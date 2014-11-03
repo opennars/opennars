@@ -819,19 +819,20 @@ public class Memory implements Serializable {
             processed++;
             
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
-
-            
-            if (task.isInput() || concept(task.getContent()) != null) {
-                                       
-                // new addInput or existing concept
+ 
+            if (task.isInput() || concept(task.sentence.content)!=null || !task.sentence.isJudgment()) { //it is a question/goal/quest or a concept which exists                   
+                // ok so lets fire it
                 queue.add(new ImmediateProcess(this, task, numTasks - 1));                
                 
-            } else {
+            } else { 
                 final Sentence s = task.sentence;
                 if ((s!=null) && (s.isJudgment())) {
-                    final double exp = s.truth.getExpectation();
-                    if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                        
+                    final double exp = s.truth.getConfidence();
+                    if (exp > Parameters.DEFAULT_CREATION_CONFIDENCE) {
+                        //i dont see how frequency could play a role here - patrick
+                        //just imagine a board game where you are confident about all the board rules
+                        //but the implications reach all the frequency spectrum in certain situations
+                        //changed to default creation confidence
                         logic.TASK_ADD_NOVEL.commit();
                         
                         // new concept formation                        
