@@ -74,7 +74,7 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
     });
   }
 
-  public Graphics2D getDBGraphics() {
+  public final Graphics2D getDBGraphics() {
     return dbg;
   }
 

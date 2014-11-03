@@ -32,6 +32,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
+import java.util.List;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.ChainShape;
@@ -68,6 +70,9 @@ public class DrawPhy2D extends DebugDraw {
     Transform xf = new Transform();
     Color3f color = new Color3f();
 
+    public final List<LayerDraw> layers = new ArrayList();
+    private Graphics2D graphics;
+    
     public DrawPhy2D(TestPanelJ2D argTestPanel, boolean yFlip) {        
         panel = argTestPanel;
         this.yFlip = yFlip;        
@@ -75,9 +80,25 @@ public class DrawPhy2D extends DebugDraw {
     }
 
 
+    public interface LayerDraw {
+        public void drawGround(DrawPhy2D draw, World w);
+        public void drawSky(DrawPhy2D draw, World w);
+    }
+    
+    public void addLayer(LayerDraw l) {
+        layers.add(l);
+    }
+    public void removeLayer(LayerDraw l) {
+        layers.remove(l);
+    }
+    
     
     public void draw(World w) {
+        
+        graphics = panel.getDBGraphics();        
 
+        for (LayerDraw l : layers) l.drawGround(this, w);
+        
         int flags = getFlags();
         //boolean wireframe = (flags & DebugDraw.e_wireframeDrawingBit) != 0;
 
@@ -142,6 +163,9 @@ public class DrawPhy2D extends DebugDraw {
 //        if ((flags & DebugDraw.e_dynamicTreeBit) != 0) {
 //            m_contactManager.m_broadPhase.drawTree(m_debugDraw);
 //        }
+
+        for (LayerDraw l : layers) l.drawSky(this, w);
+
         flush();
 
     }
@@ -511,6 +535,23 @@ public class DrawPhy2D extends DebugDraw {
     private final static IntArray xIntsPool = new IntArray();
     private final static IntArray yIntsPool = new IntArray();
 
+    public void drawSolidRect(float px, float py, float w, float h, Color color) {
+        Graphics2D g = getGraphics();
+        saveState(g);
+        g.setColor(color);
+        
+        getWorldToScreenToOut(px, py, temp);
+        int ipx = (int)temp.x;  int ipy = (int)temp.y;
+        getWorldToScreenToOut(px+w, py+h, temp);
+        int jpx = (int)temp.x;  int jpy = (int)temp.y;
+        int iw = jpx - ipx;
+        int ih = -(jpy - ipy);
+                        
+        g.fillRect(ipx-iw/2, ipy-ih/2, iw, ih);
+        
+        restoreState(g);        
+    }
+
     @Override
     public void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
         Color s = strokeColor;
@@ -561,8 +602,8 @@ public class DrawPhy2D extends DebugDraw {
         g.drawString(s, x, y);
     }
 
-    private Graphics2D getGraphics() {
-        return panel.getDBGraphics();
+    public Graphics2D getGraphics() {        
+        return graphics;
     }
 
     private final Vec2 temp2 = new Vec2();

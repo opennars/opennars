@@ -821,14 +821,14 @@ public class Memory implements Serializable {
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
 
             
-            if (task.isInput() || concept(task.getContent()) != null) {
+            if (task.isInput()) {
                                        
                 // new addInput or existing concept
                 queue.add(new ImmediateProcess(this, task, numTasks - 1));                
                 
             } else {
                 final Sentence s = task.sentence;
-                if ((s!=null) && (s.isJudgment())) {
+                if ((s!=null) && (s.isJudgment()||s.isGoal())) {
                     final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         
