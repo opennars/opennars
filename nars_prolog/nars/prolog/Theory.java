@@ -67,9 +67,6 @@ public class Theory implements Serializable, PrologTermIterator {
         this.theory=theory;
     }
 
-    public Theory(Theory copyFrom) {
-        this.clauseList = new Struct(".", copyFrom.clauseList.getArg());
-    }
     
     
     Theory() {

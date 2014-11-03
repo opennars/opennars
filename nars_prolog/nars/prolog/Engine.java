@@ -72,24 +72,31 @@ public class Engine /*Castagna 06/2011*/implements IEngine/**/{
                 long timeoutNS = (long)(maxTimeSeconds * 1e9);
                 
                 long start = System.nanoTime();
+                
+                /** only check every N iterations because System.nanotime could be expensive
+                 *  in an inner-loop like this
+                 */
+                long cyclesToCheckForTimeout = 256;
+                long cycle = 1; //skip first
+                
 		do {
-                    long now = System.nanoTime();
                     
-                    if (timeoutNS > 0) {
-                        if (now - start > timeoutNS) {
-                            mustStop = true;
-                        }
+                    if ((timeoutNS > 0) && (cycle % cyclesToCheckForTimeout == 0)) {
+                        long now = System.nanoTime();
+                        if (now - start > timeoutNS)
+                            mustStop = true;                        
                     }
 
                     if (mustStop) {
-                            nextState = manager.END_FALSE;
-                            break;
+                        nextState = manager.END_FALSE;
+                        break;
                     }
                     action = nextState.toString();
 
                     nextState.doJob(this);
                     manager.spy(action, this);
-			
+		
+                    cycle++;
 
 		} while (!(nextState instanceof StateEnd));
                 
