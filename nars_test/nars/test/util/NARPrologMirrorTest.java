@@ -37,8 +37,8 @@ public class NARPrologMirrorTest {
                         System.exit(1);                    
                     }
 
-                    new NARPrologMirror(nar, prolog).temporal(true, false);
-                    new NARPrologMirror(nar, prolog).temporal(false, true);
+                    new NARPrologMirror(nar, prolog, true).temporal(true, false);
+                    new NARPrologMirror(nar, prolog, true).temporal(false, true);
                 }
                 
                 return nar;
