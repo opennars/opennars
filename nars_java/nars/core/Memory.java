@@ -829,10 +829,10 @@ public class Memory implements Serializable {
                 if ((s!=null) && (s.isJudgment())) {
                     final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                        //i dont see how frequency could play a role here - patrick
+                        //i dont see yet how frequency could play a role here - patrick
                         //just imagine a board game where you are confident about all the board rules
                         //but the implications reach all the frequency spectrum in certain situations
-                        //changed to default creation confidence
+                        //but every concept can also be represented with (--,) so i guess its ok
                         logic.TASK_ADD_NOVEL.commit();
                         
                         // new concept formation                        
