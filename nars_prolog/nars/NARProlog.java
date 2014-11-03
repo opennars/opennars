@@ -3,8 +3,9 @@ package nars;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nars.core.Events;
 import nars.core.NAR;
+import nars.prolog.InvalidLibraryException;
+import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
 import nars.prolog.event.OutputEvent;
@@ -22,20 +23,26 @@ import nars.prolog.lib.BasicLibrary;
  */
 public class NARProlog extends Prolog implements OutputListener, WarningListener, TheoryListener, QueryListener {
     
-    
-    
     public final NAR nar;
     
-    public NARProlog(NAR n) throws Exception {
+    public NARProlog(NAR n)  {
         super();
         this.nar = n;
-                
-        loadLibrary(new BasicLibrary());
+        
         addOutputListener(this);
         addTheoryListener(this);
         addWarningListener(this);
-        addQueryListener(this);
+        addQueryListener(this);        
+    }
+    
+    public NARProlog loadBasicLibrary() throws InvalidLibraryException {
+        loadLibrary(new BasicLibrary());
+        return this;
+    }
+    
+    public NARProlog loadNAL() throws InvalidTheoryException {
         addTheory(getNALTheory());
+        return this;
     }
     
     @Override public void onOutput(OutputEvent e) {        

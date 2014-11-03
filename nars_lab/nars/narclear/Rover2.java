@@ -12,7 +12,7 @@ import java.util.Deque;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import nars.core.Events;
+import nars.NARPrologMirror;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -25,7 +25,6 @@ import nars.narclear.jbox2d.TestbedSettings;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
-import nars.util.ItemCounter;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -414,8 +413,9 @@ public class Rover2 extends PhysicsModel {
                     //float freq = 0.5f + 0.5f * di;
                     float freq = 1f;
                     
-                    //sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+                    
+                    //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+                    String ss = "<(&&," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
                     sight.set(ss);
                     
                 }
@@ -826,7 +826,7 @@ public class Rover2 extends PhysicsModel {
         
         
         float framesPerSecond = 35f;
-        int cyclesPerFrame = 50; //was 200        
+        int cyclesPerFrame = 100; //was 200        
         nar.param().noiseLevel.set(0);
         nar.param().duration.set(cyclesPerFrame);
         nar.param().conceptForgetDurations.set(5f);
@@ -834,7 +834,7 @@ public class Rover2 extends PhysicsModel {
         nar.param().beliefForgetDurations.set(25f);
         nar.param().newTaskForgetDurations.set(5f);
         
-        
+        new NARPrologMirror(nar,0.75f, true).temporal(true, true);
         
         //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
 

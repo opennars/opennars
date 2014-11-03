@@ -17,8 +17,8 @@
  */
 package nars.prolog;
 
+import com.google.common.collect.HashBasedTable;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -57,7 +57,7 @@ import nars.prolog.interfaces.IOperatorManager;
     /**
      * Returns the priority of an operator (0 if the operator is not defined).
      */
-    public synchronized int opPrio(String name,String type) {
+    public synchronized int opPrio(CharSequence name,CharSequence type) {
         Operator o = operatorList.getOperator(name, type);
         return (o == null) ? 0 : o.prio;
     }
@@ -108,19 +108,18 @@ import nars.prolog.interfaces.IOperatorManager;
     {
         //map of operators by name and type
         //key is the nameType of an operator (for example ":-xfx") - value is an Operator
-        private HashMap<String,Operator> nameTypeToKey = new HashMap<>();
+        //private HashMap<CharSequence,Operator> nameTypeToKey = new HashMap<>();
+        private HashBasedTable<CharSequence,CharSequence,Operator> nameTypeToKey = HashBasedTable.create();
         
-        public boolean addOperator(Operator op) {
-            final String nameTypeKey = op.name + op.type;
-            Operator matchingOp = nameTypeToKey.get(nameTypeKey);
-            if (matchingOp != null)
-                super.remove(matchingOp);       //removes found match from the main list
-            nameTypeToKey.put(nameTypeKey, op); //writes over found match in nameTypeToKey map
+        public final boolean addOperator(final Operator op) {            
+            Operator existing = nameTypeToKey.put(op.name, op.type, op);
+            if (existing != null)
+                super.remove(existing);       //removes found match from the main list
             return super.add(op);               //adds new operator to the main list
         }
         
-        public Operator getOperator(String name, String type) {
-            return nameTypeToKey.get(name + type);
+        public final Operator getOperator(final CharSequence name, final CharSequence type) {         
+            return nameTypeToKey.get(name, type);
         }
 
         /*Castagna 06/2011*/        
@@ -128,10 +127,10 @@ import nars.prolog.interfaces.IOperatorManager;
         public Object clone() {		 
         	OperatorRegister or = (OperatorRegister)super.clone();		 
         	Iterator<Operator> ior = (Iterator<Operator>)or.iterator();		 
-        	or.nameTypeToKey = new HashMap<>();		 
+        	or.nameTypeToKey = HashBasedTable.create(nameTypeToKey);
         	while(ior.hasNext()) {		 
         		Operator o = (Operator)ior.next();		 
-        		or.nameTypeToKey.put(o.name + o.type, o);		 
+        		or.nameTypeToKey.put(o.name, o.type, o);		 
         	}		 
         	return or;
         }
