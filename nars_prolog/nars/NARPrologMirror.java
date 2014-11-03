@@ -1,10 +1,15 @@
 package nars;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import javarepl.internal.totallylazy.Iterators;
 import nars.core.Events;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
+import nars.core.Events.Solved;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -37,7 +42,10 @@ import nars.prolog.Theory;
 import nars.prolog.Var;
 
 /**
- * Causes a NARProlog to mirror certain activity of a NAR
+ * Causes a NARProlog to mirror certain activity of a NAR.  It generates
+ * prolog terms from NARS beliefs, and answers NARS questions with the results
+ * of a prolog solution (converted to NARS terms), which are input to NARS memory
+ * with the hope that this is sooner than NARS can solve it by itself. 
  */
 public class NARPrologMirror extends AbstractObserver {
 
@@ -46,29 +54,39 @@ public class NARPrologMirror extends AbstractObserver {
     
     private float trueThreshold = 0.75f;
     private float falseThreshold = 0.25f;
-    private float confidenceThreshold = 0.75f;
-    private final Map<Term,nars.prolog.Term> beliefs = new HashMap();
-    
-    /** whether to insert directly into memory, bypassing input ports */
-    private boolean inputDirect = true;
-    
+    private float confidenceThreshold;
+    private final Map<Sentence,nars.prolog.Term> beliefs = new HashMap();
+        
     private boolean eternalJudgments = true;
     private boolean presentJudgments = false;
 
+    /** how much to scale the memory's duration parameter for this reasoner's "now" duration; default=1.0 */
+    float durationMultiplier = 1.0f;
+    
+    /** how often to remove temporally irrelevant beliefs */
+    float durationDivider = 4f;
+    
     /** in seconds */
     float maxSolveTime = 5.0f / 1e3f; //5ms
     float baseSolveTime = 1.0f / 1e3f; //1ms
     
+    boolean reportAssumptions = false;
+    boolean reportForgets = reportAssumptions;
     
-    public static final Class[] telepathicEvents = { Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, Events.ConceptQuestionAdd.class, IN.class, OUT.class };
+    
+    public static final Class[] telepathicEvents = { Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, Events.ConceptQuestionAdd.class, IN.class, OUT.class, Solved.class };
     
     public static final Class[] inputOutputEvents = { IN.class, OUT.class };
+    private long lastFlush;
+    private int durationCycles;
     
-    public NARPrologMirror(NAR nar, NARProlog prolog, boolean telepathic) {
+    boolean allTerms = false;
+    
+    public NARPrologMirror(NAR nar, float minConfidence, boolean telepathic) {
         super(nar, true, telepathic ? telepathicEvents : inputOutputEvents );
         this.nar = nar;
-        this.prolog = prolog;    
-        
+        this.confidenceThreshold = minConfidence;
+        this.prolog = new NARProlog(nar);                
     }
     
     public NARPrologMirror temporal(boolean eternalJudgments, boolean presentJudgments) {
@@ -84,15 +102,45 @@ public class NARPrologMirror extends AbstractObserver {
             return true;
         
         if (presentJudgments) {
-            long now = nar.time();
-            long durationCycles = nar.param().duration.get();
-            if (now - e < durationCycles)
+            long now = nar.time();            
+            if (Math.abs(now - e) <= durationCycles * durationMultiplier)
                return true;
         }
         
         return false;
     }
    
+    protected boolean forget(Sentence belief) {
+        if (beliefs.remove(belief)!=null) {
+            if (reportForgets) {
+                System.err.println("Prolog forget: " + belief);                
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    protected void updateBeliefs() {
+        if (presentJudgments) {
+            long now = nar.time();
+            durationCycles = nar.param().duration.get();
+            if (now - lastFlush > (long)(durationCycles/ durationDivider) ) {
+                
+                Set<Sentence> toRemove = new HashSet();
+                for (Sentence s : beliefs.keySet()) {
+                    if (!validTemporal(s)) {
+                        toRemove.add(s);
+                    }
+                }
+                for (Sentence s : toRemove) {                    
+                    forget(s);
+                }
+                
+                lastFlush = now;
+            }                
+        }
+    }
+    
     @Override
     public void event(final Class channel, final Object... arg) {        
         
@@ -136,6 +184,8 @@ public class NARPrologMirror extends AbstractObserver {
         if (!validTemporal(s))
             return;
 
+        updateBeliefs();
+        
         //only interpret input judgments, or any kind of question
         if (s.isJudgment()) {
 
@@ -143,10 +193,12 @@ public class NARPrologMirror extends AbstractObserver {
         }
         else if (s.isQuestion()) {
 
+            System.err.println("question: " + s);
+            
             float priority = task.getPriority();
             float solveTime = ((maxSolveTime-baseSolveTime) * priority) + baseSolveTime;
 
-            if (beliefs.containsKey(s.content)) {
+            if (beliefs.containsKey(s)) {
                 //already determined it to be true
                 answer(task, s.content, null);
                 return;
@@ -160,8 +212,9 @@ public class NARPrologMirror extends AbstractObserver {
                     
 
                     Theory theory;
+                    
                     prolog.setTheory(theory = getTheory(beliefs));
-                    prolog.addTheory(getAxioms());
+                    prolog.addTheory(getAxioms().iterator());
 
                     System.out.println("  Theory: " + theory);
                     //System.out.println("  Axioms: " + axioms);
@@ -233,12 +286,12 @@ public class NARPrologMirror extends AbstractObserver {
                         }
 
                         if (addOrRemove) {
-                            if (beliefs.putIfAbsent(s.content, th)==null)
-                                System.err.println("Prolog assume: " + th + " | " + s);
+                            if (beliefs.putIfAbsent(s, th)==null)
+                                if (reportAssumptions)
+                                    System.err.println("Prolog assume: " + th + " | " + s);
                         }
                         else {
-                            if (beliefs.remove(s.content)!=null)
-                                System.err.println("Prolog forget: " + th + " | " + s);
+                            forget(s);
                         }
 
                     }                                
@@ -311,13 +364,22 @@ public class NARPrologMirror extends AbstractObserver {
                 return new Struct(predicate, subj, obj);
         }
         else if (term instanceof Negation) {
-            return new Struct("negation", pterm(((Negation)term).term[0]));
+            nars.prolog.Term np = pterm(((Negation)term).term[0]);
+            if (np == null) return null;
+            return new Struct("negation", np);
         }
         else if (term.getClass().equals(Variable.class)) {
             return new Var("V" + pescape(term.name().toString()));
         }
         else if (term.getClass().equals(Term.class)) {
             return new Struct(pescape(term.name().toString()));
+        }
+        else if (term instanceof CompoundTerm) {
+            //unhandled type of compound term, store as an atomic string            
+            //NOT ready yet
+            if (allTerms) {
+                return new Struct("_" + pescape(term.name().toString()));
+            }
         }
         
         return null;        
@@ -355,7 +417,7 @@ public class NARPrologMirror extends AbstractObserver {
                             return Equivalence.make(a, b);
                         //TODO more types
                         default:
-                            System.err.println("nterm() does not yet support: " + predicate);
+                            System.err.println("nterm() does not yet support: " + term);
                     }
                 }
             }
@@ -381,13 +443,13 @@ public class NARPrologMirror extends AbstractObserver {
         return null;
     }
     
-    public Task getBeliefTask(Term t, Task parentTask) {
+    public Task getBeliefTask(Sentence question, Term t, Task parentTask) {
         float freq = 1.0f;
         float conf = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
         float priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
         float durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
         return nar.memory.newTask(t, '.', freq, conf, priority, durability, parentTask,
-                this.presentJudgments ? Tense.Present : null);        
+                question.isEternal() ? null : Tense.Present); //TODO may need to adjust tense of answer based on when question was asked
     }
     
     /** reflect a result to NARS, and remember it so that it doesn't get reprocessed here later */
@@ -396,17 +458,10 @@ public class NARPrologMirror extends AbstractObserver {
         
 
         
-        if (inputDirect) {
-            Task a = getBeliefTask(t, question);
-            nar.memory.inputTask(a);
-            
-        }
-        else {
-            //TODO avoid using String input
-            nar.addInput(t.toString() + ".");
-        }
+        Task a = getBeliefTask(question.sentence, t, question);
+        nar.memory.inputTask(a);            
         if (pt!=null)
-            beliefs.put(t, pt);
+            beliefs.put(question.sentence, pt);
     }
 
     /*
@@ -437,27 +492,28 @@ public class NARPrologMirror extends AbstractObserver {
     */
     
 
-    private static Theory axioms;
+    private static List<nars.prolog.Term> axioms = null;
     
-    private Theory getAxioms() {
+    private List<? extends nars.prolog.Term> getAxioms() {
         if (axioms==null) {
             try {
-                axioms = new Theory(
+                Theory t = new Theory(
                     "inheritance(A, C):- inheritance(A,B),inheritance(B,C)." + '\n' +
                     "implication(A, C):- implication(A,B),implication(B,C)." + '\n' +
                     "similarity(A, B):- similarity(B,A)." + '\n' +
                     "similarity(A, B):- inheritance(A,B),inheritance(B,A)." + '\n' +
                     "A:- not(not(A))." + '\n'
                 );
+                axioms = Iterators.toList( t.iterator(prolog) );
             } catch (InvalidTheoryException ex) {
                 ex.printStackTrace();
                 System.exit(1);
-            }
-        }
+            }            
+        }        
         return axioms;
     }
     
-    public Theory getTheory(Map<Term, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
+    public Theory getTheory(Map<Sentence, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
         return new Theory(new Struct(beliefMap.values().toArray(new Struct[beliefMap.size()])));
     }
 

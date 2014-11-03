@@ -205,24 +205,11 @@ public class TheoryManager implements Serializable {
 	 * @param dynamicTheory if it is true, then the clauses are marked as dynamic
 	 * @param libName       if it not null, then the clauses are marked to belong to the specified library
 	 */
-	public synchronized void consult(PrologTermIterator theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
-            startGoalStack = new Stack<>();
-            int clause = 1;
-            /**/
-            // iterate and assert all clauses in theory
-            try {
-                    for (Iterator<? extends Term> it = theory.iterator(engine); it.hasNext();) {
-                            clause++;
-                            Struct d = (Struct) it.next();
-                            if (!runDirective(d))
-                                    assertZ(d, dynamicTheory, libName, true);
-                    }
-            } catch (InvalidTermException e) {
-                    throw new InvalidTheoryException(e.getMessage(), clause, e.line, e.pos);
-            }
+	public void consult(PrologTermIterator theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
+            consult(theory.iterator(engine), dynamicTheory, libName);            
 	}
         
-	public synchronized void consult(final Struct theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
+	public void consult(final Struct theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
             startGoalStack = new Stack<>();            
             try {                
                 if (!runDirective(theory))
@@ -231,6 +218,22 @@ public class TheoryManager implements Serializable {
                     throw new InvalidTheoryException(e.getMessage(), 0, e.line, e.pos);
             }
 	}
+	public void consult(final Iterator<? extends Term> theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
+            startGoalStack = new Stack<>();
+            int clause = 1;
+            /**/
+            // iterate and assert all clauses in theory
+            try {
+                    for (Iterator<? extends Term> it = theory; it.hasNext();) {
+                            clause++;
+                            Struct d = (Struct) it.next();
+                            if (!runDirective(d))
+                                    assertZ(d, dynamicTheory, libName, true);
+                    }
+            } catch (InvalidTermException e) {
+                    throw new InvalidTheoryException(e.getMessage(), clause, e.line, e.pos);
+            }
+	}        
         
 	/**
 	 * Binds clauses in the database with the corresponding

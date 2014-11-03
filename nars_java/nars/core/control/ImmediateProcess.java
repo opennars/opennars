@@ -26,6 +26,7 @@ public class ImmediateProcess extends NAL {
 
     @Override
     public void run() {
+        System.out.println("run");
         setCurrentTask(task);
         mem.logic.TASK_IMMEDIATE_PROCESS.commit();
         emit(Events.TaskImmediateProcess.class, task);

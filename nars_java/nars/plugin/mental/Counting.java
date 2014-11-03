@@ -1,10 +1,10 @@
 package nars.plugin.mental;
 
+import java.util.Arrays;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -58,7 +58,9 @@ public class Counting implements Plugin {
 
                                 //TODO CARDINATLITY can be a static final instance shared by all
                                 Term new_term=Inheritance.make(new Product(product_args), /* --> */ new Term("CARDINALITY"));
-
+                                if (new_term == null)
+                                    throw new RuntimeException("Unable to create term: " + Arrays.toString(product_args) );
+                                
                                 TruthValue truth = task.sentence.truth.clone();
                                 Stamp stampi = task.sentence.stamp.clone();
                                 Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
