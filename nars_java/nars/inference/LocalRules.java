@@ -24,14 +24,15 @@ import java.util.Arrays;
 import nars.core.Events.Solved;
 import nars.core.Events.Unsolved;
 import nars.core.Memory;
-import nars.entity.BudgetValue;
 import nars.core.control.NAL;
+import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.reverseOrder;
+import nars.io.Output;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;
@@ -186,7 +187,12 @@ public class LocalRules {
             //Solution Activated
             
             memory.output(task);
-            memory.emit(Solved.class, task, belief, true);            
+            //only questions and quests get here because else output is spammed
+            if(task.sentence.isQuestion() || task.sentence.isQuest()) {
+                memory.emit(Solved.class, task, belief, true);      
+            } else {
+                memory.emit(Output.class, task, belief, true);            
+            }
                         
             memory.addNewTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
             return true;
