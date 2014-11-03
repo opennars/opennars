@@ -70,7 +70,7 @@ public class NARPrologMirror extends AbstractObserver {
     float maxSolveTime = 5.0f / 1e3f; //5ms
     float baseSolveTime = 1.0f / 1e3f; //1ms
     
-    boolean reportAssumptions = false;
+    boolean reportAssumptions = true;
     boolean reportForgets = reportAssumptions;
     
     

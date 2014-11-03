@@ -20,8 +20,8 @@
  */
 package nars.entity;
 
-import java.nio.CharBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -485,7 +485,11 @@ public class Sentence<T extends Term> implements Cloneable {
             arg[1]=new Term(word);
         }
         
+        //Operation.make ?
         Term operation = Inheritance.make(new Product(arg), opTerm);
+        if (operation == null) {
+            throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
+        }
         return operation;
     }
 
