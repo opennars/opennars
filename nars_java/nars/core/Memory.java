@@ -821,13 +821,7 @@ public class Memory implements Serializable {
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
 
             
-            if (  task.isInput()  ||                   
-                  (   task.sentence!=null && 
-                      task.getContent()!=null && 
-                      task.sentence.isGoal() &&
-                      Executive.isExecutableTerm(task.getContent()) 
-                      )
-               ) {
+            if (task.isInput() || concept(task.getContent()) != null) {
                                        
                 // new addInput or existing concept
                 queue.add(new ImmediateProcess(this, task, numTasks - 1));                
@@ -919,7 +913,7 @@ public class Memory implements Serializable {
         
         int executed = 0;                
 
-        for (int i = 0; i < Math.min(num, novelTasks.size()); i++) {
+        for (int i = 0; i < novelTasks.size(); i++) {
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
             if (task != null) {            
                 queue.add(new ImmediateProcess(this, task, 0));
