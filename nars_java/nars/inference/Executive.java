@@ -701,14 +701,8 @@ public class Executive {
             Sentence currentBelief = stmLast.sentence;
             nal.setCurrentBelief(currentBelief);
 
-            //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);// {
-                //c.linkToTask(t);
-            //}
-            Concept c=memory.concept(stmLast.sentence.content); 
-            if(c!=null) { //those two would be never related else altough the previous event should activate concepts
-                c.linkToTask(newEvent); //of the next
-            }
+            //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
+            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
         }
 
         //for this heuristic, only use input events & task effects of operations
