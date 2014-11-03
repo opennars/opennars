@@ -8,6 +8,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.control.NAL;
 import nars.entity.Concept;
+import nars.entity.Stamp;
 import nars.entity.Task;
 
 /**
@@ -37,11 +38,12 @@ public class ImmediateProcess extends NAL {
                 mem.event.emit(Events.ConceptDirectProcessedTask.class, currentTask);
             }
         }
-        boolean stmUpdated = mem.executive.inductionOnSucceedingEvents(currentTask, this);
-        if (stmUpdated) {
-            mem.logic.SHORT_TERM_MEMORY_UPDATE.commit();
+        if(currentTask.sentence.getOccurenceTime()!=Stamp.ETERNAL) {
+            boolean stmUpdated = mem.executive.inductionOnSucceedingEvents(currentTask, this);
+            if (stmUpdated) {
+                mem.logic.SHORT_TERM_MEMORY_UPDATE.commit();
+            }
         }
-        
     }
     
 }

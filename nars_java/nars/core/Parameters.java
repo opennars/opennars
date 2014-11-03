@@ -86,10 +86,8 @@ public class Parameters {
     public static final float BUDGET_THRESHOLD = (float) 0.01;
 
     /* ---------- default input values ---------- */
-    /** Default expectation for confirmation. */
-    public static final float DEFAULT_CONFIRMATION_EXPECTATION = (float) 0.8;
-    /** Default expectation for confirmation. */
-    public static final float DEFAULT_CREATION_EXPECTATION = (float) 0.66;
+    /** Default confidence a derived judgement has to have to possibly be able to create a new concept. */
+    public static final float DEFAULT_CREATION_CONFIDENCE = (float) 0.0;
     /** Default confidence of input judgment. */
     public static final float DEFAULT_JUDGMENT_CONFIDENCE = (float) 0.9;
     /** Default priority of input judgment */
