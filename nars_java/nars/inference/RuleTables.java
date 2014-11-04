@@ -115,7 +115,7 @@ public class RuleTables {
 
                 if(valid) {
                     Operator op=memory.getOperator("^anticipate");
-                    Product args=(Product) new Product(new Term[]{imp.getPredicate()});
+                    Product args=new Product(new Term[]{imp.getPredicate()});
                     Term new_term=Operation.make(args, /* --> */ op);
 
                     Sentence sentence = new Sentence(
