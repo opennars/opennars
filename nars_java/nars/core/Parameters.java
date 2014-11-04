@@ -36,21 +36,21 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.4f; //how much =/> should be gained
-    public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.4f; //how much =/> should be gained
+    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.2f; //how much =/> should be gained
+    public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.0f; //how much =/> should be gained
 
     public static boolean TEMPORAL_PARTICLE_PLANNER=true; //no planner anymore by default, it seems it has advanced
     
     //can only be activated in plugin menu no,
     public static boolean INTERNAL_EXPERIENCE=false;
     //so dont change these two to true
-    public static boolean INTERNAL_EXPERIENCE_FULL=true;
+    public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f;
+    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;
     
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=1.0f;
