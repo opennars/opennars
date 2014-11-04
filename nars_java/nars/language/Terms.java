@@ -296,6 +296,10 @@ public class Terms {
      * @param term The CompoundTerm for which the links are built
      */
     public static ArrayList<TermLink> prepareComponentLinks(final ArrayList<TermLink> componentLinks, final short type, final CompoundTerm t) {
+        
+        boolean tEquivalence = (t instanceof Equivalence);
+        boolean tImplication = (t instanceof Implication);
+        
         for (int i = 0; i < t.size(); i++) {
             final Term t1 = t.term[i];
             
@@ -303,15 +307,17 @@ public class Terms {
             if (!t1.hasVar()) {
                 componentLinks.add(new TermLink(type, t1, i));
             }
-            if (((t instanceof Equivalence) || ((t instanceof Implication) && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
+            if ((tEquivalence || (tImplication && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
                 prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
             } else if (t1 instanceof CompoundTerm) {
                 final CompoundTerm ct1 = (CompoundTerm)t1;
                 final int ct1Size = ct1.size(); //cache because this loop is critical
+                boolean t1ProductOrImage = (t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt);
+                
                 for (int j = 0; j < ct1Size; j++) {
                     final Term t2 = ct1.term[j];
                     if (!t2.hasVar()) {
-                        if ((t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt)) {
+                        if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
                                 componentLinks.add(new TermLink(TermLink.TRANSFORM, t2, 0, i, j));
                             } else {

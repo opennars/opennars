@@ -13,7 +13,6 @@ import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.CurveBag;
-import nars.storage.DelayBag;
 
 /**
  *
@@ -27,6 +26,7 @@ public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
 
     @Override
     public Attention newAttention(Param p, ConceptBuilder c) {
+        //return new WaveAttention(1000, c);
         return new AntAttention(1000, c);
     }
 

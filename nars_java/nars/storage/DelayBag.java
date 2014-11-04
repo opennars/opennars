@@ -194,7 +194,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
                     toRemove.add(e.name());                        
                 } 
             }                            
-            else if (ready(e)) {
+            if (ready(e)) {
                 //ACTIVATE
 
                 //shuffle
@@ -272,7 +272,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
             activity += (activityThreshold - activity) * (firingAge / (latencyCyclesMax*latencyScale));
         }*/
                 
-        if ((firingAge >= latencyMin*latencyScale) && (activity >= activityThreshold )) {
+        if ((firingAge >= latencyMin*latencyScale) || (activity >= activityThreshold )) {
             return true;
         }
 
@@ -302,17 +302,19 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     
     @Override
     public E takeNext() {
+       
         if (items.size() == 0) return null;
 
         if (!ensureLoaded())
             return null;
-                
-        for (int i = 0; i < skippedPerSample; i++) {
+               
+        for (int i = 0; i < skippedPerSample; i++)
             pending.pollFirst();
-        }
+        
         E n = pending.pollFirst();
-        if (n!=null)
+        if (n!=null) {
             return take(n.name());
+        }
         else
             return null;
     }
@@ -330,6 +332,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     @Override
     protected E addItem(E x) {                    
         E previous = items.put(x.name(), x);
+        x.budget.setLastForgetTime(now);
         return null;
     }
 

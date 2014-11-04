@@ -30,7 +30,7 @@ import nars.language.Term;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Task> implements TLink {
+public class TaskLink extends Item<Task> implements TLink<Task> {
 
     /**
      * The Task linked. The "target" field in TermLink is not used here.
@@ -121,18 +121,7 @@ public class TaskLink extends Item<Task> implements TLink {
         } else {
             return -1;
         }
-    }    
-    
-    
-    
-    /**
-     * Get the target Task
-     *
-     * @return The linked Task
-     */
-    public Task getTargetTask() {
-        return targetTask;
-    }
+    }             
 
     /**
      * To check whether a TaskLink should use a TermLink, return false if they
@@ -176,12 +165,22 @@ public class TaskLink extends Item<Task> implements TLink {
 
     @Override
     public String toString() {
-        return super.toString() + " " + getTargetTask().sentence.stamp;
+        return super.toString() + " " + getTarget().sentence.stamp;
     }
     
     public String toStringBrief() {
         return super.toString();
     }
 
+    /**
+    * Get the target Task
+    *
+    * @return The linked Task
+    */
+    @Override public Task getTarget() {
+        return targetTask;
+    }
 
+
+    
 }

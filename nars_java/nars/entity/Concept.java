@@ -728,12 +728,10 @@ public class Concept extends Item<Term> {
      * @return The selected TermLink
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
-
-        if (termLinks.size() == 0)
-            return null;
+        
         
         int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
-        for (int i = 0; i < toMatch; i++) {
+        for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
             final TermLink termLink = termLinks.takeNext();
             if (termLink==null)
