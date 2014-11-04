@@ -15,7 +15,6 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
@@ -419,13 +418,16 @@ public class Executive {
 
     protected void updateTasks() {
         Set<TaskExecution> t = new HashSet(tasks);
+        
         for (TaskExecution e : tasksToRemove) {
             t.remove(e);
         }
 
         tasks.clear();
         for (TaskExecution x : t) {
+            
             if (x.getDesire() > 0) { // && (x.getPriority() > 0)) {
+                
                 tasks.add(x);
 
                 //this is incompatible with the other usages of motivationFactor, so do not use this:
@@ -537,6 +539,7 @@ public class Executive {
         updateTasks();
         updateSensors();
 
+        //System.out.println(now + " tasks=" + tasks);
         if (tasks.isEmpty()) {
             return;
         }
@@ -556,7 +559,6 @@ public class Executive {
         TaskExecution topExecution = tasks.first();
         Task top = topExecution.t;
         Term term = top.getContent();
-        removeTask(topExecution);
         if (term instanceof Operation) {
             execute((Operation) term, top); //directly execute            
             return;
