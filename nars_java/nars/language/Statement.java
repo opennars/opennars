@@ -47,6 +47,8 @@ public abstract class Statement extends CompoundTerm {
 
     @Override
     protected void init(Term[] t) {
+        if (t.length!=2)
+            throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
         if (t[0]==null)
             throw new RuntimeException("Null subject: " + this);
         if (t[1]==null)

@@ -92,6 +92,10 @@ public class Equivalence extends Statement {
                 || (predicate instanceof Implication) || (predicate instanceof Equivalence)) {
             return null;
         }
+        
+        if (subject.equals(predicate))
+            return null;
+        
         if ((temporalOrder == TemporalRules.ORDER_BACKWARD)
                 || ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD))) {
             Term interm = subject;
@@ -114,8 +118,10 @@ public class Equivalence extends Statement {
                 copula = NativeOperator.EQUIVALENCE;
         }
         
-        return new Equivalence(                
-                Term.toSortedSetArray(subject, predicate), temporalOrder);
+        Term[] t = Term.toSortedSetArray(subject, predicate);
+        if (t.length != 2)
+            return null;        
+        return new Equivalence(t, temporalOrder);
     }
 
     /**
