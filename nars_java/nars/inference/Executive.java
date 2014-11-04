@@ -502,7 +502,7 @@ public class Executive {
             if (content instanceof Operation) {
                 addTask(concept, t);
             } else if (isSequenceConjunction(content)) {
-                //addTask(concept, t);
+                addTask(concept, t);
             }
         } else {
             //t.end();
