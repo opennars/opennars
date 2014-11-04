@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.NeuromorphicNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.narclear.jbox2d.TestbedSettings;
@@ -248,8 +248,8 @@ public class Rover2 extends PhysicsModel {
         getWorld().setGravity(new Vec2());
         getWorld().setAllowSleep(false);
 
-        //world = new FoodSpawnWorld1(this, sz, sz);
-        world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
+        world = new FoodSpawnWorld1(this, sz, sz);
+        //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
         rover = new RoverModel(this, this);
 
@@ -356,8 +356,8 @@ public class Rover2 extends PhysicsModel {
 
         //NAR nar = new DefaultNARBuilder().
         ////NAR nar = new CurveBagNARBuilder().
-        //NAR nar = new DiscretinuousBagNARBuilder().
-        NAR nar = new NeuromorphicNARBuilder().
+        NAR nar = new DiscretinuousBagNARBuilder().
+        //NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
                 setConceptBagSize(2000).
                 setSubconceptBagSize(5000).
