@@ -133,7 +133,7 @@ public abstract class CompoundTerm extends Term {
     public CompoundTerm cloneDeepVariables() {        
         Term c = clone(cloneVariableTermsDeep());
         if (c == null)
-            throw new RuntimeException("clone(cloneVariableTermsDeep()) resulted in null");
+            throw new RuntimeException("clone(cloneVariableTermsDeep()) resulted in null: " + this);
         if (c.getClass()!=getClass())
             throw new RuntimeException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         
@@ -284,7 +284,7 @@ public abstract class CompoundTerm extends Term {
         
         n.append(COMPOUND_TERM_CLOSER.ch);
                         
-        return n.compact();
+        return n.compact().toString();
     }
     
 
@@ -807,37 +807,40 @@ public abstract class CompoundTerm extends Term {
     
     @Override
     public boolean equals(final Object that) {
-        if (that==this) return true;
-        
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            if (!(that instanceof CompoundTerm)) return false;
+        if (that==this) return true;                
+        if (!(that instanceof Term))
+            return false;
+        if (Parameters.TERM_ELEMENT_EQUIVALENCY)
+            return equalsByTerm(that);
+        return name().equals(((Term)that).name());
+    }
+    
+    public boolean equalsByTerm(final Object that) {
+        if (!(that instanceof CompoundTerm)) return false;
 
-            final CompoundTerm t = (CompoundTerm)that;        
+        final CompoundTerm t = (CompoundTerm)that;        
 
-            if (operator() != t.operator())
+        if (operator() != t.operator())
+            return false;
+
+        if (getComplexity()!= t.getComplexity())
+            return false;
+
+        if (getTemporalOrder()!=t.getTemporalOrder())
+            return false;
+
+        if (!equals2(t))
+            return false;
+
+        if (term.length!=t.term.length)
+            return false;
+
+        for (int i = 0; i < term.length; i++) {            
+            if (!term[i].equals(t.term[i]))
                 return false;
-
-            if (getComplexity()!= t.getComplexity())
-                return false;
-
-            if (getTemporalOrder()!=t.getTemporalOrder())
-                return false;
-
-            if (!equals2(t))
-                return false;
-
-            if (term.length!=t.term.length)
-                return false;
-
-            for (int i = 0; i < term.length; i++) {            
-                if (!term[i].equals(t.term[i]))
-                    return false;
-            }
-
-            return true;
         }
-        return super.equals(that);
-        
+
+        return true;        
     }
     
     /** additional equality checks, in subclasses*/

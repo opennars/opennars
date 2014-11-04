@@ -123,43 +123,43 @@ public class Variable extends Term {
     @Override public boolean equals(final Object that) {
         if (that == this) return true;
         if (!(that instanceof Variable)) return false;
-        Variable v = (Variable)that;
-        
+                
         if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            
-
-            //TODO factor these comparisons into 2 nested if's
-
-            if ((v.scope == v) && (scope == this))
-                //both are unscoped, so compare by name only
-                return name().equals(v.name());
-            else if ((v.scope!=v) && (scope==this))
-                return false;
-            else if ((v.scope==v) && (scope!=this))
-                return false;
-            else {
-                if (!name().equals(v.name()))
-                    return false;
-
-                if (scope == v.scope) return true;
-
-                if (scope.hashCode()!=v.scope.hashCode())
-                    return false;
-
-                //WARNING infinnite loop can happen if the two scopes start equaling echother
-                //we need a special equals comparison which ignores variable scope when recursively
-                //called from this
-                //until then, we'll use the name for comparison because it wont 
-                //invoke infinite recursion
-
-                return scope.name().equals(v.scope.name());
-            }
-            
+            return equalsTerm(that);
         }
         else {
-            if (!super.equals(that))
-                return false;
+            Variable v = (Variable)that;
+            if (!name().equals(v.name())) return false;
             return (v.getScope().name().equals(getScope().name()));
+        }
+    }
+    
+    public boolean equalsTerm(Object that) {
+        //TODO factor these comparisons into 2 nested if's
+        Variable v = (Variable)that;
+        if ((v.scope == v) && (scope == this))
+            //both are unscoped, so compare by name only
+            return name().equals(v.name());
+        else if ((v.scope!=v) && (scope==this))
+            return false;
+        else if ((v.scope==v) && (scope!=this))
+            return false;
+        else {
+            if (!name().equals(v.name()))
+                return false;
+
+            if (scope == v.scope) return true;
+
+            if (scope.hashCode()!=v.scope.hashCode())
+                return false;
+
+            //WARNING infinnite loop can happen if the two scopes start equaling echother
+            //we need a special equals comparison which ignores variable scope when recursively
+            //called from this
+            //until then, we'll use the name for comparison because it wont 
+            //invoke infinite recursion
+
+            return scope.name().equals(v.scope.name());       
         }
     }
 
@@ -241,7 +241,7 @@ public class Variable extends Term {
         do {
             cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
         } while (index != 0);
-        return cb.compact();
+        return cb.compact().toString();
 
     }
     

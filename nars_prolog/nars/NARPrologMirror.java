@@ -394,7 +394,7 @@ public class NARPrologMirror extends AbstractObserver {
             int arity = s.getArity();
             String predicate = s.name().toString();
             if (arity == 0) {
-                return new Term(predicate);
+                return Term.get(predicate);
             }
             else if (arity == 1) {
                 switch (predicate) {

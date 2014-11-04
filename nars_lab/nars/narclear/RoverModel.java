@@ -197,6 +197,11 @@ public class RoverModel {
         Color3f sparkColor = new Color3f(0.4f, 0.9f, 0.4f);
         Color3f normalColor = new Color3f(0.9f, 0.9f, 0.4f);
         private final String angleTerm;
+        private float distMomentum = 0.75f;
+        private float minDist;
+        private Body hit;
+        private float confMomentum = 0.75f;
+        private float conf;
 
         public VisionRay(Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
             this.body = body;
@@ -247,20 +252,46 @@ public class RoverModel {
                 if (conf > 0.99f) {
                     conf = 0.99f;
                 }
-                float di = minDist;
-                String dist = Rover2.f(di);
-                onTouch(hit, di);
-                String material = hit.getUserData() != null ? hit.getUserData().toString() : "sth";
-                //float freq = 0.5f + 0.5f * di;
-                float freq = 1f;
-                //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-                String ss = "<(&&," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-                sight.set(ss);
+                
+                perceiveDist(hit, conf, meanDist);
             } else {
-                sight.set("<" + angleTerm + " --> Empty>. :|:");
+                perceiveDist(hit, 0.99f, 1.0f);
             }
+            
+            updatePerception();
         }
 
+        protected void perceiveDist(Body hit, float newConf, float newMinDist) {
+
+            minDist = (distMomentum * minDist) + (1f - distMomentum) * newMinDist;
+            conf = (confMomentum * conf) + (1f - confMomentum) * newConf;
+            
+            if (hit!=null)
+                this.hit = hit;
+            
+        }
+        
+        protected void updatePerception() {
+            if (hit == null) {
+                if (minDist > 0.5f) {
+                    sight.set("<" + angleTerm + " --> Empty>. :|:");        
+                }   
+                return;                                
+            }
+            
+            String dist = Rover2.f(minDist);
+            
+            String material = hit.getUserData() != null ? hit.getUserData().toString() : "sth";
+            //float freq = 0.5f + 0.5f * di;
+            float freq = 1f;
+            //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+            String ss = "<(&&," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+            if (sight.set(ss)) {
+                onTouch(hit, minDist);
+            }
+            
+        }
+        
         public void onTouch(Body hit, float di) {
         }
     }

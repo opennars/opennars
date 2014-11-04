@@ -24,10 +24,15 @@ import nars.core.Parameters;
 import static nars.core.Parameters.TRUTH_EPSILON;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.language.Term;
 
 
 public class TruthValue implements Cloneable { // implements Cloneable {
 
+
+    final static Term Truth_TRUE = new Term("TRUE");
+    final static Term Truth_FALSE = new Term("FALSE");
+    final static Term Truth_UNSURE = new Term("UNSURE");
     
     /**
      * The character that marks the two ends of a truth value
@@ -272,16 +277,17 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         return null;
     }
 
-    public String toWord() {
+    
+    public Term toWordTerm() {
         float e = getExpectation();
         float t = Parameters.DEFAULT_CREATION_EXPECTATION;
         if (e > t) {
-            return "TRUE";
+            return Truth_TRUE;
         }
         if (e < 1 - t) {
-            return "FALSE";
+            return Truth_FALSE;
         }
-        return "UNSURE";
+        return Truth_UNSURE;
     }
     
 }

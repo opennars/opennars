@@ -20,7 +20,8 @@
  */
 package nars.language;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
@@ -41,6 +42,9 @@ public class Term implements AbstractTerm {
         public void visit(Term t);
     }
     
+    
+    private static final Map<CharSequence,Term> atoms = new HashMap();
+    
     protected CharSequence name = null;
     
     /**
@@ -57,6 +61,34 @@ public class Term implements AbstractTerm {
     public Term(final CharSequence name) {
         setName(name);
     }
+    
+    /** gets the atomic term given a name */
+    public final static Term get(final CharSequence name) {
+        Term x = atoms.get(name);
+        if (x != null) return x;
+        x = new Term(name);
+        atoms.put(name, x);
+        return x;
+    }
+    
+    /** gets the atomic term of an integer */
+    public final static Term get(final int i) {
+        //fast lookup for single digits
+        switch (i) {
+            case 0: return get("0");
+            case 1: return get("1");
+            case 2: return get("2");
+            case 3: return get("3");
+            case 4: return get("4");
+            case 5: return get("5");
+            case 6: return get("6");
+            case 7: return get("7");
+            case 8: return get("8");
+            case 9: return get("9");
+        }
+        return get(Integer.toString(i));
+    }
+    
 
     /**
      * Reporting the name of the current Term.
@@ -245,7 +277,7 @@ public class Term implements AbstractTerm {
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Term text(String t) {
-        return new Term(Texts.escape('"' + t + '"').toString());
+        return Term.get(Texts.escape('"' + t + '"').toString());
     }
 
 
