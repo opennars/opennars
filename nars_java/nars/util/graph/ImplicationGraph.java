@@ -143,6 +143,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
         public UniqueOperation(Implication parent, Operation o, Term previous) {
             super(o.term);
+            init(o.term);
             this.previous = previous;            
             this.parent = parent;
             this.hash = Objects.hash(previous, parent, o.term);
@@ -151,6 +152,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
         @Override public boolean equals(final Object that) {
             if (that == this) return true;
+            if (hashCode()!=that.hashCode()) return false;
+            
             if (that instanceof UniqueOperation) {
                 UniqueOperation u = (UniqueOperation)that;
                 if (!u.parent.equals(parent)) return false;
@@ -175,7 +178,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         private final int hash;
     
         public UniqueInterval(Implication parent, Term previous, Interval i) {
-            super(i.magnitude, true);                
+            super(i.magnitude, true);            
+            
             this.previous = previous;
             this.parent = parent;
             this.hash = Objects.hash(i, previous, parent);
@@ -188,6 +192,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
         @Override public boolean equals(final Object that) {
             if (that == this) return true;           
+            if (hashCode()!=that.hashCode()) return false;
+            
             if (that instanceof UniqueInterval) {
                 UniqueInterval u = (UniqueInterval)that;
                 if (magnitude!=u.magnitude) return false;
@@ -203,6 +209,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     public static class PostCondition extends Negation {
         public PostCondition(final Term t) {
             super(t);                
+            init(term);
         }
 
         @Override
@@ -216,9 +223,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             return super.equals(that);
         }
 
-
-        @Override  protected void init(Term[] components) {
-        }
         
     }
     

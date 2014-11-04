@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.gui.NARSwing;
 import nars.io.Output;
 import org.junit.Test;
 
@@ -99,11 +100,11 @@ public class GraphPlanTest {
         
         n.addInput(input);
 
-        n.finish(185);
+        //n.finish(185);
         
         //assertTrue(success.get());
         
-//        new NARSwing(n);
+        new NARSwing(n);
         //n.start(100, 1);
         
         

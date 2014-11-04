@@ -39,7 +39,7 @@ public class Parameters {
     public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f; //how much =/> should be gained
     public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.0f; //how much =/> should be gained
 
-    public static boolean TEMPORAL_PARTICLE_PLANNER=false; //no planner anymore by default, it seems it has advanced
+    public static boolean TEMPORAL_PARTICLE_PLANNER=true; //no planner anymore by default, it seems it has advanced
     
     //can only be activated in plugin menu no,
     public static boolean INTERNAL_EXPERIENCE=false;
