@@ -662,6 +662,9 @@ public final class SyllogisticRules {
                 content = Statement.make(st2, term2, term1, st2.getTemporalOrder());
             } else {
                 content = term1;
+                if(content.hasVarIndep()) {
+                    return false;
+                }
             }
             if (sentence.isQuestion() || sentence.isQuest()) {
                 budget = BudgetFunctions.backwardWeak(value2, nal);
@@ -685,6 +688,9 @@ public final class SyllogisticRules {
                 content = Statement.make(st1, term1, term2, st1.getTemporalOrder());
             } else {
                 content = term2;
+                if(content.hasVarIndep()) {
+                    return false;
+                }
             }
             if (sentence.isQuestion() || sentence.isQuest()) {
 

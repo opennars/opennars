@@ -85,7 +85,7 @@ public class Equivalence extends Statement {
     }
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
-        if (invalidStatement(subject, predicate)) {
+        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {
             return null;
         }
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
