@@ -15,20 +15,13 @@ import nars.inference.RuleTables;
 abstract public class FireConcept extends NAL {
     
 
-    public FireConcept(Memory mem, Concept concept, TaskLink t) {
-        super(mem);
-        this.termLinkCount = mem.param.termLinkMaxReasoned.get();
-        this.currentConcept = concept;
-        this.currentTaskLink = t;
-        this.numTaskLinks = 0;
-    }
     
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
     }
     
     public FireConcept(Memory mem, Concept concept, int numTaskLinks, int termLinkCount) {
-        this(mem, concept, null);
+        super(mem);
         this.termLinkCount = termLinkCount;
         this.currentConcept = concept;
         this.currentTaskLink = null;

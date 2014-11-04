@@ -132,6 +132,8 @@ public abstract class CompoundTerm extends Term {
     
     public CompoundTerm cloneDeepVariables() {        
         Term c = clone(cloneVariableTermsDeep());
+        if (c == null)
+            throw new RuntimeException("clone(cloneVariableTermsDeep()) resulted in null");
         if (c.getClass()!=getClass())
             throw new RuntimeException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         

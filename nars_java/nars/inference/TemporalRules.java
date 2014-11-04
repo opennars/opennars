@@ -19,6 +19,7 @@ package nars.inference;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import nars.core.Memory;
@@ -37,6 +38,7 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.Interval;
 import nars.language.Product;
+import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
@@ -116,12 +118,14 @@ public class TemporalRules {
 
     public static final int resemblanceOrder(final int order1, final int order2, final int figure) {
         int order = ORDER_INVALID;
+        int order1Reverse = reverseOrder(order1);
+        
         if ((order2 == TemporalRules.ORDER_NONE)) {
-            order = (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
+            order = (figure > 20) ? order1 : order1Reverse; // switch when 11 or 12
         } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
             order = (figure % 10 == 1) ? order2 : reverseOrder(order2); // switch when 12 or 22
         } else if (order2 == TemporalRules.ORDER_CONCURRENT) {
-            order = (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
+            order = (figure > 20) ? order1 : order1Reverse; // switch when 11 or 12
         } else if (order1 == order2) {
             order = (figure == 21) ? order1 : -order1;
         }
@@ -211,13 +215,17 @@ public class TemporalRules {
         }
     }
     
+    /** whether a term can be used in temoralInduction(,,) */
+    protected static boolean termForTemporalInduction(final Term t) {
+        return (t instanceof Inheritance) || (t instanceof Similarity);
+    }
     
     
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
         
-        List<Task> success=new ArrayList<Task>();
+        
         if ((s1.truth==null) || (s2.truth==null))
-            return success;
+            return Collections.EMPTY_LIST;
         
         Term t1 = s1.content;
         Term t2 = s2.content;
@@ -233,12 +241,13 @@ public class TemporalRules {
         }*/
         
         //since induction shouldnt miss something trivial random is not good here
-        if (/*Memory.randomNumber.nextDouble()>0.5 &&*/ (t1 instanceof Inheritance) && (t2 instanceof Inheritance)) {
+            ///ex: *Memory.randomNumber.nextDouble()>0.5 &&*/
+        
+        if (termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
+            
             Statement ss1 = (Statement) t1;
             Statement ss2 = (Statement) t2;
 
-            
-            
             Variable var1 = new Variable("$0");
             Variable var2 = var1;
 
@@ -255,6 +264,9 @@ public class TemporalRules {
                     boolean anyone=false;
                     Term comp=ss1.getSubject();
                     Term ss2_term = ((Operation)ss2).getSubject();
+                    
+                    boolean applicableVariableType = !(comp instanceof Variable && ((Variable)comp).getType()==Symbols.VAR_INDEPENDENT);
+                    
                     if(ss2_term instanceof Product) {
                         Product ss2_prod=(Product) ss2_term;
                         for(final Term t : ss2_prod.term)
@@ -263,7 +275,7 @@ public class TemporalRules {
                                 anyone=true;
                             }
                         }
-                        if(anyone && !(comp instanceof Variable && ((Variable)comp).getType()==Symbols.VAR_INDEPENDENT)) { //only if there is one and it isnt a variable already
+                        if(anyone && applicableVariableType) { //only if there is one and it isnt a variable already
                             Term[] ars = ss2_prod.cloneTerms();
                             for(int i=0;i<ars.length;i++) {
                                 if(ars[i].equals(comp)) {
@@ -272,8 +284,12 @@ public class TemporalRules {
                             }
 
                             t11 = Statement.make(ss1, var1, ss1.getPredicate());
-                            Product S=(Product) new Product(ars);
-                            Operation op=(Operation) Operation.make(S, ss2.getPredicate());
+                            
+                            Operation op=(Operation) Operation.make(
+                                    new Product(ars), 
+                                    ss2.getPredicate()
+                            );
+                            
                             t22 = op;
                         }
                     }
@@ -281,9 +297,9 @@ public class TemporalRules {
             }
         }
         
-        if (Statement.invalidStatement(t1, t2)) {
-            return success;
-        }
+        if (Statement.invalidStatement(t1, t2))
+            return Collections.EMPTY_LIST;
+        
         
         final Interval.AtomicDuration duration = nal.mem().param.duration;
         int durationCycles = duration.get();
@@ -330,6 +346,8 @@ public class TemporalRules {
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
+        
+        List<Task> success=new ArrayList<Task>();
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
