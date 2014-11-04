@@ -495,9 +495,9 @@ public class Stamp implements Cloneable {
 
         Stamp s = (Stamp)that;
 
-        /*
         if (occurrenceTime!=s.occurrenceTime)
             return false;
+        /*
         if (creationTime!=s.creationTime)
             return false;
         */

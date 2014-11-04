@@ -24,13 +24,15 @@ import nars.util.graph.ImplicationGraph.Cause;
 
 public class ImplicationGraph extends SentenceGraph<Cause> {
 
+    float minConfidence = 0.1f;
+    
     public static class Cause {
         public final Term cause;
         public final Term effect;
         public final Sentence parent;
         
-        /** strength below which an item will be removed */
-        public final double minStrength = 0.01;
+//        /** strength below which an item will be removed */
+//        public final double minStrength = 0.01;
         
         private double activity = 0;
         
@@ -89,7 +91,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     
     
 
-    float minConfidence = 0.1f;
+    
     
 
     public ImplicationGraph(NAR nar) {
@@ -143,10 +145,10 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
         public UniqueOperation(Implication parent, Operation o, Term previous) {
             super(o.term);
-            init(o.term);
             this.previous = previous;            
             this.parent = parent;
             this.hash = Objects.hash(previous, parent, o.term);
+            init(o.term);
         }
 
         
@@ -158,7 +160,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 UniqueOperation u = (UniqueOperation)that;
                 if (!u.parent.equals(parent)) return false;
                 if (!Objects.equals(u.previous, previous)) return false;
-                return super.equals(that);
+                return name().equals(u.name());
             }
             return false;
         }        
@@ -245,7 +247,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     @Override
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
 
-        
         
         if (!(ct instanceof Implication)) {
             return false;

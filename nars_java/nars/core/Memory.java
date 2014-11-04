@@ -820,7 +820,8 @@ public class Memory implements Serializable {
             
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
  
-            if (task.isInput() || concept(task.sentence.content)!=null || !task.sentence.isJudgment()) { //it is a question/goal/quest or a concept which exists                   
+            
+            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.content)!=null) { //it is a question/goal/quest or a concept which exists                   
                 // ok so lets fire it
                 queue.add(new ImmediateProcess(this, task, numTasks - 1));                
                 

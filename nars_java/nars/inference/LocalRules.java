@@ -186,13 +186,16 @@ public class LocalRules {
             
             //Solution Activated
             
-            memory.output(task);
+            memory.emit(Solved.class, task, belief);      
+            
+            /*memory.output(task);
+                        
             //only questions and quests get here because else output is spammed
             if(task.sentence.isQuestion() || task.sentence.isQuest()) {
-                memory.emit(Solved.class, task, belief, true);      
+                memory.emit(Solved.class, task, belief);          
             } else {
-                memory.emit(Output.class, task, belief, true);            
-            }
+                memory.emit(Output.class, task, belief);            
+            }*/
                         
             memory.addNewTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
             return true;

@@ -51,7 +51,7 @@ public class Events {
     public static class ConceptRemember {    }
     
     public static class ConceptForget { }
-    public static class ConceptBeliefAdd { }
+    public static class ConceptBeliefAdd { } //TODO remove redundant sentence parameter, it's task.sentence
     public static class ConceptBeliefRemove { }
     public static class ConceptGoalAdd { }
     public static class ConceptGoalRemove { }
