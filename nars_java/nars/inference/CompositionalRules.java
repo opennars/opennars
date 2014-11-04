@@ -745,6 +745,9 @@ public final class CompositionalRules {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
+                            if(s2.hasVarIndep()) {
+                                return;
+                            }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
@@ -765,6 +768,9 @@ public final class CompositionalRules {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
+                            if(s2.hasVarIndep()) {
+                                return;
+                            }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
@@ -798,6 +804,9 @@ public final class CompositionalRules {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
+                            if(s2.hasVarIndep()) {
+                                return;
+                            }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
@@ -818,6 +827,9 @@ public final class CompositionalRules {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
+                            if(s2.hasVarIndep()) {
+                                return;
+                            }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
@@ -851,6 +863,9 @@ public final class CompositionalRules {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
+                            if(s2.hasVarIndep()) {
+                                return;
+                            }
                             if (s2!=null) {
                                 if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
                                     TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -872,8 +887,10 @@ public final class CompositionalRules {
                             if (!(s2 instanceof CompoundTerm)) {
                                 continue;
                             }
-
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
+                            if(s2.hasVarIndep()) {
+                                return;
+                            }
                             if ((s2!=null) && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
@@ -906,8 +923,10 @@ public final class CompositionalRules {
                             if (!(s2 instanceof CompoundTerm)) {
                                 continue;
                             }
-
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
+                            if(s2.hasVarIndep()) {
+                                return;
+                            }
                             if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
@@ -929,6 +948,9 @@ public final class CompositionalRules {
                             }
 
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
+                            if(s2.hasVarIndep()) {
+                                return;
+                            }
                             if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
