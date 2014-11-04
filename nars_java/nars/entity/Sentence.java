@@ -476,13 +476,12 @@ public class Sentence<T extends Term> implements Cloneable {
             default:
                 return null;
         }
+        
         Term opTerm = mem.getOperator(opName);
-        int size=(truth==null ? 1 : 2);
-        Term[] arg = new Term[size];
+        Term[] arg = new Term[ truth==null ? 1 : 2 ];
         arg[0]=content;
         if (truth != null) {
-            String word = truth.toWord();
-            arg[1]=new Term(word);
+            arg[1] = truth.toWordTerm();            
         }
         
         //Operation.make ?

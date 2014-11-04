@@ -23,6 +23,9 @@ import nars.language.Term;
 public class Counting implements Plugin {
 
     public Observer obs;
+    
+    final static Term CARDINALITY = Term.get("CARDINALITY");
+    
     @Override public boolean setEnabled(NAR n, boolean enabled) {
         Memory memory = n.memory;
         
@@ -53,13 +56,15 @@ public class Counting implements Plugin {
                                 //now create term <(*,M,cardinality) --> CARDINALITY>.
                                 Term[] product_args = new Term[] { 
                                     inh.getPredicate(),
-                                    new Term(String.valueOf(cardinality)) 
+                                    Term.get(cardinality) 
                                 };
 
                                 //TODO CARDINATLITY can be a static final instance shared by all
-                                Term new_term=Inheritance.make(new Product(product_args), /* --> */ new Term("CARDINALITY"));
-                                if (new_term == null)
-                                    throw new RuntimeException("Unable to create term: " + Arrays.toString(product_args) );
+                                Term new_term=Inheritance.make(new Product(product_args), /* --> */ CARDINALITY);
+                                if (new_term == null) {
+                                    //this usually happens when product_args contains the term CARDINALITY in which case it is an invalid Inheritance statement
+                                    return;
+                                }
                                 
                                 TruthValue truth = task.sentence.truth.clone();
                                 Stamp stampi = task.sentence.stamp.clone();

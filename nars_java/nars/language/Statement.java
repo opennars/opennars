@@ -237,7 +237,7 @@ public abstract class Statement extends CompoundTerm {
                 
         cb.append(STATEMENT_CLOSER.ch);
                         
-        return cb.compact();
+        return cb.compact().toString();
     }    
     /**
      * Check the validity of a potential Statement. [To be refined]

@@ -134,10 +134,11 @@ public class TermLink extends Item<TermLink> implements TLink<Term> {
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) return true;
+        if (hashCode()!=obj.hashCode()) return false;
+        
         if (obj instanceof TermLink) {
             TermLink t = (TermLink)obj;
             
-            if (t.hash != hash) return false;
             if (type != t.type) return false;
             if (!Arrays.equals(t.index, index)) return false;
             

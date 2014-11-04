@@ -20,17 +20,15 @@
  */
 package nars.storage;
 
-import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import nars.core.Parameters;
 import nars.entity.Item;
 
@@ -111,17 +109,21 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
     public class Level<E> implements Iterable<E> {
         private final int thisLevel;
-        Deque<E> items;
+        
+        //Deque<E> items;
+        LinkedHashSet<E> items;
         
                 
         public Level(int level, int numElements) {
             super();
-            if (Parameters.THREADS == 1) {
+            items = new LinkedHashSet(numElements);
+            
+            /*if (Parameters.THREADS == 1) {
                 items = new ArrayDeque(numElements);
             }
             else {
                 items = new ConcurrentLinkedDeque();
-            }
+            }*/
             this.thisLevel = level;
         }
 
@@ -154,7 +156,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             return false;
         }
 
-        public boolean remove(Object o) {
+        public boolean remove(E o) {
             if (items.remove(o)) {
                 levelIsEmpty(items.isEmpty());
                 return true;
@@ -163,7 +165,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
 
         public E removeFirst() {
-            E e = items.pollFirst();
+            E e = items.iterator().next();
+            items.remove(e);
             if (e!=null) {
                 levelIsEmpty(items.isEmpty());
             }
@@ -171,11 +174,12 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
 
         public E peekFirst() {
-            return items.peekFirst();
+            return items.iterator().next();
         }
 
         public Iterator<E> descendingIterator() {
-            return items.descendingIterator();
+            return items.iterator();
+            //return items.descendingIterator();
         }
         
         
@@ -184,8 +188,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     
     private Level<E> newLevel(int l) {
         return new Level(l, 1 + capacity / levels);
-        //return new LinkedList<E>();  //not good
-        //return new FastTable<E>(); //slower than arraydeque under current loads    
     }
     
     @Override

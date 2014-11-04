@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -46,7 +47,6 @@ public class Rover2 extends PhysicsModel {
     final NAR nar;
     private float linearSpeed;
     private float angleSpeed;
-
     static int mission = 0;
 
     private static final double TWO_PI = 2 * Math.PI;

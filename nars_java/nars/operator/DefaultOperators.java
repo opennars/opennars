@@ -48,7 +48,7 @@ public class DefaultOperators {
             new Doubt(),        // decrease the confidence of a belief
             new Hesitate(),      // decrease the confidence of a goal
             
-             new Anticipate(),      // expect an event
+            new Anticipate(),      // expect an event
 
             // feeling operations
             new FeelHappy(),

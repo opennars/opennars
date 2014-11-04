@@ -38,11 +38,18 @@ import nars.operator.Operator;
  * Feeling common operations
  */
 public abstract class Feel extends Operator {
+    private final Term feelingTerm;
 
     public Feel(String name) {
         super(name);
+        
+        // remove the "^feel" prefix from name
+        this.feelingTerm = Term.get(((String)name()).substring(5));
     }
 
+    final static Term self = Term.get(Symbols.SELF);
+    final static Term selfSubject = SetExt.make(self);
+    
     /**
      * To get the current value of an internal sensor
      *
@@ -53,14 +60,12 @@ public abstract class Feel extends Operator {
     protected ArrayList<Task> feeling(float value, Memory memory) {
         Stamp stamp = new Stamp(memory, Tense.Present);
         TruthValue truth = new TruthValue(value, 0.999f);
-        Term self = new Term(Symbols.SELF);
-        Term subject = SetExt.make(self);
-                
-        Term predicate = SetInt.make(
-                // remove the "^feel" prefix from name
-                new Term( ((String)name()).substring(5) )); 
         
-        Term content = Inheritance.make(subject, predicate);
+        
+                
+        Term predicate = SetInt.make(feelingTerm); 
+        
+        Term content = Inheritance.make(selfSubject, predicate);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);

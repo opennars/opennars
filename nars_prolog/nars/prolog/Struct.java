@@ -732,7 +732,7 @@ public class Struct extends Term {
     public static final CharSequence atomEscape(CharSequence n) {
         CharBuffer cb = CharBuffer.allocate(n.length()+2);
         cb.append('\'').append(n).append('\'');
-        return cb.compact();
+        return cb.compact().toString();
     }
     
     /**

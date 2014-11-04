@@ -53,6 +53,6 @@ public class Javascript extends SynchronousFunctionOperator {
     }
 
     @Override public Term getRange() {
-        return new Term("js_evaluation");
+        return Term.get("js_evaluation");
     }
 }

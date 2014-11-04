@@ -413,7 +413,7 @@ public class Narsese {
         if (containVar(s)) {
             return new Variable(s);
         } else {
-            return new Term(s);
+            return Term.get(s);
         }
     }
 

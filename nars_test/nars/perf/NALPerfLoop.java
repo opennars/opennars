@@ -3,7 +3,7 @@ package nars.perf;
 import java.util.Collection;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.CurveBagNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.test.core.NALTest;
 
@@ -22,9 +22,9 @@ public class NALPerfLoop {
         Parameters.THREADS = 1;
           
         //NAR n = new NeuromorphicNARBuilder().setConceptBagSize(maxConcepts).build();
-        NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
+        //NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
         //NAR n = new DefaultNARBuilder().setConceptBagSize(maxConcepts).build();
-        //NAR n = new DiscretinuousBagNARBuilder().setConceptBagSize(maxConcepts).build();
+        NAR n = new DiscretinuousBagNARBuilder().setConceptBagSize(maxConcepts).build();
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         

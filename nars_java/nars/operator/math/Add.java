@@ -54,7 +54,7 @@ public class Add extends SynchronousFunctionOperator {
 
     @Override
     protected Term getRange() {
-        return new Term("added");
+        return Term.get("added");
     }
     
 }
