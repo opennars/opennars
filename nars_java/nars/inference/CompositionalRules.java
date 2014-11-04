@@ -741,7 +741,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) S1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
+                            if (!(s2 instanceof CompoundTerm) || s2.hasVarIndep()) {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
@@ -761,7 +761,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) P2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
+                            if (!(s2 instanceof CompoundTerm) || s2.hasVarIndep()) {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
@@ -794,7 +794,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) S2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
+                            if (!(s2 instanceof CompoundTerm) || s2.hasVarIndep()) {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
@@ -814,7 +814,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) P1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
+                            if (!(s2 instanceof CompoundTerm) || s2.hasVarIndep()) {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
@@ -847,7 +847,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) P1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
+                            if (!(s2 instanceof CompoundTerm) || s2.hasVarIndep()) {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
@@ -869,7 +869,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) P2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
+                            if (!(s2 instanceof CompoundTerm) || s2.hasVarIndep()) {
                                 continue;
                             }
 
@@ -903,10 +903,9 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) S1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
+                            if (!(s2 instanceof CompoundTerm) || s2.hasVarIndep()) {
                                 continue;
                             }
-
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -924,7 +923,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) S2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
+                            if (!(s2 instanceof CompoundTerm) || s2.hasVarIndep()) {
                                 continue;
                             }
 

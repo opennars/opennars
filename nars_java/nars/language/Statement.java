@@ -145,6 +145,9 @@ public abstract class Statement extends CompoundTerm {
     
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
+        if(subj==null || pred==null) {
+            return null;
+        }
         if (statement instanceof Inheritance) {
             return Inheritance.make(subj, pred);
         }
