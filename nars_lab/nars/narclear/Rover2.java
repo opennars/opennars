@@ -368,7 +368,7 @@ public class Rover2 extends PhysicsModel {
                 build();
 
         float framesPerSecond = 35f;
-        int cyclesPerFrame = 500; //was 200        
+        int cyclesPerFrame = 50; //was 200        
         nar.param().noiseLevel.set(0);
         nar.param().duration.set(cyclesPerFrame);
         nar.param().conceptForgetDurations.set(5f);
