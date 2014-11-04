@@ -4,137 +4,274 @@
  */
 package nars.core.control;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Deque;
 import java.util.List;
-import nars.core.Attention;
-import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
-import nars.inference.BudgetFunctions;
+import nars.entity.Item;
+import nars.entity.Sentence;
+import nars.entity.TLink;
+import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
 import nars.language.Term;
-import nars.storage.Bag;
-import nars.storage.Bag.MemoryAware;
-import nars.storage.DelayBag;
+import nars.storage.CurveBag;
 
 /**
  *
  * @author me
  */
-public class AntAttention implements Attention {
+public class AntAttention extends WaveAttention {
 
-    public final Bag<Concept,Term> concepts;
-    //public final CacheBag<Term, Concept> subcon;
+    Deque<Ant> ants = new ArrayDeque();
+    float cycleSpeed = 1.0f;
     
-    private final ConceptBuilder conceptBuilder;
-    private Memory memory;
-    final List<Runnable> run = new ArrayList();
-    
-    int inputPriority = 2;
-    int newTaskPriority = 2;
-    int novelTaskPriority = 2;
-    int conceptPriority = 2;
-               
     public AntAttention(int maxConcepts, ConceptBuilder conceptBuilder) {
-        this.concepts = new DelayBag<>(maxConcepts);        
-        this.conceptBuilder = conceptBuilder;        
-        //this.subcon = subcon;        
-    }    
+        super(maxConcepts, conceptBuilder);
+        
+        this.concepts = new CurveBag(1000, true);
+        
+        //int numAnts = maxConcepts / 50;
+        int numAnts = 1;
+        for (int i = 0; i < numAnts; i++) {
+            Ant a = new Ant(    ((1+i) / ((double)(1+numAnts)))   );
+            ants.add(a);
+        }
+    }
+    
+    
 
     @Override
     public void cycle() {
-
         run.clear();
         
         memory.processNewTasks(newTaskPriority, run);
                 
         memory.processNovelTasks(novelTaskPriority, run);
         
-        for (int i = 0; i < conceptPriority; i++) {
-            Concept c = concepts.takeNext();
-            if (c == null)
-                break;
-            run.add(new FireConcept(memory, c, 1) {
-                @Override public void onFinished() {
-                    //putIn, not putBack; DelayBag has its own forget function
-                    concepts.putIn(currentConcept);
-                }
-            });
+        
+        
+        for (Ant a : ants) {
+            a.cycle(cycleSpeed, run);                 
         }
-
+        System.out.println(ants);
+        System.out.println(run);
+        
+            
+        
         memory.run(run, Parameters.THREADS);
         
-        /*if (!run.isEmpty())
-            System.out.println("run: "+ run.size() + " " + run + " " + concepts.size());*/
+    }
+    
+    
+    
+    
+    /** intelligent visitor */
+    public class Ant {
+        
+        TLink link = null;
+        Concept source = null;
+        Concept target = null;
+        
+        boolean traverseTermLinks = true;
+        boolean traverseTaskLinks = true;
+        boolean allowLoops = false;
+        
+        /**
+         * ETA = estimated time of arrival
+         * 1.0: start at source concept, <= 0.0: reached target concept
+         */
+        double eta; 
+        
+        /**
+         * position units per cycle time
+         */
+        double speed; 
+
+        public Ant(double speed) {
+            this.speed = speed;                        
+        }
+        
+        void randomConcept(List<Runnable> queue) {
+            
+            
+            source = null;
+            target = null;
+            link = null;
+            
+            Concept c = concepts.takeNext();
+            if (c == null) {
+                System.out.println("NOTHING: " + concepts.size());
+                return;
+            }
+            
+            System.out.println("RANDOM: " + c);
+                        
+            concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
+            
+            target = c;
+
+        }
+        
+        boolean inConcept() { return (source==null) && (target != null); } 
+        boolean inLink() { return (source!=null) && (target != null); }
+        
+        void cycle(float dt, List<Runnable> queue) {
+ 
+        
+            boolean c = inConcept();
+            boolean l = inLink();
+            
+            
+            if (c) {
+                               
+                System.out.println("FIRE SOURCE=" + target);
+                onConcept(target, eta, queue);
+                
+                eta -= dt * speed;
+                
+                if (eta < 0) {
+                    leaveConcept(randomLink(), queue);
+                }
+                
+            }
+            else if (l) {
+                
+                onLink(link, eta, queue);
+
+                eta -= dt * speed;
+                
+                if (eta < 0) {
+                    enterConcept(target, queue);
+                }
+                
+            }
+            else {
+                randomConcept(queue);                
+            }
+            
+        }
+        
+        void onConcept(Concept c, double progress, List<Runnable> queue) {
+            queue.add(new FireConcept(memory, c, 1) {                    
+                @Override public void onFinished() {                }
+            });
+        }
+        
+        void onLink(TLink l, double progress, List<Runnable> queue) {
+            if (l instanceof TaskLink) {
+                TaskLink taskLink = (TaskLink)l;
+                
+                Sentence taskSentence = taskLink.getTarget().sentence;
+                Sentence parentSentence = taskLink.getTarget().parentBelief;
+                Sentence bestSolution = taskLink.getTarget().getBestSolution();
+                
+                Concept t = null;
+                if (taskSentence!=null)
+                    t = concept(taskSentence.content);               
+                if ((t == null) || (t == target)) {
+                    if (bestSolution!=null) {
+                        t = concept(bestSolution.content);
+                    }
+                }
+                if ((t == null) || (t == target)) {
+                    if (parentSentence!=null) {
+                        t = concept(parentSentence.content);
+                    }
+                }
+                
+                if (t!=null) {
+                    System.out.println("tasklink: " + taskLink + " bestsolution=" + t);
+                    queue.add(new FireConcept(memory, t, 1) {                    
+                        @Override public void onFinished() {                }
+                    });        
+                }
+
+            }
+        }
+        
+        public TLink randomLink() {
+            List<TLink> links = new ArrayList();
+            if (traverseTermLinks)
+                links.addAll(target.termLinks.values());
+            if (traverseTaskLinks)
+                links.addAll(target.taskLinks.values());           
+            
+            if (links.isEmpty()) return null;
+            
+            //TODO weighted probability selection
+            int i = (int)(links.size() * Math.random());
+            return links.get(i);
+        }
+        
+        void enterConcept(Concept c, List<Runnable> queue) {
+            Concept previous = source;
+            
+            source = null;
+            target = c;
+            
+            if ((c == null) || ((!allowLoops) && previous.equals(c)))  {
+                randomConcept(queue);
+                return;                
+            }
+                        
+            //link remains the same
+            eta = target.getPriority();     
+            onConcept(c, eta, queue);
+        }
+        
+        void leaveConcept(TLink viaLink, List<Runnable> queue) {
+            if (viaLink == null)
+                randomConcept(queue);
+            
+            if (viaLink instanceof TermLink) {
+                target.termLinks.putBack((TermLink)viaLink, memory.param.beliefForgetDurations.getCycles(), memory);                               
+            }
+            else if (viaLink instanceof TaskLink) {
+                target.taskLinks.putBack((TaskLink)viaLink, memory.param.taskForgetDurations.getCycles(), memory);        
+            }
+            
+            eta = viaLink.getPriority();
+            link = viaLink;
+            
+            source = target;                        
+            target = getConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f));
+            /*if (target!=null)
+                System.out.println("  concept: " + viaLink.getTarget() + " -> " + target);*/
+            onLink(link, eta, queue);
+        }
+        
+        public float getConceptVisitDelivery() {
+            return 0.5f;
+        }
+        
+        
+        
+        protected Concept getConcept(Object x, BudgetValue delivery) {
+            if (x instanceof Term) {
+                return conceptualize(delivery, (Term)x, false);
+            }
+            else if (x instanceof Task) {
+                Task t = (Task)x;
+                return conceptualize(delivery, t.getContent(), false);
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return "{" + 
+                    (source!=null ? source.name() : null) + 
+                    " >>>> " + (link!=null ? ((Item)link).name() : null)  + " >>>> " + 
+                    (target!=null ? target.name() : null) +
+                    " | " + eta + " " + (inConcept() ? "concept" : (inLink() ? "link" : "")) + "}";            
+        }
         
         
     }
-    
-
-
-    @Override
-    public void reset() {
-        concepts.clear();
-    }
-
-    @Override
-    public Concept concept(Term term) {
-        return concepts.get(term);
-    }
-
-    @Override
-    public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
-        Concept c = concept(term);
-        if (c!=null) {
-            //existing
-            BudgetFunctions.activate(c.budget, budget, BudgetFunctions.Activating.Max);
-        }
-        else {
-            if (createIfMissing)
-                c = conceptBuilder.newConcept(budget, term, memory);
-            concepts.putIn(c);
-        }
-        return c;
-    }
-
-    @Override
-    public void activate(Concept c, BudgetValue b, BudgetFunctions.Activating mode) {
-        conceptualize(b, c.term, false);
-    }
-
-    @Override
-    public Concept sampleNextConcept() {
-        return concepts.takeNext();
-    }
-
-    @Override
-    public void init(Memory m) {
-        this.memory = m;
-        ((MemoryAware)concepts).setMemory(m);
-        ((AttentionAware)concepts).setAttention(this);
-    }
-
-    @Override
-    public void conceptRemoved(Concept c) {
-    
-    }
-
-    @Override
-    public Iterator<Concept> iterator() {
-        return concepts.iterator();
-    }
-
-    @Override
-    public int getInputPriority() {
-        return inputPriority;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + "[" + concepts.toString() + "]";
-    }
-    
     
 }

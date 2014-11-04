@@ -4,29 +4,40 @@
  */
 package nars.core.control;
 
-import java.util.ArrayList;
 import nars.core.Events;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.inference.RuleTables;
-import nars.language.Inheritance;
-import nars.language.Product;
-import nars.language.Term;
-import nars.operator.Operator;
 
 abstract public class FireConcept extends NAL {
-    private final int numTaskLinks;
+    
 
-    public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
+    public FireConcept(Memory mem, Concept concept, TaskLink t) {
         super(mem);
+        this.termLinkCount = mem.param.termLinkMaxReasoned.get();
         this.currentConcept = concept;
-        this.currentTaskLink = currentTaskLink;
+        this.currentTaskLink = t;
+        this.numTaskLinks = 0;
+    }
+    
+    public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
+        this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
+    }
+    
+    public FireConcept(Memory mem, Concept concept, int numTaskLinks, int termLinkCount) {
+        this(mem, concept, null);
+        this.termLinkCount = termLinkCount;
+        this.currentConcept = concept;
+        this.currentTaskLink = null;
         this.numTaskLinks = numTaskLinks;
     }
 
+    private int numTaskLinks;
+    private int termLinkCount;
+    
     abstract public void onFinished();
     
     @Override
@@ -35,60 +46,81 @@ abstract public class FireConcept extends NAL {
         onFinished();                
     }
     
+    
     protected void fire() {
 
-        
-        
-        for (int i = 0; i < numTaskLinks; i++) {
-            
-            if (currentConcept.taskLinks.size() == 0) 
-                return;
-            
-            currentTaskLink = currentConcept.taskLinks.takeNext();                    
-            if (currentTaskLink == null)
-                return;
+        if (currentTaskLink !=null) {
+            fireTaskLink(termLinkCount);
+            returnTaskLink(currentTaskLink);
+        }
+        else {
+            for (int i = 0; i < numTaskLinks; i++) {
 
-            if (currentTaskLink.budget.aboveThreshold()) {
-                try {
-                    fireTaskLink();
+                if (currentConcept.taskLinks.size() == 0) 
+                    return;
+
+                currentTaskLink = currentConcept.taskLinks.takeNext();                    
+                if (currentTaskLink == null)
+                    return;
+
+                if (currentTaskLink.budget.aboveThreshold()) {
+                    try {
+                        fireTaskLink(termLinkCount);
+                    }
+                    catch (Throwable t) {
+                        t.printStackTrace();
+                    }
                 }
-                catch (Throwable t) {
-                    t.printStackTrace();
-                }
+
+                returnTaskLink(currentTaskLink);
             }
-
-            currentConcept.taskLinks.putBack(currentTaskLink, 
-                    mem.param.taskForgetDurations.getCycles(), mem);        
         }
         
     }
 
-    protected void fireTaskLink() {
-        final Task task = currentTaskLink.getTargetTask();
+    
+    protected void returnTaskLink(TaskLink t) {
+        currentConcept.taskLinks.putBack(t, 
+                mem.param.taskForgetDurations.getCycles(), mem);
+        
+    }
+    
+    protected void fireTaskLink(int termLinks) {
+        final Task task = currentTaskLink.getTarget();
         setCurrentTerm(currentConcept.term);
         setCurrentTaskLink(currentTaskLink);
         setCurrentBeliefLink(null);
         setCurrentTask(task); // one of the two places where this variable is set
         mem.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
         emit(Events.ConceptFire.class, currentConcept, currentTaskLink);
+        
         if (currentTaskLink.type == TermLink.TRANSFORM) {
             setCurrentBelief(null);
+            
             RuleTables.transformTask(currentTaskLink, this); // to turn this into structural inference as below?
-        } else {
-            int termLinkCount = mem.param.termLinkMaxReasoned.get();
-            while (termLinkCount > 0) {
+            
+        } else {            
+            while (termLinks > 0) {
                 final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, mem.time());
                 if (termLink != null) {
                     emit(Events.TermLinkSelect.class, termLink, currentConcept);
                     setCurrentBeliefLink(termLink);
+                    
                     RuleTables.reason(currentTaskLink, termLink, this);
+                    
                     currentConcept.returnTermLink(termLink);
-                    termLinkCount--;
+                    termLinks--;
                 } else {
                     break;
                 }
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "FireConcept[" + currentConcept + "," + currentTaskLink + "]";
+    }
+    
     
 }
