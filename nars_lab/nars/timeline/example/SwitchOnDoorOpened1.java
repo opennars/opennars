@@ -21,6 +21,7 @@ import java.io.IOException;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.grid2d.TestChamber;
+import nars.gui.NARSwing;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
 import nars.io.TextInput;
@@ -29,6 +30,7 @@ import nars.gui.output.timeline.BarChart;
 import nars.gui.output.timeline.EventChart;
 import nars.gui.output.timeline.LineChart;
 import nars.gui.output.timeline.StackedPercentageChart;
+import nars.io.TextOutput;
 import nars.util.NARTrace;
 
 /**
@@ -38,12 +40,15 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
     
     public static void main(String[] args) throws Exception {
         int cycles = 1000;
-        int inputDelay = 20;
+        int inputDelay = 5;
         
         NAR nar = new DefaultNARBuilder().build();
         new TestChamber(nar, false);
         
         NARTrace t = new NARTrace(nar);
+        
+        new TextOutput(nar, System.out);
+        new NARSwing(nar);
         
         TextInput i = new TextInput(new File("nal/TestChamber/TestChamberIndependentExperience/switch_on_door_opened.nal")) {
             int c = 0;
@@ -57,11 +62,8 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         
         nar.addInput(i);
         
-        nar.finish(1);        
-        System.out.println(nar.time());
+        nar.step(cycles);        
 
-        nar.finish(cycles);        
-        System.out.println(nar.time());
         
         new NWindow("_", new Timeline2DCanvas(
                 

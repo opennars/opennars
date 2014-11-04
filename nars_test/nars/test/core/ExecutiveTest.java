@@ -13,8 +13,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
- *
- * @author me
+ * TODO test an operation sequence
  */
 public class ExecutiveTest {
     

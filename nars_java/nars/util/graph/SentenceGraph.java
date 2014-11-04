@@ -1,12 +1,14 @@
 package nars.util.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nars.core.EventEmitter;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
+import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -57,7 +59,8 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
                     Events.ConceptBeliefRemove.class, 
                     Events.ConceptGoalAdd.class, 
                     Events.ConceptGoalRemove.class, 
-                    Events.ResetEnd.class);
+                    Events.ResetEnd.class
+                    );
         }
     }
     
@@ -75,14 +78,17 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
 
     @Override
     public void event(final Class event, final Object[] a) {
+//        if (event!=FrameEnd.class)
+//            System.out.println(event + " " + Arrays.toString(a));
+        
         if (event == Events.ConceptForget.class) {
             //remove all associated beliefs
             Concept c = (Concept)a[0];
-            synchronized (c.beliefs) {
-                for (Sentence b : c.beliefs) {
-                    remove(b);
-                }
-            }
+            
+            //create a clone of the list for thread safety
+            for (Sentence b : new ArrayList<Sentence>(c.beliefs)) {
+                remove(b);
+            }            
         }
         else if (event == Events.ConceptBeliefAdd.class) {
             Concept c = (Concept)a[0];
@@ -210,12 +216,10 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         componentList.add(edge);        
     }
     
-    public boolean add(final Sentence s, final Item c) { 
-
+    public boolean add(final Sentence s, final Item c) {         
 
         if (!allow(s))
-            return false;
-            
+            return false;               
         
         if (s.content instanceof CompoundTerm) {
             CompoundTerm cs = (CompoundTerm)s.content;
@@ -224,8 +228,8 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
                 
                 
                 Statement st = (Statement)cs;
-                if (allow(st)) {
-                                
+                if (allow(st)) {                                                    
+                    
                     if (add(s, st, c)) {
                         event.emit(GraphChange.class, st, null);
                         return true;
