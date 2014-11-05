@@ -264,7 +264,7 @@ public class NALTest  {
         
         boolean success = expects.size() > 0 && (!error);
         for (Expect e: expects) {
-            if (!e.realized) success = false;
+            if (!e.succeeded) success = false;
         }
 
         if ((!success) || (success && showSuccess)) {
@@ -291,7 +291,7 @@ public class NALTest  {
 
     public static abstract class Expect extends Output {
 
-        public boolean realized = false;
+        public boolean succeeded = false;
         public List<CharSequence> exact = new ArrayList();
         public final NAR nar;
         
@@ -307,17 +307,19 @@ public class NALTest  {
                 Object signal = args[0];
                 if (condition(channel, signal)) {
                     exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
-                    realized = true;
+                    succeeded = true;
                 }
             }
         }
+        
+        public boolean success() { return succeeded; }
         
         /** returns true if condition was satisfied */
         abstract public boolean condition(Class channel, Object signal);
 
         @Override
         public String toString() {            
-            return  getClass().getSimpleName() + " " + (realized ? "OK: " + exact : getFailureReason());
+            return  getClass().getSimpleName() + " " + (succeeded ? "OK: " + exact : getFailureReason());
         }
 
         abstract public String getFailureReason();
@@ -329,7 +331,7 @@ public class NALTest  {
         
         public ExpectOutputEmpty(NAR nar) {
             super(nar);
-            realized = true;
+            succeeded = true;
         }
 
         public String getFailureReason() {
@@ -341,7 +343,7 @@ public class NALTest  {
             //any OUT or ERR output is a failure
             if ((channel == OUT.class) || (channel == ERR.class)) {
                 output.add(channel.getSimpleName().toString() + ": " + signal.toString());
-                realized = false;
+                succeeded = false;
                 return false;
             }
             return false;

@@ -34,9 +34,9 @@ import nars.core.Events.TaskLinkAdd;
 import nars.core.Events.TaskLinkRemove;
 import nars.core.Events.TermLinkAdd;
 import nars.core.Events.TermLinkRemove;
+import nars.core.Events.UnexecutableGoal;
 import nars.core.Memory;
 import nars.core.NARRun;
-import nars.core.Parameters;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.Executive;
@@ -323,10 +323,8 @@ public class Concept extends Item<Term> {
                 addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 if (!Executive.isExecutableTerm(task.sentence.content)) {
-                    if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
-                        memory.executive.decisionPlanning(nal, task, this);
-                    }
-                } else {     
+                    memory.emit(UnexecutableGoal.class, task, this, nal);
+                } else {
                     memory.executive.decisionMaking(task, this);
                 }
             }

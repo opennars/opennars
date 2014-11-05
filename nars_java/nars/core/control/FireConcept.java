@@ -74,7 +74,7 @@ abstract public class FireConcept extends NAL {
     
     protected void returnTaskLink(TaskLink t) {
         currentConcept.taskLinks.putBack(t, 
-                mem.param.taskForgetDurations.getCycles(), mem);
+                memory.param.taskForgetDurations.getCycles(), memory);
         
     }
     
@@ -84,7 +84,7 @@ abstract public class FireConcept extends NAL {
         setCurrentTaskLink(currentTaskLink);
         setCurrentBeliefLink(null);
         setCurrentTask(task); // one of the two places where this variable is set
-        mem.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
+        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
         emit(Events.ConceptFire.class, currentConcept, currentTaskLink);
         
         if (currentTaskLink.type == TermLink.TRANSFORM) {
@@ -94,7 +94,7 @@ abstract public class FireConcept extends NAL {
             
         } else {            
             while (termLinks > 0) {
-                final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, mem.time());
+                final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time());
                 if (termLink != null) {
                     emit(Events.TermLinkSelect.class, termLink, currentConcept);
                     setCurrentBeliefLink(termLink);

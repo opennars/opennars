@@ -53,6 +53,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     private Memory.Forgetting forgetMode = Forgetting.Iterative;
     private int taskBufferLevels;
     
+    private TemporalParticlePlanner pluginPlanner = null;
     
     public DefaultNARBuilder() {
         super();
@@ -100,16 +101,21 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         return p;
     }
 
+    public DefaultNARBuilder temporalPlanner(float searchDepth, int planParticles, int inlineParticles) {
+        pluginPlanner = new TemporalParticlePlanner(searchDepth, planParticles, inlineParticles);
+        return this;
+    }
+    
     @Override
     public NAR build() {
         NAR n = super.build();
         
         //the only plugin which is dependent on a parameter
         //because it enriches NAL8 performance a lot:
-        if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
-            TemporalParticlePlanner planner=new TemporalParticlePlanner();
-            n.addPlugin(planner);
+        if(pluginPlanner!=null) {            
+            n.addPlugin(pluginPlanner);
         }
+        
         if(Parameters.INTERNAL_EXPERIENCE_FULL) {
             FullInternalExperience nal9=new FullInternalExperience();
             n.addPlugin(nal9);

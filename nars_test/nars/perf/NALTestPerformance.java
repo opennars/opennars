@@ -130,7 +130,7 @@ public class NALTestPerformance {
                 
                 successes = 0;
                 for (NALTest.Expect e : expects) {
-                    if (e.realized) {
+                    if (e.succeeded) {
                         successes++;
                     }
                 }                

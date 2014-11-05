@@ -53,10 +53,18 @@ public class Events {
     public static class ConceptForget { }
     public static class ConceptBeliefAdd { } //TODO remove redundant sentence parameter, it's task.sentence
     public static class ConceptBeliefRemove { }
+    
     public static class ConceptGoalAdd { }
     public static class ConceptGoalRemove { }
     public static class ConceptQuestionAdd { }
     public static class ConceptQuestionRemove { }
+
+    
+    //planning
+    public static class UnexecutableGoal {   }
+    public static class UnexecutableOperation {   }
+    public static class NewTaskExecution {    }
+    
 
     public static class TermLinkAdd { }
     public static class TermLinkRemove { }
@@ -135,6 +143,10 @@ public class Events {
         
         
     }
+
+    
+
+    
 
     
     
