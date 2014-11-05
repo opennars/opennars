@@ -357,10 +357,11 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new DefaultNARBuilder().
         ////NAR nar = new CurveBagNARBuilder().
         NAR nar = new DiscretinuousBagNARBuilder().
+                temporalPlanner(8, 64, 16).
         //NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(700).
-                setSubconceptBagSize(5000).
+                setConceptBagSize(1000).
+                setSubconceptBagSize(2000).
                 setTaskLinkBagLevels(10).
                 setTermLinkBagLevels(10).
                 setNovelTaskBagLevels(10).

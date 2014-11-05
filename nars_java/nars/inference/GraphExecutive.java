@@ -764,7 +764,7 @@ public class GraphExecutive {
         Task newTask = plan.planTask(c, task, target, punctuation);
         
         nal.derivedTask(newTask, false, true, null, null);  //and if this is a implication then wrong
-        memory.executive.addTask(c, newTask);
+        memory.executive.addExecution(c, newTask);
         
         return newTask;
         

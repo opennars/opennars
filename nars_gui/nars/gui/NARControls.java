@@ -66,7 +66,7 @@ import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.gui.output.graph.SentenceGraphCanvas;
 import nars.gui.output.timeline.TimelinePanel;
 import nars.inference.Executive;
-import nars.inference.Executive.TaskExecution;
+import nars.inference.Executive.Execution;
 import nars.inference.GraphExecutive;
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -203,7 +203,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
                     new NWindow("Planning", new SwingLogPanel(NARControls.this, 
-                            Executive.class, TaskExecution.class, 
+                            Executive.class, Execution.class, 
                             GraphExecutive.ParticlePath.class, 
                             GraphExecutive.ParticlePlan.class))
                     .show(500, 300);

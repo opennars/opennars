@@ -54,10 +54,11 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     private int taskBufferLevels;
     
     private TemporalParticlePlanner pluginPlanner = null;
+
     
     public DefaultNARBuilder() {
         super();
-        
+               
         setConceptBagSize(1000);        
         setSubconceptBagSize(0);
         setConceptBagLevels(100);
@@ -110,6 +111,8 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     public NAR build() {
         NAR n = super.build();
         
+        temporalPlanner(8, 64, 16);
+                
         //the only plugin which is dependent on a parameter
         //because it enriches NAL8 performance a lot:
         if(pluginPlanner!=null) {            

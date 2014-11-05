@@ -55,7 +55,8 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new DefaultNARBuilder().realtime().build();
         
-        NAR nar = new DiscretinuousBagNARBuilder().simulationTime().build();
+        NAR nar = new DiscretinuousBagNARBuilder().simulationTime().
+                /*temporalPlanner(12,64,16).*/build();
         
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
         /*nar.param().termLinkRecordLength.set(4);
@@ -79,10 +80,12 @@ public class NARio extends Run {
         float fps = 20f;
         gameRate = 1.0f / fps;
 
-        NARio nario = new NARio(nar);
+        
 
         new NARSwing(nar);
         nar.startFPS(fps, memCyclesPerFrame, 1f);
+        
+        NARio nario = new NARio(nar);
         
     }
 

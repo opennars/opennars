@@ -9,7 +9,7 @@ import org.junit.Test;
 
 
 
-public class GraphPlanTest {
+public class TemporalParticlePlannerTest {
 
     
     /** NOTE: needs search depth >= 12 */

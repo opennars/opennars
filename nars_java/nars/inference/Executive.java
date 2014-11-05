@@ -1,11 +1,8 @@
 package nars.inference;
 
-import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import nars.core.Events;
 import nars.core.Events.UnexecutableOperation;
@@ -18,7 +15,6 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Conjunction;
@@ -61,8 +57,8 @@ public class Executive {
 
     ///** memory for faster execution of &/ statements (experiment) */
     //public final Deque<TaskConceptContent> next = new ArrayDeque<>();
-    public final NavigableSet<TaskExecution> tasks;
-    private final Set<TaskExecution> tasksToRemove = new ConcurrentSkipListSet();
+    public final NavigableSet<Execution> tasks;
+    private final Set<Execution> tasksToRemove = new ConcurrentSkipListSet();
 
     /**
      * number of tasks that are active in the sorted priority buffer for
@@ -106,19 +102,19 @@ public class Executive {
 
         this.graph = new GraphExecutive(mem, this);
 
-        this.tasks = new ConcurrentSkipListSet<TaskExecution>() {
+        this.tasks = new ConcurrentSkipListSet<Execution>() {
 
             @Override
-            public boolean add(TaskExecution e) {
+            public boolean add(Execution e) {
                 boolean b = super.add(e);
                 if (!b) {
                     return false;
                 }
                 if (size() > numActiveTasks) {
-                    TaskExecution l = last();
+                    Execution l = last();
                     remove(l);
                     if (l != e) {
-                        removeTask(l);
+                        removeExecution(l);
                     }
                 }
                 return true;
@@ -136,7 +132,7 @@ public class Executive {
         return numActiveTasks;
     }
 
-    public static class TaskExecution implements Comparable<TaskExecution> {
+    public static class Execution implements Comparable<Execution> {
 
         /**
          * may be null for input tasks
@@ -152,7 +148,7 @@ public class Executive {
         public final Executive executive;
         final Memory memory;
 
-        public TaskExecution(final Executive executive, TruthValue desire) {
+        public Execution(final Executive executive, TruthValue desire) {
             this.memory = executive.memory;
             this.executive = executive;
             this.desire = desire;
@@ -160,7 +156,7 @@ public class Executive {
             this.c = null;
         }
 
-        public TaskExecution(Memory mem, final Executive executive, final Concept concept, Task t) {
+        public Execution(Memory mem, final Executive executive, final Concept concept, Task t) {
             this.c = concept;
             this.executive = executive;
             this.desire = t.getDesire();
@@ -187,8 +183,8 @@ public class Executive {
 
         
         @Override
-        public int compareTo(final TaskExecution a) {
-            final TaskExecution b = this;
+        public int compareTo(final Execution a) {
+            final Execution b = this;
 
             if (a == b) {
                 return 0;
@@ -215,8 +211,8 @@ public class Executive {
 
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof TaskExecution) {
-                return ((TaskExecution) obj).t.equals(t);
+            if (obj instanceof Execution) {
+                return ((Execution) obj).t.equals(t);
             }
             return false;
         }
@@ -270,8 +266,8 @@ public class Executive {
 
     }
 
-    protected TaskExecution getExecution(final Task parent) {
-        for (final TaskExecution t : tasks) {
+    protected Execution getExecution(final Task parent) {
+        for (final Execution t : tasks) {
             if (t.t.parentTask != null) {
                 if (t.t.parentTask.equals(parent)) {
                     return t;
@@ -281,9 +277,9 @@ public class Executive {
         return null;
     }
 
-    public boolean addTask(final Concept c, final Task t) {
+    public boolean addExecution(final Concept c, final Task t) {
 
-        TaskExecution existingExecutable = getExecution(t.parentTask);
+        Execution existingExecutable = getExecution(t.parentTask);
         boolean valid = true;
         if (existingExecutable != null) {
 
@@ -304,14 +300,14 @@ public class Executive {
         }
 
         if (valid) {
-            final TaskExecution te = new TaskExecution(memory, this, c, t);
+            final Execution te = new Execution(memory, this, c, t);
             if (tasks.add(te)) {
                 //added successfully
                 if(t.sentence.content instanceof Operation) {
                     c.setPriority(0); //it was a operation, dont let operations itself gain priority
                     c.setDurability(0);
                 }
-                memory.emit(TaskExecution.class, te);
+                memory.emit(Execution.class, te);
                 return true;
             }
         }
@@ -320,21 +316,21 @@ public class Executive {
         return false;
     }
 
-    protected void removeTask(final TaskExecution t) {
+    protected void removeExecution(final Execution t) {
         if (tasksToRemove.add(t)) {
             t.end();
         }
     }
 
     protected void updateTasks() {
-        Set<TaskExecution> t = new HashSet(tasks);
+        Set<Execution> t = new HashSet(tasks);
         
-        for (TaskExecution e : tasksToRemove) {
+        for (Execution e : tasksToRemove) {
             t.remove(e);
         }
 
         tasks.clear();
-        for (TaskExecution x : t) {
+        for (Execution x : t) {
             
             if (x.getDesire() > 0) { // && (x.getPriority() > 0)) {
                 
@@ -373,6 +369,13 @@ public class Executive {
 //        //ok it is time for action:
 //        execute((Operation)n.content, n.concept, n.task, true);
 //    }    
+    
+    /** execute TaskExecution that contains a single operation, and when complete, reomve the task */
+    public void execute(Execution executing, final Operation op, final Task task) {
+        execute(op, task);
+        removeExecution(executing);
+    }
+    
     public void execute(final Operation op, final Task task) {
 
         Operator oper = op.getOperator();
@@ -396,9 +399,9 @@ public class Executive {
             Term content = concept.term;
 
             if (content instanceof Operation) {
-                addTask(concept, t);
+                addExecution(concept, t);
             } else if (isSequenceConjunction(content)) {
-                addTask(concept, t);
+                addExecution(concept, t);
             }
         } else {
             //t.end();
@@ -438,12 +441,12 @@ public class Executive {
             return;
         }
 
-        //System.out.println(now + " tasks=" + tasks);
+        System.out.println(now + " tasks=" + tasks);
         
-        if (memory.emitting(TaskExecution.class)) {
+        if (memory.emitting(Execution.class)) {
 
             if (tasks.size() > 1) {
-                for (TaskExecution tcc : tasks) {
+                for (Execution tcc : tasks) {
                     memory.emit(Executive.class, memory.time(), tcc);
                 }
             } else {
@@ -452,15 +455,15 @@ public class Executive {
 
         }
 
-        TaskExecution topExecution = tasks.first();
-        Task top = topExecution.t;
+        Execution executing = tasks.first();
+        Task top = executing.t;
         Term term = top.getContent();
         if (term instanceof Operation) {
-            execute((Operation) term, top); //directly execute            
+            execute(executing, (Operation) term, top); //directly execute            
             return;
         } 
         else {
-            memory.emit(UnexecutableOperation.class, topExecution, this);            
+            memory.emit(UnexecutableOperation.class, executing, this);            
         }
         
         //throw new RuntimeException("Unrecognized executable term: " + it.getSubject() + "[" + it.getSubject().getClass() + "] from " + top);
@@ -497,7 +500,7 @@ public class Executive {
     public Task expected_task = null;
     public Term expected_event = null;
 
-    public void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
+    public void executeConjunctionSequence(final Execution task, final Conjunction c) {
         int s = task.sequence;
         Term currentTerm = c.term[s];
 
@@ -530,7 +533,7 @@ public class Executive {
                 expected_event = ((Implication) task.t.sentence.content).getPredicate();
             }
 
-            removeTask(task);
+            removeExecution(task);
             task.sequence = 0;
         } else {
             //still incomplete
