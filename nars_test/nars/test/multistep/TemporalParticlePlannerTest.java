@@ -29,23 +29,23 @@ public class TemporalParticlePlannerTest {
         String exp = "<(&/,(^pick,X),+3,(^pick,Y),+3,(^pick,Z)) =/> <goal --> reached>>!";
         
         testGraphPlan(input, exp, true);
-        testGraphPlan(input, exp, false);
+        //testGraphPlan(input, exp, false);
     }    
 
     public void testGraphPlan(String input, String expected, boolean withPlanner) throws IOException {
         
         NAR n = 
                 withPlanner?
-                    new DefaultNARBuilder().temporalPlanner(12, 64, 24).build() :
+                    new DefaultNARBuilder().temporalPlanner(16, 64, 24).build() :
                     new DefaultNARBuilder().build();
         
-        n.param().decisionThreshold.set(0.1f);
+        n.param().decisionThreshold.set(0.3f);
         
         ExpectContains e = new ExpectContains(n, expected, true);
                
         n.addInput(input);
 
-        n.step(44);
+        n.step(74);
         
         assertEquals(withPlanner, e.success());
         
