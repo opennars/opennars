@@ -223,7 +223,7 @@ public class Concept extends Item<Term> {
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp)) {
+            if (newStamp.equals(oldStamp, memory.getDuration())) {
                 if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     //task.budget.decPriority(0);    // duplicated task
                     memory.removeTask(task, "Duplicated");

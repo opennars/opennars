@@ -76,7 +76,7 @@ public class Executive {
     /**
      * global plan search parameters
      */
-    float searchDepth = 128;
+    float searchDepth = 6;
     int particles = 64;
 
     /**
@@ -539,11 +539,13 @@ public class Executive {
         updateTasks();
         updateSensors();
 
-        //System.out.println(now + " tasks=" + tasks);
+        
         if (tasks.isEmpty()) {
             return;
         }
 
+        //System.out.println(now + " tasks=" + tasks);
+        
         if (memory.emitting(TaskExecution.class)) {
 
             if (tasks.size() > 1) {

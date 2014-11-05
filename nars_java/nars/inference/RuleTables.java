@@ -728,7 +728,8 @@ public class RuleTables {
 //        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
-                StructuralRules.transformNegation((CompoundTerm)compound.term[0], nal);
+                if (compound.term[0] instanceof CompoundTerm)
+                    StructuralRules.transformNegation((CompoundTerm)compound.term[0], nal);
             } else {
                 StructuralRules.transformNegation(compound, nal);
             }

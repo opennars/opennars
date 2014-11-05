@@ -38,7 +38,7 @@ public class GraphExecutive {
     /** controls the relative weigting of edges and vertices for particle traversals */
     double conceptExpectationFactor = 1.0;
     double causeRelevanceFactor = 1.0;
-    double conceptPriorityFactor = 0.25;
+    double conceptPriorityFactor = 1.0;
 
     double minEdgeCost = 1.0;
     double costPerDelayMagniutde = 0.25;
@@ -419,18 +419,23 @@ public class GraphExecutive {
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
     public double getCauseRelevancy(final Cause c, final Term goal) {
-        //how desired is the implication?
-        Concept w=memory.concept(c.getImplication().getPredicate());
-        if(w!=null && w.getDesire()!=null) {
-            return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()*w.getDesire().getExpectation()));
+//        //how desired is the implication?
+//        Concept w=memory.concept(c.getImplication().getPredicate());
+//        if(w!=null && w.getDesire()!=null) {
+//            return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()*w.getDesire().getExpectation()));
+//        }
+//        return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
+        
+        if (c.getTruth().getFrequency() < 0.25f) {
+            System.err.println(c + " has inverse truth which could be used to negatively weight results");
         }
-        return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
-        //return c.getTruth().getExpectation();
+        
+        return c.getTruth().getExpectation();
     }
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
     public double getCauseRelevancy(final Cause c) {
-        return c.getTruth().getExpectation();          
+        return getCauseRelevancy(c, null);
     }    
 
     public static double getActualPriority(final Memory memory, final Term t) {
@@ -457,12 +462,12 @@ public class GraphExecutive {
         if ((c!=null) && (!c.beliefs.isEmpty())) {
             Sentence bestBelief = c.beliefs.get(0);
             if (bestBelief!=null)
-                return bestBelief.truth.getExpectation();   
+                return bestBelief.truth.getExpectation();                   
         }
         
         //System.err.println("No Concept confidence available for " + t);
         
-        //if no concept confidence is available, assume 0.5?
+        //if no concept confidence is available, assume 0
         return 0f;
     }
 
@@ -528,7 +533,9 @@ public class GraphExecutive {
                 }
             }
             
-            truth = new TruthValue(1.0f, score());
+            //float freq = 1.0f;
+            float freq = 0.5f + (minConf)/2f;            
+            truth = new TruthValue(freq, minConf);
             budget = new BudgetValue(1.0f, Parameters.DEFAULT_GOAL_DURABILITY, 
                     BudgetFunctions.truthToQuality(truth));
             budget.andPriority(score() / path.length);

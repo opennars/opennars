@@ -286,10 +286,9 @@ public class RoverModel {
             float freq = 1f;
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
             String ss = "<(&&," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-            if (sight.set(ss)) {
-                onTouch(hit, minDist);
-            }
+            sight.set(ss);
             
+            onTouch(hit, minDist);
         }
         
         public void onTouch(Body hit, float di) {

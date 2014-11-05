@@ -40,6 +40,8 @@ public class NARio extends Run {
     private Mario mario;    
     static double gameRate;
 
+    boolean offKeys = false;
+    
     private ChangedTextInput moveInput;
     private ChangedTextInput velInput;
 
@@ -128,14 +130,7 @@ public class NARio extends Run {
     protected void setKey(int k, boolean pressed) {
         if (keyInput[k] == null && pressed)
             keyInput[k] = new ChangedTextInput(nar);
-        if(pressed) {
-            //if (keyInput[k].set("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:")) {            
-                //input the opposite keypress as a back-dated input from between last frame and this
-    //            long dd = nar.param().duration.get();
-    //            long lastFrame = nar.getTime() - dd + dd/2;
-                nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
-           // }
-        }
+        nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
     }
     
     @Override protected void toggleKey(int keyCode, boolean isPressed)
@@ -221,8 +216,10 @@ public class NARio extends Run {
 
             boolean representation_simple=false;
             public String direction(int i,int j) {
-                if(!representation_simple)
-                    return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
+                if(!representation_simple) {
+                    //return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
+                    return "(&&,"+String.valueOf(i)+","+String.valueOf(j)+")";
+                }
                 else {
                     if(Math.abs(i) > Math.abs(j)) {
                         if(i<0) {
@@ -271,7 +268,9 @@ public class NARio extends Run {
                     
                     
                     
-                    boolean isPressed=true; //Memory.randomNumber.nextBoolean();
+//                    boolean isPressed=true; //Memory.randomNumber.nextBoolean();
+                    boolean isPressed = offKeys ? Memory.randomNumber.nextBoolean() : true;
+                    
                     int[] ev=new int[]{KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_UP,KeyEvent.VK_S};
                     int keyCode=ev[Memory.randomNumber.nextInt(ev.length)];
                     if (keyCode == KeyEvent.VK_LEFT)
