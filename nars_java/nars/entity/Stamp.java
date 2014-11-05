@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import com.google.common.collect.Lists;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +31,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import javarepl.internal.totallylazy.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
@@ -402,7 +402,7 @@ public class Stamp implements Cloneable {
             return derivationChain;
         else {
             //unmodifiable list copy
-            return Lists.list(derivationChain);
+            return Lists.newArrayList(derivationChain);
         }
     }
 
@@ -495,9 +495,10 @@ public class Stamp implements Cloneable {
 
         Stamp s = (Stamp)that;
 
+        /*
         if (occurrenceTime!=s.occurrenceTime)
             return false;
-        /*
+        
         if (creationTime!=s.creationTime)
             return false;
         */
@@ -505,6 +506,17 @@ public class Stamp implements Cloneable {
         return Arrays.equals(toSet(), s.toSet());
     }
 
+    /** equality test, including ocurrenceTime with respect to duration */
+    public boolean equals(final Stamp stamp, int duration) {
+        if (equals(stamp)) {
+            if ((occurrenceTime==ETERNAL) && (stamp.occurrenceTime==ETERNAL))
+                return true;
+            else 
+                return (Math.abs(stamp.occurrenceTime - occurrenceTime) < duration);
+        }
+        return false;
+    }
+    
     /**
      * The hash code of Stamp
      *

@@ -24,7 +24,7 @@ import nars.util.graph.ImplicationGraph.Cause;
 
 public class ImplicationGraph extends SentenceGraph<Cause> {
 
-    float minConfidence = 0.1f;
+    float minConfidence = 0.25f;
     
     public static class Cause {
         public final Term cause;
@@ -122,10 +122,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 //if both are precondition nodes, skip the edge
                 if (!containsSrc && !containsTgt)
                     continue;
-                
-                if (s.getTruth()!=null)
-                    if (s.getTruth().getExpectation() < minPriority)
-                        continue;
                 
                 if (!containsSrc) super.addVertex(src);
                 if (!containsTgt) super.addVertex(tgt);
@@ -396,7 +392,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     public Cause newImplicationEdge(final Term source, final Term target, Item i, final Sentence parent) {
         if (source.equals(target))
             return null;
-                    
+
+        //System.out.println("cause: " + source +  " -> " + target + " in " + parent);
+        
         Cause c = new Cause(source, target, parent);
         try {
             addEdge(source, target, c);

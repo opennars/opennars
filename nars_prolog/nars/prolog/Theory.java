@@ -17,12 +17,11 @@
  */
 package nars.prolog;
 import com.google.common.collect.Lists;
-import    java.io.IOException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import static javarepl.internal.totallylazy.Characters.parameters.s;
 
 
 /**

@@ -425,6 +425,10 @@ public class Memory implements Serializable {
         return 0;
     }
     
+    public int getDuration() {
+        return param.duration.get();
+    }
+    
     /** internal, subjective time (inference steps) */
     public long getCycleTime() {
         return cycle;

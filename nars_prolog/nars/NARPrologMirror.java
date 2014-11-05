@@ -1,11 +1,11 @@
 package nars;
 
+import com.google.common.collect.Lists;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javarepl.internal.totallylazy.Iterators;
 import nars.core.Events;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
@@ -504,7 +504,7 @@ public class NARPrologMirror extends AbstractObserver {
                     "similarity(A, B):- inheritance(A,B),inheritance(B,A)." + '\n' +
                     "A:- not(not(A))." + '\n'
                 );
-                axioms = Iterators.toList( t.iterator(prolog) );
+                axioms = Lists.newArrayList( t.iterator(prolog) );
             } catch (InvalidTheoryException ex) {
                 ex.printStackTrace();
                 System.exit(1);
