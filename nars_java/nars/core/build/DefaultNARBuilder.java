@@ -59,6 +59,8 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     public DefaultNARBuilder() {
         super();
                
+        temporalPlanner(8, 64, 16);
+        
         setConceptBagSize(1000);        
         setSubconceptBagSize(0);
         setConceptBagLevels(100);
@@ -109,9 +111,8 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     
     @Override
     public NAR build() {
-        NAR n = super.build();
         
-        temporalPlanner(8, 64, 16);
+        NAR n = super.build();                
                 
         //the only plugin which is dependent on a parameter
         //because it enriches NAL8 performance a lot:
