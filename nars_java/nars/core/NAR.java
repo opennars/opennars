@@ -346,7 +346,7 @@ public class NAR implements Runnable, TaskSource {
         
         final boolean wasRunning = running;
         running = true;
-        for (int f = 0;  f < frames; f++) {
+        for (int f = 0; (f < frames) && running; f++) {
             frame();
         }
         running = wasRunning;
@@ -370,7 +370,7 @@ public class NAR implements Runnable, TaskSource {
             step(1);
             cyclesCompleted++;
         }
-        while (!inputChannels.isEmpty());
+        while ((!inputChannels.isEmpty()) && (running));
                         
         //queue additional cycles, 
         cycles -= cyclesCompleted;
@@ -378,7 +378,7 @@ public class NAR implements Runnable, TaskSource {
             memory.stepLater(cycles);
         
         //finish all remaining cycles
-        while (!memory.isProcessingInput()) {
+        while (!memory.isProcessingInput() && (running)) {
             step(1);
         }
         running = false;

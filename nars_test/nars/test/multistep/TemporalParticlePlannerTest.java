@@ -36,7 +36,7 @@ public class TemporalParticlePlannerTest {
         
         NAR n = 
                 withPlanner?
-                    new DefaultNARBuilder().temporalPlanner(16, 64, 24).build() :
+                    new DefaultNARBuilder().temporalPlanner(12, 64, 24).build() :
                     new DefaultNARBuilder().build();
         
         n.param().decisionThreshold.set(0.3f);
@@ -45,7 +45,7 @@ public class TemporalParticlePlannerTest {
                
         n.addInput(input);
 
-        n.step(74);
+        n.step(44);
         
         assertEquals(withPlanner, e.success());
         
