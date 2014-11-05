@@ -28,7 +28,7 @@ import nars.storage.CurveBag;
 public class AntAttention extends WaveAttention {
 
     Deque<Ant> ants = new ArrayDeque();
-    float cycleSpeed = 1.0f;
+    float cycleSpeed = 2.0f;
     
     public AntAttention(int maxConcepts, ConceptBuilder conceptBuilder) {
         super(maxConcepts, conceptBuilder);
@@ -37,7 +37,7 @@ public class AntAttention extends WaveAttention {
         //this.concepts = new CurveBag(1000, true);
         
         //int numAnts = maxConcepts / 50;
-        int numAnts = 12;
+        int numAnts = 4;
         for (int i = 0; i < numAnts; i++) {
             Ant a = new Ant(    ((1+i) / ((double)(1+numAnts)))   );
             ants.add(a);
