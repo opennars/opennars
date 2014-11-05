@@ -36,17 +36,21 @@ import org.junit.runners.Parameterized;
 public class NALTest  {
         
     int minCycles = 1550; //TODO reduce this to one or zero
+    //int minCycles = 1550; //TODO reduce this to one or zero
 
     static {
         Memory.randomNumber.setSeed(1);
         Parameters.DEBUG = true;
     }
 
-    boolean showOutput = false;
-    boolean saveSimilar = true;
-    boolean showSuccess = false;
-    boolean showDebug = false;
-    boolean showTrace = false;
+    static public boolean showOutput = false;
+    static public boolean saveSimilar = true;
+    static public boolean showSuccess = false;
+    static public boolean showFail = true;
+    static public boolean showDebug = false;
+    static public boolean showTrace = false;
+    static public boolean showReport = true;
+    static public boolean requireSuccess = true;
     
     
     final int similarityThreshold = 4;
@@ -56,6 +60,7 @@ public class NALTest  {
 
     protected static Map<String, String> exCache = new HashMap(); //path -> script data
     public static Map<String, Boolean> tests = new HashMap();
+    public static Map<String, Double> scores = new HashMap();
     final String scriptPath;
     
     /** reads an example file line-by-line, before being processed, to extract expectations */
@@ -154,7 +159,10 @@ public class NALTest  {
         tests.put(name, true);
     }
 
-    public static void runTests(Class c) {
+    public static double runTests(Class c) {
+
+        tests.clear();
+        scores.clear();
         
         if (waitForEnterKeyOnStart) {
             System.out.println("When ready, press enter");
@@ -166,8 +174,7 @@ public class NALTest  {
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
         
         Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
-      
-        System.out.println("\n\n");
+              
         
         for (Failure f : result.getFailures()) {
             String test = f.getMessage().substring(f.getMessage().indexOf("test/nal") + 8, f.getMessage().indexOf(".nal"));
@@ -193,22 +200,34 @@ public class NALTest  {
                 levelSuccess[level]++;
             }
         }
-        int totalSucceeded = 0, total = 0;
-        for (int i = 0; i < 9; i++) {
-            float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
-            String prefix = (i > 0) ? ("NAL" + i) : "Other";
-            
-            System.out.println(prefix + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
-            totalSucceeded += levelSuccess[i];
-            total += levelTotals[i];
+
+        double totalScore = 0;
+        for (Double d : scores.values())
+            totalScore += d;
+        
+        if (showReport) {
+            int totalSucceeded = 0, total = 0;
+            for (int i = 0; i < 9; i++) {
+                float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
+                String prefix = (i > 0) ? ("NAL" + i) : "Other";
+
+                System.out.println(prefix + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
+                totalSucceeded += levelSuccess[i];
+                total += levelTotals[i];
+            }
+            System.out.println(totalSucceeded + " / " + total);
+
+            System.out.println("Score: " + totalScore);
         }
-        System.out.println(totalSucceeded + " / " + total);
+        
+        return totalScore;
         
     }
     
     public static void main(String[] args) {
         
         runTests(NALTest.class);
+
     }
 
     public NALTest(String scriptPath) {        
@@ -222,11 +241,11 @@ public class NALTest  {
 //    }
     
     
-    public void run() {               
-        testNAL(scriptPath);
+    public double run() {               
+        return testNAL(scriptPath);
     }
     
-    protected void testNAL(final String path) {               
+    protected double testNAL(final String path) {               
         Memory.resetStatic();
         final NAR n = newNAR();
         
@@ -263,16 +282,28 @@ public class NALTest  {
         System.out.flush();
         
         boolean success = expects.size() > 0 && (!error);
-        long lastSuccess = -1;
         for (Expect e: expects) {
             if (!e.succeeded) success = false;
-            if (e.successAt!=-1) {
-                lastSuccess = e.successAt;
+        }
+
+        double score = 0;
+        if (success) {
+            long lastSuccess = -1;
+            for (Expect e: expects) {
+                if (e.successAt!=-1) {
+                    if (lastSuccess < e.successAt)
+                        lastSuccess = e.successAt;
+                }                
+            }
+            if (lastSuccess!=-1) {
+                score = 1.0 / lastSuccess;
+                scores.put(path, score);
             }
         }
-        System.out.println(path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   , success=" + lastSuccess + ", end=" + n.time());
+        
+        //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
-        if ((!success) || (success && showSuccess)) {
+        if ((!success & showFail) || (success && showSuccess)) {
             System.err.println('\n' + path + " @" + n.memory.getCycleTime());
             for (Expect e: expects) {
                 System.err.println("  " + e);
@@ -280,8 +311,11 @@ public class NALTest  {
         }
         
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
-        assertTrue(path, success);
+        if (requireSuccess)
+            assertTrue(path, success);
         
+        
+        return score;
         
     }
 
