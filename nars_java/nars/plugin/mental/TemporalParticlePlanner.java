@@ -30,7 +30,7 @@ import nars.core.control.NAL;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.inference.Executive;
-import nars.inference.Executive.TaskExecution;
+import nars.inference.Executive.Execution;
 import static nars.inference.Executive.isPlanTerm;
 import nars.inference.GraphExecutive;
 import nars.inference.TemporalRules;
@@ -67,6 +67,11 @@ public class TemporalParticlePlanner implements Plugin, Observer {
        
     Executive executive;
     GraphExecutive graph;
+
+    public TemporalParticlePlanner() {
+        this(12, 64, 16);
+    }
+    
     
     public TemporalParticlePlanner(float searchDepth, int planParticles, int inlineParticles) {
         super();
@@ -85,7 +90,7 @@ public class TemporalParticlePlanner implements Plugin, Observer {
         }
         else if (event == UnexecutableOperation.class) {
 
-            TaskExecution executing = (TaskExecution)a[0];
+            Execution executing = (Execution)a[0];
             Task task = executing.t;
             Term term = task.getContent();            
         
@@ -106,14 +111,14 @@ public class TemporalParticlePlanner implements Plugin, Observer {
                             return;
                         }
                     } else if (it.getSubject() instanceof Operation) {
-                        executive.execute((Operation) it.getSubject(), task); //directly execute
+                        executive.execute(executing, (Operation) it.getSubject(), task); //directly execute
                         return;
                     }
                 }
             }                         
         }
         else if (event == NewTaskExecution.class) {
-            TaskExecution te = (TaskExecution)a[0];
+            Execution te = (Execution)a[0];
             Task t = te.getTask();
             
             Term term = t.getContent();
@@ -149,7 +154,7 @@ public class TemporalParticlePlanner implements Plugin, Observer {
     
     
     //TODO support multiple inline replacements        
-    protected Task inlineConjunction(TaskExecution te, Task t, final Conjunction c) {
+    protected Task inlineConjunction(Execution te, Task t, final Conjunction c) {
         ArrayDeque<Term> inlined = new ArrayDeque();
         boolean modified = false;
 

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nars.NARPrologMirror;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
@@ -320,6 +321,9 @@ public class BooleanChallenge {
         //NAR n = new DefaultNARBuilder().build();
         NAR n = new DiscretinuousBagNARBuilder().build();
 
+        
+        new NARPrologMirror(n, 0.9f, true);
+        
         //NAR n = new CurveBagNARBuilder().build();
 
         //new TextOutput(n, System.out, 0.9f);
