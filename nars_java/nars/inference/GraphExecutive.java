@@ -558,6 +558,11 @@ public class GraphExecutive {
             return i;
         }
 
+        public TruthValue getTruth() {
+            return truth;
+        }
+
+        
         @Override
         public String toString() {
             return "[" + score() + "|" + distance + "] " + sequence;
@@ -765,7 +770,7 @@ public class GraphExecutive {
         
     }
 
-   protected int plan(final nars.core.control.NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
+   public int plan(final nars.core.control.NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
 
         TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
         

@@ -27,7 +27,7 @@ import nars.operator.Operation;
  * NAL Reasoner Process.  Includes all reasoning process state.
  */
 public abstract class NAL implements Runnable {
-    public final Memory mem;
+    public final Memory memory;
     protected Term currentTerm;
     protected Concept currentConcept;
     protected Task currentTask;
@@ -39,12 +39,12 @@ public abstract class NAL implements Runnable {
 
     public NAL(Memory mem) {
         super();
-        this.mem = mem;
+        this.memory = mem;
     }
 
 
     public void emit(final Class c, final Object... o) {
-        mem.emit(c, o);
+        memory.emit(c, o);
     }
 
     /**
@@ -54,25 +54,25 @@ public abstract class NAL implements Runnable {
      */
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
         if (!task.budget.aboveThreshold()) {
-            mem.removeTask(task, "Insufficient Budget");
+            memory.removeTask(task, "Insufficient Budget");
             return false;
         }
         if (task.sentence != null && task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();
             if (conf == 0) {
                 //no confidence - we can delete the wrongs out that way.
-                mem.removeTask(task, "Ignored (zero confidence)");
+                memory.removeTask(task, "Ignored (zero confidence)");
                 return false;
             }
         }
         
         if (Parameters.DERIVE_ONLY_DEMANDED_TASKS) {
             if ((task.sentence.punctuation==Symbols.JUDGMENT_MARK) && !(task.sentence.content instanceof Operation)) {             
-                boolean noConcept = mem.concept(task.sentence.content) == null;
+                boolean noConcept = memory.concept(task.sentence.content) == null;
                 
                 if (noConcept) { 
                     //there is no question and goal of this, return
-                    mem.removeTask(task, "No demand exists");
+                    memory.removeTask(task, "No demand exists");
                     return false;
                 }
             }
@@ -89,7 +89,7 @@ public abstract class NAL implements Runnable {
             stamp.setOccurrenceTime(occurence2.getOccurenceTime());
         }
         if (stamp.latency > 0) {
-            mem.logic.DERIVATION_LATENCY.commit(stamp.latency);
+            memory.logic.DERIVATION_LATENCY.commit(stamp.latency);
         }
         
         final Term currentTaskContent = getCurrentTask().getContent();
@@ -125,7 +125,7 @@ public abstract class NAL implements Runnable {
 
                     for (final Term chain1 : chain) {                
                         if (tc.equals(chain1)) {
-                            mem.removeTask(task, "Cyclic Reasoning");
+                            memory.removeTask(task, "Cyclic Reasoning");
                             return false;
                         }
                     }
@@ -139,22 +139,22 @@ public abstract class NAL implements Runnable {
                 final long baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
                     if ((i != j) && (baseI == stamp.evidentialBase[j])) {
-                        mem.removeTask(task, "Overlapping Revision Evidence");
+                        memory.removeTask(task, "Overlapping Revision Evidence");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                         return false;
                     }
                 }
             }
         }
-        mem.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
+        memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         if (task.sentence.content instanceof Operation) {
             Operation op = (Operation) task.sentence.content;
             if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
                 return false;
             }
         }
-        mem.logic.TASK_DERIVED.commit(task.budget.getPriority());
-        mem.addNewTask(task, "Derived");
+        memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
+        memory.addNewTask(task, "Derived");
         return true;
     }
 
@@ -193,7 +193,7 @@ public abstract class NAL implements Runnable {
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null);
                     if (added && temporalAdd) {
-                        mem.temporalRuleOutputToGraph(newSentence, newTask);
+                        memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
                     if(added) {
                         derived=newTask;
@@ -293,7 +293,7 @@ public abstract class NAL implements Runnable {
     //        setNewStamp(null);
     //    }
     public long getTime() {
-        return mem.time();
+        return memory.time();
     }
 
     public Stamp getNewStamp() {
@@ -423,7 +423,7 @@ public abstract class NAL implements Runnable {
     }
 
     public Memory mem() {
-        return mem;
+        return memory;
     }
     //    public Future immediateProcess(Memory mem, Task t, ExecutorService exe) {
     //        return exe.submit(new Runnable() {

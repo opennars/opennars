@@ -7,6 +7,8 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
+import nars.core.Events;
+import nars.core.Events.UnexecutableOperation;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.NAL;
@@ -68,22 +70,7 @@ public class Executive {
      */
     int numActiveTasks = 1;
 
-    /**
-     * max number of tasks that a plan can generate. chooses the N best
-     */
-    int maxPlannedTasks = 1;
 
-    /**
-     * global plan search parameters
-     */
-    float searchDepth = 6;
-    int particles = 64;
-
-    /**
-     * inline search parameters
-     */
-    float inlineSearchDepth = searchDepth;
-    int inlineParticles = 24;
 
     float maxExecutionsPerDuration = 1f;
 
@@ -156,7 +143,8 @@ public class Executive {
          */
         public final Concept c;
 
-        public final Task t;
+        public Task t; //TODO make private
+        
         public int sequence;
         public long delayUntil = -1;
         private float motivationFactor = 1;
@@ -178,105 +166,26 @@ public class Executive {
             this.desire = t.getDesire();
             this.memory = mem;
 
-            //Check if task is 
-            if (Parameters.TEMPORAL_PARTICLE_PLANNER) {
-                Term term = t.getContent();
-                if (term instanceof Implication) {
-                    Implication it = (Implication) term;
-                    if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
-                        if (it.getSubject() instanceof Conjunction) {
-                            t = inlineConjunction(t, (Conjunction) it.getSubject());
-                        }
-                    }
-                } else if (term instanceof Conjunction) {
-                    t = inlineConjunction(t, (Conjunction) term);
-                }
-            }
-
+            memory.emit(Events.NewTaskExecution.class, this);
+            
             this.t = t;
 
         }
+        
+        public void setTask(Task t) {
+            this.t = t;
+        }               
 
-        //TODO support multiple inline replacements        
-        protected Task inlineConjunction(Task t, final Conjunction c) {
-            ArrayDeque<Term> inlined = new ArrayDeque();
-            boolean modified = false;
+        public TruthValue getDesireValue() {
+            return desire;
+        }
+        
 
-            if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
-                Term prev = null;
-                for (Term e : c.term) {
-
-                    if (!isPlanTerm(e)) {
-                        if (executive.graph.isPlannable(e)) {
-
-                            TreeSet<ParticlePlan> plans = executive.graph.particlePlan(e, executive.inlineSearchDepth, executive.inlineParticles);
-                            if (plans.size() > 0) {
-                                //use the first
-                                ParticlePlan pp = plans.first();
-
-                                //if terms precede this one, remove a common prefix
-                                //scan from the end of the sequence backward until a term matches the previous, and splice it there
-                                //TODO more rigorous prefix compraison. compare sublist prefix
-                                List<Term> seq = pp.sequence;
-
-//                                if (prev!=null) {
-//                                    int previousTermIndex = pp.sequence.lastIndexOf(prev);
-//                                    
-//                                    if (previousTermIndex!=-1) {
-//                                        if (previousTermIndex == seq.size()-1)
-//                                            seq = Collections.EMPTY_LIST;
-//                                        else {                                            
-//                                            seq = seq.subList(previousTermIndex+1, seq.size());
-//                                        }
-//                                    }
-//                                }
-                                //System.out.println("inline: " + seq + " -> " + e + " in " + c);
-                                //TODO adjust the truth value according to the ratio of term length, so that a small inlined sequence affects less than a larger one
-                                desire = TruthFunctions.deduction(desire, pp.truth);
-
-                                //System.out.println(t.sentence.truth + " <- " + pp.truth + "    -> " + desire);
-                                inlined.addAll(seq);
-
-                                modified = true;
-                            } else {
-                                //no plan available, this wont be able to execute   
-                                end();
-                            }
-                        } else {
-                            //this won't be able to execute here
-                            end();
-                        }
-                    } else {
-                        //executable term, add
-                        inlined.add(e);
-                    }
-                    prev = e;
-                }
-            }
-
-            //remove suffix intervals
-            if (inlined.size() > 0) {
-                while (inlined.peekLast() instanceof Interval) {
-                    inlined.removeLast();
-                    modified = true;
-                }
-            }
-
-            if (inlined.isEmpty()) {
-                end();
-            }
-
-            if (modified) {
-                Term nc = c.clone(inlined.toArray(new Term[inlined.size()]));
-                if (nc == null) {
-                    end();
-                } else {
-                    t = t.clone(t.sentence.clone(nc));
-                }
-            }
-            return t;
+        public void setDesire(TruthValue desire) {
+            this.desire = desire;
         }
 
+        
         @Override
         public int compareTo(final TaskExecution a) {
             final TaskExecution b = this;
@@ -355,6 +264,10 @@ public class Executive {
             }
         }
 
+        public Task getTask() {
+            return t;
+        }
+
     }
 
     protected TaskExecution getExecution(final Task parent) {
@@ -409,9 +322,6 @@ public class Executive {
 
     protected void removeTask(final TaskExecution t) {
         if (tasksToRemove.add(t)) {
-//            if (memory.getRecorder().isActive())
-//               memory.getRecorder().output("Executive", "Task Remove: " + t.toString());
-
             t.end();
         }
     }
@@ -463,7 +373,7 @@ public class Executive {
 //        //ok it is time for action:
 //        execute((Operation)n.content, n.concept, n.task, true);
 //    }    
-    protected void execute(final Operation op, final Task task) {
+    public void execute(final Operation op, final Task task) {
 
         Operator oper = op.getOperator();
 
@@ -474,22 +384,6 @@ public class Executive {
         oper.call(op, memory);
 
         //task.end(true);
-    }
-
-    public void decisionPlanning(final NAL nal, final Task t, final Concept concept) {
-
-        if (Parameters.TEMPORAL_PARTICLE_PLANNER) {
-
-            if (!isDesired(t, concept)) {
-                return;
-            }
-
-            boolean plannable = graph.isPlannable(t.getContent());
-            if (plannable) {
-                graph.plan(nal, concept, t, t.getContent(), particles, searchDepth, '!', maxPlannedTasks);
-            }
-        }
-
     }
 
     /**
@@ -564,31 +458,12 @@ public class Executive {
         if (term instanceof Operation) {
             execute((Operation) term, top); //directly execute            
             return;
-        } else if (Parameters.TEMPORAL_PARTICLE_PLANNER && term instanceof Conjunction) {
-            Conjunction c = (Conjunction) term;
-            if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
-                executeConjunctionSequence(topExecution, c);
-                return;
-            }
-
-        } else if (Parameters.TEMPORAL_PARTICLE_PLANNER && term instanceof Implication) {
-            Implication it = (Implication) term;
-            if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
-                if (it.getSubject() instanceof Conjunction) {
-                    Conjunction c = (Conjunction) it.getSubject();
-                    if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
-                        executeConjunctionSequence(topExecution, c);
-                        return;
-                    }
-                } else if (it.getSubject() instanceof Operation) {
-                    execute((Operation) it.getSubject(), top); //directly execute
-                    return;
-                }
-            }
-            throw new RuntimeException("Unrecognized executable term: " + it.getSubject() + "[" + it.getSubject().getClass() + "] from " + top);
-        } else {
-            //throw new RuntimeException("Unknown Task type: "+ top);
+        } 
+        else {
+            memory.emit(UnexecutableOperation.class, topExecution, this);            
         }
+        
+        //throw new RuntimeException("Unrecognized executable term: " + it.getSubject() + "[" + it.getSubject().getClass() + "] from " + top);
 
 //        //Example prediction
 //        if (memory.getCurrentBelief()!=null) {
@@ -622,7 +497,7 @@ public class Executive {
     public Task expected_task = null;
     public Term expected_event = null;
 
-    private void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
+    public void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
         int s = task.sequence;
         Term currentTerm = c.term[s];
 
@@ -674,11 +549,11 @@ public class Executive {
             return false;
         }
         //new one happened and duration is already over, so add as negative task
-        if (Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm != null && newEvent.sentence.getOccurenceTime() - anticipateTime > nal.mem.param.duration.get()) {
+        if (Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm != null && newEvent.sentence.getOccurenceTime() - anticipateTime > nal.memory.param.duration.get()) {
             Term s = newEvent.sentence.content;
             TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
             Negation N = (Negation) Negation.make(s);
-            Stamp stamp = new Stamp(nal.mem);
+            Stamp stamp = new Stamp(nal.memory);
             Sentence S = new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
             BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
             Task task = new Task(S, budget);
@@ -689,7 +564,7 @@ public class Executive {
             anticipateTerm = null; //it happened like expected
         }
 
-        if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent, nal.mem)) {
+        if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
             return false;
         }
 
