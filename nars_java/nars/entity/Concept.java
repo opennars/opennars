@@ -299,14 +299,14 @@ public class Concept extends Item<Term> {
             final Stamp oldStamp = oldGoal.stamp;
             
             if (newStamp.equals(oldStamp)) {
-                //return; //duplicate
+                return; //duplicate
             } else if (revisible(goal, oldGoal)) {
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 boolean success=revision(goal,oldGoal,false,nal);
-                if(!success) {
-                    //return; //hm if revision could hamper goals from re-selecting candidates,
-                } //no execution would work twice. they have to be repeatable, its revision itself
-            } //which looks if revisable and only derives a new task if no overlap in evidental base - patrick
+                if(success) { //it is revised, so there is a new task for which this function will be called
+                    return; //with higher/lower desire
+                } 
+            } 
         } 
         
         if (task.aboveThreshold()) {
@@ -314,10 +314,10 @@ public class Concept extends Item<Term> {
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
 
             if (belief != null) {
-                trySolution(belief, task, nal); //ok, lets use this solution
+                trySolution(belief, task, nal); // check if the Goal is already satisfied
             }
 
-            // still worth pursuing? or was the solution good?
+            // still worth pursuing?
             if (task.aboveThreshold()) {
 
                 addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
