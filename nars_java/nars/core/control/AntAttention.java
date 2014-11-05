@@ -33,10 +33,11 @@ public class AntAttention extends WaveAttention {
     public AntAttention(int maxConcepts, ConceptBuilder conceptBuilder) {
         super(maxConcepts, conceptBuilder);
         
-        this.concepts = new CurveBag(1000, true);
+        
+        //this.concepts = new CurveBag(1000, true);
         
         //int numAnts = maxConcepts / 50;
-        int numAnts = 1;
+        int numAnts = 12;
         for (int i = 0; i < numAnts; i++) {
             Ant a = new Ant(    ((1+i) / ((double)(1+numAnts)))   );
             ants.add(a);
@@ -58,8 +59,8 @@ public class AntAttention extends WaveAttention {
         for (Ant a : ants) {
             a.cycle(cycleSpeed, run);                 
         }
-        System.out.println(ants);
-        System.out.println(run);
+        //System.out.println(ants);
+        //System.out.println(run);
         
             
         
@@ -73,11 +74,10 @@ public class AntAttention extends WaveAttention {
     /** intelligent visitor */
     public class Ant {
         
-        TLink link = null;
-        Concept source = null;
-        Concept target = null;
+        TLink link = null;        
+        Concept concept = null;
         
-        boolean traverseTermLinks = true;
+        boolean traverseTermLinks = false;
         boolean traverseTaskLinks = true;
         boolean allowLoops = false;
         
@@ -99,26 +99,23 @@ public class AntAttention extends WaveAttention {
         void randomConcept(List<Runnable> queue) {
             
             
-            source = null;
-            target = null;
+            concept = null;
             link = null;
             
             Concept c = concepts.takeNext();
+            
             if (c == null) {
-                System.out.println("NOTHING: " + concepts.size());
                 return;
             }
-            
-            System.out.println("RANDOM: " + c);
-                        
+                                    
             concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
             
-            target = c;
+            concept = c;
 
         }
         
-        boolean inConcept() { return (source==null) && (target != null); } 
-        boolean inLink() { return (source!=null) && (target != null); }
+        boolean inConcept() { return (link==null); } 
+        boolean inLink() { return (link!=null); }
         
         void cycle(float dt, List<Runnable> queue) {
  
@@ -127,10 +124,9 @@ public class AntAttention extends WaveAttention {
             boolean l = inLink();
             
             
-            if (c) {
+            if ((c) && (concept!=null)) {
                                
-                System.out.println("FIRE SOURCE=" + target);
-                onConcept(target, eta, queue);
+                onConcept(concept, eta, queue);
                 
                 eta -= dt * speed;
                 
@@ -146,7 +142,7 @@ public class AntAttention extends WaveAttention {
                 eta -= dt * speed;
                 
                 if (eta < 0) {
-                    enterConcept(target, queue);
+                    enterConcept(concept, queue);
                 }
                 
             }
@@ -173,19 +169,18 @@ public class AntAttention extends WaveAttention {
                 Concept t = null;
                 if (taskSentence!=null)
                     t = concept(taskSentence.content);               
-                if ((t == null) || (t == target)) {
+                if ((t == null) || (t == concept)) {
                     if (bestSolution!=null) {
                         t = concept(bestSolution.content);
                     }
                 }
-                if ((t == null) || (t == target)) {
+                if ((t == null) || (t == concept)) {
                     if (parentSentence!=null) {
                         t = concept(parentSentence.content);
                     }
                 }
                 
-                if (t!=null) {
-                    System.out.println("tasklink: " + taskLink + " bestsolution=" + t);
+                if (t!=null) {                    
                     queue.add(new FireConcept(memory, t, 1) {                    
                         @Override public void onFinished() {                }
                     });        
@@ -197,9 +192,9 @@ public class AntAttention extends WaveAttention {
         public TLink randomLink() {
             List<TLink> links = new ArrayList();
             if (traverseTermLinks)
-                links.addAll(target.termLinks.values());
+                links.addAll(concept.termLinks.values());
             if (traverseTaskLinks)
-                links.addAll(target.taskLinks.values());           
+                links.addAll(concept.taskLinks.values());           
             
             if (links.isEmpty()) return null;
             
@@ -209,10 +204,9 @@ public class AntAttention extends WaveAttention {
         }
         
         void enterConcept(Concept c, List<Runnable> queue) {
-            Concept previous = source;
+            Concept previous = concept;
             
-            source = null;
-            target = c;
+            concept = c;
             
             if ((c == null) || ((!allowLoops) && previous.equals(c)))  {
                 randomConcept(queue);
@@ -220,28 +214,28 @@ public class AntAttention extends WaveAttention {
             }
                         
             //link remains the same
-            eta = target.getPriority();     
+            eta = concept.getPriority();     
             onConcept(c, eta, queue);
         }
         
         void leaveConcept(TLink viaLink, List<Runnable> queue) {
-            if (viaLink == null)
+            if (viaLink == null) {
                 randomConcept(queue);
+                return;
+            }
             
             if (viaLink instanceof TermLink) {
-                target.termLinks.putBack((TermLink)viaLink, memory.param.beliefForgetDurations.getCycles(), memory);                               
+                concept.termLinks.putBack((TermLink)viaLink, memory.param.beliefForgetDurations.getCycles(), memory);                               
             }
             else if (viaLink instanceof TaskLink) {
-                target.taskLinks.putBack((TaskLink)viaLink, memory.param.taskForgetDurations.getCycles(), memory);        
+                concept.taskLinks.putBack((TaskLink)viaLink, memory.param.taskForgetDurations.getCycles(), memory);        
             }
             
             eta = viaLink.getPriority();
             link = viaLink;
+                        
+            concept = getConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f));
             
-            source = target;                        
-            target = getConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f));
-            /*if (target!=null)
-                System.out.println("  concept: " + viaLink.getTarget() + " -> " + target);*/
             onLink(link, eta, queue);
         }
         
@@ -264,10 +258,9 @@ public class AntAttention extends WaveAttention {
 
         @Override
         public String toString() {
-            return "{" + 
-                    (source!=null ? source.name() : null) + 
-                    " >>>> " + (link!=null ? ((Item)link).name() : null)  + " >>>> " + 
-                    (target!=null ? target.name() : null) +
+            return "   {" + 
+                    (link!=null ? ((Item)link).name() : null)  + " <<< " + 
+                    (concept!=null ? concept.name() : null) +
                     " | " + eta + " " + (inConcept() ? "concept" : (inLink() ? "link" : "")) + "}";            
         }
         

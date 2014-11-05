@@ -24,7 +24,7 @@ public class NALTestNeuromorphic extends NALTest {
     }
 
     public static void main(String[] args) {        
-        Parameters.DEBUG = true;
+        Parameters.DEBUG = false;
         Parameters.THREADS = 1;
         runTests(NALTestNeuromorphic.class);
     }

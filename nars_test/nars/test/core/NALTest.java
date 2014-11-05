@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest  {
         
-    int minCycles = 150; //TODO reduce this to one or zero
+    int minCycles = 1550; //TODO reduce this to one or zero
 
     static {
         Memory.randomNumber.setSeed(1);
@@ -263,9 +263,14 @@ public class NALTest  {
         System.out.flush();
         
         boolean success = expects.size() > 0 && (!error);
+        long lastSuccess = -1;
         for (Expect e: expects) {
             if (!e.succeeded) success = false;
+            if (e.successAt!=-1) {
+                lastSuccess = e.successAt;
+            }
         }
+        System.out.println(path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   , success=" + lastSuccess + ", end=" + n.time());
 
         if ((!success) || (success && showSuccess)) {
             System.err.println('\n' + path + " @" + n.memory.getCycleTime());
@@ -294,7 +299,7 @@ public class NALTest  {
         public boolean succeeded = false;
         public List<CharSequence> exact = new ArrayList();
         public final NAR nar;
-        
+        long successAt = -1;
 
         public Expect(NAR nar) {
             super(nar);
@@ -307,9 +312,15 @@ public class NALTest  {
                 Object signal = args[0];
                 if (condition(channel, signal)) {
                     exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
-                    succeeded = true;
+                    setSucceeded();
                 }
             }
+        }
+        
+        protected void setSucceeded() { 
+            if (successAt == -1)
+                successAt = nar.time();
+            succeeded = true;            
         }
         
         public boolean success() { return succeeded; }

@@ -441,7 +441,7 @@ public class Executive {
             return;
         }
 
-        System.out.println(now + " tasks=" + tasks);
+        //System.out.println(now + " tasks=" + tasks);
         
         if (memory.emitting(Execution.class)) {
 
@@ -521,8 +521,8 @@ public class Executive {
             task.delayUntil = memory.time() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
             s++;
         } else {
-            System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);
-            //removeTask(task); //was never executed, dont remove
+            /*System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);*/
+            removeExecution(task); //was never executed, dont remove
         }
 
         if (s == c.term.length) {
@@ -534,7 +534,7 @@ public class Executive {
             }
 
             removeExecution(task);
-            task.sequence = 0;
+            
         } else {
             //still incomplete
             task.sequence = s;
