@@ -295,9 +295,13 @@ public class NALTest  {
                 }                
             }
             if (lastSuccess!=-1) {
-                score = 1.0 / (1+lastSuccess);
+                //score = 1.0 + 1.0 / (1+lastSuccess);
+                score = lastSuccess;
                 scores.put(path, score);
             }
+        }
+        else {
+            scores.put(path, -1d);
         }
         
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());

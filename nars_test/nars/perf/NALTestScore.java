@@ -58,7 +58,7 @@ public class NALTestScore extends NALTest {
 
         for (Object o : c) {
             String examplePath = (String)((Object[])o)[0];
-            Parameters.DEBUG = false;
+            
             NALTest.saveSimilar = false;
             
             Memory.resetStatic();
@@ -78,7 +78,11 @@ public class NALTestScore extends NALTest {
                         
             try {
                 
-                score += new NALTestScore(examplePath).run();
+                double s = new NALTestScore(examplePath).run();
+                if (s == -1)
+                    s = maxCycles + 1; //didnt complete so use the max time
+                score += s;
+                
                 //System.out.println(examplePath + " " + score + " " + n.time());
                 
             }
