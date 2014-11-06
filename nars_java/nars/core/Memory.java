@@ -861,9 +861,12 @@ public class Memory implements Serializable {
         return processed;
     }
  
-    protected void error(Exception ex) {
+    protected void error(Throwable ex) {
         emit(ERR.class, ex);
-        ex.printStackTrace();
+        
+        if (Parameters.DEBUG) {
+            ex.printStackTrace();
+        }
     }
     
     public <T> void run(final List<Runnable> tasks) {
@@ -886,7 +889,7 @@ public class Memory implements Serializable {
             for (final Runnable t : tasks) {
                 try {
                     t.run();
-                } catch (Exception ex) { 
+                } catch (Throwable ex) { 
                     error(ex);
                 }
             }

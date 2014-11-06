@@ -228,12 +228,12 @@ public class TruthValue implements Cloneable { // implements Cloneable {
             return s1 + s2 + DELIMITER;
         }*/
         
-        sb.ensureCapacity(external ? 11 : 15);
+        sb.ensureCapacity(11);
         return sb
             .append(DELIMITER)
-            .append(external ? Texts.n2(frequency) : Texts.n2(frequency))
+            .append(Texts.n2(frequency))
             .append(SEPARATOR)
-            .append(external ? Texts.n2(confidence) : Texts.n2(confidence))
+            .append(Texts.n2(confidence))
             .append(DELIMITER);        
     }
 

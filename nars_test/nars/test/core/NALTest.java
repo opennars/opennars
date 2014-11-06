@@ -17,6 +17,8 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.DefaultNARBuilder;
+import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.gui.InferenceLogger;
 import nars.io.Output;
 import nars.io.TextInput;
@@ -35,14 +37,13 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest  {
         
-    int minCycles = 1550; //TODO reduce this to one or zero
-    //int minCycles = 1550; //TODO reduce this to one or zero
 
     static {
         Memory.randomNumber.setSeed(1);
         Parameters.DEBUG = true;
     }
 
+    int minCycles = 1550; //TODO reduce this to one or zero
     static public boolean showOutput = false;
     static public boolean saveSimilar = true;
     static public boolean showSuccess = false;
@@ -262,17 +263,15 @@ public class NALTest  {
         if (showTrace) {
             new InferenceLogger(n, System.out);
         }
-        
+                
         
         n.addInput(new TextInput(example));
-        n.step(1);
         
         boolean error = false;
         try {
             n.finish(minCycles, showDebug);
         }
-        catch(Throwable e){ 
-            e.printStackTrace();
+        catch(Throwable e){                         
             error = true; 
         }
       
@@ -296,7 +295,7 @@ public class NALTest  {
                 }                
             }
             if (lastSuccess!=-1) {
-                score = 1.0 / lastSuccess;
+                score = 1.0 / (1+lastSuccess);
                 scores.put(path, score);
             }
         }
@@ -439,8 +438,19 @@ public class NALTest  {
         @Override
         public boolean condition(Class channel, Object signal) {
             if (channel == OUT.class) {
-                CharSequence o = TextOutput.getOutputString(channel, signal, false, false, nar);
-                if (o.toString().contains(containing)) return true;
+                
+                String o;
+                if (signal instanceof Task) {
+                    //only compare for Sentence string, faster than TextOutput.getOutputString
+                    //which also does unescaping, etc..
+                    Sentence s = ((Task)signal).sentence;
+                    o = s.toString(nar, false).toString();
+                    if (o.contains(containing)) return true;                    
+                }
+                else {
+                    o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
+                    if (o.contains(containing)) return true;
+                }
 
                 if (saveSimilar) {
                     int dist = Texts.levenshteinDistance(o, containing);            

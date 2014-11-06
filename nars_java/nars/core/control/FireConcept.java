@@ -6,6 +6,7 @@ package nars.core.control;
 
 import nars.core.Events;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TaskLink;
@@ -57,12 +58,7 @@ abstract public class FireConcept extends NAL {
                     return;
 
                 if (currentTaskLink.budget.aboveThreshold()) {
-                    try {
-                        fireTaskLink(termLinkCount);
-                    }
-                    catch (Throwable t) {
-                        t.printStackTrace();
-                    }
+                    fireTaskLink(termLinkCount);                    
                 }
 
                 returnTaskLink(currentTaskLink);

@@ -3,6 +3,7 @@ package nars.operator;
 import nars.operator.io.Say;
 import nars.operator.math.Add;
 import nars.operator.math.Count;
+import nars.operator.math.Expression;
 import nars.operator.mental.Anticipate;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Doubt;
@@ -57,6 +58,7 @@ public class DefaultOperators {
             // math operations
             new Count(),
             new Add(),
+            new Expression(),
 
             new Javascript(),      // javascript evaluation
             

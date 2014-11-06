@@ -79,6 +79,7 @@ public class NAR implements Runnable, TaskSource {
     
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
+    private boolean stopped;
     
 
     public class PluginState {
@@ -332,7 +333,7 @@ public class NAR implements Runnable, TaskSource {
             thread.interrupt();
             thread = null;
         }
-        this.cyclesPerFrame = 1;
+        stopped = true;
         running = false;
     }    
     
@@ -346,10 +347,11 @@ public class NAR implements Runnable, TaskSource {
         
         final boolean wasRunning = running;
         running = true;
-        for (int f = 0; (f < frames) && running; f++) {
+        stopped = false;
+        for (int f = 0; (f < frames) && (!stopped); f++) {
             frame();
         }
-        running = wasRunning;
+        running = wasRunning;        
     }
     
     /** Execute a fixed number of cycles, then finish any remaining walking steps. */
@@ -361,6 +363,7 @@ public class NAR implements Runnable, TaskSource {
     public void finish(int cycles, final boolean debug) {
         DEBUG = debug; 
         running = true;
+        stopped = false;
 
         updatePorts();
 
@@ -370,7 +373,7 @@ public class NAR implements Runnable, TaskSource {
             step(1);
             cyclesCompleted++;
         }
-        while ((!inputChannels.isEmpty()) && (running));
+        while ((!inputChannels.isEmpty()) && (!stopped));
                         
         //queue additional cycles, 
         cycles -= cyclesCompleted;
@@ -378,7 +381,7 @@ public class NAR implements Runnable, TaskSource {
             memory.stepLater(cycles);
         
         //finish all remaining cycles
-        while (!memory.isProcessingInput() && (running)) {
+        while (!memory.isProcessingInput() && (!stopped)) {
             step(1);
         }
         running = false;
@@ -387,8 +390,9 @@ public class NAR implements Runnable, TaskSource {
 
     /** Main loop executed by the Thread.  Should not be called directly. */
     @Override public void run() {
+        stopped = false;
         
-        while (running) {      
+        while (running && !stopped) {      
             
             frame();
                         
@@ -509,11 +513,9 @@ public class NAR implements Runnable, TaskSource {
         }
         catch (Throwable e) {
             emit(ERR.class, e);
-
-            System.err.println(e);
-            e.printStackTrace();
+            
             if (Parameters.DEBUG) {
-                throw e;
+                e.printStackTrace();
             }
         }
         

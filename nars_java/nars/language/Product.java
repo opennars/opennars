@@ -21,6 +21,7 @@
 
 package nars.language;
 
+import java.util.List;
 import nars.io.Symbols.NativeOperator;
 
 /**
@@ -33,10 +34,14 @@ public class Product extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    public Product(final Term[] arg) {
+    public Product(final Term... arg) {
         super(arg);
         
         init(arg);
+    }
+
+    public Product(final List<Term> x) {
+        this(x.toArray(new Term[x.size()]));
     }
     
 

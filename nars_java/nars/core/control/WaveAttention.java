@@ -31,7 +31,7 @@ public class WaveAttention implements Attention {
     
     private final ConceptBuilder conceptBuilder;
     Memory memory;
-    final List<Runnable> run = new ArrayList();
+    List<Runnable> run = new ArrayList();
     
     int inputPriority = 2;
     int newTaskPriority = 2;

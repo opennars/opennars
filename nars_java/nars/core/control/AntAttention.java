@@ -19,7 +19,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
-import nars.storage.CurveBag;
 
 /**
  *
@@ -27,19 +26,17 @@ import nars.storage.CurveBag;
  */
 public class AntAttention extends WaveAttention {
 
-    Deque<Ant> ants = new ArrayDeque();
-    float cycleSpeed = 2.0f;
+    public final Deque<Ant> ants = new ArrayDeque();
     
-    public AntAttention(int maxConcepts, ConceptBuilder conceptBuilder) {
+    float cycleSpeed;
+    
+    public AntAttention(int numAnts, float cycleSpeed, int maxConcepts, ConceptBuilder conceptBuilder) {
         super(maxConcepts, conceptBuilder);
         
-        
-        //this.concepts = new CurveBag(1000, true);
-        
-        //int numAnts = maxConcepts / 50;
-        int numAnts = 4;
+        this.cycleSpeed = cycleSpeed;
+
         for (int i = 0; i < numAnts; i++) {
-            Ant a = new Ant(    ((1+i) / ((double)(1+numAnts)))   );
+            Ant a = new Ant(    ((1+i) / ((double)(1+numAnts))), true, true );
             ants.add(a);
         }
     }
@@ -48,7 +45,8 @@ public class AntAttention extends WaveAttention {
 
     @Override
     public void cycle() {
-        run.clear();
+        //run.clear();
+        run = new ArrayList();
         
         memory.processNewTasks(newTaskPriority, run);
                 
@@ -92,7 +90,9 @@ public class AntAttention extends WaveAttention {
          */
         double speed; 
 
-        public Ant(double speed) {
+        public Ant(double speed, boolean traverseTermLinks, boolean traverseTaskLinks) {
+            this.traverseTermLinks = traverseTermLinks;
+            this.traverseTaskLinks = traverseTaskLinks;
             this.speed = speed;                        
         }
         
