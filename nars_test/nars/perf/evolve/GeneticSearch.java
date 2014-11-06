@@ -4,8 +4,12 @@
  */
 package nars.perf.evolve;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,7 @@ import org.encog.ml.genetic.crossover.Splice;
 import org.encog.ml.genetic.genome.DoubleArrayGenome;
 import org.encog.ml.genetic.genome.DoubleArrayGenomeFactory;
 import org.encog.ml.genetic.mutate.MutatePerturb;
+import org.encog.ml.genetic.mutate.MutateShuffle;
 
 /**
  *
@@ -37,12 +42,15 @@ public class GeneticSearch {
     //623.0 [1, 1585, 302, 46, 33, 4, 20, 10, 4, 11]
     //607.0 [1, 656, 528, 74, 124, 5, 3, 7, 3, 13]
     //577.0 [1, 259.0, 156.0, 2.0, 101.0, 4.0, 16.0, 2.0, 3.0, 1.0]
-    //1473.0 [0.0, 650.0, 415.0, 5.0, 57.0, 4.806817046483262, 15.098489110914961, 9.683106815451737, 1.0, 6.0]
     
+    //0: Default Score: 2023.0
+    //1473.0 [0.0, 650.0, 415.0, 5.0, 57.0, 4.806817046483262, 15.098489110914961, 9.683106815451737, 1.0, 6.0]    
+    //1367.0 [0.0, 760.0, 16.0, 77.0, 126.0, 1.9526462004203577, 1.1296896689902738, 1.5503616143067935, 1.0, 16.0]
     
     int maxCycles = 256;
     int populationSize = 16;
-
+    int generationsPerPopulation = 64;
+    
     
     public static class IntegerParameter {
         private double min, max;
@@ -81,6 +89,12 @@ public class GeneticSearch {
             if (integer) return Math.round(i);
             return i;
         }
+
+        @Override
+        public String toString() {
+            return name + "[" + min + ".." + max + "]";
+        }
+        
         
     }
 
@@ -301,34 +315,44 @@ public class GeneticSearch {
     
     private TrainEA genetic;
 
-    public GeneticSearch() {
+    public GeneticSearch() throws Exception {
 
 
-        Population pop = initPopulation(populationSize);
-
+        File file = new File("/home/me/Downloads/default_nar_param_genetic." + new Date().toString() + ".txt");
+        
+        FileOutputStream fos = new FileOutputStream(file);
+        PrintStream ps = new PrintStream(fos);
+        System.setOut(ps);
+        
+        
+        System.out.println(param);
 
         System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new DefaultNARBuilder().build() ));
         
-        
-        genetic = new TrainEA(pop, new CalculateNALTestScore(maxCycles));
-        genetic.setShouldIgnoreExceptions(true);
-        genetic.setThreadCount(1);
-
-        genetic.addOperation(0.5, new Splice(3));
-        //genetic.addOperation(0.1, new MutateShuffle());
-        genetic.addOperation(0.5, new MutatePerturb(0.1f));
-        
-
         while (true) {
-            genetic.iteration();            
-            
-            
-            NARGenome g = (NARGenome)genetic.getBestGenome();
-            System.out.println(g.getScore() + " " + Arrays.toString(g.getData()) );
+    
+            Population pop = initPopulation(populationSize);
+
+            genetic = new TrainEA(pop, new CalculateNALTestScore(maxCycles));
+            genetic.setShouldIgnoreExceptions(true);
+            genetic.setThreadCount(1);
+
+            genetic.addOperation(0.4, new Splice(3));
+            genetic.addOperation(0.04, new MutateShuffle());            
+            genetic.addOperation(0.9, new MutatePerturb(0.04f));
+
+
+            for (int i = 0; i < generationsPerPopulation; i++) {
+                genetic.iteration();            
+
+                NARGenome g = (NARGenome)genetic.getBestGenome();
+                
+                System.out.println("  BEST: " + g.getScore() + " " + Arrays.toString(g.getData()) );
+            }
         }
     }
 
-    private Population initPopulation(int populationSize) {
+    private Population initPopulation(int populationSize) {        
         Population result = new BasicPopulation(populationSize, null);
 
         BasicSpecies defaultSpecies = new BasicSpecies();
@@ -358,7 +382,7 @@ public class GeneticSearch {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         new GeneticSearch();
     }
 

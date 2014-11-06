@@ -399,15 +399,9 @@ public class Executive {
 
             Term content = concept.term;
 
-            if (content instanceof Operation) {
+            if ((content instanceof Operation) || isSequenceConjunction(content)) {
                 addExecution(concept, t);
-            } else if (TemporalParticlePlanner.used && isSequenceConjunction(content)) {
-                addExecution(concept, t); //this makes serious problems in NAL8 mode without planner,
-                //but i dont think it should be enabled in this mode anyway. example which breaks when this is enabled in planner less mode:
-                //
-                //<(&/,(^go-to,$1),(^pick,$1)) =/> <$1 --> reached>>.
-                //<goal --> reached>!
-            }
+            } 
         } else {
             //t.end();
         }

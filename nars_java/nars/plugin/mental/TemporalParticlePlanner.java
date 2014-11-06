@@ -47,8 +47,6 @@ import nars.operator.Operation;
  * @author tc
  */
 public class TemporalParticlePlanner implements Plugin, Observer {
-
-    public static boolean used=false;
     
     /**
      * global plan search parameters
@@ -243,7 +241,6 @@ public class TemporalParticlePlanner implements Plugin, Observer {
         this.executive = n.memory.executive;
         this.graph = executive.graph;
         
-        used=enabled;
         n.memory.event.set(this, enabled, 
                 UnexecutableGoal.class, 
                 UnexecutableOperation.class);
