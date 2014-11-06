@@ -5,10 +5,11 @@
 package nars.perf;
 
 import java.util.Collection;
+import nars.core.EventEmitter;
+import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.DefaultNARBuilder;
 import nars.test.core.NALTest;
 
 /**
@@ -17,7 +18,10 @@ import nars.test.core.NALTest;
  */
 public class NALTestScore extends NALTest {
 
-    static NAR nextNAR = null;
+    
+    
+    
+    static public NAR nextNAR = null;
     
     @Override public NAR newNAR() {
         return nextNAR;
@@ -27,12 +31,10 @@ public class NALTestScore extends NALTest {
         super(scriptPath);
     }
     
-    public static void main(String[] arg) {
-        int warmups = 1;
-        int maxConcepts = 1000;
-        int extraCycles = 50;
-        int randomExtraCycles = 0;
+    public static double score(NAR nn, int maxCycles/* randomseed, etc. */) {
         Parameters.THREADS = 1;
+        
+        nextNAR = nn;
           
         requireSuccess = false;
         showFail = false;
@@ -49,31 +51,46 @@ public class NALTestScore extends NALTest {
         
         final Collection c = NALTest.params();
         
-        while (true) {
-            NAR n = nextNAR = new DefaultNARBuilder().setConceptBagSize(maxConcepts).build();
-            System.out.println(n);
-            
-            double score = 0;
-            
-            for (Object o : c) {
-                String examplePath = (String)((Object[])o)[0];
-                Parameters.DEBUG = true;
         
-                Memory.resetStatic();
-                n.reset();
+        NAR n = nextNAR;
+
+        double score = 0;
+
+        for (Object o : c) {
+            String examplePath = (String)((Object[])o)[0];
+            Parameters.DEBUG = false;
+            NALTest.saveSimilar = false;
+            
+            Memory.resetStatic();
+            n.reset();
+
+            if (maxCycles!=-1) {
                 
-                try {
-                    score += new NALTestScore(examplePath).run();
-                }
-                catch (Exception e) { }
-                
-                
-                //perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,true);
+                //TODO extract as TimeLimit plugin
+                n.on(Events.CycleEnd.class, new EventEmitter.Observer() {
+                    @Override public void event(Class event, Object[] arguments) {
+                        if (n.time() > maxCycles) {                            
+                            n.stop();
+                        }
+                    }            
+                });                
             }
-            
-            System.out.println(" score: "+ score);
-        }        
+                        
+            try {
+                
+                score += new NALTestScore(examplePath).run();
+                //System.out.println(examplePath + " " + score + " " + n.time());
+                
+            }
+            catch (Throwable e) {                 
+                if (Parameters.DEBUG)
+                    e.printStackTrace();
+                return 0;
+            }
+
+        }       
         
+        return score;        
 
     }
     

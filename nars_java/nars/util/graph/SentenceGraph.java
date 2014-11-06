@@ -1,14 +1,13 @@
 package nars.util.graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import nars.core.EventEmitter;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
-import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -171,11 +170,14 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     private void getInitialConcepts() {
         needInitialConcepts = false;
 
-        for (final Concept c : memory.concepts) {
-            for (final Sentence s : c.beliefs) {                
-                add(s, c);
-            }
-        }        
+        try {
+            for (final Concept c : memory.concepts) {
+                for (final Sentence s : c.beliefs) {                
+                    add(s, c);
+                }
+            }        
+        }
+        catch (NoSuchElementException e) { }
     }
     
     protected final void ensureTermConnected(final Term t) {

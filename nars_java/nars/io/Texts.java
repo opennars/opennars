@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import nars.util.rope.Rope;
 import nars.util.rope.impl.CharArrayRope;
+import sun.nio.cs.CharsetMapping;
 
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 
@@ -17,8 +18,8 @@ public class Texts {
     //TODO escape any mapped characters if they appear in input during encoding
     //http://www.ssec.wisc.edu/~tomw/java/unicode.html
     
-    public final static Map<Character,Character> escapeMap = new HashMap();
-    public final static Map<Character,Character> escapeMapReverse = new HashMap();
+    public final static Map<Character,Character> escapeMap = new HashMap(256);
+    public final static Map<Character,Character> escapeMapReverse = new HashMap(256);
     static {
         char[][] escapings = new char[][] {
             {':', '\u25B8'},
@@ -77,6 +78,7 @@ public class Texts {
 
     protected static StringBuilder escape(CharSequence s, boolean unescape, boolean useQuotes) {       
         StringBuilder b = new StringBuilder(s.length());
+        
         
         final Map<Character,Character> map = unescape ? escapeMapReverse : escapeMap;
         
@@ -330,18 +332,17 @@ public class Texts {
             case 0: return "0.00";
         }
                     
-        StringBuilder sb = new StringBuilder(4);
         if (hundredths > 9) {
-            sb.append("0.");
             int tens = hundredths/10;
-            sb.append((char)('0' + tens));
-            sb.append((char)('0' + hundredths%10));
+            return new String(new char[] {
+                '0', '.', (char)('0' + tens), (char)('0' + hundredths%10)
+            });
         }
         else {
-            sb.append("0.0");
-            sb.append((char)('0' + hundredths));
+            return new String(new char[] {
+                '0', '.', '0', (char)('0' + hundredths)
+            });
         }            
-        return sb;        
     }
     
     final static Format oneDecimal = new DecimalFormat("0.0");    

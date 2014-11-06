@@ -420,14 +420,14 @@ public class Sentence<T extends Term> implements Cloneable {
         final long t = nar.memory.time();
 
         final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.param.duration.get()) : "";
-        final CharSequence truthString = (truth != null) ? truth.toStringExternal() : null;
+        
  
         CharSequence stampString = showStamp ? stamp.name() : null;
         
         int stringLength = contentName.length() + tenseString.length() + 1 + 1;
                 
         if (truth != null)
-            stringLength += truthString.length()+1;
+            stringLength += 11;
         
         if (showStamp)
             stringLength += stampString.length()+1;
@@ -439,8 +439,10 @@ public class Sentence<T extends Term> implements Cloneable {
         if (tenseString.length() > 0)
             buffer.append(' ').append(tenseString);
         
-        if (truth != null)
-            buffer.append(' ').append(truthString);
+        if (truth != null) {
+            buffer.append(' ');
+            truth.appendString(buffer, true);
+        }
         
         if (showStamp)
             buffer.append(' ').append(stampString);

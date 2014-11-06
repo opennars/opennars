@@ -19,15 +19,21 @@ import nars.storage.CurveBag;
  * https://en.wikipedia.org/wiki/Neuromorphic_engineering
  */
 public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
+    private final int numAnts;
 
     public NeuromorphicNARBuilder() {
+        this(1);
+    }
+    
+    public NeuromorphicNARBuilder(int numAnts) {
         super();        
+        this.numAnts = numAnts;
     }
 
     @Override
     public Attention newAttention(Param p, ConceptBuilder c) {
         //return new WaveAttention(1000, c);
-        return new AntAttention(1000, c);
+        return new AntAttention(numAnts, 1.0f, getConceptBagSize(), c);
     }
 
     
