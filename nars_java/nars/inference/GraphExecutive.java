@@ -507,7 +507,7 @@ public class GraphExecutive {
         public final double pathScore;
         public final TruthValue truth;
         public final BudgetValue budget;
-        private float minConf;
+        //private float minConf;
         private Task solution;
         private Task goal;
 
@@ -525,24 +525,28 @@ public class GraphExecutive {
             this.sequence = sequence;
             this.pathScore = pathScore;
             this.distance = distance;
-            this.minConf = 1.0f;
+            //this.minConf = 1.0f;
+            
+            TruthValue tr=null;
             for (final Cause s : path) {
-                float c = s.getTruth().getConfidence();
-                if (c < minConf) {
-                    minConf = c;
+                if(tr==null) {
+                    tr=s.getTruth();
+                } else {
+                    tr=TruthFunctions.deduction(tr, s.getTruth());
                 }
+                //float c = s.getTruth().getConfidence();
+                //if (c < minConf) {
+                //    minConf = c;
+                //}
             }
+            truth=tr;
             
             //float freq = 1.0f;
-            float freq = 0.5f + (minConf)/2f;            
-            truth = new TruthValue(freq, minConf);
+            //float freq = 0.5f + (minConf)/2f;            
+            //truth = new TruthValue(freq, minConf);
             budget = new BudgetValue(1.0f, Parameters.DEFAULT_GOAL_DURABILITY, 
                     BudgetFunctions.truthToQuality(truth));
             budget.andPriority(score() / path.length);
-        }
-
-        public float getMinConfidence() {
-            return minConf;
         }
 
         public float score() {
