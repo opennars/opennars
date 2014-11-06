@@ -36,6 +36,7 @@ import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_BACKWARD;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
+import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.language.Tense;
 import static nars.language.Tense.Future;
@@ -105,6 +106,18 @@ public class Stamp implements Cloneable {
      * Uses LinkedHashSet for optimal contains/indexOf performance.
      */
     private Collection<Term> derivationChain;
+
+    
+    public boolean before(Stamp s, int duration) {
+        if (isEternal() || s.isEternal())
+            return false;
+        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_BACKWARD;
+    }
+    
+    public boolean after(Stamp s, int duration) {
+        if (isEternal() || s.isEternal())
+            return false;
+        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;        }
     
     public interface DerivationBuilder {
         LinkedHashSet<Term> build();
@@ -322,6 +335,9 @@ public class Stamp implements Cloneable {
     }
 
     
+    public boolean isEternal() {
+        return occurrenceTime == ETERNAL;
+    }
     /** sets the creation time; used to set input tasks with the actual time they enter Memory */
     public void setCreationTime(long time, int duration) {
         creationTime = time;

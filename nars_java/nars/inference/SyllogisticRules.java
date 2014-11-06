@@ -302,7 +302,7 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
-        if ((order != ORDER_NONE) && !taskSentence.isGoal() && !taskSentence.isQuest()) {
+        if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
             long baseTime = subSentence.getOccurenceTime();
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.getTime();

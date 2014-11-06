@@ -19,6 +19,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.AbstractObserver;
+import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
@@ -103,7 +104,7 @@ public class NARPrologMirror extends AbstractObserver {
         
         if (presentJudgments) {
             long now = nar.time();            
-            if (Math.abs(now - e) <= durationCycles * durationMultiplier)
+            if (TemporalRules.concurrent(now, e, (int)(durationCycles * durationMultiplier)))
                return true;
         }
         
