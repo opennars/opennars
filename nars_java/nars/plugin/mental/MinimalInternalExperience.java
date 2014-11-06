@@ -11,6 +11,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -54,9 +55,9 @@ public class MinimalInternalExperience implements Plugin {
 
                     Sentence j = new Sentence(sentence.toTerm(memory), Symbols.JUDGMENT_MARK, truth, stamp);
                     BudgetValue newbudget=new BudgetValue(
-                            task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                            task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                            task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
+                            Parameters.DEFAULT_JUDGMENT_CONFIDENCE*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                            Parameters.DEFAULT_JUDGMENT_PRIORITY*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
+                            BudgetFunctions.truthToQuality(truth));
 
                     Task newTask = new Task(j, (BudgetValue) newbudget, 
                             Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
