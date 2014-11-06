@@ -36,7 +36,7 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.2f; //how much =/> should be gained
+    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f; //how much =/> should be gained
     public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.0f; //how much =/> should be gained
     
     
