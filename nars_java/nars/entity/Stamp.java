@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.inference.TemporalRules;
+import static nars.inference.TemporalRules.ORDER_BACKWARD;
+import static nars.inference.TemporalRules.ORDER_FORWARD;
 import nars.io.Symbols;
 import nars.language.Tense;
 import static nars.language.Tense.Future;
@@ -580,17 +583,15 @@ public class Stamp implements Cloneable {
         if (occurrenceTime == Stamp.ETERNAL) {
             return "";
         }
-
-        long timeDiff = occurrenceTime - currentTime;
         
-        if (timeDiff > duration) {
-            return Symbols.TENSE_FUTURE;
-        } else if (timeDiff < -duration) {
-            return Symbols.TENSE_PAST;
-        } else {
-            return Symbols.TENSE_PRESENT;
-        }
-        
+        switch (TemporalRules.order(currentTime, occurrenceTime, duration)) {
+            case ORDER_FORWARD:
+                return Symbols.TENSE_FUTURE;
+            case ORDER_BACKWARD:
+                return Symbols.TENSE_PAST;
+            default:
+                return Symbols.TENSE_PRESENT;
+        }        
     }
 
     public void setOccurrenceTime(final long time) {
