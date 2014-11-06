@@ -48,15 +48,10 @@ public class Parameters {
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
     
-    //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;
-    
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=1.0f;
     //internal experience has less priority?
     public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=1.0f;
-    //internal experience has less quality?
-    public static float INTERNAL_EXPERIENCE_QUALITY_MUL=1.0f;  
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered. 
