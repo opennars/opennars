@@ -419,7 +419,7 @@ public class Sentence<T extends Term> implements Cloneable {
         
         final long t = nar.memory.time();
 
-        final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.param.duration.get()) : "";
+        final String tenseString = ( (punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.param.duration.get()) : "";
         
  
         CharSequence stampString = showStamp ? stamp.name() : null;

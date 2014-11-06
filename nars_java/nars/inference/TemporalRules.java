@@ -322,14 +322,7 @@ public class TemporalRules {
                 }
             }
         }
-        int order;
-        if (timeDiff > durationCycles) {
-            order = TemporalRules.ORDER_FORWARD;
-        } else if (timeDiff < -durationCycles) {
-            order = TemporalRules.ORDER_BACKWARD;
-        } else {
-            order = TemporalRules.ORDER_CONCURRENT;
-        }
+        int order = order(timeDiff, durationCycles);
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
         TruthValue truth1 = TruthFunctions.abduction(givenTruth1, givenTruth2);
@@ -454,4 +447,22 @@ public class TemporalRules {
         }
         return budget;
     }
+
+    public static int order(final long timeDiff, final int durationCycles) {
+        if (timeDiff > durationCycles) {
+            return TemporalRules.ORDER_FORWARD;
+        } else if (timeDiff < -durationCycles) {
+            return TemporalRules.ORDER_BACKWARD;
+        } else {
+            return TemporalRules.ORDER_CONCURRENT;
+        }
+    }
+    /** if (relative) event B after (stationary) event A then order=forward;
+     *                event B before       then order=backward
+     *                occur at the same time, relative to duration: order = concurrent
+     */
+    public static int order(final long a, final long b, final int durationCycles) {        
+        return order(b - a, durationCycles);
+    }
+    
 }
