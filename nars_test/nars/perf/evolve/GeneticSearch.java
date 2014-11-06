@@ -4,9 +4,14 @@
  */
 package nars.perf.evolve;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.core.build.CurveBagNARBuilder;
 import nars.core.build.DefaultNARBuilder;
 import nars.core.build.NeuromorphicNARBuilder;
 import nars.perf.NALTestScore;
@@ -17,9 +22,9 @@ import org.encog.ml.ea.population.BasicPopulation;
 import org.encog.ml.ea.population.Population;
 import org.encog.ml.ea.species.BasicSpecies;
 import org.encog.ml.ea.train.basic.TrainEA;
-import org.encog.ml.genetic.crossover.SpliceNoRepeat;
-import org.encog.ml.genetic.genome.IntegerArrayGenome;
-import org.encog.ml.genetic.genome.IntegerArrayGenomeFactory;
+import org.encog.ml.genetic.crossover.Splice;
+import org.encog.ml.genetic.genome.DoubleArrayGenome;
+import org.encog.ml.genetic.genome.DoubleArrayGenomeFactory;
 import org.encog.ml.genetic.mutate.MutatePerturb;
 
 /**
@@ -29,74 +34,152 @@ import org.encog.ml.genetic.mutate.MutatePerturb;
  * @author me
  */
 public class GeneticSearch {
-
-    float parallelizationPenalizationRate = 0.5f; //scale of score divisor for parallel
-    int maxCycles = 32;
-    int populationSize = 8;
+    //623.0 [1, 1585, 302, 46, 33, 4, 20, 10, 4, 11]
+    //607.0 [1, 656, 528, 74, 124, 5, 3, 7, 3, 13]
+    //577.0 [1, 259.0, 156.0, 2.0, 101.0, 4.0, 16.0, 2.0, 3.0, 1.0]
+    //1473.0 [0.0, 650.0, 415.0, 5.0, 57.0, 4.806817046483262, 15.098489110914961, 9.683106815451737, 1.0, 6.0]
     
-    public static class NARGenome extends IntegerArrayGenome {
+    
+    int maxCycles = 256;
+    int populationSize = 16;
 
-        final static int S = 10;
+    
+    public static class IntegerParameter {
+        private double min, max;
+        private final String name;
+        private boolean integer;
 
+        public IntegerParameter(String name, double min, double max) {
+            
+            this.name = name;
+            this.min = min;
+            this.max = max;                    
+            integer = true;
+        }
         
-                
-        //TODO cycle task ordering
+        public IntegerParameter(String name, double min, double max, boolean i) {
+            this(name, min, max);
+            this.integer = i;
+        }
+        
+        public double getMax() {
+            return max;
+        }
+        public double getMin() {
+            return min;
+        }
+        public double getRandom() {
+            return acceptable( r(min,max) );
+        }
+        
+        public boolean isInteger() {
+            return integer;
+        }
+        public double acceptable(double i) {
+            if (i < min) i = min;
+            if (i > max) i = max;
+            if (integer) return Math.round(i);
+            return i;
+        }
+        
+    }
+
+
+    static final List<IntegerParameter> param = new ArrayList();
+    static final Map<String,Integer> paramIndex = new HashMap();
+    static {
+
+        param.add(new IntegerParameter("builderType", 0, 0)); //result will be % number types
+        param.add(new IntegerParameter("conceptMax", 16, 2048));
+        param.add(new IntegerParameter("subConceptMax", 16, 1024));
+        param.add(new IntegerParameter("conceptTaskLinks", 2, 100));
+        param.add(new IntegerParameter("conceptTermLinks", 2, 200));
+
+        param.add(new IntegerParameter("conceptForgetDurations", 1, 5, false));
+        param.add(new IntegerParameter("termLinkForgetDurations", 1, 20, false));
+        param.add(new IntegerParameter("taskLinkForgetDurations", 1, 10, false));
+
+        param.add(new IntegerParameter("conceptsFiredPerCycle", 1, 1));
+
+        param.add(new IntegerParameter("cyclesPerDuration", 1, 16));
+
+        //param.add(new IntegerParameter("prologEnable", 0, 1));
+
+        int j = 0;
+        for (IntegerParameter i : param) {
+            paramIndex.put(i.name, j++);
+        }
+    }
+    
+    public static class NARGenome extends DoubleArrayGenome {
         
         public NARGenome() {
-            super(S);                        
+            this(null);
         }
         
         public NARGenome(Genome g) {
-            super(S);
-            System.arraycopy(((IntegerArrayGenome)g).getData(), 0, getData(), 0, S);
-        }
+            super(param.size());
+            if (g!=null)
+                System.arraycopy(((DoubleArrayGenome)g).getData(), 0, getData(), 0, param.size());
         
-        
-        public static int r(int min, int max) {
-            return (int)(Math.random() * (1+max-min) + min);
-        }
-        public static int minmax(int x, int min, int max) {
-            return Math.min(Math.max(x, min), max);
+            //normalize to acceptable values
+            for (int i = 0; i < param.size(); i++) {
+                getData()[i] = param.get(i).acceptable( getData()[i] );
+            }
         }
         
         public static NARGenome newRandom() {
             NARGenome g = new NARGenome();
-            int[] d = g.getData();
+            double[] d = g.getData();
             
-            d[0] = r(0,1);
-            d[1] = r(250, 1250);
-            d[2] = r(4, 40);
-            d[3] = r(10, 200);
-            d[4] = r(0, 1000);
-            
-            d[5] = r(1, 5);
-            d[6] = r(1, 20);
-            d[7] = r(1, 10);
-            
-            d[8] = r(1, 8);
-            
-            d[9] = r(1,10);
+            for (int i = 0; i < param.size(); i++) {
+                IntegerParameter p = param.get(i);
+                d[i] = r( p.getMin(), p.getMax() );
+            }
             
             return g;
         }
 
-        public int getConceptsFired() { return getData()[8] = minmax(getData()[8],1, 5);       }
-        public int getConceptTermLinks() { return getData()[2] = minmax( getData()[2], 1, 200); };
-        public int getConceptTaskLinks() { return getData()[3] = minmax( getData()[3], 1, 100); };
+        public int i(String name) {
+            int idx = paramIndex.get(name);
+            return (int)(getData()[idx] = param.get(idx).acceptable( getData()[idx] ));
+        }
+        public int i(String name, int defaultValue) {
+            Integer idx = paramIndex.get(name);
+            if (idx == null)
+                return defaultValue;            
+            return (int)(getData()[idx] = param.get(idx).acceptable( getData()[idx] ));
+        }
+        
+        public double d(String name) {
+            int idx = paramIndex.get(name);
+            return getData()[idx] = param.get(idx).acceptable( getData()[idx] );
+        }
+        
+        public void set(String name, double value) {
+            int idx = paramIndex.get(name);
+            getData()[idx] = param.get(idx).acceptable( value );
+        }
+        
+        public void random(int index) {
+            IntegerParameter p = param.get(index);
+            getData()[index] = p.getRandom();
+        }
         
         public NAR newNAR() {
-            int[] d = getData();
             
-            int builderType = d[0] % 2; 
-            int numConcepts = d[1];
-            int numTaskLinks = getConceptTermLinks();
-            int numTermLinks = getConceptTaskLinks();
-            int numSubconcepts = d[4];
-            int conceptForget = d[5];
-            int beliefForget = d[6];
-            int taskForget = d[7];
-            int conceptsFired = getConceptsFired();
-            int duration = Math.max(1,d[9]);
+            
+            int builderType = i("builderType") % 3;
+            int numConcepts = i("conceptMax");
+            int numTaskLinks = i("conceptTaskLinks");
+            int numTermLinks = i("conceptTermLinks");
+            int numSubconcepts = i("subConceptMax");
+            float conceptForget = (float)d("conceptForgetDurations");
+            float beliefForget = (float)d("termLinkForgetDurations");
+            float taskForget = (float)d("taskLinkForgetDurations");
+            int conceptsFired = i("conceptsFiredPerCycle");
+            int duration = i("cyclesPerDuration");
+            //int prolog = get("prologEnable");
             
             DefaultNARBuilder b;
                         
@@ -105,6 +188,9 @@ public class GeneticSearch {
             }
             else if (builderType == 1) {
                 b = new NeuromorphicNARBuilder(conceptsFired /*ants */);                
+            }
+            else if (builderType == 2) {
+                b = new CurveBagNARBuilder(true);
             }
             else {
                 throw new RuntimeException("Invalid Builder type " + builderType);
@@ -122,10 +208,14 @@ public class GeneticSearch {
             n.param().taskForgetDurations.set(taskForget);
             n.param().beliefForgetDurations.set(beliefForget);
             
-            if (builderType == 0) {
+            if (builderType != 1) {
                 //analogous to # of ants but in defaultbag
                 n.param().cycleConceptsFired.set( conceptsFired );
             }
+            
+            /*if (prolog == 1) {
+                new NARPrologMirror(n, 0.75f, true);
+            }*/
             
             return n;
         }
@@ -140,7 +230,20 @@ public class GeneticSearch {
         
     }
 
-    public double score(NAR n) {
+
+    
+    public static class CalculateNALTestScore implements CalculateScore {
+        private final int maxCycles;
+
+        final float parallelizationPenalizationRate = 0f; //scale of score divisor for parallel
+        
+
+        public CalculateNALTestScore(int maxCycles) {
+            this.maxCycles = maxCycles;
+        }
+
+        
+    public static double score(int maxCycles, NAR n) {
 
 
             Parameters.DEBUG = false;
@@ -159,30 +262,20 @@ public class GeneticSearch {
 
     }
     
-    private TrainEA genetic;
-
-    public GeneticSearch() {
-
-
-        Population pop = initPopulation(populationSize);
-
-        CalculateScore score = new CalculateScore() {
-
-            
             @Override
             public double calculateScore(MLMethod phenotype) {
 		
                 try {
                     NARGenome genome = (NARGenome) phenotype;
 
-                    System.out.print(genome.toString());
+                    System.out.print("    " + genome.toString());
 
                     final NAR n = genome.newNAR();
 
-                    double s = score(n);
+                    double s = score(maxCycles, n);
                     
                     //divide score based on degree of parallelism
-                    s/=(1.0 + ( (genome.getConceptsFired()-1.0) * parallelizationPenalizationRate));
+                    s/=(1.0 + ( (genome.i("conceptsFiredPerCycle")-1.0) * parallelizationPenalizationRate));
                     
                     System.out.println(" score: " + s);
                     
@@ -197,23 +290,33 @@ public class GeneticSearch {
             }
 
             @Override public boolean shouldMinimize() {
-                return false;
+                return true;
             }
 
             @Override public boolean requireSingleThreaded() {
                 return true;
             }
-
-        };
-
-        System.out.println("Default Score: " + score( new DefaultNARBuilder().build() ));
         
-        genetic = new TrainEA(pop, score);
+    }
+    
+    private TrainEA genetic;
+
+    public GeneticSearch() {
+
+
+        Population pop = initPopulation(populationSize);
+
+
+        System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new DefaultNARBuilder().build() ));
+        
+        
+        genetic = new TrainEA(pop, new CalculateNALTestScore(maxCycles));
         genetic.setShouldIgnoreExceptions(true);
         genetic.setThreadCount(1);
 
-        genetic.addOperation(0.9, new SpliceNoRepeat(1));
-        genetic.addOperation(0.2, new MutatePerturb(0.1f));
+        genetic.addOperation(0.5, new Splice(3));
+        //genetic.addOperation(0.1, new MutateShuffle());
+        genetic.addOperation(0.5, new MutatePerturb(0.1f));
         
 
         while (true) {
@@ -230,12 +333,13 @@ public class GeneticSearch {
 
         BasicSpecies defaultSpecies = new BasicSpecies();
         defaultSpecies.setPopulation(result);
+        
         for (int i = 0; i < populationSize; i++) {
-            final IntegerArrayGenome genome = NARGenome.newRandom();            
+            final DoubleArrayGenome genome = NARGenome.newRandom();            
             defaultSpecies.getMembers().add(genome);
         }
         
-        result.setGenomeFactory(new IntegerArrayGenomeFactory(NARGenome.S) {
+        result.setGenomeFactory(new DoubleArrayGenomeFactory(param.size()) {
  
             @Override public Genome factor() {
                 return new NARGenome(super.factor());
@@ -245,8 +349,6 @@ public class GeneticSearch {
             public Genome factor(Genome other) {
                 return new NARGenome(super.factor(other));
             }
-            
-            
             
         });
         
@@ -259,4 +361,12 @@ public class GeneticSearch {
     public static void main(String[] args) {
         new GeneticSearch();
     }
+
+    public static double  r(double  min, double max) {
+        return (Math.random() * (1+max-min) + min);
+    }
+    public static double  minmax(double  x, double min, double  max) {
+        return Math.min(Math.max(x, min), max);
+    }
+        
 }
