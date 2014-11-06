@@ -83,7 +83,7 @@ public class RuleTables {
                 float quality = BudgetFunctions.truthToQuality(sentence.truth);
                 BudgetValue budget = new BudgetValue(
                     Parameters.DEFAULT_GOAL_PRIORITY*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL, 
-                    Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL, 
+                    Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                     quality);
 
                 Task newTask = new Task(sentence, budget);       
@@ -126,7 +126,7 @@ public class RuleTables {
                     float quality = BudgetFunctions.truthToQuality(sentence.truth);
                     BudgetValue budget = new BudgetValue(
                         Parameters.DEFAULT_GOAL_PRIORITY*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL, 
-                        Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL, 
+                        Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                         quality);
 
                     Task newTask = new Task(sentence, budget);       
