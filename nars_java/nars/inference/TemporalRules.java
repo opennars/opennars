@@ -308,7 +308,7 @@ public class TemporalRules {
         long time2 = s2.getOccurenceTime();
         long timeDiff = time2 - time1;
         List<Interval> interval;
-        if (Math.abs(timeDiff) > durationCycles) {
+        if (!concurrent(time1, time2, durationCycles)) {
             interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
@@ -397,7 +397,7 @@ public class TemporalRules {
             return 0.0F;
         }
         TruthValue truth = solution.truth;
-        if (problem.getOccurenceTime() != solution.getOccurenceTime()) {
+        if (!concurrent(problem.getOccurenceTime(),solution.getOccurenceTime(),memory.getDuration())) {
             //TODO avoid creating entire Sentence; 
             //only calculate TruthValue which is all that is useful here
             Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.time());
@@ -449,12 +449,12 @@ public class TemporalRules {
     }
 
     public static int order(final long timeDiff, final int durationCycles) {
-        if (timeDiff > durationCycles) {
-            return TemporalRules.ORDER_FORWARD;
-        } else if (timeDiff < -durationCycles) {
-            return TemporalRules.ORDER_BACKWARD;
+        if (timeDiff > durationCycles/2) {
+            return ORDER_FORWARD;
+        } else if (timeDiff < -durationCycles/2) {
+            return ORDER_BACKWARD;
         } else {
-            return TemporalRules.ORDER_CONCURRENT;
+            return ORDER_CONCURRENT;
         }
     }
     /** if (relative) event B after (stationary) event A then order=forward;
@@ -463,6 +463,10 @@ public class TemporalRules {
      */
     public static int order(final long a, final long b, final int durationCycles) {        
         return order(b - a, durationCycles);
+    }
+    
+    public static boolean concurrent(final long a, final long b, final int durationCycles) {        
+        return order(a, b, durationCycles) == ORDER_CONCURRENT;
     }
     
 }

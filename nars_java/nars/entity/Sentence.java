@@ -419,7 +419,7 @@ public class Sentence<T extends Term> implements Cloneable {
         
         final long t = nar.memory.time();
 
-        final String tenseString = ( (punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.param.duration.get()) : "";
+        final String tenseString = ( (punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.getDuration()) : "";
         
  
         CharSequence stampString = showStamp ? stamp.name() : null;
@@ -500,6 +500,13 @@ public class Sentence<T extends Term> implements Cloneable {
 
     public boolean isEternal() {
         return getOccurenceTime() == Stamp.ETERNAL;
+    }
+
+    public boolean after(Sentence s, int duration) {
+        return stamp.after(s.stamp, duration);
+    }
+    public boolean before(Sentence s, int duration) {
+        return stamp.before(s.stamp, duration);
     }
 
 }

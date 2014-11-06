@@ -43,6 +43,7 @@ import nars.inference.Executive;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
+import static nars.inference.TemporalRules.concurrent;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
@@ -247,7 +248,7 @@ public class Concept extends Item<Term> {
 //                ) != null) {
                     
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
-                if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
+                if (!concurrent(projectedBelief.getOccurenceTime(), oldBelief.getOccurenceTime(), memory.getDuration())) {
                     nal.singlePremiseTask(projectedBelief, task.budget);
                 }
                 nal.setCurrentBelief(projectedBelief);
@@ -658,7 +659,7 @@ public class Concept extends Item<Term> {
 ////            }
             
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
-            if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
+            if (!concurrent(projectedBelief.getOccurenceTime(), belief.getOccurenceTime(), memory.getDuration())) {
                 nal.singlePremiseTask(projectedBelief, task.budget);
             }
             

@@ -288,15 +288,15 @@ public class NAR implements Runnable, TaskSource {
     }
     
 
-    public void startFPS(final float targetFPS, int memoryCyclesPerCycle, float durationsPerFrame) {        
+    public void startFPS(final float targetFPS, int cyclesPerFrame, float durationsPerFrame) {        
         long cycleTime = (long)(1000f / targetFPS);
-        param().duration.set(Math.round(cycleTime / durationsPerFrame));
-        start(cycleTime, memoryCyclesPerCycle);        
+        param().duration.set((int)(cyclesPerFrame / durationsPerFrame));
+        start(cycleTime, cyclesPerFrame);        
     }
     
-    public void start(final long minCyclePeriodMS, int memoryCyclesPerCycle) {
+    public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
         this.minCyclePeriodMS = minCyclePeriodMS;
-        this.cyclesPerFrame = memoryCyclesPerCycle;
+        this.cyclesPerFrame = cyclesPerFrame;
         if (thread == null) {
             thread = new Thread(this, "Inference");
             thread.start();
@@ -368,13 +368,15 @@ public class NAR implements Runnable, TaskSource {
         updatePorts();
 
         //clear existing input
-        int cyclesCompleted = 0;
+        
+        long cycleStart = time();
         do {
-            step(1);
-            cyclesCompleted++;
+            step(1);           
         }
         while ((!inputChannels.isEmpty()) && (!stopped));
-                        
+                   
+        long cyclesCompleted = time() - cycleStart;
+        
         //queue additional cycles, 
         cycles -= cyclesCompleted;
         if (cycles > 0)
@@ -492,10 +494,15 @@ public class NAR implements Runnable, TaskSource {
         memory.event.emit(c, o);
     }
     
+    
+    protected void frame() {
+        frame(cyclesPerFrame);
+    }
+    
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
-    private void frame() {
+    public void frame(int cycles) {
         
         if (DEBUG) {
             debugTime();            
@@ -508,7 +515,7 @@ public class NAR implements Runnable, TaskSource {
         updatePorts();
         
         try {
-            for (int i = 0; i < cyclesPerFrame; i++)
+            for (int i = 0; i < cycles; i++)
                 memory.cycle(this);
         }
         catch (Throwable e) {

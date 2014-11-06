@@ -82,10 +82,10 @@ public abstract class NAL implements Runnable {
         
         
         final Stamp stamp = task.sentence.stamp;
-        if (occurence != null && occurence.getOccurenceTime() != Stamp.ETERNAL) {
+        if (occurence != null && !occurence.isEternal()) {
             stamp.setOccurrenceTime(occurence.getOccurenceTime());
         }
-        if (occurence2 != null && occurence2.getOccurenceTime() != Stamp.ETERNAL) {
+        if (occurence2 != null && !occurence2.isEternal()) {
             stamp.setOccurrenceTime(occurence2.getOccurenceTime());
         }
         if (stamp.latency > 0) {

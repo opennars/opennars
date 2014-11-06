@@ -15,6 +15,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Conjunction;
@@ -44,7 +45,6 @@ import nars.operator.mental.Wonder;
 import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
 import nars.plugin.mental.Abbreviation.Abbreviate;
-import nars.plugin.mental.TemporalParticlePlanner;
 
 /**
  * Operation execution and planning support. Strengthens and accelerates
@@ -513,7 +513,7 @@ public class Executive {
         if (currentTerm instanceof Operation) {
             Concept conc = memory.concept(currentTerm);
             execute((Operation) currentTerm, task.t);
-            task.delayUntil = now + memory.param.duration.get();
+            task.delayUntil = now + memory.getDuration();
             s++;
         } else if (currentTerm instanceof Interval) {
             Interval ui = (Interval) currentTerm;
@@ -551,7 +551,8 @@ public class Executive {
             return false;
         }
         //new one happened and duration is already over, so add as negative task
-        if (Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm != null && newEvent.sentence.getOccurenceTime() - anticipateTime > nal.memory.param.duration.get()) {
+        if (Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm != null && 
+                (order(anticipateTime, newEvent.sentence.getOccurenceTime(), memory.getDuration()) == TemporalRules.ORDER_FORWARD)) {
             Term s = newEvent.sentence.content;
             TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
             Negation N = (Negation) Negation.make(s);
@@ -566,7 +567,7 @@ public class Executive {
             anticipateTerm = null; //it happened like expected
         }
 
-        if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
+        if (newEvent == null || newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
             return false;
         }
 
@@ -600,6 +601,8 @@ public class Executive {
         }
         Operation o=(Operation) t.sentence.content;
         Operator op=(Operator) o.getPredicate();
+        
+        //TODO replace with common interface that can be instanceof compared
         if(op instanceof Anticipate || op instanceof Believe || op instanceof Consider || op instanceof Doubt ||
                 op instanceof Evaluate || op instanceof Feel || op instanceof FeelBusy || op instanceof FeelHappy ||
                 op instanceof Hesitate || op instanceof Name || op instanceof Register || op instanceof Remind ||
