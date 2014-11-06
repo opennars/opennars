@@ -44,6 +44,7 @@ import nars.operator.mental.Wonder;
 import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
 import nars.plugin.mental.Abbreviation.Abbreviate;
+import nars.plugin.mental.TemporalParticlePlanner;
 
 /**
  * Operation execution and planning support. Strengthens and accelerates
@@ -400,8 +401,12 @@ public class Executive {
 
             if (content instanceof Operation) {
                 addExecution(concept, t);
-            } else if (isSequenceConjunction(content)) {
-                addExecution(concept, t);
+            } else if (TemporalParticlePlanner.used && isSequenceConjunction(content)) {
+                addExecution(concept, t); //this makes serious problems in NAL8 mode without planner,
+                //but i dont think it should be enabled in this mode anyway. example which breaks when this is enabled in planner less mode:
+                //
+                //<(&/,(^go-to,$1),(^pick,$1)) =/> <$1 --> reached>>.
+                //<goal --> reached>!
             }
         } else {
             //t.end();

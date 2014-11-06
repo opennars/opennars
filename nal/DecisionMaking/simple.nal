@@ -1,0 +1,3 @@
+//ok lets still test this example due to its importance
+<(&/,(^go-to,$1),(^pick,$1)) =/> <$1 --> reached>>.
+<goal --> reached>!
