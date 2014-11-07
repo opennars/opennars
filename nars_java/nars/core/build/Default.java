@@ -1,5 +1,9 @@
 package nars.core.build;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import nars.core.Attention;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
@@ -31,6 +35,8 @@ import nars.storage.LevelBag;
  * Default set of NAR parameters which have been classically used for development.
  */
 public class Default extends Build implements ConceptBuilder {
+
+    
 
     
     int taskLinkBagLevels;
@@ -294,4 +300,20 @@ public class Default extends Build implements ConceptBuilder {
         }
     }
 
+    public static Default fromJSON(String filePath) {
+        
+        try {
+            String c = readFile(filePath, Charset.defaultCharset());                        
+            return Param.json.fromJson(c, Default.class);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
+    static String readFile(String path, Charset encoding) 
+        throws IOException  {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+      }
 }
