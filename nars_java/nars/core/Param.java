@@ -60,10 +60,6 @@ public class Param implements Serializable {
     /** How many concepts to fire each cycle */
     public final AtomicInteger cycleConceptsFired = new AtomicInteger();
     
-    /** contraposition should have much lower priority considering the flood of implications coming from temporal knowledge.  a lower value means more frequent, must be > 0 */    
-    public final AtomicDouble contrapositionPriority = new AtomicDouble(/*30 was the default*/);
-
-    
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
             
