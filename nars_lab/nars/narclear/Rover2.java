@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.Discretinuous;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.narclear.jbox2d.TestbedSettings;
@@ -355,7 +355,7 @@ public class Rover2 extends PhysicsModel {
 
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
-        NAR nar = new DiscretinuousBagNARBuilder().temporalPlanner(8, 64, 16).
+        NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
         //NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
                 setConceptBagSize(1000).

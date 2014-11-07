@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,8 +27,6 @@ import nars.io.Output.IN;
 import nars.io.TextInput;
 import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
-import nars.core.build.DefaultOperators;
-import nars.core.build.ExampleOperators;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
 
@@ -85,7 +84,7 @@ public class NAR implements Runnable, TaskSource {
     
     
 
-    public class PluginState {
+    public class PluginState implements Serializable {
         final public Plugin plugin;
         boolean enabled = false;
 
@@ -617,7 +616,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
 
-    public static NAR build(Class<? extends NARGenome> g) {
+    public static NAR build(Class<? extends Build> g) {
         try {
             return build(g.newInstance());
         } catch (Exception ex) {
@@ -625,7 +624,7 @@ public class NAR implements Runnable, TaskSource {
         }
         return null;
     }
-    public static NAR build(Class<? extends NARGenome> g, Param p) {
+    public static NAR build(Class<? extends Build> g, Param p) {
         try {
             return build(g.newInstance(), p);
         } catch (Exception ex) {
@@ -633,11 +632,11 @@ public class NAR implements Runnable, TaskSource {
         }
         return null;
     }
-    public static NAR build(NARGenome g) {
+    public static NAR build(Build g) {
         return build(g, g.param);        
     }
     
-    public static NAR build(NARGenome g, Param p) {        
+    public static NAR build(Build g, Param p) {        
         NAR n = g.init(new NAR(g.newMemory(p)));
         return n;
     }    

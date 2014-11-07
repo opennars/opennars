@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import nars.core.NAR;
 import nars.core.Param;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.Discretinuous;
 import nars.io.TextInput;
 
 /**
@@ -146,7 +146,7 @@ public class TestQController {
     
     public static NAR newNAR() {
         //return new Default().build();        
-        return new DiscretinuousBagNARBuilder().setConceptBagSize(8192).build();        
+        return new Discretinuous().setConceptBagSize(8192).build();        
     }
     
     public static void main(String[] arg) {

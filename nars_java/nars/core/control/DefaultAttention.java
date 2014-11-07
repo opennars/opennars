@@ -79,7 +79,7 @@ public class DefaultAttention implements Attention {
 
         public int conceptsPriority() {
             if (memory.getNewTasks().isEmpty()) {
-                return t(numThreads);
+                return memory.param.conceptsFiredPerCycle.get();
             } else {
                 return 0;
             }

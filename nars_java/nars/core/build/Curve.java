@@ -17,19 +17,19 @@ import nars.storage.CurveBag;
 import nars.storage.CurveBag.FairPriorityProbabilityCurve;
 
 
-public class CurveBagNARBuilder extends Default {
+public class Curve extends Default {
     public final boolean randomRemoval;
     public final CurveBag.BagCurve curve;
 
-    public CurveBagNARBuilder() {
+    public Curve() {
         this(true);
     }
     
-    public CurveBagNARBuilder(boolean randomRemoval) {
+    public Curve(boolean randomRemoval) {
         this(new FairPriorityProbabilityCurve(), randomRemoval);        
     }
     
-    public CurveBagNARBuilder(CurveBag.BagCurve curve, boolean randomRemoval) {
+    public Curve(CurveBag.BagCurve curve, boolean randomRemoval) {
         super();
         this.randomRemoval = randomRemoval;
         this.curve = curve;
@@ -50,9 +50,9 @@ public class CurveBagNARBuilder extends Default {
     
 
     @Override
-    public Attention newAttention(Param p, ConceptBuilder c) {
+    public Attention newAttention() {
         //return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
-        return new DefaultAttention(newConceptBag(), newSubconceptBag(), c);
+        return new DefaultAttention(newConceptBag(), newSubconceptBag(), getConceptBuilder());
     }
     
     @Override

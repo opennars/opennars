@@ -2,11 +2,9 @@ package nars.core.build;
 
 import nars.core.Attention;
 import nars.core.Memory;
-import nars.core.Param;
 import nars.core.control.AntAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.entity.ConceptBuilder;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -18,22 +16,25 @@ import nars.storage.CurveBag;
  *
  * https://en.wikipedia.org/wiki/Neuromorphic_engineering
  */
-public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
-    private final int numAnts;
+public class Neuromorphic extends Curve {
+    private int numAnts;
 
-    public NeuromorphicNARBuilder() {
-        this(1);
+    public Neuromorphic() {
+        this(-1);
     }
     
-    public NeuromorphicNARBuilder(int numAnts) {
+    public Neuromorphic(int numAnts) {
         super();        
+        this.type = "neuromorphic";
         this.numAnts = numAnts;
     }
 
     @Override
-    public Attention newAttention(Param p, ConceptBuilder c) {
+    public Attention newAttention() {
         //return new WaveAttention(1000, c);
-        return new AntAttention(numAnts, 1.0f, getConceptBagSize(), c);
+        if (numAnts == -1)
+            numAnts = param.conceptsFiredPerCycle.get();
+        return new AntAttention(numAnts, 1.0f, getConceptBagSize(), getConceptBuilder());
     }
 
     

@@ -19,7 +19,7 @@ package nars.timeline.example;
 import nars.gui.output.timeline.MultiTimeline;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.Discretinuous;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries.ConceptTimeSeries;
 import nars.gui.output.chart.TimeSeries.ConceptTimeSeries.Mode;
@@ -50,18 +50,28 @@ public class ConceptDynamics extends TimelineExample {
                 NAR nar = null;
                 switch (experiment) {
                     case 0:                        
-                        DiscretinuousBagNARBuilder d = new DiscretinuousBagNARBuilder();
+                        Discretinuous d = new Discretinuous();
                         d.param.setForgetting(Memory.Forgetting.Periodic);                        
                         nar = d.build();
                         (nar.param).conceptForgetDurations.set(5f);
                         break;
                     case 1:
-                        DiscretinuousBagNARBuilder e = new DiscretinuousBagNARBuilder();
+                        Discretinuous e = new Discretinuous();
                         e.param.setForgetting(Memory.Forgetting.Periodic);                        
                         nar = e.build();
                         (nar.param).conceptForgetDurations.set(5f);                        
                         break;
                     /*case 2:
+                        nar = new ContinuousBagNARBuilder().build();
+                        break;*/
+                    /*case 2:
+                        nar = new ContinuousBagNARBuilder().build();
+                        break;*/                    /*case 2:
+                        nar = new ContinuousBagNARBuilder().build();
+                        break;*/
+                    /*case 2:
+                        nar = new ContinuousBagNARBuilder().build();
+                        break;*/                    /*case 2:
                         nar = new ContinuousBagNARBuilder().build();
                         break;*/
                     /*case 2:

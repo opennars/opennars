@@ -197,7 +197,7 @@ public class LocalRules {
                 memory.emit(Output.class, task, belief);            
             }*/
                         
-            memory.addNewTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
+            nal.addTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
             return true;
         }
         else {

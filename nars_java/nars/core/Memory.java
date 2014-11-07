@@ -186,6 +186,9 @@ public class Memory implements Serializable {
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
     
     
+    public Bag<Task<Term>,Sentence<Term>> temporalCoherences=new LevelBag<>(100,20); //todo: forgetting event
+
+    
     /* ---------- Short-term workspace for a single cycle ---	------- */
     
     /**
@@ -243,6 +246,7 @@ public class Memory implements Serializable {
     //index of Conjunction questions
     transient private Set<Task> questionsConjunction = new HashSet();
     
+
     
     private class MemoryEventEmitter extends EventEmitter {        
         @Override public void emit(final Class eventClass, final Object... params) {
@@ -573,9 +577,6 @@ public class Memory implements Serializable {
                 break;
         }
     }    
-
-    
-    public Bag<Task<Term>,Sentence<Term>> temporalCoherences=new LevelBag<>(100,20); //todo: forgetting event
     
     /* ---------- new task entries ---------- */
     /**
@@ -647,22 +648,7 @@ public class Memory implements Serializable {
         }
     }
 
-    /**
-     * Activated task called in MatchingRules.trySolution and
-     * Concept.processGoal
-     *
-     * @param budget The budget value of the new Task
-     * @param sentence The content of the new Task
-     * @param candidateBelief The belief to be used in future inference, for
-     * forward/backward correspondence
-     */
-    public void addNewTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
-        
-        addNewTask(
-                new Task(sentence, budget, currentTask, sentence, candidateBelief), 
-                "Activated");
-        
-    }
+
 
     public void removeTask(final Task task, final String reason) {        
         emit(TaskRemove.class, task, reason);

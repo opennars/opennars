@@ -5,7 +5,7 @@
 package nars.test.core;
 
 import nars.core.NAR;
-import nars.core.NARGenome;
+import nars.core.Build;
 import nars.core.Param;
 import nars.core.build.Default;
 import static org.junit.Assert.assertEquals;
@@ -25,7 +25,7 @@ public class TestParamJSON {
         String j = p.toString();
         
         Param r = Param.fromJSON(j);
-        
+                
         assertEquals(p.getForgetMode(),r.getForgetMode());
         
         assertEquals(p.duration.get(), r.duration.get());
@@ -34,9 +34,7 @@ public class TestParamJSON {
 
         assertEquals(p.taskForgetDurations.get(), r.taskForgetDurations.get(), 0.01);
         
-        assertEquals(p.termLinkRecordLength.get(), r.termLinkRecordLength.get(), 0.01);
-    
-        
+        assertEquals(p.termLinkRecordLength.get(), r.termLinkRecordLength.get(), 0.01);            
         
     }
 
@@ -44,7 +42,7 @@ public class TestParamJSON {
     @Test 
     public void testReserializeGenome() {
         
-        NARGenome p = new Default();;
+        Build p = new Default();;
         
         String j = p.toString();
         

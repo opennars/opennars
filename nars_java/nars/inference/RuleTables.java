@@ -177,7 +177,7 @@ public class RuleTables {
             InternalOperations(memory, belief, nal, beliefTerm, taskTerm);
             
              //this is a new attempt/experiment to make nars effectively track temporal coherences
-            if(beliefTerm instanceof Implication && belief.getOccurenceTime()==Stamp.ETERNAL && 
+            if(beliefTerm instanceof Implication && belief.isEternal() && 
                     (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
                 for(int i=0;i<Parameters.TEMPORAL_CHAINING_ATTEMPTS;i++) {
                     
@@ -211,7 +211,7 @@ public class RuleTables {
              (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) &&
              taskTerm instanceof Implication && 
              (taskTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || taskTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
-                if(taskSentence.stamp.getOccurrenceTime()==Stamp.ETERNAL && belief.stamp.getOccurrenceTime()==Stamp.ETERNAL ||
+                if(taskSentence.isEternal() && belief.isEternal() ||
                    belief.after(taskSentence, memory.param.duration.get())) {
                     TemporalRules.temporalInductionChain(taskSentence, belief, nal);
                 }

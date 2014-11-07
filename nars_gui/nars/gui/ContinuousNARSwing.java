@@ -2,7 +2,7 @@ package nars.gui;
 
 import nars.core.NAR;
 import nars.core.Param;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.Discretinuous;
 import nars.inference.AbstractController;
 
 
@@ -35,7 +35,7 @@ public class ContinuousNARSwing {
         
     }
     public static void main(String[] arg) {
-        NAR cn = new DiscretinuousBagNARBuilder(true).setConceptBagSize(8192).build();
+        NAR cn = new Discretinuous(true).setConceptBagSize(8192).build();
         //new Remeber(cn);
         
         NARSwing w = new NARSwing(cn);

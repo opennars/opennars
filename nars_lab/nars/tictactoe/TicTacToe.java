@@ -39,7 +39,7 @@ import nars.NARPrologMirror;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.Discretinuous;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
@@ -82,7 +82,7 @@ public class TicTacToe extends JPanel {
     public TicTacToe() {
         super(new BorderLayout());
 
-        nar = new DiscretinuousBagNARBuilder().
+        nar = new Discretinuous().
                 setConceptBagSize(1000).
                 setSubconceptBagSize(10000).
                 simulationTime().build();

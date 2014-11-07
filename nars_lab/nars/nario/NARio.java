@@ -10,7 +10,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.Discretinuous;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
@@ -55,7 +55,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
         
-        NAR nar = new DiscretinuousBagNARBuilder().simulationTime().
+        NAR nar = new Discretinuous().simulationTime().
                 /*temporalPlanner(12,64,16).*/build();
         
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();

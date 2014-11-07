@@ -1,0 +1,36 @@
+{
+  "taskLinkBagLevels": 100,
+  "taskLinkBagSize": 20,
+  "termLinkBagLevels": 100,
+  "termLinkBagSize": 100,
+  "conceptBagSize": 1000,
+  "conceptBagLevels": 100,
+  "subconceptBagSize": 0,
+  "taskBufferSize": 10,
+  "taskBufferLevels": 100,
+  "type": "level",
+  "param": {
+    "noiseLevel": 100,
+    "duration": {
+      "linear": 0.5,
+      "value": 5
+    },
+    "timing": "Iterative",
+    "forgetting": "Iterative",
+    "conceptForgetDurations": 2.0,
+    "beliefForgetDurations": 10.0,
+    "taskForgetDurations": 4.0,
+    "newTaskForgetDurations": 2.0,
+    "decisionThreshold": 0.3,
+    "conceptsFiredPerCycle": 1,
+    "termLinkMaxMatched": 10,
+    "abbreviationMinComplexity": 0,
+    "abbreviationMinQuality": 0.0,
+    "termLinkMaxReasoned": 3,
+    "termLinkRecordLength": 10,
+    "conceptBeliefsMax": 7,
+    "conceptQuestionsMax": 5,
+    "conceptGoalsMax": 7
+  }
+}
+
