@@ -613,7 +613,7 @@ public class Rover extends PhysicsModel {
         float framesPerSecond = 50f;
         int cyclesPerFrame = 200; //was 200        
         nar.param().noiseLevel.set(0);
-        
+        nar.param().duration.set(cyclesPerFrame);
         
 
        // RoverWorld.world= new RoverWorld(rv, 48, 48);

@@ -155,7 +155,7 @@ public class TemporalRules {
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static void temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
+    public static boolean temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
         //TODO prevent trying question sentences, may cause NPE
         
         //try if B1 unifies with B2, if yes, create new judgement
@@ -180,7 +180,7 @@ public class TemporalRules {
         }
         
         if(args==null)
-            return;
+            return false;
                 
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
         Term[] term = args.toArray(new Term[args.size()]);
@@ -194,7 +194,7 @@ public class TemporalRules {
                 if(term[i] instanceof CompoundTerm) {
                     term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
                     if(term[i]==null) { //it resulted in invalid term for example <a --> a>, so wrong
-                        return;
+                        return false;
                     }
                 }
             }
@@ -206,13 +206,10 @@ public class TemporalRules {
             if(whole!=null) {
                 TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
-                if(budget!=null) {
-                    budget.setPriority(Math.min(0.99f, budget.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
-                    budget.setDurability(Math.min(0.99f,budget.getDurability()+Parameters.TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT));
-                }
-                nal.doublePremiseTask(whole, truth, budget, true);
+                return nal.doublePremiseTask(whole, truth, budget, true)!=null;
             }
         }
+        return false;
     }
     
     /** whether a term can be used in temoralInduction(,,) */
@@ -330,11 +327,6 @@ public class TemporalRules {
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
-        //only boost for this one
-        if(budget2!=null) {
-            budget2.setPriority(Math.min(0.99f, budget2.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
-            budget2.setDurability(Math.min(0.99f,budget2.getDurability()+Parameters.TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT));
-        }
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
