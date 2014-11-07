@@ -104,7 +104,8 @@ public class Sentence<T extends Term> implements Cloneable {
         }
         
         if ((isQuestion() || isQuest()) && !stamp.isEternal()) {
-            throw new RuntimeException("Questions and Quests require eternal tense");
+            stamp.setEternal();
+            //throw new RuntimeException("Questions and Quests require eternal tense");
         }
         
         this.truth = truth;

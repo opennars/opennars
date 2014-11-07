@@ -182,6 +182,10 @@ public class RuleTables {
                 for(int i=0;i<Parameters.TEMPORAL_CHAINING_ATTEMPTS;i++) {
                     
                     Task best=nal.memory.temporalCoherences.takeNext();
+                    if (best == null) {
+                        break;                        
+                    }
+                    
                     nal.memory.temporalCoherences.putBack(best, memory.param.cycles(memory.param.beliefForgetDurations), memory);
                     
                     Sentence s=best.sentence;
