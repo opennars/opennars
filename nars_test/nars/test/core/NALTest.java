@@ -16,7 +16,7 @@ import java.util.TreeMap;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.InferenceLogger;
@@ -130,7 +130,7 @@ public class NALTest  {
     }
     
     public NAR newNAR() {
-        return new DefaultNARBuilder().build();
+        return new Default().build();
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();
     }

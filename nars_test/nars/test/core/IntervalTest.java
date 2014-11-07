@@ -3,7 +3,7 @@ package nars.test.core;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.language.Interval;
 import nars.language.Interval.AtomicDuration;
 import static org.junit.Assert.assertEquals;
@@ -56,7 +56,7 @@ public class IntervalTest {
     @Test
     public void testIntervalSequence() {
     
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         Memory m = n.memory;
         
         List<Interval> a11 = Interval.intervalTimeSequence(1, 1, m);
@@ -70,7 +70,7 @@ public class IntervalTest {
 
         {
             //half duration = magnitude 1 ("+2")
-            long halfDuration = n.param().duration.get()/2;
+            long halfDuration = (n.param).duration.get()/2;
             
             List<Interval> ad1 = Interval.intervalTimeSequence(halfDuration, 1, m);
             assertEquals(1, ad1.size());
@@ -83,10 +83,9 @@ public class IntervalTest {
             assertEquals(halfDuration, Interval.intervalSequenceTime(ad2, m));
             
         }
-        
         {
             //test ability to represent a range of time periods precisely with up to N terms
-            long duration = n.param().duration.get();
+            long duration = (n.param).duration.get();
             int numTerms = 6;
             for (int t = 1; t < duration * duration * duration; t++) {
                 List<Interval> ad1 = Interval.intervalTimeSequence(t, numTerms, m);

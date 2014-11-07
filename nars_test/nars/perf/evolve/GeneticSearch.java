@@ -16,7 +16,7 @@ import java.util.Map;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.CurveBagNARBuilder;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.core.build.NeuromorphicNARBuilder;
 import nars.perf.NALTestScore;
 import org.encog.ml.CalculateScore;
@@ -203,10 +203,10 @@ public class GeneticSearch {
                     
             //int prolog = get("prologEnable");
             
-            DefaultNARBuilder b;
+            Default b;
                         
             if (builderType == 0) {
-                b = new DefaultNARBuilder();                
+                b = new Default();                
             }
             else if (builderType == 1) {
                 b = new NeuromorphicNARBuilder(conceptsFired /*ants */);                
@@ -225,20 +225,20 @@ public class GeneticSearch {
                         
             NAR n = b.build();
             
-            n.param().duration.set(duration);
-            n.param().conceptForgetDurations.set(conceptForget);
-            n.param().taskForgetDurations.set(taskForget);
-            n.param().beliefForgetDurations.set(beliefForget);
+            (n.param).duration.set(duration);
+            (n.param).conceptForgetDurations.set(conceptForget);
+            (n.param).taskForgetDurations.set(taskForget);
+            (n.param).beliefForgetDurations.set(beliefForget);
 
             
-            n.param().conceptBeliefsMax.set(i("conceptBeliefs"));
-            n.param().conceptGoalsMax.set(i("conceptGoals"));
-            n.param().conceptQuestionsMax.set(i("conceptQuestions"));
+            (n.param).conceptBeliefsMax.set(i("conceptBeliefs"));
+            (n.param).conceptGoalsMax.set(i("conceptGoals"));
+            (n.param).conceptQuestionsMax.set(i("conceptQuestions"));
             
             
             if (builderType != 1) {
                 //analogous to # of ants but in defaultbag
-                n.param().cycleConceptsFired.set( conceptsFired );
+                (n.param).cycleConceptsFired.set( conceptsFired );
             }
             
             /*if (prolog == 1) {
@@ -345,7 +345,7 @@ public class GeneticSearch {
         System.out.println(param);
         
 
-        System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new DefaultNARBuilder().build() ));
+        System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new Default().build() ));
         
         while (true) {
     

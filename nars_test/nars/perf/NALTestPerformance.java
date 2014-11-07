@@ -15,7 +15,7 @@ import java.util.Random;
 import java.util.StringJoiner;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.core.sense.MultiSense;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.getExpectations;
@@ -420,7 +420,7 @@ public class NALTestPerformance {
         int[] outs = new int[] { 5 };
         //int[] ins = null, outs = null;
         
-        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder().build(), tests, 2000, additionalCycles, ins, outs, historySize);
+        NALControlMLDataSet trainingSet = test(new Default().build(), tests, 2000, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);
@@ -509,7 +509,7 @@ public class NALTestPerformance {
         int[] outs = new int[] {  10 };
         //int[] ins = null, outs = null;
         
-        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder().build(), tests, 2000, additionalCycles, ins, outs, historySize);
+        NALControlMLDataSet trainingSet = test(new Default().build(), tests, 2000, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);

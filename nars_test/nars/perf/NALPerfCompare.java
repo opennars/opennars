@@ -4,7 +4,7 @@ import java.util.Collection;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.CurveBagNARBuilder;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.test.core.NALTest;
 
@@ -21,12 +21,12 @@ public class NALPerfCompare {
         for (int r = 0; r < 96; r+=12) {
             Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = r;            
             System.out.print("ROPE_TERMLINK_TERM_SIZE_THRESHOLD " + r + ":\t");
-            perfNAL(new DefaultNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
+            perfNAL(new Default().build(), examplePath,extraCycles,repeats,warmups,true);
         }
         
         Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = -1;
         System.out.print("ROPE_TERMLINK_TERM_SIZE_THRESHOLD NO:\t");
-        perfNAL(new DefaultNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
+        perfNAL(new Default().build(), examplePath,extraCycles,repeats,warmups,true);
         
         System.out.println();
 
@@ -34,13 +34,13 @@ public class NALPerfCompare {
     
     public static void compareDiscreteContinuousBag(String examplePath) {
         System.out.print("DISCRETE:");
-        perfNAL(new DefaultNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
+        perfNAL(new Default().build(), examplePath,extraCycles,repeats,warmups,true);
         
         System.out.print("CONTINUOUS:\t");
         perfNAL(new CurveBagNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
         
         System.out.print("DISCRETE:");
-        perfNAL(new DefaultNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
+        perfNAL(new Default().build(), examplePath,extraCycles,repeats,warmups,true);
 
         
         System.out.println();
@@ -50,7 +50,7 @@ public class NALPerfCompare {
     public static void main(String[] args) {
        
 
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         
         Collection c = NALTest.params();
         while (true) {

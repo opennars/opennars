@@ -6,7 +6,6 @@ import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -27,8 +26,8 @@ import nars.io.Output.IN;
 import nars.io.TextInput;
 import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
-import nars.io.narsese.Narsese;
-import nars.language.Term;
+import nars.core.build.DefaultOperators;
+import nars.core.build.ExampleOperators;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
 
@@ -57,6 +56,8 @@ public class NAR implements Runnable, TaskSource {
               " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
               "    Github website:  http://github.com/opennars/ \n";    
+
+
     
     private Thread thread = null;
     long minCyclePeriodMS;
@@ -73,6 +74,7 @@ public class NAR implements Runnable, TaskSource {
      * The memory of the reasoner
      */
     public final Memory memory;
+    public final Param param;
     
     
     /** The addInput channels of the reasoner     */
@@ -80,7 +82,7 @@ public class NAR implements Runnable, TaskSource {
     
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
-    private boolean stopped;
+    
     
 
     public class PluginState {
@@ -111,15 +113,12 @@ public class NAR implements Runnable, TaskSource {
     
     protected final List<PluginState> plugins = new CopyOnWriteArrayList<>();
     
-    /**
-     * Flag for running continuously
-     */
+    /** Flag for running continuously  */
     private boolean running = false;
     
-
     
-    /**arbitrary data associated with this particular NAR instance can be stored here */
-    public final HashMap data = new HashMap();
+    /** used by stop() to signal that a running loop should be interrupted */
+    private boolean stopped;
     
     
     private boolean inputting = true;
@@ -131,8 +130,9 @@ public class NAR implements Runnable, TaskSource {
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
     
-    public NAR(Memory m) {
-        this.memory = m;
+    protected NAR(final Memory m) {
+        this.memory = m;        
+        this.param = m.param;
         
         //needs to be concurrent in case we change this while running
         inputChannels = new ArrayList();
@@ -292,7 +292,7 @@ public class NAR implements Runnable, TaskSource {
 
     public void startFPS(final float targetFPS, int cyclesPerFrame, float durationsPerFrame) {        
         long cycleTime = (long)(1000f / targetFPS);
-        param().duration.set((int)(cyclesPerFrame / durationsPerFrame));
+        param.duration.set((int)(cyclesPerFrame / durationsPerFrame));
         start(cycleTime, cyclesPerFrame);        
     }
     
@@ -534,7 +534,7 @@ public class NAR implements Runnable, TaskSource {
         
         if (memory.getTiming() == Timing.Real) {
             long frameTime = timeEnd - timeStart;
-            final int d = param().duration.get();
+            final int d = param.duration.get();
             
             //warn if frame consumed more time than reasoner duration
             if (frameTime > d) {
@@ -584,9 +584,6 @@ public class NAR implements Runnable, TaskSource {
 
 
 
-    public Param param() {
-        return memory.param;
-    }
        
 
     /** stops ad empties all input channels into a receiver. this
@@ -618,4 +615,31 @@ public class NAR implements Runnable, TaskSource {
     public List<InPort<Object, AbstractTask>> getInPorts() {
         return inputChannels;
     }
+
+
+    public static NAR build(Class<? extends NARGenome> g) {
+        try {
+            return build(g.newInstance());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    public static NAR build(Class<? extends NARGenome> g, Param p) {
+        try {
+            return build(g.newInstance(), p);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    public static NAR build(NARGenome g) {
+        return build(g, g.param);        
+    }
+    
+    public static NAR build(NARGenome g, Param p) {        
+        NAR n = g.init(new NAR(g.newMemory(p)));
+        return n;
+    }    
+
 }

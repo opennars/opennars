@@ -2,7 +2,7 @@ package nars.test.multistep;
 
 import java.util.Arrays;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Output;
@@ -44,7 +44,7 @@ public class PlanDecisionExperiment {
         
         System.out.println(Arrays.toString(confidences));
         
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         n.addInput(i);
         //new TextOutput(n, System.out);
         

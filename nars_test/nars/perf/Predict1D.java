@@ -15,7 +15,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Events.FrameStart;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries;
@@ -271,7 +271,7 @@ public class Predict1D {
     public Predict1D() {
         //577.0 [1, 259.0, 156.0, 2.0, 101.0, 4.0, 16.0, 2.0, 3.0, 1.0]
         
-        this.nar = new DefaultNARBuilder().simulationTime().build();
+        this.nar = new Default().simulationTime().build();
 
         /*
         this.nar = new NeuromorphicNARBuilder(4).
@@ -283,7 +283,7 @@ public class Predict1D {
         
         
         //new TextOutput(nar, System.out, 0.95f);
-        nar.param().duration.set(cyclesPerDuration);
+        (nar.param).duration.set(cyclesPerDuration);
         
         nar.on(IN.class, new Observer() {
             @Override public void event(Class event, Object[] arguments) {

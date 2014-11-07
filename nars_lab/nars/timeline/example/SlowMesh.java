@@ -5,7 +5,7 @@
 package nars.timeline.example;
 
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
 import nars.gui.output.graph.ConceptGraphCanvas2;
@@ -50,7 +50,7 @@ public class SlowMesh {
     }
     
     public static void main(String args[]) {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         
         new SlowMesh(n, 6, 6);
         

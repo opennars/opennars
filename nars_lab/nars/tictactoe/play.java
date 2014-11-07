@@ -24,7 +24,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;
@@ -45,7 +45,7 @@ public class play extends javax.swing.JFrame {
         
         
         nar.memory.addOperator(new AddO("^addO"));
-        nar.param().noiseLevel.set(0);
+        (nar.param).noiseLevel.set(0);
         
         initComponents();
         addStartKnowledge();
@@ -639,7 +639,7 @@ public class play extends javax.swing.JFrame {
         
         /* Set the Nimbus look and feel */
         NARSwing.themeInvert();
-        nar = new DefaultNARBuilder().build();
+        nar = new Default().build();
         
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

@@ -31,7 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
+import nars.core.build.Default.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -180,8 +180,8 @@ public class NARSwing  {
      */
     public static void main(String args[]) {
         themeInvert();
-                
-        NAR nar = new CommandLineNARBuilder(args).build();
+          
+        NAR nar = NAR.build(new CommandLineNARBuilder(args));
         
         //temporary:
         //NAR nar = new ContinuousBagNARBuilder(false).build();

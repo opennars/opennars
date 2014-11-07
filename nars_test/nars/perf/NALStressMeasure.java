@@ -3,7 +3,7 @@ package nars.perf;
 import java.util.Collection;
 import nars.core.NAR;
 import nars.core.build.CurveBagNARBuilder;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.test.core.NALTest;
 
 
@@ -88,7 +88,7 @@ public class NALStressMeasure  {
         NAR nc = new CurveBagNARBuilder().build();
         test(nc);
 
-        NAR nd = new DefaultNARBuilder().build();
+        NAR nd = new Default().build();
         test(nd);
         
         

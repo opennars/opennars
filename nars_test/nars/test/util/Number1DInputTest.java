@@ -19,7 +19,7 @@ package nars.test.util;
 
 import nars.core.NAR;
 import nars.core.build.CurveBagNARBuilder;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.io.TextOutput;
 import nars.util.signal.Number1DInput;
 import org.junit.Assert;
@@ -55,7 +55,7 @@ public class Number1DInputTest {
                 setConceptBagSize(32367).
                 build();
                 
-        n.param().cycleConceptsFired.set(1024);
+        (n.param).cycleConceptsFired.set(1024);
         
         
         Number1DInput v = new Number1DInput(n, "a", x, 4);
@@ -89,7 +89,7 @@ public class Number1DInputTest {
         
         double[] x = randomArray(N, 1.0, 0);
         
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         
         //new TextOutput(n, System.out);
         

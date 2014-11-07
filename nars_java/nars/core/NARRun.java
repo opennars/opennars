@@ -24,8 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Date;
-import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
+import nars.core.build.Default.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -58,8 +57,8 @@ public class NARRun {
      */
     public static void main(String args[]) {
                 
-        NARRun nars = new NARRun(new CommandLineNARBuilder(args).build());        
-        nars.runInference(args);
+        NARRun nars = new NARRun(NAR.build(new CommandLineNARBuilder(args)));
+        nars.run(args);
         
         // TODO only if single finish ( no reset in between )
         if (nars.dumpLastState) {
@@ -76,7 +75,7 @@ public class NARRun {
      * non-static equivalent to {@link #main(String[])} : finish to completion from
  an addInput file
      */
-    public void runInference(String args[]) {
+    public void run(String args[]) {
         TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
         output.setErrors(true);
         output.setErrorStackTrace(true);

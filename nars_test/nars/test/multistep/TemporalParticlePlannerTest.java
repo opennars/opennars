@@ -2,7 +2,7 @@ package nars.test.multistep;
 
 import java.io.IOException;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.test.core.NALTest.ExpectContains;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -36,10 +36,10 @@ public class TemporalParticlePlannerTest {
         
         NAR n = 
                 withPlanner?
-                    new DefaultNARBuilder().temporalPlanner(12, 64, 24).build() :
-                    new DefaultNARBuilder().build();
+                    new Default().temporalPlanner(12, 64, 24).build() :
+                    new Default().build();
         
-        n.param().decisionThreshold.set(0.3f);
+        (n.param).decisionThreshold.set(0.3f);
         
         ExpectContains e = new ExpectContains(n, expected, true);
                

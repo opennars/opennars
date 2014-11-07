@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import org.encog.ml.data.MLDataPair;
 
 /**
@@ -148,9 +148,9 @@ public class ParameterSearch {
         //p.termLinkRecordLength.set(10);
         experiments.clear();
         for (int i = 1; i < 15; i++) {
-            NAR a = new DefaultNARBuilder().build();
+            NAR a = new Default().build();
             
-            a.param().termLinkRecordLength.set(i);
+            (a.param).termLinkRecordLength.set(i);
             score("termLinkRecordLength_" + String.format("%03d", i), a);
         }
         report();
@@ -158,9 +158,9 @@ public class ParameterSearch {
         //p.beliefCyclesToForget.set(50);
         experiments.clear();
         for (int i = 2; i < 100; i+=4) {
-            NAR a = new DefaultNARBuilder().build();
+            NAR a = new Default().build();
             
-            a.param().beliefForgetDurations.set(i);
+            (a.param).beliefForgetDurations.set(i);
             score("beliefCyclesToForget_" + String.format("%03d", i), a);
         }
         report();
@@ -168,9 +168,9 @@ public class ParameterSearch {
         //p.conceptCyclesToForget.set(10);             
         experiments.clear();
         for (int i = 2; i < 20; i++) {
-            NAR a = new DefaultNARBuilder().build();
+            NAR a = new Default().build();
             
-            a.param().conceptForgetDurations.set(i);
+            (a.param).conceptForgetDurations.set(i);
             score("conceptCyclesToForget_" + String.format("%03d", i), a);
         }
         report();
@@ -178,9 +178,9 @@ public class ParameterSearch {
         //p.taskCyclesToForget.set(20);
         experiments.clear();
         for (int i = 2; i < 40; i+=2) {
-            NAR a = new DefaultNARBuilder().build();
+            NAR a = new Default().build();
             
-            a.param().taskForgetDurations.set(i);
+            (a.param).taskForgetDurations.set(i);
             score("taskCyclesToForget_" + String.format("%03d", i), a);
         }
         report();
@@ -189,9 +189,9 @@ public class ParameterSearch {
         //p.termLinkMaxMatched.set(10);        
         experiments.clear();        
         for (int i = 1; i < 13; i++) {
-            NAR a = new DefaultNARBuilder().build();
+            NAR a = new Default().build();
             
-            a.param().termLinkMaxMatched.set(i);
+            (a.param).termLinkMaxMatched.set(i);
             score("termLinkMaxMatched_" + String.format("%03d", i), a);
         }
         report();
@@ -199,9 +199,9 @@ public class ParameterSearch {
         //p.termLinkMaxReasoned.set(3);
         experiments.clear();
         for (int i = 1; i < 13; i++) {
-            NAR a = new DefaultNARBuilder().build();
+            NAR a = new Default().build();
             
-            a.param().termLinkMaxReasoned.set(i);
+            (a.param).termLinkMaxReasoned.set(i);
             score("termLinkMaxReasoned_" + String.format("%03d", i), a);
         }
         report();
@@ -213,7 +213,7 @@ public class ParameterSearch {
 //        
 //        experiments.clear();
 //        for (int i = 0; i < 15; i++) {
-//            NAR a = new DefaultNARBuilder().build();
+//            NAR a = new Default().build();
 //            
 //            //a.param().contrapositionPriority.set(i);
 //            //System.out.println("contraposition priority=" + i + " = " + score(a));            
@@ -231,7 +231,7 @@ public class ParameterSearch {
 //
 //        experiments.clear();
 //        for (int i = 0; i < 100; i+=5) {
-//            NAR a = new DefaultNARBuilder().build();
+//            NAR a = new Default().build();
 //            
 //            //a.param().contrapositionPriority.set(i);
 //            //System.out.println("contraposition priority=" + i + " = " + score(a));            

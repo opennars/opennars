@@ -1,7 +1,7 @@
 package nars.test.util;
 
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.util.meter.Sensor;
 import nars.util.meter.sensor.CompositeIncidentTracker;
 import nars.util.meter.sensor.CompositeSpanTracker;
@@ -40,7 +40,7 @@ public class MeterTest {
         for (int i= 0; i < 2; i++) {
             cst.track();
             {
-                NAR n = new DefaultNARBuilder().build();
+                NAR n = new Default().build();
                 //Thread.sleep((int)(Math.random()*90));
             }
             cst.commit();            
@@ -63,7 +63,7 @@ public class MeterTest {
         
         for (int i= 0; i < 5; i++) {            
             {
-                NAR n = new DefaultNARBuilder().build();
+                NAR n = new Default().build();
                 //Thread.sleep((int)(Math.random()*90));
             }
             cst.incident();            

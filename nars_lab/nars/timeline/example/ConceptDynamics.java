@@ -51,17 +51,22 @@ public class ConceptDynamics extends TimelineExample {
                 switch (experiment) {
                     case 0:                        
                         DiscretinuousBagNARBuilder d = new DiscretinuousBagNARBuilder();
-                        d.setForgetMode(Memory.Forgetting.Periodic);                        
+                        d.param.setForgetting(Memory.Forgetting.Periodic);                        
                         nar = d.build();
-                        nar.param().conceptForgetDurations.set(5f);
+                        (nar.param).conceptForgetDurations.set(5f);
                         break;
                     case 1:
                         DiscretinuousBagNARBuilder e = new DiscretinuousBagNARBuilder();
-                        e.setForgetMode(Memory.Forgetting.Periodic);                        
+                        e.param.setForgetting(Memory.Forgetting.Periodic);                        
                         nar = e.build();
-                        nar.param().conceptForgetDurations.set(5f);                        
+                        (nar.param).conceptForgetDurations.set(5f);                        
                         break;
                     /*case 2:
+                        nar = new ContinuousBagNARBuilder().build();
+                        break;*/
+                    /*case 2:
+                        nar = new ContinuousBagNARBuilder().build();
+                        break;*/                    /*case 2:
                         nar = new ContinuousBagNARBuilder().build();
                         break;*/
                     /*case 2:

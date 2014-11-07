@@ -108,7 +108,7 @@ public class AntAttention extends WaveAttention {
                 return;
             }
                                     
-            concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
+            concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
             
             concept = c;
 
@@ -225,10 +225,10 @@ public class AntAttention extends WaveAttention {
             }
             
             if (viaLink instanceof TermLink) {
-                concept.termLinks.putBack((TermLink)viaLink, memory.param.beliefForgetDurations.getCycles(), memory);                               
+                concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.beliefForgetDurations), memory);                               
             }
             else if (viaLink instanceof TaskLink) {
-                concept.taskLinks.putBack((TaskLink)viaLink, memory.param.taskForgetDurations.getCycles(), memory);        
+                concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskForgetDurations), memory);        
             }
             
             eta = viaLink.getPriority();

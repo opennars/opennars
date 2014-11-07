@@ -23,7 +23,7 @@ public class NALPerfLoop {
           
         //NAR n = new NeuromorphicNARBuilder().setConceptBagSize(maxConcepts).build();
         //NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
-        //NAR n = new DefaultNARBuilder().setConceptBagSize(maxConcepts).build();
+        //NAR n = new Default().setConceptBagSize(maxConcepts).build();
         NAR n = new DiscretinuousBagNARBuilder().setConceptBagSize(maxConcepts).build();
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              

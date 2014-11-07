@@ -1,7 +1,7 @@
 package nars.test.multistep;
 
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
 import nars.gui.output.graph.ImplicationGraphCanvas;
@@ -18,11 +18,11 @@ public class RealtimeSequenceExperiment {
         int durationMS = 50;
         int cycPerFrame = 5;
         
-        NAR n = new DefaultNARBuilder().realTime().build();
+        NAR n = new Default().realTime().build();
                 
-        n.param().duration.set(durationMS);
-        n.param().noiseLevel.set(0);
-        n.param().decisionThreshold.set(0.9);
+        (n.param).duration.set(durationMS);
+        (n.param).noiseLevel.set(0);
+        (n.param).decisionThreshold.set(0.9);
         
         new NARSwing(n);
         new NWindow("Implication Graph", 

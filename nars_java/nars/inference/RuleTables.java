@@ -54,7 +54,6 @@ import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.storage.Bag;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -183,7 +182,7 @@ public class RuleTables {
                 for(int i=0;i<Parameters.TEMPORAL_CHAINING_ATTEMPTS;i++) {
                     
                     Task best=nal.memory.temporalCoherences.takeNext();
-                    nal.memory.temporalCoherences.putBack(best, memory.param.beliefForgetDurations.getCycles(), memory);
+                    nal.memory.temporalCoherences.putBack(best, memory.param.cycles(memory.param.beliefForgetDurations), memory);
                     
                     Sentence s=best.sentence;
                     Term t=s.content;

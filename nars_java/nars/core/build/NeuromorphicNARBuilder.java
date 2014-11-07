@@ -38,7 +38,7 @@ public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
 
     
     @Override
-    public Bag<Concept, Term> newConceptBag(Param p) {
+    public Bag<Concept, Term> newConceptBag() {
         //return new DelayBag(getConceptBagSize());
         return null;
     }
@@ -46,8 +46,8 @@ public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {
         
-        Bag<TaskLink,Task> taskLinks = new CurveBag<>(getTaskLinkBagSize(), true);
-        Bag<TermLink,TermLink> termLinks = new CurveBag<>(getTermLinkBagSize(), true);
+        Bag<TaskLink,Task> taskLinks = new CurveBag<>(getConceptTaskLinks(), true);
+        Bag<TermLink,TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), true);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }

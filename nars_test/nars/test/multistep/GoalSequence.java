@@ -1,7 +1,7 @@
 package nars.test.multistep;
 
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.io.TextOutput;
 
 /**
@@ -33,7 +33,7 @@ Any ideas of a strategy to generate statements like "(&/,a,b,c) =/> d" with temp
 public class GoalSequence {
 
     public static void main(String[] args) {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         new TextOutput(n, System.out);
         n.addInput("<a =/> b>. \n <b =/> c>. \n <c =/> d>.");
         n.finish(500);

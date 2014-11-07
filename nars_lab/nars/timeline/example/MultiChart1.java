@@ -17,7 +17,7 @@
 package nars.timeline.example;
 
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
 import nars.gui.output.timeline.Timeline2DCanvas;
@@ -35,7 +35,7 @@ public class MultiChart1 extends TimelineExample {
     public static void main(String[] args) {
         int cycles = 500;
         
-        NAR nar = new DefaultNARBuilder().build();
+        NAR nar = new Default().build();
         NARTrace t = new NARTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");
