@@ -6,7 +6,7 @@ package nars.test.multistep;
 
 import java.io.File;
 import nars.core.NAR;
-import nars.core.build.NeuromorphicNARBuilder;
+import nars.core.build.Neuromorphic;
 import nars.gui.NARSwing;
 import nars.io.TextInput;
 
@@ -20,7 +20,7 @@ public class AnalyzeAntAttention {
         
         boolean showOutput = true;
 
-        NAR nar = new NeuromorphicNARBuilder().build();
+        NAR nar = new Neuromorphic().build();
 
         nar.addInput(new TextInput(new File("nal/test/nal7.15.nal")));
             

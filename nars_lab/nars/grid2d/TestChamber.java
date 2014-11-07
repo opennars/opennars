@@ -4,7 +4,7 @@ import java.util.List;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.core.NARGenome;
+import nars.core.Build;
 import nars.core.build.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
@@ -35,7 +35,7 @@ public class TestChamber {
 
     
     public static void main(String[] args) {
-        NARGenome builder = new Default();
+        Build builder = new Default();
         
         //set NAR architecture parameters:
         //builder...

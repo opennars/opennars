@@ -14,13 +14,13 @@ import nars.storage.CurveBag;
 import nars.storage.LevelBag;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
-public class DiscretinuousBagNARBuilder extends Default {
+public class Discretinuous extends Default {
     private final boolean randomRemoval;
 
-    public DiscretinuousBagNARBuilder() {
+    public Discretinuous() {
         this(true);
     }
-    public DiscretinuousBagNARBuilder(boolean randomRemoval) {
+    public Discretinuous(boolean randomRemoval) {
         super();
         this.randomRemoval = randomRemoval;
     }

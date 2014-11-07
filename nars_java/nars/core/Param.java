@@ -5,7 +5,6 @@ import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.language.Interval.AtomicDuration;
 import com.google.common.util.concurrent.AtomicDouble;
-import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -17,11 +16,15 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import nars.core.NAR.PluginState;
 
 /**
  * NAR Parameters which can be changed during runtime.
  */
 public class Param implements Serializable {
+    
 
     public Param() {    }
 
@@ -39,7 +42,6 @@ public class Param implements Serializable {
 
     Timing timing;
     Forgetting forgetting;
-
     
     public static Param fromJSON(String json) {
         return Param.json.fromJson(json, Param.class);
@@ -71,8 +73,8 @@ public class Param implements Serializable {
     public final AtomicDouble decisionThreshold = new AtomicDouble();
 
 
-    /** How many concepts to fire each cycle */
-    public final AtomicInteger cycleConceptsFired = new AtomicInteger();
+    /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
+    public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
     
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public final AtomicInteger termLinkMaxMatched = new AtomicInteger();

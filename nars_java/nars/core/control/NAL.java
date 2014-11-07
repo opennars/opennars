@@ -4,7 +4,9 @@
  */
 package nars.core.control;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -37,6 +39,10 @@ public abstract class NAL implements Runnable {
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
 
+    /** stores the tasks added by this inference process */
+    protected List<Task> tasksAdded = new ArrayList();
+    //TODO tasksDicarded
+    
     public NAL(Memory mem) {
         super();
         this.memory = mem;
@@ -154,7 +160,7 @@ public abstract class NAL implements Runnable {
         }
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
-        memory.addNewTask(task, "Derived");
+        addTask(task, "Derived");
         return true;
     }
 
@@ -425,12 +431,28 @@ public abstract class NAL implements Runnable {
     public Memory mem() {
         return memory;
     }
-    //    public Future immediateProcess(Memory mem, Task t, ExecutorService exe) {
-    //        return exe.submit(new Runnable() {
-    //            @Override public void run() {
-    //                immediateProcess(mem, t);
-    //            }
-    //        });
-    //    }
+    
+    /** tasks added with this method will be remembered by this NAL instance; useful for feedback */
+    public void addTask(Task t, String reason) {
+        
+        memory.addNewTask(t, reason);
+        
+        tasksAdded.add(t);
+        
+    }
+    
+    /**
+     * Activated task called in MatchingRules.trySolution and
+     * Concept.processGoal
+     *
+     * @param budget The budget value of the new Task
+     * @param sentence The content of the new Task
+     * @param candidateBelief The belief to be used in future inference, for
+     * forward/backward correspondence
+     */
+    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {        
+        addTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
+                "Activated");        
+    }    
     
 }

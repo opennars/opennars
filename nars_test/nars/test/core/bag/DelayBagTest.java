@@ -5,7 +5,7 @@
 package nars.test.core.bag;
 
 import nars.core.NAR;
-import nars.core.build.NeuromorphicNARBuilder;
+import nars.core.build.Neuromorphic;
 import nars.storage.DelayBag;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -18,11 +18,12 @@ public class DelayBagTest {
     
     @Test 
     public void testIO() {
-        NAR n = new NeuromorphicNARBuilder().build();
+        NAR n = NAR.build(Neuromorphic.class);
+
         DelayBag b = new DelayBag(1000);
+        
         b.setMemory(n.memory);
         
-
         assertTrue(n.memory.concepts!=null);
         
     }

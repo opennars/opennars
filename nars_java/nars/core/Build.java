@@ -10,14 +10,16 @@ import nars.storage.Bag;
  * These do not change after initialization.
  * For runtime parameters, @see Param
  */
-abstract public class NARGenome extends Parameters  {
+abstract public class Build extends Parameters  {
      
+    public String type = "abstract";
+       
     public Param param = new Param();
     
     abstract public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag();
     abstract public Attention newAttention();
 
-    public NARGenome() {
+    public Build() {
     }
             
     

@@ -5,7 +5,7 @@ import nars.core.Memory;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
-import nars.core.NARGenome;
+import nars.core.Build;
 import nars.core.Param;
 import nars.core.Parameters;
 import nars.core.control.DefaultAttention;
@@ -30,7 +30,7 @@ import nars.storage.LevelBag;
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class Default extends NARGenome implements ConceptBuilder {
+public class Default extends Build implements ConceptBuilder {
 
     
     int taskLinkBagLevels;
@@ -61,6 +61,8 @@ public class Default extends NARGenome implements ConceptBuilder {
     
     public Default() {
         super();
+    
+        this.type = "level";
         
        // temporalPlanner(8, 64, 16);
         
@@ -88,6 +90,8 @@ public class Default extends NARGenome implements ConceptBuilder {
         param.conceptGoalsMax.set(7);
         param.conceptQuestionsMax.set(5);
         
+        param.conceptsFiredPerCycle.set(1);
+        
         param.termLinkMaxReasoned.set(3);
         param.termLinkMaxMatched.set(10);
         param.termLinkRecordLength.set(10);
@@ -100,6 +104,7 @@ public class Default extends NARGenome implements ConceptBuilder {
     
     }
 
+    
 
     public Default temporalPlanner(float searchDepth, int planParticles, int inlineParticles) {
         pluginPlanner = new TemporalParticlePlanner(searchDepth, planParticles, inlineParticles);
@@ -136,10 +141,7 @@ public class Default extends NARGenome implements ConceptBuilder {
 
         return n;
     }
-        
-    Attention newAttention(Param p, ConceptBuilder c) {
-        return new DefaultAttention(newConceptBag(), newSubconceptBag(), c);
-    }
+
 
     ConceptBuilder getConceptBuilder() {
         return this;

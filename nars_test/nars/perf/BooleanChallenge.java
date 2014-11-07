@@ -10,7 +10,7 @@ import nars.NARPrologMirror;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.Discretinuous;
 import nars.entity.Task;
 import nars.io.Output.OUT;
 import nars.io.TextOutput;
@@ -319,7 +319,7 @@ public class BooleanChallenge {
             
     public static void main(String[] args) {
         //NAR n = new DefaultNARBuilder().build();
-        NAR n = new DiscretinuousBagNARBuilder().build();
+        NAR n = new Discretinuous().build();
 
         
         new NARPrologMirror(n, 0.9f, true);

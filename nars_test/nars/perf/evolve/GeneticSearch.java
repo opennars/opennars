@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.CurveBagNARBuilder;
+import nars.core.build.Curve;
 import nars.core.build.Default;
-import nars.core.build.NeuromorphicNARBuilder;
+import nars.core.build.Neuromorphic;
 import nars.perf.NALTestScore;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLMethod;
@@ -209,10 +209,10 @@ public class GeneticSearch {
                 b = new Default();                
             }
             else if (builderType == 1) {
-                b = new NeuromorphicNARBuilder(conceptsFired /*ants */);                
+                b = new Neuromorphic(conceptsFired /*ants */);                
             }
             else if (builderType == 2) {
-                b = new CurveBagNARBuilder(true);
+                b = new Curve(true);
             }
             else {
                 throw new RuntimeException("Invalid Builder type " + builderType);
@@ -238,7 +238,7 @@ public class GeneticSearch {
             
             if (builderType != 1) {
                 //analogous to # of ants but in defaultbag
-                (n.param).cycleConceptsFired.set( conceptsFired );
+                (n.param).conceptsFiredPerCycle.set( conceptsFired );
             }
             
             /*if (prolog == 1) {
