@@ -14,8 +14,12 @@ public class ChangedTextInput  {
     }
 
     public boolean set(String s) {
+        return set(s, -1);
+    }
+    
+    public boolean set(String s, long time) {
         if ((last == null) || (!last.equals(s))) {
-            nar.addInput(s);
+            nar.addInput(s, time);
             last = s;
             return true;
         }

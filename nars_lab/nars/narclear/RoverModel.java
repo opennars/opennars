@@ -272,6 +272,8 @@ public class RoverModel {
         }
         
         protected void updatePerception() {
+            onTouch(hit, minDist);
+            
             if (hit == null) {
                 if (minDist > 0.5f) {
                     sight.set("<" + angleTerm + " --> Empty>. :|:");        
@@ -285,10 +287,10 @@ public class RoverModel {
             //float freq = 0.5f + 0.5f * di;
             float freq = 1f;
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-            String ss = "<(&&," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+            String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
             sight.set(ss);
             
-            onTouch(hit, minDist);
+            
         }
         
         public void onTouch(Body hit, float di) {

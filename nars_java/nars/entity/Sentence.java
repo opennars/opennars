@@ -22,6 +22,9 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +52,7 @@ import nars.operator.Operator;
  * It is used as the premises and conclusions of all inference rules.
  */
 public class Sentence<T extends Term> implements Cloneable {
+
 
     /**
      * The content of a Sentence is a Term
@@ -509,4 +513,28 @@ public class Sentence<T extends Term> implements Cloneable {
         return stamp.before(s.stamp, duration);
     }
 
+    public static final class ExpectationComparator implements Comparator<Sentence> {
+        final static ExpectationComparator the = new ExpectationComparator();
+        @Override public int compare(final Sentence b, final Sentence a) {
+            return Float.compare(a.truth.getExpectation(), b.truth.getExpectation());
+        }
+    }
+    public static final class ConfidenceComparator implements Comparator<Sentence> {
+        final static ExpectationComparator the = new ExpectationComparator();
+        @Override public int compare(final Sentence b, final Sentence a) {
+            return Float.compare(a.truth.getConfidence(), b.truth.getConfidence());
+        }
+    }
+    
+    public static List<Sentence> sortExpectation(Collection<Sentence> s) {
+        List<Sentence> l = new ArrayList(s);
+        Collections.sort(l, ExpectationComparator.the);
+        return l;
+    }
+    public static List<Sentence> sortConfidence(Collection<Sentence> s) {
+        List<Sentence> l = new ArrayList(s);
+        Collections.sort(l, ConfidenceComparator.the);
+        return l;
+    }
+    
 }

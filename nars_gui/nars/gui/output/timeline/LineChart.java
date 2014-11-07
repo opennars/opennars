@@ -46,12 +46,12 @@ public class LineChart extends Chart {
     }
 
     protected void updateRange(Timeline2DCanvas l) {
-        min = Double.NaN;
-        max = 0;
+        min = Double.POSITIVE_INFINITY;
+        max = Double.NEGATIVE_INFINITY;
         for (TimeSeries chart : sensors) {
             float[] mm = chart.getMinMax(l.cycleStart, l.cycleEnd);
-            min = mm[0];
-            max = mm[1];
+            min = Math.min(min,mm[0]);
+            max = Math.max(max,mm[1]);
         }
     }
 
