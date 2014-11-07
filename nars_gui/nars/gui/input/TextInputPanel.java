@@ -46,18 +46,17 @@ import javax.swing.event.DocumentListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import nars.core.NAR;
-import nars.core.control.AbstractTask;
 import nars.gui.FileTreeModel;
 import nars.gui.NARSwing;
 import nars.gui.NPanel;
 import nars.gui.NWindow;
+import nars.gui.input.TextInputPanel.InputAction;
+import nars.gui.input.TextInputPanel.TextInputMode;
 import static nars.gui.output.SwingLogPanel.setConsoleFont;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
-import nars.io.narsese.Narsese;
 import nars.io.narsese.NarseseParser;
-import nars.io.nlp.Englisch;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.support.MatcherPath;
@@ -322,6 +321,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         
     }
     
+    /*
     public class EnglishInput implements TextInputMode {
         private NAR nar;
         private String input = "";
@@ -363,13 +363,13 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         @Override
         public void getActions(List<InputAction> actionsCollected) {
             
-            /*
-            Actions:
-                interpret
-            */
+            
+            //Actions:
+            //    interpret
+            
 
         }
-    }
+    }*/
     
     private final NAR nar;
 
@@ -402,7 +402,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         this.nar = nar;
 
         modes.add(new NarseseInput());
-        modes.add(new EnglishInput());
+        //modes.add(new EnglishInput());
         modes.add(new NullInput());
         
         centerPanel = new JPanel(new BorderLayout());

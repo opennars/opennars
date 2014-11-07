@@ -13,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
+import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
 import nars.core.control.AbstractTask;
@@ -119,9 +120,6 @@ public class NAR implements Runnable, TaskSource {
     
     /**arbitrary data associated with this particular NAR instance can be stored here */
     public final HashMap data = new HashMap();
-        
-
-    public final Perception perception;
     
     
     private boolean inputting = true;
@@ -133,15 +131,12 @@ public class NAR implements Runnable, TaskSource {
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
     
-    public NAR(Memory m, Perception p) {
+    public NAR(Memory m) {
         this.memory = m;
-        this.perception = p;                
         
         //needs to be concurrent in case we change this while running
         inputChannels = new ArrayList();
         newInputChannels = new CopyOnWriteArrayList();
-    
-        this.perception.start(this);
 
     }
 
@@ -204,10 +199,13 @@ public class NAR implements Runnable, TaskSource {
             super(input, buffer, initialAttention);
         }
 
+        @Override public void perceive(final Object x) {
+            memory.emit(Perceive.class, this, x);
+        }
+        
         @Override
-        public Iterator<AbstractTask> process(final Object x) {
+        public Iterator<AbstractTask> postprocess(final Iterator<AbstractTask> at) {
             try {
-                Iterator<AbstractTask> at = perception.perceive(x);
                 if (creationTime == -1)
                     return at;
                 else {                    
@@ -589,16 +587,7 @@ public class NAR implements Runnable, TaskSource {
     public Param param() {
         return memory.param;
     }
-    
-    /** parses and returns a Term from a string; or null if parsing error */
-    public Term term(final String s) {        
-        try {
-            return perception.getText().narsese.parseTerm(s);
-        } catch (Narsese.InvalidInputException ex) {
-            emit(ERR.class, ex);
-        }
-        return null;
-    }
+       
 
     /** stops ad empties all input channels into a receiver. this
         results in no pending input. 

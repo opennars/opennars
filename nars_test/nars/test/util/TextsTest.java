@@ -12,6 +12,7 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 import nars.io.Texts;
+import nars.io.narsese.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Statement;
 import nars.language.Term;
@@ -82,11 +83,12 @@ public class TextsTest {
     }
     
     @Test
-    public void testRope() {
+    public void testRope() throws Narsese.InvalidInputException {
         NAR n = new DefaultNARBuilder().build();
+        Narsese np = new Narsese(n);
         
         String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
-        Term term1 = n.term(term1String);
+        Term term1 = np.parseTerm(term1String);
 
         Rope tr = (Rope)toString(term1);
         

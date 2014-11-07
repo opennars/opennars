@@ -16,6 +16,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
+import nars.io.DefaultTextPerception;
 import nars.language.Term;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
@@ -112,6 +113,8 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         
         NAR n = super.build();                
                 
+        n.addPlugin(new DefaultTextPerception());
+        
         if(pluginPlanner!=null) {
             n.addPlugin(pluginPlanner);
         }
