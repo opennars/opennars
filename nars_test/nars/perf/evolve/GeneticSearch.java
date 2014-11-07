@@ -235,8 +235,6 @@ public class GeneticSearch {
             n.param().conceptGoalsMax.set(i("conceptGoals"));
             n.param().conceptQuestionsMax.set(i("conceptQuestions"));
             
-            n.param().contrapositionPriority.set(i("contrapositionPriority"));
-            
             
             if (builderType != 1) {
                 //analogous to # of ants but in defaultbag

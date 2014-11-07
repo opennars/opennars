@@ -252,7 +252,7 @@ public class Predict1D {
     
     public void tick() {
         nar.addInput("<time --> now>. :|:");
-        nar.addInput("(--,(&&,(*,x,$v,y),(*,x,$v,n))).");
+        nar.addInput("(--,(&&,(*,x,#v,y),(*,x,#v,n))).");
         
     }
     
