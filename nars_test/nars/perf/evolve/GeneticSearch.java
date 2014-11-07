@@ -49,7 +49,7 @@ public class GeneticSearch {
     
     int maxCycles = 256;
     int populationSize = 16;
-    int generationsPerPopulation = 64;
+    int generationsPerPopulation = 16;
     
     
     public static class IntegerParameter {
@@ -104,18 +104,24 @@ public class GeneticSearch {
     static {
 
         param.add(new IntegerParameter("builderType", 0, 0)); //result will be % number types
-        param.add(new IntegerParameter("conceptMax", 16, 2048));
-        param.add(new IntegerParameter("subConceptMax", 16, 1024));
-        param.add(new IntegerParameter("conceptTaskLinks", 2, 100));
-        param.add(new IntegerParameter("conceptTermLinks", 2, 200));
+        param.add(new IntegerParameter("conceptMax", 900, 1100));
+        param.add(new IntegerParameter("subConceptMax", 1024, 1024));
+        param.add(new IntegerParameter("conceptTaskLinks", 15, 25));
+        param.add(new IntegerParameter("conceptTermLinks", 90, 110));
 
-        param.add(new IntegerParameter("conceptForgetDurations", 1, 5, false));
-        param.add(new IntegerParameter("termLinkForgetDurations", 1, 20, false));
-        param.add(new IntegerParameter("taskLinkForgetDurations", 1, 10, false));
+        param.add(new IntegerParameter("conceptForgetDurations", 1.5, 2.5, false));
+        param.add(new IntegerParameter("termLinkForgetDurations", 3, 5, false));
+        param.add(new IntegerParameter("taskLinkForgetDurations", 9, 11, false));
 
         param.add(new IntegerParameter("conceptsFiredPerCycle", 1, 1));
 
-        param.add(new IntegerParameter("cyclesPerDuration", 1, 16));
+        param.add(new IntegerParameter("cyclesPerDuration", 5, 5));
+
+        param.add(new IntegerParameter("conceptBeliefs", 5, 10));
+        param.add(new IntegerParameter("conceptGoals", 5, 10));
+        param.add(new IntegerParameter("conceptQuestions", 3, 6));
+        
+        param.add(new IntegerParameter("contrapositionPriority", 20, 40));
 
         //param.add(new IntegerParameter("prologEnable", 0, 1));
 
@@ -193,6 +199,8 @@ public class GeneticSearch {
             float taskForget = (float)d("taskLinkForgetDurations");
             int conceptsFired = i("conceptsFiredPerCycle");
             int duration = i("cyclesPerDuration");
+            
+                    
             //int prolog = get("prologEnable");
             
             DefaultNARBuilder b;
@@ -221,6 +229,14 @@ public class GeneticSearch {
             n.param().conceptForgetDurations.set(conceptForget);
             n.param().taskForgetDurations.set(taskForget);
             n.param().beliefForgetDurations.set(beliefForget);
+
+            
+            n.param().conceptBeliefsMax.set(i("conceptBeliefs"));
+            n.param().conceptGoalsMax.set(i("conceptGoals"));
+            n.param().conceptQuestionsMax.set(i("conceptQuestions"));
+            
+            n.param().contrapositionPriority.set(i("contrapositionPriority"));
+            
             
             if (builderType != 1) {
                 //analogous to # of ants but in defaultbag
@@ -322,10 +338,14 @@ public class GeneticSearch {
         
         FileOutputStream fos = new FileOutputStream(file);
         PrintStream ps = new PrintStream(fos);
+        
+        
+        
         System.setOut(ps);
         
         
         System.out.println(param);
+        
 
         System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new DefaultNARBuilder().build() ));
         
@@ -337,9 +357,11 @@ public class GeneticSearch {
             genetic.setShouldIgnoreExceptions(true);
             genetic.setThreadCount(1);
 
-            genetic.addOperation(0.4, new Splice(3));
-            genetic.addOperation(0.04, new MutateShuffle());            
-            genetic.addOperation(0.9, new MutatePerturb(0.04f));
+            genetic.addOperation(0.1, new Splice(3));
+            genetic.addOperation(0.1, new Splice(2));
+            genetic.addOperation(0.1, new Splice(1));
+            genetic.addOperation(0.1, new MutateShuffle());            
+            genetic.addOperation(0.5, new MutatePerturb(0.2f));
 
 
             for (int i = 0; i < generationsPerPopulation; i++) {

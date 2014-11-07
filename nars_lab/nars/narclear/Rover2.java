@@ -366,6 +366,8 @@ public class Rover2 extends PhysicsModel {
                 setNovelTaskBagLevels(10).
                 simulationTime().
                 build();
+        
+        
 
         float framesPerSecond = 30f;
         int cyclesPerFrame = 100; //was 200        

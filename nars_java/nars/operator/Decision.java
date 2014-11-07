@@ -12,6 +12,8 @@ import nars.language.Term;
  * Each invocation of the operator effectively casts a vote towards one of the results.
  * After some time, the decision can be decided and the state reset.
  * Different policies determine which decision is selected.
+ * 
+ * TODO not complete yet
  */
 abstract public class Decision extends Operator {
 

@@ -4,11 +4,12 @@
  */
 package nars.test.util;
 
-import nars.NARProlog;
 import nars.NARPrologMirror;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.DefaultNARBuilder;
 import nars.test.core.NALTestSome;
+import org.junit.Test;
 
 /**
  *
@@ -16,13 +17,13 @@ import nars.test.core.NALTestSome;
  */
 public class NARPrologMirrorTest {
     
-    public static void main(String[] args) throws Exception {
-        
+    @Test
+    public void testMultistep() {
         boolean prolog = true;
         boolean showOutput = true;
+        Parameters.DEBUG = true;
         
         new NALTestSome("nal/test/nal1.multistep.nal", showOutput) {
-        //new NALTestSome("nal/test/nars_multistep_1.nal", showOutput) {
 
             @Override
             public NAR newNAR() {
