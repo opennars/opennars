@@ -26,7 +26,7 @@ import nars.core.Events;
 import nars.core.Events.ConceptFire;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Concept;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
@@ -158,7 +158,7 @@ public class ConceptIntegratorExample extends TimelineExample {
     public static void main(String[] args) throws Exception {
         int cycles = 500;
                 
-        NAR nar = new DefaultNARBuilder().build();
+        NAR nar = new Default().build();
         NARTrace t = new NARTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");

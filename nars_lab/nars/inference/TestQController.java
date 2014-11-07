@@ -54,7 +54,7 @@ public class TestQController {
             super(n, period);
                         
             
-            Param p = nar.param();
+            Param p = nar.param;
             
             add(new NControlSensor(p.conceptForgetDurations, 3));
             //add(new NControlSensor(p.beliefCyclesToForget, 2));
@@ -96,7 +96,7 @@ public class TestQController {
 
         @Override
         protected void act(int action) {
-            Param p = nar.param();
+            Param p = nar.param;
             
             
             switch (action) {
@@ -145,7 +145,7 @@ public class TestQController {
     }
     
     public static NAR newNAR() {
-        //return new DefaultNARBuilder().build();        
+        //return new Default().build();        
         return new DiscretinuousBagNARBuilder().setConceptBagSize(8192).build();        
     }
     
@@ -212,7 +212,7 @@ public class TestQController {
             m.step(1);
             r.step(1);
             
-            avgCycleToForget += ((double)n.param().conceptForgetDurations.get()) / displayCycles;
+            avgCycleToForget += ((double)(n.param).conceptForgetDurations.get()) / displayCycles;
             mm += qm.reward();
             nn += qn.reward();
             rr += qr.reward();

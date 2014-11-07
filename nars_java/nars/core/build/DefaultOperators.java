@@ -1,5 +1,7 @@
-package nars.operator;
+package nars.core.build;
 
+import nars.operator.NullOperator;
+import nars.operator.Operator;
 import nars.operator.io.Say;
 import nars.operator.math.Add;
 import nars.operator.math.Count;

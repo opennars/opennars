@@ -91,8 +91,8 @@ public class TicTacToe extends JPanel {
         new NARPrologMirror(nar, 0.75f, true).temporal(false, true);
         
         nar.memory.addOperator(new AddO("^addO"));        
-        nar.param().duration.set(1000);
-        nar.param().noiseLevel.set(0);
+        (nar.param).duration.set(1000);
+        (nar.param).noiseLevel.set(0);
         
         new NARSwing(nar);    
         nar.start(30, 2000);

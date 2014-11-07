@@ -1,4 +1,7 @@
-package nars.operator;
+package nars.core.build;
+
+import nars.operator.NullOperator;
+import nars.operator.Operator;
 
 /**
  * Operators for NAL8 Examples

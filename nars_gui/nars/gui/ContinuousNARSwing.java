@@ -24,7 +24,7 @@ public class ContinuousNARSwing {
 
         @Override
         public void setParameters() {
-            Param p = nar.param();
+            Param p = nar.param;
             //int c = (int)Math.sqrt(numConcepts);
             
             p.conceptForgetDurations.set(2);             

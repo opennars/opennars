@@ -2,7 +2,7 @@ package nars.test.core.bag;
 
 import nars.core.Memory;
 import nars.core.Param;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Item;
 import nars.perf.BagPerf.NullItem;
 import nars.storage.Bag;
@@ -21,7 +21,7 @@ import org.junit.Test;
  */
 public class CurveBagTest {
     
-    Param p = new DefaultNARBuilder().build().param();
+    Param p = new Default().build().param;
     final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test 

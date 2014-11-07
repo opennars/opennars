@@ -124,7 +124,7 @@ public class NARPrologMirror extends AbstractObserver {
     protected void updateBeliefs() {
         if (presentJudgments) {
             long now = nar.time();
-            durationCycles = nar.param().duration.get();
+            durationCycles = (nar.param).duration.get();
             if (now - lastFlush > (long)(durationCycles/ durationDivider) ) {
                 
                 Set<Sentence> toRemove = new HashSet();

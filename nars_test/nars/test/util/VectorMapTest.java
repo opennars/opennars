@@ -3,7 +3,7 @@ package nars.test.util;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleStart;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.util.signal.DenoisingAutoencoder;
 import nars.util.signal.UniformVector;
 import nars.util.signal.VectorMap;
@@ -19,7 +19,7 @@ public class VectorMapTest {
  
     @Test 
     public void testUniformVector() {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         
         double[] d = new double[3];
         
@@ -42,7 +42,7 @@ public class VectorMapTest {
     
     @Test
     public void testAE() {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         
         
         

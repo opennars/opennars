@@ -6,7 +6,7 @@ package nars.test.core;
 
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.io.TextOutput;
 import nars.test.core.NALTest.ExpectContains;
 import static org.junit.Assert.assertTrue;
@@ -21,7 +21,7 @@ public class TemporalOrderTest {
     @Test 
     public void testFutureQuestion() {
         Parameters.DEBUG = true;
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         new TextOutput(n, System.out);
         
         n.addInput("<e --> f>. :/:");

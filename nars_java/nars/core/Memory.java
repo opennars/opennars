@@ -244,17 +244,40 @@ public class Memory implements Serializable {
     transient private Set<Task> questionsConjunction = new HashSet();
     
     
+    private class MemoryEventEmitter extends EventEmitter {        
+        @Override public void emit(final Class eventClass, final Object... params) {
+            super.emit(eventClass, params); 
+
+            if (eventClass == Events.ConceptQuestionAdd.class) {                    
+                //Concept c = params[0];
+                Task t = (Task)params[1];
+                Term term = t.getContent();
+                if (term instanceof Conjunction) {
+                    questionsConjunction.add(t);
+                }
+            }
+            else if (eventClass == Events.ConceptQuestionAdd.class) {
+                //Concept c = params[0];
+                Task t = (Task)params[1];
+                Term term = t.getContent();
+                if (term instanceof Conjunction) {
+                    questionsConjunction.remove(t);
+                }
+            }
+        }
+    }
+    
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, Attention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks, Operator[] initialOperators) {                
+    public Memory(Param param, Attention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
 
         this.param = param;
         
-        this.event = newEventEmitter();
+        this.event = new MemoryEventEmitter();
         
         this.concepts = concepts;
         this.concepts.init(this);
@@ -329,72 +352,9 @@ public class Memory implements Serializable {
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
                 
-
-        
-        
-        // create self
-        //this.self = conceptualize(new BudgetValue(0.5f, 0.5f, 0.5f), new Term(Symbols.SELF)).term;
-
-        for (Operator o : initialOperators)
-            addOperator(o);
                 
         reset();
 
-    }
-
-    protected EventEmitter newEventEmitter() {
-        //TODO use reflection to get all subclasses
-        return new EventEmitter(
-                Events.FrameStart.class,
-                Events.FrameEnd.class,
-                Events.CycleStart.class,
-                Events.CycleEnd.class,
-                Events.WorkCycleStart.class,
-                Events.WorkCycleEnd.class,
-                ResetStart.class,
-                ResetEnd.class,
-                Events.ConceptNew.class,
-                Events.ConceptForget.class,
-                Events.ConceptBeliefAdd.class,
-                Events.ConceptBeliefRemove.class,
-                Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class,
-                Events.ConceptQuestionAdd.class,
-                Events.ConceptQuestionRemove.class,
-                Events.ConceptDirectProcessedTask.class,
-                Events.TaskAdd.class,
-                Events.TaskRemove.class,
-                Events.TaskDerive.class,
-                Events.PluginsChange.class                
-        ) {
-
-            @Override
-            public void emit(Class eventClass, Object... params) {
-                super.emit(eventClass, params); 
-                
-                //directly access events here, 
-                //for slightly more efficient than attaching a handler for Memory's use
-                    
-                if (eventClass == Events.ConceptQuestionAdd.class) {                    
-                    //Concept c = params[0];
-                    Task t = (Task)params[1];
-                    Term term = t.getContent();
-                    if (term instanceof Conjunction) {
-                        questionsConjunction.add(t);
-                    }
-                }
-                else if (eventClass == Events.ConceptQuestionAdd.class) {
-                    //Concept c = params[0];
-                    Task t = (Task)params[1];
-                    Term term = t.getContent();
-                    if (term instanceof Conjunction) {
-                        questionsConjunction.remove(t);
-                    }
-                    //System.out.println("Q-" + Arrays.toString(params));
-                }
-            }
-          
-        };
     }
     
     public void reset() {

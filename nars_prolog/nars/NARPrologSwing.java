@@ -1,7 +1,7 @@
 package nars;
 
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.gui.NARSwing;
 
 /**
@@ -15,7 +15,7 @@ public class NARPrologSwing extends NARSwing {
     }
     
     public static void main(String[] args) {
-        NAR pn = new DefaultNARBuilder().build();
+        NAR pn = new Default().build();
         PrologContext prologContext = new PrologContext(pn);
         
         new NARPrologSwing(pn);

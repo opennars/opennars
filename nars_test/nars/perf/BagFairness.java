@@ -8,7 +8,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Param;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.core.control.DefaultAttention;
 import nars.entity.Concept;
 import nars.gui.NWindow;
@@ -180,10 +180,10 @@ public class BagFairness {
     }
     
     public static void main(String[] args) {
-        NAR n = new DefaultNARBuilder() {
+        NAR n = new Default() {
 
             @Override
-            protected Bag<Concept, Term> newConceptBag(Param p) {
+            public Bag<Concept, Term> newConceptBag() {
                 return new AdaptiveContinuousBag(getConceptBagSize());
             }
             

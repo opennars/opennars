@@ -1,7 +1,7 @@
 package nars.test.util;
 
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.util.NARTrace;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -14,7 +14,7 @@ public class InferenceTracerTest {
     
     @Test
     public void testConceptAndTask() {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         
         NARTrace tracer = new NARTrace(n);        
         
@@ -34,7 +34,7 @@ public class InferenceTracerTest {
     
     @Test
     public void test2() {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         
         NARTrace tracer = new NARTrace(n);
         

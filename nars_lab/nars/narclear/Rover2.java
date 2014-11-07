@@ -353,10 +353,9 @@ public class Rover2 extends PhysicsModel {
         Parameters.DEBUG = false;
         Parameters.THREADS = 1;
 
-        //NAR nar = new DefaultNARBuilder().
+        //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
-        NAR nar = new DiscretinuousBagNARBuilder().
-                temporalPlanner(8, 64, 16).
+        NAR nar = new DiscretinuousBagNARBuilder().temporalPlanner(8, 64, 16).
         //NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
                 setConceptBagSize(1000).
@@ -371,12 +370,12 @@ public class Rover2 extends PhysicsModel {
 
         float framesPerSecond = 30f;
         int cyclesPerFrame = 100; //was 200        
-        nar.param().noiseLevel.set(0);
-        nar.param().duration.set(cyclesPerFrame);
-        nar.param().conceptForgetDurations.set(5f);
-        nar.param().taskForgetDurations.set(10f);
-        nar.param().beliefForgetDurations.set(25f);
-        nar.param().newTaskForgetDurations.set(5f);
+        (nar.param).noiseLevel.set(0);
+        (nar.param).duration.set(cyclesPerFrame);
+        (nar.param).conceptForgetDurations.set(5f);
+        (nar.param).taskForgetDurations.set(10f);
+        (nar.param).beliefForgetDurations.set(25f);
+        (nar.param).newTaskForgetDurations.set(5f);
 
         //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
         //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);

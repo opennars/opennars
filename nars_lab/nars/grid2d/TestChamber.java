@@ -4,8 +4,8 @@ import java.util.List;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.core.NARBuilder;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.NARGenome;
+import nars.core.build.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import static nars.grid2d.Hauto.DOWN;
@@ -35,7 +35,7 @@ public class TestChamber {
 
     
     public static void main(String[] args) {
-        NARBuilder builder = new DefaultNARBuilder();
+        NARGenome builder = new Default();
         
         //set NAR architecture parameters:
         //builder...
@@ -43,8 +43,8 @@ public class TestChamber {
         NAR nar = builder.build();
         
         //set NAR runtime parmeters: 
-        nar.param().duration.set(10);
-        nar.param().noiseLevel.set(0); 
+        (nar.param).duration.set(10);
+        (nar.param).noiseLevel.set(0); 
         new NARSwing(nar);
 
         new TestChamber(nar);

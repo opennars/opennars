@@ -7,7 +7,7 @@ package nars.test.util;
 import nars.NARPrologMirror;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.test.core.NALTestSome;
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class NARPrologMirrorTest {
 
             @Override
             public NAR newNAR() {
-                NAR nar = new DefaultNARBuilder().build();
+                NAR nar = new Default().build();
 
                 if (prolog) {
                     new NARPrologMirror(nar, 0.5f, true).temporal(true, true);

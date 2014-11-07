@@ -121,7 +121,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         this.memory.event.on(CycleEnd.class, this);
         
         //This assumes the bag is used for concepts:
-        this.latencyMin = m.param.conceptForgetDurations.getCycles();
+        this.latencyMin = m.param.cycles(memory.param.conceptForgetDurations);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         int j = 0;
         int iterations = 0;
         int maxIterations = size();
-        float forgetCycles = memory.param.beliefForgetDurations.getCycles();
+        float forgetCycles = memory.param.cycles(memory.param.beliefForgetDurations);
         int originalSize = size();
         
         numPriorityThru = 0;

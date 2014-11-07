@@ -37,7 +37,7 @@ public class KIFExample {
                 .build();
                 
         
-        n.param().noiseLevel.set(40);
+        (n.param).noiseLevel.set(40);
         
         KIFInput k = new KIFInput("/home/me/sigma/KBs/Merge.kif");
         k.setIncludeSubclass(true);

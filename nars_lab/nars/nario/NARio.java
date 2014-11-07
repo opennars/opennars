@@ -53,7 +53,7 @@ public class NARio extends Run {
     }
 
     public static void main(String[] arg) {
-        //NAR nar = new DefaultNARBuilder().realtime().build();
+        //NAR nar = new Default().realtime().build();
         
         NAR nar = new DiscretinuousBagNARBuilder().simulationTime().
                 /*temporalPlanner(12,64,16).*/build();
@@ -74,8 +74,8 @@ public class NARio extends Run {
         
         //new TextOutput(nar, System.out).setShowInput(true);
         int memCyclesPerFrame = 200;
-        nar.param().duration.set(memCyclesPerFrame*2); //2 frames seems good
-        nar.param().noiseLevel.set(0);
+        (nar.param).duration.set(memCyclesPerFrame*2); //2 frames seems good
+        (nar.param).noiseLevel.set(0);
         
         float fps = 20f;
         gameRate = 1.0f / fps;

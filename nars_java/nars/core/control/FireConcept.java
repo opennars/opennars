@@ -6,7 +6,6 @@ package nars.core.control;
 
 import nars.core.Events;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TaskLink;
@@ -70,7 +69,7 @@ abstract public class FireConcept extends NAL {
     
     protected void returnTaskLink(TaskLink t) {
         currentConcept.taskLinks.putBack(t, 
-                memory.param.taskForgetDurations.getCycles(), memory);
+                memory.param.cycles(memory.param.taskForgetDurations), memory);
         
     }
     

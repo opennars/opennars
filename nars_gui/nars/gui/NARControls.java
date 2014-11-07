@@ -655,7 +655,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             @Override
             public void onChange(float v) {
                 int level = (int) v;
-                nar.param().noiseLevel.set(level);
+                (nar.param).noiseLevel.set(level);
             }
 
         };

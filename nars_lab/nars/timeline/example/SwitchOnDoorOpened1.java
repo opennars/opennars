@@ -19,7 +19,7 @@ package nars.timeline.example;
 import java.io.File;
 import java.io.IOException;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
@@ -42,7 +42,7 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         int cycles = 1000;
         int inputDelay = 5;
         
-        NAR nar = new DefaultNARBuilder().build();
+        NAR nar = new Default().build();
         new TestChamber(nar, false);
         
         NARTrace t = new NARTrace(nar);

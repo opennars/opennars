@@ -12,7 +12,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.io.TextOutput;
 import nars.util.PrintWriterInput;
 
@@ -483,7 +483,7 @@ public class OWLInput extends PrintWriterInput {
     }
 
     public static void main(String[] args) throws Exception {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
 
         new TextOutput(n, System.out);
 

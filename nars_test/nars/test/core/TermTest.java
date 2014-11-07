@@ -18,7 +18,7 @@ package nars.test.core;
 
 import java.util.TreeSet;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Concept;
 import nars.io.Texts;
 import nars.io.narsese.Narsese;
@@ -35,12 +35,12 @@ import org.junit.Test;
  */
 public class TermTest {
     
-    NAR n = new DefaultNARBuilder().build();
+    NAR n = new Default().build();
     Narsese np = new Narsese(n);
     
     protected void assertEquivalent(String term1String, String term2String) {
         try {
-            NAR n = new DefaultNARBuilder().build();
+            NAR n = new Default().build();
 
             Term term1 = np.parseTerm(term1String);
             Term term2 = np.parseTerm(term2String);
@@ -58,7 +58,7 @@ public class TermTest {
     
     @Test
     public void testCommutativeCompoundTerm() throws Exception {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
@@ -68,7 +68,7 @@ public class TermTest {
     
     @Test
     public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         
         
             
@@ -125,7 +125,7 @@ public class TermTest {
     
     @Test
     public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException {
-       NAR n = new DefaultNARBuilder().build();
+       NAR n = new Default().build();
         
        String term1String ="<a --> b>";
        Term term1 = np.parseTerm(term1String);
@@ -144,7 +144,7 @@ public class TermTest {
     
     @Test
     public void testConceptInstancing() throws Narsese.InvalidInputException {
-       NAR n = new DefaultNARBuilder().build();
+       NAR n = new Default().build();
         
        String statement1 = "<a --> b>.";
        
@@ -179,7 +179,7 @@ public class TermTest {
     public void testEscaping() {        
         bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
         
-//        NAR n = new DefaultNARBuilder().build();
+//        NAR n = new Default().build();
 //        n.addInput("<a --> \"b c\">.");
 //        n.step(1);
 //        n.finish(1);

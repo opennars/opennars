@@ -46,9 +46,9 @@ public interface DataSet extends DataContainer {
         //public static final String STDEV = "stdDev";
 
         /**
-         * Default values for standard field names.
+         * DefaultField values for standard field names.
          */
-        interface Default {
+        interface DefaultField {
 
             public static final Long HITS = 0L;
             public static final Long FIRST_HIT_STAMP = -1L;

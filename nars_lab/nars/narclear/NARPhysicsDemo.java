@@ -3,7 +3,7 @@ package nars.narclear;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.language.Term;
@@ -134,7 +134,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         
         
         if (t < trainingPeriod) {
-            nar.param().decisionThreshold.set(0.75);
+            (nar.param).decisionThreshold.set(0.75);
             if (t % actionTestPeriod == 0) {
                 cangle++;
                 if (cangle > numAngles) {
@@ -144,7 +144,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
             }
         }
         else if (t == trainingPeriod) {
-            nar.param().decisionThreshold.set(decisionThreshold);
+            (nar.param).decisionThreshold.set(decisionThreshold);
             System.out.println(); System.out.println(); System.out.println(); System.out.println();
             System.out.println("AUTONOMOUS");
             System.out.println(); System.out.println(); System.out.println(); System.out.println();
@@ -174,10 +174,10 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     }
 
     public static void main(String[] args) {
-        NAR n = new DefaultNARBuilder().build();
-        n.param().duration.set(20);
-        n.param().decisionThreshold.set(0);
-        n.param().noiseLevel.set(5);
+        NAR n = new Default().build();
+        (n.param).duration.set(20);
+        (n.param).decisionThreshold.set(0);
+        (n.param).noiseLevel.set(5);
         //PhysicsModel model = new Car();
         //model = new LiquidTimer();
         

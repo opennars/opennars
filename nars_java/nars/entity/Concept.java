@@ -748,7 +748,7 @@ public class Concept extends Item<Term> {
     }
 
     public void returnTermLink(TermLink termLink) {
-        termLinks.putBack(termLink, memory.param.beliefForgetDurations.getCycles(), memory);
+        termLinks.putBack(termLink, memory.param.cycles(memory.param.beliefForgetDurations), memory);
     }
 
     /**

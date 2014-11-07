@@ -41,10 +41,10 @@ public class Interval extends Term {
          *  Since duration is now adjustable, this factor approximates the same result
          *  with regard to a "normalized" interval scale determined by duration.
          */
-        final double subDurationResolution = 0.5;
+        final double linear = 0.5;
         
-        double log; //caches the value here
-        int lastValue = -1;
+        transient double log; //caches the value here
+        transient int lastValue = -1;
 
         public AtomicDuration() {
             super();
@@ -59,7 +59,7 @@ public class Interval extends Term {
             int val = get();
             if (lastValue != val) {
                 lastValue = val;
-                this.log = Math.log( val * subDurationResolution );
+                this.log = Math.log(val * linear );
             }
             return log;
         }

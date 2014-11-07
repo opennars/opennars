@@ -1,7 +1,7 @@
 package nars.rl;
 
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
@@ -16,7 +16,7 @@ public class RLNAR extends RLAgent {
     int thoughtCycles = 1000;
 
     public static void main(String[] args) {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
 
         AgentLoader L = new AgentLoader(new RLNAR(n));
         L.run();

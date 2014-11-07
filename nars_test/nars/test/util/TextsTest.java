@@ -2,7 +2,7 @@ package nars.test.util;
 
 import static java.lang.String.valueOf;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.TruthValue;
@@ -84,7 +84,7 @@ public class TextsTest {
     
     @Test
     public void testRope() throws Narsese.InvalidInputException {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new Default().build();
         Narsese np = new Narsese(n);
         
         String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";

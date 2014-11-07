@@ -120,7 +120,7 @@ public class DefaultAttention implements Attention {
         return new FireConcept(memory, currentConcept, 1) {
             
             @Override public void onFinished() {
-                float forgetCycles = memory.param.conceptForgetDurations.getCycles();
+                float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
 
                 concepts.putBack(currentConcept, forgetCycles, memory);
             }
@@ -255,7 +255,7 @@ public class DefaultAttention implements Attention {
         }
 
         
-        Concept displaced = concepts.putBack(concept, memory.param.conceptForgetDurations.getCycles(), memory);
+        Concept displaced = concepts.putBack(concept, memory.param.cycles(memory.param.conceptForgetDurations), memory);
                 
         if (displaced == null) {
             //added without replacing anything
@@ -284,7 +284,7 @@ public class DefaultAttention implements Attention {
     @Override public void activate(final Concept c, final BudgetValue b, Activating mode) {
         concepts.take(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
-        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
+        concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
     }
     
 //    @Override
