@@ -155,9 +155,11 @@ public class RuleTables {
         final Term beliefTerm = bLink.target;       // cloning for substitution
         
         
-        //CONTRAPOSITION
+        //CONTRAPOSITION //TODO: put into rule table
         if ((taskTerm instanceof Statement) && (taskTerm instanceof Implication) && (taskSentence.isJudgment())) {
-            StructuralRules.contrapositionAttempts((Statement)taskTerm, taskSentence, nal); 
+            if(((Statement)taskTerm).getSubject() instanceof Negation && bLink.target.equals(((Statement)taskTerm).getSubject())) { 
+                StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
+            } 
         }        
 
         
@@ -820,11 +822,11 @@ public class RuleTables {
             }            
         } 
         
-        /*else if ((statement instanceof Implication) && (compound instanceof Negation)) {
+       /* else if ((statement instanceof Implication) && (compound instanceof Negation)) {
             if (index == 0) {
-                StructuralRules.contraposition(statement, memory.getCurrentTask().getSentence(), memory);
+                StructuralRules.contraposition(statement, nal.getCurrentTask().sentence, nal);
             } else {
-                StructuralRules.contraposition(statement, memory.getCurrentBelief(), memory);
+                StructuralRules.contraposition(statement, nal.getCurrentBelief(), nal);
             }        
         }*/
         

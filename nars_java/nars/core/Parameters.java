@@ -36,10 +36,8 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f; //how much =/> should be gained
-    public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.0f; //how much =/> should be gained
-    
-    
+    public static double TEMPORAL_COHERENCE_PRIORITY=0.1; //how much priority should finding temporal coherences have?
+    //TODO: also remove contraposition priority, let it use termlink to subject
     //can only be activated in plugin menu no,
     public static boolean INTERNAL_EXPERIENCE=false;
     //so dont change these two to true
