@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
 
 
 @RunWith(Parameterized.class)
-public class NALTest  {
+public class NALTestDecisionMaking  {
         
 
     static {
@@ -139,20 +139,9 @@ public class NALTest  {
     public static Collection params() {
         Map<String,Object> l = new TreeMap();
         
-        File folder = new File("nal/test");
+        File folder = new File("nal/DecisionMaking");
         
         for (final File file : folder.listFiles()) {
-            if (file.getName().equals("README.txt"))
-                continue;
-            if(!("extra".equals(file.getName()))) {
-                addTest(file.getName());
-                l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
-            }
-        }
-        
-        File folder2 = new File("nal/DecisionMaking");
-        
-        for (final File file : folder2.listFiles()) {
             if (file.getName().equals("README.txt"))
                 continue;
             if(!("extra".equals(file.getName()))) {
@@ -238,11 +227,11 @@ public class NALTest  {
     
     public static void main(String[] args) {
         
-        runTests(NALTest.class);
+        runTests(NALTestDecisionMaking.class);
 
     }
 
-    public NALTest(String scriptPath) {        
+    public NALTestDecisionMaking(String scriptPath) {        
         this.scriptPath = scriptPath;
         
     }
