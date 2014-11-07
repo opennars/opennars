@@ -51,6 +51,8 @@ public class TemporalParticlePlanner implements Plugin, Observer {
     /**
      * global plan search parameters
      */
+    public static boolean used=false; //cause decison making breaks if conjunction sequence is added when planner is not active
+    
     float searchDepth;
     int planParticles;
 
@@ -241,6 +243,7 @@ public class TemporalParticlePlanner implements Plugin, Observer {
         this.executive = n.memory.executive;
         this.graph = executive.graph;
         
+        used=enabled;
         n.memory.event.set(this, enabled, 
                 UnexecutableGoal.class, 
                 UnexecutableOperation.class);

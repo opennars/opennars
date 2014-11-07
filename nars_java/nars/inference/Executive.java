@@ -45,6 +45,7 @@ import nars.operator.mental.Wonder;
 import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
 import nars.plugin.mental.Abbreviation.Abbreviate;
+import nars.plugin.mental.TemporalParticlePlanner;
 
 /**
  * Operation execution and planning support. Strengthens and accelerates
@@ -399,7 +400,7 @@ public class Executive {
 
             Term content = concept.term;
 
-            if ((content instanceof Operation) || isSequenceConjunction(content)) {
+            if ((content instanceof Operation) || (TemporalParticlePlanner.used && isSequenceConjunction(content))) {
                 addExecution(concept, t);
             } 
         } else {
