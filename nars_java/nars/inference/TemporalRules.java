@@ -156,7 +156,10 @@ public class TemporalRules {
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
     public static boolean temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
-        //TODO prevent trying question sentences, may cause NPE
+        
+        //prevent trying question sentences, causes NPE
+        if ((s1.truth == null) || (s2.truth == null))
+            return false;
         
         //try if B1 unifies with B2, if yes, create new judgement
         Implication S1=(Implication) s1.content;

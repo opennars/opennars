@@ -103,7 +103,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         Arrays.fill(levelEmpty, true);
 
         DISTRIBUTOR = Distributor.get(this.levels).order;
-
+        distributorLength = DISTRIBUTOR.length;        
+ 
         clear();
     }
 
@@ -286,46 +287,30 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 //        return (level == null) || (level.isEmpty());
 //    }
 
-    final public int nextNonEmptyLevel(int levelIndex) {
-        //group this code into one function so it hopefully gets inlined */
-        final int distributorLength = DISTRIBUTOR.length;        
+
+    final int distributorLength;
+    
+    /** look for a non-empty level */
+    protected final void nextNonEmptyLevel() {
+               
         int cl = currentLevel;
 
-        do {
-            cl = DISTRIBUTOR[((levelIndex++) % distributorLength)];            
-        } while (levelEmpty[cl]); //levelEmpty[currentLevel));
+        do {                        
+        } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % distributorLength]]);
 
-        currentLevel = cl; //write to object outside of the loop
-
-        return levelIndex;
-    }
-
-    protected void nextNonEmptyLevel() {
-        // look for a non-empty level
-        if (size() == 1) {
-            //optimized case: only one item - just find the next non-empty level
-            int levelsTraversed = 0;
-            do {
-                currentLevel = (currentLevel + 1) % levels;
-                levelsTraversed++;
-            } while (levelEmpty[currentLevel]);
-            levelIndex = (levelIndex + levelsTraversed) % DISTRIBUTOR.length;
-        } else {
-            levelIndex = nextNonEmptyLevel(levelIndex);
-        }
-
+        currentLevel = cl;
+        
         if (currentLevel < THRESHOLD) { // for dormant levels, take one item
             currentCounter = 1;
         } else {                  // for active levels, take all current items
-            currentCounter = getLevelSize(currentLevel);
+            currentCounter = getNonEmptyLevelSize(currentLevel);
         }
     }
 
     @Override
     public E peekNext() {
         if (size() == 0) return null; // empty bag                
-        
-        
+                
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }
@@ -360,6 +345,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return selected;
     }
 
+    public int getNonEmptyLevelSize(final int level) {
+        return this.level[level].size();
+    }
     public int getLevelSize(final int level) {
         return (levelEmpty[level]) ? 0 : this.level[level].size();
     }
