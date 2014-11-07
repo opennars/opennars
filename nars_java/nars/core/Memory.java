@@ -36,10 +36,11 @@ import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
 import static nars.core.Memory.Forgetting.Periodic;
 import static nars.core.Memory.Timing.Iterative;
+import nars.core.control.AbstractTask;
+import nars.core.control.ImmediateProcess;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
-import nars.core.control.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -49,7 +50,6 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
-import nars.core.control.ImmediateProcess;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -104,6 +104,7 @@ import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.storage.Bag;
+import nars.storage.LevelBag;
 
 
 /**
@@ -614,15 +615,17 @@ public class Memory implements Serializable {
     }    
 
     
+    public Bag<Task<Term>,Sentence<Term>> temporalCoherences=new LevelBag<>(100,20); //todo: forgetting event
+    
     /* ---------- new task entries ---------- */
     /**
      * add new task that waits to be processed in the next cycleMemory
      */
     public void addNewTask(final Task t, final String reason) {
-        /*if(t.sentence.content instanceof Implication && t.sentence.content.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-            t.setPriority(Math.min(0.99f, t.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
-            t.setDurability(Math.min(0.99f, t.getDurability()+Parameters.TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT));
-        }*/ //nope not all
+        if(t.sentence.content instanceof Implication && (t.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
+                t.sentence.content.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) && t.sentence.getOccurenceTime()==Stamp.ETERNAL) {
+            temporalCoherences.putIn(t);
+        }
                 
         newTasks.add(t);
                 

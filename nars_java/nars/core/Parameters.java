@@ -36,8 +36,13 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static double TEMPORAL_COHERENCE_PRIORITY=0.1; //how much priority should finding temporal coherences have?
-    //TODO: also remove contraposition priority, let it use termlink to subject
+    //how much priority should finding temporal coherences have?
+    //examples showed, that linking succeeding found events, namely the new rule temporalInductionChain
+    //happens so rarely, that it is not of use for any real example
+    //here the best tasks will compete in a bag, and for every temporal implication n attemps will be done
+    //to take one out which can be chained
+    public static double TEMPORAL_CHAINING_ATTEMPTS=10;  //experiment
+
     //can only be activated in plugin menu no,
     public static boolean INTERNAL_EXPERIENCE=false;
     //so dont change these two to true
