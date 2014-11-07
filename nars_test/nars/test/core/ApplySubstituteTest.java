@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.io.narsese.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
@@ -12,20 +13,22 @@ import org.junit.Test;
 
 
 public class ApplySubstituteTest {
-
+    
+    NAR n = new DefaultNARBuilder().build();
+    Narsese np = new Narsese(n);
+    
     @Test
-    public void testApplySubstitute() {
-        NAR n = new DefaultNARBuilder().build();
+    public void testApplySubstitute() throws Narsese.InvalidInputException {
             
         String abS ="<a --> b>";
-        CompoundTerm ab = (CompoundTerm )n.term(abS);
+        CompoundTerm ab = (CompoundTerm )np.parseTerm(abS);
         int originalComplexity = ab.getComplexity();
         
         String xyS ="<x --> y>";
-        Term xy = n.term(xyS);
+        Term xy = np.parseTerm(xyS);
         
         Map<Term,Term> h = new HashMap();
-        h.put(n.term("b"), xy);
+        h.put(np.parseTerm("b"), xy);
         CompoundTerm c = ab.applySubstituteToCompound(h);
                 
         assertTrue(c.getComplexity() > originalComplexity);
@@ -38,13 +41,13 @@ public class ApplySubstituteTest {
     }
     
     @Test
-    public void test2() {
+    public void test2() throws Narsese.InvalidInputException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
         NAR n = new DefaultNARBuilder().build();
             
         Map<Term,Term> h = new HashMap();
-        h.put(n.term("$1"), n.term("0"));        
-        CompoundTerm c = ((CompoundTerm)n.term("<(*,$1) --> num>")).applySubstituteToCompound(h);
+        h.put(np.parseTerm("$1"), np.parseTerm("0"));        
+        CompoundTerm c = ((CompoundTerm)np.parseTerm("<(*,$1) --> num>")).applySubstituteToCompound(h);
         
         assertTrue(c!=null);
     }

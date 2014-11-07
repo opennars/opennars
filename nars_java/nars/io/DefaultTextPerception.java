@@ -1,13 +1,20 @@
 package nars.io;
 
 import static com.google.common.collect.Iterators.singletonIterator;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import nars.core.EventEmitter.Observer;
+import nars.core.Events;
+import nars.core.Events.Perceive;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
+import nars.core.Plugin;
 import nars.core.control.AbstractTask;
+import nars.entity.Sentence;
 import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
@@ -21,26 +28,76 @@ import nars.operator.io.SetVolume;
 
 /**
  *  Default handlers for text perception
+ *  TODO break into separate subclasses for each text mode
  */
-public class DefaultTextPerception  {
+public class DefaultTextPerception implements Plugin, Observer {
+    
+    private Memory memory;
+    
+    public List<TextReaction> parsers;
     
     
-    public final List<TextReaction> parsers;
-    private final Memory memory;
-    
-    public final Narsese narsese;    
-    public final Englisch englisch;
+    public Narsese narsese;    
+    public Englisch englisch;
     private boolean enableNaturalLanguage = false;
     private boolean enableEnglisch = true;
     private boolean enableNarsese = true;
+
+    @Override
+    public boolean setEnabled(NAR n, boolean enabled) {
+        if (enabled) {
+            this.memory = n.memory;
+            this.narsese = new Narsese(memory);
+            this.englisch = new Englisch();
+            this.parsers = getParsers();
+        }
+        n.memory.event.set(this, enabled, Events.Perceive.class);
+        return true;
+    }
+
+    @Override
+    public void event(Class event, Object[] arguments) {
+        if (event == Perceive.class) {            
+            Object o = arguments[1];
+            InPort i = (InPort)arguments[0];
+            
+            Iterator<AbstractTask> it = i.postprocess( perceive(o) ); 
+            if (it!=null)
+                while (it.hasNext())
+                    i.queue(it.next());
+        }
+    }
     
-    public DefaultTextPerception(final NAR nar) {
-        super();
+
+    /* Perceive an input object by calling an appropriate perception system according to the object type. */
+    public Iterator<AbstractTask> perceive(final Object o) {
+                
+        Exception error;
+        try {
+            if (o instanceof String) {
+                return perceive((String) o);
+            } else if (o instanceof Sentence) {
+                //TEMPORARY
+                Sentence s = (Sentence) o;
+                return perceive(s.content.toString() + s.punctuation + " " + s.truth.toString());
+            }
+            error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + "]");
+        }
+        catch (Exception e) {
+            if (Parameters.DEBUG)
+                throw e;
+            error = e;
+        }
         
-        this.memory = nar.memory;
-        this.narsese = new Narsese(memory);
-        this.englisch = new Englisch();
-        this.parsers = new ArrayList();
+        return singletonIterator(new Echo(Output.ERR.class, error) );
+    }
+    
+    public List<TextReaction> getParsers() {
+
+        
+        ArrayList<TextReaction> parsers = new ArrayList();
+        
+        
         
         //integer, # of cycles to step
         parsers.add(new TextReaction() {
@@ -222,10 +279,10 @@ public class DefaultTextPerception  {
             }
         });
         
-                   
+        return parsers;           
     }
     
-    public Iterator<AbstractTask> perceive(final String line) {
+    protected Iterator<AbstractTask> perceive(final String line) {
 
         Exception lastException = null;
         

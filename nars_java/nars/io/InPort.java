@@ -65,7 +65,14 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
 //            
 //    }
     
-    abstract public Iterator<Y> process(X x);
+    /** takes input object. any tasks that it generates are input into the InPort
+     *  via queue() methods.
+     */
+    abstract public void perceive(X x);    
+    
+    public Iterator<Y> postprocess(final Iterator<Y> yy) {
+        return yy;
+    }
     
     public void update() throws IOException {
         if (buffer == null) return;
@@ -75,11 +82,7 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
             if (x == null)
                 continue;
             
-            Iterator<Y> yy = process(x);
-            if (yy!=null) {
-                while (yy.hasNext())
-                    queue(yy.next());
-            }            
+            perceive(x);
         }
     }
 

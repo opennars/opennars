@@ -31,7 +31,7 @@ abstract public class NARBuilder extends Parameters  {
             m.addOperator(o);
         }
         
-        return new NAR(m, new Perception());
+        return new NAR(m);
     }
     
 }

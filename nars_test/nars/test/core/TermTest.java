@@ -21,6 +21,7 @@ import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Concept;
 import nars.io.Texts;
+import nars.io.narsese.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Term;
@@ -33,14 +34,16 @@ import org.junit.Test;
  * @author me
  */
 public class TermTest {
-
+    
+    NAR n = new DefaultNARBuilder().build();
+    Narsese np = new Narsese(n);
     
     protected void assertEquivalent(String term1String, String term2String) {
         try {
             NAR n = new DefaultNARBuilder().build();
 
-            Term term1 = n.term(term1String);
-            Term term2 = n.term(term2String);
+            Term term1 = np.parseTerm(term1String);
+            Term term2 = np.parseTerm(term2String);
 
             assertTrue(term1 instanceof CompoundTerm);
             assertTrue(term2 instanceof CompoundTerm);
@@ -64,20 +67,20 @@ public class TermTest {
     }
     
     @Test
-    public void testConjunctionTreeSet() {
+    public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
         NAR n = new DefaultNARBuilder().build();
         
         
             
         //these 2 representations are equal, after natural ordering
         String term1String =    "<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
-        Term term1 = n.term(term1String);        
+        Term term1 = np.parseTerm(term1String);        
         String term1Alternate = "<#1 --> (&,(/,taller_than,{Tom},_),boy)>";
-        Term term1a = n.term(term1Alternate);
+        Term term1a = np.parseTerm(term1Alternate);
         
 
         // <#1 --> (|,boy,(/,taller_than,{Tom},_))>
-        Term term2 = n.term("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
+        Term term2 = np.parseTerm("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
 
         assertTrue(term1.toString().equals( term1a.toString() ));
         assertTrue(term1.getComplexity() > 1);
@@ -121,12 +124,12 @@ public class TermTest {
     }
     
     @Test
-    public void testUnconceptualizedTermInstancing() {
+    public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException {
        NAR n = new DefaultNARBuilder().build();
         
        String term1String ="<a --> b>";
-       Term term1 = n.term(term1String);
-       Term term2 = n.term(term1String);
+       Term term1 = np.parseTerm(term1String);
+       Term term2 = np.parseTerm(term1String);
        
        assertTrue(term1.equals(term2));
        assertTrue(term1.hashCode() == term2.hashCode());
@@ -140,14 +143,14 @@ public class TermTest {
     }
     
     @Test
-    public void testConceptInstancing() {
+    public void testConceptInstancing() throws Narsese.InvalidInputException {
        NAR n = new DefaultNARBuilder().build();
         
        String statement1 = "<a --> b>.";
        
-       Term a = n.term("a");
+       Term a = np.parseTerm("a");
        assertTrue(a!=null);
-       Term a1 = n.term("a");
+       Term a1 = np.parseTerm("a");
        assertTrue(a.equals(a1));
        
        n.addInput(statement1);       
@@ -162,7 +165,7 @@ public class TermTest {
        n.addInput(statement2);
        n.step(4);
        
-       Term a2 = n.term("a");
+       Term a2 = np.parseTerm("a");
        assertTrue(a2!=null);
                      
        Concept ca = n.memory.concept(a2);
