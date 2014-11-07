@@ -150,6 +150,17 @@ public class NALTest  {
             }
         }
         
+        File folder2 = new File("nal/DecisionMaking");
+        
+        for (final File file : folder2.listFiles()) {
+            if (file.getName().equals("README.txt"))
+                continue;
+            if(!("extra".equals(file.getName()))) {
+                addTest(file.getName());
+                l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
+            }
+        }
+        
         
         return l.values();
     }
