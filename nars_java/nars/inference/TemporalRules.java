@@ -155,7 +155,7 @@ public class TemporalRules {
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static void temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
+    public static boolean temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
         //TODO prevent trying question sentences, may cause NPE
         
         //try if B1 unifies with B2, if yes, create new judgement
@@ -180,7 +180,7 @@ public class TemporalRules {
         }
         
         if(args==null)
-            return;
+            return false;
                 
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
         Term[] term = args.toArray(new Term[args.size()]);
@@ -194,7 +194,7 @@ public class TemporalRules {
                 if(term[i] instanceof CompoundTerm) {
                     term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
                     if(term[i]==null) { //it resulted in invalid term for example <a --> a>, so wrong
-                        return;
+                        return false;
                     }
                 }
             }
@@ -206,9 +206,10 @@ public class TemporalRules {
             if(whole!=null) {
                 TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
-                nal.doublePremiseTask(whole, truth, budget, true);
+                return nal.doublePremiseTask(whole, truth, budget, true)!=null;
             }
         }
+        return false;
     }
     
     /** whether a term can be used in temoralInduction(,,) */
