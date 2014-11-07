@@ -345,7 +345,7 @@ public class NALTest  {
         
         @Override
         public void event(Class channel, Object... args) {
-            if (channel == OUT.class) {
+            if ((channel == OUT.class) || (channel == EXE.class)) {
                 Object signal = args[0];
                 if (condition(channel, signal)) {
                     exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
@@ -441,7 +441,7 @@ public class NALTest  {
         
         @Override
         public boolean condition(Class channel, Object signal) {
-            if (channel == OUT.class) {
+            if ((channel == OUT.class) || (channel == EXE.class)) {
                 
                 String o;
                 if (signal instanceof Task) {

@@ -15,7 +15,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Events.FrameStart;
 import nars.core.NAR;
-import nars.core.build.NeuromorphicNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Sentence;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries;
@@ -271,17 +271,15 @@ public class Predict1D {
     public Predict1D() {
         //577.0 [1, 259.0, 156.0, 2.0, 101.0, 4.0, 16.0, 2.0, 3.0, 1.0]
         
-        /*this.nar = new DiscretinuousBagNARBuilder().simulationTime().
-                //setTaskLinkBagSize(10).
-                //setTermLinkBagSize(20).
-                build();*/
+        this.nar = new DefaultNARBuilder().simulationTime().build();
 
-        
+        /*
         this.nar = new NeuromorphicNARBuilder(4).
                 setTaskLinkBagSize(4).
                 setTermLinkBagSize(100).   
                 simulationTime().                
                 build();
+        */
         
         
         //new TextOutput(nar, System.out, 0.95f);
