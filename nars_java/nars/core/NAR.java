@@ -229,6 +229,8 @@ public class NAR implements Runnable, TaskSource {
                 }
             }
             catch (Throwable e) {
+                if (Parameters.DEBUG)
+                    throw e;
                 return singletonIterator(new Echo(ERR.class, e));
             }
         }
@@ -248,7 +250,9 @@ public class NAR implements Runnable, TaskSource {
         try {
             i.update();
             newInputChannels.add(i);
-        } catch (IOException ex) {                    
+        } catch (IOException ex) {  
+            if (Parameters.DEBUG)
+                throw new RuntimeException(ex.toString());
             emit(ERR.class, ex);
         }
         ioChanged = true;

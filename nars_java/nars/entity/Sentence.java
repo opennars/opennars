@@ -103,6 +103,10 @@ public class Sentence<T extends Term> implements Cloneable {
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
         
+        if ((isQuestion() || isQuest()) && !stamp.isEternal()) {
+            throw new RuntimeException("Questions and Quests require eternal tense");
+        }
+        
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());

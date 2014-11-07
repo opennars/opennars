@@ -35,6 +35,8 @@ public class Perception {
             error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + "]");
         }
         catch (Exception e) {
+            if (Parameters.DEBUG)
+                throw e;
             error = e;
         }
         
