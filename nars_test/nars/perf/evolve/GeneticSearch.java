@@ -122,6 +122,10 @@ public class GeneticSearch {
         param.add(new IntegerParameter("conceptQuestions", 3, 6));
         
         param.add(new IntegerParameter("contrapositionPriority", 20, 40));
+        
+        param.add(new IntegerParameter("contrapositionPriority", 20, 40));
+        
+        param.add(new IntegerParameter("bagLevels", 20, 120));
 
         //param.add(new IntegerParameter("prologEnable", 0, 1));
 
@@ -199,6 +203,7 @@ public class GeneticSearch {
             float taskForget = (float)d("taskLinkForgetDurations");
             int conceptsFired = i("conceptsFiredPerCycle");
             int duration = i("cyclesPerDuration");
+            int bagLevels = i("bagLevels");
             
                     
             //int prolog = get("prologEnable");
@@ -217,6 +222,11 @@ public class GeneticSearch {
             else {
                 throw new RuntimeException("Invalid Builder type " + builderType);
             }
+            
+            b.setConceptBagLevels(bagLevels);
+            b.setTermLinkBagLevels(bagLevels);
+            b.setTaskLinkBagLevels(bagLevels);
+            b.setNovelTaskBagLevels(bagLevels);
             
             b.setConceptBagSize(numConcepts);
             b.setTaskLinkBagSize(numTaskLinks);

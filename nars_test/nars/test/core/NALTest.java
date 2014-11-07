@@ -24,6 +24,7 @@ import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.Texts;
+import nars.io.narsese.Narsese;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
@@ -52,7 +53,7 @@ public class NALTest  {
     static public boolean showTrace = false;
     static public boolean showReport = true;
     static public boolean requireSuccess = true;
-    
+    static public Narsese narsese;
     
     final int similarityThreshold = 4;
     
@@ -77,9 +78,11 @@ public class NALTest  {
             if (s.indexOf(expectOutContains)==0) {
 
                 //without ') suffix:
-                String e = s.substring(expectOutContains.length(), s.length()-2);                                
-
+                String e = s.substring(expectOutContains.length(), s.length()-2);                           
+                
                 expects.add(new ExpectContains(n, e, saveSimilar));
+
+                
             }
             
             
@@ -92,7 +95,15 @@ public class NALTest  {
                 String e = s.substring(expectOutContains2.length(), s.length()-2); 
                 e = e.replace("\\\\","\\");
                 
+                /*try {                    
+                    Task t = narsese.parseTask(e);                    
+                    expects.add(new ExpectContainsSentence(n, t.sentence));
+                } catch (Narsese.InvalidInputException ex) {
+                    expects.add(new ExpectContains(n, e, saveSimilar));
+                } */
+                
                 expects.add(new ExpectContains(n, e, saveSimilar));
+
             }                
             
             final String expectOutEmpty = "''expect.outEmpty";
@@ -261,6 +272,8 @@ public class NALTest  {
     protected double testNAL(final String path) {               
         Memory.resetStatic();
         final NAR n = newNAR();
+    
+        narsese = new Narsese(n);
         
         final List<Expect> expects = new ArrayList();
         
@@ -357,8 +370,10 @@ public class NALTest  {
         
         @Override
         public void event(Class channel, Object... args) {
+            if (succeeded)
+                return;
             if ((channel == OUT.class) || (channel == EXE.class)) {
-                Object signal = args[0];
+                Object signal = args[0];                
                 if (condition(channel, signal)) {
                     exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
                     setSucceeded();
@@ -409,7 +424,7 @@ public class NALTest  {
             return false;
         }
     }
-
+    
     public static class ExpectContains extends Expect {
 
         private final String containing;
@@ -453,6 +468,9 @@ public class NALTest  {
         
         @Override
         public boolean condition(Class channel, Object signal) {
+            if (succeeded)
+                return true;
+            
             if ((channel == OUT.class) || (channel == EXE.class)) {
                 
                 String o;
@@ -486,6 +504,43 @@ public class NALTest  {
         this.showOutput = output;
     }
 
+    //NOT WORKING YET
+    @Deprecated private static class ExpectContainsSentence extends Expect {
+        private final Sentence containing;
+
+        public ExpectContainsSentence(NAR n, Sentence sentence /*, boolean saveSimilar*/) {
+            super(n);
+            this.containing = sentence;
+        }
+        
+
+        @Override
+        public String getFailureReason() {
+            String s = "FAIL: No sentence match: " + containing;
+            return s;
+        }
+        
+        
+        @Override
+        public boolean condition(Class channel, Object signal) {
+            if (succeeded)
+                return true;
+            
+            if ((channel == OUT.class) || (channel == EXE.class)) {
+                                
+                if (signal instanceof Task) {
+                    //only compare for Sentence string, faster than TextOutput.getOutputString
+                    //which also does unescaping, etc..
+                    Sentence s = ((Task)signal).sentence;
+                    if (s.equals(containing)) {                        
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+    
     
     
 }
