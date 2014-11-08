@@ -526,6 +526,20 @@ public class Stamp implements Cloneable {
 
         Stamp s = (Stamp)that;
 
+        //two beliefs can have two different derivation chains altough they share same evidental bas
+        //in this case it shouldnt return true
+        if(s.derivationChain.size()!=this.derivationChain.size()) {
+            return false;
+        }
+        
+        Term[] arr1=s.derivationChain.toArray (new Term[s.derivationChain.size()]);
+        Term[] arr2=s.derivationChain.toArray (new Term[s.derivationChain.size()]);
+        for(int i=0;i<arr1.length;i++) {
+            if(!(arr1[i].equals(arr2[i]))) { //different chain element so it doesnt have the same chain
+                return false;
+            }
+        }
+        
         return Arrays.equals(toSet(), s.toSet());
     }
 
