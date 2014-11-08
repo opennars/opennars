@@ -227,8 +227,9 @@ public class Concept extends Item<Term> {
             if (newStamp.equals(oldStamp, memory.getDuration())) {
                 if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     //task.budget.decPriority(0);    // duplicated task
-                    memory.removeTask(task, "Duplicated");
                 }   // else: activated belief
+                
+                memory.removeTask(task, "Duplicated");                
                 return;
             } else if (revisible(judg, oldBelief)) {
                 

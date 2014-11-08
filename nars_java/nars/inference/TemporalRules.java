@@ -26,6 +26,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -388,14 +389,16 @@ public class TemporalRules {
      * @return The quality of the judgment as the solution
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
+        
         if (!matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
             return 0.0F;
         }
+        
         TruthValue truth = solution.truth;
-        if (!concurrent(problem.getOccurenceTime(),solution.getOccurenceTime(),memory.getDuration())) {
-            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());
-            
+        if (!concurrent(problem.getOccurenceTime(), solution.getOccurenceTime(), memory.getDuration())) {
+            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());            
         }
+        
         if (problem.containQueryVar()) {
             return truth.getExpectation() / solution.content.getComplexity();
         } else {
@@ -442,9 +445,10 @@ public class TemporalRules {
     }
 
     public static int order(final long timeDiff, final int durationCycles) {
-        if (timeDiff > durationCycles/2) {
+        final int halfDuration = durationCycles/2;
+        if (timeDiff > halfDuration) {
             return ORDER_FORWARD;
-        } else if (timeDiff < -durationCycles/2) {
+        } else if (timeDiff < -halfDuration) {
             return ORDER_BACKWARD;
         } else {
             return ORDER_CONCURRENT;
@@ -455,11 +459,27 @@ public class TemporalRules {
      *                occur at the same time, relative to duration: order = concurrent
      */
     public static int order(final long a, final long b, final int durationCycles) {        
+        if ((a == Stamp.ETERNAL) || (b == Stamp.ETERNAL))
+            throw new RuntimeException("order() does not compare ETERNAL times");
+        
         return order(b - a, durationCycles);
     }
     
     public static boolean concurrent(final long a, final long b, final int durationCycles) {        
-        return order(a, b, durationCycles) == ORDER_CONCURRENT;
+        //since Stamp.ETERNAL is Integer.MIN_VALUE, 
+        //avoid any overflow errors by checking eternal first
+        
+        if (a == Stamp.ETERNAL) {
+            //if both are eternal, consider concurrent.  this is consistent with the original
+            //method of calculation which compared equivalent integer values only
+            return (b == Stamp.ETERNAL);
+        }
+        else if (b == Stamp.ETERNAL) {
+            return false; //a==b was compared above
+        }
+        else {        
+            return order(a, b, durationCycles) == ORDER_CONCURRENT;
+        }
     }
     
 }
