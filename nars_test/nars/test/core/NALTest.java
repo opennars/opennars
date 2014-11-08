@@ -297,7 +297,8 @@ public class NALTest  {
             n.finish(minCycles, showDebug);
         }
         catch(Throwable e){                         
-            error = true; 
+            error = true;
+            
         }
       
         
@@ -310,7 +311,7 @@ public class NALTest  {
             if (!e.succeeded) success = false;
         }
 
-        double score = 0;
+        double score = Double.POSITIVE_INFINITY;
         if (success) {
             long lastSuccess = -1;
             for (Expect e: expects) {
@@ -326,7 +327,7 @@ public class NALTest  {
             }
         }
         else {
-            scores.put(path, -1d);
+            scores.put(path, Double.POSITIVE_INFINITY);
         }
         
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());

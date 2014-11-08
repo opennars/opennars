@@ -76,21 +76,13 @@ public class NALTestScore extends NALTest {
                 });                
             }
                         
-            try {
-                
-                double s = new NALTestScore(examplePath).run();
-                if (s == -1)
-                    s = maxCycles + 1; //didnt complete so use the max time
-                score += s;
-                
-                //System.out.println(examplePath + " " + score + " " + n.time());
-                
-            }
-            catch (Throwable e) {                 
-                if (Parameters.DEBUG)
-                    e.printStackTrace();
-                return 0;
-            }
+            double s = new NALTestScore(examplePath).run();
+            if (s == Double.POSITIVE_INFINITY)
+                s = maxCycles + 1; //didnt complete so use the max time
+            score += s;
+
+            //System.out.println(examplePath + " " + score + " " + n.time());
+
 
         }       
         

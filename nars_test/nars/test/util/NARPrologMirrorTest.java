@@ -20,7 +20,7 @@ public class NARPrologMirrorTest {
     @Test
     public void testMultistep() {
         boolean prolog = true;
-        boolean showOutput = true;
+        boolean showOutput = false;
         Parameters.DEBUG = true;
         
         new NALTestSome("nal/test/nal1.multistep.nal", showOutput) {

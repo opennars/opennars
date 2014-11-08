@@ -53,7 +53,7 @@ public class TextOutput extends Output {
     private LineOutput outExp2;
     private PrintWriter outExp;
     private boolean showErrors = true;
-    private boolean showStackTrace;
+    private boolean showStackTrace = false;
     private boolean showStamp = true;
     private boolean showInput = true;
     private float minPriority = 0;
@@ -182,18 +182,19 @@ public class TextOutput extends Output {
             buffer.append(channel.getSimpleName()).append(": ");        
         
         if (channel == ERR.class) {
-            if (signal instanceof Exception) {
-                Exception e = (Exception)signal;
+            if (signal instanceof Throwable) {
+                Throwable e = (Throwable)signal;
 
                 buffer.append(e.toString());
 
                 /*if (showStackTrace)*/ {
-                    buffer.append(" ").append(Arrays.asList(e.getStackTrace()));
+                    //buffer.append(" ").append(Arrays.asList(e.getStackTrace()));
                 }
             }
             else {
                 buffer.append(signal.toString());
-            }                            
+            }      
+            
         }        
         else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Solved.class))  {
 
@@ -340,9 +341,11 @@ public class TextOutput extends Output {
 
                 buffer.append(e.toString());
 
-                /*if (showStackTrace)*/ {
-                    buffer.append(" ").append(Arrays.asList(e.getStackTrace()));
-                }
+                /*if (showStackTrace)*/
+                
+                /*for (int i = 0; i < )
+                    buffer.append(" ").append(Arrays.asList(e.getStackTrace() ));
+                }*/
             }
             else {
                 buffer.append(signal.toString());

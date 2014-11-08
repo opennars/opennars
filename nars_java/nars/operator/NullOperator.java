@@ -23,7 +23,7 @@ package nars.operator;
 import java.util.Arrays;
 import java.util.List;
 import nars.core.Memory;
-import nars.core.NAR;
+import nars.core.Parameters;
 import nars.entity.Task;
 import nars.language.Term;
 
@@ -44,7 +44,7 @@ public class NullOperator extends Operator {
     /** called from Operator */
     @Override 
     protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        if (NAR.DEBUG) {
+        if (Parameters.DEBUG) {
             System.out.println("Executed: " + this);
             for (Term t : args) {
                System.out.println(" --- " + Arrays.toString(args));

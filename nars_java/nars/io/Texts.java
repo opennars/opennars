@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import nars.util.rope.Rope;
 import nars.util.rope.impl.CharArrayRope;
-import sun.nio.cs.CharsetMapping;
 
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 

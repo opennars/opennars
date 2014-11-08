@@ -433,6 +433,7 @@ public class Concept extends Item<Term> {
             rank2 = rankBelief(judgment2);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
+                    //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return null;
                 }
                 table.add(i, newSentence);
@@ -804,5 +805,22 @@ public class Concept extends Item<Term> {
         return t / beliefs.size();        
     }
 
+    
+    public CharSequence getBeliefsSummary() {
+        if (beliefs.isEmpty())
+            return "0 beliefs";        
+        StringBuilder sb = new StringBuilder();
+        for (Sentence s : beliefs)
+            sb.append(s.toString()).append('\n');       
+        return sb;
+    }
+    public CharSequence getDesiresSummary() {
+        if (desires.isEmpty())
+            return "0 desires";        
+        StringBuilder sb = new StringBuilder();
+        for (Sentence s : desires)
+            sb.append(s.toString()).append('\n');       
+        return sb;
+    }
 
 }

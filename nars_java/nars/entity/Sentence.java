@@ -33,6 +33,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.inference.TruthFunctions;
+import nars.inference.TruthFunctions.EternalizedTruthValue;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.CompoundTerm;
@@ -233,7 +234,11 @@ public class Sentence<T extends Term> implements Cloneable {
      * @return Whether the two are equivalent
      */
     public boolean equivalentTo(final Sentence that) {
-        //assert content.equals(content) && punctuation == that.punctuation;
+        if (Parameters.DEBUG) {
+            if ((!content.equals(content)) || (punctuation != that.punctuation)) {
+                throw new RuntimeException("invalid comparison for Sentence.equivalentTo");
+            }
+        }
         return (truth.equals(that.truth) && stamp.equals(that.stamp));
     }
 
@@ -272,32 +277,36 @@ public class Sentence<T extends Term> implements Cloneable {
       * @return The projected belief
       */    
     public Sentence projection(final long targetTime, final long currentTime) {
+                
+        TruthValue newTruth = projectionTruth(targetTime, currentTime);
         
-        TruthValue newTruth = new TruthValue(truth);
+        boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
+                
+        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
         
-        boolean eternalizing = false;
-        
-        if (stamp.getOccurrenceTime() != Stamp.ETERNAL) {
-            newTruth = TruthFunctions.eternalization(truth);
-            eternalizing = true;
+        return new Sentence(content, punctuation, newTruth, newStamp);
+    }
+
+    
+    public TruthValue projectionTruth(final long targetTime, final long currentTime) {
+        TruthValue newTruth = null;
+                        
+        if (!stamp.isEternal()) {
+            newTruth = TruthFunctions.eternalize(truth);
             if (targetTime != Stamp.ETERNAL) {
                 long occurrenceTime = stamp.getOccurrenceTime();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
                     newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
-                    eternalizing = false;
                 }
             }
         }
         
+        if (newTruth == null) newTruth = truth.clone();
         
-        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
-        
-        return new Sentence(content, punctuation, newTruth, newStamp);
+        return newTruth;
     }
-
-
 
 
 //    /**

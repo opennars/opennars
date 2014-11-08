@@ -16,6 +16,7 @@ import nars.core.Events.FrameStart;
 import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
+import static nars.core.Parameters.DEBUG;
 import nars.core.control.AbstractTask;
 import nars.entity.Task;
 import nars.gui.NARControls;
@@ -61,10 +62,6 @@ public class NAR implements Runnable, TaskSource {
     private Thread thread = null;
     long minCyclePeriodMS;
     
-    /**
-     * global DEBUG print switch
-     */
-    public static boolean DEBUG = false;
     /**
      * The name of the reasoner
      */
@@ -117,7 +114,7 @@ public class NAR implements Runnable, TaskSource {
     
     
     /** used by stop() to signal that a running loop should be interrupted */
-    private boolean stopped;
+    private boolean stopped = false;
     
     
     private boolean inputting = true;
@@ -143,7 +140,7 @@ public class NAR implements Runnable, TaskSource {
      * Reset the system with an empty memory and reset clock. Called locally and
      * from {@link NARControls}.
      */     
-    public synchronized void reset() {
+    public void reset() {
         int numInputs = inputChannels.size();
         for (int i = 0; i < numInputs; i++) {
             InPort port = inputChannels.get(i);
@@ -362,7 +359,7 @@ public class NAR implements Runnable, TaskSource {
     
     /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
     public void finish(int cycles, final boolean debug) {
-        DEBUG = debug; 
+        Parameters.DEBUG = debug; 
         running = true;
         stopped = false;
 
@@ -508,33 +505,29 @@ public class NAR implements Runnable, TaskSource {
         if (DEBUG) {
             debugTime();            
         }                
-        
+
         long timeStart = System.currentTimeMillis();
-        
+
         emit(FrameStart.class);
 
         updatePorts();
-        
+
         try {
             for (int i = 0; i < cycles; i++)
                 memory.cycle(this);
         }
         catch (Throwable e) {
-            emit(ERR.class, e);
-            
-            if (Parameters.DEBUG) {
-                e.printStackTrace();
-            }
+            memory.error(e);
         }
-        
+
         emit(FrameEnd.class);
-        
+
         long timeEnd = System.currentTimeMillis();
-        
+
         if (memory.getTiming() == Timing.Real) {
             long frameTime = timeEnd - timeStart;
             final int d = param.duration.get();
-            
+
             //warn if frame consumed more time than reasoner duration
             if (frameTime > d) {
                 emit(ERR.class, 

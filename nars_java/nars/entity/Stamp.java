@@ -118,6 +118,10 @@ public class Stamp implements Cloneable {
         if (isEternal() || s.isEternal())
             return false;
         return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;        }
+
+    public float getOriginality() {
+        return 1.0f / (evidentialBase.length + 1);
+    }
     
     public interface DerivationBuilder {
         LinkedHashSet<Term> build();
