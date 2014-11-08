@@ -543,11 +543,6 @@ public class Stamp implements Cloneable {
         return Arrays.equals(toSet(), s.toSet());
     }
 
-    /** extended equality test, including ocurrenceTime with respect to duration */
-    public boolean equals(final Stamp stamp, final int duration) {
-        return equals(stamp) && concurrent(occurrenceTime, stamp.occurrenceTime, duration);
-    }
-    
     /**
      * The hash code of Stamp
      *
