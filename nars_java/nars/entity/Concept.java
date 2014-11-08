@@ -224,7 +224,7 @@ public class Concept extends Item<Term> {
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp,false,true,true,true)) {
+            if (newStamp.equals(oldStamp,false,false,true,true)) {
                 if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     //task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
