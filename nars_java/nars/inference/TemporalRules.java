@@ -395,7 +395,7 @@ public class TemporalRules {
         }
         
         TruthValue truth = solution.truth;
-        if (!concurrent(problem.getOccurenceTime(), solution.getOccurenceTime(), memory.getDuration())) {
+        if (problem.getOccurenceTime()!=solution.getOccurenceTime()) {
             truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());            
         }
         

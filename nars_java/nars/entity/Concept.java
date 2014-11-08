@@ -224,7 +224,7 @@ public class Concept extends Item<Term> {
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp, memory.getDuration())) {
+            if (newStamp.equals(oldStamp) && newStamp.getOccurrenceTime()==oldStamp.getOccurrenceTime()) {
                 if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     //task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
@@ -249,7 +249,7 @@ public class Concept extends Item<Term> {
 //                ) != null) {
                     
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
-                if (!concurrent(projectedBelief.getOccurenceTime(), oldBelief.getOccurenceTime(), memory.getDuration())) {
+                if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
                     nal.singlePremiseTask(projectedBelief, task.budget);
                 }
                 nal.setCurrentBelief(projectedBelief);
@@ -661,7 +661,7 @@ public class Concept extends Item<Term> {
 ////            }
             
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
-            if (!concurrent(projectedBelief.getOccurenceTime(), belief.getOccurenceTime(), memory.getDuration())) {
+            if (projectedBelief.getOccurenceTime()!=belief.getOccurenceTime()) {
                 nal.singlePremiseTask(projectedBelief, task.budget);
             }
             
