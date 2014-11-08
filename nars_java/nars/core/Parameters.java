@@ -43,7 +43,7 @@ public class Parameters {
     //to take one out which can be chained
     public static double TEMPORAL_CHAINING_ATTEMPTS=10;  //experiment
     //priority boost
-    public static double TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR=1.5;  //experiment
+    public static double TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR=2.0;  //experiment
 
     //can only be activated in plugin menu no,
     public static boolean INTERNAL_EXPERIENCE=false;
