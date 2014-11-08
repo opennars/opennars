@@ -70,8 +70,11 @@ public class NARPrologMirror extends AbstractObserver {
     /** in seconds */
     float maxSolveTime = 5.0f / 1e3f; //5ms
     float baseSolveTime = 1.0f / 1e3f; //1ms
+
+    /** max # answers returned in response to a question */
+    int maxAnswers = 3;
     
-    boolean reportAssumptions = true;
+    boolean reportAssumptions = false;
     boolean reportForgets = reportAssumptions;
     
     
@@ -194,7 +197,7 @@ public class NARPrologMirror extends AbstractObserver {
         }
         else if (s.isQuestion()) {
 
-            System.err.println("question: " + s);
+            //System.err.println("question: " + s);
             
             float priority = task.getPriority();
             float solveTime = ((maxSolveTime-baseSolveTime) * priority) + baseSolveTime;
@@ -209,20 +212,28 @@ public class NARPrologMirror extends AbstractObserver {
                 Struct qh = newQuestion(s);
                 
                 if (qh!=null) {
-                    System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ? (" + Texts.n2(priority) + ")");    
+                    //System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ? (" + Texts.n2(priority) + ")");    
                     
 
                     Theory theory;
                     
-                    prolog.setTheory(theory = getTheory(beliefs));
-                    prolog.addTheory(getAxioms().iterator());
+                    try {
+                        prolog.setTheory(theory = getTheory(beliefs));
+                        prolog.addTheory(getAxioms().iterator());
+                    }
+                    catch (InvalidTheoryException e) {
+                        nar.memory.emit(ERR.class, e);
+                        return;
+                    }
 
-                    System.out.println("  Theory: " + theory);
+                    //System.out.println("  Theory: " + theory);
                     //System.out.println("  Axioms: " + axioms);
                     
 
                     SolveInfo si = prolog.solve(qh, solveTime);
 
+                    int answers = 0;
+                    
                     do {
                         if (si == null) break;
 
@@ -250,7 +261,7 @@ public class NARPrologMirror extends AbstractObserver {
                             si = prolog.solveNext(maxSolveTime);
                         }
                     }                            
-                    while (prolog.hasOpenAlternatives());
+                    while (prolog.hasOpenAlternatives() && (answers++) < maxAnswers);
 
                 }
             } catch (InvalidTermException nse) {
@@ -455,7 +466,7 @@ public class NARPrologMirror extends AbstractObserver {
     
     /** reflect a result to NARS, and remember it so that it doesn't get reprocessed here later */
     public void answer(Task question, Term t, nars.prolog.Term pt) {
-        System.err.println("Prolog answer: " + t);
+        //System.err.println("Prolog answer: " + t);
         
 
         

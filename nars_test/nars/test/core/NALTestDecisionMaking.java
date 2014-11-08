@@ -40,7 +40,7 @@ public class NALTestDecisionMaking  {
 
     static {
         Memory.randomNumber.setSeed(1);
-        Parameters.DEBUG = true;
+        Parameters.DEBUG = false;
     }
 
     int minCycles = 1550; //TODO reduce this to one or zero

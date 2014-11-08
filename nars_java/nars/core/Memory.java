@@ -814,8 +814,9 @@ public class Memory implements Serializable {
         emit(ERR.class, ex);
         
         if (Parameters.DEBUG) {
-            ex.printStackTrace();
+            ex.printStackTrace();            
         }
+        
     }
     
     public <T> void run(final List<Runnable> tasks) {
@@ -826,21 +827,13 @@ public class Memory implements Serializable {
         
         if ((tasks == null) || (tasks.isEmpty())) return;
         
-        else if (tasks.size() == 1) {
-            try {
-                tasks.get(0).run();
-            } catch (Exception ex) { 
-                error(ex);
-            }
+        else if (tasks.size() == 1) {            
+            tasks.get(0).run();
         }
         else if (concurrency == 1) {
             //single threaded
             for (final Runnable t : tasks) {
-                try {
-                    t.run();
-                } catch (Throwable ex) { 
-                    error(ex);
-                }
+                t.run();
             }
         }
         else {   

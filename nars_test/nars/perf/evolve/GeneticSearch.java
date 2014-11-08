@@ -19,6 +19,7 @@ import nars.core.build.Curve;
 import nars.core.build.Default;
 import nars.core.build.Neuromorphic;
 import nars.perf.NALTestScore;
+import nars.test.core.NALTest;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLMethod;
 import org.encog.ml.ea.genome.Genome;
@@ -125,7 +126,7 @@ public class GeneticSearch {
         
         param.add(new IntegerParameter("contrapositionPriority", 20, 40));
         
-        param.add(new IntegerParameter("bagLevels", 20, 120));
+        param.add(new IntegerParameter("bagLevels", 100, 100));
 
         //param.add(new IntegerParameter("prologEnable", 0, 1));
 
@@ -283,20 +284,8 @@ public class GeneticSearch {
         
     public static double score(int maxCycles, NAR n) {
 
-
-            Parameters.DEBUG = false;
-
-            double s;
-            try {
-                s = NALTestScore.score(n, maxCycles);
-            }
-            catch (Throwable e) { 
-                if (Parameters.DEBUG)
-                    e.printStackTrace();
-                return 0;
-            }
-
-            return s;
+                NALTest.showDebug = Parameters.DEBUG = false;
+                return NALTestScore.score(n, maxCycles);
 
     }
     
@@ -320,8 +309,9 @@ public class GeneticSearch {
                     return s;
                 }                
                 catch (Throwable e) { 
-                    if (Parameters.DEBUG)
+                    if (Parameters.DEBUG) {
                         e.printStackTrace();
+                    }
                     return 0; 
                 }
 		
@@ -349,7 +339,7 @@ public class GeneticSearch {
         
         
         
-        System.setOut(ps);
+        //System.setOut(ps);
         
         
         System.out.println(param);
@@ -368,8 +358,8 @@ public class GeneticSearch {
             genetic.addOperation(0.1, new Splice(3));
             genetic.addOperation(0.1, new Splice(2));
             genetic.addOperation(0.1, new Splice(1));
-            genetic.addOperation(0.1, new MutateShuffle());            
-            genetic.addOperation(0.5, new MutatePerturb(0.2f));
+            genetic.addOperation(0.2, new MutateShuffle());            
+            genetic.addOperation(0.3, new MutatePerturb(0.2f));
 
 
             for (int i = 0; i < generationsPerPopulation; i++) {

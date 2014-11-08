@@ -393,10 +393,8 @@ public class TemporalRules {
         }
         TruthValue truth = solution.truth;
         if (!concurrent(problem.getOccurenceTime(),solution.getOccurenceTime(),memory.getDuration())) {
-            //TODO avoid creating entire Sentence; 
-            //only calculate TruthValue which is all that is useful here
-            Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.time());
-            truth = cloned.truth;
+            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());
+            
         }
         if (problem.containQueryVar()) {
             return truth.getExpectation() / solution.content.getComplexity();
