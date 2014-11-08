@@ -283,7 +283,7 @@ public class GeneticSearch {
         
     public static double score(int maxCycles, NAR n) {
 
-                NALTest.showDebug = Parameters.DEBUG = false;
+                Parameters.DEBUG = false;
                 return NALTestScore.score(n, maxCycles);
 
     }

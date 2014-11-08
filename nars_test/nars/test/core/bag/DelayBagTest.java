@@ -20,9 +20,9 @@ public class DelayBagTest {
     public void testIO() {
         NAR n = NAR.build(Neuromorphic.class);
 
-        DelayBag b = new DelayBag(1000);
+        DelayBag b = new DelayBag(n.param.conceptForgetDurations, 1000);
         
-        b.setMemory(n.memory);
+        b.setAttention(n.memory.concepts);
         
         assertTrue(n.memory.concepts!=null);
         

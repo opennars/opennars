@@ -103,12 +103,21 @@ public class DefaultTextPerception implements Plugin, Observer {
         parsers.add(new TextReaction() {
             final String spref = Symbols.INPUT_LINE_PREFIX + ':';
             
-            @Override
-            public Object react(String input) {
+            @Override public Object react(String input) {
+                
+                input = input.trim();
+                if (input.startsWith(spref))
+                    input = input.substring(spref.length());                    
+
+                if (!Character.isDigit(input.charAt(0)))
+                    return null;
+                if (input.length() > 8) {
+                    //if input > ~8 chars it wont fit as 32bit integer anyway so terminate early.
+                    //parseInt is sort of expensive
+                    return null;
+                }
+                    
                 try {
-                    input = input.trim();
-                    if (input.startsWith(spref))
-                        input = input.substring(spref.length());                    
                     int cycles = Integer.parseInt(input);
                     return new PauseInput(cycles);                    
                 }

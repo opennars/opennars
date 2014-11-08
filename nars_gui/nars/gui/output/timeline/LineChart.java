@@ -53,6 +53,7 @@ public class LineChart extends Chart {
             min = Math.min(min,mm[0]);
             max = Math.max(max,mm[1]);
         }
+        
     }
 
     protected void drawOverlay(Timeline2DCanvas l, float screenyLo, float screenyHi) {

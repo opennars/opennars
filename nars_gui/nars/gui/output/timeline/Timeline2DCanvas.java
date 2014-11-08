@@ -86,7 +86,7 @@ public class Timeline2DCanvas extends PApplet {
 
     @Override
     protected void resizeRenderer(int newWidth, int newHeight) {
-        if ((newWidth == 0)  && (newHeight == 0))
+        if ((newWidth <= 0)  || (newHeight <= 0))
             return;
         
         SwingUtilities.invokeLater(new Runnable() {

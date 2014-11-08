@@ -45,7 +45,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /**
      * firing threshold
      */
-    public final int THRESHOLD;
+    public final int fireCompleteLevelThreshold;
 
     /**
      * shared DISTRIBUTOR that produce the probability distribution
@@ -86,11 +86,16 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     private final boolean[] levelEmpty;
 
 
-
+    
     public LevelBag(int levels, int capacity) {
+        this(levels, capacity, (int) (Parameters.BAG_THRESHOLD * levels));
+    }
+
+    /** thresholdLevel = 0 disables "fire level completely" threshold effect */
+    public LevelBag(int levels, int capacity, int thresholdLevel) {
         this.levels = levels;
 
-        THRESHOLD = (int) (Parameters.BAG_THRESHOLD * levels);
+        this.fireCompleteLevelThreshold = thresholdLevel;
         //THRESHOLD = levels + 1; //fair/flat takeOut policy
 
         this.capacity = capacity;
@@ -218,7 +223,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if ((Parameters.DEBUG) && (Parameters.THREADS==1)) {
         
             int is = sizeItems();
-            if (is!=in) {                
+            if (Math.abs(is-in) > 1 ) {                
                 throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
 
             }
@@ -300,7 +305,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
         currentLevel = cl;
         
-        if (currentLevel < THRESHOLD) { // for dormant levels, take one item
+        if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
             currentCounter = 1;
         } else {                  // for active levels, take all current items
             currentCounter = getNonEmptyLevelSize(currentLevel);
