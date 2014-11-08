@@ -149,31 +149,26 @@ public class NALTest  {
     
     @Parameterized.Parameters
     public static Collection params() {
+        
         Map<String,Object> l = new TreeMap();
         
-        File folder = new File("nal/test");
+        final String[] directories = new String[] { "nal/test", "nal/DecisionMaking" };
         
-        for (final File file : folder.listFiles()) {
-            if (file.getName().equals("README.txt"))
-                continue;
-            if(!("extra".equals(file.getName()))) {
-                addTest(file.getName());
-                l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
+        for (String dir : directories ) {
+
+            File folder = new File(dir);
+        
+            for (final File file : folder.listFiles()) {
+                if (file.getName().equals("README.txt"))
+                    continue;
+                if(!("extra".equals(file.getName()))) {
+                    addTest(file.getName());
+                    l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
+                }
             }
+            
         }
-        
-        File folder2 = new File("nal/DecisionMaking");
-        
-        for (final File file : folder2.listFiles()) {
-            if (file.getName().equals("README.txt"))
-                continue;
-            if(!("extra".equals(file.getName()))) {
-                addTest(file.getName());
-                l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
-            }
-        }
-        
-        
+                
         return l.values();
     }
     

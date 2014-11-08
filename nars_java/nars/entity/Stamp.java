@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -36,7 +37,6 @@ import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_BACKWARD;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
-import static nars.inference.TemporalRules.concurrent;
 import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.language.Tense;
@@ -510,49 +510,56 @@ public class Stamp implements Cloneable {
         return evidentialSet;
     }
 
+    
+    @Override public boolean equals(final Object that) {
+        throw new RuntimeException("Use other equals() method");
+    }
+    
     /**
-     * Check if two stamps contains the same content
+     * Check if two stamps contains the same types of content
      *
      * @param that The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-        
-        if (!(that instanceof Stamp)) {
-            return false;
+    public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase, final boolean derivationChain) {
+        if (this == s) return true;
+
+        if (creationTime)
+            if (getCreationTime()!=s.getCreationTime()) return false;
+        if (ocurrenceTime)
+            if (getOccurrenceTime()!=s.getOccurrenceTime()) return false;       
+        if (evidentialBase) {
+            if (evidentialHash() != s.evidentialHash()) return false;
+            if (!Arrays.equals(toSet(), s.toSet())) return false;
         }
-
-        Stamp s = (Stamp)that;
-
+        
         //two beliefs can have two different derivation chains altough they share same evidental bas
         //in this case it shouldnt return true
-        if(s.derivationChain.size()!=this.derivationChain.size()) {
-            return false;
-        }
+        if (derivationChain)
+            if (!chainEquals(getChain(), s.getChain())) return false;
         
-        Term[] arr1=s.derivationChain.toArray (new Term[s.derivationChain.size()]);
-        Term[] arr2=s.derivationChain.toArray (new Term[s.derivationChain.size()]);
-        for(int i=0;i<arr1.length;i++) {
-            if(!(arr1[i].equals(arr2[i]))) { //different chain element so it doesnt have the same chain
-                return false;
-            }
-        }
-        
-        return Arrays.equals(toSet(), s.toSet());
+        return true;        
     }
+            
 
+    /** necessary because LinkedHashSet.equals does not compare order, only set content */
+    public static boolean chainEquals(final Collection<Term> a, final Collection<Term> b) {
+        if (a == b) return true;
+        
+        if ((a instanceof LinkedHashSet) && (b instanceof LinkedHashSet))
+            return Iterators.elementsEqual(a.iterator(), b.iterator());        
+        else
+            return a.equals(b);
+    }
+    
     /**
      * The hash code of Stamp
      *
      * @return The hash code
      */
-    @Override
-    public final int hashCode() {
-        if (evidentialSet == null) {
-            toSet();
-        }
+    public final int evidentialHash() {
+        if (evidentialSet==null)
+            toSet();       
         return evidentialHash;
     }
 

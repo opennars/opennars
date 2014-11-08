@@ -16,9 +16,6 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import nars.core.NAR.PluginState;
 
 /**
  * NAR Parameters which can be changed during runtime.
@@ -105,6 +102,10 @@ public class Param implements Serializable {
 
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptGoalsMax = new AtomicInteger();
+    
+    /** Reliance factor, the empirical confidence of analytical truth.
+        the same as default confidence  */        
+    public final AtomicDouble reliance = new AtomicDouble();
     
     
     public void setTiming(Timing time) {

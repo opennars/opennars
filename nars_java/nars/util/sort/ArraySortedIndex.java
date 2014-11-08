@@ -70,13 +70,13 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
                 if (x < y) {
                     low = mid + 1;
                 } else if (x == y) {
-                    return validPosition(mid);
+                    return mid;
                 } else if (x > y) {
                     high = mid - 1;
                 }
 
             }
-            return validPosition(low);
+            return low;
         } else {
             return 0;
         }
@@ -110,7 +110,7 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
 //                reject(remove(0));
 //            }
             
-            list.add(positionOf(o), o);
+            list.add(validPosition(positionOf(o)), o);
             return true;
         }
     }
@@ -211,7 +211,7 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
         
         
         //estimated position according to current priority
-        int p = positionOf( o ); 
+        int p = validPosition(positionOf( o )); 
         
         int s = size();
         

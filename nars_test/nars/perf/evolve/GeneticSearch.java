@@ -20,6 +20,7 @@ import nars.core.build.Default;
 import nars.core.build.Neuromorphic;
 import nars.perf.NALTestScore;
 import nars.test.core.NALTest;
+import nars.util.MultiOutputStream;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLMethod;
 import org.encog.ml.ea.genome.Genome;
@@ -28,6 +29,7 @@ import org.encog.ml.ea.population.Population;
 import org.encog.ml.ea.species.BasicSpecies;
 import org.encog.ml.ea.train.basic.TrainEA;
 import org.encog.ml.genetic.crossover.Splice;
+import org.encog.ml.genetic.crossover.SpliceNoRepeat;
 import org.encog.ml.genetic.genome.DoubleArrayGenome;
 import org.encog.ml.genetic.genome.DoubleArrayGenomeFactory;
 import org.encog.ml.genetic.mutate.MutatePerturb;
@@ -48,7 +50,7 @@ public class GeneticSearch {
     //1473.0 [0.0, 650.0, 415.0, 5.0, 57.0, 4.806817046483262, 15.098489110914961, 9.683106815451737, 1.0, 6.0]    
     //1367.0 [0.0, 760.0, 16.0, 77.0, 126.0, 1.9526462004203577, 1.1296896689902738, 1.5503616143067935, 1.0, 16.0]
     
-    int maxCycles = 256;
+    int maxCycles = 32;
     int populationSize = 16;
     int generationsPerPopulation = 16;
     
@@ -104,28 +106,25 @@ public class GeneticSearch {
     static final Map<String,Integer> paramIndex = new HashMap();
     static {
 
-        param.add(new IntegerParameter("builderType", 0, 0)); //result will be % number types
-        param.add(new IntegerParameter("conceptMax", 900, 1100));
-        param.add(new IntegerParameter("subConceptMax", 1024, 1024));
-        param.add(new IntegerParameter("conceptTaskLinks", 15, 25));
-        param.add(new IntegerParameter("conceptTermLinks", 90, 110));
+        param.add(new IntegerParameter("builderType", 1, 1)); //result will be % number types
+        param.add(new IntegerParameter("conceptMax", 200, 1100));
+        param.add(new IntegerParameter("subConceptMax", 0, 200));
+        param.add(new IntegerParameter("conceptTaskLinks", 5, 50));
+        param.add(new IntegerParameter("conceptTermLinks", 20, 150));
 
-        param.add(new IntegerParameter("conceptForgetDurations", 1.5, 2.5, false));
-        param.add(new IntegerParameter("termLinkForgetDurations", 3, 5, false));
-        param.add(new IntegerParameter("taskLinkForgetDurations", 9, 11, false));
+        param.add(new IntegerParameter("conceptForgetDurations", 0.5, 5.0, false));
+        param.add(new IntegerParameter("termLinkForgetDurations", 2, 8, false));
+        param.add(new IntegerParameter("taskLinkForgetDurations", 5, 15, false));
 
-        param.add(new IntegerParameter("conceptsFiredPerCycle", 1, 1));
+        param.add(new IntegerParameter("conceptsFiredPerCycle", 1, 16));
+        param.add(new IntegerParameter("cyclesPerDuration", 3, 7));
 
-        param.add(new IntegerParameter("cyclesPerDuration", 5, 5));
-
-        param.add(new IntegerParameter("conceptBeliefs", 5, 10));
-        param.add(new IntegerParameter("conceptGoals", 5, 10));
-        param.add(new IntegerParameter("conceptQuestions", 3, 6));
+        param.add(new IntegerParameter("conceptBeliefs", 3, 20));
+        param.add(new IntegerParameter("conceptGoals", 3, 14));
+        param.add(new IntegerParameter("conceptQuestions", 3, 10));
         
         param.add(new IntegerParameter("contrapositionPriority", 20, 40));
-        
-        param.add(new IntegerParameter("contrapositionPriority", 20, 40));
-        
+                
         param.add(new IntegerParameter("bagLevels", 100, 100));
 
         //param.add(new IntegerParameter("prologEnable", 0, 1));
@@ -335,12 +334,8 @@ public class GeneticSearch {
         File file = new File("/home/me/Downloads/default_nar_param_genetic." + new Date().toString() + ".txt");
         
         FileOutputStream fos = new FileOutputStream(file);
-        PrintStream ps = new PrintStream(fos);
         
-        
-        
-        //System.setOut(ps);
-        
+        System.setOut(new PrintStream(new MultiOutputStream(System.out, fos)));
         
         System.out.println(param);
         
@@ -349,17 +344,21 @@ public class GeneticSearch {
         
         while (true) {
     
-            Population pop = initPopulation(populationSize);
+            Population pop = initPopulation(populationSize, 1);
 
             genetic = new TrainEA(pop, new CalculateNALTestScore(maxCycles));
             genetic.setShouldIgnoreExceptions(true);
             genetic.setThreadCount(1);
 
-            genetic.addOperation(0.1, new Splice(3));
-            genetic.addOperation(0.1, new Splice(2));
-            genetic.addOperation(0.1, new Splice(1));
+
+            genetic.addOperation(0.2, new Splice(3));
+            genetic.addOperation(0.2, new Splice(2));
+            genetic.addOperation(0.2, new Splice(1));
             genetic.addOperation(0.2, new MutateShuffle());            
-            genetic.addOperation(0.3, new MutatePerturb(0.2f));
+            genetic.addOperation(0.2, new SpliceNoRepeat(3));            
+            genetic.addOperation(0.9, new MutatePerturb(0.05f));
+            genetic.addOperation(0.5, new MutatePerturb(0.2f));
+            genetic.addOperation(0.3, new MutatePerturb(0.3f));
 
 
             for (int i = 0; i < generationsPerPopulation; i++) {
@@ -372,18 +371,8 @@ public class GeneticSearch {
         }
     }
 
-    private Population initPopulation(int populationSize) {        
-        Population result = new BasicPopulation(populationSize, null);
-
-        BasicSpecies defaultSpecies = new BasicSpecies();
-        defaultSpecies.setPopulation(result);
-        
-        for (int i = 0; i < populationSize; i++) {
-            final DoubleArrayGenome genome = NARGenome.newRandom();            
-            defaultSpecies.getMembers().add(genome);
-        }
-        
-        result.setGenomeFactory(new DoubleArrayGenomeFactory(param.size()) {
+    private Population initPopulation(int populationSize, int numSpecies) {        
+        Population result = new BasicPopulation(populationSize, new DoubleArrayGenomeFactory(param.size()) {
  
             @Override public Genome factor() {
                 return new NARGenome(super.factor());
@@ -396,7 +385,17 @@ public class GeneticSearch {
             
         });
         
-        result.getSpecies().add(defaultSpecies);
+        for (int s = 0; s < numSpecies; s++) {
+            BasicSpecies species = new BasicSpecies();
+            species.setPopulation(result);
+
+            for (int i = 0; i < populationSize; i++) {
+                final DoubleArrayGenome genome = NARGenome.newRandom();            
+                species.getMembers().add(genome);
+            }         
+
+            result.getSpecies().add(species);
+        }
 
         return result;
     }

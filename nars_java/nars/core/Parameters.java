@@ -62,9 +62,7 @@ public class Parameters {
      */
     public static final float HORIZON = 1;
     
-    /** Reliance factor, the empirical confidence of analytical truth. */
-    public static final float RELIANCE = (float) 0.9;    // the same as default confidence
-    
+
 
     
     /** determines the internal precision used for TruthValue calculations.
@@ -169,9 +167,6 @@ public class Parameters {
      * Optimal value to be determined.
      */
     public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 64;
-    
-    /** how quickly a task's priority is adjusted by a fired tasklink */
-    public static float TASK_PRIORITY_MOMENTUM = 0.5f;
     
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;

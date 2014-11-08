@@ -224,7 +224,7 @@ public class Concept extends Item<Term> {
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp) && newStamp.getOccurrenceTime()==oldStamp.getOccurrenceTime()) {
+            if (newStamp.equals(oldStamp,false,true,true,true)) {
                 if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     //task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
@@ -300,7 +300,7 @@ public class Concept extends Item<Term> {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
-            if (newStamp.equals(oldStamp)) {
+            if (newStamp.equals(oldStamp,false,false,true,true)) {
                 return; //duplicate
             } else if (revisible(goal, oldGoal)) {
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());

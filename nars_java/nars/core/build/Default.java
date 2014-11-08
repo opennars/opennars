@@ -105,6 +105,8 @@ public class Default extends Build implements ConceptBuilder {
         param.setForgetting(Forgetting.Iterative);
         param.setTiming(Timing.Iterative);
         param.noiseLevel.set(100);
+
+        param.reliance.set(0.9f);
         
         param.decisionThreshold.set(0.30);
     
