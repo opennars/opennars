@@ -42,6 +42,8 @@ public class Parameters {
     //here the best tasks will compete in a bag, and for every temporal implication n attemps will be done
     //to take one out which can be chained
     public static double TEMPORAL_CHAINING_ATTEMPTS=10;  //experiment
+    //priority boost
+    public static double TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR=1.5;  //experiment
 
     //can only be activated in plugin menu no,
     public static boolean INTERNAL_EXPERIENCE=false;
