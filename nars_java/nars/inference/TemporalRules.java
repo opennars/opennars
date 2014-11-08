@@ -210,6 +210,7 @@ public class TemporalRules {
             if(whole!=null) {
                 TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                budget.setPriority((float) Math.min(0.99, budget.getPriority()*Parameters.TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR));
                 return nal.doublePremiseTask(whole, truth, budget, true)!=null;
             }
         }
@@ -331,6 +332,7 @@ public class TemporalRules {
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
+        budget2.setPriority((float) Math.min(0.99, budget2.getPriority()*Parameters.TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR));
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
