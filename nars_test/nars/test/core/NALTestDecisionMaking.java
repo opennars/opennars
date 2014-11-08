@@ -269,7 +269,7 @@ public class NALTestDecisionMaking  {
         
         boolean error = false;
         try {
-            n.finish(minCycles, showDebug);
+            n.finish(minCycles);
         }
         catch(Throwable e){                         
             error = true; 

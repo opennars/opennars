@@ -302,6 +302,12 @@ public class DefaultAttention implements Attention {
     public Iterator<Concept> iterator() {
         return concepts.iterator();
     }
+
+    @Override
+    public Memory getMemory() {
+        return memory;
+    }
+
     
     
 }

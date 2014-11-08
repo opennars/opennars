@@ -47,7 +47,7 @@ public class NullOperator extends Operator {
         if (Parameters.DEBUG) {
             System.out.println("Executed: " + this);
             for (Term t : args) {
-               System.out.println(" --- " + Arrays.toString(args));
+               System.out.print(" -- " + Arrays.toString(args));
             }
         }
         return null;

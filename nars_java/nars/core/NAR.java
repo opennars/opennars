@@ -353,13 +353,8 @@ public class NAR implements Runnable, TaskSource {
     }
     
     /** Execute a fixed number of cycles, then finish any remaining walking steps. */
-    public void finish(final int cycles) {
-        finish(cycles, false);
-    }
+    public void finish(int cycles) {
     
-    /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
-    public void finish(int cycles, final boolean debug) {
-        Parameters.DEBUG = debug; 
         running = true;
         stopped = false;
 
@@ -502,10 +497,6 @@ public class NAR implements Runnable, TaskSource {
      */
     public void frame(int cycles) {
         
-        if (DEBUG) {
-            debugTime();            
-        }                
-
         long timeStart = System.currentTimeMillis();
 
         emit(FrameStart.class);

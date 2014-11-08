@@ -81,7 +81,7 @@ public class TimeSeries {
         if (specificRange)
             return specificMinMax;
         
-        float min=0, max=0;
+        float min=Float.POSITIVE_INFINITY, max=Float.NEGATIVE_INFINITY;
         for (long i = start; i < end; i++) {
             
             Float v = values.get(i);

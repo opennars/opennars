@@ -21,6 +21,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.InferenceLogger;
 import nars.io.Output;
+import nars.io.Output.ERR;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.Texts;
@@ -49,11 +50,10 @@ public class NALTest  {
     static public boolean saveSimilar = true;
     static public boolean showSuccess = false;
     static public boolean showFail = true;
-    static public boolean showDebug = false;
     static public boolean showTrace = false;
     static public boolean showReport = true;
     static public boolean requireSuccess = true;
-    static public Narsese narsese;
+    //static public Narsese narsese;
     
     final int similarityThreshold = 4;
     
@@ -266,34 +266,40 @@ public class NALTest  {
     
     protected double testNAL(final String path) {               
         Memory.resetStatic();
-        final NAR n = newNAR();
-    
-        narsese = new Narsese(n);
         
         final List<Expect> expects = new ArrayList();
         
-                
-        String example = getExample(path);
-        List<Expect> extractedExpects = getExpectations(n, example, saveSimilar);
-        for (Expect e1 : extractedExpects)
-            expects.add(e1);
-        
-        if (showOutput)
-            new TextOutput(n, System.out);
-        if (showTrace) {
-            new InferenceLogger(n, System.out);
-        }
-                
-        
-        n.addInput(new TextInput(example));
-        
+        NAR n = null;
         boolean error = false;
         try {
-            n.finish(minCycles, showDebug);
-        }
-        catch(Throwable e){                         
-            error = true;
+            n = newNAR();
+
+
             
+
+
+            String example = getExample(path);
+            List<Expect> extractedExpects = getExpectations(n, example, saveSimilar);
+            for (Expect e1 : extractedExpects)
+                expects.add(e1);
+
+            if (showOutput)
+                new TextOutput(n, System.out);
+            if (showTrace) {
+                new InferenceLogger(n, System.out);
+            }
+
+
+            n.addInput(new TextInput(example));
+            n.finish(minCycles);
+        }
+        catch(Throwable e){     
+            System.err.println(e);
+            if (Parameters.DEBUG) {                
+                e.printStackTrace();
+            }
+            
+            error = true;
         }
       
         

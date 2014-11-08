@@ -1,7 +1,5 @@
 package nars.core;
 
-import java.util.Collection;
-import nars.core.control.FireConcept;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.inference.BudgetFunctions.Activating;
@@ -60,5 +58,7 @@ public interface Attention extends Iterable<Concept> {
 
     /** used by the bag to explicitly forget an item asynchronously */
     public void conceptRemoved(Concept c);
+    
+    public Memory getMemory();
     
 }

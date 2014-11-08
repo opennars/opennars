@@ -15,7 +15,6 @@ import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
 import nars.language.Term;
-import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
 import nars.storage.DelayBag;
 
@@ -26,7 +25,7 @@ import nars.storage.DelayBag;
  */
 public class WaveAttention implements Attention {
 
-    public Bag<Concept,Term> concepts;
+    public DelayBag<Concept,Term> concepts;
     //public final CacheBag<Term, Concept> subcon;
     
     private final ConceptBuilder conceptBuilder;
@@ -37,11 +36,12 @@ public class WaveAttention implements Attention {
     int newTaskPriority = 2;
     int novelTaskPriority = 2;
     int conceptPriority = 2;
+    private final int maxConcepts;
                
     public WaveAttention(int maxConcepts, ConceptBuilder conceptBuilder) {
-        this.concepts = new DelayBag<>(maxConcepts);        
+        this.maxConcepts = maxConcepts;
         this.conceptBuilder = conceptBuilder;        
-        //this.subcon = subcon;        
+        //this.subcon = subcon
     }    
 
     @Override
@@ -115,6 +115,7 @@ public class WaveAttention implements Attention {
     @Override
     public void init(Memory m) {
         this.memory = m;
+        this.concepts = new DelayBag<>(memory.param.conceptForgetDurations, maxConcepts);        
         if (concepts instanceof MemoryAware)
             ((MemoryAware)concepts).setMemory(m);
         if (concepts instanceof AttentionAware)
@@ -140,6 +141,12 @@ public class WaveAttention implements Attention {
     public String toString() {
         return super.toString() + "[" + concepts.toString() + "]";
     }
+
+    @Override
+    public Memory getMemory() {
+        return memory;
+    }
+    
     
     
 }

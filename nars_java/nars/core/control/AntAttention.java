@@ -8,6 +8,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -29,10 +30,11 @@ public class AntAttention extends WaveAttention {
     public final Deque<Ant> ants = new ArrayDeque();
     
     float cycleSpeed;
-    
+    float conceptVisitDelivery = 0.95f;
+        
     public AntAttention(int numAnts, float cycleSpeed, int maxConcepts, ConceptBuilder conceptBuilder) {
         super(maxConcepts, conceptBuilder);
-        
+                
         this.cycleSpeed = cycleSpeed;
 
         for (int i = 0; i < numAnts; i++) {
@@ -40,13 +42,15 @@ public class AntAttention extends WaveAttention {
             ants.add(a);
         }
     }
-    
-    
+
+    @Override public void init(Memory m) {
+        super.init(m);
+        concepts.setTargetActivated( (int)(ants.size() * 0.1f * concepts.getCapacity()) );
+    }
 
     @Override
     public void cycle() {
-        //run.clear();
-        run = new ArrayList();
+        run.clear();
         
         memory.processNewTasks(newTaskPriority, run);
                 
@@ -95,7 +99,7 @@ public class AntAttention extends WaveAttention {
             this.traverseTaskLinks = traverseTaskLinks;
             this.speed = speed;                        
         }
-        
+                
         void randomConcept(List<Runnable> queue) {
             
             
@@ -240,10 +244,8 @@ public class AntAttention extends WaveAttention {
         }
         
         public float getConceptVisitDelivery() {
-            return 0.5f;
-        }
-        
-        
+            return (float)(speed * conceptVisitDelivery);
+        }                
         
         protected Concept getConcept(Object x, BudgetValue delivery) {
             if (x instanceof Term) {

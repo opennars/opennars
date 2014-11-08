@@ -10,7 +10,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.storage.CurveBag;
+import nars.storage.DelayBag;
 
 /**
  *
@@ -47,10 +47,19 @@ public class Neuromorphic extends Curve {
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {
         
-        Bag<TaskLink,Task> taskLinks = new CurveBag<>(getConceptTaskLinks(), true);
-        Bag<TermLink,TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), true);
+        DelayBag<TaskLink,Task> taskLinks = new DelayBag<TaskLink,Task>(
+                m.param.taskForgetDurations, getConceptTaskLinks()) {
+
+            
+        };
+        taskLinks.setMemory(m);
         
-        return new Concept(b, t, taskLinks, termLinks, m);        
+        DelayBag<TermLink,TermLink> termLinks = new DelayBag<>(
+                m.param.beliefForgetDurations, getConceptTermLinks());
+        
+        termLinks.setMemory(m);
+        
+        return new Concept(b, t, taskLinks, termLinks, m);
     }
 
     
