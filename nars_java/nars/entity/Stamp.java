@@ -36,6 +36,7 @@ import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_BACKWARD;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
+import static nars.inference.TemporalRules.concurrent;
 import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.language.Tense;
@@ -79,7 +80,7 @@ public class Stamp implements Cloneable {
     /**
      * used when the occurrence time cannot be estimated, means "unknown"
      */
-    public static final long UNKNOWN = Integer.MAX_VALUE;
+    //public static final long UNKNOWN = Integer.MAX_VALUE;
 
     
     /** caches evidentialBase as a set for comparisons and hashcode.
@@ -97,8 +98,7 @@ public class Stamp implements Cloneable {
     /* used for lazily calculating derivationChain on-demand */
     private DerivationBuilder derivationBuilder = null;
     
-    /** analytics metric */
-    public final long latency;
+    
     
     /**
      * derivation chain containing the used premises and conclusions which made
@@ -106,6 +106,12 @@ public class Stamp implements Cloneable {
      * Uses LinkedHashSet for optimal contains/indexOf performance.
      */
     private Collection<Term> derivationChain;
+    
+    /** analytics metric */
+    transient public final long latency;
+    
+    /** cache of hashcode of evidential base */
+    transient private int evidentialHash;
 
     
     public boolean before(Stamp s, int duration) {
@@ -496,8 +502,10 @@ public class Stamp implements Cloneable {
      * @return The TreeSet representation of the evidential base
      */
     private long[] toSet() {        
-        if (evidentialSet == null)        
+        if (evidentialSet == null) {        
             evidentialSet = toSetArray(evidentialBase);
+            evidentialHash = Arrays.hashCode(evidentialSet);
+        }
         
         return evidentialSet;
     }
@@ -506,7 +514,7 @@ public class Stamp implements Cloneable {
      * Check if two stamps contains the same content
      *
      * @param that The Stamp to be compared
-     * @return Whether the two have contain the same elements
+     * @return Whether the two have contain the same evidential base
      */
     @Override
     public boolean equals(final Object that) {
@@ -518,26 +526,12 @@ public class Stamp implements Cloneable {
 
         Stamp s = (Stamp)that;
 
-        /*
-        if (occurrenceTime!=s.occurrenceTime)
-            return false;
-        
-        if (creationTime!=s.creationTime)
-            return false;
-        */
-        
         return Arrays.equals(toSet(), s.toSet());
     }
 
-    /** equality test, including ocurrenceTime with respect to duration */
-    public boolean equals(final Stamp stamp, int duration) {
-        if (equals(stamp)) {
-            if ((occurrenceTime==ETERNAL) && (stamp.occurrenceTime==ETERNAL))
-                return true;
-            else 
-                return (Math.abs(stamp.occurrenceTime - occurrenceTime) < duration);
-        }
-        return false;
+    /** extended equality test, including ocurrenceTime with respect to duration */
+    public boolean equals(final Stamp stamp, final int duration) {
+        return equals(stamp) && concurrent(occurrenceTime, stamp.occurrenceTime, duration);
     }
     
     /**
@@ -547,7 +541,10 @@ public class Stamp implements Cloneable {
      */
     @Override
     public final int hashCode() {
-        return Arrays.hashCode(toSet());
+        if (evidentialSet == null) {
+            toSet();
+        }
+        return evidentialHash;
     }
 
     public Stamp cloneWithNewCreationTime(long newCreationTime) {
