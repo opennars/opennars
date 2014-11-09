@@ -267,7 +267,7 @@ public class NARio extends Run {
                         scene.toggleKey(i, false);
                     }
                 }
-                if(tt%30==0) {
+                if(Memory.randomNumber.nextDouble()>1.0/30.0) {
                     
                     
                     
