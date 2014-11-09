@@ -3,10 +3,9 @@ package nars.storage;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -86,9 +85,9 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     
     private int targetActivations;
     
-    private double numPriorityThru = 0; //TODO
-    private double totalPriorityThru = 0; //TODO
-    float mass; //TODO
+    private float numPriorityThru = 0;
+    private float mass = 0;
+    
     
     private Memory memory;
     private long now;
@@ -96,7 +95,12 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
     private AtomicBoolean busyReloading = new AtomicBoolean(false);
     private final AtomicDouble forgetRate;
-    
+    protected int reloadIteration;
+    private boolean overcapacity;
+    private float avgPriority;
+
+    /** size below which to return items in flat, sequential, cyclic iterative order. */
+    int flatThreshold = 2;
     
     public DelayBag(AtomicDouble forgetRate, int capacity) {
         this(forgetRate, capacity, (int)(0.1f * capacity));
@@ -107,26 +111,27 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         this.forgetRate = forgetRate;
 
         if (Parameters.THREADS == 1) {
-             this.items = new HashMap(capacity);
+             this.items = new LinkedHashMap(capacity);
              this.pending = new ArrayDeque(targetPendingBufferSize);
         }
         else {
+            //find a solution to make a concurrent analog of the LinkedHashMap, if cyclical balance of iteration order (reinsertion appends to end) is necessary
             this.items = new ConcurrentHashMap(capacity);
             this.pending = new ConcurrentLinkedDeque<E>();            
         }
         
         this.targetActivations = targetPendingBufferSize;
         this.toRemove = new ArraySortedIndex(capacity);
-        this.mass = 0;
+        avgPriority = 0.5f;
+        mass = 0;
     }
     
     @Override
     public synchronized void clear() {
         items.clear();
         pending.clear();
+        avgPriority = 0.5f;
         mass = 0;
-        numPriorityThru = 0;
-        totalPriorityThru = 0;
     }
 
 
@@ -169,24 +174,34 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         float forgetCycles = memory.param.cycles(forgetRate);
 
         int j = 0;
-        int iterations = 0;
         int originalSize = size();
         
                 
-        numPriorityThru = totalPriorityThru = 0;
+        numPriorityThru = mass = 0;
                 
+        overcapacity = originalSize >= capacity;
+                
+        int numToRemove = originalSize - capacity;
+        if (originalSize >= capacity) {
+            toRemove.clear();
+            toRemove.setCapacity(numToRemove + 1);
+        }
+        
+            
         E e = null;
-        for (Map.Entry<K, E> ee : items.entrySet()) {
+        for (final Map.Entry<K, E> ee : items.entrySet()) {
         
             e = ee.getValue();
                            
-            BudgetFunctions.forgetPeriodic(e.budget, forgetCycles, Parameters.BAG_THRESHOLD, now);
+            if (forgettable(e))
+                BudgetFunctions.forgetPeriodic(e.budget, forgetCycles, Parameters.BAG_THRESHOLD, now);
             
+            float p = e.getPriority();
             
-            totalPriorityThru += e.getPriority();
+            mass += p;
             numPriorityThru++;
             
-            if (ready(e)) {
+            if (fireable(e)) {
                 //ACTIVATE
 
                 //shuffle
@@ -195,64 +210,46 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
                 else
                     pending.addLast(e);                
             }
-            else if ((originalSize >= capacity) && (e.getPriority() <= forgetThreshold)) {
+            else if (removeable(e)) {
                 toRemove.add(e);                
             }                            
             
-            iterations++;
+            reloadIteration++;
         }
         
-        //remove lowest priority items until the capacity is maintained
-        int numToRemove = originalSize - getCapacity();
-        int rj = 0;
-        for (final E r : toRemove) {
-            E removed = removeItem(r.name());
-            if (removed == null)
-                throw new RuntimeException("Unable to remove item: " + r);
-            if (rj++ == numToRemove)
-                break;
-        }        
-        toRemove.clear();
+        avgPriority = numPriorityThru / mass;
         
-    
-        //ADJUST FIRING THRESHOLD
-        int activated = pending.size();        
-        
-        //TODO use rate that items iterated were selected
-        float percentActivated = activated / iterations;
-        
-        if (activated < targetActivations) {
-            //too few activated, reduce threshold
-            activityThreshold *= 0.99f;
-            if (activityThreshold < 0.01) activityThreshold = 0.01f;            
+        //remove lowest priority items until the capacity is maintained        
+        if (numToRemove > 0) {
+            int rj = 0;
+            for (final E r : toRemove) {
+                E removed = removeItem(r.name());
+                if (removed == null)
+                    throw new RuntimeException("Unable to remove item: " + r);
+                if (rj++ == numToRemove)
+                    break;
+            }        
         }
-        else if (activated > targetActivations) {
-            //too many, increase threshold
-            activityThreshold *= 1.1f;
-            if (activityThreshold > 0.99) activityThreshold = 0.99f;            
-        }
-        
-        //ADJUST FORGET THRESHOLD
-        int s = size();
-        if (s > capacity) {
-            //forgetThreshold *= 1.1f;
-            forgetThreshold = 1.0f - ((s - capacity)/capacity);
-            if (forgetThreshold > 0.99f) forgetThreshold = 0.99f;
-        }
-        else if (s < capacity) {
-            forgetThreshold *= 0.98f;
-            if (forgetThreshold < 0.01f) forgetThreshold = 0.01f;
-        }
+            
+        adjustActivationThreshold();
+        adjustForgettingThreshold();                
         
         //in case the iteration added nothing to pending, use the last item
-        if (pending.isEmpty() && (s > 0) && (e!=null))
+        if (pending.isEmpty() && (e!=null))
             pending.add(e); 
         
     }
     
 
+    protected boolean forgettable(E e) {
+        return true;
+    }
     
-    protected boolean ready(final E c) {
+    protected boolean removeable(E e) {
+        return overcapacity && (e.getPriority() <= forgetThreshold);
+    }
+    
+    protected boolean fireable(final E c) {
         
         final float firingAge = now - c.budget.getLastForgetTime();        
         
@@ -302,10 +299,28 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     
     
     @Override
-    public E takeNext() {
+    public E takeNext() {                
        
-        if (items.size() == 0) return null;
-
+        int s = items.size();
+        if (s == 0) 
+            return null;
+        else if (s <= flatThreshold) {
+            K nn = items.keySet().iterator().next();
+            return take(nn);
+        }
+        
+        /* this doesnt seem to be necessary:
+        
+        
+        if (!pending.isEmpty()) {
+            //discard removed items at the head of the pending queue
+            while (!items.containsKey(pending.peekFirst().name())) {
+                E r = pending.removeFirst();
+                System.out.println("removed stale item from pending: " + r);                
+            }
+        }
+        */
+        
         if (!ensureLoaded()) {            
             //TODO throw exception if not threading and this happens
             return null;
@@ -316,8 +331,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
             return take(n.name());
         }
         else {
-            if (items.size() != 0)
-                throw new RuntimeException("Bag did not find an item although it is not empty; " + pending.size() + " " + items.size() );
+            if (s!= 0)
+                throw new RuntimeException("Bag did not find an item although it is not empty; " + pending.size() + " " + s );
             return null;
         }
     }
@@ -339,6 +354,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         if (x.budget.getLastForgetTime() == -1)
             x.budget.setLastForgetTime(now);
 
+        /* return null since nothing was actually displaced yet */
         return null;
     }
 
@@ -353,21 +369,19 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     }
 
     @Override
-    public Collection<E> values() {
+    public Iterable<E> values() {
         return items.values();
     }
 
     @Override
     public float getAveragePriority() {
         //quick way to calculate this passively while iterating
-        if (numPriorityThru!=0)
-            return (float)(totalPriorityThru / numPriorityThru);
-        return 0.5f;
+        return avgPriority;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return items.values().iterator();
+        return values().iterator();
     }
 
 
@@ -390,5 +404,35 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     public void setTargetActivated(int i) {
         this.targetActivations = i;
     }
-    
+
+    protected void adjustActivationThreshold() {
+        //ADJUST FIRING THRESHOLD
+        int activated = pending.size();                
+        if (activated < targetActivations) {
+            //too few activated, reduce threshold
+            activityThreshold *= 0.99f;
+            if (activityThreshold < 0.01) activityThreshold = 0.01f;            
+        }
+        else if (activated > targetActivations) {
+            //too many, increase threshold
+            activityThreshold *= 1.1f;
+            if (activityThreshold > 0.99) activityThreshold = 0.99f;            
+        }
+    }
+
+    protected void adjustForgettingThreshold() {
+        //ADJUST FORGET THRESHOLD
+        int s = size();
+        if (s > capacity) {
+            //forgetThreshold *= 1.1f;
+            forgetThreshold = 1.0f - ((s - capacity)/capacity);
+            if (forgetThreshold > 0.99f) forgetThreshold = 0.99f;
+        }
+        else if (s < capacity) {
+            forgetThreshold *= 0.98f;
+            if (forgetThreshold < 0.01f) forgetThreshold = 0.01f;
+        }
+    }
+
+  
 }

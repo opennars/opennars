@@ -18,6 +18,7 @@ import nars.entity.Item;
  * Bag implementation which distributes items into
  * discrete levels (queues) according to priority, 
  * with high-performance and multi-threaded capability
+ * WARNING not tested
  */
 public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
 

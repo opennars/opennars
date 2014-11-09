@@ -17,13 +17,14 @@ import nars.inference.BudgetFunctions;
 import nars.language.Term;
 import nars.storage.Bag.MemoryAware;
 import nars.storage.DelayBag;
+import nars.storage.FairDelayBag;
 
 /**
  * Uses DelayBag to emulate a massively parallel spiking neural network of concept activation
  * 
  * Designed for use in parallel processing
  */
-public class WaveAttention implements Attention {
+abstract public class WaveAttention implements Attention {
 
     public DelayBag<Concept,Term> concepts;
     //public final CacheBag<Term, Concept> subcon;
@@ -59,7 +60,7 @@ public class WaveAttention implements Attention {
                 break;
             run.add(new FireConcept(memory, c, 1) {
                 @Override public void onFinished() {
-                    //putIn, not putBack; DelayBag has its own forget function
+                    //putIn, not putBack; DelayBag has its own forgettable function
                     concepts.putIn(currentConcept);
                 }
             });
@@ -115,7 +116,9 @@ public class WaveAttention implements Attention {
     @Override
     public void init(Memory m) {
         this.memory = m;
-        this.concepts = new DelayBag<>(memory.param.conceptForgetDurations, maxConcepts);        
+        
+        this.concepts = new FairDelayBag(memory.param.conceptForgetDurations, maxConcepts);      
+        
         if (concepts instanceof MemoryAware)
             ((MemoryAware)concepts).setMemory(m);
         if (concepts instanceof AttentionAware)

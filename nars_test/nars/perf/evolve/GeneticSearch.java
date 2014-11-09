@@ -50,7 +50,7 @@ public class GeneticSearch {
     //1473.0 [0.0, 650.0, 415.0, 5.0, 57.0, 4.806817046483262, 15.098489110914961, 9.683106815451737, 1.0, 6.0]    
     //1367.0 [0.0, 760.0, 16.0, 77.0, 126.0, 1.9526462004203577, 1.1296896689902738, 1.5503616143067935, 1.0, 16.0]
     
-    int maxCycles = 512;
+    int maxCycles = 128;
     int populationSize = 16;
     int generationsPerPopulation = 16;
     
@@ -237,8 +237,8 @@ public class GeneticSearch {
             
             (n.param).duration.set(duration);
             (n.param).conceptForgetDurations.set(conceptForget);
-            (n.param).taskForgetDurations.set(taskForget);
-            (n.param).beliefForgetDurations.set(beliefForget);
+            (n.param).taskLinkForgetDurations.set(taskForget);
+            (n.param).termLinkForgetDurations.set(beliefForget);
 
             
             (n.param).conceptBeliefsMax.set(i("conceptBeliefs"));

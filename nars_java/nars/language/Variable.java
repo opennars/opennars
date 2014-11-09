@@ -21,8 +21,11 @@
 package nars.language;
 
 import java.nio.CharBuffer;
-import java.util.Objects;
 import nars.core.Parameters;
+import static nars.io.Symbols.VAR_DEPENDENT;
+import static nars.io.Symbols.VAR_INDEPENDENT;
+import static nars.io.Symbols.VAR_QUERY;
+import static nars.language.Variable.newName;
 
 /**
  * A variable term, which does not correspond to a concept
@@ -62,6 +65,8 @@ public class Variable extends Term {
         this.type = n.charAt(0);
         this.scope = scope != null ? scope : this;
         this.hash = 0; //calculate lazily
+        if (!validVariableType(type)) 
+            throw new RuntimeException("Invalid variable type: " + n);
         return this;
     }
     
@@ -189,9 +194,9 @@ public class Variable extends Term {
         return (that instanceof Variable) ? ((Comparable)name()).compareTo(that.name()) : -1;
     }*/
 
-    boolean isQueryVariable() { return getType() == '?';    }
-    boolean isDependentVariable() { return getType() == '#';    }
-    boolean isIndependentVariable() { return getType() == '$';    }
+    boolean isQueryVariable() { return getType() == VAR_QUERY;    }
+    boolean isDependentVariable() { return getType() == VAR_DEPENDENT;    }
+    boolean isIndependentVariable() { return getType() == VAR_INDEPENDENT;    }
 
     boolean isCommon() {     
         CharSequence n = name();
@@ -204,6 +209,9 @@ public class Variable extends Term {
     }
 
 
+    public static boolean validVariableType(final char c) {
+        return (c == VAR_QUERY) || (c == VAR_DEPENDENT) || (c == VAR_INDEPENDENT);
+    }
     
     private static final int MAX_CACHED_VARNAME_INDEXES = 64;
     private static final CharSequence[] vn1 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
@@ -218,9 +226,9 @@ public class Variable extends Term {
         
         CharSequence[] cache;
         switch (type) {
-            case '$': cache = vn1; break;
-            case '#': cache = vn2; break;
-            case '?': cache = vn3; break;
+            case VAR_INDEPENDENT: cache = vn1; break;
+            case VAR_DEPENDENT: cache = vn2; break;
+            case VAR_QUERY: cache = vn3; break;
             default:
                 throw new RuntimeException("Invalid variable type");
         }

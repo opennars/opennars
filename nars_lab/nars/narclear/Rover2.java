@@ -350,7 +350,7 @@ public class Rover2 extends PhysicsModel {
     }
 
     public static void main(String[] args) {
-        Parameters.DEBUG = false;
+        Parameters.DEBUG = true;
         Parameters.THREADS = 1;
 
         //NAR nar = new Default().
@@ -372,9 +372,9 @@ public class Rover2 extends PhysicsModel {
         (nar.param).noiseLevel.set(0);
         (nar.param).duration.set(cyclesPerFrame);
         (nar.param).conceptForgetDurations.set(5f);
-        (nar.param).taskForgetDurations.set(10f);
-        (nar.param).beliefForgetDurations.set(25f);
-        (nar.param).newTaskForgetDurations.set(5f);
+        (nar.param).taskLinkForgetDurations.set(10f);
+        (nar.param).termLinkForgetDurations.set(25f);
+        (nar.param).novelTaskForgetDurations.set(5f);
 
         //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
         //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);

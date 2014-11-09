@@ -30,7 +30,7 @@ public class AntAttention extends WaveAttention {
     public final Deque<Ant> ants = new ArrayDeque();
     
     float cycleSpeed;
-    float conceptVisitDelivery = 0.95f;
+    float conceptVisitDelivery = 0.5f;
         
     public AntAttention(int numAnts, float cycleSpeed, int maxConcepts, ConceptBuilder conceptBuilder) {
         super(maxConcepts, conceptBuilder);
@@ -250,10 +250,10 @@ public class AntAttention extends WaveAttention {
             }
             
             if (viaLink instanceof TermLink) {
-                concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.beliefForgetDurations), memory);                               
+                concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);                               
             }
             else if (viaLink instanceof TaskLink) {
-                concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskForgetDurations), memory);        
+                concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);        
             }
             
             eta = viaLink.getPriority();

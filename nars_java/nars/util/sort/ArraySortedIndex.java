@@ -100,15 +100,15 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
         if (isEmpty()) {
             return list.add(o);
         } else {
-//            if (size() >= capacity) {
-//
-//                if (positionOf(o) == 0) {
-//                    //priority too low to join this list
-//                    return false;
-//                }
-//
-//                reject(remove(0));
-//            }
+            if (size() >= capacity) {
+
+                if (positionOf(o) == 0) {
+                    //priority too low to join this list
+                    return false;
+                }
+
+                reject(remove(0));
+            }
             
             list.add(validPosition(positionOf(o)), o);
             return true;

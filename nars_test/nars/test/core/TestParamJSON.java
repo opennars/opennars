@@ -32,7 +32,7 @@ public class TestParamJSON {
         assertEquals(p.duration.getSubDurationLog(), r.duration.getSubDurationLog(), 0.01);
 
 
-        assertEquals(p.taskForgetDurations.get(), r.taskForgetDurations.get(), 0.01);
+        assertEquals(p.taskLinkForgetDurations.get(), r.taskLinkForgetDurations.get(), 0.01);
         
         assertEquals(p.termLinkRecordLength.get(), r.termLinkRecordLength.get(), 0.01);            
         

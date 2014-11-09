@@ -69,7 +69,7 @@ abstract public class FireConcept extends NAL {
     
     protected void returnTaskLink(TaskLink t) {
         currentConcept.taskLinks.putBack(t, 
-                memory.param.cycles(memory.param.taskForgetDurations), memory);
+                memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
         
     }
     

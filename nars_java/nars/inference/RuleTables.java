@@ -186,7 +186,7 @@ public class RuleTables {
                         break;                        
                     }
                     
-                    nal.memory.temporalCoherences.putBack(best, memory.param.cycles(memory.param.beliefForgetDurations), memory);
+                    nal.memory.temporalCoherences.putBack(best, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
                     
                     Sentence s=best.sentence;
                     Term t=s.content;
