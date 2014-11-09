@@ -30,11 +30,11 @@ import nars.util.NARTrace;
 public class NARCompare1 extends TimelineExample {
     
     public static void setA(Param p) {
-        p.beliefForgetDurations.set(10);
+        p.termLinkForgetDurations.set(10);
     }
     
     public static void setB(Param p) {
-        p.beliefForgetDurations.set(5);
+        p.termLinkForgetDurations.set(5);
     }
     
     public static void main(String[] args) {

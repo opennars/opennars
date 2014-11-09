@@ -1,6 +1,5 @@
 package nars.storage;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import nars.core.Memory;
@@ -116,7 +115,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         }
     }
     
-    abstract public Collection<E> values();
+    abstract public Iterable<E> values();
 
     public abstract float getAveragePriority();
 

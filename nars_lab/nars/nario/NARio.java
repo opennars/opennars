@@ -70,7 +70,7 @@ public class NARio extends Run {
         
        // nar.param().conceptForgetDurations.set(99.0f);
 
-       // nar.param().beliefForgetDurations.set(99.0f);
+       // nar.param().termLinkForgetDurations.set(99.0f);
         
         //new TextOutput(nar, System.out).setShowInput(true);
         int memCyclesPerFrame = 200;

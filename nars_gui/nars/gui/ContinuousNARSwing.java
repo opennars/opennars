@@ -28,9 +28,9 @@ public class ContinuousNARSwing {
             //int c = (int)Math.sqrt(numConcepts);
             
             p.conceptForgetDurations.set(2);             
-            p.taskForgetDurations.set(4);
-            p.beliefForgetDurations.set(10);
-            p.newTaskForgetDurations.set(2);
+            p.taskLinkForgetDurations.set(4);
+            p.termLinkForgetDurations.set(10);
+            p.novelTaskForgetDurations.set(2);
         }
         
     }

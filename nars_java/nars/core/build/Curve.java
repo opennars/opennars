@@ -2,11 +2,9 @@ package nars.core.build;
 
 import nars.core.Attention;
 import nars.core.Memory;
-import nars.core.Param;
 import nars.core.control.DefaultAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.entity.ConceptBuilder;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;

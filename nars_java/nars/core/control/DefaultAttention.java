@@ -187,7 +187,7 @@ public class DefaultAttention implements Attention {
     }
 
     
-    public Collection<Concept> getConcepts() {
+    public Iterable<Concept> getConcepts() {
          return concepts.values();
     }
 

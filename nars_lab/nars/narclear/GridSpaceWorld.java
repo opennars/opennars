@@ -4,7 +4,6 @@
  */
 package nars.narclear;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import nars.core.Memory;
 import nars.grid2d.Cell;
@@ -89,6 +88,11 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
                                 d.setFillColor(null);
                                 d.setStroke(null);
                             }
+
+                            @Override public String toString() {
+                                return "Wall";
+                            }
+                            
                         });
                         break;
                 }

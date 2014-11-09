@@ -21,7 +21,7 @@ import nars.gui.output.timeline.Chart;
 import nars.gui.output.timeline.MultiTimeline;
 import nars.gui.output.timeline.StackedPercentageChart;
 import nars.storage.DelayBag;
-import nars.storage.LevelBag;
+import nars.storage.FairDelayBag;
 
 /**
  *
@@ -194,7 +194,8 @@ public class BagFairness {
     public static void main(String[] args) {
         Parameters.DEBUG = true;
         
-        int maxConcepts = 1000;
+        int maxConcepts = 200;
+        float inputRate = 0.2f;
 
         new NWindow("_", new MultiTimeline(2, 2, 1) {
 
@@ -210,20 +211,21 @@ public class BagFairness {
                         }
                         else { //if (experiment == 1) {
                             //return new CurveBag(getConceptBagSize(), true);
-                            return new LevelBag(getConceptBagSize(), 100);
+                            //return new LevelBag(getConceptBagSize(), 100);
+                            return new FairDelayBag(param.conceptForgetDurations, getConceptBagSize());
                         }
                     }
 
                 }.simulationTime().setConceptBagSize(maxConcepts).build();
 
-                float rProb = 0.1f;
+                
                 ArrayList<Chart> ch = new BagFairness(n, 
-                        new RandomTermInput(8, rProb, 0.01, 0.5, 0.5, 0.1f, 1.0), 
+                        new RandomTermInput(8, inputRate, 0.01, 0.5, 0.5, 0.1f, 1.0), 
                         maxConcepts, /* concepts */
-                        2500 /* iterations */).charts;
+                        1500 /* iterations */).charts;
                 return ch.toArray(new Chart[ch.size()]);
             }            
-        }).show(800, 800, true);
+        }).show(1200, 900, true);
         
         
     }

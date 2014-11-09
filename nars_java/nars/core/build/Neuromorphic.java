@@ -5,12 +5,14 @@ import nars.core.Memory;
 import nars.core.control.AntAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.DelayBag;
+import nars.storage.FairDelayBag;
 
 /**
  *
@@ -40,28 +42,34 @@ public class Neuromorphic extends Curve {
     
     @Override
     public Bag<Concept, Term> newConceptBag() {
-        //return new DelayBag(getConceptBagSize());
+        /** created by AntAttention */
         return null;
     }
 
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {
         
-        DelayBag<TaskLink,Task> taskLinks = new DelayBag<TaskLink,Task>(
-                m.param.taskForgetDurations, getConceptTaskLinks()) {
+        DelayBag<TaskLink,Task> taskLinks = new FairDelayBag(
+                param.taskLinkForgetDurations, getConceptTaskLinks()) {
 
             
         };
         taskLinks.setMemory(m);
         
-        DelayBag<TermLink,TermLink> termLinks = new DelayBag<>(
-                m.param.beliefForgetDurations, getConceptTermLinks());
+        DelayBag<TermLink,TermLink> termLinks = new FairDelayBag(
+                param.termLinkForgetDurations, getConceptTermLinks());
         
         termLinks.setMemory(m);
         
         return new Concept(b, t, taskLinks, termLinks, m);
     }
 
+    @Override
+    public Bag<Task<Term>, Sentence<Term>> newNovelTaskBag() {
+        return new FairDelayBag(param.novelTaskForgetDurations, taskBufferSize);
+    }
+
+    
     
     
 }

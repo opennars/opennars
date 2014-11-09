@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import javolution.context.ConcurrentContext;
+import nars.core.Attention.AttentionAware;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
@@ -287,6 +288,8 @@ public class Memory implements Serializable {
         this.concepts.init(this);
         
         this.novelTasks = novelTasks;                
+        if (novelTasks instanceof AttentionAware)
+            ((AttentionAware)novelTasks).setAttention(concepts);
         
         this.newTasks = (Parameters.THREADS > 1) ?  
                 new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
