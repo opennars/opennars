@@ -85,7 +85,6 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     private float latencyMin = 0; /* in cycles */
     
     private int targetActivations;
-    private int maxActivations;
     
     private double numPriorityThru = 0; //TODO
     private double totalPriorityThru = 0; //TODO
@@ -117,7 +116,6 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         }
         
         this.targetActivations = targetPendingBufferSize;
-        this.maxActivations = 2 * targetActivations;
         this.toRemove = new ArraySortedIndex(capacity);
         this.mass = 0;
     }

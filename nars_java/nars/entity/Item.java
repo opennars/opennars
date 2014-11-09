@@ -21,6 +21,7 @@
 package nars.entity;
 
 import java.util.Comparator;
+import nars.core.Memory;
 
 /**
  * An item is an object that can be put into a Bag,
@@ -235,4 +236,30 @@ public abstract class Item<K> {
     
     }
 
+    public static float getPrioritySum(Iterable<? extends Item> c) {
+        float totalPriority = 0;
+        for (Item i : c)
+            totalPriority+=i.getPriority();
+        return totalPriority;
+    }
+    
+    /** randomly selects an item from a collection, weighted by priority */
+    public static <E extends Item> E selectRandomByPriority(Iterable<E> c) {
+        float totalPriority = getPrioritySum(c);
+        
+        if (totalPriority == 0) return null;
+        
+        float r = Memory.randomNumber.nextFloat() * totalPriority;
+                
+        E s = null;
+        for (E i : c) {
+            s = i;
+            r -= s.getPriority();
+            if (r < 0)
+                return s;
+        }
+        
+        return s;
+        
+    }
 }
