@@ -774,7 +774,7 @@ public class Concept extends Item<Term> {
     }
 
     /** get a random belief, weighted by their sentences confidences */
-    public Sentence getBeliefRandomByConfidence() {
+    public Sentence getBeliefRandomByConfidence() {        
         if (beliefs.isEmpty()) return null;
         
         float totalConfidence = getBeliefConfidenceSum();

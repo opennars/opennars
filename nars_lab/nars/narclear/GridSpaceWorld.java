@@ -15,6 +15,7 @@ import nars.grid2d.SimplexNoise;
 import nars.grid2d.map.Maze;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.narclear.jbox2d.j2d.DrawPhy2D.LayerDraw;
+import org.jbox2d.dynamics.Body;
 
 import org.jbox2d.dynamics.World;
 
@@ -80,7 +81,15 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
             @Override public void cell(Cell c, float px, float py) {
                 switch (c.material) {
                     case StoneWall:
-                        addWall(px, py, cw/2f, ch/2f, 0f);
+                        Body w = addWall(px, py, cw/2f, ch/2f, 0f);
+                        w.setUserData(new DrawPhy2D.DrawProperty() {
+
+                            @Override
+                            public void before(Body b, DrawPhy2D d) {
+                                d.setFillColor(null);
+                                d.setStroke(null);
+                            }
+                        });
                         break;
                 }
             }
@@ -105,29 +114,29 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
     }
     
     CellVisitor groundDrawer = new CellVisitor() {
-        
+                
         @Override public void cell(Cell c, float px, float py) {
             
             float h = c.height;
             
             switch (c.material) {
-                case DirtFloor:                    
-                    Color color = new Color(0.5f,c.height*0.01f, c.height*0.01f);
-                    draw.drawSolidRect(px, py, cw, ch, color);
+                case DirtFloor:                                        
+                    draw.drawSolidRect(px, py, cw, ch, 0.5f,c.height*0.01f, c.height*0.01f);
                     break;
-                case GrassFloor:
-                    Color color2 = new Color(0.1f,0.5f + c.height*0.01f, 0.1f);
-                    draw.drawSolidRect(px, py, cw, ch, color2);                    
+                case StoneWall:                    
+                    draw.drawSolidRect(px, py, cw, ch, 0.75f, 0.75f, 0.75f);
+                    break;
+                case GrassFloor:                    
+                    draw.drawSolidRect(px, py, cw, ch,0.1f,0.5f + c.height*0.005f, 0.1f);
                     break;
                 case Water:
                     float db = Memory.randomNumber.nextFloat()*0.04f;
                     
                     
-                    float b = 0.5f + h*0.02f - db;
+                    float b = 0.5f + h*0.01f - db;
                     if (b < 0) b = 0; if (b > 1.0f) b = 1.0f;
-                    
-                    Color color3 = new Color(0.1f,0.1f,b);
-                    draw.drawSolidRect(px, py, cw, ch, color3);
+                                        
+                    draw.drawSolidRect(px, py, cw, ch, 0.1f,0.1f,b);
                     break;
             }
         }            

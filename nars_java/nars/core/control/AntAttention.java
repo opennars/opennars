@@ -194,7 +194,27 @@ public class AntAttention extends WaveAttention {
         }
         
         public TLink randomLink() {
+            Iterable<? extends Item> ii;
+            if ((traverseTermLinks) && (!traverseTaskLinks)) {
+                ii = concept.termLinks;
+            }
+            else if ((!traverseTermLinks) && (traverseTaskLinks)) {
+                ii = concept.taskLinks;
+            }
+            else {
+                if (Math.random() % 2 == 0) {
+                    ii = concept.termLinks;
+                }
+                else
+                    ii = concept.taskLinks;
+            }
+            return (TLink)Item.selectRandomByPriority(ii);
+        }
+        
+        /*
+        public TLink randomLink() {
             List<TLink> links = new ArrayList();
+            
             if (traverseTermLinks)
                 links.addAll(concept.termLinks.values());
             if (traverseTaskLinks)
@@ -206,6 +226,7 @@ public class AntAttention extends WaveAttention {
             int i = (int)(links.size() * Math.random());
             return links.get(i);
         }
+        */
         
         void enterConcept(Concept c, List<Runnable> queue) {
             Concept previous = concept;
@@ -265,6 +286,7 @@ public class AntAttention extends WaveAttention {
                     (concept!=null ? concept.name() : null) +
                     " | " + eta + " " + (inConcept() ? "concept" : (inLink() ? "link" : "")) + "}";            
         }
+
         
         
     }

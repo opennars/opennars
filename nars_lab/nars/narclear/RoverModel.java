@@ -11,7 +11,7 @@ import java.util.List;
 import nars.core.NAR;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
-import org.jbox2d.callbacks.DebugDraw;
+import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -42,7 +42,7 @@ public class RoverModel {
     private final ChangedTextInput feltSpeed;
     private final ChangedTextInput feltSpeedAvg;
     private final World world;
-    private final DebugDraw draw;
+    private final DrawPhy2D draw;
 
     //public class DistanceInput extends ChangedTextInput
     public RoverModel(PhysicsModel p, final Rover2 sim) {
@@ -51,7 +51,7 @@ public class RoverModel {
         
 
         this.world = sim.getWorld();
-        this.draw = sim.draw();
+        this.draw = (DrawPhy2D) sim.draw();
         
         feltAngularVelocity = new ChangedTextInput(sim.nar);
         feltOrientation = new ChangedTextInput(sim.nar);
@@ -231,10 +231,13 @@ public class RoverModel {
                     float d = ccallback.m_point.sub(point1).length() / distance;
                     laserHitColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
                     draw.drawPoint(ccallback.m_point, 5.0f, sparkColor);
-                    draw.drawSegment(point1, ccallback.m_point, laserHitColor);
-                    pooledHead.set(ccallback.m_normal);
-                    pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
-                    draw.drawSegment(ccallback.m_point, pooledHead, normalColor);
+                    draw.drawSegment(point1, ccallback.m_point, laserHitColor, 0.25f);
+                    
+
+                    //pooledHead.set(ccallback.m_normal);
+                    //pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
+                    //draw.drawSegment(ccallback.m_point, pooledHead, normalColor, 0.25f);
+                    
                     totalDist += d;
                     if (d < minDist) {
                         hit = ccallback.body;
