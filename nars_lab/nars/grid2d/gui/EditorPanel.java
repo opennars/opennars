@@ -147,19 +147,19 @@ public class EditorPanel extends JPanel {
                                     if(s.cells.readCells[i][j].logic==Logic.SWITCH) {
                                         s.nar.addInput("<"+c[11]+" --> switch>.");
                                         if(s.cells.readCells[i][j].light==1.0f) {
-                                            s.nar.addInput("<"+c[11]+" --> on>.");
+                                            //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                         }
                                         else {
-                                            s.nar.addInput("<"+c[11]+" --> off>.");
+                                            //s.nar.addInput("<"+c[11]+" --> off>.");
                                         }
                                     }
                                     if(s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
                                         s.nar.addInput("<"+c[11]+" --> switch>.");
                                         if(s.cells.readCells[i][j].light==1.0f) {
-                                            s.nar.addInput("<"+c[11]+" --> on>. :|:");
+                                            //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                         }
                                         else {
-                                            s.nar.addInput("<"+c[11]+" --> off>. :|:");
+                                            //s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                         }
                                     }
                                     
@@ -169,19 +169,19 @@ public class EditorPanel extends JPanel {
                                         if(s.cells.readCells[i][j].machine==Machine.Turret) {
                                             s.nar.addInput("<"+c[11]+" --> firework>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
-                                                s.nar.addInput("<"+c[11]+" --> on>. :|:");
+                                                //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                             }
                                             else {
-                                                s.nar.addInput("<"+c[11]+" --> off>. :|:");
+                                                //s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
                                         if(s.cells.readCells[i][j].machine==Machine.Light) {
                                             s.nar.addInput("<"+c[11]+" --> light>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
-                                                s.nar.addInput("<"+c[11]+" --> on>. :|:");
+                                                //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                             }
                                             else {
-                                                s.nar.addInput("<"+c[11]+" --> off>. :|:");
+                                                //s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
                                     }
@@ -191,7 +191,7 @@ public class EditorPanel extends JPanel {
 
                                     if(s.cells.readCells[i][j].material==Material.Door) {
                                         s.nar.addInput("<"+c[11]+" --> door>.");
-                                        s.nar.addInput("<"+c[11]+" --> closed>. :|:");
+                                        //s.nar.addInput("<"+c[11]+" --> closed>. :|:");
                                     }
 
                                     s.cells.readCells[i][j].name=c[11];
@@ -603,9 +603,9 @@ public class EditorPanel extends JPanel {
             public void run() {
                 TestChamber.active=true;
                 s.nar.addInput("<<$1 --> on> <=> <(*,$1,SHOULD,BE,SWITCHED,ON) --> sentence>>.");
-                s.nar.addInput("<<$1 --> off> <=> <(*,$1,SHOULD,BE,OFF) --> sentence>>.");
+                s.nar.addInput("<(--,<$1 --> on>) <=> <(*,$1,SHOULD,BE,OFF) --> sentence>>.");
                 s.nar.addInput("<<$1 --> opened> <=> <(*,$1,SHOULD,BE,OPENED) --> sentence>>.");
-                s.nar.addInput("<<$1 --> closed> <=> <(*,$1,SHOULD,BE,CLOSED) --> sentence>>.");
+                s.nar.addInput("<(--,<$1 --> opened>) <=> <(*,$1,SHOULD,BE,CLOSED) --> sentence>>.");
                 s.nar.addInput("<<$1 --> hold> <=> <(*,$1,SHOULD,BE,HOLD) --> sentence>>.");
                 s.nar.addInput("<<$1 --> at> <=> <(*,SHOULD,BE,AT,$1) --> sentence>>.");
                 s.nar.addInput("<(^pick,$1) <=> <(*,$1,SHOULD,BE,PICKED) --> sentence>>.");
@@ -628,7 +628,7 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
                 s.nar.addInput("<(^go-to,$1) =/> <$1 --> at>>.");
                 s.nar.addInput("<(&/,<$1 --> at>,(^activate,$1)) =/> <$1 --> on>>.");
-                s.nar.addInput("<(&/,<$1 --> at>,(^deactivate,$1)) =/> <$1 --> off>>.");
+                s.nar.addInput("<(&/,<$1 --> at>,(^deactivate,$1)) =/> (--,<$1 --> on>)>.");
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
             }
