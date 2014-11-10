@@ -104,7 +104,27 @@ public class NALTest  {
                 
                 expects.add(new ExpectContains(n, e, saveSimilar));
 
-            }                
+            }     
+            
+            //TEMPORARY, process old script format
+            final String expectOutNotContains2 = "''outputMustNotContain('";
+
+            if (s.indexOf(expectOutNotContains2)==0) {
+
+                //without ') suffix:
+                String e = s.substring(expectOutContains2.length(), s.length()-2); 
+                e = e.replace("\\\\","\\");
+                
+                /*try {                    
+                    Task t = narsese.parseTask(e);                    
+                    expects.add(new ExpectContainsSentence(n, t.sentence));
+                } catch (Narsese.InvalidInputException ex) {
+                    expects.add(new ExpectContains(n, e, saveSimilar));
+                } */
+                
+                expects.add(new ExpectNotContains(n, e, saveSimilar));
+
+            }   
             
             final String expectOutEmpty = "''expect.outEmpty";
             if (s.indexOf(expectOutEmpty)==0) {                                
@@ -468,10 +488,7 @@ public class NALTest  {
                 return c.subList(0, max);            
         }
         
-        @Override
-        public boolean condition(Class channel, Object signal) {
-            if (succeeded)
-                return true;
+        public boolean cond(Class channel, Object signal) {
             
             if ((channel == OUT.class) || (channel == EXE.class)) {
                 
@@ -499,50 +516,29 @@ public class NALTest  {
             }
             return false;
         }
-    }
-
-    /** whether to print the execution output to System.out */
-    public void setOutput(boolean output) {
-        this.showOutput = output;
-    }
-
-    //NOT WORKING YET
-    @Deprecated private static class ExpectContainsSentence extends Expect {
-        private final Sentence containing;
-
-        public ExpectContainsSentence(NAR n, Sentence sentence /*, boolean saveSimilar*/) {
-            super(n);
-            this.containing = sentence;
-        }
-        
-
-        @Override
-        public String getFailureReason() {
-            String s = "FAIL: No sentence match: " + containing;
-            return s;
-        }
-        
         
         @Override
         public boolean condition(Class channel, Object signal) {
             if (succeeded)
                 return true;
-            
-            if ((channel == OUT.class) || (channel == EXE.class)) {
-                                
-                if (signal instanceof Task) {
-                    //only compare for Sentence string, faster than TextOutput.getOutputString
-                    //which also does unescaping, etc..
-                    Sentence s = ((Task)signal).sentence;
-                    if (s.equals(containing)) {                        
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return cond(channel,signal);
         }
     }
     
     
+    public static class ExpectNotContains extends ExpectContains {
+
+        public ExpectNotContains(NAR nar, String containing, boolean saveSimilar) {
+            super(nar, containing, saveSimilar);
+        }
+
+        
+        @Override
+        public boolean condition(Class channel, Object signal) {
+            if (succeeded)
+                return true;
+            return !cond(channel,signal);
+        }
+    }
     
 }
