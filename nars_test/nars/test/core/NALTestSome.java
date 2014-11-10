@@ -16,7 +16,7 @@ import org.junit.runners.Parameterized;
 public class NALTestSome extends NALTest {
 
    public static boolean include(String filename) {
-       return filename.startsWith("nars_multistep_3");
+       return filename.startsWith("notcontain.nal");
    }
 
    
@@ -40,11 +40,11 @@ public class NALTestSome extends NALTest {
         org.junit.runner.JUnitCore.runClasses(NALTestSome.class);
    }    
 
-   public NALTestSome(String scriptPath) {
-       this(scriptPath, true);
-   }
+//   public NALTestSome(String scriptPath) {
+//       this(scriptPath, true);
+//   }
    
-   public NALTestSome(String scriptPath, boolean showOutput) {
+   public NALTestSome(String scriptPath) {
         super(scriptPath);
         this.showSuccess = showOutput;
         this.showOutput = showOutput;
