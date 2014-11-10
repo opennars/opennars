@@ -185,8 +185,12 @@ public class LocalRules {
         if ((budget != null) && budget.aboveThreshold()) {                       
             
             //Solution Activated
+            if(task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK) {
+                memory.emit(Solved.class, task, belief);   //solution to quests and questions can be always showed   
+            } else {
+                memory.emit(Output.class, task, belief);   //goal things only show silence related 
+            }
             
-            memory.emit(Solved.class, task, belief);      
             
             /*memory.output(task);
                         
