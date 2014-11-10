@@ -5,7 +5,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -69,7 +68,7 @@ import nars.util.sort.ArraySortedIndex;
  * concept so that it only fires once it has processed all of its agent messages
  * (Tasks)
  *
- *
+ * TODO make this abstract and derive ThresholdDelayBag subclass
  */
 public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements AttentionAware {
 
@@ -103,7 +102,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     int flatThreshold = 2;
     
     public DelayBag(AtomicDouble forgetRate, int capacity) {
-        this(forgetRate, capacity, (int)(0.1f * capacity));
+        this(forgetRate, capacity, (int)(0.25f * capacity));
     }
     
     public DelayBag(AtomicDouble forgetRate, int capacity, int targetPendingBufferSize) {
@@ -111,7 +110,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         this.forgetRate = forgetRate;
 
         if (Parameters.THREADS == 1) {
-             this.items = new LinkedHashMap(capacity);
+             //this.items = new LinkedHashMap(capacity);
+             this.items = new ConcurrentHashMap(capacity);
              this.pending = new ArrayDeque(targetPendingBufferSize);
         }
         else {
@@ -279,14 +279,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
             
             //allow only one thread to reload, while the others try again later
             if (busyReloading.compareAndSet(false, true)) {
-                
-                try {
-                    reload();
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
+                reload();
                 busyReloading.set(false);
                 return true;
             }

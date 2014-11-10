@@ -17,6 +17,7 @@ import nars.core.Events.FrameStart;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Sentence;
+import nars.gui.NARSwing;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries;
 import nars.gui.output.timeline.BarChart;
@@ -24,10 +25,8 @@ import nars.gui.output.timeline.LineChart;
 import nars.gui.output.timeline.StackedPercentageChart;
 import nars.gui.output.timeline.Timeline2DCanvas;
 import nars.io.ChangedTextInput;
-import nars.io.Output.IN;
 import static nars.io.Texts.n2;
-import nars.language.CompoundTerm;
-import nars.language.Product;
+import nars.language.Inheritance;
 import nars.language.Term;
 
 /**
@@ -38,16 +37,16 @@ public class Predict1D {
     private final NAR nar;
  
     float t = 0;
-    int cyclesPerDuration = 10;
-    int cyclesPerFrame = 10;
-    final static int discretization = 7;
-    float errorRate = 0.20f;
+    int cyclesPerDuration = 5;
+    int cyclesPerFrame = 100 * cyclesPerDuration;
+    final static int discretization = 3;
+    float errorRate = 0.05f;
     final static int numIterations = 1500;
     final TimeSeries observed, observedDiscrete, bestPredictions;
     final TimeSeries[] predictions;
 
-    float frequency = 0.25f;
-    float sampleConfidence = 0.75f;
+    float frequency = 0.05f;
+    float sampleConfidence = 0.8f;
     
     transient boolean inputting = true;
     private int cutoffTime = numIterations/10;
@@ -59,8 +58,6 @@ public class Predict1D {
         Map<Term,Sentence> belief = new TreeMap();
         
         public void add(Sentence s, int duration) {
-            int polarity = getPolarity(s);
-            if (polarity == 0) return;
             Term term = getValue(s.content);
             if (term == null) return;
             
@@ -81,13 +78,11 @@ public class Predict1D {
             return belief.keySet();
         }
         
-        public float getExpectation(Term b, int polarity) {            
+        public float getExpectation(Term b) {
             
             for (Sentence s : belief.values()) {
                 if (getValue(s.content).equals(b)) {
-                    if (getPolarity(s) == polarity) {
-                        return s.truth.getExpectation();                        
-                    }
+                    return s.truth.getExpectation();                        
                 }
             }
             
@@ -95,11 +90,10 @@ public class Predict1D {
         }
         
         public float getLikelihood(Term b) {
-            return (getExpectation(b, +1) - getExpectation(b, -1))/2f+0.5f;
+            return (getExpectation(b));
         }
         
         abstract public Term getValue(Term s);
-        abstract public int getPolarity(Sentence s);        
 
         public Set<Term> values() {            
             Set<Term> s = new HashSet();
@@ -126,39 +120,25 @@ public class Predict1D {
     public BeliefSet solutions = new BeliefSet() {
 
         @Override public Term getValue(Term s) {
-            if (s instanceof Product) {
-                CompoundTerm i = (CompoundTerm)s;
-                if (i.size() == 3) {
-                    Term chanTerm = i.term[0];
-                    Term valTerm = i.term[1];
+            if (s instanceof Inheritance) {
+                Inheritance i = (Inheritance)s;
+                if (i.size() == 2) {
+                    Term chanTerm = i.getPredicate();
+                    Term valTerm = i.getSubject();
                                         
-                    if (chanTerm.equals(Term.get("x")))
-                        return valTerm;
+                    if (chanTerm.equals(Term.get("x"))) {
+                        try {
+                            int vi = Integer.parseInt(valTerm.toString());                        
+                            return valTerm;
+                        }
+                        catch (Exception e) { return null; }
+                    }
                 }
             }
 
             return null;
         }
 
-        @Override
-        public int getPolarity(Sentence se) {
-            Term s = se.content;
-            if (s instanceof Product) {
-                CompoundTerm i = (CompoundTerm)s;
-                if (i.size() == 3) {
-                    Term truthTerm = i.term[2];
-                       
-                    String tts = truthTerm.toString();
-                    if (tts.equals("y"))
-                        return +1;
-                    else if (tts.equals("n"))
-                        return -1;
-                    return 0;
-                }
-            }
-
-            return 0;            
-        }
         
     };
     
@@ -169,7 +149,6 @@ public class Predict1D {
 //        }
 //        nar.addInput(c);
         
-        nar.addInput("(--,<y <-> n>).");
     }
         
     float nextSample() {        
@@ -233,39 +212,35 @@ public class Predict1D {
     public void observe(String channel, float value, float conf, long time) {
         int l = f(value);
         
+        String x = "<";
         for (int i = 0; i < discretization; i++) { 
             //c += "<" + i + " --> " + channel + ">. :|: %" + n2( (i == l) ? 1.0f : 0.0f) + ";" + n2(conf) + "%\n";
-            String v = (i == l) ? "y" : "n";
-            String u = (i == l) ? "n" : "y";
-            
             //positive
-            String sss = "(*," + channel + "," + i + "," + v + "). :|: %1.00;" + n2(conf) + "%";
-            nar.addInput(sss, time);
-          
-            //negative
-            String sss2 = "(*," + channel + "," + i + "," + u + "). :|: %0.00;" + n2(conf) + "%";
-            nar.addInput(sss2, time);
+            String sss;
+            if (i == l)
+                sss = "" + i;
+            else
+                sss = "";
             
+            x += sss;            
+                      
         }
+        x += " --> " + channel + ">";
+        String observation = x + ". :|: %1.00;" + n2(conf) + "%";
+        nar.addInput(observation, time);
         
+        String interval = "+1";
+        //String prediction = "<(&/," + x + "," + interval + ") =/> <$x --> " + channel + ">>?";
+        
+        String prediction = "<(&/," + x +"," + interval + ") =/> <#x --> " + channel + ">>?";     
+        nar.addInput(prediction, time);
     }
     
     public void tick() {
-        nar.addInput("<time --> now>. :|:");
-        nar.addInput("(--,(&&,(*,x,#v,y),(*,x,#v,n))).");
+        //nar.addInput("<time --> now>. :|:");
         
     }
     
-    public void predict(String channel, long time) {
-        String c = "";       
-        for (int i = 0; i < discretization; i++) {
-            //c += "<" + i + " --> " + channel + ">? :/:" + '\n';
-            c += "(*," + channel + "," + i + "," + "y" + ")? :/:" + '\n';
-            c += "(*," + channel + "," + i + "," + "n" + ")? :/:" + '\n';
-        }
-        nar.addInput(c, time);
-    }
-
 
     
     public Predict1D() {
@@ -273,6 +248,10 @@ public class Predict1D {
         
         this.nar = new Default().simulationTime().build();
 
+        nar.param.conceptForgetDurations.set(10);
+        nar.param.taskLinkForgetDurations.set(16);
+        nar.param.termLinkForgetDurations.set(40);
+        nar.param.novelTaskForgetDurations.set(8);
         /*
         this.nar = new NeuromorphicNARBuilder(4).
                 setTaskLinkBagSize(4).
@@ -285,15 +264,6 @@ public class Predict1D {
         //new TextOutput(nar, System.out, 0.95f);
         (nar.param).duration.set(cyclesPerDuration);
         
-        nar.on(IN.class, new Observer() {
-            @Override public void event(Class event, Object[] arguments) {
-                /*if (arguments[0] instanceof Task) {
-                    Task t = (Task)arguments[0];
-                    if (t.sentence.isJudgment())
-                        trySolution(t.sentence);
-                }*/
-            }            
-        });
         nar.on(FrameStart.class, new Observer() {
             
             @Override public void event(Class event, Object[] arguments) {
@@ -305,14 +275,16 @@ public class Predict1D {
                 
                 if (!solutions.belief.isEmpty()) {
                     
-                    
-                    
                     for (Term s : solutions.values()) {
-                        int is = Integer.valueOf( s.toString() );
-                        float e = solutions.getLikelihood(s);
-                        predictions[is].push(d, e);
+                        try {
+                            int is = Integer.valueOf( s.toString() );
+                            float e = solutions.getLikelihood(s);
+                            predictions[is].push(d, e);
+                        }
+                        catch (NumberFormatException nfe) {
+                            
+                        }
                     }
-                    
                     
                     
                     System.out.println(solutions.belief);
@@ -324,22 +296,27 @@ public class Predict1D {
                     System.out.println("@" + nar.time() + ": " + prediction + "? " + f(sample) + " ");*/
                     //System.out.println(summarizeExpectation(getLikeliness("x")));
                 }
+
+                solutions.forget(1);
+
                 
-                if (inputting && Math.random() > errorRate) {
-                    observed.push(d, sample);
-                    observedDiscrete.push(d, f(sample));
-                    observe("x", sample, sampleConfidence, nar.time());
+                
+                if (nar.time() % cyclesPerFrame == 0) {
+                    if (inputting && Math.random() > errorRate) {
+                        observed.push(d, sample);
+                        observedDiscrete.push(d, f(sample));
+                        observe("x", sample, sampleConfidence, nar.time());
+                    }
                 }
                 
                 tick();
                 
-                predict("x", nar.time() + cyclesPerFrame/2);
             }            
         });
         nar.on(Events.Solved.class, new Observer() {           
             @Override public void event(Class event, Object[] arguments) {
                 Sentence newSolution = (Sentence)arguments[1];
-                
+          
                 solutions.add(newSolution, nar.memory.getDuration());
             }
         });
@@ -391,23 +368,20 @@ public class Predict1D {
                 
         
         new NWindow("_", tc).show(800, 800, true);
-    
+        new NARSwing(nar);
         
         
         addAxioms();
         
-        nar.frame(cyclesPerFrame);
         
-        for (int p = 0; p < numIterations; p++) {
-            
-            //forgetSolution(0.01f);
-            if (p > (numIterations-cutoffTime))
-                inputting = false;
-            
+        
+        /*for (int p = 0; p < numIterations; p++) {
+                        
             nar.frame(cyclesPerFrame);
             
             nar.memory.addSimulationTime(cyclesPerFrame);
-        }
+        }*/
+        
       
     }
     

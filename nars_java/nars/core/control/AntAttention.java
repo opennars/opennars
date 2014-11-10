@@ -79,7 +79,7 @@ public class AntAttention extends WaveAttention {
         TLink link = null;        
         Concept concept = null;
         
-        boolean traverseTermLinks = false;
+        boolean traverseTermLinks = true;
         boolean traverseTaskLinks = true;
         boolean allowLoops = false;
         

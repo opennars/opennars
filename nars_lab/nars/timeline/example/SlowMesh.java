@@ -5,7 +5,7 @@
 package nars.timeline.example;
 
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.core.build.Neuromorphic;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
 import nars.gui.output.graph.ConceptGraphCanvas2;
@@ -39,20 +39,21 @@ public class SlowMesh {
     }
     
     public String pointName(int x, int y) {
-        return "p" + x + "_" + y;                
+        return "(*," + x + "," + y + ")";
     }
     public String simlink(int x1, int y1, int x2, int y2) {
         //return "<" + pointName(x1, y1) + " <-> " + pointName(x2, y2) + ">.";
         //return "<" + pointName(x1, y1) + " <=> " + pointName(x2, y2) + ">.";
         //return "<(*," + pointName(x1, y1) + "," + pointName(x2, y2) + ") --> e>.";
         //return "<" + pointName(x1, y1) + " <|> " + pointName(x2, y2) + ">.";
+        //return "(&&," + pointName(x1, y1) + "," + pointName(x2, y2) + ").";
         return "(&&," + pointName(x1, y1) + "," + pointName(x2, y2) + ").";
     }
     
     public static void main(String args[]) {
-        NAR n = new Default().build();
+        NAR n = NAR.build(new Neuromorphic(4));
         
-        new SlowMesh(n, 6, 6);
+        new SlowMesh(n, 3, 3);
         
         new NARSwing(n);
         ConceptGraphCanvas2 cv;
