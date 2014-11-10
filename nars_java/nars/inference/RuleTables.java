@@ -174,6 +174,16 @@ public class RuleTables {
         
         if (belief != null) {   
             
+            //TODO
+            //(&/,a) goal didnt get unwinded, so lets unwind it
+            if(task.sentence.content instanceof Conjunction && task.sentence.punctuation==Symbols.GOAL_MARK) {
+                Conjunction s=(Conjunction) task.sentence.content;
+                Term newterm=s.term[0];
+                TruthValue truth=task.sentence.truth;
+                BudgetValue newBudget=BudgetFunctions.forward(TruthFunctions.deduction(truth, truth), nal);
+                nal.doublePremiseTask(newterm, truth, newBudget, false);
+            }
+            
             InternalOperations(memory, belief, nal, beliefTerm, taskTerm);
             
              //this is a new attempt/experiment to make nars effectively track temporal coherences
