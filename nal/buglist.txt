@@ -27,7 +27,7 @@ outputMustNotContain function for tests does not work
 ----- decision making:
 
 <(^deactivate,{switch0}) =\> (&/,<{door5} --> opened>,+1)>.
-<{door5} --> opened>.
+<{door5} --> opened>!
 
 spawns:
 (^deactivate,{switch0})! wtf
