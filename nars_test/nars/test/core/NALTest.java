@@ -25,7 +25,6 @@ import nars.io.Output.ERR;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.Texts;
-import nars.io.narsese.Narsese;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
@@ -542,6 +541,7 @@ public class NALTest  {
             if (!succeeded)
                 return false;
             if (cond(channel,signal)) {
+                onFailure(channel, signal);
                 succeeded = false;
                 return false;
             }
@@ -549,6 +549,9 @@ public class NALTest  {
         }
         
         public boolean isInverse() { return true; }
+
+        protected void onFailure(Class channel, Object signal) {
+        }
     }
     
 }
