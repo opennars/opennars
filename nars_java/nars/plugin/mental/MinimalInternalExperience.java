@@ -44,7 +44,7 @@ public class MinimalInternalExperience implements Plugin {
                     Term content = task.getContent();
 
                     // to prevent infinite recursions
-                    if (content instanceof Operation ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY)
+                    if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/)
                         return;
 
                     Sentence sentence = task.sentence;
