@@ -62,7 +62,7 @@ public abstract class NAL implements Runnable {
      */
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
         if(task.sentence.content instanceof Operation) {
-            if(((Operation)task.sentence.content).getPredicate()==memory.getOperator("^deactivate")) {
+            if(((Operation)task.sentence.content).getPredicate()==memory.getOperator("^deactivate") && task.sentence.punctuation==Symbols.GOAL_MARK) {
                 boolean breakpoint=true;
                 //this is a very serious bug, there is no evidence in 
                 /*
