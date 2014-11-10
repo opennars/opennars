@@ -16,3 +16,22 @@ I get nothing, altough the solution should be:
 Solved <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
 
 because ?wat can be unified with 4 since ?wat is a query variable
+
+
+--------------------------
+
+new
+outputMustNotContain function for tests does not work
+
+
+----- decision making:
+
+<(^deactivate,{switch0}) =\> (&/,<{door5} --> opened>,+1)>.
+<{door5} --> opened>.
+
+spawns:
+(^deactivate,{switch0})! wtf
+
+
+
+
