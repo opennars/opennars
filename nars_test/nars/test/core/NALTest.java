@@ -112,17 +112,10 @@ public class NALTest  {
             if (s.indexOf(expectOutNotContains2)==0) {
 
                 //without ') suffix:
-                String e = s.substring(expectOutContains2.length(), s.length()-2); 
+                String e = s.substring(expectOutNotContains2.length(), s.length()-2); 
                 e = e.replace("\\\\","\\");
                 
-                /*try {                    
-                    Task t = narsese.parseTask(e);                    
-                    expects.add(new ExpectContainsSentence(n, t.sentence));
-                } catch (Narsese.InvalidInputException ex) {
-                    expects.add(new ExpectContains(n, e, saveSimilar));
-                } */
-                
-                expects.add(new ExpectNotContains(n, e, saveSimilar));
+                expects.add(new ExpectNotContains(n, e));
 
             }   
             
@@ -390,14 +383,17 @@ public class NALTest  {
             this.nar = nar;
         }
         
+        public boolean isInverse() { return false; }
+        
         @Override
         public void event(Class channel, Object... args) {
-            if (succeeded)
+            if ((succeeded) && (!isInverse()))
                 return;
             if ((channel == OUT.class) || (channel == EXE.class)) {
                 Object signal = args[0];                
                 if (condition(channel, signal)) {
-                    exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
+                    if (saveSimilar)
+                        exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
                     setSucceeded();
                 }
             }
@@ -449,9 +445,9 @@ public class NALTest  {
     
     public static class ExpectContains extends Expect {
 
-        private final String containing;
+        final String containing;
         public Map<String, Integer> almost = new HashMap();
-        private final boolean saveSimilar;
+        final boolean saveSimilar;
 
         public ExpectContains(NAR nar, String containing, boolean saveSimilar) {
             super(nar);            
@@ -528,17 +524,31 @@ public class NALTest  {
     
     public static class ExpectNotContains extends ExpectContains {
 
-        public ExpectNotContains(NAR nar, String containing, boolean saveSimilar) {
-            super(nar, containing, saveSimilar);
+        
+        public ExpectNotContains(NAR nar, String containing) {
+            super(nar, containing, false);
+            succeeded = true;
         }
+
+        @Override
+        public String getFailureReason() {
+            return "incorrect output: " + containing;
+        }
+
 
         
         @Override
         public boolean condition(Class channel, Object signal) {
-            if (succeeded)
-                return true;
-            return !cond(channel,signal);
+            if (!succeeded)
+                return false;
+            if (cond(channel,signal)) {
+                succeeded = false;
+                return false;
+            }
+            return true;
         }
+        
+        public boolean isInverse() { return true; }
     }
     
 }

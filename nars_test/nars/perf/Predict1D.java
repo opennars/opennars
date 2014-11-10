@@ -15,6 +15,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Events.FrameStart;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -39,18 +40,21 @@ public class Predict1D {
 
     float t = 0;
     int cyclesPerDuration = 5;
-    int cyclesPerFrame = 1;
-    final static int discretization = 5;
-    float errorRate = 0.35f;
+    int cyclesPerFrame = 10;
+    final static int discretization = 3;
+    float errorRate = 0.05f;
     final static int numIterations = 3500;
-    final TimeSeries observed, observedDiscrete, bestPredictions;
+    final TimeSeries observed, observedDiscrete, bestPredictions, error;
     final TimeSeries[] predictions;
 
-    float signalFreq = 0.5f;
+    float signalFreq = 0.75f;
     float sampleConfidence = 0.99f;
-    float sampleFreq = 1.0f; //0.5f + 0.5f / (discretization);
+    float sampleFreq = 1.00f; //0.5f + 0.5f / (discretization);
 
+    float predictionFutureCycles = cyclesPerDuration * 1f;
+    
     transient boolean inputting = true;
+    int signalMode = 0;
 
     /**
      * weighs a set of positive and negative beliefs
@@ -70,7 +74,15 @@ public class Predict1D {
             float conf = s.truth.getConfidence();
 
             Sentence existingSolution = belief.get(s.content);
-            if ((existingSolution == null) || (existingSolution.truth.getConfidence() <= conf) || s.after(existingSolution, duration)) {
+            boolean sameTime = false, newer = false, moreConfident = false;
+            if (existingSolution!=null) {
+                sameTime = existingSolution.stamp.getOccurrenceTime() == s.stamp.getOccurrenceTime();
+                newer = s.after(existingSolution, duration);
+                moreConfident = (existingSolution.truth.getConfidence() <= conf);
+            }
+                    
+            if ((existingSolution == null) || 
+                    (sameTime && moreConfident) || (newer)) {                      
                 belief.put(s.content, s);
             }
 
@@ -89,7 +101,7 @@ public class Predict1D {
 
             for (Sentence s : belief.values()) {
                 if (getValue(s.content).equals(b)) {
-                    double dt = Math.abs(s.stamp.getOccurrenceTime() - nar.time());
+                    double dt = Math.max(0, s.stamp.getOccurrenceTime() - (predictionFutureCycles + nar.time()));
                     dt /= cyclesPerDuration;
                     return (s.truth.getExpectation()+1f)/2f * (float)(1.0f / ( 1f + dt));
                 }
@@ -161,17 +173,41 @@ public class Predict1D {
 
     }
 
+    float delayUntil = 0;
+    
     float nextSample() {
         float v;
 
-        float x = ((float) t) * signalFreq;
-
-        //STEP
-        v = ((int)x % 4.0f)/4f;
-        //SINE
-        //v = (float) Math.sin(x) / 2f + 0.5f;
-
         t++;
+        
+        if (delayUntil > 0) {
+            if (delayUntil > t) {
+                return Float.NaN;
+            }
+            delayUntil = 0;
+        }
+        
+        float x = ((float) t / cyclesPerFrame) * signalFreq;
+
+        v = 0;
+        switch (signalMode %2) {
+            case 0:
+                v = (float) Math.sin(x) / 2f + 0.5f;
+                break;
+            case 1:
+                v = (x % discretization)/discretization;
+                break;
+        }
+        
+
+        if (Math.random() < 0.0001) {
+            delayUntil = t + (int)(cyclesPerFrame * cyclesPerDuration);
+        }
+        if (Math.random() < 0.0005) {
+            signalMode++;
+        }
+        
+        
         return v;
     }
 
@@ -224,20 +260,21 @@ public class Predict1D {
             lastValue = value;
             return;
         }
-
-        if (lastValue == value) {
-            return;
-        }
+       
 
         int prev = f(lastValue);
         int curr = f(value);
+        
+        if (prev == curr) {
+            return;
+        }
 
         for (int i = 0; i < discretization; i++) {
             //negative            
             if (i != curr) {
-                String n = "<" + i + " --> " + channel + ">,";
+                String n = "<" + i + " --> " + channel + ">";
 
-                String antiObservation = n + ". :|: " + n2(1.0f - sampleFreq) + ";" + n2(conf) + "%";
+                String antiObservation = n + ". :|: %" + n2(1.0f - sampleFreq) + ";" + n2(conf) + "%";
                 nar.addInput(antiObservation);
             }
         }
@@ -247,10 +284,10 @@ public class Predict1D {
         String x = "<" + channel + " --> " + curr + ">";
         nar.addInput(x + ". :|: %" + n2(sampleFreq) + ";" + n2(conf) + "%");
 
-        nar.addInput("<" + x0 + " =/> " + x + ">.");
+        nar.addInput("<(&/," + x0 + ",+1) =/> " + x + ">.");
 
         String interval = "+1";
-        String prediction = "<(&/," + x + "," + interval + ") =/> <" + channel + " --> #x>>?";
+        String prediction = "<(&/," + x + "," + interval + ") =/> <" + channel + " --> ?x>>?";
 
         nar.addInput(prediction, time);
 
@@ -282,9 +319,9 @@ public class Predict1D {
                 float dt = s.getOccurenceTime() - nar.time();
                 float weight = s.truth.getExpectation();
                 evidence[i] = Math.max(evidence[i], weight);
-                System.out.println((dt >= 0 ? "+" : "") + dt + " " + s + "---> " + i + " " + weight + " " + evidence[i]);
+                //System.out.println((dt >= 0 ? "+" : "") + dt + " " + s + "---> " + i + " " + weight + " " + evidence[i]);
                 solutions.add(s, 0);
-                System.out.println("  "+ solutions.getExpectation(t));
+                //System.out.println("  "+ solutions.getExpectation(t));
             }
 
         }
@@ -294,12 +331,15 @@ public class Predict1D {
     public Predict1D() {
         //577.0 [1, 259.0, 156.0, 2.0, 101.0, 4.0, 16.0, 2.0, 3.0, 1.0]
 
+        Parameters.DEBUG = true;
+        
         this.nar = new Default().simulationTime().build();
 
         nar.param.conceptForgetDurations.set(10);
         nar.param.taskLinkForgetDurations.set(16);
         nar.param.termLinkForgetDurations.set(40);
         nar.param.novelTaskForgetDurations.set(8);
+        nar.param.duration.set(cyclesPerDuration);
         /*
          this.nar = new NeuromorphicNARBuilder(4).
          setTaskLinkBagSize(4).
@@ -309,14 +349,15 @@ public class Predict1D {
          */
 
         //new TextOutput(nar, System.out, 0.95f);
-        (nar.param).duration.set(cyclesPerDuration);
+        
+        
 
         nar.on(FrameStart.class, new Observer() {
 
             @Override
             public void event(Class event, Object[] arguments) {
 
-                long d = nar.time() / cyclesPerFrame;
+                long d = nar.time();
 
                 float sample = nextSample();
 
@@ -327,6 +368,7 @@ public class Predict1D {
                         try {
                             int is = Integer.valueOf(s.toString());
                             float e = solutions.getLikelihood(s);
+                            
                             predictions[is].push(d, e);                            
                         } catch (NumberFormatException nfe) {
 
@@ -335,20 +377,25 @@ public class Predict1D {
 
                     //System.out.println(solutions.belief);
 
-                    Term prediction = solutions.getMostLikely();
-                    bestPredictions.push(d, Integer.valueOf(prediction.toString()));                    
+                    Term predTerm = solutions.getMostLikely();
+                    int predicted = Integer.valueOf(predTerm.toString());
+                    bestPredictions.push(d, predicted);                    
                     
+                    if (!Float.isNaN(sample)) {
+                        float e = Math.abs(f(sample) - predicted);
+                        error.push(d, e);
+                    }
                     /*
                      System.out.println("@" + nar.time() + ": " + prediction + "? " + f(sample) + " ");*/
                     //System.out.println(summarizeExpectation(getLikeliness("x")));
                 }
 
-                if (nar.time() % cyclesPerFrame == 0) {
+                if (!Float.isNaN(sample) /*&& (nar.time() % cyclesPerFrame == 0)*/) {
                     //solutions.forget(1);
 
                     if (inputting && Math.random() > errorRate) {
-                        observed.push(d, sample);
-                        observedDiscrete.push(d, f(sample));
+                        observed.push(d+1, sample);
+                        observedDiscrete.push(d+1, f(sample));
                         observe("x", sample, sampleConfidence, nar.time());
                     }
                 }
@@ -364,15 +411,7 @@ public class Predict1D {
             public void event(Class event, Object[] args) {
                 Sentence s = (Sentence) args[1];
 
-                onBelief(s);
-
-                /*else if (t instanceof Implication) {
-                 Implication i = (Implication)t;
-                 if (isSampleObservation(i.getPredicate(), "x")) {
-                 System.out.println(s);
-                 }
-                    
-                 }*/
+                //onBelief(s);
             }
         });
 
@@ -381,6 +420,7 @@ public class Predict1D {
             public void event(Class event, Object[] arguments) {
                 Task t = (Task) arguments[0];
                 Sentence newSolution = (Sentence) arguments[1];
+                System.out.println("solution: " + newSolution);
 
                 onBelief(newSolution);
             }
@@ -391,11 +431,14 @@ public class Predict1D {
             observedInput[i] = new ChangedTextInput(nar);
         }
 
-        observed = new TimeSeries("value", Color.WHITE, numIterations);
+        observed = new TimeSeries("value", Color.WHITE, numIterations).setRange(0, 1f);
 
-        observedDiscrete = new TimeSeries("value(disc)", Color.YELLOW, numIterations);
-        bestPredictions = new TimeSeries("predict", Color.ORANGE, numIterations);
+        observedDiscrete = new TimeSeries("observed", Color.YELLOW, numIterations).setRange(0, discretization);
+        bestPredictions = new TimeSeries("predict", Color.ORANGE, numIterations).setRange(0, discretization);
+        error = new TimeSeries("error", Color.ORANGE, numIterations).setRange(0, discretization);
+        
         predictions = new TimeSeries[discretization];
+        
         for (int i = 0; i < predictions.length; i++) {
             predictions[i] = new TimeSeries("Pred" + i,
                     Color.getHSBColor(0.25f + i / 4f, 0.85f, 0.85f), numIterations);
@@ -404,9 +447,11 @@ public class Predict1D {
         Timeline2DCanvas tc = new Timeline2DCanvas(
                 new BarChart(observed).height(4),
                 new LineChart(observedDiscrete).height(4),
-                new LineChart(bestPredictions).height(4),
+                new LineChart(bestPredictions).height(4),                
                 new StackedPercentageChart(predictions).height(8),
-                new LineChart(predictions).height(8)
+                new LineChart(predictions).height(8),
+                new BarChart(error).height(4)
+                
         //            new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
         //
         //            new LineChart(
@@ -431,7 +476,7 @@ public class Predict1D {
 
         addAxioms();
 
-        for (int p = 0; p < numIterations * cyclesPerFrame; p++) {
+        for (int p = 0; p < numIterations; p++) {
 
             nar.frame(1);
 
