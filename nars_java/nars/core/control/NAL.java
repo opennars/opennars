@@ -90,6 +90,14 @@ public abstract class NAL implements Runnable {
                 //while the much more rational and win-bringing possibilies
                 //are not even considered
                 //TODO: Find reasons and bugfix
+                
+                //a simpler case which also shows it:
+                
+                /*
+                    IN <(&/,<{door5} --> opened>,+1) =/> (^deactivate,{switch0})>. %1.00;0.90%
+    IN <{door5} --> opened>! %1.00;0.90%
+   EXE $0.65;0.45;0.72$ ^deactivate([{switch0}])=null
+                */
             }
         }
         if(task.sentence.content instanceof Implication && ((Implication) task.sentence.content).getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
