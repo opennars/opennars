@@ -330,7 +330,16 @@ public class RuleTables {
                         if (belief != null) {
                             bIndex = bLink.getIndex(1);
                             if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
-                                conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
+                                
+                                //THIS CONDITION IS NEW:
+                                //Because this one shouldnt happen:
+                                //IN <(&/,<{door5} --> opened>,+1) =/> (^deactivate,{switch0})>. %1.00;0.90%
+                                //IN <{door5} --> opened>! %1.00;0.90%
+                                //EXE (^deactivate,{switch0})
+                                //TODO: ANALYZE IN DETAIL
+                                if(taskSentence.punctuation!=Symbols.JUDGMENT_MARK) {
+                                    conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
+                                }
                             }
                         }
                         break;
