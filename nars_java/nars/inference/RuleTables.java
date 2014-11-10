@@ -337,7 +337,7 @@ public class RuleTables {
                                 //IN <{door5} --> opened>! %1.00;0.90%
                                 //EXE (^deactivate,{switch0})
                                 //TODO: ANALYZE IN DETAIL
-                                if(taskSentence.punctuation!=Symbols.JUDGMENT_MARK) {
+                                if(taskSentence.punctuation==Symbols.JUDGMENT_MARK) {
                                     conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
                                 }
                             }
