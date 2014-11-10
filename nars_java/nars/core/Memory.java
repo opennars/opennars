@@ -944,7 +944,7 @@ public class Memory implements Serializable {
      * @param cycles The number of inference steps
      */
     public void stepLater(final int cycles) {
-        inputPausedUntil += time() + cycles;
+        inputPausedUntil = (int) (time() + cycles);
     }    
 
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
