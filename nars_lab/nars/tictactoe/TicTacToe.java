@@ -20,6 +20,7 @@ package nars.tictactoe;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
@@ -44,7 +45,6 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.gui.NWindow;
 import nars.io.Output.OUT;
 import nars.language.Term;
 import nars.operator.Operation;

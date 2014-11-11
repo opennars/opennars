@@ -1,5 +1,6 @@
 package nars.gui.output.chart;
 
+import automenta.vivisect.swing.NPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -12,7 +13,7 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.gui.NARSwing;
-import nars.gui.NPanel;
+
 
 /**
  * 2D bubble chart with configurable dimensions

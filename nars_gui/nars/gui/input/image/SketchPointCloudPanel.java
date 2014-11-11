@@ -1,5 +1,6 @@
 package nars.gui.input.image;
 
+import automenta.vivisect.swing.NWindow;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -20,7 +21,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import nars.core.NAR;
-import nars.gui.NWindow;
+
 
 public class SketchPointCloudPanel extends Panel implements MouseListener, MouseMotionListener, ActionListener {
 

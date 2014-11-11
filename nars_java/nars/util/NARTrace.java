@@ -17,8 +17,13 @@ import nars.core.sense.MultiSense;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.gui.output.chart.TimeSeries;
+import automenta.vivisect.TimeSeries;
+import nars.core.EventEmitter.Observer;
+import nars.core.Events.CycleEnd;
 import nars.inference.MemoryObserver;
+import nars.io.narsese.Narsese;
+import nars.language.Term;
+
 
 /**
  * Records all sensors, output, and trace events in an indexed data structure for runtime or subsequent analysis of a NAR's execution telemetry.
@@ -52,6 +57,16 @@ public class NARTrace extends MemoryObserver implements Serializable {
     private long t;
     public final NAR nar;
     public final MultiSense senses;
+
+    public TimeSeries[] getCharts(String... names) {
+        List<TimeSeries> l = new ArrayList(names.length);
+        for (String n : names) {
+            TimeSeries t = charts.get(n);
+            if (t!=null)
+                l.add(t);
+        }
+        return l.toArray(new TimeSeries[l.size()]);
+    }
 
 
 
@@ -241,4 +256,120 @@ public class NARTrace extends MemoryObserver implements Serializable {
         }
     }
 
+    abstract public static class CycleTimeSeries extends TimeSeries implements Observer {
+
+        private final NAR nar;
+
+        public CycleTimeSeries(NAR n, String theName, int historySize) {
+            super(theName, NARSwing.getColor(theName, 0.9f, 1f), historySize);
+            this.nar = n;
+            n.on(CycleEnd.class, this);
+        }
+
+        public CycleTimeSeries(NAR n, String theName, float min, float max, int historySize) {
+            this(n, theName, historySize);
+            setRange(min, max);
+        }
+
+        @Override
+        public void event(Class event, Object[] arguments) {
+            long time = nar.time();
+            push(nar.time(), next(time, nar));
+        }
+
+        public abstract float next(long time, NAR nar);
+
+    }
+
+    public static class ConceptBagTimeSeries extends CycleTimeSeries {
+
+        public final Mode mode;
+        private final Iterable<Concept> concepts;
+
+        public static enum Mode {
+
+            ConceptPriorityTotal, TaskLinkPriorityMean, TermLinkPriorityMean /* add others */ };
+
+        public ConceptBagTimeSeries(NAR n, Iterable<Concept> concepts, int historySize, Mode mode) {
+            super(n, "Concepts: " + mode, historySize);
+            this.mode = mode;
+            this.concepts = concepts;
+
+        }
+
+        @Override
+        public float next(long time, NAR nar) {
+            float r = 0;
+            int numConcepts = 0;
+            for (Concept c : concepts) {
+                switch (mode) {
+                    case ConceptPriorityTotal:
+                        r += c.getPriority();
+                        break;
+                    case TermLinkPriorityMean:
+                        r += c.termLinks.getTotalPriority();
+                        break;
+                    case TaskLinkPriorityMean:
+                        r += c.taskLinks.getTotalPriority();
+                        break;
+                }
+                numConcepts++;
+            }
+            
+            switch (mode) {
+                case TermLinkPriorityMean:
+                case TaskLinkPriorityMean:
+                    if (numConcepts > 0) r /= numConcepts;
+                    break;
+            }
+            
+            return r;
+        }
+
+    }
+
+    public static class ConceptTimeSeries extends CycleTimeSeries {
+
+        public final Mode mode;
+        private final String conceptString;
+        private final Term conceptTerm;
+        private Concept concept;
+
+        public static enum Mode {
+
+            Priority, Duration, BeliefConfidenceMax /* add others */ };
+
+        public ConceptTimeSeries(NAR n, String concept, int historySize, Mode mode) throws Narsese.InvalidInputException {
+            super(n, concept + ": " + mode, 0, 1, historySize);
+            this.mode = mode;
+            this.conceptString = concept;
+            this.conceptTerm = new Narsese(n).parseTerm(conceptString);
+
+            this.concept = null;
+        }
+
+        @Override
+        public float next(final long time, final NAR nar) {
+            if (concept == null) {
+                concept = nar.memory.concept(conceptTerm);
+                if (concept == null) {
+                    return 0;
+                }
+            }
+            switch (mode) {
+                case Priority:
+                    return concept.getPriority();
+                case Duration:
+                    return concept.getDurability();
+                case BeliefConfidenceMax:
+                    if (concept.beliefs.size() > 0) {
+                        return concept.beliefs.get(0).truth.getConfidence();
+                    }
+                    return 0;
+            }
+            return 0f;
+        }
+
+    }
+    
 }

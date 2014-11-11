@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import nars.core.NAR;
 
 /**
@@ -23,6 +24,8 @@ public class ConceptGraphPanel extends ProcessingGraphPanel {
         super(n, graphCanvas);
         this.cg =  graphCanvas;
     }
+    
+    
 
     @Override
     protected void init() {
@@ -61,7 +64,6 @@ public class ConceptGraphPanel extends ProcessingGraphPanel {
             }
         });
         menu.add(taskLinkEnable);
-
         
         final JCheckBox beliefsEnable = new JCheckBox("Beliefs");
         beliefsEnable.setSelected(cg.showBeliefs);

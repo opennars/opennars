@@ -1,7 +1,7 @@
 package nars.gui.input.image;
 
+import automenta.vivisect.swing.NWindow;
 import java.util.Stack;
-import nars.gui.NWindow;
 import nars.gui.output.PPanel;
 import static processing.core.PApplet.append;
 import static processing.core.PApplet.dist;

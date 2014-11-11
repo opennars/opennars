@@ -21,13 +21,13 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.gui.AwesomeToggleButton;
-import nars.gui.FAButton;
+import automenta.vivisect.swing.AwesomeToggleButton;
+import automenta.vivisect.swing.AwesomeButton;
+import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.swing.NSlider;
 import nars.gui.InferenceLogger;
 import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
-import nars.gui.NPanel;
-import nars.gui.NSlider;
 import nars.gui.WrapLayout;
 import nars.inference.AbstractObserver;
 import nars.io.Output.ECHO;
@@ -95,7 +95,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         menuTop.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         
-        JButton clearButton = new FAButton('\uf016');
+        JButton clearButton = new AwesomeButton('\uf016');
         clearButton.setToolTipText("Clear");
         clearButton.addActionListener(new ActionListener() {
             @Override

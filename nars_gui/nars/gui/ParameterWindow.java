@@ -19,6 +19,7 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.gui;
+import automenta.vivisect.swing.NWindow;
 import java.awt.GridLayout;
 import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollBar;
+import static nars.gui.NARSwing.SINGLE_WINDOW_COLOR;
 
 /**
  * JWindow displaying a system parameter that can be adjusted in run time

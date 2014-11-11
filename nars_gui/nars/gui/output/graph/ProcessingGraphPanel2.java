@@ -1,5 +1,7 @@
 package nars.gui.output.graph;
 
+import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.swing.NSlider;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import java.awt.BorderLayout;
@@ -21,8 +23,6 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.gui.NPanel;
-import nars.gui.NSlider;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.util.NARGraph;

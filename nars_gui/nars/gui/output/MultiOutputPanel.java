@@ -1,5 +1,7 @@
 package nars.gui.output;
 
+import automenta.vivisect.dock.DockingContent;
+import automenta.vivisect.dock.DockingRegionRoot;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -19,8 +21,7 @@ import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
 import nars.gui.NARSwing;
-import nars.gui.dock.DockingContent;
-import nars.gui.dock.DockingRegionRoot;
+
 
 /**
  * TODO queue outputs in non-displayed SwingLogPanel's into ArrayDeque without involving

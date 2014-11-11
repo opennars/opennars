@@ -20,6 +20,8 @@
  */
 package nars.gui.input;
 
+import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -48,8 +50,6 @@ import javax.swing.tree.TreePath;
 import nars.core.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.NARSwing;
-import nars.gui.NPanel;
-import nars.gui.NWindow;
 import nars.gui.input.TextInputPanel.InputAction;
 import nars.gui.input.TextInputPanel.TextInputMode;
 import static nars.gui.output.SwingLogPanel.setConsoleFont;

@@ -154,21 +154,6 @@ abstract public class PGraphPanel<V,E> extends PPanel implements ActionListener 
         //return getColor(o.getClass().getSimpleName());
     
 
-    public static int getColor(final String s, final float alpha) {
-        double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
-        return NARSwing.getColor(Color.getHSBColor((float)hue,0.8f,0.9f), alpha).getRGB();        
-    }
-    
-
-    public static int getColor(final Class c) {            
-        double hue = (((double)c.hashCode()) / Integer.MAX_VALUE);
-        return Color.getHSBColor((float)hue,0.8f,0.9f).getRGB();                
-    }
-    
-    public static int getColor(final String s) {            
-        double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
-        return Color.getHSBColor((float)hue,0.8f,0.9f).getRGB();        
-    }
     
     public void drawit() {
         

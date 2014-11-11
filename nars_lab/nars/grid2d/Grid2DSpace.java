@@ -1,5 +1,6 @@
 package nars.grid2d;
 
+import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Container;
@@ -20,7 +21,6 @@ import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.ParticleSystem;
-import nars.gui.NWindow;
 import processing.core.PApplet;
 import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
