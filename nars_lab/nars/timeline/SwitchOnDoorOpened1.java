@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.timeline.example;
+package nars.timeline;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,14 +22,14 @@ import nars.core.NAR;
 import nars.core.build.Default;
 import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
-import nars.gui.NWindow;
-import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
+import automenta.vivisect.TimeSeries.FirstOrderDifferenceTimeSeries;
+import automenta.vivisect.swing.NWindow;
 import nars.io.TextInput;
-import nars.gui.output.timeline.Timeline2DCanvas;
-import nars.gui.output.timeline.BarChart;
-import nars.gui.output.timeline.EventChart;
-import nars.gui.output.timeline.LineChart;
-import nars.gui.output.timeline.StackedPercentageChart;
+import automenta.vivisect.timeline.Timeline2DCanvas;
+import automenta.vivisect.timeline.BarChart;
+import automenta.vivisect.timeline.LineChart;
+import automenta.vivisect.timeline.StackedPercentageChart;
+import nars.gui.EventChart;
 import nars.io.TextOutput;
 import nars.util.NARTrace;
 
@@ -67,11 +67,11 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         
         new NWindow("_", new Timeline2DCanvas(
                 
-            new BarChart(t, "task.executed").height(2),
-            new StackedPercentageChart(t, "plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count").height(3),
-            new LineChart(t, "plan.graph.in.delay_magnitude.mean").height(1),
-            new LineChart(t, "plan.graph.edge.count", "plan.graph.vertex.count").height(2),                
-            new StackedPercentageChart(t, "plan.task.executable", "plan.task.planned").height(2),
+            new BarChart(t.getCharts( "task.executed")[0]).height(2),
+            new StackedPercentageChart(t.getCharts( "plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count")).height(3),
+            new LineChart(t.getCharts( "plan.graph.in.delay_magnitude.mean")).height(1),
+            new LineChart(t.getCharts( "plan.graph.edge.count", "plan.graph.vertex.count")).height(2),                
+            new StackedPercentageChart(t.getCharts( "plan.task.executable", "plan.task.planned")).height(2),
             
                 
             new EventChart(t, true, false, false).height(3),
@@ -80,15 +80,15 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
 
             new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.get("concept.count"))),
             
-            new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
-            new LineChart(t, "concept.priority.mean").height(1),
+            new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
+            new LineChart(t.getCharts("concept.priority.mean")).height(1),
                 
 
                 
-            new LineChart(t, "task.novel.add", "task.immediate_processed").height(3),
-            new LineChart(t, "task.goal.process", "task.question.process", "task.judgment.process").height(3),
-            new LineChart(t, "task.new.add").height(3)
-            //new LineChart(t, "emotion.busy").height(1)
+            new LineChart(t.getCharts("task.novel.add", "task.immediate_processed")).height(3),
+            new LineChart(t.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
+            new LineChart(t.getCharts("task.new.add")).height(3)
+            //new LineChart(t.getCharts("emotion.busy").height(1)
             
         )).show(800, 800, true);
     }

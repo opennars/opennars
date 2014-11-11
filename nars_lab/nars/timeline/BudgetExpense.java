@@ -14,21 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.timeline.example;
+package nars.timeline;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.gui.NWindow;
-import nars.gui.output.chart.TimeSeries.ConceptBagTimeSeries;
-import nars.gui.output.chart.TimeSeries.ConceptBagTimeSeries.Mode;
-import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
-import nars.gui.output.timeline.BarChart;
-import nars.gui.output.timeline.Chart;
-import nars.gui.output.timeline.EventChart;
-import nars.gui.output.timeline.LineChart;
-import nars.gui.output.timeline.StackedPercentageChart;
-import nars.gui.output.timeline.Timeline2DCanvas;
+import automenta.vivisect.TimeSeries.FirstOrderDifferenceTimeSeries;
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.timeline.BarChart;
+import automenta.vivisect.timeline.LineChart;
+import automenta.vivisect.timeline.StackedPercentageChart;
+import automenta.vivisect.timeline.Timeline2DCanvas;
+import nars.gui.EventChart;
 import nars.util.NARTrace;
+import nars.util.NARTrace.ConceptBagTimeSeries;
+import nars.util.NARTrace.ConceptBagTimeSeries.Mode;
 
 /**
  *
@@ -52,7 +51,7 @@ public class BudgetExpense extends TimelineExample {
 
             new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.get("concept.count"))),
 
-            new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
+            new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
 
             new LineChart(
                     new ConceptBagTimeSeries(nar, nar.memory.concepts, cycles, Mode.ConceptPriorityTotal)            
@@ -65,9 +64,9 @@ public class BudgetExpense extends TimelineExample {
             ).height(4),
 
 
-            new LineChart(t, "task.novel.add", "task.immediate_processed").height(3),
-            new LineChart(t, "task.goal.process", "task.question.process", "task.judgment.process").height(3),
-            new LineChart(t, "emotion.busy").height(1),
+            new LineChart(t.getCharts("task.novel.add", "task.immediate_processed")).height(3),
+            new LineChart(t.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
+            new LineChart(t.getCharts("emotion.busy")).height(1),
             new EventChart(t, false, false, true).height(3)
         );
                 

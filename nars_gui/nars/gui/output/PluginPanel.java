@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.swing.NPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -29,7 +30,6 @@ import nars.core.NAR;
 import nars.core.NAR.PluginState;
 import nars.core.Plugin;
 import nars.gui.NARSwing;
-import nars.gui.NPanel;
 import nars.util.PackageUtility;
 
 /**

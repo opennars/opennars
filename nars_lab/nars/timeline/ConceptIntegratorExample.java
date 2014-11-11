@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.timeline.example;
+package nars.timeline;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,11 +29,11 @@ import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Concept;
 import nars.gui.NARSwing;
-import nars.gui.NWindow;
-import nars.gui.output.chart.TimeSeries;
-import nars.gui.output.timeline.BarChart;
-import nars.gui.output.timeline.Chart;
-import nars.gui.output.timeline.Timeline2DCanvas;
+import automenta.vivisect.TimeSeries;
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.timeline.BarChart;
+import automenta.vivisect.timeline.Chart;
+import automenta.vivisect.timeline.Timeline2DCanvas;
 import nars.inference.AbstractObserver;
 import nars.util.NARTrace;
 

@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.swing.NPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -25,7 +26,6 @@ import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NARSwing;
-import nars.gui.NPanel;
 import nars.io.Output.ERR;
 import nars.io.Output.EXE;
 import nars.io.Output.IN;

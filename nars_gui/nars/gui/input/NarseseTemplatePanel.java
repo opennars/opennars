@@ -1,5 +1,6 @@
 package nars.gui.input;
 
+import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -19,7 +20,6 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import nars.gui.NWindow;
 
 /**
 <<<<<<< HEAD

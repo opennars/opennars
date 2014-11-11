@@ -1,3 +1,4 @@
+import automenta.vivisect.swing.NWindow;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Color;
@@ -13,7 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import nars.gui.NWindow;
 
 /**
  * "Sokoban 1.0, Written by Yossie Silverman."

@@ -1,23 +1,26 @@
-package nars.gui.output.timeline;
+package nars.gui.output;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import nars.core.EventEmitter.Observer;
+import nars.core.Events.CycleEnd;
+import nars.core.NAR;
+import automenta.vivisect.TimeSeries;
+import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.timeline.BarChart;
+import automenta.vivisect.timeline.Chart;
+import automenta.vivisect.timeline.LineChart;
+import automenta.vivisect.timeline.StackedPercentageChart;
+import automenta.vivisect.timeline.Timeline2DCanvas;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import nars.core.EventEmitter.Observer;
-import nars.core.Events.CycleEnd;
-import nars.core.NAR;
-import nars.gui.NPanel;
-import nars.gui.output.chart.TimeSeries;
-import nars.gui.output.timeline.BarChart;
-import nars.gui.output.timeline.Chart;
-import nars.gui.output.timeline.LineChart;
-import nars.gui.output.timeline.StackedPercentageChart;
+import nars.gui.EventChart;
+
 import nars.util.NARTrace;
 
 /**
@@ -102,7 +105,7 @@ public class TimelinePanel extends NPanel implements Observer {
         });
         controls.add(new ChartButton("Concept Priority (mean)") {
             @Override public Chart newChart() {
-                return new LineChart(trace, "concept.priority.mean").height(1);
+                return new LineChart(trace.getCharts("concept.priority.mean")).height(1);
             }            
         });
         controls.add(new ChartButton("Delta Concepts") {
@@ -112,47 +115,47 @@ public class TimelinePanel extends NPanel implements Observer {
         });
         controls.add(new ChartButton("Concept Priority Histogram (4 level)") {
             @Override public Chart newChart() {
-                return new StackedPercentageChart(trace, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2);
+                return new StackedPercentageChart(trace.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2);
             }            
         });
         controls.add(new ChartButton("Task: Novel Add, Immediate Processed") {
             @Override public Chart newChart() {
-                return new LineChart(trace, "task.novel.add", "task.immediate_processed").height(3);
+                return new LineChart(trace.getCharts("task.novel.add", "task.immediate_processed")).height(3);
             }            
         });
         controls.add(new ChartButton("Task: Processed Goal, Question, Judgment") {
             @Override public Chart newChart() {
-                return new LineChart(trace, "task.goal.process", "task.question.process", "task.judgment.process").height(3);
+                return new LineChart(trace.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3);
             }            
         });
         controls.add(new ChartButton("Emotion: Busy") {
             @Override public Chart newChart() {
-                return new LineChart(trace, "emotion.busy").height(1);
+                return new LineChart(trace.getCharts("emotion.busy")).height(1);
             }            
         });
         controls.add(new ChartButton("Task: Executed") {
             @Override public Chart newChart() {
-                return new BarChart(trace, "task.executed").height(2);
+                return new BarChart(trace.getCharts("task.executed")[0]).height(2);
             }            
         });
         controls.add(new ChartButton("Plan Graph Components") {
             @Override public Chart newChart() {
-                return new StackedPercentageChart(trace, "plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count").height(3);
+                return new StackedPercentageChart(trace.getCharts("plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count")).height(3);
             }            
         });
         controls.add(new ChartButton("Plan Graph Interval Magnitude (mean)") {
             @Override public Chart newChart() {
-                return new LineChart(trace, "plan.graph.in.delay_magnitude.mean").height(1);
+                return new LineChart(trace.getCharts("plan.graph.in.delay_magnitude.mean")).height(1);
             }            
         });
         controls.add(new ChartButton("Plan Graph Vertices & Edges") {
             @Override public Chart newChart() {
-                return new LineChart(trace, "plan.graph.edge.count", "plan.graph.vertex.count").height(2);
+                return new LineChart(trace.getCharts("plan.graph.edge.count", "plan.graph.vertex.count")).height(2);
             }            
         });
         controls.add(new ChartButton("Executable & Planned Tasks") {
             @Override public Chart newChart() {
-                return new StackedPercentageChart(trace, "plan.task.executable", "plan.task.planned").height(2);
+                return new StackedPercentageChart(trace.getCharts("plan.task.executable", "plan.task.planned")).height(2);
             }            
         });
             

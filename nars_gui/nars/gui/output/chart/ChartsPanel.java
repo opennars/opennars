@@ -1,5 +1,7 @@
 package nars.gui.output.chart;
 
+import automenta.vivisect.TimeSeries;
+import automenta.vivisect.swing.NCanvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -18,7 +20,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.SwingUtilities;
 import nars.gui.NARSwing;
-import nars.gui.NCanvas;
 import nars.io.Texts;
 import nars.util.meter.data.DataSet;
 

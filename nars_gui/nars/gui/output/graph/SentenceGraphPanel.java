@@ -1,5 +1,7 @@
 package nars.gui.output.graph;
 
+import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.swing.Swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.SwingUtilities;
@@ -7,7 +9,6 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.Sentence;
-import nars.gui.NPanel;
 import nars.inference.GraphExecutive;
 import nars.language.Term;
 import nars.util.graph.SentenceGraph;
@@ -18,8 +19,6 @@ import org.jgrapht.graph.DirectedMultigraph;
  *
  * @author me
  */
-
-
 public class SentenceGraphPanel extends NPanel implements Observer {
     
     private final SentenceGraph sentence;
@@ -66,9 +65,11 @@ public class SentenceGraphPanel extends NPanel implements Observer {
             @Override
             public int vertexColor(final Term vertex) {
                 float cp = (float)GraphExecutive.getEffectivePriority(nar.memory, vertex);
-                float alpha = 0.5f + 0.5f * cp;
-                return PGraphPanel.getColor(vertex.getClass().getSimpleName(), alpha);
+                //float alpha = 0.5f + 0.5f * cp;
+                //return PGraphPanel.getColor(vertex.getClass().getSimpleName(), alpha);                
                 //return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();        
+                return Swing.getColor(vertex.getClass().hashCode(), cp/2f + 0.5f, 0.95f).getRGB();
+                
             }
         };
         

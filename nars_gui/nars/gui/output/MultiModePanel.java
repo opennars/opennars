@@ -1,6 +1,7 @@
 
 package nars.gui.output;
 
+import automenta.vivisect.swing.NSlider;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -18,7 +19,6 @@ import static javax.swing.SwingUtilities.invokeLater;
 import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.gui.NSlider;
 import nars.gui.output.graph.ProcessingGraphPanel2;
 import nars.io.Output;
 import nars.util.DefaultGraphizer;

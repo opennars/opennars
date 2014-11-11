@@ -20,13 +20,11 @@
  */
 package nars.gui;
 
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.Swing;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -39,12 +37,7 @@ import nars.io.TextOutput;
  * The main Swing GUI class of the open-nars project.  
  * Creates default Swing GUI windows to operate a NAR.
  */
-public class NARSwing  {
-
-    
-
-
-
+public class NARSwing extends Swing {
 
     
     /*static {
@@ -140,35 +133,6 @@ public class NARSwing  {
         
     }
 
-
-    public static Font monofont;
-    static {
-        monofont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-        /*
-        try {
-            //monofont = Font.createFont(Font.TRUETYPE_FONT, NARSwing.class.getResourceAsStream("Inconsolata-Regular.ttf"));
-            
-            
-        } catch (FontFormatException ex) {
-            Logger.getLogger(NARSwing.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(NARSwing.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        */
-    }
-        
-    
-    public static Font FontAwesome;
-    static {        
-        try {
-            FontAwesome = Font.createFont(Font.TRUETYPE_FONT, NARSwing.class.getResourceAsStream("FontAwesome.ttf")).deriveFont(Font.PLAIN, 14);
-        } catch (FontFormatException ex) {
-            Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
     
     /**
      * The entry point of the standalone application.
@@ -210,7 +174,6 @@ public class NARSwing  {
 
 
 
-
  
     
 //    static {
@@ -234,39 +197,37 @@ public class NARSwing  {
 //        }
 //    }
 
-    public final static float hashFloat(final int h) {
-        //return ((float)h) / (((float)Integer.MAX_VALUE) - ((float)Integer.MIN_VALUE));
-        return ((float)(h%256)) / (256.0f);
-    }
-
-    public final static Color getColor(final String s, final float saturation, final float brightness) {             return getColor(s.hashCode(), saturation, brightness);
-    }
-    public final static Color getColor(int hashCode, float saturation, float brightness) {
-        float hue = hashFloat(hashCode);
-        return Color.getHSBColor(hue, saturation, brightness);        
-    }
-    public final static Color getColor(final Color c, float alpha) {
-        return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(255.0 * alpha));
-    }
-    public final static Color getColor(final String s, float sat, float bright, float alpha) {
-        return getColor(getColor(s, sat, bright), alpha);
-    }
+    /**
+     * Color for the background of the main window
+     */
+    static final Color MAIN_WINDOW_COLOR = new Color( 172,170,194);
+    /**
+     * Color for the background of the windows with unique instantiation
+     */
+    static final Color SINGLE_WINDOW_COLOR = new Color(213,212,223);
+    /**
+     * Color for the background of the windows with multiple instantiations
+     */
+    static final Color MULTIPLE_WINDOW_COLOR = new Color(34,102,102);
+    /**
+     * Color for the background of the text components that are read-only
+     */
+    static final Color DISPLAY_BACKGROUND_COLOR = new Color(240,240,240);
+    /**
+     * Color for the background of the text components that are being saved into
+     * a file
+     */
+    static final Color SAVING_BACKGROUND_COLOR = new Color(230,230,230);
     
-//    //NOT WORKING YET
-//    public static Color getColor(final String s, float saturation, float brightness, float alpha) {            
-//        float hue = (((float)s.hashCode()) / Integer.MAX_VALUE);
-//        int a = (int)(255.0*alpha);
-//        
-//        int c = Color.HSBtoRGB(hue, saturation, brightness);
-//        c |= (a << 24);
-//        
-//        return new Color(c, true);
-//    }
+    /**
+     * Font for NARS GUI
+     */
     
-    public static Font fontMono(float size) {
-        return monofont.deriveFont(size);
-    }
-
-
-
+    /**
+     * Message for unimplemented functions
+     */
+    public static final String UNAVAILABLE = "\n Not implemented in this version.";
+    public static final String ON_LABEL = "On";
+    public static final String OFF_LABEL = "Off";
+    
 }

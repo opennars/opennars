@@ -2,16 +2,19 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.gui.output.timeline;
+package nars.gui;
 
+import automenta.vivisect.timeline.Chart;
+import automenta.vivisect.timeline.Timeline2DCanvas;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import nars.core.Events;
 import nars.entity.Item;
-import nars.gui.NARSwing;
 import nars.io.Output;
 import nars.util.NARTrace;
 import nars.util.NARTrace.HasLabel;
@@ -22,18 +25,18 @@ import processing.core.PConstants;
  * @author me
  */
 public class EventChart extends Chart {
-    final NARTrace trace;
+    public final NARTrace trace;
     //stores the previous "representative event" for an object as the visualization is updated each time step
-    public Map<Object, EventPoint> lastSubjectEvent = new HashMap();
+    public final Map<Object, EventPoint> lastSubjectEvent = new HashMap();
     //all events mapped to their visualized feature
-    public Map<Object, EventPoint> events = new HashMap();
-    float timeScale;
-    float yScale;
-    Timeline2DCanvas l;
-    boolean includeTaskEvents = true;
-    boolean includeOutputEvents = true;
-    boolean includeOtherEvents = true;
-    private final TreeMap<Long, List<Events.InferenceEvent>> timepoints;
+    public final Map<Object, EventPoint> events = new HashMap();
+    protected float timeScale;
+    protected float yScale;
+    protected Timeline2DCanvas l;
+    protected boolean includeTaskEvents = true;
+    protected boolean includeOutputEvents = true;
+    protected boolean includeOtherEvents = true;
+    public final NavigableMap<Long, List<Events.InferenceEvent>> timepoints;
 
     public static class EventPoint<X> {
 
@@ -65,29 +68,28 @@ public class EventChart extends Chart {
         this.includeTaskEvents = includeTaskEvents;
         this.includeOutputEvents = includeOutputEvents;
         this.includeOtherEvents = includeOtherEvents;
-        timepoints = new TreeMap();
+        timepoints = new ConcurrentSkipListMap();
     }
 
     @Override
     public void update(Timeline2DCanvas l, float timeScale, float yScale) {
-        TreeMap<Long, List<Events.InferenceEvent>> time = trace.time;
-        synchronized (timepoints) {
-            timepoints.putAll(time.subMap(l.cycleStart, l.cycleEnd));
-        }
+        TreeMap<Long, List<Events.InferenceEvent>> time = trace.time;        
+        timepoints.putAll(time.subMap(l.getStart(), l.getEnd()));        
     }
 
     @Override
     public void draw(Timeline2DCanvas l, float y, float timeScale, float yScale) {
         this.timeScale = timeScale;
-        this.yScale = yScale * height;
+        this.yScale = yScale * getHeight();
         this.l = l;
         if ((timepoints == null) || (timepoints.isEmpty())) {
             return;
         }
+        
         lastSubjectEvent.clear();
         events.clear();
         l.noStroke();
-        l.textSize(l.drawnTextScale);
+        l.textSize(l.getDrawnTextScale());
         synchronized (timepoints) {
             //something not quite right about this
             long maxItemsPerCycle = timepoints.values().stream().map((x) -> x.stream().filter((e) -> include(e)).count()).max(Long::compare).get();
@@ -199,7 +201,7 @@ public class EventChart extends Chart {
     }
 
     protected void label(Object event, Object subject, float r, float x, float y) {
-        if ((l.showItemLabels) && (r * l.drawnTextScale > l.minLabelScale)) {
+        if ((l.isShowingItemLabels()) && (r * l.getDrawnTextScale() > l.getMinLabelScale())) {
             // && (r * timeScale > l.minLabelScale * l.drawnTextScale)) {
             l.fill(255f);
             String s;

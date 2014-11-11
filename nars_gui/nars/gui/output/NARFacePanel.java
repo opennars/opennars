@@ -1,5 +1,6 @@
-package nars.gui.output.face;
+package nars.gui.output;
 
+import automenta.vivisect.face.HumanoidFacePanel;
 import nars.core.NAR;
 
 
@@ -11,7 +12,7 @@ public class NARFacePanel extends HumanoidFacePanel  {
         super();
         this.nar = n;
     }
-
+    
     @Override
     protected void onShowing(boolean showing) {
         super.onShowing(showing);

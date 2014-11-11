@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.timeline.example;
+package nars.timeline;
 
-import nars.gui.output.timeline.MultiTimeline;
+import automenta.vivisect.timeline.MultiTimeline;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Discretinuous;
-import nars.gui.NWindow;
-import nars.gui.output.chart.TimeSeries.ConceptTimeSeries;
-import nars.gui.output.chart.TimeSeries.ConceptTimeSeries.Mode;
-import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
-import nars.gui.output.timeline.BarChart;
-import nars.gui.output.timeline.Chart;
-import nars.gui.output.timeline.EventChart;
-import nars.gui.output.timeline.LineChart;
-import nars.gui.output.timeline.StackedPercentageChart;
+import automenta.vivisect.TimeSeries.FirstOrderDifferenceTimeSeries;
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.timeline.BarChart;
+import automenta.vivisect.timeline.Chart;
+import automenta.vivisect.timeline.LineChart;
+import automenta.vivisect.timeline.StackedPercentageChart;
+import nars.gui.EventChart;
 import nars.util.NARTrace;
+import nars.util.NARTrace.ConceptTimeSeries;
+import nars.util.NARTrace.ConceptTimeSeries.Mode;
 
 /**
  *
@@ -134,8 +134,8 @@ public class ConceptDynamics extends TimelineExample {
 
                         new EventChart(t, true, false, false).height(3),
 
-                        new LineChart(t, "task.solution.best.priority.mean").height(3),
-                        new BarChart(t, "task.solution.best").height(3),
+                        new LineChart(t.getCharts("task.solution.best.priority.mean")).height(3),
+                        new BarChart(t.getCharts("task.solution.best")[0]).height(3),
 
                         //new LineChart(t, "task.novel.add", "task.immediate_processed").height(1),
                         //new LineChart(t, "task.goal.process", "task.question.process", "task.judgment.process").height(1),

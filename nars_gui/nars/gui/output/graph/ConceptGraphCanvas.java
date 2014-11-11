@@ -2,6 +2,7 @@ package nars.gui.output.graph;
 
 
 
+import automenta.vivisect.graph.ProcessingGraphCanvas;
 import java.util.Comparator;
 import nars.core.NAR;
 import nars.entity.Concept;
@@ -23,8 +24,11 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
     boolean showTermlinks = false;
     boolean showTasklinks = false;
     float spacing = 100f;
+    boolean compressLevels = true;
 
-    
+    float minPriority = 0;
+
+    long lasttime = -1;
     private final NAR nar;
 
     //ty = -((((Bag<Concept>)nar.memory.concepts).levels - level) * maxNodeSize * 3.5f);
@@ -35,18 +39,10 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
     //should just appear at the same position as the concept
     //lastTermVertex.visible = false;
     public ConceptGraphCanvas(NAR nar) {
-        super();
+        super(new NARGraphDisplay());        
         this.nar = nar;        
     }
-
-
- 
     
-    
-    
-    
-    //TODO genrealize to DirectedMultigraph
-
     public void position(VertexDisplay v, float level, float index, float priority) {
         
         if (mode == 3) {
@@ -62,7 +58,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
         } else if (mode == 2) {
             //double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
             double radius = (1.0 - priority) * spacing + 8;
-            float angle = NARSwing.hashFloat(v.object.hashCode()) * ((float)Math.PI*2f);
+            float angle = NARSwing.hashFloat(v.vertex.hashCode()) * ((float)Math.PI*2f);
             v.tx = (float) (Math.cos(angle) * radius) * spacing;
             v.ty = (float) (Math.sin(angle) * radius) * spacing;
         } else if (mode == 0) {
@@ -137,14 +133,15 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
                         //should just appear at the same position as the concept
                         //lastTermVertex.visible = false;
                         position(lastTermVertex, level, index, priority);
-                        lastTermVertex.visible = false;
+                        lastTermVertex.radius = 0;
                     } else {
                         index++;
                     }
                 }
                 VertexDisplay d = updateVertex(c);
                 position(d, level, index, priority);
-                deadVertices.remove(c);
+                resurrectVertex(c);                
+                
                 /*if (currentConcept != null) {
                     if (c.equals(currentConcept)) {
                         d.boost = 1.0f;

@@ -20,6 +20,9 @@
  */
 package nars.gui;
 
+import automenta.vivisect.swing.AwesomeButton;
+import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FileDialog;
@@ -57,14 +60,14 @@ import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
 import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
-import nars.gui.output.face.NARFacePanel;
+import nars.gui.output.NARFacePanel;
 import nars.gui.output.graph.ConceptGraphCanvas;
 import nars.gui.output.graph.ConceptGraphCanvas2;
 import nars.gui.output.graph.ConceptGraphPanel;
 import nars.gui.output.graph.ImplicationGraphCanvas;
 import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.gui.output.graph.SentenceGraphCanvas;
-import nars.gui.output.timeline.TimelinePanel;
+import nars.gui.output.TimelinePanel;
 import nars.inference.Executive;
 import nars.inference.Executive.Execution;
 import nars.inference.GraphExecutive;
@@ -741,16 +744,16 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
         pc.setLayout(new GridLayout(1, 0));
 
-        stopButton = new FAButton(FA_StopCharacter);
+        stopButton = new AwesomeButton(FA_StopCharacter);
         stopButton.addActionListener(this);
         pc.add(stopButton);
 
-        walkButton = new FAButton('\uf051');
+        walkButton = new AwesomeButton('\uf051');
         walkButton.setToolTipText("Walk 1 Cycle");
         walkButton.addActionListener(this);
         pc.add(walkButton);
 
-        JButton focusButton = new FAButton(FA_FocusCharacter);
+        JButton focusButton = new AwesomeButton(FA_FocusCharacter);
         focusButton.setToolTipText("Focus");
         focusButton.addActionListener(new ActionListener() {
 
@@ -765,7 +768,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         pc.add(focusButton);
         
         
-        JButton pluginsButton = new FAButton(FA_ControlCharacter);
+        JButton pluginsButton = new AwesomeButton(FA_ControlCharacter);
         pluginsButton.setToolTipText("Plugins");
         pluginsButton.addActionListener(new ActionListener() {
 
