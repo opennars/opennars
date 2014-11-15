@@ -6,5 +6,5 @@
   
 20
 
-''outputMustContain('<John --> (/,enter,_,room_101)>. :\\: %1.00;0.81%')
+''outputMustContain('<(*,John,room_101) --> enter>. :/: %1.00;0.81%')
 

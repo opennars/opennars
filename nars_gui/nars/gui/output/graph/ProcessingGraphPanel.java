@@ -1,10 +1,8 @@
 package nars.gui.output.graph;
 
-import automenta.vivisect.graph.ProcessingGraphCanvas;
 import automenta.vivisect.swing.NPanel;
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.PCanvas;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import javax.swing.JPanel;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
@@ -19,11 +17,11 @@ public class ProcessingGraphPanel extends NPanel implements Observer {
     
 
     
-    ProcessingGraphCanvas app = null;
+    PCanvas app = null;
     private final NAR nar;
     JPanel menu;
 
-    public ProcessingGraphPanel(NAR n, ProcessingGraphCanvas graphCanvas) {
+    public ProcessingGraphPanel(NAR n, PCanvas graphCanvas) {
         super(new BorderLayout());
 
         this.app = graphCanvas;

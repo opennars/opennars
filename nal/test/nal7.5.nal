@@ -6,9 +6,9 @@
 
 <(*,John,room_101) --> enter>. :|: %0% 
 
-1 
+10
 
-''outputMustContain('<<(*,John,room_101) --> enter> =\> (&/,<(*,John,door_101) --> open>,+4)>. :|: %0.00;0.45%') 
+''outputMustContain('<(&/,<(*,John,door_101) --> open>,+4) =/> <(*,John,room_101) --> enter>>. :|: %0.00;0.45%') 
 ''outputMustContain('<(&/,<(*,John,door_101) --> open>,+4) </> <(*,John,room_101) --> enter>>. :|: %0.00;0.45%')
 'adjusted +3 to +4
 

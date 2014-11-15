@@ -45,9 +45,9 @@ public class Parameters {
     //priority boost
     public static double TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR=2.0;  //experiment
 
-    //can only be activated in plugin menu no,
+    //limited NAL9 mode, doesnt break most normal examples
     public static boolean INTERNAL_EXPERIENCE=false;
-    //so dont change these two to true
+    //full NAL9 mode, not very effective yet
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //internal experience has less durability?

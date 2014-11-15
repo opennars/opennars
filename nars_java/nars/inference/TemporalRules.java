@@ -42,6 +42,7 @@ import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Terms;
 import nars.language.Variable;
 import nars.language.Variables;
 import nars.operator.Operation;
@@ -205,12 +206,25 @@ public class TemporalRules {
             int order1=s1.getTemporalOrder();
             int order2=s2.getTemporalOrder();
             Conjunction S=(Conjunction) Conjunction.make(term,order1);
+            //check if term has a element which is equal to C
+            for(Term t : term) {
+                if(Terms.equalSubTermsInRespectToImageAndProduct(t, C)) {
+                    return false;
+                }
+                for(Term u : term) {
+                    if(u!=t) { //important: checking reference here is as it should be!
+                        if(Terms.equalSubTermsInRespectToImageAndProduct(t, u)) {
+                            return false;
+                        }
+                    }
+                }
+            }
             Implication whole=Implication.make(S, C,order2);
             
             if(whole!=null) {
                 TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
-                budget.setPriority((float) Math.min(0.99, budget.getPriority()*Parameters.TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR));
+                budget.setPriority((float) Math.min(0.99, budget.getPriority()));
                 return nal.doublePremiseTask(whole, truth, budget, true)!=null;
             }
         }
@@ -327,8 +341,8 @@ public class TemporalRules {
         int order = order(timeDiff, durationCycles);
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
-        TruthValue truth1 = TruthFunctions.abduction(givenTruth1, givenTruth2);
-        TruthValue truth2 = TruthFunctions.abduction(givenTruth2, givenTruth1);
+        TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
+        TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);

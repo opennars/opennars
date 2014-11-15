@@ -18,7 +18,6 @@
 <{door5} --> opened>!
 <{door5} --> opened>!
 
-30
+6000
 ''outputMustContain('^go-to([{switch0}])=null')
-30
 ''outputMustContain('^activate([{switch0}])=null')

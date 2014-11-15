@@ -23,11 +23,12 @@ import processing.core.PVector;
 
 public class TestChamber {
 
+    public static boolean staticInformation=false;
     //TIMING
-    static int narUpdatePeriod = 5; /*milliseconds */
+    static int narUpdatePeriod = 50; /*milliseconds */
     int gridUpdatePeriod = 2;
-    int automataPeriod = 4;
-    int agentPeriod = 16;
+    int automataPeriod = 2;
+    int agentPeriod = 2;
     static long guiUpdateTime = 25; /* milliseconds */
         
     //OPTIONS

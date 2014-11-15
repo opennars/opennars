@@ -2,4 +2,4 @@
   IN: (^pick,{t002}). :\:
   IN: <(^pick,{t002})=/><(*,SELF,{t002}) --> hold>>. :\:
 20
-''outputMustContain('<(*,SELF,{t002}) --> hold>. :|: %1.00;0.43%')
+''outputMustContain('<(*,SELF,{t002}) --> hold>. :/: %1.00;0.43%')

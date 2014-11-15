@@ -56,6 +56,7 @@ public class Hauto {
                     }
                     if(!nope) {
                         TestChamber.space.add(new Pizza((int)i, (int)j, "pizza"+entityID.toString()));
+                        if(TestChamber.staticInformation)
                         nar.addInput("<pizza"+entityID.toString()+" --> pizza>."); 
                         entityID++;
                     }
@@ -174,6 +175,7 @@ public class Hauto {
         if(oper.equals("perceive")) {
              readCells[(int) x][(int) y].name = "place"+entityID.toString();
             writeCells[(int) x][(int) y].name = "place"+entityID.toString();
+            if(TestChamber.staticInformation)
             nar.addInput("<"+"place"+entityID.toString()+" --> place>.");
             if(TestChamber.curiousity) {
                 space.nar.addInput("<(^go-to," + "place"+entityID.toString() + ") =/> <Self --> [curious]>>.");
@@ -212,15 +214,28 @@ public class Hauto {
         }
         
         if(!"".equals(wish)) {
+            boolean inverse=false;
+            if(wish.equals("closed") || wish.equals("off")) {
+                inverse=true;
+            }
+            String wishreal=wish.replace("closed", "opened").replace("off", "on");
             if(!"".equals(readCells[x][y].name)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
-                nar.addInput("<" + readCells[x][y].name+" --> "+wish+">! :|:"); //in order to make NARS an observer
+                if(!inverse) {
+                    nar.addInput("<" + readCells[x][y].name+" --> "+wishreal+">! :|:"); //in order to make NARS an observer
+                } else {
+                    nar.addInput("(--,<" + readCells[x][y].name+" --> "+wishreal+">)! :|:");
+                }
                 //--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
-                nar.addInput("<" + s +" --> "+wish+">! :|:"); //in order to make NARS an observer
+                if(!inverse) {
+                    nar.addInput("<" + s +" --> "+wishreal+">! :|:"); //in order to make NARS an observer
+                } else {
+                    nar.addInput("(--,<" + s +" --> "+wishreal+">)! :|:");
+                }
                 //--nar.step(1);
             }
             return;
@@ -228,6 +243,7 @@ public class Hauto {
         
         if(!"".equals(doorname) && selected.material==Material.Door) {
             space.add(new Key((int)x, (int)y, doorname.replace("door", "key")));
+            if(TestChamber.staticInformation)
             nar.addInput("<"+doorname.replace("door", "key")+" --> key>.");
             if(TestChamber.curiousity) {
                 space.nar.addInput("<(^go-to," +doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
@@ -241,6 +257,7 @@ public class Hauto {
         }
         if(!"".equals(doorname) && selected.material==Material.Pizza) {
             space.add(new Pizza((int)x, (int)y, doorname));
+            if(TestChamber.staticInformation)
             nar.addInput("<"+doorname+" --> pizza>.");
             if(TestChamber.curiousity) {
                 space.nar.addInput("<(^go-to," + doorname + ") =/> <Self --> [curious]>>.");
@@ -283,6 +300,7 @@ public class Hauto {
             //if it has name already, dont allow overwrite
 
             if(readCells[(int) x][(int) y].name.equals("")) {
+                if(TestChamber.staticInformation)
                 nar.addInput("<"+name+" --> "+Klass+">.");
                 readCells[(int) x][(int) y].name = name;
                 writeCells[(int) x][(int) y].name = name;

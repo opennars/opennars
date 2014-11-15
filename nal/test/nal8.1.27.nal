@@ -2,4 +2,4 @@
   IN: <(^open,{t001})=/><{t001} --> [opened]>>. :|: 
   IN: (^open,{t001}). :|:
 1
-''outputMustContain('<{t001} --> [opened]>. :|: %1.00;0.81%')
+''outputMustContain('<{t001} --> [opened]>. :/: %1.00;0.43%')

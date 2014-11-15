@@ -100,12 +100,12 @@ public abstract class NAL implements Runnable {
                 */
             }
         }
-        if(task.sentence.content instanceof Implication && ((Implication) task.sentence.content).getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
-            return false; //inference rules do not handle this case correctly already, this needs deeper analysis
+        //if(task.sentence.content instanceof Implication && ((Implication) task.sentence.content).getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
+        ////    return false; //inference rules do not handle this case correctly already, this needs deeper analysis
             //this one is also quite serious, for now we don't allow =\> statements
             //as long as its not guranteed that there are inference rules like detachment
             //which lead to a decision making catastrophe due to ignoring that its a relation into the past
-        } //for example sth =\> goal gets sth with detachment
+        //} //for example sth =\> goal gets sth with detachment
         if (!task.budget.aboveThreshold()) {
             memory.removeTask(task, "Insufficient Budget");
             return false;
