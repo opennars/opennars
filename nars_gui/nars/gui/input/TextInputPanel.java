@@ -20,6 +20,7 @@
  */
 package nars.gui.input;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
@@ -49,7 +50,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import nars.core.NAR;
 import nars.gui.FileTreeModel;
-import nars.gui.NARSwing;
 import nars.gui.input.TextInputPanel.InputAction;
 import nars.gui.input.TextInputPanel.TextInputMode;
 import static nars.gui.output.SwingLogPanel.setConsoleFont;
@@ -487,9 +487,9 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             
             comments.setText("");
             for (String[] i : interpretations) {
-                Color c = NARSwing.getColor(i[0], 0.7f, 0.6f);
+                Color c = Video.getColor(i[0], 0.7f, 0.6f);
                 comments.print(Color.WHITE, c, i[0] + ":\n");
-                Color c2 = NARSwing.getColor(i[0], 0.5f, 0.3f);
+                Color c2 = Video.getColor(i[0], 0.5f, 0.3f);
                 comments.print(Color.WHITE, c2, i[1] + "\n\n");
             }
 

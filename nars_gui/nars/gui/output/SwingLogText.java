@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.Video;
 import java.awt.Color;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -9,7 +10,6 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.gui.NARSwing;
 import nars.io.Output.OUT;
 
 
@@ -175,7 +175,7 @@ public class SwingLogText extends SwingText  {
                 case 4: n = "  " + n; break;
                 case 5: n = " " + n; break;                    
             }
-            Color chanColor = NARSwing.getColor(c.getClass().hashCode(), 0.8f, 0.8f);
+            Color chanColor = Video.getColor(c.getClass().hashCode(), 0.8f, 0.8f);
             print(chanColor, n);
         }
         

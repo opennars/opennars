@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.Video;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -10,7 +11,6 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import nars.gui.NARSwing;
 
 
 
@@ -51,7 +51,7 @@ public class JCategoryList extends JList<JButton> {
 
     protected class CellRenderer implements ListCellRenderer<JButton> {
 
-        Font f = NARSwing.fontMono(16f);
+        Font f = Video.fontMono(16f);
         private JButton lastCellFocus;
 
         public Component getListCellRendererComponent(JList<? extends JButton> list, JButton value, int index, boolean isSelected, boolean cellHasFocus) {

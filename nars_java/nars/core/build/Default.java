@@ -26,6 +26,7 @@ import nars.operator.Operator;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
+import nars.plugin.mental.MinimalInternalExperience;
 import nars.plugin.mental.TemporalParticlePlanner;
 import nars.storage.Bag;
 import nars.storage.CacheBag;

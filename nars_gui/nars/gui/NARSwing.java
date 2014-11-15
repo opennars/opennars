@@ -21,7 +21,7 @@
 package nars.gui;
 
 import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.Swing;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import nars.io.TextOutput;
  * The main Swing GUI class of the open-nars project.  
  * Creates default Swing GUI windows to operate a NAR.
  */
-public class NARSwing extends Swing {
+public class NARSwing  {
 
     
     /*static {

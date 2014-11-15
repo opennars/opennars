@@ -50,7 +50,6 @@ import nars.core.Memory.Timing;
 import static nars.core.Memory.Timing.Real;
 import static nars.core.Memory.Timing.Simulation;
 import nars.core.NAR;
-import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.MultiOutputPanel;
@@ -59,21 +58,15 @@ import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
 import nars.gui.output.chart.BubbleChart;
-import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.NARFacePanel;
 import nars.gui.output.graph.ConceptGraphCanvas;
-import nars.gui.output.graph.ConceptGraphCanvas2;
 import nars.gui.output.graph.ConceptGraphPanel;
-import nars.gui.output.graph.ImplicationGraphCanvas;
-import nars.gui.output.graph.ProcessingGraphPanel;
-import nars.gui.output.graph.SentenceGraphCanvas;
 import nars.gui.output.TimelinePanel;
 import nars.inference.Executive;
 import nars.inference.Executive.Execution;
 import nars.inference.GraphExecutive;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.util.graph.InheritanceGraph;
 
 
 public class NARControls extends JPanel implements ActionListener, Observer {
@@ -132,17 +125,16 @@ public class NARControls extends JPanel implements ActionListener, Observer {
      * @param nar
      * @param title
      */
-    private ChartsPanel chart;
-    private final MultiSense senses;
+    
     public NARControls(final NAR nar) {
         super(new BorderLayout());
         
         this.nar = nar;
         memory = nar.memory;        
         
-        senses = new MultiSense(memory.logic, memory.resource);
+        /*senses = new MultiSense(memory.logic, memory.resource);
         senses.setActive(true);
-        senses.update(memory);
+        senses.update(memory);*/
         
         experienceWriter = new TextOutput(nar);
         
@@ -257,40 +249,40 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             });
             m.add(mv);
 
-            JMenuItem mv2 = new JMenuItem("+ Concept Graph 2");
-            mv2.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new NWindow("Concept Graph 2", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
-                }
-            });
-            m.add(mv2);
-
-            
-            JMenuItem imv = new JMenuItem("+ Implication Graph");
-            imv.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
-                    new NWindow("Implication Graph", 
-                            new ProcessingGraphPanel(nar, 
-                                    new ImplicationGraphCanvas(
-                                            nar.memory.executive.graph))).show(500, 500);
-                }
-            });
-            m.add(imv);
-
-            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
-            sg.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new NWindow("Inheritance Graph", 
-                            new ProcessingGraphPanel(nar, 
-                                    new SentenceGraphCanvas(
-                                            new InheritanceGraph(nar)))).show(500, 500);
-                }
-            });
-            m.add(sg);
+//            JMenuItem mv2 = new JMenuItem("+ Concept Graph 2");
+//            mv2.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    new NWindow("Concept Graph 2", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
+//                }
+//            });
+//            m.add(mv2);
+//
+//            
+//            JMenuItem imv = new JMenuItem("+ Implication Graph");
+//            imv.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
+//                    new NWindow("Implication Graph", 
+//                            new ProcessingGraphPanel(nar, 
+//                                    new ImplicationGraphCanvas(
+//                                            nar.memory.executive.graph))).show(500, 500);
+//                }
+//            });
+//            m.add(imv);
+//
+//            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
+//            sg.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    new NWindow("Inheritance Graph", 
+//                            new ProcessingGraphPanel(nar, 
+//                                    new SentenceGraphCanvas(
+//                                            new InheritanceGraph(nar)))).show(500, 500);
+//                }
+//            });
+//            m.add(sg);
             
             
             JMenuItem tt = new JMenuItem("+ Task Tree");
@@ -468,21 +460,12 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     /** in memory cycles */
     
     
-    long lastChartUpdateTime = 0;
-    long minChartUpdateTime = 100; //ms
     
     AtomicBoolean updateScheduled = new AtomicBoolean(false);
     
     protected void updateGUI() {
-        
-        long now = System.currentTimeMillis();
-        
+                
         speedSlider.repaint();
-
-        if (now - lastChartUpdateTime > minChartUpdateTime) {
-            chart.redraw();
-            lastChartUpdateTime = now;
-        }
 
         updateScheduled.set(false);
 
@@ -498,12 +481,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             
             if ((deltaTime >= GUIUpdatePeriodMS) /*|| (!updateScheduled.get())*/) {
                 
-                updateScheduled.set(true);
-
-                senses.update(memory);
-                
-                chart.updateData(memory.time());
-                                
+                updateScheduled.set(true);                
+                                                
                 speedSlider.repaint();
                 
                 SwingUtilities.invokeLater(updateGUIRunnable);
@@ -806,18 +785,18 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         p.add(new NSlider(memory.param.conceptForgetDurations, "Concept Memory Duration", 0.5f, 20), c);
 
         
-
-        //JPanel chartPanel = new JPanel(new GridLayout(0,1));
-        {
-            this.chart = new ChartsPanel(senses, chartHistoryLength);
-            //chartPanel.add(chart);
-                        
-        }
-        
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.BOTH;        
-        //p.add(new JScrollPane(chartPanel), c);
-        p.add(chart, c);
+//
+//        //JPanel chartPanel = new JPanel(new GridLayout(0,1));
+//        {
+//            this.chart = new ChartsPanel(senses, chartHistoryLength);
+//            //chartPanel.add(chart);
+//                        
+//        }
+//        
+//        c.weighty = 1.0;
+//        c.fill = GridBagConstraints.BOTH;        
+//        //p.add(new JScrollPane(chartPanel), c);
+//        p.add(chart, c);
 
         /*c.fill = c.BOTH;
         p.add(Box.createVerticalBox(), c);*/

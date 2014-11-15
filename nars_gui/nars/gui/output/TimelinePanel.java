@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.TreeMLData;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,13 +9,13 @@ import java.util.List;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
-import automenta.vivisect.TimeSeries;
 import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
-import automenta.vivisect.timeline.Timeline2DCanvas;
+import automenta.vivisect.timeline.TimelineVis;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -32,7 +33,7 @@ import nars.util.NARTrace;
 public class TimelinePanel extends NPanel implements Observer {
     
     private List<Chart> charts;
-    private final Timeline2DCanvas timeline;
+    private final TimelineVis timeline;
     private final JPanel controls;
     private final NAR nar;
     private final NARTrace trace;
@@ -48,7 +49,7 @@ public class TimelinePanel extends NPanel implements Observer {
         charts = new ArrayList();
 
                
-        this.timeline = new Timeline2DCanvas(charts);
+        this.timeline = new TimelineVis(charts);
         
         
         this.controls = new JPanel();
@@ -59,7 +60,7 @@ public class TimelinePanel extends NPanel implements Observer {
         enableBox.setEnabled(false);
         controls.add(enableBox);
 
-        add(timeline, BorderLayout.CENTER);
+        add(new PCanvas(timeline), BorderLayout.CENTER);
         add(controls, BorderLayout.EAST);
         
         addChartControls();
@@ -110,7 +111,7 @@ public class TimelinePanel extends NPanel implements Observer {
         });
         controls.add(new ChartButton("Delta Concepts") {
             @Override public Chart newChart() {
-                return new BarChart(new TimeSeries.FirstOrderDifferenceTimeSeries("d(concepts)", trace.charts.get("concept.count")));
+                return new BarChart(new TreeMLData.FirstOrderDifferenceTimeSeries("d(concepts)", trace.charts.get("concept.count")));
             }            
         });
         controls.add(new ChartButton("Concept Priority Histogram (4 level)") {

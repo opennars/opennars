@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.Video;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
@@ -15,7 +16,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import nars.gui.NARControls;
-import nars.gui.NARSwing;
 import nars.gui.output.SwingLogText.LogLine;
 import nars.io.TextOutput;
 
@@ -105,7 +105,7 @@ public class SwingLogPanel extends LogPanel {
         }*/
         c.setBorder(new EmptyBorder(0, 0, 0, 0));
         //c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
-        c.setFont(NARSwing.monofont.deriveFont(1f*fontSize));
+        c.setFont(Video.monofont.deriveFont(1f*fontSize));
     }
 
     final static String COPY = "Copy";
