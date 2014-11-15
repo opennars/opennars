@@ -16,9 +16,9 @@
  */
 package nars.timeline;
 
+import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import nars.core.NAR;
 import nars.core.build.Default;
-import automenta.vivisect.TimeSeries.FirstOrderDifferenceTimeSeries;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
@@ -26,8 +26,8 @@ import automenta.vivisect.timeline.StackedPercentageChart;
 import automenta.vivisect.timeline.Timeline2DCanvas;
 import nars.gui.EventChart;
 import nars.util.NARTrace;
-import nars.util.NARTrace.ConceptBagTimeSeries;
-import nars.util.NARTrace.ConceptBagTimeSeries.Mode;
+import nars.util.NARTrace.ConceptBagTreeMLData;
+import nars.util.NARTrace.ConceptBagTreeMLData.Mode;
 
 /**
  *
@@ -54,12 +54,12 @@ public class BudgetExpense extends TimelineExample {
             new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
 
             new LineChart(
-                    new ConceptBagTimeSeries(nar, nar.memory.concepts, cycles, Mode.ConceptPriorityTotal)            
+                    new ConceptBagTreeMLData(nar, nar.memory.concepts, cycles, Mode.ConceptPriorityTotal)            
             ).height(4),
 
             new LineChart(
-                    new ConceptBagTimeSeries(nar, nar.memory.concepts, cycles, Mode.TermLinkPriorityMean),
-                    new ConceptBagTimeSeries(nar, nar.memory.concepts, cycles, Mode.TaskLinkPriorityMean)
+                    new ConceptBagTreeMLData(nar, nar.memory.concepts, cycles, Mode.TermLinkPriorityMean),
+                    new ConceptBagTreeMLData(nar, nar.memory.concepts, cycles, Mode.TaskLinkPriorityMean)
             
             ).height(4),
 

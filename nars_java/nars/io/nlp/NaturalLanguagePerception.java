@@ -76,6 +76,55 @@ public class NaturalLanguagePerception {
         return lineParts;
     }
     
+    // helper for outside
+    public static String reconstructString(ArrayList<LinePart> lineParts) {
+        String resultString = "";
+        
+        for(LinePart linePart : lineParts) {
+            resultString += linePart.content + " ";
+        }
+        
+        return resultString;
+    }
+    
+    // helper for outside
+    public static ArrayList<ArrayList<LinePart>> splitLinePartsIntoSentenceParts(ArrayList<LinePart> lineParts) {
+        // TODO< move this into NaturalLanguagePerception >
+        ArrayList<LinePart> currentLine;
+        
+        ArrayList<ArrayList<LinePart>> resultList = new ArrayList<>();
+        
+        currentLine = new ArrayList<>();
+        
+        int i;
+        
+        for( i = 0; i < lineParts.size(); i++ ) {
+            NaturalLanguagePerception.LinePart iterationlinePart = lineParts.get(i);
+            
+            currentLine.add(iterationlinePart);
+            
+            if (isSentenceSpliter(iterationlinePart)) {
+                resultList.add(currentLine);
+                
+                currentLine = new ArrayList<>();
+            }
+        }
+        
+        if(currentLine.size() != 0) {
+            resultList.add(currentLine);
+            currentLine = new ArrayList<>();
+        }
+        
+        return resultList;
+    }
+    
+    private static boolean isSentenceSpliter(NaturalLanguagePerception.LinePart linePart) {
+        if (linePart.type != NaturalLanguagePerception.LinePart.EnumType.SIGN) {
+            return false;
+        }
+        
+        return linePart.content.equals(".") || linePart.content.equals(",") || linePart.content.equals(";") || linePart.content.equals("!") || linePart.content.equals("?");
+    }
     static private String translateLinepartsToNareses(ArrayList<LinePart> lineparts, String prefix) {
         String translated = "";
         

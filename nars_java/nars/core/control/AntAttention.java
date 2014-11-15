@@ -5,7 +5,6 @@
 package nars.core.control;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import nars.core.Memory;
@@ -69,7 +68,15 @@ public class AntAttention extends WaveAttention {
         memory.run(run, Parameters.THREADS);
         
     }
-    
+
+    @Override
+    public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
+        Concept c = super.conceptualize(budget, term, createIfMissing);
+        /*if (c!=null) {
+            immediate.add(c);
+        }*/
+        return c;
+    }
     
     
     
@@ -287,8 +294,7 @@ public class AntAttention extends WaveAttention {
                     " | " + eta + " " + (inConcept() ? "concept" : (inLink() ? "link" : "")) + "}";            
         }
 
-        
-        
+                
     }
     
 }

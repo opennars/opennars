@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Curve;
+import nars.core.build.Default;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -129,24 +130,24 @@ public class Rover extends PhysicsModel {
             
             
             
-            int pixels = 5;
+            int pixels = 3;
             float aStep = 1.5f / pixels;
             float retinaArc = aStep;
             int retinaResolution = 5; //should be odd # to balance
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay(world,"front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
+                vision.add(new VisionRay(world,"front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.0f,
                             retinaArc, retinaResolution, L, 3));
             }
             
-            pixels=3;
+            /*pixels=3;
             Vec2 backRetina = new Vec2(0, -0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 vision.add(new VisionRay(world,"back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4),
                            retinaArc, retinaResolution,
                            5.5f, 3));
-            }
+            }*/
             
             //Vec2 backRetina = new Vec2(0, -0.5f);
             //vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f, 3));
@@ -199,7 +200,7 @@ public class Rover extends PhysicsModel {
 
                 Body hit = null;
                 
-                float minDist = 1000;
+                float minDist = 999999;
                 
                 float dArc = arc / resolution;
                 for (int r = 0; r < resolution; r++) {
@@ -224,10 +225,12 @@ public class Rover extends PhysicsModel {
                         pooledHead.set(ccallback.m_normal);
                         pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
                         draw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
-                        hit = ccallback.body;
 
-                        if (d < minDist)
+
+                        if (d < minDist) {
                             minDist = d;
+                            hit = ccallback.body;
+                        }
                     } else {
                         draw().drawSegment(point1, point2, laserColor);
                     }
@@ -274,10 +277,12 @@ public class Rover extends PhysicsModel {
                     String Sgood= good ? "good" : "bad";
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
-                    sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
+                    //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
+                    sight.set("<(*," + id + ","+Sgood+") --> see>. :|:");
                 }
                 else {
-                    sight.set("<(*," + id + ",empty) --> see>. :|:");
+                    //no need to do that
+                    //sight.set("<(*," + id + ",empty) --> see>. :|:");
                 }
             }
         }
@@ -529,7 +534,7 @@ public class Rover extends PhysicsModel {
                             rover.stop();
                             break;
                         case "random": //tend forward
-                            nar.addInput("(^motor,random). :|:\n");
+                            //nar.addInput("(^motor,random). :|:\n");
                             rover.thrust(0, linearSpeed);
                             //nar.step(100);
                             
@@ -605,14 +610,13 @@ public class Rover extends PhysicsModel {
     public static void main(String[] args) {
         //NAR nar = new Default().
         //NAR nar = new DiscretinuousBagNARBuilder().
-        NAR nar = new Curve().
-                setConceptBagLevels(100).
-                setConceptBagSize(1024).simulationTime().
+        NAR nar = new Default().setConceptBagSize(100).simulationTime().
                 build();
         
         float framesPerSecond = 50f;
-        int cyclesPerFrame = 200; //was 200        
+        int cyclesPerFrame = 10; //was 200    
         (nar.param).noiseLevel.set(0);
+        (nar.param).decisionThreshold.set(0);
         (nar.param).duration.set(cyclesPerFrame);
         
 

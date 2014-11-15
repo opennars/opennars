@@ -110,7 +110,7 @@ public class TicTacToe extends JPanel {
         status = new JLabel("");
         menu.add(status);
         
-        JButton teachButton = new JButton("TEACH");
+        JButton teachButton = new JButton("Re-Explain rules to NARS");
         teachButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 teach();
@@ -283,9 +283,9 @@ public class TicTacToe extends JPanel {
     
     public void updateField() {
         if (playing == COMPUTER)
-            status.setText("Thinking");
+            status.setText("NARS Turn");
         else
-            status.setText("Play");
+            status.setText("Humans Turn");
                     
         Boolean winner = null;
 

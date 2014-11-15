@@ -305,10 +305,7 @@ public class Executive {
             final Execution te = new Execution(memory, this, c, t);
             if (tasks.add(te)) {
                 //added successfully
-                if(t.sentence.content instanceof Operation) {
-                    c.setPriority(0); //it was a operation, dont let operations itself gain priority
-                    c.setDurability(0);
-                }
+
                 memory.emit(Execution.class, te);
                 return true;
             }

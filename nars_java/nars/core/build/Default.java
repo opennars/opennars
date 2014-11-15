@@ -134,6 +134,10 @@ public class Default extends Build implements ConceptBuilder {
             n.addPlugin(pluginPlanner);
         }
         
+        if(Parameters.INTERNAL_EXPERIENCE) {
+            MinimalInternalExperience nal9_1=new MinimalInternalExperience();
+            n.addPlugin(nal9_1);
+        }
         if(Parameters.INTERNAL_EXPERIENCE_FULL) {
             FullInternalExperience nal9=new FullInternalExperience();
             n.addPlugin(nal9);

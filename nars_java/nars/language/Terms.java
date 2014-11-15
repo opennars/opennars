@@ -278,9 +278,25 @@ public class Terms {
             componentsB.add(tb);
             Collections.addAll(componentsB, sbt);
 
-            if (componentsA.containsAll(componentsB)) {
-                return true;
+            for(Term sA : componentsA) {
+                boolean had=false;
+                for(Term sB : componentsB) {
+                    if(sA instanceof Variable && sB instanceof Variable) {
+                        if(sA.name.equals(sB.name)) {
+                            had=true;
             }
+                    } 
+                    else
+                    if(sA.equals(sB)) {
+                        had=true;
+                    }
+                }
+                if(!had) {
+                    return false;
+                }
+            }
+            
+            return true;
         }
             
         return false;

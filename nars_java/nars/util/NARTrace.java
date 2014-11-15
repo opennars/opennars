@@ -1,5 +1,7 @@
 package nars.util;
 
+import automenta.vivisect.TreeMLData;
+import automenta.vivisect.Video;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +19,6 @@ import nars.core.sense.MultiSense;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import automenta.vivisect.TimeSeries;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleEnd;
 import nars.inference.MemoryObserver;
@@ -52,20 +53,20 @@ public class NARTrace extends MemoryObserver implements Serializable {
     
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
-    public final Map<String, TimeSeries> charts = new TreeMap();
+    public final Map<String, TreeMLData> charts = new TreeMap();
 
     private long t;
     public final NAR nar;
     public final MultiSense senses;
 
-    public TimeSeries[] getCharts(String... names) {
-        List<TimeSeries> l = new ArrayList(names.length);
+    public TreeMLData[] getCharts(String... names) {
+        List<TreeMLData> l = new ArrayList(names.length);
         for (String n : names) {
-            TimeSeries t = charts.get(n);
+            TreeMLData t = charts.get(n);
             if (t!=null)
                 l.add(t);
         }
-        return l.toArray(new TimeSeries[l.size()]);
+        return l.toArray(new TreeMLData[l.size()]);
     }
 
 
@@ -139,7 +140,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         senses.update(memory);        
         
         for (String x : senses.keySet()) {
-            TimeSeries ch = new TimeSeries(x, NARSwing.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f), chartHistorySize);
+            TreeMLData ch = new TreeMLData(x, Video.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f), chartHistorySize);
             charts.put(x, ch);            
         }
         
@@ -199,22 +200,22 @@ public class NARTrace extends MemoryObserver implements Serializable {
     public void onCycleEnd(long time) {
         senses.update(nar.memory);
         
-        for (Map.Entry<String, TimeSeries> e : charts.entrySet()) {
+        for (Map.Entry<String, TreeMLData> e : charts.entrySet()) {
             String f = e.getKey();            
-            TimeSeries ch = e.getValue();
+            TreeMLData ch = e.getValue();
             Object value = senses.get(f);
             
             if (value instanceof Double) {                    
-                ch.push(time, ((Number) value).floatValue());
+                ch.setData((int)time, ((Number) value).floatValue());
             }
             else if (value instanceof Float) {
-                ch.push(time, ((Number) value).floatValue());
+                ch.setData((int)time, ((Number) value).floatValue());
             }
             else if (value instanceof Integer) {
-                ch.push(time, ((Number) value).floatValue());
+                ch.setData((int)time, ((Number) value).floatValue());
             }
             else if (value instanceof Long) {
-                ch.push(time, ((Number) value).floatValue());
+                ch.setData((int)time, ((Number) value).floatValue());
             }            
         }        
     }
@@ -256,17 +257,17 @@ public class NARTrace extends MemoryObserver implements Serializable {
         }
     }
 
-    abstract public static class CycleTimeSeries extends TimeSeries implements Observer {
+    abstract public static class CycleTreeMLData extends TreeMLData implements Observer {
 
         private final NAR nar;
 
-        public CycleTimeSeries(NAR n, String theName, int historySize) {
-            super(theName, NARSwing.getColor(theName, 0.9f, 1f), historySize);
+        public CycleTreeMLData(NAR n, String theName, int historySize) {
+            super(theName, Video.getColor(theName, 0.9f, 1f), historySize);
             this.nar = n;
             n.on(CycleEnd.class, this);
         }
 
-        public CycleTimeSeries(NAR n, String theName, float min, float max, int historySize) {
+        public CycleTreeMLData(NAR n, String theName, float min, float max, int historySize) {
             this(n, theName, historySize);
             setRange(min, max);
         }
@@ -274,14 +275,14 @@ public class NARTrace extends MemoryObserver implements Serializable {
         @Override
         public void event(Class event, Object[] arguments) {
             long time = nar.time();
-            push(nar.time(), next(time, nar));
+            setData((int)nar.time(), next(time, nar));
         }
 
         public abstract float next(long time, NAR nar);
 
     }
 
-    public static class ConceptBagTimeSeries extends CycleTimeSeries {
+    public static class ConceptBagTreeMLData extends CycleTreeMLData {
 
         public final Mode mode;
         private final Iterable<Concept> concepts;
@@ -290,7 +291,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
             ConceptPriorityTotal, TaskLinkPriorityMean, TermLinkPriorityMean /* add others */ };
 
-        public ConceptBagTimeSeries(NAR n, Iterable<Concept> concepts, int historySize, Mode mode) {
+        public ConceptBagTreeMLData(NAR n, Iterable<Concept> concepts, int historySize, Mode mode) {
             super(n, "Concepts: " + mode, historySize);
             this.mode = mode;
             this.concepts = concepts;
@@ -328,7 +329,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     }
 
-    public static class ConceptTimeSeries extends CycleTimeSeries {
+    public static class ConceptTreeMLData extends CycleTreeMLData {
 
         public final Mode mode;
         private final String conceptString;
@@ -339,7 +340,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
             Priority, Duration, BeliefConfidenceMax /* add others */ };
 
-        public ConceptTimeSeries(NAR n, String concept, int historySize, Mode mode) throws Narsese.InvalidInputException {
+        public ConceptTreeMLData(NAR n, String concept, int historySize, Mode mode) throws Narsese.InvalidInputException {
             super(n, concept + ": " + mode, 0, 1, historySize);
             this.mode = mode;
             this.conceptString = concept;
