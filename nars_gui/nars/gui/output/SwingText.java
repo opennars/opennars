@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.Video;
 import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,7 +12,6 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
-import nars.gui.NARSwing;
 
 public class SwingText extends JTextPane {
 
@@ -92,7 +92,7 @@ public class SwingText extends JTextPane {
     }
 
     public void setFontSize(float v) {
-        setFont(NARSwing.monofont.deriveFont(v));
+        setFont(Video.monofont.deriveFont(v));
     }
 
 }

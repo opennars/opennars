@@ -4,8 +4,9 @@
  */
 package nars.gui;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.timeline.Chart;
-import automenta.vivisect.timeline.Timeline2DCanvas;
+import automenta.vivisect.timeline.TimelineVis;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +33,12 @@ public class EventChart extends Chart {
     public final Map<Object, EventPoint> events = new HashMap();
     protected float timeScale;
     protected float yScale;
-    protected Timeline2DCanvas l;
+    protected TimelineVis l;
     protected boolean includeTaskEvents = true;
     protected boolean includeOutputEvents = true;
     protected boolean includeOtherEvents = true;
     public final NavigableMap<Long, List<Events.InferenceEvent>> timepoints;
+
 
     public static class EventPoint<X> {
 
@@ -71,14 +73,17 @@ public class EventChart extends Chart {
         timepoints = new ConcurrentSkipListMap();
     }
 
+    
     @Override
-    public void update(Timeline2DCanvas l, float timeScale, float yScale) {
+    public void update(TimelineVis l, float timeScale, float yScale) {
         TreeMap<Long, List<Events.InferenceEvent>> time = trace.time;        
         timepoints.putAll(time.subMap(l.getStart(), l.getEnd()));        
     }
 
+
+    
     @Override
-    public void draw(Timeline2DCanvas l, float y, float timeScale, float yScale) {
+    public void draw(TimelineVis l, float y, float timeScale, float yScale) {
         this.timeScale = timeScale;
         this.yScale = yScale * getHeight();
         this.l = l;
@@ -88,8 +93,8 @@ public class EventChart extends Chart {
         
         lastSubjectEvent.clear();
         events.clear();
-        l.noStroke();
-        l.textSize(l.getDrawnTextScale());
+        l.g.noStroke();
+        l.g.textSize(l.getDrawnTextScale());
         synchronized (timepoints) {
             //something not quite right about this
             long maxItemsPerCycle = timepoints.values().stream().map((x) -> x.stream().filter((e) -> include(e)).count()).max(Long::compare).get();
@@ -99,12 +104,12 @@ public class EventChart extends Chart {
                 drawEvent(t, v, y, (int) maxItemsPerCycle);
             }
         }
-        l.strokeCap(PConstants.SQUARE);
-        l.strokeWeight(4f);
+        l.g.strokeCap(PConstants.SQUARE);
+        l.g.strokeWeight(4f);
         for (final EventPoint<Object> to : events.values()) {
             for (final EventPoint<Object> from : to.incoming) {
-                l.stroke(256f * NARSwing.hashFloat(to.subject.hashCode()), 100f, 200f, 68f);
-                l.line(timeScale * from.x, from.y, timeScale * to.x, to.y);
+                l.g.stroke(256f * Video.hashFloat(to.subject.hashCode()), 100f, 200f, 68f);
+                l.g.line(timeScale * from.x, from.y, timeScale * to.x, to.y);
             }
         }
     }
@@ -137,7 +142,7 @@ public class EventChart extends Chart {
                 NARTrace.TaskEvent te = (NARTrace.TaskEvent) i;
                 float p = te.priority;
                 {
-                    l.fill(256f * NARSwing.hashFloat(c.hashCode()), 200f, 200f);
+                    l.g.fill(256f * Video.hashFloat(c.hashCode()), 200f, 200f);
                     switch (te.type) {
                         case Add:
                             //forward                            
@@ -163,7 +168,7 @@ public class EventChart extends Chart {
                     }
                 }
                 float ph = 0.5f + 0.5f * p; //so that priority 0 will still be visible
-                l.fill(256f * NARSwing.hashFloat(te.channel.hashCode()), 100f + 100f * ph, 255f * ph);
+                l.g.fill(256f * Video.hashFloat(te.channel.hashCode()), 100f + 100f * ph, 255f * ph);
                 if (te.channel.equals(Output.IN.class)) {
                     /*pushMatrix();
                     translate(x*timeScale, y*yScale);
@@ -182,7 +187,7 @@ public class EventChart extends Chart {
                     rect(i, te.signal, ph * itemScale, x, y);
                 }
             } else {
-                l.fill(256f * NARSwing.hashFloat(c.hashCode()), 200f, 200f);
+                l.g.fill(256f * Video.hashFloat(c.hashCode()), 200f, 200f);
                 rect(i, null, 0.75f * itemScale, x, y);
             }
             x += 1.0 / v.size();
@@ -196,21 +201,21 @@ public class EventChart extends Chart {
         if (r < 2) {
             r = 2;
         }
-        l.rect(px + -r / 2f, py + -r / 2f, r, r);
+        l.g.rect(px + -r / 2f, py + -r / 2f, r, r);
         label(event, subject, r, x, y);
     }
 
     protected void label(Object event, Object subject, float r, float x, float y) {
         if ((l.isShowingItemLabels()) && (r * l.getDrawnTextScale() > l.getMinLabelScale())) {
             // && (r * timeScale > l.minLabelScale * l.drawnTextScale)) {
-            l.fill(255f);
+            l.g.fill(255f);
             String s;
             if (event instanceof HasLabel)
                 s = ((HasLabel)event).toLabel();
             else
                 s = event.toString();
                 
-            l.text(s, timeScale * x - r / 2f, y-r/2f, x+ r/2*6f, y+r/2f);
+            l.g.text(s, timeScale * x - r / 2f, y-r/2f, x+ r/2*6f, y+r/2f);
         }
         setEventPoint(event, subject, x, y, 0);
     }
@@ -221,7 +226,7 @@ public class EventChart extends Chart {
         if (r < 2) {
             r = 2;
         }
-        l.triangle(px + direction * -r / 2, py + direction * -r / 2, px + direction * r / 2, py + 0, px + direction * -r / 2, py + direction * r / 2);
+        l.g.triangle(px + direction * -r / 2, py + direction * -r / 2, px + direction * r / 2, py + 0, px + direction * -r / 2, py + direction * r / 2);
         label(event, subject, r, x, y);
     }
 
@@ -235,5 +240,16 @@ public class EventChart extends Chart {
             }
         }
     }
+
+    @Override
+    public int getEnd() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getStart() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     
 }

@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -29,7 +30,6 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NAR.PluginState;
 import nars.core.Plugin;
-import nars.gui.NARSwing;
 import nars.util.PackageUtility;
 
 /**
@@ -105,7 +105,7 @@ public class PluginPanel extends NPanel {
             
             this.plugin = p;
             final JLabel j = new JLabel(p.plugin.name().toString());
-            j.setFont(NARSwing.monofont);            
+            j.setFont(Video.monofont);            
             add(j, BorderLayout.CENTER);
             
             JPanel buttons = new JPanel(new FlowLayout());
