@@ -391,7 +391,7 @@ public class Executive {
     /**
      * Entry point for all potentially executable tasks
      */
-    public void decisionMaking(final Task t, final Concept concept) {
+    public boolean executeDecision(final Task t, final Concept concept) {
 
         if (isDesired(t, concept)) {
 
@@ -399,10 +399,10 @@ public class Executive {
 
             if ((content instanceof Operation) || (TemporalParticlePlanner.used && isSequenceConjunction(content))) {
                 addExecution(concept, t);
+                return true;
             } 
-        } else {
-            //t.end();
         }
+        return false;
     }
 
     /**
