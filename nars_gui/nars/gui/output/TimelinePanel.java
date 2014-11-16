@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import automenta.vivisect.swing.NPanel;
@@ -30,7 +30,7 @@ import nars.util.NARTrace;
  */
 
 
-public class TimelinePanel extends NPanel implements Observer {
+public class TimelinePanel extends NPanel implements EventObserver {
     
     private List<Chart> charts;
     private final TimelineVis timeline;

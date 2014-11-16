@@ -6,7 +6,7 @@ import nars.core.NAR;
 /**
  *
  */
-public abstract class AbstractObserver implements EventEmitter.Observer {
+public abstract class AbstractObserver implements EventEmitter.EventObserver {
     protected final EventEmitter source;
     protected boolean active = false;
     private final Class[] events;

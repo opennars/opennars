@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.SwingUtilities;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.io.meter.CompoundMeter;
@@ -136,7 +136,7 @@ public class MeterVis extends TimelineVis {
 
     
     
-    public class MeterVisPanel extends PCanvas implements Observer {
+    public class MeterVisPanel extends PCanvas implements EventObserver {
 
         float scaleSpeed = 1f / 1000.0f;
         

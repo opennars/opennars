@@ -6,7 +6,7 @@ package nars.timeline;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.build.Default;
@@ -27,7 +27,7 @@ public class BeliefRedundancy {
     
         new TextOutput(n, System.out);
 
-        n.on(Events.ConceptBeliefAdd.class, new Observer() {
+        n.on(Events.ConceptBeliefAdd.class, new EventObserver() {
             @Override public void event(Class event, Object[] a) {
                 Concept c = (Concept)a[0];
                 if (c.beliefs.size() > 2) {

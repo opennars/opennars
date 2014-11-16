@@ -4,7 +4,8 @@ package automenta.vivisect.graph;
 
 import automenta.vivisect.Vis;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.jgrapht.Graph;
@@ -21,11 +22,10 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
 
     
 
-    Map<V, VertexVis<V,E>> vertices = new HashMap();
-    Map<E, EdgeVis<V,E>> edges = new HashMap();
-    Set<V> deadVertices = new HashSet();
-    Set<E> deadEdges = new HashSet();
-    Map<Object, Integer> edgeColors = new HashMap(16);
+    Map<V, VertexVis<V,E>> vertices = new LinkedHashMap();
+    Map<E, EdgeVis<V,E>> edges = new LinkedHashMap();
+    Set<V> deadVertices = new LinkedHashSet();
+    Set<E> deadEdges = new LinkedHashSet();
 
     Graph<V,E> currentGraph;
     boolean showSyntax;
@@ -123,11 +123,10 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
 
             updateNext = false;
 
-            synchronized (vertices) {
+            /*synchronized (vertices)*/ {
                 deadVertices.clear();
+                deadEdges.clear();
                 
-                
-
                 currentGraph = getGraph();
                 if (currentGraph == null) {
                     vertices.clear();
@@ -136,15 +135,16 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
                 }
                 
                 deadVertices.addAll(vertices.keySet());
-                for (final V v : currentGraph.vertexSet())
-                   updateVertex(v);                  
                 deadEdges.addAll(edges.keySet());
-                for (final V v : deadVertices)
-                    vertices.remove(v);
                 
+                for (final V v : currentGraph.vertexSet())
+                   updateVertex(v);
                 
                 for (final E e : currentGraph.edgeSet())
-                    updateEdge(e);                
+                    updateEdge(e);
+                
+                for (final V v : deadVertices)
+                    vertices.remove(v);
                 for (final E e : deadEdges)
                     edges.remove(e);
             }
@@ -161,14 +161,15 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
             return true;
         }
 
-        synchronized (vertices) {
+        /*synchronized (vertices)*/ {
             //for speed:
             g.strokeCap(SQUARE);
             g.strokeJoin(PROJECT);
 
             /*boolean changed = false;*/
             
-            int numEdges = currentGraph.edgeSet().size();
+            
+            int numEdges = currentGraph.edgeSet().size();            
             if (numEdges < maxEdges) {
                 
                 for (final EdgeVis d : edges.values()) {
@@ -180,7 +181,7 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
             g.noStroke();
 
             int numNodes = vertices.size();
-            boolean text = numNodes < maxNodesWithLabels;
+            //boolean text = numNodes < maxNodesWithLabels;
             if (numNodes < maxNodes) {
                 for (final VertexVis d : vertices.values()) {
                     /*changed |= */d.draw(this, g);

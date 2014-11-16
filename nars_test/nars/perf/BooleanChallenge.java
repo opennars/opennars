@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.NARPrologMirror;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.build.Discretinuous;
@@ -59,7 +59,7 @@ public class BooleanChallenge {
         this.nar = n;        
         this.parser = new Narsese(n);
                 
-        n.on(OUT.class, new Observer() {
+        n.on(OUT.class, new EventObserver() {
 
             protected boolean evalAnd(int[] t) {
                 return (t[0] & t[1]) == t[2];
@@ -136,7 +136,7 @@ public class BooleanChallenge {
         });
         
         
-        n.on(CycleEnd.class, new Observer() {
+        n.on(CycleEnd.class, new EventObserver() {
 
             @Override public void event(Class event, Object[] arguments) {
                 double p = Math.random();

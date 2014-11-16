@@ -8,7 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.SwingUtilities;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.Concept;
@@ -20,7 +20,7 @@ import nars.gui.NARSwing;
  * 2D bubble chart with configurable dimensions
  * @author me
  */
-public class BubbleChart extends NPanel implements Observer {
+public class BubbleChart extends NPanel implements EventObserver {
     private final NAR nar;
     private BufferedImage buffer;
     private boolean needsPaint;

@@ -67,7 +67,7 @@ public class NALTestScore extends NALTest {
             if (maxCycles!=-1) {
                 
                 //TODO extract as TimeLimit plugin
-                n.on(Events.CycleEnd.class, new EventEmitter.Observer() {
+                n.on(Events.CycleEnd.class, new EventEmitter.EventObserver() {
                     @Override public void event(Class event, Object[] arguments) {
                         if (n.time() > maxCycles) {                            
                             n.stop();

@@ -16,11 +16,11 @@ public class EventEmitter {
 
     
     /** Observes events emitted by EventEmitter */
-    public interface Observer<C> {
+    public interface EventObserver<C> {
         public void event(Class<? extends C> event, Object[] args);
     }
 
-    private final Map<Class<?>, List<Observer>> events;
+    private final Map<Class<?>, List<EventObserver>> events;
             
     
     private Deque<Object[]> pendingOps = new ArrayDeque();
@@ -44,7 +44,7 @@ public class EventEmitter {
         }
     }
 
-    protected List<Observer> newObserverList() {
+    protected List<EventObserver> newObserverList() {
         return new ArrayList();
         /*return Parameters.THREADS == 1 ? 
                 new ArrayList() : Collections.synchronizedList(new ArrayList());*/
@@ -63,7 +63,7 @@ public class EventEmitter {
             if (!pendingOps.isEmpty()) {
                 for (Object[] o : pendingOps) {
                     Class c = (Class)o[1];
-                    Observer d = (Observer)o[2];
+                    EventObserver d = (EventObserver)o[2];
                     if ((Boolean)o[0]) {                        
                         _on(c,d);
                     }
@@ -76,7 +76,7 @@ public class EventEmitter {
         }
     }
     
-    public <C> void on(final Class<? extends C> event, final Observer<? extends C> o) {
+    public <C> void on(final Class<? extends C> event, final EventObserver<? extends C> o) {
         if (Parameters.THREADS == 1) {
             _on(event, o);
         }
@@ -87,11 +87,11 @@ public class EventEmitter {
         }
     }
             
-    private <C> void _on(final Class<? extends C> event, final Observer<? extends C> o) {
+    private <C> void _on(final Class<? extends C> event, final EventObserver<? extends C> o) {
         if (events.containsKey(event))
             events.get(event).add(o);
         else {
-            List<Observer> a = newObserverList();
+            List<EventObserver> a = newObserverList();
             a.add(o);
             events.put(event, a);
         }
@@ -103,7 +103,7 @@ public class EventEmitter {
      * @param o
      * @return  whether it was removed
      */
-    public <C> void off(final Class<? extends C> event, final Observer<? extends C> o) {
+    public <C> void off(final Class<? extends C> event, final EventObserver<? extends C> o) {
         if (Parameters.THREADS == 1) {
             _off(event, o);
         }
@@ -114,7 +114,7 @@ public class EventEmitter {
         }
     }
     
-    private void _off(final Class<?> event, final Observer o) {
+    private void _off(final Class<?> event, final EventObserver o) {
         if (null == event || null == o)
             throw new RuntimeException("Invalid parameter");
  
@@ -123,12 +123,12 @@ public class EventEmitter {
         
         events.get(event).remove(o);
         /*if (!removed) {
-            throw new RuntimeException("Observer " + o + " was not registered for events");
+            throw new RuntimeException("EventObserver " + o + " was not registered for events");
         }*/        
     }
 
     /** for enabling many events at the same time */
-    public void set(final Observer o, final boolean enable, final Class... events) {
+    public void set(final EventObserver o, final boolean enable, final Class... events) {
         for (final Class c : events) {
             if (enable)
                 on(c, o);
@@ -139,13 +139,13 @@ public class EventEmitter {
     
 
     public void emit(final Class eventClass, final Object... params) {
-        List<Observer> observers = events.get(eventClass);
+        List<EventObserver> observers = events.get(eventClass);
         
         if ((observers == null) || (observers.isEmpty())) return;
 
         int n = observers.size();
         for (int i = 0; i < n; i++) {
-            Observer m = observers.get(i);
+            EventObserver m = observers.get(i);
             m.event(eventClass, params);
         }
     }

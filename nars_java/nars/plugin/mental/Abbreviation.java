@@ -3,7 +3,7 @@ package nars.plugin.mental;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.TaskDerive;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -80,7 +80,7 @@ public class Abbreviation implements Plugin {
     
     public AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
     public AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
-    public Observer obs;
+    public EventObserver obs;
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
@@ -102,7 +102,7 @@ public class Abbreviation implements Plugin {
         final Operator abbreviate = _abbreviate;
         
         if(obs==null) {
-            obs=new Observer() {            
+            obs=new EventObserver() {            
                 @Override public void event(Class event, Object[] a) {
                     if (event != TaskDerive.class || Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY)
                         return;                    

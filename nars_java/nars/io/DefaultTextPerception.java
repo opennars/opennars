@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.Perceive;
 import nars.core.Memory;
@@ -33,7 +33,7 @@ import nars.operator.io.SetVolume;
  *  
  *  TODO break into separate subclasses for each text mode
  */
-public class DefaultTextPerception implements Plugin, Observer {
+public class DefaultTextPerception implements Plugin, EventObserver {
     
     private Memory memory;
     

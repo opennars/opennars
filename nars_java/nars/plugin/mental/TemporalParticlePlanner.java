@@ -20,7 +20,7 @@ package nars.plugin.mental;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.TreeSet;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.NewTaskExecution;
 import nars.core.Events.UnexecutableGoal;
 import nars.core.Events.UnexecutableOperation;
@@ -46,7 +46,7 @@ import nars.operator.Operation;
  *
  * @author tc
  */
-public class TemporalParticlePlanner implements Plugin, Observer {
+public class TemporalParticlePlanner implements Plugin, EventObserver {
     
     /**
      * global plan search parameters

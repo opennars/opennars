@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import javax.xml.transform.TransformerConfigurationException;
@@ -12,6 +11,7 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
+import org.jgrapht.Graph;
 import org.jgrapht.ext.GmlExporter;
 import org.jgrapht.ext.GraphMLExporter;
 import org.jgrapht.ext.IntegerEdgeNameProvider;
@@ -29,10 +29,6 @@ import org.xml.sax.SAXException;
  */
 public class NARGraph extends DirectedMultigraph {
 
-    @Override
-    public Object clone() {
-        return super.clone();
-    }
 
     /**
      * determines which NARS term can result in added graph features
@@ -295,4 +291,9 @@ public class NARGraph extends DirectedMultigraph {
         toGML(new FileWriter(outputFile, false));
     }
 
+    @Override
+    public Graph clone() {
+        return (Graph) super.clone();
+    }
+    
 }

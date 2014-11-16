@@ -19,7 +19,7 @@ import nars.io.meter.CompoundMeter;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
 import nars.inference.MemoryObserver;
 import nars.io.narsese.Narsese;
@@ -257,7 +257,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         }
     }
 
-    abstract public static class CycleTreeMLData extends TreeMLData implements Observer {
+    abstract public static class CycleTreeMLData extends TreeMLData implements EventObserver {
 
         private final NAR nar;
 

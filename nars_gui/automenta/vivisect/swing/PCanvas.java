@@ -6,6 +6,8 @@
 package automenta.vivisect.swing;
 
 import automenta.vivisect.Vis;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import processing.core.PApplet;
 import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
@@ -18,7 +20,7 @@ import processing.event.MouseEvent;
  *
  * @author me
  */
-public class PCanvas extends PApplet {
+public class PCanvas extends PApplet implements HierarchyListener {
 
     int mouseScroll = 0;
 
@@ -63,7 +65,6 @@ public class PCanvas extends PApplet {
             vis = (Vis)this;
         }
         this.vis = vis;
-
     }
 
     float MouseToWorldCoordX(final int x) {
@@ -167,8 +168,44 @@ public class PCanvas extends PApplet {
             smooth();
             System.out.println("Processing.org enabled OpenGL");
         }
-
+        
     }
+    
+   
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        addHierarchyListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        removeHierarchyListener(this);
+        super.removeNotify();
+    }
+
+    @Override
+    public void hierarchyChanged(HierarchyEvent e) {
+        if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+            boolean showing = isShowing();
+            onShowing(showing);
+                        
+        }
+    }    
+
+    
+    protected void onShowing(boolean showing) {
+        vis.onVisible(showing);
+        
+        if (showing) {
+            //restart loop? can this even happen
+            //throw new RuntimeException("if this happens, looping state should be restored here");
+        }
+        else {
+            noLoop();
+        }
+    }
+    
 
     public void setFrameRate(float frameRate) {
         this.FrameRate = frameRate;
