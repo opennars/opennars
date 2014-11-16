@@ -75,6 +75,7 @@ public class SwingLogPanel extends LogPanel {
         }
         
         
+        
     }
 
     

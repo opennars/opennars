@@ -613,7 +613,7 @@ public class Executive {
     
     //is input or by the system triggered operation
     public boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
-        if (!((newEvent.isInput() || (Parameters.INTERNAL_EXPERIENCE_FULL && contains_mental(newEvent))) || (newEvent.getCause() != null))) {
+        if (!((newEvent.isInput() || (Parameters.INTERNAL_EXPERIENCE && contains_mental(newEvent))) || (newEvent.getCause() != null))) {
             return false;
         }
         /*Term newcontent=newEvent.sentence.content;

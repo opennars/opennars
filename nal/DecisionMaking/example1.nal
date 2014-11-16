@@ -1,23 +1,23 @@
 (^go-to,{switch0}). :|: %1.00;0.90%
 6
-<{switch0} --> at>. :|: %1.00;0.90%
+<{switch0} --> [at]>. :|: %1.00;0.90%
 6
 (^activate,{switch0}). :|: %1.00;0.90%
 6
-<{door5} --> opened>. :|: %1.00;0.90%
+<{door5} --> [opened]>. :|: %1.00;0.90%
 6
 (^deactivate,{switch0}). :|: %1.00;0.90%
 6
-(--,<{door5} --> opened>). :|: %1.00;0.90%
+(--,<{door5} --> [opened]>). :|: %1.00;0.90%
 6
 (^go-to,{place4}). :|: %1.00;0.90%
 6
-<{place4} --> at>. :|: %1.00;0.90%
+<{place4} --> [at]>. :|: %1.00;0.90%
 6
 <{door5} --> opened>!
 <{door5} --> opened>!
 <{door5} --> opened>!
 
-6000
+10000
 ''outputMustContain('^go-to([{switch0}])=null')
 ''outputMustContain('^activate([{switch0}])=null')

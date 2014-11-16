@@ -191,8 +191,14 @@ public class MeterVis extends TimelineVis {
 
     }
     
+    int nextChartTime = 0;
+    
     /** sample the next value from each meter into the history */
     public void updateData(long t) {
+        
+        //add entries to chart sequentially, because time interval may be non-sequential or skipped
+        int ct = nextChartTime++; 
+        
         for (Map.Entry<String, DataChart> e : charts.entrySet()) {
             String f = e.getKey();            
             DataChart dc = e.getValue();
@@ -201,17 +207,19 @@ public class MeterVis extends TimelineVis {
             
             Object value = meters.get(f);
 
+            
+            
             if (value instanceof Double) {                    
-                ch.add((int)t, ((Number) value).doubleValue());
+                ch.add(ct, ((Number) value).doubleValue());
             }
             else if (value instanceof Float) {
-                ch.add((int)t, ((Number) value).doubleValue());
+                ch.add(ct, ((Number) value).doubleValue());
             }
             else if (value instanceof Integer) {
-                ch.add((int)t, ((Number) value).doubleValue());
+                ch.add(ct, ((Number) value).doubleValue());
             }
             else if (value instanceof Long) {
-                ch.add((int)t, ((Number) value).doubleValue());
+                ch.add(ct, ((Number) value).doubleValue());
             }            
         }
     }
