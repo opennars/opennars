@@ -176,7 +176,7 @@ public class MeterVis extends TimelineVis {
         charts = new TreeMap();
         
         for (String f : meters.keySet()) {
-            TreeMLData data = new TreeMLData(f, Video.getColor(f, 0.85f, 0.85f), historySize);
+            TreeMLData data = new TreeMLData(f, Video.getColor(f, 0.65f, 0.85f), historySize);
             DataChart dc = new DataChart(data, 
                     //new LineChart(data)
                     new BarChart(data)
