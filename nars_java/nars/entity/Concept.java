@@ -324,7 +324,7 @@ public class Concept extends Item<Term> {
 
                 addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
-                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>memory.time()-memory.param.duration.get()) {
+                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
                     if(!memory.executive.executeDecision(task, this)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
