@@ -2,7 +2,7 @@ package nars.core.build;
 
 import nars.core.Attention;
 import nars.core.Memory;
-import nars.core.control.AntAttention;
+import nars.core.control.experimental.AntAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;

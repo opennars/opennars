@@ -22,20 +22,20 @@ import nars.util.meter.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class DefaultEventSensor extends AbstractSensor implements EventSensor {
+public class DefaultEventMeter extends AbstractSensor implements EventMeter {
 
-    //private static final Logger logger = Logger.getLogger(DefaultEventSensor.class.toString());
+    //private static final Logger logger = Logger.getLogger(DefaultEventMeter.class.toString());
 
-    public DefaultEventSensor(final StatsSession session) {
+    public DefaultEventMeter(final StatsSession session) {
         super(session);
     }
 
-    public DefaultEventSensor(final String id) {
+    public DefaultEventMeter(final String id) {
         super(id);
     }
 
     @Override
-    public EventSensor event() {
+    public EventMeter event() {
         //try {
         
         value = 1;

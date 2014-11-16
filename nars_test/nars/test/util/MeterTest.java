@@ -2,10 +2,10 @@ package nars.test.util;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.sensor.CompositeIncidentTracker;
 import nars.util.meter.sensor.CompositeSpanTracker;
-import nars.util.meter.sensor.DefaultEventSensor;
+import nars.util.meter.sensor.DefaultEventMeter;
 import nars.util.meter.sensor.EventValueSensor;
 import nars.util.meter.sensor.HitPeriodTracker;
 import nars.util.meter.sensor.MemoryUseTracker;
@@ -45,7 +45,7 @@ public class MeterTest {
             }
             cst.commit();            
         }
-        for (Sensor x : cst.trackers) {
+        for (Meter x : cst.trackers) {
             //System.err.println(x);        
             //System.out.println(" " + x.getSession().collectData());
         }
@@ -57,8 +57,8 @@ public class MeterTest {
     @Test
     public void testIncidentMeters() {
         CompositeIncidentTracker cst = new CompositeIncidentTracker(
-                new DefaultEventSensor("incidence1"),
-                new DefaultEventSensor("incidence2")
+                new DefaultEventMeter("incidence1"),
+                new DefaultEventMeter("incidence2")
         );
         
         for (int i= 0; i < 5; i++) {            
@@ -68,7 +68,7 @@ public class MeterTest {
             }
             cst.incident();            
         }
-        for (Sensor x : cst.trackers) {
+        for (Meter x : cst.trackers) {
             //System.err.println(x);        
             //System.out.println(" " + x.getSession().collectData());
         }        

@@ -1,7 +1,7 @@
 package nars.util.meter.sensor;
 
 import java.util.Date;
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Range;
 
@@ -137,7 +137,7 @@ public abstract class AbstractSpanTracker extends AbstractSensor implements Span
     }
 
     @Override
-    public Sensor reset() {
+    public Meter reset() {
         super.reset();
         startTime = 0L;
         tracking = false;

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Range;
@@ -71,7 +71,7 @@ public class RangeDataRecorder implements DataRecorder {
 
     @Override
     public void update(final StatsSession session,
-            final Sensor tracker,
+            final Meter tracker,
             final long now) {
         final double value = tracker.getValue();
         final boolean hasOverlap = rangeList.hasOverlap();

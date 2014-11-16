@@ -14,7 +14,7 @@
  */
 package nars.util.meter.sensor;
 
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 
 /**
  * A tracker type dedicated to collecting statistics related to some span. The
@@ -23,7 +23,7 @@ import nars.util.meter.Sensor;
  *
  * @author The Stajistics Project
  */
-public interface SpanTracker extends Sensor {
+public interface SpanTracker extends Meter {
 
     /**
      * The factory that will produce the default type of {@link SpanTracker}

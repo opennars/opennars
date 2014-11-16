@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author The Stajistics Project
  */
-public class CompositeIncidentTracker<T extends EventSensor> extends AbstractCompositeTracker<T> {
+public class CompositeIncidentTracker<T extends EventMeter> extends AbstractCompositeTracker<T> {
 
     public CompositeIncidentTracker(final T... trackers) {
         super(trackers);

@@ -14,9 +14,8 @@
  */
 package nars.util.meter.sensor;
 
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
-import nars.util.meter.event.EventManager;
 import nars.util.meter.key.DefaultStatsKey;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DistributionDataRecorder;
@@ -28,12 +27,14 @@ import nars.util.meter.util.Range;
 import nars.util.meter.util.RangeList;
 
 /**
- * A convenience base implementation of {@link Sensor}.
+ * A convenience base implementation of {@link Meter}.
  *
  * @author The Stajistics Project
  * @author heavily modified for NARS
+ * 
+ * TODO find better names for this class hierarchy, it has inconsistent namig system
  */
-public abstract class AbstractSensor implements Sensor {
+public abstract class AbstractSensor implements Meter {
 
     //private static final Logger logger = Logger.getLogger(AbstractTracker.class.toString());
     protected final StatsSession session;
@@ -68,7 +69,7 @@ public abstract class AbstractSensor implements Sensor {
     }
 
     @Override
-    public Sensor reset() {
+    public Meter reset() {
         value = 0;
         lastHits = currentHits = 0;
         return this;

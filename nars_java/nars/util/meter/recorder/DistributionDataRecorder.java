@@ -16,7 +16,7 @@ package nars.util.meter.recorder;
 
 import java.util.Collections;
 import java.util.Set;
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -46,7 +46,7 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void update(final StatsSession session,
-            final Sensor tracker,
+            final Meter tracker,
             final long now) {
 
         final double currentValue = tracker.getValue();

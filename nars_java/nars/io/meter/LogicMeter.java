@@ -1,4 +1,4 @@
-package nars.core.sense;
+package nars.io.meter;
 
 import java.io.Serializable;
 import nars.core.Memory;
@@ -11,7 +11,7 @@ import nars.util.meter.sensor.EventValueSensor;
  */
 
 
-public class LogicSense extends AbstractSense implements Serializable {
+public class LogicMeter extends AbstractMeter implements Serializable {
     
     //public final Sensor CONCEPT_FIRE;
     
@@ -69,7 +69,7 @@ public class LogicSense extends AbstractSense implements Serializable {
     public final EventValueSensor PLAN_TASK_PLANNED;
     public final EventValueSensor PLAN_TASK_EXECUTABLE;
 
-    public LogicSense() {
+    public LogicMeter() {
         super();
         
         add(TASK_IMMEDIATE_PROCESS = new EventValueSensor("task.immediate_process"));
