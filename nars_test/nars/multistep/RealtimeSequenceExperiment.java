@@ -1,11 +1,7 @@
 package nars.multistep;
 
-import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.gui.NARSwing;
-import nars.gui.output.graph.ImplicationGraphCanvas;
-import nars.gui.output.graph.ProcessingGraphPanel;
 
 
 

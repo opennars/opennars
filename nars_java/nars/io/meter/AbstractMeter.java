@@ -16,7 +16,7 @@ abstract public class AbstractMeter extends DefaultDataSet {
 
     final Map<String, Meter> sensors = new HashMap<>();
     long lastUpdate = -1;
-    int allSensorResetPeriodCycles = 2048; //how often to reset all sensors
+    int allSensorResetPeriodCycles = -1; //how often to reset all sensors, or -1 to disable
     boolean active = false;
 
     public AbstractMeter(Map<String,Object> map) {
@@ -101,7 +101,9 @@ abstract public class AbstractMeter extends DefaultDataSet {
         
         lastUpdate = time;                     
         
-        updateSensors((time % allSensorResetPeriodCycles == 0), timeSinceLastUpdate);
+        updateSensors( 
+                (allSensorResetPeriodCycles!=-1) && (time % allSensorResetPeriodCycles == 0), 
+                timeSinceLastUpdate);
 
         return;
     }
