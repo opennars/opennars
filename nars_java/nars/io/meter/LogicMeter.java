@@ -7,11 +7,9 @@ import nars.util.meter.data.DataSet;
 import nars.util.meter.sensor.EventValueSensor;
 
 /**
- *
- * @author me
+ * Logic/reasoning sensors
+ * TODO convert all sensors so that what is in commit(m) becomes the commit() method of each sensor
  */
-
-
 public class LogicMeter extends AbstractMeter implements Serializable {
     
     //public final Sensor CONCEPT_FIRE;
