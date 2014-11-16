@@ -328,8 +328,6 @@ public class Concept extends Item<Term> {
                     if(!memory.executive.executeDecision(task, this)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
-                } else {
-                    memory.emit(UnexecutableGoal.class, task, this, nal);
                 }
             }
         }
