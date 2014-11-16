@@ -305,7 +305,7 @@ public class Concept extends Item<Term> {
             } else if (revisible(goal, oldGoal)) {
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 boolean success=revision(goal,oldGoal,false,nal);
-                if(success) { //it is revised, so there is a new task for which this function will be called
+                if(!success) { //it is revised, so there is a new task for which this function will be called
                     return; //with higher/lower desire
                 } 
             } 
