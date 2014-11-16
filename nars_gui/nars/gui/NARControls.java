@@ -62,11 +62,13 @@ import nars.gui.output.NARFacePanel;
 import nars.gui.output.graph.ConceptGraphCanvas;
 import nars.gui.output.graph.ConceptGraphPanel;
 import nars.gui.output.TimelinePanel;
+import nars.gui.output.chart.MeterVis;
 import nars.inference.Executive;
 import nars.inference.Executive.Execution;
 import nars.inference.GraphExecutive;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.io.meter.CompoundMeter;
 
 
 public class NARControls extends JPanel implements ActionListener, Observer {
@@ -132,9 +134,15 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         this.nar = nar;
         memory = nar.memory;        
         
-        /*senses = new MultiSense(memory.logic, memory.resource);
+        
+        
+        CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource);
         senses.setActive(true);
-        senses.update(memory);*/
+        senses.update(memory);
+        new NWindow("charts test", new MeterVis(nar, senses, 128).newPanel() ).show(400,800,true);
+        
+        
+        
         
         experienceWriter = new TextOutput(nar);
         
@@ -788,7 +796,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 //
 //        //JPanel chartPanel = new JPanel(new GridLayout(0,1));
 //        {
-//            this.chart = new ChartsPanel(senses, chartHistoryLength);
+//            this.chart = new MeterVis(senses, chartHistoryLength);
 //            //chartPanel.add(chart);
 //                        
 //        }

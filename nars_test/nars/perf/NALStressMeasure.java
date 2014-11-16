@@ -4,7 +4,7 @@ import java.util.Collection;
 import nars.core.NAR;
 import nars.core.build.Curve;
 import nars.core.build.Default;
-import nars.test.core.NALTest;
+import nars.core.NALTest;
 
 
 /** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load

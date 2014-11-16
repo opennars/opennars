@@ -1,5 +1,6 @@
 package nars.perf;
 
+import automenta.vivisect.TreeMLData;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.control.DefaultAttention;
 import nars.entity.Concept;
-import automenta.vivisect.TimeSeries;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.timeline.LineChart;
 import nars.io.Input;
@@ -32,8 +32,8 @@ import nars.storage.FairDelayBag;
 public class BagFairness {
 
     final int bins = 10;
-    TimeSeries fired[] = new TimeSeries[bins];
-    TimeSeries[] held = new TimeSeries[bins];
+    TreeMLData fired[] = new TreeMLData[bins];
+    TreeMLData[] held = new TreeMLData[bins];
     float fireCount[] = new float[bins];
     long total = 0;
     
@@ -48,9 +48,9 @@ public class BagFairness {
             double percentEnd = ((double)(b+1))/bins;            
             if (percentEnd > 1.0) percentEnd = 1.0;
             
-            held[b] = new TimeSeries("Concept: " + Texts.n2(percentStart) + ".." + Texts.n2(percentEnd), Color.getHSBColor(0.2f + 0.7f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, 1.0f);
+            held[b] = new TreeMLData("Concept: " + Texts.n2(percentStart) + ".." + Texts.n2(percentEnd), Color.getHSBColor(0.2f + 0.7f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, 1.0f);
             
-            fired[b] = new TimeSeries("Fired: " + Texts.n2(percentStart) + ".." + Texts.n2(percentEnd), Color.getHSBColor(0.2f + 0.7f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, maxConcepts);
+            fired[b] = new TreeMLData("Fired: " + Texts.n2(percentStart) + ".." + Texts.n2(percentEnd), Color.getHSBColor(0.2f + 0.7f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, maxConcepts);
         }
 
         
@@ -92,8 +92,8 @@ public class BagFairness {
             ((DefaultAttention)n.memory.concepts).concepts.getPriorityDistribution(d);
             for (int b = 0; b < bins; b++) {
                 
-                held[b].push(n.time(), (float)d[b]);
-                fired[b].push(n.time(), fireCount[b]);
+                held[b].add((int)n.time(), (float)d[b]);
+                fired[b].add((int)n.time(), fireCount[b]);
             }
             
             
@@ -102,7 +102,7 @@ public class BagFairness {
         charts = new ArrayList();
 
         /*for (b = 0; b < bins; b++) {
-            charts[b] = new Timeline2DCanvas.LineChart(held[b]);                 
+            charts[b] = new TimelineVis.LineChart(held[b]);                 
         } 8*/       
         
         charts.add(new LineChart(held).height(8f));
@@ -113,7 +113,7 @@ public class BagFairness {
         
         
         
-        //new NWindow("_", new Timeline2DCanvas(charts)).show(800, 800, true);
+        //new NWindow("_", new TimelineVis(charts)).show(800, 800, true);
 
         //printResults(insertProb, removeProb);
         

@@ -28,6 +28,7 @@ abstract public class AbstractMeter extends DefaultDataSet {
         this(new HashMap<>());
     }
 
+    /** samples the data */
     abstract public void sense(Memory memory);
     
     protected void add(Meter s) {

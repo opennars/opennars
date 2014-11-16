@@ -1,5 +1,6 @@
 package nars.gui.output.chart;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -96,7 +97,7 @@ public class BubbleChart extends NPanel implements Observer {
                 int minY = Integer.MAX_VALUE;
                 int maxX = Integer.MIN_VALUE;
                 int maxY = Integer.MIN_VALUE;
-                Color cc = NARSwing.getColor(c.term.toString(), 0.5f, 0.6f);
+                Color cc = Video.getColor(c.term.toString(), 0.5f, 0.6f);
 
                 for (Sentence s : c.beliefs) {
                     if (s.truth!=null) {
@@ -109,7 +110,7 @@ public class BubbleChart extends NPanel implements Observer {
                         int px = (int)Math.max(minEsize, (int)(c.getPriority() * esize));
                         int py = px;
                         
-                        Color color = NARSwing.getColor(cc, statementOpacity * c.getPriority());
+                        Color color = Video.getColor(cc, statementOpacity * c.getPriority());
                         g.setPaint(color);
                         int ix = x-px/2;
                         int iy = y-py/2;
@@ -131,7 +132,7 @@ public class BubbleChart extends NPanel implements Observer {
                 int ch = padding * 2 + maxY-minY;
                 
                 float areafactor = Math.max(1f, asize/(cw + ch));
-                Color occ = NARSwing.getColor(cc, conceptOpacity * c.getPriority()/areafactor);
+                Color occ = Video.getColor(cc, conceptOpacity * c.getPriority()/areafactor);
                 g.setPaint(occ);
                 g.fillOval(border+minX-padding, border+minY-padding, cw, ch);
             }

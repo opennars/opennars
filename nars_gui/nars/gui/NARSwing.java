@@ -128,6 +128,7 @@ public class NARSwing  {
 //        outputWindow.setVisible(true);
         
         
+        
 
                 
         
@@ -147,9 +148,7 @@ public class NARSwing  {
           
         NAR nar = NAR.build(new CommandLineNARBuilder(args));
         
-        //temporary:
-        //NAR nar = new ContinuousBagNARBuilder(false).build();
-        //NAR nar = new RealTimeNARBuilder(false).build();
+        
         
         NARSwing swing = new NARSwing(nar);
 

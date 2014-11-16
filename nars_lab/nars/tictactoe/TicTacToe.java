@@ -20,6 +20,7 @@ package nars.tictactoe;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
@@ -397,7 +398,7 @@ public class TicTacToe extends JPanel {
 
     }
     
-    private static final Font buttonFont = NARSwing.monofont.deriveFont(Font.BOLD).deriveFont(34f);
+    private static final Font buttonFont = Video.monofont.deriveFont(Font.BOLD).deriveFont(34f);
 
     /**
      * @param args the command line arguments

@@ -16,16 +16,17 @@
  */
 package nars.timeline;
 
+import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import java.io.File;
 import java.io.IOException;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
-import automenta.vivisect.TimeSeries.FirstOrderDifferenceTimeSeries;
 import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
 import nars.io.TextInput;
-import automenta.vivisect.timeline.Timeline2DCanvas;
+import automenta.vivisect.timeline.TimelineVis;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
@@ -65,7 +66,7 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         nar.step(cycles);        
 
         
-        new NWindow("_", new Timeline2DCanvas(
+        new NWindow("_", new PCanvas(new TimelineVis(
                 
             new BarChart(t.getCharts( "task.executed")[0]).height(2),
             new StackedPercentageChart(t.getCharts( "plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count")).height(3),
@@ -90,7 +91,7 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
             new LineChart(t.getCharts("task.new.add")).height(3)
             //new LineChart(t.getCharts("emotion.busy").height(1)
             
-        )).show(800, 800, true);
+        ))).show(800, 800, true);
     }
     
 }

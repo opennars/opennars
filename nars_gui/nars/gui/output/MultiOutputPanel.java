@@ -1,7 +1,8 @@
 package nars.gui.output;
 
-import automenta.vivisect.dock.DockingContent;
-import automenta.vivisect.dock.DockingRegionRoot;
+import automenta.vivisect.Video;
+import automenta.vivisect.swing.dock.DockingContent;
+import automenta.vivisect.swing.dock.DockingRegionRoot;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -20,7 +21,6 @@ import javax.swing.SwingUtilities;
 import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
-import nars.gui.NARSwing;
 
 
 /**
@@ -150,7 +150,7 @@ public class MultiOutputPanel extends JPanel implements HierarchyListener {
         dock.addRootContent(cont);
         
         cont.getTab().setLabel(p.getLabel());
-        cont.getTab().setFont(NARSwing.fontMono(15));
+        cont.getTab().setFont(Video.fontMono(15));
         cont.getTab().setMenuButton(headerMenu);
         
         SwingUtilities.invokeLater(new Runnable() {

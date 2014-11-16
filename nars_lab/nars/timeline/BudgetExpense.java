@@ -20,10 +20,11 @@ import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import nars.core.NAR;
 import nars.core.build.Default;
 import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
-import automenta.vivisect.timeline.Timeline2DCanvas;
+import automenta.vivisect.timeline.TimelineVis;
 import nars.gui.EventChart;
 import nars.util.NARTrace;
 import nars.util.NARTrace.ConceptBagTreeMLData;
@@ -47,7 +48,7 @@ public class BudgetExpense extends TimelineExample {
         nar.addInput("a!");
 
         
-        Timeline2DCanvas tc = new Timeline2DCanvas(
+        TimelineVis tc = new TimelineVis(
 
             new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.get("concept.count"))),
 
@@ -72,7 +73,7 @@ public class BudgetExpense extends TimelineExample {
                 
         nar.finish(cycles);
         
-        new NWindow("_", tc).show(800, 800, true);
+        new NWindow("_", new PCanvas(tc)).show(800, 800, true);
     
         
 

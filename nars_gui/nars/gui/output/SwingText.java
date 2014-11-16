@@ -37,7 +37,7 @@ public class SwingText extends JTextPane {
         //StyleConstants.setLeftIndent(mainStyle, 16);
         //StyleConstants.setRightIndent(mainStyle, 16);
         //StyleConstants.setFirstLineIndent(mainStyle, 16);
-        //StyleConstants.setFontFamily(mainStyle, NARSwing.monofont.getFamily());
+        //StyleConstants.setFontFamily(mainStyle, Video.monofont.getFamily());
         //StyleConstants.setFontSize(mainStyle, 16);
 
         doc.setLogicalStyle(0, mainStyle);

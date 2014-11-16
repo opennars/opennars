@@ -341,7 +341,7 @@ public class BuiltIn extends Library {
 	  * bodies. Also note that if T is a number, then there is no goal which
 	  * corresponds to T.
 	  */
-	 static Term convertTermToGoal(Term term) {
+	 public static Term convertTermToGoal(Term term) {
 		 if (term instanceof Number)
 			 return null;
 		 if(term instanceof Var && ((Var)term).getLink() instanceof Number)
