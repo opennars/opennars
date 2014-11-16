@@ -201,20 +201,23 @@ public class LogicMeter extends AbstractMeter implements Serializable {
         }
         {
             putHits(TASK_ADD_NEW);
-            putHits(TASK_ADD_NOVEL);
-            put("task.new.pri.mean", TASK_ADD_NEW.get().mean());
+            putHits(TASK_ADD_NOVEL);            
             put("task.derived", TASK_DERIVED.getHits());
-            put("task.derived.pri.mean", TASK_DERIVED.get().mean());
+            
+            put("task.pri.mean#added", TASK_ADD_NEW.getReset().mean());
+            put("task.pri.mean#derived", TASK_DERIVED.getReset().mean());
+            put("task.pri.mean#executed", TASK_EXECUTED.getReset().mean());
+            
             put("task.executed", TASK_EXECUTED.getHits());
-            put("task.executed.pri.mean", TASK_EXECUTED.get().mean());
+            
             put("task.immediate.process", TASK_IMMEDIATE_PROCESS.getHits());
             //put("task.immediate_processed.pri.mean", TASK_IMMEDIATE_PROCESS.get().mean());
         }
         {
             put("task.link_to", LINK_TO_TASK.getHits());
-            put("task.goal.process", GOAL_PROCESS.getHits());
-            put("task.judgment.process", JUDGMENT_PROCESS.getHits());
-            put("task.question.process", QUESTION_PROCESS.getHits());            
+            put("task.process#goal", GOAL_PROCESS.getHits());
+            put("task.process#judgment", JUDGMENT_PROCESS.getHits());
+            put("task.process#question", QUESTION_PROCESS.getHits());            
         }
         
         

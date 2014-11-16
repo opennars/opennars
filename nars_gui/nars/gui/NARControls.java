@@ -427,9 +427,12 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     case "concept.pri.histo":
                         return new StackedPercentageChart(data).height(2);
                     case "concept.pri.mean":
+                    case "task.pri.mean":
                         return new LineChart(data).range(0, 1f);
                     case "concept.belief.mean":
+                    case "task.process":                        
                         return new LineChart(data);
+                        
                 }
                 return new BarChart(data);
             }          
