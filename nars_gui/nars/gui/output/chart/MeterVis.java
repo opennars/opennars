@@ -4,16 +4,15 @@ package nars.gui.output.chart;
 import automenta.vivisect.TreeMLData;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.Chart;
+import automenta.vivisect.timeline.Chart.MultiChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.SwingUtilities;
@@ -26,33 +25,117 @@ public class MeterVis extends TimelineVis {
     private final NAR nar;
 
     
-    public static class DataChart {
+    public class DataChart {
         
         public final TreeMLData data;
         public Chart chart;
 
-        public DataChart(TreeMLData data, Chart chart) {
+        public DataChart(String id, TreeMLData data) {
             this.data = data;
-            this.chart = chart;
+            this.chart = getDisplayedChart(id, data);
             
-            if (chart instanceof LineChart)
-                ((LineChart)chart).setOverlayEnable(true);
+            chart.setOverlayEnable(true);
+        }        
+    }
+    
+    final Map<String, Chart> displayedCharts = new HashMap();
+    final CompoundMeter meters;
+    final Map<String, DataChart> charts;
+    
+    private final int historySize;
+    
+    public static final Font monofontLarge = Video.monofont.deriveFont(Font.PLAIN, 18f);
+    public static final Font monofontSmall = Video.monofont.deriveFont(Font.PLAIN, 13f);
+    int nextChartTime = 0;
+    
+
+    
+    public MeterVisPanel newPanel() {
+        return new MeterVisPanel();
+    }
+    
+    /**
+     *
+     * @param title
+     * @param historySize
+     * @param chartType use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA,
+     * Chart.BAR_CENTERED
+     */
+    public MeterVis(NAR nar, CompoundMeter meters, int historySize) {
+        super();
+
+        this.nar = nar;        
+        this.meters = meters;
+        this.historySize = historySize;
+
+        charts = new TreeMap();
+        
+        for (String f : meters.keySet()) {
+            TreeMLData data = new TreeMLData(f, Video.getColor(f, 0.65f, 0.85f), historySize);
+            DataChart dc = new DataChart(f, data);
+            charts.put(f, dc);            
         }
         
     }
     
-    final CompoundMeter meters;
-    final Map<String, DataChart> charts;
-    
-    //float motionBlur = 0.9f;
-    private final int historySize;
-    //private final int lineColor;
-    //private final int chartType;
-    
-    public static final Font monofontLarge = Video.monofont.deriveFont(Font.PLAIN, 18f);
-    public static final Font monofontSmall = Video.monofont.deriveFont(Font.PLAIN, 13f);
-    
 
+
+    public Chart getDisplayedChart(String id, TreeMLData data) {
+        if (id.contains("#")) {
+            String baseName = id.split("#")[0];
+            return getDisplayedChart(baseName, data);
+        }
+        Chart c = displayedCharts.get(id);
+        if (c!=null) {
+            if (c instanceof MultiChart)
+                ((MultiChart)c).getData().add(data);
+            else
+                throw new RuntimeException(c + " does not support multiple datas");
+        }
+        else {
+            c = meters.newDefaultChart(id, data);
+            
+            if (c == null)
+                c = new LineChart(data);
+            
+            displayedCharts.put(id, c);
+            addChart(c);            
+        }
+        return c;
+    }    
+    /** sample the next value from each meter into the history */
+    public void updateData(long t) {
+        
+        //add entries to chart sequentially, because time interval may be non-sequential or skipped
+        int ct = nextChartTime++; 
+        
+        for (Map.Entry<String, DataChart> e : charts.entrySet()) {
+            String f = e.getKey();            
+            DataChart dc = e.getValue();
+            
+            TreeMLData ch = dc.data;
+            
+            Object value = meters.get(f);
+
+            
+            
+            if (value instanceof Double) {                    
+                ch.add(ct, ((Number) value).doubleValue());
+            }
+            else if (value instanceof Float) {
+                ch.add(ct, ((Number) value).doubleValue());
+            }
+            else if (value instanceof Integer) {
+                ch.add(ct, ((Number) value).doubleValue());
+            }
+            else if (value instanceof Long) {
+                ch.add(ct, ((Number) value).doubleValue());
+            }            
+        }
+    }
+
+    
+    
     public class MeterVisPanel extends PCanvas implements Observer {
 
         float scaleSpeed = 1f / 1000.0f;
@@ -60,6 +143,9 @@ public class MeterVis extends TimelineVis {
         public MeterVisPanel() {
             super(MeterVis.this);
             noLoop();
+            
+            
+            
             
             //TODO disable event when window hiden
             nar.on(FrameEnd.class, this);
@@ -127,103 +213,39 @@ public class MeterVis extends TimelineVis {
             });
             addMouseListener(c);
 
-//            SwingUtilities.invokeLater(new Runnable() {
-//
-//                @Override
-//                public void run() {
-//                    repaint();
-//
-//                    addComponentListener(new ComponentAdapter() {
-//                        @Override public void componentResized(ComponentEvent e) {
-//                            repaint();
-//                        }
-//                    });
-//                }
-//
-//            });
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    setZoom(0.5f);
+                    setPanY(-200f);
+                    setPanX(-getWidth());
+                    camera.timeScale = 7f;
+                    repaint();
+
+                    /*addComponentListener(new ComponentAdapter() {
+                        @Override public void componentResized(ComponentEvent e) {
+                            repaint();
+                        }
+                    });*/
+                }
+
+            });
         
         }
         
         @Override
         public void event(Class event, Object[] args) {
             if (event == FrameEnd.class) {
-                meters.sense(nar.memory);
+                meters.commit(nar.memory);
                 updateData(nar.time());
                 redraw();
             }
         }
         
     }
-    
-    public MeterVisPanel newPanel() {
-        return new MeterVisPanel();
-    }
-    
-    /**
-     *
-     * @param title
-     * @param historySize
-     * @param chartType use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA,
-     * Chart.BAR_CENTERED
-     */
-    public MeterVis(NAR nar, CompoundMeter meters, int historySize) {
-        super();
 
-        this.nar = nar;        
-        this.meters = meters;
-        this.historySize = historySize;
-
-        charts = new TreeMap();
-        
-        for (String f : meters.keySet()) {
-            TreeMLData data = new TreeMLData(f, Video.getColor(f, 0.65f, 0.85f), historySize);
-            DataChart dc = new DataChart(data, 
-                    //new LineChart(data)
-                    new BarChart(data)
-            );
-            charts.put(f, dc);
-            addChart(dc.chart);
-        }
-        
     
-        
-        
-
-    }
-    
-    int nextChartTime = 0;
-    
-    /** sample the next value from each meter into the history */
-    public void updateData(long t) {
-        
-        //add entries to chart sequentially, because time interval may be non-sequential or skipped
-        int ct = nextChartTime++; 
-        
-        for (Map.Entry<String, DataChart> e : charts.entrySet()) {
-            String f = e.getKey();            
-            DataChart dc = e.getValue();
-            
-            TreeMLData ch = dc.data;
-            
-            Object value = meters.get(f);
-
-            
-            
-            if (value instanceof Double) {                    
-                ch.add(ct, ((Number) value).doubleValue());
-            }
-            else if (value instanceof Float) {
-                ch.add(ct, ((Number) value).doubleValue());
-            }
-            else if (value instanceof Integer) {
-                ch.add(ct, ((Number) value).doubleValue());
-            }
-            else if (value instanceof Long) {
-                ch.add(ct, ((Number) value).doubleValue());
-            }            
-        }
-    }
-
 //    @Override
 //    public boolean draw(PGraphics pg) {
 //        for (Map.Entry<String, DataChart> e : charts.entrySet()) {

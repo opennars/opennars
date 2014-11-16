@@ -301,7 +301,7 @@ public class Memory implements Serializable {
         this.logic = new LogicMeter() {
 
             @Override
-            public void sense(Memory memory) {
+            public void commit(Memory memory) {
                 double prioritySum = 0;        
                 double prioritySumSq = 0;
                 int count = 0;
@@ -347,7 +347,7 @@ public class Memory implements Serializable {
                 setConceptPriorityVariance(variance);
                 setConceptPriorityHistogram(histogram);
                 
-                super.sense(memory);
+                super.commit(memory);
             }
 
         };

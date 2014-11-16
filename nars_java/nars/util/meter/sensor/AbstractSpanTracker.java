@@ -34,8 +34,9 @@ public abstract class AbstractSpanTracker extends AbstractSensor implements Span
     /**
      * sample every Nth cycle; 1 = sample always, 2 = sample every other cycle, etc..
      */
-    public void setSampleResolution(int resolutionDivisor) {
+    public AbstractSpanTracker setSampleResolution(int resolutionDivisor) {
         this.sampleResolution = resolutionDivisor;
+        return this;
     }
 
     public int getSampleResolution() {
