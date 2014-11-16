@@ -29,8 +29,13 @@ abstract public class AbstractMeter extends DefaultDataSet {
     }
 
     /** samples the data */
-    abstract public void sense(Memory memory);
+    public void commit(final Memory memory) {
+        for (Meter m : sensors.values()) {
+            m.commit(this, memory);
+        }
+    }
     
+        
     protected void add(Meter s) {
         sensors.put(s.name(), s);
         s.setActive(active);
@@ -95,7 +100,7 @@ abstract public class AbstractMeter extends DefaultDataSet {
             return;
         }
         
-        sense(memory);
+        commit(memory);
 
         long timeSinceLastUpdate = time - lastUpdate;
         

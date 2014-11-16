@@ -20,10 +20,17 @@
  */
 package nars.gui;
 
+import automenta.vivisect.TreeMLData;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.timeline.BarChart;
+import automenta.vivisect.timeline.Chart;
+import automenta.vivisect.timeline.LineChart;
+import automenta.vivisect.timeline.StackedPercentageChart;
 import java.awt.BorderLayout;
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
 import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Font;
@@ -133,11 +140,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         memory = nar.memory;        
         
         
-        
-        CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource);
-        senses.setActive(true);
-        senses.update(memory);
-        new NWindow("charts test", new MeterVis(nar, senses, 128).newPanel() ).show(400,800,true);
+
         
         
         
@@ -405,12 +408,39 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         m.addActionListener(this);
         menuBar.add(m);
 
-        add(menuBar, BorderLayout.NORTH);
+        
+        JPanel top = new JPanel(new BorderLayout());
+        
+        top.add(menuBar, BorderLayout.NORTH);
 
 
         JComponent jp = newParameterPanel();
-        add(jp, BorderLayout.CENTER);
+        top.add(jp, BorderLayout.CENTER);
 
+
+        
+        
+        CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource) {
+            @Override
+            public Chart newDefaultChart(String id, TreeMLData data) {                
+                switch (id) {
+                    case "concept.pri.histo":
+                        return new StackedPercentageChart(data).height(2);
+                    case "concept.pri.mean":
+                        return new LineChart(data).range(0, 1f);
+                    case "concept.belief.mean":
+                        return new LineChart(data);
+                }
+                return new BarChart(data);
+            }          
+        };
+        senses.setActive(true);
+        senses.update(memory);        
+        
+        add(top, NORTH);
+        add(new MeterVis(nar, senses, 128).newPanel(), CENTER);
+        
+        
         init();
         
     }

@@ -14,7 +14,9 @@
  */
 package nars.util.meter.sensor;
 
+import nars.core.Memory;
 import nars.util.meter.Meter;
+import nars.util.meter.data.DataContainer;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.key.DefaultStatsKey;
 import nars.util.meter.key.StatsKey;
@@ -46,9 +48,9 @@ public abstract class AbstractSensor implements Meter {
     //private long lastFirstCommit;
     protected boolean active = false;
 
-    public AbstractSensor(final StatsSession session) {
-        //assertNotNull(session, "session");
+    public AbstractSensor(final StatsSession session) {        
         this.session = session;        
+        init();
     }
 
     public AbstractSensor(String id) {
@@ -67,11 +69,13 @@ public abstract class AbstractSensor implements Meter {
     public double getValue() {
         return value;
     }
+    
 
     @Override
     public Meter reset() {
         value = 0;
         lastHits = currentHits = 0;
+        init();
         return this;
     }
 
@@ -110,8 +114,9 @@ public abstract class AbstractSensor implements Meter {
     int sampleWindow = 0;
     
     /** automatically drain after n cycles; set to 0 for no auto-drain */
-    public void setSampleWindow(int s) {
+    public AbstractSensor setSampleWindow(int s) {
         this.sampleWindow = s;
+        return this;
     }
 
     public int getSampleWindow() {
@@ -121,6 +126,8 @@ public abstract class AbstractSensor implements Meter {
     protected void commit() {
         gets++;        
     }
+    
+    
 
     
 //    public <D> D get(D defaultValue, String... keys) {
@@ -132,6 +139,12 @@ public abstract class AbstractSensor implements Meter {
 //        return getSession().collectData(defaultValue, keys);
 //    }
 //    
+    
+    /** called to store the final value in a dataset; override in subclasses */
+    @Override
+    public void commit(DataContainer d, Memory m) {
+        
+    }
     
     @Override
     public DataSet get() {

@@ -1,5 +1,7 @@
 package nars.io.meter;
 
+import automenta.vivisect.TreeMLData;
+import automenta.vivisect.timeline.Chart;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -17,10 +19,11 @@ public class CompoundMeter extends AbstractMeter {
     }
 
     
-    @Override public void sense(final Memory memory) {
+    @Override public void commit(final Memory memory) {
+        super.commit(memory);
         
         for (AbstractMeter s : senses) {
-            s.update(memory);
+            s.update(memory); //calls commit for each meter also
             dataMap.putAll(s.dataMap);
         }
         
@@ -44,6 +47,11 @@ public class CompoundMeter extends AbstractMeter {
             for (AbstractMeter s : senses) {
                 s.setActive(active);
             }
+    }
+
+    /** creates an empty chart for the given chart id, or null if unspecified and use MeterVis default */
+    public Chart newDefaultChart(String id, TreeMLData data) {
+        return null;
     }
 
 }

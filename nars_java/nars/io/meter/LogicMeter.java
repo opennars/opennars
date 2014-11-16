@@ -2,6 +2,7 @@ package nars.io.meter;
 
 import java.io.Serializable;
 import nars.core.Memory;
+import nars.util.meter.data.DataContainer;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.sensor.EventValueSensor;
 
@@ -78,8 +79,18 @@ public class LogicMeter extends AbstractMeter implements Serializable {
         add(TASKLINK_FIRE = new EventValueSensor("tasklink.fire"));
         TASKLINK_FIRE.setSampleWindow(32);
         
-        add(CONCEPT_NEW = new EventValueSensor("concept.new"));
-        CONCEPT_NEW.setSampleWindow(32);
+        add(CONCEPT_NEW = new EventValueSensor("concept.new") {
+            @Override public void init() {
+                setSampleWindow(32);
+            }
+            @Override public void commit(DataContainer d, Memory m) {        
+                d.put("concept.new", getHits());
+                
+                /** complexity is currently stored as the value */
+                d.put("concept.new.complexity.mean", get().mean());            
+            }
+        });
+        
         
         add(REASON = new EventValueSensor("reason.tasktermlinks"));
         REASON.setSampleWindow(32);
@@ -128,18 +139,20 @@ public class LogicMeter extends AbstractMeter implements Serializable {
     }
     
     @Override
-    public void sense(Memory memory) {
+    public void commit(Memory memory) {
+        super.commit(memory);
+        
         put("concept.count", conceptNum);
         
-        put("concept.priority.mean", conceptPriorityMean);
-        put("concept.priority.variance", conceptVariance);
+        put("concept.pri.mean", conceptPriorityMean);
+        put("concept.pri.variance", conceptVariance);
         
         //in order; 0= top 25%, 1 = 50%..75%.., etc
         for (int n = 0; n < conceptHistogram.length; n++)
-            put("concept.priority.hist." + n, conceptHistogram[n]);
+            put("concept.pri.histo#" + n, conceptHistogram[n]);
         
-        put("concept.beliefs.mean", conceptNum > 0 ? ((double)conceptBeliefsSum)/conceptNum : 0);
-        put("concept.questions.mean", conceptNum > 0 ? ((double)conceptQuestionsSum)/conceptNum : 0);
+        put("concept.belief.mean", conceptNum > 0 ? ((double)conceptBeliefsSum)/conceptNum : 0);
+        put("concept.question.mean", conceptNum > 0 ? ((double)conceptQuestionsSum)/conceptNum : 0);
         
         put("task.novel.total", memory.novelTasks.size());
         //put("memory.newtasks.total", memory.newTasks.size()); //redundant with output.tasks below
@@ -152,13 +165,13 @@ public class LogicMeter extends AbstractMeter implements Serializable {
         {
             DataSet fire = TASKLINK_FIRE.get();
             //DataSet reason = TASKLINK_REASON.get();
-            put("reason.fire.tasklink.priority.mean", fire.mean());
+            put("reason.fire.tasklink.pri.mean", fire.mean());
             put("reason.fire.tasklinks", TASKLINK_FIRE.getHits());
             
             putHits(REASON);
             
-            //only makes sense as a mean, since it occurs multiple times during a cycle
-            put("reason.tasktermlink.priority.mean", REASON.get().mean());                        
+            //only makes commit as a mean, since it occurs multiple times during a cycle
+            put("reason.tasktermlink.pri.mean", REASON.get().mean());                        
         }
         {
             putValue(IO_INPUTS_BUFFERED);
@@ -189,13 +202,13 @@ public class LogicMeter extends AbstractMeter implements Serializable {
         {
             putHits(TASK_ADD_NEW);
             putHits(TASK_ADD_NOVEL);
-            put("task.new.priority.mean", TASK_ADD_NEW.get().mean());
+            put("task.new.pri.mean", TASK_ADD_NEW.get().mean());
             put("task.derived", TASK_DERIVED.getHits());
-            put("task.derived.priority.mean", TASK_DERIVED.get().mean());
+            put("task.derived.pri.mean", TASK_DERIVED.get().mean());
             put("task.executed", TASK_EXECUTED.getHits());
-            put("task.executed.priority.mean", TASK_EXECUTED.get().mean());
-            put("task.immediate_processed", TASK_IMMEDIATE_PROCESS.getHits());
-            //put("task.immediate_processed.priority.mean", TASK_IMMEDIATE_PROCESS.get().mean());
+            put("task.executed.pri.mean", TASK_EXECUTED.get().mean());
+            put("task.immediate.process", TASK_IMMEDIATE_PROCESS.getHits());
+            //put("task.immediate_processed.pri.mean", TASK_IMMEDIATE_PROCESS.get().mean());
         }
         {
             put("task.link_to", LINK_TO_TASK.getHits());
@@ -203,16 +216,13 @@ public class LogicMeter extends AbstractMeter implements Serializable {
             put("task.judgment.process", JUDGMENT_PROCESS.getHits());
             put("task.question.process", QUESTION_PROCESS.getHits());            
         }
-        {
-            put("concept.new", CONCEPT_NEW.getHits());
-            put("concept.new.complexity.mean", CONCEPT_NEW.get().mean());
-        }
+        
         
         putHits(SHORT_TERM_MEMORY_UPDATE);
         
         {
             putHits(SOLUTION_BEST);
-            put("task.solution.best.priority.mean", SOLUTION_BEST.get().mean());
+            put("task.solved.best.pri.mean", SOLUTION_BEST.get().mean());
         }
         
         

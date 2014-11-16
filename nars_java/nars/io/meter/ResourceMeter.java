@@ -1,6 +1,7 @@
 package nars.io.meter;
 
 import nars.core.Memory;
+import nars.util.meter.data.DataContainer;
 import nars.util.meter.sensor.MemoryUseTracker;
 import nars.util.meter.sensor.NanoTimeDurationTracker;
 import nars.util.meter.sensor.ThreadCPUTimeTracker;
@@ -18,41 +19,40 @@ public class ResourceMeter extends AbstractMeter {
     
 
     public ResourceMeter() {
-        super();
+        super();        
         
-        
-        add(CYCLE = new NanoTimeDurationTracker("cycle"));   
-        
-        
-        add(CYCLE_RAM_USED = new MemoryUseTracker("memory.cycle.ram_used"));
-        CYCLE_RAM_USED.setSampleResolution(128);
-        CYCLE_RAM_USED.setSampleWindow(128);
+        add(CYCLE = new NanoTimeDurationTracker("cycle") {
+            @Override public void commit(DataContainer d, Memory m) {
+                double cycleTimeMS = getValue();
+                double cycleTimeMeanMS = get().mean();
                 
-        add(CYCLE_CPU_TIME = new ThreadCPUTimeTracker("memory.cycle.cpu_time"));
-        CYCLE_CPU_TIME.setSampleResolution(128);
-        CYCLE_CPU_TIME.setSampleWindow(128);        
+                d.put("cycle.frequency.hz", 
+                        cycleTimeMS == 0 ? 0 : (1000.0 / cycleTimeMS) );
+                d.put("cycle.frequency_potential.mean.hz", 
+                        (cycleTimeMeanMS == 0) ? 0 : (1000.0 / cycleTimeMeanMS) );
+            }            
+        });      
+        
+        add(CYCLE_RAM_USED = new MemoryUseTracker("memory.cycle.ram_used") {
+            @Override public void init() {
+                setSampleResolution(128).setSampleWindow(128);
+            }            
+            @Override public void commit(DataContainer d, Memory m) {
+                d.put("cycle.ram_use.delta_Kb.sampled", getValue());
+            }
+        });
+        
+        
+        add(CYCLE_CPU_TIME = new ThreadCPUTimeTracker("memory.cycle.cpu_time") {
+            @Override public void init() {
+                setSampleResolution(128).setSampleWindow(128);
+            }            
+            @Override public void commit(DataContainer d, Memory m) {
+                d.put("cycle.cpu_time.mean", get().mean() );
+            }            
+        });
     }
 
     
-    @Override
-    public void sense(Memory memory) {
-        //DataSet cycle = CYCLE.get();
-        double cycleTimeMS = CYCLE.getValue();
-        double cycleTimeMeanMS = CYCLE.get().mean();
-        {
-            put("cycle.frequency.hz", cycleTimeMS == 0 ? 0 : (1000.0 / cycleTimeMS) );
-            put("cycle.frequency_potential.mean.hz", (cycleTimeMeanMS == 0) ? 0 : (1000.0 / cycleTimeMeanMS) );
-        }
-        {
-            //DataSet d = MEMORY_CYCLE_RAM_USED.get();
-            put("cycle.ram_use.delta_Kb.sampled", CYCLE_RAM_USED.getValue());
-        }
-        {
-            //DataSet d = CYCLE_CPU_TIME.get();
-            put("cycle.cpu_time.mean", CYCLE_CPU_TIME.get().mean() );
-        }
-        
-    }
-
     
 }

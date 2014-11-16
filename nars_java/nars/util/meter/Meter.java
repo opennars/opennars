@@ -14,7 +14,10 @@
  */
 package nars.util.meter;
 
+import com.sun.org.glassfish.external.statistics.Stats;
 import java.io.Serializable;
+import nars.core.Memory;
+import nars.util.meter.data.DataContainer;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.sensor.EventMeter;
@@ -96,6 +99,13 @@ public interface Meter extends Serializable {
         return getKey().getName();
     }
 
+    /** called when created and after reset() */
+    default public void init() { }
+    
+    default public void commit(DataContainer d, Memory m)  {
+        
+    }
+    
     public void setCyclesSinceLastUpdate(long cyclesSinceLastUpdate);
     
     abstract public void setActive(boolean b);
