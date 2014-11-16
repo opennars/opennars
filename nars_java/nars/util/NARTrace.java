@@ -15,7 +15,7 @@ import nars.core.Events.ConceptNew;
 import nars.core.Events.InferenceEvent;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.sense.MultiSense;
+import nars.io.meter.CompoundMeter;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -57,7 +57,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     private long t;
     public final NAR nar;
-    public final MultiSense senses;
+    public final CompoundMeter senses;
 
     public TreeMLData[] getCharts(String... names) {
         List<TreeMLData> l = new ArrayList(names.length);
@@ -135,7 +135,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         
         Memory memory = nar.memory;
         
-        senses = new MultiSense(memory.logic, memory.resource);
+        senses = new CompoundMeter(memory.logic, memory.resource);
         senses.setActive(true);
         senses.update(memory);        
         

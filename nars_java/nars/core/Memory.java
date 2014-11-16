@@ -39,9 +39,9 @@ import static nars.core.Memory.Forgetting.Periodic;
 import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.ImmediateProcess;
-import nars.core.sense.EmotionSense;
-import nars.core.sense.LogicSense;
-import nars.core.sense.ResourceSense;
+import nars.io.meter.EmotionMeter;
+import nars.io.meter.LogicMeter;
+import nars.io.meter.ResourceMeter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -223,9 +223,9 @@ public class Memory implements Serializable {
     
 
     
-    public final EmotionSense emotion = new EmotionSense();    
-    public final LogicSense logic;
-    public final ResourceSense resource;
+    public final EmotionMeter emotion = new EmotionMeter();    
+    public final LogicMeter logic;
+    public final ResourceMeter resource;
     
     
     /**
@@ -297,8 +297,8 @@ public class Memory implements Serializable {
         this.operators = new HashMap<>();
         
 
-        this.resource = new ResourceSense();
-        this.logic = new LogicSense() {
+        this.resource = new ResourceMeter();
+        this.logic = new LogicMeter() {
 
             @Override
             public void sense(Memory memory) {

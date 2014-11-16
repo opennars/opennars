@@ -14,7 +14,7 @@
  */
 package nars.util.meter.sensor;
 
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.session.StatsSession;
 
 /**
@@ -60,7 +60,7 @@ public class HitPeriodTracker extends AbstractSpanTracker {
     }
     
     @Override
-    public Sensor reset() {
+    public Meter reset() {
         super.reset();
         lastHitStamp = -1;
 

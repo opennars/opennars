@@ -1,19 +1,19 @@
-package nars.core.sense;
+package nars.io.meter;
 
 import java.io.Serializable;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
-public class EmotionSense implements Serializable {
+public class EmotionMeter implements Serializable {
 
     /** average desire-value */
     private float happy;
     /** average priority */
     private float busy;
 
-    public EmotionSense() {
+    public EmotionMeter() {
     }
 
-    public EmotionSense(float happy, float busy) {
+    public EmotionMeter(float happy, float busy) {
         set(happy, busy);
     }
 

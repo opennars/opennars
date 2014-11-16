@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.event.EventType;
@@ -45,7 +45,7 @@ import nars.util.meter.util.Misc;
  * a update #2, the resulting {@link DataSet} will contain data related only to
  * update #1 or update #2. It will not contain the data from a partially
  * recorded update. Furthermore, it allows this data integrity without having to
- * block the client of the {@link Sensor}, which could sacrifice performance.
+ * block the client of the {@link Meter}, which could sacrifice performance.
  * If better performance is preferred at the cost of potentially inconsistent
  * data, see {@link org.stajistics.session.ConcurrentSession}.</p>
  *
@@ -94,7 +94,7 @@ public class AsynchronousSession extends AbstractStatsSession {
         this.updateQueue = updateQueue;
     }
 
-    private void queueUpdateTask(final Sensor tracker, final long now, final boolean update) {
+    private void queueUpdateTask(final Meter tracker, final long now, final boolean update) {
         TrackerEntry entry = new TrackerEntry(tracker, now, update);
         try {
             updateQueue.add(entry);
@@ -110,11 +110,11 @@ public class AsynchronousSession extends AbstractStatsSession {
     }
 
     @Override
-    public void track(final Sensor tracker, long now) {
+    public void track(final Meter tracker, long now) {
         queueUpdateTask(tracker, now, true);
     }
 
-    private void trackImpl(final Sensor tracker, final long now) {
+    private void trackImpl(final Meter tracker, final long now) {
         stateLock.lock();
         try {
             hits++;
@@ -173,11 +173,11 @@ public class AsynchronousSession extends AbstractStatsSession {
     }
 
     @Override
-    public void update(final Sensor tracker, final long now) {
+    public void update(final Meter tracker, final long now) {
         queueUpdateTask(tracker, now, false);
     }
 
-    private void updateImpl(final Sensor tracker, final long now) {
+    private void updateImpl(final Meter tracker, final long now) {
         final double currentValue = tracker.getValue();
 
         stateLock.lock();
@@ -415,11 +415,11 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     protected static final class TrackerEntry {
 
-        private final Sensor tracker;
+        private final Meter tracker;
         private final long now;
         private final boolean track;
 
-        private TrackerEntry(final Sensor tracker, final long now, final boolean track) {
+        private TrackerEntry(final Meter tracker, final long now, final boolean track) {
             this.tracker = tracker;
             this.now = now;
             this.track = track;

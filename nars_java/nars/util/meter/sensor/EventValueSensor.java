@@ -14,7 +14,7 @@
  */
 package nars.util.meter.sensor;
 
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.session.StatsSession;
 
 /**
@@ -98,7 +98,7 @@ public class EventValueSensor extends AbstractSensor implements ManualTracker {
     }
 
     @Override
-    public Sensor reset() {
+    public Meter reset() {
         lastValue = currentDelta = 0;
         return super.reset();
     }

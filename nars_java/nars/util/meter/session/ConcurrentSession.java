@@ -17,7 +17,7 @@ package nars.util.meter.session;
 import com.google.common.util.concurrent.AtomicDouble;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.event.EventType;
@@ -80,7 +80,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     }
 
     @Override
-    public void track(final Sensor tracker,
+    public void track(final Meter tracker,
             long now) {
         if (now < 0) {
             now = System.currentTimeMillis();
@@ -137,7 +137,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     }
 
     @Override
-    public void update(final Sensor tracker, final long now) {
+    public void update(final Meter tracker, final long now) {
 
         final double currentValue = tracker.getValue();
         double tmp;

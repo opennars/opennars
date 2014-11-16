@@ -1,58 +1,58 @@
-package nars.core.sense;
+package nars.io.meter;
 
 import java.util.HashMap;
 import java.util.Map;
 import nars.core.Memory;
-import nars.core.sense.AbstractSense.UnknownSensorException;
-import nars.util.meter.Sensor;
+import nars.io.meter.AbstractMeter.UnknownSensorException;
+import nars.util.meter.Meter;
 import nars.util.meter.data.DefaultDataSet;
 import nars.util.meter.sensor.AbstractSensor;
 import nars.util.meter.sensor.AbstractSpanTracker;
-import nars.util.meter.sensor.EventSensor;
+import nars.util.meter.sensor.EventMeter;
 import nars.util.meter.sensor.SpanTracker;
 
 
-abstract public class AbstractSense extends DefaultDataSet {
+abstract public class AbstractMeter extends DefaultDataSet {
 
-    final Map<String, Sensor> sensors = new HashMap<>();
+    final Map<String, Meter> sensors = new HashMap<>();
     long lastUpdate = -1;
     int allSensorResetPeriodCycles = 2048; //how often to reset all sensors
     boolean active = false;
 
-    public AbstractSense(Map<String,Object> map) {
+    public AbstractMeter(Map<String,Object> map) {
         super(map);
         setActive(false); //default, set inactive
     }
 
-    public AbstractSense() {
+    public AbstractMeter() {
         this(new HashMap<>());
     }
 
     abstract public void sense(Memory memory);
     
-    protected void add(Sensor s) {
+    protected void add(Meter s) {
         sensors.put(s.name(), s);
         s.setActive(active);
     }
 
     public SpanTracker getSensorSpan(final String name) {
-        Sensor s = sensors.get(name);
+        Meter s = sensors.get(name);
         if (s instanceof SpanTracker) {
             return (SpanTracker) s;
         }
         return null;
     }
 
-    public EventSensor getSensorEvent(final String name) {
-        Sensor s = sensors.get(name);
-        if (s instanceof EventSensor) {
-            return (EventSensor) s;
+    public EventMeter getSensorEvent(final String name) {
+        Meter s = sensors.get(name);
+        if (s instanceof EventMeter) {
+            return (EventMeter) s;
         }
         return null;
     }
 
     protected void updateSensors(final boolean reset, long cyclesSinceLastUpdate) {
-        for (final Sensor s : sensors.values()) {
+        for (final Meter s : sensors.values()) {
             
             s.setCyclesSinceLastUpdate(cyclesSinceLastUpdate);
             
@@ -68,7 +68,7 @@ abstract public class AbstractSense extends DefaultDataSet {
     }
 
     public void incident(final String name) {
-        final EventSensor e = getSensorEvent(name);
+        final EventMeter e = getSensorEvent(name);
         if (e == null) {
             throw new UnknownSensorException(name);
         }
@@ -117,7 +117,7 @@ abstract public class AbstractSense extends DefaultDataSet {
     
     public void setActive(final boolean b) {
         this.active = b;
-        for (final Sensor s : sensors.values())
+        for (final Meter s : sensors.values())
             s.setActive(b);
     }
     

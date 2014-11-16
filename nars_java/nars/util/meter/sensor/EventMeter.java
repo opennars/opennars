@@ -14,7 +14,7 @@
  */
 package nars.util.meter.sensor;
 
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.session.StatsSession;
 
 /**
@@ -36,7 +36,7 @@ import nars.util.meter.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public interface EventSensor extends Sensor {
+public interface EventMeter extends Meter {
 
     /**
      * Report an occurrence of an event. Sets the <tt>value</tt> field to
@@ -45,5 +45,5 @@ public interface EventSensor extends Sensor {
      *
      * @return <tt>this</tt>.
      */
-    EventSensor event();
+    EventMeter event();
 }

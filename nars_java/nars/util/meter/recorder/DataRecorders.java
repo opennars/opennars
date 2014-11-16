@@ -17,7 +17,7 @@ package nars.util.meter.recorder;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Decorator;
@@ -306,7 +306,7 @@ public final class DataRecorders {
 
         @Override
         public void update(final StatsSession session,
-                final Sensor tracker,
+                final Meter tracker,
                 final long now) {
             lock.lock();
             try {

@@ -16,7 +16,7 @@ import java.util.StringJoiner;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.core.sense.MultiSense;
+import nars.io.meter.CompoundMeter;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.getExpectations;
 import nars.util.XORShiftRandom;
@@ -91,7 +91,7 @@ public class NALTestPerformance {
             boolean error = false;
             int successes = 0;
 
-            MultiSense m = new MultiSense(nar.memory.logic, nar.memory.resource);
+            CompoundMeter m = new CompoundMeter(nar.memory.logic, nar.memory.resource);
             m.update(nar.memory);
             
             fields.addAll(m.keySet());

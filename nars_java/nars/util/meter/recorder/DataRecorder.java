@@ -16,7 +16,7 @@ package nars.util.meter.recorder;
 
 import java.io.Serializable;
 import java.util.Set;
-import nars.util.meter.Sensor;
+import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
 
@@ -53,7 +53,7 @@ public interface DataRecorder extends Serializable {
      * @param tracker The tracker that is triggering the update.
      * @param now The current time.
      */
-    void update(StatsSession session, Sensor tracker, long now);
+    void update(StatsSession session, Meter tracker, long now);
 
     /**
      * Populate internal data structures with the data provided in the given

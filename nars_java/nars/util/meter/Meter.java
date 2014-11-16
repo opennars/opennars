@@ -17,7 +17,7 @@ package nars.util.meter;
 import java.io.Serializable;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.sensor.EventSensor;
+import nars.util.meter.sensor.EventMeter;
 import nars.util.meter.sensor.ManualTracker;
 import nars.util.meter.sensor.SpanTracker;
 import nars.util.meter.session.StatsSession;
@@ -29,7 +29,7 @@ import nars.util.meter.session.StatsSession;
  * manner. This interface defines the common methods to all tracker
  * implementations, however, in order to be useful for collecting statistics, a
  * more specific sub-interface must be manipulated, such as
- * {@link EventSensor}, {@link ManualTracker}, or {@link SpanTracker}.</p>
+ * {@link EventMeter}, {@link ManualTracker}, or {@link SpanTracker}.</p>
  *
  * <p>
  * The data that a tracker stores is only one element in a series of data
@@ -54,7 +54,7 @@ import nars.util.meter.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public interface Sensor extends Serializable {
+public interface Meter extends Serializable {
 
     /**
      * Obtain the numeric value that was collected as a result of operating this
@@ -71,7 +71,7 @@ public interface Sensor extends Serializable {
      *
      * @return <tt>this</tt>.
      */
-    Sensor reset();
+    Meter reset();
 
     /**
      * Get the key that represents the target for which this tracker is

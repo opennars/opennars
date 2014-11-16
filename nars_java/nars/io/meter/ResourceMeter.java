@@ -1,4 +1,4 @@
-package nars.core.sense;
+package nars.io.meter;
 
 import nars.core.Memory;
 import nars.util.meter.sensor.MemoryUseTracker;
@@ -9,7 +9,7 @@ import nars.util.meter.sensor.ThreadCPUTimeTracker;
  * Awareness of available and consumed resources, such as:
  * real-time, computation time, memory, energy, I/O, etc..
  */
-public class ResourceSense extends AbstractSense {
+public class ResourceMeter extends AbstractMeter {
     
     public final MemoryUseTracker CYCLE_RAM_USED;
     public final ThreadCPUTimeTracker CYCLE_CPU_TIME; //the cpu time of each cycle
@@ -17,7 +17,7 @@ public class ResourceSense extends AbstractSense {
     
     
 
-    public ResourceSense() {
+    public ResourceMeter() {
         super();
         
         
