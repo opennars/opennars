@@ -7,7 +7,7 @@ import static java.lang.Math.signum;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -215,7 +215,7 @@ public class NARio extends Run {
             
         });
                 
-        nar.memory.event.on(Events.FrameEnd.class, new Observer() {
+        nar.memory.event.on(Events.FrameEnd.class, new EventObserver() {
             private int[] keyTime = new int[256];
             private float lastMX;
             private float lastMY;

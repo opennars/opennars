@@ -25,7 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NAR.PluginState;
@@ -173,7 +173,7 @@ public class PluginPanel extends NPanel {
 
     @Override
     public void onShowing(boolean b) {
-        nar.memory.event.set(new Observer() {
+        nar.memory.event.set(new EventObserver() {
             @Override public void event(Class event, Object[] arguments) {
                 if (event == Events.PluginsChange.class)
                     update();

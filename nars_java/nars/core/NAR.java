@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
 import nars.core.Events.Perceive;
@@ -175,12 +175,12 @@ public class NAR implements Runnable, TaskSource {
     }
 
     /** attach event handler */
-    public void on(Class c, Observer o) {
+    public void on(Class c, EventObserver o) {
         memory.event.on(c, o);
     }
     
     /** remove event handler */
-    public void off(Class c, Observer o) {
+    public void off(Class c, EventObserver o) {
         memory.event.on(c, o);
     }
 
@@ -583,7 +583,7 @@ public class NAR implements Runnable, TaskSource {
     
     /** stops and empties an input channel into a receiver. 
      * this results in no pending input from this channel. */
-    public int flushInput(InPort i, Observer receiver) {
+    public int flushInput(InPort i, EventObserver receiver) {
         int total = 0;
         i.finish();
         

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import nars.core.EventEmitter;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.entity.Concept;
@@ -20,7 +20,7 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 
 
-abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> implements Observer {
+abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> implements EventObserver {
     public final Memory memory;
 
     public static class GraphChange { }

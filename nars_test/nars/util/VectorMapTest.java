@@ -1,6 +1,6 @@
 package nars.util;
 
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleStart;
 import nars.core.NAR;
 import nars.core.build.Default;
@@ -67,7 +67,7 @@ public class VectorMapTest {
         
         n.finish(16);
         
-        n.on(CycleStart.class, new Observer() {
+        n.on(CycleStart.class, new EventObserver() {
 
             @Override public void event(Class event, Object[] arguments) {
                 

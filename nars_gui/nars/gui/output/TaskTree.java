@@ -20,7 +20,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.entity.Concept;
@@ -36,7 +36,7 @@ import nars.operator.io.Echo;
  *
  * @author me
  */
-public class TaskTree extends NPanel implements Observer, Runnable {
+public class TaskTree extends NPanel implements EventObserver, Runnable {
 
     long updatePeriodMS = 250;
     DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");

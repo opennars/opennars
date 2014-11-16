@@ -4,7 +4,7 @@ import automenta.vivisect.TreeMLData;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -54,7 +54,7 @@ public class BagFairness {
         }
 
         
-        n.event().on(Events.ConceptFire.class, new Observer() {
+        n.event().on(Events.ConceptFire.class, new EventObserver() {
 
             @Override
             public void event(Class event, Object[] arguments) {

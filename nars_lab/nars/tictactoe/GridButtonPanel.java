@@ -15,7 +15,7 @@ import java.awt.event.MouseWheelListener;
 import java.lang.reflect.Array;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.entity.Concept;
@@ -26,7 +26,7 @@ import nars.entity.Concept;
  * in its appearance (font, color, etc..) and lines drawn between them on an overlay.
  * @author me
  */
-abstract public class GridButtonPanel extends NPanel implements Observer {
+abstract public class GridButtonPanel extends NPanel implements EventObserver {
     
     public final NAR nar;
 

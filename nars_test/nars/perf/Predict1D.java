@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.FrameStart;
 import nars.core.NAR;
@@ -353,7 +353,7 @@ public class Predict1D {
         
         
 
-        nar.on(FrameStart.class, new Observer() {
+        nar.on(FrameStart.class, new EventObserver() {
 
             @Override
             public void event(Class event, Object[] arguments) {
@@ -406,7 +406,7 @@ public class Predict1D {
             }
         });
 
-        nar.on(Events.ConceptBeliefAdd.class, new Observer() {
+        nar.on(Events.ConceptBeliefAdd.class, new EventObserver() {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -416,7 +416,7 @@ public class Predict1D {
             }
         });
 
-        nar.on(Events.Solved.class, new Observer() {
+        nar.on(Events.Solved.class, new EventObserver() {
             @Override
             public void event(Class event, Object[] arguments) {
                 Task t = (Task) arguments[0];

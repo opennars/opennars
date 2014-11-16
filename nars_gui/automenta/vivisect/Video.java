@@ -40,7 +40,6 @@ public class Video {
     
     static {        
         try {
-            System.out.println(Video.class.getClassLoader().getResource("./").getFile());
             Video.FontAwesome = Font.createFont(Font.TRUETYPE_FONT, Video.class.getResourceAsStream("FontAwesome.ttf")).deriveFont(Font.PLAIN, 14);
         } catch (Exception ex) {    
             System.err.println("FontAwesome.ttf not found");
@@ -71,19 +70,18 @@ public class Video {
   }
   
     public static int getColor(final String s, final float alpha) {
-        double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
-        return getColor(Color.getHSBColor((float)hue,0.8f,0.9f), alpha).getRGB();        
-    }
-    
+        float hue = (((float)s.hashCode()) / Integer.MAX_VALUE);
+        return colorHSB(hue,0.8f,0.9f,alpha);
+    }    
 
     public static int getColor(final Class c) {            
-        double hue = (((double)c.hashCode()) / Integer.MAX_VALUE);
-        return Color.getHSBColor((float)hue,0.8f,0.9f).getRGB();                
+        float hue = (((float)c.hashCode()) / Integer.MAX_VALUE);
+        return color(hue,0.8f,0.9f,1f);
     }
     
     public static int getColor(final String s) {            
-        double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
-        return Color.getHSBColor((float)hue,0.8f,0.9f).getRGB();        
+        float hue = (((float)s.hashCode()) / Integer.MAX_VALUE);
+        return color(hue,0.8f,0.9f,1f);
     }
 
     public static Font fontMono(float size) {
@@ -91,28 +89,28 @@ public class Video {
     }
 
     public static final float hashFloat(final int h) {
-        return ((float) h) / (((float) Integer.MAX_VALUE) - ((float) Integer.MIN_VALUE));
+        return (h) / (((float) Integer.MAX_VALUE) - ((float) Integer.MIN_VALUE));
     }
 
-    public static final Color getColor(final String s, final float saturation, final float brightness) {
+    @Deprecated public static final Color getColor(final String s, final float saturation, final float brightness) {
         return getColor(s.hashCode(), saturation, brightness);
     }
 
-    public static final Color getColor(int hashCode, float saturation, float brightness) {
+    @Deprecated public static final Color getColor(int hashCode, float saturation, float brightness) {
         float hue = hashFloat(hashCode);
         return Color.getHSBColor(hue, saturation, brightness);
     }
 
-    public static final Color getColor(int hashCode, float saturation, float brightness, float alpha) {
+    @Deprecated public static final Color getColor(int hashCode, float saturation, float brightness, float alpha) {
         return getColor(getColor(hashCode, saturation, brightness), alpha);
     }
 
-    public static final Color getColor(final Color c, float alpha) {
+    @Deprecated public static final Color getColor(final Color c, float alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255.0 * alpha));
     }
 
-    public static final Color getColor(final String s, float sat, float bright, float alpha) {
-        return getColor(getColor(s, sat, bright), alpha);
+    public static final int getColor(final String s, float sat, float bright, float alpha) {
+        return colorHSB( hashFloat(s.hashCode()), sat, bright, alpha);
     }
     //    //NOT WORKING YET
     //    public static Color getColor(final String s, float saturation, float brightness, float alpha) {
@@ -124,5 +122,9 @@ public class Video {
     //
     //        return new Color(c, true);
     //    }
+
+    public static int colorHSB(float hue, float saturation, float brightness, float alpha) {
+        return Color.HSBtoRGB(hue, saturation, brightness) | ((int)(255f*alpha) << 24);
+    }
   
 }

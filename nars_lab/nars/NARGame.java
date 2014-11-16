@@ -1,6 +1,6 @@
 package nars;
 
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.gui.NARSwing;
@@ -8,7 +8,7 @@ import nars.gui.NARSwing;
 /**
  * Game event-loop interface for NARS sensory and motor interaction
  */
-abstract public class NARGame implements Observer {
+abstract public class NARGame implements EventObserver {
     public final NAR nar;
 
     public NARGame(NAR nar) {        

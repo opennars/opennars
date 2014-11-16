@@ -5,7 +5,7 @@ import nars.core.Events;
 import nars.core.NAR;
 
 
-public abstract class AbstractController implements EventEmitter.Observer {
+public abstract class AbstractController implements EventEmitter.EventObserver {
 
     public final NAR nar;
     /** how many cycles to wait before action, then wait again.. */

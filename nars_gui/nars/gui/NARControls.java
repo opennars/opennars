@@ -24,6 +24,7 @@ import automenta.vivisect.TreeMLData;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.LineChart;
@@ -49,7 +50,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
@@ -68,6 +69,7 @@ import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.NARFacePanel;
 import nars.gui.output.TimelinePanel;
 import nars.gui.output.chart.MeterVis;
+import nars.gui.output.graph.NARGraphVis;
 import nars.inference.Executive;
 import nars.inference.Executive.Execution;
 import nars.inference.GraphExecutive;
@@ -76,7 +78,7 @@ import nars.io.TextOutput;
 import nars.io.meter.CompoundMeter;
 
 
-public class NARControls extends JPanel implements ActionListener, Observer {
+public class NARControls extends JPanel implements ActionListener, EventObserver {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 
@@ -445,6 +447,10 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         
         
         init();
+        
+        
+        
+        //new NWindow("graphvis", new PCanvas( new NARGraphVis(nar) ) ).show(800, 800, false);
         
     }
 

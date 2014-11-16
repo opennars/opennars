@@ -23,6 +23,17 @@ public class EdgeVis<V, E> {
         color = 0xffffff;
         thickness = 1f;
     }
+    
+            
+    @Override
+    public int hashCode() {
+        return edge.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return edge.equals(obj);
+    }    
 
     public void draw(AbstractGraphVis c, PGraphics g) {
 

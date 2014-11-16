@@ -1,6 +1,6 @@
 package nars.plugin.mental;
 
-import nars.core.EventEmitter.Observer;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -24,7 +24,7 @@ import nars.operator.Operation;
  */
 public class MinimalInternalExperience implements Plugin {
 
-    public Observer obs;
+    public EventObserver obs;
     
     @Override public boolean setEnabled(NAR n, boolean enabled) {
         Parameters.INTERNAL_EXPERIENCE_FULL=false;
@@ -32,7 +32,7 @@ public class MinimalInternalExperience implements Plugin {
         
         
         if(obs==null) {
-            obs=new Observer() {
+            obs=new EventObserver() {
                 @Override public void event(Class event, Object[] a) {
 
                     if (event!=Events.ConceptDirectProcessedTask.class)
