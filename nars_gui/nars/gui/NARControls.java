@@ -59,8 +59,6 @@ import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
 import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.NARFacePanel;
-import nars.gui.output.graph.ConceptGraphCanvas;
-import nars.gui.output.graph.ConceptGraphPanel;
 import nars.gui.output.TimelinePanel;
 import nars.gui.output.chart.MeterVis;
 import nars.inference.Executive;
@@ -247,15 +245,15 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
             
 
-            
-            JMenuItem mv = new JMenuItem("+ Concept Graph");
-            mv.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new NWindow("Concept Graph", new ConceptGraphPanel(nar, new ConceptGraphCanvas(nar))).show(800, 500);
-                }
-            });
-            m.add(mv);
+//            
+//            JMenuItem mv = new JMenuItem("+ Concept Graph");
+//            mv.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    new NWindow("Concept Graph", new ConceptGraphPanel(nar, new ConceptGraphCanvas(nar))).show(800, 500);
+//                }
+//            });
+//            m.add(mv);
 
 //            JMenuItem mv2 = new JMenuItem("+ Concept Graph 2");
 //            mv2.addActionListener(new ActionListener() {
