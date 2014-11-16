@@ -1,14 +1,14 @@
 package nars.io.meter;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import nars.core.Memory;
 
 
 
 public class CompoundMeter extends AbstractMeter {
-    private final AbstractMeter[] senses;
+    public final AbstractMeter[] senses;
 
     public CompoundMeter(AbstractMeter... senses) {
         super(new TreeMap() /* alphabetic order */);
@@ -27,14 +27,16 @@ public class CompoundMeter extends AbstractMeter {
     
     }
 
+    
     @Override
     public Set<String> keySet() {
-        Set<String> keys = new HashSet();
+        Set<String> keys = new TreeSet();
         for (AbstractMeter s : senses) {
             keys.addAll(s.keySet());
         }
         return keys;
     }
+    
  
     @Override public void setActive(final boolean b) {        
         this.active = b;

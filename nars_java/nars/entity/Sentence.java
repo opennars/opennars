@@ -439,7 +439,7 @@ public class Sentence<T extends Term> implements Cloneable {
 
         final String tenseString = ( (punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.getDuration()) : "";
         
- 
+        
         CharSequence stampString = showStamp ? stamp.name() : null;
         
         int stringLength = contentName.length() + tenseString.length() + 1 + 1;
@@ -491,7 +491,7 @@ public class Sentence<T extends Term> implements Cloneable {
                 opName = "^wonder";
                 break;
             case Symbols.QUEST_MARK:
-                opName = "^assess";
+                opName = "^evaluate";
                 break;
             default:
                 return null;

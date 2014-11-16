@@ -62,50 +62,10 @@ public abstract class NAL implements Runnable {
      */
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
         if(task.sentence.content instanceof Operation) {
-            if(((Operation)task.sentence.content).getPredicate()==memory.getOperator("^deactivate") && task.sentence.punctuation==Symbols.GOAL_MARK) {
-                boolean breakpoint=true;
-                //this is a very serious bug, there is no evidence in 
-                /*
-                (^go-to,{switch0}). :|: %1.00;0.90%
-6
-<{switch0} --> at>. :|: %1.00;0.90%
-6
-(^activate,{switch0}). :|: %1.00;0.90%
-6
-<{door5} --> opened>. :|: %1.00;0.90%
-6
-(^deactivate,{switch0}). :|: %1.00;0.90%
-6
-(--,<{door5} --> opened>). :|: %1.00;0.90%
-6
-(^go-to,{place4}). :|: %1.00;0.90%
-6
-<{place4} --> at>. :|: %1.00;0.90%
-6
-<{door5} --> opened>!
-<{door5} --> opened>!
-<{door5} --> opened>!
-                */
-                //for it and still it is the only thing which gets executed,
-                //while the much more rational and win-bringing possibilies
-                //are not even considered
-                //TODO: Find reasons and bugfix
-                
-                //a simpler case which also shows it:
-                
-                /*
-                    IN <(&/,<{door5} --> opened>,+1) =/> (^deactivate,{switch0})>. %1.00;0.90%
-    IN <{door5} --> opened>! %1.00;0.90%
-   EXE $0.65;0.45;0.72$ ^deactivate([{switch0}])=null
-                */
+            if(Parameters.BE_RATIONAL && (((Operation)task.sentence.content).getPredicate()==memory.getOperator("^want") || ((Operation)task.sentence.content).getPredicate()==memory.getOperator("^believe")) && task.sentence.punctuation==Symbols.GOAL_MARK) {
+                return false;
             }
         }
-        //if(task.sentence.content instanceof Implication && ((Implication) task.sentence.content).getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
-        ////    return false; //inference rules do not handle this case correctly already, this needs deeper analysis
-            //this one is also quite serious, for now we don't allow =\> statements
-            //as long as its not guranteed that there are inference rules like detachment
-            //which lead to a decision making catastrophe due to ignoring that its a relation into the past
-        //} //for example sth =\> goal gets sth with detachment
         if (!task.budget.aboveThreshold()) {
             memory.removeTask(task, "Insufficient Budget");
             return false;

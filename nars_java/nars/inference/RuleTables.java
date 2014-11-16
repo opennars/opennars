@@ -116,7 +116,7 @@ public class RuleTables {
                 if(valid) {
                     Operator op=memory.getOperator("^anticipate");
                     Product args=new Product(new Term[]{imp.getPredicate()});
-                    Term new_term=Operation.make(args, /* --> */ op);
+                    Term new_term=Operation.make(args,op);
 
                     Sentence sentence = new Sentence(
                         new_term, Symbols.GOAL_MARK, 
@@ -186,41 +186,6 @@ public class RuleTables {
             
             InternalOperations(memory, belief, nal, beliefTerm, taskTerm);
             
-             //this is a new attempt/experiment to make nars effectively track temporal coherences
-            if(beliefTerm instanceof Implication && belief.isEternal() && 
-                    (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
-                for(int i=0;i<Parameters.TEMPORAL_CHAINING_ATTEMPTS;i++) {
-                    
-                    Task best=nal.memory.temporalCoherences.takeNext();
-                    if (best == null) {
-                        break;                        
-                    }
-                    
-                    nal.memory.temporalCoherences.putBack(best, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
-                    
-                    Sentence s=best.sentence;
-                    Term t=s.content;
-                    
-                    if(!(t instanceof Implication) || s.getOccurenceTime()!=Stamp.ETERNAL)
-                        continue;
-                    
-                    Implication Imp=(Implication) t;
-                    if(Imp.getTemporalOrder()!=TemporalRules.ORDER_FORWARD && Imp.getTemporalOrder()!=TemporalRules.ORDER_CONCURRENT) {
-                        continue;
-                    }
-
-                    Task sich=nal.getCurrentTask();
-                    nal.setCurrentTask(best);
-                    
-                    if(TemporalRules.temporalInductionChain(s, belief, nal)) {
-                        break;
-                    }
-                    
-                    nal.setCurrentTask(sich);
-                }
-            }
-
-            //while this is the old way, which seem to miss so many temporal coherences that it is not even worth the rule:
             if(beliefTerm instanceof Implication && 
              (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) &&
              taskTerm instanceof Implication && 
@@ -341,15 +306,7 @@ public class RuleTables {
                             bIndex = bLink.getIndex(1);
                             if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
                                 
-                                //THIS CONDITION IS NEW:
-                                //Because this one shouldnt happen:
-                                //IN <(&/,<{door5} --> opened>,+1) =/> (^deactivate,{switch0})>. %1.00;0.90%
-                                //IN <{door5} --> opened>! %1.00;0.90%
-                                //EXE (^deactivate,{switch0})
-                                //TODO: ANALYZE IN DETAIL
-                                if(taskSentence.punctuation==Symbols.JUDGMENT_MARK) {
                                     conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
-                                }
                             }
                         }
                         break;

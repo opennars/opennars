@@ -30,7 +30,6 @@ public class MinimalInternalExperience implements Plugin {
         Parameters.INTERNAL_EXPERIENCE_FULL=false;
         Memory memory = n.memory;
         
-        Parameters.INTERNAL_EXPERIENCE=enabled;
         
         if(obs==null) {
             obs=new Observer() {
@@ -41,6 +40,9 @@ public class MinimalInternalExperience implements Plugin {
 
                     Task task = (Task)a[0];                
 
+                    if(task.budget.summary()<Parameters.INTERNAL_EXPERIENCE_CREATION_BUDGET_SUMMARY) {
+                        return;
+                    }
                     Term content = task.getContent();
 
                     // to prevent infinite recursions
@@ -62,7 +64,7 @@ public class MinimalInternalExperience implements Plugin {
                     Task newTask = new Task(j, (BudgetValue) newbudget, 
                             Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
 
-                    memory.addNewTask(newTask, "Remembered Action (Minimal Internal Experience)");
+                    memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
 
                 }
             };

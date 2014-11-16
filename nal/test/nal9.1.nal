@@ -1,0 +1,7 @@
+<a --> b>.
+'ok, being aware needs attention, so lets ask NARS about it:
+<a --> b>?
+'ok lets ask something different, then NARS should knows something very interesting about what happened:
+<c --> d>?
+10
+''outputMustContain('<(^believe,<a --> b>,TRUE) =|> (^wonder,<c --> d>)>. :\: %1.00;0.45%')

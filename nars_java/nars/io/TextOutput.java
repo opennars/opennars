@@ -267,6 +267,7 @@ public class TextOutput extends Output {
             Sentence s = t.sentence;
 
             buffer.append(s.toString(nar, showStamp));
+            
         }            
         else if (signal instanceof Sentence) {
             Sentence s = (Sentence)signal;                

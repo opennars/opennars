@@ -1,0 +1,6 @@
+<a --> b>.
+'ok, being aware needs attention, so lets ask NARS about it:
+<a --> b>?
+'ok this concept should now be important enough for it so that NARS now knows 
+2
+''outputMustContain('(^believe,<a --> b>,TRUE). :|: %1.00;0.90%')
