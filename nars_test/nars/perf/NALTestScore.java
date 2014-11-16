@@ -10,7 +10,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.test.core.NALTest;
+import nars.core.NALTest;
 
 /**
  *

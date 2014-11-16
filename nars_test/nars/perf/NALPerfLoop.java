@@ -5,7 +5,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Discretinuous;
 import static nars.perf.NALStressMeasure.perfNAL;
-import nars.test.core.NALTest;
+import nars.core.NALTest;
 
 /**
  * Runs NALTestPerf continuously, for profiling

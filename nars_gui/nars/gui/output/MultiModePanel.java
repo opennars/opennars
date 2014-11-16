@@ -1,6 +1,7 @@
 
 package nars.gui.output;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NSlider;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,7 +19,6 @@ import javax.swing.SwingUtilities;
 import static javax.swing.SwingUtilities.invokeLater;
 import nars.core.NAR;
 import nars.entity.Task;
-import nars.gui.NARSwing;
 import nars.gui.output.graph.ProcessingGraphPanel2;
 import nars.io.Output;
 import nars.util.DefaultGraphizer;
@@ -173,7 +173,7 @@ public class MultiModePanel extends JPanel  {
     
     public JMenu newMenu() {
         JMenu m = new JMenu("\uf085");
-        m.setFont(NARSwing.FontAwesome);
+        m.setFont(Video.FontAwesome);
         m.add(new JMenuItem("Statement List"));
         
         JMenuItem log;

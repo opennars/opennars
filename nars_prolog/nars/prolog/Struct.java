@@ -610,7 +610,7 @@ public class Struct extends Term {
     /**
      * Gets a list Struct representation, with the functor as first element.
      */
-    Struct toList() {
+    public Struct toList() {
         Struct t = new Struct();
         for(int c = arity - 1;c >= 0;c--) {
             t = new Struct(arg[c].getTerm(),t);

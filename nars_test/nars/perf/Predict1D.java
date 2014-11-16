@@ -19,12 +19,13 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import automenta.vivisect.TimeSeries;
+import automenta.vivisect.TreeMLData;
 import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
-import automenta.vivisect.timeline.Timeline2DCanvas;
+import automenta.vivisect.timeline.TimelineVis;
 import nars.io.ChangedTextInput;
 import static nars.io.Texts.n2;
 import nars.language.Inheritance;
@@ -44,8 +45,8 @@ public class Predict1D {
     final static int discretization = 3;
     float errorRate = 0.05f;
     final static int numIterations = 3500;
-    final TimeSeries observed, observedDiscrete, bestPredictions, error;
-    final TimeSeries[] predictions;
+    final TreeMLData observed, observedDiscrete, bestPredictions, error;
+    final TreeMLData[] predictions;
 
     float signalFreq = 0.75f;
     float sampleConfidence = 0.99f;
@@ -369,7 +370,7 @@ public class Predict1D {
                             int is = Integer.valueOf(s.toString());
                             float e = solutions.getLikelihood(s);
                             
-                            predictions[is].push(d, e);                            
+                            predictions[is].add((int)d, e);                            
                         } catch (NumberFormatException nfe) {
 
                         }
@@ -379,11 +380,11 @@ public class Predict1D {
 
                     Term predTerm = solutions.getMostLikely();
                     int predicted = Integer.valueOf(predTerm.toString());
-                    bestPredictions.push(d, predicted);                    
+                    bestPredictions.add((int)d, predicted);                    
                     
                     if (!Float.isNaN(sample)) {
                         float e = Math.abs(f(sample) - predicted);
-                        error.push(d, e);
+                        error.add((int)d, e);
                     }
                     /*
                      System.out.println("@" + nar.time() + ": " + prediction + "? " + f(sample) + " ");*/
@@ -394,8 +395,8 @@ public class Predict1D {
                     //solutions.forget(1);
 
                     if (inputting && Math.random() > errorRate) {
-                        observed.push(d+1, sample);
-                        observedDiscrete.push(d+1, f(sample));
+                        observed.add((int)d+1, sample);
+                        observedDiscrete.add((int)d+1, f(sample));
                         observe("x", sample, sampleConfidence, nar.time());
                     }
                 }
@@ -431,20 +432,20 @@ public class Predict1D {
             observedInput[i] = new ChangedTextInput(nar);
         }
 
-        observed = new TimeSeries("value", Color.WHITE, numIterations).setRange(0, 1f);
+        observed = new TreeMLData("value", Color.WHITE, numIterations).setRange(0, 1f);
 
-        observedDiscrete = new TimeSeries("observed", Color.YELLOW, numIterations).setRange(0, discretization);
-        bestPredictions = new TimeSeries("predict", Color.ORANGE, numIterations).setRange(0, discretization);
-        error = new TimeSeries("error", Color.ORANGE, numIterations).setRange(0, discretization);
+        observedDiscrete = new TreeMLData("observed", Color.YELLOW, numIterations).setRange(0, discretization);
+        bestPredictions = new TreeMLData("predict", Color.ORANGE, numIterations).setRange(0, discretization);
+        error = new TreeMLData("error", Color.ORANGE, numIterations).setRange(0, discretization);
         
-        predictions = new TimeSeries[discretization];
+        predictions = new TreeMLData[discretization];
         
         for (int i = 0; i < predictions.length; i++) {
-            predictions[i] = new TimeSeries("Pred" + i,
+            predictions[i] = new TreeMLData("Pred" + i,
                     Color.getHSBColor(0.25f + i / 4f, 0.85f, 0.85f), numIterations);
         }
 
-        Timeline2DCanvas tc = new Timeline2DCanvas(
+        TimelineVis tc = new TimelineVis(
                 new BarChart(observed).height(4),
                 new LineChart(observedDiscrete).height(4),
                 new LineChart(bestPredictions).height(4),                
@@ -455,12 +456,12 @@ public class Predict1D {
         //            new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
         //
         //            new LineChart(
-        //                    new TimeSeries.ConceptBagTimeSeries(nar, nar.memory.concepts, cycles, TimeSeries.ConceptBagTimeSeries.Mode.ConceptPriorityTotal)            
+        //                    new TreeMLData.ConceptBagTreeMLData(nar, nar.memory.concepts, cycles, TreeMLData.ConceptBagTreeMLData.Mode.ConceptPriorityTotal)            
         //            ).height(4),
         //
         //            new LineChart(
-        //                    new TimeSeries.ConceptBagTimeSeries(nar, nar.memory.concepts, cycles, TimeSeries.ConceptBagTimeSeries.Mode.TermLinkPriorityMean),
-        //                    new TimeSeries.ConceptBagTimeSeries(nar, nar.memory.concepts, cycles, TimeSeries.ConceptBagTimeSeries.Mode.TaskLinkPriorityMean)
+        //                    new TreeMLData.ConceptBagTreeMLData(nar, nar.memory.concepts, cycles, TreeMLData.ConceptBagTreeMLData.Mode.TermLinkPriorityMean),
+        //                    new TreeMLData.ConceptBagTreeMLData(nar, nar.memory.concepts, cycles, TreeMLData.ConceptBagTreeMLData.Mode.TaskLinkPriorityMean)
         //            
         //            ).height(4),
         //
@@ -471,7 +472,7 @@ public class Predict1D {
         //            new EventChart(t, false, false, true).height(3)                
         );
 
-        new NWindow("_", tc).show(800, 800, true);
+        new NWindow("_", new PCanvas(tc)).show(800, 800, true);
         //new NARSwing(nar);
 
         addAxioms();

@@ -28,12 +28,13 @@ import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Concept;
-import nars.gui.NARSwing;
-import automenta.vivisect.TimeSeries;
+import automenta.vivisect.TreeMLData;
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.Chart;
-import automenta.vivisect.timeline.Timeline2DCanvas;
+import automenta.vivisect.timeline.TimelineVis;
 import nars.inference.AbstractObserver;
 import nars.util.NARTrace;
 
@@ -51,7 +52,7 @@ public class ConceptIntegratorExample extends TimelineExample {
         private final NAR nar;
         
         public class ConceptActivity {
-            public TimeSeries meanPriority;
+            public TreeMLData meanPriority;
             
             private final Concept concept;
             
@@ -61,7 +62,7 @@ public class ConceptIntegratorExample extends TimelineExample {
             
             public ConceptActivity(Concept c) {
                 this.concept = c;
-                meanPriority = new TimeSeries(c.name().toString() + " ~pri", NARSwing.getColor(c.hashCode(), 0.5f, 0.85f), historySize);
+                meanPriority = new TreeMLData(c.name().toString() + " ~pri", Video.getColor(c.hashCode(), 0.5f, 0.85f), historySize);
             }
 
             public ConceptActivity cycle(long n) {
@@ -75,7 +76,7 @@ public class ConceptIntegratorExample extends TimelineExample {
                     for (long i = n - cycleWindow + 1; i <= n; i++) {
                         if (i < 0) continue;
                         //TODO linear interpolate
-                        meanPriority.push(i, ap);
+                        meanPriority.add((int)i, ap);
                     }
                     
                     priorityAccumulator = 0;
@@ -121,9 +122,9 @@ public class ConceptIntegratorExample extends TimelineExample {
         private List<Chart> getCharts() {
             List<Chart> l = new ArrayList(concepts.size());
             
-            float min = 0, max = 0;
+            double min = 0, max = 0;
             for (ConceptActivity a : concepts.values()) {
-                float[] mm = a.meanPriority.getMinMax();
+                double[] mm = a.meanPriority.getMinMax();
                 if (mm[0] < min) min = mm[0];
                 if (mm[1] > max) max = mm[1];
             }
@@ -170,7 +171,7 @@ public class ConceptIntegratorExample extends TimelineExample {
         
         nar.finish(cycles);
 
-        Timeline2DCanvas tc = new Timeline2DCanvas(ci.getCharts());
+        TimelineVis tc = new TimelineVis(ci.getCharts());
 
 
         /*
@@ -196,7 +197,7 @@ public class ConceptIntegratorExample extends TimelineExample {
         );
         */
         
-        new NWindow("_", tc).show(800, 800, true);
+        new NWindow("_", new PCanvas(tc)).show(800, 800, true);
     
         
 

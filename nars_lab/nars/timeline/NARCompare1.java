@@ -19,9 +19,10 @@ package nars.timeline;
 import nars.core.NAR;
 import nars.core.Param;
 import nars.core.build.Default;
-import automenta.vivisect.TimeSeries.FirstOrderDifferenceTimeSeries;
+import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.timeline.Timeline2DCanvas;
+import automenta.vivisect.swing.PCanvas;
+import automenta.vivisect.timeline.TimelineVis;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
@@ -53,7 +54,7 @@ public class NARCompare1 extends TimelineExample {
         b.addInput(input);
         b.finish(cycles);
         
-        new NWindow("_", new Timeline2DCanvas(
+        new NWindow("_", new PCanvas(new TimelineVis(
             new LineChart(at.getCharts("task.novel.add", "task.immediate_processed")).height(3),
             new LineChart(at.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
             new LineChart(at.getCharts("concept.priority.mean")).height(2),                
@@ -65,7 +66,7 @@ public class NARCompare1 extends TimelineExample {
             new LineChart(bt.getCharts("concept.priority.mean")).height(2),
             new StackedPercentageChart(bt.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
             new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", bt.charts.get("concept.count")))
-        )).show(900, 800, true);
+        ))).show(900, 800, true);
     }
     
 }

@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -25,7 +26,6 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.gui.NARSwing;
 import nars.io.Output.ERR;
 import nars.io.Output.EXE;
 import nars.io.Output.IN;
@@ -183,7 +183,7 @@ public class TaskTree extends NPanel implements Observer, Runnable {
             this.task = t;
 
             setOpaque(true);
-            setFont(NARSwing.monofont);
+            setFont(Video.monofont);
             
             updateTask();
         }

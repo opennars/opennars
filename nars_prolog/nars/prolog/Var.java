@@ -252,7 +252,7 @@ public class Var extends Term {
     /**
      * Set the term which is direct bound
      */
-    void setLink(Term l) {
+    public void setLink(Term l) {
         link = l;
     }
 

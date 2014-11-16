@@ -27,7 +27,10 @@ import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 
 /**
- *  Default handlers for text perception
+ *  Default handlers for text perception.
+ *  Parses input text into sequences of AbstractTask's which input into 
+ *      Memory via NAR input channel & buffer port.
+ *  
  *  TODO break into separate subclasses for each text mode
  */
 public class DefaultTextPerception implements Plugin, Observer {
