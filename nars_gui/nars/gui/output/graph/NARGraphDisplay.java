@@ -53,7 +53,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
             float confidence = 0.5f + tr.getConfidence();            
             alpha = confidence * 0.75f + 0.25f;
 
-            Term t = ((Sentence) o).content;
+            //Term t = ((Sentence) o).content;
             rad = (float) (Math.log(1 + 2 + confidence));
         } else if (o instanceof Task) {
             Task ta = (Task) o;
@@ -66,7 +66,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
 
             rad = (2 + 6 * co.budget.summary());
             alpha = vertexAlpha(o);                
-            v.stroke = 5;
+            //v.stroke = 5;
         } else if (o instanceof Term) {
             Term t = (Term) o;
             rad = (float) (Math.log(1 + 2 + t.getComplexity()));
@@ -100,6 +100,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
          v.label = label;         
          v.speed = 0.1f;
          v.radius = rad * nodeSize;
+         v.textColor = defaultTextColor;
     }
 
     @Override
@@ -107,19 +108,24 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
    
         E edge = e.edge;
         
+
+        int color = defaultEdgeColor;
+        
         float thickness = lineWidth;
         if (edge instanceof NARGraph.TermLinkEdge) {
-            TermLink t = ((NARGraph.TermLinkEdge)edge).termLink;
+            TermLink t = ((NARGraph.TermLinkEdge)edge).getObject();
             float p = t.getPriority();            
-            thickness = (1 + p) * lineWidth;
+            thickness = (1 + p) * lineWidth;            
+            color = Video.color(255f * (0.5f + p*0.5f), 125f, 125f, 255f * (0.5f + p*0.5f) );
         }
         if (edge instanceof NARGraph.TaskLinkEdge) {
-            TaskLink t = ((NARGraph.TaskLinkEdge)edge).taskLink;
+            TaskLink t = ((NARGraph.TaskLinkEdge)edge).getObject();
             float p = t.targetTask.getPriority();            
             thickness = (1 + p) * lineWidth;
+            color = Video.color(125f, 255f * (0.5f + p*0.5f), 125f, 255f * (0.5f + p*0.5f) );
         }
     
-        e.color = getEdgeColor(edge);
+        e.color = color;
         e.thickness = thickness;
     }
 
@@ -133,27 +139,6 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
     }    
     
 
-//
-//    
-    
-    public int getEdgeColor(final E e) {
-        if (e instanceof NARGraph.TermLinkEdge) {
-            TermLink t = ((NARGraph.TermLinkEdge)e).termLink;
-            float p = t.getPriority();
-            return Video.color(255f * (0.5f + p*0.5f), 125f, 125f, 255f * (0.5f + p*0.5f) );
-        }
-        if (e instanceof NARGraph.TaskLinkEdge) {
-            TaskLink t = ((NARGraph.TaskLinkEdge)e).taskLink;
-            float p = t.targetTask.getPriority();
-            return Video.color(125f, 255f * (0.5f + p*0.5f), 125f, 255f * (0.5f + p*0.5f) );
-        }
-        /*Integer i = edgeColors.get(e.getClass());
-        if (i == null) {
-            i = PGraphPanel.getColor(e.getClass());
-            edgeColors.put(e.getClass(), i);
-        }*/
-        return defaultEdgeColor;
-    }
 //
 //    @Override
 //    public int getTextColor(V v) {

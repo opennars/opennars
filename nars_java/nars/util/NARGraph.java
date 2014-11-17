@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.xml.transform.TransformerConfigurationException;
 import nars.core.NAR;
@@ -100,8 +101,44 @@ public class NARGraph extends DirectedMultigraph {
         void onFinish(NARGraph g);
     }
 
-    public static class NAREdge extends DefaultEdge {
+    abstract public static class NAREdge<X> extends DefaultEdge {
+        private final X object;
+        private int hash;
 
+        public NAREdge(X x) {
+            this.object = x;
+            this.hash = getHash();
+        }
+        public NAREdge() {
+            this.object = (X)getClass();
+            this.hash = getHash();
+        }
+        
+        private int getHash() {
+            return Objects.hash(object.hashCode(), getSource(), getTarget());
+        }        
+
+        @Override public int hashCode() {
+            return hash;
+        }
+
+        public X getObject() {
+            return object;
+        }
+
+        @Override public boolean equals(final Object obj) {
+            if (obj == object) return true;
+            if (obj instanceof NAREdge) {
+                NAREdge e = (NAREdge)obj;
+                return ((getSource() == e.getSource()) && //need .equals?
+                        (getTarget() == e.getTarget()) && //need .equals?
+                        (object.equals( ((NAREdge)obj).object ))
+                       );
+            }
+            return false;
+        }
+        
+        
         @Override
         public Object getSource() {
             return super.getSource();
@@ -132,20 +169,21 @@ public class NARGraph extends DirectedMultigraph {
         }
     }
 
-    public static class TermLinkEdge extends NAREdge {
-        public final TermLink termLink;
+    public static class TermLinkEdge extends NAREdge<TermLink> {
+        
 
-        public TermLinkEdge(TermLink t) {  this.termLink = t;         }
+        public TermLinkEdge(TermLink t) {  super(t); }
+
+        
         
         @Override public String toString() { return "termlink";         }
 
         @Override public Object clone() {  return super.clone();        }
     }
     
-    public static class TaskLinkEdge extends NAREdge {
-        public final TaskLink taskLink;
+    public static class TaskLinkEdge extends NAREdge<TaskLink> {
 
-        public TaskLinkEdge(TaskLink t) {  this.taskLink = t;         }
+        public TaskLinkEdge(TaskLink t) {  super(t);         }
         
         @Override public String toString() { return "tasklink";         }
 

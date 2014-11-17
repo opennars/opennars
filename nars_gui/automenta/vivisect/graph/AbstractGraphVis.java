@@ -3,7 +3,6 @@ package automenta.vivisect.graph;
 
 
 import automenta.vivisect.Vis;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -28,7 +27,6 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
     Set<E> deadEdges = new LinkedHashSet();
 
     Graph<V,E> currentGraph;
-    boolean showSyntax;
 
     boolean updateNext = true;
     
