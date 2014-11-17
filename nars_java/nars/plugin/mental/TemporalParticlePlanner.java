@@ -161,7 +161,6 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
         boolean modified = false;
 
         if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
-            Term prev = null;
             for (Term e : c.term) {
 
                 if (!isPlanTerm(e)) {
@@ -212,7 +211,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
                     //executable term, add
                     inlined.add(e);
                 }
-                prev = e;
+                
             }
         }
 
@@ -243,7 +242,6 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
         this.executive = n.memory.executive;
         this.graph = executive.graph;
         
-        used=enabled;
         n.memory.event.set(this, enabled, 
                 UnexecutableGoal.class, 
                 UnexecutableOperation.class);

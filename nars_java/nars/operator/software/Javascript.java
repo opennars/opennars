@@ -8,11 +8,12 @@ import nars.core.Memory;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
+import nars.operator.mental.Mental;
 
 /**
  * Executes a Javascript expression
  */
-public class Javascript extends SynchronousFunctionOperator {
+public class Javascript extends SynchronousFunctionOperator implements Mental {
     
     ScriptEngine js = null;      
 

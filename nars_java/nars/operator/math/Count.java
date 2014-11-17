@@ -23,6 +23,7 @@ import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
+import nars.operator.mental.Mental;
 
 /**
  * Count the number of elements in a set
@@ -38,7 +39,7 @@ import nars.operator.SynchronousFunctionOperator;
 
  * 
  */
-public class Count extends SynchronousFunctionOperator {
+public class Count extends SynchronousFunctionOperator implements Mental {
 
     public Count() {
         super("^count");

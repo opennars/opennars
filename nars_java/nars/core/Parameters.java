@@ -27,6 +27,11 @@ package nars.core;
  */
 public class Parameters {
     
+    /** use this for advanced error checking, at the expense of lower performance.
+        it is enabled for unit tests automatically regardless of the value here.    */
+    public static boolean DEBUG = false;
+    
+    
     
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
@@ -36,23 +41,11 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    //full NAL9 mode //not recommened, system cant grasp the consequences
-    public static boolean INTERNAL_EXPERIENCE_FULL=false;
+    
     public static boolean BE_RATIONAL=true; //don't allow ^want and ^believe to be active/have an effect, 
     //which means its only used as monitor
     
-    //rational NAL9 mode //this one works nice
-    public static boolean INTERNAL_EXPERIENCE=true;
-    
-    public static double INTERNAL_EXPERIENCE_CREATION_BUDGET_SUMMARY=0.75;
-    
-    //internal experience has less durability?
-    public static float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
-    
-    //internal experience has less durability?
-    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
-    //internal experience has less priority?
-    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
+
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered. 
@@ -169,9 +162,7 @@ public class Parameters {
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
     
-    /** use this for advanced Bag error checking, at the expense of lower performance.
-        it is enabled for unit tests automatically regardless of the value here.    */
-    public static boolean DEBUG = false;
+
     
     /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
     public static boolean TERM_ELEMENT_EQUIVALENCY = false;

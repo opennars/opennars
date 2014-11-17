@@ -38,7 +38,7 @@ import nars.operator.Operator;
 /**
  * Operator that creates a judgment with a given statement
  */
-public class Believe extends Operator {
+public class Believe extends Operator implements Mental {
 
     public Believe() {
         super("^believe");

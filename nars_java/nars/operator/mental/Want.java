@@ -35,7 +35,7 @@ import nars.operator.Operator;
 /**
  * Operator that creates a goal with a given statement
  */
-public class Want extends Operator {
+public class Want extends Operator implements Mental {
 
     public Want() {
         super("^want");
