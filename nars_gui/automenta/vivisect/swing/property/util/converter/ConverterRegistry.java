@@ -20,7 +20,6 @@ package automenta.vivisect.swing.property.util.converter;
 import java.util.HashMap;
 import java.util.Map;
 
-import automenta.vivisect.swing.property.sheet.converter.DimensionConverter;
 
 
 /**

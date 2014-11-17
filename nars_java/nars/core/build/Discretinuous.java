@@ -1,7 +1,6 @@
 package nars.core.build;
 
 import nars.core.Memory;
-import nars.core.Param;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import nars.core.NAR;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 

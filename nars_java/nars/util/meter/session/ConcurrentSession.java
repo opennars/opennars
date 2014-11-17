@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventManager;
-import nars.util.meter.event.EventType;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
 import nars.util.meter.recorder.DataRecorders;

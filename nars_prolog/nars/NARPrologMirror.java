@@ -23,7 +23,6 @@ import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
-import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;
 import nars.language.Implication;

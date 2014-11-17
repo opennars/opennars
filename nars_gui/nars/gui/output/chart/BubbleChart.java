@@ -1,6 +1,5 @@
 package nars.gui.output.chart;
 
-import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;

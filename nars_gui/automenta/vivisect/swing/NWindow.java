@@ -20,7 +20,6 @@
  */
 package automenta.vivisect.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

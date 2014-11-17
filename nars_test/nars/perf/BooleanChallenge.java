@@ -13,7 +13,6 @@ import nars.core.NAR;
 import nars.core.build.Discretinuous;
 import nars.entity.Task;
 import nars.io.Output.OUT;
-import nars.io.TextOutput;
 import static nars.io.Texts.n2;
 import nars.io.narsese.Narsese;
 import nars.language.Inheritance;

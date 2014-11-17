@@ -24,8 +24,6 @@
 package automenta.vivisect.gui;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.io.InputStream;
 
 import processing.core.PApplet;
 import processing.core.PImage;

@@ -17,11 +17,6 @@
  */
 package automenta.vivisect.swing.property.beans.editor;
 
-import java.util.Date;
-import java.util.Locale;
-
-//import com.toedter.calendar.JDateChooser;
-
 /**
  * Date Property Editor based on <a
  * href="http://www.toedter.com/en/jcalendar/index.html">toedter

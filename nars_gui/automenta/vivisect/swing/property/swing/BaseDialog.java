@@ -39,7 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import automenta.vivisect.swing.property.util.ResourceManager;
 
 /**
  * An extension of the <code>JDialog</code> with built-in support for

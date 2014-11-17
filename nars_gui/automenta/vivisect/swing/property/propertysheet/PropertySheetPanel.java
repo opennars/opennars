@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -43,7 +42,6 @@ import javax.swing.event.ListSelectionListener;
 import automenta.vivisect.swing.property.swing.IconPool;
 import automenta.vivisect.swing.property.swing.LookAndFeelTweaks;
 import automenta.vivisect.swing.property.swing.plaf.blue.BlueishButtonUI;
-import automenta.vivisect.swing.property.util.ResourceManager;
 
 
 /**

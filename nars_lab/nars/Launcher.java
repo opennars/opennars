@@ -28,7 +28,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import nars.core.build.Default;
 import nars.gui.NARSwing;
-import nars.nario.NARio;
 
 /**
  *

@@ -22,7 +22,6 @@ package nars.inference;
 
 import java.util.List;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.core.control.NAL;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;

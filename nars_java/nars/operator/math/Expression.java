@@ -13,7 +13,6 @@ import org.encog.ml.prg.EncogProgramContext;
 import org.encog.ml.prg.ProgramNode;
 import org.encog.ml.prg.expvalue.ExpressionValue;
 import org.encog.ml.tree.TreeNode;
-import org.encog.parse.expression.common.RenderCommonExpression;
 
 /**
  * Parses an expression string to terms

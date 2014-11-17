@@ -27,8 +27,6 @@ import org.encog.ml.MethodFactory;
 import org.encog.ml.ea.train.basic.TrainEA;
 import org.encog.ml.genetic.MLMethodGeneticAlgorithm;
 import org.encog.ml.genetic.MLMethodGenome;
-import org.encog.ml.genetic.crossover.Splice;
-import org.encog.ml.genetic.crossover.SpliceNoRepeat;
 import org.encog.ml.genetic.mutate.MutatePerturb;
 import org.encog.ml.genetic.mutate.MutateShuffle;
 

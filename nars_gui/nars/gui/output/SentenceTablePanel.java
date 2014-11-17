@@ -1,11 +1,9 @@
 package nars.gui.output;
 
-import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,13 +14,6 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.gui.NARSwing;
-import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
-import nars.language.CompoundTerm;
-import nars.language.Term;
-import nars.util.DefaultGraphizer;
-import nars.util.NARGraph;
-import org.jgrapht.graph.DirectedMultigraph;
 
 public class SentenceTablePanel extends TablePanel {
 
