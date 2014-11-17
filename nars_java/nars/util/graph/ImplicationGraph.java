@@ -249,10 +249,10 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         }
         
         final Implication st = (Implication)ct;
-        
+                
         if ((st.getTemporalOrder() == TemporalRules.ORDER_NONE) || (st.operator() == NativeOperator.IMPLICATION_BEFORE) || (!s.isEternal()))
             return false;
-                
+                                
         final Term subject, predicate;
         
         boolean reverse = false;

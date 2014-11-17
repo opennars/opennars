@@ -21,12 +21,21 @@ public class Variables {
      */
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map) {
 
+        final boolean term1HasVar = term1.hasVar(type);
+        final boolean term2HasVar = term2.hasVar(type);
+        
+        
         final boolean term1Var = term1 instanceof Variable;
         final boolean term2Var = term2 instanceof Variable;
         final boolean termsEqual = term1.equals(term2);
-        if (!term1Var && !term2Var && termsEqual) {
+        if (!term1Var && !term2Var && termsEqual)  {
             return true;
-        }       
+        }
+        
+        
+        /*if (termsEqual) {
+            return true;
+        }*/
         
         Term t;                
         if (term1Var && (((Variable) term1).getType() == type)) {
@@ -67,7 +76,7 @@ public class Variables {
                 }
                 return true;
             }
-        } else if ((term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
+        } else if ((term1HasVar || term2HasVar) && (term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
             final CompoundTerm cTerm1 = (CompoundTerm) term1;
             final CompoundTerm cTerm2 = (CompoundTerm) term2;
             if (cTerm1.size() != cTerm2.size()) {
@@ -148,7 +157,7 @@ public class Variables {
         final Map<Term, Term> map[] = new Map[2]; //begins empty: null,null
         
         final boolean hasSubs = findSubstitute(type, t1, t2, map);
-        if (hasSubs) {                        
+        if (hasSubs) {
             compound[0] = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
             if (compound[0] == null) return false;
             
