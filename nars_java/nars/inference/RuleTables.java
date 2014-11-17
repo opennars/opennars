@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
@@ -62,79 +63,6 @@ import nars.operator.Operator;
  */
 public class RuleTables {
 
-    
-    public static void InternalOperations(Memory memory,Sentence belief, NAL nal, Term beliefTerm, Term taskTerm) {
-    
-        if(Parameters.INTERNAL_EXPERIENCE_FULL && Memory.randomNumber.nextDouble()<Parameters.INTERNAL_EXPERIENCE_PROBABILITY &&
-                Memory.randomNumber.nextDouble()<0.25) { //make 4 times less probable to do one of those than by innate beliefs for now
-            String[] ops=new String[]{"^remind","^doubt","^consider","^evaluate","hestitate","^wonder","^belief","^want"}; //the operators which dont have a innate belief
-            //also get a chance to reveal its effects to the system this way
-            Operator op=memory.getOperator(ops[Memory.randomNumber.nextInt(ops.length)]);
-            Product prod=new Product(new Term[]{belief.content});
-            
-            if(op!=null && prod!=null) {
-                
-                Term new_term=Inheritance.make(prod, op);
-                Sentence sentence = new Sentence(
-                    new_term, Symbols.GOAL_MARK, 
-                    new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                    new Stamp(memory));
-                
-                float quality = BudgetFunctions.truthToQuality(sentence.truth);
-                BudgetValue budget = new BudgetValue(
-                    Parameters.DEFAULT_GOAL_PRIORITY*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL, 
-                    Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                    quality);
-
-                Task newTask = new Task(sentence, budget);       
-                nal.derivedTask(newTask, false, false, null, null);
-            }
-        }
-
-        if(Parameters.INTERNAL_EXPERIENCE_FULL && beliefTerm instanceof Implication && Memory.randomNumber.nextDouble()<=Parameters.INTERNAL_EXPERIENCE_PROBABILITY) {
-            Implication imp=(Implication) beliefTerm;
-            if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
-                boolean valid=true;
-                if(imp.getSubject() instanceof Conjunction) {
-                    Conjunction conj=(Conjunction) imp.getSubject();
-                    if(!conj.term[0].equals(taskTerm)) {
-                        valid=false; //the expected needed term is not included
-                    }
-                    for(int i=1;i<conj.term.length;i++) {
-                        if(!(conj.term[i] instanceof Interval)) {
-                            valid=false;
-                            break;
-                        }
-                    }
-                } else {
-                    if(!imp.getSubject().equals(taskTerm)) {
-                        valid=false;
-                    }
-                }    
-
-                if(valid) {
-                    Operator op=memory.getOperator("^anticipate");
-                    Product args=new Product(new Term[]{imp.getPredicate()});
-                    Term new_term=Operation.make(args,op);
-
-                    Sentence sentence = new Sentence(
-                        new_term, Symbols.GOAL_MARK, 
-                        new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                        new Stamp(memory));
-
-                    float quality = BudgetFunctions.truthToQuality(sentence.truth);
-                    BudgetValue budget = new BudgetValue(
-                        Parameters.DEFAULT_GOAL_PRIORITY*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL, 
-                        Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                        quality);
-
-                    Task newTask = new Task(sentence, budget);       
-                    nal.derivedTask(newTask, false, false, null, null);
-                }
-            }
-        }
-    }
     
     /**
      * Entry point of the inference engine
@@ -184,7 +112,7 @@ public class RuleTables {
                 nal.doublePremiseTask(newterm, truth, newBudget, false);
             }
             
-            InternalOperations(memory, belief, nal, beliefTerm, taskTerm);
+            nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
             if(beliefTerm instanceof Implication && 
              (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) &&

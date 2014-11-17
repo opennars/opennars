@@ -33,7 +33,7 @@ import nars.operator.Operator;
 /**
  * Operator that creates a question with a given statement
  */
-public class Wonder extends Operator {
+public class Wonder extends Operator implements Mental {
 
     public Wonder() {
         super("^wonder");

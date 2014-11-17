@@ -28,7 +28,7 @@ import nars.operator.Operator;
 /**
  * Register a new operator when the system is running
  */
-public class Register extends Operator {
+public class Register extends Operator implements Mental {
 
     public Register() {
         super("^register");

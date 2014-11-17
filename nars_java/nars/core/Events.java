@@ -62,10 +62,11 @@ public class Events {
     public static class ConceptQuestionRemove { }
 
     
-    //planning
+    //Executive & Planning
     public static class UnexecutableGoal {   }
     public static class UnexecutableOperation {   }
     public static class NewTaskExecution {    }
+    public static class InduceSucceedingEvent {    }
     
 
     public static class TermLinkAdd { }
@@ -81,6 +82,10 @@ public class Events {
     public static class TaskImmediateProcess { }
     public static class TermLinkSelect { }
     public static class BeliefSelect { }
+    
+    /** called from RuleTables.reason for a given Belief */
+    public static class BeliefReason {    }
+    
     public static class ConceptUnification { } //2nd level unification in CompositionalRules
 
     public static class TaskAdd { }
@@ -145,13 +150,6 @@ public class Events {
         
         
     }
-
-    
-
-    
-
-    
-
     
     
 }

@@ -4,7 +4,6 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -39,7 +38,7 @@ public class Counting implements Plugin {
                         return;
 
                     Task task = (Task)a[0];
-                    if(task.budget.summary()<Parameters.INTERNAL_EXPERIENCE_CREATION_BUDGET_SUMMARY) {
+                    if(task.budget.summary() < InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                         return;
                     }
 

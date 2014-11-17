@@ -355,7 +355,7 @@ public class TicTacToe extends JPanel {
         }
         
         //for NAL9 (anticipate)
-        if(Parameters.INTERNAL_EXPERIENCE_FULL) {
+        if (nar.memory.getOperator("^anticipate")!=null) {
             rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> (--,<input --> succeeded>)>>.\n");
             rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
         }

@@ -22,6 +22,7 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.operator.mental.Mental;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
@@ -29,11 +30,12 @@ import com.google.common.util.concurrent.AtomicDouble;
  */
 public class Abbreviation implements Plugin {
 
+    private double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
     
     /**
     * Operator that give a CompoundTerm an atomic name
     */
-    public static class Abbreviate extends Operator {
+    public static class Abbreviate extends Operator implements Mental {
 
         public Abbreviate() {
             super("^abbreviate");
@@ -104,8 +106,11 @@ public class Abbreviation implements Plugin {
         if(obs==null) {
             obs=new EventObserver() {            
                 @Override public void event(Class event, Object[] a) {
-                    if (event != TaskDerive.class || Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY)
-                        return;                    
+                    if (event != TaskDerive.class)
+                        return;
+                    
+                    if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
+                        return;
 
                     Task task = (Task)a[0];
 

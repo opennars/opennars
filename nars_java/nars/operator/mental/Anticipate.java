@@ -21,8 +21,23 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
+import nars.core.EventEmitter.EventObserver;
+import nars.core.Events;
+import nars.core.Events.InduceSucceedingEvent;
 import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Parameters;
+import nars.core.control.NAL;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TruthValue;
+import nars.inference.BudgetFunctions;
+import nars.inference.TemporalRules;
+import static nars.inference.TemporalRules.order;
+import nars.io.Symbols;
+import nars.language.Negation;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -30,11 +45,51 @@ import nars.operator.Operator;
 /**
  * Operator that creates a judgment with a given statement
  */
-public class Anticipate extends Operator {
+public class Anticipate extends Operator implements EventObserver, Mental {
 
+    Term anticipateTerm = null;
+    long anticipateTime = 0;
+    
+    //TODO set this by an optional additional parameter to ^anticipate
+    float anticipateDurations = 1f;
+    
     public Anticipate() {
-        super("^anticipate");
+        super("^anticipate");        
     }
+
+    @Override
+    public boolean setEnabled(NAR n, boolean enabled) {
+        n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class);
+        return true;
+    }
+    
+    @Override
+    public void event(Class event, Object[] args) {
+        if (event == InduceSucceedingEvent.class) {            
+            
+            Task newEvent = (Task)args[0];
+            NAL nal = (NAL)args[1];
+            Sentence newSentence = newEvent.sentence;
+            
+            if ((anticipateTerm!=null) && order(anticipateTime, newSentence.getOccurenceTime(), nal.memory.getDuration()) == TemporalRules.ORDER_FORWARD) {
+                Term s = newEvent.sentence.content;
+                TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                Term N = Negation.make(s);
+                Stamp stamp = new Stamp(nal.memory);
+                Sentence S = new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
+                BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
+                Task task = new Task(S, budget);
+                nal.derivedTask(task, false, true, null, null);
+                anticipateTerm = null;
+            }
+            
+            if ((anticipateTerm!=null) && newSentence.truth.getExpectation() > 0.5 && newSentence.content.equals(anticipateTerm)) {
+                anticipateTerm = null; //it happened like expected
+            }
+            
+        }
+    }
+    
 
     /**
      * To create a judgment with a given statement
@@ -46,9 +101,10 @@ public class Anticipate extends Operator {
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         
         Term content = args[0];
-        memory.executive.anticipateTime=memory.time() + memory.param.duration.get();
-        memory.executive.anticipateTerm=content;
+        anticipateTime=memory.time() + (int)(memory.getDuration() * anticipateDurations);
+        anticipateTerm=content;
         
         return null;
     }
+
 }

@@ -7,45 +7,21 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import nars.core.Events;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.core.control.NAL;
-import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
-import nars.language.Negation;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.operator.math.Add;
-import nars.operator.math.Count;
-import nars.operator.mental.Anticipate;
-import nars.operator.mental.Believe;
-import nars.operator.mental.Consider;
-import nars.operator.mental.Doubt;
-import nars.operator.mental.Evaluate;
-import nars.operator.mental.Feel;
-import nars.operator.mental.FeelBusy;
-import nars.operator.mental.FeelHappy;
-import nars.operator.mental.Hesitate;
-import nars.operator.mental.Name;
-import nars.operator.mental.Register;
-import nars.operator.mental.Remind;
-import nars.operator.mental.Want;
-import nars.operator.mental.Wonder;
-import nars.operator.software.Javascript;
-import nars.operator.software.NumericCertainty;
-import nars.plugin.mental.Abbreviation.Abbreviate;
-import nars.plugin.mental.TemporalParticlePlanner;
+import nars.operator.mental.Mental;
 
 /**
  * Operation execution and planning support. Strengthens and accelerates
@@ -389,7 +365,8 @@ public class Executive {
     }
 
     /**
-     * Entry point for all potentially executable tasks
+     * Entry point for all potentially executable tasks.
+     * Returns true if the Task has a Term which can be executed
      */
     public boolean executeDecision(final Task t, final Concept concept) {
 
@@ -397,7 +374,7 @@ public class Executive {
 
             Term content = concept.term;
 
-            if ((content instanceof Operation) || (TemporalParticlePlanner.used && isSequenceConjunction(content))) {
+            if (isExecutableTerm(content)) {
                 addExecution(concept, t);
                 return true;
             } 
@@ -540,30 +517,18 @@ public class Executive {
     }
 
     public Task stmLast = null;
-    public Term anticipateTerm = null;
-    public long anticipateTime = 0;
+    
 
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
         if(newEvent.budget==null) {
             return false;
         }
+        
+        
         //new one happened and duration is already over, so add as negative task
-        if (Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm != null && 
-                (order(anticipateTime, newEvent.sentence.getOccurenceTime(), memory.getDuration()) == TemporalRules.ORDER_FORWARD)) {
-            Term s = newEvent.sentence.content;
-            TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-            Negation N = (Negation) Negation.make(s);
-            Stamp stamp = new Stamp(nal.memory);
-            Sentence S = new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
-            BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
-            Task task = new Task(S, budget);
-            nal.derivedTask(task, false, true, null, null);
-            anticipateTerm = null;
-        }
-        if (Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm != null && newEvent.sentence.truth.getExpectation() > 0.5 && newEvent.sentence.content.equals(anticipateTerm)) {
-            anticipateTerm = null; //it happened like expected
-        }
+        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
+                
 
         if (newEvent == null || newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
             return false;
@@ -593,38 +558,22 @@ public class Executive {
         return true;
     }
 
-    public boolean contains_mental(Task t) {
-        if(!(t.sentence.content instanceof Operation)) {
+    public static boolean containsMentalOperator(final Task t) {
+        if(!(t.sentence.content instanceof Operation))
             return false;
-        }
-        Operation o=(Operation) t.sentence.content;
-        Operator op=(Operator) o.getPredicate();
         
-        //TODO replace with common interface that can be instanceof compared
-        if(op instanceof Anticipate || op instanceof Believe || op instanceof Consider || op instanceof Doubt ||
-                op instanceof Evaluate || op instanceof Feel || op instanceof FeelBusy || op instanceof FeelHappy ||
-                op instanceof Hesitate || op instanceof Name || op instanceof Register || op instanceof Remind ||
-                op instanceof Want || op instanceof Wonder || op instanceof Add ||
-                op instanceof Count || op instanceof Javascript || op instanceof NumericCertainty || op instanceof Abbreviate) {
-            return true;
-        }
-        return false;
+        Operation o= (Operation)t.sentence.content;
+        return (o.getOperator() instanceof Mental);
     }
     
     //is input or by the system triggered operation
-    public boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
-        if (!((newEvent.isInput() || (Parameters.INTERNAL_EXPERIENCE && contains_mental(newEvent))) || (newEvent.getCause() != null))) {
-            return false;
-        }
-        /*Term newcontent=newEvent.sentence.content;
-         if(newcontent instanceof Operation) {
-         Term pred=((Operation)newcontent).getPredicate();
-         if(pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
-         return false;
-         }
-         }*/
-        return true;
+    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
+        if (newEvent.isInput()) return true;
+        if (containsMentalOperator(newEvent)) return true;
+        if (newEvent.getCause()!=null) return true;       
+        return false;
     }
+    
     /*
      public boolean isActionable(final Task newEvent, Memory mem) {
      if(!((newEvent.isInput()))) {

@@ -19,11 +19,12 @@ package nars.operator.math;
 import nars.core.Memory;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
+import nars.operator.mental.Mental;
 
 /**
  * Count the number of elements in a set
  */
-public class Add extends SynchronousFunctionOperator {
+public class Add extends SynchronousFunctionOperator implements Mental {
 
     public Add() {
         super("^add");

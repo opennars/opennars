@@ -11,7 +11,8 @@ import nars.core.Memory.Timing;
 import nars.core.NAR;
 import nars.core.Build;
 import nars.core.Param;
-import nars.core.Parameters;
+import static nars.core.build.Default.InternalExperienceMode.Full;
+import static nars.core.build.Default.InternalExperienceMode.Minimal;
 import nars.core.control.DefaultAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -23,10 +24,11 @@ import nars.entity.TermLink;
 import nars.io.DefaultTextPerception;
 import nars.language.Term;
 import nars.operator.Operator;
+import nars.operator.mental.Anticipate;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
-import nars.plugin.mental.MinimalInternalExperience;
+import nars.plugin.mental.InternalExperience;
 import nars.plugin.mental.TemporalParticlePlanner;
 import nars.storage.Bag;
 import nars.storage.CacheBag;
@@ -62,7 +64,14 @@ public class Default extends Build implements ConceptBuilder {
     int taskBufferSize;
     
     int taskBufferLevels;
-            
+    
+    enum InternalExperienceMode {
+        None, Minimal, Full
+    }
+    
+    InternalExperienceMode internalExperience = InternalExperienceMode.Minimal;
+        
+    
     transient TemporalParticlePlanner pluginPlanner = null;
 
     
@@ -131,28 +140,22 @@ public class Default extends Build implements ConceptBuilder {
                 
         n.addPlugin(new DefaultTextPerception());
         
+        
         if(pluginPlanner!=null) {
             n.addPlugin(pluginPlanner);
         }
         
-        if(Parameters.INTERNAL_EXPERIENCE_FULL) {
-            FullInternalExperience nal9=new FullInternalExperience();
-            n.addPlugin(nal9);
-        } 
-        else
-        if(Parameters.INTERNAL_EXPERIENCE) {
-            MinimalInternalExperience nal9=new MinimalInternalExperience();
-            n.addPlugin(nal9);
+        if (internalExperience==Minimal) {            
+            n.addPlugin(new InternalExperience());
+            n.addPlugin(new Anticipate());      // expect an event
         }
-        if(Parameters.INTERNAL_EXPERIENCE_FULL) {
-            Abbreviation nal9abr=new Abbreviation();
-            n.addPlugin(nal9abr);
+        else if (internalExperience==Full) {            
+            n.addPlugin(new FullInternalExperience());
+            n.addPlugin(new Anticipate());      // expect an event
+            n.addPlugin(new Abbreviation());
+            n.addPlugin(new Counting());
         }
-        if(Parameters.INTERNAL_EXPERIENCE_FULL) {
-            Counting nal9cnt=new Counting();
-            n.addPlugin(nal9cnt);
-        }
-
+        
         return n;
     }
 
@@ -308,6 +311,17 @@ public class Default extends Build implements ConceptBuilder {
         }
     }
 
+    public InternalExperienceMode getInternalExperience() {
+        return internalExperience;
+    }
+
+    public Default setInternalExperience(InternalExperienceMode internalExperience) {
+        this.internalExperience = internalExperience;
+        return this;
+    }
+
+    
+    
     public static Default fromJSON(String filePath) {
         
         try {

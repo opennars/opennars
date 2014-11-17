@@ -42,11 +42,11 @@ public class Rover2 extends PhysicsModel {
 
     boolean wraparound = false;
 
-    public static RoverModel rover;
+    public RoverModel rover;
     final NAR nar;
     private float linearSpeed;
     private float angleSpeed;
-    static int mission = 0;
+    int mission = 0;
 
     private static final double TWO_PI = 2 * Math.PI;
 
@@ -375,18 +375,19 @@ public class Rover2 extends PhysicsModel {
         (nar.param).taskLinkForgetDurations.set(10f);
         (nar.param).termLinkForgetDurations.set(25f);
         (nar.param).novelTaskForgetDurations.set(5f);
+        Rover2 theRover;
 
         //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
         //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
         // RoverWorld.world= new RoverWorld(rv, 48, 48);
-        new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, new Rover2(nar)) {
+        new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, theRover = new Rover2(nar)) {
 
             @Override
             public void keyPressed(KeyEvent e) {
 
                 if (e.getKeyChar() == 'm') {
-                    mission = (mission + 1) % 2;
-                    System.out.println("Mission: " + mission);
+                    theRover.mission = (theRover.mission + 1) % 2;
+                    System.out.println("Mission: " + theRover.mission);
                 } else if (e.getKeyChar() == 'g') {
                     System.out.println(nar.memory.concepts);
                     //removedConcepts.report(System.out);

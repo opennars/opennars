@@ -37,7 +37,7 @@ import nars.operator.Operator;
 /**
  * Feeling common operations
  */
-public abstract class Feel extends Operator {
+public abstract class Feel extends Operator implements Mental {
     private final Term feelingTerm;
 
     public Feel(String name) {
