@@ -141,7 +141,7 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E> {
      */
     public FastOrganicLayout() {
         
-        setInitialTemp(3f);
+        setInitialTemp(13f);
         setMinDistanceLimit(1f);
         setMaxDistanceLimit(200f);
         

@@ -34,17 +34,21 @@ public class EdgeVis<V, E> {
     public boolean equals(Object obj) {
         return edge.equals(obj);
     }    
-
-    public void draw(AbstractGraphVis c, PGraphics g) {
-
-        if (elem1 == null) {            
-            elem1 = c.getVertexDisplay(c.currentGraph.getEdgeSource(edge));
-            elem2 = c.getVertexDisplay(c.currentGraph.getEdgeTarget(edge));
-        }
-        
+    
+    private void updateVertices(final AbstractGraphVis c) {
+        elem1 = c.getVertexDisplay(c.currentGraph.getEdgeSource(edge));
+        elem2 = c.getVertexDisplay(c.currentGraph.getEdgeTarget(edge));
         if ((elem1 == null) || (elem2 == null) || (elem1 == elem2)) {
             throw new RuntimeException(this + " has missing vertices");
+        }        
+    }
+
+    public void draw(final AbstractGraphVis c, final PGraphics g) {
+
+        if (elem1 == null) {            
+            updateVertices(c);
         }
+        
 
         float scale = elem1.scale;
         assert(elem2.scale == scale);
@@ -58,7 +62,7 @@ public class EdgeVis<V, E> {
         float x2 = elem2.x*scale;
         float y2 = elem2.y*scale;
 
-        c.drawArrow(g, x1, y1, x2, y2);
+        c.drawArrow(g, x1, y1, x2, y2, elem2.radius/2f);
 
         //float cx = (x1 + x2) / 2.0f;
         //float cy = (y1 + y2) / 2.0f;
