@@ -4,7 +4,6 @@ import automenta.vivisect.TreeMLData;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
@@ -16,11 +15,12 @@ import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import automenta.vivisect.timeline.TimelineVis;
-import javax.swing.BoxLayout;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import nars.gui.EventChart;
+import nars.gui.WrapLayout;
 
 import nars.util.NARTrace;
 
@@ -37,6 +37,7 @@ public class TimelinePanel extends NPanel implements EventObserver {
     private final JPanel controls;
     private final NAR nar;
     private final NARTrace trace;
+    private final PCanvas canvas;
 
     public TimelinePanel(NAR n) {
         super(new BorderLayout());
@@ -46,23 +47,24 @@ public class TimelinePanel extends NPanel implements EventObserver {
         trace.setActive(false);
         
         
-        charts = new ArrayList();
+        charts = new CopyOnWriteArrayList();
 
                
         this.timeline = new TimelineVis(charts);
         
         
         this.controls = new JPanel();
-        controls.setLayout(new BoxLayout(controls, BoxLayout.PAGE_AXIS));
+        controls.setLayout(new WrapLayout());
         
         JCheckBox enableBox = new JCheckBox("Enable");
         enableBox.setSelected(true); //TODO make functional
         enableBox.setEnabled(false);
         controls.add(enableBox);
 
-        add(new PCanvas(timeline), BorderLayout.CENTER);
-        add(controls, BorderLayout.EAST);
+        add(canvas = new PCanvas(timeline), BorderLayout.CENTER);
+        add(controls, BorderLayout.NORTH);
         
+        canvas.setZoom(1.5f);
         addChartControls();
         
         n.on(CycleEnd.class, this);
@@ -84,7 +86,8 @@ public class TimelinePanel extends NPanel implements EventObserver {
         }
     
         public void enableChart() {
-            chart = newChart();      
+            chart = newChart();    
+            chart.setOverlayEnable(true);
             charts.add(chart);
         }
         
