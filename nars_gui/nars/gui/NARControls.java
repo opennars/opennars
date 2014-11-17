@@ -24,7 +24,6 @@ import automenta.vivisect.TreeMLData;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.LineChart;
@@ -69,7 +68,7 @@ import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.NARFacePanel;
 import nars.gui.output.TimelinePanel;
 import nars.gui.output.chart.MeterVis;
-import nars.gui.output.graph.NARGraphVis;
+import nars.gui.output.graph.NARGraphPanel;
 import nars.inference.Executive;
 import nars.inference.Executive.Execution;
 import nars.inference.GraphExecutive;
@@ -450,7 +449,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         
         
         
-        //new NWindow("graphvis", new PCanvas( new NARGraphVis(nar) ) ).show(800, 800, false);
+        new NWindow("graphvis", new NARGraphPanel( nar) ).show(800, 800, false);
         
     }
 

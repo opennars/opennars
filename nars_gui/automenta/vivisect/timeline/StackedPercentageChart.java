@@ -46,9 +46,8 @@ public class StackedPercentageChart extends LineChart {
             float sy = y;
             float gap = yScale * (1.0f - barHeight) / data.size();
             for (TreeMLData chart : data) {
-                int ccolor = chart.getColor().getRGB();
-                float lx = 0;
-                float ly = 0;
+                int ccolor = chart.getColor();
+
                 l.g.strokeWeight(1f);
                 l.g.fill(255f);
                 float x = (t - l.cycleStart) * timeScale;

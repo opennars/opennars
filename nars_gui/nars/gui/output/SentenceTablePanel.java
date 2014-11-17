@@ -17,7 +17,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NARSwing;
-import nars.gui.output.graph.ProcessingGraphPanel2;
+import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.util.DefaultGraphizer;

@@ -14,9 +14,14 @@ public class BarChart extends LineChart {
 
     @Override
     protected void drawData(TimelineVis l, float timeScale, float yScale1, float y) {
-        int ccolor = 0;
+        
+        
+        if (data.size()!=1) 
+            throw new RuntimeException("BarChart only supports one data set");
+        
         TreeMLData chart = data.get(0);
-        ccolor = chart.getColor().getRGB();
+        
+        int ccolor = chart.getColor();
         l.g.noStroke();
         for (int t = l.cycleStart; t < l.cycleEnd; t++) {
             float x = (t-l.cycleStart) * timeScale;

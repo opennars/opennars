@@ -96,9 +96,7 @@ public class SpectrumChart extends LineChart {
             updated = true;
         }
         
-        int ccolor = 0;
-        
-        ccolor = chart.getColor().getRGB();
+        //int ccolor = chart.getColor();
         l.g.noStroke();
 
         long prevWindow = -1;

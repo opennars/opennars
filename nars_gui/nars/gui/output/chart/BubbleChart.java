@@ -13,12 +13,11 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.gui.NARSwing;
 
 
 /**
  * 2D bubble chart with configurable dimensions
- * @author me
+ * TODO reimplement colorization
  */
 public class BubbleChart extends NPanel implements EventObserver {
     private final NAR nar;
@@ -97,7 +96,7 @@ public class BubbleChart extends NPanel implements EventObserver {
                 int minY = Integer.MAX_VALUE;
                 int maxX = Integer.MIN_VALUE;
                 int maxY = Integer.MIN_VALUE;
-                Color cc = Video.getColor(c.term.toString(), 0.5f, 0.6f);
+                //Color cc = Video.getColor(c.term.toString(), 0.5f, 0.6f);
 
                 for (Sentence s : c.beliefs) {
                     if (s.truth!=null) {
@@ -110,8 +109,8 @@ public class BubbleChart extends NPanel implements EventObserver {
                         int px = (int)Math.max(minEsize, (int)(c.getPriority() * esize));
                         int py = px;
                         
-                        Color color = Video.getColor(cc, statementOpacity * c.getPriority());
-                        g.setPaint(color);
+                        //Color color = new Color(Video.(cc, statementOpacity * c.getPriority());
+                        //g.setPaint(color);
                         int ix = x-px/2;
                         int iy = y-py/2;
                         int jx = x+px/2;
@@ -132,8 +131,8 @@ public class BubbleChart extends NPanel implements EventObserver {
                 int ch = padding * 2 + maxY-minY;
                 
                 float areafactor = Math.max(1f, asize/(cw + ch));
-                Color occ = Video.getColor(cc, conceptOpacity * c.getPriority()/areafactor);
-                g.setPaint(occ);
+                //Color occ = Video.getColor(cc, conceptOpacity * c.getPriority()/areafactor);
+                //g.setPaint(occ);
                 g.fillOval(border+minX-padding, border+minY-padding, cw, ch);
             }
         }

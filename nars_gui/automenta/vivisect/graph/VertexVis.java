@@ -8,6 +8,7 @@ package automenta.vivisect.graph;
 import automenta.vivisect.Vis;
 import automenta.vivisect.graph.GraphDisplay.Shape;
 import static automenta.vivisect.graph.GraphDisplay.Shape.Ellipse;
+import automenta.vivisect.timeline.TimelineVis;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,11 +30,12 @@ public class VertexVis<V, E> {
     public String label;
     public int color;
     public int textColor;
+    public float textScale;
     public int strokeColor;
     public Set<E> edges;
     public Shape shape;
     public float speed;
-    public final List<Vis> children = new ArrayList();
+    public List<Vis> children = null;
 
     public VertexVis(V o) {
         this.vertex = o;
@@ -44,6 +46,7 @@ public class VertexVis<V, E> {
         strokeColor = 0;
         speed = 0.9f;
         scale = 1f;
+        textScale = 1f;
     }
 
     @Override
@@ -67,13 +70,15 @@ public class VertexVis<V, E> {
         
         boolean needsUpdate = update(c);
         //System.out.println(radius + " " + color + " " + label + " " + x + " " + y);
-        if (stroke > 0) {
-            p.stroke(strokeColor);
-            p.strokeWeight(stroke * scale);
-        }
+        
         float r = radius * scale;
         if (r == 0) {
             return needsUpdate;
+        }
+        
+        if (stroke > 0) {
+            p.stroke(strokeColor);
+            p.strokeWeight(stroke * scale);
         }
         p.fill(color); //, alpha * 255 / 2);
         if (shape == null) shape = Ellipse;
@@ -86,18 +91,20 @@ public class VertexVis<V, E> {
                 p.ellipse(x * scale, y * scale, r, r);
                 break;
         }
-        if (label != null) {
+        
+        if ((label != null) && (textScale > 0)) {
             p.fill(textColor); //, alpha * 255 * 0.75f);
-            p.textSize(r / 2f);
+            p.textSize(r / 2f * textScale);
             p.text(label, x * scale, y * scale);
         }
+        
         if (stroke > 0) {
             //reset stroke
             p.noStroke();
         }
         
         
-        if (!children.isEmpty()) {
+        if ((children!=null) && (!children.isEmpty())) {
             p.pushMatrix();
             p.translate(x*scale, y*scale);
             p.scale(radius/32f, radius/32f);
@@ -166,6 +173,12 @@ public class VertexVis<V, E> {
 
     public float getRadius() {
         return radius;
+    }
+
+    public void addChild(TimelineVis timeline) {
+        if (children == null)
+            children = new ArrayList();
+        children.add(timeline);
     }
     
 }

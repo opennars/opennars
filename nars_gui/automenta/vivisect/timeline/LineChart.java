@@ -116,7 +116,7 @@ public class LineChart extends Chart implements MultiChart {
         l.g.textSize(15f);
         float dsyt = screenyHi + 0.15f * dsy;
         for (TreeMLData chart : data) {
-            l.g.fill(chart.getColor().getRGB());
+            l.g.fill(chart.getColor());
             dsyt += ytspace;
             l.g.text(chart.label, 0, dsyt);
             dsyt += ytspace;
@@ -133,7 +133,7 @@ public class LineChart extends Chart implements MultiChart {
     protected void drawData(TimelineVis l, float timeScale1, float yScale1, float y) {
         int ccolor = 0;
         for (TreeMLData chart : data) {
-            ccolor = chart.getColor().getRGB();
+            ccolor = chart.getColor();
             float lx = 0;
             float ly = 0;
             l.g.fill(255f);

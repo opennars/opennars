@@ -1,4 +1,4 @@
-package nars.gui.output.graph;
+package nars.gui.output.graph.deprecated;
 
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;

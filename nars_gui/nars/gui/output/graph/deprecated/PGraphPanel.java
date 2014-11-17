@@ -1,4 +1,4 @@
-package nars.gui.output.graph;
+package nars.gui.output.graph.deprecated;
 
 import com.mxgraph.model.mxGeometry;
 import java.awt.Button;
