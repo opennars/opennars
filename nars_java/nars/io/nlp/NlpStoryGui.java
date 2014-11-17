@@ -11,6 +11,7 @@ import nars.core.NAR;
 import nars.core.build.Default;
 import nars.gui.NARSwing;
 
+
 public class NlpStoryGui extends JFrame {
     private class PreviousSceneActionListener implements ActionListener {
         public PreviousSceneActionListener(NlpStoryGui nlpGui) {
