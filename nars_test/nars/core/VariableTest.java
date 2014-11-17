@@ -66,10 +66,11 @@ public class VariableTest {
         new AbstractObserver(n, true, Solved.class) {            
             @Override public void event(Class event, Object[] args) {                
                 solutionFound.set(true);
+                n.stop();
             }
         };
 
-        n.finish(48);
+        n.finish(128);
           
         assertTrue(solutionFound.get());
         

@@ -13,7 +13,6 @@ import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.UP;
-import processing.core.PGraphics;
 import processing.event.MouseEvent;
 
 /**

@@ -23,7 +23,6 @@
 
 package automenta.vivisect.gui;
 
-import automenta.vivisect.swing.PCanvas;
 import java.util.Collections;
 import java.util.LinkedList;
 

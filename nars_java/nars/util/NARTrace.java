@@ -18,7 +18,6 @@ import nars.core.NAR;
 import nars.io.meter.CompoundMeter;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.gui.NARSwing;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
 import nars.inference.MemoryObserver;

@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.data.DefaultDataSet;
-import nars.util.meter.event.EventManager;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
 import nars.util.meter.util.FastPutsLinkedMap;

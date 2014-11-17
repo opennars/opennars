@@ -16,7 +16,6 @@ import nars.core.Events.FrameStart;
 import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
-import static nars.core.Parameters.DEBUG;
 import nars.core.control.AbstractTask;
 import nars.entity.Task;
 import nars.gui.NARControls;

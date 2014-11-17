@@ -43,7 +43,6 @@ import automenta.vivisect.swing.property.sheet.editor.ColorEditor;
 import automenta.vivisect.swing.property.sheet.editor.DimensionEditor;
 import automenta.vivisect.swing.property.sheet.editor.EnumEditor;
 import automenta.vivisect.swing.property.sheet.editor.FileEditor;
-import automenta.vivisect.swing.property.sheet.editor.NumberEditor;
 import automenta.vivisect.swing.property.sheet.editor.NumberEditor.ByteEditor;
 import automenta.vivisect.swing.property.sheet.editor.NumberEditor.DoubleEditor;
 import automenta.vivisect.swing.property.sheet.editor.NumberEditor.FloatEditor;

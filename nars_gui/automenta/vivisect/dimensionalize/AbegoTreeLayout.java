@@ -12,7 +12,6 @@ import automenta.vivisect.graph.VertexVis;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.abego.treelayout.NodeExtentProvider;

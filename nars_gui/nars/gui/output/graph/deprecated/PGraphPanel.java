@@ -2,7 +2,6 @@ package nars.gui.output.graph.deprecated;
 
 import com.mxgraph.model.mxGeometry;
 import java.awt.Button;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.Set;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.gui.NARSwing;
 import nars.gui.output.PPanel;
 import nars.language.Term;
 import org.jgrapht.ext.JGraphXAdapter;

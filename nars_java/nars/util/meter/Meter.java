@@ -14,7 +14,6 @@
  */
 package nars.util.meter;
 
-import com.sun.org.glassfish.external.statistics.Stats;
 import java.io.Serializable;
 import nars.core.Memory;
 import nars.util.meter.data.DataContainer;
