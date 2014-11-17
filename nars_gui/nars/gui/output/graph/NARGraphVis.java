@@ -26,6 +26,7 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.ResetEnd;
 import nars.core.NAR;
+import nars.gui.output.graph.layout.HashPriorityPolarLayout;
 import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
 import org.jgrapht.Graph;
@@ -47,6 +48,8 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
     private final GraphDisplays displays;
     private NARGraphDisplay style;
     private GraphDisplay layout;
+    
+    boolean updateNextGraph = false;
             
     public NARGraphVis(NAR n) {
         super(null, new GraphDisplays());
@@ -62,6 +65,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         displays.sequence.clear();
         displays.sequence.add(style);
         displays.sequence.add(layout);
+        setUpdateNext();
     }
 
     @Override
@@ -89,10 +93,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
     @Override
     public void setUpdateNext() {
         super.setUpdateNext();        
-        
-        Graph ng = nextGraph();
-        if (ng!=null)
-            displayedGraph.set(ng);
+        updateNextGraph = true;
     }
 
     
@@ -101,6 +102,13 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
     public Graph<Object, Object> getGraph() {        
         if (displayedGraph == null)
             return null;
+        if (updateNextGraph) {
+            updateNextGraph = false;
+
+            Graph ng = nextGraph();
+            if (ng!=null)
+                displayedGraph.set(ng);            
+        }
         return displayedGraph.get();
     }
     
@@ -115,14 +123,23 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         JPanel j = new JPanel(new FlowLayout(FlowLayout.LEFT));
         final JComboBox modeSelect = new JComboBox();
         modeSelect.addItem("Organic");
+        modeSelect.addItem("Circle Fixed");       
         modeSelect.addItem("GridSort");
         modeSelect.addItem("Circle Anim");
-        modeSelect.addItem("Circle Fixed");       
         modeSelect.addItem("Grid");
         //modeSelect.setSelectedIndex(cg.mode);
         modeSelect.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                //cg.mode = modeSelect.getSelectedIndex();
+                switch (modeSelect.getSelectedIndex()) {
+                    case 0:
+                        update(style, new FastOrganicLayout());
+                        break;
+                    case 1:
+                        update(style, new HashPriorityPolarLayout(-0.25f, 0.25f, 50));     
+                        break;
+
+                }
+//cg.mode = modeSelect.getSelectedIndex();
                 setUpdateNext();
             }
         });

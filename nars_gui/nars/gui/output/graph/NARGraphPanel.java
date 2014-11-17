@@ -13,6 +13,7 @@ import java.awt.FlowLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import nars.core.NAR;
+import nars.gui.WrapLayout;
 
 /**
  *
@@ -39,7 +40,9 @@ public class NARGraphPanel extends NPanel {
         layoutControl = vis.newLayoutPanel();
         graphControl = vis.newGraphPanel();
         
-        menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        menu = new JPanel(new WrapLayout(FlowLayout.LEFT));
+        menu.setOpaque(false);
         menu.add(graphControl);
         menu.add(visControl);
         menu.add(canvasControl);
