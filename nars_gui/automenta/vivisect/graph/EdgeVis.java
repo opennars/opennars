@@ -37,17 +37,18 @@ public class EdgeVis<V, E> {
 
     public void draw(AbstractGraphVis c, PGraphics g) {
 
-        if (elem1 == null) {
+        if (elem1 == null) {            
             elem1 = c.getVertexDisplay(c.currentGraph.getEdgeSource(edge));
             elem2 = c.getVertexDisplay(c.currentGraph.getEdgeTarget(edge));
         }
+        
+        if ((elem1 == null) || (elem2 == null) || (elem1 == elem2)) {
+            throw new RuntimeException(this + " has missing vertices");
+        }
+
         float scale = elem1.scale;
         assert(elem2.scale == scale);
         
-        if ((elem1 == null) || (elem2 == null) || (elem1 == elem2)) {
-            return;
-        }
-
         //TODO create EdgeDisplay class to cacahe these properties
         g.stroke(color);
         g.strokeWeight(thickness);

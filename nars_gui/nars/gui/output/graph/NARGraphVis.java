@@ -28,8 +28,13 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
     
     final AtomicReference<Graph> displayedGraph = new AtomicReference();
     private final NAR nar;
-    boolean taskLinks = true;
+    boolean showTaskLinks = false;
+    boolean showTermLinks = true;
     float minPriority = 0;
+    private boolean showBeliefs = false;
+    private boolean showDerivations = false;
+    private boolean showQuestions = false;
+    private boolean showTermContent = false;
             
     public NARGraphVis(NAR n) {
         super(null, new NARGraphDisplay(), new FastOrganicLayout());
@@ -40,7 +45,6 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
 
     @Override
     public void onVisible(boolean showing) {  
-        System.out.println("visible=" + showing);
         nar.memory.event.set(this, showing, FrameEnd.class, ResetEnd.class);        
     }
 
@@ -56,7 +60,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
     
     
     protected Graph nextGraph() {
-        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(false, true, false, false, 0, true, taskLinks));
+        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(showBeliefs, showDerivations, showQuestions, showTermContent, 0, showTermLinks, showTaskLinks));
     }
 
     @Override
@@ -68,7 +72,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
     
 
     public void setTaskLinks(boolean taskLinks) {
-        this.taskLinks = taskLinks;
+        this.showTaskLinks = taskLinks;
     }
 
     
