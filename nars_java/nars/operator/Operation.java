@@ -67,12 +67,20 @@ public class Operation extends Inheritance {
      * @param addSelf include SELF term at end of product terms
      * @return A compound generated or null
      */
-    public static Operation make(final Operator oper, final Term[] arg, boolean addSelf) {        
+    public static Operation make(final Operator oper, Term[] arg, boolean addSelf) {        
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
-                                
+        /*if(addSelf) {
+            Term[] arg2=new Term[arg.length+1];
+            arg2[0]=new Term("SELF");
+            for(int i=0;i<arg.length;i++) {
+                arg2[i+1]=arg[i];
+            }
+            arg=arg2;
+        }*/
+        
         return new Operation( new Product(arg), oper  );        
     }
 
