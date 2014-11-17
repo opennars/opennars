@@ -22,12 +22,10 @@ package nars.inference;
 
 import nars.core.Events;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.core.control.NAL;
 import nars.entity.Sentence;
-import nars.entity.Stamp;
 import nars.entity.TLink;
 import nars.entity.Task;
 import nars.entity.TaskLink;
@@ -43,9 +41,7 @@ import nars.language.Disjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
 import nars.language.Inheritance;
-import nars.language.Interval;
 import nars.language.Negation;
-import nars.language.Product;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Similarity;
@@ -53,8 +49,6 @@ import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variables;
-import nars.operator.Operation;
-import nars.operator.Operator;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -714,7 +708,9 @@ public class RuleTables {
                 if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
                     compound = (CompoundTerm) u[0];
                     statement = (Statement) u[1];
-                    SyllogisticRules.elimiVarDep(compound, component, statement.equals(beliefTerm), nal);
+                    SyllogisticRules.elimiVarDep(compound, component, 
+                            statement.equals(beliefTerm),
+                            nal);
                 } else if (task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, nal);
                 } else if (Variables.unify(VAR_QUERY, component, statement, u)) {

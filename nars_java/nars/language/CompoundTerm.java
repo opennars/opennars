@@ -482,12 +482,15 @@ public abstract class CompoundTerm extends Term {
     /**
      * Check whether the compound contains a certain component
      * Also matches variables, ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
+     *  ^^^ is this right? if so then try containsVariablesAsWildcard
+     * 
      * @param t The component to be checked
      * @return Whether the component is in the compound
      */
     @Override
     public boolean containsTerm(final Term t) {        
         return Terms.contains(term, t);
+        //return Terms.containsVariablesAsWildcard(term, t);
     }
 
     /**
@@ -843,6 +846,9 @@ public abstract class CompoundTerm extends Term {
         return true;        
     }
     
+    
+    
+    
     /** additional equality checks, in subclasses*/
     public boolean equals2(final CompoundTerm other) {
         return true;
@@ -950,6 +956,21 @@ public abstract class CompoundTerm extends Term {
 
     public boolean isNormalized() {
         return normalized;
+    }
+
+    /** compare subterms where any variables matched are not compared */
+    public boolean equalsVariablesAsWildcards(final CompoundTerm c) {
+        if (operator()!=c.operator()) return false;
+        if (size()!=c.size()) return false;
+        for (int i = 0; i < size(); i++) {
+            Term a = term[i];
+            Term b = c.term[i];
+            if ((a instanceof Variable) && (a.hasVarDep()) || 
+                    ((b instanceof Variable) && (b.hasVarDep())))
+                continue;
+            if (!a.equals(b)) return false;
+        }
+        return true;
     }
 
     
