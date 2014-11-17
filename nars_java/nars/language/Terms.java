@@ -467,5 +467,22 @@ public class Terms {
         return s.toArray(new Term[s.size()]);
     }
 
+    /**
+     * comparison that will match constant terms, allowing variables to match regardless
+     * ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
+     */
+    static boolean containsVariablesAsWildcard(final Term[] term, final Term b) {        
+        CompoundTerm bCompound = (b instanceof CompoundTerm) ? ((CompoundTerm)b) : null;
+        for (Term a : term) {
+            if (a.equals(b)) return true;
+            
+            if ((a instanceof CompoundTerm) && (bCompound!=null))  {
+                if (((CompoundTerm)a).equalsVariablesAsWildcards(bCompound))
+                        return true;
+            }
+        }
+        return false;
+    }
+
     
 }
