@@ -43,7 +43,7 @@ abstract public class NeuralDisplay<V, E> extends DefaultDisplay<V,E>  {
         
         vv.radius = baseSize/2f + (float)(baseSize * Math.abs(total));
         
-        vv.color = Video.getColor(layer.hashCode(), 0.75f, 0.75f, 0.75f).getRGB();
+        vv.color = Video.getColor(layer.hashCode(), 0.75f, 0.75f, 0.75f);
         vv.label = layer;
         vv.speed = 0.1f;
         vv.strokeColor = strokeColor;                

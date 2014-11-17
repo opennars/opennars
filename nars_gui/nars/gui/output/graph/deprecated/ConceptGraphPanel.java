@@ -1,3 +1,5 @@
+package nars.gui.output.graph.deprecated;
+
 //package nars.gui.output.graph;
 //
 //import java.awt.event.ActionEvent;

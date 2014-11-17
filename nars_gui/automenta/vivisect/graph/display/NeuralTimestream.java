@@ -93,7 +93,7 @@ public class NeuralTimestream<V, E> implements GraphDisplay<V,E>  {
         if (!streams.containsKey(vv)) {
             NeuralStream ns = new NeuralStream(vv);
             streams.put(vv, ns);
-            vv.children.add(ns.timeline);
+            vv.addChild(ns.timeline);
         }
         else {
             streams.get(vv).update();

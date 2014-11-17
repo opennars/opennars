@@ -132,7 +132,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
 
     @Override
     public void draw() {
-        hnav.applyTransform();
+        
 
         if (drawn) {
             return;
@@ -144,12 +144,23 @@ public class PCanvas extends PApplet implements HierarchyListener {
             fill(0, 0, 0, 255f * (1.0f - motionBlur));
             rect(0, 0, getWidth(), getHeight());
         } else {
-            background(0, 0, 0, 0.001f);
+            background(0, 0, 0);//, 0.001f);
         }
 
-        vis.draw((PGraphics) g);
+        hnav.applyTransform();
+        vis.draw(g);
     }
 
+    public void setMotionBlur(float motionBlur) {
+        this.motionBlur = motionBlur;
+    }
+
+    public float getMotionBlur() {
+        return motionBlur;
+    }
+
+    
+    
     @Override
     public void mouseWheel(MouseEvent event) {
         super.mouseWheel(event);

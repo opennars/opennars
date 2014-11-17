@@ -1,6 +1,5 @@
 package automenta.vivisect.graph;
 
-import automenta.vivisect.dimensionalize.FastOrganicLayout;
 import org.jgrapht.Graph;
 import processing.core.PGraphics;
 
@@ -39,12 +38,11 @@ public class AnimatingGraphVis<V,E> extends AbstractGraphVis<V,E> {
         
         return super.draw(g);
     }
-
+    
 
     
     @Override
     protected boolean hasUpdate() {
-        
         return false;
     }
 

@@ -39,7 +39,7 @@ public class DefaultDisplay<V, E> implements GraphDisplay<V, E> {
             v.label = v.vertex.toString();
         }
         v.radius = 16.0f + 7f * (float) Math.sin(getTime() * 4f);
-        v.color = Video.getColor(o.hashCode(), 0.75f, 0.95f, 0.75f).getRGB();
+        v.color = Video.getColor(o.hashCode(), 0.75f, 0.95f, 0.75f);
         v.textColor = white;
         v.stroke = 0;
         v.strokeColor = 0;

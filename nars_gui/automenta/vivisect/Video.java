@@ -101,8 +101,8 @@ public class Video {
         return Color.getHSBColor(hue, saturation, brightness);
     }
 
-    @Deprecated public static final Color getColor(int hashCode, float saturation, float brightness, float alpha) {
-        return getColor(getColor(hashCode, saturation, brightness), alpha);
+    public static final int getColor(int hashCode, float saturation, float brightness, float alpha) {
+        return colorHSB(hashCode, saturation, brightness, alpha);
     }
 
     @Deprecated public static final Color getColor(final Color c, float alpha) {
@@ -124,7 +124,7 @@ public class Video {
     //    }
 
     public static int colorHSB(float hue, float saturation, float brightness, float alpha) {
-        return Color.HSBtoRGB(hue, saturation, brightness) | ((int)(255f*alpha) << 24);
+        return Color.HSBtoRGB(hue, saturation, brightness) & 0x00ffffff | ((int)(255f*alpha) << 24);
     }
   
 }

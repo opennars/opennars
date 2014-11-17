@@ -9,13 +9,16 @@ import org.encog.util.kmeans.Centroid;
 
 /**
  * Used by Chart, a chart data set is a container to store chart data.
+ * TODO add ArrayDeque implementation as originally, for fast insertion/removal
  */
 public class TreeMLData implements MLData {
 
     //TODO use a primitive collection
     public final TreeMap<Integer,Double> values;
     
-    protected Color colour;
+    /** RGBA */
+    protected int colour;
+    
 	//protected double strokeWeight = 1;
     //protected int[] colors = new int[0];
 
@@ -40,8 +43,12 @@ public class TreeMLData implements MLData {
     }
     
     public TreeMLData(String theName, Color color, int historySize) {
+        this(theName, color.getRGB(), historySize); 
+    }
+    
+    public TreeMLData(String theName, int color, int historySize) {
         label = theName;
-        colour = color;
+        this.colour = color;
         capacity = historySize;
         values = new TreeMap();
     }
@@ -52,7 +59,7 @@ public class TreeMLData implements MLData {
         return this;
     }
 
-    public Color getColor() {
+    public int getColor() {
         return colour;
     }
 
