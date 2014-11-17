@@ -68,11 +68,11 @@ public class TimelineVis implements Vis {
     }
     
     public TimelineVis(Chart... charts) {        
-        this(Lists.newArrayList(charts));
+        this(new Camera(), charts);
     }
     
     public TimelineVis(Camera camera, Chart... charts) {        
-        this(camera, Lists.newArrayList(charts));
+        this(camera, Lists.newCopyOnWriteArrayList(Lists.newArrayList(charts)));
     }
     
     public void view(long start, long end) {

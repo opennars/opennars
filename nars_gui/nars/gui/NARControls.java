@@ -21,9 +21,12 @@
 package nars.gui;
 
 import automenta.vivisect.TreeMLData;
+import automenta.vivisect.dimensionalize.FastOrganicLayout;
+import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.LineChart;
@@ -68,6 +71,7 @@ import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.NARFacePanel;
 import nars.gui.output.TimelinePanel;
 import nars.gui.output.chart.MeterVis;
+import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
 import nars.inference.Executive;
 import nars.inference.Executive.Execution;
@@ -203,6 +207,27 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             });
             m.add(ml);
 
+            JMenuItem mv = new JMenuItem("+ Concept Network");
+            mv.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new NWindow("graphvis", new NARGraphPanel( nar) ).show(800, 800, false);
+                }
+            });
+            m.add(mv);
+            
+            JMenuItem tlp = new JMenuItem("+ Timeline");
+            tlp.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar));
+                    outputWindow.show(900, 700);        
+                }
+            });
+            m.add(tlp);
+
+            m.addSeparator();
+
             JMenuItem pml = new JMenuItem("+ Planning Log");
             pml.addActionListener(new ActionListener() {
                 @Override
@@ -237,27 +262,10 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             });
             m.add(al);
             
-            JMenuItem tlp = new JMenuItem("+ Timeline");
-            tlp.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar));
-                    outputWindow.show(900, 700);        
-                }
-            });
-            m.add(tlp);
+
+
 
             
-
-//            
-//            JMenuItem mv = new JMenuItem("+ Concept Graph");
-//            mv.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    new NWindow("Concept Graph", new ConceptGraphPanel(nar, new ConceptGraphCanvas(nar))).show(800, 500);
-//                }
-//            });
-//            m.add(mv);
 
 //            JMenuItem mv2 = new JMenuItem("+ Concept Graph 2");
 //            mv2.addActionListener(new ActionListener() {
@@ -269,18 +277,21 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 //            m.add(mv2);
 //
 //            
-//            JMenuItem imv = new JMenuItem("+ Implication Graph");
-//            imv.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
-//                    new NWindow("Implication Graph", 
-//                            new ProcessingGraphPanel(nar, 
-//                                    new ImplicationGraphCanvas(
-//                                            nar.memory.executive.graph))).show(500, 500);
-//                }
-//            });
-//            m.add(imv);
+            JMenuItem imv = new JMenuItem("+ Implication Graph");
+            imv.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
+                    new NWindow("Implication Graph", 
+                            new PCanvas( 
+                                    new AnimatingGraphVis(
+                                            nar.memory.executive.graph.implication,
+                                            new NARGraphDisplay(),
+                                            new FastOrganicLayout()
+                                    ))).show(500, 500);
+                }
+            });
+            m.add(imv);
 //
 //            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
 //            sg.addActionListener(new ActionListener() {
@@ -449,7 +460,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         
         
         
-        new NWindow("graphvis", new NARGraphPanel( nar) ).show(800, 800, false);
+        
         
     }
 

@@ -243,12 +243,14 @@ public class EventChart extends Chart {
 
     @Override
     public int getEnd() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (timepoints.isEmpty()) return 0;
+        return timepoints.firstKey().intValue();
     }
 
     @Override
     public int getStart() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (timepoints.isEmpty()) return 0;
+        return timepoints.lastKey().intValue();
     }
     
     
