@@ -28,26 +28,30 @@ public class TemporalParticlePlannerTest {
 //        }
         String exp = "<(&/,(^pick,X),+3,(^pick,Y),+3,(^pick,Z)) =/> <goal --> reached>>!";
         
-        testGraphPlan(input, exp, true);
-        //testGraphPlan(input, exp, false);
+        testGraphPlan(input, exp, true, true, 44);
+        testGraphPlan(input, exp, false, false, 1000);
     }    
 
-    public void testGraphPlan(String input, String expected, boolean withPlanner) throws IOException {
+    public void testGraphPlan(String input, String expected, boolean withPlanner, boolean expectSuccess, int cyclesToSolve) throws IOException {
         
-        NAR n = 
-                withPlanner?
-                    new Default().temporalPlanner(12, 64, 24).build() :
-                    new Default().build();
+        Default d = new Default().setInternalExperience(Default.InternalExperienceMode.None);
+        
+        NAR n = NAR.build(withPlanner?
+                            d.temporalPlanner(12, 64, 24) :
+                            d
+        );
         
         (n.param).decisionThreshold.set(0.3f);
         
         ExpectContains e = new ExpectContains(n, expected, true);
                
         n.addInput(input);
-
-        n.step(44);
         
-        assertEquals(withPlanner, e.success());
+        //new TextOutput(n, System.out);
+
+        n.step(cyclesToSolve);
+        
+        assertEquals("planner enabled? " + withPlanner + ".  ", expectSuccess, e.success());
         
     }
 

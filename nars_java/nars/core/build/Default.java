@@ -65,7 +65,7 @@ public class Default extends Build implements ConceptBuilder {
     
     int taskBufferLevels;
     
-    enum InternalExperienceMode {
+    public static enum InternalExperienceMode {
         None, Minimal, Full
     }
     

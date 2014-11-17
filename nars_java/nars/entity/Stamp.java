@@ -104,6 +104,7 @@ public class Stamp implements Cloneable {
      * derivation chain containing the used premises and conclusions which made
      * deriving the conclusion c possible
      * Uses LinkedHashSet for optimal contains/indexOf performance.
+     * TODO use thread-safety for this
      */
     private Collection<Term> derivationChain;
     

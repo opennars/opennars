@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
+import nars.io.Symbols;
 import nars.io.Texts;
 
 /**
@@ -288,6 +289,15 @@ public class Term implements AbstractTerm {
      */
     @Override public boolean hasVar() {
         return false;
+    }
+    
+    public boolean hasVar(final char type) {
+        switch (type) {
+            case Symbols.VAR_DEPENDENT: return hasVarDep();
+            case Symbols.VAR_INDEPENDENT: return hasVarIndep();
+            case Symbols.VAR_QUERY: return hasVarQuery();
+        }
+        throw new RuntimeException("Invalid variable type: " + type);
     }
     
     public boolean hasVarIndep() {

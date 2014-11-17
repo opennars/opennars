@@ -497,8 +497,8 @@ public abstract class CompoundTerm extends Term {
      * @return Whether the target is in the current term
      */
     @Override
-    public boolean containsTermRecursively(final Term target) {
-        for (final Term term : term) {
+    public boolean containsTermRecursively(final Term target) {        
+        for (final Term term : term) {            
             if (term.containsTermRecursively(target)) {
                 return true;
             }
