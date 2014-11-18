@@ -124,6 +124,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         final JComboBox modeSelect = new JComboBox();
         modeSelect.addItem("Organic");
         modeSelect.addItem("Circle Fixed");       
+        modeSelect.addItem("Circle Fixed (Half)");
         modeSelect.addItem("GridSort");
         modeSelect.addItem("Circle Anim");
         modeSelect.addItem("Grid");
@@ -135,7 +136,10 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
                         update(style, new FastOrganicLayout());
                         break;
                     case 1:
-                        update(style, new HashPriorityPolarLayout(-0.25f, 0.25f, 50));     
+                        update(style, new HashPriorityPolarLayout(0f, 1f, 50));     
+                        break;
+                    case 2:
+                        update(style, new HashPriorityPolarLayout(0.25f, 0.75f, 75));     
                         break;
 
                 }

@@ -7,6 +7,7 @@ package automenta.vivisect.graph;
 
 import com.google.common.collect.Lists;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
@@ -17,7 +18,7 @@ public class GraphDisplays<V,E> implements GraphDisplay<V,E> {
     final public List<GraphDisplay<V,E>> sequence;
 
     public GraphDisplays(GraphDisplay<V,E>... d) {
-        sequence = Lists.newArrayList(d);
+        sequence = new CopyOnWriteArrayList( Lists.newArrayList(d) );
     }
 
     @Override
