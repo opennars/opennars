@@ -5,7 +5,7 @@
 package nars.core;
 
 import java.util.Random;
-import nars.perf.evolve.GeneticSearch;
+import nars.perf.evolve.GeneticSearchEncog;
 import org.encog.Encog;
 import org.encog.ml.ea.train.basic.TrainEA;
 import org.encog.ml.prg.EncogProgram;
@@ -68,7 +68,7 @@ public class NARGenomeTest {
 		PrgPopulation pop = new PrgPopulation(context,1000);
 		
                 int maxCycles = 64;
-		TrainEA genetic = new TrainEA(pop, new GeneticSearch.CalculateNALTestScore(maxCycles));
+		TrainEA genetic = new TrainEA(pop, new GeneticSearchEncog.CalculateNALTestScore(maxCycles));
 		//genetic.setValidationMode(true);
 		genetic.setCODEC(new PrgCODEC());
 		genetic.addOperation(0.5, new SubtreeCrossover());
