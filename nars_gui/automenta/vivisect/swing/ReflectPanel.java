@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.vivisect.swing.property;
+package automenta.vivisect.swing;
 
 /**
  * L2FProd Common v9.2 License.
@@ -24,57 +24,52 @@ package automenta.vivisect.swing.property;
  */
 import automenta.vivisect.swing.property.propertysheet.PropertySheet;
 import automenta.vivisect.swing.property.propertysheet.PropertySheetPanel;
-import automenta.vivisect.swing.property.swing.LookAndFeelTweaks;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.SimpleBeanInfo;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * PropertySheetPage. <br>
- *
+ * Auto-reflect an object into a Swing PropertySheetPage
  */
-public class ReflectBeanExample extends JPanel {
+public class ReflectPanel<O> extends JPanel {
 
-    private static final long serialVersionUID = 8250532726229976961L;
 
     public static void main(String[] args) throws Exception {
+        
+        //Example
         JFrame frame = new JFrame("PropertySheet");
         frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add("Center", new ReflectBeanExample());
+        frame.getContentPane().add("Center", new ReflectPanel(frame));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocation(100, 100);
         frame.setVisible(true);
     }
 
-    public ReflectBeanExample() {
-		setLayout(LookAndFeelTweaks.createVerticalPercentLayout());
+    public ReflectPanel(O instance) {
+        super(new BorderLayout());
+        
+        BeanInfo beanInfo = new SimpleBeanInfo();
+        try {
+            beanInfo = Introspector.getBeanInfo(instance.getClass());
+        } catch (IntrospectionException e) {
+            e.printStackTrace();
+        }
+        final PropertySheetPanel sheet = new PropertySheetPanel();
+        sheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
+        sheet.setToolBarVisible(false);
+        sheet.setDescriptionVisible(false);
+        sheet.setBeanInfo(beanInfo);
 
-		final JButton button = new JButton();
-		button.setText("Change my properties!");
-		BeanInfo beanInfo = new SimpleBeanInfo();
-		try {
-			beanInfo = Introspector.getBeanInfo(JButton.class);
-		} catch (IntrospectionException e) {
-			e.printStackTrace();
-		}
-		final PropertySheetPanel sheet = new PropertySheetPanel();
-		sheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
-		sheet.setToolBarVisible(false);
-		sheet.setDescriptionVisible(false);
-		sheet.setBeanInfo(beanInfo);
-
-		final JPanel panel = new JPanel(LookAndFeelTweaks.createBorderLayout());
-		panel.add("Center", sheet);
-		panel.add("East", button);
-
+        sheet.setPreferredSize(new Dimension(100,100));
+        
         // initialize the properties with the value from the object
         // one can use sheet.readFromObject(button)
         // but I encountered some issues with Java Web Start. The method
@@ -82,28 +77,29 @@ public class ReflectBeanExample extends JPanel {
         // does not happen when not using Web Start. Load properties one
         // by one as follow will do the trick
         automenta.vivisect.swing.property.propertysheet.Property[] properties = sheet.getProperties();
-		for (int i = 0, c = properties.length; i < c; i++) {
-			try {
-				properties[i].readFromObject(button);
-			} catch (Exception e) {
-			}
-		}
+        for (int i = 0, c = properties.length; i < c; i++) {
+            try {
+                properties[i].readFromObject(instance);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-		// everytime a property change, update the button with it
-		PropertyChangeListener listener = new PropertyChangeListener() {
+        // everytime a property change, update the button with it
+        PropertyChangeListener listener = new PropertyChangeListener() {
 
-			public void propertyChange(PropertyChangeEvent evt) {
-				automenta.vivisect.swing.property.propertysheet.Property prop = (automenta.vivisect.swing.property.propertysheet.Property) evt.getSource();
-				prop.writeToObject(button);
-				button.repaint();
-			}
-		};
-		sheet.addPropertySheetChangeListener(listener);
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                automenta.vivisect.swing.property.propertysheet.Property prop = (automenta.vivisect.swing.property.propertysheet.Property) evt.getSource();
+                prop.writeToObject(instance);
+                
+                
+                //button.repaint();
+            }
+        };
+        sheet.addPropertySheetChangeListener(listener);
 
-
-		add(panel, "*");
+        add(sheet, BorderLayout.CENTER);
     }
-
-
 
 }
