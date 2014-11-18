@@ -125,9 +125,9 @@ public class LogicMeter extends AbstractMeter implements Serializable {
         
         add(SOLUTION_BEST = new EventValueSensor("task.solution.best"));
         
-        add(PLAN_GRAPH_IN_DELAY_MAGNITUDE = new EventValueSensor("plan.graph.in.delay_magnitude"));
-        add(PLAN_GRAPH_IN_OPERATION = new EventValueSensor("plan.graph.in.operation"));
-        add(PLAN_GRAPH_IN_OTHER = new EventValueSensor("plan.graph.in.other"));
+        add(PLAN_GRAPH_IN_DELAY_MAGNITUDE = new EventValueSensor("plan.graph.add#delay_magnitude"));
+        add(PLAN_GRAPH_IN_OPERATION = new EventValueSensor("plan.graph.add#operation"));
+        add(PLAN_GRAPH_IN_OTHER = new EventValueSensor("plan.graph.add#other"));
         
         add(PLAN_GRAPH_EDGE = new EventValueSensor("plan.graph.edge"));
         add(PLAN_GRAPH_VERTEX = new EventValueSensor("plan.graph.vertex"));
@@ -229,16 +229,16 @@ public class LogicMeter extends AbstractMeter implements Serializable {
         
         {
             
-            put("plan.graph.edge.count", PLAN_GRAPH_EDGE.getValue());
-            put("plan.graph.vertex.count", PLAN_GRAPH_VERTEX.getValue());
+            put("plan.graph#edge", PLAN_GRAPH_EDGE.getValue());
+            put("plan.graph#vertex", PLAN_GRAPH_VERTEX.getValue());
             
-            put("plan.graph.in.other.count", PLAN_GRAPH_IN_OTHER.getHits());
-            put("plan.graph.in.operation.count", PLAN_GRAPH_IN_OPERATION.getHits());
-            put("plan.graph.in.interval.count", PLAN_GRAPH_IN_DELAY_MAGNITUDE.getHits());
+            put("plan.graph.add#other", PLAN_GRAPH_IN_OTHER.getHits());
+            put("plan.graph.add#operation", PLAN_GRAPH_IN_OPERATION.getHits());
+            put("plan.graph.add#interval", PLAN_GRAPH_IN_DELAY_MAGNITUDE.getHits());
             put("plan.graph.in.delay_magnitude.mean", PLAN_GRAPH_IN_DELAY_MAGNITUDE.getReset().mean());
 
-            put("plan.task.executable", PLAN_TASK_EXECUTABLE.getReset().sum());
-            put("plan.task.planned", PLAN_TASK_PLANNED.getReset().sum());
+            put("plan.task#executable", PLAN_TASK_EXECUTABLE.getReset().sum());
+            put("plan.task#planned", PLAN_TASK_PLANNED.getReset().sum());
 
         }
     }
