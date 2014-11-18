@@ -1,10 +1,17 @@
 package nars.io.nlp;
 
+import com.google.gson.Gson;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import nars.core.NAR;
@@ -48,12 +55,48 @@ public class NlpStoryGui extends JFrame {
         }
     }
     
+    private class LoadActionListener implements ActionListener {
+        public LoadActionListener(NlpStoryGui nlpGui) {
+            this.nlpGui = nlpGui;
+        }
+        
+        private NlpStoryGui nlpGui;
+        
+        public void actionPerformed (ActionEvent ae){
+            nlpGui.loadPressed();
+        }
+    }
+    
+    private class SaveActionListener implements ActionListener {
+        public SaveActionListener(NlpStoryGui nlpGui) {
+            this.nlpGui = nlpGui;
+        }
+        
+        private NlpStoryGui nlpGui;
+        
+        public void actionPerformed (ActionEvent ae){
+            nlpGui.savePressed();
+        }
+    }
+    
     public NlpStoryGui(NAR nar) {
         super("NLP");
         
         this.nar = nar;
         
         init();
+        
+        actionPanelContext = ActionPanelContext.createPanelContext(this);
+        
+        JPanel storagePanel = new JPanel();
+        JButton loadButton = new JButton("load");
+        loadButton.addActionListener(new LoadActionListener(this));
+        JButton saveButton = new JButton("save");
+        saveButton.addActionListener(new SaveActionListener(this));
+        
+        storagePanel.add(loadButton, BorderLayout.WEST);
+        storagePanel.add(saveButton, BorderLayout.EAST);
+        
         
         JPanel nextPreviousPanel = new JPanel();
         BorderLayout nextPreviousBorderLayout = new BorderLayout();
@@ -77,9 +120,9 @@ public class NlpStoryGui extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(7, 1, 0, 15));
         
+        add(storagePanel);
         add(nextPreviousPanel);
-        add(new JLabel("Action(s)"));
-        add(actionsTextArea);
+        add(actionPanelContext.panel);
         add(new JLabel("Text"));
         add(textTextArea);
         
@@ -90,79 +133,6 @@ public class NlpStoryGui extends JFrame {
         setVisible(true);
     }
     
-    /*
-    public void parseWasPressed() {
-        resetSentencePartContexts();
-        
-        String pureTextAreaContent = pureTextArea.getText();
-        
-        ArrayList<NaturalLanguagePerception.LinePart> lineParts = NaturalLanguagePerception.parseIntoLineParts(pureTextAreaContent);
-        ArrayList<ArrayList<NaturalLanguagePerception.LinePart>> sentenceParts = NaturalLanguagePerception.splitLinePartsIntoSentenceParts(lineParts);
-        
-        int countOfSentenceParts = sentenceParts.size();
-        if (countOfSentenceParts > 3) {
-            countOfSentenceParts = 3;
-        }
-        
-        // for each sentencePart
-        // - reconstruct text
-        // - set sentencePart
-        // - set gui stuff
-        for (int i = 0; i < countOfSentenceParts; i++) {
-            ArrayList<NaturalLanguagePerception.LinePart> sentencePart = sentenceParts.get(i);
-            
-            String reconstructedString = NaturalLanguagePerception.reconstructString(sentencePart);
-            sentencePartContexts[i].nlpPart = reconstructedString;
-            sentencePartContexts[i].sentencePart = sentencePart;
-            sentencePartContexts[i].set();
-        }
-    }
-    
-    public void learnWasPressed() {
-        learn();
-        
-        resetSentencePartContexts();
-    }
-    
-    private void resetSentencePartContexts() {
-        for (int i = 0; i < 3; i++) {
-            sentencePartContexts[i].reset();
-        }
-    }
-    
-    private void learn() {
-        for (int i = 0; i < 3; i++) {
-            // TODO< more clean way to check if it is active/used >
-            if (sentencePartContexts[i].sentencePart == null) {
-                continue;
-            }
-            
-            learnSentencePart(sentencePartContexts[i]);
-        }
-    }
-    
-    private void learnSentencePart(SentencePartContext context) {
-        for (NaturalLanguagePerception.LinePart iterationLinePart : context.sentencePart) {
-            String narseseOfLinePart = translateLinePartToNarsese(iterationLinePart);
-            
-            nar.addInput(narseseOfLinePart);
-            nar.step(5);
-        }
-        
-        nar.addInput(context.getNarsese());
-        nar.step(15);
-    }
-    
-    
-    
-    private void init() {
-        sentencePartContexts = new  SentencePartContext[3];
-        
-        sentencePartContexts[0] = new SentencePartContext();
-        sentencePartContexts[1] = new SentencePartContext();
-        sentencePartContexts[2] = new SentencePartContext();
-    }
-    */
     
     public static void main(String[] args) {
         NAR nar = NAR.build(new Default().setSubconceptBagSize(1000));
@@ -175,9 +145,9 @@ public class NlpStoryGui extends JFrame {
     public void nextScenePressed() {
         storeScene();
         
-        if (currentSceneIndex >= scenes.size()-1) {
-            scenes.add(new Scene());
-            currentSceneIndex = scenes.size()-1;
+        if (currentSceneIndex >= scenes.scenes.size()-1) {
+            scenes.scenes.add(new Scene());
+            currentSceneIndex = scenes.scenes.size()-1;
         }
         else {
             currentSceneIndex++;
@@ -200,22 +170,70 @@ public class NlpStoryGui extends JFrame {
     public void learnPressed() {
         storeScene();
         
-        learnStory(scenes);
+        learnStory(scenes.scenes);
         
         // flush and update GUI
         flushStory();
         updateGui();
     }
     
+    public void savePressed() {
+        int returnVal = fc.showSaveDialog(NlpStoryGui.this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fc.getSelectedFile();
+            String filepath = selectedFile.getAbsolutePath();
+            
+            Gson gson = new Gson();
+            String gsonContent = gson.toJson(scenes);
+
+            try {
+                storeTextToFile(filepath, gsonContent);
+            }
+            catch (IOException exception) {
+                // ignore
+            }
+        } else {
+            // Open command cancelled by user
+        }
+    }
+    
+    public void loadPressed() {
+        int returnVal = fc.showOpenDialog(NlpStoryGui.this);
+ 
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fc.getSelectedFile();
+            String filepath = selectedFile.getAbsolutePath();
+            
+            String gsonContent = "";
+            
+            try {
+                gsonContent = loadTextFromFile(filepath);
+            }
+            catch (IOException exception) {
+                // ignore
+            }
+            
+            Gson gson = new Gson();
+            scenes = (Scenes)gson.fromJson(gsonContent, Scenes.class);
+            
+            currentSceneIndex = 0;
+            updateGui();
+        } else {
+            // Open command cancelled by user
+        }
+    }
+    
     private void flushStory() {
-        scenes.clear();
-        scenes.add(new Scene());
+        scenes.scenes.clear();
+        scenes.scenes.add(new Scene());
         currentSceneIndex = 0;
     }
     
     private void learnStory(ArrayList<Scene> scenesToLearn) {
         for (Scene iteratorScene : scenesToLearn) {
-            nar.addInput(iteratorScene.actionAsString + ". :|:");
+            String narseseOfActions = convertActionItemsToNarsese(iteratorScene.actionItems);
+            
+            nar.addInput(narseseOfActions + ". :|:");
             nar.step(5);
             nar.addInput(translateTextIntoTemporalNarsese(iteratorScene.textAsString) + ". :|:");
             nar.step(20);
@@ -227,31 +245,35 @@ public class NlpStoryGui extends JFrame {
     }
     
     private void storeScene() {
-        if( currentSceneIndex < 0 || currentSceneIndex >= scenes.size() ) {
+        if( currentSceneIndex < 0 || currentSceneIndex >= scenes.scenes.size() ) {
             // internal error
             return;
         }
         
-        Scene selectedScene = scenes.get(currentSceneIndex);
-        selectedScene.actionAsString = actionsTextArea.getText();
+        Scene selectedScene = scenes.scenes.get(currentSceneIndex);
+        selectedScene.actionItems = actionPanelContext.items;
         selectedScene.textAsString = textTextArea.getText();
     }
     
     private void updateGui() {
         String currentSceneNumber = "" + (currentSceneIndex+1);
-        String scenesCountAsString = "" + scenes.size();
+        String scenesCountAsString = "" + scenes.scenes.size();
         
         labelCurrentStory.setText(currentSceneNumber + " / " + scenesCountAsString);
         
-        if( currentSceneIndex < 0 || currentSceneIndex >= scenes.size() ) {
+        if( currentSceneIndex < 0 || currentSceneIndex >= scenes.scenes.size() ) {
             // internal error
             return;
         }
         
-        Scene selectedScene = scenes.get(currentSceneIndex);
-        actionsTextArea.setText(selectedScene.actionAsString);
+        Scene selectedScene = scenes.scenes.get(currentSceneIndex);
+        actionPanelContext.items = selectedScene.actionItems;
+        actionPanelContext.updateList();
+        //actionsTextArea.setText(selectedScene.actionAsString);
         textTextArea.setText(selectedScene.textAsString);
     }
+    
+    
     
     private static String translateTextIntoTemporalNarsese(String text) {
         String result = "";
@@ -281,18 +303,97 @@ public class NlpStoryGui extends JFrame {
             return "<" + linePart.content + " --> word>";
         }
     }
+    
+    private static String convertActionItemsToNarsese(ArrayList<ActionPanelContext.Item> items) {
+        int lastIndex = items.size()-1;
+        
+        String internResult = "";
+        
+        for (int i = 0; i < items.size(); i++) {
+            internResult += convertActionItemToNarsese(items.get(i));
+            
+            if (i != lastIndex) {
+                internResult += ",";
+            }
+        }
+        
+        return "(&&," + internResult + ")";
+    }
+    
+    private static String convertActionItemToNarsese(ActionPanelContext.Item item) {
+        String result;
+        
+        String typeAsText = ((ActionPanelContext.TypeInfo)ActionPanelContext.TYPES.get(item.type)).typeAsText;
+        
+        result = "";
+        int lastIndex = item.parameters.length-1;
+        
+        for (int i = 0; i < item.parameters.length; i++) {
+            result += item.parameters[i];
+            
+            if (i != lastIndex) {
+                result += ",";
+            }
+        }
+        
+        result = "(*," + result + ")";
+        
+        return "<" + result + " --> " + typeAsText + ">";
+    }
+    
+    private static void storeTextToFile(String filename, String text) throws IOException {
+        BufferedWriter writer = null;
+        try {
+            File file = new File(filename);
 
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write(text);
+        } finally {
+            try {
+                // Close the writer regardless of what happens...
+                writer.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+    
+    private static String loadTextFromFile(String filename) throws IOException {
+        // JAVA 7
+        try(BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            String everything = sb.toString();
+            
+            return everything;
+        }
+    }
+    
     private NAR nar;
     
     private class Scene {
-        public String actionAsString = ""; // narsese
+        public ArrayList<ActionPanelContext.Item> actionItems = new ArrayList<>();
         public String textAsString = "";
     }
     
-    private ArrayList<Scene> scenes = new ArrayList<Scene>();
+    // encapsulated for simpler gson handling
+    private class Scenes {
+        public ArrayList<Scene> scenes = new ArrayList<Scene>();
+    }
+    
+    private Scenes scenes = new Scenes();
     private int currentSceneIndex = 0;
     
     private TextArea actionsTextArea = new TextArea();
     private TextArea textTextArea = new TextArea();
     private JLabel labelCurrentStory = new JLabel("1 / 1", JLabel.CENTER);
+    
+    private ActionPanelContext actionPanelContext;
+    
+    private JFileChooser fc = new JFileChooser();
 }
