@@ -2,6 +2,7 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.swing.ReflectPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -106,7 +107,7 @@ public class PluginPanel extends NPanel {
             this.plugin = p;
             final JLabel j = new JLabel(p.plugin.name().toString());
             j.setFont(Video.monofont);            
-            add(j, BorderLayout.CENTER);
+            add(j, BorderLayout.NORTH);
             
             JPanel buttons = new JPanel(new FlowLayout());
             add(buttons, BorderLayout.EAST);
@@ -137,6 +138,9 @@ public class PluginPanel extends NPanel {
             });
             
             buttons.add(removeButton);            
+            
+            
+            add(new ReflectPanel(p.plugin), BorderLayout.CENTER);
         }    
         
     }
