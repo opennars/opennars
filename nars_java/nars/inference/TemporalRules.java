@@ -310,6 +310,40 @@ public class TemporalRules {
                         }
                     }
                 }
+                if(ss1 instanceof Operation && !(ss1.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
+                    boolean anyone=false;
+                    Term comp=ss2.getSubject();
+                    Term ss1_term = ((Operation)ss1).getSubject();
+                    
+                    boolean applicableVariableType = !(comp instanceof Variable && ((Variable)comp).getType()==Symbols.VAR_INDEPENDENT);
+                    
+                    if(ss1_term instanceof Product) {
+                        Product ss1_prod=(Product) ss1_term;
+                        for(final Term t : ss1_prod.term)
+                        {
+                            if(t.equals(comp)) {
+                                anyone=true;
+                            }
+                        }
+                        if(anyone && applicableVariableType) { //only if there is one and it isnt a variable already
+                            Term[] ars = ss1_prod.cloneTerms();
+                            for(int i=0;i<ars.length;i++) {
+                                if(ars[i].equals(comp)) {
+                                    ars[i]=var1;
+                                }
+                            }
+
+                            t22 = Statement.make(ss2, var1, ss2.getPredicate());
+                            
+                            Operation op=(Operation) Operation.make(
+                                    new Product(ars), 
+                                    ss1.getPredicate()
+                            );
+                            
+                            t11 = op;
+                        }
+                    }
+                }
             }
         }
         
