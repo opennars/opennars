@@ -36,7 +36,7 @@ import org.encog.ml.genetic.mutate.MutateShuffle;
  * https://github.com/encog/encog-java-examples/blob/master/src/main/java/org/encog/examples/ml/tsp/genetic/SolveTSP.java
  * @author me
  */
-public class GeneticSearch {
+public class GeneticSearchEncog {
     //623.0 [1, 1585, 302, 46, 33, 4, 20, 10, 4, 11]
     //607.0 [1, 656, 528, 74, 124, 5, 3, 7, 3, 13]
     //577.0 [1, 259.0, 156.0, 2.0, 101.0, 4.0, 16.0, 2.0, 3.0, 1.0]
@@ -349,7 +349,7 @@ public class GeneticSearch {
 
     private TrainEA genetic;
 
-    public GeneticSearch() throws Exception {
+    public GeneticSearchEncog() throws Exception {
 
         File file = new File("/home/me/Downloads/default_nar_param_genetic." + new Date().toString() + ".txt");
 
@@ -394,7 +394,7 @@ public class GeneticSearch {
     }
 
     public static void main(String[] args) throws Exception {
-        new GeneticSearch();
+        new GeneticSearchEncog();
     }
 
     public static double r(double min, double max) {
