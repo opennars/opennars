@@ -234,10 +234,12 @@ public class NlpStoryGui extends JFrame {
             String narseseOfActions = convertActionItemsToNarsese(iteratorScene.actionItems);
             
             nar.addInput(narseseOfActions + ". :|:");
-            nar.step(5);
+            nar.step(STEPS_BETWEEN);
             nar.addInput(translateTextIntoTemporalNarsese(iteratorScene.textAsString) + ". :|:");
-            nar.step(20);
+            nar.step(STEPS_BETWEENACTIONS);
         }
+        
+        nar.step(STEPS_BETWEENSCENES-STEPS_BETWEENACTIONS);
     }
     
     private void init() {
@@ -337,8 +339,13 @@ public class NlpStoryGui extends JFrame {
         }
         
         result = "(*," + result + ")";
+        result = "<" + result + " --> " + typeAsText + ">";
         
-        return "<" + result + " --> " + typeAsText + ">";
+        if (item.isNegated) {
+            result = "(--," + result + ")";
+        }
+        
+        return result;
     }
     
     private static void storeTextToFile(String filename, String text) throws IOException {
@@ -396,4 +403,8 @@ public class NlpStoryGui extends JFrame {
     private ActionPanelContext actionPanelContext;
     
     private JFileChooser fc = new JFileChooser();
+    
+    private final int STEPS_BETWEEN = 3;
+    private final int STEPS_BETWEENACTIONS = 20;
+    private final int STEPS_BETWEENSCENES = 50; // must be greater or equal to STEPS_BETWEENACTIONS
 }
