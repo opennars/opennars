@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -24,6 +25,7 @@ public class ActionPanelContext {
     public static class Item {
         public EnumTypeType type;
         public String[] parameters;
+        public boolean isNegated;
     }
     
     private static class MyTableModel extends AbstractTableModel {
@@ -35,12 +37,17 @@ public class ActionPanelContext {
         
         @Override
         public Object getValueAt(int row, int col) {
-            if(col == 1) {
+            Item item = context.items.get(row);
+            
+            if (col == 1) {
+                return item.isNegated;
+            }
+            else if(col == 2) {
                 return new Boolean(false);
             }
             // else
             
-            return getTextOfItem(context.items.get(row));
+            return getTextOfItem(item);
         }
 
         @Override
@@ -50,7 +57,7 @@ public class ActionPanelContext {
 
         @Override
         public int getColumnCount() {
-            return 2;
+            return 3;
         }
         
         private String getTextOfItem(Item item) {
@@ -73,7 +80,7 @@ public class ActionPanelContext {
         }
         
         public Class getColumnClass(int c) {
-            if(c==1) {
+            if (c==1 || c==2) {
                 return Boolean.class;
             }
             else {
@@ -82,11 +89,11 @@ public class ActionPanelContext {
         }
         
         public boolean isCellEditable(int row, int col) {
-            return col == 1;
+            return col == 2;
         }
         
         public void setValueAt(Object value, int row, int col) {
-            if (col == 1) {
+            if (col == 2) {
                 context.removeRow(row);
             }
         }
@@ -169,6 +176,7 @@ public class ActionPanelContext {
     private JTextField textfieldParameters[];
     private JComboBox typeDropdown;
     private JTable actionTable;
+    private JCheckBox negatedAction = new JCheckBox("Negated");
     
     public void transferPressed() {
         EnumTypeType selectedType = (EnumTypeType)typeDropdown.getSelectedItem();
@@ -176,6 +184,7 @@ public class ActionPanelContext {
         
         Item createdItem = new Item();
         createdItem.type = selectedType;
+        createdItem.isNegated = negatedAction.isSelected();
         
         // if there can be zero or many parameters
         if (typeInfoForSelectedType.numberOfParameters == -1) {
@@ -241,11 +250,12 @@ public class ActionPanelContext {
         
         
         JPanel dropdownAndParameterPanel = new JPanel();
-        dropdownAndParameterPanel.setLayout(new GridLayout(3, 1, 0, 8));
+        dropdownAndParameterPanel.setLayout(new GridLayout(4, 1, 0, 8));
         dropdownAndParameterPanel.add(resultPanelContext.typeDropdown);
         dropdownAndParameterPanel.add(resultPanelContext.textfieldParameters[0]);
         dropdownAndParameterPanel.add(resultPanelContext.textfieldParameters[1]);
-                
+        dropdownAndParameterPanel.add(resultPanelContext.negatedAction);
+        
         ////////
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
