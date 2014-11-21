@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -95,7 +95,7 @@ public class GTextField extends GEditableTextControl {
 	 */
 	public GTextField(PApplet theApplet, float p0, float p1, float p2, float p3, int sbPolicy) {
 		super(theApplet, p0, p1, p2, p3, sbPolicy);
-		children = new LinkedList<GAbstractControl>();
+		children = new LinkedList<GControl>();
 		tx = ty = 2;
 		tw = width - 2 * 2;
 		th = height - ((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0 ? 11 : 0);
@@ -116,27 +116,27 @@ public class GTextField extends GEditableTextControl {
 				new HSrect(9, 0, 0, width, height)		// control surface
 		};
 
-		G4P.pushStyle();
-		G4P.showMessages = false;
+		GUI.pushStyle();
+		GUI.showMessages = false;
 
 		z = Z_STICKY;
 
-		G4P.control_mode = GControlMode.CORNER;
+		GUI.control_mode = GControlMode.CORNER;
 		if((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0){
 			hsb = new GScrollbar(theApplet, 0, 0, tw, 10);
 			addControl(hsb, tx, ty + th + 2, 0);
 			hsb.addEventHandler(this, "hsbEventHandler");
 			hsb.setAutoHide(autoHide);
 		}
-		G4P.popStyle();
+		GUI.popStyle();
 		setText("");
 		//		z = Z_STICKY;
-		createEventHandler(G4P.sketchApplet, "handleTextEvents", 
+		createEventHandler(GUI.sketchApplet, "handleTextEvents", 
 				new Class<?>[]{ GEditableTextControl.class, GEvent.class }, 
 				new String[]{ "textcontrol", "event" } 
 				);
 		registeredMethods = PRE_METHOD | DRAW_METHOD | MOUSE_METHOD | KEY_METHOD;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
@@ -353,8 +353,8 @@ public class GTextField extends GEditableTextControl {
 	}
 
 	/**
-	 * Do not call this method directly, G4P uses it to handle input from
-	 * the horizontal scrollbar.
+	 * Do not call this method directly, GUI uses it to handle input from
+ the horizontal scrollbar.
 	 */
 	public void hsbEventHandler(GScrollbar scrollbar, GEvent event){
 		keepCursorInView = false;
@@ -511,7 +511,7 @@ public class GTextField extends GEditableTextControl {
 		winApp.popMatrix();
 
 		if(children != null){
-			for(GAbstractControl c : children)
+			for(GControl c : children)
 				c.draw();
 		}
 		winApp.popMatrix();

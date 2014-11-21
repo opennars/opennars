@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -63,7 +63,7 @@ public class GLabel extends GTextIconAlignBase {
 		opaque = false;
 		// Now register control with applet
 		registeredMethods = DRAW_METHOD;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	public void draw(){

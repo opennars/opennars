@@ -142,7 +142,7 @@ public class AbegoTreeLayout<V,E> implements GraphDisplay<V,E> {
                 Rectangle2D.Double b = vv.getValue();
                 v.setPosition(px + (float)b.getCenterX(), py + (float)b.getCenterY());
             }
-            System.out.println(bounds);
+            //System.out.println(bounds);
             
             px += treeLayout.getBounds().getWidth() + horizontalMargin;
             

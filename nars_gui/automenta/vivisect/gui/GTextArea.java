@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -119,7 +119,7 @@ public class GTextArea extends GEditableTextControl {
 	 */
 	public GTextArea(PApplet theApplet, float p0, float p1, float p2, float p3, int sbPolicy, int wrapWidth) {
 		super(theApplet, p0, p1, p2, p3, sbPolicy);
-		children = new LinkedList<GAbstractControl>();
+		children = new LinkedList<GControl>();
 		tx = ty = TPAD6;
 		tw = width - 2 * TPAD6 - ((scrollbarPolicy & SCROLLBAR_VERTICAL) != 0 ? 18 : 0);
 		th = height - 2 * TPAD6 - ((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0 ? 18 : 0);
@@ -142,10 +142,10 @@ public class GTextArea extends GEditableTextControl {
 				new HSrect(1, tx, ty, tw, th),			// typing area
 				new HSrect(9, 0, 0, width, height)		// control surface
 		};
-		G4P.pushStyle();
-		G4P.showMessages = false;
+		GUI.pushStyle();
+		GUI.showMessages = false;
 		z = Z_STICKY;
-		G4P.control_mode = GControlMode.CORNER;
+		GUI.control_mode = GControlMode.CORNER;
 		if((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0){
 			hsb = new GScrollbar(theApplet, 0, 0, tw, 16);
 			addControl(hsb, tx, ty + th + 2, 0);
@@ -158,14 +158,14 @@ public class GTextArea extends GEditableTextControl {
 			vsb.addEventHandler(this, "vsbEventHandler");
 			vsb.setAutoHide(autoHide);
 		}
-		G4P.popStyle();
+		GUI.popStyle();
 		setText("", (int)tw);
-		createEventHandler(G4P.sketchApplet, "handleTextEvents", 
+		createEventHandler(GUI.sketchApplet, "handleTextEvents", 
 				new Class<?>[]{ GEditableTextControl.class, GEvent.class }, 
 				new String[]{ "textcontrol", "event" } 
 				);
 		registeredMethods = PRE_METHOD | DRAW_METHOD | MOUSE_METHOD | KEY_METHOD;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
@@ -672,7 +672,7 @@ public class GTextArea extends GEditableTextControl {
 		winApp.popMatrix();
 		// Draw scrollbars
 		if(children != null){
-			for(GAbstractControl c : children)
+			for(GControl c : children)
 				c.draw();
 		}
 		winApp.popMatrix();

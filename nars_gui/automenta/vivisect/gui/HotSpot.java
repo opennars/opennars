@@ -121,8 +121,16 @@ abstract class HotSpot implements GConstants, Comparable<HotSpot> {
 		}
 
 		@Override
-		public boolean contains(float px, float py) {
-			return ((px-x)*(px-x) + (py-y)*(py-y) <= r2);
+		public boolean contains(final float px, final float py) {
+                    float dx = (px-x);
+                    float dy = (py-y);
+                    dx*=dx;
+                    if (dx <= r2) {
+                        dy*=dy;
+                        if (dy+dx <= r2)
+                            return true;
+                    }
+                    return false;
 		}
 
 		/**

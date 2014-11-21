@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -29,7 +29,7 @@ import processing.core.PApplet;
 
 /**
  * This class will be used to safely close windows provided that their actionOnClose 
- * action is G4P.CLOSE_WINODW. <br>
+ action is GUI.CLOSE_WINODW. <br>
  * This is done here, outside the windows normal Processing event loop to avoid
  * concurrent access errors. <br>
  * This class has to be declared public so it can register the post event, but it should
@@ -57,13 +57,13 @@ public class GWindowCloser {
 			if(!toDisposeOf.isEmpty()){
 				for(GWindow gwindow : toDisposeOf){
 					PApplet wapp = gwindow.papplet;
-					GWindowInfo winfo = G4P.windows.get(wapp);
+					GWindowInfo winfo = GUI.windows.get(wapp);
 					if(winfo != null){
 						// This will the on-close-window event handler to 
 						// be called if it exists
 						gwindow.onClose();
 						winfo.dispose();
-						G4P.windows.remove(wapp);
+						GUI.windows.remove(wapp);
 						gwindow.dispose();
 					}
 				}

@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -37,7 +37,7 @@ import processing.event.MouseEvent;
 
 /**
  * Objects of this class are separate windows which can be used to hold
- * G4P GUI components or used for drawing or both combined.
+ GUI GUI components or used for drawing or both combined.
  * <br><br>
  * A number of examples are included in the library and can be found
  * at www.lagers.org.uk
@@ -109,8 +109,8 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	protected String closetHandlerMethodName;
 
 	/**
-	 * Create a window that can be used to hold G4P components or used
-	 * for drawing or both together.
+	 * Create a window that can be used to hold GUI components or used
+ for drawing or both together.
 	 * 
 	 * @param theApplet
 	 * @param name
@@ -154,8 +154,8 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	 */
 	private void windowCtorCore(PApplet theApplet, int x, int y, int w, int h, PImage image,  boolean noFrame, String mode, String name){
 		// If this is the first control to be created then theAapplet must be the sketchApplet
-		if(G4P.sketchApplet == null)
-			G4P.sketchApplet = theApplet;
+		if(GUI.sketchApplet == null)
+			GUI.sketchApplet = theApplet;
 		app = theApplet;
 		winName = name;
 
@@ -210,8 +210,8 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 		// Not resizeable if we are using a back image
 		super.setResizable(image == null);
 
-		// Make sure G4P knows about this window
-		G4P.addWindow(this);
+		// Make sure GUI knows about this window
+		GUI.addWindow(this);
 	}
 
 	/**
@@ -282,15 +282,15 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 		try{
 			setAlwaysOnTop(onTop);
 		} catch (Exception e){
-			if(G4P.showMessages)
+			if(GUI.showMessages)
 				System.out.println("Warning: setOnTop() method will not work when the sketch is run from a remote location.");
 		}
 	}
 
 	/**
 	 * Sets the location of the window. <br>
-	 * (Already available from the Frame class - helps visibility 
-	 * of method in G4P reference)
+ (Already available from the Frame class - helps visibility 
+ of method in GUI reference)
 	 */
 	public void setLocation(int x, int y){
 		super.setLocation(x,y);
@@ -298,8 +298,8 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 
 	/**
 	 * Sets the visibility of the window <br>
-	 * (Already available from the Frame class - helps visibility 
-	 * of method in G4P reference)
+ (Already available from the Frame class - helps visibility 
+ of method in GUI reference)
 	 */
 	public void setVisible(boolean visible){
 		super.setVisible(visible);
@@ -533,7 +533,7 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 			switch(actionOnClose){
 			case CLOSE_WINDOW:
 				window.papplet.noLoop();
-				G4P.markWindowForClosure(window);
+				GUI.markWindowForClosure(window);
 				break;
 			case EXIT_APP:
 				System.exit(0);

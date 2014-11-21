@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -112,12 +112,12 @@ public class GDropList extends GTextBase {
 	 */
 	public GDropList(PApplet theApplet, float p0, float p1, float p2, float p3, int dropListMaxSize) {
 		super(theApplet, p0, p1, p2, p3);
-		children = new LinkedList<GAbstractControl>();
+		children = new LinkedList<GControl>();
 		this.dropListMaxSize = Math.max(dropListMaxSize, 3);
 		itemHeight = height / (dropListMaxSize + 1); // make allowance for selected text at top
 
-		G4P.pushStyle();
-		G4P.showMessages = false;
+		GUI.pushStyle();
+		GUI.showMessages = false;
 
 		vsb = new GScrollbar(theApplet, 0, 0, height - itemHeight, 10);
 		vsb.addEventHandler(this, "vsbEventHandler");
@@ -132,24 +132,24 @@ public class GDropList extends GTextBase {
 		z = Z_SLIPPY_EXPANDS;
 
 		// Add the button and scrollbar
-		G4P.control_mode = GControlMode.CORNER;
+		GUI.control_mode = GControlMode.CORNER;
 		addControl(vsb, width, itemHeight + 1, PI/2);
 		addControl(showList, width - buttonWidth, 0, 0);
 
-		G4P.popStyle();
+		GUI.popStyle();
 
 		hotspots = new HotSpot[]{
 				new HSrect(LIST_SURFACE, 0, itemHeight+1, width - 11, height - itemHeight - 1),	// text list area
 				new HSrect(CLOSED_SURFACE, 0, 0, width - buttonWidth, itemHeight)				// selected text display area
 		};
 
-		createEventHandler(G4P.sketchApplet, "handleDropListEvents",
+		createEventHandler(GUI.sketchApplet, "handleDropListEvents",
 				new Class<?>[]{ GDropList.class, GEvent.class }, 
 				new String[]{ "list", "event" } 
 				);
 		registeredMethods = DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
@@ -405,7 +405,7 @@ public class GDropList extends GTextBase {
 		winApp.popMatrix();
 
 		if(children != null){
-			for(GAbstractControl c : children)
+			for(GControl c : children)
 				c.draw();
 		}
 		winApp.popMatrix();
@@ -460,7 +460,7 @@ public class GDropList extends GTextBase {
 	 * Override this method in classes that need to do something when
 	 * they loose focus eg TextField
 	 */
-	protected void loseFocus(GAbstractControl grabber){
+	protected void loseFocus(GControl grabber){
 		if(grabber != vsb){
 			expanded = false;
 			vsb.setVisible(false);

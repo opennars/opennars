@@ -31,7 +31,7 @@ import processing.core.PApplet;
  * @author Peter Lager
  *
  */
-public abstract class GValueControl2D extends GAbstractControl {
+public abstract class GValueControl2D extends GControl {
 
 	static protected int THUMB_SPOT = 1;
 	static protected int TRACK_SPOT = 2;

@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -72,7 +72,7 @@ import processing.event.MouseEvent;
  * @author Peter Lager
  *
  */
-public class GStick extends GAbstractControl {
+public class GStick extends GControl {
 	// palette index constants
 	protected static final int BORDERS = 0;
 	protected static final int LED_INACTIVE = 1;
@@ -141,19 +141,19 @@ public class GStick extends GAbstractControl {
 		z = Z_SLIPPY;
 
 		// Now register control with applet
-		createEventHandler(G4P.sketchApplet, "handleStickEvents",
+		createEventHandler(GUI.sketchApplet, "handleStickEvents",
 				new Class<?>[]{ GStick.class, GEvent.class }, 
 				new String[]{ "stick", "event" } 
 		);
 		registeredMethods = DRAW_METHOD | MOUSE_METHOD ;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
 	 * Sets the stick mode to either 4 or 8 directions. <br>
-	 * If the mode parameter should be either G4P.X4 or G4P.X8 any
-	 * other value will be silently ignored
+ If the mode parameter should be either GUI.X4 or GUI.X8 any
+ other value will be silently ignored
 	 * 
 	 * @param m the new mode
 	 */

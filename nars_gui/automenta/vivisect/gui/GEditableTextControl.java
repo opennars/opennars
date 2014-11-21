@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -99,7 +99,7 @@ public abstract class GEditableTextControl extends GTextBase implements Focusabl
 	 * then set it to null text. <br>
 	 * Fire focus events for the GTextField and GTextArea controls
 	 */
-	protected void loseFocus(GAbstractControl grabber){
+	protected void loseFocus(GControl grabber){
 		// If this control has focus then Fire a lost focus event
 		if(focusIsWith == this)
 			fireEvent(this, GEvent.LOST_FOCUS);
@@ -184,7 +184,7 @@ public abstract class GEditableTextControl extends GTextBase implements Focusabl
 			promptText = null;
 		else {
 			promptText = new StyledString(ptext, wrapWidth);
-			promptText.addAttribute(G4P.POSTURE, G4P.POSTURE_OBLIQUE);
+			promptText.addAttribute(GUI.POSTURE, GUI.POSTURE_OBLIQUE);
 		}
 		bufferInvalid = true;
 	}
@@ -666,8 +666,8 @@ public abstract class GEditableTextControl extends GTextBase implements Focusabl
 	}
 
 	/**
-	 * Do not call this method directly, G4P uses it to handle input from
-	 * the horizontal scrollbar.
+	 * Do not call this method directly, GUI uses it to handle input from
+ the horizontal scrollbar.
 	 */
 	public void hsbEventHandler(GScrollbar scrollbar, GEvent event){
 		keepCursorInView = false;
@@ -676,8 +676,8 @@ public abstract class GEditableTextControl extends GTextBase implements Focusabl
 	}
 
 	/**
-	 * Do not call this method directly, G4P uses it to handle input from
-	 * the vertical scrollbar.
+	 * Do not call this method directly, GUI uses it to handle input from
+ the vertical scrollbar.
 	 */
 	public void vsbEventHandler(GScrollbar scrollbar, GEvent event){
 		keepCursorInView = false;

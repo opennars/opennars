@@ -20,14 +20,14 @@ import nars.io.Texts;
 import static nars.io.Texts.n2;
 
 /**
- *
+ * Direct keyboard input
  * @author me
  */
-public class KeyboardInput extends NPanel implements KeyListener, FocusListener {
+public class KeyboardInputPanel extends NPanel implements KeyListener, FocusListener {
     private final NAR nar;
     private final JTextArea text;
 
-    public KeyboardInput(NAR n) {
+    public KeyboardInputPanel(NAR n) {
         super(new BorderLayout());
         
         text = new JTextArea();
@@ -47,11 +47,13 @@ public class KeyboardInput extends NPanel implements KeyListener, FocusListener 
 
     /** can be adjusted according to how many other windows are active, etc. */
     public void setFocus(float freq, float conf) {
-        nar.addInput("<focus --> kb>. :|: %" + n2(freq) + ";" + n2(conf) + "%");
+        nar.addInput("<{focus} --> kb>. :|: %" + n2(freq) + ";" + n2(conf) + "%");        
     }
 
     public void onCharTyped(char c, float priority, float freq, float conf) {        
-        nar.addInput("$" + n2(priority) + "$ < \"" + Texts.escapeLiteral(Character.toString(c)) + "\" --> kb>. :|: %" + n2(freq) + ";" + n2(conf) + "%" );
+        String charTerm = "\"" + Texts.escapeLiteral(Character.toString(c)) + "\"";
+        nar.addInput("$" + n2(priority) + "$ < {" + charTerm + "} --> kb>. :|: %" + n2(freq) + ";" + n2(conf) + "%" );        
+        nar.addInput("<(&/, <" + charTerm + " --> kb>, ?dt) =/> <?next --> kb>>?");
     }
     
     @Override

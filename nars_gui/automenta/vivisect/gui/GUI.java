@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -49,18 +49,18 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 /**
- * The core class for the global manipulation and execution of G4P. <br>
- * All the methods and constants are static so to call a method or
- * reference a constant prefix it's name with 'G4P.' for example <br>
+ * The core class for the global manipulation and execution of GUI. <br>
+ All the methods and constants are static so to call a method or
+ reference a constant prefix it's name with 'GUI.' for example <br>
  * <pre>
- * G4P.<i>method_name(parameters);</i>
- * G4P.<i>name_of_constant;</i>
+ GUI.<i>method_name(parameters);</i>
+ GUI.<i>name_of_constant;</i>
  * </pre><br>
- * 
- * Prior to version 3.5 G4P used logical fonts to be cross-platform, 
- * unfortunately logical fonts do not use uniform metrics so it caused 
- * serious errors when formatting the text layout. In version 3.5 G4P 
- * will attempt to use a system fonts selected from this list <br>
+ 
+ Prior to version 3.5 GUI used logical fonts to be cross-platform, 
+ unfortunately logical fonts do not use uniform metrics so it caused 
+ serious errors when formatting the text layout. In version 3.5 GUI 
+ will attempt to use a system fonts selected from this list <br>
  * "Arial", "Trebuchet MS", "Tahoma", "Helvetica", "Verdana" <br>
  * 
  * Arial is the preferred font (since most systems will have it installed)
@@ -69,15 +69,15 @@ import processing.core.PConstants;
  * a logical font. <br>
  * If this causes a problem with older sketches simple call <br>
  * <pre>
- * G4P.usePre35Fonts();
- * </pre>
+ GUI.usePre35Fonts();
+ </pre>
  * before you create any GUI controls. <br>
  * 
  * 
  * @author Peter Lager
  *
  */
-public class G4P implements GConstants, PConstants {
+public class GUI implements GConstants, PConstants {
 
 	static PApplet sketchApplet = null;
 
@@ -108,7 +108,7 @@ public class G4P implements GConstants, PConstants {
 	// Store of info about windows and controls
 	static HashMap<PApplet, GWindowInfo> windows = new HashMap<PApplet, GWindowInfo>();
 	// Used to order controls
-	static GAbstractControl.Z_Order zorder = new GAbstractControl.Z_Order();
+	static GControl.Z_Order zorder = new GControl.Z_Order();
 
 	/* INTERNAL USE ONLY  Mouse over changer */
 	static boolean cursorChangeEnabled = true;
@@ -128,18 +128,18 @@ public class G4P implements GConstants, PConstants {
 
 	
 	/**
-	 * Used to register the main sketch window with G4P. This is ignored if any
-	 * G4P controls or windows have already been created because the act of
-	 * creating a control will do this for you. <br>
-	 * 
-	 * Some controls are created without passing a reference to the sketch applet
-	 * but still need to know it. An example is the GColorChooser control which
-	 * cannot be used until this method is called or some other G4P control has
-	 * been created.
-	 * 
-	 * Also some other libraries such as PeasyCam change the transformation matrix.
-	 * In which case either a G4P control should be created or this method called
-	 * before creating a PeasyCam object.
+	 * Used to register the main sketch window with GUI. This is ignored if any
+ GUI controls or windows have already been created because the act of
+ creating a control will do this for you. <br>
+ 
+ Some controls are created without passing a reference to the sketch applet
+ but still need to know it. An example is the GColorChooser control which
+ cannot be used until this method is called or some other GUI control has
+ been created.
+ 
+ Also some other libraries such as PeasyCam change the transformation matrix.
+ In which case either a GUI control should be created or this method called
+ before creating a PeasyCam object.
 	 * 
 	 * @param app
 	 */
@@ -170,9 +170,9 @@ public class G4P implements GConstants, PConstants {
 	}
 
 	/**
-	 * Versions of G4P prior to 3.5 used logical fonts for the controls. So if you 
-	 * have old sketches then the text may look different with this and later versions
-	 * of G4P. <br>
+	 * Versions of GUI prior to 3.5 used logical fonts for the controls. So if you 
+ have old sketches then the text may look different with this and later versions
+ of GUI. <br>
 	 * If this is causing a problem then call this method before creating any controls.
 	 */
 	public static void usePre35Fonts(){
@@ -211,8 +211,8 @@ public class G4P implements GConstants, PConstants {
 
 	/**
 	 * Set the transparency of all controls. If the alpha level for a 
-	 * control falls below G4P.ALPHA_BLOCK then it will no longer 
-	 * respond to mouse and keyboard events.
+ control falls below GUI.ALPHA_BLOCK then it will no longer 
+ respond to mouse and keyboard events.
 	 * 
 	 * @param alpha value in the range 0 (transparent) to 255 (opaque)
 	 */
@@ -228,8 +228,8 @@ public class G4P implements GConstants, PConstants {
 	/**
 	 * Set the transparency level for all controls drawn by the given
 	 * PApplet. If the alpha level for a control falls below 
-	 * G4P.ALPHA_BLOCK then it will no longer respond to mouse
-	 * and keyboard events.
+ GUI.ALPHA_BLOCK then it will no longer respond to mouse
+ and keyboard events.
 	 * 
 	 * @param app
 	 * @param alpha value in the range 0 (transparent) to 255 (opaque)
@@ -244,8 +244,8 @@ public class G4P implements GConstants, PConstants {
 	/**
 	 * Set the transparency level for all controls drawn by the given
 	 * GWindow. If the alpha level for a control falls below 
-	 * G4P.ALPHA_BLOCK then it will no longer respond to mouse
-	 * and keyboard events.
+ GUI.ALPHA_BLOCK then it will no longer respond to mouse
+ and keyboard events.
 	 * 
 	 * @param win apply to this window
 	 * @param alpha value in the range 0 (transparent) to 255 (opaque)
@@ -297,7 +297,7 @@ public class G4P implements GConstants, PConstants {
 	 * Used internally to register a control with its applet.
 	 * @param control
 	 */
-	static void addControl(GAbstractControl control){
+	static void addControl(GControl control){
 		PApplet app = control.getPApplet();
 		GWindowInfo winfo = windows.get(app);
 		if(winfo == null){
@@ -313,7 +313,7 @@ public class G4P implements GConstants, PConstants {
 	 * @param control
 	 * @return true if control was remove else false
 	 */
-	static boolean removeControl(GAbstractControl control){
+	static boolean removeControl(GControl control){
 		PApplet app = control.getPApplet();
 		GWindowInfo winfo = windows.get(app);
 		if(winfo != null){
@@ -347,7 +347,7 @@ public class G4P implements GConstants, PConstants {
 	}
 
 	/**
-	 * G4P has a range of support messages eg <br>if you create a GUI component 
+	 * GUI has a range of support messages eg <br>if you create a GUI component 
 	 * without an event handler or, <br>a slider where the visible size of the
 	 * slider is less than the difference between min and max values. <br>
 	 * 
@@ -365,8 +365,8 @@ public class G4P implements GConstants, PConstants {
 
 	/**
 	 * Enables or disables cursor over component change. <br>
-	 * 
-	 * Calls to this method are ignored if no G4P controls have been created.
+ 
+ Calls to this method are ignored if no GUI controls have been created.
 	 * 
 	 * @param enable true to enable cursor change over components.
 	 */
@@ -384,8 +384,8 @@ public class G4P implements GConstants, PConstants {
 
 	/**
 	 * Set the cursor shape to be used when the mouse is not over a 
-	 * G4P control for the entire application including secondary
-	 * windows.
+ GUI control for the entire application including secondary
+ windows.
 	 * @param cursorOff the cursor shape.
 	 */
 	public static void setCursor(int cursorOff){
@@ -421,9 +421,9 @@ public class G4P implements GConstants, PConstants {
 	}
 
 	/**
-	 * Get the cursor shape used when the mouse is not over a G4P 
-	 * control
-	 * set for the 
+	 * Get the cursor shape used when the mouse is not over a GUI 
+ control
+ set for the 
 	 * 
 	 */
 	public static int getCursor(){
@@ -462,7 +462,7 @@ public class G4P implements GConstants, PConstants {
 	}
 
 	/**
-	 * This class represents the current style used by G4P. 
+	 * This class represents the current style used by GUI. 
 	 * It can be extended to add other attributes but these should be 
 	 * included in the pushStyle and popStyle. 
 	 * @author Peter
@@ -509,9 +509,9 @@ public class G4P implements GConstants, PConstants {
 	}
 
 	/**
-	 * Use this to check whether a GWindow window is still open (as far as G4P is concerned).
+	 * Use this to check whether a GWindow window is still open (as far as GUI is concerned).
 	 * @param window the window we are interested in
-	 * @return true if G4P still thinks it is open
+	 * @return true if GUI still thinks it is open
 	 */
 	public static boolean isWindowOpen(GWindow window){
 		if(window != null){
@@ -794,7 +794,7 @@ public class G4P implements GConstants, PConstants {
 	 * The actual UI will depend on the platform your application is running on. <br>
 	 * 
 	 * The message type should be one of the following <br>
-	 * G4P.PLAIN, G4P.ERROR, G4P.INFO, G4P.WARNING, G4P.QUERY <br>
+ GUI.PLAIN, GUI.ERROR, GUI.INFO, GUI.WARNING, GUI.QUERY <br>
 	 * 
 	 * @param owner the control responsible for this dialog. 
 	 * @param message the text to be displayed in the main area of the dialog
@@ -821,21 +821,21 @@ public class G4P implements GConstants, PConstants {
 	 * The actual UI will depend on the platform your application is running on. <br>
 	 * 
 	 * The message type should be one of the following <br>
-	 * 	G4P.PLAIN, G4P.ERROR, G4P.INFO, G4P.WARNING, G4P.QUERY <br>
+ 	GUI.PLAIN, GUI.ERROR, GUI.INFO, GUI.WARNING, GUI.QUERY <br>
 	 * 
 	 * The option type  should be one of the following <br>
-	 * G4P.YES_NO, G4P.YES_NO_CANCEL, G4P.OK_CANCEL <br>
+ GUI.YES_NO, GUI.YES_NO_CANCEL, GUI.OK_CANCEL <br>
 	 * 
 	 * This method returns a value to indicate which button was clicked. It will be
 	 * one of the following <br>
-	 * G4P.OK, G4P.YES, G4P.NO, G4P.CANCEL, G4P.CLOSED <br>
+ GUI.OK, GUI.YES, GUI.NO, GUI.CANCEL, GUI.CLOSED <br>
 	 * 
 	 * Some comments on the returned value: <ul>
-	 * <li>G4P.OK and G4P.YES have the same integer value so can be used interchangeably. </li>
-	 * <li>G4P.CLOSED maybe returned if the dialog box is closed although on some 
-	 * systems G4P.NO or G4P.CANCEL may be returned instead. </li>
+	 * <li>GUI.OK and GUI.YES have the same integer value so can be used interchangeably. </li>
+	 * <li>GUI.CLOSED maybe returned if the dialog box is closed although on some 
+ systems GUI.NO or GUI.CANCEL may be returned instead. </li>
 	 * <li>It is better to test for a positive response because they have the same value. </li>
-	 * <li> If you must test for a negative response use !G4P.OK or !G4P.YES </li></ul>
+	 * <li> If you must test for a negative response use !GUI.OK or !GUI.YES </li></ul>
 	 * 
 	 * @param owner the control responsible for this dialog. 
 	 * @param message the text to be displayed in the main area of the dialog
@@ -870,8 +870,8 @@ public class G4P implements GConstants, PConstants {
 			frame = ((PApplet)owner).frame;
 		else if(owner instanceof GWindow)
 			frame = (Frame)owner;
-		else if(owner instanceof GAbstractControl)
-			frame = ((GAbstractControl) owner).getPApplet().frame;
+		else if(owner instanceof GControl)
+			frame = ((GControl) owner).getPApplet().frame;
 		return frame;
 	}
 

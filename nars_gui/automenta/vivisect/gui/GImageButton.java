@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -73,7 +73,7 @@ import processing.event.MouseEvent;
  * @author Peter Lager
  *
  */
-public class GImageButton extends GAbstractControl {
+public class GImageButton extends GControl {
 
 	private static PImage[] errImage = null;
 	
@@ -162,13 +162,13 @@ public class GImageButton extends GAbstractControl {
 
 		z = Z_SLIPPY;
 		// Now register control with applet
-		createEventHandler(G4P.sketchApplet, "handleButtonEvents",
+		createEventHandler(GUI.sketchApplet, "handleButtonEvents",
 				new Class<?>[]{ GImageButton.class, GEvent.class }, 
 				new String[]{ "button", "event" } 
 		);
 		registeredMethods = DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 
@@ -255,13 +255,13 @@ public class GImageButton extends GAbstractControl {
 
 		z = Z_SLIPPY;
 		// Now register control with applet
-		createEventHandler(G4P.sketchApplet, "handleButtonEvents",
+		createEventHandler(GUI.sketchApplet, "handleButtonEvents",
 				new Class<?>[]{ GImageButton.class, GEvent.class }, 
 				new String[]{ "button", "event" } 
 		);
 		registeredMethods = DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 

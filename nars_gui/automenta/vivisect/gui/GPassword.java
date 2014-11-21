@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -57,7 +57,7 @@ import processing.event.MouseEvent;
  * @author Peter Lager
  *
  */
-public final class GPassword extends GAbstractControl implements Focusable{
+public final class GPassword extends GControl implements Focusable{
 
 	protected TextLayoutHitInfo cursorTLHI = new TextLayoutHitInfo();
 
@@ -100,7 +100,7 @@ public final class GPassword extends GAbstractControl implements Focusable{
 	protected int endChar = -1, startChar = -1, pos = endChar, nbr = 0, adjust = 0;
 	protected boolean textChanged = false;
 
-	protected Font localFont = G4P.globalFont;
+	protected Font localFont = GUI.globalFont;
 	
 	/**
 	 * Create a password field without a scrollbar.
@@ -145,7 +145,7 @@ public final class GPassword extends GAbstractControl implements Focusable{
 		cursorOver = TEXT;
 		
 		setVisibleChar(cover);
-		children = new LinkedList<GAbstractControl>();
+		children = new LinkedList<GControl>();
 		tx = ty = 2;
 		tw = width - 2 * 2;
 		th = height - ((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0 ? 11 : 0);
@@ -165,26 +165,26 @@ public final class GPassword extends GAbstractControl implements Focusable{
 				new HSrect(9, 0, 0, width, height)		// control surface
 		};
 
-		G4P.pushStyle();
-		G4P.showMessages = false;
+		GUI.pushStyle();
+		GUI.showMessages = false;
 
 		z = Z_STICKY;
 
-		G4P.control_mode = GControlMode.CORNER;
+		GUI.control_mode = GControlMode.CORNER;
 		if((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0){
 			hsb = new GScrollbar(theApplet, 0, 0, tw, 10);
 			addControl(hsb, tx, ty + th + 2, 0);
 			hsb.addEventHandler(this, "hsbEventHandler");
 			hsb.setAutoHide(autoHide);
 		}
-		G4P.popStyle();
+		GUI.popStyle();
 		//		z = Z_STICKY;
-		createEventHandler(G4P.sketchApplet, "handlePasswordEvents", 
+		createEventHandler(GUI.sketchApplet, "handlePasswordEvents", 
 				new Class<?>[]{ GPassword.class, GEvent.class }, 
 				new String[]{ "pwordControl", "event" } 
 				);
 		registeredMethods = PRE_METHOD | DRAW_METHOD | MOUSE_METHOD | KEY_METHOD;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
@@ -563,7 +563,7 @@ public final class GPassword extends GAbstractControl implements Focusable{
 		winApp.popMatrix();
 
 		if(children != null){
-			for(GAbstractControl c : children)
+			for(GControl c : children)
 				c.draw();
 		}
 		winApp.popMatrix();
@@ -619,7 +619,7 @@ public final class GPassword extends GAbstractControl implements Focusable{
 	 * then set it to null text. <br>
 	 * Fire focus events for the GTextField and GTextArea controls
 	 */
-	protected void loseFocus(GAbstractControl grabber){
+	protected void loseFocus(GControl grabber){
 		// If this control has focus then Fire a lost focus event
 		if(focusIsWith == this)
 			fireEvent(this, GEvent.LOST_FOCUS);

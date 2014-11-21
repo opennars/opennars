@@ -8,7 +8,7 @@ import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.gui.NARSwing;
-import nars.gui.input.KeyboardInput;
+import nars.gui.input.KeyboardInputPanel;
 
 /**
  *
@@ -27,7 +27,7 @@ public class KeyboardInputExample {
                 
         new NARSwing(n).themeInvert();
 
-        new NWindow("Direct Keyboard Input", new KeyboardInput(n)).show(300, 100, false);
+        new NWindow("Direct Keyboard Input", new KeyboardInputPanel(n)).show(300, 100, false);
         
         n.start(100, 5);
         

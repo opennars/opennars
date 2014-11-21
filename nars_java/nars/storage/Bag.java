@@ -55,7 +55,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     abstract public E takeNext();
     
 
-    /** gets the next value without removing changing it or removing it from any index */    
+    /** gets the next value without removing changing it or removing it from any index.  however
+     the bag is cycled so that subsequent elements are different. */    
     abstract public E peekNext();
     
     

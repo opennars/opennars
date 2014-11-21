@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -25,8 +25,8 @@ package automenta.vivisect.gui;
 
 import java.awt.Font;
 import java.awt.font.TextAttribute;
-
 import processing.core.PApplet;
+
 
 /**
  * Base class for any control that uses styled text.
@@ -34,12 +34,12 @@ import processing.core.PApplet;
  * @author Peter Lager
  *
  */
-public abstract class GTextBase extends GAbstractControl {
+public abstract class GTextBase extends GControl {
 
 	/** The styled text used by this control */
 	public StyledString stext = null;
 	
-	protected Font localFont = G4P.globalFont;
+	protected Font localFont = GUI.globalFont;
 	
 
 	/**
@@ -159,14 +159,14 @@ public abstract class GTextBase extends GAbstractControl {
 	 * @param end the first character not to style
 	 */
 	public void setTextBold(int start, int end){
-		addAttributeImpl(G4P.WEIGHT, G4P.WEIGHT_BOLD, start, end);
+		addAttributeImpl(GUI.WEIGHT, GUI.WEIGHT_BOLD, start, end);
 	}
 
 	/**
 	 * Make all the characters bold.
 	 */
 	public void setTextBold(){
-		addAttributeImpl(G4P.WEIGHT, G4P.WEIGHT_BOLD);
+		addAttributeImpl(GUI.WEIGHT, GUI.WEIGHT_BOLD);
 	}
 
 	/**
@@ -177,14 +177,14 @@ public abstract class GTextBase extends GAbstractControl {
 	 * @param end the first character not to style
 	 */
 	public void setTextItalic(int start, int end){
-		addAttributeImpl(G4P.POSTURE, G4P.POSTURE_OBLIQUE, start, end);
+		addAttributeImpl(GUI.POSTURE, GUI.POSTURE_OBLIQUE, start, end);
 	}
 
 	/**
 	 * Make all the characters italic.
 	 */
 	public void setTextItalic(){
-		addAttributeImpl(G4P.POSTURE, G4P.POSTURE_OBLIQUE);
+		addAttributeImpl(GUI.POSTURE, GUI.POSTURE_OBLIQUE);
 	}
 
 	/**

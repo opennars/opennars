@@ -1,5 +1,6 @@
 package automenta.vivisect;
 
+import automenta.vivisect.swing.PCanvas;
 import processing.core.PGraphics;
 
 /**
@@ -12,6 +13,10 @@ public interface Vis {
 
     /** notifies this when visibility has changed */
     default public void onVisible(boolean showing) {
+        
+    }
+
+    default public void init(PCanvas p) {
         
     }
     
