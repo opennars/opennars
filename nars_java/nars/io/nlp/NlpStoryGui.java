@@ -230,12 +230,15 @@ public class NlpStoryGui extends JFrame {
     }
     
     private void learnStory(ArrayList<Scene> scenesToLearn) {
+        nar.addInput("<meta-stop --> meta-info>. :|:");
+        nar.step(1);
+        
         for (Scene iteratorScene : scenesToLearn) {
             String narseseOfActions = convertActionItemsToNarsese(iteratorScene.actionItems);
             
             nar.addInput(narseseOfActions + ". :|:");
             nar.step(STEPS_BETWEEN);
-            nar.addInput(translateTextIntoTemporalNarsese(iteratorScene.textAsString) + ". :|:");
+            translateTextIntoTemporalNarseseAndLearn(iteratorScene.textAsString);
             nar.step(STEPS_BETWEENACTIONS);
         }
         
@@ -277,32 +280,28 @@ public class NlpStoryGui extends JFrame {
     
     
     
-    private static String translateTextIntoTemporalNarsese(String text) {
-        String result = "";
-        
+    private void translateTextIntoTemporalNarseseAndLearn(String text) {
         ArrayList<NaturalLanguagePerception.LinePart> lineParts = NaturalLanguagePerception.parseIntoLineParts(text);
-        int maximalIndex = lineParts.size()-1;
-        int index = 0;
+        int counter = 0;
         
-        for (NaturalLanguagePerception.LinePart iterationLinePart : lineParts) {
-            result += translateLinePartToNarsese(iterationLinePart);
+        for (int i = 0; i < lineParts.size(); i++) {
+            NaturalLanguagePerception.LinePart iterationLinePart = lineParts.get(i);
             
-            if (index != maximalIndex) {
-                result += ", ";
-            }
+            String linepartAsNarsese = translateLinePartToNarsese(iterationLinePart);
             
-            index++;
+            nar.addInput(linepartAsNarsese + ". :|:");
+            nar.step(3);
+            
+            counter++;
         }
-        
-        return "<(&/," + result + ") --> sentence>";
     }
     
     private static String translateLinePartToNarsese(NaturalLanguagePerception.LinePart linePart) {
         if (linePart.type == NaturalLanguagePerception.LinePart.EnumType.SIGN) {
-            return "<'" + linePart.content + "' --> sign>";
+            return "<{'" + linePart.content + "'} --> meta-sign>";
         }
         else {
-            return "<" + linePart.content + " --> word>";
+            return "<" + linePart.content + " --> meta-word>";
         }
     }
     
@@ -319,7 +318,7 @@ public class NlpStoryGui extends JFrame {
             }
         }
         
-        return "(&&," + internResult + ")";
+        return "(&|," + internResult + ")";
     }
     
     private static String convertActionItemToNarsese(ActionPanelContext.Item item) {
@@ -328,17 +327,24 @@ public class NlpStoryGui extends JFrame {
         String typeAsText = ((ActionPanelContext.TypeInfo)ActionPanelContext.TYPES.get(item.type)).typeAsText;
         
         result = "";
-        int lastIndex = item.parameters.length-1;
         
-        for (int i = 0; i < item.parameters.length; i++) {
-            result += item.parameters[i];
-            
-            if (i != lastIndex) {
-                result += ",";
+        if (item.parameters.length == 1) {
+            result = item.parameters[0];
+        }
+        else {
+            int lastIndex = item.parameters.length-1;
+
+            for (int i = 0; i < item.parameters.length; i++) {
+                result += item.parameters[i];
+
+                if (i != lastIndex) {
+                    result += ",";
+                }
             }
+            
+            result = "(*," + result + ")";
         }
         
-        result = "(*," + result + ")";
         result = "<" + result + " --> " + typeAsText + ">";
         
         if (item.isNegated) {
