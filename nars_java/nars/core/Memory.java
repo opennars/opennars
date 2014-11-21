@@ -185,11 +185,7 @@ public class Memory implements Serializable {
      * New tasks with novel composed terms, for delayed and selective processing
      */
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
-    
-    
-    public Bag<Task<Term>,Sentence<Term>> temporalCoherences=new LevelBag<>(100,20); //todo: forgetting event
-
-    
+   
     /* ---------- Short-term workspace for a single cycle ---	------- */
     
     /**
@@ -754,14 +750,6 @@ public class Memory implements Serializable {
         timeRealNow = System.currentTimeMillis();
     }
     
-    
-    public void AddToCoherences(Task t) {
-        if(t.sentence.content instanceof Implication && (t.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
-                t.sentence.content.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) && t.sentence.getOccurenceTime()==Stamp.ETERNAL) {
-            temporalCoherences.putIn(t);
-        }
-    }
-    
     /** Processes a specific number of new tasks */
     public int processNewTasks(int maxTasks, Collection<Runnable> queue) {
         if (maxTasks == 0) return 0;
@@ -781,7 +769,6 @@ public class Memory implements Serializable {
             if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.content)!=null) { //it is a question/goal/quest or a concept which exists                   
                 // ok so lets fire it
                 queue.add(new ImmediateProcess(this, task, numTasks - 1)); 
-                AddToCoherences(task); 
             } else { 
                 final Sentence s = task.sentence;
                 if ((s!=null) && (s.isJudgment()||s.isGoal())) {
@@ -872,7 +859,6 @@ public class Memory implements Serializable {
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
             if (task != null) {            
                 queue.add(new ImmediateProcess(this, task, 0));
-                AddToCoherences(task); 
                 executed++;
             }
         }

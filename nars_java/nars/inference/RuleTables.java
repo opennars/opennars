@@ -111,58 +111,26 @@ public class RuleTables {
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
             //this is a new attempt/experiment to make nars effectively track temporal coherences
-            if(beliefTerm instanceof Implication && belief.isEternal() && 
-                    (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
-                for(int i=0;i<Parameters.TEMPORAL_CHAINING_ATTEMPTS;i++) {
-                    
-                    Task best=nal.memory.temporalCoherences.takeNext();
-                    if (best == null) {
-                        break;                        
-                    }
-                    
-                    nal.memory.temporalCoherences.putBack(best, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
-                    
-                    Sentence s=best.sentence;
-                    Term t=s.content;
-                    
-                    if(!(t instanceof Implication) || s.getOccurenceTime()!=Stamp.ETERNAL)
-                        continue;
-                    
-                    Implication Imp=(Implication) t;
-                    if(Imp.getTemporalOrder()!=TemporalRules.ORDER_FORWARD && Imp.getTemporalOrder()!=TemporalRules.ORDER_CONCURRENT) {
-                        continue;
-                    }
-
-                    Task sich=nal.getCurrentTask();
-                    nal.setCurrentTask(best);
-                    
-                    if(TemporalRules.temporalInductionChain(s, belief, nal)) {
-                        break;
-                    }
-                    
-                    if(TemporalRules.temporalInductionChain(belief, s, nal)) {
-                        break;
-                    }
-                    
-                    nal.setCurrentTask(sich);
-                }
-            }
-            
-            //old method, not effective, todo
             if(beliefTerm instanceof Implication && 
-             (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) &&
-             taskTerm instanceof Implication && 
-             (taskTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || taskTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
-                if(taskSentence.isEternal() && belief.isEternal() ||
-                   belief.after(taskSentence, memory.param.duration.get())) {
-                    TemporalRules.temporalInductionChain(taskSentence, belief, nal);
-                }
-                if(belief.isEternal() && taskSentence.isEternal() ||
-                   taskSentence.after(belief, memory.param.duration.get())) {
-                    TemporalRules.temporalInductionChain(belief, taskSentence, nal);
-                }
+                    (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
+
+                //for(int i=0;i<Parameters.TEMPORAL_CHAINING_ATTEMPTS;i++) {
+                    Concept next=nal.memory.concepts.sampleNextConcept();
+                    if(!next.beliefs.isEmpty()) {
+                        Sentence s=next.beliefs.get(0);
+                        if (s != null) {
+                            Term t=s.content;
+                            if((t instanceof Implication)) {
+                                Implication Imp=(Implication) t;
+                                if(Imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || Imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                                    TemporalRules.temporalInductionChain(s, belief, nal);
+                                    TemporalRules.temporalInductionChain(belief, s, nal);
+                                }
+                            }
+                        }
+                    }
+               //}
             }
-    
             
             if (LocalRules.match(task, belief, nal)) {
                 //new tasks resulted from the match, so return

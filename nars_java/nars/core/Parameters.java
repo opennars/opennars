@@ -30,14 +30,7 @@ public class Parameters {
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
-    
-     //how much priority should finding temporal coherences have?
-    //examples showed, that linking succeeding found events, namely the new rule temporalInductionChain
-    //happens so rarely, that it is not of use for any real example
-    //here the best tasks will compete in a bag, and for every temporal implication n attemps will be done
-    //to take one out which can be chained
-    public static double TEMPORAL_CHAINING_ATTEMPTS=10;  //experiment
-    
+
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
     //Pei comments: parameters will be separated into a dynamic group and a static group
@@ -108,7 +101,7 @@ public class Parameters {
     /* ---------- space management ---------- */
     
     /** Level separation in Bag, one digit, for display (run-time adjustable) and management (fixed) */
-    public static final float BAG_THRESHOLD = 0.1f;
+    public static final float BAG_THRESHOLD = 1.0f;
     
 
     
