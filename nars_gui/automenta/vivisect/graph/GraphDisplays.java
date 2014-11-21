@@ -26,7 +26,8 @@ public class GraphDisplays<V,E> implements GraphDisplay<V,E> {
         int n = sequence.size();
         boolean allTrue = true;
         for (int i = 0; i < n; i++) {
-            allTrue &= sequence.get(i).preUpdate(g);
+            GraphDisplay s = sequence.get(i);            
+            allTrue &= s.preUpdate(g);
         }
         return allTrue;
     }

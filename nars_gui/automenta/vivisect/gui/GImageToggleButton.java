@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -67,7 +67,7 @@ import processing.event.MouseEvent;
  * @author Peter Lager
  *
  */
-public class GImageToggleButton extends GAbstractControl {
+public class GImageToggleButton extends GControl {
 
 	private static PImage toggle = null;
 	private static final String TOGGLE = "toggle.png";
@@ -180,13 +180,13 @@ public class GImageToggleButton extends GAbstractControl {
 
 		z = Z_SLIPPY;
 		// Now register control with applet
-		createEventHandler(G4P.sketchApplet, "handleToggleButtonEvents",
+		createEventHandler(GUI.sketchApplet, "handleToggleButtonEvents",
 				new Class<?>[]{ GImageToggleButton.class, GEvent.class }, 
 				new String[]{ "button", "event" } 
 		);
 		registeredMethods = DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	public void draw(){

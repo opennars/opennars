@@ -316,11 +316,19 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     public E peekNext() {
         if (size() == 0) return null; // empty bag                
                 
+        E e = takeNext();
+        putIn(e);
+        return e;        
+    }
+    
+    public E peekNextWithoutAffectingBagOrder() {    
+        if (size() == 0) return null; // empty bag                
+        
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }
        
-        return level[currentLevel].peekFirst();
+        return level[currentLevel].peekFirst();        
     }
     
     @Override

@@ -3,6 +3,7 @@ package automenta.vivisect.graph;
 
 
 import automenta.vivisect.Vis;
+import automenta.vivisect.swing.PCanvas;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -48,6 +49,8 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
 
     float arrowHeadScale = 1f/16f;
     static final float vertexTargetThreshold = 4f;
+    private PGraphics graphics;
+    private PCanvas canvas;
 
     
     public AbstractGraphVis(GraphDisplay display) {
@@ -84,7 +87,7 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
             return v;
         }
         
-        v = new VertexVis(o);
+        v = new VertexVis(getCanvas(), o);
         vertices.put(o, v);
 
         return v;
@@ -150,9 +153,26 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
         }
     }
 
+    
+    @Override public void init(PCanvas canvas) {
+        this.canvas = canvas;
+    }
+
+    public PCanvas getCanvas() {
+        return canvas;
+    }
+    
+    
+    public PGraphics getGraphics() {
+        return graphics;
+    }
+
+    
     @Override
     public boolean draw(PGraphics g) {
 
+
+        this.graphics = g;
         //long start = System.nanoTime();
         
         if (currentGraph == null) {

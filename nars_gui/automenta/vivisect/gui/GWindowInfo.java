@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -55,12 +55,12 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 	public boolean app_g_3d;
 	public PMatrix orgMatrix;
 	
-	public LinkedList<GAbstractControl> windowControls = new LinkedList<GAbstractControl>();
+	public LinkedList<GControl> windowControls = new LinkedList<GControl>();
 	// These next two lists are for controls that are to be added or remove since these
 	// actions must be performed outside the draw cycle to avoid concurrent modification
 	// exceptions when changing windowControls
-	public LinkedList<GAbstractControl> toRemove = new LinkedList<GAbstractControl>();
-	public LinkedList<GAbstractControl> toAdd = new LinkedList<GAbstractControl>();
+	public LinkedList<GControl> toRemove = new LinkedList<GControl>();
+	public LinkedList<GControl> toAdd = new LinkedList<GControl>();
 	
 	// Set this to true if papplet is a GWinApplet objects i.e. part of a 
 	// Gwindow object
@@ -104,7 +104,7 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 			// Apply the original Processing transformation matrix.
 			app.applyMatrix(orgMatrix);
 		}
-		for(GAbstractControl control : windowControls){
+		for(GControl control : windowControls){
 			if( (control.registeredMethods & DRAW_METHOD) == DRAW_METHOD )
 				control.draw();
 		}		
@@ -124,7 +124,7 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
             
 		if(isGWindow)
 			((GWinApplet)app).mouseEvent(event);
-		for(GAbstractControl control : windowControls){
+		for(GControl control : windowControls){
 			if((control.registeredMethods & MOUSE_METHOD) == MOUSE_METHOD)
 				control.mouseEvent(event);
 		}
@@ -136,7 +136,7 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 	public void keyEvent(KeyEvent event) {
 		if(isGWindow)
 			((GWinApplet)app).keyEvent(event);
-		for(GAbstractControl control : windowControls){
+		for(GControl control : windowControls){
 			if( (control.registeredMethods & KEY_METHOD) == KEY_METHOD)
 				control.keyEvent(event);
 		}			
@@ -147,13 +147,13 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 	 */
 	public void pre(){
 //		System.out.println(app);
-		if(GAbstractControl.controlToTakeFocus != null && GAbstractControl.controlToTakeFocus.getPApplet() == app){
-			GAbstractControl.controlToTakeFocus.setFocus(true);
-			GAbstractControl.controlToTakeFocus = null;
+		if(GControl.controlToTakeFocus != null && GControl.controlToTakeFocus.getPApplet() == app){
+			GControl.controlToTakeFocus.setFocus(true);
+			GControl.controlToTakeFocus = null;
 		}
 		if(isGWindow)
 			((GWinApplet)app).pre();
-		for(GAbstractControl control : windowControls){
+		for(GControl control : windowControls){
 			if( (control.registeredMethods & PRE_METHOD) == PRE_METHOD)
 				control.pre();
 		}
@@ -163,15 +163,15 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 	 * The post method registered with Processing
 	 */
 	public void post(){
-		if(G4P.cursorChangeEnabled){
-			if(GAbstractControl.cursorIsOver != null ) //&& GAbstractControl.cursorIsOver.getPApplet() == app)
-				app.cursor(GAbstractControl.cursorIsOver.cursorOver);			
+		if(GUI.cursorChangeEnabled){
+			if(GControl.cursorIsOver != null ) //&& GControl.cursorIsOver.getPApplet() == app)
+				app.cursor(GControl.cursorIsOver.cursorOver);			
 			else 
-				app.cursor(G4P.mouseOff);
+				app.cursor(GUI.mouseOff);
 		}
 		if(isGWindow)
 			((GWinApplet)app).post();
-		for(GAbstractControl control : windowControls){
+		for(GControl control : windowControls){
 			if( (control.registeredMethods & POST_METHOD) == POST_METHOD)
 				control.post();
 		}
@@ -183,9 +183,9 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 		synchronized (this) {
 		// Dispose of any unwanted controls
 			if(!toRemove.isEmpty()){
-				for(GAbstractControl control : toRemove){
+				for(GControl control : toRemove){
 					// If the control has focus then lose it
-					if(GAbstractControl.focusIsWith == control)
+					if(GControl.focusIsWith == control)
 						control.loseFocus(null);
 					// Clear control resources
 					control.buffer = null;
@@ -206,10 +206,10 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 				toRemove.clear();
 			}
 			if(!toAdd.isEmpty()){
-				for(GAbstractControl control : toAdd)
+				for(GControl control : toAdd)
 					windowControls.add(control);
 				toAdd.clear();
-				Collections.sort(windowControls, G4P.zorder);
+				Collections.sort(windowControls, GUI.zorder);
 			}
 		}
 	}
@@ -235,7 +235,7 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 	 * post() method
 	 * @param control
 	 */
-	synchronized void addControl(GAbstractControl control){
+	synchronized void addControl(GControl control){
 		// Make sure we avoid duplicates
 		if(!windowControls.contains(control) && !toAdd.contains(control))
 			toAdd.add(control);
@@ -247,19 +247,19 @@ public class GWindowInfo implements PConstants, GConstants, GConstantsInternal {
 	 * post() method
 	 * @param control
 	 */
-	synchronized void removeControl(GAbstractControl control){
+	synchronized void removeControl(GControl control){
 		// Make sure we avoid duplicates
 		if(windowControls.contains(control) && !toRemove.contains(control))
 			toRemove.add(control);
 	}
 
 	void setColorScheme(int cs){
-		for(GAbstractControl control : windowControls)
+		for(GControl control : windowControls)
 			control.setLocalColorScheme(cs);
 	}
 
 	void setAlpha(int alpha){
-		for(GAbstractControl control : windowControls)
+		for(GControl control : windowControls)
 			control.setAlpha(alpha);
 	}
 

@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -83,13 +83,13 @@ public class GButton extends GTextIconAlignBase {
 		setText(text);
 		z = Z_SLIPPY;
 		// Now register control with applet
-		createEventHandler(G4P.sketchApplet, "handleButtonEvents", 
+		createEventHandler(GUI.sketchApplet, "handleButtonEvents", 
 				new Class<?>[]{ GButton.class, GEvent.class }, 
 				new String[]{ "button", "event" } 
 		);
 		registeredMethods = DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 	
 	/**

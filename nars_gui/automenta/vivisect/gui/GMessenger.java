@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -39,8 +39,8 @@ class GMessenger implements GConstants, GConstantsInternal {
 	 * @param info
 	 */
 	static void message(Integer id, Object[] info){
-		// Display G4P messages if required
-		if(G4P.showMessages){
+		// Display GUI messages if required
+		if(GUI.showMessages){
 			switch(id){
 			case MISSING:
 				missingEventHandler(info);
@@ -151,11 +151,11 @@ class GMessenger implements GConstants, GConstantsInternal {
 	}
 
 	/**
-	 * An attempt was made to add a G4P control that does not have a visual appearance or one that 
-	 * does not respond to mouse / keyboard events. 
+	 * An attempt was made to add a GUI control that does not have a visual appearance or one that 
+ does not respond to mouse / keyboard events. 
 	 * 
 	 * info[0] the group class
-	 * info[1] the G4P control class
+ info[1] the GUI control class
 	 */
 	private static void inavlidControlType(Object[] info){
 		String groupClassName = info[0].getClass().getSimpleName();
@@ -165,11 +165,11 @@ class GMessenger implements GConstants, GConstantsInternal {
 	}
 
 	/**
-	 * An attempt was made to add a G4P control that does not have a visual appearance or one that 
-	 * does not respond to mouse / keyboard events. 
+	 * An attempt was made to add a GUI control that does not have a visual appearance or one that 
+ does not respond to mouse / keyboard events. 
 	 * 
 	 * info[0] the group class
-	 * info[1] the G4P control class
+ info[1] the GUI control class
 	 */
 	private static void unmatchedPApplet(Object[] info){
 		String groupClassName = info[0].getClass().getSimpleName();

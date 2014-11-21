@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -38,7 +38,7 @@ import processing.event.MouseEvent;
  * @author Peter Lager
  *
  */
-class GScrollbar extends GAbstractControl {
+class GScrollbar extends GControl {
 
 	private static final int OFF_FILL = 3;
 	private static final int OFF_STROKE = 0;
@@ -80,7 +80,7 @@ class GScrollbar extends GAbstractControl {
 		z = Z_SLIPPY;
 		registeredMethods = DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**

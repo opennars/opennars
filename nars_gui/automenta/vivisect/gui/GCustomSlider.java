@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -115,7 +115,7 @@ public class GCustomSlider extends GLinearTrackControl {
 		setStyle(skin);
 		
 		// Customise buffer for this control
-		buffer.g2.setFont(G4P.numericLabelFont);
+		buffer.g2.setFont(GUI.numericLabelFont);
 		buffer.imageMode(PApplet.CENTER);
 		
 		hotspots = new HotSpot[]{
@@ -131,13 +131,13 @@ public class GCustomSlider extends GLinearTrackControl {
 		ssValue = new StyledString("0.50");
 
 		// Now register control with applet
-		createEventHandler(G4P.sketchApplet, "handleSliderEvents", 
+		createEventHandler(GUI.sketchApplet, "handleSliderEvents", 
 				new Class<?>[]{ GValueControl.class, GEvent.class },
 				new String[]{ "slider", "event" }
 		);
 		registeredMethods = PRE_METHOD | DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class GCustomSlider extends GLinearTrackControl {
 	}
 
 	/**
-	 * If no user defined skin has been specified then load a style from the G4P library.
+	 * If no user defined skin has been specified then load a style from the GUI library.
 	 * If the style does not exist it will use the default style.
 	 * @param style
 	 */

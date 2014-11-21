@@ -36,7 +36,7 @@ import processing.core.PApplet;
  * @author Peter Lager
  *
  */
-public abstract class GValueControl extends GAbstractControl {
+public abstract class GValueControl extends GControl {
 
 	protected StyledString ssStartLimit, ssEndLimit, ssValue;
 

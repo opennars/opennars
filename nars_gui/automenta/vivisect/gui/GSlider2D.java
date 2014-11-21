@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -92,13 +92,13 @@ public class GSlider2D extends GValueControl2D {
 		opaque = true;
 		
 		// Now register control with applet
-		createEventHandler(G4P.sketchApplet, "handleSlider2DEvents",
+		createEventHandler(GUI.sketchApplet, "handleSlider2DEvents",
 				new Class<?>[]{ GSlider2D.class, GEvent.class },
 				new String[]{ "slider2d", "event" }
 		);
 		registeredMethods = PRE_METHOD | DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
@@ -399,7 +399,7 @@ public class GSlider2D extends GValueControl2D {
 	 * Valid number formats are INTEGER, DECIMAL, EXPONENT <br>
 	 * Precision must be >= 1 and is ignored for INTEGER.
 	 * 
-	 * @param numberFormat G4P.INTEGER, G4P.DECIMAL orG4P. EXPONENT
+	 * @param numberFormat GUI.INTEGER, GUI.DECIMAL orG4P. EXPONENT
 	 * @param precision must be >= 1
 	 */
 	public void setNumberFormat(int numberFormat, int precision){
@@ -421,7 +421,7 @@ public class GSlider2D extends GValueControl2D {
 	 * Valid number formats are INTEGER, DECIMAL, EXPONENT <br>
 	 * Precision must be >= 1 and is ignored for INTEGER.
 	 * 
-	 * @param numberFormat G4P.INTEGER, G4P.DECIMAL or G4P.EXPONENT
+	 * @param numberFormat GUI.INTEGER, GUI.DECIMAL or GUI.EXPONENT
 	 */
 	public void setNumberFormat(int numberFormat){
 		switch(numberFormat){

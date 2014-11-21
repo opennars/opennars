@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -36,7 +36,7 @@ import processing.core.PGraphics;
  * @author Peter Lager
  *
  */
-public class GSketchPad extends GAbstractControl {
+public class GSketchPad extends GControl {
 
 	// Scale graphic should be set to true if the grpahics object
 	// and this sketch pad object are of different sizes.
@@ -46,9 +46,9 @@ public class GSketchPad extends GAbstractControl {
 
 	public GSketchPad(PApplet theApplet, float p0, float p1, float p2, float p3) {
 		super(theApplet, p0, p1, p2, p3);
-		cursorOver = G4P.mouseOff; // does not change
+		cursorOver = GUI.mouseOff; // does not change
 		registeredMethods = DRAW_METHOD;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 	
 	public void setGraphic(PGraphics pg){

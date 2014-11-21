@@ -70,7 +70,7 @@ public class VariableTest {
             }
         };
 
-        n.finish(128);
+        n.finish(1024);
           
         assertTrue(solutionFound.get());
         

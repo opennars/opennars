@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -36,16 +36,16 @@ import processing.core.PApplet;
  * scheme and transparency for all the controls in the group. It is possible to 
  * specify a delay before the action is executed, and in the case of transparency, specify
  * the amount of time the fade occurs.<br>
- * This is particularly useful if your sketch has a number of 'modes' and each mode has its
- * own set of G4P controls. Simply create a GGroup object for each mode then as the mode 
- * changes it is easy to display the controls for the current mode and hide the others. <br>
+ This is particularly useful if your sketch has a number of 'modes' and each mode has its
+ own set of GUI controls. Simply create a GGroup object for each mode then as the mode 
+ changes it is easy to display the controls for the current mode and hide the others. <br>
  * A GGroup is associated with a window (or GWindow) and can only be used with controls
  * displayed on that window.
  *
  * @author Peter Lager
  *
  */
-public final class GGroup extends GAbstractControl {
+public final class GGroup extends GControl {
 	// The possible group action types
 	private static final int INVALID_ACTION	= 0;
 	private static final int ALPHA_TO		= 1;
@@ -88,10 +88,10 @@ public final class GGroup extends GAbstractControl {
 		super(theApplet);
 		startAlpha &= 0xFF;
 		currentAlpha = targetAlpha = startAlpha;
-		children = new LinkedList<GAbstractControl>();
+		children = new LinkedList<GControl>();
 		registeredMethods = PRE_METHOD;
 		cTime = lTime = eTime = 0;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
@@ -289,48 +289,48 @@ public final class GGroup extends GAbstractControl {
 	}
 
 	private void alphaImpl(int alpha){
-		for(GAbstractControl control : children)
+		for(GControl control : children)
 			control.setAlpha(alpha, true);		
 	}
 
 	private void colorImpl(int col){
 		col &= 0xff; // make 0 -15
-		for(GAbstractControl control : children)
+		for(GControl control : children)
 			control.setLocalColorScheme(col,  true);		
 	}
 
 	private void enableImpl(boolean enable){
-		for(GAbstractControl control : children)
+		for(GControl control : children)
 			control.setEnabled(enable);		
 	}
 
 	private void visibleImpl(boolean visible){
-		for(GAbstractControl control : children)
+		for(GControl control : children)
 			control.setVisible(visible);		
 	}
 
 
 	/**
-	 * Add one or more G4P controls to this group. <br>
+	 * Add one or more GUI controls to this group. <br>
 	 * If a control is not a valid type for group control, or if the control and group are for different 
 	 * windows then the control is not added and a warning message is displayed.
 	 * 
-	 * @param controls comma separated list of G4P controls to add to this group
+	 * @param controls comma separated list of GUI controls to add to this group
 	 */
-	public void addControls(GAbstractControl... controls){
+	public void addControls(GControl... controls){
 		if(controls != null)
-			for(GAbstractControl control : controls)
+			for(GControl control : controls)
 				addControl(control);
 	}
 
 	/**
-	 * A single G4P control to add to this group. <br>
+	 * A single GUI control to add to this group. <br>
 	 * If a control is not a valid type for group control, or if the control and group are for different 
 	 * windows then the control is not added and a warning message is displayed.
 	 * 
-	 * @param control a G4P control to add to this group
+	 * @param control a GUI control to add to this group
 	 */
-	public void addControl(GAbstractControl control){
+	public void addControl(GControl control){
 		if(control != null){
 			if(!control.isSuitableForGroupControl(control)){
 				GMessenger.message(INVALID_TYPE, new Object[] { this, control } );
@@ -346,22 +346,22 @@ public final class GGroup extends GAbstractControl {
 	}
 
 	/**
-	 * Remove one or more G4P controls from this group. <br>
+	 * Remove one or more GUI controls from this group. <br>
 	 * 
-	 * @param controls comma separated list of G4P controls to remove from this group
+	 * @param controls comma separated list of GUI controls to remove from this group
 	 */
-	public void removeControls(GAbstractControl... controls){
+	public void removeControls(GControl... controls){
 		if(controls != null)
-			for(GAbstractControl control : controls)
+			for(GControl control : controls)
 				removeControl(control);
 	}
 
 	/**
-	 * Remove a single G4P control from this group. <br>
+	 * Remove a single GUI control from this group. <br>
 	 * 
-	 * @param control a G4P control to remove from this group
+	 * @param control a GUI control to remove from this group
 	 */
-	public void removeControl(GAbstractControl control){
+	public void removeControl(GControl control){
 		if(control != null)
 			children.remove(control);
 	}

@@ -1,5 +1,5 @@
 /*
-  Part of the G4P library for Processing 
+  Part of the GUI library for Processing 
   	http://www.lagers.org.uk/g4p/index.html
 	http://sourceforge.net/projects/g4p/files/?source=navbar
 
@@ -115,7 +115,7 @@ public class GPanel extends GTextBase {
 		else
 			setDragArea();
 		// Create the list of children
-		children = new LinkedList<GAbstractControl>();
+		children = new LinkedList<GControl>();
 		setText(text);
 		calcHotSpots();
 		constrainPanelPosition();
@@ -124,13 +124,13 @@ public class GPanel extends GTextBase {
 		dockY = y;
 		z = Z_PANEL;
 
-		createEventHandler(G4P.sketchApplet, "handlePanelEvents", 
+		createEventHandler(GUI.sketchApplet, "handlePanelEvents", 
 				new Class<?>[]{ GPanel.class, GEvent.class },
 				new String[]{ "panel", "event" } 
 		);
 		registeredMethods = DRAW_METHOD | MOUSE_METHOD;
 		cursorOver = HAND;
-		G4P.addControl(this);
+		GUI.addControl(this);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class GPanel extends GTextBase {
 	 *  
 	 * @param p the parent
 	 */
-	protected void addToParent(GAbstractControl p){
+	protected void addToParent(GControl p){
 		// Will this fit inside the parent panel
 		if(width > p.width || height > p.height){ //No
 			draggable = false;
@@ -187,7 +187,7 @@ public class GPanel extends GTextBase {
 	/**
 	 * What to do when the FPanel loses focus.
 	 */
-	protected void loseFocus(GAbstractControl grabber){
+	protected void loseFocus(GControl grabber){
 		focusIsWith = null;
 		beingDragged = false;
 	}
@@ -224,7 +224,7 @@ public class GPanel extends GTextBase {
 		// Draw the children
 		if(!tabOnly){
 			if(children != null){
-				for(GAbstractControl c : children)
+				for(GControl c : children)
 					c.draw();
 			}
 		}
@@ -469,7 +469,7 @@ public class GPanel extends GTextBase {
 	 */
 	public boolean setDragArea(float xMin, float yMin, float xMax, float yMax){
 		if(xMax - xMin < width || yMax - yMin < height){
-			if(G4P.showMessages)
+			if(GUI.showMessages)
 				System.out.println("The constraint area is too small for this panel - request ignored");
 			return false;
 		}

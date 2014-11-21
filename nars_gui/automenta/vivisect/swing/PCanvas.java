@@ -64,6 +64,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
             vis = (Vis)this;
         }
         this.vis = vis;
+        vis.init(this);
     }
 
     float MouseToWorldCoordX(final int x) {
@@ -217,17 +218,19 @@ public class PCanvas extends PApplet implements HierarchyListener {
     }
     
 
-    public void setFrameRate(float frameRate) {
+    public PCanvas setFrameRate(float frameRate) {
         this.FrameRate = frameRate;
         frameRate(FrameRate);
+        return this;
     }
 
     public float getFrameRate() {
         return frameRate;
     }
 
-    public void setZoom(float f) {
+    public PCanvas setZoom(float f) {
         zoom = f;
+        return this;
     }
 
     public float getZoom() {

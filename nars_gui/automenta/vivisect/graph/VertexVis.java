@@ -8,7 +8,9 @@ package automenta.vivisect.graph;
 import automenta.vivisect.Vis;
 import automenta.vivisect.graph.GraphDisplay.Shape;
 import static automenta.vivisect.graph.GraphDisplay.Shape.Ellipse;
-import automenta.vivisect.timeline.TimelineVis;
+import automenta.vivisect.swing.PCanvas;
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.MutableClassToInstanceMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -35,9 +37,12 @@ public class VertexVis<V, E> {
     public Set<E> edges;
     public Shape shape;
     public float speed;
+    public ClassToInstanceMap<Object> props;
     public List<Vis> children = null;
+    private final PCanvas canvas;
 
-    public VertexVis(V o) {
+    public VertexVis(PCanvas canvas, V o) {
+        this.canvas = canvas;
         this.vertex = o;
         x = y = 0;
         tx = x;
@@ -175,10 +180,23 @@ public class VertexVis<V, E> {
         return radius;
     }
 
-    public void addChild(TimelineVis timeline) {
+    public void addChild(Vis v) {
         if (children == null)
-            children = new ArrayList();
-        children.add(timeline);
+            children = new ArrayList();        
+        children.add(v);
+        v.init(canvas);
     }
     
+    public <C extends Object> C the(Class<C> c) {
+        if (props == null)
+            return null;
+               
+        return props.getInstance(c);
+    }
+    
+    public <D extends Object> void the(Class<D> key, D value) {
+        if (props == null)
+            props = MutableClassToInstanceMap.create();
+        props.putInstance(key, value);
+    }
 }
