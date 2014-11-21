@@ -147,13 +147,13 @@ public class Default extends Build implements ConceptBuilder {
         
         if (internalExperience==Minimal) {            
             n.addPlugin(new InternalExperience());
-            n.addPlugin(new Anticipate());      // expect an event
         }
         else if (internalExperience==Full) {            
             n.addPlugin(new FullInternalExperience());
             n.addPlugin(new Anticipate());      // expect an event
             n.addPlugin(new Abbreviation());
             n.addPlugin(new Counting());
+            n.addPlugin(new Anticipate());      // expect an event
         }
         
         return n;
