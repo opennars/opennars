@@ -172,11 +172,20 @@ public class TemporalRules {
         Term C=S2.getPredicate();
         ArrayList<Term> args=null;
         
+        int beginoffset=0;
         if(B2 instanceof Conjunction) {
             Conjunction CB2=((Conjunction)B2);
-            if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {                
-                args = new ArrayList(CB2.term.length + 1);
-                args.add(A);
+            if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {       
+                if(A instanceof Conjunction && ((Conjunction)A).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                    Conjunction ConjA=(Conjunction) A;
+                    args=new ArrayList(CB2.term.length+ConjA.term.length);
+                    beginoffset=ConjA.size();
+                    for(final Term t: ConjA.term) args.add(t);
+                } else {
+                    args = new ArrayList(CB2.term.length + 1);
+                    args.add(A);
+                    beginoffset=1;
+                }
                 for (final Term t : CB2.term) args.add(t);
             }
         }
@@ -189,7 +198,7 @@ public class TemporalRules {
                 
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
         Term[] term = args.toArray(new Term[args.size()]);
-        Term realB2 = term[1];
+        Term realB2 = term[beginoffset];
         HashMap<Term, Term> res1 = new HashMap<>();
         HashMap<Term, Term> res2 = new HashMap<>();
 

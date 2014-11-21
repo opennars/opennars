@@ -29,6 +29,7 @@ import nars.operator.Operation;
  * NAL Reasoner Process.  Includes all reasoning process state.
  */
 public abstract class NAL implements Runnable {
+
     public final Memory memory;
     protected Term currentTerm;
     protected Concept currentConcept;
