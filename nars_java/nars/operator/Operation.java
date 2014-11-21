@@ -72,14 +72,14 @@ public class Operation extends Inheritance {
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
-        /*if(addSelf) {
+        if(addSelf && !arg[arg.length-1].toString().equals("SELF")) {
             Term[] arg2=new Term[arg.length+1];
-            arg2[0]=new Term("SELF");
             for(int i=0;i<arg.length;i++) {
-                arg2[i+1]=arg[i];
+                arg2[i]=arg[i];
             }
+            arg2[arg.length]=new Term("SELF");
             arg=arg2;
-        }*/
+        }
         
         return new Operation( new Product(arg), oper  );        
     }
@@ -100,9 +100,14 @@ public class Operation extends Inheritance {
         final StringBuilder nameBuilder = new StringBuilder(16) //estimate
                 .append(COMPOUND_TERM_OPENER.ch).append(op);
         
+        int n=0;
         for (final Term t : arg) {
+            if(n==arg.length-1) {
+                break;
+            }
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             nameBuilder.append(t.name());
+            n++;
         }
         
         nameBuilder.append(COMPOUND_TERM_CLOSER.ch);

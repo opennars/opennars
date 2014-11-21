@@ -3,5 +3,5 @@
 <a --> b>?
 'ok lets ask something different, then NARS should knows something very interesting about what happened:
 <c --> d>?
-10
+20
 ''outputMustContain('<(^believe,<a --> b>,TRUE) =|> (^wonder,<c --> d>)>. :\: %1.00;0.45%')
