@@ -511,7 +511,7 @@ public class Rover extends PhysicsModel {
 
                 
 
-                if (args.length > 1) {
+                if (args.length > 2) {
                     Term t2 = args[1];
                     switch (t1.name().toString() + "," + t2.name().toString()) {
                         case "turn,left":
