@@ -51,6 +51,7 @@ public class Goto extends Operator {
         for (Term t : args) {
             System.out.println(" --- " + t);
             chamb.operateObj(t.toString(),"go-to");
+            break;
         }
         
         

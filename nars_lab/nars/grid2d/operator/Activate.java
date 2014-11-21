@@ -50,6 +50,7 @@ public class Activate extends Operator {
         for (Term t : args) {
             System.out.println(" --- " + t);
             chamb.operateObj(t.toString(),"activate");
+            break;
         }
         
         

@@ -50,6 +50,7 @@ public class Pick extends Operator {
         for (Term t : args) {
             System.out.print(" --- " + t);
             chamb.operateObj(t.toString(),"pick");
+            break;
         }
         
         
