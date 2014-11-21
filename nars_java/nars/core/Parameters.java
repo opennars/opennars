@@ -31,7 +31,12 @@ public class Parameters {
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
     
-    
+     //how much priority should finding temporal coherences have?
+    //examples showed, that linking succeeding found events, namely the new rule temporalInductionChain
+    //happens so rarely, that it is not of use for any real example
+    //here the best tasks will compete in a bag, and for every temporal implication n attemps will be done
+    //to take one out which can be chained
+    public static double TEMPORAL_CHAINING_ATTEMPTS=10;  //experiment
     
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
