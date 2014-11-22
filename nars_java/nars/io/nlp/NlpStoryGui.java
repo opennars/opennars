@@ -230,6 +230,12 @@ public class NlpStoryGui extends JFrame {
     }
     
     private void learnStory(ArrayList<Scene> scenesToLearn) {
+        for (int i = 0; i < STORY_REPEATS; i++) {
+            learnStorySingleRun(scenesToLearn);
+        }
+    }
+    
+    private void learnStorySingleRun(ArrayList<Scene> scenesToLearn) {
         nar.addInput("<meta-stop --> meta-info>. :|:");
         nar.step(1);
         
@@ -413,4 +419,6 @@ public class NlpStoryGui extends JFrame {
     private final int STEPS_BETWEEN = 3;
     private final int STEPS_BETWEENACTIONS = 20;
     private final int STEPS_BETWEENSCENES = 50; // must be greater or equal to STEPS_BETWEENACTIONS
+    
+    private final int STORY_REPEATS = 5;
 }
