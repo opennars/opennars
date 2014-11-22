@@ -173,13 +173,13 @@ public final class GPassword extends GControl implements Focusable{
 		GUI.control_mode = GControlMode.CORNER;
 		if((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0){
 			hsb = new GScrollbar(theApplet, 0, 0, tw, 10);
-			addControl(hsb, tx, ty + th + 2, 0);
+			add(hsb, tx, ty + th + 2, 0);
 			hsb.addEventHandler(this, "hsbEventHandler");
 			hsb.setAutoHide(autoHide);
 		}
 		GUI.popStyle();
 		//		z = Z_STICKY;
-		createEventHandler(GUI.sketchApplet, "handlePasswordEvents", 
+		createEventHandler(GUI.applet, "handlePasswordEvents", 
 				new Class<?>[]{ GPassword.class, GEvent.class }, 
 				new String[]{ "pwordControl", "event" } 
 				);

@@ -154,8 +154,8 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	 */
 	private void windowCtorCore(PApplet theApplet, int x, int y, int w, int h, PImage image,  boolean noFrame, String mode, String name){
 		// If this is the first control to be created then theAapplet must be the sketchApplet
-		if(GUI.sketchApplet == null)
-			GUI.sketchApplet = theApplet;
+		if(GUI.applet == null)
+			GUI.applet = theApplet;
 		app = theApplet;
 		winName = name;
 

@@ -42,7 +42,7 @@ import processing.event.MouseEvent;
  * @author Peter Lager
  */
 @SuppressWarnings("serial")
-public class GWinApplet extends PApplet implements GConstants, GConstantsInternal {
+@Deprecated public class GWinApplet extends PApplet implements GConstants, GConstantsInternal {
 
 	// Must be set by GWindow 'owning' this PApplet
 	public GWindow owner;

@@ -133,8 +133,8 @@ public class GDropList extends GTextBase {
 
 		// Add the button and scrollbar
 		GUI.control_mode = GControlMode.CORNER;
-		addControl(vsb, width, itemHeight + 1, PI/2);
-		addControl(showList, width - buttonWidth, 0, 0);
+		add(vsb, width, itemHeight + 1, PI/2);
+		add(showList, width - buttonWidth, 0, 0);
 
 		GUI.popStyle();
 
@@ -143,7 +143,7 @@ public class GDropList extends GTextBase {
 				new HSrect(CLOSED_SURFACE, 0, 0, width - buttonWidth, itemHeight)				// selected text display area
 		};
 
-		createEventHandler(GUI.sketchApplet, "handleDropListEvents",
+		createEventHandler(GUI.applet, "handleDropListEvents",
 				new Class<?>[]{ GDropList.class, GEvent.class }, 
 				new String[]{ "list", "event" } 
 				);

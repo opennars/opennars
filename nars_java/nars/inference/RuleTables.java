@@ -22,12 +22,10 @@ package nars.inference;
 
 import nars.core.Events;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.core.control.NAL;
 import nars.entity.Sentence;
-import nars.entity.Stamp;
 import nars.entity.TLink;
 import nars.entity.Task;
 import nars.entity.TaskLink;
@@ -69,8 +67,7 @@ public class RuleTables {
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final NAL nal) {
         final Memory memory = nal.mem();
-        
-        memory.logic.REASON.commit(tLink.getPriority());
+                        
         
         final Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
@@ -90,8 +87,9 @@ public class RuleTables {
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
            return;
         
+        final Concept currentConcept = nal.getCurrentConcept();
+        final Concept beliefConcept = memory.concept(beliefTerm);
         
-        Concept beliefConcept = memory.concept(beliefTerm);
         Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
         
         nal.setCurrentBelief( belief );  // may be null

@@ -162,7 +162,7 @@ public class GImageButton extends GControl {
 
 		z = Z_SLIPPY;
 		// Now register control with applet
-		createEventHandler(GUI.sketchApplet, "handleButtonEvents",
+		createEventHandler(GUI.applet, "handleButtonEvents",
 				new Class<?>[]{ GImageButton.class, GEvent.class }, 
 				new String[]{ "button", "event" } 
 		);
@@ -255,7 +255,7 @@ public class GImageButton extends GControl {
 
 		z = Z_SLIPPY;
 		// Now register control with applet
-		createEventHandler(GUI.sketchApplet, "handleButtonEvents",
+		createEventHandler(GUI.applet, "handleButtonEvents",
 				new Class<?>[]{ GImageButton.class, GEvent.class }, 
 				new String[]{ "button", "event" } 
 		);

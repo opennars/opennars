@@ -67,7 +67,7 @@ public class GCheckbox extends GToggleControl {
 		setTextAlign(GAlign.LEFT, null);
 		z = Z_SLIPPY;
 		// Now register control with applet
-		createEventHandler(GUI.sketchApplet, "handleToggleControlEvents", 
+		createEventHandler(GUI.applet, "handleToggleControlEvents", 
 				new Class<?>[]{ GToggleControl.class, GEvent.class }, 
 				new String[]{ "checkbox", "event" } 
 		);

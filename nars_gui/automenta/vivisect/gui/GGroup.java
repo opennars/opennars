@@ -317,10 +317,10 @@ public final class GGroup extends GControl {
 	 * 
 	 * @param controls comma separated list of GUI controls to add to this group
 	 */
-	public void addControls(GControl... controls){
+	public void add(GControl... controls){
 		if(controls != null)
 			for(GControl control : controls)
-				addControl(control);
+				add(control);
 	}
 
 	/**
@@ -330,7 +330,7 @@ public final class GGroup extends GControl {
 	 * 
 	 * @param control a GUI control to add to this group
 	 */
-	public void addControl(GControl control){
+	public void add(GControl control){
 		if(control != null){
 			if(!control.isSuitableForGroupControl(control)){
 				GMessenger.message(INVALID_TYPE, new Object[] { this, control } );

@@ -44,7 +44,7 @@ public interface GConstants {
 	int CYAN_SCHEME 	= 5;
 	int BLUE_SCHEME 	= 6;
 	int GOLD_SCHEME 	= 7;	
-	int SCHEME_8		= 8;
+	int GRAY_SCHEME		= 8;
 	int SCHEME_9		= 9;
 	int SCHEME_10		= 10;
 	int SCHEME_11		= 11;

@@ -28,9 +28,10 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.List;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -107,7 +108,7 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
      * A list of child GComponents added to this component
      * Created and used by GPanel and GDropList classes
      */
-    protected LinkedList<GControl> children = null;
+    protected List<GControl> children = null;
 
     protected int localColorScheme = GUI.globalColorScheme;
     protected int[] palette = null;
@@ -231,8 +232,8 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
         super();
         
         // If this is the first control to be created then theAapplet must be the sketchApplet
-        if (GUI.sketchApplet == null) {
-            GUI.sketchApplet = theApplet;
+        if (GUI.applet == null) {
+            GUI.applet = theApplet;
         }
         winApp = (PCanvas) theApplet;
         tag = this.getClass().getSimpleName();
@@ -382,6 +383,8 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
 
     
     public void mouseEvent(MouseEvent event) {
+        
+        
     }
 
     public void keyEvent(KeyEvent e) {
@@ -1014,7 +1017,7 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
      * @param angle the rotation angle (replaces any the angle specified in
      * control)
      */
-    public void addControl(GControl c, float x, float y, float angle) {
+    public void add(GControl c, float x, float y, float angle) {
         // Ignore if children are not allowed.
         if (children == null) {
             return;
@@ -1062,9 +1065,9 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
         // Parent will now be responsible for drawing
         c.registeredMethods &= (ALL_METHOD - DRAW_METHOD);
         if (children == null) {
-            children = new LinkedList<GControl>();
+            children = new ArrayList<GControl>();
         }
-        children.addLast(c);
+        children.add(c);
         Collections.sort(children, new Z_Order());
         // Does the control being added have to do anything extra
         c.addToParent(this);
@@ -1077,11 +1080,11 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
      * @param x the leftmost or centre position depending on controlMode
      * @param y the topmost or centre position depending on controlMode
      */
-    public void addControl(GControl c, float x, float y) {
+    public void add(GControl c, float x, float y) {
         if (children == null) {
             return;
         }
-        addControl(c, x, y, 0);
+        GControl.this.add(c, x, y, 0);
     }
 
     /**
@@ -1089,17 +1092,17 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
      *
      * @param c the control to add
      */
-    public void addControl(GControl c) {
+    public void add(GControl c) {
         if (children == null) {
             return;
         }
         switch (GUI.control_mode) {
             case CORNER:
             case CORNERS:
-                addControl(c, c.x, c.y, c.rotAngle);
+                GControl.this.add(c, c.x, c.y, c.rotAngle);
                 break;
             case CENTER:
-                addControl(c, c.cx, c.cy, c.rotAngle);
+                GControl.this.add(c, c.cx, c.cy, c.rotAngle);
                 break;
         }
     }
@@ -1110,7 +1113,7 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
      *
      * @param controls comma separated list of controls
      */
-    public void addControls(GControl... controls) {
+    public void add(GControl... controls) {
         if (children == null) {
             return;
         }
@@ -1118,10 +1121,10 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
             switch (GUI.control_mode) {
                 case CORNER:
                 case CORNERS:
-                    addControl(c, c.x, c.y, c.rotAngle);
+                    GControl.this.add(c, c.x, c.y, c.rotAngle);
                     break;
                 case CENTER:
-                    addControl(c, c.cx, c.cy, c.rotAngle);
+                    GControl.this.add(c, c.cx, c.cy, c.rotAngle);
                     break;
             }
         }

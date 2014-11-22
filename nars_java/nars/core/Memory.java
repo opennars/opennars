@@ -105,7 +105,6 @@ import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.storage.Bag;
-import nars.storage.LevelBag;
 
 
 /**
@@ -566,6 +565,9 @@ public class Memory implements Serializable {
         throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }
     
+    /** 
+     * this will not remove a concept.  it is not good to use directly because it can disrupt 
+     * the bag's priority order. it should only be used after it has been removed then before inserted */
     public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
         switch (param.forgetting) {
             case Iterative:

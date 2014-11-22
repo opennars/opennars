@@ -80,14 +80,16 @@ class GMessenger implements GConstants, GConstantsInternal {
 		String methodName = (String) info[1];
 		Exception e = (Exception) info[2];
 		Throwable t = e.getCause();
-		StackTraceElement[] calls = t.getStackTrace();
 		StringBuilder output = new StringBuilder();
 		output.append("################  EXCEPTION IN EVENT HANDLER  ################");
 		output.append("\nAn error occured during execution of the eventhandler:");
 		output.append("\nCLASS: "+className+"   METHOD: "+methodName);
-		output.append("\n\tCaused by " + t.toString());
-		for(Object line : calls)
-			output.append("\n\t"+ line.toString());			
+                if (t!=null) {
+                    output.append("\n\tCaused by " + t.toString());
+                    StackTraceElement[] calls = t.getStackTrace();
+                    for(Object line : calls)
+                            output.append("\n\t"+ line.toString());			
+                }
 		output.append("\n##############################################################\n");
 		System.out.println(output);
 	}

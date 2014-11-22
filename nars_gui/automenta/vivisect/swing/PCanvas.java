@@ -82,8 +82,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
         return dify;
     }
     
-    public void setPanX(float px) { difx = px; }
-    public void setPanY(float py) { dify = py; }
+    public void setPanX(float px) { difx = -px; }
+    public void setPanY(float py) { dify = -py; }
     
     public float getCursorX() {
         return MouseToWorldCoordX(mouseX);
@@ -227,6 +227,13 @@ public class PCanvas extends PApplet implements HierarchyListener {
     public float getFrameRate() {
         return frameRate;
     }
+    
+    public PCanvas setZoom(float x, float y, float z) {
+        setPanX(x);
+        setPanY(y);
+        setZoom(z);
+        return this;
+    }
 
     public PCanvas setZoom(float f) {
         zoom = f;
@@ -236,6 +243,31 @@ public class PCanvas extends PApplet implements HierarchyListener {
     public float getZoom() {
         return zoom;
     }
+
+    /** zoom to a rectangular region */
+    public void setZoom(float cx, float cy, float width, float height) {
+        //TODO add margin, right-click zoom out
+        
+        //System.out.println("auto-zoom: " + cx + " " + cy + " " + width + " " + height);
+        
+        //https://github.com/automenta/automenta.spacegraphj/blob/master/spacegraph/automenta/spacegraph/control/FractalControl.java#L128
+        
+       // float targetZ = getTargetDepth(width, height); //TODO calculate correct height
+        float targetZ = this.width / Math.max(width,height);
+        
+        //System.out.print(getPanX() + " " + getPanY() + " " + getZoom() + " --> ");        
+        float tx = (cx) * targetZ;
+        float ty = (cy) * targetZ;
+        //System.out.println(tx + " " + ty + " " + targetZ);
+        setZoom(tx, ty, targetZ);
+
+    }
+    /*static float getTargetDepth(float width, float height) {
+        float zoomDilation = 1.0f;
+        float r = Math.max(width, height) / 2.0f * zoomDilation;
+        final float focus = (float)Math.PI/4f;
+        return (float) (r * Math.sin(Math.PI / 2.0 - focus / 2.0) / Math.sin(focus / 2.0));
+    }*/
 
     class Hnav {
 

@@ -12,9 +12,8 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.inference.RuleTables;
 
+/** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 abstract public class FireConcept extends NAL {
-    
-
     
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
@@ -94,9 +93,16 @@ abstract public class FireConcept extends NAL {
                     emit(Events.TermLinkSelect.class, termLink, currentConcept);
                     setCurrentBeliefLink(termLink);
                     
-                    RuleTables.reason(currentTaskLink, termLink, this);
+                    
+                    
+                    reason(currentTaskLink, termLink);                    
+
+                    
+                    
+                    memory.logic.REASON.commit(termLink.getPriority());                    
                     
                     currentConcept.returnTermLink(termLink);
+                    
                     termLinks--;
                 } else {
                     break;
@@ -105,10 +111,17 @@ abstract public class FireConcept extends NAL {
         }
     }
 
+    
+    protected void reason(TaskLink currentTaskLink, TermLink termLink) {
+        RuleTables.reason(currentTaskLink, termLink, this);
+    }
+
+    
     @Override
     public String toString() {
         return "FireConcept[" + currentConcept + "," + currentTaskLink + "]";
     }
+
     
     
 }
