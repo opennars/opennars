@@ -89,7 +89,7 @@ public class GPanel extends GTextBase {
 	 * @param p3 height of the panel (excl. tab)
 	 */
 	public GPanel(PApplet theApplet, float p0, float p1, float p2, float p3) {
-		this(theApplet, p0, p1, 2, p3, "Panel");
+		this(theApplet, p0, p1, p2, p3, "Panel");
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class GPanel extends GTextBase {
 		dockY = y;
 		z = Z_PANEL;
 
-		createEventHandler(GUI.sketchApplet, "handlePanelEvents", 
+		createEventHandler(GUI.applet, "handlePanelEvents", 
 				new Class<?>[]{ GPanel.class, GEvent.class },
 				new String[]{ "panel", "event" } 
 		);
@@ -267,7 +267,7 @@ public class GPanel extends GTextBase {
 	public boolean isOver(float x, float y){
 		calcTransformedOrigin(winApp.getCursorX(), winApp.getCursorY());
 		currSpot = whichHotSpot(ox, oy);
-		return (tabOnly)? currSpot == COLLAPSED_BAR_SPOT : currSpot == EXPANDED_BAR_SPOT | currSpot == COLLAPSED_BAR_SPOT;
+		return (tabOnly)? currSpot == COLLAPSED_BAR_SPOT : currSpot == EXPANDED_BAR_SPOT || currSpot == COLLAPSED_BAR_SPOT || currSpot == SURFACE_SPOT;
 	}
 
 	/**

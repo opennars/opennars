@@ -118,7 +118,7 @@ public class GKnob extends GValueControl {
 		showTicks = true;
 		
 		// Now register control with applet
-		createEventHandler(GUI.sketchApplet, "handleKnobEvents",
+		createEventHandler(GUI.applet, "handleKnobEvents",
 				new Class<?>[]{ GValueControl.class, GEvent.class }, 
 				new String[]{ "knob", "event" } 
 		);

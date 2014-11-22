@@ -180,7 +180,7 @@ public class GImageToggleButton extends GControl {
 
 		z = Z_SLIPPY;
 		// Now register control with applet
-		createEventHandler(GUI.sketchApplet, "handleToggleButtonEvents",
+		createEventHandler(GUI.applet, "handleToggleButtonEvents",
 				new Class<?>[]{ GImageToggleButton.class, GEvent.class }, 
 				new String[]{ "button", "event" } 
 		);

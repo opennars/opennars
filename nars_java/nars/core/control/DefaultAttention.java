@@ -96,6 +96,11 @@ public class DefaultAttention implements Attention {
         
     }
 
+    /** for removing a specific concept (if it's not putBack) */
+    public Concept takeOut(Term t) {
+        return concepts.take(t);
+    }
+            
     @Override
     public void init(Memory m) {
         this.memory = m;

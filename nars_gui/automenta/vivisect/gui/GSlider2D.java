@@ -46,12 +46,12 @@ import processing.event.MouseEvent;
 public class GSlider2D extends GValueControl2D {
 
 	// Palette index constants
-	static int DBORDER = 1, LBORDER = 3, BACK = 6;
-	static int TBORDER = 15, TOFF = 3, TOVER = 11, TDOWN = 14, TDRAG = 15;
+	static int DBORDER = 1, LBORDER = 2, BACK = 3;
+	static int TBORDER = 15, TOFF = 3, TOVER = 11, TDOWN = 14, TDRAG = 6;
 
-	static final float THUMB_SIZE = 10;
-	static final float HALF_THUMB_SIZE = THUMB_SIZE / 2;
-	static final float BORDER_WIDTH = 2;
+	float THUMB_SIZE = 10;
+	float HALF_THUMB_SIZE = THUMB_SIZE / 2;
+	float BORDER_WIDTH = 2;
 	
 	// Define the drag area for this control
 	protected float dragWidth, dragHeight, dragD;
@@ -92,7 +92,7 @@ public class GSlider2D extends GValueControl2D {
 		opaque = true;
 		
 		// Now register control with applet
-		createEventHandler(GUI.sketchApplet, "handleSlider2DEvents",
+		createEventHandler(GUI.applet, "handleSlider2DEvents",
 				new Class<?>[]{ GSlider2D.class, GEvent.class },
 				new String[]{ "slider2d", "event" }
 		);

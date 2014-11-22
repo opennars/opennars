@@ -33,8 +33,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -79,7 +81,7 @@ import processing.core.PConstants;
  */
 public class GUI implements GConstants, PConstants {
 
-	static PApplet sketchApplet = null;
+	static PApplet applet = null;
 
 	public static GWindowCloser windowCloser = null;
 
@@ -97,13 +99,13 @@ public class GUI implements GConstants, PConstants {
 		return "18";
 	}
 
-	static int globalColorScheme = GCScheme.BLUE_SCHEME;
+	static int globalColorScheme = GCScheme.GRAY_SCHEME;
 	static int globalAlpha = 255;
 
 	// Font used for all text controls
-	static Font globalFont = FontManager.getPriorityFont(null, Font.PLAIN, 12);
+	static Font globalFont = FontManager.getFont("Monospace", Font.PLAIN, 20);
 	// Font used for slider numbers
-	static Font numericLabelFont = FontManager.getPriorityFont(null, Font.BOLD, 11);;
+	static Font numericLabelFont = globalFont; //FontManager.getPriorityFont(null, Font.BOLD, 11);;
 
 	// Store of info about windows and controls
 	static HashMap<PApplet, GWindowInfo> windows = new HashMap<PApplet, GWindowInfo>();
@@ -121,7 +123,7 @@ public class GUI implements GConstants, PConstants {
 	// Introduced V3.0
 	static GControlMode control_mode = GControlMode.CORNER;
 
-	static LinkedList<G4Pstyle> styles = new LinkedList<G4Pstyle>();
+	static Deque<G4Pstyle> styles = new ArrayDeque<G4Pstyle>();
 
 	static JColorChooser chooser = null;
 	static Color lastColor = Color.white; // White
@@ -144,8 +146,8 @@ public class GUI implements GConstants, PConstants {
 	 * @param app
 	 */
 	public static void registerSketch(PApplet app){
-		if(sketchApplet == null) {
-			sketchApplet = app;
+		if(applet == null) {
+			applet = app;
 			announceG4P();
 			GWindowInfo winfo = windows.get(app);
 			if(winfo == null){
@@ -169,16 +171,16 @@ public class GUI implements GConstants, PConstants {
 		}
 	}
 
-	/**
-	 * Versions of GUI prior to 3.5 used logical fonts for the controls. So if you 
- have old sketches then the text may look different with this and later versions
- of GUI. <br>
-	 * If this is causing a problem then call this method before creating any controls.
-	 */
-	public static void usePre35Fonts(){
-		globalFont = new Font("Dialog", Font.PLAIN, 10);
-		numericLabelFont = new Font("DialogInput", Font.BOLD, 12);
-	}
+//	/**
+//	 * Versions of GUI prior to 3.5 used logical fonts for the controls. So if you 
+// have old sketches then the text may look different with this and later versions
+// of GUI. <br>
+//	 * If this is causing a problem then call this method before creating any controls.
+//	 */
+//	public static void usePre35Fonts(){
+//		globalFont = new Font("Dialog", Font.PLAIN, 10);
+//		numericLabelFont = new Font("DialogInput", Font.BOLD, 12);
+//	}
 	
 	/**
 	 * Set the colour scheme for all the controls drawn by the given 
@@ -272,7 +274,7 @@ public class GUI implements GConstants, PConstants {
 		// Create and start windows closer object
 		if(windowCloser == null){
 			windowCloser = new GWindowCloser();
-			sketchApplet.registerMethod("post", windowCloser);
+			applet.registerMethod("post", windowCloser);
 		}
 	}
 
@@ -288,9 +290,9 @@ public class GUI implements GConstants, PConstants {
 	}
 	
 	static void announceG4P(){
-		System.out.println("===================================================");
+		/*System.out.println("===================================================");
 		System.out.println("   G4P V3.5 created by Peter Lager");
-		System.out.println("===================================================");
+		System.out.println("===================================================");*/
 	}
 	
 	/**
@@ -448,7 +450,7 @@ public class GUI implements GConstants, PConstants {
 		s.ctrlMode = control_mode;
 		s.showMessages = showMessages;
 		// Now save the style for later
-		styles.addLast(s);
+		styles.addFirst(s);
 	}
 
 	/**
@@ -484,15 +486,15 @@ public class GUI implements GConstants, PConstants {
 	 * @param list an optional ArrayList to use. In null will create a new ArrayList.
 	 * @return an ArrayList of references to all open GWindow objects.
 	 */
-	public static ArrayList<GWindow> getOpenWindowsAsList(ArrayList<GWindow> list){
+	@Deprecated public static ArrayList<GWindow> getOpenWindowsAsList(ArrayList<GWindow> list){
 		if(list == null)
 			list = new ArrayList<GWindow>();
 		else
 			list.clear();
 		Collection<GWindowInfo> windowInfos = windows.values();
 		for(GWindowInfo info : windowInfos){
-			if(info.isGWindow)
-				list.add( ((GWinApplet)info.app).owner);
+			/*if(info.isGWindow)
+				list.add( ((GWinApplet)info.app).owner);*/
 		}
 		return list;
 	}
@@ -531,7 +533,7 @@ public class GUI implements GConstants, PConstants {
 	 * @return the ARGB colour as a 32 bit integer (as used in Processing). 
 	 */
 	public static int selectColor(){
-		Frame owner = (sketchApplet == null) ? null : sketchApplet.frame;
+		Frame owner = (applet == null) ? null : applet.frame;
 		if(chooser == null){
 			chooser = new JColorChooser();
 			AbstractColorChooserPanel[] oldPanels = chooser.getChooserPanels();
@@ -580,7 +582,7 @@ public class GUI implements GConstants, PConstants {
 	 */
 	public static String selectFolder(String prompt){
 		String selectedFolder = null;
-		Frame frame = (sketchApplet == null) ? null : sketchApplet.frame;
+		Frame frame = (applet == null) ? null : applet.frame;
 		if (PApplet.platform == MACOSX && PApplet.useNativeSelect != false) {
 			FileDialog fileDialog =
 					new FileDialog(frame, prompt, FileDialog.LOAD);
@@ -685,7 +687,7 @@ public class GUI implements GConstants, PConstants {
 		// Assume that a file will not be selected
 		String selectedFile = null;
 		// Get the owner
-		Frame owner = (sketchApplet == null) ? null : sketchApplet.frame;
+		Frame owner = (applet == null) ? null : applet.frame;
 		// Create a file filter
 		if (PApplet.useNativeSelect) {
 			FileDialog dialog = new FileDialog(owner, prompt, mode);

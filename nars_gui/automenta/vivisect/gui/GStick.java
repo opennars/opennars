@@ -141,7 +141,7 @@ public class GStick extends GControl {
 		z = Z_SLIPPY;
 
 		// Now register control with applet
-		createEventHandler(GUI.sketchApplet, "handleStickEvents",
+		createEventHandler(GUI.applet, "handleStickEvents",
 				new Class<?>[]{ GStick.class, GEvent.class }, 
 				new String[]{ "stick", "event" } 
 		);
@@ -187,6 +187,10 @@ public class GStick extends GControl {
 	public int getPosition(){
 		return position;
 	}
+        
+        public float getPositionAngle() {
+            return (float)Math.atan2(getStickY(), getStickX());
+        }
 	
 	/**
 	 * Get the X position of the stick from <br>

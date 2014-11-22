@@ -75,7 +75,7 @@ public class GSlider extends GLinearTrackControl {
 		ssValue = new StyledString("0.50");
 
 		// Now register control with applet
-		createEventHandler(GUI.sketchApplet, "handleSliderEvents",
+		createEventHandler(GUI.applet, "handleSliderEvents",
 				new Class<?>[]{ GValueControl.class, GEvent.class },
 				new String[]{ "slider", "event" }
 		);

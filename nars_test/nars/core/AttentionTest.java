@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import nars.core.build.Default;
 import nars.entity.Concept;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -26,7 +27,9 @@ public class AttentionTest {
             n.addInput("<x" + i + " <-> x" + (i+1) + ">.");
         
         n.finish(100);
-        assertTrue(Iterables.size(n.memory.concepts) > 32);
+        
+        int c = Iterables.size(n.memory.concepts);
+        assertTrue(c > 32);
         
         Set<Concept> uniqueconcepts = new HashSet();
         
@@ -36,7 +39,9 @@ public class AttentionTest {
         }
 
         assertTrue(uniqueconcepts.size() > 1);
-    
+        
+        int c2 = Iterables.size(n.memory.concepts);
+        assertEquals("does not affect # of concepts", c, c2);
     }
     
 }

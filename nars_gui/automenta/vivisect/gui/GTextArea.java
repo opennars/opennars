@@ -148,19 +148,19 @@ public class GTextArea extends GEditableTextControl {
 		GUI.control_mode = GControlMode.CORNER;
 		if((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0){
 			hsb = new GScrollbar(theApplet, 0, 0, tw, 16);
-			addControl(hsb, tx, ty + th + 2, 0);
+			add(hsb, tx, ty + th + 2, 0);
 			hsb.addEventHandler(this, "hsbEventHandler");
 			hsb.setAutoHide(autoHide);
 		}
 		if((scrollbarPolicy & SCROLLBAR_VERTICAL) != 0){
 			vsb = new GScrollbar(theApplet, 0, 0, th, 16);
-			addControl(vsb, tx + tw + 18, ty, PI/2);
+			add(vsb, tx + tw + 18, ty, PI/2);
 			vsb.addEventHandler(this, "vsbEventHandler");
 			vsb.setAutoHide(autoHide);
 		}
 		GUI.popStyle();
 		setText("", (int)tw);
-		createEventHandler(GUI.sketchApplet, "handleTextEvents", 
+		createEventHandler(GUI.applet, "handleTextEvents", 
 				new Class<?>[]{ GEditableTextControl.class, GEvent.class }, 
 				new String[]{ "textcontrol", "event" } 
 				);

@@ -124,14 +124,14 @@ public class GTextField extends GEditableTextControl {
 		GUI.control_mode = GControlMode.CORNER;
 		if((scrollbarPolicy & SCROLLBAR_HORIZONTAL) != 0){
 			hsb = new GScrollbar(theApplet, 0, 0, tw, 10);
-			addControl(hsb, tx, ty + th + 2, 0);
+			add(hsb, tx, ty + th + 2, 0);
 			hsb.addEventHandler(this, "hsbEventHandler");
 			hsb.setAutoHide(autoHide);
 		}
 		GUI.popStyle();
 		setText("");
 		//		z = Z_STICKY;
-		createEventHandler(GUI.sketchApplet, "handleTextEvents", 
+		createEventHandler(GUI.applet, "handleTextEvents", 
 				new Class<?>[]{ GEditableTextControl.class, GEvent.class }, 
 				new String[]{ "textcontrol", "event" } 
 				);
