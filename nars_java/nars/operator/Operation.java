@@ -72,12 +72,12 @@ public class Operation extends Inheritance {
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
-        if(addSelf && !arg[arg.length-1].toString().equals("SELF")) {
+        if(addSelf && !Term.isSelf(arg[arg.length-1])) {
             Term[] arg2=new Term[arg.length+1];
             for(int i=0;i<arg.length;i++) {
                 arg2[i]=arg[i];
             }
-            arg2[arg.length]=new Term("SELF");
+            arg2[arg.length] = Term.SELF;
             arg=arg2;
         }
         

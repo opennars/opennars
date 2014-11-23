@@ -44,6 +44,10 @@ public class Product extends CompoundTerm {
         this(x.toArray(new Term[x.size()]));
     }
     
+    public static Product make(final Term... arg) {
+        return new Product(arg);
+    }
+    
 
     
     @Override

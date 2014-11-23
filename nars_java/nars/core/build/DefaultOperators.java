@@ -5,8 +5,7 @@ import nars.operator.Operator;
 import nars.operator.io.Say;
 import nars.operator.math.Add;
 import nars.operator.math.Count;
-import nars.operator.math.Expression;
-import nars.operator.mental.Anticipate;
+import nars.operator.math.MathExpression;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Doubt;
 import nars.operator.mental.Evaluate;
@@ -18,6 +17,7 @@ import nars.operator.mental.Register;
 import nars.operator.mental.Remind;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
+import nars.operator.meta.Reflect;
 import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
 
@@ -33,6 +33,7 @@ public class DefaultOperators {
     public static Operator[] get() {
         
         return new Operator[] {
+            //new Wait(),            
             //new Wait(),            
             new NullOperator(),
             new Believe(),  // accept a statement with a default truth-value
@@ -52,6 +53,9 @@ public class DefaultOperators {
             new Hesitate(),      // decrease the confidence of a goal
             
 
+            //Meta
+            new Reflect(),
+            
             // feeling operations
             new FeelHappy(),
             new FeelBusy(),
@@ -59,7 +63,8 @@ public class DefaultOperators {
             // math operations
             new Count(),
             new Add(),
-            new Expression(),
+            new MathExpression(),
+                        
 
             new Javascript(),      // javascript evaluation
             

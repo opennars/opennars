@@ -18,18 +18,18 @@ import org.encog.ml.tree.TreeNode;
  * Parses an expression string to terms
  * @see https://github.com/encog/encog-java-core/blob/master/src/test/java/org/encog/ml/prg/TestProgramClone.java
  */
-public class Expression  extends SynchronousFunctionOperator {
+public class MathExpression  extends SynchronousFunctionOperator {
 
     static EncogProgramContext context;
 
     
-    public Expression() {
-        super("^expression");
+    public MathExpression() {
+        super("^math");
     }
 
     final static String requireMessage = "Requires 1 string argument";
     
-    final static Term exp = Term.get("expression");
+    final static Term exp = Term.get("math");
     
     
     @Override
