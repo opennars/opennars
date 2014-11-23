@@ -20,7 +20,6 @@
  */
 package nars.entity;
 
-import nars.core.control.NAL;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.Events.BeliefSelect;
@@ -37,15 +36,28 @@ import nars.core.Events.TermLinkRemove;
 import nars.core.Events.UnexecutableGoal;
 import nars.core.Memory;
 import nars.core.NARRun;
+import nars.core.control.NAL;
+import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
+import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
+import nars.inference.TruthFunctions;
+import nars.inference.UtilityFunctions;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.Implication;
+import nars.language.Inheritance;
+import nars.language.Similarity;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
@@ -170,6 +182,44 @@ public class Concept extends Item<Term> {
         return term;
     }
 
+    
+    public void processGoalAccel(NAL nal, Task task) {
+        processGoal(nal, task);
+        //several simple Ways to speed pursuing in case it turns out to be needed, for now it doesnt seem to be the case
+        /*if(task.sentence.content instanceof Conjunction) {
+            Conjunction con=(Conjunction) task.sentence.content;
+            Sentence s2=new Sentence(con.term[0],Symbols.GOAL_MARK,task.sentence.truth,task.sentence.stamp);
+            Task t2=new Task(s2,task.budget);
+            processGoal(nal, t2);
+        }
+        if(task.sentence.content instanceof Inheritance || task.sentence.content instanceof Similarity) {
+            //is there something in memory which has the goal as consequence?
+            for(Concept c : nal.memory.concepts) {
+                if(c.term instanceof Implication && !c.beliefs.isEmpty()) {
+                    Implication imp=(Implication) c.term;
+                    if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                        if(imp.getPredicate().equals(task.sentence.content)) { //should be tried
+                            TruthValue desire=TruthFunctions.deduction(c.beliefs.get(0).truth, task.sentence.truth);
+                            BudgetValue budget=BudgetFunctions.forward(desire, nal);
+                            Sentence s2=new Sentence(imp.getSubject(),Symbols.GOAL_MARK,desire,task.sentence.stamp); //todo stamp complete
+                            Task t2=new Task(s2,task.budget);
+                            processGoal(nal,t2);
+                            
+                            if(t2.sentence.content instanceof Conjunction) {
+                                Conjunction con=(Conjunction) t2.sentence.content;
+                                Sentence s3=new Sentence(con.term[0],Symbols.GOAL_MARK,t2.sentence.truth,t2.sentence.stamp);
+                                Task t3=new Task(s3,t2.budget);
+                                processGoal(nal, t3);
+                            }
+                            //Sentence s2=new Sentence(imp.getSubject(),Symbols.GOAL_MARK,task.sentence.truth,task.sentence.stamp);
+                            //Task t2=new Task(s2,task.budget);
+                        }
+                    }
+                }
+            }
+        }*/
+    }
+    
     /* ---------- direct processing of tasks ---------- */
     /**
      * Directly process a new task. Called exactly once on each task. Using
@@ -190,7 +240,7 @@ public class Concept extends Item<Term> {
                 break;
             case Symbols.GOAL_MARK:
                 memory.logic.GOAL_PROCESS.commit();
-                processGoal(nal, task);
+                processGoalAccel(nal, task);
                 break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
