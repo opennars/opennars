@@ -194,7 +194,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
             e = ee.getValue();
                            
             if (forgettable(e))
-                BudgetFunctions.forgetPeriodic(e.budget, forgetCycles, Parameters.BAG_THRESHOLD, now);
+                BudgetFunctions.forgetPeriodic(e.budget, forgetCycles, Parameters.FORGET_QUALITY_RELATIVE, now);
             
             float p = e.getPriority();
             

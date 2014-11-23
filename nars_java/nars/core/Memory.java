@@ -570,7 +570,7 @@ public class Memory implements Serializable {
      * the bag's priority order. it should only be used after it has been removed then before inserted */
     public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
         switch (param.forgetting) {
-            case Iterative:
+            case Iterative:                
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
             case Periodic:

@@ -100,9 +100,12 @@ public class Parameters {
     
     /* ---------- space management ---------- */
     
-    /** Level separation in Bag, one digit, for display (run-time adjustable) and management (fixed) */
+    /** Level separation in LevelBag, one digit, for display (run-time adjustable) and management (fixed)
+     */
     public static final float BAG_THRESHOLD = 1.0f;
-    
+
+    /** (see its use in budgetfunctions iterative forgetting) */
+    public static float FORGET_QUALITY_RELATIVE = 0.1f;
 
     
     
@@ -175,6 +178,7 @@ public class Parameters {
      * WARNING: this mode does not apply to AGI
      */
     public static boolean DERIVE_ONLY_DEMANDED_TASKS = false;
+    
     
 }
 
