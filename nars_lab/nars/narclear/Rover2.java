@@ -356,7 +356,7 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = NAR.build(new Neuromorphic().
+        NAR nar = NAR.build(new Neuromorphic(16).
                 setConceptBagSize(1000).
                 setSubconceptBagSize(2000).
                 setTaskLinkBagLevels(10).

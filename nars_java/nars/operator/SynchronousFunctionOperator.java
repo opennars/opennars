@@ -2,7 +2,6 @@ package nars.operator;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
-import java.util.Arrays;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
@@ -56,16 +55,16 @@ public abstract class SynchronousFunctionOperator extends Operator {
         System.arraycopy(args, 0, x, 0, numArgs-1);
         
         Term y;
-        try {
+        //try {
             y = function(m, x);
             if (y == null) {
                 return null;
             }
-            m.emit(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);
-        }
+            //m.emit(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);
+        /*}
         catch (Exception e) {
             throw e;
-        }
+        }*/
         
         
         Term parameterTerm = x.length == 1 ? x[0] : new Product(x);
@@ -73,11 +72,12 @@ public abstract class SynchronousFunctionOperator extends Operator {
         Inheritance operatorInheritance = 
                 Operation.make(new Product(new Term[]{parameterTerm, y}), this);
         
-        Inheritance resultInheritance = Inheritance.make(operatorInheritance, getRange());
-        m.emit(Task.class, resultInheritance);
+        //wraps the result in getRange() inheritance:
+        //Inheritance resultInheritance = Inheritance.make(operatorInheritance, getRange());
+        //m.emit(Task.class, operatorInheritance);
         
         return Lists.newArrayList( 
-                m.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 
+                m.newTask(operatorInheritance, Symbols.JUDGMENT_MARK, 
                         1f, 0.99f, 
                         Parameters.DEFAULT_JUDGMENT_PRIORITY, 
                         Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
