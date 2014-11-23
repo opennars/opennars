@@ -375,7 +375,11 @@ public class Executive {
             Term content = concept.term;
 
             if (isExecutableTerm(content)) {
-                addExecution(concept, t);
+                //if(Parameters.TEMPORALPARTICLEPLANNER)
+                //addExecution(concept, t);
+                //else
+                if(content instanceof Operation)
+                    execute((Operation) content,t);
                 return true;
             } 
         }
