@@ -40,16 +40,20 @@ public abstract class SynchronousFunctionOperator extends Operator {
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory m) {
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
-        if (args.length < 2) {
+        int numArgs = args.length;
+        if (args[args.length-1].equals(Term.SELF))
+            numArgs--;
+        
+        if (numArgs < 2) {
             throw new RuntimeException("Requires at least 2 arguments");
         }
-        if (!(args[args.length-1] instanceof Variable)) {
+        if (!(args[numArgs-1] instanceof Variable)) {
             //TODO report error
             throw new RuntimeException("Last argument must be a Variable");
         }
         
-        Term[] x = new Term[args.length-1];
-        System.arraycopy(args, 0, x, 0, args.length-1);
+        Term[] x = new Term[numArgs-1];
+        System.arraycopy(args, 0, x, 0, numArgs-1);
         
         Term y;
         try {

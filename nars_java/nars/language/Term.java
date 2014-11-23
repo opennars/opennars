@@ -36,6 +36,13 @@ import nars.io.Texts;
  * exists. Multiple objects may represent the same Term.
  */
 public class Term implements AbstractTerm {
+    private static final Map<CharSequence,Term> atoms = new HashMap();
+
+    final public static Term SELF = Term.get("SELF");
+
+    final public static boolean isSelf(final Term t) {
+        return SELF.equals(t);
+    }
 
 
 
@@ -44,7 +51,6 @@ public class Term implements AbstractTerm {
     }
     
     
-    private static final Map<CharSequence,Term> atoms = new HashMap();
     
     protected CharSequence name = null;
     
