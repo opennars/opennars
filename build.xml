@@ -73,22 +73,24 @@
     
     <property name="store.dir" value="dist"/>
     
+    <target name="fulljars" depends="fulljar, fulljargui"></target>
     <target name="fulljargui" depends="jar">
 
         <!-- Change the value of this property to be the name of your JAR,
              minus the .jar extension. It should not have spaces.
              <property name="store.jar.name" value="MyJarName"/>
         -->
-        <property name="store.jar.name" value="OpenNARS_GUI"/>
+        <property name="store.guijar.name" value="OpenNARS_GUI"/>
 
-        <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
+        <property name="store.guijar" value="${store.dir}/${store.guijar.name}.jar"/>
 
-        <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
+        <echo message="Packaging ${application.title} into a single JAR at ${store.guijar}"/>
 
-        <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip" level="9">
+        <jar destfile="${store.dir}/temp_final_gui.jar" filesetmanifest="skip" level="9">
             <zipgroupfileset dir="dist" includes="opennars.jar"/>
-            <zipgroupfileset dir="dist/lib" includes="*.jar"/>
-            
+            <zipgroupfileset dir="lib" includes="*.jar"/>            
+            <zipgroupfileset dir="lib/lab" includes="*.jar"/>            
+            <zipgroupfileset dir="lib/gui" includes="*.jar"/>            
 
             <manifest>
                 <attribute name="Main-Class" value="nars.gui.NARSwing"/>
@@ -96,12 +98,12 @@
             
         </jar>
 
-        <zip destfile="${store.jar}">
-            <zipfileset src="${store.dir}/temp_final.jar"
+        <zip destfile="${store.guijar}">
+            <zipfileset src="${store.dir}/temp_final_gui.jar"
             excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
         </zip>
 
-        <delete file="${store.dir}/temp_final.jar"/>
+        <delete file="${store.dir}/temp_final_gui.jar"/>
 
     </target>    
     <target name="fulljar" depends="jar">
@@ -117,12 +119,15 @@
         <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
 
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip" level="9">
-            <zipgroupfileset dir="dist" includes="opennars.jar"/>
+            <zipgroupfileset dir="dist" includes="opennars.jar"/>   
+            <zipgroupfileset dir="lib" includes="*.jar"/>
+
+            <!--
             <zipgroupfileset dir="dist/lib" includes="java_websocket.jar"/>
             <zipgroupfileset dir="dist/lib" includes="javolution-core-java-6.1.0-20140103.154957-9.jar"/>
             <zipgroupfileset dir="dist/lib" includes="jgrapht-core-0.9.1-SNAPSHOT.jar"/>
             <zipgroupfileset dir="dist/lib" includes="guava-18.0.jar"/>            
-            
+            -->
 
             <manifest>
                 <attribute name="Main-Class" value="nars.core.NARRun"/>
