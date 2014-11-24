@@ -186,7 +186,11 @@ public class LocalRules {
             
             //Solution Activated
             if(task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK) {
-                memory.emit(Solved.class, task, belief);   //solution to quests and questions can be always showed   
+                if(task.isInput()) { //only show input tasks as solutions
+                    memory.emit(Solved.class, task, belief); 
+                } else {
+                    memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed   
+                }
             } else {
                 memory.emit(Output.class, task, belief);   //goal things only show silence related 
             }
