@@ -102,13 +102,20 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
     public Graph<Object, Object> getGraph() {        
         if (displayedGraph == null)
             return null;
+        
+        
         if (updateNextGraph) {
             updateNextGraph = false;
 
-            Graph ng = nextGraph();
-            if (ng!=null)
-                displayedGraph.set(ng);            
+            if (!nar.isRunning()) {
+                //only update from here if NAR isnt running; otherwise a concurrency exception can occurr
+
+                Graph ng = nextGraph();
+                if (ng!=null)
+                    displayedGraph.set(ng);            
+            }
         }
+        
         return displayedGraph.get();
     }
     
