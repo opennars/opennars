@@ -1,3 +1,5 @@
+package nars.sokoban;
+
 import automenta.vivisect.swing.NWindow;
 import java.applet.Applet;
 import java.applet.AudioClip;
