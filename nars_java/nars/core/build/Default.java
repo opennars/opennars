@@ -25,7 +25,6 @@ import nars.io.DefaultTextPerception;
 import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
-import nars.operator.mental.filter.BeRational;
 import nars.operator.mental.filter.DeriveOnlyDemandedTasks;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
@@ -122,9 +121,8 @@ public class Default extends Build implements ConceptBuilder {
         
         param.decisionThreshold.set(0.30);
     
-        //don't allow ^want and ^believe to be active/have an effect, 
-        //which means its only used as monitor
-        param.getDefaultDerivationFilters().add(new BeRational());
+        //add derivation filters here:
+        //param.getDefaultDerivationFilters().add(new BeRational());
     }
 
     
