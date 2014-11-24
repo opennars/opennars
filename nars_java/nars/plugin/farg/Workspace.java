@@ -27,6 +27,7 @@ public class Workspace {
     public Workspace(FARG farg, NAR nar) {
         this.nar=nar;
         Workspace ws=this;
+        codelets=new LevelBag(farg.codelet_level,farg.max_codelets);
         nar.on(CycleEnd.class, new EventObserver() { 
 
             @Override
