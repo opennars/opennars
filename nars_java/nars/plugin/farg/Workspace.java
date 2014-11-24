@@ -27,16 +27,17 @@ public class Workspace {
     public Workspace(FARG farg, NAR nar) {
         this.nar=nar;
         Workspace ws=this;
-        codelets=new LevelBag(farg.codelet_level,farg.max_codelets);
+        coderack=new LevelBag(farg.codelet_level,farg.max_codelets);
         nar.on(CycleEnd.class, new EventObserver() { 
 
             @Override
             public void event(Class event, Object[] args) {
                 for(int i=0;i<10;i++) { //process 10 codelets in each step
-                    Codelet cod=codelets.takeNext();
+                    Codelet cod=coderack.takeNext();
                     if(cod!=null) {
-                        cod.run(ws);
-                        codelets.putIn(cod);
+                        if(cod.run(ws)) {
+                            coderack.putIn(cod);
+                        }
                     }
                     temperature=calc_temperature();
                 }
@@ -63,5 +64,5 @@ public class Workspace {
     }
         
     
-    LevelBag<Codelet,Term> codelets;
+    LevelBag<Codelet,Term> coderack;
 }
