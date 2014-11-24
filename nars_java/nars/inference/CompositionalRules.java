@@ -1158,12 +1158,12 @@ public final class CompositionalRules {
             
             Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp, nal.getTime());
 
-            dedSecondLayerVariableUnificationTerms(nal, taskSentence, task,
+            dedSecondLayerVariableUnificationTerms(nal, task,
                     second_belief, ss, terms_dependent,
                     anonymousAnalogy(taskSentence.truth, truthSecond),
                     taskSentence.truth, truthSecond, false);
 
-            dedSecondLayerVariableUnificationTerms(nal, taskSentence, task,
+            dedSecondLayerVariableUnificationTerms(nal, task,
                     second_belief, ss, terms_independent,
                     deduction(taskSentence.truth, truthSecond),
                     taskSentence.truth, truthSecond, true);
@@ -1198,7 +1198,7 @@ public final class CompositionalRules {
                     nal.setCurrentBelief(taskSentence);
                     nal.setCurrentTask(dummy);
                     
-                    if (nal.derivedTask(newTask, false, false, taskSentence, second_belief)) {
+                    if (nal.derivedTask(newTask, false, false, task, second_belief)) {
                         
                         nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.commit();
                         nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
@@ -1219,10 +1219,12 @@ public final class CompositionalRules {
         return unifiedAnything;
     }
 
-    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, final Sentence taskSentence, Task task, Sentence second_belief, final Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, final Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
 
         Stamp sx = null;
 
+        final Sentence taskSentence = task.sentence;
+        
         for (int i = 0; i < terms_dependent.size(); i++) {
             final CompoundTerm result = terms_dependent.get(i);
 
@@ -1256,7 +1258,7 @@ public final class CompositionalRules {
                 nal.setCurrentBelief(taskSentence);
                 nal.setCurrentTask(dummy);
 
-                if (nal.derivedTask(newTask, false, false, taskSentence, second_belief)) {
+                if (nal.derivedTask(newTask, false, false, task, second_belief)) {
 
                     nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
 

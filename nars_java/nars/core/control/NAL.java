@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 import nars.core.Events;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -18,7 +17,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
-import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Negation;
 import nars.language.Term;
@@ -30,6 +28,12 @@ import nars.operator.Operation;
  */
 public abstract class NAL implements Runnable {
 
+    public interface DerivationFilter {
+        /** returns null if allowed to derive, or a String containing a short rejection reason for logging */
+        public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief);
+    }
+    
+        
     public final Memory memory;
     protected Term currentTerm;
     protected Concept currentConcept;
@@ -39,6 +43,7 @@ public abstract class NAL implements Runnable {
     protected Sentence currentBelief;
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
+    protected List<DerivationFilter> derivationFilters = null;
 
     /** stores the tasks added by this inference process */
     protected List<Task> tasksAdded = new ArrayList();
@@ -47,28 +52,45 @@ public abstract class NAL implements Runnable {
     public NAL(Memory mem) {
         super();
         this.memory = mem;
+        this.derivationFilters = mem.param.getDefaultDerivationFilters();
     }
 
-
+    public void setDerivationFilters(List<DerivationFilter> derivationFilters) {
+        this.derivationFilters = derivationFilters;
+    }
+   
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }
 
+
+    
     /**
      * Derived task comes from the inference rules.
      *
      * @param task the derived task
      */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
-        if(task.sentence.content instanceof Operation) {
-            if(Parameters.BE_RATIONAL && (((Operation)task.sentence.content).getPredicate()==memory.getOperator("^want") || ((Operation)task.sentence.content).getPredicate()==memory.getOperator("^believe")) && task.sentence.punctuation==Symbols.GOAL_MARK) {
-                return false;
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2) {                        
+
+        if (derivationFilters!=null) {            
+            for (int i = 0; i < derivationFilters.size(); i++) {
+                DerivationFilter d = derivationFilters.get(i);
+                String rejectionReason = d.reject(this, task, revised, single, parent, occurence2);
+                if (rejectionReason!=null) {
+                    memory.removeTask(task, rejectionReason);
+                    return false;
+                }
             }
         }
+        
+        final Sentence occurence = parent!=null ? parent.sentence : null;
+
+        
         if (!task.budget.aboveThreshold()) {
             memory.removeTask(task, "Insufficient Budget");
             return false;
         }
+        
         if (task.sentence != null && task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();
             if (conf == 0) {
@@ -78,18 +100,15 @@ public abstract class NAL implements Runnable {
             }
         }
         
-        if (Parameters.DERIVE_ONLY_DEMANDED_TASKS) {
-            if ((task.sentence.punctuation==Symbols.JUDGMENT_MARK) && !(task.sentence.content instanceof Operation)) {             
-                boolean noConcept = memory.concept(task.sentence.content) == null;
-                
-                if (noConcept) { 
-                    //there is no question and goal of this, return
-                    memory.removeTask(task, "No demand exists");
-                    return false;
-                }
+
+    
+        if (task.sentence.content instanceof Operation) {
+            Operation op = (Operation) task.sentence.content;
+            if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
+                memory.removeTask(task, "Operation with variable as subject or predicate");
+                return false;
             }
         }
-    
         
         
         
@@ -158,12 +177,7 @@ public abstract class NAL implements Runnable {
                 }
             }
         }
-        if (task.sentence.content instanceof Operation) {
-            Operation op = (Operation) task.sentence.content;
-            if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
-                return false;
-            }
-        }
+        
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
         addTask(task, "Derived");

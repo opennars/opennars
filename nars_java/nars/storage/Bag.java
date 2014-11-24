@@ -99,6 +99,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     abstract public E take(final K key);
 
+    public E take(E value) { return take(value.name()); }
     
     
     /**
