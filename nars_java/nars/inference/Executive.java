@@ -77,7 +77,7 @@ public class Executive {
 
     public Executive(Memory mem) {
         this.memory = mem;
-
+        
         this.graph = new GraphExecutive(mem, this);
 
         this.tasks = new ConcurrentSkipListSet<Execution>() {
@@ -459,8 +459,17 @@ public class Executive {
         return ((t instanceof Interval) || (t instanceof Operation));
     }
 
-    public static boolean isExecutableTerm(final Term t) {
-        return (t instanceof Operation) || isSequenceConjunction(t);
+    public boolean isExecutableTerm(final Term t) {
+        //don't allow ^want and ^believe to be active/have an effect, 
+        //which means its only used as monitor
+        boolean isOp=t instanceof Operation;
+        if(isOp) {
+            Operator op=((Operation)t).getOperator();
+            if(op.equals(memory.getOperator("^want")) || op.equals(memory.getOperator("^believe"))) {
+                return false;
+            }
+        }
+        return (isOp || isSequenceConjunction(t));
         //task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)))
     }
 
