@@ -49,9 +49,7 @@ public class Want extends Operator implements Mental {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        if(Parameters.BE_RATIONAL) { //passive
-            return null;
-        }
+
         Term content = args[0];                
         
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);

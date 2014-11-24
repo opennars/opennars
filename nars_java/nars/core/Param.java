@@ -16,11 +16,15 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import nars.core.control.NAL.DerivationFilter;
 
 /**
  * NAR Parameters which can be changed during runtime.
  */
 public class Param implements Serializable {
+    
     
 
     public Param() {    }
@@ -39,6 +43,7 @@ public class Param implements Serializable {
 
     Timing timing;
     Forgetting forgetting;
+    List<DerivationFilter> defaultDerivationFilters = new ArrayList();
     
     public static Param fromJSON(String json) {
         return Param.json.fromJson(json, Param.class);
@@ -124,6 +129,9 @@ public class Param implements Serializable {
         this.forgetting = forgetMode;
     }
 
+    public final List<DerivationFilter> getDefaultDerivationFilters() {
+        return defaultDerivationFilters;
+    }
     
     
     @Override
