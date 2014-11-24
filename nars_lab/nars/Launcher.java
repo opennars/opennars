@@ -40,13 +40,9 @@ public class Launcher extends javax.swing.JFrame {
      */
     public Launcher() {
         initComponents();
-        try {
-            BufferedImage myPicture = ImageIO.read(new File("OpenNARS.png"));
-            jLabel1.setIcon(new ImageIcon(myPicture));
-            
-        } catch (IOException ex) {
-            Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+        jLabel1.setIcon(new ImageIcon("./doc/opennars_logo2.png"));
+
         
        /* try {
             BufferedImage myPicture = ImageIO.read(new File("./nars_lab/launcher/mario.jpg"));
