@@ -7,11 +7,8 @@ package nars.plugin.farg;
 
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
-import nars.core.Memory;
 import nars.core.NAR;
-import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.language.Term;
 import nars.storage.LevelBag;
 
 /**
