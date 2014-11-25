@@ -1,4 +1,4 @@
-package nars.grid2d.agent.dl;
+package nars.ql.dl;
 
 import nars.util.signal.DenoisingAutoencoder;
 import java.util.Arrays;

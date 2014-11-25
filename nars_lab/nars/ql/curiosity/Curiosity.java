@@ -1,9 +1,9 @@
-package nars.grid2d.agent.curiosity;
+package nars.ql.curiosity;
 
 
 import java.io.Serializable;
-import nars.grid2d.agent.ql.ErrorBackpropagationNN;
-import nars.grid2d.agent.ql.Perception;
+import nars.ql.elsy.ErrorBackpropagationNN;
+import nars.ql.elsy.Perception;
 
 public class Curiosity implements Serializable {
 	private static final long serialVersionUID = 1L;

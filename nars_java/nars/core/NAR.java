@@ -624,4 +624,7 @@ public class NAR implements Runnable, TaskSource {
         return n;
     }    
 
+    public NAR(Build b) {
+        this(b.newMemory(b.param));
+    }
 }

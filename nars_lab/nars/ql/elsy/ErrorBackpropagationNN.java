@@ -1,4 +1,4 @@
-package nars.grid2d.agent.ql;
+package nars.ql.elsy;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,11 +10,11 @@ import java.io.Serializable;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 import static java.lang.System.arraycopy;
-import static nars.grid2d.agent.ql.Mat.sigmoidBi;
-import static nars.grid2d.agent.ql.Mat.sigmoidUni;
-import static nars.grid2d.agent.ql.Rand.b;
-import static nars.grid2d.agent.ql.Rand.d;
-import static nars.grid2d.agent.ql.Rand.successWithPercent;
+import static nars.ql.elsy.Mat.sigmoidBi;
+import static nars.ql.elsy.Mat.sigmoidUni;
+import static nars.ql.elsy.Rand.b;
+import static nars.ql.elsy.Rand.d;
+import static nars.ql.elsy.Rand.successWithPercent;
 
 
 

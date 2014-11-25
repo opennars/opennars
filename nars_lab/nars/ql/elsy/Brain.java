@@ -1,4 +1,4 @@
-package nars.grid2d.agent.ql;
+package nars.ql.elsy;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import nars.grid2d.agent.ql.QLearner.Action;
+import nars.ql.elsy.QLearner.Action;
 
 
 /**
