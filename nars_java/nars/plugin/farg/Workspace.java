@@ -7,11 +7,8 @@ package nars.plugin.farg;
 
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
-import nars.core.Memory;
 import nars.core.NAR;
-import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.language.Term;
 import nars.storage.LevelBag;
 
 /**
@@ -27,15 +24,17 @@ public class Workspace {
     public Workspace(FARG farg, NAR nar) {
         this.nar=nar;
         Workspace ws=this;
+        farg.coderack=new LevelBag(farg.codelet_level,farg.max_codelets);
         nar.on(CycleEnd.class, new EventObserver() { 
 
             @Override
             public void event(Class event, Object[] args) {
                 for(int i=0;i<10;i++) { //process 10 codelets in each step
-                    Codelet cod=codelets.takeNext();
+                    Codelet cod=farg.coderack.takeNext();
                     if(cod!=null) {
-                        cod.run(ws);
-                        codelets.putIn(cod);
+                        if(cod.run(ws)) {
+                            farg.coderack.putIn(cod);
+                        }
                     }
                     temperature=calc_temperature();
                 }
@@ -60,7 +59,4 @@ public class Workspace {
         }
         return s/((double) n_concepts);
     }
-        
-    
-    LevelBag<Codelet,Term> codelets;
 }
