@@ -1,4 +1,4 @@
-package hai;
+package nars.ql.hai;
 
 public class Hsom {
 
@@ -98,8 +98,9 @@ public class Hsom {
         if (eta != 0.0f) {
             for (i1 = 0; i1 < SomSize; i1++) {
                 for (i2 = 0; i2 < SomSize; i2++) {
+                    double h = hsit(i1, i2);
                     for (j = 0; j < numInputs; j++) { //adaption
-                        links[i1][i2][j] += eta * hsit(i1, i2) * (inputs[j] - links[i1][i2][j]);
+                        links[i1][i2][j] += eta * h * (inputs[j] - links[i1][i2][j]);
                     }
                 }
             }

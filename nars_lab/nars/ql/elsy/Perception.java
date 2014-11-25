@@ -1,9 +1,9 @@
-package nars.grid2d.agent.ql;
+package nars.ql.elsy;
 
 import java.io.Serializable;
-import static nars.grid2d.agent.ql.Mat.sigmoidBi;
-import static nars.grid2d.agent.ql.Mat.sigmoidUni;
-import static nars.grid2d.agent.ql.Rand.d;
+import static nars.ql.elsy.Mat.sigmoidBi;
+import static nars.ql.elsy.Mat.sigmoidUni;
+import static nars.ql.elsy.Rand.d;
 
 
 /**

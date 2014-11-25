@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package nars.grid2d.agent.ql;
+package nars.ql.elsy;
 
 import static java.lang.Double.MAX_VALUE;
 import static java.lang.Double.MIN_VALUE;
@@ -28,7 +28,7 @@ public class QLearner  {
     double minReward = MAX_VALUE;
     double maxReward = MIN_VALUE;
     
-    public void init(int sensors, int actions, int... hiddenNeurons) {
+    public QLearner(int sensors, int actions, int... hiddenNeurons) {
         qaction = new Action[actions];
         for (int i = 0; i < actions; i++) {
             final int I = i;

@@ -1,5 +1,6 @@
-package hai;
+package nars.ql.hai;
 
+/** Original Q-Learning + SOM agent by patham9 */
 public class Hai {
 
     public static double random(double max) { return Math.random() * max;    }

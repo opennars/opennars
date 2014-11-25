@@ -1,4 +1,4 @@
-package nars.grid2d.agent.ql;
+package nars.ql.elsy;
 import static java.lang.Math.abs;
 import java.util.Random;
 /**

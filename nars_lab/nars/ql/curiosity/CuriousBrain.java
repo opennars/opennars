@@ -1,7 +1,7 @@
-package nars.grid2d.agent.curiosity;
+package nars.ql.curiosity;
 
-import nars.grid2d.agent.ql.QBrain;
-import nars.grid2d.agent.ql.QLearner.Action;
+import nars.ql.elsy.QBrain;
+import nars.ql.elsy.QLearner.Action;
 
 
 public class CuriousBrain extends QBrain {

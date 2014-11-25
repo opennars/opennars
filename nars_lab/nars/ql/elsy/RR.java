@@ -1,7 +1,7 @@
-package nars.grid2d.agent.ql;
+package nars.ql.elsy;
 
-import static nars.grid2d.agent.ql.Rand.d;
-import static nars.grid2d.agent.ql.Rand.i;
+import static nars.ql.elsy.Rand.d;
+import static nars.ql.elsy.Rand.i;
 
 
 

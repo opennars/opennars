@@ -21,10 +21,6 @@ import nars.storage.FairDelayBag;
 public class Neuromorphic extends Curve {
     private int numAnts;
 
-    public Neuromorphic() {
-        this(-1);
-    }
-    
     public Neuromorphic(int numAnts) {
         super();        
         this.type = "neuromorphic";

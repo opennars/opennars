@@ -1,9 +1,9 @@
 
-package nars.grid2d.agent.dl;
+package nars.ql.dl;
 
 import nars.util.signal.DenoisingAutoencoder;
 import java.util.Random;
-import nars.grid2d.agent.ql.Perception;
+import nars.ql.elsy.Perception;
 
 /**
  *

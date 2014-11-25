@@ -3,12 +3,12 @@ package nars.inference;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
-import nars.grid2d.agent.ql.QLearner;
+import nars.ql.elsy.QLearner;
 
 
 public abstract class QController extends AbstractController {
 
-    final QLearner q;
+    QLearner q;
     public List<ControlSensor> inputs = new ArrayList();
     private int actions;
     private int numInputs;
@@ -19,7 +19,7 @@ public abstract class QController extends AbstractController {
     //even when not active, vectorize inputs because it may affect sensor readings that determine reward, which we may want to evaluate
     public QController(NAR nar, int updatePeriod) {
         super(nar, updatePeriod);
-        this.q = new QLearner();
+        
     }
 
     public <C extends ControlSensor> C add(C s) {
@@ -34,7 +34,7 @@ public abstract class QController extends AbstractController {
             numInputs += cs.quantization;
         }
         System.out.println("Inputs=" + numInputs + ", Outputs=" + actions);
-        q.init(numInputs, actions, getFeedForwardLayers(numInputs));
+        this.q = new QLearner(numInputs, actions, getFeedForwardLayers(numInputs));
     }
 
     protected abstract int[] getFeedForwardLayers(int inputSize);

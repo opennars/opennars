@@ -1,6 +1,6 @@
-package nars.grid2d.agent.curiosity;
+package nars.ql.curiosity;
 
-import nars.grid2d.agent.ql.Perception;
+import nars.ql.elsy.Perception;
 
 
 
