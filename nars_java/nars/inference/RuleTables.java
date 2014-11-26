@@ -112,7 +112,7 @@ public class RuleTables {
             if(beliefTerm instanceof Implication && 
                     (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
-                //for(int i=0;i<Parameters.TEMPORAL_CHAINING_ATTEMPTS;i++) {
+                for(int i=0;i<10;i++) {
                     Concept next=nal.memory.concepts.sampleNextConcept();
                     if(!next.beliefs.isEmpty()) {
                         Sentence s=next.beliefs.get(0);
@@ -127,7 +127,7 @@ public class RuleTables {
                             }
                         }
                     }
-               //}
+               }
             }
             
             if (LocalRules.match(task, belief, nal)) {

@@ -25,6 +25,7 @@ import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -234,6 +235,116 @@ public class TemporalRules {
                 TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
+                
+                
+                /*
+               MAIL1
+
+        If we consider for example
+
+        (^go-to,{switch0}). :|: %1.00;0.90%
+        6
+        (^activate,{switch0}). :|: %1.00;0.90%
+        6
+        <{door5} --> [opened]>. :|: %1.00;0.90%
+
+
+        The observation
+
+        (&/,(^go-to,{switch0}),(^activate,{switch0})) =/> <{door5} --> [opened]>
+
+        would always have less confidence than the observation
+
+        (^activate,{switch0}) =/> <{door5} --> [opened]>
+
+        by design. But how could it ever learn this sequence then?
+
+        Best regards,
+        Patrick
+
+                MAIL2: 
+
+                I think it's the first case where we need some sort of repression:
+        That (&/,(^go-to,{switch0}),(^activate,{switch0})) =/> <{door5} --> [opened]>
+        represses (^activate,{switch0}) =/> <{door5} --> [opened]>
+        in its confidence.
+
+        Best regards,
+        Patrick
+
+
+        A truth table showing the case where before there was a 1.
+        But I have no idea how much the confidence should sink:
+
+        a b a b =/> c  b =/> c
+        0 0   0            0
+        0 1   0            1
+        1 0   0            0
+        1 1   1            0 <- surpression case
+
+        It would be like "reinterpreting" the evidence which the incoming events gave which makes this quite unusual.
+
+        It is not closed world assumption,  because nothing is said about the frequencies,
+        observing b c does not mean a did not happen,
+        but observing a b c multiple times lets one tend to see a b =/> c as more confident
+        than b => c altough b c was also always the case in every single instance.
+
+        I also tried to write down the corner cases:
+
+            a b =/> c     b =/> c     updated/surpressed b =/> c
+        f        1                  1                1
+        c       1                  1                0  
+        f        0                  0                0
+        c        0                 0                0
+        f        0                 1                1
+        c       0                 1                1
+        f       1                  0                0
+        c       1                 0                0
+
+        in which case the frequencies stay the same in this corner cases,
+        but the confidence of b =/> c sinks when a b =/> c
+        was the case, like a shift of a certain same amount of
+        w+ and w
+        from b =/> c towards a b =/> c.
+        How much w&w+ should be shifted though seems mysterious,
+        maybe just a fixed factor times w.
+
+        Best regards,
+        Patrick
+
+
+        Ah no, this might be the answer:
+        With default confidence 0.9 and horizon=1 we get:
+        0.9=w/(w+1) => w=9
+        which means this should be the amount of how much
+        from w+ and w from b =/> c has to flow to
+        w+ and w of  a b =/> c
+
+        Best regards,
+        Patrick
+
+                */
+
+                //evidence flow, see comment before, todo discuss etc.
+                if(whole.getTemporalOrder()==TemporalRules.ORDER_FORWARD && whole.getSubject() instanceof Conjunction) {
+                    Conjunction conj=(Conjunction) whole.getSubject();
+                    if(conj.getTemporalOrder()==TemporalRules.ORDER_FORWARD && conj.term.length>0 && !(conj.term[0] instanceof Interval)) {
+                        Term[] t2=new Term[conj.term.length-1];
+                        for(int i=0;i<t2.length;i++) {
+                            t2[i]=conj.term[i+1];
+                        }
+                        Term reduced=Conjunction.make(t2,TemporalRules.ORDER_FORWARD);
+                        Implication impnew=Implication.make(reduced, whole.getPredicate(), TemporalRules.ORDER_FORWARD);
+                        //ok we have the reduced one where we need to reduce the confidence
+                        for(Concept c: nal.memory.concepts) {
+                            if(!(reduced instanceof Interval) && !c.beliefs.isEmpty() && c.term.equals(impnew)) {
+                                c.discountConfidence(true);
+                            }
+                        }
+                    }
+                }
+                //
+                
                 return nal.doublePremiseTask(whole, truth, budget, true)!=null;
             }
         }
