@@ -71,10 +71,12 @@ public class BudgetValue implements Cloneable {
         quality = q;
         
         if(d>=1.0) {
-            throw new RuntimeException("durability value above or equal 1");
+            durability=(float) (1.0-TRUTH_EPSILON);
+            //throw new RuntimeException("durability value above or equal 1");
         }
         if(p>1.0) {
-            throw new RuntimeException("priority value above 1");
+            priority=1.0f;
+            //throw new RuntimeException("priority value above 1");
         }
     }
 
@@ -119,7 +121,7 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incPriority(final float v) {        
-        setPriority( or(priority, v) );
+        setPriority( (float) Math.min(1.0, or(priority, v)));
     }
 
     /** AND's (multiplies) priority with another value */
@@ -161,7 +163,7 @@ public class BudgetValue implements Cloneable {
     public void incDurability(final float v) {
         float durability2 = or(durability, v);
         if(durability2>=1.0f) {
-            durability=1.0f-TRUTH_EPSILON; //put into allowed range
+            durability2=1.0f-TRUTH_EPSILON; //put into allowed range
         }
         durability=durability2;
     }
