@@ -64,6 +64,8 @@ import nars.storage.Bag.MemoryAware;
 
 public class Concept extends Item<Term> {
 
+    public ArrayList<ArrayList<Long>> evidentalDiscountBases=new ArrayList<ArrayList<Long>>();
+    
     /**
      * The term is the unique ID of the concept
      */

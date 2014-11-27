@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
@@ -329,16 +330,53 @@ public class TemporalRules {
                 if(whole.getTemporalOrder()==TemporalRules.ORDER_FORWARD && whole.getSubject() instanceof Conjunction) {
                     Conjunction conj=(Conjunction) whole.getSubject();
                     if(conj.getTemporalOrder()==TemporalRules.ORDER_FORWARD && conj.term.length>0 && !(conj.term[0] instanceof Interval)) {
-                        Term[] t2=new Term[conj.term.length-1];
+                        Term[] t2=new Term[conj.term.length-2];
                         for(int i=0;i<t2.length;i++) {
-                            t2[i]=conj.term[i+1];
+                            t2[i]=conj.term[i+2];
                         }
                         Term reduced=Conjunction.make(t2,TemporalRules.ORDER_FORWARD);
                         Implication impnew=Implication.make(reduced, whole.getPredicate(), TemporalRules.ORDER_FORWARD);
                         //ok we have the reduced one where we need to reduce the confidence
                         for(Concept c: nal.memory.concepts) {
                             if(!(reduced instanceof Interval) && !c.beliefs.isEmpty() && c.term.equals(impnew)) {
-                                c.discountConfidence(true);
+                                
+                                ArrayList<Long> newBases=new ArrayList<Long>();
+                                for(int i=0;i<s1.stamp.evidentialBase.length;i++) {
+                                    newBases.add(s1.stamp.evidentialBase[i]);
+                                }
+                                for(int i=0;i<s2.stamp.evidentialBase.length;i++) {
+                                    newBases.add(s2.stamp.evidentialBase[i]);
+                                }
+                                //c.discountConfidence(true);
+                                //check if its in the newBases now, if not, discount
+                                boolean isCompletelyIn=false;
+                                for(ArrayList<Long> ev : c.evidentalDiscountBases) {
+                                    //is every element of newBases in ev and the count the same?
+                                    //if yes, isCompletelyIn is true
+                                    if(ev.size()==newBases.size()) {
+                                        boolean isAllIn=true;
+                                        for(Long bas : ev) {
+                                            boolean isIn=false;
+                                            for(Long bas2 : newBases) {
+                                                if(Objects.equals(bas, bas2)) {
+                                                    isIn=true;
+                                                    break;
+                                                }
+                                            }
+                                            if(isIn==false) {
+                                                isAllIn=false;
+                                            }
+                                        }
+                                        if(isAllIn) { //it is in already
+                                            isCompletelyIn=true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(!isCompletelyIn) {
+                                    c.evidentalDiscountBases.add(newBases);
+                                    c.discountConfidence(true);
+                                }
                             }
                         }
                     }
