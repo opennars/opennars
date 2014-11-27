@@ -905,7 +905,13 @@ public final class CompositionalRules {
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
+            if(T1==null) {
+                return;
+            }
             T2 = (Statement) T2.applySubstitute(res1);
+            if(T2==null) {
+                return;
+            }
             S1 = T2.getSubject();
             S2 = T1.getSubject();
             P1 = T2.getPredicate();
