@@ -41,7 +41,9 @@ abstract public class Build extends Parameters  {
 //    }
     
     @Deprecated public NAR build() {
-        return NAR.build(this);
+        return new NAR(this)
+        //return build(g, g.param);
+        ;
     }
 
     protected Memory newMemory(Param p) {        
