@@ -68,25 +68,29 @@ public class DifferenceInt extends CompoundTerm {
     /**
      * Try to make a new DifferenceExt. Called by StringParser.
      * @return the Term generated from the arguments
-     * @param argList The list of term
+     * @param arg The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] argList) {
-        if (argList.length == 1) { // special case from CompoundTerm.reduceComponent
-            return argList[0];
+    public static Term make(Term[] arg) {
+        if (arg.length == 1) { // special case from CompoundTerm.reduceComponent
+            return arg[0];
         }
-        if (argList.length != 2) {
+        if (arg.length != 2) {
             return null;
         }
         
-        if ((argList[0] instanceof SetInt) && (argList[1] instanceof SetInt)) {
+        if ((arg[0] instanceof SetInt) && (arg[1] instanceof SetInt)) {
             //TODO maybe a faster way to calculate:
-            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) argList[0]).getTermList());
-            set.removeAll(((CompoundTerm) argList[1]).getTermList());           // set difference
+            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).getTermList());
+            set.removeAll(((CompoundTerm) arg[1]).getTermList());           // set difference
             return SetInt.make(set);
         }
                 
-        return new DifferenceInt(argList);
+        if (arg[0].equals(arg[1])) {
+            return null;
+        }
+            
+        return new DifferenceInt(arg);
     }
 
     /**

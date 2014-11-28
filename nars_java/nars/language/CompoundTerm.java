@@ -130,10 +130,11 @@ public abstract class CompoundTerm extends Term {
         return (CompoundTerm)c;
     }
     
-    public CompoundTerm cloneDeepVariables() {        
-        Term c = clone(cloneVariableTermsDeep());
+    public CompoundTerm cloneDeepVariables() {                
+        Term c = clone( cloneVariableTermsDeep() );
         if (c == null)
             throw new RuntimeException("clone(cloneVariableTermsDeep()) resulted in null: " + this);
+        
         if (c.getClass()!=getClass())
             throw new RuntimeException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         
@@ -423,7 +424,7 @@ public abstract class CompoundTerm extends Term {
         for (int i = 0; i < l.length; i++)  {     
             Term t = term[i];
             if (t.hasVar()) {
-                if (term[i] instanceof CompoundTerm) {
+                if (t instanceof CompoundTerm) {
                     t = ((CompoundTerm)t).cloneDeepVariables();
                 }
                 else /* it's a variable */
