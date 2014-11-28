@@ -153,7 +153,7 @@ public class NALTest  {
     }
     
     public NAR newNAR() {
-        return NAR.build(new Default());
+        return new NAR(new Default());
         //return NAR.build(Default.fromJSON("nal/build/pei1.fast.nar"));        
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();

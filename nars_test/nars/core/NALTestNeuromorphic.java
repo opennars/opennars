@@ -21,7 +21,7 @@ public class NALTestNeuromorphic extends NALTest {
 
     @Override
     public NAR newNAR() {
-        return NAR.build(new Neuromorphic(16));
+        return new NAR(new Neuromorphic(16));
     }
 
     public static void main(String[] args) {        
