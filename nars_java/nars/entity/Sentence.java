@@ -144,12 +144,7 @@ public class Sentence<T extends Term> implements Cloneable {
             
             for (final Variable v : vars) {
                 
-                CharSequence vname = v.name();
-                
-                if (!v.getScope().equals(v) && !v.hasVarIndep()) {
-                    //scope is non-anonymous
-                    vname = v.name() + " " + v.getScope().toString(); //unique by name AND scope
-                }
+                CharSequence vname = v.name();                                
                 
                 CharSequence n = rename.get(vname);                
                 
