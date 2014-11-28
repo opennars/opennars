@@ -57,7 +57,7 @@ public class NARRun {
      */
     public static void main(String args[]) {
                 
-        NARRun nars = new NARRun(NAR.build(new CommandLineNARBuilder(args)));
+        NARRun nars = new NARRun(new NAR(new CommandLineNARBuilder(args)));
         nars.run(args);
         
         // TODO only if single finish ( no reset in between )

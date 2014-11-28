@@ -135,7 +135,7 @@ public class NlpStoryGui extends JFrame {
     
     
     public static void main(String[] args) {
-        NAR nar = NAR.build(new Default().setSubconceptBagSize(1000));
+        NAR nar = new NAR(new Default().setSubconceptBagSize(1000));
         
         new NARSwing(nar);
         

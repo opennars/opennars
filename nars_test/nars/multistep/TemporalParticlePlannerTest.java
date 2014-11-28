@@ -36,10 +36,9 @@ public class TemporalParticlePlannerTest {
         
         Default d = new Default().setInternalExperience(Default.InternalExperienceMode.None);
         
-        NAR n = NAR.build(withPlanner?
-                            d.temporalPlanner(12, 64, 24) :
-                            d
-        );
+        NAR n = new NAR(withPlanner?
+                d.temporalPlanner(12, 64, 24) :
+                d);
         
         (n.param).decisionThreshold.set(0.3f);
         

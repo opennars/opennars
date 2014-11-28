@@ -146,7 +146,7 @@ public class NARSwing  {
     public static void main(String args[]) {
         themeInvert();
           
-        NAR nar = NAR.build(new CommandLineNARBuilder(args));
+        NAR nar = new NAR(new CommandLineNARBuilder(args));
         
         
         

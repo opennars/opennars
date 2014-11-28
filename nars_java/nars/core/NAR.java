@@ -601,30 +601,15 @@ public class NAR implements Runnable, TaskSource {
 
     public static NAR build(Class<? extends Build> g) {
         try {
-            return build(g.newInstance());
+            return new NAR(g.newInstance());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
     }
-    public static NAR build(Class<? extends Build> g, Param p) {
-        try {
-            return build(g.newInstance(), p);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-    public static NAR build(Build g) {
-        return build(g, g.param);        
-    }
-    
-    public static NAR build(Build g, Param p) {        
-        NAR n = g.init(new NAR(g.newMemory(p)));
-        return n;
-    }    
 
     public NAR(Build b) {
         this(b.newMemory(b.param));
+        b.init(this);
     }
 }
