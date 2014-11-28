@@ -60,20 +60,35 @@ public class NaturalLanguagePerception {
                 continue;
             }
             
-            if (inputPart.length() == 1) {
-                if (isSplitSign(inputPart.charAt(0))) {
-                    lineParts.add(new LinePart(LinePart.EnumType.SIGN, inputPart));
-                }
-                else {
-                    lineParts.add(new LinePart(LinePart.EnumType.WORD, inputPart));
-                }
-            }
-            else {
-                lineParts.add(new LinePart(LinePart.EnumType.WORD, inputPart));
-            }
+            addOneOrManyLinePartsOfText(lineParts, inputPart);
         }
         
         return lineParts;
+    }
+    
+    /**
+     * 
+     * determines the type of the inputPart and adds depending on it one or many LineParts
+     * handles also the splitting of numbers into digits
+     * 
+     * \param lineParts
+     * \param inputPart 
+     */
+    static private void addOneOrManyLinePartsOfText(ArrayList<LinePart> lineParts, String inputPart) {
+        if (inputPart.length() == 1 && isSplitSign(inputPart.charAt(0))) {
+            lineParts.add(new LinePart(LinePart.EnumType.SIGN, inputPart));
+            return;
+        }
+        // else
+        
+        if (Utility.isNumeric(inputPart)) {
+            for (int i = 0; i < inputPart.length(); i++) {
+                lineParts.add(new LinePart(LinePart.EnumType.WORD, "" + inputPart.charAt(i)));
+            }
+        }
+        else {
+            lineParts.add(new LinePart(LinePart.EnumType.WORD, inputPart));
+        }
     }
     
     // helper for outside

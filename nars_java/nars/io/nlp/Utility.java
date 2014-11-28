@@ -50,4 +50,8 @@ public class Utility {
 
         return false;
     }
+    
+    public static boolean isNumeric(String s) {  
+        return s.matches("\\d+");  
+    }  
 }
