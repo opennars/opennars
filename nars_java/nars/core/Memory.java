@@ -584,6 +584,8 @@ public class Memory implements Serializable {
      * add new task that waits to be processed in the next cycleMemory
      */
     public void addNewTask(final Task t, final String reason) {
+        /*if (!Term.valid(t.getContent()))
+            throw new RuntimeException("Invalid term: " + t);*/
         
         newTasks.add(t);
                 

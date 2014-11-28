@@ -114,41 +114,44 @@ public class Sentence<T extends Term> implements Cloneable {
         this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
             
         
+        //Variable name normalization
         //TODO move this to Concept method, like cloneNormalized()
         if (_content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
             
             this.content = (T)((CompoundTerm)_content).cloneDeepVariables();
             
-            if (this.content == null) {
-                throw new RuntimeException("clone deep should never return null: " + _content);
-            }
-            
             final CompoundTerm c = (CompoundTerm)content;
             
             List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
-            Map<CharSequence,CharSequence> rename = new HashMap();
-            
             
             c.recurseVariableTerms(new Term.TermVisitor() {                
                 @Override public void visit(final Term t) {
                     if (t instanceof Variable) {                        
                         Variable v = ((Variable)t);
                         
-                        if (v.getScope() != v) {
+                        /*if (v.getScope() != v) {
                             //rescope cloned copy
                             v.setScope(c, v.name());                            
-                        }
+                        }*/
                         
                         vars.add(v);
                     }
                 }            
             });
             
+            Map<CharSequence,CharSequence> rename = new HashMap();            
             boolean renamed = false;
             
             for (final Variable v : vars) {
+                
                 CharSequence vname = v.name();
-                CharSequence n = rename.get(vname);
+                
+                if (!v.getScope().equals(v) && !v.hasVarIndep()) {
+                    //scope is non-anonymous
+                    vname = v.name() + " " + v.getScope().toString(); //unique by name AND scope
+                }
+                
+                CharSequence n = rename.get(vname);                
                 
                 if (n==null) {                            
                     //type + id
@@ -159,10 +162,10 @@ public class Sentence<T extends Term> implements Cloneable {
                 v.setScope(c, n);                
             }
             
-            c.setNormalized(true);
-            
             if (renamed)
-                ((CompoundTerm)content).invalidateName();
+                c.invalidateName();
+
+            c.setNormalized(true);            
             
         }
         else {

@@ -211,23 +211,26 @@ public abstract class NAL implements Runnable {
         if (!newBudget.aboveThreshold()) {
             return null;
         }
-        Task derived = null;
+        
         if (newContent != null) {
-            {
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added && temporalAdd) {
-                        memory.temporalRuleOutputToGraph(newSentence, newTask);
-                    }
-                    if(added) {
-                        derived=newTask;
-                    }
+            
+            final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+
+            final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+
+            Task derived = null;
+            if (newTask!=null) {
+                boolean added = derivedTask(newTask, false, false, null, null);
+                if (added && temporalAdd) {
+                    memory.temporalRuleOutputToGraph(newSentence, newTask);
+                }
+                if(added) {
+                    derived=newTask;
                 }
             }
+            return derived;
         }
-        return derived;
+        return null;
     }
 
     /**

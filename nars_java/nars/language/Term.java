@@ -334,5 +334,21 @@ public class Term implements AbstractTerm {
                     
         return n;
     }
+
+    /** performs a thorough check of the validity of a term (by cloneDeep it) to see if it's valid */
+    public static boolean valid(Term content) {
+        
+        try {
+            Term cloned = content.cloneDeep();
+            return true;
+        }
+        catch (Throwable e) {
+            System.err.println("INVALID TERM: " + content);
+            e.printStackTrace();
+            return false;
+        }
+        
+    }
+
     
 }

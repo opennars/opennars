@@ -113,7 +113,8 @@ public abstract class CompoundTerm extends Term {
             if (t.hasVar())
                 if (t instanceof CompoundTerm)
                     ((CompoundTerm)t).invalidateName();
-        }                    
+        }     
+        setNormalized(false);
     }
 
     /** Must be Term return type because the type of Term may change with different arguments */
@@ -122,21 +123,45 @@ public abstract class CompoundTerm extends Term {
     @Override
     public CompoundTerm cloneDeep() {
         Term c = clone(cloneTermsDeep());
+        if (c == null)
+            throw new UnableToCloneException("Unable to cloneDeep: " + this);
+        
         if (c.getClass()!=getClass())
-            throw new RuntimeException("cloneDeep resulted in different class: " + c + " from " + this);
+            throw new UnableToCloneException("cloneDeep resulted in different class: " + c + " from " + this);
         if (isNormalized())
             ((CompoundTerm)c).setNormalized(true);
         
         return (CompoundTerm)c;
     }
     
+    public static class UnableToCloneException extends RuntimeException {
+
+        public UnableToCloneException(String message) {
+            super(message);
+        }
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            if (Parameters.DEBUG) {
+                return super.fillInStackTrace();
+            }
+            else {
+                //avoid recording stack trace for efficiency reasons
+                return this;
+            }
+        }
+        
+        
+    }
+    
     public CompoundTerm cloneDeepVariables() {                
         Term c = clone( cloneVariableTermsDeep() );
+        
         if (c == null)
-            throw new RuntimeException("clone(cloneVariableTermsDeep()) resulted in null: " + this);
+            throw new UnableToCloneException("clone(cloneVariableTermsDeep()) resulted in null: " + this);
         
         if (c.getClass()!=getClass())
-            throw new RuntimeException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
+            throw new UnableToCloneException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         
         return (CompoundTerm)c;
     }
