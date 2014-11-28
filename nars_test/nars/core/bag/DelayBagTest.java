@@ -18,7 +18,7 @@ public class DelayBagTest {
     
     @Test 
     public void testIO() {
-        NAR n = NAR.build(Neuromorphic.class);
+        NAR n = new NAR(new Neuromorphic(1));
 
         DelayBag b = new DelayBag(n.param.conceptForgetDurations, 1000);
         
