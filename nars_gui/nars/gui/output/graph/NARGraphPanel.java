@@ -32,7 +32,16 @@ public class NARGraphPanel extends NPanel {
         
     
         
-        vis = new NARGraphVis(n);
+        vis = new NARGraphVis(n) {
+
+            @Override
+            public void setMode(NARGraphVis.GraphMode g) {
+                super.setMode(g);
+                doLayout();
+                updateUI();
+            }
+            
+        };
         canvas = new PCanvas(vis);
 
         visControl = vis.newStylePanel();

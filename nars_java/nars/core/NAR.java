@@ -536,9 +536,6 @@ public class NAR implements Runnable, TaskSource {
         return memory.toString();
     }
 
-
-
-
      /**
      * Get the current time from the clock Called in {@link nars.entity.Stamp}
      *
@@ -563,10 +560,6 @@ public class NAR implements Runnable, TaskSource {
     public void setThreadYield(boolean b) {
         this.threadYield = b;
     }
-
-
-
-       
 
     /** stops ad empties all input channels into a receiver. this
         results in no pending input. 
@@ -599,6 +592,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
 
+    /** create a NAR given the class of a Build.  its default constructor will be used */
     public static NAR build(Class<? extends Build> g) {
         try {
             return new NAR(g.newInstance());
@@ -608,8 +602,10 @@ public class NAR implements Runnable, TaskSource {
         return null;
     }
 
+    /** normal way to construct a NAR, using a particular Build instance */
     public NAR(Build b) {
         this(b.newMemory(b.param));
         b.init(this);
     }
+    
 }
