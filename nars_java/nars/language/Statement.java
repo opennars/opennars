@@ -147,7 +147,7 @@ public abstract class Statement extends CompoundTerm {
     
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
-        if(subj==null || pred==null) {
+        if(subj==null || pred==null || invalidStatement(subj, pred)) {
             return null;
         }
         if (statement instanceof Inheritance) {
@@ -254,7 +254,7 @@ public abstract class Statement extends CompoundTerm {
     final public static boolean invalidStatement(final Term subject, final Term predicate) {
         if (subject.equals(predicate)) {
             return true;
-        }
+        }        
         if (invalidReflexive(subject, predicate)) {
             return true;
         }

@@ -216,7 +216,7 @@ public class TemporalRules {
             }
             int order1=s1.getTemporalOrder();
             int order2=s2.getTemporalOrder();
-            Conjunction S=(Conjunction) Conjunction.make(term,order1);
+            Term S = Conjunction.make(term,order1);
             //check if term has a element which is equal to C
             for(Term t : term) {
                 if(Terms.equalSubTermsInRespectToImageAndProduct(t, C)) {

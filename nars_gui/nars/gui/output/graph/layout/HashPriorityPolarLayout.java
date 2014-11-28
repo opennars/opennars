@@ -29,13 +29,15 @@ public class HashPriorityPolarLayout implements GraphDisplay<Item,Object> {
     
     
     @Override
-    public void vertex(AbstractGraphVis<Item, Object> g, VertexVis<Item, Object> v) {
-        //double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
-        float priority = v.getVertex().getPriority();
-        double radius = (1.0 - priority) * spacing + 8;
-        float angle = ((arcStop - arcStart) * Video.hashFloat(v.vertex.hashCode()) + arcStart) * ((float)Math.PI*2f);
-        v.tx = (float) (Math.cos(angle) * radius) * spacing;
-        v.ty = (float) (Math.sin(angle) * radius) * spacing;        
+    public void vertex(AbstractGraphVis<Item, Object> g, VertexVis<Item, Object> v) {        
+        if (v.getVertex() instanceof Item) {
+            float priority = v.getVertex().getPriority();
+            double radius = (1.0 - priority) * spacing + 8;
+            float angle = ((arcStop - arcStart) * Video.hashFloat(v.vertex.hashCode()) + arcStart) * ((float)Math.PI*2f);
+            v.tx = (float) (Math.cos(angle) * radius) * spacing;
+            v.ty = (float) (Math.sin(angle) * radius) * spacing;        
+        }
+        
     }
 
     @Override

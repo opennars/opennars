@@ -48,8 +48,8 @@ public class Conjunction extends CompoundTerm {
         
         init(arg);
         
-        if (normalized)
-            setNormalized(true);
+        /*if (normalized)
+            setNormalized(true);*/
     }
 
     @Override
