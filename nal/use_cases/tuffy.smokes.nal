@@ -55,3 +55,28 @@
 <Frank --> [Cancer]>?
 <Gary --> [Cancer]>?
 <Helen --> [Cancer]>? 
+
+Result:
+Solved <Anna --> [Cancer]>. %1.00;0.50%
+Solved <Edward --> [Cancer]>. %1.00;0.25%
+Solved <Frank --> [Cancer]>. %1.00;0.03%
+Solved <Bob --> [Cancer]>. %1.00;0.20%
+
+Which gives:
+
+Anna
+Edward
+Bob
+Frank
+
+Tuffy gives:
+
+Edward
+Anna
+Bob
+Frank
+
+but under AIKR the results may sometimes differ,
+the smokes example is not that interesting
+for attention-controlled systems.
+Especially the predicate logic formulation is quite unnatural.
