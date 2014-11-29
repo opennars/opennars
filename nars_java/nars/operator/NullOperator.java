@@ -45,10 +45,7 @@ public class NullOperator extends Operator {
     @Override 
     protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         if (Parameters.DEBUG) {
-            System.out.println("Executed: " + this);
-            for (Term t : args) {
-               System.out.print(" -- " + Arrays.toString(args));
-            }
+            System.out.println("Executed: " + this + " " + Arrays.toString(args));
         }
         return null;
     }

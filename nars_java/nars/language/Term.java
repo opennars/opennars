@@ -343,8 +343,8 @@ public class Term implements AbstractTerm {
             return true;
         }
         catch (Throwable e) {
-            System.err.println("INVALID TERM: " + content);
-            e.printStackTrace();
+            /*System.err.println("INVALID TERM: " + content);
+            e.printStackTrace();*/
             return false;
         }
         

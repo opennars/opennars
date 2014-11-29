@@ -213,8 +213,8 @@ public class NALTest  {
             tests.put(test, false);
         }
         
-        int levelSuccess[] = new int[9];
-        int levelTotals[] = new int[9];
+        int levelSuccess[] = new int[10];
+        int levelTotals[] = new int[10];
         
         
         for (Map.Entry<String, Boolean> e : tests.entrySet()) {

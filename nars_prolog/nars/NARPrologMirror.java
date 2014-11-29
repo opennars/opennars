@@ -75,6 +75,7 @@ public class NARPrologMirror extends AbstractObserver {
     
     boolean reportAssumptions = false;
     boolean reportForgets = reportAssumptions;
+    boolean reportAnswers = reportAssumptions;
     
     
     public static final Class[] telepathicEvents = { Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, Events.ConceptQuestionAdd.class, IN.class, OUT.class, Solved.class };
@@ -465,7 +466,8 @@ public class NARPrologMirror extends AbstractObserver {
     
     /** reflect a result to NARS, and remember it so that it doesn't get reprocessed here later */
     public void answer(Task question, Term t, nars.prolog.Term pt) {
-        //System.err.println("Prolog answer: " + t);
+        if (reportAnswers)
+            System.err.println("Prolog answer: " + t);
         
 
         

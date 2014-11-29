@@ -452,7 +452,7 @@ public abstract class CompoundTerm extends Term {
                 if (t instanceof CompoundTerm) {
                     t = ((CompoundTerm)t).cloneDeepVariables();
                 }
-                else /* it's a variable */
+                else  /* it's a variable */
                     t = t.clone();
             }
             l[i] = t;            
@@ -722,7 +722,7 @@ public abstract class CompoundTerm extends Term {
      */
     public Term applySubstitute(final Map<Term, Term> subs) {   
         if ((subs == null) || (subs.isEmpty())) {            
-            return this;
+            return this.clone();
         }
                 
         Term[] tt = new Term[term.length];

@@ -118,7 +118,7 @@ public class Sentence<T extends Term> implements Cloneable {
         //TODO move this to Concept method, like cloneNormalized()
         if (_content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
             
-            this.content = (T)((CompoundTerm)_content).cloneDeepVariables();
+            this.content = (T)((CompoundTerm)_content).cloneDeep/*Variables*/();
             
             final CompoundTerm c = (CompoundTerm)content;
             
@@ -144,7 +144,9 @@ public class Sentence<T extends Term> implements Cloneable {
             
             for (final Variable v : vars) {
                 
-                CharSequence vname = v.name();                                
+                CharSequence vname = v.name();
+                if (!v.hasVarIndep())
+                    vname = vname + " " + v.getScope().name();                                
                 
                 CharSequence n = rename.get(vname);                
                 
@@ -161,6 +163,30 @@ public class Sentence<T extends Term> implements Cloneable {
                 c.invalidateName();
 
             c.setNormalized(true);            
+            
+            if (!Term.valid(c)) {
+                throw new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c);
+                /*
+                System.err.println(_content + " ||| " + c + " " + rename);
+                
+                _content.recurseVariableTerms(new Term.TermVisitor() {                
+                    @Override public void visit(final Term t) {
+                        if (t instanceof Variable) {                        
+                            Variable v = ((Variable)t);
+                            System.err.println("  pre: " + v.name() + " | " + v.getScope());
+                        }
+                    }            
+                });
+                c.recurseVariableTerms(new Term.TermVisitor() {                
+                    @Override public void visit(final Term t) {
+                        if (t instanceof Variable) {                        
+                            Variable v = ((Variable)t);
+                            System.err.println("  post: " + v.name() + " | " + v.getScope());
+                        }
+                    }            
+                });
+                */
+            }
             
         }
         else {

@@ -77,7 +77,10 @@ public class Variable extends Term {
      */
     @Override
     public Variable clone() {
-        return new Variable(name(), scope);
+        Variable v = new Variable(name(), scope);
+        if (scope == this)
+            v.scope = v;
+        return v;
     }
 
     /**
@@ -135,6 +138,9 @@ public class Variable extends Term {
         else {
             Variable v = (Variable)that;
             if (!name().equals(v.name())) return false;
+            if (getScope() == this) {
+                if (v.getScope()!=v) return false;
+            }
             return (v.getScope().name().equals(getScope().name()));
         }
     }
