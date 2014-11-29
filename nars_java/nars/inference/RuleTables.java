@@ -713,7 +713,10 @@ public class RuleTables {
      */
     private static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {        
         
-        Term component = compound.term[index % compound.term.length];
+        if(index>compound.term.length) {
+            return;
+        }
+        Term component = compound.term[index];
         
         Task task = nal.getCurrentTask();
         if (component.getClass() == statement.getClass()) {
