@@ -712,8 +712,10 @@ public class RuleTables {
      * @param beliefTerm The content of the belief
      * @param nal Reference to the memory
      */
-    private static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {
-        Term component = compound.term[index];
+    private static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {        
+        
+        Term component = compound.term[index % compound.term.length];
+        
         Task task = nal.getCurrentTask();
         if (component.getClass() == statement.getClass()) {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {

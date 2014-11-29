@@ -21,7 +21,7 @@ public class NALTestSome extends NALTest {
     }
     
    public static boolean include(String filename) {
-       return filename.startsWith("nal6.2.nal");
+       return filename.startsWith("nal6.8.nal");
    }
 
    
