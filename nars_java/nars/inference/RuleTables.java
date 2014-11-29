@@ -76,8 +76,11 @@ public class RuleTables {
         final Term beliefTerm = bLink.target;       // cloning for substitution
         
         //CONTRAPOSITION //TODO: put into rule table
-        if ((taskTerm instanceof Implication) && (taskSentence.isJudgment())) {
-            StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
+        if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
+            Concept d=memory.concepts.sampleNextConcept();
+            if(d.term.equals(taskSentence.content)) {
+                StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
+            }
         }  
         
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
