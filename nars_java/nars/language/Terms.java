@@ -269,6 +269,14 @@ public class Terms {
             Term[] sat = ((CompoundTerm)sa).term;
             Term[] sbt = ((CompoundTerm)sb).term;
 
+            if(sa instanceof Image && sb instanceof Image) {
+                Image im1=(Image) sa;
+                Image im2=(Image) sb;
+                if(im1.relationIndex != im2.relationIndex) {
+                    return false;
+                }
+            }
+            
             Set<Term> componentsA = new HashSet(1+sat.length);
             Set<Term> componentsB = new HashSet(1+sbt.length);
 
