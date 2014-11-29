@@ -52,7 +52,7 @@ public abstract class NAL implements Runnable {
     public NAL(Memory mem) {
         super();
         this.memory = mem;
-        this.derivationFilters = mem.param.getDefaultDerivationFilters();
+        this.derivationFilters = mem.param.getDerivationFilters();
     }
 
     public void setDerivationFilters(List<DerivationFilter> derivationFilters) {

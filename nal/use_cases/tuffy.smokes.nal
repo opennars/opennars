@@ -1,0 +1,75 @@
+//@see Tuffy
+//@see https://code.google.com/p/rockit/source/browse/#svn%2Ftrunk%2Frockit%2Fdata
+
+// Evidence
+//*Friends(person, person)
+
+
+//// Some evidence, some query
+//Smokes(person)
+//// Query
+//Cancer(person)
+
+// Rules
+
+// Smokes(x) => Cancer(x)
+//0.5  !Smokes(a1) v Cancer(a1)
+<<$x <-> [Smokes]> <=> <$x <-> [Cancer]>>. %1.00;0.75%
+
+
+// Friends(x, y) => (Smokes(x) <=> Smokes(y))
+//0.4  !Friends(a1,a2) v !Smokes(a1) v Smokes(a2)
+//0.4  !Friends(a1,a2) v !Smokes(a2) v Smokes(a1)
+
+//Positive form:
+<<(&&,$a,$b) <-> [Friends]> <=> (&&,<$a <-> [Smokes]>,<$b <-> [Smokes]>)>. %1.00;0.80%
+
+//Original negative form:
+//<(--,<(&&,$a,$b) --> [Friends]>) ==> (&&,(--,<$a --> [Smokes]>),<$b --> [Smokes]>)>. %1.00;0.60%
+//<(--,<(&&,$a,$b) --> [Friends]>) ==> (&&,(--,<$b --> [Smokes]>),<$a --> [Smokes]>)>. %1.00;0.60%
+
+//<{Bob,Anna,Edward,Gary,Frank,Helen} <=> [Person]>.
+<Bob <-> [Person]>.
+<Anna <-> [Person]>.
+<Edward <-> [Person]>.
+<Gary <-> [Person]>.
+<Frank <-> [Person]>.
+<Helen <-> [Person]>.
+
+//Friends(Anna, Bob)
+<(&&,Anna,Bob) <-> [Friends]>.
+
+//Friends(Anna, Edward)
+<(&&,Anna,Edward) <-> [Friends]>.
+
+//Friends(Anna, Frank)
+<(&&,Anna,Frank) <-> [Friends]>.
+
+//Friends(Edward, Frank)
+<(&&,Edward,Frank) <-> [Friends]>.
+
+//Friends(Gary, Helen)
+<(&&,Gary,Helen) <-> [Friends]>.
+
+//!Friends(Gary, Frank)
+(--,<(&&,Gary,Frank) <-> [Friends]>).
+
+//Smokes(Anna)
+<Anna <-> [Smokes]>.
+
+//Smokes(Edward)
+<Edward <-> [Smokes]>.
+
+
+//<?x --> [Smokes]>?
+//<?y <-> [Cancer]>?
+
+
+//http://i.stanford.edu/hazy/tuffy/doc/
+//0.75	Cancer(Edward)
+//0.65	Cancer(Anna)
+//0.50	Cancer(Bob)
+//0.45	Cancer(Frank)
+
+
+

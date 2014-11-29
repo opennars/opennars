@@ -169,7 +169,7 @@ public class Default extends Build implements ConceptBuilder {
      * WARNING: this mode does not apply to AGI
      */
     public Default deriveOnlyDemandedTasks() {
-        param.getDefaultDerivationFilters().add(new DeriveOnlyDemandedTasks());
+        param.getDerivationFilters().add(new DeriveOnlyDemandedTasks());
         return this;
     }
     
