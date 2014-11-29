@@ -129,7 +129,7 @@ public class Param implements Serializable {
         this.forgetting = forgetMode;
     }
 
-    public final List<DerivationFilter> getDefaultDerivationFilters() {
+    public final List<DerivationFilter> getDerivationFilters() {
         return defaultDerivationFilters;
     }
     
