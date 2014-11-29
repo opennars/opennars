@@ -1,7 +1,8 @@
 '********** compound decomposition, one premises
 
 'Robin can fly and swim.
-(&&,<robin --> swimmer>,<robin --> [flying]>). %0.9%
+$0.90;0.90$ (&&,<robin --> swimmer>,<robin --> [flying]>). %0.9%
+
 
 1
 
