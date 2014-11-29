@@ -14,8 +14,14 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTestSome extends NALTest {
 
+    static {
+        showOutput = false;
+        showSuccess = showOutput;
+        showTrace = false;               
+    }
+    
    public static boolean include(String filename) {
-       return filename.startsWith("nal5.19.nal");
+       return filename.startsWith("nal6.2.nal");
    }
 
    
@@ -41,6 +47,7 @@ public class NALTestSome extends NALTest {
 
    public NALTestSome(String scriptPath) {
        super(scriptPath);//, true);
+
    }
 //   
 //   public NALTestSome(String scriptPath, boolean showOutput) {

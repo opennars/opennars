@@ -214,21 +214,26 @@ public abstract class NAL implements Runnable {
         
         if (newContent != null) {
             
-            final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+            try {
+                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
 
-            final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
 
-            Task derived = null;
-            if (newTask!=null) {
-                boolean added = derivedTask(newTask, false, false, null, null);
-                if (added && temporalAdd) {
-                    memory.temporalRuleOutputToGraph(newSentence, newTask);
+                Task derived = null;
+                if (newTask!=null) {
+                    boolean added = derivedTask(newTask, false, false, null, null);
+                    if (added && temporalAdd) {
+                        memory.temporalRuleOutputToGraph(newSentence, newTask);
+                    }
+                    if(added) {
+                        derived=newTask;
+                    }
                 }
-                if(added) {
-                    derived=newTask;
-                }
+                return derived;
             }
-            return derived;
+            catch (CompoundTerm.UnableToCloneException e) {
+                return null;
+            }
         }
         return null;
     }

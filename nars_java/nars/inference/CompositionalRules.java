@@ -46,6 +46,7 @@ import static nars.inference.TruthFunctions.reduceDisjunction;
 import static nars.inference.TruthFunctions.union;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.CompoundTerm.UnableToCloneException;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;
 import nars.language.DifferenceInt;
@@ -1250,23 +1251,28 @@ public final class CompositionalRules {
 
             if (sx == null)
                 sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
-                        
-            Sentence newSentence = new Sentence(result, mark, truth, sx);
-            BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
+
+            try {
+                Sentence newSentence = new Sentence(result, mark, truth, sx);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
 
 
-            if (budget.aboveThreshold()) {
-                Task newTask = new Task(newSentence, budget, task, null);
-                Task dummy = new Task(second_belief, budget, task, null);
+                if (budget.aboveThreshold()) {
+                    Task newTask = new Task(newSentence, budget, task, null);
+                    Task dummy = new Task(second_belief, budget, task, null);
 
-                nal.setCurrentBelief(taskSentence);
-                nal.setCurrentTask(dummy);
+                    nal.setCurrentBelief(taskSentence);
+                    nal.setCurrentTask(dummy);
 
-                if (nal.derivedTask(newTask, false, false, task, second_belief)) {
+                    if (nal.derivedTask(newTask, false, false, task, second_belief)) {
 
-                    nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
+                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
 
+                    }
                 }
+            }
+            catch (UnableToCloneException u) {
+                return;
             }
             
         }
