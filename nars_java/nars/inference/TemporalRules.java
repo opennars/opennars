@@ -248,6 +248,19 @@ public class TemporalRules {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
+    public static void applyExpectationOffset(Memory memory, Term temporalStatement, Stamp stamp) {
+        if(temporalStatement!=null && temporalStatement instanceof Implication) {
+            Implication imp=(Implication) temporalStatement;
+            if(imp.getSubject() instanceof Conjunction && imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD)  {
+                Conjunction conj=(Conjunction) imp.getSubject();
+                if(conj.term[conj.term.length-1] instanceof Interval) {
+                    Interval intv=(Interval) conj.term[conj.term.length-1];
+                    long time_offset=intv.getTime(memory);
+                    stamp.setOccurrenceTime(stamp.getOccurrenceTime()+time_offset);
+                }
+            }
+        }
+    }
     
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
         
