@@ -143,24 +143,20 @@ public abstract class NAL implements Runnable {
         }
         //its a inference rule, so we have to do the derivation chain check to hamper cycles
         if (!revised) {
-            Term tc = task.getContent();
+            Term tc = task.getContent();            
             
             if (task.sentence.isJudgment()) { 
                 
                 Term ptc = task.getParentTask() != null ? task.getParentTask().getContent() : null;
                 
                 if (
-                    (task.getParentTask() == null) || 
-                    (!(ptc.equals(Negation.make(tc))) && !(tc.equals(Negation.make(ptc))))
+                    (task.getParentTask() == null) || (!Negation.areMutuallyInverse(tc, ptc))
                    ) {
                 
                     final Collection<Term> chain = stamp.getChain();
-
-                    for (final Term chain1 : chain) {                
-                        if (tc.equals(chain1)) {
-                            memory.removeTask(task, "Cyclic Reasoning");
-                            return false;
-                        }
+                    if (chain.contains(tc)) {
+                        memory.removeTask(task, "Cyclic Reasoning");
+                        return false;
                     }
                 }
             }
@@ -184,7 +180,7 @@ public abstract class NAL implements Runnable {
             ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.content, memory, task.sentence.getOccurenceTime());
         }
         
-        task.NotConsideredByTemporalInduction=true;
+        task.setTemporalInducted(false);
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
         addTask(task, "Derived");

@@ -28,6 +28,7 @@ import nars.io.Symbols.NativeOperator;
 public class Negation extends CompoundTerm {
 
 
+
     /** avoid using this externally, because double-negatives can be unwrapped to the 
      * original term using Negation.make */
     protected Negation(final Term t) {
@@ -104,4 +105,12 @@ public class Negation extends CompoundTerm {
     public NativeOperator operator() {
         return NativeOperator.NEGATION;
     }
+
+    
+    public static boolean areMutuallyInverse(Term tc, Term ptc) {
+        //doesnt seem necessary to check both, one seems sufficient.
+        //incurs cost of creating a Negation and its id
+        return (ptc.equals(Negation.make(tc)) /* || tc.equals(Negation.make(ptc))*/ );        
+    }
+
 }

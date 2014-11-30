@@ -68,7 +68,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
         this(s, b, parentTask, null);        
     }
 
-    public boolean NotConsideredByTemporalInduction=false;
+    private boolean temporalInducted=true;
     
     /**
      * Constructor for a derived task
@@ -345,6 +345,15 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
     /** sets priority to zero, signaling that the Task has ended or discarded */
     @Override public void end() {
         end(false);
+    }
+
+    /** flag to indicate whether this Task was Temporally Inducted */
+    public void setTemporalInducted(boolean b) {
+        this.temporalInducted = b;
+    }
+
+    public boolean isTemporalInducted() {
+        return temporalInducted;
     }
 
     

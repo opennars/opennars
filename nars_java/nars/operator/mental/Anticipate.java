@@ -127,7 +127,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
                 
                 nal.derivedTask(task, false, true, null, null); 
 
-                task.NotConsideredByTemporalInduction=false;
+                task.setTemporalInducted(true);
                 
                 
                 remove = true;
