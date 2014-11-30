@@ -1007,7 +1007,11 @@ public final class CompositionalRules {
         }
     }
 
-    public static final boolean sEqualsP(final Term T) {
+    public static final boolean invalidSentenceContent(final Term T) {
+        if (!(T instanceof CompoundTerm))
+            return true;
+        
+        //sEqualsP:
         if (T instanceof Statement) {
             Statement st = (Statement) T;
             if (st.getSubject().equals(st.getPredicate())) {
@@ -1043,8 +1047,8 @@ public final class CompositionalRules {
         int maxUnificationAttempts = 1; //memory.param.variableUnificationLayer2_ConceptAttemptsPerCycle.get();
 
         //these are intiailized further into the first cycle below. afterward, they are clear() and re-used for subsequent cycles to avoid reallocation cost
-        ArrayList<CompoundTerm> terms_dependent = null;
-        ArrayList<CompoundTerm> terms_independent = null;
+        ArrayList<Term> terms_dependent = null;
+        ArrayList<Term> terms_independent = null;
         HashMap<Term, Term> Values = null;
         HashMap<Term, Term> Values2 = null;
         HashMap<Term, Term> Values3 = null;
@@ -1098,9 +1102,10 @@ public final class CompositionalRules {
                 smap.clear();
 
                 if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
-                    CompoundTerm taskterm_subs = ((CompoundTerm) first);
-                    taskterm_subs = taskterm_subs.applySubstituteToCompound(Values);
-                    taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
+                    
+                    CompoundTerm ctaskterm_subs = (CompoundTerm)first;
+                    ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
+                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.mem());
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                         terms_dependent.add(taskterm_subs);
                     }
@@ -1110,9 +1115,9 @@ public final class CompositionalRules {
                 smap.clear();
 
                 if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values2, smap)) {
-                    CompoundTerm taskterm_subs = (CompoundTerm) first;
-                    taskterm_subs = taskterm_subs.applySubstituteToCompound(Values2);
-                    taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
+                    CompoundTerm ctaskterm_subs = (CompoundTerm) first;
+                    ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values2);
+                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.mem());
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
 
                         terms_independent.add(taskterm_subs);
@@ -1134,9 +1139,9 @@ public final class CompositionalRules {
 
                         if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values3, smap)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs = (CompoundTerm) first;
-                            taskterm_subs = taskterm_subs.applySubstituteToCompound(Values3);
-                            taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
+                            CompoundTerm ctaskterm_subs = (CompoundTerm) first;
+                            ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values3);
+                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.mem());
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_dependent.add(taskterm_subs);
                             }
@@ -1147,9 +1152,9 @@ public final class CompositionalRules {
 
                         if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values4, smap)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs = (CompoundTerm) first;
-                            taskterm_subs = taskterm_subs.applySubstituteToCompound(Values4);
-                            taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
+                            CompoundTerm ctaskterm_subs = (CompoundTerm) first;
+                            ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values4);
+                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.mem());
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_independent.add(taskterm_subs);
                             }
@@ -1177,7 +1182,7 @@ public final class CompositionalRules {
             for (int i = 0; i < termsIndependent; i++) {
                 Term result = terms_independent.get(i);
 
-                if (sEqualsP(result)) {
+                if (invalidSentenceContent(result)) {
                     //changed from return to continue to allow furhter processing
                     continue;
                 }
@@ -1191,6 +1196,7 @@ public final class CompositionalRules {
                 }
 
                 Stamp useEvidentalBase = new Stamp(taskSentence.stamp, second_belief.stamp, nal.getTime());
+                
                 Sentence newSentence = new Sentence(result, mark, truth,
                         new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase));
 
@@ -1224,16 +1230,16 @@ public final class CompositionalRules {
         return unifiedAnything;
     }
 
-    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, final Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, final Stamp s, ArrayList<Term> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
 
         Stamp sx = null;
 
         final Sentence taskSentence = task.sentence;
         
         for (int i = 0; i < terms_dependent.size(); i++) {
-            final CompoundTerm result = terms_dependent.get(i);
-
-            if (sEqualsP(result)) {
+            final Term result = terms_dependent.get(i);
+            
+            if (invalidSentenceContent(result)) {
                 //changed this from return to continue, 
                 //to allow processing terms_dependent when it has > 1 items
                 continue;

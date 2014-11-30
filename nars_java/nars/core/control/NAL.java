@@ -18,6 +18,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.language.CompoundTerm;
+import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Term;
 import nars.language.Variable;
@@ -218,7 +219,7 @@ public abstract class NAL implements Runnable {
             return null;
         }
         
-        if (newContent != null) {
+        if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable))) {
             
             try {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
