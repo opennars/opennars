@@ -23,6 +23,7 @@ package nars.operator.mental;
 import java.util.ArrayList;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
+import nars.core.Events.CycleEnd;
 import nars.core.Events.InduceSucceedingEvent;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -71,39 +72,47 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         return true;
     }
     
+    public void manageAnticipations(NAL nal, Task newTask) {
+        ArrayList<Anticipation> toRemove=new ArrayList<>();
+        long time=nal.memory.time();
+        
+        for(int i=0;i<anticipations.size();i++) {
+            Term anticipateTerm=anticipations.get(i).anticipateTerm;
+            long anticipateTime=anticipations.get(i).anticipateTime;
+
+            if (time-anticipateTime>nal.memory.param.duration.get()) {
+                Term s = anticipateTerm;
+                TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                Term N = Negation.make(s);
+                Stamp stamp = new Stamp(nal.memory);
+                Sentence S = new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
+                BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
+                Task task = new Task(S, budget);
+                nal.derivedTask(task, false, true, null, null);
+                task.NotConsideredByTemporalInduction=false;
+                toRemove.add(anticipations.get(i));
+            }
+
+            if (newTask!=null && Math.abs(anticipateTime-time)<nal.memory.param.duration.get() 
+                    && newTask.sentence.truth.getExpectation()>0.5 && newTask.sentence.content.equals(anticipateTerm)) {
+                toRemove.add(anticipations.get(i));//it happened like expected
+            }
+        }
+        for(Anticipation anticipation : toRemove) {
+            anticipations.remove(anticipation);
+        }
+    }
+    
     @Override
     public void event(Class event, Object[] args) {
-        if (event == InduceSucceedingEvent.class) {            
-            
+        if (event == CycleEnd.class) {            
+            NAL nal = (NAL)args[1];
+            manageAnticipations(nal,null);
+        }
+        if (event == Events.InduceSucceedingEvent.class) {            
             Task newEvent = (Task)args[0];
             NAL nal = (NAL)args[1];
-            Sentence newSentence = newEvent.sentence;
-            ArrayList<Anticipation> toRemove=new ArrayList<Anticipation>();
-            
-            for(int i=0;i<anticipations.size();i++) {
-                Term anticipateTerm=anticipations.get(i).anticipateTerm;
-                long anticipateTime=anticipations.get(i).anticipateTime;
-                
-                if ((anticipateTerm!=null) && newSentence.getOccurenceTime()-anticipateTime>nal.memory.param.duration.get()) {
-                    Term s = newEvent.sentence.content;
-                    TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                    Term N = Negation.make(s);
-                    Stamp stamp = new Stamp(nal.memory);
-                    Sentence S = new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
-                    BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
-                    Task task = new Task(S, budget);
-                    nal.derivedTask(task, false, true, null, null);
-                    task.ConsideredByTemporalInduction=false;
-                    toRemove.add(anticipations.get(i));
-                }
-
-                if (anticipateTerm!=null && Math.abs(anticipateTime-newSentence.getOccurenceTime())<nal.memory.param.duration.get() && newSentence.truth.getExpectation() > 0.5 && newSentence.content.equals(anticipateTerm)) {
-                    toRemove.add(anticipations.get(i));//it happened like expected
-                }
-            }
-            for(Anticipation anticipation : toRemove) {
-                anticipations.remove(anticipation);
-            }
+            manageAnticipations(nal,newEvent);
         }
     }
     
