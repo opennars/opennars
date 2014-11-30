@@ -22,8 +22,9 @@ package nars.operator.mental;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
@@ -49,17 +50,13 @@ import nars.operator.Operator;
  * Operator that creates a judgment with a given statement
  */
 public class Anticipate extends Operator implements EventObserver, Mental {
-
-    public static class Anticipation {
-        public final Term anticipateTerm;
-        public final long anticipateTime;
-        public Anticipation(Term anticipateTerm, long anticipateTime) {
-            this.anticipateTerm=anticipateTerm;
-            this.anticipateTime=anticipateTime;
-        }
-    }
     
-    public final LinkedList<Anticipation> anticipations = new LinkedList<Anticipation>(); //todo make both arrays
+
+    
+
+
+    public final Map<Long,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
+            
     final Set<Term> newTasks = new LinkedHashSet();
     NAL nal;
     
@@ -67,9 +64,14 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     float anticipateDurations = 2f;
     
     /** how long to allow a hoped-for event to occurr before counting evidence
-     *  that it has not.  usually a <0.5 value which is a factor of duration 
+     *  that it has not.  usually a less than 0.5 value which is a factor of duration 
         "disappointmentOvercomesHopeDuration" */
     float hopeExpirationDurations = 0f;
+    
+    final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+    final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
+    
+    transient private int duration;
     
     public Anticipate() {
         super("^anticipate");        
@@ -92,7 +94,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         long now=nal.memory.time();
         
         
-        long duration = nal.memory.getDuration();
+        this.duration = nal.memory.getDuration();
         long window = (long)(duration/2f * anticipateDurations);
         long hopeExpirationWindow = (long)(duration * hopeExpirationDurations);
                 
@@ -101,52 +103,54 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         
         boolean hasNewTasks = !newTasks.isEmpty();
         
-        Iterator<Anticipation> ii = anticipations.iterator();
-        while (ii.hasNext()) {
-            final Anticipation a = ii.next();
+        Iterator<Map.Entry<Long, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
+        while (aei.hasNext()) {
             
-            Term aTerm = a.anticipateTerm;
-            long aTime = a.anticipateTime;
+            Map.Entry<Long, LinkedHashSet<Term>> ae = aei.next();
+            
+            long aTime = ae.getKey();
 
-            boolean remove = false;
+            boolean didntHappen = (now-aTime > hopeExpirationWindow);
+            boolean maybeHappened = hasNewTasks && Math.abs(aTime - now) <= window;
             
-            if (now-aTime > hopeExpirationWindow) {
-                TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 
-                Stamp cycleStamp = null;
-                if (cycleStamp == null) {
-                    cycleStamp = new Stamp(nal.memory);
-                    int derivation_tolerance_mul=2;
-                    cycleStamp.setOccurrenceTime(
-                        cycleStamp.getOccurrenceTime()-derivation_tolerance_mul*duration);
+            if ((!didntHappen) && (!maybeHappened))
+                continue;
+            
+            LinkedHashSet<Term> terms = ae.getValue();
+            
+            Iterator<Term> ii = terms.iterator();
+            while (ii.hasNext()) {
+                Term aTerm = ii.next();
+                
+                boolean remove = false;
+                
+                if (didntHappen) {
+                    deriveDidntHappen(aTerm);                                
+                    remove = true;
+                }
+
+                if (maybeHappened) {
+                    if (newTasks.remove(aTerm)) {
+                        //it happened like expected                
+                        remove = true; 
+                        hasNewTasks = !newTasks.isEmpty();
+                    }
+                    
                 }
                 
-                Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, cycleStamp);
-                BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
-                Task task = new Task(S, budget);
-                
-                nal.derivedTask(task, false, true, null, null); 
-
-                task.setTemporalInducted(true);
-                
-                
-                remove = true;
-            }
-
-            if (hasNewTasks && Math.abs(aTime - now) <= window && newTasks.remove(aTerm)) {
-                //it happened like expected                
-                remove = true; 
-                hasNewTasks = !newTasks.isEmpty();
+                if (remove)
+                    ii.remove();
             }
             
+            if (terms.isEmpty()) {
+                //remove this time entry because its terms have been emptied
+                aei.remove();
+            }
             
-            if (remove)
-                ii.remove();
-        }
-       
+        }       
     
-        newTasks.clear();
-        
+        newTasks.clear();        
     }
     
     @Override
@@ -190,7 +194,33 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             return;
         }
-        anticipations.add(new Anticipation(content, occurenceTime));
+        
+        LinkedHashSet<Term> ae = anticipations.get(occurenceTime);
+        if (ae == null) {
+            ae = new LinkedHashSet();
+            anticipations.put(occurenceTime, ae);
+        }
+        ae.add(content);
     }
 
+    protected void deriveDidntHappen(Term aTerm) {
+                
+        TruthValue truth = expiredTruth;
+        BudgetValue budget = expiredBudget;
+
+        Stamp stamp = new Stamp(nal.memory);
+        int derivation_tolerance_mul=2;
+        stamp.setOccurrenceTime(
+            stamp.getOccurrenceTime()-derivation_tolerance_mul*duration);
+
+
+        Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
+
+        Task task = new Task(S, budget);
+
+        nal.derivedTask(task, false, true, null, null); 
+
+        task.setTemporalInducted(true);
+    }
+    
 }
