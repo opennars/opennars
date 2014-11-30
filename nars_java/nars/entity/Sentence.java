@@ -127,14 +127,7 @@ public class Sentence<T extends Term> implements Cloneable {
             c.recurseVariableTerms(new Term.TermVisitor() {                
                 @Override public void visit(final Term t) {
                     if (t instanceof Variable) {                        
-                        Variable v = ((Variable)t);
-                        
-                        /*if (v.getScope() != v) {
-                            //rescope cloned copy
-                            v.setScope(c, v.name());                            
-                        }*/
-                        
-                        vars.add(v);
+                        vars.add(((Variable)t));
                     }
                 }            
             });
@@ -153,40 +146,43 @@ public class Sentence<T extends Term> implements Cloneable {
                 if (n==null) {                            
                     //type + id
                     rename.put(vname, n = Variable.getName(v.getType(), rename.size()+1));
-                    renamed = true;
                 }    
 
                 v.setScope(c, n);                
+                renamed = true;
             }
             
-            if (renamed)
+            if (renamed) {
                 c.invalidateName();
 
+                /*if (!Term.valid(c)) {
+                    throw new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c);
+                    
+//                    System.err.println(_content + " ||| " + c + " " + rename);
+//
+//                    _content.recurseVariableTerms(new Term.TermVisitor() {                
+//                        @Override public void visit(final Term t) {
+//                            if (t instanceof Variable) {                        
+//                                Variable v = ((Variable)t);
+//                                System.err.println("  pre: " + v.name() + " | " + v.getScope());
+//                            }
+//                        }            
+//                    });
+//                    c.recurseVariableTerms(new Term.TermVisitor() {                
+//                        @Override public void visit(final Term t) {
+//                            if (t instanceof Variable) {                        
+//                                Variable v = ((Variable)t);
+//                                System.err.println("  post: " + v.name() + " | " + v.getScope());
+//                            }
+//                        }            
+//                    });
+                    
+                }*/
+                
+            }
+            
             c.setNormalized(true);            
             
-            if (!Term.valid(c)) {
-                throw new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c);
-                /*
-                System.err.println(_content + " ||| " + c + " " + rename);
-                
-                _content.recurseVariableTerms(new Term.TermVisitor() {                
-                    @Override public void visit(final Term t) {
-                        if (t instanceof Variable) {                        
-                            Variable v = ((Variable)t);
-                            System.err.println("  pre: " + v.name() + " | " + v.getScope());
-                        }
-                    }            
-                });
-                c.recurseVariableTerms(new Term.TermVisitor() {                
-                    @Override public void visit(final Term t) {
-                        if (t instanceof Variable) {                        
-                            Variable v = ((Variable)t);
-                            System.err.println("  post: " + v.name() + " | " + v.getScope());
-                        }
-                    }            
-                });
-                */
-            }
             
         }
         else {
