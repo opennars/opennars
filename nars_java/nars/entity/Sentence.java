@@ -100,6 +100,9 @@ public class Sentence<T extends Term> implements Cloneable {
         
         this.punctuation = punctuation;
         
+        if (!(_content instanceof CompoundTerm))
+            throw new RuntimeException("Sentence content must be CompoundTerm: " + _content + punctuation + " " + stamp);
+        
         if ( (!isQuestion() && !isQuest()) && (truth == null) ) {            
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }

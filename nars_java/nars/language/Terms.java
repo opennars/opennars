@@ -59,15 +59,15 @@ public class Terms {
         }
     }
 
-    public static CompoundTerm reduceUntilLayer2(CompoundTerm itself, Term replacement, Memory memory) {
-        if (itself == null)
+    public static Term reduceUntilLayer2(final CompoundTerm _itself, Term replacement, Memory memory) {
+        if (_itself == null)
             return null;
         
-        Term reduced = reduceComponentOneLayer(itself, replacement, memory);
+        Term reduced = reduceComponentOneLayer(_itself, replacement, memory);
         if (!(reduced instanceof CompoundTerm))
             return null;
         
-        itself = (CompoundTerm)reduced;
+        CompoundTerm itself = (CompoundTerm)reduced;
         int j = 0;
         for (Term t : itself.term) {
             Term t2 = unwrapNegation(t);
@@ -78,12 +78,15 @@ public class Terms {
             Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement, memory);
             
             //CompoundTerm itselfCompound = itself;
-            CompoundTerm replaced = null;
+            Term replaced = null;
             if (j < itself.term.length  )
-                replaced = (CompoundTerm) itself.setComponent(j, ret2, memory);
+                replaced = itself.setComponent(j, ret2, memory);
             
             if (replaced != null) {
-                itself = replaced;
+                if (replaced instanceof CompoundTerm)
+                    itself = (CompoundTerm)replaced;
+                else
+                    return replaced;
             }
             j++;
         }
