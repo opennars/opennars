@@ -47,8 +47,16 @@ import nars.operator.Operator;
  */
 public class Anticipate extends Operator implements EventObserver, Mental {
 
-    Term anticipateTerm = null; //todo make both arrays
-    long anticipateTime = 0; //anticipations shouldnt get overwritten!
+    public class Anticipation
+    {
+        public Term anticipateTerm;
+        public long anticipateTime;
+        public Anticipation(Term anticipateTerm, long anticipateTime) {
+            this.anticipateTerm=anticipateTerm;
+            this.anticipateTime=anticipateTime;
+        }
+    }
+    ArrayList<Anticipation> anticipations = new ArrayList<Anticipation>(); //todo make both arrays
     
     //TODO set this by an optional additional parameter to ^anticipate
     float anticipateDurations = 1f;
@@ -70,24 +78,32 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             Task newEvent = (Task)args[0];
             NAL nal = (NAL)args[1];
             Sentence newSentence = newEvent.sentence;
+            ArrayList<Anticipation> toRemove=new ArrayList<Anticipation>();
             
-            if ((anticipateTerm!=null) && newSentence.getOccurenceTime()-anticipateTime>nal.memory.param.duration.get()) {
-                Term s = newEvent.sentence.content;
-                TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                Term N = Negation.make(s);
-                Stamp stamp = new Stamp(nal.memory);
-                Sentence S = new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
-                BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
-                Task task = new Task(S, budget);
-                nal.derivedTask(task, false, true, null, null);
-                task.ConsideredByTemporalInduction=false;
-                anticipateTerm = null;
+            for(int i=0;i<anticipations.size();i++) {
+                Term anticipateTerm=anticipations.get(i).anticipateTerm;
+                long anticipateTime=anticipations.get(i).anticipateTime;
+                
+                if ((anticipateTerm!=null) && newSentence.getOccurenceTime()-anticipateTime>nal.memory.param.duration.get()) {
+                    Term s = newEvent.sentence.content;
+                    TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                    Term N = Negation.make(s);
+                    Stamp stamp = new Stamp(nal.memory);
+                    Sentence S = new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
+                    BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
+                    Task task = new Task(S, budget);
+                    nal.derivedTask(task, false, true, null, null);
+                    task.ConsideredByTemporalInduction=false;
+                    toRemove.add(anticipations.get(i));
+                }
+
+                if (anticipateTerm!=null && Math.abs(anticipateTime-newSentence.getOccurenceTime())<nal.memory.param.duration.get() && newSentence.truth.getExpectation() > 0.5 && newSentence.content.equals(anticipateTerm)) {
+                    toRemove.add(anticipations.get(i));//it happened like expected
+                }
             }
-            
-            if (anticipateTerm!=null && Math.abs(anticipateTime-newSentence.getOccurenceTime())<nal.memory.param.duration.get() && newSentence.truth.getExpectation() > 0.5 && newSentence.content.equals(anticipateTerm)) {
-                anticipateTerm = null; //it happened like expected
+            for(Anticipation anticipation : toRemove) {
+                anticipations.remove(anticipation);
             }
-            
         }
     }
     
@@ -109,8 +125,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     }
     
     public void anticipate(Term content,Memory memory) {
-        anticipateTime=memory.time() + (int)(memory.getDuration() * anticipateDurations);
-        anticipateTerm=content;
+        anticipations.add(new Anticipation(content, (memory.time() + (int)(memory.getDuration() * anticipateDurations))));
     }
 
 }
