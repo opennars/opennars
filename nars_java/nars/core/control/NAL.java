@@ -183,7 +183,7 @@ public abstract class NAL implements Runnable {
             ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.content, memory);
         }
         
-        task.ConsideredByTemporalInduction=true;
+        task.NotConsideredByTemporalInduction=true;
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
         addTask(task, "Derived");
