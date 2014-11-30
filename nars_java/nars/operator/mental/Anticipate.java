@@ -82,7 +82,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             Term anticipateTerm=anticipations.get(i).anticipateTerm;
             long anticipateTime=anticipations.get(i).anticipateTime;
 
-            if (time-anticipateTime>nal.memory.param.duration.get()) {
+            if (time-anticipateTime>0) {
                 Term s = anticipateTerm;
                 TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 Stamp stamp = new Stamp(nal.memory);
