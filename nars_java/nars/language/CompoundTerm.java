@@ -724,7 +724,7 @@ public abstract class CompoundTerm extends Term {
      */
     public Term applySubstitute(final Map<Term, Term> subs) {   
         if ((subs == null) || (subs.isEmpty())) {            
-            return this.clone();
+            return this;//.clone();
         }
                 
         Term[] tt = new Term[term.length];
