@@ -2,6 +2,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
+import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,6 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import static javax.swing.SwingUtilities.invokeLater;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
@@ -29,13 +31,12 @@ import org.jgrapht.graph.DirectedMultigraph;
  *
  * @author me
  */
-public class MultiModePanel extends JPanel  {
+public class MultiModePanel extends NPanel implements EventObserver {
     final float activityIncrement = 0.5f; //per output
     final float activityMomentum = 0.95f;
 
     private final NAR nar;
-    private final Object object;
-    private final Output out;
+    private final Object object;    
     
     float activity = 0;
     //private final String label;
@@ -129,19 +130,25 @@ public class MultiModePanel extends JPanel  {
         w.pack();
             */
     }
-    
 
+    @Override
+    protected void onShowing(boolean showing) {
+        nar.event().set(this, showing, Output.DefaultOutputEvents);
+    }
+
+    @Override
+    public void event(Class event, Object[] arguments) {
+        output(event, arguments.length > 1 ? arguments : arguments[0]);
+    }
+    
+    
     public MultiModePanel(NAR nar, Object object) {
         super(new BorderLayout());
         this.nar = nar;
         this.object = object;
   
           
-        out = new Output(nar, false) {
-            @Override public void event(Class event, Object[] arguments) {
-                MultiModePanel.this.output(event, arguments.length > 1 ? arguments : arguments[0]);
-            }
-        };
+        
         
         if (object instanceof Task) {
             label = ((Task)object).sentence.toString();

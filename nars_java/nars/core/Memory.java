@@ -48,6 +48,7 @@ import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
@@ -936,6 +937,29 @@ public class Memory implements Serializable {
     public void stepLater(final int cycles) {
         inputPausedUntil = (int) (time() + cycles);
     }    
+    
+    /** get all tasks in the system by iterating all newTasks, novelTasks, Concept TaskLinks */
+    public Set<Task> getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks) {
+        
+        Set<Task> t = new HashSet();
+        
+        if (includeTaskLinks) {
+            for (Concept c : concepts) {
+                for (TaskLink tl : c.taskLinks) {
+                    t.add(tl.targetTask);
+                }
+            }
+        }
+        
+        if (includeNewTasks)
+            t.addAll(newTasks);
+        
+        if (includeNovelTasks)
+            for (Task n : novelTasks)
+                t.add(n);
+            
+        return t;        
+    }
 
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
         return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);

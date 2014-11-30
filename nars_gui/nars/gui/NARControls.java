@@ -309,11 +309,8 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             JMenuItem tt = new JMenuItem("+ Task Tree");
             tt.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    TaskTree p = new TaskTree(nar);
-                    NWindow w = new NWindow("Task Tree", p);
-                    w.setSize(200, 500);
-                    w.setVisible(true);                    
+                public void actionPerformed(ActionEvent e) {                    
+                    new NWindow("Task Tree", new TaskTree(nar)).show(300, 650, true);
                 }
             });
             m.add(tt);
@@ -460,10 +457,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         
         
         init();
-        
-        
-        
-        
+
         
     }
 
