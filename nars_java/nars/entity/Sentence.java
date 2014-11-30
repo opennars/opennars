@@ -118,7 +118,7 @@ public class Sentence<T extends Term> implements Cloneable {
         //TODO move this to Concept method, like cloneNormalized()
         if (_content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
             
-            this.content = (T)((CompoundTerm)_content).cloneDeep/*Variables*/();
+            this.content = (T)((CompoundTerm)_content).cloneDeepVariables();
             
             final CompoundTerm c = (CompoundTerm)content;
             
