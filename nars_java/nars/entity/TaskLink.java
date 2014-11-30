@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.util.Arrays;
 import nars.language.Term;
 
 /**
@@ -181,6 +182,12 @@ public class TaskLink extends Item<Task> implements TLink<Task> {
         return targetTask;
     }
 
+    @Override
+    public void end() {
+        Arrays.fill(recordedLinks, null);
+    }
 
+
+    
     
 }

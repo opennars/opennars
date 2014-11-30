@@ -220,7 +220,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         
         int in = nameTable.size();
         
-        if ((Parameters.DEBUG) && (Parameters.THREADS==1)) {
+        if (Parameters.DEBUG_BAG && (Parameters.DEBUG) && (Parameters.THREADS==1)) {
         
             int is = sizeItems();
             if (Math.abs(is-in) > 1 ) {                
@@ -625,10 +625,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
                 if (l >= 0 && levelIterator == null) {
                     while (levelEmpty[l]) {
-                        l--;
-                        if (l == -1) {
+                        if (--l == -1)
                             return false; //end of the levels
-                        }
                     }
                     levelIterator = level[l].descendingIterator();
                 }

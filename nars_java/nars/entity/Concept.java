@@ -37,34 +37,22 @@ import nars.core.Events.UnexecutableGoal;
 import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.control.NAL;
-import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
-import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
-import nars.inference.TruthFunctions;
-import nars.inference.UtilityFunctions;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
-import nars.language.Conjunction;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.Similarity;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
 
 public class Concept extends Item<Term> {
 
-    public ArrayList<ArrayList<Long>> evidentalDiscountBases=new ArrayList<ArrayList<Long>>();
+    
     
     /**
      * The term is the unique ID of the concept
@@ -95,6 +83,7 @@ public class Concept extends Item<Term> {
      */
     public final List<Task> questions;
 
+    
     /**
      * Pending Quests to be answered by new desire values
      */
@@ -119,7 +108,7 @@ public class Concept extends Item<Term> {
      * The display window
      */
 
-
+    public final ArrayList<ArrayList<Long>> evidentalDiscountBases=new ArrayList<ArrayList<Long>>();
 
     /* ---------- constructor and initialization ---------- */
     /**
@@ -511,6 +500,8 @@ public class Concept extends Item<Term> {
             else {
                 memory.emit(TaskLinkRemove.class, removed, this);
             }
+            
+            removed.end();
         }
         memory.emit(TaskLinkAdd.class, taskLink, this);
         return true;
@@ -697,16 +688,20 @@ public class Concept extends Item<Term> {
 
     @Override
     public void end() {
-        //empty bags and lists
         for (Task t : questions) t.end();
-        questions.clear();
+        
         
         for (Task t : quests) t.end();
-        quests.clear();                
         
+        questions.clear();
+        quests.clear();                
+        desires.clear();
+        evidentalDiscountBases.clear();
         termLinks.clear();
         taskLinks.clear();        
         beliefs.clear();
+        termLinkTemplates.clear();
+        
         
     }
     
