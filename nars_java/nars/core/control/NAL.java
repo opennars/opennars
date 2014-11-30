@@ -22,6 +22,7 @@ import nars.language.Negation;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
+import nars.operator.mental.Anticipate;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
@@ -178,6 +179,11 @@ public abstract class NAL implements Runnable {
             }
         }
         
+        if(task.sentence.getOccurenceTime()>memory.time()) {
+            ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.content, memory);
+        }
+        
+        task.ConsideredByTemporalInduction=true;
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
         addTask(task, "Derived");

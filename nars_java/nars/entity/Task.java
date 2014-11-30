@@ -68,6 +68,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
         this(s, b, parentTask, null);        
     }
 
+    public boolean ConsideredByTemporalInduction=false;
     
     /**
      * Constructor for a derived task
@@ -99,6 +100,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
         this(s, b, parentTask, parentBelief);
         this.bestSolution = solution;
+        this.ConsideredByTemporalInduction=ConsideredByTemporalInduction;
     }
 
     public Task clone() {
