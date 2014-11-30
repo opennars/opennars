@@ -368,6 +368,10 @@ public class Stamp implements Cloneable {
         
     }
     
+    protected boolean chainIsNullOrEmpty() {
+        return derivationChain == null || derivationChain.isEmpty();
+    }
+    
     /** for creating the chain lazily */
     protected synchronized void ensureChain() {
         
@@ -467,6 +471,9 @@ public class Stamp implements Cloneable {
     public void chainRemove(final Term t) {
         if (t == null)
             throw new RuntimeException("Chain must contain non-null items");
+
+        if (chainIsNullOrEmpty())
+            return;
         
         ensureChain();
 

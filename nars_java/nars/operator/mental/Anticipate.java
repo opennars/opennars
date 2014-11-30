@@ -60,7 +60,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     }
     
     public final LinkedList<Anticipation> anticipations = new LinkedList<Anticipation>(); //todo make both arrays
-    Set<Term> newTasks = new LinkedHashSet();
+    final Set<Term> newTasks = new LinkedHashSet();
     NAL nal;
     
     //TODO set this by an optional additional parameter to ^anticipate
