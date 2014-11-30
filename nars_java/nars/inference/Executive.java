@@ -534,7 +534,7 @@ public class Executive {
 
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
-        if(newEvent.budget==null || newEvent.NotConsideredByTemporalInduction) { //todo refine, add directbool in task
+        if(newEvent.budget==null || !newEvent.isTemporalInducted()) { //todo refine, add directbool in task
             return false;
         }
         
