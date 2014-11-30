@@ -1,0 +1,24 @@
+(^go-to,a). :|:
+2
+(^pick,b). :|:
+2
+<goal --> reached>. :|:
+50
+(^pick,b). :|:
+50
+(^pick,b). :|:
+50
+(^go-to,a). :|:
+2
+(^pick,b). :|:
+2
+<goal --> reached>. :|:
+10
+<goal --> reached>!
+<goal --> reached>!
+<goal --> reached>!
+//it is ok to try (^pick,b) because it may be that it
+//was not predicted, anticipated and revised yet
+//but after 4000 steps it should be there
+4000
+''outputMustContain('^go-to([a, SELF])=null')
