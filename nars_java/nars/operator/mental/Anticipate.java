@@ -58,6 +58,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         }
     }
     ArrayList<Anticipation> anticipations = new ArrayList<Anticipation>(); //todo make both arrays
+    NAL nal;
     
     //TODO set this by an optional additional parameter to ^anticipate
     float anticipateDurations = 1f;
@@ -69,10 +70,11 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class);
+        n.memory.event.set(this, enabled, Events.CycleEnd.class);
         return true;
     }
     
-    public void manageAnticipations(NAL nal, Task newTask) {
+    public void manageAnticipations(Task newTask) {
         ArrayList<Anticipation> toRemove=new ArrayList<>();
         long time=nal.memory.time();
         
@@ -83,9 +85,8 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             if (time-anticipateTime>nal.memory.param.duration.get()) {
                 Term s = anticipateTerm;
                 TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                Term N = Negation.make(s);
                 Stamp stamp = new Stamp(nal.memory);
-                Sentence S = new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
+                Sentence S = new Sentence(s, Symbols.JUDGMENT_MARK, truth, stamp);
                 BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
                 Task task = new Task(S, budget);
                 nal.derivedTask(task, false, true, null, null);
@@ -105,14 +106,13 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     
     @Override
     public void event(Class event, Object[] args) {
-        if (event == CycleEnd.class) {            
-            NAL nal = (NAL)args[1];
-            manageAnticipations(nal,null);
+        if (nal!=null && event == CycleEnd.class) {            
+            manageAnticipations(null);
         }
         if (event == Events.InduceSucceedingEvent.class) {            
             Task newEvent = (Task)args[0];
-            NAL nal = (NAL)args[1];
-            manageAnticipations(nal,newEvent);
+            this.nal= (NAL)args[1];
+            manageAnticipations(newEvent);
         }
     }
     
