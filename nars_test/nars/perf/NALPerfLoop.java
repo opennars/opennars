@@ -23,7 +23,7 @@ public class NALPerfLoop {
           
         NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
-        //NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
+        //NAR n = new NAR(new Curve());
         
         //NAR n = new Discretinuous().setConceptBagSize(maxConcepts).build();
 

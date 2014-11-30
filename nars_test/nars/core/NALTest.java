@@ -390,9 +390,7 @@ public class NALTest  {
                 return;
             if ((channel == OUT.class) || (channel == EXE.class)) {
                 Object signal = args[0];                
-                if (condition(channel, signal)) {
-                    if (saveSimilar)
-                        exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
+                if (condition(channel, signal)) {                    
                     setSucceeded();
                 }
             }
@@ -493,11 +491,19 @@ public class NALTest  {
                     //which also does unescaping, etc..
                     Sentence s = ((Task)signal).sentence;
                     o = s.toString(nar, false).toString();
-                    if (o.contains(containing)) return true;                    
+                    if (o.contains(containing)) {
+                        if (saveSimilar)
+                            exact.add(o);
+                        return true;
+                    }                    
                 }
                 else {
                     o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
-                    if (o.contains(containing)) return true;
+                    if (o.contains(containing)) {
+                        if (saveSimilar)
+                            exact.add(o);
+                        return true;
+                    }
                 }
 
                 if (saveSimilar) {
