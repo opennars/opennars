@@ -218,7 +218,7 @@ public class DefaultAttention implements Attention {
             
         
             //explicitly destroy all concept data structures to free memory for GC
-            c.end();
+            //c.end();
         }
         
         
