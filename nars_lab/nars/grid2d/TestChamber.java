@@ -5,6 +5,7 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Build;
+import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
@@ -40,10 +41,10 @@ public class TestChamber {
         
         //set NAR architecture parameters:
         //builder...
-        
+        Parameters.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
         NAR nar = builder.build();
-        
-        //set NAR runtime parmeters: 
+        //set NAR runtime parmeters:  
+                                    //because there every intermediate step matters a lot
         //(nar.param).duration.set(10);
         (nar.param).noiseLevel.set(0); 
         new NARSwing(nar);
