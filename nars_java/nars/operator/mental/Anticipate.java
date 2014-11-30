@@ -128,13 +128,13 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         if(operation!=null) {
             return null; //not as mental operator but as fundamental principle
         }
-        anticipate(args[0],memory);
+        anticipate(args[0],memory,memory.time()+memory.param.duration.get());
         
         return null;
     }
     
-    public void anticipate(Term content,Memory memory) {
-        anticipations.add(new Anticipation(content, (memory.time() + (int)(memory.getDuration() * anticipateDurations))));
+    public void anticipate(Term content,Memory memory, long occurenceTime) {
+        anticipations.add(new Anticipation(content, occurenceTime));
     }
 
 }
