@@ -99,6 +99,7 @@ public class Stamp implements Cloneable {
     private DerivationBuilder derivationBuilder = null;
     
     
+    final static Collection<Term> EmptyDerivationChain = Collections.EMPTY_LIST;
     
     /**
      * derivation chain containing the used premises and conclusions which made
@@ -248,7 +249,7 @@ public class Stamp implements Cloneable {
         this.latency = 0;
         this.creationTime = -1;
         this.derivationBuilder = null;
-        this.derivationChain = new LinkedHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+        this.derivationChain = EmptyDerivationChain; // new LinkedHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
     }
     
     /**
@@ -369,6 +370,13 @@ public class Stamp implements Cloneable {
     
     /** for creating the chain lazily */
     protected synchronized void ensureChain() {
+        
+        if (derivationChain == EmptyDerivationChain) {
+            derivationChain = new LinkedHashSet();
+            return;
+        }
+        
+            
         if (this.derivationChain != null) return;
         
         //create chain
@@ -444,11 +452,13 @@ public class Stamp implements Cloneable {
     public void chainAdd(final Term t) {
         if (t == null)
             throw new RuntimeException("Chain must contain non-null items");
-        
+            
         ensureChain();        
         
         if (derivationChain.size()+1 > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
-            derivationChain.remove(0);
+            //remove first element
+            Term first = derivationChain.iterator().next();
+            derivationChain.remove(first); 
         }
 
         derivationChain.add(t);
