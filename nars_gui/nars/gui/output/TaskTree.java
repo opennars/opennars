@@ -3,16 +3,22 @@ package nars.gui.output;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import java.awt.BorderLayout;
+import static java.awt.BorderLayout.NORTH;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -22,15 +28,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
+import nars.core.Events.TaskAdd;
+import nars.core.Events.TaskRemove;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.Output.ERR;
-import nars.io.Output.EXE;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
-import nars.operator.io.Echo;
+import nars.gui.WrapLayout;
 
 /**
  *
@@ -39,9 +43,9 @@ import nars.operator.io.Echo;
 public class TaskTree extends NPanel implements EventObserver, Runnable {
 
     long updatePeriodMS = 250;
-    DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
-    private final DefaultTreeModel model;
-    Map<Task, DefaultMutableTreeNode> nodes = new HashMap();
+    DefaultMutableTreeNode root = new DefaultMutableTreeNode("Tasks");
+    private DefaultTreeModel model;
+    Map<Task, DefaultMutableTreeNode> nodes = new ConcurrentHashMap();
     private final JTree tree;
     private final NAR nar;
     final WeakHashMap<Task, TaskLabel> components = new WeakHashMap<>();
@@ -51,6 +55,10 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
     final ConcurrentLinkedDeque<Task> toRemove = new ConcurrentLinkedDeque<>();
     long lastUpdateTime = 0;
     
+    boolean needsRestart = false;
+    boolean showingJudgments = false;
+    boolean showingQuestions = true;
+    boolean showingGoals = true;
     
     public TaskTree(NAR nar) {
         super(new BorderLayout());
@@ -62,13 +70,56 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
 
         this.nar = nar;        
 
+        JPanel menu = new JPanel(new WrapLayout(FlowLayout.LEFT));
+        
+        JCheckBox showJudgments = new JCheckBox("Judgments");
+        showJudgments.setSelected(showingJudgments);
+        showJudgments.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                showingJudgments = showJudgments.isSelected();
+                reset();
+            }            
+        });
+        menu.add(showJudgments);
+        JCheckBox showQuestions = new JCheckBox("Questions");
+        showQuestions.setSelected(showingQuestions);
+        showQuestions.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                showingQuestions = showQuestions.isSelected();
+                reset();
+            }            
+        });
+        menu.add(showQuestions);
+        JCheckBox showGoals = new JCheckBox("Goals");
+        showGoals.setSelected(showingGoals);
+        showGoals.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                showingGoals = showGoals.isSelected();
+                reset();
+            }            
+        });
+        menu.add(showGoals);
+        
+        add(menu, NORTH);
         add(new JScrollPane(tree), BorderLayout.CENTER);
 
+        reset();
+    }
+    
+    protected void reset() {
+        components.clear();
+        nodes.clear();
+        toAdd.clear();
+        toRemove.clear();
+        root.removeAllChildren();
+        lastUpdateTime = 0;
+        
+        needsRestart = true;                
     }
 
     @Override
     public void onShowing(boolean b) {
-        nar.memory.event.set(this, b, IN.class, OUT.class, ERR.class, Echo.class, EXE.class, FrameEnd.class);
+        nar.memory.event.set(this, b, TaskAdd.class, FrameEnd.class /*, TaskRemove.class*/);
     }
 
     public void add(Task t) {
@@ -93,10 +144,20 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
     }
 
     protected boolean isActive(final Task t) {
+        if ((t.sentence.isJudgment()) && (!showingJudgments)) return false;
+        if ((t.sentence.isQuestion()) && (!showingQuestions)) return false;
+        if ((t.sentence.isGoal()) && (!showingGoals)) return false;
         return t.getPriority() >= priorityThreshold;
     }
     
     public void update() {
+        //TODO get existing Tasks at the next frame event by new method: memory.getTasks() which iterates all concepts tasklinks
+        if (needsRestart) {
+            Set<Task> tasks = nar.memory.getTasks(true, false, false);
+            for (Task t : tasks)
+                add(t);
+        }
+        
         //remove dead tasks
         for (Task t : nodes.keySet()) {
             if (!isActive(t))
@@ -182,7 +243,7 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
         public TaskLabel(Task t) {
             this.task = t;
 
-            setOpaque(true);
+            setOpaque(false);
             setFont(Video.monofont);
             
             updateTask();
@@ -204,12 +265,15 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
             TruthValue desire = t.getDesire();
             if (desire!=null) {
                 float confidence = t.getDesire().getConfidence();
-                setForeground(new Color(0,0,conPri,confidence));
+                setForeground(new Color(0,confidence/1.5f,conPri/1.5f,0.75f + 0.25f * confidence));
             }        
-            setBackground(new Color(1f-taskPri/4f,1f,1f-taskPri/4f));
-
-            setText(t.toStringExternal());
-            //repaint();
+            else {
+                setForeground(new Color(0,0,conPri/1.5f,1f));
+            }
+            //setBackground(new Color(1f-taskPri/4f,1f,1f-taskPri/4f));
+            setFont(Video.monofont.deriveFont(14f + taskPri * 4f));
+            setText(t.toStringExternal2());
+            
         }
     }
     
@@ -246,7 +310,7 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
                 return c;
             }
             
-            return  super.getTreeCellRendererComponent(
+            return super.getTreeCellRendererComponent(
                     tree, value, selected,
                     expanded, leaf, row,
                     hasFocus);
@@ -256,11 +320,17 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
 
     @Override
     public void event(Class channel, Object[] arguments) {        
-        if (channel == OUT.class) {
-            Object o = arguments[0];
-            if (o instanceof Task) {
-                add((Task) o);
-            }
+//        if (channel == OUT.class) {
+//            Object o = arguments[0];
+//            if (o instanceof Task) {
+//                add((Task) o);
+//            }
+//        }
+        if (channel == TaskAdd.class) {
+            add((Task)arguments[0]);
+        }
+        else if (channel == TaskRemove.class) {
+            //..
         }
         else if (channel == FrameEnd.class) {
             update();

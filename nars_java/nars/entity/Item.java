@@ -183,11 +183,17 @@ public abstract class Item<K> {
      * Return a String representation of the Item after simplification
      * @return A simplified String representation of the content
      */
-    public String toStringExternal() {        
-        //return budget.toStringBrief() + " " + key ;
+    public String toStringExternal() {                
         final String briefBudget = budget.toStringExternal();
         String n = name().toString();
         return new StringBuilder(briefBudget.length()+n.length()+1).append(briefBudget).append(' ').append(n).toString();
+    }
+    
+    /** similar to toStringExternal but includes budget afterward */
+    public String toStringExternal2() {
+        final String briefBudget = budget.toStringExternal();
+        String n = name().toString();
+        return new StringBuilder(briefBudget.length()+n.length()+1).append(n).append(' ').append(briefBudget).toString();
     }
     
     public String toStringLong() {

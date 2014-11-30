@@ -148,6 +148,7 @@ public class EventEmitter {
             EventObserver m = observers.get(i);
             m.event(eventClass, params);
         }
+        
     }
  
 //    public void emitLater(final Class eventClass, final Object... params) {
