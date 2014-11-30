@@ -20,8 +20,9 @@
  */
 package nars.inference;
 
-import nars.entity.BudgetValue;
+import nars.core.Memory;
 import nars.core.control.NAL;
+import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -32,6 +33,7 @@ import static nars.inference.TemporalRules.ORDER_INVALID;
 import static nars.inference.TemporalRules.ORDER_NONE;
 import static nars.inference.TemporalRules.abdIndComOrder;
 import static nars.inference.TemporalRules.analogyOrder;
+import static nars.inference.TemporalRules.applyExpectationOffset;
 import static nars.inference.TemporalRules.dedExeOrder;
 import static nars.inference.TemporalRules.resemblanceOrder;
 import static nars.inference.TemporalRules.reverseOrder;
@@ -502,6 +504,9 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
+        
+        applyExpectationOffset(nal.memory, premise1, nal.getTheNewStamp());
+        
         nal.doublePremiseTask(content, truth, budget,false);
     }
 

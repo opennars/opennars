@@ -38,6 +38,7 @@ import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
+import nars.language.Conjunction;
 import nars.language.Negation;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -89,7 +90,9 @@ public class Anticipate extends Operator implements EventObserver, Mental {
                 Sentence S = new Sentence(s, Symbols.JUDGMENT_MARK, truth, stamp);
                 BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
                 Task task = new Task(S, budget);
-                nal.derivedTask(task, false, true, null, null);
+                nal.derivedTask(task, false, true, null, null); 
+                int derivation_tolerance_mul=2;
+                stamp.setOccurrenceTime(stamp.getOccurrenceTime()-derivation_tolerance_mul*nal.memory.param.duration.get());
                 task.NotConsideredByTemporalInduction=false;
                 toRemove.add(anticipations.get(i));
             }
@@ -134,6 +137,9 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     }
     
     public void anticipate(Term content,Memory memory, long occurenceTime) {
+        if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+            return;
+        }
         anticipations.add(new Anticipation(content, occurenceTime));
     }
 
