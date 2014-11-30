@@ -5,7 +5,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.core.NALTest;
-import nars.core.build.Default;
+import nars.core.build.Neuromorphic;
 
 /**
  * Runs NALTestPerf continuously, for profiling
@@ -21,9 +21,9 @@ public class NALPerfLoop {
         int randomExtraCycles = 512;
         Parameters.THREADS = 1;
           
-        //NAR n = new NeuromorphicNARBuilder().setConceptBagSize(maxConcepts).build();
+        NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
-        NAR n = new Default().setConceptBagSize(maxConcepts).build();
+        //NAR n = new Default().setConceptBagSize(maxConcepts).build();
         //NAR n = new Discretinuous().setConceptBagSize(maxConcepts).build();
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              

@@ -22,6 +22,7 @@ package nars.inference;
 
 import nars.core.Events;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.core.control.NAL;
@@ -78,7 +79,7 @@ public class RuleTables {
         //CONTRAPOSITION //TODO: put into rule table
         if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
             Concept d=memory.concepts.sampleNextConcept();
-            if(d.term.equals(taskSentence.content)) {
+            if(d!=null && d.term.equals(taskSentence.content)) {
                 StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
             }
         }  
@@ -111,9 +112,9 @@ public class RuleTables {
             if(beliefTerm instanceof Implication && 
                     (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
-                for(int i=0;i<10;i++) {
+                for(int i=0;i<Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;i++) {
                     Concept next=nal.memory.concepts.sampleNextConcept();
-                    if(!next.beliefs.isEmpty()) {
+                    if (next!=null && !next.beliefs.isEmpty()) {
                         Sentence s=next.beliefs.get(0);
                         if (s != null) {
                             Term t=s.content;

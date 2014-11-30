@@ -116,6 +116,7 @@ public class Parameters {
     /** Maximum length of Stamp, a power of 2 */
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
 
+    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 10;
     
 
 
@@ -168,6 +169,7 @@ public class Parameters {
     
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
+    
     
     
 }
