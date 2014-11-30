@@ -31,6 +31,9 @@ public class Parameters {
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
 
+    /** for thorough bag debugging (slow) */
+    public static boolean DEBUG_BAG = false;
+
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
     //Pei comments: parameters will be separated into a dynamic group and a static group

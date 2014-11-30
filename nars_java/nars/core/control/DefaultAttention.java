@@ -215,6 +215,10 @@ public class DefaultAttention implements Attention {
         }
         
         memory.emit(ConceptForget.class, c);
+        
+        
+        //explicitly destroy all concept data structures to free memory for GC
+        c.end();
     }
     
     @Override
