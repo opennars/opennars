@@ -47,8 +47,8 @@ import nars.operator.Operator;
  */
 public class Anticipate extends Operator implements EventObserver, Mental {
 
-    Term anticipateTerm = null;
-    long anticipateTime = 0;
+    Term anticipateTerm = null; //todo make both arrays
+    long anticipateTime = 0; //anticipations shouldnt get overwritten!
     
     //TODO set this by an optional additional parameter to ^anticipate
     float anticipateDurations = 1f;
@@ -71,7 +71,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             NAL nal = (NAL)args[1];
             Sentence newSentence = newEvent.sentence;
             
-            if ((anticipateTerm!=null) && order(anticipateTime, newSentence.getOccurenceTime(), nal.memory.getDuration()) == TemporalRules.ORDER_FORWARD) {
+            if ((anticipateTerm!=null) && newSentence.getOccurenceTime()-anticipateTime>nal.memory.param.duration.get()) {
                 Term s = newEvent.sentence.content;
                 TruthValue truth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 Term N = Negation.make(s);
@@ -80,10 +80,11 @@ public class Anticipate extends Operator implements EventObserver, Mental {
                 BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
                 Task task = new Task(S, budget);
                 nal.derivedTask(task, false, true, null, null);
+                task.ConsideredByTemporalInduction=false;
                 anticipateTerm = null;
             }
             
-            if ((anticipateTerm!=null) && newSentence.truth.getExpectation() > 0.5 && newSentence.content.equals(anticipateTerm)) {
+            if (anticipateTerm!=null && Math.abs(anticipateTime-newSentence.getOccurenceTime())<nal.memory.param.duration.get() && newSentence.truth.getExpectation() > 0.5 && newSentence.content.equals(anticipateTerm)) {
                 anticipateTerm = null; //it happened like expected
             }
             
@@ -99,12 +100,17 @@ public class Anticipate extends Operator implements EventObserver, Mental {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        
-        Term content = args[0];
-        anticipateTime=memory.time() + (int)(memory.getDuration() * anticipateDurations);
-        anticipateTerm=content;
+        if(operation!=null) {
+            return null; //not as mental operator but as fundamental principle
+        }
+        anticipate(args[0],memory);
         
         return null;
+    }
+    
+    public void anticipate(Term content,Memory memory) {
+        anticipateTime=memory.time() + (int)(memory.getDuration() * anticipateDurations);
+        anticipateTerm=content;
     }
 
 }
