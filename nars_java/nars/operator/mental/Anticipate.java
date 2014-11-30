@@ -22,7 +22,9 @@ package nars.operator.mental;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.CycleEnd;
@@ -58,7 +60,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     }
     
     public final LinkedList<Anticipation> anticipations = new LinkedList<Anticipation>(); //todo make both arrays
-    
+    Set<Term> newTasks = new LinkedHashSet();
     NAL nal;
     
     //TODO set this by an optional additional parameter to ^anticipate
@@ -79,7 +81,9 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         return true;
     }
     
-    public void manageAnticipations(Task newTask) {
+    
+    
+    public void updateAnticipations() {
         
         
         if (anticipations.isEmpty()) return;
@@ -91,14 +95,11 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         long duration = nal.memory.getDuration();
         long window = (long)(duration/2f * anticipateDurations);
         long hopeExpirationWindow = (long)(duration * hopeExpirationDurations);
-        
-        Term newTaskTerm = newTask!=null ?  newTask.sentence.content : null;
-        float newTaskExpectation = newTask!=null ? newTask.sentence.truth.getExpectation() : 0;
-        
+                
         
         //share stamps created by tasks in this cycle
         
-        
+        boolean hasNewTasks = !newTasks.isEmpty();
         
         Iterator<Anticipation> ii = anticipations.iterator();
         while (ii.hasNext()) {
@@ -132,28 +133,39 @@ public class Anticipate extends Operator implements EventObserver, Mental {
                 remove = true;
             }
 
-            if (newTaskExpectation>0.5 && Math.abs(aTime - now) <= window && newTaskTerm.equals(aTerm)) {
-                //it happened like expected
+            if (hasNewTasks && Math.abs(aTime - now) <= window && newTasks.remove(aTerm)) {
+                //it happened like expected                
                 remove = true; 
+                hasNewTasks = !newTasks.isEmpty();
             }
+            
             
             if (remove)
                 ii.remove();
         }
        
+    
+        newTasks.clear();
         
     }
     
     @Override
     public void event(Class event, Object[] args) {
-        if (nal!=null && event == CycleEnd.class) {            
-            manageAnticipations(null);
-        }
         if (event == Events.InduceSucceedingEvent.class) {            
             Task newEvent = (Task)args[0];
             this.nal= (NAL)args[1];
-            manageAnticipations(newEvent);
+            
+            if (newEvent.sentence.truth!=null) {
+                float newTaskExpectation = newEvent.sentence.truth.getExpectation();
+                if (newTaskExpectation > 0.5)
+                    newTasks.add(newEvent.getContent());
+            }
         }
+
+        if (nal!=null && event == CycleEnd.class) {            
+            updateAnticipations();
+        }
+        
     }
     
 
