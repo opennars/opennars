@@ -2,6 +2,9 @@ package nars.storage;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalCause;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import nars.entity.Item;
 
 /**
@@ -10,7 +13,7 @@ import nars.entity.Item;
  * 
  http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/cache/package-summary.html* 
  */
-public class CacheBag<K, I extends Item<K>> {
+public class CacheBag<K, I extends Item<K>> implements RemovalListener<K,I> {
     public final Cache<K, I> data;
 
     public CacheBag(int capacity) {
@@ -21,7 +24,7 @@ public class CacheBag<K, I extends Item<K>> {
                /*.weakKeys()
                .weakValues()
                .weigher(null)*/
-        //.removalListener(MY_LISTENER)
+        .removalListener(this)
         .build();
     }
     
@@ -45,6 +48,12 @@ public class CacheBag<K, I extends Item<K>> {
 
     public long size() {
         return data.size();
+    }
+
+    @Override
+    public void onRemoval(RemovalNotification<K, I> rn) {
+        if (rn.getCause()==RemovalCause.SIZE)
+            rn.getValue().end();
     }
     
     

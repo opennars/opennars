@@ -32,7 +32,7 @@ public class Neuromorphic extends Curve {
         //return new WaveAttention(1000, c);
         if (numAnts == -1)
             numAnts = param.conceptsFiredPerCycle.get();
-        return new AntAttention(numAnts, 1.0f, getConceptBagSize(), getConceptBuilder());
+        return new AntAttention(numAnts, 2.0f, getConceptBagSize(), getConceptBuilder());
     }
 
     

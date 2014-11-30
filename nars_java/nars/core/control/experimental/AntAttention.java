@@ -30,12 +30,13 @@ public class AntAttention extends WaveAttention {
     public final Deque<Ant> ants = new ArrayDeque();
     
     float cycleSpeed;
-    float conceptVisitDelivery = 0.5f;
+    float conceptVisitDelivery;
         
     public AntAttention(int numAnts, float cycleSpeed, int maxConcepts, ConceptBuilder conceptBuilder) {
         super(maxConcepts, conceptBuilder);
                 
         this.cycleSpeed = cycleSpeed;
+        this.conceptVisitDelivery = 1.0f / numAnts;
 
         for (int i = 0; i < numAnts; i++) {
             Ant a = new Ant(    ((1+i) / ((double)(1+numAnts))), true, true );

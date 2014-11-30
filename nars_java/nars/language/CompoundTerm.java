@@ -303,8 +303,7 @@ public abstract class CompoundTerm extends Term {
         final CharBuffer n = CharBuffer.allocate(size)
             .append(COMPOUND_TERM_OPENER.ch).append(opString);
             
-        for (final Term t : arg) {
-            
+        for (final Term t : arg) {            
             n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());
         }
         

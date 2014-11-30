@@ -213,12 +213,17 @@ public class DefaultAttention implements Attention {
             subcon.add(c);
             //System.out.println("forget: " + c + "   con=" + concepts.size() + " subcon=" + subcon.size());
         }
+        else {
+            memory.emit(ConceptForget.class, c);
+            
         
-        memory.emit(ConceptForget.class, c);
+            //explicitly destroy all concept data structures to free memory for GC
+            c.end();
+        }
         
         
-        //explicitly destroy all concept data structures to free memory for GC
-        c.end();
+        
+        
     }
     
     @Override
