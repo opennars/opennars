@@ -302,12 +302,12 @@ public class Concept extends Item<Term> {
             final Stamp oldStamp = oldGoal.stamp;
             
             if (newStamp.equals(oldStamp,false,false,true,true)) {
-                return; //duplicate
+                return; // duplicate
             } else if (revisible(goal, oldGoal)) {
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
-                boolean success=revision(goal,oldGoal,false,nal);
-                if(success) { //it is revised, so there is a new task for which this function will be called
-                    return; //with higher/lower desire
+                boolean successOfRevision = revision(goal, oldGoal, false, nal);
+                if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
+                    return; // with higher/lower desire
                 } 
             } 
         } 
@@ -388,32 +388,33 @@ public class Concept extends Item<Term> {
         insertTaskLink(new TaskLink(task, null, taskBudget,
                 memory.param.termLinkRecordLength.get()));  // link type: SELF
 
-        if (term instanceof CompoundTerm) {
-            if (!termLinkTemplates.isEmpty()) {
+        if (!(term instanceof CompoundTerm)) {
+            return;
+        }
+        if (termLinkTemplates.isEmpty()) {
+            return;
+        }
                 
-                final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
-                if (subBudget.aboveThreshold()) {
+        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
+        if (subBudget.aboveThreshold()) {
 
-                    for (int t = 0; t < termLinkTemplates.size(); t++) {
-                        TermLink termLink = termLinkTemplates.get(t);
+            for (int t = 0; t < termLinkTemplates.size(); t++) {
+                TermLink termLink = termLinkTemplates.get(t);
 
-//                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
-                        Term componentTerm = termLink.target;
+//              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
+                Term componentTerm = termLink.target;
 
-                        Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
+                Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
 
-                        if (componentConcept != null) {
-
-                            componentConcept.insertTaskLink(
-                                    new TaskLink(task, termLink, subBudget,
-                                            memory.param.termLinkRecordLength.get()));
-                        }
-//                        }
-                    }
-
-                    buildTermLinks(taskBudget);  // recursively insert TermLink
+                if (componentConcept != null) {
+                    componentConcept.insertTaskLink(
+                        new TaskLink(task, termLink, subBudget, memory.param.termLinkRecordLength.get())
+                    );
                 }
+//              }
             }
+
+            buildTermLinks(taskBudget);  // recursively insert TermLink
         }
     }
 
@@ -442,14 +443,18 @@ public class Concept extends Item<Term> {
                 break;
             }            
         }
-        if (table.size() >= capacity) {
-            if (table.size() > capacity) {
-                Sentence removed = table.remove(table.size() - 1);
-                return removed;
-            }
-        } else if (i == table.size()) {
+        
+        if (table.size() == capacity) {
+            // nothing
+        }
+        else if (table.size() > capacity) {
+            Sentence removed = table.remove(table.size() - 1);
+            return removed;
+        }
+        else if (i == table.size()) { // branch implies implicit table.size() < capacity
             table.add(newSentence);
         }
+        
         return null;
     }
 
@@ -515,32 +520,34 @@ public class Concept extends Item<Term> {
      * @param taskBudget The BudgetValue of the task
      */
     public void buildTermLinks(final BudgetValue taskBudget) {
-        if (termLinkTemplates.size() > 0) {
-            
-            BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
-            
-            if (subBudget.aboveThreshold()) {
-            
-                for (final TermLink template : termLinkTemplates) {
-                
-                    if (template.type != TermLink.TRANSFORM) {
-                        
-                        Term target = template.target;
-                        
-                        final Concept concept = memory.conceptualize(taskBudget, target);
-                        if (concept != null) {
+        if (termLinkTemplates.size() == 0) {
+            return;
+        }
+        
+        BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
 
-                            // this termLink to that
-                            insertTermLink(new TermLink(target, template, subBudget));
+        if (!subBudget.aboveThreshold()) {
+            return;
+        }
 
-                            // that termLink to this
-                            concept.insertTermLink(new TermLink(term, template, subBudget));
+        for (final TermLink template : termLinkTemplates) {
+            if (template.type != TermLink.TRANSFORM) {
 
-                            if (target instanceof CompoundTerm) {
-                                concept.buildTermLinks(subBudget);
-                            }
-                        }
-                    }
+                Term target = template.target;
+
+                final Concept concept = memory.conceptualize(taskBudget, target);
+                if (concept == null) {
+                    continue;
+                }
+
+                // this termLink to that
+                insertTermLink(new TermLink(target, template, subBudget));
+
+                // that termLink to this
+                concept.insertTermLink(new TermLink(term, template, subBudget));
+
+                if (target instanceof CompoundTerm) {
+                    concept.buildTermLinks(subBudget);
                 }
             }
         }
@@ -689,8 +696,6 @@ public class Concept extends Item<Term> {
     @Override
     public void end() {
         for (Task t : questions) t.end();
-        
-        
         for (Task t : quests) t.end();
         
         questions.clear();
@@ -701,8 +706,6 @@ public class Concept extends Item<Term> {
         taskLinks.clear();        
         beliefs.clear();
         termLinkTemplates.clear();
-        
-        
     }
     
 
