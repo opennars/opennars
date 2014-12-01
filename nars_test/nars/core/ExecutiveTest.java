@@ -7,8 +7,8 @@ package nars.core;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.TruthValue;
-import nars.inference.Executive;
-import nars.inference.Executive.Execution;
+import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager;
+import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager.Execution;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class ExecutiveTest {
     @Test
     public void testTaskExecution() {
         NAR n = new Default().build();
-        Executive e = n.memory.executive;
+        MultipleExecutionManager e = n.memory.executive;
         
         e.setNumActiveTasks(1);
         

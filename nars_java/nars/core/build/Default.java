@@ -30,7 +30,7 @@ import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
-import nars.plugin.mental.TemporalParticlePlanner;
+import nars.plugin.mental.ParticlePlanner.TemporalParticlePlanner;
 import nars.storage.Bag;
 import nars.storage.CacheBag;
 import nars.storage.LevelBag;

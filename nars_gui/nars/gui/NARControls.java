@@ -73,9 +73,9 @@ import nars.gui.output.TimelinePanel;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.inference.Executive;
-import nars.inference.Executive.Execution;
-import nars.inference.GraphExecutive;
+import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager;
+import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager.Execution;
+import nars.plugin.mental.ParticlePlanner.GraphExecutive;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.meter.CompoundMeter;
@@ -233,7 +233,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
                     new NWindow("Planning", new SwingLogPanel(NARControls.this, 
-                            Executive.class, Execution.class, 
+                            MultipleExecutionManager.class, Execution.class, 
                             GraphExecutive.ParticlePath.class, 
                             GraphExecutive.ParticlePlan.class))
                     .show(500, 300);

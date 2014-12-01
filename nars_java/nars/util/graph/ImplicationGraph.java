@@ -7,7 +7,7 @@ import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.TruthValue;
-import nars.inference.Executive;
+import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -290,7 +290,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                     Term a = seq.term[i];                    
                     meter(a);                       
                     
-                    if (Executive.isPlanTerm(a)) {
+                    if (MultipleExecutionManager.isPlanTerm(a)) {
                         //make a unique Term if an Interval or if an Operation in the middle of a sequence
                         if (((i > 0) && (i < seq.term.length-1)) || (a instanceof Interval))
                             a = newExecutableVertex(st, a, prev);
@@ -329,7 +329,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             }
         }
         else {
-            if (Executive.isPlanTerm(subject)) {                
+            if (MultipleExecutionManager.isPlanTerm(subject)) {                
                 //newImplicationEdge(predicatePre, subject, c, s);
                 //newImplicationEdge(subject, predicatePost, c, s);                                
                 addVertex(subject);

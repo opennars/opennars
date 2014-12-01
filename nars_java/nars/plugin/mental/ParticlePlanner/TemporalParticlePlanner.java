@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.plugin.mental;
+package nars.plugin.mental.ParticlePlanner;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -29,10 +29,10 @@ import nars.core.Plugin;
 import nars.core.control.NAL;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.inference.Executive;
-import nars.inference.Executive.Execution;
-import static nars.inference.Executive.isPlanTerm;
-import nars.inference.GraphExecutive;
+import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager;
+import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager.Execution;
+import static nars.plugin.mental.ParticlePlanner.MultipleExecutionManager.isPlanTerm;
+import nars.plugin.mental.ParticlePlanner.GraphExecutive;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
@@ -67,7 +67,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
      */
     int maxPlannedTasks = 1;
        
-    Executive executive;
+    MultipleExecutionManager executive;
     GraphExecutive graph;
 
     public TemporalParticlePlanner() {
@@ -142,7 +142,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
     
     public void decisionPlanning(final NAL nal, final Task t, final Concept concept) {
 
-        if (!executive.isDesired(t, concept)) {
+        if (!concept.isDesired()) {
             return;
         }
 
