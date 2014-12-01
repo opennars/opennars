@@ -17,8 +17,9 @@
 <goal --> reached>!
 <goal --> reached>!
 <goal --> reached>!
+<goal --> reached>!
 //it is ok to try (^pick,b) because it may be that it
 //was not predicted, anticipated and revised yet
-//but after 4000 steps it should be there
-4000
+//but after 1500 steps it should be there
+1500
 ''outputMustContain('^go-to([a, SELF])=null')
