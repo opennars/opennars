@@ -164,14 +164,14 @@ public class NALTest  {
         
         Map<String,Object> l = new TreeMap();
         
-        final String[] directories = new String[] { "nal/test", "nal/DecisionMaking" };
+        final String[] directories = new String[] { "nal/test", "nal/DecisionMaking", "nal/ClassicalConditioning" };
         
         for (String dir : directories ) {
 
             File folder = new File(dir);
         
             for (final File file : folder.listFiles()) {
-                if (file.getName().equals("README.txt"))
+                if (file.getName().equals("README.txt") || file.getName().contains(".png"))
                     continue;
                 if(!("extra".equals(file.getName()))) {
                     addTest(file.getName());
