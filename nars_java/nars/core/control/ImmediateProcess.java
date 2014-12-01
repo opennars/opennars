@@ -36,7 +36,7 @@ public class ImmediateProcess extends NAL {
             }
         }
         if (!currentTask.sentence.isEternal()) {
-            boolean stmUpdated = memory.executive.inductionOnSucceedingEvents(currentTask, this);
+            boolean stmUpdated = memory.inductionOnSucceedingEvents(currentTask, this);
             if (stmUpdated) {
                 memory.logic.SHORT_TERM_MEMORY_UPDATE.commit();
             }

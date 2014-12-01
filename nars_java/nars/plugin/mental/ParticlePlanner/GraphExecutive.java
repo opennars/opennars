@@ -1,4 +1,4 @@
-package nars.inference;
+package nars.plugin.mental.ParticlePlanner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +16,16 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import static nars.inference.Executive.isPlanTerm;
+import nars.inference.BudgetFunctions;
+import nars.inference.TemporalRules;
+import nars.inference.TruthFunctions;
 import nars.io.Texts;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
+import static nars.plugin.mental.ParticlePlanner.MultipleExecutionManager.isPlanTerm;
 import nars.util.graph.ImplicationGraph;
 import nars.util.graph.ImplicationGraph.Cause;
 import nars.util.graph.ImplicationGraph.PostCondition;
@@ -44,7 +47,7 @@ public class GraphExecutive {
     double costPerDelayMagniutde = 0.25;
     
     
-    public GraphExecutive(Memory memory, Executive exec) {
+    public GraphExecutive(Memory memory, MultipleExecutionManager exec) {
         super();
 
         this.memory = memory;

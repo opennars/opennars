@@ -1,4 +1,7 @@
-package nars.inference;
+package nars.plugin.mental.ParticlePlanner;
+//this one is needed by temporal particle planner for example
+//or by other plugins which demand adding of executions
+//GCM is always in the lead and should be so it does not need to use this.
 
 import java.util.HashSet;
 import java.util.NavigableSet;
@@ -7,9 +10,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import nars.core.Events;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.Memory;
-import nars.core.control.NAL;
 import nars.entity.Concept;
-import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.io.Symbols;
@@ -18,7 +19,6 @@ import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
-import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.operator.mental.Mental;
@@ -27,40 +27,18 @@ import nars.operator.mental.Mental;
  * Operation execution and planning support. Strengthens and accelerates
  * goal-reaching activity
  */
-public class Executive {
+public class MultipleExecutionManager {
 
     public final GraphExecutive graph;
-
     public final Memory memory;
-
-    ///** memory for faster execution of &/ statements (experiment) */
-    //public final Deque<TaskConceptContent> next = new ArrayDeque<>();
     public final NavigableSet<Execution> tasks;
     private final Set<Execution> tasksToRemove = new ConcurrentSkipListSet();
-
     /**
      * number of tasks that are active in the sorted priority buffer for
      * execution
      */
     int numActiveTasks = 1;
-
-
-
     float maxExecutionsPerDuration = 1f;
-
-    /**
-     * how much to multiply all cause relevancies per cycle
-     */
-    double causeRelevancyFactor = 0.999;
-
-    //TODO provide single thread version when applicable, slightly faster
-    Set<Task> current_tasks = new ConcurrentSkipListSet<>();
-
-    /**
-     * how much to add value to each cause involved in a successful plan
-     */
-    //TODO move this to a parameter class visible to both Executive and GraphExecutive
-    public static double relevancyOfSuccessfulPlan = 0.10;
 
     /**
      * time of last execution
@@ -75,7 +53,7 @@ public class Executive {
      */
     float motivationToFinishCurrentExecution = 1.5f;
 
-    public Executive(Memory mem) {
+    public MultipleExecutionManager(Memory mem) {
         this.memory = mem;
         
         this.graph = new GraphExecutive(mem, this);
@@ -123,10 +101,10 @@ public class Executive {
         public long delayUntil = -1;
         private float motivationFactor = 1;
         private TruthValue desire;
-        public final Executive executive;
+        public final MultipleExecutionManager executive;
         final Memory memory;
 
-        public Execution(final Executive executive, TruthValue desire) {
+        public Execution(final MultipleExecutionManager executive, TruthValue desire) {
             this.memory = executive.memory;
             this.executive = executive;
             this.desire = desire;
@@ -134,7 +112,7 @@ public class Executive {
             this.c = null;
         }
 
-        public Execution(Memory mem, final Executive executive, final Concept concept, Task t) {
+        public Execution(Memory mem, final MultipleExecutionManager executive, final Concept concept, Task t) {
             this.c = concept;
             this.executive = executive;
             this.desire = t.getDesire();
@@ -310,41 +288,11 @@ public class Executive {
             if (x.getDesire() > 0) { // && (x.getPriority() > 0)) {
                 
                 tasks.add(x);
-
-                //this is incompatible with the other usages of motivationFactor, so do not use this:
-//                if ((x.delayUntil!=-1) && (x.delayUntil <= memory.getTime())) {
-//                    //restore motivation so task can resume processing                    
-//                    x.motivationFactor = 1.0f;
-//                }
             }
         }
         tasksToRemove.clear();
     }
 
-//    public void manageExecution()  {
-//        
-//        if (next.isEmpty()) {
-//            return;
-//        }
-//        
-//        TaskConceptContent n = next.pollFirst();
-//        
-//        
-//        if (n.task==null) {
-//            //we have to wait
-//            return; 
-//        }                
-//        
-//        if (!(n.content instanceof Operation)) {
-//            throw new RuntimeException("manageExecution: Term content is not Operation: " + n.content); 
-//        }
-//        
-//        System.out.println("manageExecution: " + n.task);
-//
-//        //ok it is time for action:
-//        execute((Operation)n.content, n.concept, n.task, true);
-//    }    
-    
     /** execute TaskExecution that contains a single operation, and when complete, reomve the task */
     public void execute(Execution executing, final Operation op, final Task task) {
         execute(op, task);
@@ -352,52 +300,11 @@ public class Executive {
     }
     
     public void execute(final Operation op, final Task task) {
-
         Operator oper = op.getOperator();
-
-        //if (NAR.DEBUG)
-        //System.out.println("exe: " + task.getExplanation().trim());
         op.setTask(task);
-
         oper.call(op, memory);
-
-        //task.end(true);
     }
-
-    /**
-     * Entry point for all potentially executable tasks.
-     * Returns true if the Task has a Term which can be executed
-     */
-    public boolean executeDecision(final Task t, final Concept concept) {
-
-        if (isDesired(t, concept)) {
-
-            Term content = concept.term;
-
-            if (isExecutableTerm(content)) {
-                //if(Parameters.TEMPORALPARTICLEPLANNER)
-                //addExecution(concept, t);
-                //else
-                if(content instanceof Operation)
-                    execute((Operation) content,t);
-                return true;
-            } 
-        }
-        return false;
-    }
-
-    /**
-     * whether a concept's desire exceeds decision threshold
-     */
-    public boolean isDesired(final Task t, final Concept c) {
-        float desire = c.getDesire().getExpectation();
-        float priority = t.budget.getPriority(); //t.budget.summary();
-        return desire > memory.param.decisionThreshold.get(); //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
-
-       // double dt = memory.param.decisionThreshold.get();
-        // return ((desire >= dt) || (priority >= dt));
-    }
-
+    
     /**
      * called during each memory cycle
      */
@@ -425,10 +332,10 @@ public class Executive {
 
             if (tasks.size() > 1) {
                 for (Execution tcc : tasks) {
-                    memory.emit(Executive.class, memory.time(), tcc);
+                    memory.emit(MultipleExecutionManager.class, memory.time(), tcc);
                 }
             } else {
-                memory.emit(Executive.class, memory.time(), tasks.first());
+                memory.emit(MultipleExecutionManager.class, memory.time(), tasks.first());
             }
 
         }
@@ -527,48 +434,6 @@ public class Executive {
             task.sequence = s;
             task.setMotivationFactor(motivationToFinishCurrentExecution);
         }
-    }
-
-    public Task stmLast = null;
-    
-
-    public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
-
-        if(newEvent.budget==null || !newEvent.isTemporalInducted()) { //todo refine, add directbool in task
-            return false;
-        }
-        
-        
-        //new one happened and duration is already over, so add as negative task
-        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
-                
-
-        if (newEvent == null || newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
-            return false;
-        }
-
-        if (stmLast != null) {
-
-            if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content, stmLast.sentence.content)) {
-                return false;
-            }
-
-            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, memory.time());
-            nal.setCurrentTask(newEvent);
-
-            Sentence currentBelief = stmLast.sentence;
-            nal.setCurrentBelief(currentBelief);
-
-            //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
-        }
-
-        //for this heuristic, only use input events & task effects of operations
-        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-        stmLast = newEvent;
-        //}
-
-        return true;
     }
 
     public static boolean containsMentalOperator(final Task t) {

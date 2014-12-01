@@ -39,6 +39,7 @@ import static nars.core.Memory.Forgetting.Periodic;
 import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.ImmediateProcess;
+import nars.core.control.NAL;
 import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
@@ -51,7 +52,8 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.inference.Executive;
+import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager;
+import static nars.plugin.mental.ParticlePlanner.MultipleExecutionManager.isInputOrTriggeredOperation;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -99,6 +101,7 @@ import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
+import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
@@ -123,7 +126,8 @@ import nars.storage.Bag;
  */
 public class Memory implements Serializable {
     
-    public final Executive executive;
+    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
+    //get it out to plugin somehow
     
     private boolean enabled = true;
     
@@ -350,7 +354,7 @@ public class Memory implements Serializable {
         
         
         
-        this.executive = new Executive(this);
+        this.executive = new MultipleExecutionManager(this);
                 
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
@@ -998,6 +1002,45 @@ public class Memory implements Serializable {
             return questionsConjunction;
         }
         throw new RuntimeException("Questions index for " + c + " does not exist");
+    }
+    
+    public Task stmLast = null;
+    public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
+
+        if(newEvent.budget==null || !newEvent.isTemporalInducted()) { //todo refine, add directbool in task
+            return false;
+        }
+        
+        //new one happened and duration is already over, so add as negative task
+        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
+                
+
+        if (newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
+            return false;
+        }
+
+        if (stmLast != null) {
+
+            if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content, stmLast.sentence.content)) {
+                return false;
+            }
+
+            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, time());
+            nal.setCurrentTask(newEvent);
+
+            Sentence currentBelief = stmLast.sentence;
+            nal.setCurrentBelief(currentBelief);
+
+            //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
+            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
+        }
+
+        //for this heuristic, only use input events & task effects of operations
+        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+        stmLast = newEvent;
+        //}
+
+        return true;
     }
 
     

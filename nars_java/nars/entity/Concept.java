@@ -47,6 +47,8 @@ import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
 
@@ -283,7 +285,57 @@ public class Concept extends Item<Term> {
             memory.event.emit(eventAdd, this, newSentence, task, extraEventArguments);
         }
     }
+    
+    public boolean isExecutableTerm(final Term t) {
+        //don't allow ^want and ^believe to be active/have an effect, 
+        //which means its only used as monitor
+        boolean isOp=t instanceof Operation;
+        if(isOp) {
+            Operator op=((Operation)t).getOperator();
+            if(op.equals(memory.getOperator("^want")) || op.equals(memory.getOperator("^believe"))) {
+                return false;
+            }
+        }
+        return isOp;
+        //task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)))
+    }
+    
+    /**
+     * whether a concept's desire exceeds decision threshold
+     */
+    public boolean isDesired() {
+        return this.getDesire().getExpectation() > memory.param.decisionThreshold.get();
+    }
+    
+    /**
+     * Entry point for all potentially executable tasks.
+     * Returns true if the Task has a Term which can be executed
+     */
+    public boolean executeDecision(final Task t, final Concept concept) {
 
+        if (concept.isDesired()) {
+
+            Term content = concept.term;
+
+            if (isExecutableTerm(content)) {
+                
+                if(content instanceof Operation) {
+                    
+                    Operation op=(Operation)content;
+                    Operator oper = op.getOperator();
+
+                    //if (NAR.DEBUG)
+                    //System.out.println("exe: " + task.getExplanation().trim());
+                    op.setTask(t);
+                    oper.call(op, memory);
+                    
+                    return true;
+                }
+            } 
+        }
+        return false;
+    }
+    
     /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
@@ -326,7 +378,7 @@ public class Concept extends Item<Term> {
                 addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
-                    if(!memory.executive.executeDecision(task, this)) {
+                    if(!executeDecision(task, this)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
                 }
