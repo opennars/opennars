@@ -1,0 +1,14 @@
+(^go-to,a). :|:
+2
+(^pick,b). :|:
+2
+<goal --> reached>. :|:
+50
+(^pick,b). :|:
+100
+<?how =/> <goal --> reached>>?
+<goal --> reached>!
+<goal --> reached>!
+<goal --> reached>!
+300
+''outputMustContain('^go-to([a, SELF])=null')
