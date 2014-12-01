@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
 package nars.operator.mental;
 
 import java.util.ArrayList;
@@ -46,14 +48,10 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
-/**
- * Operator that creates a judgment with a given statement
- */
+//**
+//* Operator that creates a judgment with a given statement
+ //*
 public class Anticipate extends Operator implements EventObserver, Mental {
-    
-
-    
-
 
     public final Map<Long,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
             
@@ -63,10 +61,10 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     //TODO set this by an optional additional parameter to ^anticipate
     float anticipateDurations = 2f;
     
-    /** how long to allow a hoped-for event to occurr before counting evidence
-     *  that it has not.  usually a less than 0.5 value which is a factor of duration 
-        "disappointmentOvercomesHopeDuration" */
-    float hopeExpirationDurations = 0f;
+    //* how long to allow a hoped-for event to occurr before counting evidence
+    // *  that it has not.  usually a less than 1.0 value which is a factor of duration 
+    //    "disappointmentOvercomesHopeDuration" 
+    float hopeExpirationDurations = 0.5f; //todo in order to be flexible, modulate confidence of negative event
     
     final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -86,19 +84,15 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     
     
     public void updateAnticipations() {
-        
-        
+
         if (anticipations.isEmpty()) return;
 
-        
         long now=nal.memory.time();
-        
         
         this.duration = nal.memory.getDuration();
         long window = (long)(duration/2f * anticipateDurations);
         long hopeExpirationWindow = (long)(duration * hopeExpirationDurations);
                 
-        
         //share stamps created by tasks in this cycle
         
         boolean hasNewTasks = !newTasks.isEmpty();
@@ -112,7 +106,6 @@ public class Anticipate extends Operator implements EventObserver, Mental {
 
             boolean didntHappen = (now-aTime > hopeExpirationWindow);
             boolean maybeHappened = hasNewTasks && Math.abs(aTime - now) <= window;
-            
                 
             if ((!didntHappen) && (!maybeHappened))
                 continue;
@@ -136,7 +129,6 @@ public class Anticipate extends Operator implements EventObserver, Mental {
                         remove = true; 
                         hasNewTasks = !newTasks.isEmpty();
                     }
-                    
                 }
                 
                 if (remove)
@@ -147,7 +139,6 @@ public class Anticipate extends Operator implements EventObserver, Mental {
                 //remove this time entry because its terms have been emptied
                 aei.remove();
             }
-            
         }       
     
         newTasks.clear();        
@@ -173,12 +164,12 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     }
     
 
-    /**
-     * To create a judgment with a given statement
-     * @param args Arguments, a Statement followed by an optional tense
-     * @param memory The memory in which the operation is executed
-+    * @return Immediate results as Tasks
-     */
+    //*
+    // * To create a judgment with a given statement
+    // * @param args Arguments, a Statement followed by an optional tense
+    // * @param memory The memory in which the operation is executed
+   // * @return Immediate results as Tasks
+   //  *
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         if(operation!=null) {

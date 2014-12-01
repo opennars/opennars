@@ -4,5 +4,5 @@
 <{mouse} --> [full]>. :|:
 10
 <{light} --> [on]>. :|:
-10
-''outputMustContain('<{mouse} --> [full]>. :/: %1.00;0.25%')
+40
+''outputMustContain('<{mouse} --> [full]>. :/: %1.00;0.22%')
