@@ -89,24 +89,25 @@ abstract public class FireConcept extends NAL {
         } else {            
             while (termLinks > 0) {
                 final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time());
-                if (termLink != null) {
-                    emit(Events.TermLinkSelect.class, termLink, currentConcept);
-                    setCurrentBeliefLink(termLink);
-                    
-                    
-                    
-                    reason(currentTaskLink, termLink);                    
-
-                    
-                    
-                    memory.logic.REASON.commit(termLink.getPriority());                    
-                    
-                    currentConcept.returnTermLink(termLink);
-                    
-                    termLinks--;
-                } else {
+                
+                if (termLink == null) {
                     break;
                 }
+                
+                emit(Events.TermLinkSelect.class, termLink, currentConcept);
+                setCurrentBeliefLink(termLink);
+
+
+
+                reason(currentTaskLink, termLink);                    
+
+
+
+                memory.logic.REASON.commit(termLink.getPriority());                    
+
+                currentConcept.returnTermLink(termLink);
+
+                termLinks--;
             }
         }
     }
