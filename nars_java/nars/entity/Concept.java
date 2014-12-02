@@ -285,21 +285,7 @@ public class Concept extends Item<Term> {
             memory.event.emit(eventAdd, this, newSentence, task, extraEventArguments);
         }
     }
-    
-    public boolean isExecutableTerm(final Term t) {
-        //don't allow ^want and ^believe to be active/have an effect, 
-        //which means its only used as monitor
-        boolean isOp=t instanceof Operation;
-        if(isOp) {
-            Operator op=((Operation)t).getOperator();
-            if(op.equals(memory.getOperator("^want")) || op.equals(memory.getOperator("^believe"))) {
-                return false;
-            }
-        }
-        return isOp;
-        //task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)))
-    }
-    
+
     /**
      * whether a concept's desire exceeds decision threshold
      */
@@ -311,13 +297,13 @@ public class Concept extends Item<Term> {
      * Entry point for all potentially executable tasks.
      * Returns true if the Task has a Term which can be executed
      */
-    public boolean executeDecision(final Task t, final Concept concept) {
+    public boolean executeDecision(final Task t) {
 
-        if (concept.isDesired()) {
+        if (isDesired()) {
 
-            Term content = concept.term;
+            Term content = term;
 
-            if (isExecutableTerm(content)) {
+            if (content.isExecutable(memory)) {
                 
                 if(content instanceof Operation) {
                     
@@ -378,7 +364,7 @@ public class Concept extends Item<Term> {
                 addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
-                    if(!executeDecision(task, this)) {
+                    if(!executeDecision(task)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
                 }
