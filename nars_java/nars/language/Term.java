@@ -23,10 +23,13 @@ package nars.language;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.operator.Operation;
+import nars.operator.Operator;
 
 /**
  * Term is the basic component of Narsese, and the object of processing in NARS.
@@ -44,6 +47,19 @@ public class Term implements AbstractTerm {
         return SELF.equals(t);
     }
 
+    public boolean isExecutable(Memory mem) {
+        //don't allow ^want and ^believe to be active/have an effect, 
+        //which means its only used as monitor
+        boolean isOp=this instanceof Operation;
+        if(isOp) {
+            Operator op=((Operation)this).getOperator(); //the following part may be refactored after we
+            //know more about how the NAL9 concepts should really interact together:
+            if(op.equals(mem.getOperator("^want")) || op.equals(mem.getOperator("^believe"))) {
+                return false;
+            }
+        }
+        return isOp;
+    }
 
 
     public interface TermVisitor {
