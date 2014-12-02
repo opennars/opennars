@@ -147,5 +147,11 @@ public abstract class Operator extends Term implements Plugin {
     }
     
 
+    public static String addPrefixIfMissing(String opName) {
+        if (!opName.startsWith("^"))
+            return '^' + opName;
+        return opName;
+    }
+
 }
 
