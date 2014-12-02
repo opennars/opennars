@@ -386,7 +386,8 @@ public class Narsese {
             int pClose = s.lastIndexOf(')');
             if ((pOpen!=-1) && (pClose!=-1) && (pClose==s.length()-1)) {
                 
-                String operatorString = "^" + s.substring(0, pOpen);
+                String operatorString = Operator.addPrefixIfMissing( s.substring(0, pOpen) );
+                                
                 Operator operator = memory.getOperator(operatorString);
                 
                 if (operator == null) {
