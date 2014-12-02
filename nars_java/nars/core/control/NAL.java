@@ -211,11 +211,12 @@ public abstract class NAL implements Runnable {
      * @param newBudget The budget value in task
      */
     public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+        
         if (!newBudget.aboveThreshold()) {
             return null;
         }
         
-        if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable))) {
+        if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable)) && (!Sentence.invalidSentenceTerm(newContent))) {
             
             try {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());

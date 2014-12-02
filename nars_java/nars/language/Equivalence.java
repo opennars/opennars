@@ -84,17 +84,14 @@ public class Equivalence extends Statement {
     }
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
-        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {
+        if (invalidStatement(subject, predicate)) {
             return null;
         }
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
                 || (predicate instanceof Implication) || (predicate instanceof Equivalence)) {
             return null;
         }
-        
-        if (subject.equals(predicate))
-            return null;
-        
+                
         if ((temporalOrder == TemporalRules.ORDER_BACKWARD)
                 || ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD))) {
             Term interm = subject;

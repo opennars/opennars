@@ -63,7 +63,7 @@ public class Term implements AbstractTerm {
 
 
     public interface TermVisitor {
-        public void visit(Term t);
+        public void visit(Term t, Term superterm);
     }
     
     
@@ -184,21 +184,25 @@ public class Term implements AbstractTerm {
         return TemporalRules.ORDER_NONE;
     }   
 
-    public void recurseTerms(final TermVisitor v) {
-        v.visit(this);
+    public void recurseTerms(final TermVisitor v, Term parent) {
+        v.visit(this, parent);
         if (this instanceof CompoundTerm) {            
             for (Term t : ((CompoundTerm)this).term) {
-                t.recurseTerms(v);
+                t.recurseTerms(v, this);
             }
         }
     }
     
-    public void recurseVariableTerms(final TermVisitor v) {
+    public void recurseSubtermsContainingVariables(final TermVisitor v) {
+        recurseTerms(v, null);
+    }
+    
+    public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
         if (!hasVar()) return;
-        v.visit(this);
+        v.visit(this, parent);
         if (this instanceof CompoundTerm) {
             for (Term t : ((CompoundTerm)this).term) {
-                t.recurseTerms(v);
+                t.recurseSubtermsContainingVariables(v, this);
             }
         }
     }
@@ -356,11 +360,13 @@ public class Term implements AbstractTerm {
         
         try {
             Term cloned = content.cloneDeep();
-            return true;
+            return cloned!=null;
         }
         catch (Throwable e) {
-            /*System.err.println("INVALID TERM: " + content);
-            e.printStackTrace();*/
+            /*if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+                System.err.println("INVALID TERM: " + content);
+                e.printStackTrace();
+            }*/
             return false;
         }
         

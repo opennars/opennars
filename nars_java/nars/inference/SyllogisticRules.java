@@ -20,7 +20,6 @@
  */
 package nars.inference;
 
-import nars.core.Memory;
 import nars.core.control.NAL;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;

@@ -33,6 +33,7 @@ public class Parameters {
 
     /** for thorough bag debugging (slow) */
     public static boolean DEBUG_BAG = false;
+    public static boolean DEBUG_INVALID_SENTENCES = true;
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
@@ -172,6 +173,7 @@ public class Parameters {
     
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
+    
     
     
     

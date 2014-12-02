@@ -17,13 +17,14 @@
 package nars.core;
 
 import java.util.TreeSet;
-import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Concept;
+import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
 import nars.io.narsese.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
+import nars.language.Statement;
 import nars.language.Term;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -205,4 +206,57 @@ public class TermTest {
         }
     }
 
+    @Test public void invalidTermIndep() {
+        
+        String t = "<$1 --> (~,{place4},$1)>";
+        NAR n = new NAR(new Default());
+        Narsese p = new Narsese(n);
+        
+        try {
+            p.parseNarsese(new StringBuilder(t + "."));
+            assertTrue(false);
+        } catch (Narsese.InvalidInputException ex) {
+            assertTrue(true);
+        }
+        
+        Term subj = null, pred = null;
+        try {
+            subj = p.parseTerm("$1");
+            pred = p.parseTerm("(~,{place4},$1)");
+            
+            assertTrue(true);
+            
+        } catch (Narsese.InvalidInputException ex) {
+            assertTrue(false);
+        }
+        
+            
+        Statement s = Statement.make(NativeOperator.INHERITANCE, subj, pred);
+        assertEquals(null, s);
+
+        Inheritance i = Inheritance.make(subj, pred);
+        assertEquals(null, i);
+
+
+        try {
+            CompoundTerm forced = (CompoundTerm) p.parseTerm("<a --> b>");
+            assertTrue(true);
+            
+            forced.term[0] = subj;
+            forced.term[1] = pred;
+            forced.invalidateName();
+            
+            assertEquals(t, forced.toString());
+            
+            CompoundTerm cloned = forced.clone();
+            assertEquals(null, cloned);
+            
+            
+        } catch (Narsese.InvalidInputException ex) {           
+            assertTrue(false);
+        }
+        
+        
+        
+    }
 }

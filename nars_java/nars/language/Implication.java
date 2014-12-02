@@ -96,16 +96,14 @@ public class Implication extends Statement {
     }
     
     public static Implication make(final Term subject, final Term predicate, int temporalOrder) {
-        if ((subject == null) || (predicate == null)) {
+        if (invalidStatement(subject, predicate)) {
             return null;
         }
         
         if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence)) {
             return null;
         }
-        if (invalidStatement(subject, predicate)) {
-            return null;
-        }
+        
         //final CharSequence name = makeName(subject, temporalOrder, predicate);         
         if (predicate instanceof Implication) {
             final Term oldCondition = ((Statement) predicate).getSubject();

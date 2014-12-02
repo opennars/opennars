@@ -75,7 +75,7 @@ public class Similarity extends Statement {
      */
     public static Similarity make(final Term subject, final Term predicate) {
 
-        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {
+        if (invalidStatement(subject, predicate)) {
             return null;
         }
         if (subject.compareTo(predicate) > 0) {
