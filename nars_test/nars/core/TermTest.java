@@ -26,6 +26,7 @@ import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.operator.Operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -255,7 +256,24 @@ public class TermTest {
         } catch (Narsese.InvalidInputException ex) {           
             assertTrue(false);
         }
+    }
+    
+    
+    @Test public void testParseOperationInFunctionalForm() {
+        Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         
+        NAR n = new NAR(new Default());
+        Narsese p = new Narsese(n);
+        
+        try {
+            Term x = p.parseTerm("wonder(a,b)");
+            assertEquals(Operation.class, x.getClass());
+            assertEquals("(^wonder,a,b)", x.toString());
+            
+        } catch (Narsese.InvalidInputException ex) {
+            ex.printStackTrace();
+            assertTrue(false);
+        }
         
         
     }

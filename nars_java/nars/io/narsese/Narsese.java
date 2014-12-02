@@ -45,6 +45,7 @@ import nars.language.Tense;
 import nars.language.Term;
 import nars.language.Variable;
 import static nars.language.Variables.containVar;
+import nars.operator.Operation;
 import static nars.operator.Operation.make;
 import nars.operator.Operator;
 
@@ -373,6 +374,43 @@ public class Narsese {
                     }
             }
         }
+        else if (Parameters.FUNCTIONAL_OPERATIONAL_FORMAT) {
+            
+            //parse functional operation:
+            //  function()
+            //  function(a)
+            //  function(a,b)
+            
+            //test for existence of matching parentheses at beginning at index!=0
+            int pOpen = s.indexOf('(');
+            int pClose = s.lastIndexOf(')');
+            if ((pOpen!=-1) && (pClose!=-1) && (pClose==s.length()-1)) {
+                
+                String operatorString = "^" + s.substring(0, pOpen);
+                Operator operator = memory.getOperator(operatorString);
+                
+                if (operator == null) {
+                    //???
+                    throw new InvalidInputException("Unknown operator: " + operatorString);
+                }
+                
+                String argString = s.substring(pOpen+1, pClose+1);               
+                
+                
+                Term[] a;                
+                if (argString.length() > 1) {                
+                    ArrayList<Term> args = parseArguments(argString);                                
+                    a = args.toArray(new Term[args.size()]);
+                }
+                else {
+                    //void "()" arguments, default to (SELF)
+                    a = Operation.SELF_TERM_ARRAY;
+                }                                                            
+                
+                Operation o = Operation.make(operator, a, true);
+                return o;                
+            }
+        }
 
         //if no opener, parse the term            
         return parseAtomicTerm(s);
@@ -503,6 +541,8 @@ public class Narsese {
         Term t;
         while (end < s.length() - 1) {
             end = nextSeparator(s, start);
+            if (end == start)
+                break;
             t = parseTerm(s.substring(start, end));     // recursive call
             list.add(t);
             start = end + 1;

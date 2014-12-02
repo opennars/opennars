@@ -130,6 +130,8 @@ public class Parameters {
      */
     public static float DISCOUNT_RATE = 0.5f;    
 
+    /** enables the parsing of functional input format for operation terms: function(a,b,...) */
+    public static boolean FUNCTIONAL_OPERATIONAL_FORMAT = true;
     
     
     
