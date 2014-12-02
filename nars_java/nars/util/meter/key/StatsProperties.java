@@ -41,11 +41,11 @@ public abstract class StatsProperties {
      */
     public static StatsProperties getInstance() {
         if (instance == null) {
-            synchronized (StatsProperties.class) {
+            //synchronized (StatsProperties.class) {
                 if (instance == null) {
                     instance = new SystemStatsProperties();
                 }
-            }
+            //}
         }
 
         return instance;

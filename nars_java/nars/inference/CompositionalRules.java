@@ -1007,19 +1007,6 @@ public final class CompositionalRules {
         }
     }
 
-    public static final boolean invalidSentenceContent(final Term T) {
-        if (!(T instanceof CompoundTerm))
-            return true;
-        
-        //sEqualsP:
-        if (T instanceof Statement) {
-            Statement st = (Statement) T;
-            if (st.getSubject().equals(st.getPredicate())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     static boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
 
@@ -1182,7 +1169,7 @@ public final class CompositionalRules {
             for (int i = 0; i < termsIndependent; i++) {
                 Term result = terms_independent.get(i);
 
-                if (invalidSentenceContent(result)) {
+                if (Sentence.invalidSentenceTerm(result)) {
                     //changed from return to continue to allow furhter processing
                     continue;
                 }
@@ -1239,7 +1226,7 @@ public final class CompositionalRules {
         for (int i = 0; i < terms_dependent.size(); i++) {
             final Term result = terms_dependent.get(i);
             
-            if (invalidSentenceContent(result)) {
+            if (Sentence.invalidSentenceTerm(result)) {
                 //changed this from return to continue, 
                 //to allow processing terms_dependent when it has > 1 items
                 continue;

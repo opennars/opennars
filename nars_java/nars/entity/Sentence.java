@@ -55,6 +55,7 @@ import nars.operator.Operator;
 public class Sentence<T extends Term> implements Cloneable {
 
 
+
     /**
      * The content of a Sentence is a Term
      */
@@ -100,12 +101,24 @@ public class Sentence<T extends Term> implements Cloneable {
         
         this.punctuation = punctuation;
         
+        
+        
+        
         if (!(_content instanceof CompoundTerm))
             throw new RuntimeException("Sentence content must be CompoundTerm: " + _content + punctuation + " " + stamp);
         
         if ( (!isQuestion() && !isQuest()) && (truth == null) ) {            
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
+        
+        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+            if (!Term.valid(_content)) {
+                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
+                ntc.printStackTrace();
+                throw ntc;
+            }
+        }
+        
         
         if ((isQuestion() || isQuest()) && !stamp.isEternal()) {
             stamp.setEternal();
@@ -127,11 +140,12 @@ public class Sentence<T extends Term> implements Cloneable {
             
             List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
             
-            c.recurseVariableTerms(new Term.TermVisitor() {                
-                @Override public void visit(final Term t) {
-                    if (t instanceof Variable) {                        
-                        vars.add(((Variable)t));
-                    }
+            c.recurseSubtermsContainingVariables(new Term.TermVisitor() {                
+                @Override public void visit(final Term t, final Term parent) {
+                    if (t instanceof Variable) {
+                        Variable v = ((Variable)t);                        
+                        vars.add(v);
+                    }                    
                 }            
             });
             
@@ -149,38 +163,23 @@ public class Sentence<T extends Term> implements Cloneable {
                 if (n==null) {                            
                     //type + id
                     rename.put(vname, n = Variable.getName(v.getType(), rename.size()+1));
+                    if (!n.equals(vname))
+                        renamed = true;
                 }    
 
                 v.setScope(c, n);                
-                renamed = true;
             }
             
             if (renamed) {
                 c.invalidateName();
 
-                /*if (!Term.valid(c)) {
-                    throw new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c);
-                    
-//                    System.err.println(_content + " ||| " + c + " " + rename);
-//
-//                    _content.recurseVariableTerms(new Term.TermVisitor() {                
-//                        @Override public void visit(final Term t) {
-//                            if (t instanceof Variable) {                        
-//                                Variable v = ((Variable)t);
-//                                System.err.println("  pre: " + v.name() + " | " + v.getScope());
-//                            }
-//                        }            
-//                    });
-//                    c.recurseVariableTerms(new Term.TermVisitor() {                
-//                        @Override public void visit(final Term t) {
-//                            if (t instanceof Variable) {                        
-//                                Variable v = ((Variable)t);
-//                                System.err.println("  post: " + v.name() + " | " + v.getScope());
-//                            }
-//                        }            
-//                    });
-                    
-                }*/
+                if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+                    if (!Term.valid(c)) {
+                        CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
+                        ntc.printStackTrace();
+                        throw ntc;
+                    }
+                }
                 
             }
             
@@ -300,7 +299,7 @@ public class Sentence<T extends Term> implements Cloneable {
       * @return The projected belief
       */    
     public Sentence projection(final long targetTime, final long currentTime) {
-                
+            
         TruthValue newTruth = projectionTruth(targetTime, currentTime);
         
         boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
@@ -572,6 +571,22 @@ public class Sentence<T extends Term> implements Cloneable {
         List<Sentence> l = new ArrayList(s);
         Collections.sort(l, ConfidenceComparator.the);
         return l;
+    }
+    
+    /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content */
+    public static final boolean invalidSentenceTerm(final Term T) {
+        if (!(T instanceof CompoundTerm)) {
+            return true;
+        }
+        if (T instanceof Statement) {
+            Statement st = (Statement) T;
+            if (Statement.invalidStatement(st.getSubject(), st.getPredicate()))
+                return true;
+            if (st.getSubject().equals(st.getPredicate())) {
+                return true;
+            }
+        }
+        return false;
     }
     
 }

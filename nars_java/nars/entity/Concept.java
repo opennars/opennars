@@ -251,12 +251,15 @@ public class Concept extends Item<Term> {
 //                //        }
 //                ) != null) {
                     
+                
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
-                if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
-                    nal.singlePremiseTask(projectedBelief, task.budget);
+                if (projectedBelief!=null) {
+                    if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
+                        nal.singlePremiseTask(projectedBelief, task.budget);
+                    }
+                    nal.setCurrentBelief(projectedBelief);
+                    revision(judg, projectedBelief, false, nal);
                 }
-                nal.setCurrentBelief(projectedBelief);
-                revision(judg, projectedBelief, false, nal);
 //
             }
         }

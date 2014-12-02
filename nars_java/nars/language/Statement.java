@@ -97,9 +97,6 @@ public abstract class Statement extends CompoundTerm {
      * @return The Statement built
      */
     final public static Statement make(final NativeOperator o, final Term subject, final Term predicate) {
-        if (invalidStatement(subject, predicate)) {
-            return null;
-        }
         
         switch (o) {
             case INHERITANCE:
@@ -147,7 +144,9 @@ public abstract class Statement extends CompoundTerm {
     
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
-        if(subj==null || pred==null || invalidStatement(subj, pred)) {
+        return make(statement.operator(), subj, pred);
+        /*
+        if (invalidStatement(subj, pred)) {
             return null;
         }
         if (statement instanceof Inheritance) {
@@ -164,6 +163,7 @@ public abstract class Statement extends CompoundTerm {
         }
         
         throw new RuntimeException("Unrecognized type for Statement.make: " + statement.getClass().getSimpleName() + ", subj=" + subj + ", pred=" + pred + ", order=" + order);        
+        */
     }
 
     /**
@@ -252,6 +252,8 @@ public abstract class Statement extends CompoundTerm {
      * @return Whether The Statement is invalid
      */
     final public static boolean invalidStatement(final Term subject, final Term predicate) {
+        if (subject==null || predicate==null) return true;
+        
         if (subject.equals(predicate)) {
             return true;
         }        
@@ -287,11 +289,11 @@ public abstract class Statement extends CompoundTerm {
         if (!(t1 instanceof CompoundTerm)) {
             return false;
         }
-        final CompoundTerm com = (CompoundTerm) t1;
-        if ((com instanceof ImageExt) || (com instanceof ImageInt)) {
+        final CompoundTerm ct1 = (CompoundTerm) t1;
+        if ((ct1 instanceof ImageExt) || (ct1 instanceof ImageInt)) {
             return false;
         }
-        return com.containsTerm(t2);
+        return ct1.containsTerm(t2);
     }
 
    
