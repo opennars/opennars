@@ -4,16 +4,17 @@
  */
 package nars.io;
 
-import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import nars.core.Memory;
-import nars.entity.Task;
+import nars.core.Parameters;
+import nars.io.Output.ERR;
 import nars.io.Output.EXE;
+import nars.io.narsese.Narsese;
 import nars.language.Term;
-import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.operator.SynchronousFunctionOperator;
 
 /**
  *
@@ -25,10 +26,12 @@ public class BindJavascriptExpression implements TextReaction {
     
     public static final String BINDING_SYMBOL = ":=";
     private final Memory memory;
+    private final Narsese narsese;
 
     public BindJavascriptExpression(Memory memory) {
         super();
         this.memory = memory;
+        this.narsese = new Narsese(memory);
     }
     
     
@@ -70,9 +73,12 @@ public class BindJavascriptExpression implements TextReaction {
                 
                 js.eval(jsFunc);
                 
-                memory.addOperator(new Operator(newOp) {
-                    @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-                        StringBuilder argsToParameters = new StringBuilder();
+                memory.addOperator(new SynchronousFunctionOperator(newOp) {
+                    
+
+                    @Override
+                    protected Term function(Memory memory, Term[] args) {
+                       StringBuilder argsToParameters = new StringBuilder();
                         for (int i = 0; i < args.length; i++) {
                             argsToParameters.append("'").append(args[i].toString()).append("'");
                             if (args.length-1 != i) 
@@ -84,11 +90,25 @@ public class BindJavascriptExpression implements TextReaction {
                         try {
                             result = js.eval(o + "(" + argsToParameters + ")");
                         } catch (ScriptException ex) {
-                            throw new RuntimeException("Exception in executing " + operation + ": " + ex.toString(), ex);
+                            throw new RuntimeException("Exception in executing " + this + ": " + ex.toString(), ex);
                         }
                         
+                        
+                        try {
+                            return narsese.parseTerm(result.toString());
+                        } catch (Narsese.InvalidInputException ex) {
+                            memory.emit(ERR.class, ex.toString());
+                            if (Parameters.DEBUG)
+                                ex.printStackTrace();
+                        }
+                        
+                        return null;                        
+                     }
+
+                    @Override
+                    protected Term getRange() {
                         return null;
-                    }                    
+                    }
                 });
                 
                 memory.emit(EXE.class, "Bound: "+ jsFunc);
