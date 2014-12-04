@@ -1,4 +1,4 @@
-//inate goal: if cheese is here, pick it
+//innate goal: if cheese is here, pick it
 <<{cheese} --> [here]> =|> (^pick,cheese)>!
 //light is on, cheese is here
 <{light} --> [on]>. :|:
