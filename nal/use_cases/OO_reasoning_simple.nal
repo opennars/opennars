@@ -1,0 +1,4 @@
+<PERSON1 --> (/,livingIn,_,{vienna})>.
+<PERSON1 --> (/,namedBy,_,{tom})>.
+<PERSON2 --> (/,livingIn,_,{vienna})>.
+<PERSON2 --> (/,namedBy,_,?1)>?
