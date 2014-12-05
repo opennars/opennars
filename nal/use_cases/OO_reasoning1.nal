@@ -1,0 +1,18 @@
+<{tom,tim} --> name>.
+<{graz,vienna} --> location>.
+
+//every person is named by a firstname
+<<$1 --> person> ==> (&&,<#2 --> name>,<$1 --> (/,namedBy,_,#2)>)>. 
+//every person is living somewhere
+<<$1 --> person> ==> (&&,<#2 --> location>,<$1 --> (/,livingIn,_,#2)>)>. 
+ 
+ 
+100
+ 
+<PERSON1 --> person>.
+<PERSON2 --> person>.
+<PERSON1 --> (/,livingIn,_,{vienna})>.
+<PERSON1 --> (/,namedBy,_,{tom})>.
+<PERSON2 --> (/,livingIn,_,{vienna})>.
+<PERSON2 --> (/,namedBy,_,{tom})>?
+(^wonder,?1)?
