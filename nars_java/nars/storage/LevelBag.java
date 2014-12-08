@@ -50,7 +50,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /**
      * shared DISTRIBUTOR that produce the probability distribution
      */
-    private final short[] DISTRIBUTOR;
+    final short[] DISTRIBUTOR;
 
     /**
      * mapping from key to item
@@ -74,16 +74,16 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /**
      * index to get next level, kept in individual objects
      */
-    private int levelIndex;
+    int levelIndex;
     /**
      * current take out level
      */
-    private int currentLevel;
+    int currentLevel;
     /**
      * maximum number of items to be taken out at current level
      */
-    private int currentCounter;
-    private final boolean[] levelEmpty;
+    int currentCounter;
+    final boolean[] levelEmpty;
 
 
     
@@ -296,13 +296,13 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     final int distributorLength;
     
     /** look for a non-empty level */
-    protected final void nextNonEmptyLevel() {
+    protected void nextNonEmptyLevel() {
                
         int cl = currentLevel;
 
         do {                        
         } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % distributorLength]]);
-
+        
         currentLevel = cl;
                 
         if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
