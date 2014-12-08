@@ -26,7 +26,7 @@ public class TestChamber {
 
     public static boolean staticInformation=false;
     //TIMING
-    static int narUpdatePeriod = 20; /*milliseconds */
+    static int narUpdatePeriod = 50; /*milliseconds */
     int gridUpdatePeriod = 2;
     int automataPeriod = 2;
     int agentPeriod = 2;
