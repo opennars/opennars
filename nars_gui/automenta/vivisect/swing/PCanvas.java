@@ -95,8 +95,10 @@ public class PCanvas extends PApplet implements HierarchyListener {
 
     @Override
     protected void resizeRenderer(int newWidth, int newHeight) {
-        super.resizeRenderer(newWidth, newHeight);
-        drawn = false;
+        if ((newWidth > 0) && (newHeight > 0)) {
+            super.resizeRenderer(newWidth, newHeight);
+            drawn = false;
+        }
     }
 
     public void mouseScrolled() {

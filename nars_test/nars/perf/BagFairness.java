@@ -20,8 +20,8 @@ import nars.storage.Bag;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.MultiTimeline;
 import automenta.vivisect.timeline.StackedPercentageChart;
-import nars.storage.DelayBag;
-import nars.storage.FairDelayBag;
+import nars.core.Memory.Timing;
+import nars.storage.CurveBag;
 
 /**
  *
@@ -41,7 +41,7 @@ public class BagFairness {
             
     float nextConceptPriority;
     
-    public BagFairness(NAR n, Input input, int maxConcepts, int iterations) {
+    public BagFairness(NAR n, Input input, int maxConcepts, int iterationRecordBegin, int iterations) {
 
         for (int b = 0; b < bins; b++) {
             double percentStart = ((double)b)/bins;
@@ -73,27 +73,34 @@ public class BagFairness {
         while (n.time() < iterations) {
 
             nextConceptPriority = -1;
-                                
+                             
             
-            ///((SequentialMemoryCycle)n.memory.conceptProcessor).processConcept();
+            
+            //((SequentialMemoryCycle)n.memory.conceptProcessor).processConcept();
+            n.memory.concepts.sampleNextConcept();
             n.step(1);
-            n.memory.addSimulationTime(1);
             
-            if (nextConceptPriority!=-1) {
-                float p = nextConceptPriority;
-                int b = Bag.bin(p, bins-1);
-                
-                fireCount[b]++;                
-            }
+            if (n.memory.getTiming() == Timing.Simulation)
+                n.memory.addSimulationTime(1);
+            
+            if (n.time() > iterationRecordBegin) {
 
-            
-            int concepts = ((DefaultAttention)n.memory.concepts).concepts.size();
-            
-            ((DefaultAttention)n.memory.concepts).concepts.getPriorityDistribution(d);
-            for (int b = 0; b < bins; b++) {
-                
-                held[b].add((int)n.time(), (float)d[b]);
-                fired[b].add((int)n.time(), fireCount[b]);
+                if (nextConceptPriority!=-1) {
+                    float p = nextConceptPriority;
+                    int b = Bag.bin(p, bins-1);
+
+                    fireCount[b]++;                
+                }
+
+
+                int concepts = ((DefaultAttention)n.memory.concepts).concepts.size();
+
+                ((DefaultAttention)n.memory.concepts).concepts.getPriorityDistribution(d);
+                for (int b = 0; b < bins; b++) {
+
+                    held[b].add((int)n.time(), (float)d[b]);
+                    fired[b].add((int)n.time(), fireCount[b]);
+                }
             }
             
             
@@ -139,28 +146,31 @@ public class BagFairness {
 //    
     
     public static class RandomTermInput implements Input<String> {
-        private final double inputProb;
+        
         private final double minPriority;
         private final double maxPriority;
         private final int numTerms;
         private final double inheritanceProb;
         private final double similarityProb;
         private final double productProb;
+        private final int numInputs;
+        private int inputs;
 
-        public RandomTermInput(int numTerms, double inputProb, double inheritanceProb, double similarityProb, double productProb, double minPriority, double maxPriority) {
+        public RandomTermInput(int numTerms, int numInputs, double inheritanceProb, double similarityProb, double productProb, double minPriority, double maxPriority) {
             this.numTerms = numTerms;
-            this.inputProb = inputProb;
+            this.numInputs = numInputs;
             this.inheritanceProb = inheritanceProb;
             this.similarityProb = similarityProb;
             this.productProb = productProb;
             this.minPriority = minPriority;
             this.maxPriority = maxPriority;
+            this.inputs = 0;
             
         }
 
         @Override public String next() throws IOException {
-            double p = Math.random();
-            if (p < inputProb) {
+            
+            if (inputs < numInputs) {
                 
                 //uniform distribution
                 double pr = Math.random() * (maxPriority-minPriority) + minPriority;
@@ -178,6 +188,7 @@ public class BagFairness {
                     return "$" + Texts.n2(priority) + "$ <(*," + randomTerm() + "," + randomTerm() + ") --> " + randomTerm() + ">.";
                 }
                 
+                inputs++;
                 
             }
             return null;
@@ -194,35 +205,41 @@ public class BagFairness {
     public static void main(String[] args) {
         Parameters.DEBUG = true;
         
-        int maxConcepts = 200;
+        int inputs = 100;
+        int maxConcepts = 1000;
         float inputRate = 0.2f;
+        int displayedIterations = 600;
+        int numIterations = 600;
+        float minPri = 0.1f;
+        float maxPri = 1.0f;
 
-        new NWindow("_", new MultiTimeline(2, 2, 1) {
+        new NWindow("_", new MultiTimeline(1, 1, 1) {
 
             @Override public Chart[] getCharts(int experiment) {
                 
                 final NAR n = new Default() {
 
                     @Override public Bag<Concept, Term> newConceptBag() {                        
-                        if (experiment == 0) {
-                            return new DelayBag(param.conceptForgetDurations, getConceptBagSize());
-                            //return new LevelBag(getConceptBagSize(), 100, 0);
+                        /*if (experiment == 0)*/ {
+                            //return new DelayBag(param.conceptForgetDurations, getConceptBagSize());
+                            //return new LevelBag2(getConceptBagSize(), 20);
                             //return new AdaptiveContinuousBag(getConceptBagSize());
+                            return new CurveBag(getConceptBagSize(), true);
                         }
-                        else { //if (experiment == 1) {
-                            //return new CurveBag(getConceptBagSize(), true);
+                        /*else { //if (experiment == 1) {
+                            
                             //return new LevelBag(getConceptBagSize(), 100);
                             return new FairDelayBag(param.conceptForgetDurations, getConceptBagSize());
-                        }
+                        }*/
                     }
 
-                }.simulationTime().setConceptBagSize(maxConcepts).build();
+                }.setConceptBagSize(maxConcepts).build();
 
                 
                 ArrayList<Chart> ch = new BagFairness(n, 
-                        new RandomTermInput(8, inputRate, 0.01, 0.5, 0.5, 0.1f, 1.0), 
+                        new RandomTermInput(8, inputs, 0.01, 0.5, 0.5, minPri, maxPri), 
                         maxConcepts, /* concepts */
-                        1500 /* iterations */).charts;
+                        numIterations-displayedIterations, numIterations /* iterations */).charts;
                 return ch.toArray(new Chart[ch.size()]);
             }            
         }).show(1200, 900, true);

@@ -20,6 +20,7 @@ import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
+import nars.io.nlp.Twenglish;
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reboot;
@@ -42,9 +43,14 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     
     public Narsese narsese;    
     public Englisch englisch;
-    private boolean enableNaturalLanguage = false;
-    private boolean enableEnglisch = true;
+    public Twenglish twenglish;
+    
     private boolean enableNarsese = true;
+
+    private boolean enableNaturalLanguage = false;    
+    private boolean enableEnglisch = false;
+    
+    private boolean enableTwenglish = true;
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
@@ -52,7 +58,9 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             this.memory = n.memory;
             this.narsese = new Narsese(memory);
             this.englisch = new Englisch();
+            this.twenglish = new Twenglish(memory);
             this.parsers = getParsers();
+            
         }
         n.memory.event.set(this, enabled, Events.Perceive.class);
         return true;
@@ -274,6 +282,27 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             }
         });
         
+    //englisch
+        parsers.add(new TextReaction() {
+            @Override
+            public Object react(String line) {
+                
+                if (enableTwenglish) {
+                    /*if (!possiblyNarsese(line))*/ {                    
+                        List<AbstractTask> l;
+                        try {
+                            l = twenglish.parse(line, narsese, true);
+                            if ((l == null) || (l.isEmpty())) 
+                                return null;
+                            return l;
+                        } catch (InvalidInputException ex) {
+                            return null;
+                        }
+                    }
+                }
+                return null;            
+            }
+        });
         
         // natural language
         parsers.add(new TextReaction() {

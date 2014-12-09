@@ -965,6 +965,11 @@ public class Memory implements Serializable {
         return t;        
     }
 
+    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability) {
+        return newTask(content, sentenceType, freq, conf, priority, durability, (Task)null);
+    }
+            
+            
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
         return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
     }
