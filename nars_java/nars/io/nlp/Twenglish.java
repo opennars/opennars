@@ -19,6 +19,7 @@ package nars.io.nlp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import nars.core.Memory;
@@ -30,7 +31,7 @@ import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Twokenize.Span;
 import nars.language.Conjunction;
-import nars.language.Product;
+import nars.language.Property;
 import nars.language.Term;
 
 /**
@@ -44,6 +45,50 @@ public class Twenglish {
     public final Map<String,String> sub = new HashMap();
     private Memory memory;
 
+    boolean languageBooted = false;
+    
+    public Map<String,String> POS = new HashMap(){{
+        //https://www.englishclub.com/grammar/parts-of-speech-table.htm
+        
+        put("i", "pronoun");
+        put("it", "pronoun");
+        put("them", "pronoun");
+        put("they", "pronoun");
+        put("we", "pronoun");
+        put("you", "pronoun");
+        put("he", "pronoun");
+        put("she", "pronoun");
+        put("some", "pronoun");
+        put("all", "pronoun");
+        put("this", "pronoun");
+        put("that", "pronoun");
+        put("these", "pronoun");
+        put("those", "pronoun");
+        
+        put("is", "verb");
+
+        put("who", "qpronoun");
+        put("what", "qpronoun");
+        put("where", "qpronoun");
+        put("when", "qpronoun");
+        put("why", "qpronoun");
+        put("which", "qpronoun");
+        
+        put("to", "prepos");
+        put("at", "prepos");
+        put("before", "prepos");
+        put("after", "prepos");
+        put("on", "prepos");
+        put("but", "prepos");
+        
+        put("and", "conjunc");
+        put("but", "conjunc");
+        put("or", "conjunc");
+        put("if", "conjunc");
+        put("while", "conjunct");
+                
+    }};
+    
     public Twenglish() {
         //TODO use word tokenization so that word substitutions dont get applied across words.
         sub.put("go to", "go-to");
@@ -77,7 +122,15 @@ public class Twenglish {
     
     
     public Term spanToTerm(Span c) {
-        return Product.make( lexToTerm(c.content), tagToTerm(c.pattern) );
+        if (c.pattern.equals("word")) {
+            //TODO support >1 and probabalistic POS
+            String pos = POS.get(c.content.toLowerCase());
+            if (pos!=null) {
+                return Property.make( lexToTerm(c.content), tagToTerm(pos) );
+            }
+        }
+            
+        return Property.make( lexToTerm(c.content), tagToTerm(c.pattern) );
     }
     
     public Term lexToTerm(String c) {
@@ -97,12 +150,46 @@ public class Twenglish {
         List<Span> tokens = Twokenize.tokenizeRawTweetText(s);
         
         List<List<Span>> sentences = new ArrayList();
-        sentences.add(tokens);
+        
+        List<Span> currentSentence = new LinkedList();
+        for (Span p : tokens) {
+            
+            currentSentence.add(p);
+            
+            if (p.pattern.equals("punct")) {
+                switch (p.content) {
+                    case ".":
+                    case "?":
+                    case "!":
+                        if (currentSentence.size() > 0) {
+                            sentences.add(currentSentence);
+                            currentSentence = new LinkedList();
+                            break;
+                        }
+                }
+            }
+        }
+                
+        if (!currentSentence.isEmpty())
+            sentences.add(currentSentence);
         
         for (List<Span> x : sentences) {
             results.addAll( parseSentence(x, narsese, modifyVocabulary) );
         }
                 
+        if (results.size() > 0) {
+            if (!languageBooted) {
+                
+                
+                results.add(0, narsese.parseNarsese(new StringBuilder(
+                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.")));
+                results.add(0, narsese.parseNarsese(new StringBuilder(
+                        "<(&/,?a,<is-->[verb]>,?b) ==> <?a <-> ?b>>.")));
+                
+                languageBooted = true;
+            }
+                
+        }
         
         return results;
     }
