@@ -248,4 +248,9 @@ public class Conjunction extends CompoundTerm {
     public int getTemporalOrder() {
         return temporalOrder;
     }
+
+    @Override
+    public boolean isVector() {
+        return operator() == NativeOperator.SEQUENCE;
+    }
 }

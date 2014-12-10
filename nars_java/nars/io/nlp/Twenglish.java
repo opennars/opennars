@@ -18,6 +18,7 @@ package nars.io.nlp;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,9 @@ import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Twokenize.Span;
 import nars.language.Conjunction;
+import nars.language.Instance;
+import nars.language.Interval;
+import nars.language.Product;
 import nars.language.Property;
 import nars.language.Term;
 
@@ -102,20 +106,59 @@ public class Twenglish {
     protected List<AbstractTask> parseSentence(List<Span> s, Narsese narsese, boolean modifyVocabulary) {
         List<AbstractTask> l = new ArrayList();
         
-        l.add( spansToProduct(s) );
+        l.addAll( spansToSentenceTerms(s) );
         
         return l;
     }    
     
-    public Task spansToProduct(Collection<Span> s) {
+    public Collection<Task> spansToSentenceTerms(Collection<Span> s) {
         
-        List<Term> t = new ArrayList();
+        LinkedList<Term> t = new LinkedList();
+        Span last = null;
         for (Span c : s) {
             t.add( spanToTerm(c) );
+            last = c;
         }
+        if (t.size() == 0) return Collections.EMPTY_LIST;
         
-        Term p = Conjunction.make( t.toArray(new Term[t.size()] ), TemporalRules.ORDER_FORWARD );
-        return memory.newTask(p, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY);
+        String sentenceType = "fragment";
+        if ((last!=null) && (last.pattern.equals("punct"))) {
+            switch (last.content) {
+                case ".": sentenceType = "judgment"; break;
+                case "?": sentenceType = "question"; break;
+                case "!": sentenceType = "goal"; break;
+            }
+        }
+        if (!sentenceType.equals("fragment"))
+            t.removeLast(); //remove the punctuation, it will be redundant
+
+        List<Task> tt = new ArrayList();
+        
+        //1. add the logical structure of the sequence of terms
+        
+        Term p = 
+                /*Conjunction*/Product.make( t.toArray(new Term[t.size()] ));        
+        Term q = Instance.make( p, Term.get(sentenceType) );
+        tt.add( 
+                memory.newTask(q, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+        );
+        
+        //2. add the 'heard' sequence of just the terms
+        
+        LinkedList<Term> cont = new LinkedList();
+        for (Span cp : s) {
+            cont.add(lexToTerm(cp.content));
+            //separate each by a duration interval
+            cont.add(Interval.intervalTime(memory.getDuration(), memory));
+        }
+        cont.removeLast(); //remove trailnig interval term
+        Term con = Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD);
+                
+        tt.add( 
+                memory.newTask(con, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+        );
+        
+        return tt;
         
     }
 
@@ -126,11 +169,11 @@ public class Twenglish {
             //TODO support >1 and probabalistic POS
             String pos = POS.get(c.content.toLowerCase());
             if (pos!=null) {
-                return Property.make( lexToTerm(c.content), tagToTerm(pos) );
+                return Instance.make( lexToTerm(c.content), tagToTerm(pos) );
             }
         }
             
-        return Property.make( lexToTerm(c.content), tagToTerm(c.pattern) );
+        return Instance.make( lexToTerm(c.content), tagToTerm(c.pattern) );
     }
     
     public Term lexToTerm(String c) {
@@ -184,7 +227,7 @@ public class Twenglish {
                 results.add(0, narsese.parseNarsese(new StringBuilder(
                         "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.")));
                 results.add(0, narsese.parseNarsese(new StringBuilder(
-                        "<(&/,?a,<is-->[verb]>,?b) ==> <?a <-> ?b>>.")));
+                        "$0.90;0.90$ <(*,<#a-->[$d]>,<is-->[verb]>,<#b-->[$d]>) =/> <#a <-> #b>>.")));
                 
                 languageBooted = true;
             }

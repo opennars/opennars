@@ -27,6 +27,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -47,6 +48,10 @@ public class Term implements AbstractTerm {
         return SELF.equals(t);
     }
 
+    public NativeOperator operator() {
+        return NativeOperator.ATOM;
+    }
+    
     public boolean isExecutable(Memory mem) {
         //don't allow ^want and ^believe to be active/have an effect, 
         //which means its only used as monitor
