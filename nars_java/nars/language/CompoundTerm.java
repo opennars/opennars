@@ -67,7 +67,7 @@ public abstract class CompoundTerm extends Term {
     /**
      * Abstract method to get the operator of the compound
      */
-    public abstract NativeOperator operator();
+    @Override public abstract NativeOperator operator();
 
     /**
      * Abstract clone method
@@ -132,6 +132,13 @@ public abstract class CompoundTerm extends Term {
             ((CompoundTerm)c).setNormalized(true);
         
         return (CompoundTerm)c;
+    }
+
+    /** a compoundterm operator is considered "isVector" when its subterm
+     *  order matters, and/or if it allows repeats.  ex: Product, Image, Seq Conjunction
+     */
+    public boolean isVector() {
+        return false;
     }
     
     public static class UnableToCloneException extends RuntimeException {

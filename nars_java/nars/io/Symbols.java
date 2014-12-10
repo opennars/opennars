@@ -135,8 +135,10 @@ public class Symbols {
         IMPLICATION_BEFORE("=\\>", true),
         EQUIVALENCE("<=>", true),
         EQUIVALENCE_AFTER("</>", true),
-        EQUIVALENCE_WHEN("<|>", true);
+        EQUIVALENCE_WHEN("<|>", true),
 
+        /** an atomic term; this value is set if not a compound term */
+        ATOM(".", false);
         
         //-----------------------------------------------------
         
