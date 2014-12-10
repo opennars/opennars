@@ -49,7 +49,11 @@ public class Twenglish {
     public final Map<String,String> sub = new HashMap();
     private Memory memory;
 
-    boolean languageBooted = false;
+    
+    boolean languageBooted = true; //set to false to initialize on first twenglish input
+    boolean inputProduct = false;
+    boolean inputConjSeq = true;
+    
     
     public Map<String,String> POS = new HashMap(){{
         //https://www.englishclub.com/grammar/parts-of-speech-table.htm
@@ -135,28 +139,30 @@ public class Twenglish {
         List<Task> tt = new ArrayList();
         
         //1. add the logical structure of the sequence of terms
-        
-        Term p = 
-                /*Conjunction*/Product.make( t.toArray(new Term[t.size()] ));        
-        Term q = Instance.make( p, Term.get(sentenceType) );
-        tt.add( 
-                memory.newTask(q, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-        );
+        if (inputProduct) {
+            Term p = 
+                    /*Conjunction*/Product.make( t.toArray(new Term[t.size()] ));        
+            Term q = Instance.make( p, Term.get(sentenceType) );
+            tt.add( 
+                    memory.newTask(q, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+            );
+        }
         
         //2. add the 'heard' sequence of just the terms
-        
-        LinkedList<Term> cont = new LinkedList();
-        for (Span cp : s) {
-            cont.add(lexToTerm(cp.content));
-            //separate each by a duration interval
-            cont.add(Interval.intervalTime(memory.getDuration(), memory));
+        if (inputConjSeq) {
+            LinkedList<Term> cont = new LinkedList();
+            for (Span cp : s) {
+                cont.add(lexToTerm(cp.content));
+                //separate each by a duration interval
+                cont.add(Interval.intervalTime(memory.getDuration(), memory));
+            }
+            cont.removeLast(); //remove trailnig interval term
+            Term con = Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD);
+
+            tt.add( 
+                    memory.newTask(con, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+            );
         }
-        cont.removeLast(); //remove trailnig interval term
-        Term con = Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD);
-                
-        tt.add( 
-                memory.newTask(con, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-        );
         
         return tt;
         
