@@ -10,6 +10,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 /**
@@ -20,6 +21,7 @@ abstract public class VerticalPanel extends NPanel {
 
     protected final JPanel content;
     protected final JPanel contentWrap;
+    private final JScrollPane scrollPane;
     
     public VerticalPanel() {
         super(new BorderLayout());
@@ -27,8 +29,13 @@ abstract public class VerticalPanel extends NPanel {
         content = new JPanel(new GridBagLayout());
         contentWrap = new JPanel(new BorderLayout());
         contentWrap.add(content, BorderLayout.NORTH);
-        add(new JScrollPane(contentWrap), BorderLayout.CENTER);
+        add(scrollPane = new JScrollPane(contentWrap), BorderLayout.CENTER);
         
+    }
+    
+    public void scrollBottom() {
+        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+        vertical.setValue( vertical.getMaximum() );        
     }
     
     public void addPanel(int index, JComponent j) {
@@ -38,10 +45,9 @@ abstract public class VerticalPanel extends NPanel {
         gc.gridx = 0;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        gc.gridy = 0;
+        gc.gridy = index;
         
         content.add(j, gc);
-        gc.gridy++;
         
     }
     
