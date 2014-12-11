@@ -155,7 +155,7 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
             setOpaque(true);
             final float hue = 0.3f + 0.5f * priority;
             
-            Color c = Color.getHSBColor(hue, 0.4f, priority * 0.2f);
+            Color c = Color.getHSBColor(hue, 0.4f, 0.2f + priority * 0.2f);
             
             setBackground(c);
             
