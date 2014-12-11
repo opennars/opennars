@@ -54,7 +54,8 @@ public class NAR implements Runnable, TaskSource {
     public static final String WEBSITE =
               " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
-              "    Github website:  http://github.com/opennars/ \n";    
+              "    Github website:  http://github.com/opennars/ \n" + 
+            "    IRC:  http://webchat.freenode.net/?channels=nars \n";    ;    
 
 
     
