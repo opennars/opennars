@@ -85,13 +85,13 @@ public class BooleanChallenge {
                 Task question = answer.parentTask;
                 if (!question.sentence.isQuestion())
                     return;
-                if (!questionScores.containsKey(question.getContent())) {
+                if (!questionScores.containsKey(question.getTerm())) {
                     //this is a response to a question it asked itself
                     return;
                 }
                         
                         
-                Term t = answer.getContent();
+                Term t = answer.getTerm();
                 if (t instanceof Inheritance) {
                     Term subj = ((Inheritance)t).getSubject();
                     Term pred = ((Inheritance)t).getPredicate();
@@ -161,7 +161,7 @@ public class BooleanChallenge {
     
     void addScore(Task q, Task a, boolean correct, float confidence) {        
 
-        Term questionTerm = q.getContent();
+        Term questionTerm = q.getTerm();
         long questionTime = q.getCreationTime();
         long answerTime = a.getCreationTime();
         long time = nar.time();

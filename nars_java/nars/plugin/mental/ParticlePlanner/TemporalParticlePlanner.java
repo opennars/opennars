@@ -94,7 +94,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
 
             Execution executing = (Execution)a[0];
             Task task = executing.t;
-            Term term = task.getContent();            
+            Term term = task.getTerm();            
         
             if (term instanceof Conjunction) {
                 Conjunction c = (Conjunction) term;
@@ -123,7 +123,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
             Execution te = (Execution)a[0];
             Task t = te.getTask();
             
-            Term term = t.getContent();
+            Term term = t.getTerm();
             if (term instanceof Implication) {
                 Implication it = (Implication) term;
                 if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
@@ -146,9 +146,9 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
             return;
         }
 
-        boolean plannable = graph.isPlannable(t.getContent());
+        boolean plannable = graph.isPlannable(t.getTerm());
         if (plannable) {
-            graph.plan(nal, concept, t, t.getContent(), planParticles, searchDepth, '!', maxPlannedTasks);
+            graph.plan(nal, concept, t, t.getTerm(), planParticles, searchDepth, '!', maxPlannedTasks);
         }
 
     }

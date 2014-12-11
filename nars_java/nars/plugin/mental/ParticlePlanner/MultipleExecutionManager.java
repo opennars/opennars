@@ -178,7 +178,7 @@ public class MultipleExecutionManager {
         }
 
         public final float getPriority() {
-            Concept cc = memory.concept(t.sentence.content);
+            Concept cc = memory.concept(t.sentence.term);
             if (cc != null) {
                 return cc.getPriority();
             }
@@ -342,7 +342,7 @@ public class MultipleExecutionManager {
 
         Execution executing = tasks.first();
         Task top = executing.t;
-        Term term = top.getContent();
+        Term term = top.getTerm();
         if (term instanceof Operation) {
             execute(executing, (Operation) term, top); //directly execute            
             return;
@@ -422,9 +422,9 @@ public class MultipleExecutionManager {
         if (s == c.term.length) {
             //completed task
 
-            if (task.t.sentence.content instanceof Implication) {
+            if (task.t.sentence.term instanceof Implication) {
                 expected_task = task.t;
-                expected_event = ((Implication) task.t.sentence.content).getPredicate();
+                expected_event = ((Implication) task.t.sentence.term).getPredicate();
             }
 
             removeExecution(task);
@@ -437,10 +437,10 @@ public class MultipleExecutionManager {
     }
 
     public static boolean containsMentalOperator(final Task t) {
-        if(!(t.sentence.content instanceof Operation))
+        if(!(t.sentence.term instanceof Operation))
             return false;
         
-        Operation o= (Operation)t.sentence.content;
+        Operation o= (Operation)t.sentence.term;
         return (o.getOperator() instanceof Mental);
     }
     

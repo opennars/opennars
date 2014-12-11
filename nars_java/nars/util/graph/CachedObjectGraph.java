@@ -92,7 +92,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
             /*if (includeConceptBeliefs)*/ {
                 for (Sentence s : c.beliefs) {
-                    Term target = s.content;
+                    Term target = s.term;
                     if (!containsVertex(target)) {
                         addVertex(target);
                     }
@@ -102,7 +102,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
             /*if (includeConceptQuestoins)*/ {
                 for (Task t : c.questions) {
-                    Term target = t.getContent();
+                    Term target = t.getTerm();
                     if (!containsVertex(target)) {
                         addVertex(target);
                     }

@@ -44,9 +44,9 @@ public class Counting implements Plugin {
 
                     if(task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
                         //lets say we have <{...} --> M>.
-                        if(task.sentence.content instanceof Inheritance) {
+                        if(task.sentence.term instanceof Inheritance) {
 
-                            Inheritance inh=(Inheritance) task.sentence.content;
+                            Inheritance inh=(Inheritance) task.sentence.term;
 
                             if(inh.getSubject() instanceof SetExt) {
 

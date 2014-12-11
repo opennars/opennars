@@ -22,14 +22,19 @@ package nars.entity;
 
 import nars.core.control.AbstractTask;
 import com.google.common.base.Strings;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import nars.language.CompoundTerm;
 import nars.language.Term;
+import nars.language.Terms.Termable;
 import nars.operator.Operation;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue
  */
-public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
+public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements Termable {
+
 
     //TODO restrict T extends CompoundTerm
 
@@ -80,7 +85,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
      */
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
         super(b);
-        if (!(s.content instanceof CompoundTerm)) {
+        if (!(s.term instanceof CompoundTerm)) {
             throw new RuntimeException("Invalid task term: " + s);
         }
         this.sentence = s;
@@ -138,7 +143,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
     }
     
     public static Task make(Sentence s, BudgetValue b, Task parent, Sentence belief) {
-        Term t = s.content;
+        Term t = s.term;
         if (isValidTerm(t)) {
             return new Task(s, b, parent, belief);
         }
@@ -146,15 +151,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
     }
     
 
-
-    /**
-     * Directly get the content of the sentence
-     *
-     * @return The content of the sentence
-     */
-    public T getContent() {
-        return sentence.content;
-    }
+    
 
     /**
      * Directly get the creation time of the sentence
@@ -287,7 +284,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
         if (cause!=null)
             x += "  cause=" + cause + "\n";
         if (bestSolution!=null) {
-            if (!getContent().equals(bestSolution.content))
+            if (!getTerm().equals(bestSolution.term))
                 x += "  solution=" + bestSolution + "\n";
         }
         if (parentBelief!=null)
@@ -357,6 +354,19 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
     }
 
     
+    public static Set<Sentence> getSentences(Collection<Task> tasks) {
+        Set<Sentence> s = new HashSet();
+        for (Task t : tasks)
+            s.add(t.sentence);
+        return s;
+    }
 
+    @Override
+    public T getTerm() {
+        return sentence.getTerm();
+    }
+
+
+    
     
 }

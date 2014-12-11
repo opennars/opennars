@@ -181,15 +181,15 @@ public class AntAttention extends WaveAttention {
                 
                 Concept t = null;
                 if (taskSentence!=null)
-                    t = concept(taskSentence.content);               
+                    t = concept(taskSentence.term);               
                 if ((t == null) || (t == concept)) {
                     if (bestSolution!=null) {
-                        t = concept(bestSolution.content);
+                        t = concept(bestSolution.term);
                     }
                 }
                 if ((t == null) || (t == concept)) {
                     if (parentSentence!=null) {
-                        t = concept(parentSentence.content);
+                        t = concept(parentSentence.term);
                     }
                 }
                 
@@ -283,7 +283,7 @@ public class AntAttention extends WaveAttention {
             }
             else if (x instanceof Task) {
                 Task t = (Task)x;
-                return conceptualize(delivery, t.getContent(), false);
+                return conceptualize(delivery, t.getTerm(), false);
             }
             return null;
         }

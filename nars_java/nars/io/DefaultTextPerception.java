@@ -90,7 +90,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             } else if (o instanceof Sentence) {
                 //TEMPORARY
                 Sentence s = (Sentence) o;
-                return perceive(s.content.toString() + s.punctuation + " " + s.truth.toString());
+                return perceive(s.term.toString() + s.punctuation + " " + s.truth.toString());
             }
             error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + "]");
         }

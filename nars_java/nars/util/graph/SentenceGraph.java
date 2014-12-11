@@ -223,8 +223,8 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         if (!allow(s))
             return false;               
         
-        if (s.content instanceof CompoundTerm) {
-            CompoundTerm cs = (CompoundTerm)s.content;
+        if (s.term instanceof CompoundTerm) {
+            CompoundTerm cs = (CompoundTerm)s.term;
         
             if (cs instanceof Statement) {
                 

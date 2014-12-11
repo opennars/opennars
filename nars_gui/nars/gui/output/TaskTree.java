@@ -252,7 +252,7 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
         protected void updateTask() {
             final Task t = task;
             
-            Concept con = nar.memory.concept(t.getContent());
+            Concept con = nar.memory.concept(t.getTerm());
             float conPri = 0;
             if (con == null) {
                 /*System.err.println("TaskTree: " + t + " missing concept.  either memory was reset or concept should have been created but wasnt.");*/

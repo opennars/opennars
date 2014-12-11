@@ -134,13 +134,7 @@ public abstract class CompoundTerm extends Term {
         return (CompoundTerm)c;
     }
 
-    /** a compoundterm operator is considered "isVector" when its subterm
-     *  order matters, and/or if it allows repeats.  ex: Product, Image, Seq Conjunction
-     */
-    public boolean isVector() {
-        return false;
-    }
-    
+
     public static class UnableToCloneException extends RuntimeException {
 
         public UnableToCloneException(String message) {

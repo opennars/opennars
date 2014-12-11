@@ -182,7 +182,7 @@ public class NARPrologMirror extends AbstractObserver {
     
     protected void add(Sentence s, Task task) {
         
-        if (!(s.content instanceof CompoundTerm))
+        if (!(s.term instanceof CompoundTerm))
             return;        
 
         if (!validTemporal(s))
@@ -204,7 +204,7 @@ public class NARPrologMirror extends AbstractObserver {
 
             if (beliefs.containsKey(s)) {
                 //already determined it to be true
-                answer(task, s.content, null);
+                answer(task, s.term, null);
                 return;
             }
             
@@ -283,7 +283,7 @@ public class NARPrologMirror extends AbstractObserver {
         if (tv.getConfidence() > confidenceThreshold) {
             if ((tv.getFrequency() > trueThreshold) || (tv.getFrequency() < falseThreshold)) {
 
-                boolean exists = beliefs.containsKey(s.content);
+                boolean exists = beliefs.containsKey(s.term);
                 if ((addOrRemove) && (exists))
                     return;
                 else if ((!addOrRemove) && (!exists))
@@ -325,7 +325,7 @@ public class NARPrologMirror extends AbstractObserver {
         }
         else {*/
         try {
-            s = pterm(judgment.content);
+            s = pterm(judgment.term);
         }
         catch (Exception e) {
             e.printStackTrace();;
@@ -337,7 +337,7 @@ public class NARPrologMirror extends AbstractObserver {
     }
     
     Struct newQuestion(final Sentence question) {
-        nars.prolog.Term s = pterm(question.content);
+        nars.prolog.Term s = pterm(question.term);
         //TODO not working yet
         return (Struct) s;
     }

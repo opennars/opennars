@@ -166,8 +166,8 @@ public class TemporalRules {
             return false;
         
         //try if B1 unifies with B2, if yes, create new judgement
-        Implication S1=(Implication) s1.content;
-        Implication S2=(Implication) s2.content;
+        Implication S1=(Implication) s1.term;
+        Implication S2=(Implication) s2.term;
         Term A=S1.getSubject();
         Term B1=S1.getPredicate();
         Term B2=S2.getSubject();
@@ -268,8 +268,8 @@ public class TemporalRules {
         if ((s1.truth==null) || (s2.truth==null))
             return Collections.EMPTY_LIST;
         
-        Term t1 = s1.content;
-        Term t2 = s2.content;
+        Term t1 = s1.term;
+        Term t2 = s2.term;
         Term t11=null;
         Term t22=null;
         
@@ -474,7 +474,7 @@ public class TemporalRules {
         }
         
         if (problem.containQueryVar()) {
-            return truth.getExpectation() / solution.content.getComplexity();
+            return truth.getExpectation() / solution.term.getComplexity();
         } else {
             return truth.getConfidence();
         }

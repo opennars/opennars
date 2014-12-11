@@ -21,6 +21,7 @@
 package nars.entity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import nars.core.Events.BeliefSelect;
 import nars.core.Events.ConceptBeliefAdd;
@@ -45,16 +46,17 @@ import static nars.inference.LocalRules.trySolution;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
 import nars.language.Term;
+import nars.language.Terms.Termable;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
 
-public class Concept extends Item<Term> {
+public class Concept extends Item<Term> implements Termable {
 
-    
     
     /**
      * The term is the unique ID of the concept
@@ -875,4 +877,23 @@ public class Concept extends Item<Term> {
         return sb;
     }
 
+    public NativeOperator operator() {
+        return term.operator();
+    }
+
+    public Collection<Sentence> getSentences(char punc) {
+        switch(punc) {
+            case Symbols.JUDGMENT_MARK: return beliefs;
+            case Symbols.GOAL_MARK: return desires;                
+            case Symbols.QUESTION_MARK: return Task.getSentences(questions);
+            case Symbols.QUEST_MARK: return Task.getSentences(quests);
+        }
+        throw new RuntimeException("Invalid punctuation: " + punc);
+    }
+
+    public Term getTerm() {
+        return term;
+    }
+
+    
 }

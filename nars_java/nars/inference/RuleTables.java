@@ -73,13 +73,13 @@ public class RuleTables {
         final Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
         
-        final Term taskTerm = taskSentence.content;         // cloning for substitution
+        final Term taskTerm = taskSentence.term;         // cloning for substitution
         final Term beliefTerm = bLink.target;       // cloning for substitution
         
         //CONTRAPOSITION //TODO: put into rule table
         if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
             Concept d=memory.concepts.sampleNextConcept();
-            if(d!=null && d.term.equals(taskSentence.content)) {
+            if(d!=null && d.term.equals(taskSentence.term)) {
                 StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
             }
         }  
@@ -98,8 +98,8 @@ public class RuleTables {
             
             //TODO
             //(&/,a) goal didnt get unwinded, so lets unwind it
-            if(task.sentence.content instanceof Conjunction && task.sentence.punctuation==Symbols.GOAL_MARK) {
-                Conjunction s=(Conjunction) task.sentence.content;
+            if(task.sentence.term instanceof Conjunction && task.sentence.punctuation==Symbols.GOAL_MARK) {
+                Conjunction s=(Conjunction) task.sentence.term;
                 Term newterm=s.term[0];
                 TruthValue truth=task.sentence.truth;
                 BudgetValue newBudget=BudgetFunctions.forward(TruthFunctions.deduction(truth, truth), nal);
@@ -117,7 +117,7 @@ public class RuleTables {
                     if (next!=null && !next.beliefs.isEmpty()) {
                         Sentence s=next.beliefs.get(0);
                         if (s != null) {
-                            Term t=s.content;
+                            Term t=s.term;
                             if((t instanceof Implication)) {
                                 Implication Imp=(Implication) t;
                                 if(Imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || Imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
@@ -356,8 +356,8 @@ public class RuleTables {
      * @param nal Reference to the memory
      */
     private static void asymmetricAsymmetric(final Sentence taskSentence, final Sentence belief, int figure, final NAL nal) {
-        Statement taskStatement = (Statement) taskSentence.content;
-        Statement beliefStatement = (Statement) belief.content;
+        Statement taskStatement = (Statement) taskSentence.term;
+        Statement beliefStatement = (Statement) belief.term;
         
         Term t1, t2;
         Term[] u = new Term[] { taskStatement, beliefStatement };
@@ -450,8 +450,8 @@ public class RuleTables {
      * @param nal Reference to the memory
      */
     private static void asymmetricSymmetric(final Sentence asym, final Sentence sym, final int figure, final NAL nal) {
-        Statement asymSt = (Statement) asym.content;
-        Statement symSt = (Statement) sym.content;
+        Statement asymSt = (Statement) asym.term;
+        Statement symSt = (Statement) sym.term;
         Term t1, t2;
         Term[] u = new Term[] { asymSt, symSt };
         switch (figure) {
@@ -517,8 +517,8 @@ public class RuleTables {
      * @param nal Reference to the memory
      */
     private static void symmetricSymmetric(final Sentence belief, final Sentence taskSentence, int figure, final NAL nal) {
-        Statement s1 = (Statement) belief.content;
-        Statement s2 = (Statement) taskSentence.content;
+        Statement s1 = (Statement) belief.term;
+        Statement s2 = (Statement) taskSentence.term;
         
         Term ut1, ut2;  //parameters for unify()
         Term rt1, rt2;  //parameters for resemblance()
@@ -589,13 +589,13 @@ public class RuleTables {
         }
         Sentence mainSentence = originalMainSentence;   // for substitution
         
-        if (!(mainSentence.content instanceof Statement))
+        if (!(mainSentence.term instanceof Statement))
             return;
         
-        Statement statement = (Statement) mainSentence.content;
+        Statement statement = (Statement) mainSentence.term;
         
         Term component = statement.term[index];
-        Term content = subSentence.content;
+        Term content = subSentence.term;
         if (((component instanceof Inheritance) || (component instanceof Negation)) && (nal.getCurrentBelief() != null)) {
             
             Term[] u = new Term[] { statement, content };
@@ -794,7 +794,7 @@ public class RuleTables {
      * @param nal Reference to the memory
      */
     public static void transformTask(TaskLink tLink, NAL nal) {
-        CompoundTerm content = (CompoundTerm) nal.getCurrentTask().getContent();
+        CompoundTerm content = (CompoundTerm) nal.getCurrentTask().getTerm();
         short[] indices = tLink.index;
         Term inh = null;
         if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>

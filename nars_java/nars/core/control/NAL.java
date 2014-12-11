@@ -104,8 +104,8 @@ public abstract class NAL implements Runnable {
         
 
     
-        if (task.sentence.content instanceof Operation) {
-            Operation op = (Operation) task.sentence.content;
+        if (task.sentence.term instanceof Operation) {
+            Operation op = (Operation) task.sentence.term;
             if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
                 memory.removeTask(task, "Operation with variable as subject or predicate");
                 return false;
@@ -125,9 +125,9 @@ public abstract class NAL implements Runnable {
             memory.logic.DERIVATION_LATENCY.commit(stamp.latency);
         }
         
-        final Term currentTaskContent = getCurrentTask().getContent();
+        final Term currentTaskContent = getCurrentTask().getTerm();
         if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
-            final Term currentBeliefContent = getCurrentBelief().content;
+            final Term currentBeliefContent = getCurrentBelief().term;
             stamp.chainRemove(currentBeliefContent);
             stamp.chainAdd(currentBeliefContent);
         }
@@ -143,11 +143,11 @@ public abstract class NAL implements Runnable {
         }
         //its a inference rule, so we have to do the derivation chain check to hamper cycles
         if (!revised) {
-            Term tc = task.getContent();            
+            Term tc = task.getTerm();            
             
             if (task.sentence.isJudgment()) { 
                 
-                Term ptc = task.getParentTask() != null ? task.getParentTask().getContent() : null;
+                Term ptc = task.getParentTask() != null ? task.getParentTask().getTerm() : null;
                 
                 if (
                     (task.getParentTask() == null) || (!Negation.areMutuallyInverse(tc, ptc))
@@ -177,7 +177,7 @@ public abstract class NAL implements Runnable {
         }
         
         if(task.sentence.getOccurenceTime()>memory.time()) {
-            ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.content, memory, task.sentence.getOccurenceTime());
+            ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime());
         }
         
         task.setTemporalInducted(false);
@@ -287,13 +287,13 @@ public abstract class NAL implements Runnable {
         
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
-            if (parentTask.getContent() == null) {
+            if (parentTask.getTerm() == null) {
                 return false;
             }
             if (newContent == null) {
                 return false;
             }
-            if (newContent.equals(parentTask.getContent())) {
+            if (newContent.equals(parentTask.getTerm())) {
                 return false;
             }
         }

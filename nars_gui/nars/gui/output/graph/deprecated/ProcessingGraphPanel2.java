@@ -233,7 +233,7 @@ abstract public class ProcessingGraphPanel2<V,E> extends NPanel {
         final Set<Term> include = new HashSet();
         for (final Object s : selected) {
             if (s instanceof Sentence) {
-                Term t = ((Sentence)s).content;
+                Term t = ((Sentence)s).term;
                 include.add(t);
                 if (t instanceof CompoundTerm) {
                     CompoundTerm ct = (CompoundTerm)t;

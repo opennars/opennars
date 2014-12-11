@@ -27,7 +27,7 @@ public class ImmediateProcess extends NAL {
         setCurrentTask(task);
         memory.logic.TASK_IMMEDIATE_PROCESS.commit();
         emit(Events.TaskImmediateProcess.class, task);
-        setCurrentTerm(currentTask.getContent());
+        setCurrentTerm(currentTask.getTerm());
         setCurrentConcept(memory.conceptualize(currentTask.budget, getCurrentTerm()));
         if (getCurrentConcept() != null) {
             boolean processed = getCurrentConcept().directProcess(this, currentTask);

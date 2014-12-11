@@ -22,6 +22,7 @@ package nars.entity;
 
 import java.util.Arrays;
 import nars.language.Term;
+import nars.language.Terms.Termable;
 
 /**
  * Reference to a Task.
@@ -31,7 +32,7 @@ import nars.language.Term;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Task> implements TLink<Task> {
+public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
 
     /**
      * The Task linked. The "target" field in TermLink is not used here.
@@ -136,7 +137,7 @@ public class TaskLink extends Item<Task> implements TLink<Task> {
      */
     public boolean novel(final TermLink termLink, final long currentTime) {
         final Term bTerm = termLink.target;
-        if (bTerm.equals(targetTask.sentence.content)) {            
+        if (bTerm.equals(targetTask.sentence.term)) {            
             return false;
         }
         TermLink linkKey = termLink.name();
@@ -187,7 +188,13 @@ public class TaskLink extends Item<Task> implements TLink<Task> {
         Arrays.fill(recordedLinks, null);
     }
 
+    @Override
+    public Term getTerm() {
+        return getTarget().getTerm();
+    }
 
+
+    
     
     
 }

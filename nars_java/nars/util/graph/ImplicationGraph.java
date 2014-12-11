@@ -78,7 +78,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         }
         
         public Implication getImplication() {
-            return (Implication)parent.content;
+            return (Implication)parent.term;
         }
 
         @Override
@@ -267,7 +267,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             predicate = st.getPredicate();            
         }  
         
-        if (s.content.hasVarIndep()) {
+        if (s.term.hasVarIndep()) {
             return false;
         }
                 
