@@ -21,9 +21,12 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
+import nars.language.Image;
 import nars.language.Term;
 import nars.language.Terms.Termable;
 
@@ -35,7 +38,7 @@ public class Idea implements Iterable<Concept> {
    
     final public Set<Concept> concepts = Collections.synchronizedSet(new HashSet());
     final CharSequence key;
-    final Set<OperatorPunctuation> feature = new HashSet();
+    final Set<SentenceType> feature = new HashSet();
     final Set<NativeOperator> operators = new HashSet<NativeOperator>();
 
 
@@ -48,10 +51,17 @@ public class Idea implements Iterable<Concept> {
             
             if (!ct.isCommutative()) {
                 //if not commutative (order matters): key = list of subterms
-                return Arrays.toString(ct.term).replaceFirst("\\[", "(");
+                String s = Arrays.toString(ct.term).replaceFirst("\\[", "(");
+                
+                if (ct instanceof Image) {
+                    int index = ((Image)ct).relationIndex;
+                    s += "." + index;
+                }
+                
+                return s;
             }            
             else {
-                //key = 'set' + sorted list of subterms
+                //key = sorted set of subterms
                 return Term.toSortedSet(ct.term).toString();
             }
         }
@@ -79,7 +89,8 @@ public class Idea implements Iterable<Concept> {
     }
     
 
-    /** returns the first term */
+    /** returns a sample term (ex: first concept's term);
+        all Concepts will have equal sub-components */
     public Term getSampleTerm() {
         return concepts.iterator().next().getTerm();
     }
@@ -93,16 +104,15 @@ public class Idea implements Iterable<Concept> {
         return 1;
     }
     
-    public static class OperatorPunctuation implements Comparable<OperatorPunctuation> {
+    public class SentenceType implements Comparable<SentenceType> {
         
         public final NativeOperator op;
         public final char punc;
-        
-        //TODO tense, image index
-        
+                
         transient private final int hash;
+        private ArrayList sentences;
 
-        public OperatorPunctuation(NativeOperator o, char c) {
+        public SentenceType(NativeOperator o, char c) {
             this.op = o;
             this.punc = c;
             this.hash = Objects.hashCode(op, punc);
@@ -116,13 +126,13 @@ public class Idea implements Iterable<Concept> {
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
-            if (!(o instanceof OperatorPunctuation)) return false;
-            OperatorPunctuation x = (OperatorPunctuation)o;
+            if (!(o instanceof SentenceType)) return false;
+            SentenceType x = (SentenceType)o;
             return x.op == op && x.punc == punc;
         }
 
         @Override
-        public int compareTo(OperatorPunctuation t) {
+        public int compareTo(SentenceType t) {
             int i = op.compareTo(t.op);
             if (i != 0) return i;
             return Character.compare(punc, t.punc);
@@ -130,14 +140,35 @@ public class Idea implements Iterable<Concept> {
 
         @Override
         public String toString() {
-            return op.toString() + punc;
+            return op.toString() + " " + punc;
         }
         
-        
-        
+        public List<Sentence> getSentences() {
+            if (sentences == null) {
+                sentences = new ArrayList();
+                for (Concept c : concepts) {
+                    switch (punc) {
+                        case Symbols.JUDGMENT_MARK:
+                            sentences.addAll(c.beliefs);
+                            break;
+                        case Symbols.QUESTION_MARK:
+                            sentences.addAll(Task.getSentences(c.questions));
+                            break;
+                        case Symbols.QUEST_MARK:
+                            sentences.addAll(Task.getSentences(c.quests));
+                            break;
+                        case Symbols.GOAL_MARK:
+                            sentences.addAll(c.desires);
+                            break;
+                    }
+                }
+            }
+            return sentences;
+        }
+                
     }
     
-    public Collection<Sentence> getSentences(OperatorPunctuation o) {
+    public Collection<Sentence> getSentences(SentenceType o) {
         List<Sentence> s = new ArrayList();
         for (Concept c : this) {
             if (c.term.operator() == o.op) {
@@ -148,7 +179,7 @@ public class Idea implements Iterable<Concept> {
     }
     
     /** returns the set of all operator+punctuation concatenations */
-    public Set<OperatorPunctuation> getOperatorPunctuations() {
+    public Set<SentenceType> getSentenceTypes() {
         return feature;
     }
     
@@ -179,13 +210,13 @@ public class Idea implements Iterable<Concept> {
             operators.add(o);
             
             if (!c.beliefs.isEmpty())
-                feature.add(new OperatorPunctuation(o, Symbols.JUDGMENT_MARK));
+                feature.add(new SentenceType(o, Symbols.JUDGMENT_MARK));
             if (!c.questions.isEmpty())
-                feature.add(new OperatorPunctuation(o, Symbols.QUESTION_MARK));
+                feature.add(new SentenceType(o, Symbols.QUESTION_MARK));
             if (!c.desires.isEmpty())
-                feature.add(new OperatorPunctuation(o, Symbols.GOAL_MARK));
+                feature.add(new SentenceType(o, Symbols.GOAL_MARK));
             if (!c.quests.isEmpty())
-                feature.add(new OperatorPunctuation(o, Symbols.QUEST_MARK));
+                feature.add(new SentenceType(o, Symbols.QUEST_MARK));
         }
         
     }
@@ -232,9 +263,6 @@ public class Idea implements Iterable<Concept> {
         }
         return false;
     }
-    
-    
-    
     
     public static class IdeaSet extends HashMap<CharSequence,Idea> implements EventObserver {
         private final NAR nar;

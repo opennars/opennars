@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.entity.TruthValue.Truthable;
 import nars.inference.TruthFunctions;
 import nars.inference.TruthFunctions.EternalizedTruthValue;
 import nars.io.Symbols;
@@ -49,7 +50,7 @@ import nars.operator.Operator;
  * <p>
  * It is used as the premises and conclusions of all inference rules.
  */
-public class Sentence<T extends Term> implements Cloneable, Termable {
+public class Sentence<T extends Term> implements Cloneable, Termable, Truthable {
 
 
 
@@ -557,6 +558,12 @@ public class Sentence<T extends Term> implements Cloneable, Termable {
     public T getTerm() {
         return term;
     }
+
+    @Override
+    public TruthValue getTruth() {
+        return truth;
+    }
+    
     
     
 }

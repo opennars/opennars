@@ -57,7 +57,7 @@ public class IdeaTest {
         n.finish(12);
 
         
-        assertEquals(3, i.get("[a, b]").getOperatorPunctuations().size());
+        assertEquals(3, i.get("[a, b]").getSentenceTypes().size());
         
         
         

@@ -5,28 +5,32 @@
 package nars.gui.output;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
 import nars.core.NAR;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.gui.WrapLayout;
+import nars.entity.TruthValue;
 import nars.io.Output;
+import static nars.io.Symbols.JUDGMENT_MARK;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.util.Idea;
 import nars.util.Idea.IdeaSet;
-import nars.util.Idea.OperatorPunctuation;
+import nars.util.Idea.SentenceType;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
  *
@@ -38,6 +42,9 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
     private final IdeaSet ideas;
 
     public final Map<Idea, IdeaSummary> ideaPanel = new WeakHashMap();
+    
+    boolean showTasks = true;
+    boolean showConcepts = false;
 
     public IdeaPanel(NAR nar) {
         super();
@@ -51,11 +58,15 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
     public void event(Class event, Object[] args) {
 
         if (args[0] instanceof Task) {
-            Task t = (Task) args[0];
-            onOutputTask(t);
+            if (showTasks) {
+                Task t = (Task) args[0];
+                onOutputTask(t);
+            }
         } else if (args[0] instanceof Concept) {
-            Concept c = (Concept) args[0];
-            onOutputConcept(c);
+            if (showConcepts) {
+                Concept c = (Concept) args[0];
+                onOutputConcept(c);
+            }
         }
     }
 
@@ -67,7 +78,7 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
             super(new BorderLayout());
             this.idea = i;
 
-            setBorder(LineBorder.createGrayLineBorder());
+            //setBorder(LineBorder.createGrayLineBorder());
             update();
         }
 
@@ -84,25 +95,29 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
             //add(new JLabel(idea.getOperatorPunctuations().toString()), BorderLayout.SOUTH);
 
             JPanel operatorPanel = null;
-            if (idea.getOperatorPunctuations().size() > 1) {
+            if (idea.getSentenceTypes().size() > 1) {
                 operatorPanel = new JPanel();
+                operatorPanel.setOpaque(false);
                 operatorPanel.setLayout(new BoxLayout(operatorPanel, BoxLayout.PAGE_AXIS));
-                for (OperatorPunctuation x : idea.getOperatorPunctuations()) {
-                    JButton j = new JButton(x.toString());
-                    operatorPanel.add(j);
+                for (SentenceType x : idea.getSentenceTypes()) {
+                    operatorPanel.add(new SentenceTypeButton(x));
                 }
                 
             }
 
+            
+                    
             boolean centerFree = true;
             if (operatorPanel!=null) {
                 if (idea.getArity() == 2) {
                     Term[] t = ((CompoundTerm)idea.getSampleTerm()).term;
 
+            
                     JPanel f = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                    f.add(new ConceptButton(t[0]));
+                    f.setOpaque(false);
+                    f.add(new TermButton(t[0]));
                     f.add(operatorPanel);
-                    f.add(new ConceptButton(t[1]));
+                    f.add(new TermButton(t[1]));
                     add(f, BorderLayout.CENTER);
                     centerFree = false;
                 }
@@ -111,38 +126,79 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
                 }
             }
             if (centerFree) {
-                JPanel conceptPanel = new JPanel(
-                        new WrapLayout(FlowLayout.LEFT));
+                
+                JPanel f = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                f.setOpaque(false);
+            
                 for (Concept c : idea)
-                    conceptPanel.add(new ConceptButton(c));                    
+                    f.add(new TermButton(c));                    
                 
                 //get the only sentence type, use it's punctuation as a suffix button
-                Iterator<OperatorPunctuation> oi = idea.getOperatorPunctuations().iterator();
+                Iterator<SentenceType> oi = idea.getSentenceTypes().iterator();
                 if (oi.hasNext()) {
 
-                    OperatorPunctuation p = oi.next();
+                    SentenceType p = oi.next();
                     JButton pbutton = new JButton(Character.toString(p.punc));
-                    conceptPanel.add(pbutton);
+                    f.add(pbutton);
                 }
 
-                add(conceptPanel, BorderLayout.CENTER);
+                add(f, BorderLayout.CENTER);
                 
             }
             
             doLayout();
         }
 
-    }
-    
-    /** represents either a Term or its Concept (if exists) */
-    public static class ConceptButton extends JButton {
-
-        public ConceptButton(Concept c) {
-            this(c.getTerm());
-
+        public void applyPriority(float priority) {
+            //setFont(Video.monofont.deriveFont(12.0f + priority * 4f));
+            
+            setOpaque(true);
+            final float hue = 0.3f + 0.5f * priority;
+            
+            Color c = Color.getHSBColor(hue, 0.4f, priority * 0.2f);
+            
+            setBackground(c);
+            
+            Color c2 = Color.getHSBColor(hue, 0.6f, 0.5f + priority * 0.5f);
+            
+            setBorder(BorderFactory.createMatteBorder(0, 14, 0, 0, c2));
+            
+            
+            
+            updateUI();
         }
 
-        public ConceptButton(Term t) {
+    }
+
+    public static class SentenceTypeButton extends JButton {
+
+        public SentenceTypeButton(SentenceType x) {
+            super(x.toString());
+            
+            switch (x.punc) {
+                case JUDGMENT_MARK:
+                    DescriptiveStatistics d = TruthValue.statistics(x.getSentences(), TruthValue.TruthComponent.Expectation);
+                    float mean = (float) d.getMean();
+                                        
+                    float hue = 0.2f + mean*0.5f;
+                    setForeground(Color.getHSBColor(hue, 0.9f, 0.95f));
+                    break;
+            }
+            
+        }
+    
+        
+    }
+    
+    /** represents either a Term or its Concept (if exists).
+        if a concept is involved, there may be additional data to display.     */
+    public static class TermButton extends JButton {
+
+        public TermButton(Concept c) {
+            this(c.getTerm());
+        }
+
+        public TermButton(Term t) {
             super(t.toString());
 
         }
@@ -157,28 +213,24 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
 
     protected void onOutputTask(Task t) {
         Idea i = ideas.get(t);
-        if (i == null) {
-            /*System.err.println("no idea exist: " + t.getTerm() + " " + Idea.getKey(t));
-            
-             Concept c = nar.memory.concept(t.getTerm());
-            
-             if (c == null) {
-             System.err.println("no concept exist: " + t.getTerm());
-             return;
-             }
-            
-             i = ideas.add(c);*/
+        if (i==null)
             return;
-        }
-        update(i);
+        update(i, t.budget);
     }
 
-    protected void update(Idea i) {
+    protected void update(Idea i, BudgetValue currentTaskBudget) {
+        IdeaSummary p = getPanel(i);
+        if (p == null)
+            return;
+        
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-                IdeaSummary p = getPanel(i);
+                
+                
+                if (currentTaskBudget!=null)
+                    p.applyPriority(currentTaskBudget.getPriority());
 
                 //SwingUtilities..
                 content.remove(p);
@@ -195,7 +247,7 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
 
     protected void onOutputConcept(Concept c) {
         Idea i = ideas.get(c);
-        update(i);
+        update(i, null);
     }
 
     protected IdeaSummary getPanel(Idea i) {
