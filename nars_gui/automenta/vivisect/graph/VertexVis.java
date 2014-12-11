@@ -44,7 +44,8 @@ public class VertexVis<V, E> {
     public VertexVis(PCanvas canvas, V o) {
         this.canvas = canvas;
         this.vertex = o;
-        x = y = 0;
+        x = (float) Math.random();
+        y = (float) Math.random();
         tx = x;
         ty = y;
         stroke = 0;

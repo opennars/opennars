@@ -186,7 +186,9 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             });
             m.add(mv3);
             
-            JMenuItem cct4 = new JMenuItem("+ Input Drawing");
+            //not really relevant for NARS, Im working on a active approach to detecting such patterns
+            //which will work when conditioning works good
+           /* JMenuItem cct4 = new JMenuItem("+ Input Drawing");
             cct4.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -195,11 +197,9 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                     w.setVisible(true);
                 }                
             });
-            m.add(cct4);
+            m.add(cct4); */
             
-            m.addSeparator();
-            
-            JMenuItem ml = new JMenuItem("+ Output Log");
+            JMenuItem ml = new JMenuItem("+ Output");
             ml.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
@@ -207,6 +207,9 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 }
             });
             m.add(ml);
+            
+            m.addSeparator();
+
 
             JMenuItem mv = new JMenuItem("+ Concept Network");
             mv.addActionListener(new ActionListener() {
@@ -229,7 +232,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 
             m.addSeparator();
 
-            JMenuItem pml = new JMenuItem("+ Planning Log");
+            /* JMenuItem pml = new JMenuItem("+ Planning Log");
             pml.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
@@ -240,13 +243,13 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                     .show(500, 300);
                 }
             });
-            m.add(pml);
+            m.add(pml); */
             
-            JMenuItem gml = new JMenuItem("+ Garbage Log");
+            JMenuItem gml = new JMenuItem("+ Forgetting Log");
             gml.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
-                    new NWindow("Garbage", new SwingLogPanel(NARControls.this, 
+                    new NWindow("Forgot", new SwingLogPanel(NARControls.this, 
                             Events.ConceptForget.class
                             //, Events.TaskRemove.class, Events.TermLinkRemove.class, Events.TaskLinkRemove.class)
                     ))
@@ -255,13 +258,13 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             });
             m.add(gml);
             
-            JMenuItem al = new JMenuItem("+ Activity");
+            /* JMenuItem al = new JMenuItem("+ Activity");
             al.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new NWindow("Activity", new MultiOutputPanel(NARControls.this)).show(500, 300);                }
             });
-            m.add(al);
+            m.add(al); */
             
 
 
@@ -278,7 +281,16 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 //            m.add(mv2);
 //
 //            
-            JMenuItem imv = new JMenuItem("+ Implication Graph");
+            
+            
+            /*
+            not working anyway, like multiple input of
+            <a --> b>. :|:
+            6
+            <x --> y>. :|:
+            shows
+            
+            JMenuItem imv = new JMenuItem("+ Eternalized Implications Graph");
             imv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -292,7 +304,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                                     ))).show(500, 500);
                 }
             });
-            m.add(imv);
+            m.add(imv); */
 //
 //            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
 //            sg.addActionListener(new ActionListener() {
@@ -312,7 +324,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             tt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
-                    new NWindow("Task Tree", new TaskTree(nar)).show(300, 650, true);
+                    new NWindow("Task Tree", new TaskTree(nar)).show(300, 650, false);
                 }
             });
             m.add(tt);
@@ -341,7 +353,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             });
             m.add(st);
 
-            JMenuItem fc = new JMenuItem("+ Freq. vs Confidence");
+         /* not working yet anyway   JMenuItem fc = new JMenuItem("+ Freq. vs Confidence");
             fc.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -351,7 +363,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                     wbc.setVisible(true);
                 }
             });
-            m.add(fc);
+            m.add(fc); */
             
             JMenuItem hf = new JMenuItem("+ Humanoid Face");
             hf.addActionListener(new ActionListener() {
