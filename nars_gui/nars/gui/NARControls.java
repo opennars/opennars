@@ -318,6 +318,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 //            });
 //            m.add(sg);
             
+            m.addSeparator();
             
             JMenuItem tt = new JMenuItem("+ Task Tree");
             tt.addActionListener(new ActionListener() {
@@ -337,6 +338,8 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 }
             });
             m.add(it);
+            
+            m.addSeparator();
             
             JMenuItem st = new JMenuItem("+ Sentence Table");
             st.addActionListener(new ActionListener() {

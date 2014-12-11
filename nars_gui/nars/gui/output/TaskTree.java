@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.border.MatteBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -65,6 +66,8 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
 
         tree = new JTree();
         model = new DefaultTreeModel(root);
+        tree.setRootVisible(false);
+        tree.setShowsRootHandles(true);
         tree.setModel(model);
         tree.setCellRenderer(new CustomDefaultRenderer());
 
@@ -187,7 +190,7 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
         for (Task t : toAdd) {
             Task parent = t.parentTask;
             if (parent!=null && parent.equals(t)) {
-                System.err.println(t + " has parentTask equal to itself");
+                //System.err.println(t + " has parentTask equal to itself");
                 parent = null;
             }
 
@@ -263,14 +266,26 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
             }
             float taskPri = t.getPriority();
             TruthValue desire = t.getDesire();
+            
+            Color iColor;
             if (desire!=null) {
                 float confidence = t.getDesire().getConfidence();
-                setForeground(new Color(0,confidence/1.5f,conPri/1.5f,0.75f + 0.25f * confidence));
+                iColor = new Color(0,confidence/1.5f,conPri/1.5f,0.75f + 0.25f * confidence);
             }        
             else {
-                setForeground(new Color(0,0,conPri/1.5f,1f));
+                iColor = new Color(0,0,conPri/1.5f,1f);
             }
+            setBorder(new MatteBorder(0,15,0,0,iColor));
+            
+           
+            setForeground(Color.WHITE);
+            
+            setOpaque(true);
+            final float hue = 0.3f + 0.5f * conPri;            
+            Color c = Color.getHSBColor(hue, 0.4f, conPri * 0.2f);
             //setBackground(new Color(1f-taskPri/4f,1f,1f-taskPri/4f));
+            setBackground(c);
+            
             setFont(Video.monofont.deriveFont(14f + taskPri * 4f));
             setText(t.toStringExternal2());
             
