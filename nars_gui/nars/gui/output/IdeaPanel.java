@@ -16,8 +16,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
+import nars.core.Events.ConceptBeliefAdd;
+import nars.core.Events.ConceptBeliefRemove;
 import nars.core.Events.ConceptForget;
+import nars.core.Events.ConceptGoalAdd;
+import nars.core.Events.ConceptGoalRemove;
 import nars.core.Events.ConceptNew;
+import nars.core.Events.ConceptQuestionAdd;
+import nars.core.Events.ConceptQuestionRemove;
 import nars.core.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -53,6 +59,19 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
         ideas = new IdeaSet(nar);
 
     }
+    @Override
+    protected void onShowing(boolean showing) {
+        ideas.enable(showing);
+        //nar.memory.event.set(this, showing, Output.DefaultOutputEvents);
+        nar.memory.event.set(this, showing, 
+                ConceptNew.class, ConceptForget.class, 
+                ConceptBeliefAdd.class,
+                ConceptBeliefRemove.class,
+                ConceptQuestionAdd.class,
+                ConceptQuestionRemove.class,
+                ConceptGoalAdd.class,
+                ConceptGoalRemove.class);
+    }
 
     @Override
     public void event(Class event, Object[] args) {
@@ -62,7 +81,7 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
                 Task t = (Task) args[0];
                 onOutputTask(t);
             }
-        } else if (args[0] instanceof Concept) {
+        } else/* if (args[0] instanceof Concept)*/ {
             if (showConcepts) {
                 Concept c = (Concept) args[0];
                 onOutputConcept(c);
@@ -262,11 +281,5 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
         return existing;
     }
 
-    @Override
-    protected void onShowing(boolean showing) {
-        ideas.enable(showing);
-        nar.memory.event.set(this, showing, Output.DefaultOutputEvents);
-        nar.memory.event.set(this, showing, ConceptNew.class, ConceptForget.class);
-    }
 
 }
