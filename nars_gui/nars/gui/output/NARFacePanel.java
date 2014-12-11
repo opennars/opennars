@@ -30,8 +30,8 @@ public class NARFacePanel extends HumanoidFacePanel  {
     public void update(double t) {
         happy = nar.memory.emotion.happy() > 0.6;
         busy = nar.memory.emotion.busy() > 0.95;
-        float conceptPriority = ((Number)nar.memory.logic.get("concept.priority.mean")).floatValue();
-        float taskNewPriority = ((Number)nar.memory.logic.get("task.new.priority.mean")).floatValue();        
+        float conceptPriority = 0.5f; //((Number)nar.memory.logic.get("concept.priority.mean")).floatValue();
+        float taskNewPriority = 0.5f; //((Number)nar.memory.logic.get("task.new.priority.mean")).floatValue();        
         
         //max out at 0.5
         conceptPriority = Math.min(conceptPriority, 0.4f);
