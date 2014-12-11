@@ -8,6 +8,7 @@ import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,9 +33,9 @@ and tasks where the only differ by the top-level operator, tense, freq, conf,etc
  */
 public class Idea implements Iterable<Concept> {
    
-    final public Set<Concept> concepts = new HashSet();
+    final public Set<Concept> concepts = Collections.synchronizedSet(new HashSet());
     final CharSequence key;
-    Set<OperatorPunctuation> feature = new HashSet();
+    final Set<OperatorPunctuation> feature = new HashSet();
     final Set<NativeOperator> operators = new HashSet<NativeOperator>();
 
 
@@ -77,11 +78,29 @@ public class Idea implements Iterable<Concept> {
         return operators;
     }
     
+
+    /** returns the first term */
+    public Term getSampleTerm() {
+        return concepts.iterator().next().getTerm();
+    }
+    
+    /** # of terms, which will be equal in all Concept terms */
+    public int getArity() {        
+        Term sampleTerm = getSampleTerm();
+        if (sampleTerm instanceof CompoundTerm) {
+            return ((CompoundTerm)sampleTerm).term.length;
+        }
+        return 1;
+    }
+    
     public static class OperatorPunctuation implements Comparable<OperatorPunctuation> {
         
         public final NativeOperator op;
         public final char punc;
-        private final int hash;
+        
+        //TODO tense, image index
+        
+        transient private final int hash;
 
         public OperatorPunctuation(NativeOperator o, char c) {
             this.op = o;
