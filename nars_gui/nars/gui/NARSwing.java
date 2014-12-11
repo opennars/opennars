@@ -127,9 +127,6 @@ public class NARSwing  {
 //        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
 //        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
 //        outputWindow.setVisible(true);
-        
-        
-        new NWindow("Ideas", new IdeaPanel(nar)).show(400, 700, false);
 
                 
         
