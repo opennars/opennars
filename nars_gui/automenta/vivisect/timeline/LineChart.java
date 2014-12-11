@@ -116,7 +116,7 @@ public class LineChart extends Chart implements MultiChart {
         l.g.textSize(15f);
         float dsyt = screenyHi + 0.15f * dsy;
         for (TreeMLData chart : data) {
-            l.g.fill(chart.getColor());
+            l.g.fill(chart.getColor() | 0x77777777);
             dsyt += ytspace;
             l.g.text(chart.label, 0, dsyt);
             dsyt += ytspace;
