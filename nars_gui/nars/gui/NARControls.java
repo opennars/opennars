@@ -62,6 +62,7 @@ import static nars.core.Memory.Timing.Simulation;
 import nars.core.NAR;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
+import nars.gui.output.IdeaPanel;
 import nars.gui.output.MultiOutputPanel;
 import nars.gui.output.PluginPanel;
 import nars.gui.output.SentenceTablePanel;
@@ -314,6 +315,16 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 }
             });
             m.add(tt);
+            
+            
+            JMenuItem it = new JMenuItem("+ Idea Panel");
+            it.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {                    
+                    new NWindow("Ideas", new IdeaPanel(nar)).show(400, 700, false);
+                }
+            });
+            m.add(it);
             
             JMenuItem st = new JMenuItem("+ Sentence Table");
             st.addActionListener(new ActionListener() {
