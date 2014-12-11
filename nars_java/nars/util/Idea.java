@@ -150,7 +150,7 @@ public class Idea implements Iterable<Concept> {
         return b;
     }
 
-    protected void update() {
+    public void update() {
         
         operators.clear();
         feature.clear();
@@ -199,6 +199,22 @@ public class Idea implements Iterable<Concept> {
     public Iterator<Concept> iterator() {
         return concepts.iterator();
     }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj==this) return true;
+        if (obj instanceof Idea) {
+            return key.equals(((Idea)obj).key);
+        }
+        return false;
+    }
+    
+    
     
     
     public static class IdeaSet extends HashMap<CharSequence,Idea> implements EventObserver {
@@ -241,7 +257,7 @@ public class Idea implements Iterable<Concept> {
             return get(Idea.getKey(t.getTerm()));
         }
         
-        public void add(Concept c) {
+        public Idea add(Concept c) {
             Idea existing = get(c);
             if (existing == null) {
                 existing = new Idea(c);
@@ -252,13 +268,15 @@ public class Idea implements Iterable<Concept> {
             else {
                 existing.add(c);
             }
+            return existing;
         }
         
-        public void remove(Concept c) {
+        public Idea remove(Concept c) {
             Idea existing = get(c);
             if (existing != null) {
                 existing.remove(c);
             }
+            return existing;
         }
         
     }
