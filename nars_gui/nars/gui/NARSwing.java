@@ -61,7 +61,9 @@ public class NARSwing  {
         UIManager.put("Label.foreground", Color.WHITE);
 
         UIManager.put("Tree.background", Color.BLACK);
-        UIManager.put("Tree.foreground", Color.WHITE);
+        UIManager.put("Tree.foreground", Color.BLACK);
+        UIManager.put("Tree.textForeground", Color.WHITE);
+        UIManager.put("Tree.textBackground", Color.BLACK);
         UIManager.put("TextPane.background", Color.BLACK);
         UIManager.put("TextPane.foreground", Color.WHITE);
         UIManager.put("TextEdit.background", Color.BLACK);
