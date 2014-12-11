@@ -22,9 +22,9 @@ public class DeriveOnlyDemandedTasks implements DerivationFilter {
         
         Sentence s = task.sentence;
         
-        if ((s.punctuation == Symbols.JUDGMENT_MARK) && !(s.content instanceof Operation)) {
+        if ((s.punctuation == Symbols.JUDGMENT_MARK) && !(s.term instanceof Operation)) {
             
-            boolean noConcept = (nal.memory.concept(s.content) == null);
+            boolean noConcept = (nal.memory.concept(s.term) == null);
 
             if (noConcept) {
                 //there is no question and goal of this, return

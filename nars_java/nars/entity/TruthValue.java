@@ -25,6 +25,7 @@ import static nars.core.Parameters.TRUTH_EPSILON;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Term;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 
 public class TruthValue implements Cloneable { // implements Cloneable {
@@ -289,5 +290,15 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         }
         return Truth_UNSURE;
     }
+
+    public interface Truthable {
+        public TruthValue getTruth();
+    }
     
+    public DescriptiveStatistics freqStatistics(Iterable<Truthable> t) {
+        DescriptiveStatistics d = new DescriptiveStatistics();
+        for (Truthable x : t)
+            d.addValue(x.getTruth().frequency);
+        return d;
+    }
 }

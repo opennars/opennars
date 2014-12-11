@@ -153,7 +153,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             if (newEvent.sentence.truth!=null) {
                 float newTaskExpectation = newEvent.sentence.truth.getExpectation();
                 if (newTaskExpectation > 0.5)
-                    newTasks.add(newEvent.getContent());
+                    newTasks.add(newEvent.getTerm());
             }
         }
 

@@ -30,6 +30,7 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.Default.CommandLineNARBuilder;
+import nars.gui.output.IdeaPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -128,7 +129,7 @@ public class NARSwing  {
 //        outputWindow.setVisible(true);
         
         
-        
+        new NWindow("Ideas", new IdeaPanel(nar)).show(400, 700, false);
 
                 
         

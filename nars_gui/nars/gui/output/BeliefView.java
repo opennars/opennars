@@ -25,7 +25,7 @@ public class BeliefView extends PPanel {
         }
         
         public void include(Sentence s) {
-            assert(s.content.equals(term));
+            assert(s.term.equals(term));
             TruthValue t = s.truth;
             if (t!=null) {
                 float co = t.getConfidence();

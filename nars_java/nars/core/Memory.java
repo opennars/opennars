@@ -256,7 +256,7 @@ public class Memory implements Serializable {
             if (eventClass == Events.ConceptQuestionAdd.class) {                    
                 //Concept c = params[0];
                 Task t = (Task)params[1];
-                Term term = t.getContent();
+                Term term = t.getTerm();
                 if (term instanceof Conjunction) {
                     questionsConjunction.add(t);
                 }
@@ -264,7 +264,7 @@ public class Memory implements Serializable {
             else if (eventClass == Events.ConceptQuestionAdd.class) {
                 //Concept c = params[0];
                 Task t = (Task)params[1];
-                Term term = t.getContent();
+                Term term = t.getTerm();
                 if (term instanceof Conjunction) {
                     questionsConjunction.remove(t);
                 }
@@ -444,9 +444,9 @@ public class Memory implements Serializable {
 
     //TODO decide if this is necessary
     public void temporalRuleOutputToGraph(Sentence s, Task t) {
-        if(t.sentence.content instanceof Implication && t.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+        if(t.sentence.term instanceof Implication && t.sentence.term.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
             
-            executive.graph.implication.add(s, (CompoundTerm)s.content, t);            
+            executive.graph.implication.add(s, (CompoundTerm)s.term, t);            
         }
 
     }
@@ -775,7 +775,7 @@ public class Memory implements Serializable {
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
  
             
-            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.content)!=null) { //it is a question/goal/quest or a concept which exists                   
+            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term)!=null) { //it is a question/goal/quest or a concept which exists                   
                 // ok so lets fire it
                 queue.add(new ImmediateProcess(this, task, numTasks - 1)); 
             } else { 
@@ -1026,7 +1026,7 @@ public class Memory implements Serializable {
 
         if (stmLast != null) {
 
-            if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content, stmLast.sentence.content)) {
+            if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
                 return false;
             }
 

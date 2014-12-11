@@ -137,12 +137,6 @@ abstract public class Image extends CompoundTerm {
         return (relationIndex == 0) ? term[1] : term[0];
     }    
 
-    @Override
-    public boolean isVector() {
-        return true;
-    }
-
-
     
     
 }

@@ -1,5 +1,6 @@
 package nars.plugin.mental;
 
+import java.util.Arrays;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Memory;
@@ -65,6 +66,41 @@ public class InternalExperience implements Plugin, EventObserver {
                 
         return true;
     }
+    
+        public static Term toTerm(final Sentence s, final Memory mem) {
+        String opName;
+        switch (s.punctuation) {
+            case Symbols.JUDGMENT_MARK:
+                opName = "^believe";
+                break;
+            case Symbols.GOAL_MARK:
+                opName = "^want";
+                break;
+            case Symbols.QUESTION_MARK:
+                opName = "^wonder";
+                break;
+            case Symbols.QUEST_MARK:
+                opName = "^evaluate";
+                break;
+            default:
+                return null;
+        }
+        
+        Term opTerm = mem.getOperator(opName);
+        Term[] arg = new Term[ s.truth==null ? 1 : 2 ];
+        arg[0]=s.getTerm();
+        if (s.truth != null) {
+            arg[1] = s.truth.toWordTerm();            
+        }
+        
+        //Operation.make ?
+        Term operation = Inheritance.make(new Product(arg), opTerm);
+        if (operation == null) {
+            throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
+        }
+        return operation;
+    }
+
 
     @Override
     public void event(Class event, Object[] a) {
@@ -77,7 +113,7 @@ public class InternalExperience implements Plugin, EventObserver {
             if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return;
             }
-            Term content = task.getContent();
+            Term content = task.getTerm();
 
             // to prevent infinite recursions
             if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/)
@@ -89,7 +125,7 @@ public class InternalExperience implements Plugin, EventObserver {
             Stamp stamp = task.sentence.stamp.clone();
             stamp.setOccurrenceTime(memory.time());
 
-            Sentence j = new Sentence(sentence.toTerm(memory), Symbols.JUDGMENT_MARK, truth, stamp);
+            Sentence j = new Sentence(toTerm(sentence, memory), Symbols.JUDGMENT_MARK, truth, stamp);
             BudgetValue newbudget=new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
@@ -125,7 +161,7 @@ public class InternalExperience implements Plugin, EventObserver {
             //also get a chance to reveal its effects to the system this way
             Operator op=memory.getOperator(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
             
-            Product prod=new Product(new Term[]{belief.content});
+            Product prod=new Product(new Term[]{belief.term});
             
             if(op!=null && prod!=null) {
                 

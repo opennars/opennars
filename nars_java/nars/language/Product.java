@@ -95,9 +95,5 @@ public class Product extends CompoundTerm {
         return NativeOperator.PRODUCT;
     }
 
-    @Override public boolean isVector() {
-        return true;
-    }
-    
     
 }

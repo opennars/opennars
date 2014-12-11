@@ -74,7 +74,7 @@ public class LocalRules {
             }
         } else {
             if (matchingOrder(sentence, belief)) {
-                Term[] u = new Term[] { sentence.content, belief.content };
+                Term[] u = new Term[] { sentence.term, belief.term };
                 if (Variables.unify(Symbols.VAR_QUERY, u)) {
                     trySolution(belief, task, nal);
                 }
@@ -107,7 +107,7 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
-        if (newBelief.content==null) return false;
+        if (newBelief.term==null) return false;
         
         TruthValue newTruth = newBelief.truth;
         TruthValue oldTruth = oldBelief.truth;
@@ -115,7 +115,7 @@ public class LocalRules {
         BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
         
         if (budget.aboveThreshold()) {
-            if (nal.doublePremiseTaskRevised(newBelief.content, truth, budget)) {
+            if (nal.doublePremiseTaskRevised(newBelief.term, truth, budget)) {
                 nal.mem().logic.BELIEF_REVISION.commit();
                 return true;
             }
@@ -156,9 +156,9 @@ public class LocalRules {
             }
         }
         
-        Term content = belief.content;
+        Term content = belief.term;
         if (content.hasVarIndep()) {
-            Term u[] = new Term[] { content, problem.content };
+            Term u[] = new Term[] { content, problem.term };
             
             boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u);            
             content = u[0];
@@ -170,7 +170,7 @@ public class LocalRules {
             }
             
             Stamp st = new Stamp(belief.stamp, memory.time());
-            st.chainAdd(belief.content);
+            st.chainAdd(belief.term);
         }
 
         task.setBestSolution(belief);
@@ -260,7 +260,7 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static void inferToSym(Sentence judgment1, Sentence judgment2, NAL nal) {
-        Statement s1 = (Statement) judgment1.content;
+        Statement s1 = (Statement) judgment1.term;
         Term t1 = s1.getSubject();
         Term t2 = s1.getPredicate();
         Term content;
@@ -285,7 +285,7 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static void inferToAsym(Sentence asym, Sentence sym, NAL nal) {
-        Statement statement = (Statement) asym.content;
+        Statement statement = (Statement) asym.term;
         Term sub = statement.getPredicate();
         Term pre = statement.getSubject();
         
@@ -318,7 +318,7 @@ public class LocalRules {
      */
     private static void convertRelation(final NAL nal) {
         TruthValue truth = nal.getCurrentBelief().truth;
-        if (((CompoundTerm) nal.getCurrentTask().getContent()).isCommutative()) {
+        if (((CompoundTerm) nal.getCurrentTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(truth, 1.0f);
@@ -337,8 +337,8 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final NAL nal) {
-        Statement content = (Statement) nal.getCurrentTask().getContent();
-        Statement beliefContent = (Statement) nal.getCurrentBelief().content;
+        Statement content = (Statement) nal.getCurrentTask().getTerm();
+        Statement beliefContent = (Statement) nal.getCurrentBelief().term;
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
         final Term subjT = content.getSubject();
         final Term predT = content.getPredicate();

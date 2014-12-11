@@ -1,12 +1,10 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.ReflectPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
@@ -17,13 +15,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import nars.core.EventEmitter.EventObserver;
@@ -37,26 +35,22 @@ import nars.util.PackageUtility;
  * Manages the activated set of plugins in a NAR, and a menu for adding additional ones
  * and presets of them.
  */
-public class PluginPanel extends NPanel {
+public class PluginPanel extends VerticalPanel {
     private final NAR nar;
-    private final JPanel plugins;
     private final JMenuBar menu;
-    private final JPanel pluginsWrap;
+    
 
     public PluginPanel(NAR nar) {
-        super(new BorderLayout());
+        super();
+        
         this.nar = nar;
         
         
         menu = new JMenuBar();
         initMenu();
         
-        plugins = new JPanel(new GridBagLayout());
-        pluginsWrap = new JPanel(new BorderLayout());
-        pluginsWrap.add(plugins, BorderLayout.NORTH);
         
         add(menu, BorderLayout.NORTH);
-        add(new JScrollPane(pluginsWrap), BorderLayout.CENTER);
         
         update();
         
@@ -145,33 +139,27 @@ public class PluginPanel extends NPanel {
         
     }
     
+
+    
     protected void update() {
-        plugins.removeAll();
+        content.removeAll();
         
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        
-        gc.gridx = 0;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.gridy = 0;
-        
+        int i = 0;
         List<PluginState> ppp = nar.getPlugins();
         if (!ppp.isEmpty()) {
             for (PluginState p : ppp) {
                 PluginPane pp = new PluginPane(p);
                 pp.setBorder(new BevelBorder(BevelBorder.RAISED));            
-                plugins.add(pp, gc);
-                gc.gridy++;
+                addPanel(i++, pp);
             }
         }
         else {
-            plugins.add(new JLabel("(empty)"), gc);
+            addPanel(i++, new JLabel("(No plugins active.)"));
         }
     
         
-        pluginsWrap.doLayout();
-        pluginsWrap.validate();
+        contentWrap.doLayout();
+        contentWrap.validate();
     }
     
 

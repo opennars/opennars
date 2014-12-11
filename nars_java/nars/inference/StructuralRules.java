@@ -296,7 +296,7 @@ public final class StructuralRules {
      */
     private static void structuralStatement(Term subject, Term predicate, int order, TruthValue truth, NAL nal) {
         Task task = nal.getCurrentTask();
-        Term oldContent = task.getContent();
+        Term oldContent = task.getTerm();
         if (oldContent instanceof Statement) {
             Statement content = Statement.make((Statement) oldContent, subject, predicate, order);
             if (content != null) {

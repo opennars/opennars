@@ -101,7 +101,7 @@ public final class CompositionalRules {
             return;
         }
 
-        final Term term1 = sentence.content;
+        final Term term1 = sentence.term;
         final boolean term1ContainVar = term1.hasVar();
         final boolean term1Conjunction = term1 instanceof Conjunction;
 
@@ -109,7 +109,7 @@ public final class CompositionalRules {
             return;
         }
 
-        final Term term2 = belief.content;
+        final Term term2 = belief.term;
         final boolean term2ContainVar = term2.hasVar();
         final boolean term2Conjunction = term2 instanceof Conjunction;
 
@@ -129,7 +129,7 @@ public final class CompositionalRules {
                 Sentence qu = question.sentence;
 
                 //if(qu==null) { assert(false); continue; }
-                final Term pcontent = qu.content;
+                final Term pcontent = qu.term;
                 if (!(pcontent instanceof Conjunction)) {
                     continue;
                 }
@@ -286,7 +286,7 @@ public final class CompositionalRules {
             return;
         }
         Term content = Statement.make(statement, subject, predicate, order);
-        if ((content == null) || statement == null || content.equals(statement) || content.equals(nal.getCurrentBelief().content)) {
+        if ((content == null) || statement == null || content.equals(statement) || content.equals(nal.getCurrentBelief().term)) {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
@@ -316,7 +316,7 @@ public final class CompositionalRules {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
-        Statement oldContent = (Statement) task.getContent();
+        Statement oldContent = (Statement) task.getTerm();
         TruthValue v1,
                 v2;
         if (compoundTask) {
@@ -417,7 +417,7 @@ public final class CompositionalRules {
             budget = BudgetFunctions.compoundBackward(content, nal);
             nal.doublePremiseTask(content, truth, budget, false);
             // special inference to answer conjunctive questions with query variables
-            if (taskSentence.content.hasVarQuery()) {
+            if (taskSentence.term.hasVarQuery()) {
                 Concept contentConcept = nal.mem().concept(content);
                 if (contentConcept == null) {
                     return;
@@ -694,7 +694,7 @@ public final class CompositionalRules {
 
             TruthValue truth;
             
-            if (premise1.equals(taskSentence.content)) {
+            if (premise1.equals(taskSentence.term)) {
                 truth = induction(belief.truth, taskSentence.truth);
             } else {
                 truth = induction(taskSentence.truth, belief.truth);
@@ -741,8 +741,8 @@ public final class CompositionalRules {
     }
 
     public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final NAL nal) {
-        Statement T1 = (Statement) sentence.content;
-        Statement T2 = (Statement) belief.content;
+        Statement T1 = (Statement) sentence.term;
+        Statement T2 = (Statement) belief.term;
 
         Term S1 = T2.getSubject();
         Term S2 = T1.getSubject();
@@ -999,7 +999,7 @@ public final class CompositionalRules {
     }
 
     static void IntroVarSameSubjectOrPredicate(final Sentence originalMainSentence, final Sentence subSentence, final Term component, final Term content, final int index, final NAL nal) {
-        Term T1 = originalMainSentence.content;
+        Term T1 = originalMainSentence.term;
         if (!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
             return;
         }
@@ -1046,7 +1046,7 @@ public final class CompositionalRules {
             return false;
         }
 
-        Term first = taskSentence.content;
+        Term first = taskSentence.term;
 
         if (!first.hasVar()) {
             return false;
@@ -1217,7 +1217,7 @@ public final class CompositionalRules {
                 Sentence newSentence = new Sentence(result, mark, truth,
                         new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase));
 
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.term, nal);
 
                 if (budget.aboveThreshold()) {
                     Task newTask = new Task(newSentence, budget, task, null);
@@ -1277,7 +1277,7 @@ public final class CompositionalRules {
 
             try {
                 Sentence newSentence = new Sentence(result, mark, truth, sx);
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.term, nal);
 
 
                 if (budget.aboveThreshold()) {

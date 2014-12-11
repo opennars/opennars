@@ -67,14 +67,14 @@ public class Predict1D {
         Map<Term, Sentence> belief = new TreeMap();
 
         public void add(Sentence s, int duration) {
-            Term term = getValue(s.content);
+            Term term = getValue(s.term);
             if (term == null) {
                 return;
             }
 
             float conf = s.truth.getConfidence();
 
-            Sentence existingSolution = belief.get(s.content);
+            Sentence existingSolution = belief.get(s.term);
             boolean sameTime = false, newer = false, moreConfident = false;
             if (existingSolution!=null) {
                 sameTime = existingSolution.stamp.getOccurrenceTime() == s.stamp.getOccurrenceTime();
@@ -84,7 +84,7 @@ public class Predict1D {
                     
             if ((existingSolution == null) || 
                     (sameTime && moreConfident) || (newer)) {                      
-                belief.put(s.content, s);
+                belief.put(s.term, s);
             }
 
         }
@@ -101,7 +101,7 @@ public class Predict1D {
         public float getExpectation(Term b) {
 
             for (Sentence s : belief.values()) {
-                if (getValue(s.content).equals(b)) {
+                if (getValue(s.term).equals(b)) {
                     double dt = Math.max(0, s.stamp.getOccurrenceTime() - (predictionFutureCycles + nar.time()));
                     dt /= cyclesPerDuration;
                     return (s.truth.getExpectation()+1f)/2f * (float)(1.0f / ( 1f + dt));
@@ -229,7 +229,7 @@ public class Predict1D {
     public String summarizeExpectation(List<Sentence> l) {
         String s = "";
         for (Sentence p : l) {
-            s += p.content + "=" + n2(p.truth.getExpectation()) + ",";
+            s += p.term + "=" + n2(p.truth.getExpectation()) + ",";
         }
         return s;
     }
@@ -310,7 +310,7 @@ public class Predict1D {
     float evidence[] = new float[discretization];
 
     public void onBelief(Sentence s) {
-        Term t = s.content;
+        Term t = s.term;
         if (!s.isEternal()) {
             Integer i = getSampleObservation(t, "x");
             if (i == null) return;

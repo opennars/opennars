@@ -122,7 +122,7 @@ public class DefaultGraphizer implements NARGraph.Graphize {
         }
         if (includeQuestions) {
             for (final Task q : c.getQuestions()) {
-                if (c.term.equals(q.getContent())) {
+                if (c.term.equals(q.getTerm())) {
                     continue;
                 }
                 //TODO extract to onQuestion
@@ -197,12 +197,12 @@ public class DefaultGraphizer implements NARGraph.Graphize {
                         continue;
                     }
                     final Collection<Term> tchain = deriverSentence.stamp.getChain();
-                    if (schain.contains(deriverSentence.content)) {
+                    if (schain.contains(deriverSentence.term)) {
                         g.addVertex(derived);
                         g.addVertex(deriver);
                         g.addEdge(deriver, derived, new NARGraph.TermDerivation());
                     }
-                    if (tchain.contains(derivedSentence.content)) {
+                    if (tchain.contains(derivedSentence.term)) {
                         g.addVertex(derived);
                         g.addVertex(deriver);
                         g.addEdge(derived, deriver, new NARGraph.TermDerivation());
@@ -228,7 +228,7 @@ public class DefaultGraphizer implements NARGraph.Graphize {
                     Task theTask = t.targetTask;
                     if (!g.containsVertex(theTask)) {
                         g.addVertex(theTask);
-                        Term term = theTask.getContent();
+                        Term term = theTask.getTerm();
                         if (term != null) {
                             Concept c = terms.get(term);
                             if (c != null) {

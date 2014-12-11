@@ -41,7 +41,7 @@ public class TuneTuffy {
         public void event(Class event, Object[] args) {
             if ((event == Solved.class) || (event == OUT.class)) {
                 Task task = (Task)args[0];
-                Term content = task.sentence.content;
+                Term content = task.sentence.term;
                 if (task.sentence.isJudgment()) {
                     if (content.equals(term)) {
                         onJudgment(task.sentence);

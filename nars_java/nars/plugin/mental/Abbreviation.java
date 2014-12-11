@@ -88,8 +88,8 @@ public class Abbreviation implements Plugin {
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
     
     public boolean canAbbreviate(Task task) {
-        return !(task.sentence.content instanceof Operation) && 
-                (task.sentence.content.getComplexity() > abbreviationComplexityMin.get()) &&
+        return !(task.sentence.term instanceof Operation) && 
+                (task.sentence.term.getComplexity() > abbreviationComplexityMin.get()) &&
                 (task.budget.getQuality() > abbreviationQualityMin.get());
     }
     
@@ -118,7 +118,7 @@ public class Abbreviation implements Plugin {
                     if (canAbbreviate(task)) {
 
                         Operation operation = Operation.make(
-                                abbreviate, termArray( task.sentence.content ), 
+                                abbreviate, termArray(task.sentence.term ), 
                                 false);
 
                         abbreviate.call(operation, memory);

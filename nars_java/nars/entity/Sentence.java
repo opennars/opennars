@@ -21,7 +21,6 @@
 package nars.entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.inference.TruthFunctions;
@@ -38,10 +36,9 @@ import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
-import nars.language.Inheritance;
-import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Terms.Termable;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -52,14 +49,14 @@ import nars.operator.Operator;
  * <p>
  * It is used as the premises and conclusions of all inference rules.
  */
-public class Sentence<T extends Term> implements Cloneable {
+public class Sentence<T extends Term> implements Cloneable, Termable {
 
 
 
     /**
      * The content of a Sentence is a Term
      */
-    public final T content;
+    public final T term;
     
     /**
      * The punctuation also indicates the type of the Sentence: 
@@ -134,9 +131,9 @@ public class Sentence<T extends Term> implements Cloneable {
         //TODO move this to Concept method, like cloneNormalized()
         if (_content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
             
-            this.content = (T)((CompoundTerm)_content).cloneDeepVariables();
+            this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
             
-            final CompoundTerm c = (CompoundTerm)content;
+            final CompoundTerm c = (CompoundTerm)term;
             
             List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
             
@@ -188,14 +185,14 @@ public class Sentence<T extends Term> implements Cloneable {
             
         }
         else {
-            this.content = _content;
+            this.term = _content;
         }
         
     
         if (isUniqueByOcurrenceTime())
-            this.hash = Objects.hash( content, punctuation, truth, stamp.getOccurrenceTime());
+            this.hash = Objects.hash(term, punctuation, truth, stamp.getOccurrenceTime());
         else 
-            this.hash = Objects.hash( content, punctuation, truth );
+            this.hash = Objects.hash(term, punctuation, truth );
     }
 
     protected boolean isUniqueByOcurrenceTime() {
@@ -230,7 +227,7 @@ public class Sentence<T extends Term> implements Cloneable {
             }
             else if (!truth.equals(t.truth)) return false;            
             
-            if (!content.equals(t.content)) return false;
+            if (!term.equals(t.term)) return false;
                     
             return true;
         }
@@ -257,7 +254,7 @@ public class Sentence<T extends Term> implements Cloneable {
      */
     public boolean equivalentTo(final Sentence that) {
         if (Parameters.DEBUG) {
-            if ((!content.equals(content)) || (punctuation != that.punctuation)) {
+            if ((!term.equals(term)) || (punctuation != that.punctuation)) {
                 throw new RuntimeException("invalid comparison for Sentence.equivalentTo");
             }
         }
@@ -271,12 +268,12 @@ public class Sentence<T extends Term> implements Cloneable {
      */
     @Override
     public Sentence clone() {
-        return clone(content);
+        return clone(term);
     }
     
     
     public Sentence clone(boolean makeEternal) {
-        Sentence clon = clone(content);
+        Sentence clon = clone(term);
         if(clon.stamp.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
             //change occurence time of clone
             clon.stamp.setEternal();
@@ -306,7 +303,7 @@ public class Sentence<T extends Term> implements Cloneable {
                 
         Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
         
-        return new Sentence(content, punctuation, newTruth, newStamp);
+        return new Sentence(term, punctuation, newTruth, newStamp);
     }
 
     
@@ -369,7 +366,7 @@ public class Sentence<T extends Term> implements Cloneable {
     }    
     
     public boolean containQueryVar() {
-        return content.hasVarQuery();
+        return term.hasVarQuery();
     }
 
     public boolean getRevisible() {
@@ -381,7 +378,7 @@ public class Sentence<T extends Term> implements Cloneable {
     }
 
     public int getTemporalOrder() {
-        return content.getTemporalOrder();
+        return term.getTemporalOrder();
     }
     
     public long getOccurenceTime() {
@@ -389,8 +386,8 @@ public class Sentence<T extends Term> implements Cloneable {
     }
     
     public Operator getOperator() {
-        if (content instanceof Operation) {
-             return (Operator) ((Statement) content).getPredicate();
+        if (term instanceof Operation) {
+             return (Operator) ((Statement) term).getPredicate();
         } else {
              return null;
         }
@@ -415,7 +412,7 @@ public class Sentence<T extends Term> implements Cloneable {
     public CharSequence getKey() {
         //key must be invalidated if content or truth change
         if (key == null) {
-            final CharSequence contentName = content.name();
+            final CharSequence contentName = term.name();
             
             final boolean showOcurrenceTime = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
             //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
@@ -455,7 +452,7 @@ public class Sentence<T extends Term> implements Cloneable {
      */
     public CharSequence toString(NAR nar, boolean showStamp) {
     
-        CharSequence contentName = content.name();
+        CharSequence contentName = term.name();
         
         final long t = nar.memory.time();
 
@@ -500,42 +497,9 @@ public class Sentence<T extends Term> implements Cloneable {
         truth.setConfidence(truth.getConfidence() * Parameters.DISCOUNT_RATE).setAnalytic(false);
     }
 
-    public Term toTerm(final Memory mem) {
-        String opName;
-        switch (punctuation) {
-            case Symbols.JUDGMENT_MARK:
-                opName = "^believe";
-                break;
-            case Symbols.GOAL_MARK:
-                opName = "^want";
-                break;
-            case Symbols.QUESTION_MARK:
-                opName = "^wonder";
-                break;
-            case Symbols.QUEST_MARK:
-                opName = "^evaluate";
-                break;
-            default:
-                return null;
-        }
-        
-        Term opTerm = mem.getOperator(opName);
-        Term[] arg = new Term[ truth==null ? 1 : 2 ];
-        arg[0]=content;
-        if (truth != null) {
-            arg[1] = truth.toWordTerm();            
-        }
-        
-        //Operation.make ?
-        Term operation = Inheritance.make(new Product(arg), opTerm);
-        if (operation == null) {
-            throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
-        }
-        return operation;
-    }
 
     final public boolean equalsContent(final Sentence s2) {
-        return content.equals(s2.content);
+        return term.equals(s2.term);
     }
 
     public boolean isEternal() {
@@ -588,5 +552,11 @@ public class Sentence<T extends Term> implements Cloneable {
         }
         return false;
     }
+
+    @Override
+    public T getTerm() {
+        return term;
+    }
+    
     
 }
