@@ -218,7 +218,7 @@ public class MeterVis extends TimelineVis {
                 @Override
                 public void run() {
                     setZoom(0.2f);
-                    setPanY(-200f);
+                    setPanY(getHeight());
                     setPanX(-getWidth());
                     camera.timeScale = 3f*10f;
                     camera.yScale = 14f*10f;
