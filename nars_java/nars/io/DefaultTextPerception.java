@@ -51,7 +51,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     private boolean enableEnglisch = false;
     
     private boolean enableTwenglish = false; //the events should be introduced event-wise
-    //and not by &/ because else it wont make its way into temporal induction which is crucial here
+    //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal inference
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
