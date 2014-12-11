@@ -47,10 +47,11 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     
     private boolean enableNarsese = true;
 
-    private boolean enableNaturalLanguage = false;    
+    private boolean enableNaturalLanguage = true; //the NLP mode we should strive for
     private boolean enableEnglisch = false;
     
-    private boolean enableTwenglish = true;
+    private boolean enableTwenglish = false; //the events should be introduced event-wise
+    //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal inference
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
