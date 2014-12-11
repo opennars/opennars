@@ -233,7 +233,7 @@ public class Twenglish {
                 results.add(0, narsese.parseNarsese(new StringBuilder(
                         "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.")));
                 results.add(0, narsese.parseNarsese(new StringBuilder(
-                        "$0.90;0.90$ <(*,<#a-->[$d]>,<is-->[verb]>,<#b-->[$d]>) =/> <#a <-> #b>>.")));
+                       "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.")));
                 
                 languageBooted = true;
             }

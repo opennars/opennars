@@ -47,10 +47,12 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     
     private boolean enableNarsese = true;
 
-    private boolean enableNaturalLanguage = false;    
+    private boolean enableNaturalLanguage = true; //the NLP mode we should strive for
     private boolean enableEnglisch = false;
     
-    private boolean enableTwenglish = true;
+    private boolean enableTwenglish = false; //whatever it should do, putting
+    // in &/ terms without a higher order copula like =/> makes it useless for reasning
+    //it needs to be (&/,a1,..an-1) =/> an  and not (&/,a1,..an)
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
