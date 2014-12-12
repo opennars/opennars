@@ -1,4 +1,4 @@
-package nars.plugin.mental.ParticlePlanner;
+package nars.plugin.applicationspecific.ParticlePlanner;
 //this one is needed by temporal particle planner for example
 //or by other plugins which demand adding of executions
 //GCM is always in the lead and should be so it does not need to use this.
