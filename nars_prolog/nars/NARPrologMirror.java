@@ -149,16 +149,14 @@ public class NARPrologMirror extends AbstractObserver {
     public void event(final Class channel, final Object... arg) {        
         
         if (channel == ConceptBeliefAdd.class) {
-            Concept c = (Concept)arg[0];
-            Sentence s = (Sentence)arg[1];
-            Task task = (Task)arg[2];
-            add(s, task);            
+            Concept c = (Concept)arg[0];            
+            Task task = (Task)arg[1];
+            add(task.sentence, task);            
         }
         else if (channel == ConceptBeliefRemove.class) {
-            Concept c = (Concept)arg[0];
-            Sentence s = (Sentence)arg[1];
-            Task task = (Task)arg[2];
-            remove(s, task);
+            Concept c = (Concept)arg[0];            
+            Task task = (Task)arg[1];
+            remove(task.sentence, task);
         }        
         else if (channel == Events.ConceptQuestionAdd.class) {
             Concept c = (Concept)arg[0];            
