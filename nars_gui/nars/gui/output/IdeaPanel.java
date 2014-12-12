@@ -228,31 +228,6 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
         
     }
     
-    /** represents either a Term or its Concept (if exists).
-        if a concept is involved, there may be additional data to display.     */
-    public static class ConceptButton extends JButton implements ActionListener {
-        private Concept concept;
-        private NAR nar;
-
-        public ConceptButton(NAR n, Concept c) {
-            super(c.term.toString());
-            this.concept = c;
-            this.nar = n;
-            addActionListener(this);
-            
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            ConceptsPanel cp;
-            NWindow w = new NWindow(concept.term.toString(), 
-                    new JScrollPane(cp = new ConceptsPanel(nar, concept)));
-            cp.onShowing(true);
-            w.pack();
-            w.setVisible(true);
-        }
-
-    }
 
     int y = 0;
 

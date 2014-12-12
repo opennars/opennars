@@ -22,6 +22,7 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import nars.core.Events.BeliefSelect;
 import nars.core.Events.ConceptBeliefAdd;
@@ -894,6 +895,11 @@ public class Concept extends Item<Term> implements Termable {
 
     public Term getTerm() {
         return term;
+    }
+
+    /** returns unmodifidable collection wrapping beliefs */
+    public List<Sentence> getBeliefs() {
+        return Collections.unmodifiableList(beliefs);
     }
 
     

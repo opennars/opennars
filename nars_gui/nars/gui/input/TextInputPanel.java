@@ -488,9 +488,9 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             comments.setText("");
             for (String[] i : interpretations) {
                 Color c = Video.getColor(i[0], 0.7f, 0.6f);
-                comments.print(Color.WHITE, c, i[0] + ":\n");
+                comments.print(Color.WHITE, c, i[0] + ":\n", null);
                 Color c2 = Video.getColor(i[0], 0.5f, 0.3f);
-                comments.print(Color.WHITE, c2, i[1] + "\n\n");
+                comments.print(Color.WHITE, c2, i[1] + "\n\n", null);
             }
 
 

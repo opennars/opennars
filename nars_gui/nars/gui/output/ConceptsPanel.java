@@ -15,14 +15,17 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.BudgetValue.Budgetable;
 import nars.entity.Concept;
+import nars.entity.Sentence;
 import nars.entity.TruthValue.Truthable;
 import nars.gui.WrapLayout;
 
@@ -88,7 +91,7 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
         private final TruthChart beliefChart;
         private final TruthChart desireChart;
         private final PriorityColumn questionChart;
-        private final JLabel title;
+        private final JTextArea title;
         private final JLabel subtitle;
 
         final int chartWidth = 64;
@@ -110,7 +113,8 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
 
             JPanel titlePanel = new JPanel(new BorderLayout());
             
-            titlePanel.add(this.title = new JLabel(concept.term.toString()), CENTER);
+            titlePanel.add(this.title = new JTextArea(concept.term.toString()), CENTER);
+            this.title.setEditable(false);
             titlePanel.add(this.subtitle = new JLabel(), SOUTH);
             
             details.add(titlePanel);
@@ -123,11 +127,13 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
         public void update() {
 
             if (!concept.beliefs.isEmpty()) {
-                beliefChart.update(concept.beliefs);
-                subtitle.setText(concept.beliefs.get(0).truth.toString());
+                List<Sentence> bb = concept.getBeliefs();
+                beliefChart.update(bb);
+                subtitle.setText(bb.get(0).truth.toString());
             }
             else {
-                subtitle.setText("");
+                if (!concept.questions.isEmpty())
+                    subtitle.setText("??");
             }
 
             if (!concept.questions.isEmpty())

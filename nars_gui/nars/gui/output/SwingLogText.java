@@ -2,11 +2,14 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import javax.swing.AbstractAction;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
@@ -156,6 +159,7 @@ public class SwingLogText extends SwingText  {
 //        
 //    }
     
+    
     protected int print(Class c, Object o)  {        
 
         float priority = 1f;
@@ -202,8 +206,6 @@ public class SwingLogText extends SwingText  {
             }
         }        
         
-        float tc = 0.75f + 0.25f * priority;
-        Color textColor = new Color(tc,tc,tc);
         
         CharSequence text = LogPanel.getText(c, o, showStamp, nar);
         StringBuilder sb = new StringBuilder(text.length()+2);
@@ -216,10 +218,35 @@ public class SwingLogText extends SwingText  {
         if (sb.charAt(sb.length()-1)!='\n')
             sb.append('\n');
                 
+        if (o instanceof Task) {
+            Task t = (Task)o;
+            Concept cc = nar.memory.concept(t.getTerm());            
+            if (cc!=null) {
                 
-        print(textColor, sb.toString());
+                print(Color.WHITE, sb.toString(), new ConceptAction(cc));
+                return doc.getLength();
+            }            
+        }
         
+//        float tc = 0.75f + 0.25f * priority;
+//        Color textColor = new Color(tc,tc,tc);        
+        print(Color.GRAY, sb.toString());        
         return doc.getLength();
+        
+    }
+    
+    public class ConceptAction extends AbstractAction {
+        private final Concept concept;
+
+        public ConceptAction(Concept c) {
+            super();
+            this.concept = c;
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {            
+            ConceptButton.popup(nar, concept);
+        }
         
     }
     

@@ -2,12 +2,17 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Action;
 import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
+import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -23,11 +28,10 @@ public class SwingText extends JTextPane {
     protected final DefaultStyledDocument doc;
     protected final Style mainStyle;
 
-            
     public SwingText() {
         super(new DefaultStyledDocument(new StyleContext()));
 
-        doc = (DefaultStyledDocument) getDocument();        
+        doc = (DefaultStyledDocument) getDocument();
         setEditable(false);
 
         // Create and add the main document style
@@ -39,28 +43,57 @@ public class SwingText extends JTextPane {
         //StyleConstants.setFirstLineIndent(mainStyle, 16);
         //StyleConstants.setFontFamily(mainStyle, Video.monofont.getFamily());
         //StyleConstants.setFontSize(mainStyle, 16);
-
         doc.setLogicalStyle(0, mainStyle);
+
+        addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Element ele = doc.getCharacterElement(viewToModel(e.getPoint()));
+                AttributeSet as = ele.getAttributes();
+                Action fla = (Action) as.getAttribute("linkact");
+                if (fla != null) {
+                    fla.actionPerformed(null);
+                }
+            }
+
+        });
 
     }
 
     public void print(final Color color, final CharSequence text) {
         //System.out.println("print:: " + text);
-        print(color, null, text);
+        print(color, null, text, null);
     }
 
-    public void print(final Color color, final Color bgColor, CharSequence text) {
-        
+    public void print(final Color color, final CharSequence text, Action a) {
+        print(color, null, text, a);
+    }
+
+    public void print(final Color color, final Color bgColor, CharSequence text, Action action) {
 
         MutableAttributeSet aset = getInputAttributes();
         StyleConstants.setForeground(aset, color);
         StyleConstants.setBackground(aset, bgColor != null ? bgColor : Color.BLACK);
+        //StyleConstants.setUnderline(aset, false);
         //StyleConstants.setBold(aset, bold);
-        try {            
-            doc.insertString(doc.getLength(), text.toString(), aset);
+        
+        try {
+            if (action == null) {
+                doc.insertString(doc.getLength(), text.toString(), aset);
+            } else {
+                //http://stackoverflow.com/questions/16131811/clickable-text-in-a-jtextpane
+                Style link = doc.addStyle(null, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+                StyleConstants.setForeground(link, color);
+                //StyleConstants.setUnderline(link, true);
+                //StyleConstants.setBold(link, true);
+                link.addAttribute("linkact", action);
+                doc.insertString(doc.getLength(), text.toString(), link);
+            }
         } catch (BadLocationException ex) {
             Logger.getLogger(SwingText.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     public void printColorBlock(final Color color, final String s) {
