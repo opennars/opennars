@@ -12,6 +12,7 @@ import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.language.CompoundTerm;
 import nars.language.Statement;
 import nars.language.Term;
@@ -91,7 +92,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         }
         else if (event == Events.ConceptBeliefAdd.class) {
             Concept c = (Concept)a[0];
-            Sentence s = (Sentence)a[1];
+            Sentence s = ((Task)a[1]).sentence;
             add(s, c);
         }
         else if (event == Events.ConceptBeliefRemove.class) {
@@ -101,7 +102,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         }
         else if (event == Events.ConceptGoalAdd.class) {
             Concept c = (Concept)a[0];
-            Sentence s = (Sentence)a[1];
+            Sentence s = ((Task)a[1]).sentence;
             add(s, c);
         }
         else if (event == Events.ConceptGoalRemove.class) {

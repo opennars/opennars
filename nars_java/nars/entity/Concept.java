@@ -112,7 +112,7 @@ public class Concept extends Item<Term> implements Termable {
      * The display window
      */
 
-    public final ArrayList<ArrayList<Long>> evidentalDiscountBases=new ArrayList<ArrayList<Long>>();
+    //public final ArrayList<ArrayList<Long>> evidentalDiscountBases=new ArrayList<ArrayList<Long>>();
 
     /* ---------- constructor and initialization ---------- */
     /**
@@ -271,11 +271,12 @@ public class Concept extends Item<Term> implements Termable {
                 trySolution(judg, questions.get(i), nal);
             }
 
-            addToTable(task, judg, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+            addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
         }
     }
 
-    protected void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+    protected void addToTable(final Task task, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+        final Sentence newSentence = task.sentence;
         int preSize = table.size();
 
         Sentence removed;
@@ -287,7 +288,7 @@ public class Concept extends Item<Term> implements Termable {
             memory.event.emit(eventRemove, this, removed, task, extraEventArguments);
         }
         if ((preSize != table.size()) || (removed != null)) {
-            memory.event.emit(eventAdd, this, newSentence, task, extraEventArguments);
+            memory.event.emit(eventAdd, this, task, extraEventArguments);
         }
     }
 
@@ -366,7 +367,7 @@ public class Concept extends Item<Term> implements Termable {
             // still worth pursuing?
             if (task.aboveThreshold()) {
 
-                addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+                addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
                     if(!executeDecision(task)) {
@@ -744,7 +745,7 @@ public class Concept extends Item<Term> implements Termable {
         questions.clear();
         quests.clear();                
         desires.clear();
-        evidentalDiscountBases.clear();
+        //evidentalDiscountBases.clear();
         termLinks.clear();
         taskLinks.clear();        
         beliefs.clear();

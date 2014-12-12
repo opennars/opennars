@@ -82,7 +82,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     private boolean revisible;
 
     /** caches the 'getKey()' result */
-    private CharSequence key;
+    private transient CharSequence key;
 
     private final int hash;
     

@@ -410,7 +410,7 @@ public class Predict1D {
 
             @Override
             public void event(Class event, Object[] args) {
-                Sentence s = (Sentence) args[1];
+                Sentence s = ((Task) args[1]).sentence;
 
                 //onBelief(s);
             }

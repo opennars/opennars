@@ -4,10 +4,12 @@
  */
 package nars.gui.output;
 
+import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -15,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.ConceptBeliefAdd;
@@ -85,7 +88,10 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
         } else/* if (args[0] instanceof Concept)*/ {
             if (showConcepts) {
                 Concept c = (Concept) args[0];
-                onOutputConcept(c);
+                Task t = null;
+                if (args.length > 1)
+                    t = (Task)args[1];
+                onOutputConcept(c, t);
             }
         }
     }
@@ -113,12 +119,6 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
 
             //add(new JLabel(idea.getOperatorPunctuations().toString()), BorderLayout.SOUTH);
             
-            if (idea.size() == 1) {
-                ConceptsPanel cp;
-                add(cp = new ConceptsPanel(nar, idea.concepts.iterator().next()), CENTER);
-                cp.onShowing(true);
-                return;
-            }
 
             JPanel operatorPanel = null;
             if (idea.getSentenceTypes().size() > 1) {
@@ -140,9 +140,22 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
             
                     JPanel f = new JPanel(new FlowLayout(FlowLayout.LEFT));
                     f.setOpaque(false);
-                    f.add(new TermButton(t[0]));
+                    
+                    Concept c0 = nar.memory.concept(t[0]);
+                    if (c0!=null)
+                        f.add(new ConceptButton(nar, c0));
+                    else
+                        f.add(new JButton(t[0].toString()));
+                    
+                    
                     f.add(operatorPanel);
-                    f.add(new TermButton(t[1]));
+                    
+                    Concept c1 = nar.memory.concept(t[0]);
+                    if (c0!=null)
+                        f.add(new ConceptButton(nar, c1));
+                    else
+                        f.add(new JButton(t[1].toString()));
+                    
                     add(f, BorderLayout.CENTER);
                     centerFree = false;
                 }
@@ -156,7 +169,7 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
                 f.setOpaque(false);
             
                 for (Concept c : idea)
-                    f.add(new TermButton(c));                    
+                    f.add(new ConceptButton(nar, c));                    
                 
                 //get the only sentence type, use it's punctuation as a suffix button
                 Iterator<SentenceType> oi = idea.getSentenceTypes().iterator();
@@ -217,19 +230,26 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
     
     /** represents either a Term or its Concept (if exists).
         if a concept is involved, there may be additional data to display.     */
-    public static class TermButton extends JButton {
+    public static class ConceptButton extends JButton implements ActionListener {
+        private Concept concept;
+        private NAR nar;
 
-        public TermButton(Concept c) {
-            this(c.getTerm());
+        public ConceptButton(NAR n, Concept c) {
+            super(c.term.toString());
+            this.concept = c;
+            this.nar = n;
+            addActionListener(this);
+            
         }
 
-        public TermButton(Term t) {
-            super(t.toString());
-
-        }
-
-        public void update() {
-
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ConceptsPanel cp;
+            NWindow w = new NWindow(concept.term.toString(), 
+                    new JScrollPane(cp = new ConceptsPanel(nar, concept)));
+            cp.onShowing(true);
+            w.pack();
+            w.setVisible(true);
         }
 
     }
@@ -270,9 +290,12 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
         });
     }
 
-    protected void onOutputConcept(Concept c) {
+    protected void onOutputConcept(Concept c, Task t) {
         Idea i = ideas.get(c);
-        update(i, null);
+        if (t!=null)
+            update(i, t.budget);
+        else
+            update(i, null);
     }
 
     protected IdeaSummary getPanel(Idea i) {
