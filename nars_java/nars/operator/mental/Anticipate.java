@@ -44,9 +44,11 @@ import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.Conjunction;
+import nars.language.Product;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.plugin.mental.InternalExperience;
 
 //**
 //* Operator that creates a judgment with a given statement
@@ -176,12 +178,15 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             return null; //not as mental operator but as fundamental principle
         }
         
-        anticipate(args[0],memory,memory.time()+memory.getDuration());
+        anticipate(args[0],memory,memory.time()+memory.getDuration(), null);
         
         return null;
     }
     
-    public void anticipate(Term content,Memory memory, long occurenceTime) {
+    boolean anticipationOperator=false; //a parameter which tells whether NARS should know if it anticipated or not
+    //in one case its the base functionality needed for NAL8 and in the other its a mental NAL9 operator
+    
+    public void anticipate(Term content,Memory memory, long occurenceTime, Task t) {
         if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             return;
         }
@@ -192,6 +197,25 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             anticipations.put(occurenceTime, ae);
         }
         ae.add(content);
+        
+        if(anticipationOperator) {
+            Operation op=(Operation) Operation.make(Product.make(content), this);
+            TruthValue truth=new TruthValue(1.0f,0.90f);
+            Stamp st;
+            if(t==null) {
+                st=new Stamp(memory);
+            } else {
+                st=t.sentence.stamp.clone();
+                st.setOccurrenceTime(memory.time());
+            }
+
+            Sentence s=new Sentence(op,Symbols.JUDGMENT_MARK,truth,st);
+            Task newTask=new Task(s,new BudgetValue(
+                    Parameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                    Parameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                    BudgetFunctions.truthToQuality(truth)));
+            memory.addNewTask(newTask, "Perceived (Internal Experience: Anticipation)");
+        }
     }
 
     protected void deriveDidntHappen(Term aTerm) {

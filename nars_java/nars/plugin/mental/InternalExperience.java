@@ -43,9 +43,9 @@ public class InternalExperience implements Plugin, EventObserver {
             INTERNAL_EXPERIENCE_PROBABILITY/4f;
     
     //internal experience has less durability?
-    float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
+    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
     //internal experience has less priority?
-    float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
+    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
     
     
     private Memory memory;
