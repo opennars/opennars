@@ -177,7 +177,7 @@ public abstract class NAL implements Runnable {
         }
         
         if(task.sentence.getOccurenceTime()>memory.time()) {
-            ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime());
+            ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(),task);
         }
         
         task.setTemporalInducted(false);
