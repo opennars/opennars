@@ -95,6 +95,11 @@ public class Idea implements Iterable<Concept> {
         return concepts.iterator().next().getTerm();
     }
     
+    /** number of concepts represented in this Idea */
+    public int size() {        
+        return concepts.size();
+    }
+    
     /** # of terms, which will be equal in all Concept terms */
     public int getArity() {        
         Term sampleTerm = getSampleTerm();

@@ -5,6 +5,7 @@
 package nars.gui.output;
 
 import java.awt.BorderLayout;
+import static java.awt.BorderLayout.CENTER;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.Iterator;
@@ -29,7 +30,6 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.Output;
 import static nars.io.Symbols.JUDGMENT_MARK;
 import nars.language.CompoundTerm;
 import nars.language.Term;
@@ -44,13 +44,14 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 public class IdeaPanel extends VerticalPanel implements EventObserver {
 
+    
     private NAR nar;
     private final IdeaSet ideas;
 
     public final Map<Idea, IdeaSummary> ideaPanel = new WeakHashMap();
     
     boolean showTasks = true;
-    boolean showConcepts = false;
+    boolean showConcepts = true;
 
     public IdeaPanel(NAR nar) {
         super();
@@ -89,7 +90,7 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
         }
     }
 
-    public static class IdeaSummary extends JPanel {
+    public class IdeaSummary extends JPanel {
 
         public final Idea idea;
 
@@ -97,7 +98,6 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
             super(new BorderLayout());
             this.idea = i;
 
-            //setBorder(LineBorder.createGrayLineBorder());
             update();
         }
 
@@ -112,6 +112,13 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
             }*/
 
             //add(new JLabel(idea.getOperatorPunctuations().toString()), BorderLayout.SOUTH);
+            
+            if (idea.size() == 1) {
+                ConceptsPanel cp;
+                add(cp = new ConceptsPanel(nar, idea.concepts.iterator().next()), CENTER);
+                cp.onShowing(true);
+                return;
+            }
 
             JPanel operatorPanel = null;
             if (idea.getSentenceTypes().size() > 1) {
@@ -123,7 +130,6 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
                 }
                 
             }
-
             
                     
             boolean centerFree = true;
