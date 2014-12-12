@@ -7,7 +7,7 @@ import processing.core.PApplet;
 /**
  * Processing.org Panel
  */
-abstract public class PPanel extends PApplet {
+public class PPanel extends PApplet {
 
     public PPanel() {
         super();
