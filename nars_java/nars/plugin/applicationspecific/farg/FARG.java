@@ -3,7 +3,7 @@
  * Each line should be prefixed with  * 
  */
 
-package nars.plugin.farg;
+package nars.plugin.applicationspecific.farg;
 
 import nars.core.NAR;
 import nars.core.Plugin;

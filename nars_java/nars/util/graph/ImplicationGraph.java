@@ -7,7 +7,7 @@ import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.TruthValue;
-import nars.plugin.mental.ParticlePlanner.MultipleExecutionManager;
+import nars.plugin.applicationspecific.ParticlePlanner.MultipleExecutionManager;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;

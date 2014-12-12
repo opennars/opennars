@@ -1,4 +1,4 @@
-package nars.plugin.mental.ParticlePlanner;
+package nars.plugin.applicationspecific.ParticlePlanner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
-import static nars.plugin.mental.ParticlePlanner.MultipleExecutionManager.isPlanTerm;
+import static nars.plugin.applicationspecific.ParticlePlanner.MultipleExecutionManager.isPlanTerm;
 import nars.util.graph.ImplicationGraph;
 import nars.util.graph.ImplicationGraph.Cause;
 import nars.util.graph.ImplicationGraph.PostCondition;
