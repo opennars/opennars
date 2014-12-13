@@ -240,8 +240,8 @@ public class Stamp implements Cloneable {
         
     }
     
-    /** used for when the ocrrence time will be set later */
-    public Stamp(final Tense tense, final long serial) {
+    /** used for when the ocrrence time will be set later; so should not be called from externally but through another Stamp constructor */
+    protected Stamp(final Tense tense, final long serial) {
         this.baseLength = 1;
         this.evidentialBase = new long[baseLength];
         this.evidentialBase[0] = serial;
@@ -257,7 +257,8 @@ public class Stamp implements Cloneable {
      *
      * @param time Creation time of the stamp
      */
-    public Stamp(final long time, final Tense tense, final long serial, final int duration) {               this(tense, serial);    
+    public Stamp(final long time, final Tense tense, final long serial, final int duration) {    
+        this(tense, serial);    
         setCreationTime(time, duration);        
     }
 

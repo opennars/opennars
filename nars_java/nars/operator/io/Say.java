@@ -20,32 +20,40 @@
  */
 package nars.operator.io;
  
+import com.google.common.collect.Lists;
 import java.util.List;
 import nars.core.Memory;
 import nars.entity.Task;
 import nars.language.Term;
+import nars.language.Terms;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
 /**
- *  A class used as a template for Operator definition.
- * TODO: memory.registerOperator(new Goto("^goto"));
  */
 public class Say extends Operator {
 
+    boolean rejectEmpty = true;
+    boolean rejectHasVariables = true;    
+    
     public Say() {
         super("^say");
     }
 
     @Override
     protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        //Operation content = (Operation) task.getContent();
-        //Operator op = content.getOperator();
 
-        System.out.println("Executed: " + this);
-        for (Term t : args) {
-            System.out.println(" --- " + t);
+        if (rejectEmpty && args.length == 1) {
+            //SELF argument by itself is not worth speaking
+            throw NegativeFeedback.ignore("Said nothing");
         }
+                
+        if (rejectEmpty && Terms.containsVariables(args)) {
+            throw NegativeFeedback.ignore("Said variables");
+        }
+                
+        List<Term> spoken = Lists.newArrayList(args).subList(0, args.length-1);
+        memory.emit(Say.class, spoken);
         
         return null;
     }

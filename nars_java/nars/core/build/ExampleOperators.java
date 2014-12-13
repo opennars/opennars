@@ -19,7 +19,6 @@ public class ExampleOperators {
             new NullOperator("^pick"),
             new NullOperator("^strike"),
             new NullOperator("^throw"),
-            new NullOperator("^say"),
             new NullOperator("^activate"),
             new NullOperator("^deactivate")
         };

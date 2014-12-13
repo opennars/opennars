@@ -14,6 +14,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.JLabel;
@@ -137,10 +138,10 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
             }
 
             if (!concept.questions.isEmpty())
-                questionChart.update(concept.questions);
+                questionChart.update( unmodifiableList( concept.questions ) );
             
             if (!concept.desires.isEmpty())
-                desireChart.update(concept.desires);
+                desireChart.update( unmodifiableList( concept.desires ));
 
             updateUI();
         }

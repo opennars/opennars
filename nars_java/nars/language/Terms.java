@@ -495,6 +495,16 @@ public class Terms {
         return false;
     }
 
+    
+    /** true if any of the terms contains a variable */
+    public static boolean containsVariables(Term... args) {
+        for (Term t : args) {
+            if (t.hasVar())
+                return true;
+        }
+        return false;
+    }
+
 
     /** has, or is associated with a specific term */
     public static interface Termable {

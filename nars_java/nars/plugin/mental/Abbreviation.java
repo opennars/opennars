@@ -120,6 +120,8 @@ public class Abbreviation implements Plugin {
                         Operation operation = Operation.make(
                                 abbreviate, termArray(task.sentence.term ), 
                                 false);
+                        
+                        operation.setTask(task);
 
                         abbreviate.call(operation, memory);
                     }

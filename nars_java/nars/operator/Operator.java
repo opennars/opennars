@@ -25,12 +25,16 @@ import java.util.Arrays;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.io.Output.EXE;
+import nars.io.Symbols;
 import nars.language.Product;
 import nars.language.Statement;
+import nars.language.Tense;
 import nars.language.Term;
 
 /**
@@ -40,7 +44,9 @@ import nars.language.Term;
  * This is the only file to modify when registering a new operator into NARS.
  */
 public abstract class Operator extends Term implements Plugin {
-        
+
+    public static final float executionConfidence = Parameters.MAX_CONFIDENCE; // 0.9999f;
+    
     protected Operator() {   super();    }
     
     protected Operator(String name) {
@@ -53,6 +59,35 @@ public abstract class Operator extends Term implements Plugin {
     public boolean setEnabled(NAR n, boolean enabled) {
         return true;
     }        
+    
+    public static class NegativeFeedback extends RuntimeException {
+
+        /** convenience method for creating a "never again" negative feedback"*/
+        public static NegativeFeedback never(String reason, boolean quiet) {
+            return new NegativeFeedback(reason, 0, executionConfidence, 
+                    0, executionConfidence, quiet
+            );
+        }
+        /** convenience method for ignoring an invalid operation; does not recognize that it occurred, and does not report anything*/
+        public static NegativeFeedback ignore(String reason) {
+            return new NegativeFeedback(reason, -1, -1, -1, -1, true);
+        }        
+        
+        public final float freqCorrection;
+        public final float confCorrection;
+        public final float freqOcurred;
+        public final float confidenceOcurred;
+        public final boolean quiet;
+    
+        public NegativeFeedback(String reason, float freqOcurred, float confidenceOccurred, float freqCorrection, float confCorrection, boolean quiet) {
+            super(reason);
+            this.freqOcurred = freqOcurred;
+            this.confidenceOcurred = confidenceOccurred;
+            this.freqCorrection = freqCorrection;
+            this.confCorrection = confCorrection;
+            this.quiet = quiet;
+        }
+    }
     
     /**
      * Required method for every operator, specifying the corresponding
@@ -77,7 +112,9 @@ public abstract class Operator extends Term implements Plugin {
     public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
         try {
             List<Task> feedback = execute(operation, args, memory);            
-            memory.executedTask(operation);
+            
+            memory.executedTask(operation, new TruthValue(1f,executionConfidence));
+            
             reportExecution(operation, args, feedback, memory);
             
             //System.out.println("Executed: " + this);
@@ -87,10 +124,34 @@ public abstract class Operator extends Term implements Plugin {
                     memory.inputTask(t);
                 }            
             }
+            
             return true;
         }
-        catch (Exception e) {
-            reportExecution(operation, args, e, memory);
+        catch (NegativeFeedback n) {
+            
+            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
+                memory.executedTask(operation, new TruthValue(n.freqOcurred, n.confidenceOcurred));
+            }
+            
+            if (n.freqCorrection >= 0 && n.confCorrection >=0) {
+                //for inputting an inversely frequent goal to counteract a repeat invocation
+                BudgetValue b = operation.getTask().budget;
+                float priority = b.getPriority();
+                float durability = b.getDurability();                
+                
+                memory.addNewTask(
+                        memory.newTask(operation, Symbols.GOAL_MARK, n.freqCorrection, n.confCorrection, priority, durability, (Tense)null), 
+                        "Negative feedback"
+                );
+                
+            }
+            
+            if (!n.quiet) {
+                reportExecution(operation, args, n, memory);
+            }
+        }
+        catch (Exception e) {                        
+            reportExecution(operation, args, e, memory);            
         }
         return false;
         

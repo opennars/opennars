@@ -664,11 +664,10 @@ public class Memory implements Serializable {
      *
      * @param operation The operation just executed
      */
-    public void executedTask(final Operation operation) {
+    public void executedTask(final Operation operation, TruthValue truth) {
         Task opTask = operation.getTask();
         logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
                 
-        TruthValue truth = new TruthValue(1f,0.9999f);
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
         
