@@ -262,20 +262,8 @@ public class TemporalRules {
         }
     }
     
-    public static boolean isDesired(nars.core.control.NAL nal, Sentence s) {
-        Concept c=nal.memory.concept(s.term);
-        if(c!=null) {
-            return c.isDesired();
-        }
-        return false;
-    }
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
         
-        if(isDesired(nal,s1) || isDesired(nal,s2)) {
-            nars.core.control.NAL.allowed=true;
-        } else {
-            return Collections.EMPTY_LIST;
-        }
         
         if ((s1.truth==null) || (s2.truth==null))
             return Collections.EMPTY_LIST;
