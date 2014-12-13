@@ -82,7 +82,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     private float forgetThreshold = 1f;
     private float latencyMin = 0; /* in cycles */
     
-    private int targetActivations;
+    private float targetActivations;
     
     private float numPriorityThru = 0;
     private float mass = 0;
@@ -105,14 +105,14 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         this(forgetRate, capacity, (int)(0.25f * capacity));
     }
     
-    public DelayBag(AtomicDouble forgetRate, int capacity, int targetPendingBufferSize) {
+    public DelayBag(AtomicDouble forgetRate, int capacity, float targetPendingBufferSize) {
         this.capacity = capacity;
         this.forgetRate = forgetRate;
 
         if (Parameters.THREADS == 1) {
              //this.items = new LinkedHashMap(capacity);
              this.items = new ConcurrentHashMap(capacity);
-             this.pending = new ArrayDeque(targetPendingBufferSize);
+             this.pending = new ArrayDeque((int)(targetPendingBufferSize * capacity));
         }
         else {
             //find a solution to make a concurrent analog of the LinkedHashMap, if cyclical balance of iteration order (reinsertion appends to end) is necessary
@@ -155,7 +155,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         return mass;
     }
 
-    protected E removeItem(final K k) {        
+    protected E removeItem(final K k) {             
         E x = items.remove(k);        
         if ((attention!=null) && (x instanceof Concept) && (x != null)) {
             attention.conceptRemoved((Concept)x);
@@ -218,7 +218,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         }
         
         avgPriority = numPriorityThru / mass;
-        
+                
         //remove lowest priority items until the capacity is maintained        
         if (numToRemove > 0) {
             int rj = 0;
@@ -236,7 +236,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         
         //in case the iteration added nothing to pending, use the last item
         if (pending.isEmpty() && (e!=null))
-            pending.add(e); 
+            pending.add(e);         
         
     }
     
@@ -334,14 +334,15 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     public E peekNext() {
         if (size() == 0) return null;
         
-        if (pending.isEmpty())
-            return null;
-        
-        return pending.peekFirst();
+        E x = takeNext();
+        addItem(x);
+
+        return x;
     }
 
     @Override
     protected E addItem(E x) {                    
+        
         E previous = items.put(x.name(), x);
         
         if (x.budget.getLastForgetTime() == -1)
@@ -353,6 +354,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
     @Override
     public E take(K key) {
+        
         return items.remove(key);
     }
 
@@ -394,19 +396,20 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         return super.toString() + "[" + size() + "|" + pending.size() + "|" + this.forgetThreshold + ".." + this.activityThreshold + "]";
     }
 
-    public void setTargetActivated(int i) {
-        this.targetActivations = i;
+    public void setTargetActivated(float proportion) {
+        this.targetActivations = proportion;
     }
 
     protected void adjustActivationThreshold() {
         //ADJUST FIRING THRESHOLD
         int activated = pending.size();                
-        if (activated < targetActivations) {
+        int toActivate = (int)(targetActivations * size());
+        if (activated < toActivate) {
             //too few activated, reduce threshold
             activityThreshold *= 0.99f;
             if (activityThreshold < 0.01) activityThreshold = 0.01f;            
         }
-        else if (activated > targetActivations) {
+        else if (activated > toActivate) {
             //too many, increase threshold
             activityThreshold *= 1.1f;
             if (activityThreshold > 0.99) activityThreshold = 0.99f;            

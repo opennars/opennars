@@ -111,7 +111,7 @@ abstract public class WaveAttention implements Attention {
 
     @Override
     public Concept sampleNextConcept() {
-        return concepts.takeNext();
+        return concepts.peekNext();
     }
 
     @Override
