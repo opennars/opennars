@@ -72,6 +72,7 @@ public class BindJavascriptExpression implements TextReaction {
                 String jsFunc = "function " + o + "($1, $2, $3, $4, $5, $6) { " + proc + "; }";
                 
                 js.eval(jsFunc);
+                js.put("memory", memory);
                 
                 memory.addOperator(new SynchronousFunctionOperator(newOp) {
                     
