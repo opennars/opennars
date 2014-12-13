@@ -154,9 +154,8 @@ public class NARPrologMirror extends AbstractObserver {
             add(task.sentence, task);            
         }
         else if (channel == ConceptBeliefRemove.class) {
-            Concept c = (Concept)arg[0];            
-            Task task = (Task)arg[1];
-            remove(task.sentence, task);
+            Concept c = (Concept)arg[0];           
+            remove((Sentence)arg[1], null);
         }        
         else if (channel == Events.ConceptQuestionAdd.class) {
             Concept c = (Concept)arg[0];            
