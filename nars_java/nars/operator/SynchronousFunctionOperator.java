@@ -81,7 +81,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
             ));    
         }
         else {
-            float equal = equals(lastTerm, y);
+            /*float equal = equals(lastTerm, y);
             
             
             
@@ -100,8 +100,10 @@ public abstract class SynchronousFunctionOperator extends Operator {
                             Parameters.DEFAULT_JUDGMENT_DURABILITY, 
                             operation.getTask()));
             }
-            
             return rt;
+            */
+            
+            return null;
             
         }
     }
