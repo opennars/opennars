@@ -341,6 +341,8 @@ public class Narsese {
     public Term parseTerm(String s) throws InvalidInputException {
         s = s.trim();
         
+        if (s.length() == 0) return null;
+        
         int index = s.length() - 1;
         char first = s.charAt(0);
         char last = s.charAt(index);
