@@ -7,6 +7,7 @@ package nars.core.control.experimental;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.Random;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.FireConcept;
@@ -20,18 +21,22 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
+import nars.util.XORShiftRandom;
 
 /**
  *
  * @author me
  */
 public class AntAttention extends WaveAttention {
+    
+    public final Random random = new XORShiftRandom();
 
     public final Deque<Ant> ants = new ArrayDeque();
     
     float cycleSpeed;
     float conceptVisitDelivery;
         
+    
     public AntAttention(int numAnts, float cycleSpeed, int maxConcepts, ConceptBuilder conceptBuilder) {
         super(maxConcepts, conceptBuilder);
                 
@@ -46,7 +51,7 @@ public class AntAttention extends WaveAttention {
 
     @Override public void init(Memory m) {
         super.init(m);
-        concepts.setTargetActivated( (int)(ants.size() * 0.1f * concepts.getCapacity()) );
+        concepts.setTargetActivated( (int)(ants.size() * 0.1f) );
     }
 
     @Override
@@ -91,6 +96,7 @@ public class AntAttention extends WaveAttention {
         boolean traverseTermLinks = true;
         boolean traverseTaskLinks = true;
         boolean allowLoops = false;
+        double randomConceptProbability = 0.01;
         
         /**
          * ETA = estimated time of arrival
@@ -123,6 +129,7 @@ public class AntAttention extends WaveAttention {
                                     
             concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
             
+            
             concept = c;
 
         }
@@ -144,7 +151,7 @@ public class AntAttention extends WaveAttention {
                 eta -= dt * speed;
                 
                 if (eta < 0) {
-                    leaveConcept(randomLink(), queue);
+                    leaveConcept(nextLink(), queue);
                 }
                 
             }
@@ -202,8 +209,15 @@ public class AntAttention extends WaveAttention {
             }
         }
         
-        public TLink randomLink() {
+        
+        /** return null to be relocated to a random concept */
+        public TLink nextLink() {
             Iterable<? extends Item> ii;
+            
+            if (random.nextDouble() < randomConceptProbability) {
+                return null;
+            }
+            
             if ((traverseTermLinks) && (!traverseTaskLinks)) {
                 ii = concept.termLinks;
             }

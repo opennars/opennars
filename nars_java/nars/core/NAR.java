@@ -527,10 +527,13 @@ public class NAR implements Runnable, TaskSource {
             }
         }
         else if (memory.getTiming() == Timing.Simulation) {
-            memory.addSimulationTime(minCyclePeriodMS);
+            memory.addSimulationTime(getSimulationTimeCyclesPerFrame());
         }
     }
     
+    protected long getSimulationTimeCyclesPerFrame() {
+        return minCyclePeriodMS;
+    }
 
     @Override
     public String toString() {

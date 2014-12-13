@@ -29,7 +29,6 @@ public class Neuromorphic extends Curve {
 
     @Override
     public Attention newAttention() {
-        //return new WaveAttention(1000, c);
         if (numAnts == -1)
             numAnts = param.conceptsFiredPerCycle.get();
         return new AntAttention(numAnts, 2.0f, getConceptBagSize(), getConceptBuilder());
@@ -42,6 +41,7 @@ public class Neuromorphic extends Curve {
         return null;
     }
 
+    /*
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {
         
@@ -58,12 +58,13 @@ public class Neuromorphic extends Curve {
         termLinks.setMemory(m);
         
         return new Concept(b, t, taskLinks, termLinks, m);
-    }
+    }*/
 
+    /*
     @Override
     public Bag<Task<Term>, Sentence<Term>> newNovelTaskBag() {
         return new FairDelayBag(param.novelTaskForgetDurations, taskBufferSize);
-    }
+    }*/
 
     
     
