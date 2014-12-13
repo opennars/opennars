@@ -89,7 +89,7 @@ public class IdeaPanel extends VerticalPanel implements EventObserver {
             if (showConcepts) {
                 Concept c = (Concept) args[0];
                 Task t = null;
-                if (args.length > 1)
+                if (args.length > 1 && args[1] instanceof Task)
                     t = (Task)args[1];
                 onOutputConcept(c, t);
             }

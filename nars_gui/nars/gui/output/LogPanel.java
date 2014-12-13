@@ -30,6 +30,7 @@ import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
 import nars.gui.WrapLayout;
 import nars.inference.AbstractObserver;
+import nars.io.Output;
 import nars.io.Output.ECHO;
 import nars.io.Output.ERR;
 import nars.io.Output.EXE;
@@ -64,9 +65,8 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     private final InferenceLogger logger;
     private String logFilePath;
 
-    public static final Class[] outputEvents = new Class[] { 
-        IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Events.Solved.class
-    };
+    public static final Class[] outputEvents = Output.DefaultOutputEvents;
+
     
     
     public LogPanel(NARControls c) {

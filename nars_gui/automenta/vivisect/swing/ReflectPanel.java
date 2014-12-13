@@ -81,7 +81,7 @@ public class ReflectPanel<O> extends JPanel {
             try {
                 properties[i].readFromObject(instance);
             } catch (Exception e) {
-                e.printStackTrace();
+                ///e.printStackTrace();
             }
         }
 

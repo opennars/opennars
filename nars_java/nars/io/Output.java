@@ -1,9 +1,11 @@
 package nars.io;
 
 import nars.core.EventEmitter;
+import nars.core.Events.Solved;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.inference.AbstractObserver;
+import nars.operator.io.Say;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
@@ -26,7 +28,7 @@ public abstract class Output extends AbstractObserver {
     /** operation execution */
     public static interface EXE  { }
 
-    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class };
+    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Say.class, Solved.class };
             
     public Output(EventEmitter source, boolean active) {
         super(source, active, DefaultOutputEvents );

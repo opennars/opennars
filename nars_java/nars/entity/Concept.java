@@ -317,8 +317,6 @@ public class Concept extends Item<Term> implements Termable {
                     Operation op=(Operation)content;
                     Operator oper = op.getOperator();
 
-                    //if (NAR.DEBUG)
-                    //System.out.println("exe: " + task.getExplanation().trim());
                     op.setTask(t);
                     oper.call(op, memory);
                     
