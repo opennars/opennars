@@ -33,8 +33,8 @@ import nars.operator.Operator;
  */
 public class Say extends Operator {
 
-    boolean rejectEmpty = true;
-    boolean rejectHasVariables = true;    
+//    boolean rejectEmpty = true;
+//    boolean rejectHasVariables = true;    
     
     public Say() {
         super("^say");
@@ -43,14 +43,14 @@ public class Say extends Operator {
     @Override
     protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
 
-        if (rejectEmpty && args.length == 1) {
-            //SELF argument by itself is not worth speaking
-            throw NegativeFeedback.ignore("Said nothing");
-        }
-                
-        if (rejectEmpty && Terms.containsVariables(args)) {
-            throw NegativeFeedback.ignore("Said variables");
-        }
+//        if (rejectEmpty && args.length == 1) {
+//            //SELF argument by itself is not worth speaking
+//            throw NegativeFeedback.ignore("Said nothing");
+//        }
+//                
+//        if (rejectEmpty && Terms.containsVariables(args)) {
+//            throw NegativeFeedback.ignore("Said variables");
+//        }
                 
         List<Term> spoken = Lists.newArrayList(args).subList(0, args.length-1);
         memory.emit(Say.class, spoken);
