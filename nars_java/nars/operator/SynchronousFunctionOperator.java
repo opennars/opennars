@@ -6,6 +6,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;
+import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
@@ -30,7 +31,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
     abstract protected Term function(Memory memory, Term[] x);
     
     /** the term that the output will inherit from; analogous to the 'Range' of a function in mathematical terminology */
-    abstract protected Term getRange();
+    @Deprecated abstract protected Term getRange();
         
     //abstract protected int getMinArity();
     //abstract protected int getMaxArity();
@@ -46,13 +47,14 @@ public abstract class SynchronousFunctionOperator extends Operator {
         if (numArgs < 2) {
             throw new RuntimeException("Requires at least 2 arguments");
         }
-        if (!(args[numArgs-1] instanceof Variable)) {
-            //TODO report error
-            throw new RuntimeException("Last argument must be a Variable");
-        }
         
-        Term[] x = new Term[numArgs-1];
-        System.arraycopy(args, 0, x, 0, numArgs-1);
+        //last argument a variable?
+        Term lastTerm = args[numArgs-1];
+        boolean variable = lastTerm instanceof Variable;
+        
+        int numParam = numArgs-1;
+        Term[] x = new Term[numParam];
+        System.arraycopy(args, 0, x, 0, numParam);
         
         Term y;
         //try {
@@ -65,23 +67,50 @@ public abstract class SynchronousFunctionOperator extends Operator {
         catch (Exception e) {
             throw e;
         }*/
+            
+        Term actual = operation.setComponent(0, 
+                ((CompoundTerm)operation.getSubject()).setComponent(
+                        numArgs-1, y, m), m);            
         
-        
-        Term parameterTerm = x.length == 1 ? x[0] : new Product(x);
-        
-        Inheritance operatorInheritance = 
-                Operation.make(new Product(new Term[]{parameterTerm, y}), this);
-        
-        //wraps the result in getRange() inheritance:
-        //Inheritance resultInheritance = Inheritance.make(operatorInheritance, getRange());
-        //m.emit(Task.class, operatorInheritance);
-        
-        return Lists.newArrayList( 
-                m.newTask(operatorInheritance, Symbols.JUDGMENT_MARK, 
-                        1f, 0.99f, 
-                        Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                        Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
-        ));    
+        if (variable) {
+            return Lists.newArrayList( 
+                    m.newTask(actual, Symbols.JUDGMENT_MARK, 
+                            1f, 0.99f, 
+                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
+                            Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
+            ));    
+        }
+        else {
+            float equal = equals(lastTerm, y);
+            
+            
+            
+            float confidence = 0.99f;
+            ArrayList<Task> rt = Lists.newArrayList( 
+                    m.newTask(actual, Symbols.JUDGMENT_MARK, 
+                            1.0f, confidence, 
+                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
+                            Parameters.DEFAULT_JUDGMENT_DURABILITY, 
+                            operation.getTask()));    
+            
+            if (equal < 1.0f) {
+                rt.add(m.newTask(operation, Symbols.JUDGMENT_MARK, 
+                            equal, confidence, 
+                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
+                            Parameters.DEFAULT_JUDGMENT_DURABILITY, 
+                            operation.getTask()));
+            }
+            
+            return rt;
+            
+        }
     }
 
+    /** (can be overridden in subclasses) the extent to which it is truth 
+     * that the 2 given terms are equal.  in other words, a distance metric
+     */
+    public float equals(Term a, Term b) {
+        //default: Term equality
+        return a.equals(b) ? 1.0f : 0.0f;
+    }
 }
