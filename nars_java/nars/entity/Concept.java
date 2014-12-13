@@ -297,7 +297,11 @@ public class Concept extends Item<Term> implements Termable {
      * whether a concept's desire exceeds decision threshold
      */
     public boolean isDesired() {
-        return this.getDesire().getExpectation() > memory.param.decisionThreshold.get();
+        TruthValue desire=this.getDesire();
+        if(desire==null) {
+            return false;
+        }
+        return desire.getExpectation() > memory.param.decisionThreshold.get();
     }
     
     /**
