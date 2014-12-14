@@ -33,7 +33,11 @@ public class NARSwingNeuromorphic {
         
         NARSwing.themeInvert();
         
-        new NARSwing(n);
+        NARSwing s = new NARSwing(n);
+        
+        s.enableJMX();
+        
+        
         
     }
 }
