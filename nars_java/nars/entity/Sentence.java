@@ -504,7 +504,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     }
 
     public boolean isEternal() {
-        return getOccurenceTime() == Stamp.ETERNAL;
+        return stamp.isEternal();
     }
 
     public boolean after(Sentence s, int duration) {
