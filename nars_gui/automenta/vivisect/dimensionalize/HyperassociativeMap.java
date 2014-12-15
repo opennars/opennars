@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.ml.distance.DistanceMeasure;
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.jgrapht.Graph;
 
 /**
@@ -42,6 +43,15 @@ import org.jgrapht.Graph;
  * @author Jeffrey Phillips Freeman
  * @param <G> The graph type
  * @param <N> The node type
+ * 
+ * 
+ * TODO:
+ *   parameter for distance function that takes arguments for max
+ *      if distance exceeds max it will return POSITIVE_INFINITY
+ *   parameter for max repulsion distance (cutoff)
+ *      for use with above
+ *   parameter for min attraction distance (cutoff)
+ *   
  */
 public class HyperassociativeMap<N, E> {
 
@@ -57,6 +67,8 @@ public class HyperassociativeMap<N, E> {
     private static final double DEFAULT_ACCEPTABLE_DISTANCE_FACTOR = 0.85;
     private static final double DEFAULT_EQUILIBRIUM_DISTANCE = 1.0;
 
+    double maxRepulsionDistance = 8.0;
+    
     private Graph<N, E> graph;
     private final int dimensions;
     private final ExecutorService threadExecutor;
@@ -68,7 +80,10 @@ public class HyperassociativeMap<N, E> {
     private double learningRate = DEFAULT_LEARNING_RATE;
     private double maxMovement = DEFAULT_MAX_MOVEMENT;
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
-    private double acceptableDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
+    private double acceptableMaxDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
+    
+    private DistanceMeasure distanceFunction;
+    final double[] zero;
 
     protected ArrayRealVector newNodeCoordinates(N node) {
         ArrayRealVector location = randomCoordinates(dimensions);
@@ -98,7 +113,7 @@ public class HyperassociativeMap<N, E> {
         }
     }
 
-    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final double equilibriumDistance, final boolean useWeights, final ExecutorService threadExecutor) {
+    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final double equilibriumDistance, DistanceMeasure distance, final ExecutorService threadExecutor) {
         if (graph == null) {
             throw new IllegalArgumentException("Graph can not be null");
         }
@@ -110,7 +125,8 @@ public class HyperassociativeMap<N, E> {
         this.dimensions = dimensions;
         this.threadExecutor = threadExecutor;
         this.equilibriumDistance = Math.abs(equilibriumDistance);
-        this.useWeights = useWeights;
+        this.distanceFunction = distance;
+        this.zero = new double[dimensions];
 
         if (threadExecutor!=null) {
             coordinates = Collections.synchronizedMap(new WeakHashMap<N, ArrayRealVector>());
@@ -125,16 +141,20 @@ public class HyperassociativeMap<N, E> {
         }
     }
 
-    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final ExecutorService threadExecutor) {
-        this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, true, threadExecutor);
+    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, DistanceMeasure distance, final ExecutorService threadExecutor) {
+        this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, distance, threadExecutor);
     }
 
-    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final double equilibriumDistance, final boolean useWeights) {
-        this(graph, dimensions, equilibriumDistance, useWeights, null);
+    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final double equilibriumDistance, DistanceMeasure distance) {
+        this(graph, dimensions, equilibriumDistance, distance, null);
     }
 
+    public HyperassociativeMap(final Graph<N, E> graph, DistanceMeasure distance, final int dimensions) {
+        this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, distance, null);
+    }
+    
     public HyperassociativeMap(final Graph<N, E> graph, final int dimensions) {
-        this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, true, null);
+        this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, new EuclideanDistance(), null);
     }
 
     public void setGraph(Graph<N, E> graph) {
@@ -159,7 +179,7 @@ public class HyperassociativeMap<N, E> {
         learningRate = DEFAULT_LEARNING_RATE;
         maxMovement = DEFAULT_TOTAL_MOVEMENT;
         totalMovement = DEFAULT_TOTAL_MOVEMENT;
-        acceptableDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
+        acceptableMaxDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
     }
 
     public void reset() {
@@ -311,10 +331,21 @@ public class HyperassociativeMap<N, E> {
             neighbors.put(neighbor, currentWeight);
         }                
     }
+    
+    
+    public double magnitude(ArrayRealVector x) {
+        return distanceFunction.compute(zero, x.getDataRef());
+    }
 
     private ArrayRealVector align(final N nodeToAlign, Map<N, Double> neighbors) {
+        
+        
         // calculate equilibrium with neighbors
         ArrayRealVector position = getPosition(nodeToAlign);
+
+        double nodeSpeed = getSpeedFactor(nodeToAlign);
+        
+        if (nodeSpeed == 0) return position;
         
         getNeighbors(nodeToAlign, neighbors);
 
@@ -329,12 +360,9 @@ public class HyperassociativeMap<N, E> {
             
             final double distToNeighbor = neighborEntry.getValue();
 
-            ArrayRealVector nv = getPosition(neighbor);
-            if (nv == null)
-                continue;
+            ArrayRealVector attractVector = getPosition(neighbor).subtract(position);
             
-            nv = nv.subtract(position);
-            double oldDistance = nv.getNorm();
+            double oldDistance = magnitude(attractVector);
             
             double newDistance;
             double factor = 0;
@@ -356,46 +384,38 @@ public class HyperassociativeMap<N, E> {
                 factor = newDistance/oldDistance;
             }
             
-            add(delta, nv, factor);
+            add(delta, attractVector, factor);
         }
         
         // calculate repulsion with all non-neighbors
         for (final N node : graph.vertexSet()) {
-            
-            if ((!neighbors.containsKey(node)) && (node != nodeToAlign)
-                    /*&& (!(graph.containsEdge(node, nodeToAlign) || graph.containsEdge(nodeToAlign, node)))*/) {
-                
-                ArrayRealVector nl = getPosition(node);
-                
-                ArrayRealVector nodeVector = nl.subtract(position);
-                
-                double oldDistance = nodeVector.getNorm();
-                
-                double newDistance = -targetDistance / Math.pow(oldDistance, REPULSIVE_WEAKNESS);
-                
-                if (Math.abs(newDistance) > targetDistance) {
-                    newDistance = Math.copySign(targetDistance, newDistance);
-                }                
-                newDistance *= learningRate;
-                
-                add(delta, nodeVector, newDistance/oldDistance);
-            }
+            if (node == nodeToAlign) continue;
+            if (neighbors.containsKey(node)) continue;
+
+            ArrayRealVector repelVector = getPosition(node).subtract(position);
+
+            double oldDistance = magnitude(repelVector);
+
+            double newDistance = -targetDistance / Math.pow(oldDistance, REPULSIVE_WEAKNESS);
+
+            if (Math.abs(newDistance) > targetDistance) {
+                newDistance = Math.copySign(targetDistance, newDistance);
+            }                
+            newDistance *= learningRate;
+
+            add(delta, repelVector, newDistance/oldDistance);
         }
 
-        double nodeSpeed = getSpeedFactor(nodeToAlign);
-        if (nodeSpeed!=0) {
-            if (nodeSpeed!=1.0) {
-                delta.mapMultiplyToSelf(nodeSpeed);
-            }
-        }
-        else {
-            delta.set(0);
+        
+        
+        if (nodeSpeed!=1.0) {
+            delta.mapMultiplyToSelf(nodeSpeed);
         }
         
-        double moveDistance = delta.getNorm();
+        double moveDistance = magnitude(delta);
         
-        if (moveDistance > targetDistance * acceptableDistanceFactor) {
-            final double newLearningRate = ((targetDistance * acceptableDistanceFactor) / moveDistance);
+        if (moveDistance > targetDistance * acceptableMaxDistanceFactor) {
+            final double newLearningRate = ((targetDistance * acceptableMaxDistanceFactor) / moveDistance);
             if (newLearningRate < learningRate) {
                 learningRate = newLearningRate;
                 //LOGGER.debug("learning rate: " + learningRate);
@@ -468,8 +488,8 @@ public class HyperassociativeMap<N, E> {
         
         if ((learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT) < DEFAULT_LEARNING_RATE) {
             final double acceptableDistanceAdjustment = 0.1;
-            if (getAverageMovement() < (equilibriumDistance * acceptableDistanceFactor * acceptableDistanceAdjustment)) {
-                acceptableDistanceFactor *= LEARNING_RATE_INCREASE_FACTOR;
+            if (getAverageMovement() < (equilibriumDistance * acceptableMaxDistanceFactor * acceptableDistanceAdjustment)) {
+                acceptableMaxDistanceFactor *= LEARNING_RATE_INCREASE_FACTOR;
             }
             learningRate *= LEARNING_RATE_PROCESSING_ADJUSTMENT;
             //LOGGER.debug("learning rate: " + learningRate + ", acceptableDistanceFactor: " + acceptableDistanceFactor);
@@ -493,8 +513,8 @@ public class HyperassociativeMap<N, E> {
         }
         if (learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT < DEFAULT_LEARNING_RATE) {
             final double acceptableDistanceAdjustment = 0.1;
-            if (getAverageMovement() < (equilibriumDistance * acceptableDistanceFactor * acceptableDistanceAdjustment)) {
-                acceptableDistanceFactor = maxMovement * 2.0;
+            if (getAverageMovement() < (equilibriumDistance * acceptableMaxDistanceFactor * acceptableDistanceAdjustment)) {
+                acceptableMaxDistanceFactor = maxMovement * 2.0;
             }
             learningRate *= LEARNING_RATE_PROCESSING_ADJUSTMENT;
             //LOGGER.debug("learning rate: " + learningRate + ", acceptableDistanceFactor: " + acceptableDistanceFactor);
