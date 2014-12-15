@@ -14,6 +14,7 @@
  */
 package automenta.vivisect.dimensionalize;
 
+import static automenta.vivisect.dimensionalize.HyperassociativeMap.EdgeWeightToDistanceFunction.OneDivSum;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import java.util.ArrayList;
@@ -79,6 +80,7 @@ public class HyperassociativeMap<N, E> {
     private double maxMovement = DEFAULT_MAX_MOVEMENT;
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
     private double acceptableMaxDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
+    private EdgeWeightToDistanceFunction edgeWeightToDistance = EdgeWeightToDistanceFunction.OneDivSum;
     
     private DistanceMetric distanceFunction;
     final double[] zero;
@@ -313,6 +315,10 @@ public class HyperassociativeMap<N, E> {
         return 1.0;
     }
     
+    public static enum EdgeWeightToDistanceFunction {
+        Min, Max, Sum, SumOneDiv, OneDivSum, OneDivSumOneDiv
+    }
+    
     void getNeighbors(final N nodeToQuery, Map<N, Double> neighbors) {
         if (neighbors == null)
             neighbors = new HashMap<N, Double>();
@@ -320,14 +326,48 @@ public class HyperassociativeMap<N, E> {
             neighbors.clear();
         
         for (E neighborEdge : graph.edgesOf(nodeToQuery)) {
-            double currentWeight = getEdgeDistance(neighborEdge);
-
             N s = graph.getEdgeSource(neighborEdge);
             N t = graph.getEdgeSource(neighborEdge);
             N neighbor = s == nodeToQuery ? t : s;
 
+            Double existingWeight = neighbors.get(neighbor);
+            
+            double currentWeight = getEdgeDistance(neighborEdge);
+
+            if (existingWeight!=null) {
+                switch (edgeWeightToDistance) {
+                    case Min:
+                        currentWeight = Math.min(existingWeight, currentWeight);
+                        break;
+                    case Max:
+                        currentWeight = Math.max(existingWeight, currentWeight);
+                        break;
+                    case SumOneDiv:
+                    case OneDivSumOneDiv:
+                        currentWeight = 1/currentWeight + existingWeight;
+                        break;
+                    case Sum:
+                    case OneDivSum:                    
+                        currentWeight += existingWeight;
+                        break;
+                        
+                     
+                }
+            }
+            
             neighbors.put(neighbor, currentWeight);
-        }                
+        }   
+        
+        switch (edgeWeightToDistance) {
+            case OneDivSumOneDiv:
+            case OneDivSum:
+                for ( Entry<N, Double> e : neighbors.entrySet()) {
+                    e.setValue( 1.0 / e.getValue() );
+                }
+                break;
+        }
+
+        
     }
     
     

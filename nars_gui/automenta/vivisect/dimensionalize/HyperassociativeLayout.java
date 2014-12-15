@@ -36,12 +36,21 @@ public class HyperassociativeLayout implements GraphDisplay {
                     return super.newNodeCoordinates(node);
                 }
 
+            @Override
+            public double getEdgeDistance(Object e) {
+                if (e instanceof Budgetable) {                   
+                    return 1.0 + ((Budgetable)e).getBudget().getPriority() * 1.0;                }
+                return 1;
+            }
+
+                
+            
                 
             @Override
             public double getRadius(Object n) {
                 if (n instanceof Budgetable) {
                     return 1.0 + ((Budgetable)n).getBudget().getPriority() * 1.0;                }
-                return 0;
+                return 1;
             }
 
                 
