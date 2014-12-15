@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.WeakHashMap;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.apache.log4j.Logger;
 import org.jgrapht.Graph;
 
 /**
@@ -59,8 +59,9 @@ public class HyperassociativeMap<N, E> {
     private Graph<N, E> graph;
     private final int dimensions;
     private final ExecutorService threadExecutor;
-    private static final Logger LOGGER = Logger.getLogger(HyperassociativeMap.class);
-    private Map<N, ArrayRealVector> coordinates = Collections.synchronizedMap(new HashMap<N, ArrayRealVector>());
+    
+    private final Map<N, ArrayRealVector> coordinates;
+    
     private static final Random RANDOM = new Random();
     private final boolean useWeights;
     private double equilibriumDistance;
@@ -68,6 +69,15 @@ public class HyperassociativeMap<N, E> {
     private double maxMovement = DEFAULT_MAX_MOVEMENT;
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
     private double acceptableDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
+
+    public ArrayRealVector getCoordinates(N node) {
+        ArrayRealVector location = coordinates.get(node);    
+        if (location == null) {
+            location = randomCoordinates(dimensions);
+            coordinates.put(node, location);
+        }
+        return location;
+    }
 
     private class Align implements Callable<ArrayRealVector> {
 
@@ -79,7 +89,7 @@ public class HyperassociativeMap<N, E> {
 
         @Override
         public ArrayRealVector call() {
-            return align(node);
+            return align(node, null);
         }
     }
 
@@ -97,6 +107,13 @@ public class HyperassociativeMap<N, E> {
         this.equilibriumDistance = equilibriumDistance;
         this.useWeights = useWeights;
 
+        if (threadExecutor!=null) {
+            coordinates = Collections.synchronizedMap(new WeakHashMap<N, ArrayRealVector>());
+        }
+        else {
+            coordinates = new WeakHashMap<>();
+        }
+        
         // refresh all nodes
         for (final N node : this.graph.vertexSet()) {
             this.coordinates.put(node, randomCoordinates(this.dimensions));
@@ -166,6 +183,7 @@ public class HyperassociativeMap<N, E> {
 
     public void align() {
         // refresh all nodes
+        /*
         if (!coordinates.keySet().equals(graph.vertexSet())) {
             final Map<N, ArrayRealVector> newCoordinates = new HashMap<N, ArrayRealVector>();
             for (final N node : graph.vertexSet()) {
@@ -177,6 +195,7 @@ public class HyperassociativeMap<N, E> {
             }
             coordinates = Collections.synchronizedMap(newCoordinates);
         }
+        */
 
         totalMovement = DEFAULT_TOTAL_MOVEMENT;
         maxMovement = DEFAULT_MAX_MOVEMENT;
@@ -192,12 +211,12 @@ public class HyperassociativeMap<N, E> {
             try {
                 center = waitAndProcessFutures(futures);
             } catch (InterruptedException caught) {
-                LOGGER.warn("waitAndProcessFutures was unexpectedly interrupted", caught);
+                //LOGGER.warn("waitAndProcessFutures was unexpectedly interrupted", caught);
                 throw new RuntimeException("Unexpected interruption. Get should block indefinitely", caught);
             }
         }
 
-        LOGGER.debug("maxMove: " + maxMovement + ", Average Move: " + getAverageMovement());
+        //LOGGER.debug("maxMove: " + maxMovement + ", Average Move: " + getAverageMovement());
 
 		// divide each coordinate of the sum of all the points by the number of
         // nodes in order to calculate the average point, or center of all the
@@ -212,14 +231,30 @@ public class HyperassociativeMap<N, E> {
         return dimensions;
     }
 
-    public Map<N, ArrayRealVector> getCoordinates() {
-        return coordinates;
-    }
 
+    public static void add(ArrayRealVector target, ArrayRealVector add) {
+        double[] a = add.getDataRef();
+        double[] t = target.getDataRef();
+        int dim = t.length;
+        for (int i = 0; i < dim; i++) {
+            t[i] += a[i];
+        }
+    }
+    public static void sub(ArrayRealVector target, ArrayRealVector add) {
+        double[] a = add.getDataRef();
+        double[] t = target.getDataRef();
+        int dim = t.length;
+        for (int i = 0; i < dim; i++) {
+            t[i] -= a[i];
+        }
+    }
+    
     private void recenterNodes(final ArrayRealVector center) {
         for (final N node : graph.vertexSet()) {
             //TODO subtract with modify
-            coordinates.put(node, coordinates.get(node).subtract(center));
+            ArrayRealVector v = coordinates.get(node);
+            if (v!=null)
+                sub(v, center);
         }
     }
 
@@ -227,8 +262,12 @@ public class HyperassociativeMap<N, E> {
         return useWeights;
     }
 
-    Map<N, Double> getNeighbors(final N nodeToQuery) {
-        final Map<N, Double> neighbors = new HashMap<N, Double>();
+    void getNeighbors(final N nodeToQuery, Map<N, Double> neighbors) {
+        if (neighbors == null)
+            neighbors = new HashMap<N, Double>();
+        else
+            neighbors.clear();
+        
         for (E neighborEdge : graph.edgesOf(nodeToQuery)) {
             double currentWeight = graph.getEdgeWeight(neighborEdge);
 
@@ -237,70 +276,94 @@ public class HyperassociativeMap<N, E> {
             N neighbor = s == nodeToQuery ? t : s;
 
             neighbors.put(neighbor, currentWeight);
-        }
-        return neighbors;
+        }                
     }
 
-    private ArrayRealVector align(final N nodeToAlign) {
+    private ArrayRealVector align(final N nodeToAlign, Map<N, Double> neighbors) {
         // calculate equilibrium with neighbors
-        final ArrayRealVector location = coordinates.get(nodeToAlign);
-        final Map<N, Double> neighbors = getNeighbors(nodeToAlign);
+        ArrayRealVector location = getCoordinates(nodeToAlign);
+        
+        getNeighbors(nodeToAlign, neighbors);
 
-        ArrayRealVector compositeArrayRealVector = new ArrayRealVector(location.getDimension());
+        ArrayRealVector compositeArrayRealVector = new ArrayRealVector(dimensions);
 
         // align with neighbours
         for (final Entry<N, Double> neighborEntry : neighbors.entrySet()) {
             final N neighbor = neighborEntry.getKey();
-            final double associationEquilibriumDistance = neighborEntry.getValue();
+            final double distToNeighbor = neighborEntry.getValue();
 
-            RealVector neighborArrayRealVector = coordinates.get(neighbor).subtract(location);
-            if (Math.abs(neighborArrayRealVector.getNorm()) > associationEquilibriumDistance) {
-                double newDistance = Math.pow(Math.abs(neighborArrayRealVector.getNorm()) - associationEquilibriumDistance, ATTRACTION_STRENGTH);
-                if (Math.abs(newDistance) > Math.abs(Math.abs(neighborArrayRealVector.getNorm()) - associationEquilibriumDistance)) {
-                    newDistance = Math.copySign(Math.abs(Math.abs(neighborArrayRealVector.getNorm()) - associationEquilibriumDistance), newDistance);
+            ArrayRealVector nv = coordinates.get(neighbor);
+            if (nv == null)
+                continue;
+            
+            nv = nv.subtract(location);
+            
+            
+            double nvnorm = nv.getNorm();
+            if (nvnorm > distToNeighbor) {
+                double newDistance = Math.pow(nvnorm - distToNeighbor, ATTRACTION_STRENGTH);
+                if (Math.abs(newDistance) > Math.abs(nvnorm - distToNeighbor)) {
+                    newDistance = Math.copySign(Math.abs(nvnorm - distToNeighbor), newDistance);
                 }
+                
                 newDistance *= learningRate;
-                double oldDistance = neighborArrayRealVector.getNorm();
-                neighborArrayRealVector = neighborArrayRealVector.mapMultiplyToSelf(newDistance/oldDistance);
-            } else {
-                double newDistance = -EQUILIBRIUM_DISTANCE * atanh((associationEquilibriumDistance - Math.abs(neighborArrayRealVector.getNorm())) / associationEquilibriumDistance);
-                if (Math.abs(newDistance) > (Math.abs(associationEquilibriumDistance - Math.abs(neighborArrayRealVector.getNorm())))) {
-                    newDistance = -EQUILIBRIUM_DISTANCE * (associationEquilibriumDistance - Math.abs(neighborArrayRealVector.getNorm()));
+                if (nvnorm!=0) {
+                    nv.mapMultiplyToSelf(newDistance/nvnorm);
                 }
+                
+            } else {
+                
+                double newDistance = -EQUILIBRIUM_DISTANCE * atanh((distToNeighbor - nvnorm) / distToNeighbor);
+                if (Math.abs(newDistance) > (Math.abs(distToNeighbor - nvnorm))) {
+                    newDistance = -EQUILIBRIUM_DISTANCE * (distToNeighbor - nvnorm);
+                }
+                
                 newDistance *= learningRate;
                 
-                double oldDistance = neighborArrayRealVector.getNorm();
-                if (oldDistance != 0) {
-                    neighborArrayRealVector = neighborArrayRealVector.mapMultiplyToSelf(newDistance / oldDistance);
+                
+                if (nvnorm != 0) {
+                    nv.mapMultiplyToSelf(newDistance / nvnorm);
                 }
             }
-            compositeArrayRealVector = compositeArrayRealVector.add(neighborArrayRealVector);
+            add(compositeArrayRealVector, nv);
         }
+        
         // calculate repulsion with all non-neighbors
         for (final N node : graph.vertexSet()) {
             if ((!neighbors.containsKey(node)) && (node != nodeToAlign)
                     && (!(graph.containsEdge(node, nodeToAlign) || graph.containsEdge(nodeToAlign, node)))) {
-                RealVector nodeArrayRealVector = coordinates.get(node).subtract(location);
+                
+                ArrayRealVector nl = getCoordinates(node);
+
+                    
+
+                
+                ArrayRealVector nodeArrayRealVector = nl.subtract(location);
                 double newDistance = -EQUILIBRIUM_DISTANCE / Math.pow(nodeArrayRealVector.getNorm(), REPULSIVE_WEAKNESS);
                 if (Math.abs(newDistance) > Math.abs(equilibriumDistance)) {
                     newDistance = Math.copySign(equilibriumDistance, newDistance);
                 }
                 newDistance *= learningRate;
-                nodeArrayRealVector = nodeArrayRealVector.unitVector().mapMultiplyToSelf(newDistance);
-                compositeArrayRealVector = compositeArrayRealVector.add(nodeArrayRealVector);
+                
+                double oldDistance = nodeArrayRealVector.getNorm();
+                nodeArrayRealVector.mapMultiplyToSelf(newDistance/oldDistance);
+                add(compositeArrayRealVector, nodeArrayRealVector);
             }
         }
+        
         ArrayRealVector newLocation = location.add(compositeArrayRealVector);
+        
         final ArrayRealVector oldLocation = coordinates.get(nodeToAlign);
-        double moveDistance = Math.abs(newLocation.subtract(oldLocation).getNorm());
+        double moveDistance = newLocation.getDistance(oldLocation);
+        
         if (moveDistance > equilibriumDistance * acceptableDistanceFactor) {
             final double newLearningRate = ((equilibriumDistance * acceptableDistanceFactor) / moveDistance);
             if (newLearningRate < learningRate) {
                 learningRate = newLearningRate;
-                LOGGER.debug("learning rate: " + learningRate);
+                //LOGGER.debug("learning rate: " + learningRate);
             } else {
                 learningRate *= LEARNING_RATE_INCREASE_FACTOR;
-                LOGGER.debug("learning rate: " + learningRate);
+                //LOGGER.debug("learning rate: " + learningRate);
             }
 
             newLocation = oldLocation;
@@ -355,19 +418,23 @@ public class HyperassociativeMap<N, E> {
 
     private ArrayRealVector processLocally() {
         ArrayRealVector pointSum = new ArrayRealVector(dimensions);
+        Map<N, Double> n = new HashMap();
+        
         for (final N node : graph.vertexSet()) {
-            final ArrayRealVector newPoint = align(node);
+            
+            final ArrayRealVector newPoint = align(node, n);
 
             //TODO use direct array
-            pointSum = pointSum.add(newPoint);
+            add(pointSum, newPoint);
         }
+        
         if ((learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT) < DEFAULT_LEARNING_RATE) {
             final double acceptableDistanceAdjustment = 0.1;
             if (getAverageMovement() < (equilibriumDistance * acceptableDistanceFactor * acceptableDistanceAdjustment)) {
                 acceptableDistanceFactor *= LEARNING_RATE_INCREASE_FACTOR;
             }
             learningRate *= LEARNING_RATE_PROCESSING_ADJUSTMENT;
-            LOGGER.debug("learning rate: " + learningRate + ", acceptableDistanceFactor: " + acceptableDistanceFactor);
+            //LOGGER.debug("learning rate: " + learningRate + ", acceptableDistanceFactor: " + acceptableDistanceFactor);
         }
         return pointSum;
     }
@@ -383,7 +450,7 @@ public class HyperassociativeMap<N, E> {
 
             }
         } catch (ExecutionException caught) {
-            LOGGER.error("Align had an unexpected problem executing.", caught);
+            //LOGGER.error("Align had an unexpected problem executing.", caught);
             throw new RuntimeException("Unexpected execution exception. Get should block indefinitely", caught);
         }
         if (learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT < DEFAULT_LEARNING_RATE) {
@@ -392,7 +459,7 @@ public class HyperassociativeMap<N, E> {
                 acceptableDistanceFactor = maxMovement * 2.0;
             }
             learningRate *= LEARNING_RATE_PROCESSING_ADJUSTMENT;
-            LOGGER.debug("learning rate: " + learningRate + ", acceptableDistanceFactor: " + acceptableDistanceFactor);
+            //LOGGER.debug("learning rate: " + learningRate + ", acceptableDistanceFactor: " + acceptableDistanceFactor);
         }
         return pointSum;
     }

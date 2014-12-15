@@ -18,7 +18,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 public class HyperassociativeLayout implements GraphDisplay {
 
     HyperassociativeMap h = null;
-        float spcing = 100.0f;
+        float spcing = 200.0f;
 
     @Override
     public boolean preUpdate(AbstractGraphVis g) {
@@ -37,11 +37,9 @@ public class HyperassociativeLayout implements GraphDisplay {
     public void vertex(AbstractGraphVis g, VertexVis v) {
         if (h == null) return;
         if (v == null) return;
-        if (v.vertex == null) return;
-        if (h.getCoordinates()==null) return;
-                
+        if (v.vertex == null) return;                
         
-        ArrayRealVector c = (ArrayRealVector) h.getCoordinates().get(v.vertex); 
+        ArrayRealVector c = h.getCoordinates(v.vertex); 
         if (c==null) return;
         
         
