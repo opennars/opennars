@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.ml.distance.DistanceMeasure;
-import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.jgrapht.Graph;
 
 /**
@@ -67,7 +65,7 @@ public class HyperassociativeMap<N, E> {
     private static final double DEFAULT_ACCEPTABLE_DISTANCE_FACTOR = 0.85;
     private static final double DEFAULT_EQUILIBRIUM_DISTANCE = 1.0;
 
-    double maxRepulsionDistance = 8.0;
+    double maxRepulsionDistance = 16.0;
     
     private Graph<N, E> graph;
     private final int dimensions;
@@ -82,7 +80,7 @@ public class HyperassociativeMap<N, E> {
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
     private double acceptableMaxDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
     
-    private DistanceMeasure distanceFunction;
+    private DistanceMetric distanceFunction;
     final double[] zero;
 
     protected ArrayRealVector newNodeCoordinates(N node) {
@@ -113,7 +111,7 @@ public class HyperassociativeMap<N, E> {
         }
     }
 
-    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final double equilibriumDistance, DistanceMeasure distance, final ExecutorService threadExecutor) {
+    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final double equilibriumDistance, DistanceMetric distance, final ExecutorService threadExecutor) {
         if (graph == null) {
             throw new IllegalArgumentException("Graph can not be null");
         }
@@ -141,20 +139,20 @@ public class HyperassociativeMap<N, E> {
         }
     }
 
-    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, DistanceMeasure distance, final ExecutorService threadExecutor) {
+    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, DistanceMetric distance, final ExecutorService threadExecutor) {
         this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, distance, threadExecutor);
     }
 
-    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final double equilibriumDistance, DistanceMeasure distance) {
+    public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, final double equilibriumDistance, DistanceMetric distance) {
         this(graph, dimensions, equilibriumDistance, distance, null);
     }
 
-    public HyperassociativeMap(final Graph<N, E> graph, DistanceMeasure distance, final int dimensions) {
+    public HyperassociativeMap(final Graph<N, E> graph, DistanceMetric distance, final int dimensions) {
         this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, distance, null);
     }
     
     public HyperassociativeMap(final Graph<N, E> graph, final int dimensions) {
-        this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, new EuclideanDistance(), null);
+        this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, Euclidean, null);
     }
 
     public void setGraph(Graph<N, E> graph) {
@@ -334,7 +332,7 @@ public class HyperassociativeMap<N, E> {
     
     
     public double magnitude(ArrayRealVector x) {
-        return distanceFunction.compute(zero, x.getDataRef());
+        return distanceFunction.getDistance(zero, x.getDataRef());
     }
 
     private ArrayRealVector align(final N nodeToAlign, Map<N, Double> neighbors) {
@@ -387,15 +385,20 @@ public class HyperassociativeMap<N, E> {
             add(delta, attractVector, factor);
         }
         
+        ArrayRealVector repelVector = new ArrayRealVector(dimensions);
+        double maxEffectiveDistance = targetDistance * maxRepulsionDistance;
+        
         // calculate repulsion with all non-neighbors
         for (final N node : graph.vertexSet()) {
             if (node == nodeToAlign) continue;
             if (neighbors.containsKey(node)) continue;
 
-            ArrayRealVector repelVector = getPosition(node).subtract(position);
-
-            double oldDistance = magnitude(repelVector);
-
+            
+            
+            double oldDistance = distanceFunction.subtractIfLessThan(getPosition(node), position, repelVector, maxEffectiveDistance);
+            if (oldDistance == Double.POSITIVE_INFINITY)
+                continue;
+            
             double newDistance = -targetDistance / Math.pow(oldDistance, REPULSIVE_WEAKNESS);
 
             if (Math.abs(newDistance) > targetDistance) {
@@ -521,4 +524,104 @@ public class HyperassociativeMap<N, E> {
         }
         return pointSum;
     }
+    
+    
+    /** distance metric with early termination condition when accumulated distance exceeds a max threshold (in which case it returns positive infinity) */
+    public interface DistanceMetric {
+        
+        /** version which can be overridden to eliminate max distance test in inner loop */
+        default public double getDistance(double[] a, double[] b) {
+            return getDistance(a, b, Double.POSITIVE_INFINITY);
+        }
+        
+        public double getDistance(double[] a, double[] b, double max);        
+
+        public double subtractIfLessThan(ArrayRealVector a, ArrayRealVector b, ArrayRealVector result, double maxDistance);
+    }
+    
+    public final static DistanceMetric Euclidean = new DistanceMetric() {
+
+        @Override public double getDistance(double[] a, double[] b, double max) {
+            double maxSquare = max*max;
+            double d = 0;
+            for (int i = 0; i < a.length; i++) {
+                double ab = (a[i] - b[i]);                
+                d += ab*ab;
+                
+                if (d > maxSquare)
+                    return Double.POSITIVE_INFINITY;                
+            }
+            
+            return Math.sqrt(d);            
+        }
+        @Override public double getDistance(double[] a, double[] b) {
+            double d = 0;
+            for (int i = 0; i < a.length; i++) {
+                double ab = (a[i] - b[i]);                
+                d += ab*ab;
+            }
+            
+            return Math.sqrt(d);            
+        }        
+
+        @Override
+        public double subtractIfLessThan(ArrayRealVector aa, ArrayRealVector bb, ArrayRealVector result, double maxDistance) {
+            double a[] = aa.getDataRef();
+            double b[] = bb.getDataRef();
+            double r[] = result.getDataRef();
+            double maxDistanceSq = maxDistance*maxDistance;
+            double d = 0;
+            for (int i = 0; i < a.length; i++) {
+                double ab = a[i] - b[i];
+                d += ab*ab;
+             
+                if (d > maxDistanceSq) return Double.POSITIVE_INFINITY;
+                
+                r[i] = ab;
+            }
+            return Math.sqrt(d);
+        }
+    };
+    public final static DistanceMetric Manhattan = new DistanceMetric() {
+
+        @Override public double getDistance(double[] a, double[] b, double max) {            
+            double d = 0;
+            for (int i = 0; i < a.length; i++) {
+                double ab = (a[i] - b[i]);                
+                if (ab < 0) ab = -ab; //abs
+                d += ab;
+                
+                if (d > max)
+                    return Double.POSITIVE_INFINITY;                
+            }
+            
+            return d;
+        }
+        @Override public double getDistance(double[] a, double[] b) {                    double d = 0;
+            for (int i = 0; i < a.length; i++) {                
+                double ab = (a[i] - b[i]);
+                if (ab < 0) ab = -ab; //abs
+                d += ab;
+            }            
+            return d;
+        }     
+        
+        @Override
+        public double subtractIfLessThan(ArrayRealVector aa, ArrayRealVector bb, ArrayRealVector result, double maxDistance) {
+            double a[] = aa.getDataRef();
+            double b[] = bb.getDataRef();
+            double r[] = result.getDataRef();
+            double d = 0;
+            for (int i = 0; i < a.length; i++) {
+                double ab = a[i] - b[i];
+                if (ab < 0) ab = -ab;
+                d += ab;
+             
+                if (d > maxDistance) return Double.POSITIVE_INFINITY;
+                
+                r[i] = ab;
+            }
+            return Math.sqrt(d);
+        }        
+    };
 }
