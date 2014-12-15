@@ -70,11 +70,16 @@ public class HyperassociativeMap<N, E> {
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
     private double acceptableDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
 
+    protected ArrayRealVector newNodeCoordinates(N node) {
+        ArrayRealVector location = randomCoordinates(dimensions);
+        coordinates.put(node, location);
+        return location;    
+    }
+    
     public ArrayRealVector getCoordinates(N node) {
         ArrayRealVector location = coordinates.get(node);    
         if (location == null) {
-            location = randomCoordinates(dimensions);
-            coordinates.put(node, location);
+            location = newNodeCoordinates(node);
         }
         return location;
     }
@@ -104,7 +109,7 @@ public class HyperassociativeMap<N, E> {
         this.graph = graph;
         this.dimensions = dimensions;
         this.threadExecutor = threadExecutor;
-        this.equilibriumDistance = equilibriumDistance;
+        this.equilibriumDistance = Math.abs(equilibriumDistance);
         this.useWeights = useWeights;
 
         if (threadExecutor!=null) {
@@ -147,7 +152,7 @@ public class HyperassociativeMap<N, E> {
     }
 
     public void setEquilibriumDistance(final double equilibriumDistance) {
-        this.equilibriumDistance = equilibriumDistance;
+        this.equilibriumDistance = Math.abs(equilibriumDistance);
     }
 
     public void resetLearning() {
@@ -159,8 +164,10 @@ public class HyperassociativeMap<N, E> {
 
     public void reset() {
         resetLearning();
+        
         // randomize all nodes
-        for (final N node : coordinates.keySet()) {
+        coordinates.clear();
+        for (final N node : graph.vertexSet()) {
             coordinates.put(node, randomCoordinates(dimensions));
         }
     }
@@ -334,27 +341,23 @@ public class HyperassociativeMap<N, E> {
                     && (!(graph.containsEdge(node, nodeToAlign) || graph.containsEdge(nodeToAlign, node)))) {
                 
                 ArrayRealVector nl = getCoordinates(node);
-
-                    
-
                 
                 ArrayRealVector nodeArrayRealVector = nl.subtract(location);
-                double newDistance = -EQUILIBRIUM_DISTANCE / Math.pow(nodeArrayRealVector.getNorm(), REPULSIVE_WEAKNESS);
-                if (Math.abs(newDistance) > Math.abs(equilibriumDistance)) {
+                double oldDistance = nodeArrayRealVector.getNorm();
+                
+                double newDistance = -EQUILIBRIUM_DISTANCE / Math.pow(oldDistance, REPULSIVE_WEAKNESS);
+                if (Math.abs(newDistance) > equilibriumDistance) {
                     newDistance = Math.copySign(equilibriumDistance, newDistance);
                 }
                 newDistance *= learningRate;
                 
-                double oldDistance = nodeArrayRealVector.getNorm();
                 nodeArrayRealVector.mapMultiplyToSelf(newDistance/oldDistance);
                 add(compositeArrayRealVector, nodeArrayRealVector);
             }
         }
-        
-        ArrayRealVector newLocation = location.add(compositeArrayRealVector);
-        
-        final ArrayRealVector oldLocation = coordinates.get(nodeToAlign);
-        double moveDistance = newLocation.getDistance(oldLocation);
+
+        double moveDistance = compositeArrayRealVector.getNorm();
+        //newLocation.getDistance(oldLocation);
         
         if (moveDistance > equilibriumDistance * acceptableDistanceFactor) {
             final double newLearningRate = ((equilibriumDistance * acceptableDistanceFactor) / moveDistance);
@@ -365,9 +368,11 @@ public class HyperassociativeMap<N, E> {
                 learningRate *= LEARNING_RATE_INCREASE_FACTOR;
                 //LOGGER.debug("learning rate: " + learningRate);
             }
-
-            newLocation = oldLocation;
+            
             moveDistance = DEFAULT_TOTAL_MOVEMENT;
+        }
+        else {
+            add(location, compositeArrayRealVector);
         }
 
         if (moveDistance > maxMovement) {
@@ -375,8 +380,7 @@ public class HyperassociativeMap<N, E> {
         }
         totalMovement += moveDistance;
 
-        coordinates.put(nodeToAlign, newLocation);
-        return newLocation;
+        return location;
     }
 
     /**
