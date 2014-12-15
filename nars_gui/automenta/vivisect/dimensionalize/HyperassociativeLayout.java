@@ -9,9 +9,9 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import java.util.concurrent.atomic.AtomicBoolean;
+import nars.entity.BudgetValue.Budgetable;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.ml.distance.ManhattanDistance;
 
 /**
  *
@@ -29,20 +29,20 @@ public class HyperassociativeLayout implements GraphDisplay {
         
         
         if (h == null)
-            h = new HyperassociativeMap(g.getGraph(), new ManhattanDistance(), 2) {
+            h = new HyperassociativeMap(g.getGraph(), HyperassociativeMap.Euclidean, 2) {
                 @Override
                 protected ArrayRealVector newNodeCoordinates(Object node) {
                     newNode.set(true);
                     return super.newNodeCoordinates(node);
                 }
 
-                /*
+                
             @Override
             public double getRadius(Object n) {
                 if (n instanceof Budgetable) {
-                    return ((Budgetable)n).getBudget().getPriority() * 0.5f;                }
+                    return 1.0 + ((Budgetable)n).getBudget().getPriority() * 1.0;                }
                 return 0;
-            }*/
+            }
 
                 
             };    
