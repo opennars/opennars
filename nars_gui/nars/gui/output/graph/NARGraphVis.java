@@ -10,6 +10,7 @@ package nars.gui.output.graph;
  */
 
 import automenta.vivisect.dimensionalize.FastOrganicLayout;
+import automenta.vivisect.dimensionalize.HyperassociativeLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.GraphDisplays;
@@ -235,6 +236,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         layoutSelect.addItem("Organic");
         layoutSelect.addItem("Circle Fixed");       
         layoutSelect.addItem("Circle Fixed (Half)");
+        layoutSelect.addItem("Hyperassociative");
         layoutSelect.addItem("GridSort");
         layoutSelect.addItem("Circle Anim");
         layoutSelect.addItem("Grid");
@@ -251,6 +253,9 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
                         break;
                     case 2:
                         update(style, new HashPriorityPolarLayout(0.25f, 0.75f, 75));     
+                        break;
+                    case 3:
+                        update(style, new HyperassociativeLayout());     
                         break;
 
                 }
