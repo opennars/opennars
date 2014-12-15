@@ -8,6 +8,7 @@ import automenta.vivisect.graph.AbstractGraphVis;
 import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 
@@ -18,15 +19,31 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 public class HyperassociativeLayout implements GraphDisplay {
 
     HyperassociativeMap h = null;
-        float spcing = 200.0f;
-
+    float spcing = 200.0f;
+    
+    private AtomicBoolean newNode = new AtomicBoolean(false);
+    
     @Override
     public boolean preUpdate(AbstractGraphVis g) {
         
+        
         if (h == null)
-            h = new HyperassociativeMap(g.getGraph(), 2);        
-        else
+            h = new HyperassociativeMap(g.getGraph(), 2) {
+                @Override
+                protected ArrayRealVector newNodeCoordinates(Object node) {
+                    newNode.set(true);
+                    return super.newNodeCoordinates(node);
+                }
+
+            };    
+        else {
+            if (newNode.get()) {
+                h.resetLearning();
+                newNode.set(false);
+            }
+            
             h.setGraph(g.getGraph());
+        }
         
         h.align();
         return true;
