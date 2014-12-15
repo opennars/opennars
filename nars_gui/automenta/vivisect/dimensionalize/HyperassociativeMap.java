@@ -66,7 +66,8 @@ public class HyperassociativeMap<N, E> {
     private static final double DEFAULT_ACCEPTABLE_DISTANCE_FACTOR = 0.85;
     private static final double DEFAULT_EQUILIBRIUM_DISTANCE = 1.0;
 
-    double maxRepulsionDistance = 16.0;
+    /** when distance between nodes exceeds this factor times target distance, repulsion is not applied.  set to positive infinity to completely disable */
+    double maxRepulsionDistance = 12.0;
     
     private Graph<N, E> graph;
     private final int dimensions;
@@ -97,6 +98,11 @@ public class HyperassociativeMap<N, E> {
             location = newNodeCoordinates(node);
         }
         return location;
+    }
+
+    public void run(int i) {
+        for ( ; i > 0; i--)
+            align();
     }
 
     private class Align implements Callable<ArrayRealVector> {
@@ -664,4 +670,11 @@ public class HyperassociativeMap<N, E> {
             return Math.sqrt(d);
         }        
     };
+
+    @Override
+    public String toString() {
+        return coordinates.toString();
+    }
+    
+    
 }

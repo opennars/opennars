@@ -3,7 +3,7 @@ package nars.inference;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
-import nars.ql.elsy.QLearner;
+import nars.rl.elsy.QLearner;
 
 
 public abstract class QController extends AbstractController {

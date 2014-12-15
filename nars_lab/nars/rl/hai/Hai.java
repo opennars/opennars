@@ -1,4 +1,4 @@
-package nars.ql.hai;
+package nars.rl.hai;
 
 /** Original Q-Learning + SOM agent by patham9 */
 public class Hai {

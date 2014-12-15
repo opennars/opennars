@@ -1,4 +1,4 @@
-package nars.ql.elsy;
+package nars.rl.elsy;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,11 +10,11 @@ import java.io.Serializable;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 import static java.lang.System.arraycopy;
-import static nars.ql.elsy.Mat.sigmoidBi;
-import static nars.ql.elsy.Mat.sigmoidUni;
-import static nars.ql.elsy.Rand.b;
-import static nars.ql.elsy.Rand.d;
-import static nars.ql.elsy.Rand.successWithPercent;
+import static nars.rl.elsy.Mat.sigmoidBi;
+import static nars.rl.elsy.Mat.sigmoidUni;
+import static nars.rl.elsy.Rand.b;
+import static nars.rl.elsy.Rand.d;
+import static nars.rl.elsy.Rand.successWithPercent;
 
 
 
