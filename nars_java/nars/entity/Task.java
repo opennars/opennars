@@ -255,6 +255,24 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
         return s.toString();
     }
 
+
+    public boolean hasParent(Task t) {
+        if (getParentTask() == null)
+            return false;
+        Task p=getParentTask();
+        do {            
+            Task n = p.getParentTask();
+            if (n!=null) {
+                if (n.equals(t))
+                    return true;
+                p = n;
+            }
+            else
+                break;
+        } while (p!=null);
+        return false;        
+    }    
+    
     public Task getRootTask() {
         if (getParentTask() == null) {
             return null;
@@ -365,6 +383,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
     public T getTerm() {
         return sentence.getTerm();
     }
+
 
 
     

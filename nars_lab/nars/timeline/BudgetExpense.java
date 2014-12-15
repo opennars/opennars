@@ -71,7 +71,7 @@ public class BudgetExpense extends TimelineExample {
             new EventChart(t, false, false, true).height(3)
         );
                 
-        nar.finish(cycles);
+        nar.run(cycles);
         
         new NWindow("_", new PCanvas(tc)).show(800, 800, true);
     

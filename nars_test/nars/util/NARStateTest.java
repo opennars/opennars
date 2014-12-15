@@ -39,7 +39,7 @@ public class NARStateTest {
         NAR n = new Default().build();
                 
         //new Number1DInput(n, "x", x, 2);
-        n.finish(16);
+        n.run(16);
         
 
         n.memory.logic.setActive(true);

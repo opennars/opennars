@@ -22,7 +22,7 @@ public class TestMultistepEdited {
         n.memory.setRecorder(logger);*/
 
         
-        n.finish(1000);
+        n.run(1000);
         //System.out.println(n.memory.concepts);
         
     }

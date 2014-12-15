@@ -54,8 +54,8 @@ public class Want extends Operator implements Mental {
         
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.GOAL_MARK, truth, new Stamp(memory));
-        float quality = BudgetFunctions.truthToQuality(truth);
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, quality);
+        
+        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
 
         return Lists.newArrayList( new Task(sentence, budget) );        
     }

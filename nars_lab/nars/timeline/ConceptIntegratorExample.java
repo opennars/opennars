@@ -169,7 +169,7 @@ public class ConceptIntegratorExample extends TimelineExample {
 
         ConceptIntegrator ci = new ConceptIntegrator(nar, 16, cycles);
         
-        nar.finish(cycles);
+        nar.run(cycles);
 
         TimelineVis tc = new TimelineVis(ci.getCharts());
 

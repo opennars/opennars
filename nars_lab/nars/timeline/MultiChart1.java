@@ -43,7 +43,7 @@ public class MultiChart1 extends TimelineExample {
         nar.addInput("<(^pick,x) =\\> a>.");
         nar.addInput("<(*, b, c) <-> x>.");
         nar.addInput("a!");
-        nar.finish(cycles);
+        nar.run(cycles);
 
         new NWindow("_", 
             new PCanvas(

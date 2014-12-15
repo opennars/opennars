@@ -56,8 +56,8 @@ public class Name extends Operator implements Mental {
         
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));
-        float quality = BudgetFunctions.truthToQuality(truth);
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
+        
+        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         
         return Lists.newArrayList( new Task(sentence, budget) );        
     }

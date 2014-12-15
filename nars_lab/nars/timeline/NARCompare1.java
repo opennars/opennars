@@ -46,13 +46,13 @@ public class NARCompare1 extends TimelineExample {
         setA(a.param);        
         NARTrace at = new NARTrace(a);
         a.addInput(input);
-        a.finish(cycles);
+        a.run(cycles);
 
         NAR b = new Default().build();
         setB(b.param);
         NARTrace bt = new NARTrace(b);
         b.addInput(input);
-        b.finish(cycles);
+        b.run(cycles);
         
         new NWindow("_", new PCanvas(new TimelineVis(
             new LineChart(at.getCharts("task.novel.add", "task.immediate_processed")).height(3),

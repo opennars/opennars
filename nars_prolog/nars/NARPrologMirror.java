@@ -458,7 +458,7 @@ public class NARPrologMirror extends AbstractObserver {
         float priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
         float durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
         return nar.memory.newTask(t, '.', freq, conf, priority, durability, parentTask,
-                question.isEternal() ? null : Tense.Present); //TODO may need to adjust tense of answer based on when question was asked
+                question.isEternal() ? Tense.Eternal : Tense.Present); //TODO may need to adjust tense of answer based on when question was asked
     }
     
     /** reflect a result to NARS, and remember it so that it doesn't get reprocessed here later */

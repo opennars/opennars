@@ -18,7 +18,7 @@ public class TestNARGraph {
         
         n.addInput("<a --> b>.");
         
-        n.finish(2);
+        n.run(2);
         
         //System.out.println(n);
 

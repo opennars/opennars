@@ -36,32 +36,32 @@ public class DelayBagTest {
         
         n.addInput("<a --> b>.");
         
-        n.finish(1);        
+        n.run(1);        
         assertEquals(3, numConcepts(n) );
 
-        n.finish(1);        
+        n.run(1);        
         assertEquals(3, numConcepts(n) );
         
-        n.finish(1);        
+        n.run(1);        
         assertEquals(3, numConcepts(n) );
         
         n.addInput("<c --> d>.");
         
-        n.finish(2);        
+        n.run(2);        
         assertEquals(6, numConcepts(n) );
 
-        n.finish(30);
+        n.run(30);
         assertEquals(6, numConcepts(n) );
         
         ((AntAttention)n.memory.concepts).concepts.take(
                 new Narsese(n).parseTerm("<a --> b>") );
         
         assertEquals(5, numConcepts(n) );
-        n.finish(10);
+        n.run(10);
         assertEquals(5, numConcepts(n) );
 
         n.addInput("<a --> b>.");
-        n.finish(5);
+        n.run(5);
         assertEquals(6, numConcepts(n) );
     }
 }

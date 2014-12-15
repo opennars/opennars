@@ -41,7 +41,7 @@ public class RLNAR extends RLAgent {
     }
 
     protected void think() {
-        nar.finish(thoughtCycles);
+        nar.run(thoughtCycles);
     }
 
     @Override

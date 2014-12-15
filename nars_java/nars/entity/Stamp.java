@@ -349,7 +349,15 @@ public class Stamp implements Cloneable {
 
     
     public boolean isEternal() {
-        return occurrenceTime == ETERNAL;
+        boolean eternalOccurrence = occurrenceTime == ETERNAL;
+        
+        if (Parameters.DEBUG) {
+            if (eternalOccurrence && tense!=Tense.Eternal) {
+                throw new RuntimeException(this + " has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
+            }
+        }
+        
+        return eternalOccurrence;
     }
     /** sets the creation time; used to set input tasks with the actual time they enter Memory */
     public void setCreationTime(long time, int duration) {
@@ -587,6 +595,8 @@ public class Stamp implements Cloneable {
     }
     public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime) {
         Stamp s = clone();
+        if (newOcurrenceTime == ETERNAL)
+            s.tense = Tense.Eternal;
         s.setOccurrenceTime(newOcurrenceTime);
         return s;
     }
@@ -623,7 +633,7 @@ public class Stamp implements Cloneable {
      * @return The occurrence time
      */
     public String getOccurrenceTimeString() {
-        if (occurrenceTime == ETERNAL) {
+        if (isEternal()) {
             return "";
         } else {
             return appendOcurrenceTime(new StringBuilder()).toString();
@@ -632,7 +642,7 @@ public class Stamp implements Cloneable {
 
     public String getTense(final long currentTime, final int duration) {
         
-        if (occurrenceTime == Stamp.ETERNAL) {
+        if (isEternal()) {
             return "";
         }
         
@@ -649,6 +659,10 @@ public class Stamp implements Cloneable {
     public void setOccurrenceTime(final long time) {
         if (occurrenceTime!=time) {
             occurrenceTime = time;
+            
+            if (time == ETERNAL)
+                tense = Tense.Eternal;
+                        
             name = null;
         }
     }
@@ -662,7 +676,7 @@ public class Stamp implements Cloneable {
 
             final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
             buffer.append(Symbols.STAMP_OPENER).append(getCreationTime());
-            if (occurrenceTime != ETERNAL) {
+            if (!isEternal()) {
                 buffer.append('|').append(occurrenceTime);
             }
             buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');

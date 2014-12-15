@@ -68,7 +68,7 @@ public class PlanDecisionExperiment {
             }
         };
         
-        n.finish(2000);
+        n.run(2000);
         
         System.out.println();
         

@@ -5,6 +5,7 @@ import java.util.Map;
 
 public enum Tense {
     
+    
     Past(":\\:"),
     Present(":|:"),
     Future(":/:");
@@ -12,6 +13,8 @@ public enum Tense {
     
     public final String symbol;
 
+    public static final Tense Eternal = null;
+    
     private Tense(String string) {
         this.symbol = string;
     }
