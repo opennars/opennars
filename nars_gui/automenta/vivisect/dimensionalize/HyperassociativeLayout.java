@@ -9,6 +9,7 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import java.util.concurrent.atomic.AtomicBoolean;
+import nars.entity.BudgetValue.Budgetable;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 
@@ -35,6 +36,15 @@ public class HyperassociativeLayout implements GraphDisplay {
                     return super.newNodeCoordinates(node);
                 }
 
+                /*
+            @Override
+            public double getRadius(Object n) {
+                if (n instanceof Budgetable) {
+                    return ((Budgetable)n).getBudget().getPriority() * 0.5f;                }
+                return 0;
+            }*/
+
+                
             };    
         else {
             if (newNode.get()) {
@@ -56,7 +66,7 @@ public class HyperassociativeLayout implements GraphDisplay {
         if (v == null) return;
         if (v.vertex == null) return;                
         
-        ArrayRealVector c = h.getCoordinates(v.vertex); 
+        ArrayRealVector c = h.getPosition(v.vertex); 
         if (c==null) return;
         
         
