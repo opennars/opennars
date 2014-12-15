@@ -1,4 +1,4 @@
-package nars.ql.elsy;
+package nars.rl.elsy;
 
 import static java.lang.Math.exp;
 

@@ -1,6 +1,6 @@
-package nars.ql.curiosity;
+package nars.rl.curiosity;
 
-import nars.ql.elsy.Perception;
+import nars.rl.elsy.Perception;
 
 
 /**

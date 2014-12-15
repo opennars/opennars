@@ -1,7 +1,7 @@
-package nars.ql.elsy;
+package nars.rl.elsy;
 
-import static nars.ql.elsy.Rand.d;
-import static nars.ql.elsy.Rand.i;
+import static nars.rl.elsy.Rand.d;
+import static nars.rl.elsy.Rand.i;
 
 
 

@@ -1,9 +1,9 @@
 
-package nars.ql.dl;
+package nars.rl.dl;
 
 import nars.util.signal.DenoisingAutoencoder;
 import java.util.Random;
-import nars.ql.elsy.Perception;
+import nars.rl.elsy.Perception;
 
 /**
  *

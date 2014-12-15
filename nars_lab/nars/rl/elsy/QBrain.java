@@ -1,4 +1,4 @@
-package nars.ql.elsy;
+package nars.rl.elsy;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,13 +11,13 @@ import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.System.arraycopy;
 import static java.lang.System.out;
-import static nars.ql.elsy.Mat.sigmoidBi;
-import static nars.ql.elsy.Mat.sigmoidUni;
-import nars.ql.elsy.QLearner.Action;
-import static nars.ql.elsy.RR.pickBestIndex;
-import static nars.ql.elsy.Rand.d;
-import static nars.ql.elsy.Rand.i;
-import static nars.ql.elsy.Rand.successWithPercent;
+import static nars.rl.elsy.Mat.sigmoidBi;
+import static nars.rl.elsy.Mat.sigmoidUni;
+import nars.rl.elsy.QLearner.Action;
+import static nars.rl.elsy.RR.pickBestIndex;
+import static nars.rl.elsy.Rand.d;
+import static nars.rl.elsy.Rand.i;
+import static nars.rl.elsy.Rand.successWithPercent;
 
 
 /**

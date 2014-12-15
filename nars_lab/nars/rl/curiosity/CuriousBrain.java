@@ -1,7 +1,7 @@
-package nars.ql.curiosity;
+package nars.rl.curiosity;
 
-import nars.ql.elsy.QBrain;
-import nars.ql.elsy.QLearner.Action;
+import nars.rl.elsy.QBrain;
+import nars.rl.elsy.QLearner.Action;
 
 
 public class CuriousBrain extends QBrain {

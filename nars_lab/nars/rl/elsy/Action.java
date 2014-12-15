@@ -1,4 +1,4 @@
-package nars.ql.elsy;
+package nars.rl.elsy;
 
 import java.io.Serializable;
 

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package nars.ql.hai;
+package nars.rl.hai;
 
 import java.util.Arrays;
 

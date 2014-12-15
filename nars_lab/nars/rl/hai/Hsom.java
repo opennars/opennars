@@ -1,4 +1,4 @@
-package nars.ql.hai;
+package nars.rl.hai;
 
 public class Hsom {
 

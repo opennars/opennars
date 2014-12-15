@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package nars.ql.elsy;
+package nars.rl.elsy;
 
 import static java.lang.Double.MAX_VALUE;
 import static java.lang.Double.MIN_VALUE;
