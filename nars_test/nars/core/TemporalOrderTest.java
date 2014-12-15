@@ -28,11 +28,11 @@ public class TemporalOrderTest {
         n.addInput("<c --> d>. :|:");
         ExpectContains futureQuestion = new ExpectContains(n, "<e --> f>. :/:", false);
         assertTrue(!futureQuestion.success());
-        n.finish(1);
+        n.run(1);
         
         assertTrue(futureQuestion.success());
         
-        n.finish(10);
+        n.run(10);
 
         /*
         try {
@@ -48,7 +48,7 @@ public class TemporalOrderTest {
         
         ExpectContains pastQuestion = new ExpectContains(n, "<c --> d>. :\\:", false);
         
-        n.finish(10);
+        n.run(10);
         
         assertTrue(pastQuestion.success());
     }

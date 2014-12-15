@@ -57,6 +57,10 @@ public class BudgetValue implements Cloneable {
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
     long lastForgetTime = -1;
     
+    
+    public BudgetValue(final float p, final float d, final TruthValue qualityFromTruth) {
+        this(p, d, BudgetFunctions.truthToQuality(qualityFromTruth));
+    }
 
 
     /** 

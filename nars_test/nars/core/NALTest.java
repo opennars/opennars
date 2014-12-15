@@ -303,7 +303,7 @@ public class NALTest  {
 
 
             n.addInput(new TextInput(example));
-            n.finish(minCycles);
+            n.run(minCycles);
         }
         catch(Throwable e){     
             System.err.println(e);

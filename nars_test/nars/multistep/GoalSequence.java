@@ -36,6 +36,6 @@ public class GoalSequence {
         NAR n = new Default().build();
         new TextOutput(n, System.out);
         n.addInput("<a =/> b>. \n <b =/> c>. \n <c =/> d>.");
-        n.finish(500);
+        n.run(500);
     }
 }

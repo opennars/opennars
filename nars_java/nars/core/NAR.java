@@ -17,16 +17,25 @@ import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
 import nars.core.control.AbstractTask;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.gui.NARControls;
+import nars.io.Answered;
 import nars.io.InPort;
 import nars.io.Input;
 import nars.io.Output;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
+import nars.io.Symbols;
+import nars.io.TaskInput;
 import nars.io.TextInput;
 import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
+import nars.io.narsese.Narsese;
+import nars.io.narsese.Narsese.InvalidInputException;
+import nars.language.Tense;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
 
@@ -78,6 +87,7 @@ public class NAR implements Runnable, TaskSource {
     
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
+
     
     
 
@@ -154,9 +164,13 @@ public class NAR implements Runnable, TaskSource {
         memory.reset();        
     }
 
-    /** Convenience method for creating a TextInput and adding as Input Channel.
-     the creationTime will be set to the current memory cycle time, but may be processed
-     by memory later according to the length of the input queue. */
+    /**
+     * Convenience method for creating a TextInput and adding as Input Channel.
+     * Generally the text will consist of Task's to be parsed in Narsese, but
+     * may contain other commands recognized by the system. The creationTime
+     * will be set to the current memory cycle time, but may be processed by
+     * memory later according to the length of the input queue.
+     */
     public TextInput addInput(final String text) {
         
         return addInput(text, text.contains("\n") ? -1 : time());
@@ -173,6 +187,79 @@ public class NAR implements Runnable, TaskSource {
         
         return i;
     }
+    
+    public NAR addInput(final String taskText, float frequency, float confidence) throws InvalidInputException {
+        return addInput(-1, -1, taskText, frequency, confidence);
+    }
+    
+    
+    public NAR believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
+        
+        return addInput(memory.newTask(new Narsese(this).parseTerm(termString),
+                Symbols.JUDGMENT_MARK, freq, conf, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, tense));
+    }
+
+    public NAR ask(String termString) throws InvalidInputException {
+        return ask(termString, null);
+    }
+    
+    public NAR ask(String termString, Answered answered) throws InvalidInputException {
+        
+        Task t;
+        addInput(
+                t = new Task(
+                        new Sentence(
+                                new Narsese(this).parseTerm(termString),
+                                Symbols.QUESTION_MARK, 
+                                null, 
+                                new Stamp(memory)), 
+                        new BudgetValue(
+                                Parameters.DEFAULT_QUESTION_PRIORITY, 
+                                Parameters.DEFAULT_QUESTION_DURABILITY, 
+                                1))
+        );
+        
+        if (answered!=null) {
+            answered.start(t, this);
+        }
+        return this;
+        
+    }
+    
+    public NAR addInput(final Sentence sentence) throws InvalidInputException {
+        
+        //TODO use correct default values depending on sentence punctuation
+        float priority = 
+                Parameters.DEFAULT_JUDGMENT_PRIORITY;
+        float durability = 
+                Parameters.DEFAULT_JUDGMENT_DURABILITY;
+                
+        return addInput(                
+                new Task(sentence, new 
+                    BudgetValue(priority, durability, sentence.truth))
+        );
+    }
+    
+    public NAR addInput(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
+        
+        Task t = new Narsese(this).parseTask(taskText);        
+        if (frequency!=-1)
+            t.sentence.truth.setFrequency(frequency);
+        if (confidence!=-1)
+            t.sentence.truth.setConfidence(confidence);
+        if (priority!=-1)
+            t.budget.setPriority(priority);
+        if (durability!=-1)
+            t.budget.setDurability(durability);
+        
+        return addInput(t);
+    }
+    
+    public NAR addInput(final Task t) {
+        TaskInput ti = new TaskInput(t);
+        addInput(ti);
+        return this;
+    }
 
     /** attach event handler */
     public void on(Class c, EventObserver o) {
@@ -183,7 +270,13 @@ public class NAR implements Runnable, TaskSource {
     public void off(Class c, EventObserver o) {
         memory.event.on(c, o);
     }
+    
+    /** set an event handler. useful for multiple events. */
+    public void event(EventObserver e, boolean enabled, Class... events) {
+        memory.event.set(e, enabled, events);
+    }
 
+    
     public int getCyclesPerFrame() {
         return cyclesPerFrame;
     }
@@ -353,8 +446,9 @@ public class NAR implements Runnable, TaskSource {
     }
     
     /** Execute a fixed number of cycles, then finish any remaining walking steps. */
-    public void finish(int cycles) {
-    
+    public NAR run(int cycles) {
+        if (cycles <= 0) return this;
+        
         running = true;
         stopped = false;
 
@@ -379,7 +473,10 @@ public class NAR implements Runnable, TaskSource {
         while (!memory.isProcessingInput() && (!stopped)) {
             step(1);
         }
+        
         running = false;
+        
+        return this;
     }
     
 

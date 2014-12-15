@@ -42,7 +42,7 @@ public class BeliefRedundancy {
         
         n.addInput(i);
         
-        n.finish(1000);
+        n.run(1000);
         System.out.println(n.time());
         
     }

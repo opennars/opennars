@@ -77,7 +77,7 @@ public class TuneTuffy {
         
         //new TextOutput(n, System.out, 0.95f);                
         
-        n.finish(0);
+        n.run(0);
         
         SolutionMonitor anna0 = new SolutionMonitor(n, "<Anna <-> [Smokes]>");
         SolutionMonitor bob0 = new SolutionMonitor(n, "<Bob --> [Smokes]>");
@@ -90,7 +90,7 @@ public class TuneTuffy {
         SolutionMonitor frank = new SolutionMonitor(n, "<Frank --> [Cancer]>");
 
 
-        n.finish(15000);
+        n.run(15000);
 
         //first number is the expected Tuffy probability result
         System.out.println("0.75? " + edward);

@@ -28,14 +28,14 @@ public class VectorMapTest {
         
         //new TextOutput(n, System.out);
         
-        n.finish(16);
+        n.run(16);
         
         d[1] = 1.0f;
         d[2] = 0.5f;
         
         v.update();
 
-        n.finish(16);
+        n.run(16);
         
         //TODO assert that NAR has > 1 concepts
     }
@@ -65,7 +65,7 @@ public class VectorMapTest {
         
         v.update();
         
-        n.finish(16);
+        n.run(16);
         
         n.on(CycleStart.class, new EventObserver() {
 
@@ -84,7 +84,7 @@ public class VectorMapTest {
         
         v.update();
         
-        n.finish(16);
+        n.run(16);
         
         //new NARSwing(n);
 

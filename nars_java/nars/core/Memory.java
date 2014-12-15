@@ -987,7 +987,7 @@ public class Memory implements Serializable {
                 sentenceType, 
                 truth, 
                 new Stamp(this, tense));
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
+        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         Task task = new Task(sentence, budget, parentTask);
         return task;
     }

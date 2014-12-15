@@ -1,5 +1,6 @@
 package nars.io;
 
+import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.core.control.AbstractTask;
 import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
@@ -82,7 +84,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     
 
     /* Perceive an input object by calling an appropriate perception system according to the object type. */
-    public Iterator<AbstractTask> perceive(final Object o) {
+    public Iterator<? extends AbstractTask> perceive(final Object o) {
                 
         Exception error;
         try {
@@ -92,6 +94,8 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                 //TEMPORARY
                 Sentence s = (Sentence) o;
                 return perceive(s.term.toString() + s.punctuation + " " + s.truth.toString());
+            } else if (o instanceof Task) {
+                return Iterators.forArray((Task)o);
             }
             error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + "]");
         }

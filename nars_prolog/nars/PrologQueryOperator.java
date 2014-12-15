@@ -132,7 +132,7 @@ public class PrologQueryOperator extends Operator {
         memory.emit(Task.class, resultInheritance);
         
         ArrayList<Task> results = new ArrayList<>(1);
-        results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY,(Tense)null));
+        results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, Tense.Eternal));
                
         return results;
     }

@@ -44,7 +44,7 @@ public class VariableTest {
         
         ExpectContains e = new ExpectContains(n, "=/> <a --> 4>>.", false);
         
-        n.finish(32);
+        n.run(32);
   
         assertTrue(e.success());
     }
@@ -70,7 +70,7 @@ public class VariableTest {
             }
         };
 
-        n.finish(1024);
+        n.run(1024);
           
         assertTrue(solutionFound.get());
         

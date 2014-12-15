@@ -34,7 +34,7 @@ public class IdeaTest {
         n.addInput("<a <-> b>.");
         n.addInput("<b --> a>.");
         
-        n.finish(4);
+        n.run(4);
                         
         assertEquals(2+2, i.size());
         assertTrue(i.keySet().contains("[a, b]"));
@@ -54,7 +54,7 @@ public class IdeaTest {
         n.addInput("<a <-> b>!");
         n.addInput("<b <-> a>?");
         
-        n.finish(12);
+        n.run(12);
 
         
         assertEquals(3, i.get("[a, b]").getSentenceTypes().size());

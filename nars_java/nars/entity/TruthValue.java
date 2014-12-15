@@ -291,6 +291,12 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         return Truth_UNSURE;
     }
 
+    public TruthValue set(float frequency, float confidence) {
+        setFrequency(frequency);
+        setConfidence(confidence);
+        return this;
+    }
+
     /** indicates an implementation has, or is associated with a specific TruthValue */
     public interface Truthable {
         public TruthValue getTruth();
