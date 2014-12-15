@@ -47,14 +47,15 @@ public class HyperassociativeMap<N, E> {
 
     private static final double REPULSIVE_WEAKNESS = 2.0;
     private static final double ATTRACTION_STRENGTH = 4.0;
+    private static final double EQUILIBRIUM_ALIGNMENT_FACTOR = 0.005;
+    private static final double LEARNING_RATE_INCREASE_FACTOR = 0.95;
+    private static final double LEARNING_RATE_PROCESSING_ADJUSTMENT = 1.01;
+    
     private static final double DEFAULT_LEARNING_RATE = 0.4;
     private static final double DEFAULT_MAX_MOVEMENT = 0.0;
     private static final double DEFAULT_TOTAL_MOVEMENT = 0.0;
     private static final double DEFAULT_ACCEPTABLE_DISTANCE_FACTOR = 0.85;
     private static final double DEFAULT_EQUILIBRIUM_DISTANCE = 1.0;
-    private static final double EQUILIBRIUM_ALIGNMENT_FACTOR = 0.005;
-    private static final double LEARNING_RATE_INCREASE_FACTOR = 0.95;
-    private static final double LEARNING_RATE_PROCESSING_ADJUSTMENT = 1.01;
 
     private Graph<N, E> graph;
     private final int dimensions;
@@ -63,7 +64,6 @@ public class HyperassociativeMap<N, E> {
     private final Map<N, ArrayRealVector> coordinates;
     
     private static final Random RANDOM = new Random();
-    private final boolean useWeights;
     private double equilibriumDistance;
     private double learningRate = DEFAULT_LEARNING_RATE;
     private double maxMovement = DEFAULT_MAX_MOVEMENT;
@@ -252,6 +252,8 @@ public class HyperassociativeMap<N, E> {
         }
     }
     public static void add(ArrayRealVector target, ArrayRealVector add, double factor) {
+        if (factor == 0) return;
+        
         double[] a = add.getDataRef();
         double[] t = target.getDataRef();
         int dim = t.length;
@@ -335,14 +337,9 @@ public class HyperassociativeMap<N, E> {
             double oldDistance = nv.getNorm();
             
             double newDistance;
+            double factor = 0;
             if (oldDistance > distToNeighbor) {
-                newDistance = Math.pow(oldDistance - distToNeighbor, ATTRACTION_STRENGTH);
-                
-                newDistance *= learningRate;
-                if (oldDistance!=0) {
-                    nv.mapMultiplyToSelf(newDistance/oldDistance);
-                }
-                
+                newDistance = Math.pow(oldDistance - distToNeighbor, ATTRACTION_STRENGTH);                
                 
             } else {
                 
@@ -352,16 +349,14 @@ public class HyperassociativeMap<N, E> {
                     newDistance = -targetDistance * (distToNeighbor - oldDistance);
                 }
                 
-                newDistance *= learningRate;
-                
-                
-                if (oldDistance != 0) {
-                    nv.mapMultiplyToSelf(newDistance / oldDistance);
-                }
             }
             
-            //add(delta, nv, (newDistance * learningRate) / oldDistance);
-            add(delta, nv);
+            newDistance *= learningRate;
+            if (oldDistance != 0) {
+                factor = newDistance/oldDistance;
+            }
+            
+            add(delta, nv, factor);
         }
         
         // calculate repulsion with all non-neighbors
@@ -383,8 +378,7 @@ public class HyperassociativeMap<N, E> {
                 }                
                 newDistance *= learningRate;
                 
-                nodeVector.mapMultiplyToSelf(newDistance/oldDistance);
-                add(delta, nodeVector);
+                add(delta, nodeVector, newDistance/oldDistance);
             }
         }
 
@@ -463,14 +457,13 @@ public class HyperassociativeMap<N, E> {
 
     private ArrayRealVector processLocally() {
         ArrayRealVector pointSum = new ArrayRealVector(dimensions);
-        Map<N, Double> n = new HashMap();
+        Map<N, Double> reusableNeighborData = new HashMap();
         
         for (final N node : graph.vertexSet()) {
             
-            final ArrayRealVector newPoint = align(node, n);
+            final ArrayRealVector newPosition = align(node, reusableNeighborData);
 
-            //TODO use direct array
-            add(pointSum, newPoint);
+            add(pointSum, newPosition);
         }
         
         if ((learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT) < DEFAULT_LEARNING_RATE) {
