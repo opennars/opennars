@@ -30,7 +30,6 @@ import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
-import org.encog.ml.data.temporal.TemporalMLDataSet;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.training.Train;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
@@ -118,11 +117,12 @@ public class Predict1 {
 
 
         //----
-        int duration = 8;
-        float freq = 0.125f * 1.0f / duration;
+        int duration = 32;
+        float freq = 1.0f / duration * 1f;
         int thinkInterval = 1;
-        int minCyclesAhead = 1;
+        int minCyclesAhead = 0;
         double noise = 0.01;
+        boolean onlyNoticeChange = true;
 
         NAR n = new NAR(new Default().setInternalExperience(null));
         n.param.duration.set(duration);
@@ -135,10 +135,10 @@ public class Predict1 {
         String xFuncEq0 = "<x_t0 --> y0>";
         String xFuncEq1 = "<x_t0 --> y1>";
         //String xNextFunc = "<x_tPlus1 --> y>";
-        n.believe(xPrevFuncEq0, Tense.Present, 0.50f, 0.90f).run(1);
-        n.believe(xPrevFuncEq1, Tense.Present, 0.50f, 0.90f).run(1);
-        n.believe(xFuncEq0, Tense.Present, 0.50f, 0.90f).run(1);
-        n.believe(xFuncEq1, Tense.Present, 0.50f, 0.90f).run(1);
+        n.believe(xPrevFuncEq0, Tense.Present, 0.50f, 0.50f).run(1);
+        n.believe(xPrevFuncEq1, Tense.Present, 0.50f, 0.50f).run(1);
+        n.believe(xFuncEq0, Tense.Present, 0.50f, 0.50f).run(1);
+        n.believe(xFuncEq1, Tense.Present, 0.50f, 0.50f).run(1);
         //n.believe("<(&/," + xPrevFunc + ",+1) =/> " + xFunc + ">", Tense.Eternal, 1.00f, 0.95f).run(1);
         //n.believe("<(&/," + xPrevFunc + ",+1," + xFunc + ",+1) =/> " + xNextFunc + ">", Tense.Eternal, 1.00f, 0.95f).run(1);
         //n.believe("<(&/," + xFunc + ",+1) =/> " + xNextNextFunc + ">", Tense.Eternal, 1.00f, 0.90f).run(1);
@@ -190,6 +190,14 @@ public class Predict1 {
 
         new TextOutput(n, System.out) {
 
+            /** dt = relative to center */
+            public double getPredictionEnvelope(double dt, double duration) {
+                //guassian curve width=duration
+                //  e^(-(4*x/(dur))^2)    
+                double p = (4 * dt / duration);
+                return Math.exp( -(p * p) );
+            }
+            
             /**
              * only allow future predictions
              */
@@ -202,7 +210,8 @@ public class Predict1 {
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
                     float value = Float.NEGATIVE_INFINITY;
-                    float expect = 2f * (t.sentence.truth.getFrequency() - 0.5f) * t.sentence.truth.getConfidence();
+                    float conf = t.sentence.truth.getConfidence();
+                    float expect = 2f * (t.sentence.truth.getFrequency() - 0.5f) * conf;
                     if (term.toString().equals("<x_t0 --> y0>")) {
                         value = 0;
                     }
@@ -213,6 +222,10 @@ public class Predict1 {
 
                         //predictions[(int)value].addPlus(time, expect);
                         for (int tt = time - duration / 2; tt <= time + duration / 2; tt++) {
+ 
+                            double smooth = 1;
+                            expect *= getPredictionEnvelope(time-tt, smooth * duration);
+                            
                             predictions[0].addPlus(tt, value == 0 ? expect : -expect);
 
                             if (expect < 0) {
@@ -254,8 +267,8 @@ public class Predict1 {
             Thread.sleep(5);
             //n.memory.addSimulationTime(1);
 
-            float curY  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
-            //float curY = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
+            //float curY  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
+            float curY = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
 
             if (Math.random() > noise)
                 observed.add((int) n.time(), curY);
@@ -268,7 +281,7 @@ public class Predict1 {
             }
             //System.out.println("elman error: " + train.getError());
 
-            if (curY == y) {
+            if ((curY == y) && (onlyNoticeChange)) {
                 continue;
             }
 
@@ -279,10 +292,10 @@ public class Predict1 {
 
             y = curY;
 
-            n.believe(xFuncEq0, Tense.Future, 1.0f, y);
-            n.believe(xFuncEq0, Tense.Future, 0.0f, 1f - y);
-            n.believe(xFuncEq1, Tense.Future, 1.0f, 1f - y);
-            n.believe(xFuncEq1, Tense.Future, 0.0f, y);
+            n.believe(xFuncEq0, Tense.Present, 1.0f, y);
+            n.believe(xFuncEq0, Tense.Present, 0.0f, 1f - y);
+            n.believe(xFuncEq1, Tense.Present, 1.0f, 1f - y);
+            n.believe(xFuncEq1, Tense.Present, 0.0f, y);
 
         }
 
