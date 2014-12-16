@@ -30,12 +30,13 @@ import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
-import org.encog.ml.data.basic.BasicMLDataSet;
+import org.encog.ml.data.temporal.TemporalMLDataSet;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.training.Train;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
 import org.encog.neural.pattern.ElmanPattern;
 import org.encog.neural.pattern.FeedForwardPattern;
+import org.encog.util.arrayutil.TemporalWindowArray;
 
 /**
  *
@@ -68,8 +69,8 @@ public class Predict1 {
         // construct an Elman type network
         ElmanPattern pattern = new ElmanPattern();
         pattern.setActivationFunction(new ActivationSigmoid());
-        pattern.setInputNeurons(1);
-        pattern.addHiddenLayer(6);
+        pattern.setInputNeurons(1);        
+        pattern.addHiddenLayer(5);
         pattern.setOutputNeurons(1);
         return (BasicNetwork) pattern.generate();
     }
@@ -84,16 +85,44 @@ public class Predict1 {
         return (BasicNetwork) pattern.generate();
     }
 
+    static double[] trainingHistory;
+
+    public static MLDataSet getTraining(double nextValue, int inputWindow, int predictionWindow, int historySize) {
+        if ((trainingHistory == null) || (trainingHistory.length != historySize)) {
+            trainingHistory = new double[historySize];
+        }
+
+        System.arraycopy(trainingHistory, 1, trainingHistory, 0, trainingHistory.length - 1);
+        trainingHistory[trainingHistory.length-1] = nextValue;
+        
+        TemporalWindowArray temp = new TemporalWindowArray(inputWindow, predictionWindow);
+
+        temp.analyze(trainingHistory);
+
+        return temp.process(trainingHistory);
+    }
+
+    static double polarize(double v) {
+         return 2 * (v - 0.5);
+    }
+    static double unpolarize(double v) {
+         v = (v/2) + 0.5;
+         if (v < 0) v = 0;
+         if (v > 1.0) v = 1.0;
+         return v;
+    }
+    
     public static void main(String[] args) throws Narsese.InvalidInputException, InterruptedException {
 
         final BasicNetwork elmanNetwork = createElmanNetwork();
 
-        MLDataSet result = new BasicMLDataSet();
-				
+
         //----
         int duration = 8;
         float freq = 0.125f * 1.0f / duration;
         int thinkInterval = 1;
+        int minCyclesAhead = 1;
+        double noise = 0.01;
 
         NAR n = new NAR(new Default().setInternalExperience(null));
         n.param.duration.set(duration);
@@ -136,7 +165,7 @@ public class Predict1 {
         //error = new TreeMLData("error", Color.ORANGE, numIterations).setRange(0, discretization);
 
         TreeMLData elmanPredict = new TreeMLData("elman prediction", Color.WHITE).setRange(0, 1f);
-                
+
         int discretization = 2;
         TreeMLData[] predictions = new TreeMLData[discretization];
         TreeMLData[] predBalance = new TreeMLData[discretization];
@@ -154,9 +183,7 @@ public class Predict1 {
                 new LineChart(observed).thickness(16f).height(128),
                 new StackedPercentageChart(predBalance).height(16),
                 new LineChart(predictions[0]).thickness(16f).height(128),
-        
                 new LineChart(elmanPredict).thickness(16f).height(128)
-        
         );
         //new BarChart(error).height(4)
         new NWindow("_", new PCanvas(tc)).show(800, 800, true);
@@ -170,7 +197,7 @@ public class Predict1 {
                 if (t.sentence.isEternal()) {
                     return false;
                 }
-                if ((t.sentence.getOccurenceTime() > n.time())) {
+                if ((t.sentence.getOccurenceTime() > n.time() + minCyclesAhead)) {
                     System.out.print(n.time() + ".." + t.sentence.getOccurenceTime() + ": ");
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
@@ -218,32 +245,28 @@ public class Predict1 {
         while (true) {
 
             MLData inputData = new BasicMLData(1);
-            inputData.setData(0,y);            
+            inputData.setData(0, polarize(y));
             MLData predict = elmanNetwork.compute(inputData);
-            elmanPredict.add((int)n.time(), predict.getData(0));
-            
+            elmanPredict.add((int) n.time(), unpolarize(predict.getData(0)));
+
             n.run(thinkInterval);
 
             Thread.sleep(5);
             //n.memory.addSimulationTime(1);
 
-            //n.run(thinkCycles/2);
-            //y = (float)Math.sin(freq * t) * 0.5f + 0.5f;
-            float curY = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
+            float curY  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
+            //float curY = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
 
-            observed.add((int) n.time(), curY);
+            if (Math.random() > noise)
+                observed.add((int) n.time(), curY);
 
+            final Train train = new ResilientPropagation(elmanNetwork, getTraining(polarize(curY), 16, 1, 96));
             
-            MLData idealData = new BasicMLData(1);            
-            idealData.setData(0,curY);
-            result.add(inputData,idealData);
-
-            final Train train = new ResilientPropagation(elmanNetwork, result);
-            for (int ti = 0; ti < 10; ti++) {
+            
+            for (int ti = 0; ti < 64; ti++) {
                 train.iteration();
             }
-            System.out.println("elman error: " + train.getError());
-            
+            //System.out.println("elman error: " + train.getError());
 
             if (curY == y) {
                 continue;
