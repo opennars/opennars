@@ -79,11 +79,23 @@ public class TreeMLData implements MLData {
         values.clear();
     }
 
+    public void setDefaultValue(double defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    
     
 
     @Override
     public void add(final int t, final double f) {
         setData(t, f);
+    }
+    
+    public void addPlus(final int t, final double f) {
+        Double x = getData(t);
+        if (x == null) setData(t, f);
+        else
+            setData(t, f + x.doubleValue());
     }
     
     @Override
@@ -218,6 +230,12 @@ public class TreeMLData implements MLData {
 
     }
 
+    @Override
+    public String toString() {
+        return values.toString();
+    }
+
+    
 }
 //
 ///**
