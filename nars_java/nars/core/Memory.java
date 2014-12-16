@@ -769,6 +769,7 @@ public class Memory implements Serializable {
         for (int i = 0; (!newTasks.isEmpty()) && (i < numTasks); i++) {
             
             final Task task = newTasks.removeFirst();
+                        
             processed++;
             
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
