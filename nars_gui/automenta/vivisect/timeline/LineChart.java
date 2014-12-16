@@ -45,7 +45,10 @@ public class LineChart extends Chart implements MultiChart {
         return this;
     }
 
-    
+    public LineChart thickness(float thick) {
+        this.lineThickness = thick;
+        return this;
+    }
 
 
     @Override
