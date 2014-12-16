@@ -474,7 +474,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    private static Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
+    public static Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
         final float rank1 = rankBelief(newSentence);    // for the new isBelief
         float rank2;        
         int i;
