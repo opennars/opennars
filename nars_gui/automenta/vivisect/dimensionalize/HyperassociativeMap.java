@@ -18,6 +18,7 @@ import static automenta.vivisect.dimensionalize.HyperassociativeMap.EdgeWeightTo
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -85,6 +86,10 @@ public class HyperassociativeMap<N, E> {
     
     private DistanceMetric distanceFunction;
     final double[] zero;
+    
+    public Collection<N> keys() {
+        return coordinates.keySet();
+    }
 
     protected ArrayRealVector newNodeCoordinates(N node) {
         ArrayRealVector location = randomCoordinates(dimensions);
@@ -316,8 +321,8 @@ public class HyperassociativeMap<N, E> {
         return 1.0;
     }
     
-    /** increasing this decreases the attraction strength of the edge */
-    public double getEdgeDistance(E e) {
+    /** edge "weight" which can be mapped in certain ways (via EdgeWeightToDistanceFunction) to distance */
+    public double getEdgeWeight(E e) {
         return 1.0;
     }
     
@@ -338,7 +343,7 @@ public class HyperassociativeMap<N, E> {
 
             Double existingWeight = neighbors.get(neighbor);
             
-            double currentWeight = getEdgeDistance(neighborEdge);
+            double currentWeight = getEdgeWeight(neighborEdge);
 
             if (existingWeight!=null) {
                 switch (edgeWeightToDistance) {

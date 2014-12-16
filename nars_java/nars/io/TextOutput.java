@@ -145,7 +145,16 @@ public class TextOutput extends Output {
     final StringBuilder result = new StringBuilder(16 /* estimate */);
     
     public String process(final Class c, final Object o) {
+        if (o instanceof Task) {
+            if (!allowTask((Task)o))
+                return null;
+        }
         return getOutputString(c, o, true, showStamp, nar, result, minPriority);
+    }
+    
+    /** may be overridden in subclass to filter certain tasks */
+    protected boolean allowTask(Task t) {
+        return true;
     }
 
     public TextOutput setErrors(boolean errors) {

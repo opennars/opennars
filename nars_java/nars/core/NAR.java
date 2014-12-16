@@ -18,6 +18,7 @@ import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
 import nars.core.control.AbstractTask;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -88,6 +89,7 @@ public class NAR implements Runnable, TaskSource {
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
 
+ 
     
     
 
@@ -199,6 +201,12 @@ public class NAR implements Runnable, TaskSource {
                 Symbols.JUDGMENT_MARK, freq, conf, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, tense));
     }
 
+    
+   /** gets a concept if it exists, or returns null if it does not */
+    public Concept concept(String concept) throws InvalidInputException {
+        return memory.concept(new Narsese(this).parseTerm(concept));
+    }
+    
     public NAR ask(String termString) throws InvalidInputException {
         return ask(termString, null);
     }
