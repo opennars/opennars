@@ -24,12 +24,14 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
+import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.entity.BudgetValue.Budgetable;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.TruthValue.Truthable;
 import nars.gui.WrapLayout;
+import nars.inference.TruthFunctions;
 
 /**
  * Views one or more Concepts
@@ -47,6 +49,8 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
         this.concept = new LinkedHashMap();
         int i = 0;
         for (Concept x : c) {
+            if (x==null) continue;
+            
             ConceptPanel p = new ConceptPanel(x, nar.time());
             addPanel(i++, p);
             concept.put(x, p);
@@ -60,6 +64,7 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
     protected void onShowing(boolean showing) {
 
         nar.memory.event.set(this, showing,
+                Events.FrameEnd.class,
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,
                 Events.ConceptQuestionAdd.class,
@@ -71,6 +76,11 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
     @Override
     public void event(Class event, Object[] args) {
 
+        if (event == FrameEnd.class) {
+            //SwingUtilities.invokeLater(this);
+            run();
+        }
+        /*
         if (!(args.length > 0) && (args[0] instanceof Concept)) {
             return;
         }
@@ -78,7 +88,7 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
         ConceptPanel cp = concept.get(c);
         if (cp != null) {
             SwingUtilities.invokeLater(this);
-        }
+        }*/
     }
     
     @Override public void run() {  
@@ -119,7 +129,7 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
             //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
             
-            add(this.beliefTime = new BeliefTimeline(chartWidth*3, chartHeight/4), SOUTH);
+            add(this.beliefTime = new BeliefTimeline(chartWidth*3, chartHeight/2), SOUTH);
 
             JPanel titlePanel = new JPanel(new BorderLayout());
             
@@ -138,12 +148,12 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
 
             if (!concept.beliefs.isEmpty()) {
                 List<Sentence> bb = concept.getBeliefs();
-                beliefChart.update(bb);
+                beliefChart.update(time, bb);
                 subtitle.setText(bb.get(0).truth.toString());
                 
                 
                 beliefTime.setVisible(
-                        beliefTime.update(time, concept.beliefs));
+                        beliefTime.update(time, bb));
             }
             else {
                 if (!concept.questions.isEmpty())
@@ -155,7 +165,7 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
                 questionChart.update( unmodifiableList( concept.questions ) );
             
             if (!concept.desires.isEmpty())
-                desireChart.update( unmodifiableList( concept.desires ));
+                desireChart.update( time, unmodifiableList( concept.desires ));
 
             
         
@@ -230,31 +240,40 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
      */
     public static class BeliefTimeline extends ImagePanel {
 
+        float minTime, maxTime;
+        private float timeFactor;
+        
         public BeliefTimeline(int width, int height) {
             super(width, height);
         }
 
+        public int getX(long when) {
+            return (int)Math.round((when - minTime) / timeFactor);    
+        }
+        
         public boolean update(long time, Collection<Sentence> i) {
             
-            long minTime = -1, maxTime = time;
+            minTime = maxTime = time;
             for (Sentence s : i) {
                 if (s.isEternal()) continue;
                 long when = s.getOccurenceTime();
-                
-                if ((minTime == -1) || (minTime > when))
+                                
+                if (minTime > when)
                     minTime = when;                
+                if (maxTime < when)
+                    maxTime = when;
             }
             
-            if (minTime == -1) {
-                //no time-bound beliefs
+            if (minTime == maxTime) {
+                //no time-distinct beliefs
                 return false;
             }
 
             Graphics g = g();
             if (g == null) return false;
             
-            int h = 8;                
-            float timeFactor = (1f+(float)maxTime - minTime) / ((float)w-h);
+            int thick = 4;                
+            timeFactor = ((float)maxTime - minTime) / ((float)w-thick);
             
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
@@ -262,34 +281,44 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
                 if (s.isEternal()) continue;
                 long when = s.getOccurenceTime();
                 
-                int x = (int)((when - minTime) / timeFactor);
-
+                int x = getX(when);
+                
                 
                 float freq = s.getTruth().getFrequency();
                 float conf = s.getTruth().getConfidence();
 
-                float ii = 0.25f + conf * 0.75f;
-                float green = freq > 0.5f ? (freq/2f) : 0f;
+                int y = (int)((1.0f - freq) * (this.h - thick));
+                        
                 
-                float red = freq <= 0.5f ? ((1.0f-freq)/2f) : 0;
-                g.setColor(new Color(red, green, 1.0f, ii));
+                g.setColor(getColor(freq, conf, 1.0f));
                 
-                g.fillRect(x, 0, h, getHeight());
+                g.fillRect(x, y, thick, thick);
 
             }
+            
+            // "now" axis            
+            g.setColor(Color.WHITE);
+            g.fillRect(getX(time), 0, 1, getHeight());
+            
             g.dispose();        
             return true;
         }
+    }
+    
+    public static Color getColor(float freq, float conf, float factor) {
+        float ii = 0.25f + (factor * conf) * 0.75f;
+        float green = freq > 0.5f ? (freq/2f) : 0f;
+        float red = freq <= 0.5f ? ((1.0f-freq)/2f) : 0;
+        return new Color(red, green, 1.0f, ii);
     }
     
     public static class TruthChart extends ImagePanel {
 
         public TruthChart(int width, int height) {
             super(width, height);
-            update(Collections.EMPTY_LIST);
         }
 
-        public void update(Iterable<? extends Truthable> i) {
+        public void update(long now, Iterable<? extends Truthable> i) {
             Graphics g = g();
             if (g == null) return;
             
@@ -299,7 +328,15 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
                 float freq = s.getTruth().getFrequency();
                 float conf = s.getTruth().getConfidence();
 
-                g.setColor(new Color(freq * 1f, conf * 1f, 1f, 0.8f));
+                float factor = 1.0f;
+                if (s instanceof Sentence) {
+                    Sentence ss = (Sentence)s;
+                    if (!ss.isEternal()) {
+                        //float factor = TruthFunctions.temporalProjection(now, ss.getOccurenceTime(), now);
+                        factor = 1.0f / (1f + Math.abs(ss.getOccurenceTime() - now)  );                        
+                    }
+                }
+                g.setColor(getColor(freq, conf, factor));
 
                 int w = 8;
                 int h = 8;

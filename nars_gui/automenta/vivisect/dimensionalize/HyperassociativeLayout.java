@@ -37,7 +37,7 @@ public class HyperassociativeLayout implements GraphDisplay {
                 }
 
             @Override
-            public double getEdgeDistance(Object e) {
+            public double getEdgeWeight(Object e) {
                 if (e instanceof Budgetable) {                   
                     return 1.0 + ((Budgetable)e).getBudget().getPriority() * 1.0;                }
                 return 1;
