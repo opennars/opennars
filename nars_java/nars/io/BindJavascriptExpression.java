@@ -10,7 +10,6 @@ import javax.script.ScriptException;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Output.ERR;
-import nars.io.Output.EXE;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
 import nars.operator.Operator;
@@ -112,7 +111,7 @@ public class BindJavascriptExpression implements TextReaction {
                     }
                 });
                 
-                memory.emit(EXE.class, "Bound: "+ jsFunc);
+                //memory.emit(OUT.class, "Bound: "+ jsFunc);
             } catch (ScriptException ex) {
                 throw new RuntimeException(ex.toString(), ex);
             }

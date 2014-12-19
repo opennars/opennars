@@ -1,34 +1,17 @@
 package nars.core;
 
-import nars.io.condition.OutputEmptyCondition;
-import nars.io.condition.OutputNotContainsCondition;
-import nars.io.condition.OutputContainsCondition;
 import nars.io.condition.OutputCondition;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.entity.Sentence;
-import nars.entity.Task;
 import nars.gui.InferenceLogger;
-import nars.io.Output;
-import nars.io.Output.ERR;
+import nars.io.ExampleFileInput;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.io.Texts;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
@@ -65,53 +48,6 @@ public class NALTest  {
     public static Map<String, Double> scores = new HashMap();
     final String scriptPath;
     
-    /** reads an example file line-by-line, before being processed, to extract expectations */
-    public static List<OutputCondition> getConditions(NAR n, String example, boolean saveSimilar)  {
-        List<OutputCondition> conditions = new ArrayList();
-        String[] lines = example.split("\n");
-        
-        for (String s : lines) {
-            s = s.trim();
-            
-            
-            final String expectOutContains2 = "''outputMustContain('";
-
-            if (s.indexOf(expectOutContains2)==0) {
-
-                //remove ') suffix:
-                String e = s.substring(expectOutContains2.length(), s.length()-2); 
-                
-                /*try {                    
-                    Task t = narsese.parseTask(e);                    
-                    expects.add(new ExpectContainsSentence(n, t.sentence));
-                } catch (Narsese.InvalidInputException ex) {
-                    expects.add(new ExpectContains(n, e, saveSimilar));
-                } */
-                
-                conditions.add(new OutputContainsCondition(n, e, similarsToSave));
-
-            }     
-            
-            final String expectOutNotContains2 = "''outputMustNotContain('";
-
-            if (s.indexOf(expectOutNotContains2)==0) {
-
-                //remove ') suffix:
-                String e = s.substring(expectOutNotContains2.length(), s.length()-2);                 
-                conditions.add(new OutputNotContainsCondition(n, e));
-
-            }   
-            
-            final String expectOutEmpty = "''expect.outEmpty";
-            if (s.indexOf(expectOutEmpty)==0) {                                
-                conditions.add(new OutputEmptyCondition(n));
-            }                
-            
-
-        }
-        
-        return conditions;
-    }
 
 
     public static String getExample(String path) {
@@ -120,14 +56,8 @@ public class NALTest  {
             if (existing!=null)
                 return existing;
             
-            StringBuilder  sb  = new StringBuilder();
-            String line;
-            File fp = new File(path);
-            BufferedReader br = new BufferedReader(new FileReader(fp));
-            while ((line = br.readLine())!=null) {
-                sb.append(line).append("\n");
-            }
-            existing = sb.toString();
+            existing = ExampleFileInput.load(path);
+            
             examples.put(path, existing);
             return existing;
         } catch (Exception ex) {
@@ -143,31 +73,13 @@ public class NALTest  {
         //return new DiscretinuousBagNARBuilder().build();
     }
     
-    public static Map<String,Object> getUnitTests() {
-        Map<String,Object> l = new TreeMap();
-        
-        final String[] directories = new String[] { "nal/test", "nal/DecisionMaking", "nal/ClassicalConditioning" };
-        
-        for (String dir : directories ) {
-
-            File folder = new File(dir);
-        
-            for (final File file : folder.listFiles()) {
-                if (file.getName().equals("README.txt") || file.getName().contains(".png"))
-                    continue;
-                if(!("extra".equals(file.getName()))) {
-                    addTest(file.getName());
-                    l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
-                }
-            }
-            
-        }
-        return l;
-    }
     
     @Parameterized.Parameters
     public static Collection params() {
-        return getUnitTests().values();
+        Map<String, Object> et = ExampleFileInput.getUnitTests();
+        Collection t = et.values();
+        for (String x : et.keySet()) addTest(x);
+        return t;
     }
     
     
@@ -277,7 +189,7 @@ public class NALTest  {
 
 
             String example = getExample(path);
-            List<OutputCondition> extractedExpects = getConditions(n, example, saveSimilar);
+            List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
             for (OutputCondition e1 : extractedExpects)
                 expects.add(e1);
 

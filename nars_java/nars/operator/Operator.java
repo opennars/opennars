@@ -31,10 +31,8 @@ import nars.entity.BudgetValue;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.io.Output.EXE;
-import nars.io.Symbols;
 import nars.language.Product;
 import nars.language.Statement;
-import nars.language.Tense;
 import nars.language.Term;
 
 /**
@@ -158,19 +156,43 @@ public abstract class Operator extends Term implements Plugin {
         if (memory.emitting(EXE.class)) {
             final Operator operator = (Operator) opT;
             
-            Task t = operation.getTask();
-            BudgetValue b = null;
-            if (t != null) {
-                b = operation.getTask().budget;
-            }
+
             
             if (feedback instanceof Exception)
                 feedback = feedback.getClass().getSimpleName() + ": " + ((Throwable)feedback).getMessage();
             
             memory.emit(EXE.class, 
-                ((b != null) ? (b.toStringExternal() + " ") : "") + 
-                        operator + "(" + Arrays.toString(args) + ")=" + feedback);
+                    new ExecutionResult(operation, feedback));
         }
+    }
+    
+    public static class ExecutionResult {
+        private final Operation operation;
+        private final Object feedback;
+
+        public ExecutionResult(Operation op, Object feedback) {
+            this.operation = op;
+            this.feedback = feedback;
+        }
+        
+        public Task getTask() { return operation.getTask(); }
+        
+
+        
+        @Override
+        public String toString() {
+            BudgetValue b = null;
+            if (getTask() != null) {
+                b = getTask().budget;
+            }
+            Term[] args = operation.getArguments().term;
+            Operator operator = operation.getOperator();
+            
+            return ((b != null) ? (b.toStringExternal() + " ") : "") + 
+                        operator + "(" + Arrays.toString(args) + ")=" + feedback;
+        }
+        
+        
     }
 
     public final boolean call(final Operation op, final Memory memory) {
