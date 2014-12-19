@@ -306,9 +306,9 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
                 x += "  solution=" + bestSolution + "\n";
         }
         if (parentBelief!=null)
-            x += "  parentBelief=" + parentBelief + "\n";
+            x += "  parentBelief=" + parentBelief + " @ " + parentBelief.getCreationTime() + "\n";
         if (parentTask!=null) {
-            x += "  parentTask=" + parentTask + "\n";
+            x += "  parentTask=" + parentTask + " @ " + parentTask.getCreationTime() + "\n";
         
             int indentLevel = 1;
             Task p=getParentTask();

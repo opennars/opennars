@@ -514,6 +514,10 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         return stamp.before(s.stamp, duration);
     }
 
+    public long getCreationTime() {
+        return stamp.getCreationTime();
+    }
+
     public static final class ExpectationComparator implements Comparator<Sentence> {
         final static ExpectationComparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
