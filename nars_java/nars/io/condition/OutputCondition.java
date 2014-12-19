@@ -24,6 +24,7 @@ public abstract class OutputCondition extends Output {
         this.nar = nar;
     }
 
+    /** whether this is an "inverse" condition */
     public boolean isInverse() {
         return false;
     }
@@ -36,19 +37,19 @@ public abstract class OutputCondition extends Output {
         if ((channel == OUT.class) || (channel == EXE.class)) {
             Object signal = args[0];
             if (condition(channel, signal)) {
-                setSucceeded();
+                setTrue();
             }
         }
     }
 
-    protected void setSucceeded() {
+    protected void setTrue() {
         if (successAt == -1) {
             successAt = nar.time();
         }
         succeeded = true;
     }
 
-    public boolean success() {
+    public boolean isTrue() {
         return succeeded;
     }
 
@@ -57,12 +58,14 @@ public abstract class OutputCondition extends Output {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " " + (succeeded ? "OK: " + exact : getFailureReason());
+        return getClass().getSimpleName() + " " + (succeeded ? "OK: " + exact : getFalseReason());
     }
 
-    public abstract String getFailureReason();
+    /** if false, a reported reason why this condition is false */
+    public abstract String getFalseReason();
 
-    public long getSuccessAt() {
+    /** if true, when it became true */
+    public long getTrueTime() {
         return successAt;
     }
     

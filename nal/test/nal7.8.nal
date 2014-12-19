@@ -10,5 +10,5 @@
 
 120
 
-''outputMustContain('<John --> (/,hold,_,key_101)>. :\\: %0.09;0.91%')
+''outputMustContain('<John --> (/,hold,_,key_101)>. :\: %0.09;0.91%')
 

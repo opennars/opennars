@@ -67,7 +67,7 @@ public class OutputContainsCondition extends OutputCondition {
     }
 
     @Override
-    public String getFailureReason() {
+    public String getFalseReason() {
         String s = "FAIL: No substring match: " + containing;
         if (!almost.isEmpty()) {
             for (SimilarOutput cs : getCandidates(5)) {

@@ -1,6 +1,6 @@
 package nars.core;
 
-import nars.io.condition.EmptyOutputCondition;
+import nars.io.condition.OutputEmptyCondition;
 import nars.io.condition.OutputNotContainsCondition;
 import nars.io.condition.OutputContainsCondition;
 import nars.io.condition.OutputCondition;
@@ -56,49 +56,30 @@ public class NALTest  {
     static public boolean showTrace = false;
     static public boolean showReport = true;
     static public boolean requireSuccess = true;
-    static public int similarsToSave = 5;
-    
-    //static public Narsese narsese;
-    
-    final int similarityThreshold = 4;
-    
+    static public int similarsToSave = 5;       
     private static boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
       
 
-    protected static Map<String, String> exCache = new HashMap(); //path -> script data
+    protected static Map<String, String> examples = new HashMap(); //path -> script data
     public static Map<String, Boolean> tests = new HashMap();
     public static Map<String, Double> scores = new HashMap();
     final String scriptPath;
     
     /** reads an example file line-by-line, before being processed, to extract expectations */
-    public static List<OutputCondition> getExpectations(NAR n, String example, boolean saveSimilar)  {
-        List<OutputCondition> expects = new ArrayList();
+    public static List<OutputCondition> getConditions(NAR n, String example, boolean saveSimilar)  {
+        List<OutputCondition> conditions = new ArrayList();
         String[] lines = example.split("\n");
         
         for (String s : lines) {
             s = s.trim();
-
-            final String expectOutContains = "''expect.outContains('";
-
-            if (s.indexOf(expectOutContains)==0) {
-
-                //without ') suffix:
-                String e = s.substring(expectOutContains.length(), s.length()-2);                           
-                
-                expects.add(new OutputContainsCondition(n, e, similarsToSave));
-
-                
-            }
             
             
-            //TEMPORARY, process old script format
             final String expectOutContains2 = "''outputMustContain('";
 
             if (s.indexOf(expectOutContains2)==0) {
 
-                //without ') suffix:
+                //remove ') suffix:
                 String e = s.substring(expectOutContains2.length(), s.length()-2); 
-                e = e.replace("\\\\","\\");
                 
                 /*try {                    
                     Task t = narsese.parseTask(e);                    
@@ -107,38 +88,35 @@ public class NALTest  {
                     expects.add(new ExpectContains(n, e, saveSimilar));
                 } */
                 
-                expects.add(new OutputContainsCondition(n, e, similarsToSave));
+                conditions.add(new OutputContainsCondition(n, e, similarsToSave));
 
             }     
             
-            //TEMPORARY, process old script format
             final String expectOutNotContains2 = "''outputMustNotContain('";
 
             if (s.indexOf(expectOutNotContains2)==0) {
 
-                //without ') suffix:
-                String e = s.substring(expectOutNotContains2.length(), s.length()-2); 
-                e = e.replace("\\\\","\\");
-                
-                expects.add(new OutputNotContainsCondition(n, e));
+                //remove ') suffix:
+                String e = s.substring(expectOutNotContains2.length(), s.length()-2);                 
+                conditions.add(new OutputNotContainsCondition(n, e));
 
             }   
             
             final String expectOutEmpty = "''expect.outEmpty";
             if (s.indexOf(expectOutEmpty)==0) {                                
-                expects.add(new EmptyOutputCondition(n));
+                conditions.add(new OutputEmptyCondition(n));
             }                
             
 
         }
         
-        return expects;
+        return conditions;
     }
 
 
     public static String getExample(String path) {
         try {
-            String existing = exCache.get(path);
+            String existing = examples.get(path);
             if (existing!=null)
                 return existing;
             
@@ -150,7 +128,7 @@ public class NALTest  {
                 sb.append(line).append("\n");
             }
             existing = sb.toString();
-            exCache.put(path, existing);
+            examples.put(path, existing);
             return existing;
         } catch (Exception ex) {
             assertTrue(path + ": " + ex.toString()  + ": ", false);
@@ -165,9 +143,7 @@ public class NALTest  {
         //return new DiscretinuousBagNARBuilder().build();
     }
     
-    @Parameterized.Parameters
-    public static Collection params() {
-        
+    public static Map<String,Object> getUnitTests() {
         Map<String,Object> l = new TreeMap();
         
         final String[] directories = new String[] { "nal/test", "nal/DecisionMaking", "nal/ClassicalConditioning" };
@@ -186,8 +162,12 @@ public class NALTest  {
             }
             
         }
-                
-        return l.values();
+        return l;
+    }
+    
+    @Parameterized.Parameters
+    public static Collection params() {
+        return getUnitTests().values();
     }
     
     
@@ -297,7 +277,7 @@ public class NALTest  {
 
 
             String example = getExample(path);
-            List<OutputCondition> extractedExpects = getExpectations(n, example, saveSimilar);
+            List<OutputCondition> extractedExpects = getConditions(n, example, saveSimilar);
             for (OutputCondition e1 : extractedExpects)
                 expects.add(e1);
 
@@ -334,9 +314,9 @@ public class NALTest  {
         if (success) {
             long lastSuccess = -1;
             for (OutputCondition e: expects) {
-                if (e.getSuccessAt()!=-1) {
-                    if (lastSuccess < e.getSuccessAt())
-                        lastSuccess = e.getSuccessAt();
+                if (e.getTrueTime()!=-1) {
+                    if (lastSuccess < e.getTrueTime())
+                        lastSuccess = e.getTrueTime();
                 }                
             }
             if (lastSuccess!=-1) {

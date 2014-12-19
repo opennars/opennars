@@ -6,7 +6,7 @@
 
 100
 
-''outputMustContain('<<(*,$1,room_101) --> enter> =\\> <(*,$1,key_101) --> hold>>. %0.72;0.58%')
+''outputMustContain('<<(*,$1,room_101) --> enter> =\> <(*,$1,key_101) --> hold>>. %0.72;0.58%')
 ''outputMustContain('<<(*,$1,key_101) --> hold> =/> <(*,$1,room_101) --> enter>>. %1.00;0.37%')
 '********** temporal induction/comparison 
 
@@ -17,7 +17,7 @@
 100
 
 ''outputMustContain('<<(*,$1,key_101) --> hold> =/> <(*,$1,room_101) --> enter>>. %0.90;0.39%')  
-''outputMustContain('<<(*,$1,room_101) --> enter> =\\> <(*,$1,key_101) --> hold>>. %0.80;0.42%') 
+''outputMustContain('<<(*,$1,room_101) --> enter> =\> <(*,$1,key_101) --> hold>>. %0.80;0.42%') 
 ''outputMustContain('<<(*,$1,key_101) --> hold> </> <(*,$1,room_101) --> enter>>. %0.73;0.44%')
 
 '********** temporal analogy
@@ -45,7 +45,7 @@
   
 20
 
-''outputMustContain('<John --> (/,enter,_,room_101)>. :\\: %1.00;0.81%')
+''outputMustContain('<John --> (/,enter,_,room_101)>. :\: %1.00;0.81%')
 
 '********** inference on tense 
 
@@ -55,7 +55,7 @@
 
 3 
 
-''outputMustContain('<(*,John,key_101) --> hold>. :\\: %1.00;0.45%')
+''outputMustContain('<(*,John,key_101) --> hold>. :\: %1.00;0.45%')
 
 '********** inference on tense 
 
@@ -65,7 +65,7 @@
   
 20
 
-''outputMustContain('<John --> (/,enter,_,room_101)>. :\\: %1.00;0.81%')
+''outputMustContain('<John --> (/,enter,_,room_101)>. :\: %1.00;0.81%')
 
 '********** induction on events  
 <(*,John,door_101) --> open>. :|: 
@@ -118,10 +118,10 @@
 
 6 
 
-' irrelevant   outputMustContain('<John --> (/,hold,_,key_101)>. :\\: %1.00;0.90%') 
-' irrelevant  'outputMustContain('<key_101 --> (/,hold,John,_)>. :\\: %1.00;0.90%') 
-' irrelevant  'outputMustContain('<John --> (/,hold,_,key_101)>. :\\: %1.00;0.90%') 
-' irrelevant  'outputMustContain('<key_101 --> (/,hold,John,_)>. :\\: %1.00;0.90%')
+' irrelevant   outputMustContain('<John --> (/,hold,_,key_101)>. :\: %1.00;0.90%') 
+' irrelevant  'outputMustContain('<key_101 --> (/,hold,John,_)>. :\: %1.00;0.90%') 
+' irrelevant  'outputMustContain('<John --> (/,hold,_,key_101)>. :\: %1.00;0.90%') 
+' irrelevant  'outputMustContain('<key_101 --> (/,hold,John,_)>. :\: %1.00;0.90%')
 
 <<(*,John,door_101) --> open> =/> <(*,John,room_101) --> enter>>. :|:  %1.0000;0.9000% 
 
@@ -142,5 +142,5 @@
 
 120
 
-''outputMustContain('<John --> (/,hold,_,key_101)>. :\\: %0.09;0.91%')
+''outputMustContain('<John --> (/,hold,_,key_101)>. :\: %0.09;0.91%')
 

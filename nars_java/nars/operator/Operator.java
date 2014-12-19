@@ -89,7 +89,6 @@ public abstract class Operator extends Term implements Plugin {
             
             reportExecution(operation, args, feedback, memory);
             
-            //System.out.println("Executed: " + this);
 
             if (feedback!=null) {
                 for (final Task t : feedback) {

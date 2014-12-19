@@ -12,6 +12,6 @@
 1
 <c-->meta-word>. :|:
 
-''outputMustContain('<(&/, <a-->meta-word>, <b-->meta-word>) =/> <c-->meta-word>>. :\\: %1.00;0.43%')
+''outputMustContain('<(&/, <a-->meta-word>, <b-->meta-word>) =/> <c-->meta-word>>. :\: %1.00;0.43%')
 
 1000

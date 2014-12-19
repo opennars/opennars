@@ -12,15 +12,15 @@ import nars.core.NAR;
  *
  * @author me
  */
-public class EmptyOutputCondition extends OutputCondition {
+public class OutputEmptyCondition extends OutputCondition {
     List<String> output = new LinkedList();
 
-    public EmptyOutputCondition(NAR nar) {
+    public OutputEmptyCondition(NAR nar) {
         super(nar);
         succeeded = true;
     }
 
-    public String getFailureReason() {
+    public String getFalseReason() {
         return "FAIL: output exists but should not: " + output;
     }
 
