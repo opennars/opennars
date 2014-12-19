@@ -40,7 +40,7 @@ public abstract class BeliefPrediction extends AbstractObserver {
 
     protected abstract void train();
 
-    protected abstract void predict();
+    protected abstract double[] predict();
 
     @Override
     public void event(Class event, Object[] args) {

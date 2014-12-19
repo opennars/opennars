@@ -9,31 +9,16 @@ import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
-import com.google.common.collect.Lists;
-import de.jannlab.Net;
-import de.jannlab.core.CellType;
-import de.jannlab.data.Sample;
-import de.jannlab.data.SampleSet;
-import de.jannlab.generator.RNNGenerator;
-import de.jannlab.tools.NetTools;
-import de.jannlab.training.GradientDescent;
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.TreeMap;
-import nars.core.Events.CycleEnd;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Concept;
-import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.output.ConceptsPanel;
-import nars.inference.AbstractObserver;
 import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
-import nars.language.Instance;
 import nars.language.Tense;
 import nars.language.Term;
 
@@ -57,16 +42,20 @@ public class Predict3 {
          return v;
     }
     
+    static float signal = 0;
+    
     
     public static void main(String[] args) throws Narsese.InvalidInputException, InterruptedException {
 
+        Parameters.DEBUG = true;
         int duration = 8;
         float freq = 1.0f / duration * 0.15f;        
         int minCyclesAhead = 0;
-        double noise = 0.01;
+        double missingDataRate = 0.1;
+        double noiseRate = 0.02;
         boolean onlyNoticeChange = false;
         int thinkInterval = onlyNoticeChange ? 1 : 2;
-        int discretization = 4;
+        int discretization = 3;
 
         NAR n = new NAR(new Default().setInternalExperience(null));
         n.param.duration.set(duration);
@@ -174,6 +163,7 @@ public class Predict3 {
         
         n.run(discretization*4);
 
+        
         //new TextOutput(n, System.out);
         
         Concept[] valueBeliefConcepts = discretize.getValueConcepts("x");
@@ -184,16 +174,33 @@ public class Predict3 {
         RNNBeliefPrediction predictor = new RNNBeliefPrediction(n, valueBeliefConcepts) {
 
             @Override
-            protected void predict() {
-                super.predict();
-                double[] x = predictedOutput;
-                if (x == null) return;
+            public double[] getTrainedPrediction(double[] input) {
+                
+                
+                //return new double[] { EngineArray.maxIndex(input) };
+                
+                return input;
+            }
+            
+            @Override
+            public int getPredictionSize() {
+                return getInputSize();
+                //return 1;
+            }
+
+            
+            @Override
+            protected double[] predict() {
+                double[] x = super.predict();
+                if (x == null) return null;
+                
                 long t = n.time();
                 
-                for (int i = 0; i < predictions.length; i++) {
+                for (int i = 0; i < x.length; i++) {
                 
                     predictions[i].add((int)t, x[i] ); //- x[i*2+1]);
                 }
+                return x;
             }
           
             
@@ -211,12 +218,15 @@ public class Predict3 {
             Thread.sleep(3);
             //n.memory.addSimulationTime(1);
 
-            float signal  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
-            //float signal = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
+            signal  = (float)Math.max(0, Math.min(1.0, Math.tan(freq * n.time()) * 0.5f + 0.5f));
+            
+            //signal  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
+            //signal = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
+            
+            signal *= 1.0 + (Math.random()-0.5f)* 2f * noiseRate;
 
-            if (Math.random() > noise)
+            if (Math.random() > missingDataRate)
                 observed.add((int) n.time(), signal);
-
             
             prevY = curY;
             curY = discretize.f(signal);

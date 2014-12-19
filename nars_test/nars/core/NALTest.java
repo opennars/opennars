@@ -1,5 +1,9 @@
 package nars.core;
 
+import nars.io.condition.EmptyOutputCondition;
+import nars.io.condition.OutputNotContainsCondition;
+import nars.io.condition.OutputContainsCondition;
+import nars.io.condition.OutputCondition;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -65,8 +69,8 @@ public class NALTest  {
     final String scriptPath;
     
     /** reads an example file line-by-line, before being processed, to extract expectations */
-    public static List<Expect> getExpectations(NAR n, String example, boolean saveSimilar)  {
-        List<Expect> expects = new ArrayList();
+    public static List<OutputCondition> getExpectations(NAR n, String example, boolean saveSimilar)  {
+        List<OutputCondition> expects = new ArrayList();
         String[] lines = example.split("\n");
         
         for (String s : lines) {
@@ -79,7 +83,7 @@ public class NALTest  {
                 //without ') suffix:
                 String e = s.substring(expectOutContains.length(), s.length()-2);                           
                 
-                expects.add(new ExpectContains(n, e, saveSimilar));
+                expects.add(new OutputContainsCondition(n, e, saveSimilar));
 
                 
             }
@@ -101,7 +105,7 @@ public class NALTest  {
                     expects.add(new ExpectContains(n, e, saveSimilar));
                 } */
                 
-                expects.add(new ExpectContains(n, e, saveSimilar));
+                expects.add(new OutputContainsCondition(n, e, saveSimilar));
 
             }     
             
@@ -114,13 +118,13 @@ public class NALTest  {
                 String e = s.substring(expectOutNotContains2.length(), s.length()-2); 
                 e = e.replace("\\\\","\\");
                 
-                expects.add(new ExpectNotContains(n, e));
+                expects.add(new OutputNotContainsCondition(n, e));
 
             }   
             
             final String expectOutEmpty = "''expect.outEmpty";
             if (s.indexOf(expectOutEmpty)==0) {                                
-                expects.add(new ExpectOutputEmpty(n));
+                expects.add(new EmptyOutputCondition(n));
             }                
             
 
@@ -279,7 +283,7 @@ public class NALTest  {
     protected double testNAL(final String path) {               
         Memory.resetStatic();
         
-        final List<Expect> expects = new ArrayList();
+        final List<OutputCondition> expects = new ArrayList();
         
         NAR n = null;
         boolean error = false;
@@ -291,8 +295,8 @@ public class NALTest  {
 
 
             String example = getExample(path);
-            List<Expect> extractedExpects = getExpectations(n, example, saveSimilar);
-            for (Expect e1 : extractedExpects)
+            List<OutputCondition> extractedExpects = getExpectations(n, example, saveSimilar);
+            for (OutputCondition e1 : extractedExpects)
                 expects.add(e1);
 
             if (showOutput)
@@ -320,17 +324,17 @@ public class NALTest  {
         System.out.flush();
         
         boolean success = expects.size() > 0 && (!error);
-        for (Expect e: expects) {
+        for (OutputCondition e: expects) {
             if (!e.succeeded) success = false;
         }
 
         double score = Double.POSITIVE_INFINITY;
         if (success) {
             long lastSuccess = -1;
-            for (Expect e: expects) {
-                if (e.successAt!=-1) {
-                    if (lastSuccess < e.successAt)
-                        lastSuccess = e.successAt;
+            for (OutputCondition e: expects) {
+                if (e.getSuccessAt()!=-1) {
+                    if (lastSuccess < e.getSuccessAt())
+                        lastSuccess = e.getSuccessAt();
                 }                
             }
             if (lastSuccess!=-1) {
@@ -347,7 +351,7 @@ public class NALTest  {
 
         if ((!success & showFail) || (success && showSuccess)) {
             System.err.println('\n' + path + " @" + n.memory.getCycleTime());
-            for (Expect e: expects) {
+            for (OutputCondition e: expects) {
                 System.err.println("  " + e);
             }
         }
@@ -370,194 +374,9 @@ public class NALTest  {
         testNAL(scriptPath);
     }
 
-    public static abstract class Expect extends Output {
-
-        public boolean succeeded = false;
-        public List<CharSequence> exact = new ArrayList();
-        public final NAR nar;
-        long successAt = -1;
-
-        public Expect(NAR nar) {
-            super(nar);
-            this.nar = nar;
-        }
-        
-        public boolean isInverse() { return false; }
-        
-        @Override
-        public void event(Class channel, Object... args) {
-            if ((succeeded) && (!isInverse()))
-                return;
-            if ((channel == OUT.class) || (channel == EXE.class)) {
-                Object signal = args[0];                
-                if (condition(channel, signal)) {                    
-                    setSucceeded();
-                }
-            }
-        }
-        
-        protected void setSucceeded() { 
-            if (successAt == -1)
-                successAt = nar.time();
-            succeeded = true;            
-        }
-        
-        public boolean success() { return succeeded; }
-        
-        /** returns true if condition was satisfied */
-        abstract public boolean condition(Class channel, Object signal);
-
-        @Override
-        public String toString() {            
-            return  getClass().getSimpleName() + " " + (succeeded ? "OK: " + exact : getFailureReason());
-        }
-
-        abstract public String getFailureReason();
-    }
-    
-    public static class ExpectOutputEmpty extends Expect {
-
-        List<String> output = new LinkedList();
-        
-        public ExpectOutputEmpty(NAR nar) {
-            super(nar);
-            succeeded = true;
-        }
-
-        public String getFailureReason() {
-            return "FAIL: output exists but should not: " + output;
-        }
-         
-        @Override
-        public boolean condition(Class channel, Object signal) {
-            //any OUT or ERR output is a failure
-            if ((channel == OUT.class) || (channel == ERR.class)) {
-                output.add(channel.getSimpleName().toString() + ": " + signal.toString());
-                succeeded = false;
-                return false;
-            }
-            return false;
-        }
-    }
-    
-    public static class ExpectContains extends Expect {
-
-        final String containing;
-        public Map<String, Integer> almost = new HashMap();
-        final boolean saveSimilar;
-
-        public ExpectContains(NAR nar, String containing, boolean saveSimilar) {
-            super(nar);            
-            this.containing = containing;
-            this.saveSimilar = saveSimilar;
-        }
-
-        @Override
-        public String getFailureReason() {
-            String s = "FAIL: No substring match: " + containing;
-            if (!almost.isEmpty()) {
-                for (String cs : getCandidates(5)) {
-                    s += "\n\t" + cs;
-                }
-            }
-            return s;
-        }
-        
-        public List<String> getCandidates(int max) {
-            List<String> c = new ArrayList(almost.keySet());
-            
-            Collections.sort(c, new Comparator<String>() {
-
-                @Override
-                public int compare(String a, String b) {
-                    return Integer.compare(almost.get(a), almost.get(b));
-                }
-                
-            });
-            
-            if (c.size() < max) 
-                return c;
-            else
-                return c.subList(0, max);            
-        }
-        
-        public boolean cond(Class channel, Object signal) {
-            
-            if ((channel == OUT.class) || (channel == EXE.class)) {
-                
-                String o;
-                if (signal instanceof Task) {
-                    //only compare for Sentence string, faster than TextOutput.getOutputString
-                    //which also does unescaping, etc..
-                    Sentence s = ((Task)signal).sentence;
-                    o = s.toString(nar, false).toString();
-                    if (o.contains(containing)) {
-                        if (saveSimilar)
-                            exact.add(o);
-                        return true;
-                    }                    
-                }
-                else {
-                    o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
-                    if (o.contains(containing)) {
-                        if (saveSimilar)
-                            exact.add(o);
-                        return true;
-                    }
-                }
-
-                if (saveSimilar) {
-                    int dist = Texts.levenshteinDistance(o, containing);            
-                    //if (dist < similarityThreshold + Math.abs(o.length() - containing.length()))
-                    almost.put("similar(" + dist + "): " + TextOutput.getOutputString(channel, signal, false, false, nar), dist);
-                }            
-            }
-            if (channel == ERR.class) {
-                assertTrue(signal.toString(), false);
-            }
-            return false;
-        }
-        
-        @Override
-        public boolean condition(Class channel, Object signal) {
-            if (succeeded)
-                return true;
-            return cond(channel,signal);
-        }
-    }
     
     
-    public static class ExpectNotContains extends ExpectContains {
-
-        
-        public ExpectNotContains(NAR nar, String containing) {
-            super(nar, containing, false);
-            succeeded = true;
-        }
-
-        @Override
-        public String getFailureReason() {
-            return "incorrect output: " + containing;
-        }
-
-
-        
-        @Override
-        public boolean condition(Class channel, Object signal) {
-            if (!succeeded)
-                return false;
-            if (cond(channel,signal)) {
-                onFailure(channel, signal);
-                succeeded = false;
-                return false;
-            }
-            return true;
-        }
-        
-        public boolean isInverse() { return true; }
-
-        protected void onFailure(Class channel, Object signal) {
-        }
-    }
+    
+    
     
 }

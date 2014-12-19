@@ -18,6 +18,7 @@ import nars.core.NAR;
 import nars.core.build.Default;
 import nars.io.meter.CompoundMeter;
 import nars.core.NALTest;
+import nars.io.condition.OutputCondition;
 import static nars.core.NALTest.getExpectations;
 import nars.util.XORShiftRandom;
 import org.encog.Encog;
@@ -79,10 +80,10 @@ public class NALTestPerformance {
 
             Memory.resetStatic();
 
-            final List<NALTest.Expect> expects = new ArrayList();
+            final List<OutputCondition> expects = new ArrayList();
 
-            List<NALTest.Expect> extractedExpects = getExpectations(nar, input, false);
-            for (NALTest.Expect e1 : extractedExpects) {
+            List<OutputCondition> extractedExpects = getExpectations(nar, input, false);
+            for (OutputCondition e1 : extractedExpects) {
                 expects.add(e1);
             }
 
@@ -129,7 +130,7 @@ public class NALTestPerformance {
                 }
                 
                 successes = 0;
-                for (NALTest.Expect e : expects) {
+                for (OutputCondition e : expects) {
                     if (e.succeeded) {
                         successes++;
                     }

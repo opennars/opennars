@@ -19,10 +19,10 @@ import java.util.TreeMap;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import org.encog.util.arrayutil.NormalizeArray;
+import org.apache.commons.math3.util.MathArrays;
 
 /** predicts the beliefs of a set of concepts */
-public class RNNBeliefPrediction extends BeliefPrediction {
+abstract public class RNNBeliefPrediction extends BeliefPrediction {
     final Random rnd = new Random();
 
     private final Net net;
@@ -35,27 +35,33 @@ public class RNNBeliefPrediction extends BeliefPrediction {
         
      /** how much temporal radius to smudge a time prediction forwrad and backward */
         
-    float predictionTimeSpanFactor = 5f;
+    float predictionTimeSpanFactor = 3f;
                    
     protected double[] predictedOutput;
     private GradientDescent trainer;
-    private final int frameSize;
+    private final int inputSize;
     private double[] actual;
     private double[] ideal;
     
-    NormalizeArray na = new NormalizeArray();
-    
     boolean normalizeInputVectors = true;
     boolean normalizeOutputVector = false;
+    final int downSample = 1; //not working yet for values other than 1
 
     public RNNBeliefPrediction(NAR n, Concept... concepts) {        
         this(n, Lists.newArrayList(concepts));
     }
-        
+
+    public static double[] normalize(double[] x) {
+        double d = MathArrays.safeNorm(x);
+        if (d == 0) return x;
+        for (int i = 0; i < x.length; i++)
+            x[i]/=d;
+        return x;
+    }
     
     public RNNBeliefPrediction(NAR n, List<Concept> concepts) {
         super(n, concepts);
-        this.frameSize = concepts.size();
+        this.inputSize = concepts.size();
         //https://github.com/JANNLab/JANNLab/blob/master/examples/de/jannlab/examples/recurrent/AddingExample.java
         /*LSTMGenerator gen = new LSTMGenerator();
         gen.inputLayer(frameSize);
@@ -66,11 +72,11 @@ public class RNNBeliefPrediction extends BeliefPrediction {
         gen.outputLayer(frameSize,  CellType.TANH);
          */
         RNNGenerator gen = new RNNGenerator();
-        gen.inputLayer(frameSize);
+        gen.inputLayer(inputSize);
         gen.hiddenLayer(concepts.size() * 6, CellType.TANH);
-        //gen.hiddenLayer(concepts.size() * 8, CellType.TANH);
-        gen.outputLayer(frameSize, CellType.TANH);
-        
+        //gen.hiddenLayer(concepts.size() * 3, CellType.TANH);
+        gen.outputLayer(getPredictionSize(), CellType.TANH);
+
         
         net = gen.generate();
         net.rebuffer(maxDataFrames);
@@ -86,26 +92,34 @@ public class RNNBeliefPrediction extends BeliefPrediction {
      */
     //leave as zeros
 
+    public int getInputSize() {
+        return inputSize;
+    }
+    
+    abstract public int getPredictionSize();
+    abstract public double[] getTrainedPrediction(double[] input);
+    
+    @Override
     protected void train() {
         //
         //double[] target = {((data[x(i1)] + data[x(i2)])/2.0)};
         //new Sample(data, target, 2, length, 1, 1);
         TreeMap<Integer, double[]> d = new TreeMap();
         int cc = 0;
-        int hd = Math.round(predictionTimeSpanFactor * nar.memory.getDuration() / 2f);
+        int hd = Math.round(predictionTimeSpanFactor * nar.memory.getDuration() / 2f / downSample);
         for (Concept c : concepts) {
             for (Sentence s : c.beliefs) {
                 if (s.isEternal()) {
                     continue;
                 }
-                int o = (int) s.getOccurenceTime();
+                int o = (int) Math.round( ((double)s.getOccurenceTime()) / ((double)downSample)) ;
                 if (o > nar.time()) {
                     continue; //non-future beliefs
                 }
                 for (int oc = o - hd; oc <= o + hd; oc++) {
                     double[] x = d.get(oc);
                     if (x == null) {
-                        x = new double[frameSize];
+                        x = new double[inputSize];
                         d.put(oc, x);
                     }
                     float freq = 2f * (s.truth.getFrequency() - 0.5f);
@@ -125,48 +139,53 @@ public class RNNBeliefPrediction extends BeliefPrediction {
         data = new SampleSet();
         int first = d.firstKey();
         int last = (int) nar.time();
-        if (last - first > maxDataFrames) {
-            first = last - maxDataFrames;
+        if (last - first > maxDataFrames*downSample) {
+            first = last - maxDataFrames*downSample;
         }
         int frames = (int) (last - first);
-        int bsize = frameSize * frames;
-        
+        int bsize = getInputSize() * frames;
+        int isize = getPredictionSize() * frames;
         if (actual==null || actual.length!=bsize) 
             actual = new double[bsize];
         else
             Arrays.fill(actual, 0);
         
-        if (ideal == null || ideal.length!=bsize) 
-            ideal = new double[bsize];
+        if (ideal == null || ideal.length!=isize) 
+            ideal = new double[isize];
         else
             Arrays.fill(ideal, 0);
         
         
-        int ac = 0;
+        int idealSize = getPredictionSize();
+        int ac = 0, id = 0;
         double[] prevX = null;
         for (int i = first; i <= last; i++) {
             double[] x = d.get(i);
             if (x == null) {
-                x = new double[frameSize];
+                x = new double[inputSize];
             }
             else {
+                
                 if (normalizeInputVectors) {
-                    na.process(x);
+                    x = normalize(x);
                 }
             }
             if (prevX != null) {
-                System.arraycopy(prevX, 0, ideal, ac, frameSize);
-                System.arraycopy(x, 0, actual, ac, frameSize);
-                ac += frameSize;
+                System.arraycopy(prevX, 0, actual, ac, inputSize);
+                ac += inputSize;
+                
+                System.arraycopy(getTrainedPrediction(x), 0, ideal, id, idealSize);
+                id += idealSize;
+                
             }
             prevX = x;
         }
 
-        Sample s = new Sample(actual, ideal, frameSize, frameSize);
+        Sample s = new Sample(actual, ideal, inputSize, idealSize);
         data.add(s);
 
             
-            //System.out.println(data);
+        //System.out.println(data);
             
 
         if (trainer == null) {
@@ -191,12 +210,12 @@ public class RNNBeliefPrediction extends BeliefPrediction {
         //System.out.println("LSTM error: " + trainer.getTrainingError());
     }
 
-    protected void predict() {
+    protected double[] predict() {
         if (data == null) {
-            return;
+            return null;
         }
         if (predictedOutput == null) {
-            predictedOutput = new double[frameSize];
+            predictedOutput = new double[getPredictionSize()];
         }
         Sample lastSample = data.get(data.size() - 1);
         double error = NetTools.performForward(this.net, lastSample);
@@ -204,10 +223,12 @@ public class RNNBeliefPrediction extends BeliefPrediction {
         
         
         if (normalizeOutputVector)
-            na.process(predictedOutput);
+            predictedOutput = normalize(predictedOutput);
                 
             
         System.out.println("output: " + Arrays.toString(predictedOutput) + " " + error);
+        
+        return predictedOutput;
     }
 
     

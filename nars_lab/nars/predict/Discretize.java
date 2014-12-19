@@ -32,23 +32,26 @@ public class Discretize {
     }
     
     public int f(double p) {
-        if (p < 0) {
-            p = 0;
+        if (p <= 0) {
+            return 0;
         }
-        if (p > 1f) {
-            p = 1f;
+        if (p >= 1f) {
+            return discretization-1;
         }
-        return (int)Math.round(-0.5 + p * (discretization));
+        int x = (int)Math.round(-0.5 + p * (discretization));
+        return x;
     }
     
     public double d(double p) {
-        if (p < 0) {
-            p = 0;
+        if (p <= 0) {
+            return 0;
         }
-        if (p > 1f) {
-            p = 1f;
+        if (p >= 1f) {
+            return discretization-1;
         }
-        return (-0.5 + p * (discretization));
+        double x = (-0.5 + p * (discretization));
+        return x;
+        
     }    
 
     /** calculate proportion that value 'v' is at level 'l', or somewhere in between levels */
