@@ -9,7 +9,7 @@ import nars.core.Events.Solved;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.inference.AbstractObserver;
-import nars.core.NALTest.ExpectContains;
+import nars.io.condition.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class VariableTest {
             }
         };
         
-        ExpectContains e = new ExpectContains(n, "=/> <a --> 4>>.", false);
+        OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", false);
         
         n.run(32);
   

@@ -272,6 +272,17 @@ public class Texts {
         }
         
         if ((totalLen <= maxLen) || (maxLen == -1)) {            
+            /*
+            final CharBuffer n = CharBuffer.allocate(totalLen);
+
+            for (final CharSequence s : components) {            
+                n.append(s);
+            }
+
+            return n.compact();
+            */
+        
+            
             StringBuilder sb = new StringBuilder(totalLen);
             for (final CharSequence s : components) {
                 if (s != null) {

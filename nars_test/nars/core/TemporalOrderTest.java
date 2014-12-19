@@ -8,7 +8,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.io.TextOutput;
-import nars.core.NALTest.ExpectContains;
+import nars.io.condition.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class TemporalOrderTest {
         
         n.addInput("<e --> f>. :/:");
         n.addInput("<c --> d>. :|:");
-        ExpectContains futureQuestion = new ExpectContains(n, "<e --> f>. :/:", false);
+        OutputContainsCondition futureQuestion = new OutputContainsCondition(n, "<e --> f>. :/:", false);
         assertTrue(!futureQuestion.success());
         n.run(1);
         
@@ -46,7 +46,7 @@ public class TemporalOrderTest {
         
         n.addInput("<c --> d>?");
         
-        ExpectContains pastQuestion = new ExpectContains(n, "<c --> d>. :\\:", false);
+        OutputContainsCondition pastQuestion = new OutputContainsCondition(n, "<c --> d>. :\\:", false);
         
         n.run(10);
         

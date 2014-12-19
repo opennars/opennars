@@ -3,7 +3,7 @@ package nars.multistep;
 import java.io.IOException;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.core.NALTest.ExpectContains;
+import nars.io.condition.OutputContainsCondition;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
