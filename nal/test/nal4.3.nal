@@ -6,8 +6,8 @@
 3
 
 'Something that can neutralize a base is an acid.
-''outputMustContain('<(\\,neutralization,_,base) --> acid>. %1.00;0.90%')
+''outputMustContain('<(\,neutralization,_,base) --> acid>. %1.00;0.90%')
 
 'Something that can be neutralized by an acid is a base.
-''outputMustContain('<(\\,neutralization,acid,_) --> base>. %1.00;0.90%')
+''outputMustContain('<(\,neutralization,acid,_) --> base>. %1.00;0.90%')
 

@@ -46,7 +46,7 @@ public class VariableTest {
         
         n.run(32);
   
-        assertTrue(e.success());
+        assertTrue(e.isTrue());
     }
     
     @Test public void testQueryVariableUnification() {

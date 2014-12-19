@@ -18,7 +18,7 @@ public class OutputNotContainsCondition extends OutputContainsCondition {
     }
 
     @Override
-    public String getFailureReason() {
+    public String getFalseReason() {
         return "incorrect output: " + containing;
     }
 
