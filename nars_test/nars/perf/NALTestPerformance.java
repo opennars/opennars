@@ -19,7 +19,6 @@ import nars.core.build.Default;
 import nars.io.meter.CompoundMeter;
 import nars.core.NALTest;
 import nars.io.condition.OutputCondition;
-import static nars.core.NALTest.getConditions;
 import nars.util.XORShiftRandom;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;
@@ -82,7 +81,7 @@ public class NALTestPerformance {
 
             final List<OutputCondition> expects = new ArrayList();
 
-            List<OutputCondition> extractedExpects = getConditions(nar, input, false);
+            List<OutputCondition> extractedExpects = OutputCondition.getConditions(nar, input, 5);
             for (OutputCondition e1 : extractedExpects) {
                 expects.add(e1);
             }

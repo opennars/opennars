@@ -4,21 +4,25 @@
  */
 package nars.io.condition;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.SortedSet;
+import java.util.List;
 import java.util.TreeSet;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.TextOutput;
 import nars.io.Texts;
+import nars.operator.Operator.ExecutionResult;
 
 /**
  * OutputCondition that watches for a specific String output,
  * while collecting similar results (according to Levenshtein text distance).
  * 
  */
-public class OutputContainsCondition extends OutputCondition {
+public class OutputContainsCondition extends OutputCondition<Task> {
+    
+    public List<Task> exact = new ArrayList();
     
     public static class SimilarOutput implements Comparable<SimilarOutput> {
         public final String signal;
@@ -47,6 +51,8 @@ public class OutputContainsCondition extends OutputCondition {
         
         
     }
+    
+    
     
     final String containing;
     public TreeSet<SimilarOutput> almost = new TreeSet();
@@ -87,23 +93,28 @@ public class OutputContainsCondition extends OutputCondition {
             if (signal instanceof Task) {
                 //only compare for Sentence string, faster than TextOutput.getOutputString
                 //which also does unescaping, etc..
-                Sentence s = ((Task) signal).sentence;
+                Task t = (Task)signal;
+                Sentence s = t.sentence;
                 o = s.toString(nar, false).toString();
                 if (o.contains(containing)) {
                     if (saveSimilar) {
-                        exact.add(o);
+                        exact.add(t);
                     }
                     return true;
                 }
-            } else {
+            } else  {
+                Task t = null;
+                if (signal instanceof ExecutionResult)
+                    t = ((ExecutionResult)signal).getTask();
+                
                 o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
                 
                 if (o.contains(containing)) {
-                    if (saveSimilar) {
-                        exact.add(o);
+                    if ((saveSimilar) && (t!=null)) {                        
+                        exact.add(t);
                     }
                     return true;
-                }
+                }                
             }
             if (saveSimilar) {
                 int dist = Texts.levenshteinDistance(o, containing);
@@ -134,5 +145,11 @@ public class OutputContainsCondition extends OutputCondition {
         }
         return cond(channel, signal);
     }
+
+    @Override
+    public List<Task> getTrueReasons() {
+        return exact;
+    }
+    
     
 }
