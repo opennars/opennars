@@ -42,7 +42,7 @@ public class VariableTest {
             }
         };
         
-        OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", false);
+        OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", 5);
         
         n.run(32);
   
