@@ -13,7 +13,7 @@ import nars.core.NAR;
 public class OutputNotContainsCondition extends OutputContainsCondition {
 
     public OutputNotContainsCondition(NAR nar, String containing) {
-        super(nar, containing, false);
+        super(nar, containing, -1);
         succeeded = true;
     }
 

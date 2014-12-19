@@ -56,6 +56,8 @@ public class NALTest  {
     static public boolean showTrace = false;
     static public boolean showReport = true;
     static public boolean requireSuccess = true;
+    static public int similarsToSave = 5;
+    
     //static public Narsese narsese;
     
     final int similarityThreshold = 4;
@@ -83,7 +85,7 @@ public class NALTest  {
                 //without ') suffix:
                 String e = s.substring(expectOutContains.length(), s.length()-2);                           
                 
-                expects.add(new OutputContainsCondition(n, e, saveSimilar));
+                expects.add(new OutputContainsCondition(n, e, similarsToSave));
 
                 
             }
@@ -105,7 +107,7 @@ public class NALTest  {
                     expects.add(new ExpectContains(n, e, saveSimilar));
                 } */
                 
-                expects.add(new OutputContainsCondition(n, e, saveSimilar));
+                expects.add(new OutputContainsCondition(n, e, similarsToSave));
 
             }     
             

@@ -4,12 +4,9 @@
  */
 package nars.io.condition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -17,12 +14,13 @@ import nars.io.TextOutput;
 import nars.io.Texts;
 
 /**
- *
- * @author me
+ * OutputCondition that watches for a specific String output,
+ * while collecting similar results (according to Levenshtein text distance).
+ * 
  */
 public class OutputContainsCondition extends OutputCondition {
     
-    public static class SimilarOutput {
+    public static class SimilarOutput implements Comparable<SimilarOutput> {
         public final String signal;
         public final int distance;
 
@@ -41,44 +39,46 @@ public class OutputContainsCondition extends OutputCondition {
         public String toString() {
             return "similar(" + distance + "): " + signal;
         }
+
+        @Override
+        public int compareTo(SimilarOutput o) {
+            return Integer.compare(distance, o.distance);
+        }
         
         
     }
     
     final String containing;
-    public Map<SimilarOutput, Integer> almost = new HashMap();
+    public TreeSet<SimilarOutput> almost = new TreeSet();
     final boolean saveSimilar;
+    int maxSimilars = 5;
 
-    public OutputContainsCondition(NAR nar, String containing, boolean saveSimilar) {
+    /** 
+     * 
+     * @param nar
+     * @param containing
+     * @param maxSimilars # of similar results to collect, -1 to disable
+     */
+    public OutputContainsCondition(NAR nar, String containing, int maxSimilars) {
         super(nar);
         this.containing = containing;
-        this.saveSimilar = saveSimilar;
+        this.maxSimilars = maxSimilars;
+        this.saveSimilar = maxSimilars != -1;
     }
 
     @Override
     public String getFailureReason() {
         String s = "FAIL: No substring match: " + containing;
         if (!almost.isEmpty()) {
-            for (String cs : getCandidates(5)) {
+            for (SimilarOutput cs : getCandidates(5)) {
                 s += "\n\t" + cs;
             }
         }
         return s;
     }
 
-    public List<String> getCandidates(int max) {
-        List<String> c = new ArrayList(almost.keySet());
-        Collections.sort(c, new Comparator<String>() {
-            @Override
-            public int compare(String a, String b) {
-                return Integer.compare(almost.get(a), almost.get(b));
-            }
-        });
-        if (c.size() < max) {
-            return c;
-        } else {
-            return c.subList(0, max);
-        }
+    public Collection<SimilarOutput> getCandidates(int max) {
+        return almost;
     }
 
     public boolean cond(Class channel, Object signal) {
@@ -107,7 +107,18 @@ public class OutputContainsCondition extends OutputCondition {
             }
             if (saveSimilar) {
                 int dist = Texts.levenshteinDistance(o, containing);
-                almost.put(new SimilarOutput(o, dist), dist);
+                
+                if (almost.size() >= maxSimilars) {
+                    SimilarOutput last = almost.last();
+                    
+                    if (dist < last.distance) {
+                        almost.remove(last);
+                        almost.add(new SimilarOutput(o, dist));
+                    }
+                }
+                else {
+                    almost.add(new SimilarOutput(o, dist));
+                }
             }
         }
         /*if (channel == ERR.class) {

@@ -26,7 +26,7 @@ public class TemporalOrderTest {
         
         n.addInput("<e --> f>. :/:");
         n.addInput("<c --> d>. :|:");
-        OutputContainsCondition futureQuestion = new OutputContainsCondition(n, "<e --> f>. :/:", false);
+        OutputContainsCondition futureQuestion = new OutputContainsCondition(n, "<e --> f>. :/:", 5);
         assertTrue(!futureQuestion.success());
         n.run(1);
         
@@ -46,7 +46,7 @@ public class TemporalOrderTest {
         
         n.addInput("<c --> d>?");
         
-        OutputContainsCondition pastQuestion = new OutputContainsCondition(n, "<c --> d>. :\\:", false);
+        OutputContainsCondition pastQuestion = new OutputContainsCondition(n, "<c --> d>. :\\:", 5);
         
         n.run(10);
         

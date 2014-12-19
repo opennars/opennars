@@ -10,8 +10,8 @@ import nars.core.NAR;
 import nars.io.Output;
 
 /**
- *
- * @author me
+ * Monitors an output stream for certain conditions. Used in testing and
+ * analysis
  */
 public abstract class OutputCondition extends Output {
     public boolean succeeded = false;
