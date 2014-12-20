@@ -25,8 +25,6 @@ public class ImmediateProcess extends NAL {
     @Override
     public void run() {
         setCurrentTask(task);
-        memory.logic.TASK_IMMEDIATE_PROCESS.commit();
-        emit(Events.TaskImmediateProcess.class, task);
         setCurrentTerm(currentTask.getTerm());
         setCurrentConcept(memory.conceptualize(currentTask.budget, getCurrentTerm()));
         if (getCurrentConcept() != null) {
@@ -41,6 +39,8 @@ public class ImmediateProcess extends NAL {
                 memory.logic.SHORT_TERM_MEMORY_UPDATE.commit();
             }
         }
+        memory.logic.TASK_IMMEDIATE_PROCESS.commit();
+        emit(Events.TaskImmediateProcess.class, task, this);
     }
     
 }

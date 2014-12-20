@@ -31,19 +31,20 @@ public class ExampleFileInput extends TextInput {
         return sb.toString();
     }
     
-    private final String content;
+    /** narsese source code, one instruction per line */
+    private final String source;
 
     protected ExampleFileInput(String input) throws FileNotFoundException {
         super(input);
-        this.content = input;
+        this.source = input;
     }
     
-    public static ExampleFileInput getExample(String id) throws Exception {
+    public static ExampleFileInput get(String id) throws Exception {
         return new ExampleFileInput(load("./nal/" + id +".nal"));
     }
     
-    public List<OutputCondition> getConditions(NAR n, int similarResultsToSave) {
-        return OutputCondition.getConditions(n, content, similarResultsToSave);
+    public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
+        return OutputCondition.getConditions(n, source, similarResultsToSave);
     }
     
     public static Map<String,Object> getUnitTests() {
@@ -65,6 +66,10 @@ public class ExampleFileInput extends TextInput {
             
         }
         return l;
+    }
+
+    public String getSource() {
+        return source;
     }
     
 }

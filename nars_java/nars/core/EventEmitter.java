@@ -76,6 +76,15 @@ public class EventEmitter {
         }
     }
     
+    public <X extends EventObserver> X on(X o) {
+        on(o.getClass(), o);
+        return o;
+    }
+    public <X extends EventObserver> X off(X o) {
+        off(o.getClass(), o);
+        return o;
+    }        
+    
     public <C> void on(final Class<? extends C> event, final EventObserver<? extends C> o) {
         if (Parameters.THREADS == 1) {
             _on(event, o);
