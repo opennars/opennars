@@ -6,9 +6,9 @@
 'A tiger is an animal.
 <tiger --> animal>. 
 
-3
+10
 
 'I guess that a tiger is a bird.
-''outputMustContain('<tiger --> bird>. %1.00;0.81%')
+''outputMustContain('<tiger --> bird>. %1.00;0.45%')
 
 
