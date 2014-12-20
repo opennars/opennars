@@ -3,6 +3,7 @@ package nars.core;
 import java.util.Arrays;
 import java.util.List;
 import nars.core.EventEmitter.EventObserver;
+import nars.core.control.FireConcept;
 import nars.core.control.NAL;
 import nars.entity.Concept;
 import nars.entity.Task;
@@ -85,10 +86,15 @@ public class Events {
     
     abstract public static class ConceptFire implements EventObserver { 
         
-        abstract public void onFire(Concept c, TaskLink t, NAL n);
+        /**
+         * use:
+         * Concept n.getCurrentConcept()
+         * TaskLink n.getCurrentTaskLink()
+         */
+        abstract public void onFire(FireConcept n);
         
         @Override public void event(Class event, Object[] args) {
-            onFire((Concept)args[0], (TaskLink)args[1], (NAL)args[2]);
+            onFire((FireConcept)args[0]);
         }
         
     }
