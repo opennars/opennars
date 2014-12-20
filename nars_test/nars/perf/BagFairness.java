@@ -21,6 +21,7 @@ import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.MultiTimeline;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import nars.core.Memory.Timing;
+import nars.core.control.FireConcept;
 import nars.storage.CurveBag;
 
 /**
@@ -53,7 +54,7 @@ public class BagFairness {
             fired[b] = new TreeMLData("Fired: " + Texts.n2(percentStart) + ".." + Texts.n2(percentEnd), Color.getHSBColor(0.2f + 0.7f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, maxConcepts);
         }
 
-        
+        //TODO use ConceptFire event observer impl
         n.event().on(Events.ConceptFire.class, new EventObserver() {
 
             @Override
@@ -61,7 +62,7 @@ public class BagFairness {
                 if (nextConceptPriority!=-1)
                     throw new RuntimeException("Only supports 1 concept per cycle");
                 
-                nextConceptPriority = ((Concept)arguments[0]).getPriority();
+                nextConceptPriority = ((FireConcept)arguments[0]).getCurrentConcept().getPriority();
             }
             
         });

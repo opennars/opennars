@@ -107,7 +107,7 @@ abstract public class FireConcept extends NAL {
             }
         }
                 
-        emit(Events.ConceptFire.class, currentConcept, currentTaskLink, this);
+        emit(Events.ConceptFire.class, this);
         memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
         
     }

@@ -269,14 +269,7 @@ public class NAR implements Runnable, TaskSource {
         return this;
     }
 
-    public <X extends EventObserver> X on(X o) {
-        on(o.getClass(), o);
-        return o;
-    }
-    public <X extends EventObserver> X off(X o) {
-        off(o.getClass(), o);
-        return o;
-    }    
+  
     
     /** attach event handler */
     public void on(Class c, EventObserver o) {

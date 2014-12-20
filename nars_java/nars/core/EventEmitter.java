@@ -75,7 +75,9 @@ public class EventEmitter {
             pendingOps.clear();
         }
     }
-    
+ 
+    /*
+    //These will not work if o is a subclass of X
     public <X extends EventObserver> X on(X o) {
         on(o.getClass(), o);
         return o;
@@ -83,7 +85,8 @@ public class EventEmitter {
     public <X extends EventObserver> X off(X o) {
         off(o.getClass(), o);
         return o;
-    }        
+    } 
+    */
     
     public <C> void on(final Class<? extends C> event, final EventObserver<? extends C> o) {
         if (Parameters.THREADS == 1) {

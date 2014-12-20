@@ -5,7 +5,8 @@
 package nars.inference;
 
 import automenta.vivisect.swing.NWindow;
-import java.util.ArrayList;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
+import nars.core.control.FireConcept;
 import nars.core.control.NAL;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -31,6 +33,7 @@ import nars.util.NARGraph;
 import nars.util.NARGraph.TimeNode;
 import nars.util.NARGraph.UniqueEdge;
 import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.DirectedSubgraph;
 
 /**
  * Graph analysis of reasoning processes to determine essential and non-essential
@@ -89,7 +92,10 @@ public class LogicPerformance {
             }
             if (bestSolution!=null) {
                 if (!t.getTerm().equals(bestSolution.term)) {
-                    //x += "  solution=" + bestSolution + "\n";
+                    
+                    addVertex(bestSolution.term);
+                    addEdge(bestSolution.term, t, new UniqueEdge("t"));
+                    
                     addVertex(bestSolution);
                     addEdge(t, bestSolution,new UniqueEdge("bestSolution"));
                     
@@ -97,7 +103,9 @@ public class LogicPerformance {
                 }
             }
             if (parentBelief!=null) {
-                //x += "  parentBelief=" + parentBelief + " @ " + parentBelief.getCreationTime() + "\n";
+                addVertex(parentBelief.term);
+                addEdge(parentBelief.term, t, new UniqueEdge("t"));
+                
                 addVertex(parentBelief);
                 addEdge(parentBelief, t, new UniqueEdge("belief"));
                 at(parentBelief, parentBelief.getCreationTime());
@@ -136,11 +144,20 @@ public class LogicPerformance {
             }
         }
         
-        public void explain(long t, Concept conceptFired, TaskLink link, List<Task> generated) {
-            addVertex(conceptFired.term);
-            at(conceptFired.term, t, link.name().toString());
+        public void explain(long t, FireConcept f) {
+            //Concept conceptFired, TaskLink link, List<Task> generated) {
+            Term term = f.getCurrentConcept().term;
+            TaskLink link = f.getCurrentTaskLink();
             
-            explainGeneration(conceptFired.term, generated);
+            addVertex(f);
+            addVertex(term);
+            addVertex(link);
+            
+            addEdge(term, link, new UniqueEdge("tasklink"));
+            addEdge(link, f, new UniqueEdge("fire"));
+            at(f, t, "fire");
+            
+            explainGeneration(f, f.tasksAdded);
         }
 
         
@@ -152,41 +169,78 @@ public class LogicPerformance {
     public LogicPerformance(TaskReasonGraph process, Collection<Task> solutionTasks) {
         Set<TimeNode> allCycles = process.vertices(TimeNode.class);        
      
-        System.out.println("Time Cycles: " + allCycles);
+        System.out.println("\n--------------- ANALYSIS ----------\n");
+        
+        System.out.println("Active at Time Cycles: " + allCycles);
         
         solutionTask = solutionTasks;
         
-        //remove all tasks which have no path to a solution
-        System.out.println("Calculating essentials (" + process.vertexSet().size() + " vertices)");
+        //remove all tasks which have no path to a solution; result is in 'essential'
 
         essential = (TaskReasonGraph) process.clone();
 
-        List<Object> removeableVertex = new ArrayList();
+        Set<Object> nonEssentialVertices = new HashSet();
+        Set<Object> nonEssentialVertexRoots = new HashSet();
         
         for (Object o : process.vertexSet()) {
+            if (o instanceof String) continue;
+            
             if (o instanceof Task) {
                 Task t = (Task)o;
+                
                 if (solutionTasks.contains(t))
                     continue;
-                if (!connectsAny(t, solutionTasks))
-                    removeableVertex.add(t);                    
+            }
+            if (!connectsAny(o, solutionTasks))
+                nonEssentialVertices.add(o);
+            
+        }
+        
+        Predicate nonTimeNode = new Predicate() {
+            @Override public boolean apply(Object t) {
+                return !(t instanceof TimeNode);
+            }
+        };
+        
+        DirectedSubgraph nonEssentialComponents = new DirectedSubgraph(process, Sets.filter(nonEssentialVertices, nonTimeNode), null);
+        
+        //calculate the root non-essentials which would remove all other non-essentials; except for time nodes
+        for (Object o : nonEssentialComponents.vertexSet()) {
+            if (nonEssentialComponents.incomingEdgesOf(o).isEmpty()) {
+                nonEssentialVertexRoots.add(o);
             }
         }
         
-        System.out.println("Non-essential: ");
-        for (Object o : removeableVertex) {
+        System.out.println("\nNon-essential vertices: ");
+        for (Object o : nonEssentialVertices) {
             essential.removeVertex(o);
-            System.out.println("  " + o + " (" + o.getClass().getSimpleName() +")");
+            char c = nonEssentialVertexRoots.contains(o) ? '*' : ' ';
+            System.out.println("  " + c + ' ' + o + " (" + o.getClass().getSimpleName() +")");
         }
         
-        System.out.println(essential);
-        System.out.println(process.vertexSet().size() + " -> " + essential.vertexSet().size());
+
+        
+        new NWindow("Essential", new JGraphXGraphPanel(essential)).show(800,800, true);
+        
+        System.out.println("\nEssential vertices:");
+        for (Object o : essential.vertexSet()) {
+            if (o instanceof String) continue;
+            System.out.println("   " + o + " (" + o.getClass().getSimpleName() +")");
+        }        
+        
+        System.out.print("\nTotal Process vs. Actually Essential: ");
+        System.out.println(process.vertexSet().size() + " to " + essential.vertexSet().size());        
         
     }
     
-    public boolean connectsAny(Object source, Iterable<? extends Object> targets) {
+    public boolean connectsAny(Object source, Iterable<? extends Object> targets) { 
+        
         for (Object o : targets) {
+            if (source.equals(o))
+                return true;
+            
             DijkstraShortestPath d = new DijkstraShortestPath<>(essential, source, o);
+            
             if (d.getPath()!=null)
                 return true;            
         }
@@ -202,7 +256,7 @@ public class LogicPerformance {
         int analysisDepth = 5;
         NAR n = new NAR(new Default());
         
-        ExampleFileInput example = ExampleFileInput.get("test/nal5.18");
+        ExampleFileInput example = ExampleFileInput.get("test/nal7.5");
                 
         List<OutputCondition> conditions = example.enableConditions(n, 5);
 
@@ -221,8 +275,9 @@ public class LogicPerformance {
          n.on(ConceptFire.class, new ConceptFire() {
 
             @Override
-            public void onFire(Concept c, TaskLink t, NAL nal) {                
-                process.explain(n.time(), c, t, nal.tasksAdded);
+            public void onFire(FireConcept f) {                
+                
+                process.explain(n.time(), f);
             }            
         });
         
