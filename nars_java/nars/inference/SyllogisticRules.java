@@ -205,8 +205,14 @@ public final class SyllogisticRules {
         CompoundTerm taskTerm = (CompoundTerm) sentence.term;
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (taskTerm.isCommutative()) {
+                if(asym.truth==null) { //a question for example
+                    return;
+                }
                 budget = BudgetFunctions.backwardWeak(asym.truth, nal);
             } else {
+                if(sym.truth==null) { //a question for example
+                    return;
+                }
                 budget = BudgetFunctions.backward(sym.truth, nal);
             }
         } else {
