@@ -740,6 +740,13 @@ public final class CompositionalRules {
         return commonTerm;
     }
 
+    /*
+    The other inversion (abduction) should also be studied:
+ IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
+ IN: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
+OUT: <lock1 --> lock>.
+    http://code.google.com/p/open-nars/issues/detail?id=40&can=1
+    */
     public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final NAL nal) {
         Statement T1 = (Statement) sentence.term;
         Statement T2 = (Statement) belief.term;
@@ -777,7 +784,7 @@ public final class CompositionalRules {
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(s2==null || s2.hasVarIndep()) {
-                                return;
+                                continue;
                             }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -800,7 +807,7 @@ public final class CompositionalRules {
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(s2==null || s2.hasVarIndep()) {
-                                return;
+                                continue;
                             }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -836,7 +843,7 @@ public final class CompositionalRules {
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(s2==null || s2.hasVarIndep()) {
-                                return;
+                                continue;
                             }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -859,7 +866,7 @@ public final class CompositionalRules {
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(s2==null || s2.hasVarIndep()) {
-                                return;
+                                continue;
                             }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -895,7 +902,7 @@ public final class CompositionalRules {
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(s2==null || s2.hasVarIndep()) {
-                                return;
+                                continue;
                             }
                             if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -918,7 +925,7 @@ public final class CompositionalRules {
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(s2==null || s2.hasVarIndep()) {
-                                return;
+                                continue;
                             }
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -960,7 +967,7 @@ public final class CompositionalRules {
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(s2==null || s2.hasVarIndep()) {
-                                return;
+                                continue;
                             }
                             if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -984,7 +991,7 @@ public final class CompositionalRules {
 
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(s2==null || s2.hasVarIndep()) {
-                                return;
+                                continue;
                             }
                             if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -1037,6 +1044,14 @@ public final class CompositionalRules {
         }
     }
 
+    
+    /*
+    The current NAL-6 misses another way to introduce a second variable by induction:
+  IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
+  IN: <lock1 --> lock>.
+OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
+    http://code.google.com/p/open-nars/issues/detail?id=40&can=1
+    */
 
     static boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
 

@@ -75,6 +75,7 @@ public abstract class NAL implements Runnable {
      */
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2) {                        
 
+        //if(!task.sentence.term.toString().contains("<lock1 --> lock>")) return false;
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);
