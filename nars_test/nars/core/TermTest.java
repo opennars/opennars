@@ -232,7 +232,7 @@ public class TermTest {
         }
         
             
-        Statement s = Statement.make(NativeOperator.INHERITANCE, subj, pred);
+        Statement s = Statement.make(NativeOperator.INHERITANCE, subj, pred, false, 0);
         assertEquals(null, s);
 
         Inheritance i = Inheritance.make(subj, pred);

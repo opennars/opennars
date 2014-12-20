@@ -96,7 +96,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    final public static Statement make(final NativeOperator o, final Term subject, final Term predicate) {
+    final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, boolean customOrder, int order) {
         
         switch (o) {
             case INHERITANCE:
@@ -112,17 +112,17 @@ public abstract class Statement extends CompoundTerm {
             case IMPLICATION:
                 return Implication.make(subject, predicate);
             case IMPLICATION_AFTER:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_FORWARD);
+                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
             case IMPLICATION_BEFORE:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_BACKWARD);
+                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_BACKWARD);
             case IMPLICATION_WHEN:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_CONCURRENT);
+                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE:
                 return Equivalence.make(subject, predicate);
             case EQUIVALENCE_AFTER:
-                return Equivalence.make(subject, predicate, TemporalRules.ORDER_FORWARD);
+                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
             case EQUIVALENCE_WHEN:
-                return Equivalence.make(subject, predicate, TemporalRules.ORDER_CONCURRENT);            
+                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);            
         }
         
         return null;
@@ -141,10 +141,10 @@ public abstract class Statement extends CompoundTerm {
 //    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {
 //        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
 //    }
-    
+    //++ TODO
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
-        return make(statement.operator(), subj, pred);
+        return make(statement.operator(), subj, pred, true, order);
         /*
         if (invalidStatement(subj, pred)) {
             return null;
