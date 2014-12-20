@@ -78,8 +78,6 @@ abstract public class FireConcept extends NAL {
         setCurrentTaskLink(currentTaskLink);
         setCurrentBeliefLink(null);
         setCurrentTask(task); // one of the two places where this variable is set
-        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
-        emit(Events.ConceptFire.class, currentConcept, currentTaskLink);
         
         if (currentTaskLink.type == TermLink.TRANSFORM) {
             setCurrentBelief(null);
@@ -94,15 +92,13 @@ abstract public class FireConcept extends NAL {
                     break;
                 }
                 
-                emit(Events.TermLinkSelect.class, termLink, currentConcept);
                 setCurrentBeliefLink(termLink);
 
 
 
                 reason(currentTaskLink, termLink);                    
 
-
-
+                emit(Events.TermLinkSelect.class, termLink, currentConcept, this);
                 memory.logic.REASON.commit(termLink.getPriority());                    
 
                 currentConcept.returnTermLink(termLink);
@@ -110,6 +106,10 @@ abstract public class FireConcept extends NAL {
                 termLinks--;
             }
         }
+                
+        emit(Events.ConceptFire.class, currentConcept, currentTaskLink, this);
+        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
+        
     }
 
     

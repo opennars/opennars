@@ -47,8 +47,9 @@ public abstract class NAL implements Runnable {
     protected StampBuilder newStampBuilder;
     protected List<DerivationFilter> derivationFilters = null;
 
-    /** stores the tasks added by this inference process */
-    protected List<Task> tasksAdded = new ArrayList();
+    /** stores the tasks that this process generates, and adds to memory */
+    public final List<Task> tasksAdded = new ArrayList();
+    
     //TODO tasksDicarded
     
     public NAL(Memory mem) {

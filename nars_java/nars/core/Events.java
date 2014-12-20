@@ -2,7 +2,11 @@ package nars.core;
 
 import java.util.Arrays;
 import java.util.List;
+import nars.core.EventEmitter.EventObserver;
+import nars.core.control.NAL;
 import nars.entity.Concept;
+import nars.entity.Task;
+import nars.entity.TaskLink;
 
 /** empty event classes for use with EventEmitter */
 public class Events {
@@ -78,8 +82,25 @@ public class Events {
     public static class Unsolved { }
     
     
-    public static class ConceptFire { }
-    public static class TaskImmediateProcess { }
+    
+    abstract public static class ConceptFire implements EventObserver { 
+        
+        abstract public void onFire(Concept c, TaskLink t, NAL n);
+        
+        @Override public void event(Class event, Object[] args) {
+            onFire((Concept)args[0], (TaskLink)args[1], (NAL)args[2]);
+        }
+        
+    }
+    abstract public static class TaskImmediateProcess implements EventObserver { 
+
+        abstract public void onProcessed(Task t, NAL n);
+        
+        @Override public void event(Class event, Object[] args) {
+            onProcessed((Task)args[0], (NAL)args[1]);
+        }
+        
+    }
     public static class TermLinkSelect { }
     public static class BeliefSelect { }
     

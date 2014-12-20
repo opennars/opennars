@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -34,7 +35,15 @@ import org.xml.sax.SAXException;
  */
 public class NARGraph extends DirectedMultigraph {
 
-
+    public <X> Set<X> vertices(Class<? extends X> type) {
+        Set<X> s = new HashSet();
+        for (Object o : vertexSet()) {
+            if (type.isInstance(o))
+                s.add((X)o);
+        }
+        return s;
+    }
+    
     /**
      * determines which NARS term can result in added graph features
      */
@@ -106,6 +115,7 @@ public class NARGraph extends DirectedMultigraph {
     }
 
     abstract public static class NAREdge<X> extends DefaultEdge {
+
         private final X object;
         private int hash;
 
@@ -113,16 +123,18 @@ public class NARGraph extends DirectedMultigraph {
             this.object = x;
             this.hash = getHash();
         }
+
         public NAREdge() {
-            this.object = (X)getClass();
+            this.object = (X) getClass();
             this.hash = getHash();
         }
-        
+
         private int getHash() {
             return Objects.hash(object.hashCode(), getSource(), getTarget());
-        }        
+        }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return hash;
         }
 
@@ -130,19 +142,20 @@ public class NARGraph extends DirectedMultigraph {
             return object;
         }
 
-        @Override public boolean equals(final Object obj) {
-            if (obj == object) return true;
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj == object) {
+                return true;
+            }
             if (obj instanceof NAREdge) {
-                NAREdge e = (NAREdge)obj;
+                NAREdge e = (NAREdge) obj;
                 return ((getSource() == e.getSource()) && //need .equals?
                         (getTarget() == e.getTarget()) && //need .equals?
-                        (object.equals( ((NAREdge)obj).object ))
-                       );
+                        (object.equals(((NAREdge) obj).object)));
             }
             return false;
         }
-        
-        
+
         @Override
         public Object getSource() {
             return super.getSource();
@@ -174,15 +187,20 @@ public class NARGraph extends DirectedMultigraph {
     }
 
     public static class TermLinkEdge extends NAREdge<TermLink> implements Budgetable, Termable {
-        
 
-        public TermLinkEdge(TermLink t) {  super(t); }
+        public TermLinkEdge(TermLink t) {
+            super(t);
+        }
 
-        
-        
-        @Override public String toString() { return "termlink";         }
+        @Override
+        public String toString() {
+            return "termlink";
+        }
 
-        @Override public Object clone() {  return super.clone();        }
+        @Override
+        public Object clone() {
+            return super.clone();
+        }
 
         @Override
         public BudgetValue getBudget() {
@@ -193,17 +211,25 @@ public class NARGraph extends DirectedMultigraph {
         public Term getTerm() {
             return this.getObject().getTerm();
         }
-    
+
     }
-    
+
     public static class TaskLinkEdge extends NAREdge<TaskLink> implements Termable, Budgetable {
 
-        public TaskLinkEdge(TaskLink t) {  super(t);         }
-        
-        @Override public String toString() { return "tasklink";         }
+        public TaskLinkEdge(TaskLink t) {
+            super(t);
+        }
 
-        @Override public Object clone() {  return super.clone();        }
-        
+        @Override
+        public String toString() {
+            return "tasklink";
+        }
+
+        @Override
+        public Object clone() {
+            return super.clone();
+        }
+
         @Override
         public BudgetValue getBudget() {
             return this.getObject().getBudget();
@@ -212,9 +238,9 @@ public class NARGraph extends DirectedMultigraph {
         @Override
         public Term getTerm() {
             return this.getObject().getTerm();
-        }        
+        }
     }
-    
+
     public static class TermQuestion extends NAREdge {
 
         @Override
@@ -290,7 +316,6 @@ public class NARGraph extends DirectedMultigraph {
         graphize.onTime(this, n.time());
 
         //TODO support AbstractBag
-
         for (Concept c : n.memory.concepts) {
 
             //TODO use more efficient iterator so that the entire list does not need to be traversed when excluding ranges
@@ -334,7 +359,6 @@ public class NARGraph extends DirectedMultigraph {
         return super.addEdge(sourceVertex, targetVertex, e);
     }
 
-
     public void toGraphML(Writer writer) throws SAXException, TransformerConfigurationException {
         GraphMLExporter gme = new GraphMLExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
         gme.export(writer, this);
@@ -358,5 +382,65 @@ public class NARGraph extends DirectedMultigraph {
     public Graph clone() {
         return (Graph) super.clone();
     }
-    
+
+    public void graphMLWrite(String filename) throws Exception {
+        new GraphMLExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider()).export(new FileWriter(filename), this);
+    }
+
+    public static class TimeNode {
+
+        private final long time;
+
+        public TimeNode(long t) {
+            this.time = t;
+        }
+
+        @Override
+        public int hashCode() {
+            return (int) time;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof TimeNode)) {
+                return false;
+            }
+            return ((TimeNode) obj).time == time;
+        }
+
+        @Override
+        public String toString() {
+            return "t" + time;
+        }
+
+    }
+
+    public static class UniqueEdge {
+
+        private final String label;
+
+        public UniqueEdge(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+    }
+
+    public void at(Object x, long t) {
+        at(x, t, "c"); //c=creation time
+    }
+    public void at(Object x, long t, String edgeLabel) {
+        at(x, t, new UniqueEdge(edgeLabel));
+    }
+
+    public void at(Object x, long t, Object edge) {
+        TimeNode timeNode = new TimeNode(t);
+        addVertex(timeNode);        
+        addEdge(timeNode, x, edge);
+    }
+
 }
