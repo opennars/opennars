@@ -110,7 +110,7 @@ public class Discretize {
     void believe(String variable, double signal, int dt) {        
         for (int i = 0; i < discretization; i++) {
             double p = pDiscrete(signal, i);
-            believe(variable, i, dt, (float)p, 0.99f, BeliefInsertion.ImmediateProcess);
+            believe(variable, i, dt, (float)p, 0.99f, BeliefInsertion.Input);
         }
             
     }
@@ -134,8 +134,7 @@ public class Discretize {
           
         }
         else if ((mode == BeliefInsertion.MemoryInput)|| (mode == BeliefInsertion.ImmediateProcess)) {
-            
-            Task t = nar.memory.newTask(getValueTerm(variable, level), Symbols.JUDGMENT_MARK, freq, conf, 1.0f, 0.8f);
+            Task t = nar.memory.newTask(getValueTerm(variable, level), Symbols.JUDGMENT_MARK, freq, conf, 1.0f, 0.8f, Tense.Present);
         
             if (mode == BeliefInsertion.MemoryInput)
                 nar.memory.inputTask(t);
