@@ -107,7 +107,7 @@ public class Predict_NARS_Core {
             int curmax=0;
             @Override
             public void onProcessed(Task t, NAL n) {
-                if (t.sentence.getOccurenceTime() > n.memory.time()) {
+                if (t.sentence.getOccurenceTime() >= n.memory.time()) {
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
                     int value = -1;
@@ -161,7 +161,7 @@ public class Predict_NARS_Core {
         NARSwing.themeInvert();
         new NWindow("x", new ConceptsPanel(n, valueBeliefConcepts)).show(900, 600, true);
 
-        new NARSwing(n);
+       // new NARSwing(n);
         
         ChangedTextInput chg=new ChangedTextInput(n);
         
