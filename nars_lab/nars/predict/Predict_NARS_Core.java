@@ -109,9 +109,9 @@ public class Predict_NARS_Core {
             public void onProcessed(Task t, NAL n) {
                 if (t.sentence.getOccurenceTime() >= n.memory.time()) {
                     //no need to restrict to future value
-                    if(t.sentence.getOccurenceTime() - n.memory.time() > duration*10) {
-                        return; //dont let it predict too far apart because the plot does not support <THIS1>
-                    }
+                    //if(t.sentence.getOccurenceTime() - n.memory.time() > duration*10) {
+                    //    return; //dont let it predict too far apart because the plot does not support <THIS1>
+                    //}
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
                     int value = -1;
@@ -123,8 +123,8 @@ public class Predict_NARS_Core {
 
                         value = cc - '0';
                         //predictions[0].addPlus((int) n.memory.time(), Math.random()*100);
-                        if((int) t.sentence.getOccurenceTime()>=curmax) // <THIS1> - plot does not support updating old values..
-                            predictions[0].add((int) t.sentence.getOccurenceTime(), (value)/10.0 );
+                        //if((int) t.sentence.getOccurenceTime()>=curmax) // <THIS1> - plot does not support updating old values..
+                        predictions[0].add((int) t.sentence.getOccurenceTime(), (value)/10.0 );
                         curmax=(int) Math.max(t.sentence.getOccurenceTime(), curmax);
                     }
                 }
