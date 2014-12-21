@@ -168,7 +168,6 @@ public class Predict_NARS_Core {
        // new NARSwing(n);
         
         ChangedTextInput chg=new ChangedTextInput(n);
-        ChangedTextInput chg2=new ChangedTextInput(n);
         
         int prevY = -1, curY = -1;
         int cnt=0;
@@ -200,7 +199,6 @@ public class Predict_NARS_Core {
                 double prec=4.0;
                 int val=(int)(((int)((signal*prec))*(10.0/prec)));
                 chg.set("<{x} --> y"+val+">. :|:");
-                chg2.set("<{x} --> y"+val+">!");
                 //System.out.println(val);
             /*} else if (cnt==1000){
                 System.out.println("observation phase end, residual predictions follow");
