@@ -119,7 +119,7 @@ public class Predict_NARS_Core {
                         value = cc - '0';
                         //predictions[0].addPlus((int) n.memory.time(), Math.random()*100);
                         if((int) t.sentence.getOccurenceTime()>=curmax)
-                            predictions[0].add((int) t.sentence.getOccurenceTime(), value );
+                            predictions[0].add((int) t.sentence.getOccurenceTime(), (value)/10.0 );
                         curmax=(int) Math.max(t.sentence.getOccurenceTime(), curmax);
                     }
                 }
