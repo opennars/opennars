@@ -19,6 +19,7 @@ import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.output.ConceptsPanel;
+import nars.io.ChangedTextInput;
 import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
 import nars.language.Tense;
@@ -162,6 +163,8 @@ public class Predict_NARS_Core {
 
         new NARSwing(n);
         
+        ChangedTextInput chg=new ChangedTextInput(n);
+        
         int prevY = -1, curY = -1;
         
         while (true) {
@@ -186,7 +189,7 @@ public class Predict_NARS_Core {
             }
 
             //discretize.believe("x", signal, 0);
-            n.addInput("<{x} --> y"+((int)(signal*10.0))+">. :|:");
+            chg.set("<{x} --> y"+((int)(signal*10.0))+">. :|:");
 
         }
 
