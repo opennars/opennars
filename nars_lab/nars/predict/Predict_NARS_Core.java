@@ -90,11 +90,11 @@ public class Predict_NARS_Core {
 
         Parameters.DEBUG = true;
         int duration = 8;
-        float freq = 1.0f / duration * 0.15f;        
+        float freq = 1.0f / duration * 0.075f;        
         double missingDataRate = 0.1;
         double noiseRate = 0.02;
         boolean onlyNoticeChange = false;
-        int thinkInterval = onlyNoticeChange ? 1 : 2;
+        int thinkInterval = 50;
         int discretization = 3;
 
         NAR n = new NAR(new Default().setInternalExperience(null));
@@ -157,8 +157,8 @@ public class Predict_NARS_Core {
         for (Term t : discretize.getValueTerms("x"))
             n.believe(t.toString(), Tense.Present, 0.5f, 0.5f);
         
+        //n.run(discretization*4);
         n.run(discretization*4);
-        
 
         Concept[] valueBeliefConcepts = discretize.getValueConcepts("x");
         
@@ -168,6 +168,7 @@ public class Predict_NARS_Core {
        // new NARSwing(n);
         
         ChangedTextInput chg=new ChangedTextInput(n);
+        ChangedTextInput chg2=new ChangedTextInput(n);
         
         int prevY = -1, curY = -1;
         int cnt=0;
@@ -196,10 +197,11 @@ public class Predict_NARS_Core {
 
             //discretize.believe("x", signal, 0);
             //if(cnt<1000) { //switch to see what NARS does when observations end :)
-                double prec=3.0;
-                int val=(int)(((int)((signal*3.0))*(10.0/prec)));
+                double prec=4.0;
+                int val=(int)(((int)((signal*prec))*(10.0/prec)));
                 chg.set("<{x} --> y"+val+">. :|:");
-                System.out.println(val);
+                chg2.set("<{x} --> y"+val+">!");
+                //System.out.println(val);
             /*} else if (cnt==1000){
                 System.out.println("observation phase end, residual predictions follow");
             }*/
