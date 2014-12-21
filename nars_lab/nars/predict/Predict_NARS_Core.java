@@ -37,60 +37,12 @@ public class Predict_NARS_Core {
     static float signal = 0;
     
     static TreeMLData[] predictions;
-    
-    protected boolean allowTask(NAR n,Task t) {
-        if (t.sentence.isEternal()) {
-            return false;
-        }
-        if ((t.sentence.getOccurenceTime() > n.time())) {
-
-
-            Term term = t.getTerm();
-            int time = (int) t.sentence.getOccurenceTime();
-            int value = -1;
-            float conf = t.sentence.truth.getConfidence();
-            float expect = 2f * (t.sentence.truth.getFrequency() - 0.5f) * conf;
-            String ts = term.toString();
-            if (ts.startsWith("<x_t0 --> y")) {
-                char cc = ts.charAt("<x_t0 --> y".length());
-
-                value = cc - '0';
-                predictions[0].add((int)n.time(), value );
-            }
-
-
-           /* if (value != -1) {
-
-                //predictions[(int)value].addPlus(time, expect);
-                for (int tt = time - duration / 2; tt <= time + duration / 2; tt++) {
-
-                    double smooth = 1;
-                    expect *= getPredictionEnvelope(time-tt, smooth * duration*2f);
-
-                    //
-                    //if (future)
-                   //     predictions[value].addPlus(tt, expect);
-                   // else
-                   //     reflections[value].addPlus(tt, expect);
-                    ///
-
-                }
-
-            }*/
-
-
-
-            return true;
-        }
-        return false;
-
-    }
-    
+   
     public static void main(String[] args) throws Narsese.InvalidInputException, InterruptedException {
 
         Parameters.DEBUG = true;
         int duration = 8;
-        float freq = 1.0f / duration * 0.075f;        
+        float freq = 1.0f / duration * 0.1f;        
         double missingDataRate = 0.1;
         double noiseRate = 0.02;
         boolean onlyNoticeChange = false;
@@ -108,24 +60,15 @@ public class Predict_NARS_Core {
             @Override
             public void onProcessed(Task t, NAL n) {
                 if (t.sentence.getOccurenceTime() >= n.memory.time()) {
-                    //no need to restrict to future value
-                    //if(t.sentence.getOccurenceTime() - n.memory.time() > duration*10) {
-                    //    return; //dont let it predict too far apart because the plot does not support <THIS1>
-                    //}
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
                     int value = -1;
-                    float conf = t.sentence.truth.getConfidence();
-                    float expect = 2f * (t.sentence.truth.getFrequency() - 0.5f) * conf;
                     String ts = term.toString();
                     if (ts.startsWith("<{x} --> y")) {
                         char cc = ts.charAt("<{x} --> y".length());
-
                         value = cc - '0';
-                        //predictions[0].addPlus((int) n.memory.time(), Math.random()*100);
-                        //if((int) t.sentence.getOccurenceTime()>=curmax) // <THIS1> - plot does not support updating old values..
-                        predictions[0].add((int) t.sentence.getOccurenceTime(), (value)/10.0 );
-                        curmax=(int) Math.max(t.sentence.getOccurenceTime(), curmax);
+                        predictions[0].add(time, (value)/10.0 );
+                        curmax=(int) Math.max(time, curmax);
                     }
                 }
             }
@@ -156,8 +99,7 @@ public class Predict_NARS_Core {
 
         for (Term t : discretize.getValueTerms("x"))
             n.believe(t.toString(), Tense.Present, 0.5f, 0.5f);
-        
-        //n.run(discretization*4);
+
         n.run(discretization*4);
 
         Concept[] valueBeliefConcepts = discretize.getValueConcepts("x");
@@ -181,7 +123,6 @@ public class Predict_NARS_Core {
             //signal  = (float)Math.max(0, Math.min(1.0, Math.tan(freq * n.time()) * 0.5f + 0.5f));
             signal  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
             //signal = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
-            
             //signal *= 1.0 + (Math.random()-0.5f)* 2f * noiseRate;
 
             if (Math.random() > missingDataRate)
