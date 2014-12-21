@@ -40,9 +40,6 @@ public class Predict_NARS_Core {
         Parameters.DEBUG = true;
         int duration = 8;
         float freq = 1.0f / duration * 0.1f;        
-        double missingDataRate = 0.1;
-        double noiseRate = 0.02;
-        boolean onlyNoticeChange = false;
         int thinkInterval = 50;
         double discretization = 3;
 
