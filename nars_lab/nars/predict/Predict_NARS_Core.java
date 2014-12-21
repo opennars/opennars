@@ -108,6 +108,10 @@ public class Predict_NARS_Core {
             @Override
             public void onProcessed(Task t, NAL n) {
                 if (t.sentence.getOccurenceTime() >= n.memory.time()) {
+                    //no need to restrict to future value
+                    if(t.sentence.getOccurenceTime() - n.memory.time() > duration*10) {
+                        return; //dont let it predict too far apart because the plot does not support <THIS1>
+                    }
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
                     int value = -1;
@@ -119,7 +123,7 @@ public class Predict_NARS_Core {
 
                         value = cc - '0';
                         //predictions[0].addPlus((int) n.memory.time(), Math.random()*100);
-                        if((int) t.sentence.getOccurenceTime()>=curmax)
+                        if((int) t.sentence.getOccurenceTime()>=curmax) // <THIS1> - plot does not support updating old values..
                             predictions[0].add((int) t.sentence.getOccurenceTime(), (value)/10.0 );
                         curmax=(int) Math.max(t.sentence.getOccurenceTime(), curmax);
                     }
@@ -166,17 +170,19 @@ public class Predict_NARS_Core {
         ChangedTextInput chg=new ChangedTextInput(n);
         
         int prevY = -1, curY = -1;
+        int cnt=0;
         
         while (true) {
 
+            cnt++;
             n.run(thinkInterval);
             Thread.sleep(3);
             
-            signal  = (float)Math.max(0, Math.min(1.0, Math.tan(freq * n.time()) * 0.5f + 0.5f));
-            //signal  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
+            //signal  = (float)Math.max(0, Math.min(1.0, Math.tan(freq * n.time()) * 0.5f + 0.5f));
+            signal  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
             //signal = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
             
-            signal *= 1.0 + (Math.random()-0.5f)* 2f * noiseRate;
+            //signal *= 1.0 + (Math.random()-0.5f)* 2f * noiseRate;
 
             if (Math.random() > missingDataRate)
                 observed.add((int) n.time(), signal);
@@ -189,7 +195,14 @@ public class Predict_NARS_Core {
             }
 
             //discretize.believe("x", signal, 0);
-            chg.set("<{x} --> y"+((int)(signal*10.0))+">. :|:");
+            //if(cnt<1000) { //switch to see what NARS does when observations end :)
+                double prec=3.0;
+                int val=(int)(((int)((signal*3.0))*(10.0/prec)));
+                chg.set("<{x} --> y"+val+">. :|:");
+                System.out.println(val);
+            /*} else if (cnt==1000){
+                System.out.println("observation phase end, residual predictions follow");
+            }*/
 
         }
 
