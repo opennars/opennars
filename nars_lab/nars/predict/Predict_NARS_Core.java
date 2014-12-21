@@ -7,6 +7,7 @@ package nars.predict;
 import automenta.vivisect.TreeMLData;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
+import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Color;
@@ -84,8 +85,8 @@ public class Predict_NARS_Core {
             reflections[i].setDefaultValue(0.0);
         }
         TimelineVis tc = new TimelineVis(
-                new LineChart(observed).thickness(16f).height(128),                          new LineChart(predictions).thickness(16f).height(128),
-                new LineChart(reflections).thickness(16f).height(128)
+                new LineChart(observed).thickness(16f).height(128),                          new LineChart(predictions[0]).thickness(16f).height(128)
+                //new BarChart(reflections).thickness(16f).height(128)
                 /*new LineChart(predictions[1]).thickness(16f).height(128),
                 new LineChart(predictions[2]).thickness(16f).height(128),*/
         );
