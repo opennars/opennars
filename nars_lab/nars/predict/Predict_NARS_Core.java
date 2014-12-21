@@ -160,6 +160,8 @@ public class Predict_NARS_Core {
         NARSwing.themeInvert();
         new NWindow("x", new ConceptsPanel(n, valueBeliefConcepts)).show(900, 600, true);
 
+        new NARSwing(n);
+        
         int prevY = -1, curY = -1;
         
         while (true) {
@@ -183,7 +185,8 @@ public class Predict_NARS_Core {
                 continue;
             }
 
-            discretize.believe("x", signal, 0);
+            //discretize.believe("x", signal, 0);
+            n.addInput("<{x} --> y"+((int)(signal*10.0))+">. :|:");
 
         }
 
