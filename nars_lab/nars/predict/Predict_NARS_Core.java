@@ -15,14 +15,10 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.control.NAL;
-import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.gui.output.ConceptsPanel;
 import nars.io.ChangedTextInput;
-import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
-import nars.language.Tense;
 import nars.language.Term;
 
 /**
@@ -47,7 +43,7 @@ public class Predict_NARS_Core {
         double noiseRate = 0.02;
         boolean onlyNoticeChange = false;
         int thinkInterval = 50;
-        int discretization = 3;
+        double discretization = 3;
 
         NAR n = new NAR(new Default().setInternalExperience(null));
         n.param.duration.set(duration);
@@ -59,7 +55,7 @@ public class Predict_NARS_Core {
             int curmax=0;
             @Override
             public void onProcessed(Task t, NAL n) {
-                if (t.sentence.getOccurenceTime() >= n.memory.time()) {
+                if (t.sentence.getOccurenceTime() > n.memory.time()) {
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
                     int value = -1;
@@ -74,11 +70,10 @@ public class Predict_NARS_Core {
             }
         });
         
-        Discretize discretize = new Discretize(n, discretization);
         
         TreeMLData observed = new TreeMLData("value", Color.WHITE).setRange(0, 1f);
-        predictions = new TreeMLData[discretization];
-        TreeMLData[] reflections = new TreeMLData[discretization];
+        predictions = new TreeMLData[(int)discretization];
+        TreeMLData[] reflections = new TreeMLData[(int)discretization];
 
         for (int i = 0; i < predictions.length; i++) {
             predictions[i] = new TreeMLData("Pred" + i,
@@ -97,48 +92,28 @@ public class Predict_NARS_Core {
 
         new NWindow("_", new PCanvas(tc)).show(800, 800, true);
 
-        for (Term t : discretize.getValueTerms("x"))
-            n.believe(t.toString(), Tense.Present, 0.5f, 0.5f);
-
-        n.run(discretization*4);
-
-        Concept[] valueBeliefConcepts = discretize.getValueConcepts("x");
+        n.run((int)discretization*4);
         
         NARSwing.themeInvert();
-        new NWindow("x", new ConceptsPanel(n, valueBeliefConcepts)).show(900, 600, true);
 
        // new NARSwing(n);
         
         ChangedTextInput chg=new ChangedTextInput(n);
         
-        int prevY = -1, curY = -1;
-        int cnt=0;
-        
         while (true) {
 
-            cnt++;
             n.run(thinkInterval);
-            Thread.sleep(3);
+            Thread.sleep(30);
             
             //signal  = (float)Math.max(0, Math.min(1.0, Math.tan(freq * n.time()) * 0.5f + 0.5f));
             signal  = (float)Math.sin(freq * n.time()) * 0.5f + 0.5f;
             //signal = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
             //signal *= 1.0 + (Math.random()-0.5f)* 2f * noiseRate;
 
-            if (Math.random() > missingDataRate)
-                observed.add((int) n.time(), signal);
-            
-            prevY = curY;
-            curY = discretize.f(signal);
+            observed.add((int) n.time(), signal);
 
-            if ((curY == prevY) && (onlyNoticeChange)) {
-                continue;
-            }
-
-            //discretize.believe("x", signal, 0);
             //if(cnt<1000) { //switch to see what NARS does when observations end :)
-                double prec=4.0;
-                int val=(int)(((int)((signal*prec))*(10.0/prec)));
+                int val=(int)(((int)((signal*discretization))*(10.0/discretization)));
                 chg.set("<{x} --> y"+val+">. :|:");
                 //System.out.println(val);
             /*} else if (cnt==1000){
