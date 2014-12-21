@@ -4,6 +4,8 @@
  */
 package nars.predict;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.core.NAR;
@@ -119,14 +121,23 @@ public class Discretize {
         Input, MemoryInput, ImmediateProcess, BeliefInsertion
     }
     
+    Map<String,Term> oldTerm=new HashMap<String,Term>();
     //TODO input method: normal input, memory input, immediate process, direct belief insertion    
     void believe(String variable, int level, int dt, float freq, float conf, BeliefInsertion mode) {
                 //TODO handle 'dt'
 
+        Term tcur=getValueTerm(variable, level);
+        
+        if(oldTerm.containsKey(variable) && tcur.equals(oldTerm.get(variable))) {
+            return; //it is the same discrete value as before, return!
+        }
+        
+        oldTerm.put(variable, tcur);
+        
         if (mode == BeliefInsertion.Input) {
             try {
 
-                nar.believe(getValueTerm(variable, level).toString(), Tense.Present, freq, conf);
+                nar.believe(tcur.toString(), Tense.Present, freq, conf);
             } catch (Narsese.InvalidInputException ex) {
                 Logger.getLogger(Discretize.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -134,7 +145,7 @@ public class Discretize {
           
         }
         else if ((mode == BeliefInsertion.MemoryInput)|| (mode == BeliefInsertion.ImmediateProcess)) {
-            Task t = nar.memory.newTask(getValueTerm(variable, level), Symbols.JUDGMENT_MARK, freq, conf, 1.0f, 0.8f, Tense.Present);
+            Task t = nar.memory.newTask(tcur, Symbols.JUDGMENT_MARK, freq, conf, 1.0f, 0.8f, Tense.Present);
         
             if (mode == BeliefInsertion.MemoryInput)
                 nar.memory.inputTask(t);
