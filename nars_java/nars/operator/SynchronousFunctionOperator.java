@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
+import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.Product;
+import nars.language.Similarity;
 import nars.language.Term;
 import nars.language.Variable;
 
@@ -52,6 +55,10 @@ public abstract class SynchronousFunctionOperator extends Operator {
         Term lastTerm = args[numArgs-1];
         boolean variable = lastTerm instanceof Variable;
         
+        if(!variable) {
+            return null;
+        }
+        
         int numParam = numArgs-1;
         Term[] x = new Term[numParam];
         System.arraycopy(args, 0, x, 0, numParam);
@@ -67,11 +74,20 @@ public abstract class SynchronousFunctionOperator extends Operator {
         catch (Exception e) {
             throw e;
         }*/
-            
-        Term actual = operation.setComponent(0, 
+          
+        //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
+        //which wont happen on temporal induction with dependent variable for good reason,
+        //because in general the two dependent variables of event1 and event2
+        //can not be assumed to be related, but here we have to assume
+        //it if we don't want to use the "resultof"-relation.
+        Variable var=new Variable("$1");
+        Term actual_part = Similarity.make(var, y);
+        operation=(Operation) operation.setComponent(0, 
                 ((CompoundTerm)operation.getSubject()).setComponent(
-                        numArgs-1, y, m), m);            
+                        numArgs-1, var, m), m); 
         
+        Term actual=Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
+
         if (variable) {
             return Lists.newArrayList( 
                     m.newTask(actual, Symbols.JUDGMENT_MARK, 
