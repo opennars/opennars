@@ -17,4 +17,7 @@
 ''outputMustContain('<{cheese} --> [here]>. :/: %1.00;0.22%')
 //''outputMustContain('<{cheese} --> [here]>. :/: %1.00;0.22% {43|55 : 1;3;1;2<{light} --> [on]>;<(&/,<{light} --> [on]>,+3) =/> <{cheese} --> [here]>>}')
 //disappointment:
-''outputMustContain('<(^pick,cheese) =|> <{cheese} --> [here]>>. :\: %0.00;0.47%')
+1000
+''outputMustContain('<<{light} --> [on]> =/> <{cheese} --> [here]>>. :\: %0.00;0.90%')
+//revision
+''outputMustContain('<<{light} --> [on]> =/> <{cheese} --> [here]>>. :|: %0.02;0.88%')
