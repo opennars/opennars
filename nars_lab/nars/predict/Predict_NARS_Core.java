@@ -94,7 +94,7 @@ public class Predict_NARS_Core {
         
         NARSwing.themeInvert();
 
-       // new NARSwing(n);
+        new NARSwing(n);
         
         ChangedTextInput chg=new ChangedTextInput(n);
         
