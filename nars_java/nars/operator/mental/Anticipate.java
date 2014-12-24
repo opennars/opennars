@@ -121,13 +121,13 @@ public class Anticipate extends Operator implements EventObserver, Mental {
                 boolean remove = false;
                 
                 if (didntHappen) {
-                    deriveDidntHappen(aTerm);                                
+                    deriveDidntHappen(aTerm,aTime);                                
                     remove = true;
                 }
 
                 if (maybeHappened) {
                     if (newTasks.remove(aTerm)) {
-                        //it happened like expected                
+                        //it happened, temporal induction will do the rest          
                         remove = true; 
                         hasNewTasks = !newTasks.isEmpty();
                     }
@@ -153,9 +153,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             this.nal= (NAL)args[1];
             
             if (newEvent.sentence.truth!=null) {
-                float newTaskExpectation = newEvent.sentence.truth.getExpectation();
-                if (newTaskExpectation > 0.5)
-                    newTasks.add(newEvent.getTerm());
+                newTasks.add(newEvent.getTerm()); //new: always add but keep truth value in mind
             }
         }
 
@@ -218,17 +216,16 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         }
     }
 
-    protected void deriveDidntHappen(Term aTerm) {
+    protected void deriveDidntHappen(Term aTerm, long expectedOccurenceTime) {
                 
         TruthValue truth = expiredTruth;
         BudgetValue budget = expiredBudget;
 
         Stamp stamp = new Stamp(nal.memory);
-        int derivation_tolerance_mul=2;
-        stamp.setOccurrenceTime(
-            stamp.getOccurrenceTime()-derivation_tolerance_mul*duration);
-
-
+        stamp.setOccurrenceTime(expectedOccurenceTime-nal.memory.param.duration.get()); //it did not happen, so the time of when it did not happen
+        //is exactly the time it was expected
+        //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
+        
         Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
 
         Task task = new Task(S, budget);
