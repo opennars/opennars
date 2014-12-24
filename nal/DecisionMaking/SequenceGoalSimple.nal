@@ -5,10 +5,14 @@
 <goal --> reached>. :|:
 50
 (^pick,b). :|:
+50
+(^pick,b). :|:
+50
+(^pick,b). :|:
 100
+<goal --> reached>!
+<goal --> reached>!
+<goal --> reached>!
 <?how =/> <goal --> reached>>?
-<goal --> reached>!
-<goal --> reached>!
-<goal --> reached>!
 300
 ''outputMustContain('^go-to([a, SELF])=null')
