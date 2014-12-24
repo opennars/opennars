@@ -1,8 +1,11 @@
 package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
+import java.awt.BorderLayout;
+import static java.awt.BorderLayout.CENTER;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import nars.core.NAR;
@@ -17,9 +20,12 @@ public abstract class TablePanel extends NPanel  {
     private final Output out;
 
     public TablePanel(NAR nar) {
-        super();
+        super(new BorderLayout());
         this.nar = nar;
         table = new JTable();   
+        table.setFillsViewportHeight(true);
+        
+        add(new JScrollPane(table), CENTER);
         out = new Output(nar, false) {
 
             @Override
