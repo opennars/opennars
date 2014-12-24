@@ -613,7 +613,7 @@ public class Rover extends PhysicsModel {
     public static void main(String[] args) {
         //NAR nar = new Default().
         //NAR nar = new DiscretinuousBagNARBuilder().
-        NAR nar = new Default().setConceptBagSize(100).simulationTime().
+        NAR nar = new Default().simulationTime().
                 build();
         
         float framesPerSecond = 50f;
