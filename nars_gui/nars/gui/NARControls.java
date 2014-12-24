@@ -283,13 +283,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 //            
             
             
-            /*
-            not working anyway, like multiple input of
-            <a --> b>. :|:
-            6
-            <x --> y>. :|:
-            shows
-            
+
             JMenuItem imv = new JMenuItem("+ Eternalized Implications Graph");
             imv.addActionListener(new ActionListener() {
                 @Override
@@ -304,7 +298,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                                     ))).show(500, 500);
                 }
             });
-            m.add(imv); */
+            m.add(imv); 
 //
 //            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
 //            sg.addActionListener(new ActionListener() {
