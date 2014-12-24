@@ -22,8 +22,6 @@ public class SentenceTablePanel extends TablePanel {
     public SentenceTablePanel(NAR nar) {
         super(nar);
 
-        setLayout(new BorderLayout());
-
         data = newModel();
 
         table.setModel(data);
@@ -41,9 +39,7 @@ public class SentenceTablePanel extends TablePanel {
         table.getColumn("Priority").setMaxWidth(64);
         table.getColumn("Complexity").setMaxWidth(64);
         table.getColumn("Time").setMaxWidth(72);
-
-        add(new JScrollPane(table), BorderLayout.CENTER);
-
+        
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         {
             syntaxGraphButton = new JButton("Graph");

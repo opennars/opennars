@@ -15,13 +15,14 @@ import org.junit.runners.Parameterized;
 public class NALTestSome extends NALTest {
 
     static {
-        showOutput = false;
+        showOutput = true;
         showSuccess = showOutput;
         showTrace = false;               
     }
     
    public static boolean include(String filename) {
-       return true; //filename.startsWith("nal6.8.nal");
+       //return true; //filename.startsWith("nal6.8.nal");
+       return filename.startsWith("nal8.6.0");
    }
 
    
@@ -29,7 +30,8 @@ public class NALTestSome extends NALTest {
     public static Collection params() {
         List l = new LinkedList();
         
-        File folder = new File("nal/ClassicalConditioning");
+        //File folder = new File("nal/ClassicalConditioning");
+        File folder = new File("nal/test");
         
         for (final File file : folder.listFiles()) {
             if (file.getName().equals("README.txt") || file.getName().contains(".png"))

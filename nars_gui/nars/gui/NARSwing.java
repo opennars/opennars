@@ -93,7 +93,8 @@ public class NARSwing  {
         
         UIManager.put("Table.background", Color.BLACK);
         UIManager.put("Table.foreground", Color.WHITE);
-
+        UIManager.put("TableHeader.background", Color.BLACK);
+        UIManager.put("TableHeader.foreground", Color.ORANGE);
     }
 
     public final NAR nar;

@@ -189,6 +189,12 @@ public class NALTest  {
 
 
             String example = getExample(path);
+            
+            if (showOutput) {
+                System.out.println(example);
+                System.out.println();
+            }
+            
             List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
             for (OutputCondition e1 : extractedExpects)
                 expects.add(e1);
