@@ -217,6 +217,6 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
         Task task = new Task(S, budget);
         nal.derivedTask(task, false, true, null, null); 
-        task.setTemporalInduced(true);
+        task.setParticipateInTemporalInduction(true);
     }
 }
