@@ -31,7 +31,7 @@ public class NALTest  {
         Parameters.DEBUG = true;
     }
 
-    int minCycles = 1550; //TODO reduce this to one or zero
+    int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public boolean showOutput = false;
     static public boolean saveSimilar = true;
     static public boolean showSuccess = false;

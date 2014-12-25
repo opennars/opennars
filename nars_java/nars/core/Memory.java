@@ -469,6 +469,11 @@ public class Memory implements Serializable {
     public Concept conceptualize(final BudgetValue budget, final Term term) {
         boolean createIfMissing = true;
         
+        /*Concept c = concept(term);
+        if (c!=null)
+            System.out.print(c.budget + "   ");
+        System.out.println(term + " conceptualize: " + budget);*/
+                
         return concepts.conceptualize(budget, term, createIfMissing);
     }
 
