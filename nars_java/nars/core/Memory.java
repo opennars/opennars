@@ -1017,7 +1017,7 @@ public class Memory implements Serializable {
     public Task stmLast = null;
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
-        if(newEvent.budget==null || !newEvent.isTemporalInducted()) { //todo refine, add directbool in task
+        if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
         }
         
