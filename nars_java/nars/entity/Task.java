@@ -362,12 +362,12 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
         end(false);
     }
 
-    /** flag to indicate whether this Task was Temporally Inducted */
-    public void setTemporalInduced(boolean b) {
+    /** flag to indicate whether this Event Task participates in tempporal induction */
+    public void setParticipateInTemporalInduction(boolean b) {
         this.temporalInducted = b;
     }
 
-    public boolean isTemporalInduced() {
+    public boolean isParticipatingInTemporalInduction() {
         return temporalInducted;
     }
 
