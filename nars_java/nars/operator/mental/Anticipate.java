@@ -59,15 +59,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             
     final Set<Term> newTasks = new LinkedHashSet();
     NAL nal;
-    
-    //TODO set this by an optional additional parameter to ^anticipate
-    float anticipateDurations = 2f;
-    
-    //* how long to allow a hoped-for event to occurr before counting evidence
-    // *  that it has not.  usually a less than 1.0 value which is a factor of duration 
-    //    "disappointmentOvercomesHopeDuration" 
-    float hopeExpirationDurations = 0.5f; //todo in order to be flexible, modulate confidence of negative event
-    
+
     final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
     
@@ -83,17 +75,14 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         return true;
     }
     
-    
-    
     public void updateAnticipations() {
 
         if (anticipations.isEmpty()) return;
 
         long now=nal.memory.time();
         
-        this.duration = nal.memory.getDuration();
-        long window = (long)(duration/2f * anticipateDurations);
-        long hopeExpirationWindow = (long)(duration * hopeExpirationDurations);
+        this.duration = nal.memory.getDuration()*5;
+        long hopeExpirationWindow = duration;
                 
         //share stamps created by tasks in this cycle
         
@@ -107,7 +96,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             long aTime = ae.getKey();
 
             boolean didntHappen = (now-aTime > hopeExpirationWindow);
-            boolean maybeHappened = hasNewTasks && Math.abs(aTime - now) <= window;
+            boolean maybeHappened = hasNewTasks && Math.abs(aTime - now) <= duration;
                 
             if ((!didntHappen) && (!maybeHappened))
                 continue;
@@ -160,7 +149,6 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         if (nal!=null && event == CycleEnd.class) {            
             updateAnticipations();
         }
-        
     }
     
 
@@ -222,17 +210,13 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         BudgetValue budget = expiredBudget;
 
         Stamp stamp = new Stamp(nal.memory);
-        stamp.setOccurrenceTime(expectedOccurenceTime-nal.memory.param.duration.get()); //it did not happen, so the time of when it did not happen
-        //is exactly the time it was expected
+        stamp.setOccurrenceTime(expectedOccurenceTime-nal.memory.param.duration.get()); //it did not happen, so the time of when it did not 
+        //happen is exactly the time it was expected
         //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
         
         Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
-
         Task task = new Task(S, budget);
-
         nal.derivedTask(task, false, true, null, null); 
-
-        task.setTemporalInducted(true);
+        task.setParticipateInTemporalInduction(true);
     }
-    
 }
