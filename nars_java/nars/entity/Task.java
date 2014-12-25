@@ -363,11 +363,11 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
     }
 
     /** flag to indicate whether this Task was Temporally Inducted */
-    public void setTemporalInducted(boolean b) {
+    public void setTemporalInduced(boolean b) {
         this.temporalInducted = b;
     }
 
-    public boolean isTemporalInducted() {
+    public boolean isTemporalInduced() {
         return temporalInducted;
     }
 
