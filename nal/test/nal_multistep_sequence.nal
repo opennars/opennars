@@ -1,28 +1,22 @@
-<a-->meta-word>. :|:
-1
-<b-->meta-word>. :|:
-1
-<c-->meta-word>. :|:
-3
-
-<a-->meta-word>. :|:
-1
-<b-->meta-word>. :|:
-1
-<c-->meta-word>. :|:
-3
-
-15
-<b-->meta-word>. :|:
-
-15
-<b-->meta-word>. :|:
-
-
-500
-
-<?what =|> <c --> meta-word>>?
-
-''outputMustContain('<(&/, <a-->meta-word>, <b-->meta-word>) =/> <c-->meta-word>>. :\: %1.00;0.43%')
-
-1000
+(^go-to,a). :|:
+2
+(^pick,b). :|:
+2
+<goal --> reached>. :|:
+50
+(^pick,b). :|:
+50
+(^pick,b). :|:
+50
+(^pick,b). :|:
+100
+<goal --> reached>!
+<goal --> reached>!
+<goal --> reached>!
+<?how =/> <goal --> reached>>?
+300
+<?how =/> <goal --> reached>>?
+<?how =/> <goal --> reached>>?
+1500
+//it is like SequenceGoalSimple but asks for an explaination instead of wanting it to go-to(a)
+''outputMustContain('<(&/,(^go-to,a),+2,(^pick,b),+2) =/> <goal --> reached>>. %1.00;0.12%')
