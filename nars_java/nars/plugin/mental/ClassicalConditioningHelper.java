@@ -49,7 +49,7 @@ public class ClassicalConditioningHelper implements Plugin {
     
     public ArrayList<Task> cutoutAppend(int ind1,int ind2,ArrayList<Task> first,ArrayList<Task> second) {
         ArrayList<Task> res=new ArrayList<>();
-        for(int i=ind1;i<=first.size()+ind2;i++) {
+        for(int i=ind1;i<first.size()+ind2;i++) {
             res.add(first.get(i));
         }
         for(Task t : second) {
@@ -139,6 +139,10 @@ public class ClassicalConditioningHelper implements Plugin {
             theories.add(t);
         }
         for(int i=0;i<2;i++) {
+            ArrayList<ArrayList<Task>> theories2=new ArrayList<>();
+            for(ArrayList<Task> t : theories) {
+                theories2.add(t);
+            }
             for(ArrayList<Task> A : theories) {
                 for(ArrayList<Task> B : theories) {
                     if(A.size()==1 || B.size()==1) {
@@ -154,16 +158,18 @@ public class ClassicalConditioningHelper implements Plugin {
                     boolean caseB=A.size()>2 && B.size()>1 && A.get(A.size()-1)==B.get(1) && A.get(A.size()-2)==B.get(0);
                     
                     if((A.size()>1 && B.size()>1) && (caseA || caseB)) {
-                        ArrayList<Task> compoundT;
+                        ArrayList<Task> compoundT=null;
                         if(caseA) {
                             compoundT=cutoutAppend(0,-1,A,B);   
                         }
                         if(caseB) {
                             compoundT=cutoutAppend(0,-2,A,B);   
                         }
+                        theories2.add(compoundT);
                     }
                 }
             }
+            theories=theories2;
         }
         System.out.println("found theories:");
         ArrayList<ArrayList<Task>> filtered=new ArrayList<>(); //Filtered=[a for a in list(set([a.replace(" ","") for a in theories])) if len(a)>1]
@@ -200,6 +206,7 @@ public class ClassicalConditioningHelper implements Plugin {
         for(ArrayList<Task> a: filtered) {
             Ret.add(new Tuple(a,TaskStringEqualSequentialTermCount(st,a)*a.size()));
         }
+        ArrayList<Tuple> ToRemove=new ArrayList<Tuple>();
         for(Tuple T : Ret) {
             ArrayList<Task> a=T.x;
             double b=T.y;
@@ -207,9 +214,13 @@ public class ClassicalConditioningHelper implements Plugin {
                 ArrayList<Task> c=D.x;
                 double d=D.y;
                 if(a!=c && TaskStringContains(c,a) && d>=b) {
-                    Ret.remove(T);
+                    //Ret.remove(T);
+                    ToRemove.add(T);
                 }
             }
+        }
+        for(Tuple T : ToRemove) {
+            Ret.remove(T);
         }
         double max=0;
         for(Tuple T : Ret) {
@@ -236,10 +247,11 @@ public class ClassicalConditioningHelper implements Plugin {
                     } else {
                         Truth=TruthFunctions.induction(Truth,t.sentence.truth);
                     }
-                    Conjunction con=(Conjunction) Conjunction.make(wuh, TemporalRules.ORDER_FORWARD);
-                    Implication res=Implication.make(con, pred,TemporalRules.ORDER_FORWARD);
-                    boolean debugtillhere=true;
                 }
+                Conjunction con=(Conjunction) Conjunction.make(wuh, TemporalRules.ORDER_FORWARD);
+                Implication res=Implication.make(con, pred,TemporalRules.ORDER_FORWARD);
+                boolean debugtillhere=true;
+                
                 break;
             }
         }
