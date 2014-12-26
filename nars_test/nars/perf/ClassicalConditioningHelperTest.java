@@ -21,7 +21,7 @@ public class ClassicalConditioningHelperTest {
         NAR nar=new Default().build();
         nar.addPlugin(blub);
         blub.EnableAutomaticConditioning=false;
-        nar.addInput("<a --> M>. :|:");
+        nar.addInput("<a --> M>. :|:"); //abcbbbabc
         nar.step(6);
         nar.addInput("<b --> M>. :|:");
         nar.step(6);
@@ -38,6 +38,7 @@ public class ClassicalConditioningHelperTest {
         nar.addInput("<b --> M>. :|:");
         nar.step(6);
         nar.addInput("<c --> M>. :|:");
+        nar.step(1);
         blub.classicalConditioning();
     }
     

@@ -122,8 +122,10 @@ public class ClassicalConditioningHelper implements Plugin {
                     ArrayList<Task> H=new ArrayList<>();
                     H.add(lastev);
                     H.add(ev);
+                    System.out.println(lastev.sentence.term);
+                    System.out.println(ev.sentence.term);
                     theoriess.put(ev.sentence.term, H);
-                    for(int j=i;j<st.size()-1;j++) {
+                    for(int j=i;j<st.size();j++) {
                         Task ev2=st.get(j);
                         Task lastev2=st.get(j-1); //forward conditioning
                         if(lastev2.sentence.term.equals(lastev.sentence.term) && !ev2.sentence.term.equals(ev.sentence.term) &&
