@@ -6,13 +6,16 @@
 package nars.plugin.mental;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import nars.core.EventEmitter;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
+import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.language.Term;
 
 /**
  *
@@ -26,13 +29,37 @@ public class ClassicalConditioningHelper implements Plugin {
     public int maxlen=20;
     public int conditionAllNSteps=5;
     public int cnt=0; 
+    NAR nar;
     
     public void classicalConditioning() {
+        ArrayList<Task> st=new ArrayList(lastElems.size());
+        Task lastt=null;
+        for(Task t: lastElems) {
+            st.add(t);
+            if(lastt!=null && Math.abs(t.sentence.getOccurenceTime()-lastt.sentence.getOccurenceTime())>nar.param.duration.get()*100) {
+                st.add(null); //pause
+            }
+            lastt=t;
+        }
+        st.add(0, null);
+        st.add(null); //empty space
+        
+        HashMap<Term,ArrayList<Task>> theories=new HashMap<>();
+        
+        for(int k=0;k<st.size();k++) {
+            for(int i=1;i<st.size()-1;i++) {
+                Task ev=st.get(i);
+                Task lastev=st.get(i-1);
+                //if(desired)
+                //theories[ev.sentence.term]=new ArrayList<>();
+            }
+        }
+        //ok st is prepared
         /*
-        from copy import deepcopy
-@interact
-def _(Sequence="kabc kabc abc"):
-    st=" "+Sequence+" "
+from copy import deepcopy
+
+def conditioning2(Sequence):
+    st="  "+Sequence+"  "
     dc=set([a for a in st]) #unconditional and conditioned stimulus / events of high desire, currently we use all
     theories={} 
     
@@ -40,10 +67,10 @@ def _(Sequence="kabc kabc abc"):
         dc2=deepcopy(dc)
         for i in range(1,len(st)-1):
             ev, lastev=st[i], st[i-1]
-            if ev!=" " and lastev!=" " and ev in dc: 
+            if ev in dc:
                 theories[ev]=lastev+ev #forward/simultaneous conditioning with blocking and inhibition:
-                dc2.add(lastev)  #to allow multiple forward conditionings, this means deriving st[i-1] as a desired subgoal
-                for j in range(1,len(st)-1):
+                dc2.add(lastev)  #to allow multiple forward conditionings, this means deriving lastev as a desired subgoal
+                for j in range(i,len(st)-1):
                     ev2, lastev2=st[j], st[j-1]
                     if lastev2==lastev and ev2!=ev and ev in theories.keys():
                         del theories[ev] #extinction
@@ -51,33 +78,62 @@ def _(Sequence="kabc kabc abc"):
     
     #higher order conditioning
     theories=theories.values()
-    for i in range(len(st)):
+    for i in range(2):
         theories2=deepcopy(theories)
         for A in theories:
             for B in theories:
+                if len(A)==1 or len(B)==1 :
+                    continue
+                A=A.replace(" ","")
+                B=B.replace(" ","")
                 caseA= A[-1]==B[0]
-                caseB= len(A)>2 and A[-1]==B[1] and A[-2]==B[0]
-                if caseA or caseB:
+                caseB= len(A)>2 and len(B)>1 and A[-1]==B[1] and A[-2]==B[0]
+                if len(A)>1 and len(B)>1 and caseA or caseB:
                     if caseA: compoundT=A[0:-1]+B
                     if caseB: compoundT=A[0:-2]+B
-                    #check for counterexample
-                    if st.count(A)>st.count(compoundT) or st.count(B)>st.count(compoundT):
-                        continue
                     theories2=theories2+[compoundT]
-                    if A in theories2:
-                        del theories2[theories2.index(A)]
-                    if B in theories2:
-                        del theories2[theories2.index(B)]
         theories=theories2
-    print "found theories:"             
-    show([a for a in theories if st.count(a)==st.count(a[-1]) and st.count(a)==st.count(a[0])])
-        //the latter are the temporal hypotheses which enter memory
+    print "found theories:" 
+    Filtered=[a for a in list(set([a.replace(" ","") for a in theories])) if len(a)>1]
+    Ret=[(a,float(st.count(a))*float(len(a))) for a in Filtered]
+    for (a,b) in Ret:
+        for (c,d) in Ret:
+            if a!=c and a in c and d>=b:
+                if (a,b) in Ret:
+                    Ret.remove((a,b))
+    Maxc=max([b for (a,b) in Ret] if len(Ret)>0 else [0]) 
+    return [(a,b) for (a,b) in Ret if b==Maxc] # 
+
+a="uab wab kabi"
+print "forward conditioning: \n" + a
+print conditioning2(a)
+print
+a="kacf guacf wacfg"
+print "higher order conditioning: \n" + a
+print conditioning2(a)
+print
+a="cb cb cb ab"
+print "inhibition: \n" + a
+print conditioning2(a)
+print
+a="ab ab ab a"
+print "extinction: \n" + a
+print conditioning2(a)
+print
+a="abc abc abc ab"
+print "extinction: \n" + a
+print conditioning2(a)
+print
+a="AB AB AB CB CBF CBF CBF"
+print "inhibition: \n" + a
+print conditioning2(a)
         */
     }
     
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
 
+        this.nar=n;
         if(obs==null) {
             saved_priority=Parameters.DEFAULT_JUDGMENT_PRIORITY;
             obs=new EventObserver() {
@@ -87,14 +143,16 @@ def _(Sequence="kabc kabc abc"):
                     if (event!=Events.Perceive.class)
                         return;
                     Task task = (Task)a[0];
-                    lastElems.add(task);
-                    if(lastElems.size()>maxlen) {
-                        lastElems.remove(0);
+                    if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
+                        lastElems.add(task);
+                        if(lastElems.size()>maxlen) {
+                            lastElems.remove(0);
+                        }
+                        if(cnt%conditionAllNSteps==0) {
+                            classicalConditioning();
+                        }
+                        cnt++;
                     }
-                    if(cnt%conditionAllNSteps==0) {
-                        classicalConditioning();
-                    }
-                    cnt++;
                 }
             };
         }
