@@ -29,6 +29,7 @@ import nars.language.Term;
  */
 public class ClassicalConditioningHelper implements Plugin {
 
+    public boolean EnableAutomaticConditioning=true;
     public EventEmitter.EventObserver obs;
     public float saved_priority;
     public ArrayList<Task> lastElems=new ArrayList<>();
@@ -243,7 +244,7 @@ public class ClassicalConditioningHelper implements Plugin {
             }
         }
     }
-    
+
     public void HandleInput(Task task) {
         if(!enabled) {
             return;
@@ -256,8 +257,8 @@ public class ClassicalConditioningHelper implements Plugin {
             if(lastElems.size()>maxlen) {
                 lastElems.remove(0);
             }
-            if(cnt%conditionAllNSteps==0) {
-                classicalConditioning();
+            if(cnt%conditionAllNSteps==0 && EnableAutomaticConditioning) {
+                //classicalConditioning();
             }
             cnt++;
         }
