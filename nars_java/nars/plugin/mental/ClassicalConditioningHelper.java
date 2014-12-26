@@ -18,6 +18,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
+import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Term;
@@ -241,88 +242,6 @@ public class ClassicalConditioningHelper implements Plugin {
             }
         }
     }
-   /* 
-    Maxc=max([b for (a,b) in Ret] if len(Ret)>0 else [0]) 
-    return [(a,b) for (a,b) in Ret if b==Maxc] # 
-   */
-                
-
-
-        //ok st is prepared
-        /*
-from copy import deepcopy
-
-def conditioning2(Sequence):
-    st="  "+Sequence+"  "
-    dc=set([a for a in st]) #unconditional and conditioned stimulus / events of high desire, currently we use all
-    theories={} 
-    
-    for i in range(len(st)):
-        dc2=deepcopy(dc)
-        for i in range(1,len(st)-1):
-            ev, lastev=st[i], st[i-1]
-            if ev in dc:
-                theories[ev]=lastev+ev #forward/simultaneous conditioning with blocking and inhibition:
-                dc2.add(lastev)  #to allow multiple forward conditionings, this means deriving lastev as a desired subgoal
-                for j in range(i,len(st)-1):
-                    ev2, lastev2=st[j], st[j-1]
-                    if lastev2==lastev and ev2!=ev and ev in theories.keys():
-                        del theories[ev] #extinction
-        dc=dc2
-    
-    #higher order conditioning
-    theories=theories.values()
-    for i in range(2):
-        theories2=deepcopy(theories)
-        for A in theories:
-            for B in theories:
-                if len(A)==1 or len(B)==1 :
-                    continue
-                A=A.replace(" ","")
-                B=B.replace(" ","")
-                caseA= A[-1]==B[0]
-                caseB= len(A)>2 and len(B)>1 and A[-1]==B[1] and A[-2]==B[0]
-                if len(A)>1 and len(B)>1 and caseA or caseB:
-                    if caseA: compoundT=A[0:-1]+B
-                    if caseB: compoundT=A[0:-2]+B
-                    theories2=theories2+[compoundT]
-        theories=theories2
-    print "found theories:" 
-    Filtered=[a for a in list(set([a.replace(" ","") for a in theories])) if len(a)>1]
-    Ret=[(a,float(st.count(a))*float(len(a))) for a in Filtered]
-    for (a,b) in Ret:
-        for (c,d) in Ret:
-            if a!=c and a in c and d>=b:
-                if (a,b) in Ret:
-                    Ret.remove((a,b))
-    Maxc=max([b for (a,b) in Ret] if len(Ret)>0 else [0]) 
-    return [(a,b) for (a,b) in Ret if b==Maxc] # 
-
-a="uab wab kabi"
-print "forward conditioning: \n" + a
-print conditioning2(a)
-print
-a="kacf guacf wacfg"
-print "higher order conditioning: \n" + a
-print conditioning2(a)
-print
-a="cb cb cb ab"
-print "inhibition: \n" + a
-print conditioning2(a)
-print
-a="ab ab ab a"
-print "extinction: \n" + a
-print conditioning2(a)
-print
-a="abc abc abc ab"
-print "extinction: \n" + a
-print conditioning2(a)
-print
-a="AB AB AB CB CBF CBF CBF"
-print "inhibition: \n" + a
-print conditioning2(a)
-        */
-
     
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
@@ -337,7 +256,7 @@ print conditioning2(a)
                     if (event!=Events.Perceive.class)
                         return;
                     Task task = (Task)a[0];
-                    if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
+                    if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL && task.sentence.punctuation==Symbols.JUDGMENT_MARK) {
                         lastElems.add(task);
                         if(lastElems.size()>maxlen) {
                             lastElems.remove(0);
