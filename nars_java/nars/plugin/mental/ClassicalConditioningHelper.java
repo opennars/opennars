@@ -15,6 +15,11 @@ import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TruthValue;
+import nars.inference.TemporalRules;
+import nars.inference.TruthFunctions;
+import nars.language.Conjunction;
+import nars.language.Implication;
 import nars.language.Term;
 
 /**
@@ -31,8 +36,17 @@ public class ClassicalConditioningHelper implements Plugin {
     public int cnt=0; 
     NAR nar;
     
+    public class Tuple { 
+        public final ArrayList<Task> x; 
+        public final double y; 
+        public Tuple(ArrayList<Task> x, double y) { 
+          this.x = x; 
+          this.y = y; 
+        } 
+      } 
+    
     public ArrayList<Task> cutoutAppend(int ind1,int ind2,ArrayList<Task> first,ArrayList<Task> second) {
-        ArrayList<Task> res=new ArrayList<Task>();
+        ArrayList<Task> res=new ArrayList<>();
         for(int i=ind1;i<=first.size()+ind2;i++) {
             res.add(first.get(i));
         }
@@ -40,6 +54,48 @@ public class ClassicalConditioningHelper implements Plugin {
             res.add(t);
         }
         return res;
+    }
+
+    public boolean TaskStringContains(ArrayList<Task> w,ArrayList<Task> content) {
+        for(int i=0;i<w.size();i++) {
+            boolean same=true;
+            for(int j=0;j<content.size();j++) {
+                if(i+j>=w.size()) {
+                    return false;
+                }
+                if(!w.get(i+j).sentence.term.equals(content.get(j).sentence.term)) {
+                    same=false;
+                    break;
+                }
+            }
+            if(content.isEmpty()) {
+                return false;
+            }
+            if(same) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public int TaskStringEqualSequentialTermCount(ArrayList<Task> w,ArrayList<Task> content) {
+        int cnt2=0;
+        for(int i=0;i<w.size();i++) {
+            boolean same=true;
+            for(int j=0;i+j<w.size() && j<content.size();j++) {
+                if(!w.get(i+j).sentence.term.equals(content.get(j).sentence.term)) {
+                    same=false;
+                    break;
+                }
+            }
+            if(content.isEmpty()) {
+                return 0;
+            }
+            if(same) {
+                cnt2++;
+            }
+        }
+        return cnt2;
     }
     
     public void classicalConditioning() {
@@ -63,7 +119,7 @@ public class ClassicalConditioningHelper implements Plugin {
                 Task lastev=st.get(i-1);
                 if(true)//desired
                 {
-                    ArrayList<Task> H=new ArrayList<Task>();
+                    ArrayList<Task> H=new ArrayList<>();
                     H.add(lastev);
                     H.add(ev);
                     theoriess.put(ev.sentence.term, H);
@@ -71,8 +127,8 @@ public class ClassicalConditioningHelper implements Plugin {
                         Task ev2=st.get(j);
                         Task lastev2=st.get(j-1); //forward conditioning
                         if(lastev2.sentence.term.equals(lastev.sentence.term) && !ev2.sentence.term.equals(ev.sentence.term) &&
-                                theoriess.keySet().contains(ev)) {
-                            theoriess.remove(theoriess.get(ev)); //extinction
+                                theoriess.keySet().contains(ev.sentence.term)) {
+                            theoriess.remove(ev.sentence.term); //extinction
                         }
                     }
                 }
@@ -107,14 +163,85 @@ public class ClassicalConditioningHelper implements Plugin {
             }
         }
         System.out.println("found theories:");
+        ArrayList<ArrayList<Task>> filtered=new ArrayList<>(); //Filtered=[a for a in list(set([a.replace(" ","") for a in theories])) if len(a)>1]
+        for(ArrayList<Task> t: theories) {
+            if(t.size()>1) {
+                //check if its not included:
+                boolean included=false;
+                for(ArrayList<Task> fil : filtered) {
+                    if(fil==null) {
+                        continue;
+                    }
+                    if(fil.size()!=t.size()) {
+                        continue;
+                    }
+                    else {
+                        boolean same=true;
+                        for(int i=0;i<t.size();i++) {
+                            if(!(t.get(i).sentence.term.equals(fil.get(i).sentence.term))) { //we need term equals this is why
+                                same=false;
+                                break;
+                            }
+                        }
+                        if(same) {
+                            included=true;
+                        }
+                    }
+                }
+                if(!included) {
+                   filtered.add(t);
+                }
+            }
+        }
+        ArrayList<Tuple> Ret=new ArrayList<>();
+        for(ArrayList<Task> a: filtered) {
+            Ret.add(new Tuple(a,TaskStringEqualSequentialTermCount(st,a)*a.size()));
+        }
+        for(Tuple T : Ret) {
+            ArrayList<Task> a=T.x;
+            double b=T.y;
+            for(Tuple D : Ret) {
+                ArrayList<Task> c=D.x;
+                double d=D.y;
+                if(a!=c && TaskStringContains(c,a) && d>=b) {
+                    Ret.remove(T);
+                }
+            }
+        }
+        double max=0;
+        for(Tuple T : Ret) {
+            if(T.y>max) {
+                max=T.y;
+            }
+        }
+        
+        for(Tuple T : Ret) {
+            if(T.y==max) {
+                TruthValue Truth=null;
+                Term[] wuh=new Term[T.x.size()-1];
+                Term pred=null;
+                int i=0;
+                for(Task t : T.x) {
+                    if(i==T.x.size()-1) {
+                        pred=t.sentence.term;
+                    } else {
+                        wuh[i]=t.sentence.term;
+                    }
+                    i++;
+                    if(Truth==null) {
+                        Truth=t.sentence.truth;
+                    } else {
+                        Truth=TruthFunctions.induction(Truth,t.sentence.truth);
+                    }
+                    Conjunction con=(Conjunction) Conjunction.make(wuh, TemporalRules.ORDER_FORWARD);
+                    Implication res=Implication.make(con, pred,TemporalRules.ORDER_FORWARD);
+                    boolean debugtillhere=true;
+                }
+                break;
+            }
+        }
     }
-   /* Filtered=[a for a in list(set([a.replace(" ","") for a in theories])) if len(a)>1]
-    Ret=[(a,float(st.count(a))*float(len(a))) for a in Filtered]
-    for (a,b) in Ret:
-        for (c,d) in Ret:
-            if a!=c and a in c and d>=b:
-                if (a,b) in Ret:
-                    Ret.remove((a,b))
+   /* 
     Maxc=max([b for (a,b) in Ret] if len(Ret)>0 else [0]) 
     return [(a,b) for (a,b) in Ret if b==Maxc] # 
    */

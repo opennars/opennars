@@ -193,7 +193,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue induction(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue induction(final TruthValue v1, final TruthValue v2) {
         return abduction(v2, v1);
     }
 
