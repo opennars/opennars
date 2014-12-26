@@ -15,9 +15,12 @@ import nars.plugin.mental.ClassicalConditioningHelper;
  */
 public class ClassicalConditioningHelperTest {
     
-    ClassicalConditioningHelper blub=new ClassicalConditioningHelper();
+    
     public static void main(String[] args) {
+        ClassicalConditioningHelper blub=new ClassicalConditioningHelper();
         NAR nar=new Default().build();
+        nar.addPlugin(blub);
+        blub.EnableAutomaticConditioning=false;
         nar.addInput("<a --> M>. :|:");
         nar.step(6);
         nar.addInput("<b --> M>. :|:");
@@ -35,6 +38,7 @@ public class ClassicalConditioningHelperTest {
         nar.addInput("<b --> M>. :|:");
         nar.step(6);
         nar.addInput("<c --> M>. :|:");
+        blub.classicalConditioning();
     }
     
 }
