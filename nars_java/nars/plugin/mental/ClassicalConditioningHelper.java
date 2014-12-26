@@ -109,13 +109,11 @@ public class ClassicalConditioningHelper implements Plugin {
             }
             lastt=t;
         }
-        st.add(0, null);
-        st.add(null); //empty space
         
         HashMap<Term,ArrayList<Task>> theoriess=new HashMap<>();
         
         for(int k=0;k<st.size();k++) {
-            for(int i=1;i<st.size()-1;i++) {
+            for(int i=1;i<st.size();i++) {
                 Task ev=st.get(i);
                 Task lastev=st.get(i-1);
                 if(true)//desired
@@ -135,7 +133,10 @@ public class ClassicalConditioningHelper implements Plugin {
                 }
             }
         }
-        ArrayList<ArrayList<Task>> theories=(ArrayList<ArrayList<Task>>) theoriess.values();
+        ArrayList<ArrayList<Task>> theories=new ArrayList<>();
+        for(ArrayList<Task> t : theoriess.values()) {
+            theories.add(t);
+        }
         for(int i=0;i<2;i++) {
             for(ArrayList<Task> A : theories) {
                 for(ArrayList<Task> B : theories) {
@@ -243,9 +244,31 @@ public class ClassicalConditioningHelper implements Plugin {
         }
     }
     
+    public void HandleInput(Task task) {
+        if(!enabled) {
+            return;
+        }
+        if(!task.isInput()) {
+            return;
+        }
+        if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL && task.sentence.punctuation==Symbols.JUDGMENT_MARK) {
+            lastElems.add(task);
+            if(lastElems.size()>maxlen) {
+                lastElems.remove(0);
+            }
+            if(cnt%conditionAllNSteps==0) {
+                classicalConditioning();
+            }
+            cnt++;
+        }
+    }
+    
+    boolean enabled=false;
+    
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
 
+        this.enabled=enabled;
         this.nar=n;
         if(obs==null) {
             saved_priority=Parameters.DEFAULT_JUDGMENT_PRIORITY;
@@ -253,22 +276,11 @@ public class ClassicalConditioningHelper implements Plugin {
 
                 @Override
                 public void event(Class event, Object[] a) {
-                    if (event!=Events.TaskAdd.class)
+                    //is not working, keep for later:
+                    if (event!=Events.TaskImmediateProcess.class)
                         return;
                     Task task = (Task)a[0];
-                    if(!task.isInput()) {
-                        return;
-                    }
-                    if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL && task.sentence.punctuation==Symbols.JUDGMENT_MARK) {
-                        lastElems.add(task);
-                        if(lastElems.size()>maxlen) {
-                            lastElems.remove(0);
-                        }
-                        if(cnt%conditionAllNSteps==0) {
-                            classicalConditioning();
-                        }
-                        cnt++;
-                    }
+                    HandleInput(task);
                 }
             };
         }
@@ -279,7 +291,7 @@ public class ClassicalConditioningHelper implements Plugin {
             Parameters.DEFAULT_JUDGMENT_PRIORITY=saved_priority;
         }
         
-        n.memory.event.set(obs, enabled, Events.TaskAdd.class);
+        n.memory.event.set(obs, enabled, Events.TaskImmediateProcess.class);
         return true;
     }
     
