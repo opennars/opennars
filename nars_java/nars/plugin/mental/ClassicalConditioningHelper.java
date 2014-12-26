@@ -31,6 +31,17 @@ public class ClassicalConditioningHelper implements Plugin {
     public int cnt=0; 
     NAR nar;
     
+    public ArrayList<Task> cutoutAppend(int ind1,int ind2,ArrayList<Task> first,ArrayList<Task> second) {
+        ArrayList<Task> res=new ArrayList<Task>();
+        for(int i=ind1;i<=first.size()+ind2;i++) {
+            res.add(first.get(i));
+        }
+        for(Task t : second) {
+            res.add(t);
+        }
+        return res;
+    }
+    
     public void classicalConditioning() {
         ArrayList<Task> st=new ArrayList(lastElems.size());
         Task lastt=null;
@@ -44,16 +55,72 @@ public class ClassicalConditioningHelper implements Plugin {
         st.add(0, null);
         st.add(null); //empty space
         
-        HashMap<Term,ArrayList<Task>> theories=new HashMap<>();
+        HashMap<Term,ArrayList<Task>> theoriess=new HashMap<>();
         
         for(int k=0;k<st.size();k++) {
             for(int i=1;i<st.size()-1;i++) {
                 Task ev=st.get(i);
                 Task lastev=st.get(i-1);
-                //if(desired)
-                //theories[ev.sentence.term]=new ArrayList<>();
+                if(true)//desired
+                {
+                    ArrayList<Task> H=new ArrayList<Task>();
+                    H.add(lastev);
+                    H.add(ev);
+                    theoriess.put(ev.sentence.term, H);
+                    for(int j=i;j<st.size()-1;i++) {
+                        Task ev2=st.get(j);
+                        Task lastev2=st.get(j-1); //forward conditioning
+                        if(lastev2.sentence.term.equals(lastev.sentence.term) && !ev2.sentence.term.equals(ev.sentence.term) &&
+                                theoriess.keySet().contains(ev)) {
+                            theoriess.remove(theoriess.get(ev)); //extinction
+                        }
+                    }
+                }
             }
         }
+        ArrayList<ArrayList<Task>> theories=(ArrayList<ArrayList<Task>>) theoriess.values();
+        for(int i=0;i<2;i++) {
+            for(ArrayList<Task> A : theories) {
+                for(ArrayList<Task> B : theories) {
+                    if(A.size()==1 || B.size()==1) {
+                        continue;
+                    }
+                    while(A.contains(null)) {
+                        A.remove(null);
+                    }
+                    while(B.contains(null)) {
+                        B.remove(null);
+                    }
+                    boolean caseA=A.get(A.size()-1)==B.get(0);
+                    boolean caseB=A.size()>2 && B.size()>1 && A.get(A.size()-1)==B.get(1) && A.get(A.size()-2)==B.get(0);
+                    
+                    if((A.size()>1 && B.size()>1) && (caseA || caseB)) {
+                        ArrayList<Task> compoundT;
+                        if(caseA) {
+                            compoundT=cutoutAppend(0,-1,A,B);   
+                        }
+                        if(caseB) {
+                            compoundT=cutoutAppend(0,-2,A,B);   
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("found theories:");
+    }
+   /* Filtered=[a for a in list(set([a.replace(" ","") for a in theories])) if len(a)>1]
+    Ret=[(a,float(st.count(a))*float(len(a))) for a in Filtered]
+    for (a,b) in Ret:
+        for (c,d) in Ret:
+            if a!=c and a in c and d>=b:
+                if (a,b) in Ret:
+                    Ret.remove((a,b))
+    Maxc=max([b for (a,b) in Ret] if len(Ret)>0 else [0]) 
+    return [(a,b) for (a,b) in Ret if b==Maxc] # 
+   */
+                
+
+
         //ok st is prepared
         /*
 from copy import deepcopy
@@ -128,7 +195,7 @@ a="AB AB AB CB CBF CBF CBF"
 print "inhibition: \n" + a
 print conditioning2(a)
         */
-    }
+
     
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
