@@ -253,9 +253,12 @@ public class ClassicalConditioningHelper implements Plugin {
 
                 @Override
                 public void event(Class event, Object[] a) {
-                    if (event!=Events.Perceive.class)
+                    if (event!=Events.TaskAdd.class)
                         return;
                     Task task = (Task)a[0];
+                    if(!task.isInput()) {
+                        return;
+                    }
                     if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL && task.sentence.punctuation==Symbols.JUDGMENT_MARK) {
                         lastElems.add(task);
                         if(lastElems.size()>maxlen) {
@@ -276,7 +279,7 @@ public class ClassicalConditioningHelper implements Plugin {
             Parameters.DEFAULT_JUDGMENT_PRIORITY=saved_priority;
         }
         
-        n.memory.event.set(obs, enabled, Events.Perceive.class);
+        n.memory.event.set(obs, enabled, Events.TaskAdd.class);
         return true;
     }
     
