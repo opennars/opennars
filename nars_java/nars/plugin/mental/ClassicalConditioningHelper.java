@@ -13,6 +13,9 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
+import nars.entity.BudgetValue;
+import nars.entity.Concept;
+import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
@@ -23,8 +26,6 @@ import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Term;
-import nars.entity.Sentence;
-import nars.entity.BudgetValue;
 
 /**
  *
@@ -253,10 +254,17 @@ public class ClassicalConditioningHelper implements Plugin {
                         Truth=TruthFunctions.induction(Truth,t.sentence.truth);
                     }
                 }
+              //  Concept c=nar.memory.concept(pred);
+                //if(c==null || !c.isDesired()) {
+               //     return;
+               // }
                 Conjunction con=(Conjunction) Conjunction.make(wuh, TemporalRules.ORDER_FORWARD);
                 Implication res=Implication.make(con, pred,TemporalRules.ORDER_FORWARD);
-                Sentence s=new Sentence(res,Symbols.JUDGMENT_MARK,Truth,new Stamp(nar.memory));
+                Stamp stamp=new Stamp(nar.memory);
+                stamp.setOccurrenceTime(Stamp.ETERNAL);
+                Sentence s=new Sentence(res,Symbols.JUDGMENT_MARK,Truth,stamp);
                 Task TT=Task.make(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,
+                
                 BudgetFunctions.truthToQuality(Truth)), lastElems.get(lastElems.size()-1));
                 nar.addInput(TT);
                 boolean debugtillhere=true;
