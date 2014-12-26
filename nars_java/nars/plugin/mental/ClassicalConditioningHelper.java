@@ -16,12 +16,15 @@ import nars.core.Plugin;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Term;
+import nars.entity.Sentence;
+import nars.entity.BudgetValue;
 
 /**
  *
@@ -252,6 +255,10 @@ public class ClassicalConditioningHelper implements Plugin {
                 }
                 Conjunction con=(Conjunction) Conjunction.make(wuh, TemporalRules.ORDER_FORWARD);
                 Implication res=Implication.make(con, pred,TemporalRules.ORDER_FORWARD);
+                Sentence s=new Sentence(res,Symbols.JUDGMENT_MARK,Truth,new Stamp(nar.memory));
+                Task TT=Task.make(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,
+                BudgetFunctions.truthToQuality(Truth)), lastElems.get(lastElems.size()-1));
+                nar.addInput(TT);
                 boolean debugtillhere=true;
                 
                 break;
@@ -272,7 +279,7 @@ public class ClassicalConditioningHelper implements Plugin {
                 lastElems.remove(0);
             }
             if(cnt%conditionAllNSteps==0 && EnableAutomaticConditioning) {
-                //classicalConditioning();
+                classicalConditioning();
             }
             cnt++;
         }
