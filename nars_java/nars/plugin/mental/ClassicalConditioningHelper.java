@@ -37,7 +37,7 @@ public class ClassicalConditioningHelper implements Plugin {
     public float saved_priority;
     public ArrayList<Task> lastElems=new ArrayList<>();
     public int maxlen=20;
-    public int conditionAllNSteps=5;
+    public int conditionAllNSteps=3;
     public int cnt=0; 
     NAR nar;
     
@@ -125,8 +125,8 @@ public class ClassicalConditioningHelper implements Plugin {
                     ArrayList<Task> H=new ArrayList<>();
                     H.add(lastev);
                     H.add(ev);
-                    System.out.println(lastev.sentence.term);
-                    System.out.println(ev.sentence.term);
+                    //System.out.println(lastev.sentence.term);
+                   // System.out.println(ev.sentence.term);
                     theoriess.put(ev.sentence.term, H);
                     for(int j=i;j<st.size();j++) {
                         Task ev2=st.get(j);
@@ -302,7 +302,11 @@ public class ClassicalConditioningHelper implements Plugin {
                     if (event!=Events.TaskImmediateProcess.class)
                         return;
                     Task task = (Task)a[0];
-                    HandleInput(task);
+                    try{
+                       HandleInput(task);     
+                    } catch(Exception ex){}
+                    
+                    
                 }
             };
         }
