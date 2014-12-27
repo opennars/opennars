@@ -25,6 +25,7 @@ import nars.core.Events.NewTaskExecution;
 import nars.core.Events.UnexecutableGoal;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.core.control.NAL;
 import nars.entity.Concept;
@@ -239,6 +240,11 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
     }
     
     @Override public boolean setEnabled(NAR n, boolean enabled) {
+        if(enabled) {
+            Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f; //immediate eternalization
+        } else {
+            Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f; //change this param back
+        }
         this.executive = n.memory.executive;
         this.graph = executive.graph;
         
