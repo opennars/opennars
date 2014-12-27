@@ -13,7 +13,7 @@ import nars.plugin.applicationspecific.ClassicalConditioningHelper;
  *
  * @author tc
  */
-public class ClassicalConditioningHelperTest {
+public class ClassicalConditioningHelperTestModule {
     
     
     public static void main(String[] args) {
