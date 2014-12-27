@@ -47,6 +47,10 @@ public class InternalExperience implements Plugin, EventObserver {
     //internal experience has less priority?
     public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
     
+    //dont use internal experience for want and believe if this setting is true
+    public static boolean NoWantBelieve=false;
+    
+    
     
     private Memory memory;
 
@@ -72,9 +76,15 @@ public class InternalExperience implements Plugin, EventObserver {
         switch (s.punctuation) {
             case Symbols.JUDGMENT_MARK:
                 opName = "^believe";
+                if(NoWantBelieve) {
+                    return null;
+                }
                 break;
             case Symbols.GOAL_MARK:
                 opName = "^want";
+                if(NoWantBelieve) {
+                    return null;
+                }
                 break;
             case Symbols.QUESTION_MARK:
                 opName = "^wonder";
@@ -125,7 +135,11 @@ public class InternalExperience implements Plugin, EventObserver {
             Stamp stamp = task.sentence.stamp.clone();
             stamp.setOccurrenceTime(memory.time());
 
-            Sentence j = new Sentence(toTerm(sentence, memory), Symbols.JUDGMENT_MARK, truth, stamp);
+            Term ret=toTerm(sentence, memory);
+            if(ret==null) {
+                return;
+            }
+            Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
             BudgetValue newbudget=new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
