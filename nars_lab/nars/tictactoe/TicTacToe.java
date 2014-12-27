@@ -88,6 +88,8 @@ public class TicTacToe extends JPanel {
                 setSubconceptBagSize(10000).
                 simulationTime().build();
         
+        Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;
+        
         new NARPrologMirror(nar, 0.75f, true).temporal(true, false);
         new NARPrologMirror(nar, 0.75f, true).temporal(false, true);
         
