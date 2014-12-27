@@ -296,13 +296,13 @@ public class Rover2 extends PhysicsModel {
                 float priority = operation.getTask().budget.getPriority();
 
                 String command = "";
-                if (args.length == 1) {
+                if (args.length == 1+1) {
                     command = t1.name().toString();
                 }
-                if (args.length == 2) {
+                if (args.length == 2+1) {
                     Term t2 = args[1];
                     command = t1.name().toString() + "," + t2.name().toString();
-                } else if (args.length == 3) {
+                } else if (args.length == 3+1) {
                     Term t2 = args[1];
                     Term t3 = args[2];
                     command = t1.name().toString() + "," + t2.name().toString() + "," + t3.name().toString();
