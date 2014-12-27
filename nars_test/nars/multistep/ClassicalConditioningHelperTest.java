@@ -3,7 +3,7 @@
  * Each line should be prefixed with  * 
  */
 
-package nars.perf;
+package nars.multistep;
 
 import nars.core.NAR;
 import nars.core.build.Default;
