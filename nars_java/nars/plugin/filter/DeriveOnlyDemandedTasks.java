@@ -12,8 +12,10 @@ import nars.io.Symbols;
 import nars.operator.Operation;
 
 /**
- *
- * @author me
+* only allowing derivation of tasks where a demand(goal) exists
+* this is one of the aspects which make metacat fast
+* that there is a global optimization criteria which controls the entire ting
+* WARNING: this mode does not apply to AGI
  */
 public class DeriveOnlyDemandedTasks implements DerivationFilter {
 

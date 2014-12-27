@@ -117,13 +117,14 @@ public class ClassicalConditioningHelper implements Plugin {
         
         HashMap<Term,ArrayList<Task>> theoriess=new HashMap<>();
         
+        ArrayList<Task> H=new ArrayList<>(); //temporary, recycled use in loop below
         for(int k=0;k<st.size();k++) {
             for(int i=1;i<st.size();i++) {
                 Task ev=st.get(i);
                 Task lastev=st.get(i-1);
                 if(true)//desired
                 {
-                    ArrayList<Task> H=new ArrayList<>();
+                    H.clear();
                     H.add(lastev);
                     H.add(ev);
                     //System.out.println(lastev.sentence.term);
@@ -140,20 +141,17 @@ public class ClassicalConditioningHelper implements Plugin {
                 }
             }
         }
-        ArrayList<ArrayList<Task>> theories=new ArrayList<>();
-        for(ArrayList<Task> t : theoriess.values()) {
-            theories.add(t);
-        }
+        
+        ArrayList<ArrayList<Task>> theories=new ArrayList<>(theoriess.values());
+        
+        
         for(int i=0;i<2;i++) {
-            ArrayList<ArrayList<Task>> theories2=new ArrayList<>();
-            for(ArrayList<Task> t : theories) {
-                theories2.add(t);
-            }
+            ArrayList<ArrayList<Task>> theories2=new ArrayList<>(theories);
             for(ArrayList<Task> A : theories) {
+                if (A.size() == 1) continue;
                 for(ArrayList<Task> B : theories) {
-                    if(A.size()==1 || B.size()==1) {
-                        continue;
-                    }
+                    if(B.size()==1) continue;
+                    
                     while(A.contains(null)) {
                         A.remove(null);
                     }
@@ -225,9 +223,9 @@ public class ClassicalConditioningHelper implements Plugin {
                 }
             }
         }
-        for(Tuple T : ToRemove) {
-            Ret.remove(T);
-        }
+        
+        Ret.removeAll(ToRemove);
+        
         double max=0;
         for(Tuple T : Ret) {
             if(T.y>max) {
@@ -319,11 +317,13 @@ public class ClassicalConditioningHelper implements Plugin {
             };
         }
         
+        /*
         if(enabled) {
             Parameters.DEFAULT_JUDGMENT_PRIORITY=(float) 0.01;
         } else {
             Parameters.DEFAULT_JUDGMENT_PRIORITY=saved_priority;
         }
+        */
         
         n.memory.event.set(obs, enabled, Events.TaskImmediateProcess.class);
         return true;
