@@ -10,6 +10,7 @@ import java.util.List;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -227,12 +228,13 @@ public abstract class NAL implements Runnable {
         
         if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable)) && (!Sentence.invalidSentenceTerm(newContent))) {
             
+            Task derived = null;
+            
             try {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
 
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-
-                Task derived = null;
+                
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null);
                     if (added && temporalAdd) {
@@ -242,11 +244,36 @@ public abstract class NAL implements Runnable {
                         derived=newTask;
                     }
                 }
-                return derived;
             }
             catch (CompoundTerm.UnableToCloneException e) {
                 return null;
             }
+            
+            if(temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL!=0.0f) {
+                
+                try {
+               
+                TruthValue truthEt=newTruth.clone();
+                truthEt.setConfidence(newTruth.getConfidence()*Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL);
+               
+                Stamp st=getTheNewStamp().clone();
+                st.setEternal();
+                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
+                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                if (newTask!=null) {
+                    boolean added = derivedTask(newTask, false, false, null, null);
+                    if (added && temporalAdd) {
+                        memory.temporalRuleOutputToGraph(newSentence, newTask);
+                    }
+                }
+                
+            }
+            catch (CompoundTerm.UnableToCloneException e) {
+                return null;
+            }
+                
+            }
+            return derived;
         }
         return null;
     }
