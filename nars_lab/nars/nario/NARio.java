@@ -7,6 +7,7 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -47,6 +48,7 @@ public class NARio extends Run {
 
     public static void main(String[] arg) {
         NAR nar = new Default().setConceptBagSize(1024).build();
+        Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f; 
         //NAR nar = new ContinuousBagNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
          nar.param().beliefCyclesToForget.set(30);
@@ -57,7 +59,7 @@ public class NARio extends Run {
          nar.param().cycleInputTasks.set(1);
          nar.param().cycleMemory.set(1);*/
         
-        nar.param.conceptForgetDurations.set(1.0f);
+        //nar.param.conceptForgetDurations.set(1.0f);
 
        // nar.param().beliefForgetDurations.set(99.0f);
         
