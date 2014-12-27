@@ -240,11 +240,6 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
     }
     
     @Override public boolean setEnabled(NAR n, boolean enabled) {
-        if(enabled) {
-            Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f; //immediate eternalization
-        } else {
-            Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f; //change this param back
-        }
         this.executive = n.memory.executive;
         this.graph = executive.graph;
         

@@ -48,7 +48,7 @@ public class InternalExperience implements Plugin, EventObserver {
     public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
     
     //dont use internal experience for want and believe if this setting is true
-    public static boolean NoWantBelieve=false;
+    public static boolean NoWantBelieve=true;
     
     
     
