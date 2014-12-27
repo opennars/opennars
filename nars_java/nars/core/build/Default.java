@@ -162,17 +162,6 @@ public class Default extends Build implements ConceptBuilder {
         return n;
     }
 
-    /**
-     * only allowing derivation of tasks where a demand(goal) exists
-     * this is one of the aspects which make metacat fast
-     * that there is a global optimization criteria which controls the entire ting
-     * WARNING: this mode does not apply to AGI
-     */
-    public Default deriveOnlyDemandedTasks() {
-        param.getDerivationFilters().add(new DeriveOnlyDemandedTasks());
-        return this;
-    }
-    
 
     ConceptBuilder getConceptBuilder() {
         return this;
