@@ -17,6 +17,7 @@ import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
 import nars.core.control.AbstractTask;
+import nars.core.control.NAL.DerivationFilter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -368,6 +369,9 @@ public class NAR implements Runnable, TaskSource {
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
         }
+        if (p instanceof DerivationFilter) {
+            param.defaultDerivationFilters.add((DerivationFilter)p);
+        }
         PluginState ps = new PluginState(p);
         plugins.add(ps);
         emit(Events.PluginsChange.class, p, null);
@@ -378,6 +382,9 @@ public class NAR implements Runnable, TaskSource {
             Plugin p = ps.plugin;
             if (p instanceof Operator) {
                 memory.removeOperator((Operator)p);
+            }
+            if (p instanceof DerivationFilter) {
+                param.defaultDerivationFilters.remove((DerivationFilter)p);
             }
             ps.setEnabled(false);
             emit(Events.PluginsChange.class, null, p);

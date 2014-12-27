@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.List;
 import nars.core.Events;
 import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -30,9 +32,15 @@ import nars.operator.mental.Anticipate;
  */
 public abstract class NAL implements Runnable {
 
-    public interface DerivationFilter {
+    public interface DerivationFilter extends Plugin {
         /** returns null if allowed to derive, or a String containing a short rejection reason for logging */
         public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief);
+
+        @Override
+        public default boolean setEnabled(NAR n, boolean enabled) {
+            return true;
+        }
+        
     }
     
         

@@ -3,7 +3,7 @@
  * Each line should be prefixed with  * 
  */
 
-package nars.plugin.applicationspecific.farg;
+package nars.plugin.app.farg;
 
 import nars.core.Memory;
 import nars.entity.BudgetValue;
