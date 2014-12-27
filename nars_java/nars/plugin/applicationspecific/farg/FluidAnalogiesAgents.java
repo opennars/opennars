@@ -14,7 +14,7 @@ import nars.storage.LevelBag;
  *
  * @author tc
  */
-public class FARG implements Plugin {
+public class FluidAnalogiesAgents implements Plugin {
     public int max_codelets=100;
     public int codelet_level=100;
     Workspace ws;

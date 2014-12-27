@@ -7,7 +7,7 @@ package nars.perf;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.plugin.mental.ClassicalConditioningHelper;
+import nars.plugin.applicationspecific.ClassicalConditioningHelper;
 
 /**
  *

@@ -21,7 +21,7 @@ public class Workspace {
     public NAR nar;
     public int n_concepts=0;
     
-    public Workspace(FARG farg, NAR nar) {
+    public Workspace(FluidAnalogiesAgents farg, NAR nar) {
         this.nar=nar;
         Workspace ws=this;
         farg.coderack=new LevelBag(farg.codelet_level,farg.max_codelets);

@@ -3,7 +3,7 @@
  * Each line should be prefixed with  * 
  */
 
-package nars.plugin.mental;
+package nars.plugin.applicationspecific;
 
 import java.util.ArrayList;
 import java.util.HashMap;
