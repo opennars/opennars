@@ -20,6 +20,7 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
+import nars.plugin.mental.InternalExperience;
 import processing.core.PVector;
 
 public class TestChamber {
@@ -44,7 +45,8 @@ public class TestChamber {
         Parameters.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
         NAR nar = builder.build();
         //set NAR runtime parmeters:  
-                                    //because there every intermediate step matters a lot
+        Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;             //because there every intermediate step matters a lot
+        InternalExperience.NoWantBelieve=true;
         //(nar.param).duration.set(10);
         (nar.param).noiseLevel.set(0); 
         new NARSwing(nar);
