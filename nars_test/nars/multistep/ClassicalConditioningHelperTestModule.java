@@ -7,7 +7,7 @@ package nars.multistep;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.plugin.applicationspecific.ClassicalConditioningHelper;
+import nars.plugin.app.ClassicalConditioningHelper;
 
 /**
  *

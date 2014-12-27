@@ -7,8 +7,8 @@ package nars.core;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.TruthValue;
-import nars.plugin.applicationspecific.ParticlePlanner.MultipleExecutionManager;
-import nars.plugin.applicationspecific.ParticlePlanner.MultipleExecutionManager.Execution;
+import nars.plugin.app.plan.MultipleExecutionManager;
+import nars.plugin.app.plan.MultipleExecutionManager.Execution;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 

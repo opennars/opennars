@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.plugin.applicationspecific.ParticlePlanner;
+package nars.plugin.app.plan;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -29,10 +29,10 @@ import nars.core.Plugin;
 import nars.core.control.NAL;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.plugin.applicationspecific.ParticlePlanner.MultipleExecutionManager;
-import nars.plugin.applicationspecific.ParticlePlanner.MultipleExecutionManager.Execution;
-import static nars.plugin.applicationspecific.ParticlePlanner.MultipleExecutionManager.isPlanTerm;
-import nars.plugin.applicationspecific.ParticlePlanner.GraphExecutive;
+import nars.plugin.app.plan.MultipleExecutionManager;
+import nars.plugin.app.plan.MultipleExecutionManager.Execution;
+import static nars.plugin.app.plan.MultipleExecutionManager.isPlanTerm;
+import nars.plugin.app.plan.GraphExecutive;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
