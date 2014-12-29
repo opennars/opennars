@@ -363,6 +363,8 @@ public class GraphExecutive {
             
             c+= minEdgeCost;
             
+            
+            
             c+= delayCost;
                         
             //System.out.println("  s " + s + " >> " + nextTerm + " : " + " = " + c);

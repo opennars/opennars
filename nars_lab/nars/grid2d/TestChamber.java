@@ -45,7 +45,7 @@ public class TestChamber {
         Parameters.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
         NAR nar = builder.build();
         //set NAR runtime parmeters:  
-        Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;             //because there every intermediate step matters a lot
+        Parameters.IMMEDIATE_ETERNALIZATION=true;
         InternalExperience.NoWantBelieve=true;
         //(nar.param).duration.set(10);
         (nar.param).noiseLevel.set(0); 

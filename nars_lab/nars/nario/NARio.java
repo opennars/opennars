@@ -48,7 +48,7 @@ public class NARio extends Run {
 
     public static void main(String[] arg) {
         NAR nar = new Default().setConceptBagSize(1024).build();
-        Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f; 
+        Parameters.IMMEDIATE_ETERNALIZATION=true;
         //NAR nar = new ContinuousBagNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
          nar.param().beliefCyclesToForget.set(30);
