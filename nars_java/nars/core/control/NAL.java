@@ -252,7 +252,7 @@ public abstract class NAL implements Runnable {
             
             
             //"Since in principle it is always valid to eternalize a tensed belief"
-            if(Parameters.IMMEDIATE_ETERNALIZATION) { //temporalAdd
+            if(temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
                 
                 try {
 
