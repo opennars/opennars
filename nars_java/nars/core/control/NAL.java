@@ -20,6 +20,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
+import nars.inference.TruthFunctions;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.Negation;
@@ -249,13 +250,13 @@ public abstract class NAL implements Runnable {
                 return null;
             }
             
-            if(temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL!=0.0f) {
+            
+            //"Since in principle it is always valid to eternalize a tensed belief"
+            if(Parameters.IMMEDIATE_ETERNALIZATION) { //temporalAdd
                 
                 try {
-               
-                TruthValue truthEt=newTruth.clone();
-                truthEt.setConfidence(newTruth.getConfidence()*Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL);
-               
+
+                TruthValue truthEt=TruthFunctions.eternalize(newTruth);               
                 Stamp st=getTheNewStamp().clone();
                 st.setEternal();
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
