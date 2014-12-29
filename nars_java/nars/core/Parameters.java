@@ -175,7 +175,7 @@ public class Parameters {
     
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f;
+    public static boolean IMMEDIATE_ETERNALIZATION=false;
     
     
     
