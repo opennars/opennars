@@ -1,0 +1,6 @@
+<{sky} --> [blue]>.
+<{tom} --> cat>.
+<(*,{tom},{sky}) --> likes>.
+<(*,cat,[blue]) --> likes>?
+15000
+OUT: <(*,cat,[blue]) --> likes>. %1.00;0.36%
