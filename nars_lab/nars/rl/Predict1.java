@@ -416,7 +416,7 @@ public class Predict1 {
             }
         });
 
-        nar.on(Events.Solved.class, new EventObserver() {
+        nar.on(Events.Answer.class, new EventObserver() {
             @Override
             public void event(Class event, Object[] arguments) {
                 Task t = (Task) arguments[0];

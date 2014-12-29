@@ -21,7 +21,7 @@
 package nars.inference;
 
 import java.util.Arrays;
-import nars.core.Events.Solved;
+import nars.core.Events.Answer;
 import nars.core.Events.Unsolved;
 import nars.core.Memory;
 import nars.core.control.NAL;
@@ -187,7 +187,7 @@ public class LocalRules {
             //Solution Activated
             if(task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK) {
                 if(task.isInput()) { //only show input tasks as solutions
-                    memory.emit(Solved.class, task, belief); 
+                    memory.emit(Answer.class, task, belief); 
                 } else {
                     memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed   
                 }

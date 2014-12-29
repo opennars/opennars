@@ -79,7 +79,7 @@ public class Events {
     public static class TaskLinkAdd { }
     public static class TaskLinkRemove { }
     
-    public static class Solved { }
+    public static class Answer { }
     public static class Unsolved { }
     
     

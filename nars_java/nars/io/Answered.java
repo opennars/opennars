@@ -5,7 +5,7 @@
 package nars.io;
 
 import nars.core.EventEmitter.EventObserver;
-import nars.core.Events.Solved;
+import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -20,8 +20,8 @@ public abstract class Answered implements EventObserver {
     private Task question;
     private NAR nar;
     
-    final static Class[] events = new Class[] { Solved.class
-            /*, ConceptBeliefAdd.class*/ };
+    final static Class[] events = new Class[] { Answer.class
+ };
     
     public void start(Task question, NAR n) {
         this.nar = n;
@@ -48,7 +48,7 @@ public abstract class Answered implements EventObserver {
     @Override
     public void event(Class event, Object[] args) {                
         
-        if (event == Solved.class) {
+        if (event == Answer.class) {
             Task task = (Task)args[0];
             Sentence belief = (Sentence)args[1];
             if (task.equals(question)) {
