@@ -291,7 +291,7 @@ public class TextOutput extends Output {
                 Sentence question = task.sentence;
                 Sentence answer = belief;
                 
-                buffer.append(answer.toString(nar, false));
+                buffer.append(answer.toString(nar, showStamp));
             }
             else            
                 buffer.append( Arrays.toString((Object[])signal) );
