@@ -9,7 +9,7 @@ import java.util.Set;
 import nars.core.Events;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
-import nars.core.Events.Solved;
+import nars.core.Events.Answer;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -78,7 +78,7 @@ public class NARPrologMirror extends AbstractObserver {
     boolean reportAnswers = reportAssumptions;
     
     
-    public static final Class[] telepathicEvents = { Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, Events.ConceptQuestionAdd.class, IN.class, OUT.class, Solved.class };
+    public static final Class[] telepathicEvents = { Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, Events.ConceptQuestionAdd.class, IN.class, OUT.class, Answer.class };
     
     public static final Class[] inputOutputEvents = { IN.class, OUT.class };
     private long lastFlush;

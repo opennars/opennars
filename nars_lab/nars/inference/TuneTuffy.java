@@ -7,7 +7,7 @@ package nars.inference;
 import java.io.File;
 import java.io.FileNotFoundException;
 import nars.core.Build;
-import nars.core.Events.Solved;
+import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Sentence;
@@ -29,7 +29,7 @@ public class TuneTuffy {
         Sentence mostConfident = null;
         
         public SolutionMonitor(NAR n, String term) throws Narsese.InvalidInputException {
-            super(n, true, OUT.class, Solved.class);
+            super(n, true, OUT.class, Answer.class);
             
             Term t = new Narsese(n).parseTerm(term);
             this.term = t;
@@ -39,7 +39,7 @@ public class TuneTuffy {
 
         @Override
         public void event(Class event, Object[] args) {
-            if ((event == Solved.class) || (event == OUT.class)) {
+            if ((event == Answer.class) || (event == OUT.class)) {
                 Task task = (Task)args[0];
                 Term content = task.sentence.term;
                 if (task.sentence.isJudgment()) {
