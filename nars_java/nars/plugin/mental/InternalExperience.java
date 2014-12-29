@@ -50,10 +50,10 @@ public class InternalExperience implements Plugin, EventObserver {
     //dont use internal experience for want and believe if this setting is true
     public static boolean NoWantBelieve=false;
     
-    public boolean isWantBelief() {
+    public boolean isNoWantBelief() {
         return NoWantBelieve;
     }
-    public void setWantBelief(boolean val) {
+    public void setNoWantBelief(boolean val) {
         NoWantBelieve=val;
     }
     
