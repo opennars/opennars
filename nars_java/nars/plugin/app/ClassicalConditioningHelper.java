@@ -122,7 +122,8 @@ public class ClassicalConditioningHelper implements Plugin {
             for(int i=1;i<st.size();i++) {
                 Task ev=st.get(i);
                 Task lastev=st.get(i-1);
-                if(true)//desired
+                Concept c=nar.memory.concept(ev.sentence.term);
+                if(c!=null && c.isDesired())//desired
                 {
                     H.clear();
                     H.add(lastev);
@@ -317,13 +318,13 @@ public class ClassicalConditioningHelper implements Plugin {
             };
         }
         
-        /*
+        
         if(enabled) {
             Parameters.DEFAULT_JUDGMENT_PRIORITY=(float) 0.01;
         } else {
             Parameters.DEFAULT_JUDGMENT_PRIORITY=saved_priority;
         }
-        */
+        
         
         n.memory.event.set(obs, enabled, Events.TaskImmediateProcess.class);
         return true;
