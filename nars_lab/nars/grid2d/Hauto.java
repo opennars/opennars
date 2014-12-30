@@ -55,9 +55,9 @@ public class Hauto {
                         }
                     }
                     if(!nope) {
-                        TestChamber.space.add(new Pizza((int)i, (int)j, "pizza"+entityID.toString()));
+                        TestChamber.space.add(new Pizza((int)i, (int)j, "{pizza"+entityID.toString()+"}"));
                         if(TestChamber.staticInformation)
-                        nar.addInput("<pizza"+entityID.toString()+" --> pizza>."); 
+                        nar.addInput("<{pizza"+entityID.toString()+"} --> pizza>."); 
                         entityID++;
                     }
                 }
@@ -253,7 +253,7 @@ public class Hauto {
             return;
         }
         if(selected.material==Material.Pizza) {
-            doorname+="pizza"+entityID.toString();
+            doorname="{pizza"+entityID.toString()+"}";
         }
         if(!"".equals(doorname) && selected.material==Material.Pizza) {
             space.add(new Pizza((int)x, (int)y, doorname));
