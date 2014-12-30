@@ -21,6 +21,7 @@ import nars.language.Term;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
+import nars.plugin.mental.InternalExperience;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -617,6 +618,7 @@ public class Rover extends PhysicsModel {
         NAR nar = new Default().simulationTime().
                 build();
         Parameters.IMMEDIATE_ETERNALIZATION=true;
+        InternalExperience.NoWantBelieve=true;
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    
         (nar.param).noiseLevel.set(0);
