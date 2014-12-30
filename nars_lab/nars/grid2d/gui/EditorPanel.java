@@ -679,7 +679,7 @@ public class EditorPanel extends JPanel {
         resourceMenu.add(new EditorMode("pizza") {
             @Override
             public void run() {
-                s.cells.click("pizza", "", "");
+                s.cells.click("Pizza", "", "");
             }
         });
     }
