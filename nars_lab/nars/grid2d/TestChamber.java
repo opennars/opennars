@@ -20,6 +20,7 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
+import nars.plugin.app.plan.TemporalParticlePlanner;
 import nars.plugin.mental.InternalExperience;
 import processing.core.PVector;
 
@@ -47,6 +48,7 @@ public class TestChamber {
         //set NAR runtime parmeters:  
         Parameters.IMMEDIATE_ETERNALIZATION=true;
         InternalExperience.NoWantBelieve=true;
+        nar.addPlugin(new TemporalParticlePlanner());
         //(nar.param).duration.set(10);
         (nar.param).noiseLevel.set(0); 
         new NARSwing(nar);
