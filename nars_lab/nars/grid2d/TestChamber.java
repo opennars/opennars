@@ -257,8 +257,8 @@ public class TestChamber {
                                         inventorybag=(LocalGridObject)obi;
                                         if(obi!=null) {
                                             space.objects.remove(obi);
-                                            if(inventorybag.doorname.startsWith("key")) {
-                                                keyn=Integer.parseInt(inventorybag.doorname.replaceAll("key", ""));
+                                            if(inventorybag.doorname.startsWith("{key")) {
+                                                keyn=Integer.parseInt(inventorybag.doorname.replaceAll("{key", "").replaceAll("}", ""));
                                                 for(int i=0;i<cells.h;i++) {
                                                     for(int j=0;j<cells.w;j++) {
                                                         if(Hauto.doornumber(cells.readCells[i][j])==keyn) {
@@ -307,7 +307,7 @@ public class TestChamber {
                                     if("go-to".equals(opname)) {
                                         executed_going=false;
                                         nar.addInput("<"+goal+" --> [at]>. :|:");
-                                        if (goal.startsWith("pizza")) {
+                                        if (goal.startsWith("{pizza")) {
                                             GridObject ToRemove = null;
                                             for (GridObject obj : space.objects) { //remove pizza
                                                 if (obj instanceof LocalGridObject) {
