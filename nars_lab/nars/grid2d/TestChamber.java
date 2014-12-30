@@ -258,7 +258,7 @@ public class TestChamber {
                                         if(obi!=null) {
                                             space.objects.remove(obi);
                                             if(inventorybag.doorname.startsWith("{key")) {
-                                                keyn=Integer.parseInt(inventorybag.doorname.replaceAll("{key", "").replaceAll("}", ""));
+                                                keyn=Integer.parseInt(inventorybag.doorname.replaceAll("key", "").replace("}", "").replace("{", ""));
                                                 for(int i=0;i<cells.h;i++) {
                                                     for(int j=0;j<cells.w;j++) {
                                                         if(Hauto.doornumber(cells.readCells[i][j])==keyn) {
