@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
@@ -615,7 +616,7 @@ public class Rover extends PhysicsModel {
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new Default().simulationTime().
                 build();
-        
+        Parameters.IMMEDIATE_ETERNALIZATION=true;
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    
         (nar.param).noiseLevel.set(0);
