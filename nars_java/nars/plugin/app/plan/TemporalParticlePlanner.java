@@ -72,7 +72,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
     GraphExecutive graph;
 
     public TemporalParticlePlanner() {
-        this(12, 64, 16);
+        this(120, 64, 16);
     }
     
     
