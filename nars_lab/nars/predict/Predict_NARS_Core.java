@@ -47,6 +47,7 @@ public class Predict_NARS_Core {
         n.param.duration.set(duration);
         //n.param.duration.setLinear(0.5);
         n.param.conceptBeliefsMax.set(64);
+        n.param.noiseLevel.set(0);
         //n.param.conceptForgetDurations.set(16);
         
         n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
