@@ -54,7 +54,7 @@ public class Predict_NARS_Core {
             int curmax=0;
             @Override
             public void onProcessed(Task t, NAL n) {
-                if (t.sentence.getOccurenceTime() >= n.memory.time()) {
+                if (t.sentence.getOccurenceTime() >= n.memory.time() && t.sentence.truth.getExpectation()>0.5) {
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
                     int value = -1;
