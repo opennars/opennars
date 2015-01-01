@@ -32,10 +32,10 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 
 /**
- *
+ * Old version, broken
  * @author tc
  */
-public class play extends javax.swing.JFrame {
+class play extends javax.swing.JFrame {
 
     /**
      * Creates new form play
@@ -635,7 +635,7 @@ public class play extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void _main(String args[]) {
         
         /* Set the Nimbus look and feel */
         NARSwing.themeInvert();
