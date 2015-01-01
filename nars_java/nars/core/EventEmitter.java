@@ -89,10 +89,10 @@ public class EventEmitter {
     */
     
     public <C> void on(final Class<? extends C> event, final EventObserver<? extends C> o) {
-        if (Parameters.THREADS == 1) {
+        /*if (Parameters.THREADS == 1) {
             _on(event, o);
         }
-        else {
+        else*/ {
             synchronized(pendingOps) {
                 pendingOps.add(new Object[] { true, event, o });        
             }
@@ -116,10 +116,10 @@ public class EventEmitter {
      * @return  whether it was removed
      */
     public <C> void off(final Class<? extends C> event, final EventObserver<? extends C> o) {
-        if (Parameters.THREADS == 1) {
+        /*if (Parameters.THREADS == 1) {
             _off(event, o);
         }
-        else {
+        else*/ {
             synchronized(pendingOps) {
                 pendingOps.add(new Object[] { false, event, o });        
             }

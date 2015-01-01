@@ -24,7 +24,7 @@ public class TreeMLData implements MLData {
 
     boolean resetRangeEachCycle = true;
     public final String label;
-    protected final int capacity;
+    protected int capacity;
     private double[] specificMinMax;
     
     private boolean specificRange;
@@ -79,12 +79,14 @@ public class TreeMLData implements MLData {
         values.clear();
     }
 
-    public void setDefaultValue(double defaultValue) {
-        this.defaultValue = defaultValue;
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
-
     
-    
+    public TreeMLData setDefaultValue(double defaultValue) {
+        this.defaultValue = defaultValue;
+        return this;
+    }
 
     @Override
     public void add(final int t, final double f) {
@@ -200,6 +202,20 @@ public class TreeMLData implements MLData {
             setData(0, v);
         else
             setData(getEnd()+1, v);
+    }
+
+    
+    public boolean max(int time, double newValue) {
+        double v = getData(time);
+        if ((Double.isNaN(v)) || (v < newValue)) {
+            setData(time, newValue);
+            return true;
+        }
+        return false;
+    }
+
+    public void removeData(int t) {
+        values.remove(t);
     }
 
 

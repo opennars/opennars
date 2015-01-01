@@ -229,7 +229,7 @@ public class Predict3 {
                 observed.add((int) n.time(), signal);
             
             prevY = curY;
-            curY = discretize.f(signal);
+            curY = discretize.i(signal);
 
             if ((curY == prevY) && (onlyNoticeChange)) {
                 continue;
