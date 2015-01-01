@@ -10,11 +10,12 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import nars.entity.Item;
+import nars.language.Terms.Termable;
 
 /**
  * Item Hash = theta, Priority = radius
  */
-public class HashPriorityPolarLayout implements GraphDisplay<Item,Object> {
+public class HashPriorityPolarLayout implements GraphDisplay<Item, Object> {
 
     //# of radians to cover
     float arcStart, arcStop;
@@ -26,24 +27,27 @@ public class HashPriorityPolarLayout implements GraphDisplay<Item,Object> {
         this.spacing = spacing;
     }
 
-    
-    
     @Override
-    public void vertex(AbstractGraphVis<Item, Object> g, VertexVis<Item, Object> v) {        
-        if (v.getVertex() instanceof Item) {
-            float priority = v.getVertex().getPriority();
-            double radius = (1.0 - priority) * spacing + 8;
-            float angle = ((arcStop - arcStart) * Video.hashFloat(v.vertex.hashCode()) + arcStart) * ((float)Math.PI*2f);
-            v.tx = (float) (Math.cos(angle) * radius) * spacing;
-            v.ty = (float) (Math.sin(angle) * radius) * spacing;        
+    public void vertex(AbstractGraphVis<Item, Object> g, VertexVis<Item, Object> v) {
+        Item vertex = v.getVertex();
+
+        float priority = vertex.getPriority();
+        double radius = (1.0 - priority) * spacing + 8;
+
+        Object x = vertex;
+        if (vertex instanceof Termable) {
+            x = ((Termable) vertex).getTerm();
         }
-        
+
+        float angle = ((arcStop - arcStart) * Video.hashFloat(x.hashCode()) + arcStart) * ((float) Math.PI * 2f);
+        v.tx = (float) (Math.cos(angle) * radius) * spacing;
+        v.ty = (float) (Math.sin(angle) * radius) * spacing;
+
     }
 
     @Override
     public void edge(AbstractGraphVis<Item, Object> g, EdgeVis<Item, Object> e) {
-        
+
     }
 
-    
 }
