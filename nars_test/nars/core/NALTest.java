@@ -32,7 +32,7 @@ public class NALTest  {
     }
 
     int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
-    static public boolean showOutput = true;
+    static public boolean showOutput = false;
     static public boolean saveSimilar = true;
     static public boolean showSuccess = false;
     static public boolean showFail = true;

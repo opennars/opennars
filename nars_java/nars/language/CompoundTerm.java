@@ -20,11 +20,13 @@
  */
 package nars.language;
 
+import com.google.common.collect.Iterators;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -40,7 +42,7 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
 
 
-public abstract class CompoundTerm extends Term {
+public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     /**
      * list of (direct) term
@@ -1002,6 +1004,21 @@ public abstract class CompoundTerm extends Term {
     }
 
     
+    public Term[] cloneTermsReplacing(Term from, Term to) {
+        Term[] y = new Term[term.length];
+        int i = 0;
+        for (Term x : term) {
+            if (x.equals(from))
+                x = to;
+            y[i++] = x;
+        }
+        return y;
+    }
 
+    @Override
+    public Iterator<Term> iterator() {
+        return Iterators.forArray(term);
+    }
 
+    
 }

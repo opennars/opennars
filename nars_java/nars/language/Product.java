@@ -95,5 +95,7 @@ public class Product extends CompoundTerm {
         return NativeOperator.PRODUCT;
     }
 
+
+
     
 }

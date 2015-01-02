@@ -33,6 +33,7 @@ import nars.io.ChangedTextInput;
 import nars.io.narsese.Narsese;
 import nars.language.Tense;
 import nars.language.Term;
+import nars.plugin.filter.LimitDerivationPriority;
 
 /**
  *
@@ -57,7 +58,7 @@ public class PredictGUI extends JPanel {
     private boolean allowNegativeBeliefs = true;
     
     
-    int updatePeriodMS = 5;
+    int updatePeriodMS = 500;
     private final NAR n;
     private final GridBagConstraints cons;
 
@@ -87,7 +88,7 @@ public class PredictGUI extends JPanel {
     }
     
     public int getThinkInterval() {
-        return 100;
+        return 10;
     }
     
     public float getMissingRate() {
@@ -159,6 +160,7 @@ public class PredictGUI extends JPanel {
         n.param.conceptBeliefsMax.set(getMaxConceptBeliefs());
         n.param.noiseLevel.set(0);
         //n.param.conceptForgetDurations.set(16);
+        n.addPlugin(new LimitDerivationPriority());
         
         Discretize d = new Discretize(n, getDiscretization());
         
@@ -365,8 +367,8 @@ public class PredictGUI extends JPanel {
                 if (lastVal!=val) {
                     /*if (lastVal!=-1)
                         n.believe("<{x} --> y"+lastVal+">",Tense.Present, 0.0f, 0.95f);*/
-                                        
-                    n.believe("<{x} --> y"+val+">",Tense.Present, 1.0f, 0.99f);
+                                                  
+                    n.believe("<{x} --> y"+val+">",Tense.Present, 1.0f, 0.95f);
                 }
                 
                 
