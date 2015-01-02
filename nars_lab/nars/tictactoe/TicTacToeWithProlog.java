@@ -37,6 +37,7 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import nars.NARPrologMirror;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
@@ -56,7 +57,7 @@ import nars.operator.Operator;
  *
  * @author tc
  */
-public class TicTacToe extends JPanel {
+public class TicTacToeWithProlog extends JPanel {
 
     final boolean HUMAN = false;
     final boolean COMPUTER = true;
@@ -81,7 +82,7 @@ public class TicTacToe extends JPanel {
     
     
     
-    public TicTacToe() {
+    public TicTacToeWithProlog() {
         super(new BorderLayout());
 
         nar = new NAR(new Discretinuous().
@@ -90,6 +91,9 @@ public class TicTacToe extends JPanel {
                 simulationTime());
         
         Parameters.IMMEDIATE_ETERNALIZATION=true;
+        
+        new NARPrologMirror(nar, 0.75f, true).temporal(true, false);
+        new NARPrologMirror(nar, 0.75f, true).temporal(false, true);
         
         nar.memory.addOperator(new AddO("^addO"));        
         (nar.param).duration.set(1000);
@@ -249,7 +253,7 @@ public class TicTacToe extends JPanel {
                 }
                 
                 if (success) {
-                    nar.emit(TicTacToe.class, "NARS plays: " + i);
+                    nar.emit(TicTacToeWithProlog.class, "NARS plays: " + i);
                     nar.addInput("<input --> succeeded>. :|: %" + (success ? "1.00" : "0.00") + "%" );
                     nar.addInput("<(*," + i + ",nars) --> move>. :|:");
                     playing = !playing;
@@ -260,12 +264,12 @@ public class TicTacToe extends JPanel {
 
                 }
                 else {
-                    nar.emit(TicTacToe.class, "NARS selects invalid cell: " + i);
+                    nar.emit(TicTacToeWithProlog.class, "NARS selects invalid cell: " + i);
                     nar.addInput("(--,<input --> succeeded>). :|:");
                 }
             }
             else {
-                nar.emit(TicTacToe.class, "NARS not playing, but wants: " + i);    
+                nar.emit(TicTacToeWithProlog.class, "NARS not playing, but wants: " + i);    
                 nar.addInput("(--,<input --> succeeded>). :|:");
             }
             
@@ -419,7 +423,7 @@ public class TicTacToe extends JPanel {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new NWindow("NARTacToe", new TicTacToe()).show(400,400,true);
+                new NWindow("NARTacToe", new TicTacToeWithProlog()).show(400,400,true);
             }
         });
 
