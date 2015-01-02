@@ -16,7 +16,7 @@ public class NALTestDecisionMaking extends NALTest  {
         
         Map<String,Object> l = new TreeMap();
         
-        final String[] directories = new String[] { "nal/DecisionMaking" };
+        final String[] directories = new String[] { "nal/Examples/DecisionMaking" };
         
         for (String dir : directories ) {
 

@@ -50,7 +50,7 @@ public class ExampleFileInput extends TextInput {
     public static Map<String,Object> getUnitTests() {
         Map<String,Object> l = new TreeMap();
         
-        final String[] directories = new String[] { "nal/test", "nal/DecisionMaking", "nal/ClassicalConditioning" };
+        final String[] directories = new String[] { "nal/test", "nal/Examples/DecisionMaking", "nal/Examples/ClassicalConditioning" };
         
         for (String dir : directories ) {
 
