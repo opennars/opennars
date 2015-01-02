@@ -357,13 +357,13 @@ public class DefaultTextPerception implements Plugin, EventObserver {
         }
 
         String errorMessage = "Invalid input: \'" + line + "\'";
-        if(!line.startsWith("*silence=")) {
-            if (lastException!=null) {
-                errorMessage += " : " + lastException.toString(); 
-            }
 
-            memory.emit(Output.ERR.class, errorMessage);
+        if (lastException!=null) {
+            errorMessage += " : " + lastException.toString(); 
         }
+
+        memory.emit(Output.ERR.class, errorMessage);
+        
         return null;
     }
 

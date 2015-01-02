@@ -23,10 +23,6 @@ public class NaturalLanguagePerception {
     
     static public List<AbstractTask> parseLine(String input, Narsese narsese, String prefix) {
 
-        if(input.startsWith("*silence=")) {
-            return null;
-        }
-        
         List<String> statements = new ArrayList();
 
         parseLineInternal(input, statements, prefix);
