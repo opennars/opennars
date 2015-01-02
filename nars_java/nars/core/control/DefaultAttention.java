@@ -38,7 +38,7 @@ public class DefaultAttention implements Attention {
     private Memory memory;
     
     private Cycle loop = new Cycle();
-    final List<Runnable> run = new ArrayList();
+    
        
     public class Cycle {
         public final AtomicInteger threads = new AtomicInteger();
@@ -144,8 +144,8 @@ public class DefaultAttention implements Attention {
     
     
     public void cycleSequential() {
-
-        run.clear();
+        final List<Runnable> run = new ArrayList();
+        
         memory.processNewTasks(loop.newTasksPriority(), run);
         memory.run(run);
         
@@ -163,7 +163,7 @@ public class DefaultAttention implements Attention {
 
     public void cycleParallel() {
 
-        run.clear();
+        final List<Runnable> run = new ArrayList();
         
         memory.processNewTasks(loop.newTasksPriority(), run);
         
