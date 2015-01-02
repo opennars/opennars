@@ -431,7 +431,7 @@ public class GraphExecutive {
 //        }
 //        return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
         
-        if (c.getTruth().getFrequency() < 0.25f) {
+        if (c.getTruth().getExpectation() < 0.5f) {
             System.err.println(c + " has inverse truth which could be used to negatively weight results");
         }
         
