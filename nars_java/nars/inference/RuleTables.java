@@ -20,6 +20,8 @@
  */
 package nars.inference;
 
+import java.util.HashSet;
+import java.util.Set;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -108,23 +110,34 @@ public class RuleTables {
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
+            
+            
             //this is a new attempt/experiment to make nars effectively track temporal coherences
             if(beliefTerm instanceof Implication && 
                     (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
+                //prevent duplicate inductions
+                Set<Term> alreadyInducted = new HashSet();
+                
                 for(int i=0;i<Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;i++) {
+                    
                     Concept next=nal.memory.concepts.sampleNextConcept();
-                    if (next!=null && !next.beliefs.isEmpty()) {
-                        Sentence s=next.beliefs.get(0);
-                        if (s != null) {
-                            Term t=s.term;
-                            if((t instanceof Implication)) {
-                                Implication Imp=(Implication) t;
-                                if(Imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || Imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                                    TemporalRules.temporalInductionChain(s, belief, nal);
-                                    TemporalRules.temporalInductionChain(belief, s, nal);
-                                }
-                            }
+                    if (next == null) continue;
+                        
+                    Term t = next.getTerm();
+                    
+                    if ((t instanceof Implication) && (!alreadyInducted.contains(t))) {
+                        
+                        Implication implication=(Implication) t;
+                        
+                        if (!next.beliefs.isEmpty() && (implication.isForward() || implication.isConcurrent())) {
+                        
+                            Sentence s=next.beliefs.get(0);
+                            
+                            TemporalRules.temporalInductionChain(s, belief, nal);
+                            TemporalRules.temporalInductionChain(belief, s, nal);
+                            alreadyInducted.add(t);
+                            
                         }
                     }
                }
