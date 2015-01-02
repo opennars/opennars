@@ -56,15 +56,7 @@ public class InternalExperience implements Plugin, EventObserver {
     public void setNoWantBelieve(boolean val) {
         NoWantBelieve=val;
     }
-    
-    public boolean isImmediateEternalization() {
-        return Parameters.IMMEDIATE_ETERNALIZATION;
-    }
-    public void setImmediateEternalization(boolean val) {
-        Parameters.IMMEDIATE_ETERNALIZATION=val;
-    }
-    
-    
+
     private Memory memory;
 
 
