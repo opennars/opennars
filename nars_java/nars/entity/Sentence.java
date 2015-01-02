@@ -107,6 +107,22 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
         
+        if(_content instanceof Statement) {
+            Statement in=(Statement) _content;
+            if(in.getSubject() instanceof Variable) {
+                Variable v=(Variable) in.getSubject();
+                if(v.hasVarDep() || v.hasVarIndep()) {
+                    throw new RuntimeException("A statement sentence is not allowed to have a in/dependent variable as subj or pred");
+                }
+            }
+            if(in.getPredicate()instanceof Variable) {
+                Variable v=(Variable) in.getPredicate();
+                if(v.hasVarDep() || v.hasVarIndep()) {
+                    throw new RuntimeException("A statement sentence is not allowed to have a in/dependent variable as subj or pred");
+                }
+            }
+        }
+        
         if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
             if (!Term.valid(_content)) {
                 CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);

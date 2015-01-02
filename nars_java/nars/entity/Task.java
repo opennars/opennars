@@ -86,9 +86,6 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
      */
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
         super(b);
-        if (s.term instanceof Interval) {
-            throw new RuntimeException("Invalid task term (interval is not allowed): " + s);
-        }
         this.sentence = s;
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
