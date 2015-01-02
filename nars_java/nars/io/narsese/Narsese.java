@@ -173,12 +173,6 @@ public class Narsese {
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));
         if (content == null) throw new InvalidInputException("Content term missing");
-
-        if(str.startsWith("*silence=")) {
-            int value=Integer.valueOf(str.replace("*silence=", ""));
-            memory.param.noiseLevel.set(value);
-            return null;
-        }
             
         Sentence sentence = new Sentence(content, punc, truth, stamp);
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
