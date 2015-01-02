@@ -13,7 +13,7 @@
 (^go-to,{place4}). :|: %1.00;0.90%
 6
 <{place4} --> [at]>. :|: %1.00;0.90%
-6
+50
 <{door5} --> opened>!
 <{door5} --> opened>!
 <{door5} --> opened>!
