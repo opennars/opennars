@@ -1,5 +1,7 @@
 package nars.gui.output;
 
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -14,10 +16,13 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.gui.output.graph.TermSyntaxVis;
+import nars.language.Term;
 
 public class SentenceTablePanel extends TablePanel {
 
     private final JButton syntaxGraphButton;
+    private PCanvas syntaxPanel=null;
 
     public SentenceTablePanel(NAR nar) {
         super(nar);
@@ -81,6 +86,19 @@ public class SentenceTablePanel extends TablePanel {
     }
 
     public void newSelectedGraphPanel() {
+        Term[] sel=new Term[table.getSelectedRows().length];
+        int k=0;
+        for(int i: table.getSelectedRows()) {
+            Sentence w=(Sentence) table.getValueAt(i, 1);
+            sel[k]=w.term;
+            k++;
+        }
+        TermSyntaxVis tt = new TermSyntaxVis(sel);
+        syntaxPanel = new PCanvas(tt);
+        syntaxPanel.setZoom(10f);
+        NWindow w = new NWindow("", syntaxPanel);
+        w.setSize(400, 400);
+        w.setVisible(true);
 //        ProcessingGraphPanel2 pgp = new ProcessingGraphPanel2(getSelectedRows(1)) {
 //
 //            @Override
