@@ -21,6 +21,7 @@ import nars.language.Term;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
+import nars.plugin.app.plan.TemporalParticlePlanner;
 import nars.plugin.mental.InternalExperience;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
@@ -619,6 +620,7 @@ public class Rover extends PhysicsModel {
                 build();
         Parameters.IMMEDIATE_ETERNALIZATION=true;
         InternalExperience.NoWantBelieve=true;
+        nar.addPlugin(new TemporalParticlePlanner());
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    
         (nar.param).noiseLevel.set(0);
