@@ -31,6 +31,7 @@ import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
 import nars.io.ChangedTextInput;
 import nars.io.narsese.Narsese;
+import nars.language.Tense;
 import nars.language.Term;
 
 /**
@@ -44,19 +45,19 @@ public class PredictGUI extends JPanel {
     
     final int maxDiscretization = 9; //because of the digit assumption
 
-    final int minFutureTime = 1; //set to zero to consider beliefs about present time as a prediction; > 0 means all predictions must be some time ahead in the future
+    final int minFutureTime = 5; //set to zero to consider beliefs about present time as a prediction; > 0 means all predictions must be some time ahead in the future
     
     float signal = 0;
     
-    float predictionMagnitudeThreshold = 0.05f; //min magnitude of a prediction to be considered
+    float predictionMagnitudeThreshold = 0.5f; //min magnitude of a prediction to be considered
 
-    boolean projectFutureBeliefs = true;
+    boolean projectFutureBeliefs = false;
     
     final int historySize = 128;
+    private boolean allowNegativeBeliefs = true;
     
     
-    
-    int updatePeriodMS = 30;
+    int updatePeriodMS = 5;
     private final NAR n;
     private final GridBagConstraints cons;
 
@@ -74,7 +75,7 @@ public class PredictGUI extends JPanel {
     }
     
     public int getDuration() {
-        return 6;
+        return 5;
     }
     
     public float getFrequency() {
@@ -86,7 +87,7 @@ public class PredictGUI extends JPanel {
     }
     
     public int getThinkInterval() {
-        return 30;
+        return 100;
     }
     
     public float getMissingRate() {
@@ -129,7 +130,7 @@ public class PredictGUI extends JPanel {
         }
     }
     
-    public PredictGUI() {
+    public PredictGUI() throws Narsese.InvalidInputException {
         super();
         
         setLayout(new GridBagLayout());
@@ -145,10 +146,10 @@ public class PredictGUI extends JPanel {
         
         
         addSlider("Signal Type", signalType = new AtomicDouble(0), 0, 5f);
-        addSlider("Signal Period", signalPeriod = new AtomicDouble(100), 0, 1000f);
+        addSlider("Signal Period", signalPeriod = new AtomicDouble(1000), 0, 2000f);
         addSlider("Noise Rate", noiseRate = new AtomicDouble(0), 0, 1.0f);
         addSlider("Missing Rate", missingRate = new AtomicDouble(0), 0, 1.0f);
-        addSlider("Discretization", discretizationAtomic = new AtomicDouble(3), 2, maxDiscretization);
+        addSlider("Discretization", discretizationAtomic = new AtomicDouble(7), 2, maxDiscretization);
         
         Parameters.DEBUG = true;
 
@@ -187,6 +188,7 @@ public class PredictGUI extends JPanel {
         
         
         n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
+            
             //int curmax=0;
             
             protected void updatePrediction(int t) {
@@ -210,7 +212,8 @@ public class PredictGUI extends JPanel {
                     double belief = 0;
                     
                     if (!Double.isNaN(pos)) belief += pos;
-                    if (!Double.isNaN(neg)) belief -= neg;
+                    if (allowNegativeBeliefs)
+                        if (!Double.isNaN(neg)) belief -= neg;
                     
                         
                     
@@ -241,6 +244,7 @@ public class PredictGUI extends JPanel {
                 
                 if (meanSamples > 0) {
                     double mean = total / meanSamples;
+                    
                     prediction.setData(t, d.continuous(mean));
                     
                     predictionGreedy.setData(t, d.continuous(strongest));
@@ -249,6 +253,9 @@ public class PredictGUI extends JPanel {
             
             @Override
             public void onProcessed(Task t, NAL n) {
+                if (!t.sentence.isJudgment()) return;
+                if (t.sentence.isEternal()) return;
+                
                 float freq = t.sentence.truth.getFrequency();
                 float conf = t.sentence.truth.getConfidence();
                 boolean positive = freq >= 0.5;
@@ -268,8 +275,7 @@ public class PredictGUI extends JPanel {
                 if (ts.length()!=prefix.length() + 1 + suffix.length())
                     return;
                     
-                if (!t.sentence.isJudgment()) return;
-                if (t.sentence.isEternal()) return;
+
                 
                 if ((then - now >= minFutureTime) && (magnitude >= predictionMagnitudeThreshold)) {
                      
@@ -326,6 +332,7 @@ public class PredictGUI extends JPanel {
         
         ChangedTextInput chg=new ChangedTextInput(n);
         
+        int val, lastVal=-1;
         
         while (true) {
 
@@ -334,7 +341,7 @@ public class PredictGUI extends JPanel {
             chg.setAllowRepeatInputs(allowsRepeatInputs());
             
             
-            n.run(getThinkInterval());
+            n.run(getThinkInterval()-1);
             
             try {
                 Thread.sleep(updatePeriodMS);
@@ -349,10 +356,26 @@ public class PredictGUI extends JPanel {
                 observed.add((int) n.time(), signal);
                 
                 
-                int val = d.i(signal);
-                chg.set("<{x} --> y"+val+">. :|:");
+                val = d.i(signal);
+
+                
+                
+                
+                
+                if (lastVal!=val) {
+                    /*if (lastVal!=-1)
+                        n.believe("<{x} --> y"+lastVal+">",Tense.Present, 0.0f, 0.95f);*/
+                                        
+                    n.believe("<{x} --> y"+val+">",Tense.Present, 1.0f, 0.99f);
+                }
+                
+                
+                
+                //chg.set("<{x} --> y"+val+">. :|:");
 
                 observedDiscrete.add((int)n.time(), val);
+                
+                lastVal = val;
                 
             }
 
