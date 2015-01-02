@@ -353,7 +353,7 @@ public class Stamp implements Cloneable {
         
         if (Parameters.DEBUG) {
             if (eternalOccurrence && tense!=Tense.Eternal) {
-                throw new RuntimeException(this + " has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
+                throw new RuntimeException("Stamp has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
             }
         }
         

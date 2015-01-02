@@ -39,4 +39,9 @@ public class BarChart extends LineChart {
             l.g.rect(px, py, width * timeScale * barWidth, h);
         }
     }
+
+    public BarChart setBarWidth(float f) {
+        this.barWidth = f;
+        return this;
+    }
 }
