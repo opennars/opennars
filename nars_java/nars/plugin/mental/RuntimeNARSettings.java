@@ -30,25 +30,25 @@ public class RuntimeNARSettings implements Plugin {
         Parameters.IMMEDIATE_ETERNALIZATION=val;
     }
     
-    public int getDuration() {
+    public double getDuration() {
         return n.param.duration.get();
     }
-    public void setDuration(int val) {
-        n.param.duration.set(val);
+    public void setDuration(double val) {
+        n.param.duration.set((int) val);
     }
     
-    public int getTemporalInductionPriority() {
+    public double getTemporalInductionPriority() {
         return Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
     }
-    public void setTemporalInductionPriority(int val) {
-        Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES=val;
+    public void setTemporalInductionPriority(double val) {
+        Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES=(int) val;
     }
     
-    public float getEvidentalHorizon() {
+    public double getEvidentalHorizon() {
         return Parameters.HORIZON;
     }
-    public void setEvidentalHorizon(float val) {
-        Parameters.HORIZON=val;
+    public void setEvidentalHorizon(double val) {
+        Parameters.HORIZON=(float) val;
     }
     
 }
