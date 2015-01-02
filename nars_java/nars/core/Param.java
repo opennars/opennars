@@ -113,6 +113,7 @@ public class Param implements Serializable {
     public final AtomicDouble reliance = new AtomicDouble();
     
     
+    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
     public void setTiming(Timing time) {
         this.timing = time;
     }

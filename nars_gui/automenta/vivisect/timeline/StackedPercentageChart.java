@@ -64,5 +64,10 @@ public class StackedPercentageChart extends LineChart {
             }
         }
     }
+
+    public StackedPercentageChart setBarWidth(float f) {
+        this.barWidth = f;
+        return this;
+    }
     
 }

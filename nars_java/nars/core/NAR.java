@@ -195,11 +195,16 @@ public class NAR implements Runnable, TaskSource {
         return addInput(-1, -1, taskText, frequency, confidence);
     }
     
-    
-    public NAR believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
+   public NAR believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         
         return addInput(memory.newTask(new Narsese(this).parseTerm(termString),
-                Symbols.JUDGMENT_MARK, freq, conf, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, tense));
+                Symbols.JUDGMENT_MARK, freq, conf, pri, dur, tense));
+    }
+
+   
+    public NAR believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
+        
+        return believe(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, tense, freq, conf);
     }
 
     
@@ -221,7 +226,7 @@ public class NAR implements Runnable, TaskSource {
                                 new Narsese(this).parseTerm(termString),
                                 Symbols.QUESTION_MARK, 
                                 null, 
-                                new Stamp(memory)), 
+                                new Stamp(memory, Tense.Eternal)), 
                         new BudgetValue(
                                 Parameters.DEFAULT_QUESTION_PRIORITY, 
                                 Parameters.DEFAULT_QUESTION_DURABILITY, 
@@ -644,9 +649,6 @@ public class NAR implements Runnable, TaskSource {
                         "@" + timeEnd + ": Real-time consumed by frame (" + 
                                 frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
             }
-        }
-        else if (memory.getTiming() == Timing.Simulation) {
-            memory.addSimulationTime(getSimulationTimeCyclesPerFrame());
         }
     }
     

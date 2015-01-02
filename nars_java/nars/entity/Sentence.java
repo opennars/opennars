@@ -455,7 +455,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         
         final long t = nar.memory.time();
 
-        final String tenseString = ( (punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.getDuration()) : "";
+        final String tenseString = stamp.getTense(t, nar.memory.getDuration());
         
         
         CharSequence stampString = showStamp ? stamp.name() : null;

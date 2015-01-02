@@ -8,7 +8,9 @@ import automenta.vivisect.TreeMLData;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
+import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
+import automenta.vivisect.timeline.StackedPercentageChart;
 import automenta.vivisect.timeline.TimelineVis;
 import com.google.common.util.concurrent.AtomicDouble;
 import java.awt.BorderLayout;
@@ -21,16 +23,20 @@ import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import nars.core.Events;
+import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.control.NAL;
+import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
 import nars.io.ChangedTextInput;
 import nars.io.narsese.Narsese;
+import nars.language.Interval;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.plugin.filter.LimitDerivationPriority;
@@ -46,19 +52,21 @@ public class PredictGUI extends JPanel {
     
     final int maxDiscretization = 9; //because of the digit assumption
 
-    final int minFutureTime = 5; //set to zero to consider beliefs about present time as a prediction; > 0 means all predictions must be some time ahead in the future
+    final int minFutureTime = 1; //set to zero to consider beliefs about present time as a prediction; > 0 means all predictions must be some time ahead in the future
     
     float signal = 0;
     
-    float predictionMagnitudeThreshold = 0.5f; //min magnitude of a prediction to be considered
+    float predictionMagnitudeThreshold = 0.01f; //min magnitude of a prediction to be considered
+    float greedyPredictionThreshold = 0.05f;
 
-    boolean projectFutureBeliefs = false;
+    boolean projectFutureBeliefs = true;
     
     final int historySize = 128;
     private boolean allowNegativeBeliefs = true;
+    private final boolean limitDerivationPriority = true;
     
     
-    int updatePeriodMS = 500;
+    int updatePeriodMS = 5;
     private final NAR n;
     private final GridBagConstraints cons;
 
@@ -76,7 +84,7 @@ public class PredictGUI extends JPanel {
     }
     
     public int getDuration() {
-        return 5;
+        return 6;
     }
     
     public float getFrequency() {
@@ -88,7 +96,7 @@ public class PredictGUI extends JPanel {
     }
     
     public int getThinkInterval() {
-        return 10;
+        return getDuration()*2;
     }
     
     public float getMissingRate() {
@@ -100,10 +108,10 @@ public class PredictGUI extends JPanel {
     }
     
     private boolean allowsRepeatInputs() {
-        return false;
+        return true;
     }
     private int getMaxConceptBeliefs() {
-        return 64;
+        return 16;
     }
     
     
@@ -146,26 +154,36 @@ public class PredictGUI extends JPanel {
         setPreferredSize(new Dimension(150, 500));
         
         
-        addSlider("Signal Type", signalType = new AtomicDouble(0), 0, 5f);
-        addSlider("Signal Period", signalPeriod = new AtomicDouble(1000), 0, 2000f);
+        addSlider("Signal Type", signalType = new AtomicDouble(1), 0, 5f);
+        addSlider("Signal Period", signalPeriod = new AtomicDouble(20), 0, 200f);
         addSlider("Noise Rate", noiseRate = new AtomicDouble(0), 0, 1.0f);
         addSlider("Missing Rate", missingRate = new AtomicDouble(0), 0, 1.0f);
-        addSlider("Discretization", discretizationAtomic = new AtomicDouble(7), 2, maxDiscretization);
+        addSlider("Discretization", discretizationAtomic = new AtomicDouble(3), 2, maxDiscretization);
         
         Parameters.DEBUG = true;
 
-        n = new NAR(new Default().setInternalExperience(null));
+        n = new NAR(new Default().simulationTime().setInternalExperience(null));
+        
+        NARSwing.themeInvert();
+        new NARSwing(n);
+        
         n.param.duration.set(getDuration());
         //n.param.duration.setLinear(0.5);
         n.param.conceptBeliefsMax.set(getMaxConceptBeliefs());
         n.param.noiseLevel.set(0);
-        //n.param.conceptForgetDurations.set(16);
-        n.addPlugin(new LimitDerivationPriority());
+        n.param.conceptForgetDurations.set(5);
+        
+        Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES = 32;
+        Parameters.STM_SIZE = 6;
+        
+        
+        if (limitDerivationPriority)
+            n.addPlugin(new LimitDerivationPriority());
         
         Discretize d = new Discretize(n, getDiscretization());
         
-        TreeMLData observed = new TreeMLData("observed", Color.WHITE, historySize).setRange(0, 1f);
-        TreeMLData observedDiscrete = new TreeMLData("observed", Color.WHITE, historySize);
+        TreeMLData observed = new TreeMLData("observed", Color.WHITE, historySize*8).setRange(0, 1f);
+        TreeMLData observedDiscrete = new TreeMLData("observed", Color.WHITE, historySize/4);
         
         TreeMLData prediction = new TreeMLData("prediction", Color.WHITE, historySize).setRange(0, 1f).setDefaultValue(0);
         TreeMLData predictionGreedy = new TreeMLData("prediction", Color.WHITE, historySize).setRange(0, 1f);
@@ -188,7 +206,14 @@ public class PredictGUI extends JPanel {
             reflections[i].setDefaultValue(0.0);
         }
         
-        
+
+        n.on(Events.ConceptBeliefAdd.class, new ConceptBeliefAdd() {
+
+            @Override
+            public void onBeliefAdd(Concept c, Task t, Object[] extra) {
+            }
+            
+        });
         n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
             
             //int curmax=0;
@@ -249,7 +274,8 @@ public class PredictGUI extends JPanel {
                     
                     prediction.setData(t, d.continuous(mean));
                     
-                    predictionGreedy.setData(t, d.continuous(strongest));
+                    if (strongestAmount > greedyPredictionThreshold / meanSamples)
+                        predictionGreedy.setData(t, d.continuous(strongest));
                 }
             }
             
@@ -262,7 +288,7 @@ public class PredictGUI extends JPanel {
                 float conf = t.sentence.truth.getConfidence();
                 boolean positive = freq >= 0.5;
                 float magnitude = 2f * Math.abs( freq - 0.5f ) * conf;
-                long now = n.memory.time();
+                long now = t.sentence.getCreationTime(); //n.memory.time();
                 
                 //float exp = t.sentence.truth.getExpectation();
                 Term term = t.getTerm();
@@ -288,7 +314,7 @@ public class PredictGUI extends JPanel {
                     TreeMLData pp = (positive) ? predictionsPos[value] : predictionsNeg[value];
                     
                     if (projectFutureBeliefs)
-                        magnitude = TruthFunctions.temporalProjection(now, then, now);
+                        magnitude = TruthFunctions.temporalProjection(now, then, n.memory.time());
                     
                     pp.max( (int)then, magnitude );
                 
@@ -306,10 +332,10 @@ public class PredictGUI extends JPanel {
                 new LineChart(observed).thickness(16f).height(128),               
                 new LineChart(observedDiscrete).thickness(16f).height(128),               
                 
-                //new LineChart(predictionsPos).thickness(16f).height(128),
-                new LineChart(prediction).thickness(16f).height(256),
-                new LineChart(predictionGreedy).thickness(16f).height(256)
-                //new LineChart(predictionsNeg).thickness(16f).height(128)
+                new StackedPercentageChart(predictionsPos).setBarWidth(26f).height(64),
+                new BarChart(prediction).setBarWidth(13f).height(128),
+                new LineChart(predictionGreedy).thickness(16f).height(256),
+                new StackedPercentageChart(predictionsNeg).setBarWidth(26f).height(64)
                 
                 //new BarChart(reflections).thickness(16f).height(128)
                 /*new LineChart(predictions[1]).thickness(16f).height(128),
@@ -318,7 +344,7 @@ public class PredictGUI extends JPanel {
         
         
 
-        tc.camera.timeScale = 1f;
+        tc.camera.timeScale = 4f;
         
         JPanel sp = new JPanel(new BorderLayout());
         sp.add(new PCanvas(tc), CENTER);
@@ -328,13 +354,13 @@ public class PredictGUI extends JPanel {
 
         //n.run((int)getDiscretization()*4); //initial thinking pause
         
-        NARSwing.themeInvert();
 
-        new NARSwing(n);
+        
         
         ChangedTextInput chg=new ChangedTextInput(n);
         
         int val, lastVal=-1;
+        long lastTime = -1;
         
         while (true) {
 
@@ -343,7 +369,9 @@ public class PredictGUI extends JPanel {
             chg.setAllowRepeatInputs(allowsRepeatInputs());
             
             
-            n.run(getThinkInterval()-1);
+            n.step(getThinkInterval());
+            n.memory.addSimulationTime(1);
+            //System.out.println(n.time() + " " + n.memory.getTimeDelta());
             
             try {
                 Thread.sleep(updatePeriodMS);
@@ -359,25 +387,43 @@ public class PredictGUI extends JPanel {
                 
                 
                 val = d.i(signal);
+                
+                
+                if (allowsRepeatInputs()  || (lastVal!=val)) {
+                    
+                    String nowBelief = "<{x} --> y"+val+">";
+                    
+                    
+                    //int interval = 1;
+                    
+                    if (lastVal!=-1) {
+                        
+                        if (lastVal != val) {
+                            long now = n.time();
+                            long dt = now - lastTime;
+                            int interval = Interval.timeToMagnitude(dt, n.param.duration);
 
-                
-                
-                
-                
-                if (lastVal!=val) {
-                    /*if (lastVal!=-1)
-                        n.believe("<{x} --> y"+lastVal+">",Tense.Present, 0.0f, 0.95f);*/
+                            String prevBelief = "<{x} --> y"+lastVal+">";
+                            n.believe("<(&/," + prevBelief + ",+" + interval + ") =/> " + nowBelief + ">",Tense.Present, 1.0f, 1.0f / getDiscretization());
+                            
+                            lastTime = now;
+                            
+                        }
+                        
+                        observedDiscrete.add((int)n.time(), val);
+
+
+                    }
+                    
+                    lastVal = val;
                                                   
-                    n.believe("<{x} --> y"+val+">",Tense.Present, 1.0f, 0.95f);
+                    n.believe(0.95f, 0.8f, nowBelief, Tense.Present, 1.0f, 0.95f);
+                    
+                    //n.ask("<{x} --> ?>");
+                    
                 }
                 
-                
-                
                 //chg.set("<{x} --> y"+val+">. :|:");
-
-                observedDiscrete.add((int)n.time(), val);
-                
-                lastVal = val;
                 
             }
 
