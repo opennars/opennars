@@ -1,9 +1,12 @@
 package nars.core.build;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import nars.core.Attention;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
@@ -22,10 +25,10 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.io.DefaultTextPerception;
+import nars.io.TextInput;
 import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
-import nars.plugin.filter.DeriveOnlyDemandedTasks;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
@@ -285,7 +288,9 @@ public class Default extends Build implements ConceptBuilder {
     
     
     public static class CommandLineNARBuilder extends Default {
-
+        
+        List<String> filesToLoad = new ArrayList();
+        
         public CommandLineNARBuilder(String[] args) {
             super();
 
@@ -296,13 +301,37 @@ public class Default extends Build implements ConceptBuilder {
                     int sl = Integer.parseInt(arg);                
                     param.noiseLevel.set(100-sl);
                 }
-                if ("--noise".equals(arg)) {
+                else if ("--noise".equals(arg)) {
                     arg = args[++i];
                     int sl = Integer.parseInt(arg);                
                     param.noiseLevel.set(sl);
-                }            
+                }    
+                else {
+                    filesToLoad.add(arg);
+                }
+                
             }        
         }
+
+        @Override
+        public NAR init(NAR n) {
+            n = super.init(n); 
+            
+            for (String x : filesToLoad) {
+                try {
+                    n.addInput( new TextInput(new File(x) ) );
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                n.run(1);
+            }
+            
+            return n;
+        }
+
+        
+        
+        
         /**
          * Decode the silence level
          *

@@ -312,6 +312,7 @@ public class NARGraph extends DirectedMultigraph {
 
     public List<Concept> currentLevel = new ArrayList();
 
+
     public NARGraph add(NAR n, Filter filter, Graphize graphize) {
         graphize.onTime(this, n.time());
 

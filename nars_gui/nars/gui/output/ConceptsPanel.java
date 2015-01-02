@@ -5,8 +5,11 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
+import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.swing.PCanvas;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,7 +24,6 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
@@ -31,12 +33,12 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.TruthValue.Truthable;
 import nars.gui.WrapLayout;
-import nars.inference.TruthFunctions;
+import nars.gui.output.graph.TermSyntaxVis;
 
 /**
  * Views one or more Concepts
  */
-public class ConceptsPanel extends VerticalPanel implements EventObserver, Runnable {
+public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
 
     private final NAR nar;
     private final LinkedHashMap<Concept, ConceptPanel> concept;
@@ -45,15 +47,33 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
         super();
 
         this.nar = n;
+            this.concept = new LinkedHashMap();
 
-        this.concept = new LinkedHashMap();
-        int i = 0;
-        for (Concept x : c) {
-            if (x==null) continue;
+        if (c.length == 1) {
+            ConceptPanel v = new ConceptPanel(c[0], nar.time()); 
+            setLayout(new BorderLayout());
+            add(v, CENTER);
+            concept.put(c[0], v);
+        }
+        else {
+            VerticalPanel v = new VerticalPanel() {
+
+                @Override
+                protected void onShowing(boolean showing) {
+                    ConceptsPanel.this.onShowing(showing);
+                }
+                
+            };
+            add(v, CENTER);
             
-            ConceptPanel p = new ConceptPanel(x, nar.time());
-            addPanel(i++, p);
-            concept.put(x, p);
+            int i = 0;
+            for (Concept x : c) {
+                if (x==null) continue;
+
+                ConceptPanel p = new ConceptPanel(x, nar.time());
+                v.addPanel(i++, p);
+                concept.put(x, p);
+            }
         }
 
         updateUI();
@@ -111,6 +131,7 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
         final float titleSize = 24f;
         final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
+        private final PCanvas syntaxPanel;
         
         public ConceptPanel(Concept c, long time) {
             this(c);
@@ -121,26 +142,50 @@ public class ConceptsPanel extends VerticalPanel implements EventObserver, Runna
             super(new BorderLayout());
             this.concept = c;
 
+            JPanel overlay = new JPanel(new BorderLayout());
+            
             JPanel details = new JPanel(new WrapLayout(FlowLayout.LEFT));
-            add(details, CENTER);
+            details.setOpaque(false);
 
             details.add(this.beliefChart = new TruthChart(chartWidth, chartHeight));
             details.add(this.questionChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight));
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
             //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
             
-            add(this.beliefTime = new BeliefTimeline(chartWidth*3, chartHeight/2), SOUTH);
 
             JPanel titlePanel = new JPanel(new BorderLayout());
+            titlePanel.setOpaque(false);
             
             titlePanel.add(this.title = new JTextArea(concept.term.toString()), CENTER);
-            this.title.setEditable(false);
+            title.setEditable(false);
+            title.setOpaque(false);
             titlePanel.add(this.subtitle = new JLabel(), SOUTH);
             
             details.add(titlePanel);
             
             title.setFont(Video.monofont.deriveFont(titleSize ));
 
+            overlay.add(details, CENTER);
+            overlay.add(this.beliefTime = new BeliefTimeline(chartWidth*3, chartHeight/2), SOUTH);
+
+            
+            
+            TermSyntaxVis tt = new TermSyntaxVis(c.term);
+            syntaxPanel = new PCanvas(tt);
+            syntaxPanel.setZoom(10f);
+            
+            syntaxPanel.noLoop();
+            syntaxPanel.redraw();
+
+            
+                        
+
+            add(syntaxPanel);
+            add(overlay, NORTH);  
+            
+            setComponentZOrder(overlay, 1);
+            syntaxPanel.setBounds(0,0,400,400);
+            
             
         }
 
