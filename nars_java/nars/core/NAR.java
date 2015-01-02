@@ -353,7 +353,12 @@ public class NAR implements Runnable, TaskSource {
                 throw new RuntimeException(ex.toString());
             emit(ERR.class, ex);
         }
+        
         ioChanged = true;
+        
+        if (!running)
+            updatePorts();
+
         return i;
     }
 

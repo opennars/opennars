@@ -67,12 +67,10 @@ public class DefaultGraphizer implements NARGraph.Graphize {
         termLinks.clear();
     }
 
-    protected void addTerm(NARGraph g, Term t) {
-        //if (terms.put(t)) {
-        //}
-    }
 
-    public void onTerm(Term t) {
+    public void onTerm(NARGraph g, Term t) {
+        
+
     }
 
     public void onTask(Task t) {
@@ -87,7 +85,11 @@ public class DefaultGraphizer implements NARGraph.Graphize {
     @Override
     public void onConcept(NARGraph g, Concept c) {
         g.addVertex(c);
+        
+        Term t = c.term;
+        
         terms.put(c.term, c);
+                
         if (includeTermLinks) {
             for (TermLink x : c.termLinks) {
                 termLinks.put(x, c);
@@ -99,10 +101,9 @@ public class DefaultGraphizer implements NARGraph.Graphize {
             }
         }
         if (includeTermContent) {
-            g.addVertex(c.term);
-            terms.put(c.term, c);
+            g.addVertex(t);
             g.addEdge(c, c.term, new NARGraph.TermContent());
-            onTerm(c.term);
+            
         }
         if (includeBeliefs) {
             for (final Sentence belief : c.beliefs) {

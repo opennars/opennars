@@ -31,13 +31,21 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
     
     float lineWidth = 4f;
     float nodeSize = 16f;
-    static final int MAX_UNSELECTED_LABEL_LENGTH = 16;
+    int maxLabelLen = 16;
     float nodeSpeed = 0.2f;
     float textSize = 1f;
     
     int defaultEdgeColor = Video.color(127,127,127,200);
     int defaultTextColor = Video.color(255,255,255,255);
+
+    public NARGraphDisplay setTextSize(float textSize, int maxLabelLen) {
+        this.textSize = textSize;
+        this.maxLabelLen = maxLabelLen;
+        return this;
+    }
     
+    
+            
 
     @Override
     public void vertex(AbstractGraphVis<V, E> g, VertexVis<V, E> v) {
@@ -101,8 +109,8 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
              label = o.toString();
          }
 
-         if (label.length() > MAX_UNSELECTED_LABEL_LENGTH) {
-             label = label.substring(0, MAX_UNSELECTED_LABEL_LENGTH - 2) + "..";
+         if (label.length() > maxLabelLen) {
+             label = label.substring(0, maxLabelLen - 2) + "..";
          }
          
          v.label = label;         
