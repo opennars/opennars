@@ -8,11 +8,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.Attention;
+import nars.core.Build;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
-import nars.core.Build;
 import nars.core.Param;
 import static nars.core.build.Default.InternalExperienceMode.Full;
 import static nars.core.build.Default.InternalExperienceMode.Minimal;
@@ -29,11 +29,12 @@ import nars.io.TextInput;
 import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
+import nars.plugin.app.plan.TemporalParticlePlanner;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
-import nars.plugin.app.plan.TemporalParticlePlanner;
+import nars.plugin.mental.RuntimeNARSettings;
 import nars.storage.Bag;
 import nars.storage.CacheBag;
 import nars.storage.LevelBag;
@@ -146,6 +147,7 @@ public class Default extends Build implements ConceptBuilder {
                 
         n.addPlugin(new DefaultTextPerception());
         
+        n.addPlugin(new RuntimeNARSettings());
         
         if(pluginPlanner!=null) {
             n.addPlugin(pluginPlanner);
