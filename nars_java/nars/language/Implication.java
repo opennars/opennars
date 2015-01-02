@@ -138,4 +138,15 @@ public class Implication extends Statement {
     public int getTemporalOrder() {
         return temporalOrder;
     }
+
+    public boolean isForward() {
+        return getTemporalOrder()==TemporalRules.ORDER_FORWARD;
+    }
+    public boolean isBackward() {
+        return getTemporalOrder()==TemporalRules.ORDER_BACKWARD;
+    }
+    public boolean isConcurrent() {
+        return getTemporalOrder()==TemporalRules.ORDER_CONCURRENT;
+    }
+    
 }

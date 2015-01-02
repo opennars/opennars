@@ -1014,7 +1014,9 @@ public class Memory implements Serializable {
         throw new RuntimeException("Questions index for " + c + " does not exist");
     }
     
-    public Task stmLast = null;
+    public final ArrayDeque<Task> stm = new ArrayDeque();
+    //public Task stmLast = null;
+    
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
         if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
@@ -1029,7 +1031,7 @@ public class Memory implements Serializable {
             return false;
         }
 
-        if (stmLast != null) {
+        for (Task stmLast : stm) {
 
             if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
                 return false;
@@ -1038,17 +1040,23 @@ public class Memory implements Serializable {
             nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, time());
             nal.setCurrentTask(newEvent);
 
-            Sentence currentBelief = stmLast.sentence;
-            nal.setCurrentBelief(currentBelief);
+            Sentence previousBelief = stmLast.sentence;
+            nal.setCurrentBelief(previousBelief);
+            
+            Sentence currentBelief = newEvent.sentence;
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
+            TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
         }
 
-        //for this heuristic, only use input events & task effects of operations
-        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-        stmLast = newEvent;
-        //}
+        ////for this heuristic, only use input events & task effects of operations
+        ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+        //stmLast = newEvent;
+        ////}
+        
+        while (stm.size()+1 > Parameters.STM_SIZE)
+            stm.removeFirst();
+        stm.addLast(newEvent);
 
         return true;
     }

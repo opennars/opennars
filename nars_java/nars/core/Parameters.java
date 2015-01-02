@@ -51,7 +51,7 @@ public class Parameters {
     /** Evidential Horizon, the amount of future evidence to be considered. 
      * Must be >=1.0, usually 1 .. 2
      */
-    public static final float HORIZON = 1;
+    public static float HORIZON = 1;
     
 
 
@@ -176,6 +176,9 @@ public class Parameters {
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
     public static boolean IMMEDIATE_ETERNALIZATION=false;
+    
+    
+    public static int STM_SIZE = 1;
     
     
     

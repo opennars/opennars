@@ -207,7 +207,8 @@ public class TemporalRules {
             for(int i=0;i<term.length;i++) {
                 if(term[i] instanceof CompoundTerm) {
                     term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
-                    if(term[i]==null) { //it resulted in invalid term for example <a --> a>, so wrong
+                    if(term[i]==null) { 
+                        //it resulted in invalid term for example <a --> a>, so wrong
                         return false;
                     }
                 }
