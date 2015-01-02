@@ -37,6 +37,7 @@ import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
+import nars.language.Interval;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Terms.Termable;
@@ -99,11 +100,8 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         
         this.punctuation = punctuation;
         
-        
-        
-        
-        if (!(_content instanceof CompoundTerm))
-            throw new RuntimeException("Sentence content must be CompoundTerm: " + _content + punctuation + " " + stamp);
+        if (_content instanceof Interval)
+            throw new RuntimeException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
         
         if ( (!isQuestion() && !isQuest()) && (truth == null) ) {            
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");

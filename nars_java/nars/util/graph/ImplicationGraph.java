@@ -243,6 +243,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     @Override
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
 
+        if(s.truth!=null && s.truth.getExpectation()<0.5) {
+            return false;
+        }
         
         if (!(ct instanceof Implication)) {
             return false;

@@ -56,8 +56,7 @@ public class InternalExperience implements Plugin, EventObserver {
     public void setNoWantBelieve(boolean val) {
         NoWantBelieve=val;
     }
-    
-    
+
     private Memory memory;
 
 
