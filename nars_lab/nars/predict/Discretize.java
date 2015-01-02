@@ -60,7 +60,7 @@ public class Discretize {
     
     /** inverse of discretize */
     public double continuous(double discretized) {
-        return ((double)discretized) / ((double)discretization);
+        return ((double)discretized) / ((double)discretization-1);
     }
     public double continuous(int discretized) {
         return continuous((double)discretized);
@@ -121,8 +121,9 @@ public class Discretize {
      */
     void believe(String variable, double signal, int dt) {        
         for (int i = 0; i < discretization; i++) {
-            double p = pDiscrete(signal, i);
-            believe(variable, i, dt, (float)p, 0.99f, BeliefInsertion.ImmediateProcess);
+            //double p = pDiscrete(signal, i);
+            double p = pSmoothDiscrete(signal, i);
+            believe(variable, i, dt, (float)p, 0.95f, BeliefInsertion.MemoryInput);
         }
             
     }
@@ -151,6 +152,8 @@ public class Discretize {
             
             Task t = nar.memory.newTask(getValueTerm(variable, level), Symbols.JUDGMENT_MARK, freq, conf, 1.0f, 0.8f);
         
+            System.out.println(t);
+            
             if (mode == BeliefInsertion.MemoryInput)
                 nar.memory.inputTask(t);
             else if (mode == BeliefInsertion.ImmediateProcess)
