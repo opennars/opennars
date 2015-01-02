@@ -172,6 +172,14 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     boolean anticipationOperator=false; //a parameter which tells whether NARS should know if it anticipated or not
     //in one case its the base functionality needed for NAL8 and in the other its a mental NAL9 operator
     
+    public boolean isAnticipationAsOperator() {
+        return anticipationOperator;
+    }
+    
+    public void setAnticipationAsOperator(boolean val) {
+        anticipationOperator=val;
+    }
+    
     public void anticipate(Term content,Memory memory, long occurenceTime, Task t) {
         if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             return;
