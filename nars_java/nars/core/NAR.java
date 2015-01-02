@@ -404,15 +404,9 @@ public class NAR implements Runnable, TaskSource {
     public List<PluginState> getPlugins() {
         return Collections.unmodifiableList(plugins);
     }
-    
 
-    public void startFPS(final float targetFPS, int cyclesPerFrame, float durationsPerFrame) {        
-        long cycleTime = (long)(1000f / targetFPS);
-        param.duration.set((int)(cyclesPerFrame / durationsPerFrame));
-        start(cycleTime, cyclesPerFrame);        
-    }
     
-    public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
+    @Deprecated public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
         this.minCyclePeriodMS = minCyclePeriodMS;
         this.cyclesPerFrame = cyclesPerFrame;
         if (thread == null) {
@@ -428,8 +422,6 @@ public class NAR implements Runnable, TaskSource {
      * @param minCyclePeriodMS minimum cycle period (milliseconds).
      */    
     public void start(final long minCyclePeriodMS) {
-        if (memory.getTiming()!=Timing.Iterative) 
-            throw new RuntimeException("Invalid timing mode for start(minCyclePeriodMS)");
         start(minCyclePeriodMS, 1);
     }
 

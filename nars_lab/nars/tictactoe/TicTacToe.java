@@ -38,6 +38,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import nars.NARPrologMirror;
+import nars.core.EventEmitter.EventObserver;
+import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -83,10 +85,10 @@ public class TicTacToe extends JPanel {
     public TicTacToe() {
         super(new BorderLayout());
 
-        nar = new Discretinuous().
+        nar = new NAR(new Discretinuous().
                 setConceptBagSize(1000).
                 setSubconceptBagSize(10000).
-                simulationTime().build();
+                simulationTime());
         
         Parameters.IMMEDIATE_ETERNALIZATION=true;
         
@@ -98,7 +100,15 @@ public class TicTacToe extends JPanel {
         (nar.param).noiseLevel.set(0);
         
         new NARSwing(nar);    
-        nar.start(30, 2000);
+        nar.on(FrameEnd.class, new EventObserver() {
+
+            @Override
+            public void event(Class event, Object[] args) {
+                nar.memory.addSimulationTime(500);
+            }
+            
+        });
+        nar.start(30);
         
         JPanel menu = new JPanel(new FlowLayout());
 

@@ -35,6 +35,8 @@ import nars.plugin.mental.InternalExperience;
  */
 public class NARio extends Run {
 
+    static int memoryCyclesPerFrame = 10;
+    
     private final NAR nar;
     private LevelScene level;
     private float lastX = -1;
@@ -79,8 +81,8 @@ public class NARio extends Run {
        // nar.param().termLinkForgetDurations.set(99.0f);
         
         //new TextOutput(nar, System.out).setShowInput(true);
-        int memCyclesPerFrame = 10;
-        (nar.param).duration.set(memCyclesPerFrame); //2 frames seems good
+        
+        (nar.param).duration.set(memoryCyclesPerFrame); //2 frames seems good
         (nar.param).noiseLevel.set(0);
         (nar.param).decisionThreshold.set(0);
         
@@ -90,7 +92,7 @@ public class NARio extends Run {
         
 
         new NARSwing(nar);
-        nar.startFPS(fps, memCyclesPerFrame, 1f);
+        nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
         
         NARio nario = new NARio(nar);
         
@@ -192,6 +194,7 @@ public class NARio extends Run {
     public void ready() {
         //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
 
+        
         scene = level = new LevelScene(graphicsConfiguration, this, 4,1, LevelGenerator.TYPE_OVERGROUND) {
             @Override
             protected Mario newMario(LevelScene level) {
@@ -261,6 +264,8 @@ public class NARio extends Run {
             int tt=0;
             @Override
             public void event(Class event, Object... arguments) {
+
+                nar.memory.addSimulationTime(memoryCyclesPerFrame);
 
                 {
         //                int ji = 10;
