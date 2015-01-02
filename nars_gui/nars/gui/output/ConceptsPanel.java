@@ -131,7 +131,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
         final float titleSize = 24f;
         final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
-        private final PCanvas syntaxPanel;
+       // private final PCanvas syntaxPanel;
         
         public ConceptPanel(Concept c, long time) {
             this(c);
@@ -170,7 +170,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
 
             
             
-            TermSyntaxVis tt = new TermSyntaxVis(c.term);
+           /* TermSyntaxVis tt = new TermSyntaxVis(c.term);
             syntaxPanel = new PCanvas(tt);
             syntaxPanel.setZoom(10f);
             
@@ -180,11 +180,11 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             
                         
 
-            add(syntaxPanel);
+            add(syntaxPanel);*/
             add(overlay, NORTH);  
             
-            setComponentZOrder(overlay, 1);
-            syntaxPanel.setBounds(0,0,400,400);
+            //setComponentZOrder(overlay, 1);
+            //syntaxPanel.setBounds(0,0,400,400);
             
             
         }
