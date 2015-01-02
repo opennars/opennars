@@ -7,6 +7,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
@@ -32,7 +33,8 @@ public class EventEmitter {
         /*if (Parameters.THREADS > 1)
             events = new ConcurrentHashMap<>();
         else*/
-            events = new HashMap<>();
+            //events = new HashMap<>();
+        events = new ConcurrentHashMap<>();
     }
 
     /** EventEmitter with a fixed set of known events; the 'events' map
@@ -89,10 +91,10 @@ public class EventEmitter {
     */
     
     public <C> void on(final Class<? extends C> event, final EventObserver<? extends C> o) {
-        /*if (Parameters.THREADS == 1) {
+        if (Parameters.THREADS == 1) {
             _on(event, o);
         }
-        else*/ {
+        else {
             synchronized(pendingOps) {
                 pendingOps.add(new Object[] { true, event, o });        
             }
@@ -116,10 +118,10 @@ public class EventEmitter {
      * @return  whether it was removed
      */
     public <C> void off(final Class<? extends C> event, final EventObserver<? extends C> o) {
-        /*if (Parameters.THREADS == 1) {
+        if (Parameters.THREADS == 1) {
             _off(event, o);
         }
-        else*/ {
+        else {
             synchronized(pendingOps) {
                 pendingOps.add(new Object[] { false, event, o });        
             }
