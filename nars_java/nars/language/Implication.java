@@ -100,7 +100,8 @@ public class Implication extends Statement {
             return null;
         }
         
-        if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence)) {
+        if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence) ||
+                (subject instanceof Interval) || (predicate instanceof Interval)) {
             return null;
         }
         

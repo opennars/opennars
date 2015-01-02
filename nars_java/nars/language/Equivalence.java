@@ -87,8 +87,10 @@ public class Equivalence extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
+        
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
-                || (predicate instanceof Implication) || (predicate instanceof Equivalence)) {
+                || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
+                (subject instanceof Interval) || (predicate instanceof Interval)) {
             return null;
         }
                 
