@@ -537,8 +537,8 @@ public class NARio extends Run {
                 }
                 if(www%200==0) {
                      nar.addInput("<right --> moved>!");
-                     nar.addInput("<up --> moved>!");
-                     nar.addInput("<up --> moved>!");
+                     //nar.addInput("<up --> moved>!");
+                     //nar.addInput("<up --> moved>!");
                      /* nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right
                     nar.addInput("<"+direction(2,0)+" --> moved>!"); //move right
                     nar.addInput("<"+direction(1,1)+" --> moved>!"); //move right
