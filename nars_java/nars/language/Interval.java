@@ -91,10 +91,12 @@ public class Interval extends Term {
         return intervalMagnitude( timeToMagnitude( time, duration ) );
     }
     
-    public static Interval intervalMagnitude(final int magnitude) {
+    public static Interval intervalMagnitude(int magnitude) {
         if (magnitude >= INTERVAL_POOL_SIZE)
             return new Interval(magnitude, true);
-        
+        else if (magnitude < 0)
+            magnitude = 0;
+            
         Interval existing = INTERVAL[magnitude];
         if (existing == null) {
             existing = new Interval(magnitude, true);

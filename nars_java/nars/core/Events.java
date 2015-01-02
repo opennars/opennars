@@ -133,7 +133,14 @@ public class Events {
     
     public static class ConceptUnification { } //2nd level unification in CompositionalRules
 
-    public static class TaskAdd { }
+    abstract public static class TaskAdd implements EventObserver { 
+        
+        abstract public void onTaskAdd(Task t, String reason);
+        
+        @Override public void event(Class event, Object[] args) {
+            onTaskAdd((Task)args[0], (String)args[1]);
+        }
+    }
     public static class TaskRemove { }
     public static class TaskDerive {    }
 

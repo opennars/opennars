@@ -24,17 +24,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import nars.core.Events;
-import nars.core.Events.ConceptBeliefAdd;
+import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.control.NAL;
-import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
 import nars.io.ChangedTextInput;
+import nars.io.Texts;
 import nars.io.narsese.Narsese;
 import nars.language.Interval;
 import nars.language.Tense;
@@ -52,21 +52,21 @@ public class PredictGUI extends JPanel {
     
     final int maxDiscretization = 9; //because of the digit assumption
 
-    final int minFutureTime = 1; //set to zero to consider beliefs about present time as a prediction; > 0 means all predictions must be some time ahead in the future
+    final int minFutureTime = 16; //set to zero to consider beliefs about present time as a prediction; > 0 means all predictions must be some time ahead in the future
     
     float signal = 0;
     
-    float predictionMagnitudeThreshold = 0.01f; //min magnitude of a prediction to be considered
-    float greedyPredictionThreshold = 0.05f;
+    float predictionMagnitudeThreshold = 0.05f; //min magnitude of a prediction to be considered
+    float greedyPredictionThreshold = 0.2f;
 
-    boolean projectFutureBeliefs = true;
+    boolean projectFutureBeliefs = false;
     
     final int historySize = 128;
     private boolean allowNegativeBeliefs = true;
-    private final boolean limitDerivationPriority = true;
+    private final boolean limitDerivationPriority = false;
     
     
-    int updatePeriodMS = 5;
+    int updatePeriodMS = 2;
     private final NAR n;
     private final GridBagConstraints cons;
 
@@ -76,7 +76,18 @@ public class PredictGUI extends JPanel {
     private final AtomicDouble signalPeriod;
     private final AtomicDouble signalType;
     
-    
+        TreeMLData observed = new TreeMLData("observed", Color.WHITE, historySize*8).setRange(0, 1f);
+        TreeMLData observedDiscrete = new TreeMLData("observed", Color.WHITE, historySize/4);
+        
+        TreeMLData prediction = new TreeMLData("prediction", Color.WHITE, historySize).setRange(0, 1f).setDefaultValue(0);
+        TreeMLData predictionGreedy = new TreeMLData("prediction", Color.WHITE, historySize).setRange(0, 1f);
+        
+        TreeMLData error = new TreeMLData("error", Color.WHITE, historySize).setRange(0, 1f);
+
+        TreeMLData[] predictionsPos = new TreeMLData[maxDiscretization];
+        TreeMLData[] predictionsNeg = new TreeMLData[maxDiscretization];
+        TreeMLData[] reflections = new TreeMLData[maxDiscretization];    
+    private final Discretize d;
 
     
     public int getSignalMode() {
@@ -84,7 +95,11 @@ public class PredictGUI extends JPanel {
     }
     
     public int getDuration() {
-        return 6;
+        return 4;
+    }
+    
+    private long getDT() {
+        return 1;
     }
     
     public float getFrequency() {
@@ -108,7 +123,7 @@ public class PredictGUI extends JPanel {
     }
     
     private boolean allowsRepeatInputs() {
-        return true;
+        return false;
     }
     private int getMaxConceptBeliefs() {
         return 16;
@@ -138,85 +153,7 @@ public class PredictGUI extends JPanel {
                 throw new RuntimeException("Unknown signal type");
         }
     }
-    
-    public PredictGUI() throws Narsese.InvalidInputException {
-        super();
-        
-        setLayout(new GridBagLayout());
-        cons = new GridBagConstraints();
-        cons.fill = GridBagConstraints.HORIZONTAL;
-        cons.weightx = 1;
-        cons.gridx = 0;
-        
-        
-        
-        setMinimumSize(new Dimension(150, 500));
-        setPreferredSize(new Dimension(150, 500));
-        
-        
-        addSlider("Signal Type", signalType = new AtomicDouble(1), 0, 5f);
-        addSlider("Signal Period", signalPeriod = new AtomicDouble(20), 0, 200f);
-        addSlider("Noise Rate", noiseRate = new AtomicDouble(0), 0, 1.0f);
-        addSlider("Missing Rate", missingRate = new AtomicDouble(0), 0, 1.0f);
-        addSlider("Discretization", discretizationAtomic = new AtomicDouble(3), 2, maxDiscretization);
-        
-        Parameters.DEBUG = true;
 
-        n = new NAR(new Default().simulationTime().setInternalExperience(null));
-        
-        NARSwing.themeInvert();
-        new NARSwing(n);
-        
-        n.param.duration.set(getDuration());
-        //n.param.duration.setLinear(0.5);
-        n.param.conceptBeliefsMax.set(getMaxConceptBeliefs());
-        n.param.noiseLevel.set(0);
-        n.param.conceptForgetDurations.set(5);
-        
-        Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES = 32;
-        Parameters.STM_SIZE = 6;
-        
-        
-        if (limitDerivationPriority)
-            n.addPlugin(new LimitDerivationPriority());
-        
-        Discretize d = new Discretize(n, getDiscretization());
-        
-        TreeMLData observed = new TreeMLData("observed", Color.WHITE, historySize*8).setRange(0, 1f);
-        TreeMLData observedDiscrete = new TreeMLData("observed", Color.WHITE, historySize/4);
-        
-        TreeMLData prediction = new TreeMLData("prediction", Color.WHITE, historySize).setRange(0, 1f).setDefaultValue(0);
-        TreeMLData predictionGreedy = new TreeMLData("prediction", Color.WHITE, historySize).setRange(0, 1f);
-        
-        TreeMLData error = new TreeMLData("error", Color.WHITE, historySize).setRange(0, 1f);
-
-        TreeMLData[] predictionsPos = new TreeMLData[maxDiscretization];
-        TreeMLData[] predictionsNeg = new TreeMLData[maxDiscretization];
-        TreeMLData[] reflections = new TreeMLData[maxDiscretization];
-        
-        for (int i = 0; i < predictionsPos.length; i++) {
-            predictionsPos[i] = new TreeMLData("+Pred" + i,
-                    Color.getHSBColor(0.25f + i / 4f, 0.85f, 0.85f), historySize);
-            
-            predictionsNeg[i] = new TreeMLData("-Pred" + i,
-                    Color.getHSBColor(0.25f + i / 4f, 0.85f, 0.85f), historySize);
-
-            reflections[i] = new TreeMLData("Refl" + i,
-                    Color.getHSBColor(0.25f + i / 4f, 0.85f, 0.85f), historySize);
-            reflections[i].setDefaultValue(0.0);
-        }
-        
-
-        n.on(Events.ConceptBeliefAdd.class, new ConceptBeliefAdd() {
-
-            @Override
-            public void onBeliefAdd(Concept c, Task t, Object[] extra) {
-            }
-            
-        });
-        n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
-            
-            //int curmax=0;
             
             protected void updatePrediction(int t) {
                 //weigh positive and negative predictions at time t to determine final aggregate prediction belief
@@ -278,9 +215,8 @@ public class PredictGUI extends JPanel {
                         predictionGreedy.setData(t, d.continuous(strongest));
                 }
             }
-            
-            @Override
-            public void onProcessed(Task t, NAL n) {
+
+            public void onPrediction(Task t) {
                 if (!t.sentence.isJudgment()) return;
                 if (t.sentence.isEternal()) return;
                 
@@ -322,6 +258,79 @@ public class PredictGUI extends JPanel {
                 }
                 
                 
+                
+            }
+    public PredictGUI() throws Narsese.InvalidInputException {
+        super();
+        
+        setLayout(new GridBagLayout());
+        cons = new GridBagConstraints();
+        cons.fill = GridBagConstraints.HORIZONTAL;
+        cons.weightx = 1;
+        cons.gridx = 0;
+        
+        
+        
+        setMinimumSize(new Dimension(150, 500));
+        setPreferredSize(new Dimension(150, 500));
+        
+        
+        addSlider("Signal Type", signalType = new AtomicDouble(1), 0, 5f);
+        addSlider("Signal Period", signalPeriod = new AtomicDouble(80), 0, 200f);
+        addSlider("Noise Rate", noiseRate = new AtomicDouble(0), 0, 1.0f);
+        addSlider("Missing Rate", missingRate = new AtomicDouble(0), 0, 1.0f);
+        addSlider("Discretization", discretizationAtomic = new AtomicDouble(3), 2, maxDiscretization);
+        
+        Parameters.DEBUG = true;
+
+        n = new NAR(new Default().simulationTime().setInternalExperience(null));
+        
+        NARSwing.themeInvert();
+        new NARSwing(n);
+        
+        n.param.duration.set(getDuration());
+        //n.param.duration.setLinear(0.5);
+        n.param.conceptBeliefsMax.set(getMaxConceptBeliefs());
+        n.param.noiseLevel.set(0);
+        n.param.conceptForgetDurations.set(5);
+        
+        Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES = 32;
+        Parameters.STM_SIZE = 6;
+        
+        
+        if (limitDerivationPriority)
+            n.addPlugin(new LimitDerivationPriority());
+        
+        d = new Discretize(n, getDiscretization());
+        
+
+        
+        for (int i = 0; i < predictionsPos.length; i++) {
+            predictionsPos[i] = new TreeMLData("+Pred" + i,
+                    Color.getHSBColor(0.25f + i / 4f, 0.85f, 0.85f), historySize);
+            
+            predictionsNeg[i] = new TreeMLData("-Pred" + i,
+                    Color.getHSBColor(0.25f + i / 4f, 0.85f, 0.85f), historySize);
+
+            reflections[i] = new TreeMLData("Refl" + i,
+                    Color.getHSBColor(0.25f + i / 4f, 0.85f, 0.85f), historySize);
+            reflections[i].setDefaultValue(0.0);
+        }
+        
+
+        n.on(Events.TaskAdd.class, new TaskAdd() {
+
+            @Override public void onTaskAdd(Task t, String reason) {
+                onPrediction(t);
+            }
+            
+        });
+        n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
+            
+            
+            @Override
+            public void onProcessed(Task t, NAL n) {
+                //onPrediction(t);
             }
         });
         
@@ -370,7 +379,7 @@ public class PredictGUI extends JPanel {
             
             
             n.step(getThinkInterval());
-            n.memory.addSimulationTime(1);
+            n.memory.addSimulationTime(getDT());
             //System.out.println(n.time() + " " + n.memory.getTimeDelta());
             
             try {
@@ -389,7 +398,7 @@ public class PredictGUI extends JPanel {
                 val = d.i(signal);
                 
                 
-                if (allowsRepeatInputs()  || (lastVal!=val)) {
+                if (allowsRepeatInputs()  || (!allowsRepeatInputs() && (lastVal!=val))) {
                     
                     String nowBelief = "<{x} --> y"+val+">";
                     
@@ -402,9 +411,12 @@ public class PredictGUI extends JPanel {
                             long now = n.time();
                             long dt = now - lastTime;
                             int interval = Interval.timeToMagnitude(dt, n.param.duration);
+                            double dtError = Interval.magnitudeToTime(interval, n.param.duration) - dt;
+                            
+                            System.out.println("@" + n.time() + " dt=" + dt + " +" + interval + " dtError=" + dtError + " (" + ((dtError / dt)*100.0) + "%)");
 
                             String prevBelief = "<{x} --> y"+lastVal+">";
-                            n.believe("<(&/," + prevBelief + ",+" + interval + ") =/> " + nowBelief + ">",Tense.Present, 1.0f, 1.0f / getDiscretization());
+                            n.believe("<(&/," + prevBelief + ",+" + interval + ") =/> " + nowBelief + ">",Tense.Present, 1.0f, 0.9f /*1.0f / getDiscretization()*/);
                             
                             lastTime = now;
                             
@@ -445,6 +457,8 @@ public class PredictGUI extends JPanel {
         add(slider = new NSlider(value, min, max), cons);        
         return slider;
     }
+
+    
 
 
 }
