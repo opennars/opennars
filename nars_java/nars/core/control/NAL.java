@@ -229,6 +229,10 @@ public abstract class NAL implements Runnable {
         
         if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable)) && (!Sentence.invalidSentenceTerm(newContent))) {
             
+            if(newContent.subjectOrPredicateIsIndependentOrDependentVar()) {
+                return null;
+            }
+            
             Task derived = null;
             
             try {

@@ -378,6 +378,24 @@ public class Term implements AbstractTerm, Termable {
         
     }
 
+    public boolean subjectOrPredicateIsIndependentOrDependentVar() {
+        if(this instanceof Statement) {
+            Statement cont=(Statement)this;
+            if(cont.getSubject() instanceof Variable) {
+                Variable v=(Variable) cont.getSubject();
+                if(v.hasVarDep() || v.hasVarIndep()) {
+                    return true;
+                }
+            }
+            if(cont.getPredicate()instanceof Variable) {
+                Variable v=(Variable) cont.getPredicate();
+                if(v.hasVarDep() || v.hasVarIndep()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     @Override public Term getTerm() { return this; }
 }
