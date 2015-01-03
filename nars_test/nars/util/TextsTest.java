@@ -87,7 +87,7 @@ public class TextsTest {
         NAR n = new Default().build();
         Narsese np = new Narsese(n);
         
-        String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
+        String term1String ="<wat --> (&,boy,(/,taller_than,{Tom},_))>";
         Term term1 = np.parseTerm(term1String);
 
         Rope tr = (Rope)toString(term1);
