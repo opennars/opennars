@@ -167,8 +167,6 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
 
             overlay.add(details, CENTER);
             overlay.add(this.beliefTime = new BeliefTimeline(chartWidth*3, chartHeight/2), SOUTH);
-
-            
             
            /* TermSyntaxVis tt = new TermSyntaxVis(c.term);
             syntaxPanel = new PCanvas(tt);
@@ -182,7 +180,6 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
 
             add(syntaxPanel);*/
             add(overlay, NORTH);  
-            
             //setComponentZOrder(overlay, 1);
             //syntaxPanel.setBounds(0,0,400,400);
             
@@ -194,26 +191,27 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             if (!concept.beliefs.isEmpty()) {
                 List<Sentence> bb = concept.getBeliefs();
                 beliefChart.update(time, bb);
-                subtitle.setText(bb.get(0).truth.toString());
-                
+                subtitle.setText("truth: " + bb.get(0).truth.toString());
                 
                 beliefTime.setVisible(
                         beliefTime.update(time, bb));
             }
             else {
+                subtitle.setText("");
                 if (!concept.questions.isEmpty())
-                    subtitle.setText("??");
+                    subtitle.setText("?(question)");
                 beliefTime.setVisible(false);
             }
 
             if (!concept.questions.isEmpty())
                 questionChart.update( unmodifiableList( concept.questions ) );
             
-            if (!concept.desires.isEmpty())
+            if (!concept.desires.isEmpty()) {
+                String s=subtitle.getText();
+                subtitle.setText(s+(s.equals("") ? "" : " ")+"desire: "+concept.desires.get(0).truth.toString());
                 desireChart.update( time, unmodifiableList( concept.desires ));
+            }
 
-            
-        
             updateUI();
         }
     }
