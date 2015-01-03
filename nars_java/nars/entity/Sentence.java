@@ -107,8 +107,8 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
         
-        if(_content.subjectOrPredicateIsIndependentOrDependentVar()) {
-                throw new RuntimeException("A statement sentence is not allowed to have a in/dependent variable as subj or pred");
+        if(_content.subjectOrPredicateIsIndependentVar()) {
+                throw new RuntimeException("A statement sentence is not allowed to have a independent variable as subj or pred");
         }
         
         if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {

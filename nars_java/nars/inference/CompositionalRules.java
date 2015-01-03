@@ -1309,6 +1309,11 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
 
             try {
+                
+                if(result.subjectOrPredicateIsIndependentVar()) {
+                    return;
+                }
+                
                 Sentence newSentence = new Sentence(result, mark, truth, sx);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.term, nal);
 
