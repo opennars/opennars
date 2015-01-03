@@ -176,7 +176,7 @@ public class Hauto {
              readCells[(int) x][(int) y].name = "place"+entityID.toString();
             writeCells[(int) x][(int) y].name = "place"+entityID.toString();
             if(TestChamber.staticInformation)
-            nar.addInput("<"+"place"+entityID.toString()+" --> place>.");
+            nar.addInput("<"+"{place"+entityID.toString()+"} --> place>.");
             if(TestChamber.curiousity) {
                 space.nar.addInput("<(^go-to," + "place"+entityID.toString() + ") =/> <Self --> [curious]>>.");
             }
