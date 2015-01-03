@@ -72,20 +72,34 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode resourceMenu = new DefaultMutableTreeNode("Need of Resources");
         root.add(resourceMenu);
         
-        DefaultMutableTreeNode mindSettings = new DefaultMutableTreeNode("Mind Settings");
+        DefaultMutableTreeNode mindSettings = new DefaultMutableTreeNode("Advanced Settings");
         root.add(mindSettings);
         
-        mindSettings.add(new EditorMode("Allow imitation") {
+        mindSettings.add(new EditorMode("Allow joy in action") {
             @Override
             public void run() {
                 Hauto.allow_imitating=true;
             }
         });
         
-        mindSettings.add(new EditorMode("Don't allow imitation") {
+        mindSettings.add(new EditorMode("Don't allow joy") {
             @Override
             public void run() {
                 Hauto.allow_imitating=false;
+            }
+        });
+        
+        mindSettings.add(new EditorMode("Tell object categories") {
+            @Override
+            public void run() {
+                TestChamber.staticInformation=true;
+            }
+        });
+        
+        mindSettings.add(new EditorMode("Don't tell object categories") {
+            @Override
+            public void run() {
+                TestChamber.staticInformation=false;
             }
         });
         
@@ -170,7 +184,7 @@ public class EditorPanel extends JPanel {
                                         s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
                                         if(s.cells.readCells[i][j].machine==Machine.Turret) {
                                             if(TestChamber.staticInformation)
-                                            s.nar.addInput("<"+c[11]+" --> firework>.");
+                                                s.nar.addInput("<"+c[11]+" --> firework>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
                                                 //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                             }
@@ -512,7 +526,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
-        EditorMode wu=new EditorMode("stay active") {
+        EditorMode wu=new EditorMode("try things") {
 
             @Override
             public void run() {
