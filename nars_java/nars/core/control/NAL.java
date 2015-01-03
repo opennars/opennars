@@ -229,7 +229,7 @@ public abstract class NAL implements Runnable {
         
         if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable)) && (!Sentence.invalidSentenceTerm(newContent))) {
             
-            if(newContent.subjectOrPredicateIsIndependentOrDependentVar()) {
+            if(newContent.subjectOrPredicateIsIndependentVar()) {
                 return null;
             }
             
@@ -345,6 +345,11 @@ public abstract class NAL implements Runnable {
             // to answer a question with negation in NAL-5 --- move to activated task?
             setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
         }
+        
+        if(newContent.subjectOrPredicateIsIndependentVar()) {
+            return false;
+        }
+        
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
