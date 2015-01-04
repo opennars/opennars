@@ -12,6 +12,7 @@ import nars.gui.NARSwing;
 abstract public class NARGame implements EventObserver {
     public final NAR nar;
     private int cyclesPerFrame;
+    public NARSwing sw;
 
     public NARGame(NAR nar) {        
         this.nar = nar;        
@@ -19,7 +20,7 @@ abstract public class NARGame implements EventObserver {
             throw new RuntimeException(this + " requires NAR use Simulation timing");
         
         nar.memory.event.on(Events.FrameEnd.class, this);
-        new NARSwing(nar);
+        sw=new NARSwing(nar);
     }
     
     abstract public void init();

@@ -627,7 +627,7 @@ public class Rover extends PhysicsModel {
         (nar.param).duration.set(cyclesPerFrame);
         
        // RoverWorld.world= new RoverWorld(rv, 48, 48);
-        new NARPhysics<Rover>(nar, 1.0f / framesPerSecond, new Rover(nar)) {
+        NARPhysics phys=new NARPhysics<Rover>(nar, 1.0f / framesPerSecond, new Rover(nar)) {
 
             @Override
             public void cycle() {
@@ -681,7 +681,7 @@ public class Rover extends PhysicsModel {
         };
         
         nar.start(((long)(1000f/framesPerSecond)));//, cyclesPerFrame, 1.0f);
-
+        phys.sw.controls.setSpeed(Float.MAX_VALUE);
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }
 
