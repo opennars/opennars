@@ -477,7 +477,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         
         
         init();
-
+        volumeSlider.setValue(nar.param.noiseLevel.get());
         
     }
 
