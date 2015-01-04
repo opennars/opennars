@@ -98,8 +98,8 @@ public class NARSwing  {
     }
 
     public final NAR nar;
-    private final NWindow mainWindow;
-    private final NARControls controls;
+    public final NWindow mainWindow;
+    public final NARControls controls;
 
     public NARSwing(NAR nar) {
         this(nar, true);
