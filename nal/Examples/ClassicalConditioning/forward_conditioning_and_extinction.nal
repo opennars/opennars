@@ -8,14 +8,11 @@
 //light is on:
 <{light} --> [on]>. :|:
 60
-//todo: this check is not sufficient, check trace for
 //
 ''outputMustContain('^pick([cheese, SELF])=null')
-''outputMustContain('(^pick,cheese)! %1.00;0.06%')
-//TODO allow check trace: ''outputMustContain('(^pick,cheese)! %1.00;0.06% {35 : 1;2;2;1;2;0<<{cheese} --> [here]> =\> (&/,<{light} --> [on]>,+3)>;(&/,<{light} --> [on]>,+3)}')
+''outputMustContain('(^pick,cheese)! %1.00;0.03%')
 //cheese is expected
 ''outputMustContain('<{cheese} --> [here]>. :/: %1.00;0.22%')
-//''outputMustContain('<{cheese} --> [here]>. :/: %1.00;0.22% {43|55 : 1;3;1;2<{light} --> [on]>;<(&/,<{light} --> [on]>,+3) =/> <{cheese} --> [here]>>}')
 //disappointment:
 1000
 ''outputMustContain('<<{light} --> [on]> =/> <{cheese} --> [here]>>. :\: %0.00;0.90%')

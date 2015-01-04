@@ -8,14 +8,14 @@
 72
 (^pick,b). :|:
 72
+(^pick,b). :|:
+72
 (^go-to,a). :|:
 2
 (^pick,b). :|:
 2
 <goal --> reached>. :|:
-10
-<goal --> reached>!
-<goal --> reached>!
+100
 <goal --> reached>!
 <goal --> reached>!
 //it is ok to try (^pick,b) because it may be that it

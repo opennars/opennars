@@ -175,7 +175,7 @@ public class Parameters {
     
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
-    public static boolean IMMEDIATE_ETERNALIZATION=false;
+    public static boolean IMMEDIATE_ETERNALIZATION=true;
     
     
     public static int STM_SIZE = 1;
