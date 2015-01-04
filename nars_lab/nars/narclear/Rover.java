@@ -132,7 +132,7 @@ public class Rover extends PhysicsModel {
             
             
             
-            int pixels = 3;
+            int pixels = 5;
             float aStep = 1.5f / pixels;
             float retinaArc = aStep;
             int retinaResolution = 5; //should be odd # to balance
@@ -437,9 +437,9 @@ public class Rover extends PhysicsModel {
             for (int i = 0; i < 10; i++) {
                 AddABlock(p, w, h,false);
             }
-            for (int i = 0; i < 10; i++) {
+            /*for (int i = 0; i < 10; i++) {
                 AddABlock(p, w, h,true);
-            }
+            }*/
         }
 
         public void AddABlock(PhysicsModel p, float w, float h, boolean bad) {
