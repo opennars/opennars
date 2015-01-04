@@ -90,8 +90,6 @@ public class TicTacToeWithProlog extends JPanel {
                 setSubconceptBagSize(10000).
                 simulationTime());
         
-        Parameters.IMMEDIATE_ETERNALIZATION=true;
-        
         new NARPrologMirror(nar, 0.75f, true).temporal(true, false);
         new NARPrologMirror(nar, 0.75f, true).temporal(false, true);
         

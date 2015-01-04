@@ -46,7 +46,6 @@ public class TestChamber {
         Parameters.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
         NAR nar = builder.build();
         //set NAR runtime parmeters:  
-        Parameters.IMMEDIATE_ETERNALIZATION=true;
         InternalExperience.NoWantBelieve=true;
         nar.addPlugin(new TemporalParticlePlanner());
         //(nar.param).duration.set(10);

@@ -64,7 +64,6 @@ public class NARio extends Run {
         NAR nar = new Default().simulationTime().setConceptBagSize(500).
                 /*temporalPlanner(12,64,16).*/build();
         nar.addPlugin(new TemporalParticlePlanner());
-        Parameters.IMMEDIATE_ETERNALIZATION=true;
         InternalExperience.NoWantBelieve=true;
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
         /*nar.param().termLinkRecordLength.set(4);
