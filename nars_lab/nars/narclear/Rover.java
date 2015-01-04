@@ -618,7 +618,7 @@ public class Rover extends PhysicsModel {
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new Default().simulationTime().
                 build();
-        InternalExperience.NoWantBelieve=true;
+
         nar.addPlugin(new TemporalParticlePlanner());
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    

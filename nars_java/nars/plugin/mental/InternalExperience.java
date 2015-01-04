@@ -48,13 +48,13 @@ public class InternalExperience implements Plugin, EventObserver {
     public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
     
     //dont use internal experience for want and believe if this setting is true
-    public static boolean NoWantBelieve=false;
+    public static boolean AllowWantBelieve=true;
     
-    public boolean isNoWantBelieve() {
-        return NoWantBelieve;
+    public boolean isAllowWantBelieve() {
+        return AllowWantBelieve;
     }
-    public void setNoWantBelieve(boolean val) {
-        NoWantBelieve=val;
+    public void setAllowWantBelieve(boolean val) {
+        AllowWantBelieve=val;
     }
 
     private Memory memory;
@@ -81,13 +81,13 @@ public class InternalExperience implements Plugin, EventObserver {
         switch (s.punctuation) {
             case Symbols.JUDGMENT_MARK:
                 opName = "^believe";
-                if(NoWantBelieve) {
+                if(!AllowWantBelieve) {
                     return null;
                 }
                 break;
             case Symbols.GOAL_MARK:
                 opName = "^want";
-                if(NoWantBelieve) {
+                if(!AllowWantBelieve) {
                     return null;
                 }
                 break;
