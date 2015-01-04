@@ -196,6 +196,9 @@ public abstract class Operator extends Term implements Plugin {
     }
 
     public final boolean call(final Operation op, final Memory memory) {
+        if(!op.isExecutable(memory)) {
+            return false;
+        }
         Product args = op.getArguments();
         return call(op, args.term, memory);
     }
