@@ -25,7 +25,7 @@ public class Pizza extends LocalGridObject {
         cx = (cx * (1.0f - animationLerpRate)) + (x * animationLerpRate);
         cy = (cy * (1.0f - animationLerpRate)) + (y * animationLerpRate);
         cheading = (cheading * (1.0f - animationLerpRate / 2.0f)) + (heading * animationLerpRate / 2.0f);
-        float scale = (float) Math.sin(Math.PI + space.getTime() / 7f) * 0.05f + 1.0f;
+        float scale = (float) Math.sin(Math.PI / 7f) * 0.05f + 1.0f;
         space.pushMatrix();
         space.translate(cx, cy);
         space.pushMatrix();
