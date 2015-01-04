@@ -314,19 +314,18 @@ public class Concept extends Item<Term> implements Termable {
 
             Term content = term;
 
-            if (content.isExecutable(memory)) {
-                
-                if(content instanceof Operation) {
-                    
-                    Operation op=(Operation)content;
-                    Operator oper = op.getOperator();
+            if(content instanceof Operation) {
 
-                    op.setTask(t);
-                    oper.call(op, memory);
-                    
-                    return true;
+                Operation op=(Operation)content;
+                Operator oper = op.getOperator();
+
+                op.setTask(t);
+                if(!oper.call(op, memory)) {
+                    return false;
                 }
-            } 
+
+                return true;
+            }
         }
         return false;
     }
