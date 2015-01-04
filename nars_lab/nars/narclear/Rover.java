@@ -681,7 +681,7 @@ public class Rover extends PhysicsModel {
         };
         
         nar.start(((long)(1000f/framesPerSecond)));//, cyclesPerFrame, 1.0f);
-        phys.sw.controls.setSpeed(Float.MAX_VALUE);
+        phys.sw.controls.setSpeed(1.0f);
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }
 

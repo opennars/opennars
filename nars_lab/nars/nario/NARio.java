@@ -90,11 +90,12 @@ public class NARio extends Run {
 
         
 
-        new NARSwing(nar);
+        NARSwing sw=new NARSwing(nar);
+        
         nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
         
         NARio nario = new NARio(nar);
-        
+        sw.controls.setSpeed(0.95f);
     }
 
     ChangedTextInput chg;
