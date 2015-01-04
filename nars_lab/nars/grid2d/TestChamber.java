@@ -1,10 +1,10 @@
 package nars.grid2d;
 
 import java.util.List;
+import nars.core.Build;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.core.Build;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.grid2d.Cell.Logic;
@@ -21,6 +21,7 @@ import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
 import nars.plugin.app.plan.TemporalParticlePlanner;
+import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
 import processing.core.PVector;
 
@@ -47,14 +48,22 @@ public class TestChamber {
         NAR nar = builder.build();
         //set NAR runtime parmeters:  
 
+        for(NAR.PluginState pluginstate : nar.getPlugins()) {
+            if(pluginstate.plugin instanceof InternalExperience || pluginstate.plugin instanceof FullInternalExperience) {
+                nar.removePlugin(pluginstate);
+            }
+        }
+  
         nar.addPlugin(new TemporalParticlePlanner());
+        
         //(nar.param).duration.set(10);
         (nar.param).noiseLevel.set(0); 
         new NARSwing(nar);
 
         new TestChamber(nar);
                 
-        nar.start(narUpdatePeriod);        
+        nar.start(narUpdatePeriod);   
+        
     }
 
     
