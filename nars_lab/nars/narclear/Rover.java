@@ -132,11 +132,11 @@ public class Rover extends PhysicsModel {
             
             
             
-            int pixels = 5;
-            float aStep = 1.5f / pixels;
+            int pixels = 8;
+            float aStep = 1.8f / pixels;
             float retinaArc = aStep;
             int retinaResolution = 5; //should be odd # to balance
-            float L = 35.0f;
+            float L = 50.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 vision.add(new VisionRay(world,"front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.0f,
@@ -282,8 +282,9 @@ public class Rover extends PhysicsModel {
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     if(Sgood.equals("bad") && n%25==0) {
                         nar.addInput("(--,<(*," + id + ",good) --> see>). :|:");
-                    } else if(n%25==0) {
-                        nar.addInput("<(*," + id + ",good) --> see>. :|:");
+                    } else if(n%50==0) {
+                        //nar.addInput("<(*," + id + ",good) --> see>. :|:");
+                        nar.addInput("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     }
                 }
                 else {
@@ -625,7 +626,6 @@ public class Rover extends PhysicsModel {
         (nar.param).noiseLevel.set(0);
         (nar.param).duration.set(cyclesPerFrame);
         
-
        // RoverWorld.world= new RoverWorld(rv, 48, 48);
         new NARPhysics<Rover>(nar, 1.0f / framesPerSecond, new Rover(nar)) {
 
