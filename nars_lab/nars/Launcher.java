@@ -134,6 +134,7 @@ public class Launcher extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        jButton1.setForeground(new java.awt.Color(255, 255, 254));
         jButton1.setText(" Run NARS GUI");
         jButton1.setActionCommand("jButton1");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -143,7 +144,7 @@ public class Launcher extends javax.swing.JFrame {
         });
 
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setForeground(new java.awt.Color(254, 255, 255));
         jLabel2.setText("Tic Tac Toe");
         jLabel2.setToolTipText("");
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -155,9 +156,10 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setForeground(new java.awt.Color(254, 255, 255));
         jLabel3.setText("Run Application Examples:");
 
+        jButton2.setForeground(new java.awt.Color(254, 255, 255));
         jButton2.setText("Website");
         jButton2.setActionCommand("jButton1");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -167,7 +169,7 @@ public class Launcher extends javax.swing.JFrame {
         });
 
         jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setForeground(new java.awt.Color(254, 255, 255));
         jLabel6.setText("Test Chamber");
         jLabel6.setToolTipText("");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -177,7 +179,7 @@ public class Launcher extends javax.swing.JFrame {
         });
 
         jLabel7.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setForeground(new java.awt.Color(254, 255, 255));
         jLabel7.setText("Rover");
         jLabel7.setToolTipText("");
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -189,6 +191,7 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        jButton5.setForeground(new java.awt.Color(254, 255, 255));
         jButton5.setText("IRC");
         jButton5.setActionCommand("jButton1");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -198,7 +201,7 @@ public class Launcher extends javax.swing.JFrame {
         });
 
         jLabel5.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setForeground(new java.awt.Color(254, 255, 255));
         jLabel5.setText("NAR Pred");
         jLabel5.setToolTipText("");
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -211,7 +214,7 @@ public class Launcher extends javax.swing.JFrame {
         });
 
         jLabel8.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setForeground(new java.awt.Color(254, 255, 255));
         jLabel8.setText("Nario");
         jLabel8.setToolTipText("");
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -223,6 +226,7 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setForeground(new java.awt.Color(255, 255, 254));
         jButton3.setText("Run Web GUI");
         jButton3.setActionCommand("jButton1");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -244,9 +248,7 @@ public class Launcher extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
