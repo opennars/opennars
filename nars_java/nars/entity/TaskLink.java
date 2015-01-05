@@ -20,7 +20,10 @@
  */
 package nars.entity;
 
-import java.util.Arrays;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import nars.core.Parameters;
 import nars.language.Term;
 import nars.language.Terms.Termable;
 
@@ -38,21 +41,34 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
      * The Task linked. The "target" field in TermLink is not used here.
      */
     public final Task targetTask;
+    private final int recordLength;
     
-    /**
-     * Remember the TermLinks that has been used recently with this TaskLink
-     */
-    public final TermLink recordedLinks[];
     
-    /**
-     * Remember the time when each TermLink is used with this TaskLink
-     */
-    public final long recordingTime[];
+    /* Remember the TermLinks, and when they has been used recently with this TaskLink */
+    public final static class Recording {
     
-    /**
-     * The number of TermLinks remembered
-     */
-    private int counter;
+        public final TermLink link;
+        long time;
+
+        public Recording(TermLink link, long time) {
+            this.link = link;
+            this.time = time;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        
+        public void setTime(long t) {
+            this.time = t;
+        }
+        
+    }
+    
+    public final Deque<Recording> records;
+    
+
     
     /** The type of link, one of the above */    
     public final short type;
@@ -83,10 +99,11 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
                         template.index
         ;
         
-        targetTask = t;
-        recordedLinks = new TermLink[recordLength];
-        recordingTime = new long[recordLength];
-        counter = 0;        
+        this.targetTask = t;
+        
+        this.recordLength = recordLength;
+        this.records = new ArrayDeque(recordLength);
+        
     }
 
 
@@ -143,25 +160,33 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
         TermLink linkKey = termLink.name();
         int next, i;
         
-        final int recordLength = recordedLinks.length; //Parameters.TERM_LINK_RECORD_LENGTH;
         
-        for (i = 0; i < counter; i++) {
-            next = i % recordLength;
-            if (linkKey.equals(recordedLinks[next])) {
-                if (currentTime < recordingTime[next] + recordLength) {
+                
+        //iterating the FIFO deque from oldest (first) to newest (last)
+        Iterator<Recording> ir = records.iterator();
+        while (ir.hasNext()) {
+            Recording r = ir.next();
+            if (linkKey.equals(r.link)) {
+                if (currentTime < r.getTime() + Parameters.NOVELTY_HORIZON) {
+                    //too recent, not novel
                     return false;
                 } else {
-                    recordingTime[next] = currentTime;
+                    //happened long enough ago that we have forgotten it somewhat, making it seem more novel
+                    r.setTime(currentTime);
+                    ir.remove();
+                    records.addLast(r);
                     return true;
                 }
             }
         }
-        next = i % recordLength;
-        recordedLinks[next] = linkKey;       // add knowledge reference to recordedLinks
-        recordingTime[next] = currentTime;
-        if (counter < recordLength) { // keep a constant length
-            counter++;
-        }
+        
+        
+        //keep recordedLinks queue a maximum finite size
+        while (records.size() + 1 >= recordLength) records.removeFirst();
+        
+        // add knowledge reference to recordedLinks
+        records.addLast(new Recording(linkKey, currentTime));
+        
         return true;
     }
 
@@ -185,7 +210,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
 
     @Override
     public void end() {
-        Arrays.fill(recordedLinks, null);
+        records.clear();
     }
 
     @Override
