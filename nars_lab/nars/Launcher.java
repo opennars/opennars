@@ -38,6 +38,10 @@ import nars.web.NARServer;
  */
 public class Launcher extends javax.swing.JFrame {
 
+    public static File resource(String path) {
+        return new File("./nars_lab/nars/launcher/" + path);
+    }
+    
     /**
      * Creates new form Launcher
      */
@@ -48,7 +52,7 @@ public class Launcher extends javax.swing.JFrame {
 
         
         try {
-            BufferedImage myPicture = ImageIO.read(new File("./nars_lab/launcher/mario.png"));
+            BufferedImage myPicture = ImageIO.read(resource("mario.png"));
             jLabel8.setIcon(new ImageIcon(myPicture));
             
         } catch (IOException ex) {
@@ -56,7 +60,7 @@ public class Launcher extends javax.swing.JFrame {
         }
         
         try {
-            BufferedImage myPicture = ImageIO.read(new File("./nars_lab/launcher/testchamber.png"));
+            BufferedImage myPicture = ImageIO.read(resource("testchamber.png"));
             jLabel6.setIcon(new ImageIcon(myPicture));
             
         } catch (IOException ex) {
@@ -64,7 +68,7 @@ public class Launcher extends javax.swing.JFrame {
         }
         
         try {
-            BufferedImage myPicture = ImageIO.read(new File("./nars_lab/launcher/rover.png"));
+            BufferedImage myPicture = ImageIO.read(resource("rover.png"));
             jLabel7.setIcon(new ImageIcon(myPicture));
             
         } catch (IOException ex) {
@@ -72,7 +76,7 @@ public class Launcher extends javax.swing.JFrame {
         }
         
         try {
-            BufferedImage myPicture = ImageIO.read(new File("./nars_lab/launcher/nartactoe.png"));
+            BufferedImage myPicture = ImageIO.read(resource("nartactoe.png"));
             jLabel2.setIcon(new ImageIcon(myPicture));
             
         } catch (IOException ex) {
@@ -80,7 +84,7 @@ public class Launcher extends javax.swing.JFrame {
         }
         
         try {
-            BufferedImage myPicture = ImageIO.read(new File("./nars_lab/launcher/predict.png"));
+            BufferedImage myPicture = ImageIO.read(resource("predict.png"));
             jLabel5.setIcon(new ImageIcon(myPicture));
             
         } catch (IOException ex) {
