@@ -100,7 +100,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
         this.capacity = capacity;
 
-        nameTable = Parameters.THREADS == 1 ? new HashMap<>(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
+        nameTable = Parameters.THREADS == 1 ? new HashMap<>(capacity) : new ConcurrentHashMap<>(capacity);
 
         level = new Level[this.levels];
         
