@@ -385,7 +385,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public Term[] cloneTermsExcept(final boolean requireModification, final Term[] toRemove) {
         //TODO if deep, this wastes created clones that are then removed.  correct this inefficiency?
         
-        List<Term> l = getTermList();
+        List<Term> l = asTermList();
         boolean removed = false;
                 
         for (final Term t : toRemove) {
@@ -435,7 +435,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         
     }
 
-    public List<Term> getTermList() {        
+    public List<Term> asTermList() {        
         ArrayList l = new ArrayList(term.length);
         addTermsTo(l);
         return l;
@@ -590,7 +590,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * @return The new compound
      */
     public Term setComponent(final int index, final Term t, final Memory memory) {
-        List<Term> list = getTermList();//Deep();
+        List<Term> list = asTermList();//Deep();
         list.remove(index);
         if (t != null) {
             if (getClass() != t.getClass()) {

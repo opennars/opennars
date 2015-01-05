@@ -346,7 +346,7 @@ public class Term implements AbstractTerm, Termable {
         return false;
     }
 
-    @Deprecated public static TreeSet<Term> toSortedSet(final Term... arg) {
+    public static TreeSet<Term> toSortedSet(final Term... arg) {
         //use toSortedSetArray where possible
         TreeSet<Term> t = new TreeSet();
         for (Term x : arg) t.add(x);

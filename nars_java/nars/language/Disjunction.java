@@ -20,7 +20,8 @@
  */
 package nars.language;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
@@ -60,7 +61,7 @@ public class Disjunction extends CompoundTerm {
 
     @Override
     public Term clone(Term[] x) {
-        return make(Term.toSortedSet(x));
+        return make(x);
     }
     
     
@@ -72,12 +73,12 @@ public class Disjunction extends CompoundTerm {
      * @return A Disjunction generated or a Term it reduced to
      */
     public static Term make(Term term1, Term term2) {
-        TreeSet<Term> set;
+        List<Term> set = new ArrayList();
         if (term1 instanceof Disjunction) {
-            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
+            set.addAll(((CompoundTerm) term1).asTermList());
             if (term2 instanceof Disjunction) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                set.addAll(((CompoundTerm) term2).getTermList());
+                set.addAll(((CompoundTerm) term2).asTermList());
             } 
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -85,42 +86,28 @@ public class Disjunction extends CompoundTerm {
             }                          
         } else if (term2 instanceof Disjunction) {
             // (&,R,(&,P,Q)) = (&,P,Q,R)
-            set = new TreeSet<>(((CompoundTerm) term2).getTermList());
+            set.addAll(((CompoundTerm) term2).asTermList());
             set.add(term1);                              
         } else {
-            set = new TreeSet<>();
             set.add(term1);
             set.add(term2);
         }
-        return make(set);
+        return make(set.toArray(new Term[set.size()]));
     }
 
-    /**
-     * Try to make a new IntersectionExt. Called by StringParser.
-     * @param argList a list of Term as term
-     * @param memory Reference to the memory
-     * @return the Term generated from the arguments
-     */
-    public static Term make(Collection<Term> argList) {
-        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set);
-    }
 
-    /**
-     * Try to make a new Disjunction from a set of term. Called by the public make methods.
-     * @param set a set of Term as term
-     * @param memory Reference to the memory
-     * @return the Term generated from the arguments
-     */
-    public static Term make(TreeSet<Term> set) {
-        if (set.size() == 1) {
+    public static Term make(Term[] t) {
+        t = Term.toSortedSetArray(t);
+        
+        if (t.length == 0) return null;
+        if (t.length == 1) {
             // special case: single component
-            return set.first();
+            return t[0];
         }                         
-        Term[] argument = set.toArray(new Term[set.size()]);
-        return new Disjunction(argument);
+        
+        return new Disjunction(t);
     }
-
+    
     /**
      * Get the operator of the term.
      * @return the operator of the term

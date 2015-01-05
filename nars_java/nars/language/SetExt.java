@@ -21,7 +21,6 @@
 package nars.language;
 
 import java.util.Collection;
-import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
@@ -31,12 +30,14 @@ import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
  */
 public class SetExt extends SetTensional {
 
+
+
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term
-     * @param arg The component list of the term
+     * @param arg The component list of the term - args must be unique and sorted
      */
-    private SetExt(final Term[] arg) {
+    public SetExt(final Term... arg) {
         super(arg);
     }
 
@@ -51,32 +52,17 @@ public class SetExt extends SetTensional {
     }
     
     @Override public SetExt clone(Term[] replaced) {
-        return make(Term.toSortedSet(replaced));
-    }
-
-
-    /**
-     * Try to make a new compound from a set of term. Called by the public make methods.
-     * @param t a set of Term as compoments
-     * @param memory Reference to the memeory
-     * @return the Term generated from the arguments
-     */
-    public static SetExt make(Collection<Term> t) {
-        int s = t.size();
-        if (s == 0) return null;         
-        else if (s == 1) return make(t.iterator().next()); //avoid creating treeset for single item
-        else return make(new TreeSet<>(t));
+        return make(replaced);
     }
     
     public static SetExt make(Term... t) {
+        t = Term.toSortedSetArray(t);
+        if (t.length == 0) return null;
         return new SetExt(t);
     }
-    
-    
-    @Deprecated public static SetExt make(final TreeSet<Term> t) {        
-        if (t.isEmpty()) return null;
-        Term[] x = t.toArray(new Term[t.size()]);
-        return new SetExt(x);
+
+    public static SetExt make(Collection<Term> l) {
+        return make(l.toArray(new Term[l.size()]));
     }
     
     /**

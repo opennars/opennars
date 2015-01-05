@@ -21,7 +21,6 @@
 package nars.language;
 
 import java.util.Collection;
-import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
@@ -34,9 +33,9 @@ public class SetInt extends SetTensional {
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term
-     * @param arg The component list of the term
+     * @param arg The component list of the term - args must be unique and sorted
      */
-    private SetInt(final Term[] arg) {
+    public SetInt(final Term... arg) {
         super(arg);
     }
  
@@ -53,39 +52,17 @@ public class SetInt extends SetTensional {
     }
 
     @Override public SetInt clone(Term[] replaced) {
-        return make(Term.toSortedSet(replaced));
+        return make(replaced);
     }
 
-    
-    
-    /**
-     * Try to make a new set from one component. Called by the inference rules.
-     * @param t The compoment
-     * @param memory Reference to the memeory
-     * @return A compound generated or a term it reduced to
-     */
-    @Deprecated public static SetInt make(final TreeSet<Term> t) {        
-        if (t.isEmpty()) return null;
-        Term[] x = t.toArray(new Term[t.size()]);
-        return make(x);
-    }
+    public static SetInt make(Collection<Term> l) {
+        return make(l.toArray(new Term[l.size()]));
+    }    
     
     public static SetInt make(Term... t) {
+        t = Term.toSortedSetArray(t);
+        if (t.length == 0) return null;
         return new SetInt(t);
-    }    
-
-
-    /**
-     * Try to make a new compound from a set of term. Called by the public make methods.
-     * @param t a set of Term as compoments
-     * @param memory Reference to the memeory
-     * @return the Term generated from the arguments
-     */
-    public static Term make(Collection<Term> t) {
-        int s = t.size();
-        if (s == 0) return null;         
-        else if (s == 1) return make(t.iterator().next());
-        else return make(new TreeSet<>(t));
     }
 
     /**

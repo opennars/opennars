@@ -20,9 +20,13 @@
  */
 package nars.language;
 
+import com.google.common.collect.ObjectArrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.IntersectionExt.make;
 
 /**
  * A compound term whose intension is the intersection of the extensions of its term
@@ -57,6 +61,7 @@ public class IntersectionInt extends CompoundTerm {
         return make(replaced);
     }
         
+
     /**
      * Try to make a new compound from two term. Called by the inference rules.
      * @param term1 The first compoment
@@ -64,47 +69,48 @@ public class IntersectionInt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term term1, final Term term2) {
-        TreeSet<Term> set;
+    public static Term make(Term term1, Term term2) {
+        
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
-            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
-            set.addAll(((CompoundTerm) term2).getTermList());           // set union
-            return SetExt.make(set);
+            // set union
+            Term[] both = ObjectArrays.concat(
+                    ((CompoundTerm) term1).term, 
+                    ((CompoundTerm) term2).term, Term.class);
+            return SetExt.make(both);
         }
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
-            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
-            set.retainAll(((CompoundTerm) term2).getTermList());        // set intersection
-            return SetInt.make(set);
+            // set intersection
+            TreeSet<Term> set = Term.toSortedSet(((CompoundTerm) term1).term);
+            
+            set.retainAll(((CompoundTerm) term2).asTermList());     
+            
+            //technically this can be used directly if it can be converted to array
+            //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously
+            return SetInt.make(set.toArray(new Term[set.size()]));
         }
+        
+        List<Term> se = new ArrayList();
         if (term1 instanceof IntersectionInt) {
-            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
+            ((CompoundTerm) term1).addTermsTo(se);
             if (term2 instanceof IntersectionInt) {
-                // (|,(|,P,Q),(|,R,S)) = (|,P,Q,R,S)
-                set.addAll(((CompoundTerm) term2).getTermList());
-            } 
+                // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)                
+                ((CompoundTerm) term2).addTermsTo(se);
+            }               
             else {
-                // (|,(|,P,Q),R) = (|,P,Q,R)
-                set.add(term2);
-            }                          
+                // (&,(&,P,Q),R) = (&,P,Q,R)
+                se.add(term2);
+            }               
         } else if (term2 instanceof IntersectionInt) {
-            // (|,R,(|,P,Q)) = (|,P,Q,R)
-            set = new TreeSet<>(((CompoundTerm) term2).getTermList());
-            set.add(term1);   
+            // (&,R,(&,P,Q)) = (&,P,Q,R)
+            ((CompoundTerm) term2).addTermsTo(se);
+            se.add(term1);
         } else {
-            set = new TreeSet<>();
-            set.add(term1);
-            set.add(term2);
+            se.add(term1);
+            se.add(term2);
         }
-        return make(set);
+        return make(se.toArray(new Term[se.size()]));
     }
 
-    @Deprecated public static Term make(TreeSet<Term> t) {
-        if (t.size() == 0) return null;        
-        if (t.size() == 1) return t.first(); // special case: single component        
-                
-        Term[] a = t.toArray(new Term[t.size()]);
-        return new IntersectionInt(a);
-    }
     
     public static Term make(Term[] t) {
         t = Term.toSortedSetArray(t);
