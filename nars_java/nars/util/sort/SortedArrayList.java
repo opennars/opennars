@@ -1,11 +1,20 @@
 package nars.util.sort;
 
 import java.util.ArrayList;
+import static nars.language.Term.get;
 
 /**
+ * UNTESTED
  * @author http://stackoverflow.com/a/4249132
  */
-public class SortedArrayList<T> extends ArrayList<T> {
+public class SortedArrayList<T> extends ArrayList<T> { 
+    
+    public SortedArrayList(int capacity) {
+        super(capacity);
+    }
+    public SortedArrayList() {
+        super();
+    }
 
     @SuppressWarnings("unchecked")
     public void insertSorted(T value) {
@@ -16,5 +25,10 @@ public class SortedArrayList<T> extends ArrayList<T> {
             set(i, get(i-1));
             set(i-1, tmp);
         }
+    }
+
+    
+    public void insertSorted(Iterable<T> i) {
+        for (T t : i) insertSorted(t);
     }
 }

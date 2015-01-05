@@ -68,11 +68,12 @@ public class SetExt extends SetTensional {
         else return make(new TreeSet<>(t));
     }
     
-    public static SetExt make(Term t) {
-        return new SetExt(new Term[] { t });
-    }    
+    public static SetExt make(Term... t) {
+        return new SetExt(t);
+    }
     
-    public static SetExt make(final TreeSet<Term> t) {        
+    
+    @Deprecated public static SetExt make(final TreeSet<Term> t) {        
         if (t.isEmpty()) return null;
         Term[] x = t.toArray(new Term[t.size()]);
         return new SetExt(x);

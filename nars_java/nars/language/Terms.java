@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import nars.core.Memory;
 import nars.entity.TermLink;
 
@@ -466,16 +465,16 @@ public class Terms {
         if (!allowSingleton && (arg.length == 1)) {
             throw new RuntimeException("Needs >1 components: " + Arrays.toString(arg));
         }
-        TreeSet<Term> s = Term.toSortedSet(arg);
-        if (arg.length!=s.size()) {
+        Term[] s = Term.toSortedSetArray(arg);
+        if (arg.length!=s.length) {
             throw new RuntimeException("Contains duplicates: " + Arrays.toString(arg));
         }
         int j = 0;
         for (Term t : s) {
             if (!t.equals(arg[j++]))
-                throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + s);
+                throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
         }        
-        return s.toArray(new Term[s.size()]);
+        return s;
     }
 
     /**

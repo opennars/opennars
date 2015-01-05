@@ -528,9 +528,9 @@ public class Memory implements Serializable {
         switch (op) {
             
             case SET_EXT_OPENER:
-                return SetExt.make(CompoundTerm.toSortedSet(a));
+                return SetExt.make(CompoundTerm.toSortedSetArray(a));
             case SET_INT_OPENER:
-                return SetInt.make(CompoundTerm.toSortedSet(a));
+                return SetInt.make(CompoundTerm.toSortedSetArray(a));
             case INTERSECTION_EXT:
                 return IntersectionExt.make(a);
             case INTERSECTION_INT:

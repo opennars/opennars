@@ -100,22 +100,25 @@ public class IntersectionExt extends CompoundTerm {
         return make(set);
     }
 
-    public static Term make(TreeSet<Term> t) {
+    @Deprecated public static Term make(TreeSet<Term> t) {
         if (t.size() == 0) return null;        
         if (t.size() == 1) return t.first(); // special case: single component        
                 
         Term[] a = t.toArray(new Term[t.size()]);
         return new IntersectionExt(a);
     }
-
-    public static Term make(Term[] replaced) {
-        if (replaced.length == 1)
-            return replaced[0];
-        else if (replaced.length > 1)
-            return make(Term.toSortedSet(replaced));
-        else
-            throw new RuntimeException("Invalid # of terms for Intersection: " + Arrays.toString(replaced));        
+    
+    public static Term make(Term[] t) {
+        t = Term.toSortedSetArray(t);
+        switch (t.length) {
+            case 0: return null;
+            case 1: return t[0];
+            default:
+               return new IntersectionExt(t); 
+        }
     }
+    
+
 
 
     /**
