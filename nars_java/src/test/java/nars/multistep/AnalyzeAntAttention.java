@@ -7,7 +7,6 @@ package nars.multistep;
 import java.io.File;
 import nars.core.NAR;
 import nars.core.build.Neuromorphic;
-import nars.gui.NARSwing;
 import nars.io.TextInput;
 
 /**
@@ -24,9 +23,7 @@ public class AnalyzeAntAttention {
 
         nar.addInput(new TextInput(new File("nal/test/nal7.15.nal")));
             
-        
-        new NARSwing(nar);
-        
+                
 //        new NALTestSome("nal/test/nal7.15.nal", showOutput) {
 //        //new NALTestSome("nal/test/nal1.multistep.nal", showOutput) {
 //        //new NALTestSome("nal/test/nars_multistep_1.nal", showOutput) {

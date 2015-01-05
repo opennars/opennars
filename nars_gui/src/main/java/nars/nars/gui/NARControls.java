@@ -20,6 +20,7 @@
  */
 package nars.gui;
 
+import nars.io.InferenceLogger;
 import automenta.vivisect.TreeMLData;
 import automenta.vivisect.dimensionalize.FastOrganicLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;

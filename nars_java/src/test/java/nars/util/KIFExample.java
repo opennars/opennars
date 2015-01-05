@@ -19,7 +19,6 @@ package nars.util;
 
 import nars.core.NAR;
 import nars.core.build.Curve;
-import nars.gui.NARSwing;
 import nars.util.kif.KIFInput;
 
 /**
@@ -62,7 +61,7 @@ public class KIFExample {
         
         //t.stop();
         
-        new NARSwing(n);
+        //new NARSwing(n);
         
 
         /*

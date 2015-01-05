@@ -1,4 +1,4 @@
-package nars.perf;
+package perf;
 
 import java.util.HashMap;
 import java.util.HashSet;
