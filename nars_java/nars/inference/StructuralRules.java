@@ -77,7 +77,7 @@ public final class StructuralRules {
         }*/
         Term sub = statement.getSubject();
         Term pred = statement.getPredicate();
-        List<Term> components = compound.getTermList();
+        List<Term> components = compound.asTermList();
         if (((side == 0) && components.contains(pred)) || ((side == 1) && components.contains(sub))) {
             return;
         }
@@ -263,7 +263,8 @@ public final class StructuralRules {
             if (compound instanceof IntersectionInt) {
                 structuralStatement(component, pred, order, truthDed, nal);
             } else if ((compound instanceof SetExt) && (compound.size() > 1)) {
-                structuralStatement(SetExt.make(component), pred, order, truthDed, nal);
+                Term[] t1 = new Term[]{component};
+                structuralStatement(new SetExt(t1), pred, order, truthDed, nal);
             } else if (compound instanceof DifferenceInt) {
                 if (index == 0) {
                     structuralStatement(component, pred, order, truthDed, nal);
@@ -275,7 +276,7 @@ public final class StructuralRules {
             if (compound instanceof IntersectionExt) {
                 structuralStatement(subj, component, order, truthDed, nal);
             } else if ((compound instanceof SetInt) && (compound.size() > 1)) {
-                structuralStatement(subj, SetInt.make(component), order, truthDed, nal);
+                structuralStatement(subj, new SetInt(component), order, truthDed, nal);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
                     structuralStatement(subj, component, order, truthDed, nal);

@@ -528,9 +528,9 @@ public class Memory implements Serializable {
         switch (op) {
             
             case SET_EXT_OPENER:
-                return SetExt.make(CompoundTerm.toSortedSetArray(a));
+                return SetExt.make(a);
             case SET_INT_OPENER:
-                return SetInt.make(CompoundTerm.toSortedSetArray(a));
+                return SetInt.make(a);
             case INTERSECTION_EXT:
                 return IntersectionExt.make(a);
             case INTERSECTION_INT:
@@ -550,7 +550,7 @@ public class Memory implements Serializable {
             case NEGATION:
                 return Negation.make(a);
             case DISJUNCTION:
-                return Disjunction.make(CompoundTerm.termList(a));
+                return Disjunction.make(a);
             case CONJUNCTION:
                 return Conjunction.make(a);
             case SEQUENCE:

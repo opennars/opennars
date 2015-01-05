@@ -16,6 +16,9 @@ abstract public class SetTensional extends CompoundTerm {
     protected SetTensional(final Term[] arg) {
         super(arg);
         
+        if (arg.length == 0)
+            throw new RuntimeException("0-arg empty set");
+        
         if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, true); }
         
         init(arg);

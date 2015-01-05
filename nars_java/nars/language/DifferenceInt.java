@@ -81,8 +81,8 @@ public class DifferenceInt extends CompoundTerm {
         
         if ((arg[0] instanceof SetInt) && (arg[1] instanceof SetInt)) {
             //TODO maybe a faster way to calculate:
-            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).getTermList());
-            set.removeAll(((CompoundTerm) arg[1]).getTermList());           // set difference
+            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).asTermList());
+            set.removeAll(((CompoundTerm) arg[1]).asTermList());           // set difference
             return SetInt.make(set);
         }
                 
