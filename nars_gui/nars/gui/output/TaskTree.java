@@ -188,7 +188,7 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
         }
         
         for (Task t : toAdd) {
-            Task parent = t.parentTask;
+            Task parent = t.getParentTask();
             if (parent!=null && parent.equals(t)) {
                 //System.err.println(t + " has parentTask equal to itself");
                 parent = null;
