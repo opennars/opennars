@@ -134,15 +134,24 @@ public class LineChart extends Chart implements MultiChart {
     }
 
     protected void drawData(TimelineVis l, float timeScale1, float yScale1, float y) {
+
         int ccolor = 0;
+        float w = lineThickness * 2.75f;
+        
         for (TreeMLData chart : data) {
             ccolor = chart.getColor();
             float lx = 0;
             float ly = 0;
             l.g.fill(255f);
             boolean firstPoint = false;
+            
+            l.g.stroke(ccolor);
+            l.g.strokeWeight(lineThickness);
+            
             int cs = l.cycleStart;
             for (int t = cs; t < l.cycleEnd; t++) {
+                l.g.stroke = true;
+                
                 float x = (t-cs) * timeScale1;
                 float v = (float)chart.getData(t);
                 if (Float.isNaN(v)) {
@@ -155,12 +164,9 @@ public class LineChart extends Chart implements MultiChart {
                 float py = y + yScale1 - h;
                                 
                 if (firstPoint) {
-                    l.g.strokeWeight(lineThickness);
                     if (showVerticalLines) {
-                        l.g.stroke(ccolor, 127f);
                         l.g.line(px, py, px, py + h);
                     }
-                    l.g.stroke(ccolor);
 
                     if (t != l.cycleStart) {
                         l.g.line(lx, ly, px, py);
@@ -173,10 +179,10 @@ public class LineChart extends Chart implements MultiChart {
                 firstPoint = true;
                 
                 if (showPoints) {
-                    l.g.noStroke();
+                    l.g.stroke = false;                    
+                    
                     //TODO create separate size and opacity get/set parameter for the points
-                    l.g.fill(ccolor, 128f * (p * 0.5f + 0.5f));
-                    float w = lineThickness * 2.75f;
+                    l.g.fill(ccolor, 128f * (p * 0.5f + 0.5f));                    
                     l.g.rect(px - w / 2f, py - w / 2f, w, w);
                 }
             }

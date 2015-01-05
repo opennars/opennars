@@ -87,6 +87,11 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
 
     private final int hash;
     
+    
+    public Sentence(T term, char punctuation, TruthValue newTruth, Stamp newStamp) {
+        this(term, punctuation, newTruth, newStamp, true);
+    }
+    
     /**
      * Create a Sentence with the given fields
      *
@@ -96,7 +101,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    public Sentence(final T _content, final char punctuation, final TruthValue truth, final Stamp stamp) {
+    private Sentence(final T _content, final char punctuation, final TruthValue truth, final Stamp stamp, boolean normalize) {
         
         this.punctuation = punctuation;
         
@@ -132,7 +137,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         
         //Variable name normalization
         //TODO move this to Concept method, like cloneNormalized()
-        if (_content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
+        if (normalize && _content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
             
             this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
             
@@ -197,6 +202,8 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         else 
             this.hash = Objects.hash(term, punctuation, truth );
     }
+
+    
 
     protected boolean isUniqueByOcurrenceTime() {
         return ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
@@ -306,7 +313,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
                 
         Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
         
-        return new Sentence(term, punctuation, newTruth, newStamp);
+        return new Sentence(term, punctuation, newTruth, newStamp, false);
     }
 
     
