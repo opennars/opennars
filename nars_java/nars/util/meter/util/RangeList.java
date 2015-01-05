@@ -14,7 +14,6 @@
  */
 package nars.util.meter.util;
 
-import com.google.common.collect.Iterators;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +61,8 @@ public class RangeList implements Iterable<Range>, Serializable {
     }
 
     protected boolean calcHasOverlap() {
+        boolean hasOverlap = false;
+
         for (int i = 0; i < ranges.length; i++) {
             for (int j = i; j < ranges.length; j++) {
                 if (i == j) {
@@ -69,20 +70,21 @@ public class RangeList implements Iterable<Range>, Serializable {
                 }
 
                 if (ranges[i].overlaps(ranges[j], exclusiveRangeEnd)) {
-                    return true;
+                    hasOverlap = true;
+                    break;
                 }
             }
         }
 
-        return false;
+        return hasOverlap;
     }
 
     protected double calcMinBegin() {
-        if (ranges.length == 0) return Double.POSITIVE_INFINITY;        
-        double min = ranges[0].getBegin();
-        
-        for (int i = 1; i < ranges.length; i++) {
-            double tmp = ranges[i].getBegin();
+        double min = Double.POSITIVE_INFINITY;
+
+        double tmp;
+        for (int i = 0; i < ranges.length; i++) {
+            tmp = ranges[i].getBegin();
             if (tmp < min) {
                 min = tmp;
             }
@@ -92,11 +94,10 @@ public class RangeList implements Iterable<Range>, Serializable {
     }
 
     protected double calcMaxEnd() {
-        if (ranges.length == 0) return Double.NEGATIVE_INFINITY;
-        double max = ranges[0].getEnd();
+        double max = Double.NEGATIVE_INFINITY;
 
         double tmp;
-        for (int i = 1; i < ranges.length; i++) {
+        for (int i = 0; i < ranges.length; i++) {
             tmp = ranges[i].getEnd();
             if (tmp > max) {
                 max = tmp;
@@ -132,7 +133,7 @@ public class RangeList implements Iterable<Range>, Serializable {
 
     @Override
     public Iterator<Range> iterator() {
-        return Iterators.forArray(ranges);
+        return getRanges().iterator();
     }
 
     public int indexOfRangeContaining(final double value) {
