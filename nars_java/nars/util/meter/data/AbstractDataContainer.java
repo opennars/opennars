@@ -16,6 +16,7 @@ package nars.util.meter.data;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.DoubleAccumulator;
 
 /**
  * A convenience base implementation of {@link DataContainer}.
@@ -84,7 +85,7 @@ public abstract class AbstractDataContainer implements DataContainer {
     @Override
     public void put(final String name, final Object value) {
         //assertNotEmpty(name, "name");
-        //assertNotNull(value, "value");        
+        //assertNotNull(value, "value");                
         dataMap.put(name, value);
     }
 

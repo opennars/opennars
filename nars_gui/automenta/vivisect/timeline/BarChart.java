@@ -23,6 +23,7 @@ public class BarChart extends LineChart {
         
         int ccolor = chart.getColor();
         l.g.noStroke();
+        l.g.fill(ccolor);
         for (int t = l.cycleStart; t < l.cycleEnd; t++) {
             float x = (t-l.cycleStart) * timeScale;
             float v = (float)chart.getData(t);
@@ -35,7 +36,7 @@ public class BarChart extends LineChart {
             float px = width * x;
             float h = p * yScale1;
             float py = y + yScale1 - h;
-            l.g.fill(ccolor, 255f * (0.5f + 0.5f * p));
+            //l.g.fill(ccolor, 255f * (0.5f + 0.5f * p));
             l.g.rect(px, py, width * timeScale * barWidth, h);
         }
     }

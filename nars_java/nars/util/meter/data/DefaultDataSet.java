@@ -130,34 +130,33 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
         return dataMap.toString();
     }
     
+    public void put(final String fieldName, double value) {
+        MutableDouble o = (MutableDouble) get(fieldName);
+        if (o==null) {
+            put(fieldName, new MutableDouble(value));
+        }
+        else
+            o.setValue(value);        
+    }
+    
     public double d(final String fieldName, final double defaultValue) {
-        Double value = getField(fieldName, Double.class);
+        Number value = (Number)get(fieldName);
         if (value == null)
             return defaultValue;
-        return value;
+        return value.doubleValue();
     }
     
     @Override
     public double d(final String fieldName) {
-        return getField(fieldName, Double.class);
+        return ((Number)get(fieldName)).doubleValue();
     }
 
     @Override
     public long i(final String fieldName) {
-        return getField(fieldName, Long.class);
+        return ((Number)get(fieldName)).longValue();
     }
 
     
-    public double n(final String fieldName) {        
-        Object o = dataMap.get(fieldName);
-        if (o instanceof Double)
-            return ((Double)o).doubleValue();
-        if (o instanceof Float)
-            return ((Float)o).doubleValue();
-        if (o instanceof Integer)
-            return ((Integer)o).doubleValue();
-        return 0;
-    }
      
     public double[] toArray(double... extraFields) {
         Set<String> k = keySet();
@@ -165,7 +164,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
         double d[] = new double[s + extraFields.length];
         int i = 0;
         for (String field : k) {
-            d[i++] = n(field);
+            d[i++] = d(field);
         }
         for (double e : extraFields) {
             d[i++] = e;

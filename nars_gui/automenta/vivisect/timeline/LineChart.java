@@ -142,10 +142,10 @@ public class LineChart extends Chart implements MultiChart {
             ccolor = chart.getColor();
             float lx = 0;
             float ly = 0;
-            l.g.fill(255f);
             boolean firstPoint = false;
             
             l.g.stroke(ccolor);
+            l.g.fill(ccolor);
             l.g.strokeWeight(lineThickness);
             
             int cs = l.cycleStart;
@@ -182,7 +182,7 @@ public class LineChart extends Chart implements MultiChart {
                     l.g.stroke = false;                    
                     
                     //TODO create separate size and opacity get/set parameter for the points
-                    l.g.fill(ccolor, 128f * (p * 0.5f + 0.5f));                    
+                    //l.g.fill(ccolor); //, 128f * (p * 0.5f + 0.5f));                    
                     l.g.rect(px - w / 2f, py - w / 2f, w, w);
                 }
             }
