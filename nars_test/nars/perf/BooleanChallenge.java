@@ -82,7 +82,7 @@ public class BooleanChallenge {
                     return;
                 }
                 
-                Task question = answer.parentTask;
+                Task question = answer.getParentTask();
                 if (!question.sentence.isQuestion())
                     return;
                 if (!questionScores.containsKey(question.getTerm())) {

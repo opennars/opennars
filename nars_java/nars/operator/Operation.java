@@ -33,6 +33,8 @@ import nars.language.Term;
  */
 public class Operation extends Inheritance {
     private Task task;
+    
+    
     public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
 
     /**
@@ -48,6 +50,7 @@ public class Operation extends Inheritance {
     protected Operation(Term[] t) {
         super(t);
     }
+
     
     /**
      * Clone an object

@@ -68,7 +68,7 @@ abstract public class AbstractMeter extends DefaultDataSet {
                         continue;
                     }
                 }
-                s.getSession().drainData();
+                s.getSession().clear();
             }
         }
     }

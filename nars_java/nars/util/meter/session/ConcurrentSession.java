@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
+import nars.util.meter.data.Field;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
@@ -58,18 +59,18 @@ public class ConcurrentSession extends AbstractStatsSession {
     //public static final Factory FACTORY = new Factory();
     private static final Logger logger = Logger.getLogger(ConcurrentSession.class.toString());
 
-    protected final AtomicLong hits = new AtomicLong(DataSet.Field.DefaultField.HITS);
-    protected final AtomicLong firstHitStamp = new AtomicLong(DataSet.Field.DefaultField.FIRST_HIT_STAMP);
-    protected volatile long lastHitStamp = DataSet.Field.DefaultField.LAST_HIT_STAMP;
-    protected final AtomicLong commits = new AtomicLong(DataSet.Field.DefaultField.COMMITS);
+    protected final AtomicLong hits = new AtomicLong(Field.DefaultField.HITS);
+    protected final AtomicLong firstHitStamp = new AtomicLong(Field.DefaultField.FIRST_HIT_STAMP);
+    protected volatile long lastHitStamp = Field.DefaultField.LAST_HIT_STAMP;
+    protected final AtomicLong commits = new AtomicLong(Field.DefaultField.COMMITS);
 
     // The proper default is taken care of in getFirst()
     protected final AtomicDouble first = new AtomicDouble(Double.NEGATIVE_INFINITY);
 
-    protected volatile double last = DataSet.Field.DefaultField.LAST;
+    protected volatile double last = Field.DefaultField.LAST;
     protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
     protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
-    protected final AtomicDouble sum = new AtomicDouble(DataSet.Field.DefaultField.SUM);
+    protected final AtomicDouble sum = new AtomicDouble(Field.DefaultField.SUM);
 
     public ConcurrentSession(final StatsKey key,
             final EventManager eventManager,
@@ -87,8 +88,8 @@ public class ConcurrentSession extends AbstractStatsSession {
 
         hits.incrementAndGet();
 
-        if (firstHitStamp.get() == DataSet.Field.DefaultField.FIRST_HIT_STAMP) {
-            firstHitStamp.compareAndSet(DataSet.Field.DefaultField.FIRST_HIT_STAMP, now);
+        if (firstHitStamp.get() == Field.DefaultField.FIRST_HIT_STAMP) {
+            firstHitStamp.compareAndSet(Field.DefaultField.FIRST_HIT_STAMP, now);
         }
         lastHitStamp = now;
 
@@ -193,10 +194,10 @@ public class ConcurrentSession extends AbstractStatsSession {
 
     @Override
     public double getFirst() {
-        Double firstValue = first.get();
+        double firstValue = first.doubleValue();
 
-        if (firstValue == null) {
-            return DataSet.Field.DefaultField.FIRST;
+        if (!Double.isFinite(firstValue)) {
+            return Field.DefaultField.FIRST;
         }
 
         return firstValue;
@@ -219,9 +220,9 @@ public class ConcurrentSession extends AbstractStatsSession {
 
     @Override
     public double getMin() {
-        Double result = min.get();
-        if (result.equals(Double.POSITIVE_INFINITY)) {
-            result = DataSet.Field.DefaultField.MIN;
+        double result = min.doubleValue();
+        if (!Double.isFinite(result)) {
+            result = Field.DefaultField.MIN;
         }
         return result;
     }
@@ -233,9 +234,9 @@ public class ConcurrentSession extends AbstractStatsSession {
 
     @Override
     public double getMax() {
-        Double result = max.get();
-        if (result.equals(Double.NEGATIVE_INFINITY)) {
-            result = DataSet.Field.DefaultField.MAX;
+        double result = max.get();
+        if (!Double.isFinite(result)) {
+            result = Field.DefaultField.MAX;
         }
         return result;
     }

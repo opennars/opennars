@@ -19,7 +19,6 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.control.FireConcept;
 import nars.core.control.NAL;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
@@ -66,7 +65,7 @@ public class LogicPerformance {
 
         public void explain(Task t, int maxLevels, List<Task> generated) {
             //String x = toString() + "\n";
-            Operation cause = t.getCause();
+            Term cause = t.getCause();
             Sentence bestSolution = t.getBestSolution();            
             Sentence parentBelief = t.getParentBelief();
             Task parentTask = t.getParentTask();
@@ -83,9 +82,10 @@ public class LogicPerformance {
                 addEdge(term, t, new UniqueEdge("s"));
             }
             
-            if (cause!=null) {
+            if ((cause!=null) && (cause instanceof Operation)) {
                 //x += "  cause=" + cause + "\n";
-                Task causeTask = cause.getTask();
+                
+                Task causeTask = ((Operation)cause).getTask();
                 addVertex(causeTask);
                 addEdge(causeTask, t,new UniqueEdge("cause"));
                 explain(causeTask, maxLevels-1);

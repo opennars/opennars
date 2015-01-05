@@ -46,6 +46,7 @@ public class Inheritance extends Statement {
     }
 
 
+    
     /**
      * Clone an object
      * @return A new object, to be casted into a SetExt
