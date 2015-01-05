@@ -53,10 +53,7 @@
                                   <Component id="jLabel5" min="-2" pref="151" max="-2" attributes="0"/>
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel2" min="-2" pref="147" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="jLabel2" alignment="0" min="-2" pref="147" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
@@ -152,6 +149,9 @@
         </Container>
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="fe" green="ff" red="ff" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value=" Run NARS GUI"/>
             <Property name="actionCommand" type="java.lang.String" value="jButton1"/>
           </Properties>
@@ -165,7 +165,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="ff" green="ff" red="fe" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Tic Tac Toe"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -178,13 +178,16 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="ff" green="ff" red="fe" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Run Application Examples:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="fe" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Website"/>
             <Property name="actionCommand" type="java.lang.String" value="jButton1"/>
           </Properties>
@@ -198,7 +201,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="ff" green="ff" red="fe" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Test Chamber"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -213,7 +216,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="ff" green="ff" red="fe" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Rover"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -225,6 +228,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButton5">
           <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="fe" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="IRC"/>
             <Property name="actionCommand" type="java.lang.String" value="jButton1"/>
           </Properties>
@@ -238,7 +244,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="ff" green="ff" red="fe" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="NAR Pred"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -254,7 +260,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="ff" green="ff" red="fe" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Nario"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -266,6 +272,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButton3">
           <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="fe" green="ff" red="ff" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Run Web GUI"/>
             <Property name="actionCommand" type="java.lang.String" value="jButton1"/>
           </Properties>
