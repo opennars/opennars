@@ -82,7 +82,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     public class CurveMap extends HashMap<K,E> {
 
         public CurveMap(int initialCapacity) {
-            super(initialCapacity * 2);
+            super(initialCapacity * 1 + 1);
         }
      
         @Override public E put(final K key, final E value) {
