@@ -21,6 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
+import nars.util.meter.data.Field;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.event.TaskService;
 import nars.util.meter.event.TaskServiceFactory;
@@ -61,16 +62,16 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     private static final Logger logger = Logger.getLogger(AsynchronousSession.class.toString());
 
-    private volatile long hits = DataSet.Field.DefaultField.HITS;
-    private volatile long firstHitStamp = DataSet.Field.DefaultField.FIRST_HIT_STAMP;
-    private volatile long lastHitStamp = DataSet.Field.DefaultField.LAST_HIT_STAMP;
-    private volatile long commits = DataSet.Field.DefaultField.COMMITS;
+    private volatile long hits = Field.DefaultField.HITS;
+    private volatile long firstHitStamp = Field.DefaultField.FIRST_HIT_STAMP;
+    private volatile long lastHitStamp = Field.DefaultField.LAST_HIT_STAMP;
+    private volatile long commits = Field.DefaultField.COMMITS;
 
     private volatile Double first = null; // The proper default is taken care of in getFirst()
-    private volatile double last = DataSet.Field.DefaultField.LAST;
+    private volatile double last = Field.DefaultField.LAST;
     private volatile double min = Double.POSITIVE_INFINITY;
     private volatile double max = Double.NEGATIVE_INFINITY;
-    private volatile double sum = DataSet.Field.DefaultField.SUM;
+    private volatile double sum = Field.DefaultField.SUM;
 
     private final Queue<TrackerEntry> updateQueue;
     private final Lock updateQueueProcessingLock = new ReentrantLock();
@@ -118,7 +119,7 @@ public class AsynchronousSession extends AbstractStatsSession {
         try {
             hits++;
 
-            if (firstHitStamp == DataSet.Field.DefaultField.FIRST_HIT_STAMP) {
+            if (firstHitStamp == Field.DefaultField.FIRST_HIT_STAMP) {
                 firstHitStamp = now;
             }
 
@@ -224,7 +225,7 @@ public class AsynchronousSession extends AbstractStatsSession {
         Double firstValue = first;
 
         if (firstValue == null) {
-            return DataSet.Field.DefaultField.FIRST;
+            return Field.DefaultField.FIRST;
         }
 
         return firstValue;
@@ -249,7 +250,7 @@ public class AsynchronousSession extends AbstractStatsSession {
     public double getMin() {
         Double result = min;
         if (result.equals(Double.POSITIVE_INFINITY)) {
-            result = DataSet.Field.DefaultField.MIN;
+            result = Field.DefaultField.MIN;
         }
         return result;
     }
@@ -263,7 +264,7 @@ public class AsynchronousSession extends AbstractStatsSession {
     public double getMax() {
         Double result = max;
         if (result.equals(Double.NEGATIVE_INFINITY)) {
-            result = DataSet.Field.DefaultField.MAX;
+            result = Field.DefaultField.MAX;
         }
         return result;
     }

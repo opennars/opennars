@@ -15,6 +15,7 @@
 package nars.util.meter.sensor;
 
 import nars.util.meter.Meter;
+import nars.util.meter.data.Field;
 import nars.util.meter.session.StatsSession;
 
 /**
@@ -106,5 +107,13 @@ public class EventValueSensor extends AbstractSensor implements ManualTracker {
 //    public double getMean() {
 //        return get("hits","mean").mean();
 //    }
+
+    public double mean() {        
+        double sum = getSession().getSum();
+        double hits = /*getSession().*/getDeltaHits();
+        if (hits == 0) return 0;
+        return sum / hits;
+    }
+
 
 }

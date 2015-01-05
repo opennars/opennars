@@ -3,6 +3,7 @@ package automenta.vivisect;
 import java.awt.Color;
 import java.util.Comparator;
 import java.util.TreeMap;
+import nars.util.meter.data.MutableInteger;
 import nars.util.meter.data.MutableIntegerDouble;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLDataCentroid;
@@ -17,7 +18,9 @@ public class TreeMLData implements MLData {
 
 
     //TODO use a primitive collection
-    public final TreeMap<MutableIntegerDouble,MutableIntegerDouble> values;
+    public final TreeMap<MutableInteger,MutableIntegerDouble> values;
+    
+    private final MutableInteger temp = new MutableInteger(0);
     
     /** RGBA */
     protected int colour;
@@ -110,10 +113,14 @@ public class TreeMLData implements MLData {
         setData(t, f + x);
     }
     
+    public synchronized MutableIntegerDouble get(int i) {        
+        return values.get(temp.setValue(i));
+    }
+    
     @Override
     public void setData(final int t, final double f) {
         
-        MutableIntegerDouble existing = values.get(t);
+        MutableIntegerDouble existing = get(t);
         if (existing!=null) {
             existing.setAux(f);
         }
@@ -153,13 +160,13 @@ public class TreeMLData implements MLData {
 
     @Override
     public double getData(int t) {
-        MutableIntegerDouble v = values.get(t);
+        MutableIntegerDouble v = get(t);
         if (v == null) return defaultValue;
         return v.getAux();
     }
     
     public double getData(int t, double defaultVal) {
-        MutableIntegerDouble v = values.get(t);
+        MutableIntegerDouble v = get(t);
         if (v == null) return defaultVal;
         return v.getAux();
     }
@@ -185,7 +192,7 @@ public class TreeMLData implements MLData {
     public double[] getMinMax(int start, int end) {
         if (specificRange)
             return specificMinMax;
-        
+            
         double min=Double.POSITIVE_INFINITY, max=Double.NEGATIVE_INFINITY;
         for (int i = start; i < end; i++) {
             

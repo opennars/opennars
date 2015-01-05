@@ -29,39 +29,6 @@ public interface DataSet extends DataContainer {
     
 
 
-    /**
-     * Standard field names.
-     */
-    interface Field {
-
-        public static final String HITS = "hits";
-        public static final String FIRST_HIT_STAMP = "firstHitStamp";
-        public static final String LAST_HIT_STAMP = "lastHitStamp";
-        public static final String COMMITS = "commits";
-        public static final String FIRST = "first";
-        public static final String LAST = "last";
-        public static final String MIN = "min";
-        public static final String MAX = "max";
-        public static final String SUM = "sum";
-        //public static final String STDEV = "stdDev";
-
-        /**
-         * DefaultField values for standard field names.
-         */
-        interface DefaultField {
-
-            public static final Long HITS = 0L;
-            public static final Long FIRST_HIT_STAMP = -1L;
-            public static final Long LAST_HIT_STAMP = -1L;
-            public static final Long COMMITS = 0L;
-            public static final Double FIRST = Double.NaN;
-            public static final Double LAST = Double.NaN;
-            public static final Double MIN = Double.NaN;
-            public static final Double MAX = Double.NaN;
-            public static final Double SUM = 0D;
-            //public static final Double STDEV = 0D;
-        }
-    }
 
     /**
      * Get the time stamp at which this DataSet was collected from a
@@ -118,5 +85,8 @@ public interface DataSet extends DataContainer {
         return (sum() / h); 
     }
 
+    default public void put(String id, double value) {
+        put(id, new Double(value));
+    }
 
 }

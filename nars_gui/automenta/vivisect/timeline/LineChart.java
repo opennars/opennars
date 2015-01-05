@@ -1,16 +1,18 @@
 package automenta.vivisect.timeline;
 
 import automenta.vivisect.TreeMLData;
+import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.Chart.MultiChart;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
+import nars.io.Texts;
 
 public class LineChart extends Chart implements MultiChart {
     protected final List<TreeMLData> data;
-    float min;
-    float max;
+    double min;
+    double max;
     boolean showVerticalLines = false;
     boolean showPoints = true;
     float lineThickness = 1f;
@@ -83,8 +85,8 @@ public class LineChart extends Chart implements MultiChart {
     }
 
     protected void updateRange(TimelineVis l) {
-        min = Float.POSITIVE_INFINITY;
-        max = Float.NEGATIVE_INFINITY;
+        min = Double.POSITIVE_INFINITY;
+        max = Double.NEGATIVE_INFINITY;
         for (TreeMLData chart : data) {
             double[] mm = chart.getMinMax(l.cycleStart, l.cycleEnd);
             min = (float)Math.min(min,mm[0]);
@@ -92,8 +94,10 @@ public class LineChart extends Chart implements MultiChart {
         }
         
     }
-
+    
+ 
     protected void drawOverlay(TimelineVis l, float screenyLo, float screenyHi) {
+        
         //draw overlay
         l.g.pushMatrix();
         l.g.resetMatrix();
@@ -109,19 +113,19 @@ public class LineChart extends Chart implements MultiChart {
         
         float ytspace = dsy * 0.75f / data.size() / 2;
 
-        l.g.textSize(11f);
+        l.g.textFont(PCanvas.font9);
         l.g.fill(210);
         
         //TODO number precision formatting
-        l.g.text("" + ((double) min), 0, screenyLo - dsy / 10f);
-        l.g.text("" + ((double) max), 0, screenyHi + dsy / 10f);
+        l.g.text(Texts.n4((float)min), 15, screenyLo - dsy / 10f);
+        l.g.text(Texts.n4((float)max), 0, screenyHi + dsy / 10f);
 
-        l.g.textSize(15f);
+        l.g.textFont(PCanvas.font12);
         float dsyt = screenyHi + 0.15f * dsy;
         for (TreeMLData chart : data) {
             l.g.fill(chart.getColor() | 0x77777777);
             dsyt += ytspace;
-            l.g.text(chart.label, 0, dsyt);
+            l.g.text(chart.label, 8, dsyt);
             dsyt += ytspace;
         }
         
