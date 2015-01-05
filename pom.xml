@@ -1,136 +1,107 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>opennars</groupId>
-  <artifactId>core</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+    <groupId>opennars</groupId>
+    <artifactId>opennars</artifactId>
+    <version>1.7-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-  <name>core</name>
-  <url>http://maven.apache.org</url>
+    <name>OpenNARS</name>
+    <url>https://github.com/opennars/opennars</url>
 
-<build>
+    <modules>
+        <module>nars_java</module>
+        <module>nars_gui</module>
+        <module>nars_lab</module>
+        <module>nars_web</module>
+        <module>nars_prolog</module>
+    </modules>
 
-<!--
-   <resources>
-     <resource>
-       <directory>nal</directory>
-     </resource>     
-   </resources> -->
+    <build>
 
-    <plugins>
-    
-    <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.9.1</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>nars_java</source>
-                <source>nars_gui</source>
-                <source>nars_lab</source>
-                <source>nars_web</source>
-                <source>nars_prolog</source>
-              </sources>
-            </configuration>
-          </execution>
-         <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>nars_test</source>
-              </sources>
-            </configuration>
-          </execution>          
-        </executions>
-      </plugin>
-      
+        <!--
+        <resources>
+          <resource>
+            <directory>nal</directory>
+          </resource>     
+        </resources> -->
+
+        <plugins>
           
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.2</version>
-        <configuration>
-            <optimize>true</optimize>
-            <source>1.8</source>
-            <target>1.8</target>
-        </configuration>
-      </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <optimize>true</optimize>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
       
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.1</version>
-        <configuration>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.1</version>
+                <configuration>
           
-        </configuration>
-      </plugin>
+                </configuration>
+            </plugin>
       
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.3</version>
-      </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.3</version>
+            </plugin>
       
-      <!--
-       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.13</version>
-          <reportSets>
-            <reportSet>
-              <reports>
-                <report>checkstyle</report>
-              </reports>
-            </reportSet>
-          </reportSets>
-        </plugin>
-         -->
+            <!--
+          <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-checkstyle-plugin</artifactId>
+             <version>2.13</version>
+             <reportSets>
+               <reportSet>
+                 <reports>
+                   <report>checkstyle</report>
+                 </reports>
+               </reportSet>
+             </reportSets>
+           </plugin>
+            -->
                 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <!-- put your configurations here -->
-            <createDependencyReducedPom>false</createDependencyReducedPom>
-          <!--
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>org.sonatype.haven.HavenCli</mainClass>
-                </transformer>
-              </transformers>
-              -->
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>   
-   </build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <!-- put your configurations here -->
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <!--
+                    <transformers>
+                      <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        <mainClass>org.sonatype.haven.HavenCli</mainClass>
+                      </transformer>
+                    </transformers>
+                    -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>   
+    </build>
    
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
-       <repositories>
+    <repositories>
         <repository>
             <id>processing</id>
             <name>Processing</name>
@@ -138,28 +109,28 @@
         </repository>
     </repositories>
 
-  <dependencies>
-          <dependency>
+    <dependencies>
+        <dependency>
             <groupId>processing</groupId>
             <artifactId>core</artifactId>
             <version>3.0</version>
         </dependency>
 
-    <dependency>
-	    <groupId>com.google.guava</groupId>
-	    <artifactId>guava</artifactId>
-	    <version>18.0</version>
-    </dependency>
-<dependency>
-	<groupId>org.javolution</groupId>
-	<artifactId>javolution-core-java</artifactId>
-	<version>6.0.0</version>
-</dependency>
-<dependency>
-	<groupId>org.jgrapht</groupId>
-	<artifactId>jgrapht-core</artifactId>
-	<version>0.9.0</version>
-</dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javolution</groupId>
+            <artifactId>javolution-core-java</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>0.9.0</version>
+        </dependency>
         <dependency>
             <groupId>org.tinyjee.jgraphx</groupId>
             <artifactId>jgraphx</artifactId>
@@ -176,47 +147,65 @@
             <artifactId>org.abego.treelayout.core</artifactId>
             <version>1.0.1</version>
         </dependency>
-<dependency>
-	<groupId>org.jbox2d</groupId>
-	<artifactId>jbox2d-library</artifactId>
-	<version>2.2.1.1</version>
-</dependency>
-                <dependency>
+        <dependency>
+            <groupId>org.jbox2d</groupId>
+            <artifactId>jbox2d-library</artifactId>
+            <version>2.2.1.1</version>
+        </dependency>
+        <dependency>
             <groupId>io.undertow</groupId>        
             <artifactId>undertow-core</artifactId>
             <version>1.2.0.Beta6</version>
         </dependency>   
-<dependency>
-	<groupId>com.github.parboiled1</groupId>
-	<artifactId>grappa</artifactId>
-	<version>1.0.0</version>
-</dependency>
+        <dependency>
+            <groupId>com.github.parboiled1</groupId>
+            <artifactId>grappa</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
 
-<dependency>
-	<groupId>org.apache.commons</groupId>
-	<artifactId>commons-math3</artifactId>
-	<version>3.4</version>
-</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.4</version>
+        </dependency>
 
-<dependency>
-	<groupId>org.encog</groupId>
-	<artifactId>encog-core</artifactId>
-	<version>3.3.0</version>
-<exclusions>
-        <exclusion>
-	<groupId>org.apache.commons</groupId>
-	<artifactId>commons-math3</artifactId>
-        </exclusion>
-      </exclusions>	
-</dependency>
+        <dependency>
+            <groupId>org.encog</groupId>
+            <artifactId>encog-core</artifactId>
+            <version>3.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                </exclusion>
+            </exclusions>	
+        </dependency>
     
   
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+  
+  
+  
+ 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId>
+                <version>2.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+        </plugins>
+    </reporting>  
 </project>
