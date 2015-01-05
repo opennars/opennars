@@ -1,9 +1,7 @@
 package automenta.vivisect;
 
 import java.awt.Color;
-import java.util.Comparator;
 import java.util.TreeMap;
-import nars.util.meter.data.MutableIntegerDouble;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLDataCentroid;
 import org.encog.util.kmeans.Centroid;
@@ -15,9 +13,8 @@ import org.encog.util.kmeans.Centroid;
  */
 public class TreeMLData implements MLData {
 
-
     //TODO use a primitive collection
-    public final TreeMap<MutableIntegerDouble,MutableIntegerDouble> values;
+    public final TreeMap<Integer,Double> values;
     
     /** RGBA */
     protected int colour;
@@ -43,8 +40,6 @@ public class TreeMLData implements MLData {
         this.colour = t.colour;
         this.capacity = t.capacity;
         this.values = t.values;
-        
-  
     }
     
     public TreeMLData(String theName, Color color, int historySize) {
@@ -55,14 +50,7 @@ public class TreeMLData implements MLData {
         label = theName;
         this.colour = color;
         capacity = historySize;
-        values = new TreeMap(new Comparator<Number>() {
-
-            @Override
-            public int compare(Number o1, Number o2) {
-                return Integer.compare(o1.intValue(), o2.intValue());
-            }
-            
-        });
+        values = new TreeMap();
     }
 
     public TreeMLData setRange(double min, double max) {
@@ -78,12 +66,12 @@ public class TreeMLData implements MLData {
     public int getStart() { 
         if (values.isEmpty())
             return 0;
-        return values.firstKey().intValue(); 
+        return values.firstKey(); 
     }
     public int getEnd() { 
         if (values.isEmpty())
             return 0;
-        return values.lastKey().intValue(); 
+        return values.lastKey(); 
     }
 
     @Override
@@ -106,21 +94,16 @@ public class TreeMLData implements MLData {
     }
     
     public void addPlus(final int t, final double f) {
-        double x = getData(t, 0);
-        setData(t, f + x);
+        Double x = getData(t);
+        if (x == null) setData(t, f);
+        else
+            setData(t, f + x.doubleValue());
     }
     
     @Override
     public void setData(final int t, final double f) {
         
-        MutableIntegerDouble existing = values.get(t);
-        if (existing!=null) {
-            existing.setAux(f);
-        }
-        else {
-            existing = new  MutableIntegerDouble(t, f);
-            values.put(existing, existing);
-        }
+        values.put(t, f);
 
         if (capacity!=-1) {
             while (values.size() > capacity) {
@@ -153,17 +136,13 @@ public class TreeMLData implements MLData {
 
     @Override
     public double getData(int t) {
-        MutableIntegerDouble v = values.get(t);
-        if (v == null) return defaultValue;
-        return v.getAux();
+        Double f = values.get(t);
+        if (f == null) {
+            return defaultValue;
+        }
+        return f;
     }
-    
-    public double getData(int t, double defaultVal) {
-        MutableIntegerDouble v = values.get(t);
-        if (v == null) return defaultVal;
-        return v.getAux();
-    }
-    
+
     @Override
     public double[] getData() {
         int size = size();
@@ -189,8 +168,8 @@ public class TreeMLData implements MLData {
         double min=Double.POSITIVE_INFINITY, max=Double.NEGATIVE_INFINITY;
         for (int i = start; i < end; i++) {
             
-            double v = getData(i);
-            if (!Double.isFinite(v))
+            Double v = values.get(i);
+            if (v == null)
                 continue;
             
             if (i == start)
