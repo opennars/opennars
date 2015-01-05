@@ -1,4 +1,4 @@
-package automenta.vivisect;
+package nars.util;
 
 import java.awt.Color;
 import java.util.Comparator;
@@ -258,7 +258,7 @@ public class TreeMLData implements MLData {
         public final TreeMLData data;
 
         public FirstOrderDifferenceTimeSeries(String name, TreeMLData s) {
-            super(name, Video.getColor(name, 0.8f, 0.8f), 1);
+            super(name, Color.WHITE /* Video.getColor(name, 0.8f, 0.8f)*/, 1);
             this.data = s;
         }
 

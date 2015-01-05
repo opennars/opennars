@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>opennars</groupId>
+        <artifactId>opennars</artifactId>
+        <version>1.7-SNAPSHOT</version>
+    </parent>
+    <artifactId>opennars-lab</artifactId>
+    <packaging>jar</packaging>
+
+    <name>OpenNARS Lab</name>
+    <url>https://github.com/opennars/opennars</url>
+
+   
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+
+    <dependencies>
+        <dependency>
+            <groupId>opennars</groupId>
+            <artifactId>opennars-core</artifactId>
+            <version>1.7-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>opennars</groupId>
+            <artifactId>opennars-gui</artifactId>
+            <version>1.7-SNAPSHOT</version>
+        </dependency>        
+    </dependencies>
+  
+  
+  
+</project>
+

@@ -12,10 +12,10 @@
 
     <modules>
         <module>nars_java</module>
-        <module>nars_gui</module>
         <module>nars_lab</module>
-        <module>nars_web</module>
-        <module>nars_prolog</module>
+<!--        <module>nars_web</module>
+        <module>nars_prolog</module>-->
+        <module>nars_gui</module>
     </modules>
 
     <build>
@@ -70,20 +70,19 @@
            </plugin>
             -->
                 
+            <!-- add shade to submodules -->
+                <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
-                    <!-- put your configurations here -->
                     <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <!--
                     <transformers>
                       <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                        <mainClass>org.sonatype.haven.HavenCli</mainClass>
+                        <mainClass>MAINCLASS</mainClass>
                       </transformer>
                     </transformers>
-                    -->
                 </configuration>
                 <executions>
                     <execution>
@@ -94,6 +93,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>   
     </build>
    
@@ -109,6 +109,7 @@
         </repository>
     </repositories>
 
+<!--
     <dependencies>
         <dependency>
             <groupId>processing</groupId>
@@ -190,7 +191,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-  
+  -->
   
   
  

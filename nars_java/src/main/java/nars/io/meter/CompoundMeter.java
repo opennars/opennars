@@ -1,11 +1,10 @@
 package nars.io.meter;
 
-import automenta.vivisect.TreeMLData;
-import automenta.vivisect.timeline.Chart;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import nars.core.Memory;
+import nars.util.TreeMLData;
 
 
 
@@ -49,9 +48,9 @@ public class CompoundMeter extends AbstractMeter {
             }
     }
 
-    /** creates an empty chart for the given chart id, or null if unspecified and use MeterVis default */
-    public Chart newDefaultChart(String id, TreeMLData data) {
-        return null;
-    }
+//    /** creates an empty chart for the given chart id, or null if unspecified and use MeterVis default */
+//    public Chart newDefaultChart(String id, TreeMLData data) {
+//        return null;
+//    }
 
 }

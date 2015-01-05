@@ -1,7 +1,6 @@
 package nars.util;
 
-import automenta.vivisect.TreeMLData;
-import automenta.vivisect.Video;
+import java.awt.Color;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -139,7 +138,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         senses.update(memory);        
         
         for (String x : senses.keySet()) {
-            TreeMLData ch = new TreeMLData(x, Video.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f), chartHistorySize);
+            TreeMLData ch = new TreeMLData(x,Color.WHITE /*Video.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f)*/, chartHistorySize);
             charts.put(x, ch);            
         }
         
@@ -261,7 +260,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         private final NAR nar;
 
         public CycleTreeMLData(NAR n, String theName, int historySize) {
-            super(theName, Video.getColor(theName, 0.9f, 1f), historySize);
+            super(theName, Color.WHITE  /*Video.getColor(theName, 0.9f, 1f)*/, historySize);
             this.nar = n;
             n.on(CycleEnd.class, this);
         }
