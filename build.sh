@@ -1,6 +1,7 @@
 #!/bin/bash
 
 mkdir -p build
+mkdir -p dist
 
 ant fulljars -Djavac.debug=false
 
