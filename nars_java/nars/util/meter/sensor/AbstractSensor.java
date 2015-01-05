@@ -14,7 +14,6 @@
  */
 package nars.util.meter.sensor;
 
-import java.util.HashMap;
 import nars.core.Memory;
 import nars.util.meter.Meter;
 import nars.util.meter.data.DataContainer;
@@ -25,6 +24,7 @@ import nars.util.meter.recorder.DistributionDataRecorder;
 import nars.util.meter.recorder.RangeDataRecorder;
 import nars.util.meter.session.ConcurrentSession;
 import nars.util.meter.session.StatsSession;
+import nars.util.meter.util.FastPutsArrayMap;
 import nars.util.meter.util.Range;
 import nars.util.meter.util.RangeList;
 
@@ -55,13 +55,13 @@ public abstract class AbstractSensor implements Meter {
 
     public AbstractSensor(String id) {
         this(new ConcurrentSession(
-                new DefaultStatsKey("", id, new HashMap() /*new FastPutsArrayMap<>()*/),
+                new DefaultStatsKey("", id, new FastPutsArrayMap<>()),
                 null,
                 new DistributionDataRecorder()));
     }
 
     public AbstractSensor(String id, Range... ranges) {
-        this(new ConcurrentSession(new DefaultStatsKey("", id, new HashMap() /*new FastPutsArrayMap<>()*/), null, new DistributionDataRecorder(), new RangeDataRecorder(new RangeList(ranges))));
+        this(new ConcurrentSession(new DefaultStatsKey("", id, new FastPutsArrayMap<>()), null, new DistributionDataRecorder(), new RangeDataRecorder(new RangeList(ranges))));
     }
 
     

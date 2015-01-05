@@ -18,7 +18,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -27,6 +26,7 @@ import nars.util.meter.data.DataSet;
 import nars.util.meter.data.DefaultDataSet;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
+import nars.util.meter.util.FastPutsLinkedMap;
 import nars.util.meter.util.Misc;
 
 /**
@@ -163,13 +163,10 @@ public abstract class AbstractStatsSession implements StatsSession {
     protected DataSet createDataSet(final boolean drainedSession) {
         DataSet dataSet = new DefaultDataSet(System.currentTimeMillis(),
                 drainedSession,
-                //new FastPutsLinkedMap<>()
-                new HashMap()
-        ) {
+                new FastPutsLinkedMap<>()) {
                     @Override
                     protected Map<String, Object> createMetaDataMap() {
-                        //return new FastPutsLinkedMap<>();
-                        return new HashMap();
+                        return new FastPutsLinkedMap<>();
                     }
                 };
 
