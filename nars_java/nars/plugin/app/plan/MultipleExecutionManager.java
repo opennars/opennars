@@ -224,9 +224,8 @@ public class MultipleExecutionManager {
 
     protected Execution getExecution(final Task parent) {
         for (final Execution t : tasks) {
-            Task pt = t.t.getParentTask();
-            if (pt != null) {
-                if (pt.equals(parent)) {
+            if (t.t.parentTask != null) {
+                if (t.t.parentTask.equals(parent)) {
                     return t;
                 }
             }
@@ -236,7 +235,7 @@ public class MultipleExecutionManager {
 
     public boolean addExecution(final Concept c, final Task t) {
 
-        Execution existingExecutable = getExecution(t.getParentTask());
+        Execution existingExecutable = getExecution(t.parentTask);
         boolean valid = true;
         if (existingExecutable != null) {
 

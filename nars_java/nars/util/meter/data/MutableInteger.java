@@ -85,9 +85,8 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @param value
    *          the value to set
    */
-  public MutableInteger setValue(int value) {
+  public void setValue(int value) {
     this.value = value;
-    return this;
   }
 
   /**

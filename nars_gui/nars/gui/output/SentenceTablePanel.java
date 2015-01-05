@@ -199,8 +199,7 @@ public class SentenceTablePanel extends TablePanel {
                 conf = truth.getConfidence();
             }
 
-            Task pt = t.getParentTask();
-            String parentTask = (pt != null) ? pt.toStringExternal() : "";
+            String parentTask = (t.parentTask != null) ? t.parentTask.toStringExternal() : "";
 
             //TODO use table sort instead of formatting numbers with leading '0's
             data.addRow(new Object[]{
