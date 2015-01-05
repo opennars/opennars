@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.data.DefaultDataSet;
-import nars.util.meter.data.Field;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
 import nars.util.meter.util.Misc;
@@ -103,31 +102,31 @@ public abstract class AbstractStatsSession implements StatsSession {
         name = name.intern();
 
         // Check basic fields
-        if (name == Field.HITS) {
+        if (name == DataSet.Field.HITS) {
             return getHits();
         }
-        if (name == Field.FIRST_HIT_STAMP) {
+        if (name == DataSet.Field.FIRST_HIT_STAMP) {
             return getFirstHitStamp();
         }
-        if (name == Field.LAST_HIT_STAMP) {
+        if (name == DataSet.Field.LAST_HIT_STAMP) {
             return getLastHitStamp();
         }
-        if (name == Field.COMMITS) {
+        if (name == DataSet.Field.COMMITS) {
             return getCommits();
         }
-        if (name == Field.FIRST) {
+        if (name == DataSet.Field.FIRST) {
             return getFirst();
         }
-        if (name == Field.LAST) {
+        if (name == DataSet.Field.LAST) {
             return getLast();
         }
-        if (name == Field.MIN) {
+        if (name == DataSet.Field.MIN) {
             return getMin();
         }
-        if (name == Field.MAX) {
+        if (name == DataSet.Field.MAX) {
             return getMax();
         }
-        if (name == Field.SUM) {
+        if (name == DataSet.Field.SUM) {
             return getSum();
         }
         /*if (name == DataSet.Field.STDEV) {
@@ -185,15 +184,15 @@ public abstract class AbstractStatsSession implements StatsSession {
     }
 
     protected void collectData(final DataSet dataSet) {
-        dataSet.put(Field.HITS, getHits());
-        dataSet.put(Field.FIRST_HIT_STAMP, getFirstHitStamp());
-        dataSet.put(Field.LAST_HIT_STAMP, getLastHitStamp());
-        dataSet.put(Field.COMMITS, getCommits());
-        dataSet.put(Field.FIRST, getFirst());
-        dataSet.put(Field.LAST, getLast());
-        dataSet.put(Field.MIN, getMin());
-        dataSet.put(Field.MAX, getMax());
-        dataSet.put(Field.SUM, getSum());
+        dataSet.put(DataSet.Field.HITS, getHits());
+        dataSet.put(DataSet.Field.FIRST_HIT_STAMP, getFirstHitStamp());
+        dataSet.put(DataSet.Field.LAST_HIT_STAMP, getLastHitStamp());
+        dataSet.put(DataSet.Field.COMMITS, getCommits());
+        dataSet.put(DataSet.Field.FIRST, getFirst());
+        dataSet.put(DataSet.Field.LAST, getLast());
+        dataSet.put(DataSet.Field.MIN, getMin());
+        dataSet.put(DataSet.Field.MAX, getMax());
+        dataSet.put(DataSet.Field.SUM, getSum());
 
         for (final DataRecorder dataRecorder : dataRecorders) {
             //try {
@@ -210,38 +209,38 @@ public abstract class AbstractStatsSession implements StatsSession {
 
         if (!dataSet.isEmpty()) {
 
-            Long restoredHits = dataSet.getField(Field.HITS,
-                    Field.DefaultField.HITS);
-            Long restoredFirstHitStamp = dataSet.getField(Field.FIRST_HIT_STAMP,
-                    Field.DefaultField.FIRST_HIT_STAMP);
-            Long restoredLastHitStamp = dataSet.getField(Field.LAST_HIT_STAMP,
-                    Field.DefaultField.LAST_HIT_STAMP);
+            Long restoredHits = dataSet.getField(DataSet.Field.HITS,
+                    DataSet.Field.DefaultField.HITS);
+            Long restoredFirstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP,
+                    DataSet.Field.DefaultField.FIRST_HIT_STAMP);
+            Long restoredLastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP,
+                    DataSet.Field.DefaultField.LAST_HIT_STAMP);
 
             // Only restore if hits, firstHitStamp, and lastHitStamp are defined
-            if (restoredHits > Field.DefaultField.HITS
-                    && restoredFirstHitStamp > Field.DefaultField.FIRST_HIT_STAMP
-                    && restoredLastHitStamp > Field.DefaultField.LAST_HIT_STAMP) {
+            if (restoredHits > DataSet.Field.DefaultField.HITS
+                    && restoredFirstHitStamp > DataSet.Field.DefaultField.FIRST_HIT_STAMP
+                    && restoredLastHitStamp > DataSet.Field.DefaultField.LAST_HIT_STAMP) {
 
                 setHits(restoredHits);
                 setFirstHitStamp(restoredFirstHitStamp);
                 setLastHitStamp(restoredLastHitStamp);
 
-                Long restoredCommits = dataSet.getField(Field.COMMITS,
-                        Field.DefaultField.COMMITS);
-                Double restoredFirst = dataSet.getField(Field.FIRST, Double.class);
-                Double restoredLast = dataSet.getField(Field.LAST, Double.class);
+                Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS,
+                        DataSet.Field.DefaultField.COMMITS);
+                Double restoredFirst = dataSet.getField(DataSet.Field.FIRST, Double.class);
+                Double restoredLast = dataSet.getField(DataSet.Field.LAST, Double.class);
 
                 // Only restore "update()" data if commits, first, and last are defined
-                if (restoredCommits > Field.DefaultField.COMMITS
+                if (restoredCommits > DataSet.Field.DefaultField.COMMITS
                         && restoredFirst != null
                         && restoredLast != null) {
 
                     setCommits(restoredCommits);
                     setFirst(restoredFirst);
                     setLast(restoredLast);
-                    setMin(dataSet.getField(Field.MIN, Double.POSITIVE_INFINITY));
-                    setMax(dataSet.getField(Field.MAX, Double.NEGATIVE_INFINITY));
-                    setSum(dataSet.getField(Field.SUM, Field.DefaultField.SUM));
+                    setMin(dataSet.getField(DataSet.Field.MIN, Double.POSITIVE_INFINITY));
+                    setMax(dataSet.getField(DataSet.Field.MAX, Double.NEGATIVE_INFINITY));
+                    setSum(dataSet.getField(DataSet.Field.SUM, DataSet.Field.DefaultField.SUM));
 
                     // Restore DataRecorders
                     for (DataRecorder dataRecorder : dataRecorders) {
@@ -258,15 +257,15 @@ public abstract class AbstractStatsSession implements StatsSession {
     }
 
     protected void clearState() {
-        setHits(Field.DefaultField.HITS);
-        setFirstHitStamp(Field.DefaultField.FIRST_HIT_STAMP);
-        setLastHitStamp(Field.DefaultField.LAST_HIT_STAMP);
-        setCommits(Field.DefaultField.COMMITS);
+        setHits(DataSet.Field.DefaultField.HITS);
+        setFirstHitStamp(DataSet.Field.DefaultField.FIRST_HIT_STAMP);
+        setLastHitStamp(DataSet.Field.DefaultField.LAST_HIT_STAMP);
+        setCommits(DataSet.Field.DefaultField.COMMITS);
         setFirst(Double.NEGATIVE_INFINITY); // The proper default is taken care of in getFirst()
-        setLast(Field.DefaultField.LAST);
+        setLast(DataSet.Field.DefaultField.LAST);
         setMin(Double.POSITIVE_INFINITY);
         setMax(Double.NEGATIVE_INFINITY);
-        setSum(Field.DefaultField.SUM);
+        setSum(DataSet.Field.DefaultField.SUM);
 
         for (DataRecorder dataRecorder : dataRecorders) {
             try {

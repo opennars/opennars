@@ -161,14 +161,15 @@ public class LogicMeter extends AbstractMeter implements Serializable {
 
         
         {
+            DataSet fire = TASKLINK_FIRE.get();
             //DataSet reason = TASKLINK_REASON.get();
-            put("reason.fire.tasklink.pri.mean", TASKLINK_FIRE.mean());
+            put("reason.fire.tasklink.pri.mean", fire.mean());
             put("reason.fire.tasklinks", TASKLINK_FIRE.getHits());
             
             putHits(REASON);
             
             //only makes commit as a mean, since it occurs multiple times during a cycle
-            put("reason.tasktermlink.pri.mean", REASON.mean());                        
+            put("reason.tasktermlink.pri.mean", REASON.get().mean());                        
         }
         {
             putValue(IO_INPUTS_BUFFERED);

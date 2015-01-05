@@ -13,7 +13,6 @@ import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.UP;
-import processing.core.PFont;
 import processing.event.MouseEvent;
 
 /**
@@ -47,11 +46,6 @@ public class PCanvas extends PApplet implements HierarchyListener {
     int lastscr = 0;
     boolean EnableZooming = true;
     float scrollcamspeed = 1.1f;
-    
-    
-    public static PFont font12;
-    public static PFont font9;
-    public static PFont font15;
 
     public PCanvas() {
         this(null);
@@ -65,11 +59,6 @@ public class PCanvas extends PApplet implements HierarchyListener {
         super();
         this.FrameRate = frameRate;
         init();
-        
-        hint(ENABLE_NATIVE_FONTS);
-        hint(ENABLE_OPTIMIZED_STROKE);
-        
-                
         if ((vis == null) && (this instanceof Vis)) {
             //for subclasses:
             vis = (Vis)this;
@@ -160,7 +149,6 @@ public class PCanvas extends PApplet implements HierarchyListener {
             background(0, 0, 0);//, 0.001f);
         }
 
-        
         hnav.applyTransform();
         vis.draw(g);
     }
@@ -187,14 +175,9 @@ public class PCanvas extends PApplet implements HierarchyListener {
 
         //size(500,500,P3D);
         frameRate(FrameRate);
-        
-        font9 = createDefaultFont(9);
-        font12 = createDefaultFont(12);
-        font15 = createDefaultFont(15);
-                
-        textFont(font12);
 
         if (isGL()) {
+            textFont(createDefaultFont(16));
             smooth();
             System.out.println("Processing.org enabled OpenGL");
         }

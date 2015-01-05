@@ -146,15 +146,6 @@ public abstract class AbstractSensor implements Meter {
         
     }
     
-    public double d(String field) {
-        return ((Number)getSession().getField(field)).doubleValue();
-    }
-    public double dReset(String field) {
-        double d = ((Number)getSession().getField(field)).doubleValue();
-        getSession().clear();
-        return d;
-    }
-    
     @Override
     public DataSet get() {
         if (sampleWindow > 0) {
