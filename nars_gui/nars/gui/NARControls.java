@@ -638,8 +638,11 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 
     
     private NSlider newSpeedSlider() {
+            final StringBuilder sb = new StringBuilder(32);
+
         final NSlider s = new NSlider(0f, 0f, 1.0f) {
 
+            
             @Override
             public String getText() {
                 if (value == null) {
@@ -647,20 +650,28 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 }
                 
                 Timing tt = memory.param.getTiming();
-                String s = "@" +
-                        ((tt == Real || tt == Simulation) ?
-                            + memory.time() + "|" + memory.getCycleTime() : memory.time());
+                
+                if (sb.length() > 0) sb.setLength(0);
+                
+                sb.append('@');
+                
+                if ((tt == Real) || (tt == Simulation)) {
+                    sb.append(memory.time() + "|" + memory.getCycleTime());
+                }
+                else {
+                    sb.append(memory.time());
+                }
                         
                 
 
                 if (currentSpeed == 0) {
-                    s += " - pause";
+                    sb.append(" - pause");
                 } else if (currentSpeed == 1.0) {
-                    s += " - run max speed";
+                    sb.append(" - run max speed");
                 } else {
-                    s += " - run " + nar.getMinCyclePeriodMS() + " ms / step";
+                    sb.append(" - run ").append(nar.getMinCyclePeriodMS()).append(" ms / step");
                 }
-                return s;
+                return sb.toString();
             }
 
             @Override

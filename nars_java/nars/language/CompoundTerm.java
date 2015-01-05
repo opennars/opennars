@@ -166,7 +166,9 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (c.getClass()!=getClass())
             throw new UnableToCloneException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         
-        return (CompoundTerm)c;
+        CompoundTerm cc = (CompoundTerm)c;
+        cc.setNormalized(isNormalized());
+        return cc;
     }
     
     /** override in subclasses to avoid unnecessary reinit */

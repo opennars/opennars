@@ -278,12 +278,7 @@ public class TimelineVis implements Vis {
         }
         for (Chart c : charts) {
             float h = c.height * camera.yScale;
-            try {
-                c.draw(this, y, camera.timeScale, camera.yScale);
-            }
-            catch (Exception e) { 
-                System.err.println("Timeline draw: " + e);
-            }
+            c.draw(this, y, camera.timeScale, camera.yScale);
             y += (h + yMargin);
         }
                
