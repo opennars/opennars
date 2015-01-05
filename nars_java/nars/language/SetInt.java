@@ -64,15 +64,15 @@ public class SetInt extends SetTensional {
      * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static SetInt make(final TreeSet<Term> t) {        
+    @Deprecated public static SetInt make(final TreeSet<Term> t) {        
         if (t.isEmpty()) return null;
         Term[] x = t.toArray(new Term[t.size()]);
-        return new SetInt(x);
+        return make(x);
     }
     
-    public static SetInt make(Term t) {
-        return new SetInt(new Term[] { t });
-    }
+    public static SetInt make(Term... t) {
+        return new SetInt(t);
+    }    
 
 
     /**

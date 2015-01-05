@@ -69,6 +69,22 @@ public class TermTest {
     }
     
     @Test
+    public void testTermSort() throws Exception {
+        NAR n = new Default().build();
+        
+        Narsese m = new Narsese(n);
+        Term a = m.parseTerm("a");
+        Term b = m.parseTerm("b");
+        Term c = m.parseTerm("c");
+
+        assertEquals(3, Term.toSortedSetArray(a, b, c).length);
+        assertEquals(2, Term.toSortedSetArray(a, b, b).length);
+        assertEquals(1, Term.toSortedSetArray(a, a).length);
+        assertEquals(1, Term.toSortedSetArray(a).length);
+        assertEquals("correct natural ordering", a, Term.toSortedSetArray(a, b)[0]);
+    }    
+    
+    @Test
     public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
         NAR n = new Default().build();
         

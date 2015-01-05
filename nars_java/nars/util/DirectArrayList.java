@@ -23,6 +23,10 @@ public class DirectArrayList<E> extends ArrayList<E> {
         super(size);
         updateData();
     }
+    
+    public DirectArrayList(E[] data) {
+        this.data = data;
+    }
 
     public void updateData() {
         try {

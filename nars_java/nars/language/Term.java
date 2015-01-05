@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
@@ -32,6 +33,7 @@ import nars.io.Texts;
 import nars.language.Terms.Termable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.util.sort.SortedList;
 
 /**
  * Term is the basic component of Narsese, and the object of processing in NARS.
@@ -344,21 +346,59 @@ public class Term implements AbstractTerm, Termable {
         return false;
     }
 
-    public static TreeSet<Term> toSortedSet(final Term... arg) {
+    @Deprecated public static TreeSet<Term> toSortedSet(final Term... arg) {
+        //use toSortedSetArray where possible
         TreeSet<Term> t = new TreeSet();
         for (Term x : arg) t.add(x);
         return t;        
     }
+    
+    public final static Term[] EmptyTermArray = new Term[0];
+    
     public static Term[] toSortedSetArray(final Term... arg) {
+        switch (arg.length) {
+            case 0: return EmptyTermArray;                
+            case 1: return new Term[] { arg[0] };
+            case 2: 
+                Term a = arg[0];
+                Term b = arg[1];
+                int c = a.compareTo(b);
+
+                if (Parameters.DEBUG) {
+                    //verify consistency of compareTo() and equals()
+                    boolean equal = a.equals(b);
+                    if ((equal && (c!=0)) || (!equal && (c==0))) {
+                        throw new RuntimeException("invalid order: " + a + " = " + b);
+                    }
+                }
+
+                if (c < 0) return new Term[] { a, b };
+                else if (c > 0) return new Term[] { b, a };
+                else if (c == 0) return new Term[] { a }; //equal
+                
+        }
+        
+        //TODO fast sorted array for arg.length == 3
+
+        //terms > 2:        
+        
+        SortedList<Term> s = new SortedList(arg.length);
+        s.setAllowDuplicate(false);
+        
+        for (Term a: arg) s.add(a);        
+        
+        return s.toArray(new Term[s.size()] );
+        
+        /*
         TreeSet<Term> s = toSortedSet(arg);
         //toArray didnt seem to work, but it might. in the meantime:
         Term[] n = new Term[s.size()];
         int j = 0;
         for (Term x : s) {
             n[j++] = x;
-        }
-                    
+        }                    
         return n;
+        */
     }
 
     /** performs a thorough check of the validity of a term (by cloneDeep it) to see if it's valid */

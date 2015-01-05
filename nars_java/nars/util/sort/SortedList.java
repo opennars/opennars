@@ -15,7 +15,8 @@ import java.util.Comparator;
 public class SortedList<E> extends ArrayList<E> {
 
     private final Comparator<E> comparator;
-
+    private boolean allowDuplicate = true;
+    
     /**
      * <p>
      * Constructs a new sorted list. The objects in the list will be sorted
@@ -26,7 +27,19 @@ public class SortedList<E> extends ArrayList<E> {
     public SortedList(Comparator<E> c) {
         this.comparator = c;
     }
+    public SortedList() {
+        this.comparator = null;
+    }
+    public SortedList(int capacity) {
+        super(capacity);
+        this.comparator = null;
+    }    
 
+    public void setAllowDuplicate(boolean allowDuplicate) {
+        this.allowDuplicate = allowDuplicate;
+    }
+
+    
     /**
      * <p>
      * Adds an object to the list. The object will be inserted in the correct
@@ -48,7 +61,11 @@ public class SortedList<E> extends ArrayList<E> {
             while (low <= high) {
                 int mid = (low + high) >>> 1;
                 E midVal = get(mid);
-                int cmp = comparator.compare(midVal, o);
+                
+                int cmp = 
+                        comparator!=null ?
+                            comparator.compare(midVal, o) :
+                            ((Comparable)midVal).compareTo(o);
 
                 if (cmp < 0) {
                     low = mid + 1;
@@ -56,6 +73,8 @@ public class SortedList<E> extends ArrayList<E> {
                     high = mid - 1;
                 } else {
                     // key found, insert after it
+                    if (!allowDuplicate) 
+                        return false;
                     super.add(mid, o);
                     return true;
                 }
