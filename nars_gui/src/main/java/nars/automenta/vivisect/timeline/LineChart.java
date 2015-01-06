@@ -1,6 +1,6 @@
 package automenta.vivisect.timeline;
 
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.Chart.MultiChart;
 import java.awt.Color;

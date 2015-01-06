@@ -21,7 +21,7 @@
 package nars.gui;
 
 import nars.io.InferenceLogger;
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 import automenta.vivisect.dimensionalize.FastOrganicLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.swing.AwesomeButton;
@@ -451,7 +451,9 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         
         
         CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource) {
-            @Override
+            
+            
+            //@Override
             public Chart newDefaultChart(String id, TreeMLData data) {                
                 switch (id) {
                     case "concept.pri.histo":

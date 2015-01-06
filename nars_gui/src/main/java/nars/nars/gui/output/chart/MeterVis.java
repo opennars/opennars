@@ -1,7 +1,7 @@
 package nars.gui.output.chart;
 
 
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.Chart;
@@ -93,13 +93,13 @@ public class MeterVis extends TimelineVis {
                 throw new RuntimeException(c + " does not support multiple datas");
         }
         else {
-            c = meters.newDefaultChart(id, data);
+            /*c = meters.newDefaultChart(id, data);
             
             if (c == null)
                 c = new LineChart(data);
             
             displayedCharts.put(id, c);
-            addChart(c);            
+            addChart(c);            */
         }
         return c;
     }    

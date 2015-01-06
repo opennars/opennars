@@ -71,8 +71,8 @@ public class Rover extends PhysicsModel {
             shape.setAsBox(0.5f, 0.5f);
 
             BodyDef bd = new BodyDef();
-            bd.setLinearDamping(0.9f);
-            bd.setAngularDamping(0.9f);
+            bd.linearDamping = 0.9f;
+            bd.angularDamping = 0.9f;
 
             bd.type = BodyType.DYNAMIC;
             bd.position.set(0, 0);
@@ -466,8 +466,8 @@ public class Rover extends PhysicsModel {
             }
 
             BodyDef bd = new BodyDef();
-            bd.setLinearDamping(0.95f);
-            bd.setAngularDamping(0.8f);
+            bd.linearDamping = 0.95f;
+            bd.angularDamping = 0.8f;
 
             bd.type = BodyType.DYNAMIC;
             bd.position.set(x, y);

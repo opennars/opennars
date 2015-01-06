@@ -4,7 +4,7 @@
  */
 package nars.predict;
 
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;

@@ -4,7 +4,7 @@
  */
 package automenta.vivisect.timeline;
 
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 
 
 

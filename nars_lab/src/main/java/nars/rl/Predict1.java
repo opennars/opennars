@@ -19,7 +19,7 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;

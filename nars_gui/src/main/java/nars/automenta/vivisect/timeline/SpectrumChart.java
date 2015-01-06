@@ -1,6 +1,6 @@
 package automenta.vivisect.timeline;
 
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 import com.google.common.primitives.Floats;
 import java.util.ArrayList;
 import java.util.List;

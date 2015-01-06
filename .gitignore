@@ -18,3 +18,5 @@ jacoco**
 /nbproject/yjp-build-impl.xml
 /yjp-build.xmltarget
 /nars_java/target/
+/nars_gui/target/
+/nars_lab/target/

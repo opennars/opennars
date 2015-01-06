@@ -2,9 +2,8 @@ package nars.multistep;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.io.TextInput;
-import nars.io.TextOutput;
-import nars.core.NALTest;
+import nars.io.ExampleFileInput;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
@@ -14,17 +13,19 @@ import org.junit.Test;
 public class TestMultistepEdited {
 
     @Test
-    public void testMultistepEndState() {
-        NAR n = new Default().build();
-        n.addInput(new TextInput(NALTest.getExample("nal/Examples/Example-MultiStep-edited.txt")));        
-        new TextOutput(n, System.out);
+    public void testMultistepEndState() throws Exception {
+        NAR n = new NAR(new Default());
+        n.addInput(ExampleFileInput.get("Examples/Example-MultiStep-edited"));
+        
+        //new TextOutput(n, System.out);
         /*InferenceLogger logger = new InferenceLogger(System.out);
         n.memory.setRecorder(logger);*/
-
-        
-        n.run(1000);
         //System.out.println(n.memory.concepts);
         
+        n.run(1000);
+        
+        
+        assertEquals(2488, n.time());
     }
             
 }

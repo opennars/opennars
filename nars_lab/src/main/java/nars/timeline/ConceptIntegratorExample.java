@@ -28,7 +28,7 @@ import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Concept;
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;

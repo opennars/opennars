@@ -1,6 +1,6 @@
 package nars.gui.output;
 
-import automenta.vivisect.TreeMLData;
+import nars.util.TreeMLData;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

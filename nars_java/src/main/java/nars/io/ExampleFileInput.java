@@ -17,6 +17,7 @@ import nars.io.condition.OutputCondition;
 
 /**
  * Access to library of examples/unit tests
+ * TODO use getClass().getResource ?
  */
 public class ExampleFileInput extends TextInput {
 
@@ -40,7 +41,11 @@ public class ExampleFileInput extends TextInput {
     }
     
     public static ExampleFileInput get(String id) throws Exception {
-        return new ExampleFileInput(load("./nal/" + id +".nal"));
+        return new ExampleFileInput(load(getExamplePath(id) +".nal"));
+    }
+    
+    public static String getExamplePath(String path) {
+        return "../nal/" + path;
     }
     
     public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
@@ -50,11 +55,13 @@ public class ExampleFileInput extends TextInput {
     public static Map<String,Object> getUnitTests() {
         Map<String,Object> l = new TreeMap();
         
-        final String[] directories = new String[] { "nal/test", "nal/Examples/DecisionMaking", "nal/Examples/ClassicalConditioning" };
+        System.out.println("CWD: " + new File("./").getAbsolutePath());
+        
+        final String[] directories = new String[] { "test", "Examples/DecisionMaking", "Examples/ClassicalConditioning" };
         
         for (String dir : directories ) {
 
-            File folder = new File(dir);
+            File folder = new File(getExamplePath(dir));
         
             for (final File file : folder.listFiles()) {
                 if (file.getName().equals("README.txt") || file.getName().contains(".png"))
