@@ -39,6 +39,7 @@ import nars.io.narsese.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
+import reactor.event.registry.Registration;
 
 
 /**
@@ -277,17 +278,17 @@ public class NAR implements Runnable, TaskSource {
   
     
     /** attach event handler */
-    public void on(Class c, EventObserver o) {
-        memory.event.on(c, o);
+    public Registration on(Class c, EventObserver o) {
+        return memory.event.on(c, o);
     }
     
     /** remove event handler */
-    public void off(Class c, EventObserver o) {
-        memory.event.on(c, o);
+    @Deprecated public void off(Class c, EventObserver o) {
+        memory.event.off(c, o);
     }
     
     /** set an event handler. useful for multiple events. */
-    public void event(EventObserver e, boolean enabled, Class... events) {
+    @Deprecated public void event(EventObserver e, boolean enabled, Class... events) {
         memory.event.set(e, enabled, events);
     }
 

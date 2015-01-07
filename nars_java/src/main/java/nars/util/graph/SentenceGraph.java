@@ -18,6 +18,7 @@ import nars.language.Statement;
 import nars.language.Term;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
+import reactor.core.Environment;
 
 
 
@@ -31,7 +32,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     
     public final Map<Sentence, List<E>> components = new HashMap();
     
-    public final EventEmitter event = new EventEmitter( GraphChange.class );
+    public final EventEmitter event = new EventEmitter( Environment.EVENT_LOOP );
     
     public SentenceGraph(Memory memory) {
         super(/*null*/new EdgeFactory() {

@@ -109,6 +109,7 @@ import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.storage.Bag;
+import reactor.event.dispatch.SynchronousDispatcher;
 
 
 /**
@@ -250,7 +251,14 @@ public class Memory implements Serializable {
 
     
     private class MemoryEventEmitter extends EventEmitter {        
-        @Override public void emit(final Class eventClass, final Object... params) {
+
+        public MemoryEventEmitter() {
+            super(new SynchronousDispatcher());
+            //super(Environment.WORK_QUEUE);
+        }
+
+        
+        public void emit(final Class eventClass, final Object... params) {
             super.emit(eventClass, params); 
 
             if (eventClass == Events.ConceptQuestionAdd.class) {                    
@@ -742,8 +750,7 @@ public class Memory implements Serializable {
                            
         executive.cycle();
 
-        event.emit(Events.CycleEnd.class);
-        event.synch();
+        event.emit(Events.CycleEnd.class);       
         
         updateTime();
         

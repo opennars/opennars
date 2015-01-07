@@ -10,6 +10,7 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import reactor.event.registry.Registration;
 
 /**
  *
@@ -22,18 +23,19 @@ public abstract class Answered implements EventObserver {
     
     final static Class[] events = new Class[] { Answer.class
  };
+    private Registration answering;
     
     public void start(Task question, NAR n) {
         this.nar = n;
         this.question = question;
                 
-        nar.event(this, true, events);
+        answering = nar.memory.event.on(Answer.class, this);
         
         reportExistingSolutions();
     }
     
     public void off() {
-        nar.event(this, false, events);
+        answering.cancel();
     }
 
     protected void reportExistingSolutions() {

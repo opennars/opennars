@@ -5,10 +5,9 @@
  */
 package nars.core;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import reactor.core.Environment;
-import reactor.core.Reactor;
-import reactor.core.spec.Reactors;
 import reactor.event.Event;
 import static reactor.event.selector.Selectors.T;
 
@@ -18,16 +17,25 @@ import static reactor.event.selector.Selectors.T;
  */
 public class EventTest {
 
+    
     @Test public void testReactor() throws InterruptedException {
-        Environment env = new Environment();
-        Reactor r = Reactors.reactor().env(env).dispatcher(Environment.EVENT_LOOP).get();
         
-        r.on(T(Events.CycleEnd.class), e -> {
-            System.err.println("EVENT: " + e);
+        Eventer e = Eventer.newSynchronous();
+        
+        AtomicBoolean b = new AtomicBoolean();
+        
+        e.on(T(Events.CycleEnd.class), x -> {
+            System.err.println("EVENT: " + x);
+            b.set(true);
         });
-        r.notify(T(Events.CycleEnd.class), Event.wrap(true));
         
-        r.getDispatcher().shutdown();
+        e.emit(Events.CycleEnd.class, Event.wrap(true));
+        
+        
         Thread.sleep(100);
+
+        e.shutdown();
+        
+        assertTrue(b.get());
     }
 }
