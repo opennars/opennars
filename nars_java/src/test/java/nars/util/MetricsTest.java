@@ -82,7 +82,7 @@ public class MetricsTest {
     
     @Test public void testSummaryStatistics() {
 
-        TemporalMetrics<Integer> tm = new TemporalMetrics<Integer>(10);        
+        TemporalMetrics<Double> tm = new TemporalMetrics<Double>(10);        
         tm.addMeter(new BasicStatistics(tm, 0));
         
         for (int i = 0; i < 10; i++) {
@@ -99,7 +99,7 @@ public class MetricsTest {
             public void println(String x) {
                 String eq = null;
                 switch (line++) {
-                    case 0: eq = "\"time\",\"time_mean\",\"time_max\""; break;
+                    case 0: eq = "\"time\",\"time.mean\",\"time.max\""; break;
                     case 1: eq = "0,0,0"; break;
                     case 3: eq = "0.2,0.1,0.2"; break;
                 }

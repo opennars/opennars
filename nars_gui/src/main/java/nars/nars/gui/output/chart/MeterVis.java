@@ -6,7 +6,6 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.Chart.MultiChart;
-import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Font;
 import java.awt.Point;
@@ -34,7 +33,8 @@ public class MeterVis extends TimelineVis {
             this.data = data;
             this.chart = getDisplayedChart(id, data);
             
-            chart.setOverlayEnable(true);
+            if (chart!=null)
+                chart.setOverlayEnable(true);
         }        
     }
     

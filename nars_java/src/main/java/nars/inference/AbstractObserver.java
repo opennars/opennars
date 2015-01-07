@@ -1,16 +1,17 @@
 package nars.inference;
 
 import nars.core.EventEmitter;
+import nars.core.EventEmitter.Registrations;
 import nars.core.NAR;
 
 /**
  *
  */
 public abstract class AbstractObserver implements EventEmitter.EventObserver {
+    
     protected final EventEmitter source;
-    protected boolean active = false;
+    protected Registrations active;
     private final Class[] events;
-
     
     public AbstractObserver(NAR n, boolean active, Class... events) {
         this(n.memory.event, active, events);
@@ -23,15 +24,19 @@ public abstract class AbstractObserver implements EventEmitter.EventObserver {
         setActive(active);
     }
 
-    public void setActive(boolean b) {
-        if (this.active == b) return;
+    public synchronized void setActive(boolean b) {        
         
-        this.active = b;
-        source.set(this, b, events);
+        if (b && (this.active==null)) {
+            this.active = source.on(this, events);
+        }
+        else if (!b && (this.active!=null)) {
+            this.active.cancel();
+            this.active = null;
+        }
     }
 
     public boolean isActive() {
-        return active;
+        return active!=null;
     }
     
 }

@@ -43,6 +43,7 @@ public class Video {
             Video.FontAwesome = Font.createFont(Font.TRUETYPE_FONT, Video.class.getResourceAsStream("FontAwesome.ttf")).deriveFont(Font.PLAIN, 14);
         } catch (Exception ex) {    
             System.err.println("FontAwesome.ttf not found");
+            Video.FontAwesome = Font.decode(Font.MONOSPACED).deriveFont(Font.PLAIN, 14);
             //ex.printStackTrace();
         }
 

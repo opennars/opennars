@@ -1,9 +1,11 @@
 
 package nars.core;
 
+import java.util.ArrayList;
 import reactor.event.Event;
 import reactor.event.dispatch.Dispatcher;
 import reactor.event.registry.Registration;
+import reactor.event.selector.Selector;
 import reactor.event.selector.Selectors;
 import static reactor.event.selector.Selectors.T;
 
@@ -35,8 +37,13 @@ public class EventEmitter extends Eventer<Object> {
     }
 
     public Registration on(Class<?> channel, EventEmitter.EventObserver obs) {
-        return on(Selectors.T(channel),  event -> {
-            
+        return on(Selectors.T(channel), obs);
+    }
+    
+    public Registration on(Selector s, EventEmitter.EventObserver obs) {
+        return on(s,  event -> {
+
+            Class channel = (Class)(((Event)event).getKey());
             Object o = ((Event)event).getData();
             
             if (o instanceof Object[]) {
@@ -48,7 +55,7 @@ public class EventEmitter extends Eventer<Object> {
     }
 
     /** for enabling many events at the same time */
-    public void set(final EventObserver o, final boolean enable, final Class... events) {
+    @Deprecated public void set(final EventObserver o, final boolean enable, final Class... events) {
         
         for (final Class c : events) {
             if (enable)
@@ -58,6 +65,40 @@ public class EventEmitter extends Eventer<Object> {
         }
     }
 
+    public static class Registrations extends ArrayList<Registration> {
+
+        Registrations(int length) {
+            super(length);
+        }
+
+        public void resume() {
+            for (Registration r : this)                
+                r.resume();            
+        }
+        public void pause() {
+            for (Registration r : this)                
+                r.pause();            
+        }
+        public void cancel() {
+            for (Registration r : this)
+                r.cancel();            
+        }
+        
+        public void cancelAfterUse() {
+            for (Registration r : this)
+                r.cancelAfterUse();
+        }        
+    }
+    
+    public Registrations on(final EventObserver o, final Class... events) {        
+        Registrations r = new Registrations(events.length);
+    
+        for (final Class c : events)            
+            r.add( on(c, o) );
+        
+        return r;
+    }
+    
     @Override
     @Deprecated public void emit(Class channel, Object arg) {
         

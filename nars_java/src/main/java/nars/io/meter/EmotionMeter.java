@@ -1,6 +1,7 @@
 package nars.io.meter;
 
 import java.io.Serializable;
+import nars.io.meter.event.ValueMeter;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
 public class EmotionMeter implements Serializable {
@@ -10,6 +11,10 @@ public class EmotionMeter implements Serializable {
     /** average priority */
     private float busy;
 
+    public final ValueMeter happyMeter = new ValueMeter("happy");
+    public final ValueMeter busyMeter = new ValueMeter("busy");
+    
+    
     public EmotionMeter() {
     }
 
@@ -20,6 +25,7 @@ public class EmotionMeter implements Serializable {
     public void set(float happy, float busy) {
         this.happy = happy;
         this.busy = busy;
+        update();
     }
 
     public float happy() {
@@ -36,6 +42,7 @@ public class EmotionMeter implements Serializable {
         happy /= 1.0f + weight;
         //        if (Math.abs(oldV - happyValue) > 0.1) {
         //            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happyValue*10.0) + "\n");
+        update();
     }
 
     public void adjustBusy(float newValue, float weight) {
@@ -44,5 +51,11 @@ public class EmotionMeter implements Serializable {
         busy /= (1.0f + weight);
         //        if (Math.abs(oldV - busyValue) > 0.1) {
         //            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busyValue*10.0) + "\n");
+        update();
+    }
+    
+    protected void update() {
+        happyMeter.set(happy);
+        busyMeter.set(busy);
     }
 }
