@@ -83,11 +83,11 @@ public class Interval extends Term {
         return intervalMagnitude( Integer.parseInt(i.substring(1)) - 1);
     }
     
-    public static Interval intervalTime(final long time, final Memory memory) {
+    public static Interval interval(final long time, final Memory memory) {
         return intervalMagnitude( timeToMagnitude( time, memory.param.duration ) );
     }
     
-    public static Interval intervalTime(final long time, final AtomicDuration duration) {
+    public static Interval interval(final long time, final AtomicDuration duration) {
         return intervalMagnitude( timeToMagnitude( time, duration ) );
     }
     
@@ -175,11 +175,11 @@ public class Interval extends Term {
     /** returns a sequence of intervals which approximate a time period with a maximum number of consecutive Interval terms */
     public static List<Interval> intervalTimeSequence(final long t, final int maxTerms, final Memory memory) {
         if (maxTerms == 1)
-            return Lists.newArrayList(intervalTime(t, memory));
+            return Lists.newArrayList(interval(t, memory));
         
         long a; //current approximation value
         Interval first;
-        first = intervalTime(t, memory);
+        first = interval(t, memory);
         a = first.getTime(memory);
         if (a == t) return Lists.newArrayList(first);
         else if (a < t) {

@@ -28,7 +28,6 @@ import nars.gui.EventChart;
 import nars.util.NARTrace;
 import nars.util.NARTrace.ConceptBagTreeMLData;
 import nars.util.NARTrace.ConceptBagTreeMLData.Mode;
-import nars.util.TreeMLData.FirstOrderDifferenceTimeSeries;
 
 /**
  *
@@ -50,10 +49,10 @@ public class BudgetExpense extends TimelineExample {
         
         TimelineVis tc = new TimelineVis(
 
-            new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.get("concept.count"))),
+            //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
 
             new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
-
+/*
             new LineChart(
                     new ConceptBagTreeMLData(nar, nar.memory.concepts, cycles, Mode.ConceptPriorityTotal)            
             ).height(4),
@@ -63,7 +62,7 @@ public class BudgetExpense extends TimelineExample {
                     new ConceptBagTreeMLData(nar, nar.memory.concepts, cycles, Mode.TaskLinkPriorityMean)
             
             ).height(4),
-
+*/
 
             new LineChart(t.getCharts("task.novel.add", "task.immediate_processed")).height(3),
             new LineChart(t.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),

@@ -9,9 +9,11 @@ package nars.io.meter;
  * Effectively a column header in a Metrics table; indicates what appears
  * in the column index of rows
  */
-public class Signal {
+public class Signal implements Comparable<Signal> {
     public String id;
     public String unit;
+    
+    private double min, max;
 
     public Signal(String id) {
         this.id = id;
@@ -24,10 +26,37 @@ public class Signal {
     }
 
     @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return id.equals(((Signal)obj).id);
+    }
+    
+    @Override
     public String toString() {
         return id;
     }
+
+    @Override
+    public int compareTo(Signal o) {
+        return id.compareTo(o.id);
+    }
+
+    public double[] getBounds() {
+        return new double[] { getMin(), getMax()  };
+    }
     
+    public double getMin() {
+        return min;
+    }
     
+    public double getMax() {
+        return max;
+    }
     
+    void setMin(double newMin) { this.min = newMin; }
+    void setMax(double newMax) { this.max = newMax; }
 }

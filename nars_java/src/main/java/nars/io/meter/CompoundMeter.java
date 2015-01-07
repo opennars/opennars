@@ -4,11 +4,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import nars.core.Memory;
-import nars.util.TreeMLData;
 
 
 
-public class CompoundMeter extends AbstractMeter {
+@Deprecated class CompoundMeter extends AbstractMeter {
     public final AbstractMeter[] senses;
 
     public CompoundMeter(AbstractMeter... senses) {

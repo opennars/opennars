@@ -14,7 +14,7 @@ import org.encog.util.kmeans.Centroid;
  * Used by Chart, a chart data set is a container to store chart data.
  * TODO add ArrayDeque implementation as originally, for fast insertion/removal
  */
-public class TreeMLData implements MLData {
+@Deprecated class TreeMLData implements MLData {
 
 
     //TODO use a primitive collection

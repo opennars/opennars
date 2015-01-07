@@ -42,7 +42,7 @@ public class MetricsTest {
         tm.update(1.0);
         
         assertEquals(1, tm.numRows());
-        assertEquals(2, tm.getSignalData(1)[0]);
+        assertEquals(2, tm.getData(1)[0]);
         
         tm.update(1.5);
         tm.update(2.0);
@@ -66,16 +66,16 @@ public class MetricsTest {
         tm.update(1.0);
         
         //check the '1' column ('x')
-        assertEquals(0, tm.getSignalData(1)[0]);
-        assertEquals(2, tm.getSignalData(1)[1]);
+        assertEquals(0, tm.getData(1)[0]);
+        assertEquals(2, tm.getData(1)[1]);
         
         tm.update(2.0);
 
         
         
         //check the '2' column (first order diff)
-        assertEquals(null, tm.getSignalData(2)[0]);
-        assertEquals(2.0, tm.getSignalData(2)[1]);
+        assertEquals(null, tm.getData(2)[0]);
+        assertEquals(2.0, tm.getData(2)[1]);
 
         
     }

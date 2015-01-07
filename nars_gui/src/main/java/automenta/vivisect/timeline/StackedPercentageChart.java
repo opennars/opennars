@@ -4,7 +4,8 @@
  */
 package automenta.vivisect.timeline;
 
-import nars.util.TreeMLData;
+import nars.io.meter.Metrics.SignalData;
+
 
 
 
@@ -16,7 +17,7 @@ public class StackedPercentageChart extends LineChart {
     float barWidth = 0.9f;
     float barHeight = 0.9f;
 
-    public StackedPercentageChart(TreeMLData... series) {
+    public StackedPercentageChart(SignalData... series) {
         super(series);
     }
 
@@ -33,7 +34,7 @@ public class StackedPercentageChart extends LineChart {
         l.g.noStroke();
         for (int t = l.cycleStart; t < l.cycleEnd; t++) {
             float total = 0;
-            for (TreeMLData chart : data) {
+            for (SignalData chart : data) {
                 float v = (float)chart.getData(t);
                 if (Float.isNaN(v)) {
                     continue;

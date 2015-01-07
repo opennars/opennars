@@ -26,7 +26,6 @@ import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import nars.util.NARTrace;
-import nars.util.TreeMLData.FirstOrderDifferenceTimeSeries;
 
 public class NARCompare1 extends TimelineExample {
     
@@ -59,13 +58,13 @@ public class NARCompare1 extends TimelineExample {
             new LineChart(at.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
             new LineChart(at.getCharts("concept.priority.mean")).height(2),                
             new StackedPercentageChart(at.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
-            new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", at.charts.get("concept.count"))),
+            //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", at.metrics.get("concept.count"))),
                 
             new LineChart(bt.getCharts("task.novel.add", "task.immediate_processed")).height(3),
             new LineChart(bt.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
             new LineChart(bt.getCharts("concept.priority.mean")).height(2),
-            new StackedPercentageChart(bt.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
-            new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", bt.charts.get("concept.count")))
+            new StackedPercentageChart(bt.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2)
+            //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", bt.metrics.get("concept.count")))
         ))).show(900, 800, true);
     }
     

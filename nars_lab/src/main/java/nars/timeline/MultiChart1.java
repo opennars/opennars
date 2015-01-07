@@ -21,12 +21,10 @@ import nars.core.build.Default;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.TimelineVis;
-import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import nars.gui.EventChart;
 import nars.util.NARTrace;
-import nars.util.TreeMLData.FirstOrderDifferenceTimeSeries;
 
 /**
  *
@@ -49,7 +47,7 @@ public class MultiChart1 extends TimelineExample {
             new PCanvas(
                 new TimelineVis(
                     new EventChart(t, true, false, false).height(3),
-                    new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.get("concept.count"))),
+                    //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
 
                     new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
                     new LineChart(t.getCharts("concept.priority.mean")).height(1),

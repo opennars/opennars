@@ -12,14 +12,14 @@ import java.util.TreeMap;
 import nars.core.Events;
 import nars.core.Events.ConceptNew;
 import nars.core.Events.InferenceEvent;
-import nars.core.Memory;
 import nars.core.NAR;
-import nars.io.meter.CompoundMeter;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
 import nars.inference.MemoryObserver;
+import nars.io.meter.Metrics;
+import nars.io.meter.Metrics.SignalData;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
 
@@ -47,24 +47,26 @@ public class NARTrace extends MemoryObserver implements Serializable {
         return true;
     }
 
-    final int chartHistorySize = 5000;
     
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
-    public final Map<String, TreeMLData> charts = new TreeMap();
+    
+    final int chartHistorySize = 5000;    
+    public final Metrics metrics = new Metrics(chartHistorySize);
+    
+    
 
     private long t;
     public final NAR nar;
-    public final CompoundMeter senses;
 
-    public TreeMLData[] getCharts(String... names) {
-        List<TreeMLData> l = new ArrayList(names.length);
+    public SignalData[] getCharts(String... names) {
+        List<SignalData> l = new ArrayList(names.length);
         for (String n : names) {
-            TreeMLData t = charts.get(n);
+            SignalData t = metrics.getSignalData(n);
             if (t!=null)
                 l.add(t);
         }
-        return l.toArray(new TreeMLData[l.size()]);
+        return l.toArray(new SignalData[l.size()]);
     }
 
 
@@ -130,18 +132,6 @@ public class NARTrace extends MemoryObserver implements Serializable {
     public NARTrace(NAR n) {
         super(n, true);
         this.nar = n;
-        
-        Memory memory = nar.memory;
-        
-        senses = new CompoundMeter(memory.logic, memory.resource);
-        senses.setActive(true);
-        senses.update(memory);        
-        
-        for (String x : senses.keySet()) {
-            TreeMLData ch = new TreeMLData(x,Color.WHITE /*Video.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f)*/, chartHistorySize);
-            charts.put(x, ch);            
-        }
-        
     }
     
     
@@ -155,10 +145,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         timeslot.add(e);
     }
 
-    @Override
-    public boolean isActive() {
-        return active;
-    }
+  
 
     public void reset() {
         time.clear();
@@ -189,6 +176,11 @@ public class NARTrace extends MemoryObserver implements Serializable {
         this.concept.put(concept, lc);
     }
 
+    public Metrics getMetrics() {
+        return metrics;
+    }
+
+    
     @Override
     public void onCycleStart(long clock) {
         this.t = clock;
@@ -196,26 +188,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     @Override
     public void onCycleEnd(long time) {
-        senses.update(nar.memory);
-        
-        for (Map.Entry<String, TreeMLData> e : charts.entrySet()) {
-            String f = e.getKey();            
-            TreeMLData ch = e.getValue();
-            Object value = senses.get(f);
-            
-            if (value instanceof Double) {                    
-                ch.setData((int)time, ((Number) value).floatValue());
-            }
-            else if (value instanceof Float) {
-                ch.setData((int)time, ((Number) value).floatValue());
-            }
-            else if (value instanceof Integer) {
-                ch.setData((int)time, ((Number) value).floatValue());
-            }
-            else if (value instanceof Long) {
-                ch.setData((int)time, ((Number) value).floatValue());
-            }            
-        }        
+        metrics.update(time);    
     }
 
     @Override

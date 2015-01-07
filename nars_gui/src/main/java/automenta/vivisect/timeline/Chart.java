@@ -4,8 +4,8 @@
  */
 package automenta.vivisect.timeline;
 
-import nars.util.TreeMLData;
 import java.util.List;
+import nars.io.meter.Metrics.SignalData;
 
 /**
  * Modes: Line Line with vertical pole to base Stacked bar Stacked bar
@@ -18,7 +18,7 @@ public abstract class Chart {
     protected boolean overlayEnable = false;
 
     public interface MultiChart {
-        public List<TreeMLData> getData();
+        public List<SignalData> getData();
     }
     
     public Chart() {

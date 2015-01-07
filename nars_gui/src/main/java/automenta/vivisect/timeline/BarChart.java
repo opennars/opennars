@@ -1,25 +1,25 @@
 package automenta.vivisect.timeline;
 
-import nars.util.TreeMLData;
+import nars.io.meter.Metrics.SignalData;
 
 
 public class BarChart extends LineChart {
 
     float barWidth = 0.9f;
 
-    public BarChart(TreeMLData t) {
+    public BarChart(SignalData t) {
         super(t);
     }
 
 
     @Override
-    protected void drawData(TimelineVis l, float timeScale, float yScale1, float y) {
+    protected void drawData(SignalData l, float timeScale, float yScale1, float y) {
         
         
         if (data.size()!=1) 
             throw new RuntimeException("BarChart only supports one data set");
         
-        TreeMLData chart = data.get(0);
+        SignalData chart = data.get(0);
         
         int ccolor = chart.getColor();
         l.g.noStroke();

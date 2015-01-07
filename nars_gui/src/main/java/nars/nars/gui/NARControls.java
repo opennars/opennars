@@ -21,17 +21,12 @@
 package nars.gui;
 
 import nars.io.InferenceLogger;
-import nars.util.TreeMLData;
 import automenta.vivisect.dimensionalize.FastOrganicLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.BarChart;
-import automenta.vivisect.timeline.Chart;
-import automenta.vivisect.timeline.LineChart;
-import automenta.vivisect.timeline.StackedPercentageChart;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
@@ -62,25 +57,19 @@ import static nars.core.Memory.Timing.Real;
 import static nars.core.Memory.Timing.Simulation;
 import nars.core.NAR;
 import nars.gui.input.TextInputPanel;
-import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.IdeaPanel;
-import nars.gui.output.MultiOutputPanel;
 import nars.gui.output.PluginPanel;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
-import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.NARFacePanel;
 import nars.gui.output.TimelinePanel;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.plugin.app.plan.MultipleExecutionManager;
-import nars.plugin.app.plan.MultipleExecutionManager.Execution;
-import nars.plugin.app.plan.GraphExecutive;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.io.meter.CompoundMeter;
+import nars.util.NARTrace;
 
 
 public class NARControls extends JPanel implements ActionListener, EventObserver {
@@ -132,6 +121,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
     public final InferenceLogger logger;
 
     int chartHistoryLength = 128;
+    private final NARTrace trace;
     
     /**
      * Constructor
@@ -139,11 +129,15 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
      * @param nar
      * @param title
      */
-    
     public NARControls(final NAR nar) {
+        this(nar, null);
+    }
+    
+    public NARControls(final NAR nar, final NARTrace trace) {
         super(new BorderLayout());
         
         this.nar = nar;
+        this.trace = (trace == null) ? new NARTrace(nar) : trace;
         memory = nar.memory;        
         
         
@@ -225,7 +219,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             tlp.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar));
+                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar, trace));
                     outputWindow.show(900, 700);        
                 }
             });
@@ -450,33 +444,33 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 
         
         
-        CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource) {
-            
-            
-            //@Override
-            public Chart newDefaultChart(String id, TreeMLData data) {                
-                switch (id) {
-                    case "concept.pri.histo":
-                        return new StackedPercentageChart(data).height(2);
-                    case "concept.pri.mean":
-                    case "task.pri.mean":
-                        return new LineChart(data).range(0, 1f);
-                    case "plan.graph":
-                    case "plan.graph.add":
-                    case "plan.task":                    
-                    case "concept.belief.mean":
-                    case "task.process":                        
-                        return new LineChart(data);
-                        
-                }
-                return new BarChart(data);
-            }          
-        };
-        senses.setActive(true);
-        senses.update(memory);        
+//        CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource) {
+//            
+//            
+//            //@Override
+//            public Chart newDefaultChart(String id, TreeMLData data) {                
+//                switch (id) {
+//                    case "concept.pri.histo":
+//                        return new StackedPercentageChart(data).height(2);
+//                    case "concept.pri.mean":
+//                    case "task.pri.mean":
+//                        return new LineChart(data).range(0, 1f);
+//                    case "plan.graph":
+//                    case "plan.graph.add":
+//                    case "plan.task":                    
+//                    case "concept.belief.mean":
+//                    case "task.process":                        
+//                        return new LineChart(data);
+//                        
+//                }
+//                return new BarChart(data);
+//            }          
+//        };
+//        senses.setActive(true);
+//        senses.update(memory);        
         
         add(top, NORTH);
-        add(new MeterVis(nar, senses, 128).newPanel(), CENTER);
+        add(new MeterVis(nar, trace.getMetrics(), 128).newPanel(), CENTER);
         
         
         init();

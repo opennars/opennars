@@ -1,39 +1,42 @@
 package automenta.vivisect.timeline;
 
-import nars.util.TreeMLData;
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.Chart.MultiChart;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import nars.io.Texts;
+import nars.io.meter.Metrics;
+import nars.io.meter.Metrics.SignalData;
 
 public class LineChart extends Chart implements MultiChart {
-    protected final List<TreeMLData> data;
+    protected final List<SignalData> data;
     double min;
     double max;
     boolean showVerticalLines = false;
     boolean showPoints = true;
     float lineThickness = 1f;
     float borderThickness = 0.5f;
-    private int end;
-    private int start;
+    private float end;
+    private float start;
     private boolean specifiedRange;
     boolean xorOverlay = false;
 
   
 
-    public LineChart(TreeMLData... series) {
+    public LineChart(SignalData... series) {
         super();
         
         this.data = new ArrayList(series.length);
-        for (TreeMLData s : series)
+        for (SignalData s : series)
             data.add(s);
         
     }
     
-    public LineChart(float min, float max, TreeMLData... series) {
+    public LineChart(float min, float max, SignalData... series) {
         this(series);
         
         range(min, max);
@@ -68,8 +71,8 @@ public class LineChart extends Chart implements MultiChart {
             return;
         }
                 
-        if (!specifiedRange)
-            updateRange(l);
+        
+        updateRange(l);
         
         l.g.stroke(127);
         l.g.strokeWeight(borderThickness);
@@ -84,15 +87,12 @@ public class LineChart extends Chart implements MultiChart {
         }
     }
 
-    protected void updateRange(TimelineVis l) {
-        min = Double.POSITIVE_INFINITY;
-        max = Double.NEGATIVE_INFINITY;
-        for (TreeMLData chart : data) {
-            double[] mm = chart.getMinMax(l.cycleStart, l.cycleEnd);
-            min = (float)Math.min(min,mm[0]);
-            max = (float)Math.max(max,mm[1]);
-        }
-        
+    protected void updateRange() {
+        double[] bounds = Metrics.getBounds(data);
+        start = (float)bounds[0];
+        end = (float)bounds[1];
+        min = bounds[2];
+        max = bounds[3];        
     }
     
  
@@ -122,10 +122,10 @@ public class LineChart extends Chart implements MultiChart {
 
         l.g.textFont(PCanvas.font12);
         float dsyt = screenyHi + 0.15f * dsy;
-        for (TreeMLData chart : data) {
-            l.g.fill(chart.getColor() | 0x77777777);
+        for (SignalData chart : data) {
+            l.g.fill(getColor(chart.getID()) | 0x77777777);
             dsyt += ytspace;
-            l.g.text(chart.label, 8, dsyt);
+            l.g.text(chart.getID(), 8, dsyt);
             dsyt += ytspace;
         }
         
@@ -142,8 +142,9 @@ public class LineChart extends Chart implements MultiChart {
         int ccolor = 0;
         float w = lineThickness * 2.75f;
                 
-        for (TreeMLData chart : data) {
-            ccolor = chart.getColor();
+        
+        for (SignalData chart : data) {
+            ccolor = Color.WHITE.getRGB(); //chart.getColor();
             float lx = 0;
             float ly = 0;
             boolean firstPoint = false;
@@ -153,11 +154,19 @@ public class LineChart extends Chart implements MultiChart {
             l.g.strokeWeight(lineThickness);
             
             int cs = l.cycleStart;
-            for (int t = cs; t < l.cycleEnd; t++) {
+            Iterator<Object[]> series = chart.iteratorWith(0);
+            while (series.hasNext()) {
+                Object[] o = series.next();
+                Object ox = o[0]; //time
+                Object oy = o[1]; //value
+                if ((ox==null) || (oy==null))
+                    continue;
+                float t = ((Number)ox).floatValue();
+                float v = ((Number)oy).floatValue();
+                
                 l.g.stroke = true;
                 
                 float x = (t-cs) * timeScale1;
-                float v = (float)chart.getData(t);
                 if (Float.isNaN(v)) {
                     continue;
                 }
@@ -194,35 +203,26 @@ public class LineChart extends Chart implements MultiChart {
     }
 
     @Override
-    public int getStart() {
-        start = Integer.MAX_VALUE;
-        end = 0;
-        for (TreeMLData s  : data) {
-            if (s.isEmpty())
-                continue;
-            int ss = s.getStart();
-            int se = s.getEnd();
-            
-                    
-            if (start > ss) start = ss;
-            if (end < se) end = se;
-        }
+    public float getStart() {
         return start;
     }
 
     @Override
-    public int getEnd() {
-        //call getStart() prior to this
+    public float getEnd() {
         return end;
     }
 
     @Override
-    public List<TreeMLData> getData() {
+    public List<SignalData> getData() {
         return data;
     }
 
     public void setLineThickness(float lineThickness) {
         this.lineThickness = lineThickness;
+    }
+
+    private int getColor(Object o) {
+        return Video.getColor(o.hashCode(),0.8f,0.9f,1.0f);
     }
     
     

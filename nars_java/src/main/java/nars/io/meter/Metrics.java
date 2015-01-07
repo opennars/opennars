@@ -5,6 +5,8 @@
  */
 package nars.io.meter;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -16,8 +18,10 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A tabular data store where each (# indexed) column represents a different
@@ -25,7 +29,7 @@ import java.util.List;
  * time point (first column).
  * 
  */
-public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
+public class Metrics<RowKey extends Object,Cell extends Object> implements Iterable<Object[]> {
 
     final static int PRECISION = 4;
     public final static Gson json = new GsonBuilder()
@@ -56,6 +60,42 @@ JsonSerializationContext context) {
         
     }
 
+    
+    /**
+    *  Calculates a 2-tuple with the following data:
+    *   0: minimum value among all columns in given signals
+    *   1: maximum value among all columns in given signals
+    * 
+    * @param data
+    * @return 
+    */
+    public static double[] getBounds(Iterable<SignalData> data) {
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.POSITIVE_INFINITY;
+    
+        for (SignalData ss : data) {
+            double a = ss.getMin();
+            double b = ss.getMax();
+            if (a < min) min = a;
+            if (b > max) max = b;
+        }
+        return new double[] { min, max };        
+    }
+    
+    /*  Calculates a 2-tuple with the following data:
+    *   0: minimum value among specific column
+    *   1: maximum value among specific column
+    */ 
+    public double[] getBounds(int signal) {
+        return getSignal(signal).getBounds();
+    }
+
+    public SignalData getSignalData(String n) {
+        Signal s = getSignal(n);
+        if (s == null) return null;
+        return new SignalData(this, s);
+    }
+
     /** generates the value of the first entry in each row */
     class RowKeyMeter extends FunctionMeter {
 
@@ -77,26 +117,41 @@ JsonSerializationContext context) {
     private ArrayDeque<Object[]> rows = new ArrayDeque<>();
     
     transient private List<Signal> signalList = new ArrayList<>();
+    transient private Map<Signal, Integer> signalIndex = new HashMap();
     
-    int numColumns = 0;
+    int numColumns;
     
     /** capacity */
     int history;
 
     public Metrics(int historySize) {
+        super();
         this.history = historySize;
         
-        meters.add(new RowKeyMeter());
-        numColumns++;
-        
-        signalList = null;
+        addMeter(new RowKeyMeter());
     }
     
+
+    public void clear() {
+        clearData();
+        clearSignals();
+    }
+    
+    public void clearSignals() {
+        numColumns = 0;
+        signalList = null;
+        signalIndex = null;
+    }
+    
+    public void clearData() {
+        rows.clear();
+    }
     
     public void addMeter(Meter<? extends Cell> m) {
         meters.add(m);
         numColumns+= m.numSignals();
         signalList = null;
+        signalIndex = null;
     }
     
     public void removeMeter(Meter<? extends Cell> m) {
@@ -104,7 +159,7 @@ JsonSerializationContext context) {
     }
     
     /** key could be a time, or some other unique-like identifying value */
-    public void update(RowKey key) {
+    public <R extends RowKey> void update(R key) {
         nextRowKey = key;        
         
         Object[] nextRow = new Object[ numColumns ];
@@ -143,9 +198,29 @@ JsonSerializationContext context) {
         return signalList;        
     }
     
-    public Signal getSignal(int column) {
-       return getSignals().get(column); 
+    public Map<Signal,Integer> getSignalIndex() {
+        if (signalIndex == null) {
+            int i = 0;
+            for (Signal s : getSignals()) {
+                signalIndex.put(s, i++);
+            }
+        }
+        return signalIndex;
     }
+    
+    public int getIndex(Signal s) {
+        return getSignalIndex().get(s);
+    }
+    public int getIndex(String s) {
+        return getSignalIndex().get(s);
+    }
+    
+    public Signal getSignal(int index) {
+       return getSignals().get(index); 
+    }
+    public Signal getSignal(String s) {
+       return getSignals().get(getIndex(s)); 
+    }    
     
     public Object[] rowFirst() { return rows.getFirst(); }
     public Object[] rowLast() { return rows.getLast(); }
@@ -160,13 +235,77 @@ JsonSerializationContext context) {
         return rows.descendingIterator();
     }
     
-    public Object[] getSignalData(int i) {        
-        Object[] c = new Object[ numRows() ];
+    public static class SignalData {
+        public final Signal signal;
+        private final Metrics metric;
+        private final int index;
+        private Object[] data;
+
+        public SignalData(Metrics m, Signal s) {
+            this.metric = m;
+            this.signal = s;
+            this.index = metric.getSignals().indexOf(s);
+        }
+
+        public Signal getSignal() {
+            return signal;
+        }
+        
+        public Object[] getDataCached() { return data; }
+        
+        public Object[] getData() {        
+            return this.data = metric.getData(index, data);
+        }
+
+        public String getID() {
+            return signal.id;
+        }
+
+        /** iterates any other signal in the metric's data, by its column ID's */
+        public Iterator<Object[]> iterateOtherSignals(int... columns) {
+            return metric.iterator(columns);
+        }
+      
+        /** iterates this signal's data */
+        public Iterator<Object[]> iterator() {
+            return metric.iterator(getIndex());
+        }
+          
+        /** iterates this signal's data in 1st index, along with one other column, in the 0th index */
+        public Iterator<Object[]> iteratorWith(int columns) {
+            return metric.iterator(columns, getIndex());
+        }
+
+        /** the index of this signal within the metrics */
+        public int getIndex() {
+            return index;
+        }
+
+        private double getMin() {
+            return signal.getMin();
+        }
+
+        private double getMax() {
+            return signal.getMax();
+        }
+
+        
+    }
+    
+    public Object[] getData(int signal, Object[] c) {        
+        if ((c == null) || (c.length != numRows() )) 
+            c = new Object[ numRows() ];
+        
         int r = 0;
         for (Object[] row : this) {
-            c[r++] = row[i];
+            c[r++] = row[signal];
         }
+        
         return c;
+    }
+    
+    public Object[] getData(int signal) {        
+        return getData(signal, null);
     }
     
     //Table<Signal,Object (row),Object (value)> getSignalTable(int columns...)
@@ -185,6 +324,30 @@ JsonSerializationContext context) {
     
     public Iterator<Object> iterateSignal(int column, boolean reverse) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public Iterator<Object[]> iterator(final int... columns) {
+        return Iterators.transform(iterator(), new Function<Object[], Object[]>() {
+
+            Object[] next = new Object[columns.length];
+
+            @Override
+            public Object[] apply(Object[] f) {
+                
+                if (columns.length == 1) {
+                    //fast 1-argument
+                    next[0] = f[columns[0]];
+                    return next;
+                }
+                
+                int j = 0;
+                for (int c : columns) {
+                    next[j++] = f[c];
+                }
+                return next;
+            }
+            
+        });
     }
 
     public static List<Double> doubles(List<Object> l) {

@@ -1,7 +1,6 @@
 package nars.gui.output.chart;
 
 
-import nars.util.TreeMLData;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.Chart;
@@ -18,7 +17,9 @@ import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
-import nars.io.meter.CompoundMeter;
+import nars.io.meter.Metrics;
+import nars.io.meter.Metrics.SignalData;
+import nars.io.meter.Signal;
 
 public class MeterVis extends TimelineVis {
     private final NAR nar;
@@ -26,20 +27,24 @@ public class MeterVis extends TimelineVis {
     
     public class DataChart {
         
-        public final TreeMLData data;
+        public final SignalData data;
         public Chart chart;
 
-        public DataChart(String id, TreeMLData data) {
-            this.data = data;
-            this.chart = getDisplayedChart(id, data);
+        public DataChart(String id) {
+            this.data = meters.getSignalData(id);
+            this.chart = displayedCharts.get(id);
             
             if (chart!=null)
                 chart.setOverlayEnable(true);
         }        
+
+        private DataChart(Signal s) {
+            this(s.id);
+        }
     }
     
     final Map<String, Chart> displayedCharts = new HashMap();
-    final CompoundMeter meters;
+    final Metrics meters;
     final Map<String, DataChart> charts;
     
     private final int historySize;
@@ -54,6 +59,10 @@ public class MeterVis extends TimelineVis {
         return new MeterVisPanel();
     }
     
+    public MeterVis(NAR nar, Metrics meters, int historySize) {
+        this(nar, meters, historySize, null);
+    }
+    
     /**
      *
      * @param title
@@ -61,7 +70,7 @@ public class MeterVis extends TimelineVis {
      * @param chartType use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA,
      * Chart.BAR_CENTERED
      */
-    public MeterVis(NAR nar, CompoundMeter meters, int historySize) {
+    public MeterVis(NAR nar, Metrics<?,?> meters, int historySize, String[] enabled) {
         super();
 
         this.nar = nar;        
@@ -70,25 +79,30 @@ public class MeterVis extends TimelineVis {
 
         charts = new TreeMap();
         
-        for (String f : meters.keySet()) {
-            TreeMLData data = new TreeMLData(f, Video.getColor(f, 0.65f, 0.85f), historySize);
-            DataChart dc = new DataChart(f, data);
-            charts.put(f, dc);            
+        if (enabled == null) {
+            for (Signal s : meters.getSignals()) {
+                charts.put(s.id, new DataChart(s));
+            }
+        }
+        else {
+            for (String f : enabled) {
+                charts.put(f, new DataChart(f));            
+            }
         }
         
     }
     
 
 
-    public Chart getDisplayedChart(String id, TreeMLData data) {
+    public DataChart getDisplayedChart(String id) {
         if (id.contains("#")) {
             String baseName = id.split("#")[0];
-            return getDisplayedChart(baseName, data);
+            return getDisplayedChart(baseName);
         }
-        Chart c = displayedCharts.get(id);
+        DataChart c = charts.get(id);
         if (c!=null) {
             if (c instanceof MultiChart)
-                ((MultiChart)c).getData().add(data);
+                ((MultiChart)c).getData().add(c.data);
             else
                 throw new RuntimeException(c + " does not support multiple datas");
         }
@@ -105,33 +119,8 @@ public class MeterVis extends TimelineVis {
     }    
     /** sample the next value from each meter into the history */
     public void updateData(long t) {
-        
-        //add entries to chart sequentially, because time interval may be non-sequential or skipped
         int ct = nextChartTime++; 
-        
-        for (Map.Entry<String, DataChart> e : charts.entrySet()) {
-            String f = e.getKey();            
-            DataChart dc = e.getValue();
-            
-            TreeMLData ch = dc.data;
-            
-            Object value = meters.get(f);
-
-            
-            
-            if (value instanceof Double) {                    
-                ch.add(ct, ((Number) value).doubleValue());
-            }
-            else if (value instanceof Float) {
-                ch.add(ct, ((Number) value).doubleValue());
-            }
-            else if (value instanceof Integer) {
-                ch.add(ct, ((Number) value).doubleValue());
-            }
-            else if (value instanceof Long) {
-                ch.add(ct, ((Number) value).doubleValue());
-            }            
-        }
+        meters.update(t);
     }
 
     
@@ -238,7 +227,6 @@ public class MeterVis extends TimelineVis {
         @Override
         public void event(Class event, Object[] args) {
             if (event == FrameEnd.class) {
-                meters.commit(nar.memory);
                 updateData(nar.time());
                 redraw();
             }

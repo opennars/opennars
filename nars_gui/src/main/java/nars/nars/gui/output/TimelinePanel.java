@@ -1,6 +1,5 @@
 package nars.gui.output;
 
-import nars.util.TreeMLData;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,11 +38,11 @@ public class TimelinePanel extends NPanel implements EventObserver {
     private final NARTrace trace;
     private final PCanvas canvas;
 
-    public TimelinePanel(NAR n) {
+    public TimelinePanel(NAR n, NARTrace trace) {
         super(new BorderLayout());
         
         this.nar = n;
-        this.trace = new NARTrace(n);
+        this.trace = trace;
         trace.setActive(false);
         
         
@@ -112,11 +111,11 @@ public class TimelinePanel extends NPanel implements EventObserver {
                 return new LineChart(trace.getCharts("concept.priority.mean")).height(1);
             }            
         });
-        controls.add(new ChartButton("Delta Concepts") {
-            @Override public Chart newChart() {
-                return new BarChart(new TreeMLData.FirstOrderDifferenceTimeSeries("d(concepts)", trace.charts.get("concept.count")));
-            }            
-        });
+//        controls.add(new ChartButton("Delta Concepts") {
+//            @Override public Chart newChart() {
+//                return new BarChart(new TreeMLData.FirstOrderDifferenceTimeSeries("d(concepts)", trace.charts.get("concept.count")));
+//            }            
+//        });
         controls.add(new ChartButton("Concept Priority Histogram (4 level)") {
             @Override public Chart newChart() {
                 return new StackedPercentageChart(trace.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2);
