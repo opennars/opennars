@@ -19,6 +19,7 @@ abstract public class DependsOnColumn<Source extends Object,Result extends Objec
 
     protected final int sourceColumn;
     protected final Metrics metrics;
+    
 
 
     public DependsOnColumn(Metrics metrics, int sourceColumn, int numResults) {
@@ -38,10 +39,10 @@ abstract public class DependsOnColumn<Source extends Object,Result extends Objec
         return metrics.getSignalIterator(sourceColumn, true);        
     }*/
     
-    public Object newestValue() { 
+    public Source newestValue() { 
         Iterator<Object[]> r = metrics.reverseIterator();
         if (r.hasNext())
-            return r.next()[sourceColumn];
+            return (Source) r.next()[sourceColumn];
         return null;
     }
     //public List<Object> newestValues(int n) { 

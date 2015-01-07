@@ -12,7 +12,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 /**
  * Uses apache commons math 
  */
-public class BasicStatistics extends DependsOnColumn  {
+public class BasicStatistics extends DependsOnColumn<Number,Double>  {
     
     private final SummaryStatistics stat;
 
@@ -29,19 +29,17 @@ public class BasicStatistics extends DependsOnColumn  {
     @Override
     protected String getColumnID(Signal dependent, int i) {
         switch (i) {
-            case 0: return dependent.id + "_mean";
-            case 1: return dependent.id + "_max";
+            case 0: return dependent.id + ".mean";
+            case 1: return dependent.id + ".max";
         }
         return null;
     }
 
     @Override
-    protected Object getValue(Object key, int index) {
+    protected Double getValue(Object key, int index) {
         if (index == 0) {
-            Object nextValue = newestValue();
-            if (nextValue instanceof Number) {
-                stat.addValue( ((Number)nextValue).doubleValue() );
-            }
+            Number nextValue = newestValue();            
+            stat.addValue( (nextValue).doubleValue() );            
         }
         switch (index) {
             case 0: return stat.getMean();
