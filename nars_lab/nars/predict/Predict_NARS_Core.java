@@ -62,10 +62,13 @@ public class Predict_NARS_Core {
                     if (ts.startsWith("<{x} --> y")) {
                         char cc = ts.charAt("<{x} --> y".length());
                         value = cc - '0';
-                        lastprediction= (value)/10.0;
+                        if(time>=curmax) {
+                            curmax=time;
+                            lastprediction= (value)/10.0;
+                        }
                         maxval=Math.max(maxval, (value)/10.0);
                         predictions[0].add(time, (value)/10.0 );
-                        curmax=(int) Math.max(time, curmax);
+                        
                     }
                 }
             }
