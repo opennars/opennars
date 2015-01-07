@@ -15,14 +15,14 @@
 package nars.util.meter.sensor;
 
 import java.util.List;
-import nars.util.meter.Meter;
+import nars.util.meter.Tracker;
 
 /**
  * A convenience base implementation of {@link CompositeTracker}.
  *
  * @author The Stajistic Project
  */
-public abstract class AbstractCompositeTracker<T extends Meter> {
+public abstract class AbstractCompositeTracker<T extends Tracker> {
 
     public final T[] trackers;
 
@@ -33,7 +33,7 @@ public abstract class AbstractCompositeTracker<T extends Meter> {
 
     @SuppressWarnings("unchecked")
     public AbstractCompositeTracker(final List<T> trackers) {
-        this(trackers.toArray((T[]) new Meter[trackers.size()]));
+        this(trackers.toArray((T[]) new Tracker[trackers.size()]));
     }
 
 //    public Collection<? extends T> composites() {

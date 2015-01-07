@@ -17,7 +17,7 @@ package nars.util.meter.sensor;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
-import nars.util.meter.Meter;
+import nars.util.meter.Tracker;
 import nars.util.meter.session.StatsSession;
 
 /**
@@ -96,7 +96,7 @@ public class GarbageCollectionTimeTracker extends AbstractSpanTracker {
     }
 
     @Override
-    public Meter reset() {
+    public Tracker reset() {
         super.reset();
 
         startGCNames = null;

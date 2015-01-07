@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.Attention;
+import nars.core.Core;
 import nars.core.Build;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
@@ -191,7 +191,7 @@ public class Default extends Build implements ConceptBuilder {
     }
 
     @Override
-    public Attention newAttention() {
+    public Core newAttention() {
         return new DefaultAttention(newConceptBag(), newSubconceptBag(), getConceptBuilder());
     }
     

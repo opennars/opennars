@@ -31,7 +31,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import javolution.context.ConcurrentContext;
-import nars.core.Attention.AttentionAware;
+import nars.core.Core.AttentionAware;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
@@ -171,7 +171,7 @@ public class Memory implements Serializable {
         randomNumber.setSeed(randomSeed);    
     }
     
-    public final Attention concepts;
+    public final Core concepts;
     
     public final EventEmitter event;
     
@@ -286,7 +286,7 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, Attention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
+    public Memory(Param param, Core concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
 
         this.param = param;
         

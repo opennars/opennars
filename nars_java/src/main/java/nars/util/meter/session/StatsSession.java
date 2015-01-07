@@ -16,7 +16,7 @@ package nars.util.meter.session;
 
 import java.io.Serializable;
 import java.util.List;
-import nars.util.meter.Meter;
+import nars.util.meter.Tracker;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventType;
 import nars.util.meter.key.StatsKey;
@@ -46,7 +46,7 @@ public interface StatsSession extends Serializable {
     List<DataRecorder> getDataRecorders();
 
     /**
-     * Get the number of hits, or the number of times a {@link Meter}
+     * Get the number of hits, or the number of times a {@link Tracker}
      * associated with this session's {@link String} has called
      * {@link #track(Tracker, long)}.
      *
@@ -71,7 +71,7 @@ public interface StatsSession extends Serializable {
     long getLastHitStamp();
 
     /**
-     * Get the number of commits, or the number of time a {@link Meter}
+     * Get the number of commits, or the number of time a {@link Tracker}
      * associated with this session's {@link String} has called
      * {@link #update(Tracker, long)}.
      *
@@ -178,23 +178,23 @@ public interface StatsSession extends Serializable {
 
     /**
      * <p>
-     * Do not call directly. Normally called by a {@link Meter}
+     * Do not call directly. Normally called by a {@link Tracker}
      * implementation. Increments the hits for this session by one.</p>
      *
      * <p>
      * Fires a {@link EventType#TRACKER_TRACKING} event for the passed
      * <tt>tracker</tt>.</p>
      *
-     * @param tracker The {@link Meter} that, after this call, will be
+     * @param tracker The {@link Tracker} that, after this call, will be
      * tracking data for this session.
      * @param now The time stamp of the current time if known, otherwise
      * <tt>-1</tt>.
      */
-    void track(Meter tracker, long now);
+    void track(Tracker tracker, long now);
 
     /**
      * <p>
-     * Do not call directly. Normally called by a {@link Meter}
+     * Do not call directly. Normally called by a {@link Tracker}
      * implementation. Increments the commits for this session by one. The value
      * reported by the given
      * <tt>tracker</tt>'s {@link Tracker#getValue()} method is processed and
@@ -204,7 +204,7 @@ public interface StatsSession extends Serializable {
      * Fires a {@link EventType#TRACKER_COMMITTED} event for the passed
      * <tt>tracker</tt>.</p>
      *
-     * @param tracker The {@link Meter} that collected the data for this
+     * @param tracker The {@link Tracker} that collected the data for this
      * update.
      * @param now The time stamp of the current time if known, otherwise
      * <tt>-1</tt>.
@@ -213,7 +213,7 @@ public interface StatsSession extends Serializable {
      * @see DataRecorder
      * @see #getDataRecorders()
      */
-    void update(Meter tracker, long now);
+    void update(Tracker tracker, long now);
 
     /**
      * <p>

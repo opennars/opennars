@@ -15,7 +15,7 @@
 package nars.util.meter.sensor;
 
 import java.lang.management.ThreadInfo;
-import nars.util.meter.Meter;
+import nars.util.meter.Tracker;
 import nars.util.meter.session.StatsSession;
 
 /**
@@ -61,7 +61,7 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoSpanTracker {
     }
 
     @Override
-    public Meter reset() {
+    public Tracker reset() {
         super.reset();
 
         startWaitTime = -1;

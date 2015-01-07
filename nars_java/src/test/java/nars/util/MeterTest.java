@@ -2,7 +2,7 @@ package nars.util;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.util.meter.Meter;
+import nars.util.meter.Tracker;
 import nars.util.meter.sensor.CompositeIncidentTracker;
 import nars.util.meter.sensor.CompositeSpanTracker;
 import nars.util.meter.sensor.DefaultEventMeter;
@@ -45,7 +45,7 @@ public class MeterTest {
             }
             cst.commit();            
         }
-        for (Meter x : cst.trackers) {
+        for (Tracker x : cst.trackers) {
             //System.err.println(x);        
             //System.out.println(" " + x.getSession().collectData());
         }
@@ -68,7 +68,7 @@ public class MeterTest {
             }
             cst.incident();            
         }
-        for (Meter x : cst.trackers) {
+        for (Tracker x : cst.trackers) {
             //System.err.println(x);        
             //System.out.println(" " + x.getSession().collectData());
         }        

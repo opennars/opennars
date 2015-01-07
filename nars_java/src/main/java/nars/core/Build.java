@@ -17,7 +17,7 @@ abstract public class Build extends Parameters  {
     public Param param = new Param();
     
     abstract public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag();
-    abstract public Attention newAttention();
+    abstract public Core newAttention();
 
     public Build() {
     }

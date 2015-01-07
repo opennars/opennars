@@ -1,0 +1,75 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package nars.io.meter;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Convenience implementation for a 1-signal meter
+ */
+public abstract class SimpleMeter<M> implements Meter<M> {
+
+    private final List<Signal> signals;
+    private M[] vector;
+
+    public static String[] newDefaultSignalIDs(String prefix, int n) {
+        String[] s = new String[n];
+        for (int i = 0; i < n; i++)
+            s[i] = prefix + '_' + i;
+        return s;
+    }
+    
+    public SimpleMeter(String prefix, int n) {
+        this(newDefaultSignalIDs(prefix, n));
+    }
+    
+    public SimpleMeter(String... ids) {
+        List<Signal> s = new ArrayList();
+        for (String n : ids) {
+            s.add(new Signal(n, null));
+        }
+
+        this.signals = Collections.unmodifiableList(s);
+    }
+    
+    public void setUnits(String... units) { 
+        int i = 0;
+        for (Signal s : signals)
+            s.unit = units[i++];
+    }
+
+    @Override
+    public List<Signal> getSignals() {
+        return signals;
+    }
+
+    abstract protected M getValue(Object key, int index);
+
+    protected void fillVector(Object key, int fromIndex, int toIndex) {
+        for (int i = 1; i < vector.length; i++) {
+            vector[i] = getValue(key, i);
+        }
+
+    }
+
+    @Override
+    public M[] sample(Object key) {
+        if (vector == null) {
+            M firstValue = getValue(key, 0);
+            vector = (M[]) Array.newInstance(firstValue.getClass(), signals.size());
+            vector[0] = firstValue;
+            fillVector(key, 1, vector.length);
+        } else {
+            fillVector(key, 0, vector.length);
+        }
+
+        return vector;
+    }
+
+}

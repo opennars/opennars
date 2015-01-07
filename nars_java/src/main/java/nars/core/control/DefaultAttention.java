@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.Attention;
+import nars.core.Core;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Memory;
@@ -24,7 +24,7 @@ import nars.storage.CacheBag;
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class DefaultAttention implements Attention {
+public class DefaultAttention implements Core {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */

@@ -14,7 +14,7 @@
  */
 package nars.util.meter.sensor;
 
-import nars.util.meter.Meter;
+import nars.util.meter.Tracker;
 import nars.util.meter.session.StatsSession;
 
 /**
@@ -24,7 +24,7 @@ import nars.util.meter.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public interface ManualTracker extends Meter {
+public interface ManualTracker extends Tracker {
 
     /**
      * Add the given <tt>value</tt> to the currently stored value.

@@ -56,7 +56,7 @@ import nars.util.meter.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public interface Meter extends Serializable {
+public interface Tracker extends Serializable {
 
     /**
      * Obtain the numeric value that was collected as a result of operating this
@@ -73,7 +73,7 @@ public interface Meter extends Serializable {
      *
      * @return <tt>this</tt>.
      */
-    Meter reset();
+    Tracker reset();
 
     /**
      * Get the key that represents the target for which this tracker is

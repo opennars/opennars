@@ -7,7 +7,7 @@ package nars.core.control.experimental;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import nars.core.Attention;
+import nars.core.Core;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.FireConcept;
@@ -25,7 +25,7 @@ import nars.storage.FairDelayBag;
  * 
  * Designed for use in parallel processing
  */
-abstract public class WaveAttention implements Attention {
+abstract public class WaveAttention implements Core {
 
     public DelayBag<Concept,Term> concepts;
     //public final CacheBag<Term, Concept> subcon;

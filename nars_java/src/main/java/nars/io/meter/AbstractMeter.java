@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import nars.core.Memory;
 import nars.io.meter.AbstractMeter.UnknownSensorException;
-import nars.util.meter.Meter;
+import nars.util.meter.Tracker;
 import nars.util.meter.data.DefaultDataSet;
 import nars.util.meter.sensor.AbstractSensor;
 import nars.util.meter.sensor.AbstractSpanTracker;
@@ -14,7 +14,7 @@ import nars.util.meter.sensor.SpanTracker;
 
 abstract public class AbstractMeter extends DefaultDataSet {
 
-    final Map<String, Meter> sensors = new HashMap<>();
+    final Map<String, Tracker> sensors = new HashMap<>();
     long lastUpdate = -1;
     int allSensorResetPeriodCycles = -1; //how often to reset all sensors, or -1 to disable
     boolean active = false;
@@ -30,19 +30,19 @@ abstract public class AbstractMeter extends DefaultDataSet {
 
     /** samples the data */
     public void commit(final Memory memory) {
-        for (Meter m : sensors.values()) {
+        for (Tracker m : sensors.values()) {
             m.commit(this, memory);
         }
     }
     
         
-    protected void add(Meter s) {
+    protected void add(Tracker s) {
         sensors.put(s.name(), s);
         s.setActive(active);
     }
 
     public SpanTracker getSensorSpan(final String name) {
-        Meter s = sensors.get(name);
+        Tracker s = sensors.get(name);
         if (s instanceof SpanTracker) {
             return (SpanTracker) s;
         }
@@ -50,7 +50,7 @@ abstract public class AbstractMeter extends DefaultDataSet {
     }
 
     public EventMeter getSensorEvent(final String name) {
-        Meter s = sensors.get(name);
+        Tracker s = sensors.get(name);
         if (s instanceof EventMeter) {
             return (EventMeter) s;
         }
@@ -58,7 +58,7 @@ abstract public class AbstractMeter extends DefaultDataSet {
     }
 
     protected void updateSensors(final boolean reset, long cyclesSinceLastUpdate) {
-        for (final Meter s : sensors.values()) {
+        for (final Tracker s : sensors.values()) {
             
             s.setCyclesSinceLastUpdate(cyclesSinceLastUpdate);
             
@@ -125,7 +125,7 @@ abstract public class AbstractMeter extends DefaultDataSet {
     
     public void setActive(final boolean b) {
         this.active = b;
-        for (final Meter s : sensors.values())
+        for (final Tracker s : sensors.values())
             s.setActive(b);
     }
     

@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
-import nars.core.Attention;
-import nars.core.Attention.AttentionAware;
+import nars.core.Core;
+import nars.core.Core.AttentionAware;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Concept;
@@ -90,7 +90,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     
     private Memory memory;
     private long now;
-    private Attention attention;
+    private Core attention;
 
     private AtomicBoolean busyReloading = new AtomicBoolean(false);
     private final AtomicDouble forgetRate;
@@ -381,7 +381,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
 
     @Override
-    public void setAttention(Attention a) {
+    public void setAttention(Core a) {
         this.attention = a;
         this.memory = a.getMemory();        
     }

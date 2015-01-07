@@ -16,7 +16,7 @@ package nars.util.meter.sensor;
 
 import java.util.HashMap;
 import nars.core.Memory;
-import nars.util.meter.Meter;
+import nars.util.meter.Tracker;
 import nars.util.meter.data.DataContainer;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.key.DefaultStatsKey;
@@ -29,14 +29,14 @@ import nars.util.meter.util.Range;
 import nars.util.meter.util.RangeList;
 
 /**
- * A convenience base implementation of {@link Meter}.
+ * A convenience base implementation of {@link Tracker}.
  *
  * @author The Stajistics Project
  * @author heavily modified for NARS
  * 
  * TODO find better names for this class hierarchy, it has inconsistent namig system
  */
-public abstract class AbstractSensor implements Meter {
+public abstract class AbstractSensor implements Tracker {
 
     //private static final Logger logger = Logger.getLogger(AbstractTracker.class.toString());
     protected final StatsSession session;
@@ -72,7 +72,7 @@ public abstract class AbstractSensor implements Meter {
     
 
     @Override
-    public Meter reset() {
+    public Tracker reset() {
         value = 0;
         lastHits = currentHits = 0;
         init();
