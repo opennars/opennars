@@ -207,7 +207,7 @@ public class Predict2 {
             long dt = memory.time() - lastTime;
             
             Term prevBelief = Inheritance.make(prevTerm, getValueTerm(prevY));
-            Interval interval = Interval.intervalTime(dt, memory);
+            Interval interval = Interval.interval(dt, memory);
             //System.out.println(dt + " cycles -> " + interval.getTime(memory));
             
             Term currentBelief = Inheritance.make(term, getValueTerm(y));

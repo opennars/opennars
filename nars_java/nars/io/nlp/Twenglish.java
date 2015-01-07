@@ -154,7 +154,7 @@ public class Twenglish {
             for (Span cp : s) {
                 cont.add(lexToTerm(cp.content));
                 //separate each by a duration interval
-                cont.add(Interval.intervalTime(memory.getDuration(), memory));
+                cont.add(Interval.interval(memory.getDuration(), memory));
             }
             cont.removeLast(); //remove trailnig interval term
             Term con = Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD);

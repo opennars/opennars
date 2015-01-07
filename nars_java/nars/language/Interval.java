@@ -80,18 +80,18 @@ public class Interval extends Term {
     static Interval[] INTERVAL = new Interval[INTERVAL_POOL_SIZE];
     
     public static Interval interval(final String i) {
-        return intervalMagnitude( Integer.parseInt(i.substring(1)) - 1);
+        return interval( Integer.parseInt(i.substring(1)) - 1);
     }
     
-    public static Interval intervalTime(final long time, final Memory memory) {
-        return intervalMagnitude( timeToMagnitude( time, memory.param.duration ) );
+    public static Interval interval(final long time, final Memory memory) {
+        return interval( timeToMagnitude( time, memory.param.duration ) );
     }
     
-    public static Interval intervalTime(final long time, final AtomicDuration duration) {
-        return intervalMagnitude( timeToMagnitude( time, duration ) );
+    public static Interval interval(final long time, final AtomicDuration duration) {
+        return interval( timeToMagnitude( time, duration ) );
     }
     
-    public static Interval intervalMagnitude(int magnitude) {
+    public static Interval interval(int magnitude) {
         if (magnitude >= INTERVAL_POOL_SIZE)
             return new Interval(magnitude, true);
         else if (magnitude < 0)
@@ -175,11 +175,11 @@ public class Interval extends Term {
     /** returns a sequence of intervals which approximate a time period with a maximum number of consecutive Interval terms */
     public static List<Interval> intervalTimeSequence(final long t, final int maxTerms, final Memory memory) {
         if (maxTerms == 1)
-            return Lists.newArrayList(intervalTime(t, memory));
+            return Lists.newArrayList(interval(t, memory));
         
         long a; //current approximation value
         Interval first;
-        first = intervalTime(t, memory);
+        first = interval(t, memory);
         a = first.getTime(memory);
         if (a == t) return Lists.newArrayList(first);
         else if (a < t) {
@@ -187,7 +187,7 @@ public class Interval extends Term {
         }
         else if ((a > t) && (first.magnitude > 0)) {
             //use next lower magnitude
-            first = intervalMagnitude(first.magnitude - 1);
+            first = interval(first.magnitude - 1);
             a = first.getTime(memory);
         }
                 
