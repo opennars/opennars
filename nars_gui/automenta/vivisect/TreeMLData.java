@@ -71,7 +71,10 @@ public class TreeMLData implements MLData {
     public int getEnd() { 
         if (values.isEmpty())
             return 0;
-        return values.lastKey(); 
+        Integer ret=values.lastKey(); 
+        if(ret==null)
+            return 0;
+        return ret;
     }
 
     @Override
