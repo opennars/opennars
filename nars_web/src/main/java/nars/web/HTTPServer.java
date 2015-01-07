@@ -92,7 +92,7 @@ import java.util.TimeZone;
  * See the end of the source file for distribution license (Modified BSD
  * licence)
  */
-abstract public class HTTPServer {
+@Deprecated abstract public class HTTPServer {
   // 
     // API parts
     // 

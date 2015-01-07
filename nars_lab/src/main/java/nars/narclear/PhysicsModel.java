@@ -35,8 +35,6 @@ import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.callbacks.DestructionListener;
-import org.jbox2d.callbacks.ParticleDestructionListener;
-import org.jbox2d.callbacks.ParticleQueryCallback;
 import org.jbox2d.callbacks.QueryCallback;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Collision;
@@ -44,7 +42,6 @@ import org.jbox2d.collision.Collision.PointState;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.WorldManifold;
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Transform;
@@ -59,7 +56,7 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
-import org.jbox2d.particle.ParticleGroup;
+
 
 /**
  * @author Daniel Murphy
@@ -100,7 +97,6 @@ public abstract class PhysicsModel implements ContactListener {
 
   private TestbedState model;
   protected DestructionListener destructionListener;
-  protected ParticleDestructionListener particleDestructionListener;
 
 
   private String title = null;
@@ -149,9 +145,7 @@ public abstract class PhysicsModel implements ContactListener {
 
   public void endContact(Contact contact) {}
 
-  public void particleDestroyed(int particle) {}
 
-  public void particleGroupDestroyed(ParticleGroup group) {}
 
   public void postSolve(Contact contact, ContactImpulse impulse) {}  
 
@@ -160,8 +154,7 @@ public abstract class PhysicsModel implements ContactListener {
 
     Vec2 gravity = new Vec2(0, -10f);
     m_world = model.getWorldCreator().createWorld(gravity);
-    m_world.setParticleGravityScale(0.4f);
-    m_world.setParticleDensity(1.2f);
+    
     bomb = null;
     mouseJoint = null;
 
@@ -180,10 +173,10 @@ public abstract class PhysicsModel implements ContactListener {
     pointCount = 0;
     stepCount = 0;
     bombSpawning = false;
-    model.getDebugDraw().setViewportTransform(camera.getTransform());
+    //model.getDebugDraw().setViewportTransform(camera.getTransform());
 
     world.setDestructionListener(destructionListener);
-    world.setParticleDestructionListener(particleDestructionListener);
+    
     world.setContactListener(this);
     world.setDebugDraw(model.getDebugDraw());
     title = getTestName();
@@ -337,7 +330,7 @@ public abstract class PhysicsModel implements ContactListener {
 
   private final Vec2 acceleration = new Vec2();
   private final CircleShape pshape = new CircleShape();
-  private final ParticleVelocityQueryCallback pcallback = new ParticleVelocityQueryCallback();
+  
   private final AABB paabb = new AABB();
 
   public void step(float timeStep, TestbedSettings settings) {
@@ -375,10 +368,10 @@ public abstract class PhysicsModel implements ContactListener {
     flags +=
         settings.getSetting(TestbedSettings.DrawCOMs).enabled ? DebugDraw.e_centerOfMassBit : 0;
     flags += settings.getSetting(TestbedSettings.DrawTree).enabled ? DebugDraw.e_dynamicTreeBit : 0;
-    flags +=
+    /*flags +=
         settings.getSetting(TestbedSettings.DrawWireframe).enabled
-            ? DebugDraw.e_wireframeDrawingBit
-            : 0;
+            ? wireframeDrawing
+            : 0;*/
     debugDraw.setFlags(flags);
 
     m_world.setAllowSleep(settings.getSetting(TestbedSettings.AllowSleep).enabled);
@@ -405,14 +398,7 @@ public abstract class PhysicsModel implements ContactListener {
     m_textLine += TEXT_LINE_SPACE;
 
     if (settings.getSetting(TestbedSettings.DrawStats).enabled) {
-      int particleCount = m_world.getParticleCount();
-      int groupCount = m_world.getParticleGroupCount();
-      debugDraw.drawString(
-          5,
-          m_textLine,
-          "bodies/contacts/joints/proxies/particles/groups = " + m_world.getBodyCount() + "/"
-              + m_world.getContactCount() + "/" + m_world.getJointCount() + "/"
-              + m_world.getProxyCount() + "/" + particleCount + "/" + groupCount, Color3f.WHITE);
+
       m_textLine += TEXT_LINE_SPACE;
 
       debugDraw.drawString(5, m_textLine, "World mouse position: " + mouseWorld.toString(),
@@ -464,9 +450,7 @@ public abstract class PhysicsModel implements ContactListener {
       mouseTracerPosition.y += timeStep * mouseTracerVelocity.y;
       pshape.m_p.set(mouseTracerPosition);
       pshape.m_radius = 2;
-      pcallback.init(m_world, pshape, mouseTracerVelocity);
       pshape.computeAABB(paabb, identity, 0);
-      m_world.queryAABB(pcallback, paabb);
     }
 
     if (mouseJoint != null) {
@@ -695,7 +679,7 @@ public abstract class PhysicsModel implements ContactListener {
       cp.state = state2[i];
       cp.normalImpulse = manifold.points[i].normalImpulse;
       cp.tangentImpulse = manifold.points[i].tangentImpulse;
-      cp.separation = worldManifold.separations[i];
+      //cp.separation = worldManifold.separations[i];
       ++pointCount;
     }
   }
@@ -727,33 +711,6 @@ class TestQueryCallback implements QueryCallback {
   }
 }
 
-
-class ParticleVelocityQueryCallback implements ParticleQueryCallback {
-  World world;
-  Shape shape;
-  Vec2 velocity;
-  final Transform xf = new Transform();
-
-  public ParticleVelocityQueryCallback() {
-    xf.setIdentity();
-  }
-
-  public void init(World world, Shape shape, Vec2 velocity) {
-    this.world = world;
-    this.shape = shape;
-    this.velocity = velocity;
-  }
-
-  @Override
-  public boolean reportParticle(int index) {
-    Vec2 p = world.getParticlePositionBuffer()[index];
-    if (shape.testPoint(xf, p)) {
-      Vec2 v = world.getParticleVelocityBuffer()[index];
-      v.set(velocity);
-    }
-    return true;
-  }
-}
 
 
 //class SignerAdapter implements ObjectSigner {

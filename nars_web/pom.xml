@@ -6,10 +6,10 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <artifactId>opennars-lab</artifactId>
+    <artifactId>opennars-web</artifactId>
     <packaging>jar</packaging>
 
-    <name>OpenNARS Lab</name>
+    <name>OpenNARS Web</name>
     <url>https://github.com/opennars/opennars</url>
 
    
@@ -26,20 +26,11 @@
             <version>1.7-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>opennars</groupId>
-            <artifactId>opennars-prolog</artifactId>
-            <version>1.7-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>opennars</groupId>
-            <artifactId>opennars-gui</artifactId>
-            <version>1.7-SNAPSHOT</version>
-        </dependency>        
-        <dependency>
-            <groupId>opennars</groupId>
-            <artifactId>opennars-web</artifactId>
-            <version>1.7-SNAPSHOT</version>
-        </dependency>        
+            <groupId>io.undertow</groupId>        
+            <artifactId>undertow-core</artifactId>
+            <version>1.2.0.Beta6</version>
+        </dependency>  
+
     </dependencies>
   
   

@@ -44,6 +44,7 @@ import org.jbox2d.common.Color3f;
 import org.jbox2d.common.IViewportTransform;
 import org.jbox2d.common.Mat22;
 import org.jbox2d.common.MathUtils;
+import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
@@ -53,7 +54,6 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.PulleyJoint;
-import org.jbox2d.particle.ParticleColor;
 import org.jbox2d.pooling.arrays.IntArray;
 import org.jbox2d.pooling.arrays.Vec2Array;
 
@@ -73,7 +73,8 @@ public class DrawPhy2D extends DebugDraw {
     public final List<LayerDraw> layers = new ArrayList();
     private Graphics2D graphics;
     
-    public DrawPhy2D(TestPanelJ2D argTestPanel, boolean yFlip) {        
+    public DrawPhy2D(TestPanelJ2D argTestPanel, boolean yFlip) {  
+        super(new OBBViewportTransform());
         panel = argTestPanel;
         this.yFlip = yFlip;        
         circle = new Ellipse2D.Float(-1, -1, 2, 2);
@@ -166,7 +167,7 @@ public class DrawPhy2D extends DebugDraw {
 
         for (LayerDraw l : layers) l.drawSky(this, w);
 
-        flush();
+        //flush();
 
     }
     public interface DrawProperty {
@@ -363,11 +364,11 @@ public class DrawPhy2D extends DebugDraw {
         //pool.pushVec2(2);
     }
 
-    @Override
+    /*@Override
     public void setViewportTransform(IViewportTransform viewportTransform) {
         super.setViewportTransform(viewportTransform);
         viewportTransform.setYFlip(yFlip);
-    }
+    }*/
 
     private final Vec2Array vec2Array = new Vec2Array();
 
@@ -432,7 +433,7 @@ public class DrawPhy2D extends DebugDraw {
     private void transformGraphics(Graphics2D g, Vec2 center) {
         Vec2 e = viewportTransform.getExtents();
         Vec2 vc = viewportTransform.getCenter();
-        Mat22 vt = viewportTransform.getMat22Representation();
+        Mat22 vt = new Mat22(e, vc);//viewportTransform.getMat22Representation();
 
         int flip = yFlip ? -1 : 1;
         tr.setTransform(vt.ex.x, flip * vt.ex.y, vt.ey.x, flip * vt.ey.y, e.x, e.y);
@@ -454,7 +455,6 @@ public class DrawPhy2D extends DebugDraw {
         restoreState(g);
     }
 
-    @Override
     public void drawCircle(Vec2 center, float radius, Vec2 axis, Color3f color) {
         Graphics2D g = getGraphics();
         saveState(g);
@@ -494,58 +494,58 @@ public class DrawPhy2D extends DebugDraw {
     private final Vec2 zero = new Vec2();
     private final Color pcolorA = new Color(1f, 1f, 1f, .4f);
 
-    @Override
-    public void drawParticles(final Vec2[] centers, final float radius, ParticleColor[] colors, final int count) {
-        Graphics2D g = getGraphics();
-        saveState(g);
-        transformGraphics(g, zero);
-        g.setStroke(stroke);
-        for (int i = 0; i < count; i++) {
-            Vec2 center = centers[i];
-            Color color;
-            if (colors == null) {
-                color = pcolorA;
-            } else {
-                ParticleColor c = colors[i];
-                color = new Color(c.r * 1f / 127, c.g * 1f / 127, c.b * 1f / 127, c.a * 1f / 127);
-            }
-            AffineTransform old = g.getTransform();
-            g.translate(center.x, center.y);
-            g.scale(radius, radius);
-            g.setColor(color);
-            g.fill(circle);
-            g.setTransform(old);
-        }
-        restoreState(g);
-    }
+//    @Override
+//    public void drawParticles(final Vec2[] centers, final float radius, ParticleColor[] colors, final int count) {
+//        Graphics2D g = getGraphics();
+//        saveState(g);
+//        transformGraphics(g, zero);
+//        g.setStroke(stroke);
+//        for (int i = 0; i < count; i++) {
+//            Vec2 center = centers[i];
+//            Color color;
+//            if (colors == null) {
+//                color = pcolorA;
+//            } else {
+//                ParticleColor c = colors[i];
+//                color = new Color(c.r * 1f / 127, c.g * 1f / 127, c.b * 1f / 127, c.a * 1f / 127);
+//            }
+//            AffineTransform old = g.getTransform();
+//            g.translate(center.x, center.y);
+//            g.scale(radius, radius);
+//            g.setColor(color);
+//            g.fill(circle);
+//            g.setTransform(old);
+//        }
+//        restoreState(g);
+//    }
 
     private final Color pcolor = new Color(1f, 1f, 1f, 1f);
 
-    @Override
-    public void drawParticlesWireframe(Vec2[] centers, float radius, ParticleColor[] colors, int count) {
-        Graphics2D g = getGraphics();
-        saveState(g);
-        transformGraphics(g, zero);
-        g.setStroke(stroke);
-        for (int i = 0; i < count; i++) {
-            Vec2 center = centers[i];
-            Color color;
-            // No alpha channel, it slows everything down way too much.
-            if (colors == null) {
-                color = pcolor;
-            } else {
-                ParticleColor c = colors[i];
-                color = new Color(c.r * 1f / 127, c.g * 1f / 127, c.b * 1f / 127, 1);
-            }
-            AffineTransform old = g.getTransform();
-            g.translate(center.x, center.y);
-            g.scale(radius, radius);
-            g.setColor(color);
-            g.draw(circle);
-            g.setTransform(old);
-        }
-        restoreState(g);
-    }
+//    @Override
+//    public void drawParticlesWireframe(Vec2[] centers, float radius, ParticleColor[] colors, int count) {
+//        Graphics2D g = getGraphics();
+//        saveState(g);
+//        transformGraphics(g, zero);
+//        g.setStroke(stroke);
+//        for (int i = 0; i < count; i++) {
+//            Vec2 center = centers[i];
+//            Color color;
+//            // No alpha channel, it slows everything down way too much.
+//            if (colors == null) {
+//                color = pcolor;
+//            } else {
+//                ParticleColor c = colors[i];
+//                color = new Color(c.r * 1f / 127, c.g * 1f / 127, c.b * 1f / 127, 1);
+//            }
+//            AffineTransform old = g.getTransform();
+//            g.translate(center.x, center.y);
+//            g.scale(radius, radius);
+//            g.setColor(color);
+//            g.draw(circle);
+//            g.setTransform(old);
+//        }
+//        restoreState(g);
+//    }
 
     private final Vec2 temp = new Vec2();
     private final static IntArray xIntsPool = new IntArray();

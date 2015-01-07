@@ -65,8 +65,8 @@ public class RoverModel {
         shape.set(vertices, vertices.length);
         //shape.m_centroid.set(bodyDef.position);
         BodyDef bd = new BodyDef();
-        bd.setLinearDamping(0.9f);
-        bd.setAngularDamping(0.9f);
+        bd.linearDamping=(0.9f);
+        bd.angularDamping=(0.9f);
         bd.type = BodyType.DYNAMIC;
         bd.position.set(0, 0);
         torso = p.getWorld().createBody(bd);

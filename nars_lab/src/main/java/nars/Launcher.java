@@ -382,7 +382,7 @@ public class Launcher extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
-            NARServer.main(new String[]{"9999","localhost","9100","1000"});
+            NARServer.main(new String[]{"9999","localhost","1000"});
             Desktop.getDesktop().browse(new URI("http://127.0.0.1:9999"));
         }catch(Exception ex){}
     }//GEN-LAST:event_jButton3ActionPerformed

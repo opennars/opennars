@@ -49,8 +49,8 @@ abstract public class RoverWorld {
         shape.setAsBox(w, h);
         BodyDef bd = new BodyDef();
         if (mass != 0) {
-            bd.setLinearDamping(0.95f);
-            bd.setAngularDamping(0.8f);
+            bd.linearDamping=(0.95f);
+            bd.angularDamping=(0.8f);
             bd.type = BodyType.DYNAMIC;
         } else {
             bd.type = BodyType.STATIC;

@@ -35,7 +35,7 @@ import static nars.web.HTTPServer.MIME_PLAINTEXT;
  *
  * @author me
  */
-public class HTTPServeFiles extends HTTPServer {
+@Deprecated public class HTTPServeFiles extends HTTPServer {
 
     File staticFilePath;
     

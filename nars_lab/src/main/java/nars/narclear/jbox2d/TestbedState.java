@@ -85,7 +85,8 @@ public class TestbedState {
   }
 
   public void setViewportTransform(IViewportTransform transform) {
-    draw.setViewportTransform(transform);
+    draw.getViewportTranform().setExtents(transform.getExtents());
+    draw.getViewportTranform().setCenter(transform.getCenter());
   }
 
   public void setDebugDraw(DebugDraw argDraw) {

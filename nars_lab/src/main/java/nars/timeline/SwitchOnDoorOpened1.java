@@ -16,7 +16,6 @@
  */
 package nars.timeline;
 
-import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import java.io.File;
 import java.io.IOException;
 import nars.core.NAR;
@@ -33,6 +32,7 @@ import automenta.vivisect.timeline.StackedPercentageChart;
 import nars.gui.EventChart;
 import nars.io.TextOutput;
 import nars.util.NARTrace;
+import nars.util.TreeMLData.FirstOrderDifferenceTimeSeries;
 
 /**
  *

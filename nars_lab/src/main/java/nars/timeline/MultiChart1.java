@@ -16,7 +16,6 @@
  */
 package nars.timeline;
 
-import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import nars.core.NAR;
 import nars.core.build.Default;
 import automenta.vivisect.swing.NWindow;
@@ -27,6 +26,7 @@ import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import nars.gui.EventChart;
 import nars.util.NARTrace;
+import nars.util.TreeMLData.FirstOrderDifferenceTimeSeries;
 
 /**
  *
