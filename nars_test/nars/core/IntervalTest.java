@@ -25,24 +25,24 @@ public class IntervalTest {
         assertTrue(dur5.getSubDurationLog() == Math.log(5/2f));
         assertTrue(dur5.get() == 5);
         
-        Interval i1 = Interval.intervalTime(1, dur5);
+        Interval i1 = Interval.interval(1, dur5);
         assertTrue(i1.magnitude == 0);
         assertTrue(i1.name().toString().equals("+1"));
         assertTrue(i1.getTime(dur5) == 1);
 
         //testing 2 = floor(dur5/2)
-        Interval i2 = Interval.intervalTime(2, dur5);
+        Interval i2 = Interval.interval(2, dur5);
         assertEquals(1, i2.magnitude);
         assertTrue(i2.name().toString().equals("+2"));
         assertEquals(3, i2.getTime(dur5));
         
         ////testing 2 = floor(dur5/2)
-        Interval i3 = Interval.intervalTime(3, dur5);
+        Interval i3 = Interval.interval(3, dur5);
         assertEquals(1, i3.magnitude);
         assertTrue(i3.name().toString().equals("+2"));
         assertEquals(3, i3.getTime(dur5));
         
-        Interval i5 = Interval.intervalTime(5, dur5);
+        Interval i5 = Interval.interval(5, dur5);
         assertEquals(2, i5.magnitude);
         assertTrue(i5.name().toString().equals("+3"));
         assertEquals(6, i5.getTime(dur5));
@@ -61,8 +61,8 @@ public class IntervalTest {
         
         List<Interval> a11 = Interval.intervalTimeSequence(1, 1, m);
         assertEquals(1, a11.size());
-        assertEquals(Interval.intervalTime(1, m), a11.get(0));
-        assertEquals(Interval.intervalMagnitude(0), a11.get(0));
+        assertEquals(Interval.interval(1, m), a11.get(0));
+        assertEquals(Interval.interval(0), a11.get(0));
 
         List<Interval> a12 = Interval.intervalTimeSequence(1, 2, m);
         assertEquals(a11, a12);
@@ -74,7 +74,7 @@ public class IntervalTest {
             
             List<Interval> ad1 = Interval.intervalTimeSequence(halfDuration, 1, m);
             assertEquals(1, ad1.size());
-            assertEquals(Interval.intervalMagnitude(1), ad1.get(0));
+            assertEquals(Interval.interval(1), ad1.get(0));
             assertEquals(halfDuration+1, Interval.intervalSequenceTime(ad1, m));
 
             //unused extra term because time period was exactly reached
