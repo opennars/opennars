@@ -86,7 +86,7 @@ public class Predict_NARS_Core {
             reflections[i].setDefaultValue(0.0);
         }
         TimelineVis tc = new TimelineVis(
-                new LineChart(observed).thickness(16f).height(128),                          new LineChart(predictions[0]).thickness(16f).height(128)
+                new LineChart(0,1,observed).thickness(16f).height(128),                          new LineChart(predictions[0]).thickness(16f).height(128)
                 //new BarChart(reflections).thickness(16f).height(128)
                 /*new LineChart(predictions[1]).thickness(16f).height(128),
                 new LineChart(predictions[2]).thickness(16f).height(128),*/
@@ -117,7 +117,7 @@ public class Predict_NARS_Core {
             observed.removeData((int) (lasttime+1));  //this
             observed.removeData((int) (lasttime+2));  //is not good practice
             observed.add((int) n.time(), signal);
-            observed.add((int) n.time()+1, 0); //but is fine
+            observed.add((int) n.time()+1, -1); //but is fine
             observed.add((int) n.time()+2, 1); //for now (just wanted a line at the end)
             
             lastsignal=signal;
