@@ -5,9 +5,17 @@
  */
 package nars.io.meter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import java.io.PrintStream;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,8 +27,37 @@ import java.util.List;
  */
 public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
+    final static int PRECISION = 4;
+    public final static Gson json = new GsonBuilder()
+             .registerTypeAdapter(Double.class, new JsonSerializer<Double>()  { 
+                        public JsonElement serialize(Double value, Type theType, 
+JsonSerializationContext context) { 
+                                if (value.isNaN()) { 
+                                        return new JsonPrimitive("NaN");
+                                } else if (value.isInfinite()) { 
+                                        return new JsonPrimitive(value);
+                                } else { 
+                                        return new JsonPrimitive(
+                                                new BigDecimal(value).
+                                                    setScale(PRECISION,
+                                                    BigDecimal.ROUND_HALF_UP).stripTrailingZeros()); 
+                                } 
+                        } 
+                }) 
+                .create(); 
+
+    
+    public static void printJSONArray(PrintStream out, Object[] row, boolean includeBrackets) {
+        String r = json.toJson(row);
+        if (!includeBrackets) {
+            r = r.substring(1, r.length()-1);
+        }
+        out.println(r);
+        
+    }
+
     /** generates the value of the first entry in each row */
-    class RowKeyMeter extends SimpleMeter {
+    class RowKeyMeter extends FunctionMeter {
 
         public RowKeyMeter() {
             super("time");
@@ -51,6 +88,8 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         
         meters.add(new RowKeyMeter());
         numColumns++;
+        
+        signalList = null;
     }
     
     
@@ -166,6 +205,22 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         return l;
     }
     
+    public String[] getSignalIDs() {
+        String[] r = new String[getSignals().size()];
+        int i = 0;
+        for (Signal s : getSignals()) {
+            r[i++] = s.id;
+        }
+        return r;
+    }
+        
+    
+    public void printCSV(PrintStream out) {
+        printJSONArray(out, getSignalIDs(),false );
+        for (Object[] row : this) {
+            printJSONArray(out, row, false);
+        }
+    }
 
 
 }

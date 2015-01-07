@@ -22,5 +22,12 @@ public class Signal {
         this.id = id;
         this.unit = unit;
     }
+
+    @Override
+    public String toString() {
+        return id;
+    }
+    
+    
     
 }

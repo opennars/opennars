@@ -5,6 +5,8 @@
  */
 package nars.io.meter;
 
+import java.io.PrintStream;
+
 /**
  *
  * @author me
@@ -15,8 +17,5 @@ public class TemporalMetrics<Cell> extends Metrics<Double,Cell> {
         super(historySize);
     }
 
-    public Object getSignalData(int i, int i0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     
 }

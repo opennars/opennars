@@ -10,12 +10,12 @@ import java.util.Iterator;
 import java.util.List;
 import nars.io.meter.Metrics;
 import nars.io.meter.Signal;
-import nars.io.meter.SimpleMeter;
+import nars.io.meter.FunctionMeter;
 
 /**
  * @param Source Return type
  */
-abstract public class DependsOnColumn<Source extends Object,Result extends Object> extends SimpleMeter<Result> {
+abstract public class DependsOnColumn<Source extends Object,Result extends Object> extends FunctionMeter<Result> {
 
     protected final int sourceColumn;
     protected final Metrics metrics;
@@ -25,8 +25,9 @@ abstract public class DependsOnColumn<Source extends Object,Result extends Objec
         super("",numResults);
         
         int i = 0;
+        Signal src = metrics.getSignal(sourceColumn);
         for (Signal s : getSignals())
-            s.id = getColumnID(s, i++);
+            s.id = getColumnID(src, i++);
         
         this.metrics = metrics;
         this.sourceColumn = sourceColumn;

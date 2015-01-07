@@ -5,9 +5,10 @@
  */
 package nars.util;
 
-import java.util.Arrays;
-import nars.io.meter.SimpleMeter;
+import java.io.PrintStream;
+import nars.io.meter.FunctionMeter;
 import nars.io.meter.TemporalMetrics;
+import nars.io.meter.func.BasicStatistics;
 import nars.io.meter.func.FirstOrderDifference;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -19,7 +20,7 @@ import org.junit.Test;
  */
 public class MetricsTest {
 
-    static final SimpleMeter<Integer> timeDoubler = new SimpleMeter<Integer>("x") {
+    static final FunctionMeter<Integer> timeDoubler = new FunctionMeter<Integer>("x") {
 
         @Override
         protected Integer getValue(Object when, int index) {
@@ -79,4 +80,35 @@ public class MetricsTest {
         
     }
     
+    @Test public void testSummaryStatistics() {
+
+        TemporalMetrics<Integer> tm = new TemporalMetrics<Integer>(10);        
+        tm.addMeter(new BasicStatistics(tm, 0));
+        
+        for (int i = 0; i < 10; i++) {
+            tm.update(0.1 * i);
+        }
+        
+        
+        
+        PrintStream sb = new PrintStream(System.out) {
+        
+            int line = 0;
+            
+            @Override
+            public void println(String x) {
+                String eq = null;
+                switch (line++) {
+                    case 0: eq = "\"time\",\"time_mean\",\"time_max\""; break;
+                    case 1: eq = "0,0,0"; break;
+                    case 3: eq = "0.2,0.1,0.2"; break;
+                }
+                if (eq!=null) {
+                    assertEquals(eq, x);
+                }
+            }          
+        };
+        tm.printCSV(sb);
+        
+    }
 }

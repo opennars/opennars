@@ -34,13 +34,9 @@ public class FirstOrderDifference extends DependsOnColumn {
     protected Number getValue(Object key, int ignored) {
         
         List nv = newestValues(sourceColumn, 2);
-        
-        System.err.println("firstorder: " + nv);
-        
+                
         List<Double> values = Metrics.doubles(nv);
-        
-        System.err.println("  : " + values);
-        
+                
         if (values.size()<2) return null;
                 
         double currentValue = values.get(0);

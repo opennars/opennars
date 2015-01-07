@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Convenience implementation for a 1-signal meter
  */
-public abstract class SimpleMeter<M> implements Meter<M> {
+public abstract class FunctionMeter<M> implements Meter<M> {
 
     private final List<Signal> signals;
     private M[] vector;
@@ -25,11 +25,11 @@ public abstract class SimpleMeter<M> implements Meter<M> {
         return s;
     }
     
-    public SimpleMeter(String prefix, int n) {
+    public FunctionMeter(String prefix, int n) {
         this(newDefaultSignalIDs(prefix, n));
     }
     
-    public SimpleMeter(String... ids) {
+    public FunctionMeter(String... ids) {
         List<Signal> s = new ArrayList();
         for (String n : ids) {
             s.add(new Signal(n, null));
