@@ -13,9 +13,9 @@ import nars.io.meter.Signal;
 import nars.io.meter.SimpleMeter;
 
 /**
- * @param R Return type
+ * @param Source Return type
  */
-abstract public class DependsOnColumn<R> extends SimpleMeter<R> {
+abstract public class DependsOnColumn<Source extends Object,Result extends Object> extends SimpleMeter<Result> {
 
     protected final int sourceColumn;
     protected final Metrics metrics;
@@ -32,7 +32,7 @@ abstract public class DependsOnColumn<R> extends SimpleMeter<R> {
         this.sourceColumn = sourceColumn;
     }
 
-    
+//    
     /*public Iterator<Object> signalIterator() {
         return metrics.getSignalIterator(sourceColumn, true);        
     }*/
@@ -45,8 +45,8 @@ abstract public class DependsOnColumn<R> extends SimpleMeter<R> {
     }
     //public List<Object> newestValues(int n) { 
 
-    protected List<Object> newestValues(int i) {
-        return metrics.getNewSignalValues(i);
+    protected List<Object> newestValues(int column, int i) {
+        return metrics.getNewSignalValues(column, i);
     }
     
     abstract protected String getColumnID(Signal dependent, int i);

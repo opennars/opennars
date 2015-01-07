@@ -49,10 +49,10 @@ public abstract class SimpleMeter<M> implements Meter<M> {
         return signals;
     }
 
-    abstract protected M getValue(Object key, int index);
+    abstract protected <N extends M> N getValue(Object key, int index);
 
     protected void fillVector(Object key, int fromIndex, int toIndex) {
-        for (int i = 1; i < vector.length; i++) {
+        for (int i = 0; i < vector.length; i++) {
             vector[i] = getValue(key, i);
         }
 
@@ -61,13 +61,15 @@ public abstract class SimpleMeter<M> implements Meter<M> {
     @Override
     public M[] sample(Object key) {
         if (vector == null) {
-            M firstValue = getValue(key, 0);
-            vector = (M[]) Array.newInstance(firstValue.getClass(), signals.size());
-            vector[0] = firstValue;
-            fillVector(key, 1, vector.length);
-        } else {
-            fillVector(key, 0, vector.length);
+            //the following wont work because firstValue may be null
+            //M firstValue = getValue(key, 0);            
+            //vector = (M[]) Array.newInstance(firstValue.getClass(), signals.size());
+            vector = (M[]) new Object[signals.size()];
+
         }
+
+        fillVector(key, 0, vector.length);
+        
 
         return vector;
     }

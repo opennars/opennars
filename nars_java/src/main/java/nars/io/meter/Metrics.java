@@ -7,6 +7,7 @@ package nars.io.meter;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,14 +17,12 @@ import java.util.List;
  * time point (first column).
  * 
  */
-public class Metrics<RowKey> implements Iterable<Object[]> {
+public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
-
-    
     /** generates the value of the first entry in each row */
-    class RowKey extends SimpleMeter<RowKey> {
+    class RowKeyMeter extends SimpleMeter {
 
-        public RowKey() {
+        public RowKeyMeter() {
             super("time");
         }
 
@@ -50,16 +49,18 @@ public class Metrics<RowKey> implements Iterable<Object[]> {
     public Metrics(int historySize) {
         this.history = historySize;
         
-        addMeter(new RowKey());
+        meters.add(new RowKeyMeter());
+        numColumns++;
     }
     
     
-    public void addMeter(Meter m) {
+    public void addMeter(Meter<? extends Cell> m) {
         meters.add(m);
         numColumns+= m.numSignals();
+        signalList = null;
     }
     
-    public void removeMeter(Meter m) {
+    public void removeMeter(Meter<? extends Cell> m) {
         throw new RuntimeException("Removal not supported yet");
     }
     
@@ -71,9 +72,14 @@ public class Metrics<RowKey> implements Iterable<Object[]> {
         append(nextRow); //append it so that any derivative columns further on can work with the most current data (in lower array indices) while the array is being formed
 
         int c = 0;
-        for (Meter<?> m : meters) {
-            Object[] v = m.sample(key);
+        for (Meter m : meters) {
+            Cell[] v = ((Meter<? extends Cell>)m).sample(key);
+            if (v == null) continue;
             int vl = v.length;
+
+            if (c + vl > nextRow.length) 
+                throw new RuntimeException("column overflow: " + m + " " + c + "+" + vl + ">" + nextRow.length);
+            
             System.arraycopy(v, 0, nextRow, c, vl);
             c += vl; 
         }
@@ -83,7 +89,7 @@ public class Metrics<RowKey> implements Iterable<Object[]> {
     protected void append(Object[] row) {
         if (row==null) return;        
         
-        while (rows.size() + 1 >= history)
+        while (rows.size() >= history)
             rows.removeFirst();
         
         rows.addLast(row);            
@@ -115,7 +121,7 @@ public class Metrics<RowKey> implements Iterable<Object[]> {
         return rows.descendingIterator();
     }
     
-    public Object[] getSignalData(int i) {
+    public Object[] getSignalData(int i) {        
         Object[] c = new Object[ numRows() ];
         int r = 0;
         for (Object[] row : this) {
@@ -150,15 +156,15 @@ public class Metrics<RowKey> implements Iterable<Object[]> {
     }
 
 
-    public List<Object> getNewSignalValues(int num) {
+    public List<Object> getNewSignalValues(int column, int num) {
         List<Object> l = new ArrayList(num);
         Iterator<Object[]> r = reverseIterator();        
         while (r.hasNext() && num > 0) {
-            l.add(r.next());
+            l.add(r.next()[column]);
             num--;
         }
         return l;
-    }     
+    }
     
 
 
