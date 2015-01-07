@@ -34,7 +34,6 @@ public class Predict_NARS_Core {
     static float signal = 0;
     
     static TreeMLData[] predictions;
-    static double lastprediction=0;
     static double maxval=0;
     
     public static void main(String[] args) throws Narsese.InvalidInputException, InterruptedException {
@@ -64,7 +63,6 @@ public class Predict_NARS_Core {
                         value = cc - '0';
                         if(time>=curmax) {
                             curmax=time;
-                            lastprediction= (value)/10.0;
                         }
                         maxval=Math.max(maxval, (value)/10.0);
                         predictions[0].add(time, (value)/10.0 );
@@ -116,18 +114,11 @@ public class Predict_NARS_Core {
             //signal = ((float) Math.sin(freq * n.time()) > 0 ? 1f : -1f) * 0.5f + 0.5f;
             //signal *= 1.0 + (Math.random()-0.5f)* 2f * noiseRate;
             
-            
             observed.removeData((int) (lasttime+1));  //this
-            observed.removeData((int) (lasttime+2));  //is
-            predictions[0].removeData((int) (lasttime+1));  //for
-            predictions[0].removeData((int) (lasttime+2));  //sure
-            predictions[0].removeData((int) (lasttime+3)); //not
-            predictions[0].add((int) (n.time()+1),0); //bad
-            predictions[0].add((int) (n.time()+2),maxval); //practice
-            predictions[0].add((int) (n.time()+3),lastprediction); //at
+            observed.removeData((int) (lasttime+2));  //is not good practice
             observed.add((int) n.time(), signal);
-            observed.add((int) n.time()+1, 0); //all
-            observed.add((int) n.time()+2, 1); //!
+            observed.add((int) n.time()+1, 0); //but is fine
+            observed.add((int) n.time()+2, 1); //for now (just wanted a line at the end)
             
             lastsignal=signal;
             lasttime=n.time();
