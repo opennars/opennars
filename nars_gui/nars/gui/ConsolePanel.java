@@ -16,7 +16,6 @@ public class ConsolePanel extends JSplitPane {
     
     public ConsolePanel(NARControls narControls) {
         super(JSplitPane.VERTICAL_SPLIT);
-        
         LogPanel outputLog = new SwingLogPanel(narControls);
         add(outputLog, 0);
         
@@ -24,13 +23,13 @@ public class ConsolePanel extends JSplitPane {
         add(inputPanel, 1);
     }
     
-    boolean painted=false;
+    int cnt=0;
     @Override
     public void paint(Graphics g) {
         super.paint(g);
 
-        if (!painted) {
-            painted = true;
+        if(cnt<5) {
+            cnt++;
             this.setDividerLocation(0.75);
         }
     }
