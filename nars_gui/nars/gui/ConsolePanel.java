@@ -1,5 +1,6 @@
 package nars.gui;
 
+import java.awt.Graphics;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JSplitPane;
@@ -21,23 +22,16 @@ public class ConsolePanel extends JSplitPane {
         
         TextInputPanel inputPanel = new TextInputPanel(narControls.nar);
         add(inputPanel, 1);
-        
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ConsolePanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                setDividerLocation(0.75);
-            }
-            
-        });
-        
-        setDividerLocation(0.75);
-        
     }
     
+    boolean painted=false;
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+
+        if (!painted) {
+            painted = true;
+            this.setDividerLocation(0.75);
+        }
+    }
 }
