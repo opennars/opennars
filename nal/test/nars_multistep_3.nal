@@ -4,7 +4,7 @@
 5
 <{Tom} --> (/,taller_than,_,boy)>? 
 850
-''outputMustContain('<{Tom} --> (/,taller_than,_,boy)>. %1.00;0.45%')
+''outputMustContain('<boy --> (/,taller_than,{Tom},_)>. %1.00;0.45%')
 6
 <{David} --> boy>. 
 (--,<{David} --> (/,taller_than,{Tom},_)>).

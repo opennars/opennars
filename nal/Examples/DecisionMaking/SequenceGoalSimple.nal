@@ -4,15 +4,19 @@
 2
 <goal --> reached>. :|:
 50
+(^go-to,a). :|:
+2
 (^pick,b). :|:
+2
+<goal --> reached>. :|:
 50
 (^pick,b). :|:
 50
 (^pick,b). :|:
-100
+50
+(^pick,b). :|:
+50
 <goal --> reached>!
-<goal --> reached>!
-<goal --> reached>!
-<?how =/> <goal --> reached>>?
-300
+7000
 ''outputMustContain('^go-to([a, SELF])=null')
+''outputMustContain('^pick([b, SELF])=null')
