@@ -7,8 +7,10 @@ import nars.core.control.AbstractTask;
  */
 public class Reset extends AbstractTask<CharSequence> {
 
-    public Reset() {        
+    public String input;
+    public Reset(String input) {        
         super();
+        this.input=input;
     }
 
     @Override
