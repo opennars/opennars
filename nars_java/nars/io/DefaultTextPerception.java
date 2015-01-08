@@ -145,7 +145,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
         //reset
         parsers.add(new TextReaction() {
             @Override public Object react(String input) {                
-                if (input.equals(Symbols.RESET_COMMAND))
+                if (input.equals(Symbols.RESET_COMMAND) || input.startsWith("*"))
                     return new Reset();
                 return null;
             }
