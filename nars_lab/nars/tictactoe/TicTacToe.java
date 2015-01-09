@@ -107,6 +107,7 @@ public class TicTacToe extends JPanel {
         JPanel menu = new JPanel(new FlowLayout());
 
         JButton resetButton = new JButton("RESET");
+        resetButton.setBackground(Color.DARK_GRAY);
         resetButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 reset();
@@ -118,6 +119,7 @@ public class TicTacToe extends JPanel {
         menu.add(status);
         
         JButton teachButton = new JButton("Re-Explain rules to NARS");
+        teachButton.setBackground(Color.DARK_GRAY);
         teachButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 teach();
