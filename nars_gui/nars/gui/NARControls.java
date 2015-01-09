@@ -34,6 +34,7 @@ import automenta.vivisect.timeline.StackedPercentageChart;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
+import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Font;
@@ -807,15 +808,18 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         pc.setLayout(new GridLayout(1, 0));
 
         stopButton = new AwesomeButton(FA_StopCharacter);
+        stopButton.setBackground(Color.DARK_GRAY);
         stopButton.addActionListener(this);
         pc.add(stopButton);
 
         walkButton = new AwesomeButton('\uf051');
+        walkButton.setBackground(Color.DARK_GRAY);
         walkButton.setToolTipText("Walk 1 Cycle");
         walkButton.addActionListener(this);
         pc.add(walkButton);
 
         JButton focusButton = new AwesomeButton(FA_FocusCharacter);
+        focusButton.setBackground(Color.DARK_GRAY);
         focusButton.setToolTipText("Focus");
         focusButton.addActionListener(new ActionListener() {
 

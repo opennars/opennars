@@ -3,6 +3,7 @@ package nars.gui.output;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,6 +50,7 @@ public class SentenceTablePanel extends TablePanel {
         {
             syntaxGraphButton = new JButton("Graph");
             syntaxGraphButton.setEnabled(false);
+            syntaxGraphButton.setBackground(Color.DARK_GRAY);
             syntaxGraphButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -58,6 +60,7 @@ public class SentenceTablePanel extends TablePanel {
             menu.add(syntaxGraphButton);
 
             JButton clearButton = new JButton("Clear");
+            clearButton.setBackground(Color.DARK_GRAY);
             clearButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {

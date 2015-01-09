@@ -134,6 +134,7 @@ public class Launcher extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        jButton1.setBackground(java.awt.Color.darkGray);
         jButton1.setForeground(new java.awt.Color(255, 255, 254));
         jButton1.setText(" Run NARS GUI");
         jButton1.setActionCommand("jButton1");
@@ -159,6 +160,7 @@ public class Launcher extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(254, 255, 255));
         jLabel3.setText("Run Application Examples:");
 
+        jButton2.setBackground(java.awt.Color.darkGray);
         jButton2.setForeground(new java.awt.Color(254, 255, 255));
         jButton2.setText("Website");
         jButton2.setActionCommand("jButton1");
@@ -191,6 +193,7 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        jButton5.setBackground(java.awt.Color.darkGray);
         jButton5.setForeground(new java.awt.Color(254, 255, 255));
         jButton5.setText("IRC");
         jButton5.setActionCommand("jButton1");
@@ -226,6 +229,7 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setBackground(java.awt.Color.darkGray);
         jButton3.setForeground(new java.awt.Color(255, 255, 254));
         jButton3.setText("Run Web GUI");
         jButton3.setActionCommand("jButton1");
@@ -246,9 +250,10 @@ public class Launcher extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

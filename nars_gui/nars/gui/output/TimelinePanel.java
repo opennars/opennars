@@ -15,6 +15,7 @@ import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import automenta.vivisect.timeline.TimelineVis;
+import java.awt.Color;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -83,6 +84,7 @@ public class TimelinePanel extends NPanel implements EventObserver {
                         disableChart();
                 }
             });
+            this.setBackground(Color.DARK_GRAY);
         }
     
         public void enableChart() {
