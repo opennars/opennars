@@ -128,3 +128,11 @@ This version was however developed on Github:
 
 Discussion Group:
  * https://groups.google.com/forum/?fromgroups#!forum/open-nars
+
+Credits:
+-------
+We also thank the involved other projects, for example
+http://www.marioai.org/LevelGeneration/source-code
+https://processing.org/
+Hyperassociative Map code adapted from dANN:
+http://wiki.syncleus.com/index.php/dANN
