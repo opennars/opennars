@@ -528,7 +528,8 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                     maxStrength = strength;
                 }
                 b.setFont(b.getFont().deriveFont((float)(b.getFont().getSize() * (0.5f + 0.5f * strength))));
-                        
+                b.setForeground(Color.WHITE); 
+                b.setBackground(Color.DARK_GRAY);
                 b.addActionListener(new ActionListener() {
                     @Override public void actionPerformed(ActionEvent e) {
                         SwingUtilities.invokeLater(new Runnable() {
