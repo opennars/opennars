@@ -11,11 +11,12 @@ import nars.io.meter.FunctionMeter;
 /**
  * Stores the latest provided value for retrieval by a Metrics 
  */
-public class ValueMeter extends FunctionMeter<Double> {
+public class ValueMeter extends SourceFunctionMeter<Double> {
     
     boolean autoReset;
     AtomicDouble val = new AtomicDouble();
     private final String name;
+    
     
     
     public ValueMeter(String id, boolean autoReset) {
@@ -24,12 +25,12 @@ public class ValueMeter extends FunctionMeter<Double> {
         this.autoReset = autoReset;
     }
     
+    
     public ValueMeter(String id) {
         this(id, false);
     }    
 
 
-    
     public ValueMeter reset() {
         set(Double.NaN);
         return this;

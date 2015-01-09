@@ -9,18 +9,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import nars.core.Events;
-import nars.core.Events.ConceptNew;
 import nars.core.Events.InferenceEvent;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.core.EventEmitter.EventObserver;
+import nars.core.Events;
+import nars.core.Events.ConceptNew;
 import nars.core.Events.CycleEnd;
 import nars.inference.MemoryObserver;
 import nars.io.meter.Metrics;
-import nars.io.meter.Metrics.SignalData;
+import nars.io.meter.SignalData;
+import nars.io.meter.Signal;
+import nars.io.meter.TemporalMetrics;
 import nars.io.meter.func.BasicStatistics;
+import nars.io.meter.func.FirstOrderDifference;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
 
@@ -53,7 +56,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
     
     final int chartHistorySize = 512;    
-    public final Metrics metrics = new Metrics(chartHistorySize);
+    public final TemporalMetrics<Object> metrics = new TemporalMetrics(chartHistorySize);
     
     
 
@@ -69,6 +72,14 @@ public class NARTrace extends MemoryObserver implements Serializable {
         }
         return l.toArray(new SignalData[l.size()]);
     }
+    public List<SignalData> getCharts() {
+        List<SignalData> l = new ArrayList();
+        
+        for (Signal sv : metrics.getSignals()) {            
+            l.add( metrics.newSignalData(sv.id) );
+        }
+        return l;
+    }    
 
 
 
@@ -136,11 +147,17 @@ public class NARTrace extends MemoryObserver implements Serializable {
         
         metrics.addMeter(n.memory.emotion.busyMeter);
         metrics.addMeter(n.memory.emotion.happyMeter);
-        metrics.addMeter(new BasicStatistics(metrics, n.memory.emotion.happyMeter.signalFirst().id));
         
-        metrics.addMeter(n.memory.resource.CYCLE);
+        
+        metrics.addMeter(n.memory.resource.CYCLE_DURATION);
+        metrics.addMeter(new BasicStatistics(metrics, n.memory.resource.CYCLE_DURATION.id(), 16));
+        
+        
         metrics.addMeter(n.memory.resource.CYCLE_CPU_TIME);
         metrics.addMeter(n.memory.resource.CYCLE_RAM_USED);
+        metrics.addMeter(new FirstOrderDifference(metrics, n.memory.resource.CYCLE_RAM_USED.id()));
+        
+        
     }
     
     
@@ -197,7 +214,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     @Override
     public void onCycleEnd(long time) {
-        metrics.update(time);    
+        metrics.update((double)time);    
     }
 
     @Override

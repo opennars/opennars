@@ -17,7 +17,7 @@ public class ResourceMeter {
     public final ThreadCPUTimeTracker CYCLE_CPU_TIME = new ThreadCPUTimeTracker("cpu.time"); 
  
     /** the duration of the cycle */
-    public final DurationMeter CYCLE = new DurationMeter("cycle.freq", true, 1.0, true); 
+    public final DurationMeter CYCLE_DURATION = new DurationMeter("cycle.time", true, 1.0, false); 
      
    
 }

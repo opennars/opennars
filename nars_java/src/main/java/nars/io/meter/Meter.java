@@ -17,18 +17,18 @@ public interface Meter<M> {
     /** the list of signals produced by this meter; this should not change
      * in quantity during operation
      */
-    public List<Signal> signal();
+    public List<Signal> getSignals();
     
     default Signal signal(int i) {
-        return signal().get(i);
+        return getSignals().get(i);
     }
     default String signalID(int i) {
-        return signal().get(i).id;
+        return getSignals().get(i).id;
     }
     
     /** convenience method for accessing the first of the signals, in case one needs the only signal */
     default Signal signalFirst() {
-        return signal().get(0);
+        return getSignals().get(0);
     }
     
 
@@ -40,7 +40,7 @@ public interface Meter<M> {
      */
     public M[] sample(Object key);
     
-    default public int numSignals() { return signal().size(); }
+    default public int numSignals() { return getSignals().size(); }
     
     
 }

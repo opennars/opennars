@@ -175,8 +175,14 @@ JsonSerializationContext context) {
     }
     
     public void addMeter(Meter<? extends Cell> m) {
+        for (Signal s : m.getSignals()) {
+            if (getSignal(s.id)!=null)
+                throw new RuntimeException("Signal " + s.id + " already exists in "+ this);
+        }
+        
         meters.add(m);
         numColumns+= m.numSignals();
+        
         signalList = null;
         signalIndex = null;
     }
@@ -229,9 +235,9 @@ JsonSerializationContext context) {
     
     public List<Signal> getSignals() {
         if (signalList == null) {
-            signalList = new ArrayList(numColumns);
+            signalList = new ArrayList<Signal>(numColumns);
             for (Meter<?> m : meters)
-                signalList.addAll(m.signal());
+                signalList.addAll(m.getSignals());
         }
         return signalList;        
     }
@@ -247,18 +253,24 @@ JsonSerializationContext context) {
         return signalIndex;
     }
     
-    public int getIndex(Signal s) {
-        return getSignalIndex().get(s.id);
+    public int indexOf(Signal s) {
+        return indexOf(s.id);
     }
-    public int getIndex(String s) {
-        return getSignalIndex().get(s);
+    
+    public int indexOf(String signalID) {
+        Integer i = getSignalIndex().get(signalID);
+        if (i == null) return -1;
+        return i;
     }
     
     public Signal getSignal(int index) {
        return getSignals().get(index); 
     }
     public Signal getSignal(String s) {
-       return getSignals().get(getIndex(s)); 
+       if (s == null) return null;
+       int ii = indexOf(s);
+       if (ii == -1) return null;
+       return getSignals().get(ii); 
     }    
     
     public Object[] rowFirst() { return rows.getFirst(); }
@@ -274,71 +286,6 @@ JsonSerializationContext context) {
         return rows.descendingIterator();
     }
     
-    public static class SignalData {
-        public final Signal signal;
-        private final Metrics metric;
-        private final int index;
-        private Object[] data;
-
-
-        public SignalData(Metrics m, Signal s) {
-            this.metric = m;
-            this.signal = s;
-            this.index = metric.getSignals().indexOf(s);
-        }
-
-        public Signal getSignal() {
-            return signal;
-        }
-        
-        public Object[] getDataCached() { return data; }
-        
-        public Object[] getData() {        
-            return this.data = metric.getData(index, data);
-        }
-
-        public String getID() {
-            return signal.id;
-        }
-
-        /** iterates any other signal in the metric's data, by its column ID's */
-        public Iterator<Object[]> iterateOtherSignals(int... columns) {
-            return metric.iterator(columns);
-        }
-      
-        /** iterates this signal's data */
-        public Iterator<Object[]> iterator() {
-            return metric.iterator(getIndex());
-        }
-          
-        /** iterates this signal's data in 1st index, along with one other column, in the 0th index */
-        public Iterator<Object[]> iteratorWith(int columns) {
-            return metric.iterator(columns, getIndex());
-        }
-
-        /** the index of this signal within the metrics */
-        public int getIndex() {
-            return index;
-        }
-
-        public double[] getBounds() {
-            return new double[] { getMin(), getMax()  };
-        }
-
-        public double getMin() {
-            return getSignal().getMin();
-        }
-
-        public double getMax() {
-            return getSignal().getMax();
-        }
-
-        public Metrics getMetric() {
-            return metric;
-        }
-        
-        
-    }
     
     public Object[] getData(int signal, Object[] c) {        
         if ((c == null) || (c.length != numRows() )) 

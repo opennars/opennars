@@ -18,7 +18,7 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.io.meter.Metrics;
-import nars.io.meter.Metrics.SignalData;
+import nars.io.meter.SignalData;
 import nars.io.meter.Signal;
 
 public class MeterVis extends TimelineVis {

@@ -32,4 +32,19 @@
                 <skipTests>true</skipTests>
             </properties>
         </action>
+        <action>
+            <actionName>run.single.main</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+            <properties>
+                <exec.args>-classpath %classpath ${packageClassName}</exec.args>
+                <exec.executable>java</exec.executable>
+                <exec.classpathScope>${classPathScope}</exec.classpathScope>
+                <ksdljf>"process-classes org.codehaus.mojo:exec-maven-plugin:1.2.1:exec"</ksdljf>
+            </properties>
+        </action>
     </actions>

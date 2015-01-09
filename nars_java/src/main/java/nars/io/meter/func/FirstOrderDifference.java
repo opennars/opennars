@@ -24,7 +24,7 @@ public class FirstOrderDifference extends DependsOnColumn {
 
     @Override
     protected String getColumnID(Signal dependent, int i) {
-        return dependent.id + " change";
+        return dependent.id + ".change";
     }
 
 

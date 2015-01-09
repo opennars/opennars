@@ -48,7 +48,8 @@ public class DurationMeter extends ValueMeter {
     }
     
     public double sinceStart() {
-        return PeriodMeter.now(nanoSeconds) - startTime;
+        double resolutionTime = nanoSeconds ? 1E9 : 1E3;
+        return (PeriodMeter.now(nanoSeconds) - startTime) / resolutionTime;
     }
 
     

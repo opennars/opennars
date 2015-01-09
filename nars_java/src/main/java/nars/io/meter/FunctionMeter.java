@@ -45,7 +45,7 @@ public abstract class FunctionMeter<M> implements Meter<M> {
     }
 
     @Override
-    public List<Signal> signal() {
+    public List<Signal> getSignals() {
         return signals;
     }
 

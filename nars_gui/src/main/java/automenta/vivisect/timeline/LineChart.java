@@ -10,9 +10,10 @@ import java.util.Iterator;
 import java.util.List;
 import nars.io.Texts;
 import nars.io.meter.Metrics;
-import nars.io.meter.Metrics.SignalData;
+import nars.io.meter.SignalData;
 
 public class LineChart extends AxisPlot implements MultiChart {
+    
     protected final List<SignalData> data;
     double min;
     double max;
@@ -22,12 +23,18 @@ public class LineChart extends AxisPlot implements MultiChart {
     final float pointWidthFactor = 2.75f; /* multiplied by linethickness */
     float borderThickness = 0.1f;
 
-    private boolean specifiedRange;
+    
     boolean xorOverlay = false;
     private float pwf;
     private float lx;
     private float ly;
     private boolean firstPoint;
+    int ccolor;
+    private boolean specifiedRange;
+    private float screenyLo;
+    private float screenyHi;
+    private float pixelsTallNecessaryForLinePoints = 96;
+    private boolean allowLinePoints;
 
   
 
@@ -65,8 +72,10 @@ public class LineChart extends AxisPlot implements MultiChart {
     @Override
     public void draw(TimelineVis l) {
         
-        float screenyHi = l.g.screenY(x, y);
-        float screenyLo = l.g.screenY(x + width, y + height);
+        screenyHi = l.g.screenY(x, y);
+        screenyLo = l.g.screenY(x + plotWidth, y + plotHeight);
+        
+        allowLinePoints = ( (screenyLo - screenyHi) >= pixelsTallNecessaryForLinePoints);
         
         int displayHeight = l.g.height;
         
@@ -87,11 +96,11 @@ public class LineChart extends AxisPlot implements MultiChart {
         float range = (float)(xMax() - xMin());
         
         //bottom line
-        l.g.line(0, y + height, width * range * width, y + height);
+        l.g.line(0, y + plotHeight, plotWidth * range * plotWidth, y + plotHeight);
         //top line
-        l.g.line(0, y, width * range * width, y);
+        l.g.line(0, y, plotWidth * range * plotWidth, y);
         
-        drawData(l, width, height, y);
+        drawData(l, plotWidth, plotHeight, y);
         
         if (overlayEnable) {
             drawOverlay(l, screenyLo, screenyHi);
@@ -99,6 +108,8 @@ public class LineChart extends AxisPlot implements MultiChart {
     }
 
     protected void updateRange() {
+        if (specifiedRange) return;
+        
         double[] bounds = getMetrics().getBounds(data);        
         min = bounds[0];
         max = bounds[1];        
@@ -160,13 +171,13 @@ public class LineChart extends AxisPlot implements MultiChart {
         
         pwf = pointWidthFactor*lineThickness;
         
-        int ccolor;
+        
         ccolor = getColor(chart.getSignal(), order++);
         lx = ly = 0;
         firstPoint = false;
-        l.g.stroke(ccolor);
-        l.g.fill(ccolor);
-        l.g.strokeWeight(lineThickness);
+        
+        drawChartPre(l, ccolor);
+        
         float cs = (float)xMin();
         Iterator<Object[]> series = chart.iteratorWith(0);
         while (series.hasNext()) {
@@ -204,7 +215,7 @@ public class LineChart extends AxisPlot implements MultiChart {
         lx = px;
         ly = py;
         firstPoint = true;
-        if (showPoints) {
+        if (showPoints && allowLinePoints) {
             l.g.stroke = false;
             
             //TODO create separate size and opacity get/set parameter for the points
@@ -242,6 +253,12 @@ public class LineChart extends AxisPlot implements MultiChart {
         //TODO this assumes that all the charts are from the same Metrics
         //but this need not be the case in a future revision
         return getData().get(0).getMetric();
+    }
+
+    protected void drawChartPre(TimelineVis l, int ccolor) {
+        l.g.stroke(ccolor);
+        l.g.fill(ccolor);
+        l.g.strokeWeight(lineThickness);
     }
        
     

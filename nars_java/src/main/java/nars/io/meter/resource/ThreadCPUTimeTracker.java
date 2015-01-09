@@ -53,7 +53,7 @@ public class ThreadCPUTimeTracker extends ValueMeter {
     private static volatile boolean hasSetCPUTimeMonitoringEnabled = false;
 
     private static boolean contentionMonitoringEnabled = false;
-    private static boolean cpuTimeMonitoringEnabled = false;
+    private static boolean cpuTimeMonitoringEnabled = true;
 
     private static final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();    
 

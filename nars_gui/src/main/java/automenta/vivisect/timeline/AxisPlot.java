@@ -6,7 +6,7 @@ package automenta.vivisect.timeline;
 
 import java.util.List;
 import nars.io.meter.Metrics;
-import nars.io.meter.Metrics.SignalData;
+import nars.io.meter.SignalData;
 
 /**
  * Modes: Line Line with vertical pole to base Stacked bar Stacked bar
@@ -14,8 +14,8 @@ import nars.io.meter.Metrics.SignalData;
  *
  */
 public abstract class AxisPlot {
-    protected float height = 1.0f;
-    protected float width = 1.0f;
+    protected float plotHeight = 1.0f;
+    protected float plotWidth = 1.0f;
     protected boolean overlayEnable = true;
     float y = 0;
     float x = 0;
@@ -26,7 +26,7 @@ public abstract class AxisPlot {
     }
     
     public AxisPlot() {
-        height = 1f;
+        plotHeight = 1f;
     }
 
     public AxisPlot pos(float x, float y) {
@@ -35,16 +35,16 @@ public abstract class AxisPlot {
         return this;
     }
     public AxisPlot size(float w , float h) {
-        this.width = w;
-        this.height = h;
+        this.plotWidth = w;
+        this.plotHeight = h;
         return this;
     }
     public AxisPlot height(float h) {
-        this.height = h;
+        this.plotHeight = h;
         return this;
     }
     public AxisPlot width(float w) {
-        this.width = w;
+        this.plotWidth = w;
         return this;
     }
     
@@ -60,10 +60,10 @@ public abstract class AxisPlot {
     public abstract void draw(TimelineVis l);
 
     public float getHeight() {
-        return height;
+        return plotHeight;
     }
     public float getWidth() {
-        return width;
+        return plotWidth;
     }    
 
     

@@ -44,7 +44,8 @@ public class MultiChart1 extends TimelineExample {
         nar.run(cycles);
 
         System.out.println(t.metrics.getSignals());
-        t.metrics.printCSV(System.out);
+        //t.metrics.printCSV(System.out);
+        
         PCanvas p;
         TimelineVis v;
         

@@ -11,7 +11,7 @@ import java.io.PrintStream;
  *
  * @author me
  */
-public class TemporalMetrics<Cell> extends Metrics<Double,Cell> {
+public class TemporalMetrics<O extends Object> extends Metrics<Double,O> {
 
     public TemporalMetrics(int historySize) {
         super(historySize);

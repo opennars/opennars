@@ -137,7 +137,7 @@ public class TimelineVis implements Vis {
             g.translate(0, pos);
             c.draw(this);         
             g.popMatrix();
-            pos += c.height+chartMargin;
+            pos += c.plotHeight+chartMargin;
         }
                 
                

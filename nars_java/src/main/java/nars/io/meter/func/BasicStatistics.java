@@ -5,9 +5,10 @@
  */
 package nars.io.meter.func;
 
-import nars.io.meter.Meter;
 import nars.io.meter.Metrics;
 import nars.io.meter.Signal;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
@@ -15,21 +16,29 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  */
 public class BasicStatistics extends DependsOnColumn<Number,Double>  {
     
-    private final SummaryStatistics stat;
-    private double lastUpdate = Double.NaN;
-    private double resetPeriod; //in seconds, or whatever time unit is applied
+    private StatisticalSummary stat;
+    private int windowSize; //in seconds, or whatever time unit is applied
 
+    /** no window, uses SummaryStatistics */
     public BasicStatistics(Metrics metrics, String derivedFrom) {
-        this(metrics, derivedFrom, Double.NaN);
-    }
-    public BasicStatistics(Metrics metrics, String derivedFrom, double resetPeriod) {
-        super(metrics, derivedFrom, 2);
-        stat = new SummaryStatistics();
+        this(metrics, derivedFrom, 0);        
     }
     
-//    public void setWindowSize(int w) {
-//        stat.
-//    }
+    /** fixed window if windowSize>0, uses DescriptiveStatistics */
+    public BasicStatistics(Metrics metrics, String derivedFrom, int windowSize) {
+        super(metrics, derivedFrom, 2);
+        
+        setWindowSize(windowSize);
+    }
+    
+    public void setWindowSize(int w) {
+        if (w == 0)
+            stat = new SummaryStatistics();
+        else
+            stat = new DescriptiveStatistics(w);
+        
+        this.windowSize = w;
+    }
 
     
     
@@ -37,33 +46,27 @@ public class BasicStatistics extends DependsOnColumn<Number,Double>  {
     protected String getColumnID(Signal dependent, int i) {
         switch (i) {
             case 0: return dependent.id + ".mean";
-            case 1: return dependent.id + ".max";
+            case 1: return dependent.id + ".stdev";
         }
         return null;
     }
 
     @Override
     protected Double getValue(Object key, int index) {
-        if (!Double.isNaN(resetPeriod)) {
-            double time = ((Number)key).doubleValue();
-            
-            if (!Double.isNaN(lastUpdate)) {
-                lastUpdate = time;
-            }
-            else if (time - lastUpdate > resetPeriod) {
-                stat.clear();
-                lastUpdate = time;
-            }
-        }
-                
         
         if (index == 0) {
-            Number nextValue = newestValue();            
-            stat.addValue( (nextValue).doubleValue() );            
+            double nextValue = newestValue().doubleValue();
+            if (Double.isFinite(nextValue)) {
+                if (stat instanceof SummaryStatistics)
+                    ((SummaryStatistics)stat).addValue( nextValue );    
+                else if (stat instanceof DescriptiveStatistics)
+                    ((DescriptiveStatistics)stat).addValue( nextValue );
+            }
         }
+        
         switch (index) {
             case 0: return stat.getMean();
-            case 1: return stat.getMax();
+            case 1: return stat.getStandardDeviation();
         }
         
         return null;

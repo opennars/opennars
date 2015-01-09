@@ -27,11 +27,15 @@ abstract public class DependsOnColumn<Source extends Object,Result extends Objec
         
         int i = 0;
         Signal m = metrics.getSignal(source);
-        for (Signal s : signal())
+        if (m == null)
+            throw new RuntimeException("Missing signal: " + source);
+        
+        for (Signal s : getSignals()) {            
             s.id = getColumnID(m, i++);
+        }
         
         this.metrics = metrics;
-        this.sourceColumn = metrics.getIndex(source);
+        this.sourceColumn = metrics.indexOf(source);
     }
 
 //    
