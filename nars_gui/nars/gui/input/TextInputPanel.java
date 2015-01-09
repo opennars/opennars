@@ -410,6 +410,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         menu = new JMenuBar();
 
         menu.setOpaque(false);
+        menu.setBackground(Color.BLACK);
         setBackground(Color.BLACK);
 
         textInput = newTextInput();
