@@ -253,7 +253,7 @@ public class DefaultAttention implements Core {
             concept = conceptBuilder.newConcept(budget, term, memory);
 
             if (memory.logic!=null)
-                memory.logic.CONCEPT_NEW.commit(term.getComplexity());
+                memory.logic.CONCEPT_NEW.commit();
             memory.emit(Events.ConceptNew.class, concept);                
         }
         else if (concept!=null) {            

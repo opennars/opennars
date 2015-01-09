@@ -308,7 +308,6 @@ public class Memory implements Serializable {
         this.resource = new ResourceMeter();
         this.logic = new LogicMeter() {
 
-            @Override
             public void commit(Memory memory) {
                 double prioritySum = 0;        
                 double prioritySumSq = 0;
@@ -355,7 +354,7 @@ public class Memory implements Serializable {
                 setConceptPriorityVariance(variance);
                 setConceptPriorityHistogram(histogram);
                 
-                super.commit(memory);
+                //super.commit(memory);
             }
 
         };
@@ -607,7 +606,7 @@ public class Memory implements Serializable {
         
         newTasks.add(t);
                 
-        logic.TASK_ADD_NEW.commit(t.getPriority());
+        logic.TASK_ADD_NEW.hit();//t.getPriority());
         
         emit(Events.TaskAdd.class, t, reason);
         
@@ -679,7 +678,7 @@ public class Memory implements Serializable {
      */
     public void executedTask(final Operation operation, TruthValue truth) {
         Task opTask = operation.getTask();
-        logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
+        logic.TASK_EXECUTED.hit(); //(opTask.budget.getPriority());
                 
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
@@ -728,8 +727,8 @@ public class Memory implements Serializable {
         
         resource.CYCLE_DURATION.start();
 
-        if (logic.IO_INPUTS_BUFFERED.isActive())
-            logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());
+        
+        logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());
         
         event.emit(Events.CycleStart.class);                
 

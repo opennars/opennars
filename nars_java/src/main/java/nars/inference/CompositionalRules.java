@@ -179,7 +179,7 @@ public final class CompositionalRules {
                     return;
                 }*/
 
-                nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.commit();
+                nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.hit();
 
                 TruthValue truthAnd = intersection(truthT, truthB);
                 BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);

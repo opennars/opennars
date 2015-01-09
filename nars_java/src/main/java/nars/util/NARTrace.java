@@ -145,18 +145,15 @@ public class NARTrace extends MemoryObserver implements Serializable {
         super(n, true);
         this.nar = n;
         
-        metrics.addMeter(n.memory.emotion.busyMeter);
-        metrics.addMeter(n.memory.emotion.happyMeter);
+        metrics.addMeters(n.memory.emotion);
         
+        metrics.addMeters(n.memory.resource);
         
-        metrics.addMeter(n.memory.resource.CYCLE_DURATION);
+
         metrics.addMeter(new BasicStatistics(metrics, n.memory.resource.CYCLE_DURATION.id(), 16));
-        
-        
-        metrics.addMeter(n.memory.resource.CYCLE_CPU_TIME);
-        metrics.addMeter(n.memory.resource.CYCLE_RAM_USED);
         metrics.addMeter(new FirstOrderDifference(metrics, n.memory.resource.CYCLE_RAM_USED.id()));
-        
+     
+        metrics.addMeters(n.memory.logic);
         
     }
     

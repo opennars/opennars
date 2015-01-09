@@ -193,16 +193,16 @@ public class Concept extends Item<Term> implements Termable {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
-                memory.logic.JUDGMENT_PROCESS.commit();
+                memory.logic.JUDGMENT_PROCESS.hit();
                 processJudgment(nal, task);
                 break;
             case Symbols.GOAL_MARK:
-                memory.logic.GOAL_PROCESS.commit();
+                memory.logic.GOAL_PROCESS.hit();
                 processGoal(nal, task);
                 break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
-                memory.logic.QUESTION_PROCESS.commit();
+                memory.logic.QUESTION_PROCESS.hit();
                 processQuestion(nal, task);
                 break;
             default:
