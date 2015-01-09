@@ -2,7 +2,7 @@ package automenta.vivisect.timeline;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.Chart.MultiChart;
+import automenta.vivisect.timeline.AxisPlot.MultiChart;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -12,16 +12,15 @@ import nars.io.Texts;
 import nars.io.meter.Metrics;
 import nars.io.meter.Metrics.SignalData;
 
-public class LineChart extends Chart implements MultiChart {
+public class LineChart extends AxisPlot implements MultiChart {
     protected final List<SignalData> data;
     double min;
     double max;
     boolean showVerticalLines = false;
     boolean showPoints = true;
-    float lineThickness = 1f;
-    float borderThickness = 0.5f;
-    private float end;
-    private float start;
+    float lineThickness = 0.1f;
+    float borderThickness = 0.1f;
+
     private boolean specifiedRange;
     boolean xorOverlay = false;
 
@@ -30,9 +29,11 @@ public class LineChart extends Chart implements MultiChart {
     public LineChart(SignalData... series) {
         super();
         
+        
         this.data = new ArrayList(series.length);
-        for (SignalData s : series)
+        for (SignalData s : series) {
             data.add(s);
+        }
         
     }
     
@@ -55,12 +56,12 @@ public class LineChart extends Chart implements MultiChart {
         return this;
     }
 
-
+    
     @Override
-    public void draw(TimelineVis l, float y, float timeScale, float yScale) {
-        yScale *= height;
-        float screenyHi = l.g.screenY(l.cycleStart * timeScale, y);
-        float screenyLo = l.g.screenY(l.cycleStart * timeScale, y + yScale);
+    public void draw(TimelineVis l) {
+        
+        float screenyHi = l.g.screenY(x, y);
+        float screenyLo = l.g.screenY(x + width, y + height);
         
         int displayHeight = l.g.height;
         
@@ -72,15 +73,20 @@ public class LineChart extends Chart implements MultiChart {
         }
                 
         
-        updateRange(l);
+        updateRange();
+                
         
         l.g.stroke(127);
         l.g.strokeWeight(borderThickness);
+        
+        float range = (float)(xMax() - xMin());
+        
         //bottom line
-        l.g.line(0, y + yScale, width * (l.cycleEnd-l.cycleStart) * timeScale, y + yScale);
+        l.g.line(0, y + height, width * range * width, y + height);
         //top line
-        l.g.line(0, y, width * (l.cycleEnd-l.cycleStart) * timeScale, y);
-        drawData(l, timeScale, yScale, y);
+        l.g.line(0, y, width * range * width, y);
+        
+        drawData(l, width, height, y);
         
         if (overlayEnable) {
             drawOverlay(l, screenyLo, screenyHi);
@@ -88,11 +94,9 @@ public class LineChart extends Chart implements MultiChart {
     }
 
     protected void updateRange() {
-        double[] bounds = Metrics.getBounds(data);
-        start = (float)bounds[0];
-        end = (float)bounds[1];
-        min = bounds[2];
-        max = bounds[3];        
+        double[] bounds = getMetrics().getBounds(data);        
+        min = bounds[0];
+        max = bounds[1];        
     }
     
  
@@ -122,8 +126,9 @@ public class LineChart extends Chart implements MultiChart {
 
         l.g.textFont(PCanvas.font12);
         float dsyt = screenyHi + 0.15f * dsy;
+        int order = 0;
         for (SignalData chart : data) {
-            l.g.fill(getColor(chart.getID()) | 0x77777777);
+            l.g.fill(getColor(chart.getID(), order++) | 0x77777777);
             dsyt += ytspace;
             l.g.text(chart.getID(), 8, dsyt);
             dsyt += ytspace;
@@ -137,14 +142,14 @@ public class LineChart extends Chart implements MultiChart {
         l.g.popMatrix();
     }
 
-    protected void drawData(TimelineVis l, float timeScale1, float yScale1, float y) {
+    protected void drawData(TimelineVis l, float width1, float height1, float y) {
 
         int ccolor = 0;
-        float w = lineThickness * 2.75f;
+        float pointWidth = lineThickness * 2.75f;
                 
-        
+        int order = 0;
         for (SignalData chart : data) {
-            ccolor = Color.WHITE.getRGB(); //chart.getColor();
+            ccolor = getColor(chart.getSignal(), order++);
             float lx = 0;
             float ly = 0;
             boolean firstPoint = false;
@@ -153,7 +158,7 @@ public class LineChart extends Chart implements MultiChart {
             l.g.fill(ccolor);
             l.g.strokeWeight(lineThickness);
             
-            int cs = l.cycleStart;
+            float cs = (float)xMin();
             Iterator<Object[]> series = chart.iteratorWith(0);
             while (series.hasNext()) {
                 Object[] o = series.next();
@@ -166,22 +171,22 @@ public class LineChart extends Chart implements MultiChart {
                 
                 l.g.stroke = true;
                 
-                float x = (t-cs) * timeScale1;
+                float x = (t-cs) * width1;
                 if (Float.isNaN(v)) {
                     continue;
                 }
                 
                 float p = (float)((max == min) ? 0 : (double) ((v - min) / (max - min)));
                 float px = width * x;
-                float h = p * yScale1;
-                float py = y + yScale1 - h;
+                float h = p * height1;
+                float py = y + height1 - h;
                                 
                 if (firstPoint) {
                     if (showVerticalLines) {
                         l.g.line(px, py, px, py + h);
                     }
 
-                    if (t != l.cycleStart) {
+                    if (t != xMin()) {
                         l.g.line(lx, ly, px, py);
                     }
                 }
@@ -196,21 +201,23 @@ public class LineChart extends Chart implements MultiChart {
                     
                     //TODO create separate size and opacity get/set parameter for the points
                     //l.g.fill(ccolor); //, 128f * (p * 0.5f + 0.5f));                    
-                    l.g.rect(px - w / 2f, py - w / 2f, w, w);
+                    l.g.rect(px - pointWidth / 2f, py - pointWidth / 2f, pointWidth, pointWidth);
                 }
             }
         }
     }
 
-    @Override
-    public float getStart() {
-        return start;
+    public double xMax() {
+        return getMetrics().getSignal(0).getMax();
     }
 
-    @Override
-    public float getEnd() {
-        return end;
+    public double xMin() {
+        return getMetrics().getSignal(0).getMin();
     }
+    
+    
+
+
 
     @Override
     public List<SignalData> getData() {
@@ -221,12 +228,15 @@ public class LineChart extends Chart implements MultiChart {
         this.lineThickness = lineThickness;
     }
 
-    private int getColor(Object o) {
-        return Video.getColor(o.hashCode(),0.8f,0.9f,1.0f);
+    private int getColor(Object o, int order) {
+        return Video.colorHSB(Video.hashFloat(o.hashCode())+ order*0.2f, 0.8f, 0.8f, 1.0f);
     }
-    
-    
-    
-    
+
+    public Metrics getMetrics() {
+        //TODO this assumes that all the charts are from the same Metrics
+        //but this need not be the case in a future revision
+        return getData().get(0).getMetric();
+    }
+       
     
 }

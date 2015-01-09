@@ -58,7 +58,7 @@ public class MetricsTest {
         
         TemporalMetrics<Integer> tm = new TemporalMetrics<Integer>(3);
         tm.addMeter(timeDoubler);
-        tm.addMeter(new FirstOrderDifference(tm, 1));
+        tm.addMeter(new FirstOrderDifference(tm, timeDoubler.signalID(0)));
         
         assertEquals(3, tm.getSignals().size()); 
         
@@ -83,7 +83,7 @@ public class MetricsTest {
     @Test public void testSummaryStatistics() {
 
         TemporalMetrics<Double> tm = new TemporalMetrics<Double>(10);        
-        tm.addMeter(new BasicStatistics(tm, 0));
+        tm.addMeter(new BasicStatistics(tm, tm.getSignalIDs()[0]));
         
         for (int i = 0; i < 10; i++) {
             tm.update(0.1 * i);

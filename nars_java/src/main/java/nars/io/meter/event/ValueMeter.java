@@ -15,15 +15,20 @@ public class ValueMeter extends FunctionMeter<Double> {
     
     boolean autoReset;
     AtomicDouble val = new AtomicDouble();
+    private final String name;
+    
     
     public ValueMeter(String id, boolean autoReset) {
         super(id);
+        this.name = id;
         this.autoReset = autoReset;
     }
     
     public ValueMeter(String id) {
-        this(id, true);
+        this(id, false);
     }    
+
+
     
     public ValueMeter reset() {
         set(Double.NaN);
@@ -53,7 +58,7 @@ public class ValueMeter extends FunctionMeter<Double> {
     }
     
     public boolean getAutoReset() { return autoReset; }
-    
+
     
     
 }

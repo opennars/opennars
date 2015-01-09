@@ -5,6 +5,7 @@
  */
 package nars.io.meter.func;
 
+import nars.io.meter.Meter;
 import nars.io.meter.Metrics;
 import nars.io.meter.Signal;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -15,9 +16,14 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 public class BasicStatistics extends DependsOnColumn<Number,Double>  {
     
     private final SummaryStatistics stat;
+    private double lastUpdate = Double.NaN;
+    private double resetPeriod; //in seconds, or whatever time unit is applied
 
-    public BasicStatistics(Metrics metrics, int sourceColumn) {
-        super(metrics, sourceColumn, 2);
+    public BasicStatistics(Metrics metrics, String derivedFrom) {
+        this(metrics, derivedFrom, Double.NaN);
+    }
+    public BasicStatistics(Metrics metrics, String derivedFrom, double resetPeriod) {
+        super(metrics, derivedFrom, 2);
         stat = new SummaryStatistics();
     }
     
@@ -25,6 +31,7 @@ public class BasicStatistics extends DependsOnColumn<Number,Double>  {
 //        stat.
 //    }
 
+    
     
     @Override
     protected String getColumnID(Signal dependent, int i) {
@@ -37,6 +44,19 @@ public class BasicStatistics extends DependsOnColumn<Number,Double>  {
 
     @Override
     protected Double getValue(Object key, int index) {
+        if (!Double.isNaN(resetPeriod)) {
+            double time = ((Number)key).doubleValue();
+            
+            if (!Double.isNaN(lastUpdate)) {
+                lastUpdate = time;
+            }
+            else if (time - lastUpdate > resetPeriod) {
+                stat.clear();
+                lastUpdate = time;
+            }
+        }
+                
+        
         if (index == 0) {
             Number nextValue = newestValue();            
             stat.addValue( (nextValue).doubleValue() );            

@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import nars.core.Memory;
 import nars.io.meter.AbstractMeter.UnknownSensorException;
-import nars.util.meter.Tracker;
-import nars.util.meter.data.DefaultDataSet;
-import nars.util.meter.sensor.AbstractSensor;
-import nars.util.meter.sensor.AbstractSpanTracker;
-import nars.util.meter.sensor.EventMeter;
-import nars.util.meter.sensor.SpanTracker;
+import nars.io.meter.depr.Tracker;
+import nars.io.meter.depr.data.DefaultDataSet;
+import nars.io.meter.depr.sensor.AbstractSensor;
+import nars.io.meter.depr.sensor.AbstractSpanTracker;
+import nars.io.meter.depr.sensor.EventMeter;
+import nars.io.meter.depr.sensor.SpanTracker;
 
 
 abstract public class AbstractMeter extends DefaultDataSet {

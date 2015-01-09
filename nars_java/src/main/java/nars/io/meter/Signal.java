@@ -7,7 +7,8 @@ package nars.io.meter;
 
 /**
  * Effectively a column header in a Metrics table; indicates what appears
- * in the column index of rows
+ * in the column index of rows.
+ * May cache re-usable metadata specific to the signal shared by several SignalData views (ex: min, max)
  */
 public class Signal implements Comparable<Signal> {
     public String id;
@@ -15,14 +16,16 @@ public class Signal implements Comparable<Signal> {
     
     private double min, max;
 
+
     public Signal(String id) {
-        this.id = id;
-        this.unit = null;
+        this(id, null);
     }
 
     public Signal(String id, String unit) {
         this.id = id;
         this.unit = unit;
+        
+        invalidateBounds();
     }
 
     @Override
@@ -45,18 +48,28 @@ public class Signal implements Comparable<Signal> {
         return id.compareTo(o.id);
     }
 
-    public double[] getBounds() {
-        return new double[] { getMin(), getMax()  };
+    public double getMax() {
+        return max;
     }
-    
+
     public double getMin() {
         return min;
     }
     
-    public double getMax() {
-        return max;
-    }
+        void setMin(double newMin) { this.min = newMin; }
+        void setMax(double newMax) { this.max = newMax; }
+
+        void resetBounds() {
+            min = Double.POSITIVE_INFINITY;
+            max = Double.NEGATIVE_INFINITY;        
+        }
+        void invalidateBounds() {
+            min = max = Double.NaN;
+        }
+
+        boolean isInvalidatedBounds() {
+            return (Double.isNaN(min));
+        }
     
-    void setMin(double newMin) { this.min = newMin; }
-    void setMax(double newMax) { this.max = newMax; }
+
 }

@@ -2,9 +2,9 @@ package nars.io.meter;
 
 import java.io.Serializable;
 import nars.core.Memory;
-import nars.util.meter.data.DataContainer;
-import nars.util.meter.data.DataSet;
-import nars.util.meter.sensor.EventValueSensor;
+import nars.io.meter.depr.data.DataContainer;
+import nars.io.meter.depr.data.DataSet;
+import nars.io.meter.depr.sensor.EventValueSensor;
 
 /**
  * Logic/reasoning sensors

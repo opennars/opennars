@@ -66,7 +66,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
         this.FrameRate = frameRate;
         init();
         
-        hint(ENABLE_NATIVE_FONTS);
+        //hint(ENABLE_NATIVE_FONTS);
         hint(ENABLE_OPTIMIZED_STROKE);
         
                 

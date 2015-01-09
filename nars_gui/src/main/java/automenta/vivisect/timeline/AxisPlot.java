@@ -1,0 +1,71 @@
+/*
+ * Here comes the text of your license
+ * Each line should be prefixed with  * 
+ */
+package automenta.vivisect.timeline;
+
+import java.util.List;
+import nars.io.meter.Metrics;
+import nars.io.meter.Metrics.SignalData;
+
+/**
+ * Modes: Line Line with vertical pole to base Stacked bar Stacked bar
+ * normalized each step Scatter Spectral Event Bubble
+ *
+ */
+public abstract class AxisPlot {
+    protected float height = 1.0f;
+    protected float width = 1.0f;
+    protected boolean overlayEnable = true;
+    float y = 0;
+    float x = 0;
+
+
+    public interface MultiChart {
+        public List<SignalData> getData();
+    }
+    
+    public AxisPlot() {
+        height = 1f;
+    }
+
+    public AxisPlot pos(float x, float y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+    public AxisPlot size(float w , float h) {
+        this.width = w;
+        this.height = h;
+        return this;
+    }
+    public AxisPlot height(float h) {
+        this.height = h;
+        return this;
+    }
+    public AxisPlot width(float w) {
+        this.width = w;
+        return this;
+    }
+    
+    public void setOverlayEnable(boolean overlayEnable) {
+        this.overlayEnable = overlayEnable;
+    }
+    
+    //called during NAR thread
+    public void update(TimelineVis l) {
+    }
+
+    //called during Swing thread
+    public abstract void draw(TimelineVis l);
+
+    public float getHeight() {
+        return height;
+    }
+    public float getWidth() {
+        return width;
+    }    
+
+    
+
+}

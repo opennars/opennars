@@ -22,19 +22,18 @@ import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.TimelineVis;
 import automenta.vivisect.timeline.LineChart;
-import automenta.vivisect.timeline.StackedPercentageChart;
-import nars.gui.EventChart;
+import java.awt.event.MouseAdapter;
 import nars.util.NARTrace;
 
 /**
  *
  */
 public class MultiChart1 extends TimelineExample {
-    
+
     public static void main(String[] args) {
         int cycles = 500;
-        
-        NAR nar = new Default().build();
+
+        NAR nar = new NAR(new Default());
         NARTrace t = new NARTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");
@@ -43,22 +42,47 @@ public class MultiChart1 extends TimelineExample {
         nar.addInput("a!");
         nar.run(cycles);
 
-        new NWindow("_", 
-            new PCanvas(
-                new TimelineVis(
-                    new EventChart(t, true, false, false).height(3),
-                    //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
+        System.out.println(t.metrics.getSignals());
+        t.metrics.printCSV(System.out);
+        PCanvas p;
+        TimelineVis v;
 
-                    new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
-                    new LineChart(t.getCharts("concept.priority.mean")).height(1),
+        new NWindow("_",
+                p = new PCanvas(
+                        v = new TimelineVis(
+                                //new EventChart(t, true, false, false).height(3),
+                                //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
 
-                    new EventChart(t, false, true, false).height(3),
+                                //new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
+                                new LineChart(t.getCharts("busy")).height(10),
+                                //new EventChart(t, false, true, false).height(3),
 
-                    new LineChart(t.getCharts("task.novel.add", "task.immediate_processed")).height(3),
-                    new LineChart(t.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
-                    new LineChart(t.getCharts("emotion.busy")).height(1),
-                    new EventChart(t, false, false, true).height(3)
-        ))).show(800, 800, true);
+                                new LineChart(t.getCharts("happy", "happy.mean")).height(20),
+                                new LineChart(t.getCharts("happy.max")).height(5)
+                        //new EventChart(t, false, false, true).height(3)
+                        ))).show(800, 800, true);
+
+        final MouseAdapter c = v.newMouseDragPanScale(p);
+        p.addMouseMotionListener(c);
+        p.addMouseListener(c);
+        
+
+//        new NWindow("_", 
+//            new PCanvas(
+//                new TimelineVis(
+//                    new EventChart(t, true, false, false).height(3),
+//                    //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
+//
+//                    new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
+//                    new LineChart(t.getCharts("concept.priority.mean")).height(1),
+//
+//                    new EventChart(t, false, true, false).height(3),
+//
+//                    new LineChart(t.getCharts("task.novel.add", "task.immediate_processed")).height(3),
+//                    new LineChart(t.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
+//                    new LineChart(t.getCharts("emotion.busy")).height(1),
+//                    new EventChart(t, false, false, true).height(3)
+//        ))).show(800, 800, true);
     }
-    
+
 }

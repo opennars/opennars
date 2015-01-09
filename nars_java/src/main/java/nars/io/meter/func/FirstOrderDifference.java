@@ -16,8 +16,8 @@ import nars.io.meter.Signal;
  */
 public class FirstOrderDifference extends DependsOnColumn {
 
-    public FirstOrderDifference(Metrics metrics, int sourceColumn) {
-        super(metrics, sourceColumn, 1);
+    public FirstOrderDifference(Metrics metrics, String source) {
+        super(metrics, source, 1);
         
 
     }

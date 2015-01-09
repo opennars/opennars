@@ -10,13 +10,27 @@ import java.util.List;
 /** produces 1 or more signals */
 public interface Meter<M> {
 
+    
     public default void setActive(boolean active) {
     }
 
     /** the list of signals produced by this meter; this should not change
      * in quantity during operation
      */
-    public List<Signal> getSignals();
+    public List<Signal> signal();
+    
+    default Signal signal(int i) {
+        return signal().get(i);
+    }
+    default String signalID(int i) {
+        return signal().get(i).id;
+    }
+    
+    /** convenience method for accessing the first of the signals, in case one needs the only signal */
+    default Signal signalFirst() {
+        return signal().get(0);
+    }
+    
 
     /**
      * @param key the current row's leading element, usually time
@@ -26,7 +40,7 @@ public interface Meter<M> {
      */
     public M[] sample(Object key);
     
-    default public int numSignals() { return getSignals().size(); }
+    default public int numSignals() { return signal().size(); }
     
     
 }

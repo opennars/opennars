@@ -1,0 +1,1415 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<java version="1.6.0_24" class="java.beans.XMLDecoder"> 
+ <object class="com.jformdesigner.model.FormModel"> 
+  <void method="setProperty"> 
+   <string>i18n.autoExternalize</string> 
+   <boolean>true</boolean> 
+  </void> 
+  <void method="setProperty"> 
+   <string>i18n.bundlePackage</string> 
+   <string>net.ericaro.surfaceplotter.surface</string> 
+  </void> 
+  <void method="setProperty"> 
+   <string>i18n.bundleName</string> 
+   <string>VerticalConfigurationPanel</string> 
+  </void> 
+  <void property="contentType"> 
+   <string>form/swing</string> 
+  </void> 
+  <void property="root"> 
+   <object class="com.jformdesigner.model.FormRoot"> 
+    <void method="add"> 
+     <object class="com.jformdesigner.model.FormContainer"> 
+      <string>javax.swing.JPanel</string> 
+      <object class="com.jformdesigner.model.FormLayoutManager"> 
+       <class>java.awt.GridBagLayout</class> 
+       <void method="setProperty"> 
+        <string>$columnSpecs</string> 
+        <string>6, 0:1.0</string> 
+       </void> 
+       <void method="setProperty"> 
+        <string>$rowSpecs</string> 
+        <string>0, 0, 0, center:0, 0, 0, 0, 0, 0, 0, center:0, 0, 0, 0, 0, 0, center:0, 0, 0, 0, 0, center:0, 0, 0, 0</string> 
+       </void> 
+       <void method="setProperty"> 
+        <string>$alignTop</string> 
+        <boolean>true</boolean> 
+       </void> 
+       <void method="setProperty"> 
+        <string>$alignLeft</string> 
+        <boolean>true</boolean> 
+       </void> 
+      </object> 
+      <void method="setProperty"> 
+       <string>border</string> 
+       <object class="javax.swing.border.EmptyBorder"> 
+        <object class="java.awt.Insets"> 
+         <int>6</int> 
+         <int>6</int> 
+         <int>6</int> 
+         <int>6</int> 
+        </object> 
+       </object> 
+      </void> 
+      <void method="setProperty"> 
+       <string>background</string> 
+       <object class="java.awt.Color"> 
+        <int>255</int> 
+        <int>255</int> 
+        <int>255</int> 
+        <int>255</int> 
+       </object> 
+      </void> 
+      <void method="setProperty"> 
+       <string>alignmentY</string> 
+       <float>0.0</float> 
+      </void> 
+      <void property="name"> 
+       <string>this</string> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>javax.swing.JLabel</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>label1.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>font</string> 
+         <object id="SwingDerivedFont0" class="com.jformdesigner.model.SwingDerivedFont"> 
+          <null/> 
+          <int>1</int> 
+          <int>0</int> 
+          <boolean>false</boolean> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object id="Color0" class="java.awt.Color"> 
+          <int>255</int> 
+          <int>255</int> 
+          <int>255</int> 
+          <int>255</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>label1</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridwidth</string> 
+         <int>2</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>insets</string> 
+         <object class="java.awt.Insets"> 
+          <int>6</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedCheckBox</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>boxed.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object id="FormReference0" class="com.jformdesigner.model.FormReference"> 
+          <string>modelSource1</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>boxed</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>boxed</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedCheckBox</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>scaleBox.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>scaleBox</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>scaleBox</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>2</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>javax.swing.JLabel</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>label3.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>font</string> 
+         <object idref="SwingDerivedFont0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void property="name"> 
+         <string>label3</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>3</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridwidth</string> 
+         <int>2</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>insets</string> 
+         <object class="java.awt.Insets"> 
+          <int>6</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedCheckBox</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>displayXY.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>displayXY</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>displayXY</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>4</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedCheckBox</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>displayZ.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>displayZ</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>displayZ</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>5</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>javax.swing.JLabel</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>label6.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>font</string> 
+         <object idref="SwingDerivedFont0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void property="name"> 
+         <string>label6</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>6</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridwidth</string> 
+         <int>2</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>insets</string> 
+         <object class="java.awt.Insets"> 
+          <int>6</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedCheckBox</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>displayGrids.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>displayGrids</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>displayGrids</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>7</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedCheckBox</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>mesh.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>mesh</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>mesh</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>8</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedCheckBox</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>expectDelay.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>expectDelay</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>expectDelay</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>9</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>javax.swing.JLabel</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>label4.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>font</string> 
+         <object idref="SwingDerivedFont0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void property="name"> 
+         <string>label4</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>10</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridwidth</string> 
+         <int>2</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>insets</string> 
+         <object class="java.awt.Insets"> 
+          <int>6</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>hiddenMode.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object id="FormReference1" class="com.jformdesigner.model.FormReference"> 
+          <string>buttonGroup1</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>hiddenMode</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>hiddenMode</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>11</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>spectrumMode.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object idref="FormReference1"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>spectrumMode</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>spectrumMode</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>12</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>grayScaleMode.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object idref="FormReference1"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>grayScaleMode</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>grayScaleMode</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>13</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>dualShadeMode.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object idref="FormReference1"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>dualShadeMode</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>dualShadeMode</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>14</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>fogMode.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object idref="FormReference1"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>fogMode</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>fogMode</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>15</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>javax.swing.JLabel</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>label5.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>font</string> 
+         <object idref="SwingDerivedFont0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void property="name"> 
+         <string>label5</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>16</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridwidth</string> 
+         <int>2</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>insets</string> 
+         <object class="java.awt.Insets"> 
+          <int>6</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>wireframeType.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object class="com.jformdesigner.model.FormReference"> 
+          <string>buttonGroup2</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>wireframeType</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>wireframeType</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>17</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>surfaceType.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object id="FormReference2" class="com.jformdesigner.model.FormReference"> 
+          <string>buttonGroup2</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>surfaceType</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>surfaceType</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>18</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>contourType.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object idref="FormReference2"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>contourType</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>contourType</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>19</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>densityType.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object idref="FormReference2"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>densityType</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>densityType</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>20</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>javax.swing.JLabel</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>label2.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>font</string> 
+         <object idref="SwingDerivedFont0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void property="name"> 
+         <string>label2</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>21</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridwidth</string> 
+         <int>2</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>insets</string> 
+         <object class="java.awt.Insets"> 
+          <int>6</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>firstFunctionOnly.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object id="FormReference3" class="com.jformdesigner.model.FormReference"> 
+          <string>buttonGroup3</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>firstFunctionOnly</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>property</string> 
+         <boolean>true</boolean> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>firstFunctionOnly</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>22</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>secondFunctionOnly.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object idref="FormReference3"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>secondFunctionOnly</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>property</string> 
+         <boolean>true</boolean> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>secondFunctionOnly</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>23</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>net.ericaro.surfaceplotter.beans.JBindedRadioButton</string> 
+        <void method="setProperty"> 
+         <string>text</string> 
+         <object class="com.jformdesigner.model.FormMessage"> 
+          <null/> 
+          <string>bothFunction.text</string> 
+         </object> 
+        </void> 
+        <void method="setProperty"> 
+         <string>$buttonGroup</string> 
+         <object idref="FormReference3"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>background</string> 
+         <object idref="Color0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>sourceBean</string> 
+         <object idref="FormReference0"/> 
+        </void> 
+        <void method="setProperty"> 
+         <string>propertyName</string> 
+         <string>bothFunction</string> 
+        </void> 
+        <void method="setProperty"> 
+         <string>margin</string> 
+         <object class="java.awt.Insets"> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+          <int>0</int> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>bothFunction</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jformdesigner.runtime.GridBagConstraintsEx</class> 
+        <void method="setProperty"> 
+         <string>gridy</string> 
+         <int>24</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridx</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+     </object> 
+     <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+      <null/> 
+      <void method="setProperty"> 
+       <string>location</string> 
+       <object class="java.awt.Point"> 
+        <int>160</int> 
+        <int>5</int> 
+       </object> 
+      </void> 
+      <void method="setProperty"> 
+       <string>size</string> 
+       <object class="java.awt.Dimension"> 
+        <int>160</int> 
+        <int>625</int> 
+       </object> 
+      </void> 
+     </object> 
+    </void> 
+    <void method="add"> 
+     <object class="com.jformdesigner.model.FormNonVisual"> 
+      <string>javax.swing.ButtonGroup</string> 
+      <void property="name"> 
+       <string>buttonGroup1</string> 
+      </void> 
+     </object> 
+     <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+      <null/> 
+      <void method="setProperty"> 
+       <string>location</string> 
+       <object class="java.awt.Point"> 
+        <int>370</int> 
+        <int>245</int> 
+       </object> 
+      </void> 
+     </object> 
+    </void> 
+    <void method="add"> 
+     <object class="com.jformdesigner.model.FormNonVisual"> 
+      <string>javax.swing.ButtonGroup</string> 
+      <void property="name"> 
+       <string>buttonGroup2</string> 
+      </void> 
+     </object> 
+     <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+      <null/> 
+      <void method="setProperty"> 
+       <string>location</string> 
+       <object class="java.awt.Point"> 
+        <int>370</int> 
+        <int>360</int> 
+       </object> 
+      </void> 
+     </object> 
+    </void> 
+    <void method="add"> 
+     <object class="com.jformdesigner.model.FormNonVisual"> 
+      <string>javax.swing.ButtonGroup</string> 
+      <void property="name"> 
+       <string>buttonGroup3</string> 
+      </void> 
+     </object> 
+     <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+      <null/> 
+      <void method="setProperty"> 
+       <string>location</string> 
+       <object class="java.awt.Point"> 
+        <int>370</int> 
+        <int>450</int> 
+       </object> 
+      </void> 
+     </object> 
+    </void> 
+    <void method="add"> 
+     <object class="com.jformdesigner.model.FormNonVisual"> 
+      <string>net.ericaro.surfaceplotter.beans.ModelSource</string> 
+      <void method="setProperty"> 
+       <string>surfaceModel</string> 
+       <object class="com.jformdesigner.model.FormReference"> 
+        <string>abstractSurfaceModel1</string> 
+       </object> 
+      </void> 
+      <void property="name"> 
+       <string>modelSource1</string> 
+      </void> 
+     </object> 
+     <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+      <null/> 
+      <void method="setProperty"> 
+       <string>location</string> 
+       <object class="java.awt.Point"> 
+        <int>50</int> 
+        <int>575</int> 
+       </object> 
+      </void> 
+     </object> 
+    </void> 
+    <void method="add"> 
+     <object class="com.jformdesigner.model.FormNonVisual"> 
+      <string>net.ericaro.surfaceplotter.DefaultSurfaceModel</string> 
+      <void method="setProperty"> 
+       <string>secondFunctionOnly</string> 
+       <boolean>true</boolean> 
+      </void> 
+      <void property="name"> 
+       <string>abstractSurfaceModel1</string> 
+      </void> 
+     </object> 
+     <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+      <null/> 
+      <void method="setProperty"> 
+       <string>location</string> 
+       <object class="java.awt.Point"> 
+        <int>45</int> 
+        <int>645</int> 
+       </object> 
+      </void> 
+     </object> 
+    </void> 
+   </object> 
+  </void> 
+ </object> 
+</java> 

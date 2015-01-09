@@ -69,28 +69,55 @@ JsonSerializationContext context) {
     * @param data
     * @return 
     */
-    public static double[] getBounds(Iterable<SignalData> data) {
+    public double[] getBounds(Iterable<SignalData> data) {
         double min = Double.POSITIVE_INFINITY;
-        double max = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
     
-        for (SignalData ss : data) {
-            double a = ss.getMin();
-            double b = ss.getMax();
+        for (SignalData ss : data) {            
+            double a = getMin(ss.index);
+            double b = getMax(ss.index);
             if (a < min) min = a;
             if (b > max) max = b;
         }
         return new double[] { min, max };        
     }
     
-    /*  Calculates a 2-tuple with the following data:
-    *   0: minimum value among specific column
-    *   1: maximum value among specific column
-    */ 
-    public double[] getBounds(int signal) {
-        return getSignal(signal).getBounds();
+    public double getMin(int signal) {
+        Signal s = getSignal(signal);
+        if (s.isInvalidatedBounds()) {
+            updateBounds(signal);
+        }
+        return s.getMin();
+    }
+    public double getMax(int signal) {
+        Signal s = getSignal(signal);
+        if (s.isInvalidatedBounds()) {
+            updateBounds(signal);
+        }
+        return s.getMax();
+    }
+    
+    //TODO make a batch version of this
+    public void updateBounds(int signal) {
+        
+        Signal s = getSignal(signal);
+        s.resetBounds();
+        double min = s.getMin();
+        double max = s.getMax();
+        Iterator<Object[]> ii = iterator(signal);
+        while (ii.hasNext()) {
+            Object e = ii.next()[0];
+            if (e instanceof Number) {
+                double d = ((Number)e).doubleValue();
+                if (d < min) min = d;
+                if (d > max) max = d;                
+            }
+        }
+        s.setMin(min);
+        s.setMax(max);
     }
 
-    public SignalData getSignalData(String n) {
+    public SignalData newSignalData(String n) {
         Signal s = getSignal(n);
         if (s == null) return null;
         return new SignalData(this, s);
@@ -117,7 +144,7 @@ JsonSerializationContext context) {
     private ArrayDeque<Object[]> rows = new ArrayDeque<>();
     
     transient private List<Signal> signalList = new ArrayList<>();
-    transient private Map<Signal, Integer> signalIndex = new HashMap();
+    transient private Map<String, Integer> signalIndex = new HashMap();
     
     int numColumns;
     
@@ -178,38 +205,50 @@ JsonSerializationContext context) {
             c += vl; 
         }
         
+        //invalidate min/max for each column
+        /*for (Signal s : getSignals()) {
+            s.invalidateBounds();
+        }*/
+        
+        for (int i = 0; i < getSignals().size(); i++) {
+            updateBounds(i);
+        }
+        
     }
     
-    protected void append(Object[] row) {
-        if (row==null) return;        
+    protected void append(Object[] next) {
+        if (next==null) return;        
         
-        while (rows.size() >= history)
-            rows.removeFirst();
+        while (rows.size() >= history) {
+            Object[] prev = rows.removeFirst();
+        }
         
-        rows.addLast(row);            
+        rows.addLast(next);     
+
     }
     
     public List<Signal> getSignals() {
         if (signalList == null) {
             signalList = new ArrayList(numColumns);
             for (Meter<?> m : meters)
-                signalList.addAll(m.getSignals());
+                signalList.addAll(m.signal());
         }
         return signalList;        
     }
     
-    public Map<Signal,Integer> getSignalIndex() {
+    public Map<String,Integer> getSignalIndex() {
         if (signalIndex == null) {
             int i = 0;
+            signalIndex = new HashMap(numColumns);
             for (Signal s : getSignals()) {
-                signalIndex.put(s, i++);
+                signalIndex.put(s.id, i++);
             }
         }
         return signalIndex;
     }
     
     public int getIndex(Signal s) {
-        return getSignalIndex().get(s);
+        return getSignalIndex().get(s.id);
     }
     public int getIndex(String s) {
         return getSignalIndex().get(s);
@@ -240,6 +279,7 @@ JsonSerializationContext context) {
         private final Metrics metric;
         private final int index;
         private Object[] data;
+
 
         public SignalData(Metrics m, Signal s) {
             this.metric = m;
@@ -281,14 +321,22 @@ JsonSerializationContext context) {
             return index;
         }
 
-        private double getMin() {
-            return signal.getMin();
+        public double[] getBounds() {
+            return new double[] { getMin(), getMax()  };
         }
 
-        private double getMax() {
-            return signal.getMax();
+        public double getMin() {
+            return getSignal().getMin();
         }
 
+        public double getMax() {
+            return getSignal().getMax();
+        }
+
+        public Metrics getMetric() {
+            return metric;
+        }
+        
         
     }
     

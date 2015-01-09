@@ -3,8 +3,8 @@ package nars.gui.output.chart;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.Chart;
-import automenta.vivisect.timeline.Chart.MultiChart;
+import automenta.vivisect.timeline.AxisPlot;
+import automenta.vivisect.timeline.AxisPlot.MultiChart;
 import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Font;
 import java.awt.Point;
@@ -28,10 +28,10 @@ public class MeterVis extends TimelineVis {
     public class DataChart {
         
         public final SignalData data;
-        public Chart chart;
+        public AxisPlot chart;
 
         public DataChart(String id) {
-            this.data = meters.getSignalData(id);
+            this.data = meters.newSignalData(id);
             this.chart = displayedCharts.get(id);
             
             if (chart!=null)
@@ -43,7 +43,7 @@ public class MeterVis extends TimelineVis {
         }
     }
     
-    final Map<String, Chart> displayedCharts = new HashMap();
+    final Map<String, AxisPlot> displayedCharts = new HashMap();
     final Metrics meters;
     final Map<String, DataChart> charts;
     
@@ -170,7 +170,7 @@ public class MeterVis extends TimelineVis {
                         e.consume();
                         startLocation = e.getPoint();
                         oy = camera.yScale;
-                        ox = camera.timeScale;                        
+                        ox = camera.xScale;                        
                     }
                     
                 }
@@ -188,7 +188,7 @@ public class MeterVis extends TimelineVis {
                         int deltaX  = currentLocation.x - startLocation.x;
                         int deltaY  = currentLocation.y - startLocation.y;
                         camera.yScale = oy * (1.0f + (deltaY* scaleSpeed));
-                        camera.timeScale = ox * (1.0f + (deltaX * scaleSpeed));
+                        camera.xScale = ox * (1.0f + (deltaX * scaleSpeed));
                         redraw();
                         
                     }
@@ -209,8 +209,8 @@ public class MeterVis extends TimelineVis {
                     setZoom(0.2f);
                     setPanY(getHeight()+100.0f);
                     setPanX(getWidth()/2); //setPanX(getWidth()+35.0f);
-                    camera.timeScale = 10.5f;
-                    camera.yScale = 14f*10f;
+                    camera.xScale = 200;
+                    camera.yScale = 200;
                     repaint();
 
                     /*addComponentListener(new ComponentAdapter() {

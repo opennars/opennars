@@ -727,8 +727,6 @@ public class Memory implements Serializable {
             return;
         
         resource.CYCLE.start();
-        resource.CYCLE_CPU_TIME.start();
-        resource.CYCLE_RAM_USED.start();
 
         if (logic.IO_INPUTS_BUFFERED.isActive())
             logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());
@@ -755,8 +753,6 @@ public class Memory implements Serializable {
         updateTime();
         
 
-        resource.CYCLE_RAM_USED.stop();
-        resource.CYCLE_CPU_TIME.stop();
         resource.CYCLE.stop();
     }
     

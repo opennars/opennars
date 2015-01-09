@@ -21,7 +21,7 @@ import java.io.IOException;
 import nars.core.NAR;
 import nars.core.build.Default;
 import static nars.util.Number1DInputTest.randomArray;
-import nars.util.meter.data.DataSet;
+import nars.io.meter.depr.data.DataSet;
 import org.junit.Test;
 
 /**

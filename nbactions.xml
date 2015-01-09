@@ -2,7 +2,7 @@
 <actions>
         <action>
             <actionName>build</actionName>
-            <recursive>false</recursive>
+            <preAction>build-with-dependencies</preAction>
             <packagings>
                 <packaging>*</packaging>
             </packagings>

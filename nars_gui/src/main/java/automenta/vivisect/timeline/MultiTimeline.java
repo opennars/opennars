@@ -30,5 +30,5 @@ public abstract class MultiTimeline extends JPanel {
         doLayout();
     }
 
-    public abstract Chart[] getCharts(int experiment);
+    public abstract AxisPlot[] getCharts(int experiment);
 }

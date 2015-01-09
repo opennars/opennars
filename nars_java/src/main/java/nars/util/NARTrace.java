@@ -20,6 +20,7 @@ import nars.core.Events.CycleEnd;
 import nars.inference.MemoryObserver;
 import nars.io.meter.Metrics;
 import nars.io.meter.Metrics.SignalData;
+import nars.io.meter.func.BasicStatistics;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
 
@@ -51,7 +52,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
     
-    final int chartHistorySize = 5000;    
+    final int chartHistorySize = 512;    
     public final Metrics metrics = new Metrics(chartHistorySize);
     
     
@@ -62,7 +63,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
     public SignalData[] getCharts(String... names) {
         List<SignalData> l = new ArrayList(names.length);
         for (String n : names) {
-            SignalData t = metrics.getSignalData(n);
+            SignalData t = metrics.newSignalData(n);
             if (t!=null)
                 l.add(t);
         }
@@ -132,6 +133,14 @@ public class NARTrace extends MemoryObserver implements Serializable {
     public NARTrace(NAR n) {
         super(n, true);
         this.nar = n;
+        
+        metrics.addMeter(n.memory.emotion.busyMeter);
+        metrics.addMeter(n.memory.emotion.happyMeter);
+        metrics.addMeter(new BasicStatistics(metrics, n.memory.emotion.happyMeter.signalFirst().id));
+        
+        metrics.addMeter(n.memory.resource.CYCLE);
+        metrics.addMeter(n.memory.resource.CYCLE_CPU_TIME);
+        metrics.addMeter(n.memory.resource.CYCLE_RAM_USED);
     }
     
     

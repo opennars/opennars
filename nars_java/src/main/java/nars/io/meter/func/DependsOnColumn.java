@@ -5,12 +5,12 @@
  */
 package nars.io.meter.func;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import nars.io.meter.Metrics;
 import nars.io.meter.Signal;
 import nars.io.meter.FunctionMeter;
+import nars.io.meter.Meter;
 
 /**
  * @param Source Return type
@@ -22,16 +22,16 @@ abstract public class DependsOnColumn<Source extends Object,Result extends Objec
     
 
 
-    public DependsOnColumn(Metrics metrics, int sourceColumn, int numResults) {
+    public DependsOnColumn(Metrics metrics, String source, int numResults) {
         super("",numResults);
         
         int i = 0;
-        Signal src = metrics.getSignal(sourceColumn);
-        for (Signal s : getSignals())
-            s.id = getColumnID(src, i++);
+        Signal m = metrics.getSignal(source);
+        for (Signal s : signal())
+            s.id = getColumnID(m, i++);
         
         this.metrics = metrics;
-        this.sourceColumn = sourceColumn;
+        this.sourceColumn = metrics.getIndex(source);
     }
 
 //    

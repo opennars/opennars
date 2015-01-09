@@ -1,10 +1,15 @@
 package automenta.vivisect.timeline;
 
 import automenta.vivisect.Vis;
+import automenta.vivisect.swing.PCanvas;
 import com.google.common.collect.Lists;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
+import javax.swing.SwingUtilities;
 import static processing.core.PConstants.HSB;
 import processing.core.PGraphics;
 import processing.core.PGraphicsJava2D;
@@ -35,17 +40,17 @@ public class TimelineVis implements Vis {
     //display options to extract to a parameter class ----------------------------------------
     boolean showItemLabels = true;
     float textScale = 0.1f;
-    int cycleStart = 0;
-    int cycleEnd = 0;
+
     
     public PGraphics g;
     public Graphics2D g2; //for direct Swing control
+    private float chartMargin = 1;
 
     public static class Camera {
         public float camX = 0f;
         public float camY = 0f;
-        public float timeScale = 32f;
-        public float yScale = 32f;   
+        public float xScale = 100f;
+        public float yScale = 100f;   
         public long lastUpdate = 0;
     }
     
@@ -54,24 +59,26 @@ public class TimelineVis implements Vis {
     long lastUpdate = System.nanoTime();
     long lastCameraUpdate = 0;
 
-    public final List<Chart> charts;
+    public final List<AxisPlot> charts;
     //display options ----------------------------------------
 
-    public TimelineVis(List<Chart> charts) {
+    public TimelineVis(List<AxisPlot> charts) {
         this(new Camera(), charts);
     }
     
-    public TimelineVis(Camera camera, List<Chart> charts) {
+    public TimelineVis(Camera camera, List<AxisPlot> charts) {
         super();
         this.camera = camera;
         this.charts = charts;
+        
+        
     }
     
-    public TimelineVis(Chart... charts) {        
+    public TimelineVis(AxisPlot... charts) {        
         this(new Camera(), charts);
     }
     
-    public TimelineVis(Camera camera, Chart... charts) {        
+    public TimelineVis(Camera camera, AxisPlot... charts) {        
         this(camera, Lists.newCopyOnWriteArrayList(Lists.newArrayList(charts)));
     }
     
@@ -85,23 +92,185 @@ public class TimelineVis implements Vis {
         charts.clear();
     }
     
-    public void setCharts(Collection<Chart> newChartList) {
+    public void setCharts(Collection<AxisPlot> newChartList) {
         clearCharts();
         charts.addAll(newChartList);
     }
     
-    public void addChart(Chart c) {
+    public void addChart(AxisPlot c) {
         charts.add(c);
     }
 
-    public long getStart() {
-        return cycleStart;
+
+    
+    
+    public void updateNext() {
+        if (!updating) {
+            for (AxisPlot c : charts) {                
+                c.update(this);
+            }            
+        }
+        updating = true;        
+    }
+
+    @Override
+    public boolean draw(PGraphics g) {
+           
+        this.g = g;
+        this.g2 = ((PGraphicsJava2D)g).g2;
+        
+        int originalColorMode = g.colorMode;
+        g.colorMode(HSB);
+  
+        
+        lastCameraUpdate = camera.lastUpdate;
+
+        //background(0);
+        
+        g.pushMatrix();
+        g.translate(camera.camX, camera.camY);
+        g.scale(camera.xScale, camera.yScale);
+
+        float pos = chartMargin/2.0f;
+        for (AxisPlot c : charts) {            
+            g.pushMatrix();
+            g.translate(0, pos);
+            c.draw(this);         
+            g.popMatrix();
+            pos += c.height+chartMargin;
+        }
+                
+               
+        g.colorMode(originalColorMode);
+        
+
+        
+        g.popMatrix();
+
+        return true;
     }
     
-    public long getEnd() {
-        return cycleEnd;
+    public MouseAdapter newMouseDragPanScale(PCanvas p) {
+        final float scaleSpeed = 0.01f;
+        
+        return new MouseAdapter() {
+            private Point startLocation;
+            //private int startYOffset;
+            float oy, ox;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    e.consume();
+                    startLocation = e.getPoint();
+                    oy = camera.yScale;
+                    ox = camera.xScale;
+                }
+
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (startLocation == null) {
+                    return;
+                }
+
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    e.consume();
+                    Point currentLocation = e.getPoint();
+                    int deltaX = currentLocation.x - startLocation.x;
+                    int deltaY = currentLocation.y - startLocation.y;
+                    camera.yScale = oy * (1.0f + (deltaY * scaleSpeed));
+                    camera.xScale = ox * (1.0f + (deltaX * scaleSpeed));
+                    p.redraw();
+
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                startLocation = null;
+            }
+
+        };
+    }
+
+
+    public boolean isShowingItemLabels() {
+        return showItemLabels;
+    }
+
+    public float getMinLabelScale() {
+        return minLabelScale;
+    }
+
+ 
+    
+    /*
+    
+    
+     import picking.*;
+
+     Picker picker;
+     float a = 0.0;
+
+     void setup() {
+     size(200, 150, P3D);
+     picker = new Picker(this);
+     }
+
+     void draw() {
+     a += 0.01;
+
+     background(255);
+
+     picker.start(0);
+     drawBox(80, 75, 50, #ff8800);
+
+     picker.start(1);
+     drawBox(140, 75, 20, #eeee00);
+
+     picker.stop();
+
+     color c = 0;
+     int id = picker.get(mouseX, mouseY);
+     switch (id) {
+     case 0:
+     c = #ff8800;
+     break;
+     case 1:
+     c = #eeee00;
+     break;
+     }
+     drawBorder(10, c);
+     }
+
+     void drawBox(int x, int y, int w, color c) {
+     stroke(0);
+     fill(c);
+     pushMatrix();
+     translate(x, y);
+     rotateX(a); rotateY(a);
+     box(w);
+     popMatrix();
+     }
+
+     void drawBorder(int w, color c) {
+     noStroke();
+     fill(c);
+     rect(0,   0, width, w);
+     rect(0, height - w, width, w);
+     rect(0,   0, w, height);
+     rect(width - w, 0, w, height);
+     }
+     */
+
+    public float getDrawnTextScale() {
+        return drawnTextScale;
     }
     
+    
+}
 
 //    @Override
 //    public void mouseWheelMoved(MouseWheelEvent e) {
@@ -135,7 +304,6 @@ public class TimelineVis implements Vis {
     
     
     
-//
 //    protected void updateMouse() {
 //        
 //        boolean changed = false;
@@ -227,139 +395,3 @@ public class TimelineVis implements Vis {
 //        
 //        
 //    }
-    
-    public void updateNext() {
-        if (!updating) {
-            for (Chart c : charts) {
-                float h = c.height * camera.yScale;
-                c.update(this, camera.timeScale, camera.yScale);
-            }            
-        }
-        updating = true;        
-    }
-
-    @Override
-    public boolean draw(PGraphics g) {
-    
-       
-        this.g = g;
-        this.g2 = ((PGraphicsJava2D)g).g2;
-        
-        int originalColorMode = g.colorMode;
-        g.colorMode(HSB);
-        
-        //updateMouse();
-        
-        /*if (!isDisplayable() || !isVisible())
-            return true;*/
-            
-        //updateCamera();
-
-        /*if (!updating) {
-            return true;
-        }
-
-        updating = false;*/
-        
-        lastCameraUpdate = camera.lastUpdate;
-
-        //background(0);
-
-        float y = 0;
-        float yMargin = camera.yScale * 0.1f;
-        
-        cycleStart = Integer.MAX_VALUE;
-        cycleEnd = 0;
-        for (Chart c : charts) {
-            int cstart = c.getStart();
-            int cend = c.getEnd();
-            if (cstart < cycleStart) cycleStart = cstart;
-            if (cend > cycleEnd) cycleEnd = cend;
-        }
-        for (Chart c : charts) {
-            float h = c.height * camera.yScale;
-            c.draw(this, y, camera.timeScale, camera.yScale);
-            y += (h + yMargin);
-        }
-                
-               
-        g.colorMode(originalColorMode);
-        return true;
-    }
-
-
-    public boolean isShowingItemLabels() {
-        return showItemLabels;
-    }
-
-    public float getMinLabelScale() {
-        return minLabelScale;
-    }
-
-    
-    
-    /*
-    
-    
-     import picking.*;
-
-     Picker picker;
-     float a = 0.0;
-
-     void setup() {
-     size(200, 150, P3D);
-     picker = new Picker(this);
-     }
-
-     void draw() {
-     a += 0.01;
-
-     background(255);
-
-     picker.start(0);
-     drawBox(80, 75, 50, #ff8800);
-
-     picker.start(1);
-     drawBox(140, 75, 20, #eeee00);
-
-     picker.stop();
-
-     color c = 0;
-     int id = picker.get(mouseX, mouseY);
-     switch (id) {
-     case 0:
-     c = #ff8800;
-     break;
-     case 1:
-     c = #eeee00;
-     break;
-     }
-     drawBorder(10, c);
-     }
-
-     void drawBox(int x, int y, int w, color c) {
-     stroke(0);
-     fill(c);
-     pushMatrix();
-     translate(x, y);
-     rotateX(a); rotateY(a);
-     box(w);
-     popMatrix();
-     }
-
-     void drawBorder(int w, color c) {
-     noStroke();
-     fill(c);
-     rect(0,   0, width, w);
-     rect(0, height - w, width, w);
-     rect(0,   0, w, height);
-     rect(width - w, 0, w, height);
-     }
-     */
-
-    public float getDrawnTextScale() {
-        return drawnTextScale;
-    }
-    
-    
-}

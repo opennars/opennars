@@ -215,15 +215,15 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             });
             m.add(mv);
             
-            JMenuItem tlp = new JMenuItem("+ Timeline");
-            tlp.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar, trace));
-                    outputWindow.show(900, 700);        
-                }
-            });
-            m.add(tlp);
+//            JMenuItem tlp = new JMenuItem("+ Timeline");
+//            tlp.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar, trace));
+//                    outputWindow.show(900, 700);        
+//                }
+//            });
+//            m.add(tlp);
 
             m.addSeparator();
 
