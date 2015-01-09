@@ -6,6 +6,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.sound.midi.MidiSystem;
@@ -99,11 +100,11 @@ public class Art
         {
             sequencer = MidiSystem.getSequencer();
             sequencer.open();
-            songs[0] = MidiSystem.getSequence(Art.class.getResourceAsStream("res/mus/smb3map1.mid"));
-            songs[1] = MidiSystem.getSequence(Art.class.getResourceAsStream("res/mus/smwovr1.mid"));
-            songs[2] = MidiSystem.getSequence(Art.class.getResourceAsStream("res/mus/smb3undr.mid"));
-            songs[3] = MidiSystem.getSequence(Art.class.getResourceAsStream("res/mus/smwfortress.mid"));
-            songs[4] = MidiSystem.getSequence(Art.class.getResourceAsStream("res/mus/smwtitle.mid"));
+            songs[0] = MidiSystem.getSequence(new File("nars_lab/nars/nario/res//mus/smb3map1.mid"));
+            songs[1] = MidiSystem.getSequence(new File("nars_lab/nars/nario/res//mus/smwovr1.mid"));
+            songs[2] = MidiSystem.getSequence(new File("nars_lab/nars/nario/res//mus/smb3undr.mid"));
+            songs[3] = MidiSystem.getSequence(new File("nars_lab/nars/nario/res//mus/smwfortress.mid"));
+            songs[4] = MidiSystem.getSequence(new File("nars_lab/nars/nario/res//mus/smwtitle.mid"));
         }
         catch (Exception e)
         {
@@ -114,7 +115,7 @@ public class Art
 
     private static Image getImage(GraphicsConfiguration gc, String imageName) throws IOException
     {
-        BufferedImage source = ImageIO.read(Art.class.getResourceAsStream("res/" + imageName));
+        BufferedImage source = ImageIO.read(new File("nars_lab/nars/nario/res/" + imageName));
         Image image = gc.createCompatibleImage(source.getWidth(), source.getHeight(), Transparency.BITMASK);
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setComposite(AlphaComposite.Src);
