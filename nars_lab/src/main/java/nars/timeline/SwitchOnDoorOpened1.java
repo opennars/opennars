@@ -28,8 +28,6 @@ import nars.io.TextInput;
 import automenta.vivisect.timeline.TimelineVis;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
-import automenta.vivisect.timeline.StackedPercentageChart;
-import nars.gui.EventChart;
 import nars.io.TextOutput;
 import nars.util.NARTrace;
 
@@ -65,32 +63,32 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         nar.step(cycles);        
 
         
-        new NWindow("_", new PCanvas(new TimelineVis(
-                
-            new BarChart(t.getCharts( "task.executed")[0]).height(2),
-            new StackedPercentageChart(t.getCharts( "plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count")).height(3),
-            new LineChart(t.getCharts( "plan.graph.in.delay_magnitude.mean")).height(1),
-            new LineChart(t.getCharts( "plan.graph.edge.count", "plan.graph.vertex.count")).height(2),                
-            new StackedPercentageChart(t.getCharts( "plan.task.executable", "plan.task.planned")).height(2),
-            
-                
-            new EventChart(t, true, false, false).height(3),
-            new EventChart(t, false, true, false).height(3),
-            new EventChart(t, false, false, true).height(3),
-
-            //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
-            
-            new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
-            new LineChart(t.getCharts("concept.priority.mean")).height(1),
-                
-
-                
-            new LineChart(t.getCharts("task.novel.add", "task.immediate_processed")).height(3),
-            new LineChart(t.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
-            new LineChart(t.getCharts("task.new.add")).height(3)
-            //new LineChart(t.getCharts("emotion.busy").height(1)
-            
-        ))).show(800, 800, true);
+//        new NWindow("_", new PCanvas(new TimelineVis(
+//                
+//            new BarChart(t.getCharts( "task.executed")[0]).height(2),
+//            new StackedPercentageChart(t.getCharts( "plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count")).height(3),
+//            new LineChart(t.getCharts( "plan.graph.in.delay_magnitude.mean")).height(1),
+//            new LineChart(t.getCharts( "plan.graph.edge.count", "plan.graph.vertex.count")).height(2),                
+//            new StackedPercentageChart(t.getCharts( "plan.task.executable", "plan.task.planned")).height(2),
+//            
+//                
+//            new EventChart(t, true, false, false).height(3),
+//            new EventChart(t, false, true, false).height(3),
+//            new EventChart(t, false, false, true).height(3),
+//
+//            //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
+//            
+//            new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
+//            new LineChart(t.getCharts("concept.priority.mean")).height(1),
+//                
+//
+//                
+//            new LineChart(t.getCharts("task.novel.add", "task.immediate_processed")).height(3),
+//            new LineChart(t.getCharts("task.goal.process", "task.question.process", "task.judgment.process")).height(3),
+//            new LineChart(t.getCharts("task.new.add")).height(3)
+//            //new LineChart(t.getCharts("emotion.busy").height(1)
+//            
+//        ))).show(800, 800, true);
     }
     
 }

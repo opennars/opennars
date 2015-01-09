@@ -19,10 +19,15 @@ public class LineChart extends AxisPlot implements MultiChart {
     boolean showVerticalLines = false;
     boolean showPoints = true;
     float lineThickness = 0.1f;
+    final float pointWidthFactor = 2.75f; /* multiplied by linethickness */
     float borderThickness = 0.1f;
 
     private boolean specifiedRange;
     boolean xorOverlay = false;
+    private float pwf;
+    private float lx;
+    private float ly;
+    private boolean firstPoint;
 
   
 
@@ -142,68 +147,69 @@ public class LineChart extends AxisPlot implements MultiChart {
         l.g.popMatrix();
     }
 
-    protected void drawData(TimelineVis l, float width1, float height1, float y) {
+    protected void drawData(TimelineVis l, float w, float h, float y) {
 
-        int ccolor = 0;
-        float pointWidth = lineThickness * 2.75f;
                 
         int order = 0;
         for (SignalData chart : data) {
-            ccolor = getColor(chart.getSignal(), order++);
-            float lx = 0;
-            float ly = 0;
-            boolean firstPoint = false;
-            
-            l.g.stroke(ccolor);
-            l.g.fill(ccolor);
-            l.g.strokeWeight(lineThickness);
-            
-            float cs = (float)xMin();
-            Iterator<Object[]> series = chart.iteratorWith(0);
-            while (series.hasNext()) {
-                Object[] o = series.next();
-                Object ox = o[0]; //time
-                Object oy = o[1]; //value
-                if ((ox==null) || (oy==null))
-                    continue;
-                float t = ((Number)ox).floatValue();
-                float v = ((Number)oy).floatValue();
-                
-                l.g.stroke = true;
-                
-                float x = (t-cs) * width1;
-                if (Float.isNaN(v)) {
-                    continue;
-                }
-                
-                float p = (float)((max == min) ? 0 : (double) ((v - min) / (max - min)));
-                float px = width * x;
-                float h = p * height1;
-                float py = y + height1 - h;
-                                
-                if (firstPoint) {
-                    if (showVerticalLines) {
-                        l.g.line(px, py, px, py + h);
-                    }
+            drawChart(chart, order, l, w, h, y);
+        }
+    }
 
-                    if (t != xMin()) {
-                        l.g.line(lx, ly, px, py);
-                    }
-                }
-                
-                lx = px;
-                ly = py;
-                
-                firstPoint = true;
-                
-                if (showPoints) {
-                    l.g.stroke = false;                    
-                    
-                    //TODO create separate size and opacity get/set parameter for the points
-                    //l.g.fill(ccolor); //, 128f * (p * 0.5f + 0.5f));                    
-                    l.g.rect(px - pointWidth / 2f, py - pointWidth / 2f, pointWidth, pointWidth);
-                }
+    void drawChart(SignalData chart, int order, TimelineVis l, float width, float height, float y1) {
+        
+        pwf = pointWidthFactor*lineThickness;
+        
+        int ccolor;
+        ccolor = getColor(chart.getSignal(), order++);
+        lx = ly = 0;
+        firstPoint = false;
+        l.g.stroke(ccolor);
+        l.g.fill(ccolor);
+        l.g.strokeWeight(lineThickness);
+        float cs = (float)xMin();
+        Iterator<Object[]> series = chart.iteratorWith(0);
+        while (series.hasNext()) {
+            Object[] o = series.next();
+            Object ox = o[0]; //time
+            Object oy = o[1]; //value
+            if ((ox==null) || (oy==null))
+                continue;
+            float t = ((Number)ox).floatValue();
+            float v = ((Number)oy).floatValue();
+            float x = (t-cs) * width;
+            if (Float.isNaN(v)) {
+                continue;
             }
+            
+            drawPoint(l, v, width, x, height, y1, t);
+        }
+    }
+
+    void drawPoint(TimelineVis l, float v, float width1, float x1, float height1, float y1, float t) {
+        l.g.stroke = true;
+        float p = (float)((max == min) ? 0 : (double) ((v - min) / (max - min)));
+        float px = width1 * x1;
+        float h = p * height1;
+        float py = y1 + height1 - h;
+        if (firstPoint) {
+            if (showVerticalLines) {
+                l.g.line(px, py, px, py + h);
+            }
+            
+            if (t != xMin()) {
+                l.g.line(lx, ly, px, py);
+            }
+        }
+        lx = px;
+        ly = py;
+        firstPoint = true;
+        if (showPoints) {
+            l.g.stroke = false;
+            
+            //TODO create separate size and opacity get/set parameter for the points
+            //l.g.fill(ccolor); //, 128f * (p * 0.5f + 0.5f));
+            l.g.rect(px - pwf / 2f, py - pwf / 2f, pwf, pwf);
         }
     }
 

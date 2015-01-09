@@ -356,13 +356,13 @@ public class Launcher extends javax.swing.JFrame {
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
 
             new Thread(new Runnable() { @Override public void run() {
-                try {
-                    nars.predict.Predict_NARS_Core.main(new String[]{});
-                } catch (Narsese.InvalidInputException ex) {
-                    Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
-                }
+//                try {
+//                    nars.predict.Predict_NARS_Core.main(new String[]{});
+//                } catch (Narsese.InvalidInputException ex) {
+//                    Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
+//                }
             }
             }).start();
             this.dispose();

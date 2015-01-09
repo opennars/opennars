@@ -20,6 +20,7 @@ import nars.core.NAR;
 import nars.core.build.Default;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
+import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.TimelineVis;
 import automenta.vivisect.timeline.LineChart;
 import java.awt.event.MouseAdapter;
@@ -46,7 +47,7 @@ public class MultiChart1 extends TimelineExample {
         t.metrics.printCSV(System.out);
         PCanvas p;
         TimelineVis v;
-
+        
         new NWindow("_",
                 p = new PCanvas(
                         v = new TimelineVis(
@@ -54,11 +55,12 @@ public class MultiChart1 extends TimelineExample {
                                 //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
 
                                 //new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
-                                new LineChart(t.getCharts("busy")).height(10),
+                                new BarChart(t.getCharts("busy")).height(10),
                                 //new EventChart(t, false, true, false).height(3),
 
                                 new LineChart(t.getCharts("happy", "happy.mean")).height(20),
-                                new LineChart(t.getCharts("happy.max")).height(5)
+                                new LineChart(t.getCharts("happy.max")).height(5),
+                                new LineChart(t.getCharts("ram.used")).height(5)
                         //new EventChart(t, false, false, true).height(3)
                         ))).show(800, 800, true);
 
