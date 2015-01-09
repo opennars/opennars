@@ -24,8 +24,6 @@ public class Signal implements Comparable<Signal> {
     public Signal(String id, String unit) {
         this.id = id;
         this.unit = unit;
-        
-        invalidateBounds();
     }
 
     @Override
@@ -63,13 +61,13 @@ public class Signal implements Comparable<Signal> {
             min = Double.POSITIVE_INFINITY;
             max = Double.NEGATIVE_INFINITY;        
         }
-        void invalidateBounds() {
-            min = max = Double.NaN;
-        }
-
-        boolean isInvalidatedBounds() {
-            return (Double.isNaN(min));
-        }
-    
+//        void invalidateBounds() {
+//            min = max = Double.NaN;
+//        }
+//
+//        boolean isInvalidatedBounds() {
+//            return (Double.isNaN(min));
+//        }
+//    
 
 }

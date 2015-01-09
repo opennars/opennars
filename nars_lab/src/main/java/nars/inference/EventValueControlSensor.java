@@ -2,11 +2,12 @@ package nars.inference;
 
 import nars.core.NAR;
 import nars.io.meter.depr.sensor.EventValueSensor;
+import nars.io.meter.event.ValueMeter;
 
 
 public class EventValueControlSensor extends ControlSensor {
 
-    EventValueSensor e;
+    ValueMeter e;
     final NAR nar;
     final String logicSensor;
     final double adaptContrast;
@@ -14,14 +15,14 @@ public class EventValueControlSensor extends ControlSensor {
     /*default value if not exist */
     public EventValueControlSensor(NAR n, String logicSensor, int quantization, int sampleWindow, double adaptContrast) {
         super(quantization);
-        e = new EventValueSensor("_", true, sampleWindow);
+        e = new ValueMeter("_");
         this.nar = n;
         this.logicSensor = logicSensor;
         this.adaptContrast = adaptContrast;
     }
     public EventValueControlSensor(NAR n, String logicSensor, int min, int max, int quantization, int sampleWindow) {
         super(min, max, quantization);
-        e = new EventValueSensor("_", true, sampleWindow);
+        e = new ValueMeter("_");
         this.nar = n;
         this.logicSensor = logicSensor;
         this.adaptContrast = 0;
@@ -29,15 +30,15 @@ public class EventValueControlSensor extends ControlSensor {
 
     @Override
     public void update() {
-        e.commit(nar.memory.logic.d(logicSensor, 0 /*default value if not exist */ ));
+        //e.commit(nar.memory.logic.d(logicSensor, 0 /*default value if not exist */ ));
     }
 
     @Override
     public double get() {
-        double v = e.get().mean();
-        if (adaptContrast > 0) {
-            adaptContrast(adaptContrast, v);
-        }
-        return v;
+        //double v = e.signalFirst().get();
+//        if (adaptContrast > 0) {
+//            adaptContrast(adaptContrast, v);
+//        }
+        return Double.NaN;
     }
 }

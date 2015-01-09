@@ -1,3 +1,5 @@
+package nars.gui.input.image;
+
 //package nars.gui.input.image;
 //
 //import boofcv.abst.feature.detect.line.DetectLineHoughPolar;

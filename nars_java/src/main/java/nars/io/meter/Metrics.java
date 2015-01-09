@@ -18,6 +18,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -82,18 +83,21 @@ JsonSerializationContext context) {
         return new double[] { min, max };        
     }
     
+    protected void setMin(int signal, double n) {
+        getSignal(signal).setMin(n);
+    }
+    protected void setMax(int signal, double n) {
+        getSignal(signal).setMax(n);
+    }
+    
     public double getMin(int signal) {
         Signal s = getSignal(signal);
-        if (s.isInvalidatedBounds()) {
-            updateBounds(signal);
-        }
+        if (s == null) return Double.NaN;        
         return s.getMin();
     }
     public double getMax(int signal) {
         Signal s = getSignal(signal);
-        if (s.isInvalidatedBounds()) {
-            updateBounds(signal);
-        }
+        if (s == null) return Double.NaN;        
         return s.getMax();
     }
     
@@ -122,6 +126,7 @@ JsonSerializationContext context) {
         if (s == null) return null;
         return new SignalData(this, s);
     }
+
 
     /** generates the value of the first entry in each row */
     class RowKeyMeter extends FunctionMeter {
@@ -191,12 +196,14 @@ JsonSerializationContext context) {
         throw new RuntimeException("Removal not supported yet");
     }
     
-    /** key could be a time, or some other unique-like identifying value */
+    /** generate the next row.  key can be a time number, or some other unique-like identifying value */
     public <R extends RowKey> void update(R key) {
         nextRowKey = key;        
         
+        boolean[] extremaToInvalidate = new boolean[ numColumns ];
+        
         Object[] nextRow = new Object[ numColumns ];
-        append(nextRow); //append it so that any derivative columns further on can work with the most current data (in lower array indices) while the array is being formed
+        append(nextRow, extremaToInvalidate); //append it so that any derivative columns further on can work with the most current data (in lower array indices) while the array is being formed
 
         int c = 0;
         for (Meter m : meters) {
@@ -211,22 +218,54 @@ JsonSerializationContext context) {
             c += vl; 
         }
         
-        //invalidate min/max for each column
-        /*for (Signal s : getSignals()) {
-            s.invalidateBounds();
-        }*/
-        
+        invalidateExtrema(true, nextRow, extremaToInvalidate);
+   
         for (int i = 0; i < getSignals().size(); i++) {
-            updateBounds(i);
+            if (extremaToInvalidate[i])
+                updateBounds(i);
         }
         
     }
     
-    protected void append(Object[] next) {
+    private void invalidateExtrema(boolean added, Object[] row, boolean[] extremaToInvalidate) {
+        for (int i = 0; i < row.length; i++) {
+            Object ri = row[i];
+            if (ri == null || !(ri instanceof Number)) continue;
+            
+            double n = ((Number)row[i]).doubleValue();
+            if (Double.isNaN(n)) continue;
+            
+            double min = getMin(i);
+            double max = getMax(i);
+            
+            boolean minNAN = Double.isNaN(min);
+            boolean maxNAN = Double.isNaN(max);
+            
+            if (added) {
+                //for rows which have been added
+                if (minNAN || (n < min))  {                     
+                    setMin(i, n);
+                }
+                if (maxNAN || (n > max))  { 
+                    setMax(i, n);
+                }
+            }
+            else {
+                //for rows which have been removed
+                if (minNAN || (n == min))  { extremaToInvalidate[i] = true; continue; }
+                if (maxNAN || (n == max))  { extremaToInvalidate[i] = true; continue; }                
+            }
+                
+        }
+    }
+    
+    
+    protected void append(Object[] next, boolean[] invalidatedExtrema) {
         if (next==null) return;        
         
         while (rows.size() >= history) {
             Object[] prev = rows.removeFirst();
+            invalidateExtrema(false, prev, invalidatedExtrema);
         }
         
         rows.addLast(next);     
@@ -322,19 +361,26 @@ JsonSerializationContext context) {
     }
     
     public Iterator<Object[]> iterator(final int... columns) {
+        if (columns.length == 1) {
+            //fast 1-argument
+            return Iterators.transform(iterator(), new Function<Object[], Object[]>() {
+                Object[] next = new Object[1];
+                final int thecolumn = columns[0];
+
+                @Override public Object[] apply(Object[] f) {
+                    next[0] = f[thecolumn];
+                    return next;
+                }            
+            });           
+        }
+                
         return Iterators.transform(iterator(), new Function<Object[], Object[]>() {
 
             Object[] next = new Object[columns.length];
 
             @Override
             public Object[] apply(Object[] f) {
-                
-                if (columns.length == 1) {
-                    //fast 1-argument
-                    next[0] = f[columns[0]];
-                    return next;
-                }
-                
+                                
                 int j = 0;
                 for (int c : columns) {
                     next[j++] = f[c];

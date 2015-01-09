@@ -26,6 +26,7 @@ import automenta.vivisect.timeline.TimelineVis;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import nars.gui.output.chart.MeterVis;
 import nars.io.meter.SignalData;
 import nars.util.NARTrace;
 
@@ -35,7 +36,7 @@ import nars.util.NARTrace;
 public class NARTraceCharts extends TimelineExample {
 
     public static void main(String[] args) {
-        int cycles = 1500;
+        int cycles = 500;
 
         NAR nar = new NAR(new Default());
         NARTrace t = new NARTrace(nar);
@@ -49,26 +50,12 @@ public class NARTraceCharts extends TimelineExample {
 
         System.out.println(t.metrics.getSignals());
         //t.metrics.printCSV(System.out);
-        
-        
-        
-        List<AxisPlot> c = new ArrayList();
-        List<SignalData> signals = t.getCharts();
-        for (SignalData s : signals) {
-            c.add(new LineChart(s).height(10));
-        }
 
-        PCanvas p;
-        TimelineVis v;
-        
-        new NWindow("_",
-                p = new PCanvas(
-                        v = new TimelineVis(c))).show(800, 800, true);
+        nar.start(100);
 
-        final MouseAdapter m = v.newMouseDragPanScale(p);
-        p.addMouseMotionListener(m);
-        p.addMouseListener(m);
-        
+        new NWindow("_", 
+                new MeterVis(nar,t.metrics,null).newPanel()).show(800, 800, true);
+
     }
 
 }

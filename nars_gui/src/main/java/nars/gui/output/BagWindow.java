@@ -1,3 +1,5 @@
+package nars.gui.output;
+
 ///*
 // * BagWindow.java
 // *

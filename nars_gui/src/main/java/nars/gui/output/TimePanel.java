@@ -1,3 +1,5 @@
+package nars.gui.output;
+
 //package nars.gui.output;
 //
 //import java.awt.Dimension;

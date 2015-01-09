@@ -6,6 +6,8 @@
 package nars.io.meter;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +38,15 @@ public class TemporalMetrics<O extends Object> extends Metrics<Double,O> {
                 } 
             }
         }
+    }
+
+    public List<SignalData> getSignalDatas() {
+        List<SignalData> l = new ArrayList();
+        
+        for (Signal sv : getSignals()) {            
+            l.add( newSignalData(sv.id) );
+        }
+        return l;
     }
 
     

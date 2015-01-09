@@ -14,6 +14,7 @@ import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.UP;
 import processing.core.PFont;
+import processing.core.PGraphics;
 import processing.event.MouseEvent;
 
 /**
@@ -31,6 +32,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
     float selection_distance = 10;
     float FrameRate = 25f;
 
+    boolean lowQuality = false;
+    
     boolean drawn = false;
     float motionBlur = 0.0f;
     private final Vis vis;
@@ -52,6 +55,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
     public static PFont font12;
     public static PFont font9;
     public static PFont font15;
+    private PGraphics b;
 
     public PCanvas() {
         this(null);
@@ -65,6 +69,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
         super();
         this.FrameRate = frameRate;
         init();
+
         
         //hint(ENABLE_NATIVE_FONTS);
         hint(ENABLE_OPTIMIZED_STROKE);
@@ -143,26 +148,51 @@ public class PCanvas extends PApplet implements HierarchyListener {
         super.mousePressed();
     }
 
+    public void setLowQuality(boolean lowQuality) {
+        this.lowQuality = lowQuality;
+    }
+
+    public void predraw() {
+        
+        if ((b!=null) && (b.width != getWidth() || b.height != getHeight())) {
+            b.dispose();
+            b = null;
+        }
+        if (b == null) {
+            b = createGraphics(getWidth(), getHeight(), JAVA2D);
+        }
+        
+        b.beginDraw();
+        
+        if (lowQuality)
+            b.noSmooth();
+        else
+            b.smooth();
+
+        b.strokeJoin(MITER);
+        b.strokeCap(PROJECT);        
+        
+        if (motionBlur > 0) {
+            b.fill(0, 0, 0, 255f * (1.0f - motionBlur));
+            b.rect(0, 0, getWidth(), getHeight());
+        } else {
+            b.background(0, 0, 0);//, 0.001f);
+        }
+        
+        
+        hnav.applyTransform(b);
+                
+        vis.draw(b);
+        
+        b.endDraw();
+    }
+    
     @Override
     public void draw() {
         
-
-        if (drawn) {
-            return;
+        if (b!=null) {
+            image(b, 0, 0);
         }
-
-        drawn = false;
-
-        if (motionBlur > 0) {
-            fill(0, 0, 0, 255f * (1.0f - motionBlur));
-            rect(0, 0, getWidth(), getHeight());
-        } else {
-            background(0, 0, 0);//, 0.001f);
-        }
-
-        
-        hnav.applyTransform();
-        vis.draw(g);
     }
 
     public void setMotionBlur(float motionBlur) {
@@ -368,9 +398,9 @@ public class PCanvas extends PApplet implements HierarchyListener {
             drawn = false;
         }
 
-        void applyTransform() {
-            translate(difx + 0.5f * width, dify + 0.5f * height);
-            scale(zoom, zoom);
+        void applyTransform(PGraphics g) {
+            g.translate(difx + 0.5f * width, dify + 0.5f * height);
+            g.scale(zoom, zoom);
         }
     }
 

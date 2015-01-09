@@ -92,13 +92,14 @@ public class LineChart extends AxisPlot implements MultiChart {
         
         l.g.stroke(127);
         l.g.strokeWeight(borderThickness);
-        
+       
         float range = (float)(xMax() - xMin());
         
         //bottom line
         l.g.line(0, y + plotHeight, plotWidth * range * plotWidth, y + plotHeight);
         //top line
         l.g.line(0, y, plotWidth * range * plotWidth, y);
+        
         
         drawData(l, plotWidth, plotHeight, y);
         

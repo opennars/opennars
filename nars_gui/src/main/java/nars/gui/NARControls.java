@@ -63,7 +63,6 @@ import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
 import nars.gui.output.NARFacePanel;
-import nars.gui.output.TimelinePanel;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
@@ -130,7 +129,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
      * @param title
      */
     public NARControls(final NAR nar) {
-        this(nar, null);
+        this(nar, new NARTrace(nar));
     }
     
     public NARControls(final NAR nar, final NARTrace trace) {
@@ -470,7 +469,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 //        senses.update(memory);        
         
         add(top, NORTH);
-        add(new MeterVis(nar, trace.getMetrics(), 128).newPanel(), CENTER);
+        add(new MeterVis(nar, trace.getMetrics()).newPanel(), CENTER);
         
         
         init();

@@ -121,7 +121,6 @@ public class TimelineVis implements Vis {
         
         int originalColorMode = g.colorMode;
         g.colorMode(HSB);
-  
         
         lastCameraUpdate = camera.lastUpdate;
 
@@ -142,11 +141,9 @@ public class TimelineVis implements Vis {
                 
                
         g.colorMode(originalColorMode);
-        
-
-        
+                
         g.popMatrix();
-
+        
         return true;
     }
     

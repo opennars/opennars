@@ -133,7 +133,8 @@ public class TestQController {
             //return conceptPriority;
             // + conceptNewMean;
             
-            return conceptNewMean + taskDerivedMean + 1* nar.memory.logic.d("task.solution.best");            
+            return 0;
+            //return conceptNewMean + taskDerivedMean + 1* nar.memory.logic.d("task.solution.best");            
         }
 
 

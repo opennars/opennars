@@ -20,7 +20,6 @@ public abstract class AxisPlot {
     float y = 0;
     float x = 0;
 
-
     public interface MultiChart {
         public List<SignalData> getData();
     }

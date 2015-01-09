@@ -15,7 +15,6 @@ public abstract class AbstractController implements EventEmitter.EventObserver {
     public AbstractController(NAR n, int period) {
         this.nar = n;
         this.period = period;
-        nar.memory.logic.setActive(true);
         start();
     }
     /** read sensor values as input */
@@ -35,7 +34,6 @@ public abstract class AbstractController implements EventEmitter.EventObserver {
     public void event(final Class event, final Object... arguments) {
         //TODO use relative time (not modulo) for non-sequence time modes
         long cycle = nar.time();
-        nar.memory.logic.update(nar.memory);
         getSensors();
         if (cycle % period == (period - 1)) {
             setParameters();

@@ -18,9 +18,7 @@ import nars.core.Events;
 import nars.core.Events.ConceptNew;
 import nars.core.Events.CycleEnd;
 import nars.inference.MemoryObserver;
-import nars.io.meter.Metrics;
 import nars.io.meter.SignalData;
-import nars.io.meter.Signal;
 import nars.io.meter.TemporalMetrics;
 import nars.io.meter.func.BasicStatistics;
 import nars.io.meter.func.FirstOrderDifference;
@@ -54,9 +52,8 @@ public class NARTrace extends MemoryObserver implements Serializable {
     
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
-    
-    final int chartHistorySize = 512;    
-    public final TemporalMetrics<Object> metrics = new TemporalMetrics(chartHistorySize);
+        
+    public final TemporalMetrics<Object> metrics;
     
     
 
@@ -72,13 +69,9 @@ public class NARTrace extends MemoryObserver implements Serializable {
         }
         return l.toArray(new SignalData[l.size()]);
     }
+    
     public List<SignalData> getCharts() {
-        List<SignalData> l = new ArrayList();
-        
-        for (Signal sv : metrics.getSignals()) {            
-            l.add( metrics.newSignalData(sv.id) );
-        }
-        return l;
+        return metrics.getSignalDatas();
     }    
 
 
@@ -142,8 +135,14 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     
     public NARTrace(NAR n) {
+        this(n, 64);
+    }
+    
+    public NARTrace(NAR n, int metricsHistoryLength) {
         super(n, true);
         this.nar = n;
+    
+        metrics = new TemporalMetrics(metricsHistoryLength);
         
         metrics.addMeters(n.memory.emotion);
         
@@ -199,7 +198,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         this.concept.put(concept, lc);
     }
 
-    public Metrics getMetrics() {
+    public TemporalMetrics getMetrics() {
         return metrics;
     }
 
