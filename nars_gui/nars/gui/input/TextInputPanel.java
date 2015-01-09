@@ -418,6 +418,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
         add(centerPanel, BorderLayout.CENTER);
         add(menu, BorderLayout.SOUTH);
+        menu.setVisible(true);
 
     }
 
