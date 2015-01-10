@@ -195,6 +195,7 @@ public class NARPrologMirror extends AbstractObserver {
         else if (s.isQuestion()) {
 
             //System.err.println("question: " + s);
+            onQuestion(s);
             
             float priority = task.getPriority();
             float solveTime = ((maxSolveTime-baseSolveTime) * priority) + baseSolveTime;
@@ -462,16 +463,18 @@ public class NARPrologMirror extends AbstractObserver {
     }
     
     /** reflect a result to NARS, and remember it so that it doesn't get reprocessed here later */
-    public void answer(Task question, Term t, nars.prolog.Term pt) {
+    public Term answer(Task question, Term t, nars.prolog.Term pt) {
         if (reportAnswers)
             System.err.println("Prolog answer: " + t);
         
-
-        
         Task a = getBeliefTask(question.sentence, t, question);
-        nar.memory.inputTask(a);            
+        
+        nar.memory.inputTask(a);
+        
         if (pt!=null)
             beliefs.put(question.sentence, pt);
+        
+        return t;
     }
 
     /*
@@ -525,6 +528,9 @@ public class NARPrologMirror extends AbstractObserver {
     
     public Theory getTheory(Map<Sentence, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
         return new Theory(new Struct(beliefMap.values().toArray(new Struct[beliefMap.size()])));
+    }
+
+    protected void onQuestion(Sentence s) {
     }
 
     

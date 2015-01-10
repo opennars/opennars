@@ -98,6 +98,9 @@ public class DrawPhy2D extends DebugDraw {
         
         graphics = panel.getDBGraphics();        
 
+        
+        
+        
         for (LayerDraw l : layers) l.drawGround(this, w);
         
         int flags = getFlags();
@@ -285,6 +288,7 @@ public class DrawPhy2D extends DebugDraw {
                 assert (vertexCount <= Settings.maxPolygonVertices);
                 Vec2[] vertices = tlvertices.get(Settings.maxPolygonVertices);
 
+                
                 for (int i = 0; i < vertexCount; ++i) {
                     // vertices[i] = Mul(xf, poly.m_vertices[i]);
                     Transform.mulToOutUnsafe(xf, poly.m_vertices[i], vertices[i]);
@@ -554,17 +558,19 @@ public class DrawPhy2D extends DebugDraw {
     public void drawSolidRect(float px, float py, float w, float h, float r, float G, float b) {
         Graphics2D g = getGraphics();
         //saveState(g);
-        
+                
         getWorldToScreenToOut(px, py, temp);
         int ipx = (int)temp.x;  int ipy = (int)temp.y;
         getWorldToScreenToOut(px+w, py+h, temp);
+        
         int jpx = (int)temp.x;  int jpy = (int)temp.y;
-        int iw = jpx - ipx;
-        int ih = -(jpy - ipy);
+        int iw = Math.abs(jpx - ipx);
+        int ih = Math.abs(jpy - ipy);
           
 //        if ((ipy/2 > g.getDeviceConfiguration().getBounds().getHeight()) ||
 //                (ipx/2 > g.getDeviceConfiguration().getBounds().getWidth()))
 //                    return;
+        
         g.setColor(new Color(r, G, b));
         g.fillRect(ipx-iw/2, ipy-ih/2, iw, ih);
 
@@ -599,6 +605,7 @@ public class DrawPhy2D extends DebugDraw {
     public void drawPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
         Color s = strokeColor; //new Color(color.x, color.y, color.z, 1f);
         Graphics2D g = getGraphics();
+        
         //saveState(g);
         int[] xInts = xIntsPool.get(vertexCount);
         int[] yInts = yIntsPool.get(vertexCount);

@@ -40,25 +40,29 @@ public class PhysicsCamera {
   private final Vec2 initPosition = new Vec2();
   private float initScale;
 
-  private final IViewportTransform transform;
+  private final OBBViewportTransform transform;
 
   private final Mat22 upScale;
   private final Mat22 downScale;
   float targetScale, scale;
 
+    public float getTargetScale() {
+        return targetScale;
+    }
+
+  
   public PhysicsCamera(Vec2 initPosition, float initScale, float zoomScaleDiff) {
     Preconditions.checkArgument(zoomScaleDiff > 0, "Zoom scale %d must be > 0", zoomScaleDiff);
     
-    this.scale = targetScale = 10f;
-    
     this.transform = new OBBViewportTransform();
     this.targetTransform = new OBBViewportTransform();
+    this.targetScale = initScale;
     
     transform.setCamera(initPosition.x, initPosition.y, initScale);
     targetTransform.setCamera(initPosition.x, initPosition.y, initScale);
         
-    this.initPosition.set(initPosition);
-    this.initScale = initScale;
+    //this.initPosition.set(initPosition);
+    //this.initScale = initScale;
     upScale = Mat22.createScaleTransform(1 + zoomScaleDiff);
     downScale = Mat22.createScaleTransform(1 - zoomScaleDiff);
   }
@@ -67,7 +71,7 @@ public class PhysicsCamera {
    * Resets the camera to the initial position
    */
   public void reset() {
-    setCamera(initPosition, initScale);
+    //setCamera(initPosition, initScale);
   }
 
   /**
@@ -90,6 +94,7 @@ public class PhysicsCamera {
       float tx = targetTransform.getCenter().x;
       float ty = targetTransform.getCenter().y;
       float ts = targetScale;
+      
       transform.setCamera( x * m + tx * n , y * m + ty * n, s * ms + ts * ns);
   }
 
@@ -108,7 +113,7 @@ public class PhysicsCamera {
    */
   public void zoomToPoint(Vec2 screenPosition, ZoomType zoomType) {
     //Mat22 zoom;
-    float scaleRate = 50f;
+    float scaleRate = 1f;
     switch (zoomType) {
       case ZOOM_IN:
         //zoom = upScale;
@@ -148,7 +153,7 @@ public class PhysicsCamera {
    */
   public void moveWorld(Vec2 screenDiff) {
     targetTransform.getScreenVectorToWorld(screenDiff, worldDiff);
-    if (!targetTransform.isYFlip()) {
+    if (targetTransform.isYFlip()) {
       worldDiff.y = -worldDiff.y;
     }
     targetTransform.setCenter(targetTransform.getCenter().addLocal(worldDiff));

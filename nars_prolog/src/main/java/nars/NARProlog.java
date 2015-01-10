@@ -41,7 +41,19 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
     }
     
     public NARProlog loadNAL() throws InvalidTheoryException {
-        addTheory(getNALTheory());
+    /*    addTheory(getNALTheory());
+    private static Theory nalTheory;
+    static {
+        try {
+            nalTheory = new Theory(PrologContext.class.getResourceAsStream("../nal.pl"));
+        } catch (IOException ex) {
+            nalTheory = null;
+            Logger.getLogger(NARProlog.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }        
+    }
+    public static Theory getNALTheory() { return nalTheory; }
+    */
         return this;
     }
     
@@ -77,21 +89,6 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
                 */
         
     }
-
-    
-    private static Theory nalTheory;
-    static {
-        try {
-            nalTheory = new Theory(PrologContext.class.getResourceAsStream("../nal.pl"));
-        } catch (IOException ex) {
-            nalTheory = null;
-            Logger.getLogger(NARProlog.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(1);
-        }        
-    }
-    
-    public static Theory getNALTheory() { return nalTheory; }
-
     
 //    public static void main(String[] args) throws Exception {
 //        NAR nar = new DefaultNARBuilder().build();

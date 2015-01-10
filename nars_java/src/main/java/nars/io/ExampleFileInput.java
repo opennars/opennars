@@ -4,11 +4,14 @@
  */
 package nars.io;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,6 +34,18 @@ public class ExampleFileInput extends TextInput {
         }
         return sb.toString();
     }
+
+    public static Iterable<String> getUnitTestPaths() {
+        Collection<Object> v = getUnitTests().values();
+        return Iterables.transform(v, new Function<Object, String>() {
+
+            @Override
+            public String apply(Object f) {
+                return (String)((Object[])f)[0];
+            }
+            
+        });
+    }
     
     /** narsese source code, one instruction per line */
     private final String source;
@@ -41,10 +56,16 @@ public class ExampleFileInput extends TextInput {
     }
     
     public static ExampleFileInput get(String id) throws Exception {
-        return new ExampleFileInput(load(getExamplePath(id) +".nal"));
+        if (!id.endsWith(".nal"))
+            id = id + ".nal";
+
+        String path = getExamplePath(id);
+                
+        return new ExampleFileInput(load(path));
     }
     
     public static String getExamplePath(String path) {
+        if (path.startsWith("/")) return path; //dont modify, it's already absolute
         return "../nal/" + path;
     }
     
@@ -54,9 +75,7 @@ public class ExampleFileInput extends TextInput {
     
     public static Map<String,Object> getUnitTests() {
         Map<String,Object> l = new TreeMap();
-        
-        System.out.println("CWD: " + new File("./").getAbsolutePath());
-        
+                
         final String[] directories = new String[] { "test", "Examples/DecisionMaking", "Examples/ClassicalConditioning" };
         
         for (String dir : directories ) {

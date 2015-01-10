@@ -123,6 +123,7 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
             
             float h = c.height;
             
+            
             switch (c.material) {
                 case DirtFloor:                                        
                     draw.drawSolidRect(px, py, cw, ch, 0.5f,c.height*0.01f, c.height*0.01f);

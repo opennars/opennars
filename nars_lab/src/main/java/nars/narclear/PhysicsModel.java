@@ -384,9 +384,15 @@ public abstract class PhysicsModel implements ContactListener {
     m_world.step(timeStep, settings.getSetting(TestbedSettings.VelocityIterations).value,
         settings.getSetting(TestbedSettings.PositionIterations).value);
 
-    //m_world.drawDebugData();
+      //m_world.drawDebugData();
+      Vec2 cc = getCamera().getTransform().getCenter();
+      
+      
+    
+    ((DrawPhy2D)debugDraw).getViewportTranform().setCamera(cc.x, cc.y, getCamera().getTargetScale());
+ 
     ((DrawPhy2D)debugDraw).draw(m_world);
-
+    
     if (timeStep > 0f) {
       ++stepCount;
     }
@@ -526,9 +532,11 @@ public abstract class PhysicsModel implements ContactListener {
       beginBombSpawn(p);
     }
 
+    
     if (button == MOUSE_JOINT_BUTTON) {
-      spawnMouseJoint(p);
+        spawnMouseJoint(p);
     }
+    System.out.println("mouse down: " + mouseJoint + " " + button);                    
   }
 
   public void mouseMove(Vec2 p) {
@@ -537,6 +545,7 @@ public abstract class PhysicsModel implements ContactListener {
 
   public void mouseDrag(Vec2 p, int button) {
     mouseWorld.set(p);
+
     if (button == MOUSE_JOINT_BUTTON) {
       updateMouseJoint(p);
     }
@@ -557,7 +566,9 @@ public abstract class PhysicsModel implements ContactListener {
     queryAABB.lowerBound.set(p.x - .001f, p.y - .001f);
     queryAABB.upperBound.set(p.x + .001f, p.y + .001f);
     callback.point.set(p);
+    
     callback.fixture = null;
+    
     m_world.queryAABB(callback, queryAABB);
 
     if (callback.fixture != null) {
@@ -574,6 +585,7 @@ public abstract class PhysicsModel implements ContactListener {
   }
 
   private void updateMouseJoint(Vec2 target) {
+      
     if (mouseJoint != null) {
       mouseJoint.setTarget(target);
     }

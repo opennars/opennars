@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import nars.NARPrologMirror;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Neuromorphic;
 import nars.entity.Task;
+import nars.gui.NARSwing;
 import nars.language.Term;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
@@ -352,23 +354,38 @@ public class Rover2 extends PhysicsModel {
     public static void main(String[] args) {
         Parameters.DEBUG = true;
         Parameters.THREADS = 1;
+        
+        NARSwing.themeInvert();
 
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = new NAR(new Neuromorphic(16).setConceptBagSize(1000).setSubconceptBagSize(2000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagLevels(10).simulationTime());
+        NAR nar = new NAR(new Neuromorphic(16).setConceptBagSize(2000).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagLevels(10).simulationTime());
                 
+        new NARPrologMirror(nar, 0.5f, true) {
+
+            @Override
+            public Term answer(Task question, Term t, nars.prolog.Term pt) {
+                
+                Term xt = super.answer(question, t, pt);
+                if (xt!=null)
+                    System.out.println(pt);
+                return xt;
+            }
+            
+        }.temporal(false, true);      
         
         
 
         float framesPerSecond = 30f;
         int cyclesPerFrame = 4; //was 200        
         (nar.param).noiseLevel.set(0);
-        (nar.param).duration.set(cyclesPerFrame*2);
+        (nar.param).duration.set(cyclesPerFrame*1);
         (nar.param).conceptForgetDurations.set(5f);
         (nar.param).taskLinkForgetDurations.set(10f);
         (nar.param).termLinkForgetDurations.set(25f);
         (nar.param).novelTaskForgetDurations.set(5f);
+        
         Rover2 theRover;
 
         //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
