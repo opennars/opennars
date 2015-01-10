@@ -163,8 +163,8 @@ public class Concept extends Item<Term> implements Termable {
 
     @Override public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Concept)) return false;
-        return ((Concept)obj).name().equals(name());
+        if (!(obj instanceof Termable)) return false;
+        return ((Termable)obj).getTerm().name().equals(name());
     }
 
     @Override public int hashCode() { return name().hashCode();     }
@@ -309,31 +309,18 @@ public class Concept extends Item<Term> implements Termable {
      * Returns true if the Task has a Term which can be executed
      */
     public boolean executeDecision(final Task t) {
+        
+            if ((term instanceof Operation) && (t.sentence.getOccurenceTime()==Stamp.ETERNAL || t.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) && isDesired()) {
 
-        if (isDesired()) {
+            Operation op=(Operation)term;
+            Operator oper = op.getOperator();
 
-            Term content = term;
-
-            if(content instanceof Operation) {
-
-                System.out.println("decision accepted: " + t);
-
-                Operation op=(Operation)content;
-                Operator oper = op.getOperator();
-
-                op.setTask(t);
-                if(!oper.call(op, memory)) {
-                    return false;
-                }
-
-                return true;
+            op.setTask(t);
+            if(!oper.call(op, memory)) {
+                return false;
             }
-            else {
-                System.out.println("decision rejected: not operation " + t);
-            }
-        }
-        else {
-            System.out.println("decision rejected: " + t);
+
+            return true;
         }
         
         return false;
@@ -380,11 +367,11 @@ public class Concept extends Item<Term> implements Termable {
 
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
-                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
+                
                     if(!executeDecision(task)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
-                }
+                
             }
         }
     }

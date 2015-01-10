@@ -348,16 +348,16 @@ public class Rover2 extends PhysicsModel {
 
     public static void main(String[] args) {
         Parameters.DEBUG = false;
-        Parameters.THREADS = 1;
+        Parameters.THREADS = 2;
         
         NARSwing.themeInvert();
 
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(1000).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
+        NAR nar = new NAR(new Neuromorphic(8).setConceptBagSize(1000).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
                 
-        new NARPrologMirror(nar, 0.35f, true) {
+        new NARPrologMirror(nar, 0.60f, true) {
 
             @Override
             protected void onQuestion(Sentence s) {

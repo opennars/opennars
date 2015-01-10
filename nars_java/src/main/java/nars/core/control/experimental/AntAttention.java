@@ -6,8 +6,11 @@ package nars.core.control.experimental;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.FireConcept;
@@ -17,10 +20,10 @@ import nars.entity.ConceptBuilder;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.TLink;
-import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
+import nars.language.Terms.Termable;
 import nars.util.XORShiftRandom;
 
 /**
@@ -32,6 +35,9 @@ public class AntAttention extends WaveAttention {
     public final Random random = new XORShiftRandom();
 
     public final Deque<Ant> ants = new ArrayDeque();
+    
+    /** prevents Ants from moving to a concept in which another Ant occupies */
+    public final ConcurrentHashMap<Term,Ant> occupied = new ConcurrentHashMap();
     
     float cycleSpeed;
     float conceptVisitDelivery;
@@ -67,7 +73,9 @@ public class AntAttention extends WaveAttention {
         }
         
         //System.out.println(ants);
-        System.out.println(run.size() + "[" + newTasks + "|" + novelTasks + "] " + run);
+        System.out.println(run.size() + "[" + newTasks + "|" + novelTasks + "] " +
+                occupied.size() + " " + ensureAntsOccupyUniqueConcepts() );
+                //run);
         
             
         
@@ -82,6 +90,21 @@ public class AntAttention extends WaveAttention {
             immediate.add(c);
         }*/
         return c;
+    }
+
+    public boolean ensureAntsOccupyUniqueConcepts() {
+        int numConcepts = occupied.size();
+        int uniqueOccupants = new HashSet(occupied.values()).size();
+        boolean fair = numConcepts == uniqueOccupants;
+        if (!fair) {
+            System.err.println("occupied concepts = " + numConcepts + ", unique registered ants = " + uniqueOccupants + ", total ants = " + ants.size());
+            for (Map.Entry<Term, Ant> e : occupied.entrySet()) {
+                System.err.println(e.getValue() + " @ " + e.getKey());
+            }
+            System.err.println(occupied);
+            throw new RuntimeException("Ants violated occupation rules");
+        }
+        return true;
     }
     
     
@@ -114,19 +137,53 @@ public class AntAttention extends WaveAttention {
             this.speed = speed;                        
         }
                 
-        void randomConcept(List<Runnable> queue) {
+        void goRandomConcept(List<Runnable> queue) {
             
+            if (concept!=null)
+                occupied.remove(concept.getTerm());            
             
             concept = null;
             link = null;
-            
-            Concept c = concepts.takeNext();
-            
-            if (c == null) {
+
+            //check if there are enough remaining concepts to transition to */
+            if (concepts.size() - occupied.size() - 1 /* an extra one to include this concept) */ <= 0)
                 return;
+            
+            Concept c = null;
+            
+            synchronized (occupied) {
+                
+                boolean validDestination = false;
+                
+                do {
+                    
+                    c = concepts.takeNext();
+
+                    if (c == null)
+                        return;
+                    
+                    if (c == concept) { 
+                        //no need to move to self
+                    }
+                    else {
+                        Ant occupier = occupied.get(c.getTerm());
+                        if ((occupier!=null) || (occupier==this)) {
+                            //occupied, or it's me
+                        }           
+                        else {
+                            validDestination = true;
+                        }
+                    }
+                
+                    concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
+
+                } while (!validDestination);
+                        
+
+              
+                occupied.put(c.getTerm(), this);
+                
             }
-                                    
-            concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
             
             
             concept = c;
@@ -166,7 +223,7 @@ public class AntAttention extends WaveAttention {
                 
             }
             else {
-                randomConcept(queue);                
+                goRandomConcept(queue);                
             }
             
         }
@@ -256,7 +313,7 @@ public class AntAttention extends WaveAttention {
             concept = c;
             
             if ((c == null) || ((!allowLoops) && previous.equals(c)))  {
-                randomConcept(queue);
+                goRandomConcept(queue);
                 return;                
             }
                         
@@ -267,21 +324,26 @@ public class AntAttention extends WaveAttention {
         
         void leaveConcept(TLink viaLink, List<Runnable> queue) {
             if (viaLink == null) {
-                randomConcept(queue);
+                goRandomConcept(queue);
                 return;
             }
             
-            if (viaLink instanceof TermLink) {
-                concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);                               
-            }
-            else if (viaLink instanceof TaskLink) {
-                concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);        
-            }
+            if (viaLink!=null) {
+                if (viaLink instanceof TermLink) {
+                    concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);                               
+                }
+                else if (viaLink instanceof TaskLink) {
+                    concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);        
+                }
             
-            eta = viaLink.getPriority();
-            link = viaLink;
+                eta = viaLink.getPriority();
+                link = viaLink;
+                viaLink = null;
+            }
                         
-            concept = getConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f));
+            
+            if (viaLink == null || (goNextConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f)) == null))
+                return;
             
             onLink(link, eta, queue);
         }
@@ -290,15 +352,23 @@ public class AntAttention extends WaveAttention {
             return (float)(speed * conceptVisitDelivery);
         }                
         
-        protected Concept getConcept(Object x, BudgetValue delivery) {
-            if (x instanceof Term) {
-                return conceptualize(delivery, (Term)x, false);
+        protected Concept goNextConcept(Termable x, BudgetValue delivery) {
+            Term ct = x.getTerm();
+            
+            synchronized (occupied) {
+                if (concept!=null)
+                    occupied.remove(concept.getTerm());
+
+                if (occupied.containsKey(ct)) {
+                    return concept = null;
+                }
+
+                Concept nextC = conceptualize(delivery, ct, false);
+                                
+                occupied.put(nextC.getTerm(), this);
+                
+                return concept = nextC;
             }
-            else if (x instanceof Task) {
-                Task t = (Task)x;
-                return conceptualize(delivery, t.getTerm(), false);
-            }
-            return null;
         }
 
         @Override

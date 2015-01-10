@@ -1,6 +1,8 @@
 package nars.entity;
 
-public interface TLink<T> {
+import nars.language.Terms.Termable;
+
+public interface TLink<T extends Termable> {
 
     public short getIndex(final int i);
     
