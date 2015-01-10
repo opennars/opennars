@@ -296,6 +296,10 @@ public class NAR implements Runnable, TaskSource {
     public int getCyclesPerFrame() {
         return cyclesPerFrame;
     }
+
+    public void setCyclesPerFrame(int cyclesPerFrame) {
+        this.cyclesPerFrame = cyclesPerFrame;
+    }
     
     final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
         private long creationTime = -1;
@@ -505,12 +509,21 @@ public class NAR implements Runnable, TaskSource {
         
         while (running && !stopped) {      
             
+            long preFrame = System.currentTimeMillis();
+            
             frame();
+            
+            long postFrame = System.currentTimeMillis();
                         
             if (minCyclePeriodMS > 0) {
-                try {
-                    Thread.sleep(minCyclePeriodMS);
-                } catch (InterruptedException e) { }
+                
+                long frameTime = postFrame - preFrame;
+                long remainingTime = minCyclePeriodMS - frameTime;
+                if (remainingTime > 0) {
+                    try {
+                        Thread.sleep(minCyclePeriodMS);
+                    } catch (InterruptedException e) { }
+                }                
             }
             else if (threadYield) {
                 Thread.yield();
@@ -642,10 +655,6 @@ public class NAR implements Runnable, TaskSource {
                                 frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
             }
         }
-    }
-    
-    protected long getSimulationTimeCyclesPerFrame() {
-        return minCyclePeriodMS;
     }
 
     @Override

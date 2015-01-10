@@ -348,17 +348,28 @@ public class Rover2 extends PhysicsModel {
 
     public static void main(String[] args) {
         Parameters.DEBUG = false;
-        Parameters.THREADS = 4;
+        Parameters.THREADS = 2;
         
         NARSwing.themeInvert();
 
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = new NAR(new Neuromorphic(64).setConceptBagSize(1000).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
+        NAR nar = new NAR(new Neuromorphic(64).setConceptBagSize(1200).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
                 
-        new NARPrologMirror(nar, 0.60f, true) {
+        new NARPrologMirror(nar, 0.30f, true) {
 
+            @Override
+            public nars.prolog.Term pterm(Term term) {
+                nars.prolog.Term x = super.pterm(term);
+                if ((x!=null) && (!x.isAtomic()))
+                    System.out.println("PROLOG TERM: " + x);
+                return x;
+            }
+
+
+            
+            
             @Override
             protected void onQuestion(Sentence s) {
                 System.out.println("PROLOG QUESTION: " + s);
@@ -379,9 +390,10 @@ public class Rover2 extends PhysicsModel {
         
 
         float framesPerSecond = 30f;
-        int cyclesPerFrame = 1; //was 200        
+        
         Parameters.STM_SIZE = 4;
-        (nar.param).noiseLevel.set(6);
+        nar.setCyclesPerFrame(4);
+        (nar.param).noiseLevel.set(3);
         (nar.param).duration.set(5);
         (nar.param).conceptForgetDurations.set(25f);
         (nar.param).taskLinkForgetDurations.set(25f);
@@ -398,7 +410,7 @@ public class Rover2 extends PhysicsModel {
             @Override
             public void cycle() {
                 super.cycle(); 
-                nar.memory.addSimulationTime(cyclesPerFrame);
+                nar.memory.addSimulationTime(1);
             }
 
             

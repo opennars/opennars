@@ -22,11 +22,7 @@ public class NARSwingNeuromorphic {
         NAR n = new NAR(
                 new Neuromorphic(ants).simulationTime().setConceptBagSize(4096).setNovelTaskBagSize(100).setSubconceptBagSize(8192).setTaskLinkBagSize(50).setTermLinkBagSize(200)      
         ) {
-            
-            @Override
-            protected long getSimulationTimeCyclesPerFrame() {
-                return 1;
-            }
+
 
         };
         n.param.conceptBeliefsMax.set(32);

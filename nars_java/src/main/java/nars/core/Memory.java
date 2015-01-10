@@ -30,6 +30,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javolution.context.ConcurrentContext;
 import nars.core.Core.AttentionAware;
 import nars.core.Events.ResetEnd;
@@ -110,12 +115,7 @@ import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.storage.Bag;
 import reactor.core.Environment;
-import reactor.core.processor.Processor;
-import reactor.core.processor.spec.ProcessorSpec;
-import reactor.event.Event;
 import reactor.event.dispatch.SynchronousDispatcher;
-import reactor.function.Consumer;
-import reactor.function.Supplier;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -140,6 +140,7 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     private final Environment env;
+
 
     public static enum Forgetting {
 
@@ -262,31 +263,7 @@ public class Memory implements Serializable {
             }
         }
     }
-
-    public final Processor<Event<ImmediateProcess>> immediateProcessor
-            = new ProcessorSpec<Event<ImmediateProcess>>()                    
-            .multiThreadedProducer().sleepingWaitStrategy()
-            .dataSupplier(new Supplier<Event<ImmediateProcess>>() {
-                @Override
-                public Event<ImmediateProcess> get() {
-                    return new Event<ImmediateProcess>(new ImmediateProcess(Memory.this));
-                }
-            })
-            .consume(new Consumer<Event<ImmediateProcess>>() {
-
-                @Override
-                public void accept(Event<ImmediateProcess> immediateProcessEvent) {
-                    immediateProcessEvent.getData().run();
-                    immediateProcessEvent.recycle();
-                }
-
-            }).dataBufferSize(2048).get();
-
-    public void queue(Task immediateProcessTask, int numSiblingTasks) {
-        reactor.core.processor.Operation<Event<ImmediateProcess>> op = immediateProcessor.get();
-        op.get().getData().init(immediateProcessTask, numSiblingTasks);
-        op.commit();
-    }
+    
     
     
     /* ---------- Constructor ---------- */
@@ -758,8 +735,9 @@ public class Memory implements Serializable {
                 inputTask(t);
             }
         }
-
+        
         concepts.cycle();
+        
 
         //executive.cycle();
         event.emit(Events.CycleEnd.class);
@@ -799,12 +777,8 @@ public class Memory implements Serializable {
             emotion.adjustBusy(task.getPriority(), task.getDurability());
 
             if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists                   
-                // ok so lets fire it
-                if (Parameters.THREADS == 1)
-                    queue.add(new ImmediateProcess(this, task, numTasks - 1));
-                else {
-                    queue(task, numTasks-1);
-                }
+                // ok so lets fire it                
+                queue.add(new ImmediateProcess(this, task, numTasks - 1));
                 
             } else {
                 final Sentence s = task.sentence;
@@ -862,6 +836,10 @@ public class Memory implements Serializable {
                 t.run();
             }
         } else {
+            
+            //TEMPORARY
+            
+            
             //execute in parallel, multithreaded                        
             final ConcurrentContext ctx = ConcurrentContext.enter();
 
@@ -893,11 +871,11 @@ public class Memory implements Serializable {
         for (int i = 0; i < novelTasks.size(); i++) {
 
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
-            if (task == null) {
+            /*if (task == null) {
                 continue;
-            }
-            /*if (task == null)
-             throw new RuntimeException("novelTasks.takeNext() returned null but non-empty: " + novelTasks );*/
+            }*/
+            if (task == null)
+             throw new RuntimeException("novelTasks.takeNext() returned null but non-empty: " + novelTasks );
 
             queue.add(new ImmediateProcess(this, task, 0));
             executed++;

@@ -28,6 +28,7 @@ package nars.narclear.jbox2d.j2d;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
@@ -398,6 +399,7 @@ public class DrawPhy2D extends DebugDraw {
         Color c = new Color(color.x, color.y, color.z);
         Graphics2D g = getGraphics();
         g.setColor(c);
+
         g.setStroke(stroke);
         g.drawLine((int) sp1.x, (int) sp1.y, (int) sp2.x, (int) sp2.y);
     }

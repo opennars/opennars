@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import javolution.context.ConcurrentContext;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.FireConcept;
@@ -64,26 +65,31 @@ public class AntAttention extends WaveAttention {
     public void cycle() {
         run.clear();
         
-        int newTasks = memory.processNewTasks(ants.size(), run);
-                
-        int novelTasks = memory.processNovelTasks(ants.size(), run);
-        
-        int preAntSize = run.size();
-        
-        for (Ant a : ants) {
-            a.cycle(cycleSpeed, run);                 
-        }
-        
-        int antTasks = run.size() - preAntSize;
-        
-        //System.out.println(ants);
+        int numNew, numNovel, numConcepts = 0;
+            
+        numNew = memory.processNewTasks(ants.size(), run);
+
+        numNovel = memory.processNovelTasks(ants.size(), run);
+
+        for (Ant a : ants)
+            a.cycle(cycleSpeed, run);                             
+
         long t = memory.time();
-        if (t % 50 == 0)
-            System.out.println(t + ": " + run.size() + "[" + newTasks + "|" + novelTasks + "|" + antTasks + "] ");
+        if (t % 10 == 0)
+            System.out.println(t + ": " + run.size() + "[" + numNew + "|" + numNovel /*+ "|" + numConcepts */ + "] ");
         //+ occupied.size() + " " + ensureAntsOccupyUniqueConcepts() );
                 //run);
+            
+        if (run.isEmpty()) return;
         
-        memory.run(run, Parameters.THREADS);
+        final ConcurrentContext ctx = ConcurrentContext.enter();
+        ctx.setConcurrency(Parameters.THREADS);
+        try {
+            for (Runnable r : run) ctx.execute(r);            
+        } finally {
+            ctx.exit();
+        }
+        
         
     }
 
@@ -159,6 +165,8 @@ public class AntAttention extends WaveAttention {
                 
                 boolean validDestination = false;
                 
+                int maxTries = 2;
+                int tries = 0;
                 do {
                     
                     c = concepts.takeNext();
@@ -181,6 +189,9 @@ public class AntAttention extends WaveAttention {
                 
                     concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
 
+                    if (tries++ == maxTries)
+                        return;
+                    
                 } while (!validDestination);
                         
 
