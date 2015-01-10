@@ -10,6 +10,7 @@ import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,10 +59,7 @@ public class MeterVis extends TimelineVis {
     public MeterVisPanel newPanel() {
         return new MeterVisPanel();
     }
-    
-    public MeterVis(NAR nar, TemporalMetrics<Object> meters) {
-        this(nar, meters, null);
-    }
+
     
     /**
      *
@@ -70,28 +68,23 @@ public class MeterVis extends TimelineVis {
      * @param chartType use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA,
      * Chart.BAR_CENTERED
      */
-    public MeterVis(NAR nar, TemporalMetrics<Object> meters, String[] enabled) {
-        super();
+    public MeterVis(NAR nar, TemporalMetrics<Object> meters) {
+        super(meters.newSignalData("time"));
 
         this.nar = nar;        
         this.meters = meters;
 
         charts = new TreeMap();
         
-        if (enabled == null) {
-            List<AxisPlot> c = new ArrayList();
-            List<SignalData> signals = meters.getSignalDatas();
-            for (SignalData s : signals) {
-                charts.put(s.getID(), new DataChart(s.signal));                
-                c.add(new LineChart(s).height(10));
-            }            
-            setCharts(c);
-        }
-        else {
-            for (String f : enabled) {
-                charts.put(f, new DataChart(f));            
-            }
-        }
+        List<AxisPlot> c = new ArrayList();
+        List<SignalData> signals = meters.getSignalDatas();
+        for (SignalData s : signals) {
+            charts.put(s.getID(), new DataChart(s.signal));                
+            c.add(new LineChart(s).height(10));
+        }            
+        setCharts(c);
+        
+
         
         
     }
@@ -128,8 +121,7 @@ public class MeterVis extends TimelineVis {
         public MeterVisPanel() {
             super(MeterVis.this);
             
-            noLoop();
-            
+            //noLoop();
             //TODO disable event when window hiden
             nar.on(FrameEnd.class, this);
             
@@ -141,10 +133,12 @@ public class MeterVis extends TimelineVis {
         @Override
         public void event(Class event, Object[] args) {
             if (event == FrameEnd.class) {
+                updateNext();
                 predraw();
-                redraw();
             }
         }
+        
+        
         
     }
 }

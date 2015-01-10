@@ -51,7 +51,7 @@ public class MultiChart1 extends TimelineExample {
         
         new NWindow("_",
                 p = new PCanvas(
-                        v = new TimelineVis(
+                        v = new TimelineVis(t.metrics.newSignalData("time"),
                                 //new EventChart(t, true, false, false).height(3),
                                 //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
 

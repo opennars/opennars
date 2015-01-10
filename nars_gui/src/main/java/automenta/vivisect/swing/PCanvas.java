@@ -80,7 +80,9 @@ public class PCanvas extends PApplet implements HierarchyListener {
             vis = (Vis)this;
         }
         this.vis = vis;
+        
         vis.init(this);
+        
     }
 
     float MouseToWorldCoordX(final int x) {
@@ -152,8 +154,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
         this.lowQuality = lowQuality;
     }
 
-    public void predraw() {
-        
+    public synchronized void predraw() {
+        drawn = false;
         if ((b!=null) && (b.width != getWidth() || b.height != getHeight())) {
             b.dispose();
             b = null;
@@ -169,6 +171,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
         else
             b.smooth();
 
+        b.textFont(font12);
         b.strokeJoin(MITER);
         b.strokeCap(PROJECT);        
         
@@ -185,13 +188,18 @@ public class PCanvas extends PApplet implements HierarchyListener {
         vis.draw(b);
         
         b.endDraw();
+        
+        redraw();
+        drawn = true;
     }
+
+   
     
     @Override
     public void draw() {
         
-        if (b!=null) {
-            image(b, 0, 0);
+        if (drawn && b!=null && b.width == getWidth() && b.height==getHeight())  {
+            this.background(b);
         }
     }
 
@@ -228,6 +236,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
             smooth();
             System.out.println("Processing.org enabled OpenGL");
         }
+
+        predraw();
         
     }
     
@@ -327,7 +337,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
             if (mouseButton == RIGHT) {
                 savepx = mouseX;
                 savepy = mouseY;
-                redraw();
+                predraw();
             }
         }
 
@@ -341,7 +351,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
                 dify += (mouseY - savepy);
                 savepx = mouseX;
                 savepy = mouseY;
-                redraw();                
+                predraw();                
             }
         }
 
@@ -373,7 +383,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
                 difx = (difx) * (zoom / zoomBefore);
                 dify = (dify) * (zoom / zoomBefore);
             }
-            redraw();            
+            predraw();            
             drawn = false;
         }
 
@@ -394,7 +404,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
             }
             difx = (difx) * (zoom / zoomBefore);
             dify = (dify) * (zoom / zoomBefore);
-            redraw();
+            predraw();
             drawn = false;
         }
 

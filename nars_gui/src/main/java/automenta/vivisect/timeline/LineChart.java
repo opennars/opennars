@@ -6,7 +6,7 @@ import automenta.vivisect.timeline.AxisPlot.MultiChart;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 import nars.io.Texts;
 import nars.io.meter.Metrics;
@@ -86,10 +86,6 @@ public class LineChart extends AxisPlot implements MultiChart {
             return;
         }
                 
-        
-        updateRange();
-                
-        
         l.g.stroke(127);
         l.g.strokeWeight(borderThickness);
        
@@ -108,6 +104,15 @@ public class LineChart extends AxisPlot implements MultiChart {
         }
     }
 
+    @Override
+    public void update(TimelineVis l) {
+        for (SignalData s : data) {
+            s.getData();
+        }
+        updateRange();
+    }
+
+    
     protected void updateRange() {
         if (specifiedRange) return;
         
@@ -161,14 +166,15 @@ public class LineChart extends AxisPlot implements MultiChart {
 
     protected void drawData(TimelineVis l, float w, float h, float y) {
 
+        Object[] time = l.getTimeAxis();
                 
         int order = 0;
         for (SignalData chart : data) {
-            drawChart(chart, order, l, w, h, y);
+            drawChart(time, chart, order, l, w, h, y);
         }
     }
 
-    void drawChart(SignalData chart, int order, TimelineVis l, float width, float height, float y1) {
+    void drawChart(Object[] time, SignalData chart, int order, TimelineVis l, float width, float height, float y1) {
         
         pwf = pointWidthFactor*lineThickness;
         
@@ -180,21 +186,21 @@ public class LineChart extends AxisPlot implements MultiChart {
         drawChartPre(l, ccolor);
         
         float cs = (float)xMin();
-        Iterator<Object[]> series = chart.iteratorWith(0);
-        while (series.hasNext()) {
-            Object[] o = series.next();
-            Object ox = o[0]; //time
-            Object oy = o[1]; //value
+        Object[] series = chart.getDataCached();
+        if (series == null) return;
+        for (int t = 0; t< series.length; t++) {
+            Object ox = time[t]; //time
+            Object oy = series[t]; //value
             if ((ox==null) || (oy==null))
                 continue;
-            float t = ((Number)ox).floatValue();
+            float tx = ((Number)ox).floatValue();
             float v = ((Number)oy).floatValue();
-            float x = (t-cs) * width;
+            float x = (tx-cs) * width;
             if (Float.isNaN(v)) {
                 continue;
             }
             
-            drawPoint(l, v, width, x, height, y1, t);
+            drawPoint(l, v, width, x, height, y1, tx);
         }
     }
 
@@ -261,6 +267,8 @@ public class LineChart extends AxisPlot implements MultiChart {
         l.g.fill(ccolor);
         l.g.strokeWeight(lineThickness);
     }
+
+    
        
     
 }

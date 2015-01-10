@@ -7,9 +7,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.SwingUtilities;
+import nars.io.meter.SignalData;
 import static processing.core.PConstants.HSB;
 import processing.core.PGraphics;
 import processing.core.PGraphicsJava2D;
@@ -46,6 +48,13 @@ public class TimelineVis implements Vis {
     public Graphics2D g2; //for direct Swing control
     private float chartMargin = 1;
 
+    SignalData timeAxis;
+    
+    public Object[] getTimeAxis() {
+        Object[] r = timeAxis.getDataCached();
+        return r;        
+    }
+
     public static class Camera {
         public float camX = 0f;
         public float camY = 0f;
@@ -62,24 +71,24 @@ public class TimelineVis implements Vis {
     public final List<AxisPlot> charts;
     //display options ----------------------------------------
 
-    public TimelineVis(List<AxisPlot> charts) {
-        this(new Camera(), charts);
+    public TimelineVis(SignalData timeAxis, List<AxisPlot> charts) {
+        this(new Camera(), timeAxis, charts);
     }
     
-    public TimelineVis(Camera camera, List<AxisPlot> charts) {
+    public TimelineVis(Camera camera, SignalData timeAxis, List<AxisPlot> charts) {
         super();
         this.camera = camera;
         this.charts = charts;
-        
+        this.timeAxis = timeAxis;
         
     }
     
-    public TimelineVis(AxisPlot... charts) {        
-        this(new Camera(), charts);
+    public TimelineVis(SignalData timeAxis, AxisPlot... charts) {        
+        this(new Camera(), timeAxis, charts);
     }
     
-    public TimelineVis(Camera camera, AxisPlot... charts) {        
-        this(camera, Lists.newCopyOnWriteArrayList(Lists.newArrayList(charts)));
+    public TimelineVis(Camera camera, SignalData timeAxis, AxisPlot... charts) {        
+        this(camera, timeAxis, Lists.newCopyOnWriteArrayList(Lists.newArrayList(charts)));
     }
     
     public void view(long start, long end) {
@@ -95,6 +104,7 @@ public class TimelineVis implements Vis {
     public void setCharts(Collection<AxisPlot> newChartList) {
         clearCharts();
         charts.addAll(newChartList);
+        updateNext();
     }
     
     public void addChart(AxisPlot c) {
@@ -105,17 +115,19 @@ public class TimelineVis implements Vis {
     
     
     public void updateNext() {
-        if (!updating) {
+        timeAxis.getData();
             for (AxisPlot c : charts) {                
-                c.update(this);
+                c.update(this);                
             }            
-        }
-        updating = true;        
+        
     }
 
     @Override
     public boolean draw(PGraphics g) {
-           
+                   
+        if (getTimeAxis() == null)
+            return true;
+        
         this.g = g;
         this.g2 = ((PGraphicsJava2D)g).g2;
         
@@ -130,14 +142,14 @@ public class TimelineVis implements Vis {
         g.translate(camera.camX, camera.camY);
         g.scale(camera.xScale, camera.yScale);
 
+        g.pushMatrix();
         float pos = chartMargin/2.0f;
         for (AxisPlot c : charts) {            
-            g.pushMatrix();
             g.translate(0, pos);
             c.draw(this);         
-            g.popMatrix();
-            pos += c.plotHeight+chartMargin;
+            pos = c.plotHeight+chartMargin;
         }
+        g.popMatrix();
                 
                
         g.colorMode(originalColorMode);
@@ -179,7 +191,7 @@ public class TimelineVis implements Vis {
                     int deltaY = currentLocation.y - startLocation.y;
                     camera.yScale = oy * (1.0f + (deltaY * scaleSpeed));
                     camera.xScale = ox * (1.0f + (deltaX * scaleSpeed));
-                    p.redraw();
+                    p.predraw();
 
                 }
             }

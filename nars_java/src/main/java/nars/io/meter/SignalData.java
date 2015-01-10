@@ -27,10 +27,18 @@ public class SignalData {
     }
 
     public Object[] getDataCached() {
+        if (data == null) {
+            try {
+                this.data = getData();
+            }
+            catch (Exception e) {
+                System.err.println(e);
+            }
+        }
         return data;
     }
 
-    public Object[] getData() {
+    public synchronized Object[] getData() {
         return this.data = metric.getData(index, data);
     }
 

@@ -19,15 +19,7 @@ package nars.timeline;
 import nars.core.NAR;
 import nars.core.build.Default;
 import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.AxisPlot;
-import automenta.vivisect.timeline.LineChart;
-import automenta.vivisect.timeline.TimelineVis;
-import java.awt.event.MouseAdapter;
-import java.util.ArrayList;
-import java.util.List;
 import nars.gui.output.chart.MeterVis;
-import nars.io.meter.SignalData;
 import nars.util.NARTrace;
 
 /**
@@ -49,12 +41,13 @@ public class NARTraceCharts extends TimelineExample {
         nar.run(cycles);
 
         System.out.println(t.metrics.getSignals());
-        //t.metrics.printCSV(System.out);
-
+        
         nar.start(100);
 
+        
+        
         new NWindow("_", 
-                new MeterVis(nar,t.metrics,null).newPanel()).show(800, 800, true);
+                new MeterVis(nar, t.metrics).newPanel()).show(800, 800, true);
 
     }
 
