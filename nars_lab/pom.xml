@@ -40,6 +40,20 @@
             <artifactId>opennars-web</artifactId>
             <version>1.7-SNAPSHOT</version>
         </dependency>        
+        
+        
+<dependency>
+	<groupId>org.choco-solver</groupId>
+	<artifactId>choco-solver</artifactId>
+	<version>3.3.0</version>
+</dependency>
+<dependency>
+	<groupId>org.jfree</groupId>
+	<artifactId>jfreechart</artifactId>
+	<version>1.0.19</version>
+</dependency>
+
+                
     </dependencies>
   
   

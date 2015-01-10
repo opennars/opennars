@@ -49,5 +49,11 @@ public class TemporalMetrics<O extends Object> extends Metrics<Double,O> {
         return l;
     }
 
+    /** allows updating with an integer/long time, because it will be converted
+     * to double internally
+     */
+    public void update(long integerTime) {
+        update((double)integerTime);
+    }    
     
 }

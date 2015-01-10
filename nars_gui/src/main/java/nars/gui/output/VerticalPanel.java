@@ -17,7 +17,7 @@ import javax.swing.JScrollPane;
  *
  * @author me
  */
-abstract public class VerticalPanel extends NPanel {
+public class VerticalPanel extends NPanel {
 
     protected final JPanel content;
     protected final JPanel contentWrap;
@@ -50,6 +50,12 @@ abstract public class VerticalPanel extends NPanel {
         content.add(j, gc);
         
     }
+
+    @Override
+    protected void onShowing(boolean showing) {
+    
+    }
+    
     
     
     

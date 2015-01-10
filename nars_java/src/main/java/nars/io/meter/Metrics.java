@@ -74,9 +74,9 @@ JsonSerializationContext context) {
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
     
-        for (SignalData ss : data) {            
-            double a = getMin(ss.index);
-            double b = getMax(ss.index);
+        for (SignalData ss : data) {   
+            double a = ss.getMin();
+            double b = ss.getMax();
             if (a < min) min = a;
             if (b > max) max = b;
         }
@@ -106,11 +106,14 @@ JsonSerializationContext context) {
         
         Signal s = getSignal(signal);
         s.resetBounds();
-        double min = s.getMin();
-        double max = s.getMax();
-        Iterator<Object[]> ii = iterator(signal);
+        double min, max;
+        min = Double.POSITIVE_INFINITY;
+        max = Double.NEGATIVE_INFINITY;
+
+
+        Iterator<Object[]> ii = iterator(); //signal);
         while (ii.hasNext()) {
-            Object e = ii.next()[0];
+            Object e = ii.next()[signal];
             if (e instanceof Number) {
                 double d = ((Number)e).doubleValue();
                 if (d < min) min = d;
@@ -220,9 +223,11 @@ JsonSerializationContext context) {
         
         invalidateExtrema(true, nextRow, extremaToInvalidate);
    
+        
         for (int i = 0; i < getSignals().size(); i++) {
-            if (extremaToInvalidate[i])
+            if (extremaToInvalidate[i]) {        
                 updateBounds(i);
+            }
         }
         
     }
@@ -243,10 +248,10 @@ JsonSerializationContext context) {
             
             if (added) {
                 //for rows which have been added
-                if (minNAN || (n < min))  {                     
+                if ((minNAN) || (n < min))  {                     
                     setMin(i, n);
                 }
-                if (maxNAN || (n > max))  { 
+                if ((maxNAN) || (n > max))  { 
                     setMax(i, n);
                 }
             }

@@ -19,6 +19,7 @@ public class DurationMeter extends ValueMeter {
     private final double window;
     private double prev;
     private final boolean frequency;
+    boolean strict = false;
     
     public DurationMeter(String id, boolean nanoSeconds, double windowSec, boolean asFrequency) {
         super(id);
@@ -34,13 +35,15 @@ public class DurationMeter extends ValueMeter {
     public boolean isStarted() { return !Double.isNaN(startTime); }
     
     public synchronized void start() {
-        if (isStarted())
-            throw new RuntimeException(this + " already started");
+        if (strict && isStarted()) {
+            startTime = Double.NaN;
+            throw new RuntimeException(this + " already started");            
+        }
         startTime = PeriodMeter.now(nanoSeconds);
     }
     
     public synchronized void stop() {
-        if (!isStarted())
+        if (strict && !isStarted())
             throw new RuntimeException(this + " not previously started");
         double duration = sinceStart();
         set(frequency ? (1.0 / duration) : duration);

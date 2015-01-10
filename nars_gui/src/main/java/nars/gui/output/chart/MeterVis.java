@@ -10,21 +10,23 @@ import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import nars.core.EventEmitter.EventObserver;
+import nars.core.Eventer;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.io.meter.Metrics;
 import nars.io.meter.SignalData;
 import nars.io.meter.Signal;
 import nars.io.meter.TemporalMetrics;
+import reactor.event.registry.Registration;
+import static reactor.event.selector.Selectors.T;
+import reactor.function.Consumer;
 
 public class MeterVis extends TimelineVis {
-    private final NAR nar;
+    private final Eventer nar;
 
     
     @Deprecated public class DataChart {
@@ -61,6 +63,10 @@ public class MeterVis extends TimelineVis {
     }
 
     
+    public MeterVis(NAR n, TemporalMetrics<Object> metrics) {
+        this(n.memory.event, metrics);
+    }
+    
     /**
      *
      * @param title
@@ -68,7 +74,7 @@ public class MeterVis extends TimelineVis {
      * @param chartType use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA,
      * Chart.BAR_CENTERED
      */
-    public MeterVis(NAR nar, TemporalMetrics<Object> meters) {
+    public MeterVis(Eventer nar, TemporalMetrics<Object> meters) {
         super(meters.newSignalData("time"));
 
         this.nar = nar;        
@@ -116,26 +122,28 @@ public class MeterVis extends TimelineVis {
     }    
     
     
-    public class MeterVisPanel extends PCanvas implements EventObserver {
+    public class MeterVisPanel extends PCanvas implements Consumer<Object> {
+        
+        private final Registration framer;
         
         public MeterVisPanel() {
             super(MeterVis.this);
             
             //noLoop();
             //TODO disable event when window hiden
-            nar.on(FrameEnd.class, this);
+            framer = nar.on(T(FrameEnd.class), this);
             
             final MouseAdapter m = newMouseDragPanScale(this);
             addMouseMotionListener(m);
             addMouseListener(m);
         }
-        
+
         @Override
-        public void event(Class event, Object[] args) {
-            if (event == FrameEnd.class) {
+        public void accept(Object t) {
+            //if (event == FrameEnd.class) {
                 updateNext();
                 predraw();
-            }
+            //}
         }
         
         

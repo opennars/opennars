@@ -35,6 +35,8 @@ public class LineChart extends AxisPlot implements MultiChart {
     private float screenyHi;
     private float pixelsTallNecessaryForLinePoints = 96;
     private boolean allowLinePoints;
+    private float maxX;
+    private float minX;
 
   
 
@@ -89,12 +91,15 @@ public class LineChart extends AxisPlot implements MultiChart {
         l.g.stroke(127);
         l.g.strokeWeight(borderThickness);
        
-        float range = (float)(xMax() - xMin());
+        minX = (float)xMin();
+        maxX = (float)xMax();
+        
+        float range = Math.abs((float)(maxX - minX));
         
         //bottom line
-        l.g.line(0, y + plotHeight, plotWidth * range * plotWidth, y + plotHeight);
+        l.g.line(0, y + plotHeight, plotWidth * range, y + plotHeight);
         //top line
-        l.g.line(0, y, plotWidth * range * plotWidth, y);
+        l.g.line(0, y, plotWidth * range, y);
         
         
         drawData(l, plotWidth, plotHeight, y);
@@ -115,6 +120,7 @@ public class LineChart extends AxisPlot implements MultiChart {
     
     protected void updateRange() {
         if (specifiedRange) return;
+ 
         
         double[] bounds = getMetrics().getBounds(data);        
         min = bounds[0];
@@ -185,7 +191,7 @@ public class LineChart extends AxisPlot implements MultiChart {
         
         drawChartPre(l, ccolor);
         
-        float cs = (float)xMin();
+        float cs = (float)minX;
         Object[] series = chart.getDataCached();
         if (series == null) return;
         for (int t = 0; t< series.length; t++) {
@@ -215,7 +221,7 @@ public class LineChart extends AxisPlot implements MultiChart {
                 l.g.line(px, py, px, py + h);
             }
             
-            if (t != xMin()) {
+            if (t != minX) {
                 l.g.line(lx, ly, px, py);
             }
         }
