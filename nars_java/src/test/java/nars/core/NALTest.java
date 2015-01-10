@@ -1,7 +1,9 @@
 package nars.core;
 
+import nars.util.NALPerformance;
 import nars.io.condition.OutputCondition;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,14 +41,13 @@ public class NALTest  {
     static public boolean showTrace = false;
     static public boolean showReport = true;
     static public boolean requireSuccess = true;
-    static public int similarsToSave = 5;       
     private static boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
       
 
     protected static Map<String, String> examples = new HashMap(); //path -> script data
     public static Map<String, Boolean> tests = new HashMap();
     public static Map<String, Double> scores = new HashMap();
-    final String scriptPath;
+    
     
 
 
@@ -158,6 +159,8 @@ public class NALTest  {
         runTests(NALTest.class);
 
     }
+    
+    transient final String scriptPath;
 
     public NALTest(String scriptPath) {        
         this.scriptPath = scriptPath;
@@ -174,89 +177,47 @@ public class NALTest  {
         return testNAL(scriptPath);
     }
     
+    
     protected double testNAL(final String path) {               
         Memory.resetStatic();
         
-        final List<OutputCondition> expects = new ArrayList();
+        String input;
+        NAR nar;
         
-        NAR n = null;
-        boolean error = false;
-        try {
-            n = newNAR();
+        NALPerformance test = new NALPerformance(nar = newNAR(), input = getExample(path), minCycles );
+        
 
-
-            
-
-
-            String example = getExample(path);
-            
-            if (showOutput) {
-                System.out.println(example);
-                System.out.println();
-            }
-            
-            List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
-            for (OutputCondition e1 : extractedExpects)
-                expects.add(e1);
-
-            if (showOutput)
-                new TextOutput(n, System.out);
-            if (showTrace) {
-                new InferenceLogger(n, System.out);
-            }
-
-
-            n.addInput(new TextInput(example));
-            n.run(minCycles);
+        if (showOutput)
+            new TextOutput(nar, System.out);
+        if (showTrace) {
+            new InferenceLogger(nar, System.out);
         }
-        catch(Throwable e){     
-            System.err.println(e);
-            if (Parameters.DEBUG) {                
-                e.printStackTrace();
-            }
-            
-            error = true;
+        
+        
+        if (showOutput) {
+            System.out.println(input);
+            System.out.println();
         }
-      
+
+        test.run();
         
+        double score = test.getScore();                
+        boolean success = test.getSuccess();
         
+        scores.put(path, score);
+
         System.err.flush();
         System.out.flush();
-        
-        boolean success = expects.size() > 0 && (!error);
-        for (OutputCondition e: expects) {
-            if (!e.succeeded) success = false;
-        }
-
-        double score = Double.POSITIVE_INFINITY;
-        if (success) {
-            long lastSuccess = -1;
-            for (OutputCondition e: expects) {
-                if (e.getTrueTime()!=-1) {
-                    if (lastSuccess < e.getTrueTime())
-                        lastSuccess = e.getTrueTime();
-                }                
-            }
-            if (lastSuccess!=-1) {
-                //score = 1.0 + 1.0 / (1+lastSuccess);
-                score = lastSuccess;
-                scores.put(path, score);
-            }
-        }
-        else {
-            scores.put(path, Double.POSITIVE_INFINITY);
-        }
         
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
         if ((!success & showFail) || (success && showSuccess)) {
-            System.err.println('\n' + path + " @" + n.memory.getCycleTime());
-            for (OutputCondition e: expects) {
-                System.err.println("  " + e);
-            }
+            System.out.print(path + ' ');
+            test.printResults(System.err);
         }
         
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
+        
         if (requireSuccess)
             assertTrue(path, success);
         

@@ -12,7 +12,8 @@
     <name>OpenNARS Core</name>
     <url>https://github.com/opennars/opennars</url>
 
-           <plugins>
+    <build>
+        <plugins>
           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -24,8 +25,9 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-           </plugins>
-           
+        </plugins>
+    </build>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
