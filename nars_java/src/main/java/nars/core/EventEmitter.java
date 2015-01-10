@@ -2,6 +2,7 @@
 package nars.core;
 
 import java.util.ArrayList;
+import reactor.core.Environment;
 import reactor.event.Event;
 import reactor.event.dispatch.Dispatcher;
 import reactor.event.registry.Registration;
@@ -26,8 +27,8 @@ public class EventEmitter extends Eventer<Object> {
         super(type);
     }
 
-    public EventEmitter(Dispatcher d) {
-        super(d);
+    public EventEmitter(Environment e, Dispatcher d) {
+        super(e, d);
     }
     
     

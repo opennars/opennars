@@ -10,6 +10,15 @@
     <name>OpenNARS</name>
     <url>https://github.com/opennars/opennars</url>
 
+
+    <licenses>
+        <license>
+            <name>The GNU General Public Licence, Version 3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     <modules>
         <module>nars_java</module>
         <module>nars_lab</module>
@@ -18,98 +27,6 @@
         <module>nars_web</module>
     </modules>
 
-    <build>
-
-        <!--
-        <resources>
-          <resource>
-            <directory>nal</directory>
-          </resource>     
-        </resources> -->
-
-        <plugins>
-          
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
-                <configuration>
-                    <optimize>true</optimize>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-      
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
-                <configuration>
-          
-                </configuration>
-            </plugin>
-      <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.3</version>
-            </plugin>
-      -->
-            <!--
-          <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-checkstyle-plugin</artifactId>
-             <version>2.13</version>
-             <reportSets>
-               <reportSet>
-                 <reports>
-                   <report>checkstyle</report>
-                 </reports>
-               </reportSet>
-             </reportSets>
-           </plugin>
-            -->
-                
-            <!-- add shade to submodules -->
-                <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <transformers>
-                      <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                        <mainClass>MAINCLASS</mainClass>
-                      </transformer>
-                    </transformers>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
-        </plugins>   
-    </build>
-   
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-
-    <repositories>
-        <repository>
-            <id>processing</id>
-            <name>Processing</name>
-            <url>file://${project.basedir}/lib</url>
-        </repository>
-    </repositories>
 
 
 <!--

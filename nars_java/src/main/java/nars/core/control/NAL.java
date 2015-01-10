@@ -45,7 +45,6 @@ public abstract class NAL implements Runnable {
         
     }
     
-        
     public final Memory memory;
     protected Term currentTerm;
     protected Concept currentConcept;
@@ -55,7 +54,7 @@ public abstract class NAL implements Runnable {
     protected Sentence currentBelief;
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
-    protected List<DerivationFilter> derivationFilters = null;
+
 
     /** stores the tasks that this process generates, and adds to memory */
     public final List<Task> tasksAdded = new ArrayList();
@@ -65,13 +64,22 @@ public abstract class NAL implements Runnable {
     public NAL(Memory mem) {
         super();
         this.memory = mem;
-        this.derivationFilters = mem.param.getDerivationFilters();
+        reset();
     }
 
-    public void setDerivationFilters(List<DerivationFilter> derivationFilters) {
-        this.derivationFilters = derivationFilters;
+    /** NAL and subclasses are recyclable; call reset() before using a recycled instance */
+    public void reset() {
+        tasksAdded.clear();
+        currentTerm = null;
+        currentConcept = null;
+        currentTask = null;
+        currentBeliefLink = null;
+        currentTaskLink = null;
+        currentBelief = null;
+        newStamp = null;
+        newStampBuilder = null;
     }
-   
+    
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }
@@ -84,6 +92,7 @@ public abstract class NAL implements Runnable {
      * @param task the derived task
      */
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2) {                        
+        List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
 
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {

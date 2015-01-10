@@ -109,99 +109,97 @@ import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.storage.Bag;
+import reactor.core.Environment;
+import reactor.core.processor.Processor;
+import reactor.core.processor.spec.ProcessorSpec;
+import reactor.event.Event;
 import reactor.event.dispatch.SynchronousDispatcher;
-
+import reactor.function.Consumer;
+import reactor.function.Supplier;
 
 /**
- * Memory consists of the run-time state of a NAR, including:
- *   * term and concept memory
- *   * clock
- *   * reasoner state
- *   * etc.
- * 
- * Excluding input/output channels which are managed by a NAR.  
- * 
+ * Memory consists of the run-time state of a NAR, including: * term and concept
+ * memory * clock * reasoner state * etc.
+ *
+ * Excluding input/output channels which are managed by a NAR.
+ *
  * A memory is controlled by zero or one NAR's at a given time.
- * 
+ *
  * Memory is serializable so it can be persisted and transported.
  */
 public class Memory implements Serializable {
-    
-    @Deprecated public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
+
+    @Deprecated
+    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
     //get it out to plugin somehow
-    
+
     private boolean enabled = true;
-    
+
     private long timeRealStart;
     private long timeRealNow;
     private long timePreviousCycle;
     private long timeSimulation;
-
-
+    private final Environment env;
 
     public static enum Forgetting {
+
         Iterative, Periodic
     }
-    
+
     public enum Timing {
-        /** internal, subjective time (inference steps) */
-        Iterative, 
-        
-        /** hard real-time, uses system clock */
-        Real, 
-        
-        /** soft real-time, uses controlled simulation time */
+
+        /**
+         * internal, subjective time (inference steps)
+         */
+        Iterative,
+        /**
+         * hard real-time, uses system clock
+         */
+        Real,
+        /**
+         * soft real-time, uses controlled simulation time
+         */
         Simulation
     }
-    
+
     Timing timing;
-    
-    
+
     public static interface TaskSource {
+
         public AbstractTask nextTask();
 
         public int getInputItemsBuffered();
     }
-    
+
     //public static Random randomNumber = new Random(1);
     public static long randomSeed = 1;
     public static Random randomNumber = new Random(randomSeed);
 
     public static void resetStatic() {
-        randomNumber.setSeed(randomSeed);    
+        randomNumber.setSeed(randomSeed);
     }
-    
-    public final Core concepts;
-    
-    public final EventEmitter event;
-    
-    
 
-    
-    
+    public final Core concepts;
+
+    public final EventEmitter event;
+
     /* InnateOperator registry. Containing all registered operators of the system */
     public final HashMap<CharSequence, Operator> operators;
-    
+
     private long currentStampSerial = 0;
-    
-    
-    
+
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
-    public final Bag<Task<Term>,Sentence<Term>> novelTasks;
-   
+    public final Bag<Task<Term>, Sentence<Term>> novelTasks;
+
     /* ---------- Short-term workspace for a single cycle ---	------- */
-    
     /**
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
     public final Deque<Task> newTasks;
-    
-    
-    
-    
+
     // ----------------------------------------
 //    public Term currentTerm;
 //
@@ -216,62 +214,47 @@ public class Memory implements Serializable {
 //
 //    private Stamp newStamp;
     // ----------------------------------------
-    
-    
     //public final Term self;
-
-    
-    
-
-    
-    public final EmotionMeter emotion = new EmotionMeter();    
+    public final EmotionMeter emotion = new EmotionMeter();
     public final LogicMeter logic;
     public final ResourceMeter resource;
-    
-    
+
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
     private int inputPausedUntil;
 
-    
     /**
      * System clock, relatively defined to guarantee the repeatability of
      * behaviors
      */
     private long cycle;
-    
-    
+
     public final Param param;
-    
-    
+
     //index of Conjunction questions
     transient private Set<Task> questionsConjunction = new HashSet();
-    
 
-    
-    private class MemoryEventEmitter extends EventEmitter {        
+    private class MemoryEventEmitter extends EventEmitter {
 
-        public MemoryEventEmitter() {
-            super(new SynchronousDispatcher());
+        public MemoryEventEmitter(Environment e) {
+            super(e, new SynchronousDispatcher());
             //super(Environment.WORK_QUEUE);
         }
 
-        
         public void emit(final Class eventClass, final Object... params) {
-            super.emit(eventClass, params); 
+            super.emit(eventClass, params);
 
-            if (eventClass == Events.ConceptQuestionAdd.class) {                    
+            if (eventClass == Events.ConceptQuestionAdd.class) {
                 //Concept c = params[0];
-                Task t = (Task)params[1];
+                Task t = (Task) params[1];
                 Term term = t.getTerm();
                 if (term instanceof Conjunction) {
                     questionsConjunction.add(t);
                 }
-            }
-            else if (eventClass == Events.ConceptQuestionAdd.class) {
+            } else if (eventClass == Events.ConceptQuestionAdd.class) {
                 //Concept c = params[0];
-                Task t = (Task)params[1];
+                Task t = (Task) params[1];
                 Term term = t.getTerm();
                 if (term instanceof Conjunction) {
                     questionsConjunction.remove(t);
@@ -279,37 +262,66 @@ public class Memory implements Serializable {
             }
         }
     }
+
+    public final Processor<Event<ImmediateProcess>> immediateProcessor
+            = new ProcessorSpec<Event<ImmediateProcess>>()                    
+            .multiThreadedProducer().sleepingWaitStrategy()
+            .dataSupplier(new Supplier<Event<ImmediateProcess>>() {
+                @Override
+                public Event<ImmediateProcess> get() {
+                    return new Event<ImmediateProcess>(new ImmediateProcess(Memory.this));
+                }
+            })
+            .consume(new Consumer<Event<ImmediateProcess>>() {
+
+                @Override
+                public void accept(Event<ImmediateProcess> immediateProcessEvent) {
+                    immediateProcessEvent.getData().run();
+                    immediateProcessEvent.recycle();
+                }
+
+            }).dataBufferSize(2048).get();
+
+    public void queue(Task immediateProcessTask, int numSiblingTasks) {
+        reactor.core.processor.Operation<Event<ImmediateProcess>> op = immediateProcessor.get();
+        op.get().getData().init(immediateProcessTask, numSiblingTasks);
+        op.commit();
+    }
+    
     
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
      *
-     * @param initialOperators - initial set of available operators; more may be added during runtime
+     * @param initialOperators - initial set of available operators; more may be
+     * added during runtime
      */
-    public Memory(Param param, Core concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
+    public Memory(Param param, Core concepts, Bag<Task<Term>, Sentence<Term>> novelTasks) {
+
+        this.env = new Environment();
 
         this.param = param;
-        
-        this.event = new MemoryEventEmitter();
-        
+
+        this.event = new MemoryEventEmitter(env);
+
         this.concepts = concepts;
         this.concepts.init(this);
-        
-        this.novelTasks = novelTasks;                
-        if (novelTasks instanceof AttentionAware)
-            ((AttentionAware)novelTasks).setAttention(concepts);
-        
-        this.newTasks = (Parameters.THREADS > 1) ?  
-                new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
-        
+
+        this.novelTasks = novelTasks;
+        if (novelTasks instanceof AttentionAware) {
+            ((AttentionAware) novelTasks).setAttention(concepts);
+        }
+
+        this.newTasks = (Parameters.THREADS > 1)
+                ? new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
+
         this.operators = new HashMap<>();
-        
 
         this.resource = new ResourceMeter();
         this.logic = new LogicMeter() {
 
             public void commit(Memory memory) {
-                double prioritySum = 0;        
+                double prioritySum = 0;
                 double prioritySumSq = 0;
                 int count = 0;
                 int totalQuestions = 0;
@@ -319,31 +331,36 @@ public class Memory implements Serializable {
 
                 for (final Concept c : concepts) {
                     double p = c.getPriority();
-                    totalQuestions += c.questions.size();        
-                    totalBeliefs += c.beliefs.size();        
+                    totalQuestions += c.questions.size();
+                    totalBeliefs += c.beliefs.size();
                     //TODO totalGoals...
                     //TODO totalQuests...
-                    
+
                     prioritySum += p;
-                    prioritySumSq += p*p;
-                    
-                    if (p > 0.75) histogram[0]++;
-                    else if (p > 0.5) histogram[1]++;
-                    else if (p > 0.25) histogram[2]++;
-                    else histogram[3]++;
-                    
+                    prioritySumSq += p * p;
+
+                    if (p > 0.75) {
+                        histogram[0]++;
+                    } else if (p > 0.5) {
+                        histogram[1]++;
+                    } else if (p > 0.25) {
+                        histogram[2]++;
+                    } else {
+                        histogram[3]++;
+                    }
+
                     count++;
                 }
                 double mean, variance;
                 if (count > 0) {
                     mean = prioritySum / count;
-                    
+
                     //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-                    variance = (prioritySumSq - ((prioritySum*prioritySum)/count))/(count-1);
-                    for (int i = 0; i < histogram.length; i++)
-                        histogram[i]/=count;
-                }
-                else {
+                    variance = (prioritySumSq - ((prioritySum * prioritySum) / count)) / (count - 1);
+                    for (int i = 0; i < histogram.length; i++) {
+                        histogram[i] /= count;
+                    }
+                } else {
                     mean = variance = 0;
                 }
 
@@ -353,77 +370,84 @@ public class Memory implements Serializable {
                 setConceptPriorityMean(mean);
                 setConceptPriorityVariance(variance);
                 setConceptPriorityHistogram(histogram);
-                
+
                 //super.commit(memory);
             }
 
         };
-        
-        
-        
+
         this.executive = new MultipleExecutionManager(this);
-                
+
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
-                
-                
         reset();
 
     }
-    
+
     public void reset() {
         event.emit(ResetStart.class);
-        
+
         concepts.reset();
         novelTasks.clear();
-        newTasks.clear();     
-        
-        timing = param.getTiming();      
+        newTasks.clear();
+
+        timing = param.getTiming();
         cycle = 0;
         timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
-        
+
         inputPausedUntil = 0;
-        
+
         emotion.set(0.5f, 0.5f);
-        
+
         event.emit(ResetEnd.class);
-       
+
     }
 
     public long time() {
         switch (timing) {
-            case Iterative: return getCycleTime();
-            case Real: return getRealTime();
-            case Simulation: return getSimulationTime();
+            case Iterative:
+                return getCycleTime();
+            case Real:
+                return getRealTime();
+            case Simulation:
+                return getSimulationTime();
         }
         return 0;
     }
-    
+
     public int getDuration() {
         return param.duration.get();
     }
-    
-    /** internal, subjective time (inference steps) */
+
+    /**
+     * internal, subjective time (inference steps)
+     */
     public long getCycleTime() {
         return cycle;
     }
 
-    /** hard real-time, uses system clock */
+    /**
+     * hard real-time, uses system clock
+     */
     public long getRealTime() {
         return timeRealNow - timeRealStart;
     }
-    
-    /** soft real-time, uses controlled simulation time */
+
+    /**
+     * soft real-time, uses controlled simulation time
+     */
     public long getSimulationTime() {
         return timeSimulation;
     }
-    
+
     public void addSimulationTime(long dt) {
         timeSimulation += dt;
     }
-    
-    /** difference in time since last cycle */
+
+    /**
+     * difference in time since last cycle
+     */
     public long getTimeDelta() {
         return time() - timePreviousCycle;
     }
@@ -431,7 +455,7 @@ public class Memory implements Serializable {
     public Deque<Task> getNewTasks() {
         return newTasks;
     }
-    
+
 
     /* ---------- conversion utilities ---------- */
     /**
@@ -445,42 +469,38 @@ public class Memory implements Serializable {
     public Concept concept(final Term t) {
         return concepts.concept(t);
     }
-  
-
-
 
     //TODO decide if this is necessary
     public void temporalRuleOutputToGraph(Sentence s, Task t) {
-        if(t.sentence.term instanceof Implication && t.sentence.term.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-            
-            executive.graph.implication.add(s, (CompoundTerm)s.term, t);            
+        if (t.sentence.term instanceof Implication && t.sentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+
+            executive.graph.implication.add(s, (CompoundTerm) s.term, t);
         }
 
     }
 
-
     /**
      * Get the Concept associated to a Term, or create it.
-     * 
-     *   Existing concept: apply tasklink activation (remove from bag, adjust budget, reinsert)
-     *   New concept: set initial activation, insert
-     *   Subconcept: extract from cache, apply activation, insert
-     * 
+     *
+     * Existing concept: apply tasklink activation (remove from bag, adjust
+     * budget, reinsert) New concept: set initial activation, insert Subconcept:
+     * extract from cache, apply activation, insert
+     *
      * If failed to insert as a result of null bag, returns null
      *
-     * A displaced Concept resulting from insert is forgotten (but may be stored in optional  subconcept memory
-     * 
+     * A displaced Concept resulting from insert is forgotten (but may be stored
+     * in optional subconcept memory
+     *
      * @param term indicating the concept
-     * @return an existing Concept, or a new one, or null 
+     * @return an existing Concept, or a new one, or null
      */
     public Concept conceptualize(final BudgetValue budget, final Term term) {
         boolean createIfMissing = true;
-        
+
         /*Concept c = concept(term);
-        if (c!=null)
-            System.out.print(c.budget + "   ");
-        System.out.println(term + " conceptualize: " + budget);*/
-                
+         if (c!=null)
+         System.out.print(c.budget + "   ");
+         System.out.println(term + " conceptualize: " + budget);*/
         return concepts.conceptualize(budget, term, createIfMissing);
     }
 
@@ -519,7 +539,6 @@ public class Memory implements Serializable {
         Term[] c = components.toArray(new Term[components.size()]);
         return term(compound, c);
     }
-    
 
     /**
      * Try to make a compound term from an operator and a list of term
@@ -531,9 +550,9 @@ public class Memory implements Serializable {
      * @return A term or null
      */
     public Term term(final NativeOperator op, final Term[] a) {
-        
+
         switch (op) {
-            
+
             case SET_EXT_OPENER:
                 return SetExt.make(a);
             case SET_INT_OPENER:
@@ -581,96 +600,92 @@ public class Memory implements Serializable {
         }
         throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }
-    
-    /** 
-     * this will not remove a concept.  it is not good to use directly because it can disrupt 
-     * the bag's priority order. it should only be used after it has been removed then before inserted */
+
+    /**
+     * this will not remove a concept. it is not good to use directly because it
+     * can disrupt the bag's priority order. it should only be used after it has
+     * been removed then before inserted
+     */
     public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
         switch (param.forgetting) {
-            case Iterative:                
+            case Iterative:
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
             case Periodic:
                 BudgetFunctions.forgetPeriodic(x.budget, forgetCycles, relativeThreshold, time());
                 break;
         }
-    }    
-    
+    }
+
     /* ---------- new task entries ---------- */
     /**
      * add new task that waits to be processed in the next cycleMemory
      */
     public void addNewTask(final Task t, final String reason) {
         /*if (!Term.valid(t.getContent()))
-            throw new RuntimeException("Invalid term: " + t);*/
-        
+         throw new RuntimeException("Invalid term: " + t);*/
+
         newTasks.add(t);
-                
+
         logic.TASK_ADD_NEW.hit();//t.getPriority());
-        
+
         emit(Events.TaskAdd.class, t, reason);
-        
+
         output(t);
     }
-    
+
     /* There are several types of new tasks, all added into the
      newTasks list, to be processed in the next cycleMemory.
      Some of them are reported and/or logged. */
     /**
      * Input task processing. Invoked by the outside or inside environment.
- Outside: StringParser (addInput); Inside: InnateOperator (feedback). Input
- tasks with low priority are ignored, and the others are put into task
- buffer.
+     * Outside: StringParser (addInput); Inside: InnateOperator (feedback).
+     * Input tasks with low priority are ignored, and the others are put into
+     * task buffer.
      *
      * @param t The addInput task
      */
     public void inputTask(final AbstractTask t) {
-        
+
         if (t instanceof Task) {
-            Task task = (Task)t;
-            Stamp s = task.sentence.stamp;                        
-            if (s.getCreationTime()==-1)
+            Task task = (Task) t;
+            Stamp s = task.sentence.stamp;
+            if (s.getCreationTime() == -1) {
                 s.setCreationTime(time(), param.duration.get());
+            }
 
             emit(IN.class, task);
 
             if (task.budget.aboveThreshold()) {
-                temporalRuleOutputToGraph(task.sentence,task);
-                
+                temporalRuleOutputToGraph(task.sentence, task);
+
                 addNewTask(task, "Perceived");
-                
+
             } else {
                 removeTask(task, "Neglected");
             }
-        }
-        else if (t instanceof PauseInput) {            
-            stepLater(((PauseInput)t).cycles);            
+        } else if (t instanceof PauseInput) {
+            stepLater(((PauseInput) t).cycles);
             emit(IN.class, t);
-        }
-        else if (t instanceof Reset) {
+        } else if (t instanceof Reset) {
             reset();
             emit(IN.class, t);
-        }
-        else if (t instanceof Echo) {
-            Echo e = (Echo)t;
+        } else if (t instanceof Echo) {
+            Echo e = (Echo) t;
             emit(e.channel, e.signal);
-        }
-        else if (t instanceof SetVolume) {            
-            param.noiseLevel.set(((SetVolume)t).volume);
+        } else if (t instanceof SetVolume) {
+            param.noiseLevel.set(((SetVolume) t).volume);
             emit(IN.class, t);
-        }            
-        else {
+        } else {
             emit(IN.class, "Unrecognized Input Task: " + t);
         }
     }
 
-
-
-    public void removeTask(final Task task, final String reason) {        
+    public void removeTask(final Task task, final String reason) {
         emit(TaskRemove.class, task, reason);
-        task.end();        
+        task.end();
     }
-    
+
     /**
      * ExecutedTask called in Operator.call
      *
@@ -679,27 +694,27 @@ public class Memory implements Serializable {
     public void executedTask(final Operation operation, TruthValue truth) {
         Task opTask = operation.getTask();
         logic.TASK_EXECUTED.hit(); //(opTask.budget.getPriority());
-                
-        Stamp stamp = new Stamp(this, Tense.Present); 
+
+        Stamp stamp = new Stamp(this, Tense.Present);
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
-        
+
         Task task = new Task(sentence, opTask.budget, operation.getTask());
         task.setCause(operation);
-        
+
         addNewTask(task, "Executed");
     }
 
     public void output(final Task t) {
-        
+
         final float budget = t.budget.summary();
         final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
-        
+
         if (budget >= noiseLevel) {  // only report significant derived Tasks
             emit(OUT.class, t);
-        }        
+        }
     }
-    
-    final public void emit(final Class c, final Object... signal) {        
+
+    final public void emit(final Class c, final Object... signal) {
         event.emit(c, signal);
     }
 
@@ -707,9 +722,11 @@ public class Memory implements Serializable {
         return event.isActive(channel);
     }
 
-    
-    /** enable/disable all I/O and memory processing.  CycleStart and CycleStop events will 
-     continue to be generated, allowing the memory to be used as a clock tick while disabled. */
+    /**
+     * enable/disable all I/O and memory processing. CycleStart and CycleStop
+     * events will continue to be generated, allowing the memory to be used as a
+     * clock tick while disabled.
+     */
     public void setEnabled(boolean e) {
         this.enabled = e;
     }
@@ -717,77 +734,81 @@ public class Memory implements Serializable {
     public boolean isEnabled() {
         return enabled;
     }
-    
-    
-    
+
     public void cycle(final TaskSource inputs) {
 
-        if (!isEnabled())
+        if (!isEnabled()) {
             return;
-        
+        }
+
         resource.CYCLE_DURATION.start();
 
-        
         logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());
-        
-        event.emit(Events.CycleStart.class);                
 
-            
+        event.emit(Events.CycleStart.class);
+
         int inputTaskPriority = concepts.getInputPriority();
-        
-        /** adds input tasks to newTasks */
+
+        /**
+         * adds input tasks to newTasks
+         */
         for (int i = 0; (i < inputTaskPriority) && (isProcessingInput()); i++) {
-            AbstractTask t = inputs.nextTask();                    
-            if (t!=null) 
-                inputTask(t);            
+            AbstractTask t = inputs.nextTask();
+            if (t != null) {
+                inputTask(t);
+            }
         }
-      
 
         concepts.cycle();
-                           
-        //executive.cycle();
 
-        event.emit(Events.CycleEnd.class);       
-        
+        //executive.cycle();
+        event.emit(Events.CycleEnd.class);
+
         updateTime();
-        
 
         resource.CYCLE_DURATION.stop();
     }
-    
-    
 
     /**
-     * automatically called each cycle */    
+     * automatically called each cycle
+     */
     protected void updateTime() {
         timePreviousCycle = time();
         cycle++;
         timeRealNow = System.currentTimeMillis();
     }
-    
-    /** Processes a specific number of new tasks */
+
+    /**
+     * Processes a specific number of new tasks
+     */
     public int processNewTasks(int maxTasks, Collection<Runnable> queue) {
-        if (maxTasks == 0) return 0;
-        
+        if (maxTasks == 0) {
+            return 0;
+        }
+
         int processed = 0;
-                
+
         int numTasks = Math.min(maxTasks, newTasks.size());
-        
+
         for (int i = 0; (!newTasks.isEmpty()) && (i < numTasks); i++) {
-            
+
             final Task task = newTasks.removeFirst();
-                        
+
             processed++;
-            
-            emotion.adjustBusy(task.getPriority(), task.getDurability());            
- 
-            
-            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term)!=null) { //it is a question/goal/quest or a concept which exists                   
+
+            emotion.adjustBusy(task.getPriority(), task.getDurability());
+
+            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists                   
                 // ok so lets fire it
-                queue.add(new ImmediateProcess(this, task, numTasks - 1)); 
-            } else { 
+                if (Parameters.THREADS == 1)
+                    queue.add(new ImmediateProcess(this, task, numTasks - 1));
+                else {
+                    queue(task, numTasks-1);
+                }
+                
+            } else {
                 final Sentence s = task.sentence;
-                if ((s!=null) && (s.isJudgment()||s.isGoal())) {
+                if ((s != null) && (s.isJudgment() || s.isGoal())) {
                     final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         //i dont see yet how frequency could play a role here - patrick
@@ -795,125 +816,122 @@ public class Memory implements Serializable {
                         //but the implications reach all the frequency spectrum in certain situations
                         //but every concept can also be represented with (--,) so i guess its ok
                         logic.TASK_ADD_NOVEL.commit();
-                        
+
                         // new concept formation                        
                         Task displacedNovelTask = novelTasks.putIn(task);
-                        if (displacedNovelTask!=null) {
-                            if (displacedNovelTask==task) {
+                        if (displacedNovelTask != null) {
+                            if (displacedNovelTask == task) {
                                 removeTask(task, "Ignored");
-                            }
-                            else {
+                            } else {
                                 removeTask(displacedNovelTask, "Displaced novel task");
                             }
                         }
-                        
-                    } else {                        
+
+                    } else {
                         removeTask(task, "Neglected");
                     }
                 }
             }
-        }        
-                         
+        }
+
         return processed;
     }
- 
+
     protected void error(Throwable ex) {
         emit(ERR.class, ex);
-        
+
         if (Parameters.DEBUG) {
-            ex.printStackTrace();            
+            ex.printStackTrace();
         }
-        
+
     }
-    
+
     public <T> void run(final List<Runnable> tasks) {
         run(tasks, 1);
     }
-    
-    public <T> void run(final List<Runnable> tasks, int concurrency) {        
-        
-        if ((tasks == null) || (tasks.isEmpty())) return;
-        
-        else if (tasks.size() == 1) {            
+
+    public <T> void run(final List<Runnable> tasks, int concurrency) {
+
+        if ((tasks == null) || (tasks.isEmpty())) {
+            return;
+        } else if (tasks.size() == 1) {
             tasks.get(0).run();
-        }
-        else if (concurrency == 1) {
+        } else if (concurrency == 1) {
             //single threaded
             for (final Runnable t : tasks) {
                 t.run();
             }
-        }
-        else {   
+        } else {
             //execute in parallel, multithreaded                        
-            final ConcurrentContext ctx = ConcurrentContext.enter(); 
-            
+            final ConcurrentContext ctx = ConcurrentContext.enter();
+
             ctx.setConcurrency(concurrency);
-            try { 
-                for (final Runnable r : tasks) {                    
+            try {
+                for (final Runnable r : tasks) {
                     ctx.execute(r);
                 }
             } finally {
                 // Waits for all concurrent executions to complete.
                 // Re-exports any exception raised during concurrent executions. 
-                ctx.exit();                              
+                ctx.exit();
             }
         }
     }
 
-    
-
     /**
      * Select a novel task to process.
+     *
      * @return whether a task was processed
      */
     public int processNovelTasks(int num, Collection<Runnable> queue) {
-        if (num == 0) return 0;
-        
-        int executed = 0;                
+        if (num == 0) {
+            return 0;
+        }
+
+        int executed = 0;
 
         for (int i = 0; i < novelTasks.size(); i++) {
+
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
-            if (task == null) break;
-            
+            if (task == null) {
+                continue;
+            }
+            /*if (task == null)
+             throw new RuntimeException("novelTasks.takeNext() returned null but non-empty: " + novelTasks );*/
+
             queue.add(new ImmediateProcess(this, task, 0));
             executed++;
         }
-        
-        
+
         return executed;
     }
 
-
-    
-     public Operator getOperator(final String op) {
+    public Operator getOperator(final String op) {
         return operators.get(op);
-     }
-     
-     public Operator addOperator(final Operator op) {
-         operators.put(op.name(), op);
-         return op;
-     }
-     
-     public Operator removeOperator(final Operator op) {
-         return operators.remove(op.name());
-     }
-     
+    }
 
+    public Operator addOperator(final Operator op) {
+        operators.put(op.name(), op);
+        return op;
+    }
 
+    public Operator removeOperator(final Operator op) {
+        return operators.remove(op.name());
+    }
 
     @Override
     public String toString() {
         //final StringBuilder sb = new StringBuilder(1024);
         //sb.append(toStringLongIfNotNull(novelTasks, "novelTasks"))
-          //      .append(toStringIfNotNull(newTasks, "newTasks"));
-                //.append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
-                //.append(toStringLongIfNotNull(getCurrentBeliefLink(), "currentBeliefLink"))
-                //.append(toStringIfNotNull(getCurrentBelief(), "currentBelief"));
+        //      .append(toStringIfNotNull(newTasks, "newTasks"));
+        //.append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
+        //.append(toStringLongIfNotNull(getCurrentBeliefLink(), "currentBeliefLink"))
+        //.append(toStringIfNotNull(getCurrentBelief(), "currentBelief"));
         //return sb.toString();
         return super.toString();
     }
 
-    private String toStringLongIfNotNull(Bag<?,?> item, String title) {
+    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
         return item == null ? "" : "\n " + title + ":\n"
                 + item.toString();
     }
@@ -928,18 +946,14 @@ public class Memory implements Serializable {
                 + item.toString();
     }
 
-
-
     public long newStampSerial() {
         return currentStampSerial++;
     }
-
 
     public boolean isProcessingInput() {
         return time() >= inputPausedUntil;
     }
 
-    
     /**
      * Queue additional cycle()'s to the inference process.
      *
@@ -947,13 +961,16 @@ public class Memory implements Serializable {
      */
     public void stepLater(final int cycles) {
         inputPausedUntil = (int) (time() + cycles);
-    }    
-    
-    /** get all tasks in the system by iterating all newTasks, novelTasks, Concept TaskLinks */
+    }
+
+    /**
+     * get all tasks in the system by iterating all newTasks, novelTasks,
+     * Concept TaskLinks
+     */
     public Set<Task> getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks) {
-        
+
         Set<Task> t = new HashSet();
-        
+
         if (includeTaskLinks) {
             for (Concept c : concepts) {
                 for (TaskLink tl : c.taskLinks) {
@@ -961,50 +978,58 @@ public class Memory implements Serializable {
                 }
             }
         }
-        
-        if (includeNewTasks)
+
+        if (includeNewTasks) {
             t.addAll(newTasks);
-        
-        if (includeNovelTasks)
-            for (Task n : novelTasks)
+        }
+
+        if (includeNovelTasks) {
+            for (Task n : novelTasks) {
                 t.add(n);
-            
-        return t;        
+            }
+        }
+
+        return t;
     }
 
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability) {
-        return newTask(content, sentenceType, freq, conf, priority, durability, (Task)null);
+        return newTask(content, sentenceType, freq, conf, priority, durability, (Task) null);
     }
-            
-            
+
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
         return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
     }
-    
-    /** convenience method for forming a new Task from a term */
+
+    /**
+     * convenience method for forming a new Task from a term
+     */
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
         return newTask(content, sentenceType, freq, conf, priority, durability, null, tense);
     }
-    
-    /** convenience method for forming a new Task from a term */
+
+    /**
+     * convenience method for forming a new Task from a term
+     */
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
-        
+
         TruthValue truth = new TruthValue(freq, conf);
         Sentence sentence = new Sentence(
-                content, 
-                sentenceType, 
-                truth, 
+                content,
+                sentenceType,
+                truth,
                 new Stamp(this, tense));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         Task task = new Task(sentence, budget, parentTask);
         return task;
     }
-    
-    /** gets a next concept for processing */
+
+    /**
+     * gets a next concept for processing
+     */
     public Concept sampleNextConcept() {
         return concepts.sampleNextConcept();
     }
-    
+
     public Timing getTiming() {
         return timing;
     }
@@ -1015,25 +1040,24 @@ public class Memory implements Serializable {
         }
         throw new RuntimeException("Questions index for " + c + " does not exist");
     }
-    
+
     public final ArrayDeque<Task> stm = new ArrayDeque();
     //public Task stmLast = null;
-    
+
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
-        if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+        if (newEvent.budget == null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
         }
-        
+
         //new one happened and duration is already over, so add as negative task
         nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
-                
 
         if (newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
             return false;
         }
 
-        synchronized(stm) {
+        synchronized (stm) {
             for (Task stmLast : stm) {
 
                 if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
@@ -1056,14 +1080,13 @@ public class Memory implements Serializable {
             ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
             //stmLast = newEvent;
             ////}
-
-            while (stm.size()+1 > Parameters.STM_SIZE)
+            while (stm.size() + 1 > Parameters.STM_SIZE) {
                 stm.removeFirst();
+            }
             stm.addLast(newEvent);
         }
 
         return true;
     }
 
-    
 }

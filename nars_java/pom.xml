@@ -12,21 +12,31 @@
     <name>OpenNARS Core</name>
     <url>https://github.com/opennars/opennars</url>
 
+ 
+    
+<scm>
+        <connection>scm:git:${project.url}.git</connection>
+        <developerConnection>scm:git:${project.url}.git</developerConnection>
+        <url>${project.url}</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <build>
         <plugins>
-          
+            <!-- Order is important ! Execution follows the declaration order -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
+                <version>3.1</version>
                 <configuration>
-                    <optimize>true</optimize>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -20,30 +20,35 @@ import reactor.function.Consumer;
  * @author me
  */
 public class Eventer<E> {
-    public static final Environment env = new Environment();
+    public final Environment env;
     public final Reactor r;
 
     public Eventer(Reactor r) {
+        this(new Environment(), r);
+    }
+    
+    public Eventer(Environment e, Reactor r) {
         this.r = r;
+        this.env = e;
     }
 
-    public Eventer(Dispatcher d) {
-        this(Reactors.reactor().env(env).dispatcher(d).get());
+    public Eventer(Environment e, Dispatcher d) {
+        this(e, Reactors.reactor().env(e).dispatcher(d).get());
     }
     
     public Eventer(String dispatcher) {
-        this(Reactors.reactor().env(env).dispatcher(dispatcher).get());
+        this(Reactors.reactor().env(new Environment()).dispatcher(dispatcher).get());        
     }
 
     /** new Eventer with a dispatcher mode that runs in the same thread */
     public static Eventer newSynchronous() {
         SynchronousDispatcher d = new SynchronousDispatcher();
-        return new Eventer(d);
+        return new Eventer(new Environment(), d);
     }
 
     /** new Eventer with a dispatcher mode that runs in 1 separate */
     public static Eventer newWorkQueue() {
-        return new Eventer(Reactors.reactor(env, Environment.WORK_QUEUE));
+        return new Eventer(Reactors.reactor(new Environment(), Environment.WORK_QUEUE));
     }
 
     public Registration on(Selector s, Consumer c) {
