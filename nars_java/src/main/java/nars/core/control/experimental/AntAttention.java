@@ -58,17 +58,16 @@ public class AntAttention extends WaveAttention {
     public void cycle() {
         run.clear();
         
-        memory.processNewTasks(newTaskPriority, run);
+        int newTasks = memory.processNewTasks(ants.size(), run);
                 
-        memory.processNovelTasks(novelTaskPriority, run);
-        
-        
+        int novelTasks = memory.processNovelTasks(ants.size(), run);
         
         for (Ant a : ants) {
             a.cycle(cycleSpeed, run);                 
         }
+        
         //System.out.println(ants);
-        //System.out.println(run);
+        System.out.println(run.size() + "[" + newTasks + "|" + novelTasks + "] " + run);
         
             
         

@@ -23,6 +23,13 @@ public class ImmediateProcess extends NAL {
     }
 
     @Override
+    public String toString() {
+        return "ImmediateProcess[" + task.toString() + "]";
+    }
+    
+    
+
+    @Override
     public void run() {
         setCurrentTask(task);
         setCurrentTerm(currentTask.getTerm());

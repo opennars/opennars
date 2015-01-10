@@ -18,9 +18,12 @@ public class FoodSpawnWorld1 extends RoverWorld {
         this.h = h;
         
         float foodSpawnR = w / 1.5f;
-        int numFood = 30;
+        int numFood = 5;
         for (int i = 0; i < numFood; i++) {
-            addFood(foodSpawnR, foodSpawnR);
+            float minSize = 1.5f;
+            float maxSize = 2.0f;
+            float mass = 4.0f;
+            addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass);
         }
         float wt = 1f;
         addWall(0, h, w, wt, 0);

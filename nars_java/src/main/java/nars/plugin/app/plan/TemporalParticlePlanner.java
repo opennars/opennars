@@ -58,7 +58,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
     int planParticles;
 
     /**
-     * inline search parameters
+     * inline search parameters -- is this used any more?
      */
     float inlineSearchDepth;
     int inlineParticles;
@@ -66,23 +66,50 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
     /**
      * max number of tasks that a plan can generate. chooses the N best
      */
-    int maxPlannedTasks = 1;
+    int maxPlannedTasks = 0;
        
     MultipleExecutionManager executive;
     GraphExecutive graph;
 
     public TemporalParticlePlanner() {
-        this(120, 64, 16);
+        this(120, 128, 16, 4);
     }
+
+
     
-    
-    public TemporalParticlePlanner(float searchDepth, int planParticles, int inlineParticles) {
+    public TemporalParticlePlanner(float searchDepth, int planParticles, int inlineParticles, int maxPlannedTasks) {
         super();
         this.searchDepth = this.inlineSearchDepth = searchDepth;
         this.planParticles = planParticles;
         this.inlineParticles = inlineParticles;
+        this.maxPlannedTasks = maxPlannedTasks;
     }
 
+  
+    public void setPlanParticles(int planParticles) {
+        this.planParticles = planParticles;
+    }
+
+    public void setSearchDepth(float searchDepth) {
+        this.searchDepth = searchDepth;
+    }
+
+    public void setMaxPlannedTasks(int maxPlannedTasks) {
+        this.maxPlannedTasks = maxPlannedTasks;
+    }
+
+    public int getMaxPlannedTasks() {
+        return maxPlannedTasks;
+    }
+
+    public int getPlanParticles() {
+        return planParticles;
+    }
+
+    public float getSearchDepth() {
+        return searchDepth;
+    }
+        
     @Override
     public void event(Class event, Object[] a) {
         if (event == UnexecutableGoal.class) {

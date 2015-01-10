@@ -127,7 +127,7 @@ import reactor.event.dispatch.SynchronousDispatcher;
  */
 public class Memory implements Serializable {
     
-    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
+    @Deprecated public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
     //get it out to plugin somehow
     
     private boolean enabled = true;
@@ -745,7 +745,7 @@ public class Memory implements Serializable {
 
         concepts.cycle();
                            
-        executive.cycle();
+        //executive.cycle();
 
         event.emit(Events.CycleEnd.class);       
         
@@ -873,10 +873,10 @@ public class Memory implements Serializable {
 
         for (int i = 0; i < novelTasks.size(); i++) {
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
-            if (task != null) {            
-                queue.add(new ImmediateProcess(this, task, 0));
-                executed++;
-            }
+            if (task == null) break;
+            
+            queue.add(new ImmediateProcess(this, task, 0));
+            executed++;
         }
         
         

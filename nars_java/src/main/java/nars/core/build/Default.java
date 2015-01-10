@@ -131,8 +131,8 @@ public class Default extends Build implements ConceptBuilder {
 
     
 
-    public Default temporalPlanner(float searchDepth, int planParticles, int inlineParticles) {
-        pluginPlanner = new TemporalParticlePlanner(searchDepth, planParticles, inlineParticles);
+    public Default temporalPlanner(float searchDepth, int planParticles, int inlineParticles, int maxPlans) {
+        pluginPlanner = new TemporalParticlePlanner(searchDepth, planParticles, inlineParticles, maxPlans);
         return this;
     }
 

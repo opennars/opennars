@@ -316,6 +316,8 @@ public class Concept extends Item<Term> implements Termable {
 
             if(content instanceof Operation) {
 
+                System.out.println("decision accepted: " + t);
+
                 Operation op=(Operation)content;
                 Operator oper = op.getOperator();
 
@@ -326,7 +328,14 @@ public class Concept extends Item<Term> implements Termable {
 
                 return true;
             }
+            else {
+                System.out.println("decision rejected: not operation " + t);
+            }
         }
+        else {
+            System.out.println("decision rejected: " + t);
+        }
+        
         return false;
     }
     
@@ -784,24 +793,25 @@ public class Concept extends Item<Term> implements Termable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public synchronized TermLink selectTermLink(final TaskLink taskLink, final long time) {
+    public TermLink selectTermLink(final TaskLink taskLink, final long time) {
         
-        
-        int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
-        for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
-            
-            final TermLink termLink = termLinks.takeNext();
-            if (termLink==null)
-                break;
-            
-            if (taskLink.novel(termLink, time)) {
-                //return, will be re-inserted in caller method when finished processing it
-                return termLink;
+        synchronized (termLinks) {
+            int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
+            for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
+
+                final TermLink termLink = termLinks.takeNext();
+                if (termLink==null)
+                    break;
+
+                if (taskLink.novel(termLink, time)) {
+                    //return, will be re-inserted in caller method when finished processing it
+                    return termLink;
+                }
+
+                returnTermLink(termLink);
             }
-            
-            returnTermLink(termLink);
+            return null;
         }
-        return null;
 
     }
 

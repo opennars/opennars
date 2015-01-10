@@ -15,6 +15,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Neuromorphic;
+import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;
@@ -33,14 +34,11 @@ import org.jbox2d.dynamics.Body;
  */
 public class Rover2 extends PhysicsModel {
 
-    public int decrease_of_importance_step = 30;
-    public int cnt = 0;
-    public int do_sth_importance = 0;
 
-    float curiosity;
+    float curiosity = 0.05f;
 
     /* how often to input mission, in frames */
-    int missionPeriod = 5000;
+    int missionPeriod = 100;
 
     boolean wraparound = false;
 
@@ -59,7 +57,8 @@ public class Rover2 extends PhysicsModel {
         return normalized;
     }
 
-    final int angleResolution = 18;
+    final int angleResolution = 8;
+    int cnt = 0;
 
     public String angleTerm(final float a) {
         float h = (float) normalizeAngle(a);
@@ -154,18 +153,16 @@ public class Rover2 extends PhysicsModel {
     }
 
     protected void addAxioms() {
-        //nar.addInput("<feltOrientation <-> feltAngularMotion>?");
-        //nar.addInput("<feltSpeed <-> feltAngularMotion>?");
-        nar.addInput("<{left,right,forward,reverse} <-> direction>.");
-        nar.addInput("<{Wall,Empty,Food} <-> material>.");
-        nar.addInput("<{0,x,xx,xxx,xxxx} <-> magnitude>.");
 
-        nar.addInput("<0 <-> x>. %1.00;0.50%");
-        nar.addInput("<x <-> xx>. %1.00;0.50%");
-        nar.addInput("<xx <-> xxx>. %1.00;0.50%");
-        nar.addInput("<xxx <-> xxxx>. %1.00;0.50%");
+        nar.addInput("<{left,right,forward,reverse} --> direction>.");
+        nar.addInput("<{Wall,Empty,Food} --> material>.");
+        nar.addInput("<{0,x,xx,xxx,xxxx} --> magnitude>.");
 
-        nar.addInput("<{feltAngularMotion,feltOrientation,feltSpeed,feltSpeedAvg16} <-> magnitude>.");
+        nar.addInput("<0 <-> x>. %0.60;0.60%");
+        nar.addInput("<x <-> xx>. %0.60;0.60%");
+        nar.addInput("<xx <-> xxx>. %0.60;0.60%");
+        nar.addInput("<xxx <-> xxxx>. %0.60;0.60%");
+        nar.addInput("<0 <-> xxxx>. %0.00;0.95%");
 
     }
 
@@ -179,15 +176,12 @@ public class Rover2 extends PhysicsModel {
             nar.addInput("<goal --> Food>! %1.00;0.99%");
             nar.addInput("<goal --> stop>! %0.00;0.99%");
             //nar.addInput("Wall! %0.00;0.50%");            
-            nar.addInput("<" + f(0) + " --> feltAvgSpeed16>! %0.00;0.50%");
+            nar.addInput("<goal --> feel>! %1.00;0.70%");
         } else if (mission == 1) {
             //rest
             curiosity = 0;
             nar.addInput("<goal --> stop>! %1.00;0.99%");
             nar.addInput("<goal --> Food>! %0.00;0.99%");
-            nar.addInput("<" + f(0) + " --> feltAngularMotion>! %1.00;0.99%");
-            nar.addInput("<" + f(0) + " --> feltSpeed>! %1.00;0.99%");
-            nar.addInput("<" + f(0) + " --> feltAvgSpeed16>! %1.00;0.99%");
         }
         //..
     }
@@ -195,6 +189,8 @@ public class Rover2 extends PhysicsModel {
     @Override
     public void step(float timeStep, TestbedSettings settings) {
 
+        cnt++;
+        
         super.step(timeStep, settings);
 
         rover.step();
@@ -247,8 +243,8 @@ public class Rover2 extends PhysicsModel {
         getWorld().setGravity(new Vec2());
         getWorld().setAllowSleep(false);
 
-        //world = new FoodSpawnWorld1(this, sz, sz);
-        world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
+        world = new FoodSpawnWorld1(this, sz, sz);
+        //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
         rover = new RoverModel(this, this);
 
@@ -267,16 +263,17 @@ public class Rover2 extends PhysicsModel {
     static final ArrayList<String> randomActions = new ArrayList<>();
 
     static {
-        // randomActions.add("(^motor,left)!");
-        randomActions.add("(^motor,left,left)!");
-        // randomActions.add("(^motor,right)!");
-        randomActions.add("(^motor,right,right)!");
+        String p = "$0.99;0.75;0.90$ ";
+        randomActions.add("(^motor,left)!");
+        randomActions.add(p + "(^motor,left,left)!");
+        randomActions.add("(^motor,right)!");
+        randomActions.add(p + "(^motor,right,right)!");
         //randomActions.add("(^motor,forward,forward)!"); //too much actions are not good, 
-        randomActions.add("(^motor,forward)!"); //however i would agree if <(^motor,forward,forward) --> (^motor,forward)>.
+        randomActions.add(p + "(^motor,forward)!"); //however i would agree if <(^motor,forward,forward) --> (^motor,forward)>.
         //randomActions.add("(^motor,forward,forward)!");
-        randomActions.add("(^motor,forward)!");
+        randomActions.add(p + "(^motor,forward)!");
         //randomActions.add("(^motor,reverse)!");
-        randomActions.add("(^motor,stop)!");
+        randomActions.add(p + "(^motor,stop)!");
         //randomActions.add("(^motor,random)!");
     }
 
@@ -350,40 +347,46 @@ public class Rover2 extends PhysicsModel {
     }
 
     public static void main(String[] args) {
-        Parameters.DEBUG = true;
-        Parameters.THREADS = 3;
+        Parameters.DEBUG = false;
+        Parameters.THREADS = 1;
         
         NARSwing.themeInvert();
 
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(2000).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagLevels(10).simulationTime().setInternalExperience(null));
+        NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(1000).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
                 
-        new NARPrologMirror(nar, 0.5f, true) {
+        new NARPrologMirror(nar, 0.35f, true) {
 
+            @Override
+            protected void onQuestion(Sentence s) {
+                System.out.println("PROLOG QUESTION: " + s);
+            }
+
+            
             @Override
             public Term answer(Task question, Term t, nars.prolog.Term pt) {
                 
                 Term xt = super.answer(question, t, pt);
                 if (xt!=null)
-                    System.out.println(pt);
+                    System.out.println("PROLOG ANSWERED: " + pt);
                 return xt;
             }
             
-        }.temporal(true, false);      
+        }.temporal(true, true);      
         
         
 
         float framesPerSecond = 30f;
-        int cyclesPerFrame = 100; //was 200        
+        int cyclesPerFrame = 1; //was 200        
         Parameters.STM_SIZE = 4;
-        (nar.param).noiseLevel.set(0);
-        (nar.param).duration.set(cyclesPerFrame/4);
-        (nar.param).conceptForgetDurations.set(5f);
-        (nar.param).taskLinkForgetDurations.set(10f);
+        (nar.param).noiseLevel.set(6);
+        (nar.param).duration.set(5);
+        (nar.param).conceptForgetDurations.set(25f);
+        (nar.param).taskLinkForgetDurations.set(25f);
         (nar.param).termLinkForgetDurations.set(25f);
-        (nar.param).novelTaskForgetDurations.set(5f);
+        (nar.param).novelTaskForgetDurations.set(20f);
         
         Rover2 theRover;
 

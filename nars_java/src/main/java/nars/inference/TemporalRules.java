@@ -62,6 +62,11 @@ public class TemporalRules {
     public static final int ORDER_INVALID = -2;
 
     public final static int reverseOrder(final int order) {
+        
+        if (order == ORDER_INVALID) {
+            throw new RuntimeException("ORDER_INVALID not handled here");
+        }
+        
         if (order == ORDER_NONE) {
             return ORDER_NONE;
         } else {
@@ -75,6 +80,7 @@ public class TemporalRules {
     
 
     public final static boolean matchingOrder(final int order1, final int order2) {
+        
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }
 

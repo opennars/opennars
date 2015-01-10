@@ -10,6 +10,7 @@ import java.util.Deque;
 import java.util.List;
 import nars.core.NAR;
 import nars.io.ChangedTextInput;
+import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -43,6 +44,7 @@ public class RoverModel {
     private final ChangedTextInput feltSpeedAvg;
     private final World world;
     private final DrawPhy2D draw;
+    final double inputRepeatRate = 0.01;
 
     //public class DistanceInput extends ChangedTextInput
     public RoverModel(PhysicsModel p, final Rover2 sim) {
@@ -53,10 +55,10 @@ public class RoverModel {
         this.world = sim.getWorld();
         this.draw = (DrawPhy2D) sim.draw();
         
-        feltAngularVelocity = new ChangedTextInput(sim.nar);
-        feltOrientation = new ChangedTextInput(sim.nar);
-        feltSpeed = new ChangedTextInput(sim.nar);
-        feltSpeedAvg = new ChangedTextInput(sim.nar);
+        feltAngularVelocity = new SometimesChangedTextInput(sim.nar, inputRepeatRate);
+        feltOrientation = new SometimesChangedTextInput(sim.nar, inputRepeatRate);
+        feltSpeed = new SometimesChangedTextInput(sim.nar, inputRepeatRate);
+        feltSpeedAvg = new SometimesChangedTextInput(sim.nar, inputRepeatRate);
 
     
         float mass = 2.25f;
@@ -186,7 +188,7 @@ public class RoverModel {
         final Vec2 point; //where the retina receives vision at
         final float angle;
         private final float distance;
-        final ChangedTextInput sight = new ChangedTextInput(sim.nar);
+        final ChangedTextInput sight = new SometimesChangedTextInput(sim.nar,inputRepeatRate);
         RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
         private final Body body;
         private final int distanceSteps;
@@ -279,7 +281,7 @@ public class RoverModel {
             
             if (hit == null) {
                 if (minDist > 0.5f) {
-                    sight.set("<" + angleTerm + " --> Empty>. :|:");        
+                    sight.set("<(*,empty," + angleTerm + ",unknownDistance) --> feel>. :|:");        
                 }   
                 return;                                
             }
@@ -290,7 +292,7 @@ public class RoverModel {
             //float freq = 0.5f + 0.5f * di;
             float freq = 1f;
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-            String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+            String ss = "<(*," + material + "," + angleTerm + "," + dist + ") --> " +  "feel>. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
             sight.set(ss);
             
             
@@ -305,6 +307,7 @@ public class RoverModel {
         if (sim.cnt % sim.missionPeriod == 0) {
             sim.inputMission();
         }
+        
         for (VisionRay v : vision) {
             v.step();
         }
@@ -319,7 +322,6 @@ public class RoverModel {
         if (Math.random() < sim.curiosity) {
             sim.randomAction();
         }
-        sim.cnt++;
     }
 
     public void thrust(float angle, float force) {
@@ -346,7 +348,7 @@ public class RoverModel {
             a = maxAngleVelocityFelt;
         }
         if (a < 0.1) {
-            feltAngularVelocity.set("<" + Rover2.f(0) + " --> feltAngularMotion>. :|: %1.00;0.90%");
+            feltAngularVelocity.set("<(*,rotation," + Rover2.f(0) + ") --> feel>. :|: %1.00;0.90%");
             //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");
         } else {
             String direction;
@@ -355,19 +357,19 @@ public class RoverModel {
             } else /*if (xa > 0)*/ {
                 direction = sim.angleTerm(+MathUtils.PI);
             }
-            feltAngularVelocity.set("<(*," + Rover2.f(a) + "," + direction + ") --> feltAngularMotion>. :|:");
+            feltAngularVelocity.set("<(*,rotation," + Rover2.f(a) + "," + direction + ") --> feel>. :|:");
             // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
         }
-        feltOrientation.set("<" + sim.angleTerm(torso.getAngle()) + " --> feltOrientation>. :|:");
+        feltOrientation.set("<(*,orientation," + sim.angleTerm(torso.getAngle()) + ") --> feel>. :|:");
         float speed = Math.abs(torso.getLinearVelocity().length() / 20f);
         if (speed > 0.9f) {
             speed = 0.9f;
         }
-        feltSpeed.set("<" + Rover2.f(speed) + " --> feltSpeed>. :|:");
+        feltSpeed.set("<(*,speed," + Rover2.f(speed) + ") --> feel>. :|:");
         //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         int positionWindow1 = 16;
         Vec2 currentPosition = torso.getWorldCenter();
-        if (positions.size() >= positionWindow1) {
+        /*if (positions.size() >= positionWindow1) {
             Vec2 prevPosition = positions.removeFirst();
             float dist = prevPosition.sub(currentPosition).length();
             float scale = 1.5f;
@@ -376,8 +378,8 @@ public class RoverModel {
             if (dist > 1.0f) {
                 dist = 1.0f;
             }
-            feltSpeedAvg.set("<" + Rover2.f(dist) + " --> feltSpeedAvg" + positionWindow1 + ">. :|:");
-        }
+            feltSpeedAvg.set("<(*,speed," + Rover2.f(dist) + ") --> feel" + positionWindow1 + ">. :\\:");
+        }*/
         positions.addLast(currentPosition.clone());
     }
 
