@@ -1033,32 +1033,34 @@ public class Memory implements Serializable {
             return false;
         }
 
-        for (Task stmLast : stm) {
+        synchronized(stm) {
+            for (Task stmLast : stm) {
 
-            if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
-                return false;
+                if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
+                    return false;
+                }
+
+                nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, time());
+                nal.setCurrentTask(newEvent);
+
+                Sentence previousBelief = stmLast.sentence;
+                nal.setCurrentBelief(previousBelief);
+
+                Sentence currentBelief = newEvent.sentence;
+
+                //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
+                TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
             }
 
-            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, time());
-            nal.setCurrentTask(newEvent);
+            ////for this heuristic, only use input events & task effects of operations
+            ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+            //stmLast = newEvent;
+            ////}
 
-            Sentence previousBelief = stmLast.sentence;
-            nal.setCurrentBelief(previousBelief);
-            
-            Sentence currentBelief = newEvent.sentence;
-
-            //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
+            while (stm.size()+1 > Parameters.STM_SIZE)
+                stm.removeFirst();
+            stm.addLast(newEvent);
         }
-
-        ////for this heuristic, only use input events & task effects of operations
-        ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-        //stmLast = newEvent;
-        ////}
-        
-        while (stm.size()+1 > Parameters.STM_SIZE)
-            stm.removeFirst();
-        stm.addLast(newEvent);
 
         return true;
     }

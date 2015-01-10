@@ -41,25 +41,27 @@ abstract public class FireConcept extends NAL {
     
     protected void fire() {
 
-        if (currentTaskLink !=null) {
-            fireTaskLink(termLinkCount);
-            returnTaskLink(currentTaskLink);
-        }
-        else {
-            for (int i = 0; i < numTaskLinks; i++) {
-
-                if (currentConcept.taskLinks.size() == 0) 
-                    return;
-
-                currentTaskLink = currentConcept.taskLinks.takeNext();                    
-                if (currentTaskLink == null)
-                    return;
-
-                if (currentTaskLink.budget.aboveThreshold()) {
-                    fireTaskLink(termLinkCount);                    
-                }
-
+        synchronized (currentConcept) {
+            if (currentTaskLink !=null) {
+                fireTaskLink(termLinkCount);
                 returnTaskLink(currentTaskLink);
+            }
+            else {
+                for (int i = 0; i < numTaskLinks; i++) {
+
+                    if (currentConcept.taskLinks.size() == 0) 
+                        return;
+
+                    currentTaskLink = currentConcept.taskLinks.takeNext();                    
+                    if (currentTaskLink == null)
+                        return;
+
+                    if (currentTaskLink.budget.aboveThreshold()) {
+                        fireTaskLink(termLinkCount);                    
+                    }
+
+                    returnTaskLink(currentTaskLink);
+                }
             }
         }
         

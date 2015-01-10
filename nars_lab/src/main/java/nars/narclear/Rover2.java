@@ -40,14 +40,12 @@ public class Rover2 extends PhysicsModel {
     float curiosity;
 
     /* how often to input mission, in frames */
-    int missionPeriod = 100;
+    int missionPeriod = 5000;
 
     boolean wraparound = false;
 
     public RoverModel rover;
     final NAR nar;
-    private float linearSpeed;
-    private float angleSpeed;
     int mission = 0;
 
     private static final double TWO_PI = 2 * Math.PI;
@@ -353,14 +351,14 @@ public class Rover2 extends PhysicsModel {
 
     public static void main(String[] args) {
         Parameters.DEBUG = true;
-        Parameters.THREADS = 1;
+        Parameters.THREADS = 3;
         
         NARSwing.themeInvert();
 
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = new NAR(new Neuromorphic(16).setConceptBagSize(2000).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagLevels(10).simulationTime());
+        NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(2000).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagLevels(10).simulationTime().setInternalExperience(null));
                 
         new NARPrologMirror(nar, 0.5f, true) {
 
@@ -373,14 +371,15 @@ public class Rover2 extends PhysicsModel {
                 return xt;
             }
             
-        }.temporal(false, true);      
+        }.temporal(true, false);      
         
         
 
         float framesPerSecond = 30f;
-        int cyclesPerFrame = 4; //was 200        
+        int cyclesPerFrame = 100; //was 200        
+        Parameters.STM_SIZE = 4;
         (nar.param).noiseLevel.set(0);
-        (nar.param).duration.set(cyclesPerFrame*1);
+        (nar.param).duration.set(cyclesPerFrame/4);
         (nar.param).conceptForgetDurations.set(5f);
         (nar.param).taskLinkForgetDurations.set(10f);
         (nar.param).termLinkForgetDurations.set(25f);

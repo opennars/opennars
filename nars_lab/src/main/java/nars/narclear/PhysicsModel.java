@@ -536,7 +536,7 @@ public abstract class PhysicsModel implements ContactListener {
     if (button == MOUSE_JOINT_BUTTON) {
         spawnMouseJoint(p);
     }
-    System.out.println("mouse down: " + mouseJoint + " " + button);                    
+   
   }
 
   public void mouseMove(Vec2 p) {

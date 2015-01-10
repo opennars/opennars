@@ -324,7 +324,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
             return take(n.name());
         }
         else {
-            if (s!= 0)
+            if ((s!= 0) && (Parameters.THREADS == 1))
                 throw new RuntimeException("Bag did not find an item although it is not empty; " + pending.size() + " " + s );
             return null;
         }
@@ -335,6 +335,9 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         if (size() == 0) return null;
         
         E x = takeNext();
+        
+        if (x == null) return null;
+        
         addItem(x);
 
         return x;

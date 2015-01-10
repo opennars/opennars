@@ -86,30 +86,36 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         }
      
         @Override public E put(final K key, final E value) {
-            
+
             E removed;
             
-            removed = super.put(key, value);                
-            if (removed!=null) {
-                items.remove(removed);
-                mass -= removed.budget.getPriority();                
-            }
+            synchronized (nameTable) {
 
-            items.add(value);
+                removed = super.put(key, value);                
+                if (removed!=null) {
+                    items.remove(removed);
+                    mass -= removed.budget.getPriority();                
+                }
+
+                items.add(value);
+            }
 
             return removed;            
         }
 
 
         @Override public E remove(final Object key) {
-            
+
             E e;
             
-            e = super.remove(key);
-            if (e!=null) {
-                items.remove(e);
-            }
+            synchronized (nameTable) {
 
+                e = super.remove(key);
+                if (e!=null) {
+                    items.remove(e);
+                }
+
+            }
             return e;
         }
 
@@ -145,9 +151,11 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
 
     @Override
     public final void clear() {
-        items.clear();
-        nameTable.clear();
-        mass = 0;
+        synchronized (nameTable) {
+            items.clear();
+            nameTable.clear();
+            mass = 0;
+        }
     }
 
     /**
@@ -235,14 +243,21 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     public E takeNext() {
         
         if (size()==0) return null; // empty bag          
-        return removeItem( nextRemovalIndex() );    
+        if (items.isEmpty()) return null;
+        synchronized (nameTable) {
+            return removeItem( nextRemovalIndex() );    
+        }
     }
     
 
     @Override
     public E peekNext() {
-        if (size()==0) return null; // empty bag                
-        return items.get( nextRemovalIndex() );
+        
+        if (size()==0) return null; // empty bag      
+        if (items.isEmpty()) return null;
+        synchronized (nameTable) {
+            return items.get( nextRemovalIndex() );
+        }
     }
     
     
@@ -317,23 +332,26 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      */
     @Override protected E addItem(E newItem) {
 
-        float newPriority = newItem.getPriority();        
-        
-        E oldItem = null;
-        
-        if (size() >= capacity) {      // the bag is full            
-            if (newPriority < getMinPriority())
-                return newItem;
+        synchronized (nameTable) {
+            float newPriority = newItem.getPriority();        
 
-            oldItem = removeItem(0);            
+            E oldItem = null;
+
+            if (size() >= capacity) {      // the bag is full            
+                if (newPriority < getMinPriority())
+                    return newItem;
+
+                oldItem = removeItem(0);            
+            }
+
+            nameTable.put(newItem.name(), newItem);        
+            mass += (newItem.budget.getPriority());                  // increase total mass
+            
+            return oldItem;
         }
-
-        nameTable.put(newItem.name(), newItem);        
-        mass += (newItem.budget.getPriority());                  // increase total mass
         
         
         
-        return oldItem;
     }
 
 
@@ -346,13 +364,16 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The first Item
      */
     protected E removeItem(final int index) {
-        //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
         
+        final E selected;
         
-        final E selected = items.get((int)index);
-        if (selected!=null) {            
-            nameTable.remove(selected.name());
-            mass -= selected.budget.getPriority();
+        synchronized (nameTable) {
+
+            selected = items.get((int)index);
+            if (selected!=null) {            
+                nameTable.remove(selected.name());
+                mass -= selected.budget.getPriority();
+            }
         }
         
         return selected;

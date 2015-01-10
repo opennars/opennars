@@ -784,7 +784,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectTermLink(final TaskLink taskLink, final long time) {
+    public synchronized TermLink selectTermLink(final TaskLink taskLink, final long time) {
         
         
         int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
