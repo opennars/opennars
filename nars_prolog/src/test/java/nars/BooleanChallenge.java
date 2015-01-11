@@ -321,7 +321,7 @@ public class BooleanChallenge {
         NAR n = new Discretinuous().build();
 
         
-        new NARPrologMirror(n, 0.9f, true);
+        new NARPrologMirror(n, 0.9f, true, true, false);
         
         //NAR n = new CurveBagNARBuilder().build();
 

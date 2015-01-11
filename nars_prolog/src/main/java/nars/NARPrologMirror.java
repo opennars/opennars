@@ -269,7 +269,8 @@ public class NARPrologMirror extends AbstractObserver {
                         }
                     }                            
                     while (prolog.hasOpenAlternatives() && (answers++) < maxAnswers);                    
-                    prolog.solveHalt();
+                    
+                    
                     
                 }
             } catch (InvalidTermException nse) {
@@ -281,6 +282,8 @@ public class NARPrologMirror extends AbstractObserver {
                 nar.emit(ERR.class, ex.toString());
                 ex.printStackTrace();
             }
+            
+            prolog.solveHalt();
         }
         
     }

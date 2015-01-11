@@ -486,8 +486,8 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 			Parser p = new Parser(opManager, st);
 			Term t = p.nextTerm(true);
 			return solve(t);
-		} catch (InvalidTermException ex) {
-			throw new MalformedGoalException();
+		} catch (Exception ex) {
+			throw new MalformedGoalException(ex.toString());
 		}
 	}
 	

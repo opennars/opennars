@@ -5,6 +5,7 @@ import nars.prolog.Int;
 import nars.prolog.Prolog;
 import nars.prolog.PrologException;
 import nars.prolog.SolveInfo;
+import nars.prolog.TestLibrary;
 
 public class LibraryTestCase extends TestCase {
 	

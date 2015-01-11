@@ -3,9 +3,11 @@ package prolog;
 
 import junit.framework.TestCase;
 import nars.prolog.InvalidLibraryException;
+import nars.prolog.InvalidTermException;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Library;
 import nars.prolog.Prolog;
+import nars.prolog.StringLibrary;
 import nars.prolog.Theory;
 import nars.prolog.event.SpyEvent;
 import nars.prolog.event.SpyListener;
@@ -57,7 +59,7 @@ public class PrologTestCase extends TestCase {
 		try {
 			engine.addTheory(t);
 			fail();
-		} catch (InvalidTheoryException expected) {
+		} catch (InvalidTermException expected) {
 			assertEquals("", engine.getTheory().toString());
 		}
 	}

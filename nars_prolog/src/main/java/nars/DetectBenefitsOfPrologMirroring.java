@@ -45,8 +45,8 @@ public class DetectBenefitsOfPrologMirroring {
             System.out.println(path + "\n  " + np.getScore() + " " + pp.getScore());
         }
         
-        System.out.println(currentPrologEternal.getBeliefsTheory());
-        System.out.println(currentPrologPresent.getBeliefsTheory());
+        //System.out.println(currentPrologEternal.getBeliefsTheory());
+        //System.out.println(currentPrologPresent.getBeliefsTheory());
         
     }
     

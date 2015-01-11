@@ -24,4 +24,15 @@ package nars.prolog;
  *
  */
 @SuppressWarnings("serial")
-public class MalformedGoalException extends PrologException {}
+public class MalformedGoalException extends PrologException {
+
+    public MalformedGoalException() {
+        super();
+    }
+
+    
+    public MalformedGoalException(String st) {
+        super(st);
+    }
+
+}

@@ -54,9 +54,9 @@ public class BasicLibraryExceptionsTestCase extends TestCase {
 		Struct g = (Struct) info.getTerm("Goal");
 		assertTrue(g.isEqual(new Struct("set_theory", new Struct("a"))));
 		Int line = (Int) info.getTerm("Line");
-		assertTrue(line.intValue() == 1);
+		assertEquals("line intValue", 1, line.intValue());
 		Int position = (Int) info.getTerm("Line");
-		assertTrue(position.intValue() == 1);
+		assertEquals("position intValue", 1, position.intValue());
 		Struct message = (Struct) info.getTerm("Message");
 		assertTrue(message.isEqual(new Struct("The term 'a' is not ended with a period.")));
 	}

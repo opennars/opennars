@@ -158,7 +158,8 @@ public class Var extends Term {
         Var v;
         Object temp = vMap.get(this);
         if (temp == null) {
-            v = new Var(null, Var.PROGRESSIVE, vMap.size(), timestamp);//name,Var.PROGRESSIVE,vMap.size(),timestamp);
+            v = new Var(null, Var.PROGRESSIVE, vMap.size(), timestamp);
+                //name,Var.PROGRESSIVE,vMap.size(),timestamp);
             vMap.put(this, v);
         } else {
             v = (Var) temp;
@@ -173,10 +174,10 @@ public class Var extends Term {
                 v.link = (tt != v) ? (Var) tt : null;
             }
         }
-        if (t instanceof Struct) {
+        else if (t instanceof Struct) {
             v.link = t.copy(vMap, substMap);
         }
-        if (t instanceof Number) {
+        else if (t instanceof Number) {
             v.link = t;
         }
         return v;

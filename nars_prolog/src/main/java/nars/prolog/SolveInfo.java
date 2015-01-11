@@ -63,14 +63,14 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
      * 
      * @param initGoal
      * @param resultGoal
-     * @param resultDemo
+     * @param resultState
      * @param resultVars
      */
-    SolveInfo(Term initGoal, Struct resultGoal, int resultDemo, List<Var> resultVars) {
+    SolveInfo(Term initGoal, Struct resultGoal, int resultState, List<Var> resultVars) {
         query = initGoal;
         goal = resultGoal;
         bindings = resultVars;
-        endState = resultDemo;
+        endState = resultState;
         isSuccess = (endState > FALSE);
         setOfSolution=null;
     }

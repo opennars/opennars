@@ -13,6 +13,13 @@ public class JavaException extends Throwable {
         this.e = e;
     }
 
+    @Override
+    public String toString() {
+        return "JavaException[" + e + "]";
+    }
+    
+    
+
     public Struct getException() {
         // java_exception
         String java_exception = e.getClass().getName();

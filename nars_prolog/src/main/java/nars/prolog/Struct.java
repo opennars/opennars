@@ -482,7 +482,7 @@ public class Struct extends Term {
         if (resolved) {
             return count;
         } else {
-            LinkedList<Var> vars = new LinkedList<>();
+            List<Var> vars = new ArrayList<>();
             return resolveTerm(vars,count);
         }
     }
@@ -494,7 +494,7 @@ public class Struct extends Term {
      * @param count start timestamp for variables of this term
      * @return next timestamp for other terms
      */
-    public long resolveTerm(LinkedList<Var> vl,long count) {
+    public long resolveTerm(List<Var> vl, long count) {
         long newcount=count;
         for (int c = 0;c < arity;c++) {
             Term term=arg[c];
@@ -510,10 +510,9 @@ public class Struct extends Term {
                     if (!t.isAnonymous()) {
                         // searching a variable with the same name in the list
                         String name= t.getName();
-                        Iterator<Var> it = vl.iterator();
                         Var found = null;
-                        while (it.hasNext()) {
-                            Var vn = it.next();
+                        for (int d = 0; d < vl.size(); d++) {
+                            Var vn = vl.get(d);
                             if (name.equals(vn.getName())) {
                                 found=vn;
                                 break;

@@ -257,8 +257,10 @@ public class EngineRunner implements java.io.Serializable, Runnable{
             }
             return sinfo;
 
-        } else
+        } else {
+            solveEnd();
             throw new NoMoreSolutionException();       
+        }
     }
    
     
@@ -274,6 +276,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
      * Accepts current solution
      */
     public void solveEnd() {
+        
 //        theoryManager.transEnd(sinfo.isSuccess());
 //        theoryManager.optimize();
         libraryManager.onSolveEnd();

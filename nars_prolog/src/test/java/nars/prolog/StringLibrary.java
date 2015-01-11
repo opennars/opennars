@@ -18,28 +18,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-package prolog;
+package nars.prolog;
 
-import nars.prolog.Int;
-import nars.prolog.Number;
+import nars.prolog.Library;
+import nars.prolog.Struct;
 import nars.prolog.Term;
 
-public class TestLibrary extends StringLibrary {
+public class StringLibrary extends Library {
 	private static final long serialVersionUID = 1L;
 
-	public String getName() {
-		return "TestLibraryName";
-	}
-
-	public Term sum_2(Number arg0, Number arg1){
-		int a0 = arg0.intValue();
-		int a1 = arg1.intValue();
-		return new Int(a0+a1);
-	}
-	
-	public boolean println_1(Term arg0){
-		getEngine().stdOutput(arg0.toString());
-		return true;
-	}
-	
+	public boolean to_lower_case_2(Term arg0, Term arg1){
+		String dest = arg0.toString().toLowerCase();
+		return unify(arg1, new Struct(dest));
+	} 
 }
