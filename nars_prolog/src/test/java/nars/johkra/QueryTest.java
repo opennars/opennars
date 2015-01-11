@@ -26,7 +26,7 @@ public class QueryTest {
     private void verifyOutput(String commands, String exceptedOutput) throws Exception {
         byte[] bytes = commands.getBytes("utf-8");
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        Prolog.procFile(input, "");
+        Prolog.read(input, "");
         assertEquals(exceptedOutput, outContent.toString());
     }
 

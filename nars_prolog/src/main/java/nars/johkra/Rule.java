@@ -8,17 +8,18 @@ import java.util.List;
  * User: Johannes Krampf <johkra@gmail.com>
  * Date: 06.02.11
  */
-public final class Rule {
+public class Rule {
+
     private Term head;
     private ArrayList<Term> goals;
 
     public Rule(String rule) throws ParseException {
-        List<String> flds = Util.split(rule,":-", false);
+        List<String> flds = Util.split(rule, ":-", false);
         head = new Term(flds.get(0), null);
         goals = new ArrayList<Term>();
 
         if (flds.size() == 2) {
-            flds = Util.split(flds.get(1),",",true);
+            flds = Util.split(flds.get(1), ",", true);
             for (String fld : flds) {
                 goals.add(new Term(fld, null));
             }
@@ -41,6 +42,7 @@ public final class Rule {
         this.goals = goals;
     }
 
+    @Override
     public Rule clone() {
         Rule clone = new Rule();
         clone.head = head;
@@ -51,7 +53,7 @@ public final class Rule {
     @Override
     public String toString() {
         String goalsString = "";
-        for(int i = 0; i < goals.size(); i++) {
+        for (int i = 0; i < goals.size(); i++) {
             if (i != 0) {
                 goalsString += ", ";
             }

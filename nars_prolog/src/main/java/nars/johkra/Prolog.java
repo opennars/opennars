@@ -1,6 +1,11 @@
 package nars.johkra;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,17 +15,18 @@ import java.util.HashMap;
  * User: Johannes Krampf <johkra@gmail.com>
  * Date: 07.02.11
  * <p/>
- * This is a translation of prolog1.py written by Chris Meyers under a copyleft license.
+ * This is a translation of prolog1.py written by Chris Meyers under a copyleft
+ * license.
  * <p/>
- * See http://web.archive.org/web/20071014055005/ibiblio.org/obp/py4fun/prolog/prolog2.html for the code and explanations.
+ * See
+ * http://web.archive.org/web/20071014055005/ibiblio.org/obp/py4fun/prolog/prolog2.html
+ * for the code and explanations.
  */
-public final class Prolog {
-    private static ArrayList<Rule> rules = new ArrayList<Rule>();
+public class Prolog {
+
+    private static final ArrayList<Rule> rules = new ArrayList<Rule>();
     private static Boolean trace = false;
     private static String indent = "";
-
-    private Prolog() {
-    }
 
     public static void main(String[] args) {
         for (String file : args) {
@@ -28,16 +34,16 @@ public final class Prolog {
                 System.exit(0);
             }
             try {
-                procFile(new FileInputStream(file), null);
+                read(new FileInputStream(file), null);
             } catch (FileNotFoundException e) {
                 System.err.println("File '" + file + "' not found.");
             }
         }
-        procFile(System.in, "? ");
+        read(System.in, "? ");
     }
 
-    public static void procFile(InputStream file, String prompt) {
-        HashMap env = new HashMap<String, String>();
+    public static void read(InputStream file, String prompt) {
+        
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(file));
             if (prompt != null) {
@@ -47,7 +53,7 @@ public final class Prolog {
             String line = in.readLine();
             while (line != null) {
                 line = line.replaceAll("#.*", "").replace(" is ", "*is*").replace(" ", "");
-                if (line.equals("")) {
+                if (line.isEmpty()) {
                     break;
                 }
                 char last = line.charAt(line.length() - 1);
@@ -84,15 +90,15 @@ public final class Prolog {
         }
     }
 
-    private static Boolean isVariable(Term term) {
-        return ((term.getArgs().size() == 0) && (term.getPred().charAt(0) >= 'A') && (term.getPred().charAt(0) <= 'Z'));
+    private static boolean isVariable(Term term) {
+        return ((term.getArgs().isEmpty()) && (term.getPred().charAt(0) >= 'A') && (term.getPred().charAt(0) <= 'Z'));
     }
 
-    private static Boolean isConstant(Term term) {
-        return ((term.getArgs().size() == 0) && ((term.getPred().charAt(0) < 'A') || (term.getPred().charAt(0) > 'Z')));
+    private static boolean isConstant(Term term) {
+        return ((term.getArgs().isEmpty()) && ((term.getPred().charAt(0) < 'A') || (term.getPred().charAt(0) > 'Z')));
     }
 
-    private static Boolean unify(Term src, HashMap<String, Term> srcEnv, Term dest, HashMap<String, Term> destEnv) throws ParseException {
+    private static boolean unify(Term src, HashMap<String, Term> srcEnv, Term dest, HashMap<String, Term> destEnv) throws ParseException {
         if (trace) {
             System.out.println(indent + "Unify " + src + " " + srcEnv + " to " + dest + " " + destEnv);
         }
@@ -131,7 +137,7 @@ public final class Prolog {
         return sts(true, "All args unify");
     }
 
-    private static Boolean sts(Boolean ok, String why) {
+    private static boolean sts(boolean ok, String why) {
         indent = indent.substring(2);
         if (trace) {
             System.out.println(indent + (ok ? "Yes" : "No") + " " + why);
@@ -215,13 +221,13 @@ public final class Prolog {
             Integer a = Integer.parseInt(eval(term.getArgs().get(0), env).getPred());
             Integer b = Integer.parseInt(eval(term.getArgs().get(1), env).getPred());
             if (term.getPred().equals("+")) {
-                return new Term(new Integer(a + b).toString(), null);
+                return new Term(Integer.toString(a + b), null);
             }
             if (term.getPred().equals("-")) {
-                return new Term(new Integer(a - b).toString(), null);
+                return new Term(Integer.toString(a - b), null);
             }
             if (term.getPred().equals("*")) {
-                return new Term(new Integer(a * b).toString(), null);
+                return new Term(Integer.toString(a * b), null);
             }
         }
         // TODO: How to set types for lt, eq, original uses booleans
@@ -245,4 +251,5 @@ public final class Prolog {
         }
         return new Term(term.getPred(), args);
     }
+
 }

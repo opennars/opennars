@@ -1,20 +1,24 @@
 package nars.johkra;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: Johannes Krampf <johkra@gmail.com>
  * Date: 12.02.11
  */
- final class Util {
-    private Util() {}
-    private static String[] infixOps = {"*is*","==","<",">","+","-","*","/"};
+class Util {
+
+    private static final String[] infixOps = {"*is*", "==", "<", ">", "+", "-", "*", "/"};
 
     public static List<String> split(String l, String sep, Boolean all) {
         int nest = 0;
         int lsep = sep.length();
         ArrayList<String> returnValue = new ArrayList<String>();
-        if (l.equals("")) {
+        if (l.isEmpty()) {
             return returnValue;
         }
         for (int i = 0; i <= l.length() - lsep; i++) {
@@ -40,17 +44,22 @@ import java.util.*;
         returnValue.add(l);
         return returnValue;
     }
+
     public static List<String> getOperators() {
         return Arrays.asList(infixOps);
     }
-    public static Map.Entry<String,List<String>> splitInfix(String s) {
-        for (String op: infixOps) {
+
+    public static Map.Entry<String, List<String>> splitInfix(String s) {
+        for (String op : infixOps) {
             List<String> p = Util.split(s, op, false);
             if (p.size() > 1) {
-                return new AbstractMap.SimpleEntry<String,List<String>>(op, p);
+                return new AbstractMap.SimpleEntry<String, List<String>>(op, p);
             }
         }
         return null;
+    }
+
+    private Util() {
     }
 
 }
