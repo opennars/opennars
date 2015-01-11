@@ -10,8 +10,8 @@ import java.util.Map;
  * User: Johannes Krampf <johkra@gmail.com>
  * Date: 06.02.11
  */
-public class Term {
 
+public final class Term {
     private String pred;
     private List<Term> args;
 
@@ -72,6 +72,7 @@ public class Term {
     private Term() {
     }
 
+
     public String getPred() {
         return pred;
     }
@@ -80,7 +81,6 @@ public class Term {
         return args;
     }
 
-    @Override
     public Term clone() {
         Term clone = new Term();
         clone.pred = pred;
@@ -91,11 +91,11 @@ public class Term {
     @Override
     public String toString() {
         if (this.getPred().equals(".")) {
-            if (this.getArgs().isEmpty()) {
+            if (this.getArgs().size() == 0) {
                 return "[]";
             }
             Term nxt = this.getArgs().get(1);
-            if (nxt.getPred().equals(".") && (nxt.getArgs().isEmpty())) {
+            if (nxt.getPred().equals(".") && (nxt.getArgs().size() == 0)) {
                 return "[" + this.getArgs().get(0) + "]";
             } else if (nxt.getPred().equals(".")) {
                 return "[" + this.getArgs().get(0) + "," + nxt.toString().substring(1, nxt.toString().length() - 1) + "]";

@@ -6,8 +6,7 @@ import java.util.HashMap;
  * User: Johannes Krampf <johkra@gmail.com>
  * Date: 07.02.11
  */
-public class Goal {
-
+public final class Goal {
     private Rule rule;
     private Goal parent;
     private HashMap<String, Term> env;
@@ -58,7 +57,6 @@ public class Goal {
         this.inx = inx;
     }
 
-    @Override
     public Goal clone() {
         Goal clone = new Goal();
         clone.rule = rule.clone();
@@ -70,10 +68,10 @@ public class Goal {
 
     @Override
     public String toString() {
-        return "Goal{" + rule
-                + "; parent=" + (parent != null)
-                + ", inx=" + inx
-                + ", env=" + env
-                + '}';
+        return "Goal{" + rule +
+                "; parent=" + (parent != null) +
+                ", inx=" + inx +
+                ", env=" + env +
+                '}';
     }
 }
