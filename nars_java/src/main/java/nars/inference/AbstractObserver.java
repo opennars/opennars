@@ -5,7 +5,9 @@ import nars.core.EventEmitter.Registrations;
 import nars.core.NAR;
 
 /**
- *
+ * Class whch manages the registration and unregistration of event handlers
+ * with an EventEmitter. it may be enabled and disabled repeatedly with
+ * different event classes as selector keys for event bus messages.
  */
 public abstract class AbstractObserver implements EventEmitter.EventObserver {
     

@@ -1,29 +1,34 @@
 package nars.jwam.compiler;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
+import java.util.Arrays;
 import nars.jwam.RuleHeap;
 import nars.jwam.WAM;
 import nars.jwam.datastructures.Numbers;
 import nars.jwam.datastructures.IntArrayList;
 import nars.jwam.datastructures.Strings;
+import nars.jwam.parser.ParseException;
 import nars.jwam.parser.Parser;
 import nars.jwam.parser.ToHeap;
 
-/** Can compile Prolog to heaps or WAM instructions */
+/**
+ * Can compile Prolog to heaps or WAM instructions
+ */
 public class Compiler {
 
     // Stores the heap representations
-    private final RuleHeap sources;				
+    private final RuleHeap sources;
 
     // Converts files to heaps
-    private final Parser parser;					
-    
+    private final Parser parser;
+
     // Keeps int->String mapping, needed for toString 
-    private final Strings strings; 								
+    private final Strings strings;
     // Keeps int->String mapping, needed for toString 
-    private final Numbers nums; 									
+    private final Numbers nums;
     private final SingleClauseCompiler single_clause_compiler;
     private final ClauseSequenceCompiler clause_sequence_compiler;
 
@@ -37,7 +42,6 @@ public class Compiler {
         clause_sequence_compiler = new ClauseSequenceCompiler();
     }
 
-
     /**
      * Reset the compiler. Will remove all rule entries as well.
      */
@@ -45,21 +49,18 @@ public class Compiler {
 //        //for now, do nothing here. any reset will be triggered and managed by the WAM 
 //        return this;
 //    }
-    
     /**
      * Compiles a file and adds the data to previously compiled rules.
      *
      * @param file File to compile.
      */
-    public void compile_file(String file) {
-        try {
-            File f = new File(file);            
-            FileReader fr = new FileReader(f);
-            parser.reset(fr);
-            parser.Prolog();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void compile_file(String file) throws ParseException, FileNotFoundException {
+
+        File f = new File(file);
+        FileReader fr = new FileReader(f);
+        parser.reset(fr);
+        parser.Prolog();
+
     }
 
     /**
@@ -67,53 +68,59 @@ public class Compiler {
      *
      * @param file File to compile.
      */
-    public Compiler compile_string(String str) {
-        try {
-            parser.reset(new StringReader(str));
-            parser.Prolog();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Compiler compile_string(String str) throws ParseException {
+        parser.reset(new StringReader(str));
+        parser.Prolog();
         return this;
     }
 
     /**
      * Compiles a query.
-     *     
+     *
      */
-    public int[] compile_query(String str) {
-        try {
-            String s = str.startsWith("?") ? str : ("? " + str);
-            s = s.endsWith(".") ? s : (s + ".");
-            parser.reset(new StringReader(s));
-            parser.Query(); 											// Convert to heap
-            single_clause_compiler.compile_clause(sources.getQueryHeap(), true, sources); // Convert to instructions 
-            sources.loadQuery();										// Put query in the WAM
-            return sources.getQueryInstructions();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public int[] compile_query(String str) throws ParseException {
+        String s = str.startsWith("?") ? str : ("? " + str);
+        s = s.endsWith(".") ? s : (s + ".");
+        parser.reset(new StringReader(s));
+        
+        // Convert to heap
+        parser.Query();
+        
+        // Convert to instructions
+        single_clause_compiler.compile_clause(sources.getQueryHeap(), true, sources);  
+        
+        //Put query in the WAM
+        sources.loadQuery();		
+        
+        return Arrays.copyOf(sources.getQueryInstructions(), sources.getQueryInstructions().length);
+
     }
 
     /**
-     * Finalize compilation; Compile the sequences and put the code in the WAM. Should be used after compiling files.
+     * Finalize compilation; Compile the sequences and put the code in the WAM.
+     * Should be used after compiling files.
      */
     public Compiler commit() {
         for (Integer key : sources.getHeaps().keySet()) {
-            for (int[] heap : sources.getHeaps().get(key)) {
-                single_clause_compiler.compile_clause(heap, false, sources);
+
+            for (int[] clause : sources.heap(key)) {
+                single_clause_compiler.compile_clause(clause, false, sources);
             }
-            int[] r = clause_sequence_compiler.compile_sequence(sources, key);				// Compile the sequences 
-            sources.getCallStarts().put(key, sources.getAreas().size());			// Get the functor start point in the code
-            sources.getAreas().add(r); 									// Add code to the code area's
+
+            // Compile the sequences 
+            int[] r = clause_sequence_compiler.compile_sequence(sources, key);
+
+            // Get the functor start point in the code
+            sources.getCallStarts().put(key, sources.getAreas().size());
+
+            // Add code to the code area's
+            sources.getAreas().add(r);
         }
         // Transfer the code into the WAM
-        sources.injectAllCode(); 	
-        
+        sources.injectAllCode();
+
         return this;
     }
-
 
     public Parser getParser() {
         return parser;

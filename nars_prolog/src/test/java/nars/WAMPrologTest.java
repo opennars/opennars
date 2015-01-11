@@ -1,19 +1,22 @@
 package nars;
 
 
+import java.io.FileNotFoundException;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import nars.jwam.WAM;
 import nars.jwam.WAMProlog;
 import nars.jwam.WAMProlog.Answer;
 import nars.jwam.WAMProlog.Query;
+import nars.jwam.parser.ParseException;
 import org.junit.Test;
 
 public class WAMPrologTest {
 
  
-    @Test public void testQuery1() {
+    @Test public void testQuery1() throws ParseException {
         
         WAMProlog p = WAMProlog.newSmall().setTheory("x(a,b).  y(C,D) :- x(D,C).");
         
@@ -24,13 +27,43 @@ public class WAMPrologTest {
         
         Query q2 = p.query("y(a,b)");
         assertFalse(q2.nextAnswer().success);
+
+    }
+    
+    @Test public void testSyntaxError1() {
+        try {
+            WAMProlog p = WAMProlog.newSmall().setTheory("x(!!22.,sd3_a,b");
+            assertTrue("did not catch the syntax error", false);
+        }
+        catch (ParseException e) {
+            assertEquals("caught error", ParseException.class, e.getClass());
+        }
+    }
+    
+    @Test public void testQuery2() throws ParseException {           
+        test("f(a). f(b). g(a). g(b). h(b). k(X) :- f(X), g(X), h(X).", 
+                "k(Y).", 
+                true, 
+                "Y", "b");
+    }
+    
+    void test(String theory, String query, boolean expected, String variable, String value) throws ParseException {
+        
+        WAMProlog p = WAMProlog.newSmall().setTheory(theory);
+
+        Query q = p.query(query);
+                
+        Answer a = q.nextAnswer();       
+        
+        assertEquals("Answer[" + q.toString() + "|" + expected + "|{" + variable + "=" + value + "}]", a.toString());
+        
         
     }
     
 
     
     
-    @Deprecated void original_test_code() {
+    @Deprecated void original_test_code() throws ParseException, FileNotFoundException {
         //WAM w = new WAM(5000, 40, 1000, 100, 50, 3);
         WAM w = new WAM(8192, 80, 2000, 200, 100, 6);
         w.getCompiler().compile_file("src/main/java/nlp-1.pl");

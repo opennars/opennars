@@ -61,33 +61,33 @@ public class SingleClauseCompiler {
      * @param heap
      * @param isQuery
      */
-    public void compile_clause(int[] heap, boolean isQuery, RuleHeap dsm) {
-        int[] program = compile_heap(heap, isQuery, heap.length - 1, dsm);
+    public void compile_clause(int[] heap, boolean isQuery, RuleHeap rules) {
+        int[] program = compile_clause(heap, isQuery, heap.length - 1, rules);
         if (isQuery) {
-            dsm.setQueryInstructions(program);
+            rules.setQueryInstructions(program);
         } else {
-            dsm.addInstructions(Compiler.getTopFN(heap, heap.length - 1, strings), program, false);
+            rules.addInstructions(Compiler.getTopFN(heap, heap.length - 1, strings), program, false);
         }
     }
 
-    public int[] compile_heap(int[] heap, boolean isQuery, int start, RuleHeap dsm) {
+    public int[] compile_clause(int[] clause, boolean isQuery, int start, RuleHeap dsm) {
         reset(); 
         
         // Create token array
-        this.heap = heap;
+        this.heap = clause;
         
         // Get the start of the body parts
-        int start_of_parts = Compiler.getPartsStart(heap, start, strings);
-        if (start_of_parts + 1 >= heap.length) {
+        int start_of_parts = Compiler.getPartsStart(clause, start, strings);
+        if (start_of_parts + 1 >= clause.length) {
             /*throw new RuntimeException("Can't make deep cut for: " + Arrays.toString(tokens) + " at OOB index " + (start_of_parts + 1) + " heap=" + Arrays.toString(heap) + ", start=" + start);*/
         }
 
         // Reset the data
-        tokens = new Token[heap.length]; 	
+        tokens = new Token[clause.length]; 	
         
         for (int i = 0; i < tokens.length; i++) { 										// Initialize tokens
             tokens[i] = new Token(i); 													// These will hold information about variables etc 
-            if (WAM.cell_tag(heap[i]) == WAM.CON && WAM.cell_value(heap[i]) == strings.getInt("!")) {
+            if (WAM.cell_tag(clause[i]) == WAM.CON && WAM.cell_value(clause[i]) == strings.getInt("!")) {
                 tokens[i].is_cut = true;												// Cuts require some extra data
                 if (i == start_of_parts + 1) {
                     tokens[i].is_neck = true;							// Neck cut: a:-!,...
@@ -101,8 +101,8 @@ public class SingleClauseCompiler {
                 }
             }
         }
-        preprocessor.assign_registers(heap, tokens, isQuery);								// Assign registers to tokens
-        int nr_parts = Compiler.numberOfParts(heap, start, strings); 						// Get the amount of body parts +1 for the head
+        preprocessor.assign_registers(clause, tokens, isQuery);								// Assign registers to tokens
+        int nr_parts = Compiler.numberOfParts(clause, start, strings); 						// Get the amount of body parts +1 for the head
         int end_of_parts = start_of_parts + nr_parts - 1;									// Determine the end 
         for (int part = start_of_parts; part <= end_of_parts; part++) { 					// For each part 
             if (isQuery || (part > start_of_parts)) // If query or body part: to query instructions

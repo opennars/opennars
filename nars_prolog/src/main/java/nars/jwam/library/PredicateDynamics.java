@@ -51,7 +51,7 @@ public class PredicateDynamics {
 
     private boolean assertion(boolean front) {
         int[] heap = deep_copy(wam.getStorage(), wam.getA1()); // deep copy heap, temp nums become dynamic nums, (:-(a,b),c) becomes :-(a,b,c) 
-        int[] instructions = wam.getCompiler().getSingleClauseCompiler().compile_heap(heap, false, heap.length - 1, wam.rules()); // heap to instructions
+        int[] instructions = wam.getCompiler().getSingleClauseCompiler().compile_clause(heap, false, heap.length - 1, wam.rules()); // heap to instructions
         int fn = Compiler.getTopFN(heap, heap.length - 1, wam.strings());
         wam.rules().dynamic_assert(fn, instructions, heap, front); // trt update
         return true;

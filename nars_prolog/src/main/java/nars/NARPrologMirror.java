@@ -1,6 +1,5 @@
 package nars;
 
-import com.google.common.collect.Lists;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,11 +18,12 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.inference.AbstractObserver;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
+import nars.jwam.WAMProlog;
+import nars.jwam.WAMProlog.Query;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;
 import nars.language.Implication;
@@ -40,8 +40,6 @@ import nars.language.Term;
 import nars.language.Variable;
 import nars.prolog.InvalidTermException;
 import nars.prolog.InvalidTheoryException;
-import nars.prolog.NoMoreSolutionException;
-import nars.prolog.SolveInfo;
 import nars.prolog.Struct;
 import nars.prolog.Theory;
 import nars.prolog.Var;
@@ -52,10 +50,10 @@ import nars.prolog.Var;
  * of a prolog solution (converted to NARS terms), which are input to NARS memory
  * with the hope that this is sooner than NARS can solve it by itself. 
  */
-public class NARPrologMirror extends AbstractObserver {
+public class NARPrologMirror extends AbstractMirror {
 
-    private final NAR nar;
-    private final NARProlog prolog;
+    public final NAR nar;
+    public final NARProlog prolog;
     
     private float trueThreshold = 0.75f;
     private float falseThreshold = 0.25f;
@@ -222,11 +220,9 @@ public class NARPrologMirror extends AbstractObserver {
                     //System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ? (" + Texts.n2(priority) + ")");    
                     
 
-                    Theory theory;
                     
                     try {
-                        prolog.setTheory(theory = getBeliefsTheory());
-                        prolog.addTheory(getAxioms().iterator());
+                        prolog.setTheory(getBeliefsTheory() + getAxioms());
                     }
                     catch (InvalidTheoryException e) {
                         nar.memory.emit(ERR.class, e);
@@ -237,19 +233,20 @@ public class NARPrologMirror extends AbstractObserver {
                     //System.out.println("  Axioms: " + axioms);
                     
 
-                    SolveInfo si = prolog.solve(qh, solveTime);
+                    Query si = prolog.query(qh.toString());
 
                     int answers = 0;
                     
                     do {
                         if (si == null) break;
 
-                        if (!si.isSuccess())
+                        WAMProlog.Answer a = si.nextAnswer();
+                        if (!a.success)
                             break;
 
 
-                        nars.prolog.Term solution = si.getSolution();
-                        if (solution == null)
+                        //nars.prolog.Term solution = a.getSolution();                                      
+                        /*if (solution == null)
                             break;
 
                         try {
@@ -261,14 +258,14 @@ public class NARPrologMirror extends AbstractObserver {
                             //problem generating a result
                             e.printStackTrace();
                         }
+                        */
 
-
-                        if (prolog.hasOpenAlternatives()) {
+                        /*if (prolog.hasOpenAlternatives()) {
                             maxSolveTime /= 2d;
                             si = prolog.solveNext(maxSolveTime);
-                        }
+                        }*/
                     }                            
-                    while (prolog.hasOpenAlternatives() && (answers++) < maxAnswers);                    
+                    while (false); //prolog.hasOpenAlternatives() && (answers++) < maxAnswers);                    
                     
                     
                     
@@ -276,14 +273,12 @@ public class NARPrologMirror extends AbstractObserver {
             } catch (InvalidTermException nse) {
                 nar.emit(NARPrologMirror.class, s + " : not supported yet");       
                 nse.printStackTrace();;
-            } catch (NoMoreSolutionException nse) {
-                //normal
             } catch (Exception ex) {                        
                 nar.emit(ERR.class, ex.toString());
                 ex.printStackTrace();
             }
             
-            prolog.solveHalt();
+            
         }
         
     }
@@ -547,31 +542,20 @@ public class NARPrologMirror extends AbstractObserver {
 
     private static List<nars.prolog.Term> axioms = null;
     
-    private List<? extends nars.prolog.Term> getAxioms() {
-        if (axioms==null) {
-            try {
-                Theory t = new Theory(
-                    "inheritance(A, C):- inheritance(A,B),inheritance(B,C)." + '\n' +
+    private String getAxioms() {
+                    return "inheritance(A, C):- inheritance(A,B),inheritance(B,C)." + '\n' +
                     "implication(A, C):- implication(A,B),implication(B,C)." + '\n' +
                     "similarity(A, B):- similarity(B,A)." + '\n' +
                     "similarity(A, B):- inheritance(A,B),inheritance(B,A)." + '\n' +
-                    "A:- not(not(A))." + '\n'
-                );
-                axioms = Lists.newArrayList( t.iterator(prolog) );
-            } catch (InvalidTheoryException ex) {
-                ex.printStackTrace();
-                System.exit(1);
-            }            
-        }        
-        return axioms;
+                    "A:- not(not(A))." + '\n';
     }
     
     public static Theory getTheory(Map<Sentence, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
         return new Theory(new Struct(beliefMap.values().toArray(new Struct[beliefMap.size()])));
     }
     
-    public Theory getBeliefsTheory() throws InvalidTheoryException {
-        return getTheory(beliefs);
+    public String getBeliefsTheory() throws InvalidTheoryException {
+        return getTheory(beliefs).toString();
     }
 
     protected void onQuestion(Sentence s) {

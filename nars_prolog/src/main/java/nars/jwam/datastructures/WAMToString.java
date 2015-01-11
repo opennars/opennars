@@ -35,6 +35,7 @@ public class WAMToString {
         return r;
     }
 
+
     /**
      * Convert a term on the heap to a String.
      *

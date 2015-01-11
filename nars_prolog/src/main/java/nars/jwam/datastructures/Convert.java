@@ -4,17 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import nars.jwam.WAM;
+import static nars.jwam.datastructures.WAMToString.deref;
 
 /**
  * This class contains functionalities to convert WAM data to Java data.
  *
- * @author 3227200
- *
  */
 public class Convert {
 
-    public static Object cellToObject(WAM wam, int[] source, int heap_index) {
-        int address = WAM.external_deref(source, heap_index);
+    public static Object object(WAM wam, int[] source, int address) {
         int tag = WAM.cell_tag(source[address]);
         switch (tag) {
             case WAM.NUM:
@@ -26,7 +24,17 @@ public class Convert {
             case WAM.CON:
                 return conToString(wam, source, address);
         }
-        return null;
+        return null;        
+    }
+    public static Object termToObject(WAM wam, int[] source, int address, boolean no_bindings) {        
+        if (!no_bindings) {
+            address = deref(address, source);
+        }
+        return Convert.object(wam, source, address);
+    }    
+    public static Object cellToObject(WAM wam, int[] source, int heap_index) {
+        int address = WAM.external_deref(source, heap_index);
+        return object(wam, source, address);
     }
 
     public static int numToInt(WAM wam, int[] source, int heap_index) {

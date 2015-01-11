@@ -45,10 +45,10 @@ public class RuleHeap {
      * Also refreshes the call function.
      */
     public void injectAllCode() {
-        IntHashMap<Point> call = new IntHashMap<Point>(IntHashMap.OBJ);
+        IntHashMap<int[]> call = new IntHashMap<int[]>(IntHashMap.OBJ);
         for (Integer key : call_starts.keySet()) // Make updated call function
         {
-            call.putObj(key, new Point(0, call_starts.get(key)));
+            call.putObj(key, WAM.call(0, call_starts.get(key)));
         }
         wam.setCall(call);											// Overwrite the WAM's data
         wam.setCodeAreas(areas);
@@ -67,20 +67,19 @@ public class RuleHeap {
                 int[] ar = Arrays.copyOf(remove.data, remove.size());
                 Arrays.sort(ar);
                 for (int i = ar.length - 1; i >= 0; i--) {
-                    heap.remove(ar[i]);
-                    removeNums(code.get(ar[i]));
-                    code.remove(ar[i]);
+                    final int ari = ar[i];
+                    heap.remove(ari);
+                    removeNums(code.get(ari));
+                    code.remove(ari);
                 }
             }
-            Point p = wam.getCallFunction().getObj(key);
-            int[] r = wam.getCompiler().getSequenceCompiler().compile_sequence(this, key);
-            areas.set(p.y, r);
-            if (heaps.get(key).isEmpty()) {
-                p.x = -1;
-            } else {
-                p.x = 0;
+            int[] p = wam.getCallFunction().getObj(key);
+            if (p[1] < areas.size()) {
+                int[] r = wam.getCompiler().getSequenceCompiler().compile_sequence(this, key);
+                areas.set(p[1], r);
             }
-            //wam.getCallFunction().putObj(key, new Point(0,p.y));
+            p[0] = (heaps.get(key).isEmpty()) ? -1 : 0;
+            //wam.getCallFunction().putObj(key, new Point(0,p[1]));
         }
         dirty_functors.clear();
         marked_for_removal.clear();
@@ -91,34 +90,34 @@ public class RuleHeap {
     }
 
     public void dynamic_assert(int functor, int[] code, int[] heap, boolean front) {
-        Point p = wam.getCallFunction().getObj(functor);
+        int[] p = wam.getCallFunction().getObj(functor);
         int[] current;
         if (p == null) {
-            p = new Point(0, wam.getCodeAreas().size());
+            p = WAM.call(0, wam.getCodeAreas().size());
             wam.getCallFunction().putObj(functor, p);
             current = new int[]{WAM.make_instruction(WAM.DYNAMIC_CODE_END, 0)};
             wam.getCodeAreas().add(current);
         } else {
-            current = wam.getCodeAreas().get(p.y);
+            current = wam.getCodeAreas().get(p[1]);
         }
         dirty_functors.add(functor);
         addHeap(functor, heap, front);
         addInstructions(functor, code, front);
-        //System.out.println(p.x + " "+current.length);
-        int size = p.x < 0 ? 1 : WAM.instruction_arg(current[current.length - 1]); // -1 for deleting end of code instruction
+        //System.out.println(p[0] + " "+current.length);
+        int size = p[0] < 0 ? 1 : WAM.instruction_arg(current[current.length - 1]); // -1 for deleting end of code instruction
         IntArrayList new_code = new IntArrayList(current, size);
-        int first_code = WAM.instruction_code(current[p.x > 0 ? p.x : 0]);
-        if (p.x < 0) {	// All entries were retracted
-            p.x = new_code.size(); // So only update p.x 
+        int first_code = WAM.instruction_code(current[p[0] > 0 ? p[0] : 0]);
+        if (p[0] < 0) {	// All entries were retracted
+            p[0] = new_code.size(); // So only update p[0] 
         } else if (!front && first_code != WAM.D_TRY) { // only one entry was present
-            int ptr = toArg(p.x - size);
-            p.x = new_code.size();
+            int ptr = toArg(p[0] - size);
+            p[0] = new_code.size();
             new_code.add(WAM.make_instruction(WAM.D_TRY, ptr));
             new_code.add(2); // Else try next entry
             new_code.add(WAM.make_instruction(WAM.D_TRUST, 2 << 1));
             new_code.add(0); // Else try next entry 
         } else if (!front) { // Last d_trust becomes d_retry and add d_trust for new entry
-            int last_code_pos = p.x;
+            int last_code_pos = p[0];
             int last_code = WAM.instruction_code(current[last_code_pos]);
             while (last_code != WAM.D_TRUST) {
                 last_code_pos += current[last_code_pos + 1];
@@ -129,41 +128,41 @@ public class RuleHeap {
             new_code.add(WAM.make_instruction(WAM.D_TRUST, 2 << 1));
             new_code.add(0);
         } else if (front && first_code != WAM.D_TRY) {
-            int ptr = toArg(p.x - size);
+            int ptr = toArg(p[0] - size);
             new_code.add(WAM.make_instruction(WAM.D_TRUST, ptr));
             new_code.add(0); // Else try next entry
-            p.x = new_code.size();
+            p[0] = new_code.size();
             new_code.add(WAM.make_instruction(WAM.D_TRY, 2 << 1));
             new_code.add(-2); // Else try next entry
         } else if (front) {
-            new_code.data[p.x] = WAM.make_instruction(WAM.D_RETRY, WAM.instruction_arg(new_code.data[p.x]));
-            int ptr = p.x - size;
-            p.x = new_code.size();
+            new_code.data[p[0]] = WAM.make_instruction(WAM.D_RETRY, WAM.instruction_arg(new_code.data[p[0]]));
+            int ptr = p[0] - size;
+            p[0] = new_code.size();
             new_code.add(WAM.make_instruction(WAM.D_TRY, 2 << 1));
             new_code.add(ptr); // Else try next entry
         }
         new_code.addAll(new IntArrayList(code, code.length));
         new_code.add(WAM.make_instruction(WAM.DYNAMIC_CODE_END, new_code.size())); // add and shove backwards
         new_code.data[new_code.data.length - 1] = new_code.removeLast();
-        wam.getCodeAreas().set(p.y, new_code.data);
+        wam.getCodeAreas().set(p[1], new_code.data);
         //System.out.println(WAMToString.programToString(new_code.intdata, 0, new_code.size(), wam.regStart(), wam.getStringContainer(), wam.getNums()));
     }
 
     public int dynamic_retract(int nr, int nrEntries, int functor) {
-        Point p = wam.getCallFunction().getObj(functor); // Get the relevant code point
+        int[] p = wam.getCallFunction().getObj(functor); // Get the relevant code point
         dirty_functors.add(functor);
-        int[] current = wam.getCodeAreas().get(p.y);
+        int[] current = wam.getCodeAreas().get(p[1]);
 //		System.out.println(WAMToString.programToString(current, 0, current.length, wam.regStart(), wam.getStringContainer(), wam.getNums()));
 //		System.out.println("$$$$$$$$$$$$");
         int size = WAM.instruction_arg(current[current.length - 1]); // -1 for deleting end of code instruction
         IntArrayList new_code = new IntArrayList(current, size);
         //d_try/d_retry: eerste arg is eigen code, tweede arg is modificatie voor volgende code
         if (nrEntries == 1) {
-            current[p.x] = WAM.make_instruction(WAM.FAIL, 0);
-            p.x = -1; // Only one entry which is removed, so p.x points to -1 
+            current[p[0]] = WAM.make_instruction(WAM.FAIL, 0);
+            p[0] = -1; // Only one entry which is removed, so p[0] points to -1 
         } else {
-            int own_trt = p.x;
-            int next_trt = p.x + current[p.x + 1];
+            int own_trt = p[0];
+            int next_trt = p[0] + current[p[0] + 1];
             int last_trt = 0;
             int second_last_trt = 0;
             for (int i = 0; i < nr; i++) {
@@ -179,20 +178,20 @@ public class RuleHeap {
                 current[own_trt] = WAM.make_instruction(WAM.D_RETRY, WAM.instruction_arg(current[own_trt]));// Change try to retry
                 int next_code = WAM.instruction_arg(current[next_trt]); // Get the actual start of the next piece of code
                 next_code = next_trt + ((next_code & 1) > 0 ? (-(next_code >>> 1)) : (next_code >>> 1));
-                if (nrEntries == 2) { // There is only one entry left, so p.x has to point to its actual start (not its trt)
-                    p.x = next_code; // Let p.x point to it
+                if (nrEntries == 2) { // There is only one entry left, so p[0] has to point to its actual start (not its trt)
+                    p[0] = next_code; // Let p[0] point to it
                 } else { // The next code is a retry, but has to become a try. However due to pointers to the retry instruction icw backtracking we have to add a new try instruction at the end
-                    p.x = new_code.size();
-                    int arg = next_code - p.x;
+                    p[0] = new_code.size();
+                    int arg = next_code - p[0];
                     arg = arg > 0 ? arg << 1 : (((-arg) << 1) | 1);
                     new_code.add(WAM.make_instruction(WAM.D_TRY, arg));
-                    new_code.add((next_trt + current[next_trt + 1]) - p.x);
+                    new_code.add((next_trt + current[next_trt + 1]) - p[0]);
                 }
             } else if (nr == (nrEntries - 1)) { // Last entry is removed
                 int last_code = WAM.instruction_arg(current[last_trt]);
                 last_code = last_trt + ((last_code & 1) > 0 ? (-(last_code >>> 1)) : (last_code >>> 1));
                 if (nr == 1) { // Second of two is removed
-                    p.x = last_code; // Now start to point to start of first entry code
+                    p[0] = last_code; // Now start to point to start of first entry code
                 } else { // Last of |entries|>2 is removed
                     int arg = last_code - new_code.size();
                     arg = arg > 0 ? arg << 1 : (((-arg) << 1) | 1);
@@ -208,7 +207,7 @@ public class RuleHeap {
         // *get first real instruction, change it to fail
         // *if nr = 0, change it to retry
         // *if nr = 0 and |entries| = 2, point.x of fn goes to next item start
-        // *if nr = 0 and |entries| = 0 p.x is -1
+        // *if nr = 0 and |entries| = 0 p[0] is -1
         // *if nr = 0 and |entries| > 2, create new try instruction which points to next instructions, make point.x point to it
         // *if nr = |entries| and nr = 2, point.x goes to first item real start 
         // *if nr = |entries| and nr > 2, add trust instruction and make it point to second last instruction series, let the TRT of the third last entry point to the new trust instruction
@@ -216,7 +215,7 @@ public class RuleHeap {
         // 
         new_code.add(WAM.make_instruction(WAM.DYNAMIC_CODE_END, new_code.size())); // add and shove backwards
         new_code.data[new_code.data.length - 1] = new_code.removeLast();
-        wam.getCodeAreas().set(p.y, new_code.data);
+        wam.getCodeAreas().set(p[1], new_code.data);
 //		System.out.println(WAMToString.programToString(new_code.intdata, 0, new_code.size(), wam.regStart(), wam.getStringContainer(), wam.getNums()));
         return 0;
     }

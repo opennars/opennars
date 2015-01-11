@@ -1,6 +1,5 @@
 package nars.jwam;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import nars.jwam.compiler.Compiler;
 import nars.jwam.datastructures.Numbers;
@@ -9,6 +8,16 @@ import nars.jwam.datastructures.Strings;
 
 public class WAM {
 
+    public static WAM newMedium() {
+        //TODO these may not be valid VM parameters; for now, just use Small
+        //return new WAM(8192, 80, 2000, 200, 100, 6);        
+        return newSmall();
+    }
+    public static WAM newSmall() {
+        return new WAM(5000, 40, 1000, 100, 50, 3);        
+    }
+    
+    
     public static final int STR = 1, REF = 2, PN = 3, CON = 4, LIS = 5, NUM = 6, // Heap types
             PUT_STR = 1, SET_VAR = 2, SET_VAL = 3, GET_STR = 4, UNI_VAR = 5, UNI_VAL = 6, CALL = 7, PROCEED = 8, // All the instructions
             PUT_VAR = 9, PUT_VAL = 10, GET_VAR = 11, GET_VAL = 12, ALLOCATE = 13, DEALLOCATE = 14,
@@ -22,6 +31,8 @@ public class WAM {
             CALL_VAR = 51, CALL_VAR_PERM = 52, EXECUTE_VAR = 53, PUT_NUM = 54, GET_NUM = 55, SET_NUM = 56,
             UNI_NUM = 57, SWITCH_NUM = 58, BUILT_IN_BINARY = 59, D_TRY = 60, D_RETRY = 61, D_TRUST = 62, JUMP = 63,
             JUMPLIST = 64, DYNAMIC_CODE_END = 65, FAIL = 66, RETRACT = 67;
+
+    
 
 
     
@@ -40,8 +51,10 @@ public class WAM {
     // Globals for execution and debugging
     private boolean read = true, fail, trace, untilCall, untilPoint; 					
     
+    public static int[] call(int x, int y) { return new int[] { x, y }; }
+    
     // The call function
-    private IntHashMap<Point> call = null;						   			
+    private IntHashMap<int[]> call = null;						   			
     
     // Built in functions, predicates, etc
     private Library library = null;					   					
@@ -671,8 +684,8 @@ public class WAM {
     // with the arguments functor, true and Integer.MIN_VALUE. The execute instruction uses false as second argument. When a variable
     // is called/executed, then the dereferenced address should be different from Integer.MIN_VALUE.
     private void call(int functor, boolean is_call, int d_address) {
-        Point point = call.getObj(functor); 						// Get the code point of the functor
-        if (point == null || (point != null && point.x < 0)) {
+        int[] point = call.getObj(functor); // Get the code point of the functor
+        if (point == null || (point != null && point[0] < 0)) {
             backtrack();		// If the predicate is unknown: backtrack
         } else {
             if (is_call) {											// If you want to update the continuation pointer
@@ -681,8 +694,8 @@ public class WAM {
             }
             num_of_args = numArgs(functor);					// Update the number of arguments global
             b0 = b;													// Set the last choice point pointer (for cuts)
-            p = point.x;											// Move to the instruction point of the functor
-            ca = point.y;
+            p = point[0];											// Move to the instruction point of the functor
+            ca = point[1];
             code = areas.get(ca);
             if (d_address != Integer.MIN_VALUE) // When executing/calling variables, update the argument registers
             {
@@ -1175,14 +1188,14 @@ public class WAM {
      */
     public void setQuery(int[] query) {
         int[] prevCode = areas.set(1, query);									// Overwrite the query area
-        code = areas.get(1);										// Set the engine's current code area to the query code
+        code = query; //areas.get(1);										// Set the engine's current code area to the query code
         ca = 1;															// Set the execution point to the query area at position 1
         p = 0;
     }
     
     /** get current query (compiled) code */
     public int[] getQuery() {
-        return areas.get(1);
+        return code;
     }
 
     /////////////////////////////
@@ -1368,11 +1381,11 @@ public class WAM {
         this.areas = areas;
     }
 
-    public IntHashMap<Point> getCallFunction() {
+    public IntHashMap<int[]> getCallFunction() {
         return call;
     }
 
-    public void setCall(IntHashMap<Point> call) {
+    public void setCall(IntHashMap<int[]> call) {
         this.call = call;
     }
 
@@ -1484,7 +1497,7 @@ public class WAM {
         areas.add(new int[0]); 						// Reserve for query
         code = areas.get(0);
         cca = ca = 0;
-        call = new IntHashMap<Point>(IntHashMap.OBJ);
+        call = new IntHashMap<int[]>(IntHashMap.OBJ);
         strings = new Strings();
         strings.add("!", 0);
         numbers = new Numbers();

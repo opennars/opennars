@@ -10,7 +10,6 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
 import nars.io.ExampleFileInput;
-import nars.io.narsese.Narsese;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -23,6 +22,10 @@ public class NARPrologMirrorTest {
     
     boolean prologAnswered = false;
     
+    public static void main(String[] args) throws Exception {
+        new NARPrologMirrorTest().testMultistep();
+    }
+    
     @Test
     public void testMultistep() throws Exception {
         boolean prolog = true;
@@ -31,8 +34,8 @@ public class NARPrologMirrorTest {
 
         NAR nar = new NAR( new Default().setInternalExperience(null) );
 
-        new NARPrologMirror(nar, 0.5f, true, true, true) {
-
+        NARPrologMirror p = new NARPrologMirror(nar, 0.5f, true, true, true) {
+            
             
             @Override
             public Term answer(Task question, Term t, nars.prolog.Term pt) {
@@ -40,13 +43,17 @@ public class NARPrologMirrorTest {
 
                 //look for <a --> d> answer
                 //if (t.equals(aInhd))
-                    prologAnswered = true;
+                prologAnswered = true;
+                assertTrue(true);
                 
                 return r;
             }
-
-
+            
+            
         };        
+        
+        p.prolog.printRules(System.err);
+        
         
         NALPerformance nts = new NALPerformance(nar, ExampleFileInput.get("../nal/test/nal1.multistep.nal").getSource(), 500) {
 //            
