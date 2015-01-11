@@ -833,41 +833,6 @@ public class Memory implements Serializable {
 
     }
 
-    public <T> void run(final List<Runnable> tasks) {
-        run(tasks, 1);
-    }
-
-    public <T> void run(final List<Runnable> tasks, int concurrency) {
-
-        if ((tasks == null) || (tasks.isEmpty())) {
-            return;
-        } else if (tasks.size() == 1) {
-            tasks.get(0).run();
-        } else if (concurrency == 1) {
-            //single threaded
-            for (final Runnable t : tasks) {
-                t.run();
-            }
-        } else {
-            
-            //TEMPORARY
-            
-            
-            //execute in parallel, multithreaded                        
-            final ConcurrentContext ctx = ConcurrentContext.enter();
-
-            ctx.setConcurrency(concurrency);
-            try {
-                for (final Runnable r : tasks) {
-                    ctx.execute(r);
-                }
-            } finally {
-                // Waits for all concurrent executions to complete.
-                // Re-exports any exception raised during concurrent executions. 
-                ctx.exit();
-            }
-        }
-    }
 
     /**
      * Select a novel task to process.

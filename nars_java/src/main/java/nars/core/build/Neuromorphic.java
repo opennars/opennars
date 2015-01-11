@@ -2,7 +2,7 @@ package nars.core.build;
 
 import nars.core.Core;
 import nars.core.Memory;
-import nars.core.control.experimental.AntAttention;
+import nars.core.control.experimental.AntCore;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -31,7 +31,7 @@ public class Neuromorphic extends Curve {
     public Core newAttention() {
         if (numAnts == -1)
             numAnts = param.conceptsFiredPerCycle.get();
-        return new AntAttention(numAnts, 2.0f, getConceptBagSize(), getConceptBuilder());
+        return new AntCore(numAnts, 2.0f, getConceptBagSize(), getConceptBuilder());
     }
 
     

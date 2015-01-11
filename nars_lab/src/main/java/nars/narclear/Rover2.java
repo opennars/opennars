@@ -14,7 +14,7 @@ import nars.NARPrologMirror;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Neuromorphic;
+import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -348,14 +348,21 @@ public class Rover2 extends PhysicsModel {
 
     public static void main(String[] args) {
         Parameters.DEBUG = false;
-        Parameters.THREADS = 2;
+        
         
         NARSwing.themeInvert();
 
-        //NAR nar = new Default().
-        ////NAR nar = new CurveBagNARBuilder().
+        Parameters.THREADS = 1;
+        NAR nar = new NAR(new Default().simulationTime());
+        nar.setCyclesPerFrame(8);
+        
+        //NAR nar = new CurveBagNARBuilder().
+
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(1200).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
+                
+        //Parameters.THREADS = 2;
+        //NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(1200).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
+        //nar.setCyclesPerFrame(2);
                 
         new NARPrologMirror(nar, 0.30f, true) {
 
@@ -395,7 +402,6 @@ public class Rover2 extends PhysicsModel {
         float framesPerSecond = 30f;
         
         Parameters.STM_SIZE = 4;
-        nar.setCyclesPerFrame(2);
         (nar.param).noiseLevel.set(3);
         (nar.param).duration.set(5);
         (nar.param).conceptForgetDurations.set(25f);

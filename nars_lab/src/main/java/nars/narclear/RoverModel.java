@@ -219,7 +219,7 @@ public class RoverModel {
         }
         
 
-        public void step(boolean feel, boolean drawing) {
+        public synchronized void step(boolean feel, boolean drawing) {
             point1 = body.getWorldPoint(point);
             Body hit = null;
             float minDist = distance * 1.1f; //far enough away
@@ -231,7 +231,12 @@ public class RoverModel {
                 point2.set(point1);
                 point2.addLocal(d);
                 ccallback.init();
-                world.raycast(ccallback, point1, point2);
+                
+                try {
+                    world.raycast(ccallback, point1, point2);
+                }
+                catch (Exception e) { System.err.println("Phys2D raycast: " + e); }
+                
                 if (ccallback.m_hit) {
                     float d = ccallback.m_point.sub(point1).length() / distance;
                     if (drawing) {

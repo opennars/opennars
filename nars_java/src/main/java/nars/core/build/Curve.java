@@ -2,7 +2,7 @@ package nars.core.build;
 
 import nars.core.Core;
 import nars.core.Memory;
-import nars.core.control.DefaultAttention;
+import nars.core.control.DefaultCore;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -50,7 +50,7 @@ public class Curve extends Default {
     @Override
     public Core newAttention() {
         //return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
-        return new DefaultAttention(newConceptBag(), newSubconceptBag(), getConceptBuilder());
+        return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder());
     }
     
     @Override

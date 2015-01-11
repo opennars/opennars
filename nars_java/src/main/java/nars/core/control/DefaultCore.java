@@ -24,7 +24,7 @@ import nars.storage.CacheBag;
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class DefaultAttention implements Core {
+public class DefaultCore implements Core {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */
@@ -40,7 +40,7 @@ public class DefaultAttention implements Core {
     private Cycle loop = new Cycle();
     
        
-    public class Cycle {
+    class Cycle {
         public final AtomicInteger threads = new AtomicInteger();
         private final int numThreads;
 
@@ -89,7 +89,7 @@ public class DefaultAttention implements Core {
     }
     
             
-    public DefaultAttention(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
+    public DefaultCore(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
@@ -116,7 +116,7 @@ public class DefaultAttention implements Core {
     }
     
     
-    protected FireConcept next() {       
+    protected FireConcept nextConcept() {       
 
         Concept currentConcept = concepts.takeNext();
         if (currentConcept==null)
@@ -147,15 +147,22 @@ public class DefaultAttention implements Core {
         final List<Runnable> run = new ArrayList();
         
         memory.processNewTasks(loop.newTasksPriority(), run);
-        memory.run(run);
+        Core.run(run);
         
         run.clear();
-        memory.processNovelTasks(loop.novelTasksPriority(), run);
-        memory.run(run); 
         
-        run.clear();        
+        memory.processNovelTasks(loop.novelTasksPriority(), run);
+        Core.run(run); 
+        
+        run.clear();   
+        
         processConcepts(loop.conceptsPriority(), run);
-        memory.run(run);
+        Core.run(run);
+        
+        run.clear();
+        
+        memory.processOtherTasks(run);
+        Core.run(run);
         
         run.clear();
 
@@ -170,8 +177,10 @@ public class DefaultAttention implements Core {
         memory.processNovelTasks(loop.novelTasksPriority(), run);
         
         processConcepts(loop.conceptsPriority(), run);
-                
-        memory.run(run, Parameters.THREADS);
+
+        memory.processOtherTasks(run);
+        
+        Core.run(run, Parameters.THREADS);
         
         run.clear();
 
@@ -181,7 +190,7 @@ public class DefaultAttention implements Core {
         if (c == 0) return;                
         
         for (int i = 0; i < c; i++) {
-            FireConcept f = next();
+            FireConcept f = nextConcept();
             
             if (f!=null)
                 run.add(f);                            

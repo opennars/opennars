@@ -6,7 +6,7 @@ package nars.core.bag;
 
 import nars.core.NAR;
 import nars.core.build.Neuromorphic;
-import nars.core.control.experimental.AntAttention;
+import nars.core.control.experimental.AntCore;
 import nars.io.narsese.Narsese;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,7 +20,7 @@ import org.junit.Test;
 public class DelayBagTest {
     
     static int numConcepts(NAR n) {
-        return ((AntAttention)n.memory.concepts).concepts.size();
+        return ((AntCore)n.memory.concepts).concepts.size();
     }
         
     @Test 
@@ -53,7 +53,7 @@ public class DelayBagTest {
         n.run(30);
         assertEquals(6, numConcepts(n) );
         
-        ((AntAttention)n.memory.concepts).concepts.take(
+        ((AntCore)n.memory.concepts).concepts.take(
                 new Narsese(n).parseTerm("<a --> b>") );
         
         assertEquals(5, numConcepts(n) );

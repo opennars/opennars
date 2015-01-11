@@ -24,8 +24,12 @@ import nars.storage.FairDelayBag;
  * Uses DelayBag to emulate a massively parallel spiking neural network of concept activation
  * 
  * Designed for use in parallel processing
+ * 
+ * Named "Wave" core because its concept-firing timing resembles spiking
+ * brainwaves 
  */
-abstract public class WaveAttention implements Core {
+abstract public class ConceptWaveCore implements Core {
+    
 
     public DelayBag<Concept,Term> concepts;
     //public final CacheBag<Term, Concept> subcon;
@@ -40,7 +44,7 @@ abstract public class WaveAttention implements Core {
     int conceptPriority = 2;
     private final int maxConcepts;
                
-    public WaveAttention(int maxConcepts, ConceptBuilder conceptBuilder) {
+    public ConceptWaveCore(int maxConcepts, ConceptBuilder conceptBuilder) {
         this.maxConcepts = maxConcepts;
         this.conceptBuilder = conceptBuilder;        
         //this.subcon = subcon
@@ -67,7 +71,7 @@ abstract public class WaveAttention implements Core {
             });
         }
 
-        memory.run(run, Parameters.THREADS);
+        Core.run(run, Parameters.THREADS);
         
         /*if (!run.isEmpty())
             System.out.println("run: "+ run.size() + " " + run + " " + concepts.size());*/
@@ -150,7 +154,5 @@ abstract public class WaveAttention implements Core {
     public Memory getMemory() {
         return memory;
     }
-    
-    
     
 }

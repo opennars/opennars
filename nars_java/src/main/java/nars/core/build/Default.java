@@ -16,7 +16,7 @@ import nars.core.NAR;
 import nars.core.Param;
 import static nars.core.build.Default.InternalExperienceMode.Full;
 import static nars.core.build.Default.InternalExperienceMode.Minimal;
-import nars.core.control.DefaultAttention;
+import nars.core.control.DefaultCore;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -192,7 +192,7 @@ public class Default extends Build implements ConceptBuilder {
 
     @Override
     public Core newAttention() {
-        return new DefaultAttention(newConceptBag(), newSubconceptBag(), getConceptBuilder());
+        return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder());
     }
     
     public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag() {

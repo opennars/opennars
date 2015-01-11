@@ -1,5 +1,7 @@
 package nars.core;
 
+import java.util.List;
+import javolution.context.ConcurrentContext;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.inference.BudgetFunctions.Activating;
@@ -15,7 +17,13 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
     }
 
 
-    /** called during main memory cycle */
+    /** called once during the main memory cycle; 
+     *  responsible for executing Memory's:
+     *      --newTasks (ImmediateProcess)
+     *      --novelTasks (ImmediateProcess)
+     *      --fired concepts (FireConcept)
+     *      --otherTasks
+     */
     public void cycle();
 
     /** how many input tasks to process per cycle.  this allows Attention to regulate
@@ -57,5 +65,44 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
     public void conceptRemoved(Concept c);
     
     public Memory getMemory();
+    
+    
+    /** Generic utility method for running a list of tasks in current thread */
+    public static void run(final List<Runnable> tasks) {
+        run(tasks, 1);
+    }
+
+    /** Generic utility method for running a list of tasks in current thread (concurrency == 1) or in multiple threads (> 1, in which case it will block until they finish) */
+    public static void run(final List<Runnable> tasks, int concurrency) {
+
+        if ((tasks == null) || (tasks.isEmpty())) {
+            return;
+        } else if (tasks.size() == 1) {
+            tasks.get(0).run();
+        } else if (concurrency == 1) {
+            //single threaded
+            for (final Runnable t : tasks) {
+                t.run();
+            }
+        } else {
+            
+            //TEMPORARY
+            
+            
+            //execute in parallel, multithreaded                        
+            final ConcurrentContext ctx = ConcurrentContext.enter();
+
+            ctx.setConcurrency(concurrency);
+            try {
+                for (final Runnable r : tasks) {
+                    ctx.execute(r);
+                }
+            } finally {
+                // Waits for all concurrent executions to complete.
+                // Re-exports any exception raised during concurrent executions. 
+                ctx.exit();
+            }
+        }
+    }
     
 }

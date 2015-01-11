@@ -28,10 +28,12 @@ import nars.language.Terms.Termable;
 import nars.util.XORShiftRandom;
 
 /**
- *
- * @author me
+ * Multiprocessor-capable NAR controller.
+ * 
+ * Named Ant-core because the activity pattern resembles a collection of 
+ * simulated Ants navigating through the concept network
  */
-public class AntAttention extends WaveAttention {
+public class AntCore extends ConceptWaveCore {
     
     public final Random random = new XORShiftRandom();
 
@@ -44,7 +46,7 @@ public class AntAttention extends WaveAttention {
     float conceptVisitDelivery;
         
     
-    public AntAttention(int numAnts, float cycleSpeed, int maxConcepts, ConceptBuilder conceptBuilder) {
+    public AntCore(int numAnts, float cycleSpeed, int maxConcepts, ConceptBuilder conceptBuilder) {
         super(maxConcepts, conceptBuilder);
                 
         this.cycleSpeed = cycleSpeed;

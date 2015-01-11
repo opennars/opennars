@@ -33,7 +33,7 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.Default.CommandLineNARBuilder;
-import nars.core.control.experimental.AntAttention;
+import nars.core.control.experimental.AntCore;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -252,7 +252,7 @@ public class NARSwing  {
 
         @Override
         public int getNumConcepts() {
-            return ((AntAttention)nar.memory.concepts).concepts.size();
+            return ((AntCore)nar.memory.concepts).concepts.size();
         }
         
     }
