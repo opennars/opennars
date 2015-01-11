@@ -49,7 +49,11 @@ public class WAM {
     private int[] storage, unify_pdl, code;				   					
     
     // Globals for execution and debugging
-    private boolean read = true, fail, trace, untilCall, untilPoint; 					
+    private boolean read = true, 
+            fail, 
+            trace, 
+            untilCall, 
+            untilPoint; 					
     
     public static int[] call(int x, int y) { return new int[] { x, y }; }
     

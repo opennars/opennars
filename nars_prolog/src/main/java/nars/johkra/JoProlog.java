@@ -18,13 +18,13 @@ import java.util.Set;
  * <p/>
  * See http://web.archive.org/web/20071014055005/ibiblio.org/obp/py4fun/prolog/prolog2.html for the code and explanations.
  */
-public final class Prolog {
+public final class JoProlog {
     
     private static Set<Rule> rules = new LinkedHashSet<Rule>();
     private static Boolean trace = false;
     private static String indent = "";
 
-    private Prolog() {
+    private JoProlog() {
     }
 
     public static void main(String[] args) {

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.util.Arrays;
+import javolution.io.CharSequenceReader;
 import nars.jwam.RuleHeap;
 import nars.jwam.WAM;
 import nars.jwam.datastructures.Numbers;
@@ -68,8 +69,13 @@ public class Compiler {
      *
      * @param file File to compile.
      */
-    public Compiler compile_string(String str) throws ParseException {
+    public Compiler compile_string(String str) throws ParseException {        
         parser.reset(new StringReader(str));
+        parser.Prolog();
+        return this;
+    }
+    public Compiler compile_string(CharSequence str) throws ParseException {        
+        parser.reset(new CharSequenceReader().setInput(str));
         parser.Prolog();
         return this;
     }

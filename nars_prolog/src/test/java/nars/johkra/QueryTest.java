@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import nars.johkra.Prolog;
+import nars.johkra.JoProlog;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,7 +26,7 @@ public class QueryTest {
     private void verifyOutput(String commands, String exceptedOutput) throws Exception {
         byte[] bytes = commands.getBytes("utf-8");
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        Prolog.procFile(input, "");
+        JoProlog.procFile(input, "");
         assertEquals(exceptedOutput, outContent.toString());
     }
 

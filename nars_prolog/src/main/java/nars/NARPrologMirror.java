@@ -22,6 +22,7 @@ import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
+import nars.jwam.WAM;
 import nars.jwam.WAMProlog;
 import nars.jwam.WAMProlog.Query;
 import nars.language.CompoundTerm;
@@ -53,7 +54,7 @@ import nars.prolog.Var;
 public class NARPrologMirror extends AbstractMirror {
 
     public final NAR nar;
-    public final NARProlog prolog;
+    public NARProlog prolog;
     
     private float trueThreshold = 0.75f;
     private float falseThreshold = 0.25f;
@@ -84,6 +85,7 @@ public class NARPrologMirror extends AbstractMirror {
     boolean reportForgets = reportAssumptions;
     boolean reportAnswers = reportAssumptions;
     
+    protected StringBuilder theoryBuffer = new StringBuilder(2048);
     
     public static final Class[] telepathicEvents = { Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, Events.ConceptQuestionAdd.class, IN.class, OUT.class, Answer.class };
     
@@ -95,7 +97,6 @@ public class NARPrologMirror extends AbstractMirror {
         super(nar, true, telepathic ? telepathicEvents : inputOutputEvents );
         this.nar = nar;
         this.confidenceThreshold = minConfidence;
-        this.prolog = new NARProlog(nar);                
         setTemporalMode(eternalJudgments, presentJudgments);
     }
     
@@ -121,8 +122,15 @@ public class NARPrologMirror extends AbstractMirror {
         return false;
     }
    
+    protected void beliefsChanged() {
+        theoryBuffer.setLength(0);
+    }
+    
     protected boolean forget(Sentence belief) {
         if (beliefs.remove(belief)!=null) {
+            
+            beliefsChanged();
+
             if (reportForgets) {
                 System.err.println("Prolog forget: " + belief);                
             }
@@ -219,20 +227,32 @@ public class NARPrologMirror extends AbstractMirror {
                 if (qh!=null) {
                     //System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ? (" + Texts.n2(priority) + ")");    
                     
-
                     
-                    try {
-                        prolog.setTheory(getBeliefsTheory() + getAxioms());
-                    }
-                    catch (InvalidTheoryException e) {
-                        nar.memory.emit(ERR.class, e);
-                        return;
+                    prolog = new NARProlog(nar, WAM.newSmall());
+
+                    if (theoryBuffer.length() == 0) {
+                        try {                            
+                            theoryBuffer.append(getAxioms());
+                            for (nars.prolog.Term x : beliefs.values()) {
+                                theoryBuffer.append(x).append(". ");
+                            }
+                            String t = theoryBuffer.toString();
+                            System.err.println(t);
+                            prolog.setTheory(t);
+                            prolog.printRules(System.out);
+                            System.out.println("-------------");
+                        }
+                        catch (Exception e) {
+                            nar.memory.emit(ERR.class, e);
+                            return;
+                        }
                     }
 
                     //System.out.println("  Theory: " + theory);
                     //System.out.println("  Axioms: " + axioms);
                     
 
+                    System.err.println("  --> " + qh.toString());
                     Query si = prolog.query(qh.toString());
 
                     int answers = 0;
@@ -241,6 +261,7 @@ public class NARPrologMirror extends AbstractMirror {
                         if (si == null) break;
 
                         WAMProlog.Answer a = si.nextAnswer();
+                        System.out.println("  <-- " + a);
                         if (!a.success)
                             break;
 
@@ -304,9 +325,13 @@ public class NARPrologMirror extends AbstractMirror {
                         }
 
                         if (addOrRemove) {
-                            if (beliefs.putIfAbsent(s, th)==null)
+                            if (beliefs.putIfAbsent(s, th)==null) {
+                                
+                                beliefsChanged();
+                                
                                 if (reportAssumptions)
                                     System.err.println("Prolog assume: " + th + " | " + s);
+                            }
                         }
                         else {
                             forget(s);
@@ -506,8 +531,10 @@ public class NARPrologMirror extends AbstractMirror {
         
         nar.memory.inputTask(a);
         
-        if (pt!=null)
+        if (pt!=null) {
             beliefs.put(question.sentence, pt);
+            beliefsChanged();
+        }
         
         return t;
     }
@@ -543,19 +570,19 @@ public class NARPrologMirror extends AbstractMirror {
     private static List<nars.prolog.Term> axioms = null;
     
     private String getAxioms() {
-                    return "inheritance(A, C):- inheritance(A,B),inheritance(B,C)." + '\n' +
-                    "implication(A, C):- implication(A,B),implication(B,C)." + '\n' +
-                    "similarity(A, B):- similarity(B,A)." + '\n' +
-                    "similarity(A, B):- inheritance(A,B),inheritance(B,A)." + '\n' +
-                    "A:- not(not(A))." + '\n';
+                    return "inheritance(A, C) :- inheritance(A,B),inheritance(B,C). " + '\n' +
+                    "implication(A, C) :- implication(A,B),implication(B,C). " + '\n' +
+                    //"similarity(A, B) :- similarity(B,A). " + '\n' +
+                    "similarity(A, B) :- inheritance(A,B),inheritance(B,A). " + '\n' +
+                    "A :- not(not(A))." + '\n';
     }
     
     public static Theory getTheory(Map<Sentence, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
         return new Theory(new Struct(beliefMap.values().toArray(new Struct[beliefMap.size()])));
     }
     
-    public String getBeliefsTheory() throws InvalidTheoryException {
-        return getTheory(beliefs).toString();
+    public Theory getBeliefsTheory() throws InvalidTheoryException {
+        return getTheory(beliefs);
     }
 
     protected void onQuestion(Sentence s) {

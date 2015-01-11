@@ -80,6 +80,7 @@ public class WAMProlog {
                 //TODO optionally through an exception if interleaved queries
                 //System.out.println("setting query: " + Arrays.toString(compiled));
                 //System.out.println("setting query: " + Arrays.toString(compiled));
+                w.prepare_for_new_query();
                 w.setQuery(compiled);
             }
             else {
@@ -169,7 +170,6 @@ public class WAMProlog {
     }
     
     public Query query(String query) throws ParseException {
-        w.prepare_for_new_query();
         
         int[] q = w.getCompiler().compile_query(query);       
         

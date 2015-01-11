@@ -46,6 +46,19 @@ public class WAMPrologTest {
                 true, 
                 "Y", "b");
     }
+    /*@Test public void testQuery4() throws ParseException {
+        
+        test("A :- not(not(A)).", 
+                "\\=(a,not(not(a)))", 
+                true, 
+                null, null);
+    }*/
+    @Test public void testQuery3() throws ParseException {           
+        String t = "i(x,y). i(y,x).  s(A,B) :- i(A,B), i(B,A).";
+        test(t, "s(x,y)", true, null, null);
+        test(t, "s(y,x)", true, null, null);
+        test(t, "s(x,w)", false, null, null);
+    }    
     
     void test(String theory, String query, boolean expected, String variable, String value) throws ParseException {
         
@@ -54,6 +67,13 @@ public class WAMPrologTest {
         Query q = p.query(query);
                 
         Answer a = q.nextAnswer();       
+        
+        if (variable == null) {
+           
+            System.err.println(a.toString());
+            assertEquals( expected, a.success);
+            return;
+        }
         
         assertEquals("Answer[" + q.toString() + "|" + expected + "|{" + variable + "=" + value + "}]", a.toString());
         

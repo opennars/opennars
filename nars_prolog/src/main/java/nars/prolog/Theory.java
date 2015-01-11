@@ -98,6 +98,8 @@ public class Theory implements Serializable, PrologTermIterator {
             return clauseList.listIterator();
     }
 
+
+    
     /**
      * Adds (appends) a theory to this.
      *

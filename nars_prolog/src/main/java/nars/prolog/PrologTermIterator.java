@@ -8,6 +8,6 @@ import java.util.Iterator;
  */
 
 
-public interface PrologTermIterator {
+public interface PrologTermIterator  {
     public Iterator<? extends Term> iterator(Prolog engine);        
 }

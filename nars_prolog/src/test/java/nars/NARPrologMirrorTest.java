@@ -8,7 +8,9 @@ import nars.NARPrologMirror;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
+import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.gui.NARSwing;
 import nars.io.ExampleFileInput;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
@@ -34,7 +36,14 @@ public class NARPrologMirrorTest {
 
         NAR nar = new NAR( new Default().setInternalExperience(null) );
 
-        NARPrologMirror p = new NARPrologMirror(nar, 0.5f, true, true, true) {
+        NARPrologMirror p = new NARPrologMirror(nar, 0.1f, true, true, true) {
+
+            @Override
+            protected void onQuestion(Sentence s) {
+                super.onQuestion(s);
+                System.err.println("QUESTION: " + s);
+            }
+            
             
             
             @Override
@@ -52,10 +61,9 @@ public class NARPrologMirrorTest {
             
         };        
         
-        p.prolog.printRules(System.err);
         
-        
-        NALPerformance nts = new NALPerformance(nar, ExampleFileInput.get("../nal/test/nal1.multistep.nal").getSource(), 500) {
+        //nal1.multistep.nal
+        NALPerformance nts = new NALPerformance(nar, ExampleFileInput.get("../nal/test/nars_multistep_1.nal").getSource(), 3500) {
 //            
 //            
 //            @Override
@@ -79,8 +87,10 @@ public class NARPrologMirrorTest {
             
         };
 
+        
+        
         nts.run();
-                
+        
         assertTrue(prologAnswered);
         
 //        //nar.addInput(new TextInput(new File("nal/Examples/Example-MultiStep-edited.txt")));
