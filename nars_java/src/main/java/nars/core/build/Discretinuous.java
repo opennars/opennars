@@ -11,6 +11,7 @@ import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.CurveBag;
 import nars.storage.LevelBag;
+import static nars.storage.LevelBag.NextNonEmptyLevelMode.Fast;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
 public class Discretinuous extends Default {
@@ -27,15 +28,12 @@ public class Discretinuous extends Default {
     
     @Override
     public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag() {        
-        return new CurveBag<>(getNovelTaskBagSize(), randomRemoval);
+        return new LevelBag(getNovelTaskBagLevels(), getNovelTaskBagSize()).setNextNonEmptyMode(Fast);        
     }
 
     @Override
     public Bag<Concept,Term> newConceptBag() {
-        return new LevelBag(getConceptBagLevels(), getConceptBagSize());
-        
-        //NOT READY yet
-        //return new GearBag(getConceptBagLevels(), getConceptBagSize());
+        return new LevelBag(getConceptBagLevels(), getConceptBagSize()).setNextNonEmptyMode(Fast);
     }
 
 

@@ -1,6 +1,7 @@
-package nars.storage;
+package nars.storage.experimental;
 
 import nars.entity.Item;
+import nars.storage.CurveBag;
 
 
 /**

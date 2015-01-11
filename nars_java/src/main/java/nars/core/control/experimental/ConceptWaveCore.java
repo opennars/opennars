@@ -17,8 +17,8 @@ import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
 import nars.language.Term;
 import nars.storage.Bag.MemoryAware;
-import nars.storage.DelayBag;
-import nars.storage.FairDelayBag;
+import nars.storage.experimental.DelayBag;
+import nars.storage.experimental.FairDelayBag;
 
 /**
  * Uses DelayBag to emulate a massively parallel spiking neural network of concept activation

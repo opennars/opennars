@@ -11,8 +11,8 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.storage.DelayBag;
-import nars.storage.FairDelayBag;
+import nars.storage.experimental.DelayBag;
+import nars.storage.experimental.FairDelayBag;
 
 /**
  *

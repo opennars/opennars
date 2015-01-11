@@ -1,5 +1,5 @@
 
-package nars.storage;
+package nars.storage.experimental;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import java.util.ArrayDeque;
@@ -17,6 +17,7 @@ import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Item;
 import nars.inference.BudgetFunctions;
+import nars.storage.Bag;
 import nars.util.sort.ArraySortedIndex;
 
 /**

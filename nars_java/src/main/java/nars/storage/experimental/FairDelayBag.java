@@ -2,10 +2,11 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.storage;
+package nars.storage.experimental;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.entity.Item;
+import nars.storage.Distributor;
 
 /**
  * TODO add a strict probability mode which excludes low priority items from exceeding

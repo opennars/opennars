@@ -33,7 +33,7 @@ import nars.entity.Item;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
 import nars.storage.CurveBag;
-import nars.storage.GearBag;
+import nars.storage.experimental.GearBag;
 import nars.util.sort.ArraySortedIndex;
 
 /**

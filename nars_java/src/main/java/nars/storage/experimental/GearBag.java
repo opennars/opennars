@@ -1,4 +1,4 @@
-package nars.storage;
+package nars.storage.experimental;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
@@ -13,6 +13,7 @@ import javolution.util.FastSet;
 import javolution.util.function.Equality;
 import nars.core.Parameters;
 import nars.entity.Item;
+import nars.storage.Bag;
 
 /**
  * Bag implementation which distributes items into

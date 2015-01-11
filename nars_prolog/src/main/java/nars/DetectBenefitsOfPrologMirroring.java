@@ -5,10 +5,9 @@
  */
 package nars;
 
-import java.util.Iterator;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.core.build.Discretinuous;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.ExampleFileInput;
@@ -58,12 +57,12 @@ public class DetectBenefitsOfPrologMirroring {
     }
 
     private NAR newNAR() {
-        NAR nar = new NAR(new Default().setInternalExperience(null));
+        NAR nar = new NAR(new Discretinuous().setInternalExperience(null));
         return nar;
     }
 
     private NAR newPrologNAR(NAR n) {
-        new NARPrologMirror(n, 0.5f, true) {
+        new NARPrologMirror(n, 0.3f, true) {
             
             @Override
             public Term answer(Task question, Term t, nars.prolog.Term pt) {

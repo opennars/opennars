@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import nars.core.Parameters;
 import nars.entity.Item;
+import static nars.storage.LevelBag.NextNonEmptyLevelMode.Default;
 
 /**
  * Original Bag implementation which distributes items into
@@ -84,6 +85,14 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      */
     int currentCounter;
     final boolean[] levelEmpty;
+
+    final int distributorLength;
+    
+    public static enum NextNonEmptyLevelMode {
+        Default, Fast
+    }
+    
+    NextNonEmptyLevelMode nextNonEmptyMode = Default;
 
 
     
@@ -292,11 +301,22 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 //        return (level == null) || (level.isEmpty());
 //    }
 
-
-    final int distributorLength;
+    public LevelBag setNextNonEmptyMode(NextNonEmptyLevelMode nextNonEmptyMode) {
+        this.nextNonEmptyMode = nextNonEmptyMode;
+        return this;
+    }
+    
+            
+    protected void nextNonEmptyLevel() {
+        switch (nextNonEmptyMode) {
+            case Default: nextNonEmptyLevelDefault();
+            case Fast: nextNonEmptyLevelFast();
+        }
+    }
+            
     
     /** look for a non-empty level */
-    protected void nextNonEmptyLevel() {
+    protected void nextNonEmptyLevelDefault() {
                
         int cl = currentLevel;
 
@@ -311,6 +331,26 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             currentCounter = getNonEmptyLevelSize(currentLevel);
         }
     }
+    
+     /** Variation of LevelBag which follows a different distributor policy but 
+ runs much faster.  The policy should be approximately equally fair as LevelBag */
+    protected void nextNonEmptyLevelFast() {
+               
+        int cl = DISTRIBUTOR[(levelIndex++) % distributorLength];        
+        while (levelEmpty[cl]) {
+            cl++;
+            cl%=levels;
+        }
+
+        currentLevel = cl;
+                
+        if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
+            currentCounter = 1;
+        } else {                  // for active levels, take all current items
+            currentCounter = getNonEmptyLevelSize(currentLevel);
+        }
+    }
+    
 
     @Override
     public E peekNext() {
