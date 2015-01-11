@@ -33,6 +33,7 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
         addTheoryListener(this);
         addWarningListener(this);
         addQueryListener(this);        
+             
     }
     
     public NARProlog loadBasicLibrary() throws InvalidLibraryException {

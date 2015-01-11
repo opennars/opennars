@@ -364,38 +364,7 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(1200).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
         //nar.setCyclesPerFrame(2);
                 
-        new NARPrologMirror(nar, 0.30f, true) {
-
-//            @Override
-//            public nars.prolog.Term pterm(Term term) {
-//                nars.prolog.Term x = super.pterm(term);
-//                /*if ((x!=null) && (!x.isAtomic()))
-//                    System.out.println("PROLOG TERM: " + x);
-//                else if (x == null) {
-//                    System.out.println("PROLOG CONFUSED by: " + term);
-//                }*/
-//                return x;
-//            }
-
-
-            
-            
-            @Override
-            protected void onQuestion(Sentence s) {
-                System.out.println("PROLOG QUESTION: " + s);
-            }
-
-            
-            @Override
-            public Term answer(Task question, Term t, nars.prolog.Term pt) {
-                
-                Term xt = super.answer(question, t, pt);
-                if (xt!=null)
-                    System.out.println("PROLOG ANSWERED: " + pt);
-                return xt;
-            }
-            
-        }.temporal(true, true);      
+        new NARPrologMirror(nar, 0.30f, true, true, false);      
         
         
 

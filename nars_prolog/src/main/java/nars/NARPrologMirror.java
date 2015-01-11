@@ -29,6 +29,10 @@ import nars.language.Equivalence;
 import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.Negation;
+import nars.language.Product;
+import nars.language.SetExt;
+import nars.language.SetInt;
+import nars.language.SetTensional;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Tense;
@@ -65,7 +69,11 @@ public class NARPrologMirror extends AbstractObserver {
     float durationMultiplier = 1.0f;
     
     /** how often to remove temporally irrelevant beliefs */
-    float durationDivider = 4f;
+    float forgetCyclePeriod = 4f;
+    private long lastFlush;
+    private int durationCycles;
+    
+    boolean allTerms = false;    
     
     /** in seconds */
     float maxSolveTime = 5.0f / 1e3f; //5ms
@@ -82,19 +90,19 @@ public class NARPrologMirror extends AbstractObserver {
     public static final Class[] telepathicEvents = { Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, Events.ConceptQuestionAdd.class, IN.class, OUT.class, Answer.class };
     
     public static final Class[] inputOutputEvents = { IN.class, OUT.class };
-    private long lastFlush;
-    private int durationCycles;
     
-    boolean allTerms = false;
     
-    public NARPrologMirror(NAR nar, float minConfidence, boolean telepathic) {
+    
+    public NARPrologMirror(NAR nar, float minConfidence, boolean telepathic, boolean eternalJudgments, boolean presentJudgments) {
         super(nar, true, telepathic ? telepathicEvents : inputOutputEvents );
         this.nar = nar;
         this.confidenceThreshold = minConfidence;
         this.prolog = new NARProlog(nar);                
+        setTemporalMode(eternalJudgments, presentJudgments);
     }
     
-    public NARPrologMirror temporal(boolean eternalJudgments, boolean presentJudgments) {
+    /** you probably do not want to enable both simultaneously because it will confuse eternal beliefs with present beliefs within the same theory */
+    public NARPrologMirror setTemporalMode(boolean eternalJudgments, boolean presentJudgments) {
         this.eternalJudgments = eternalJudgments;
         this.presentJudgments = presentJudgments;
         return this;
@@ -129,7 +137,7 @@ public class NARPrologMirror extends AbstractObserver {
         if (presentJudgments) {
             long now = nar.time();
             durationCycles = (nar.param).duration.get();
-            if (now - lastFlush > (long)(durationCycles/ durationDivider) ) {
+            if (now - lastFlush > (long)(durationCycles/ forgetCyclePeriod) ) {
                 
                 Set<Sentence> toRemove = new HashSet();
                 for (Sentence s : beliefs.keySet()) {
@@ -217,7 +225,7 @@ public class NARPrologMirror extends AbstractObserver {
                     Theory theory;
                     
                     try {
-                        prolog.setTheory(theory = getTheory(beliefs));
+                        prolog.setTheory(theory = getBeliefsTheory());
                         prolog.addTheory(getAxioms().iterator());
                     }
                     catch (InvalidTheoryException e) {
@@ -260,8 +268,9 @@ public class NARPrologMirror extends AbstractObserver {
                             si = prolog.solveNext(maxSolveTime);
                         }
                     }                            
-                    while (prolog.hasOpenAlternatives() && (answers++) < maxAnswers);
-
+                    while (prolog.hasOpenAlternatives() && (answers++) < maxAnswers);                    
+                    prolog.solveHalt();
+                    
                 }
             } catch (InvalidTermException nse) {
                 nar.emit(NARPrologMirror.class, s + " : not supported yet");       
@@ -364,18 +373,34 @@ public class NARPrologMirror extends AbstractObserver {
         return pescPattern.matcher(p).replaceAll("_d");
     }
             
+    protected static String classPredicate(Class c) {
+        return c.getSimpleName().toLowerCase();
+    }
+    
     //NARS term -> Prolog term
     public nars.prolog.Term pterm(final Term term) {
         
         //CharSequence s = termString(term);
         if (term instanceof Statement) {
             Statement i = (Statement)term;
-            String predicate = i.getClass().getSimpleName().toLowerCase();
+            String predicate = classPredicate(i.getClass());
             nars.prolog.Term subj = pterm(i.getSubject());
             nars.prolog.Term obj = pterm(i.getPredicate());
             if ((subj!=null) && (obj!=null))
                 return new Struct(predicate, subj, obj);
         }
+        else if ((term instanceof SetTensional) || (term instanceof Product) /* conjunction */) {
+            CompoundTerm s = (CompoundTerm)term;
+            String predicate = classPredicate(s.getClass());
+            nars.prolog.Term[] args = pterms(s.term);
+            if (args!=null)
+                return new Struct(predicate, args);
+        }
+        else if (term instanceof Product) {
+            
+        }
+        //Image...
+        //Conjunction...
         else if (term instanceof Negation) {
             nars.prolog.Term np = pterm(((Negation)term).term[0]);
             if (np == null) return null;
@@ -409,13 +434,22 @@ public class NARPrologMirror extends AbstractObserver {
             if (arity == 0) {
                 return Term.get(predicate);
             }
-            else if (arity == 1) {
+            if (arity == 1) {
                 switch (predicate) {
                     case "negation":
                         return Negation.make(nterm(s.getArg(0)));
                 }
             }
-            else if (arity == 2) {                
+            if (predicate.equals("product")) {
+                return new Product(nterm(s.getArg()));
+            }
+            if (predicate.equals("setint")) {
+                return new SetInt(nterm(s.getArg()));                
+            }
+            if (predicate.equals("setext")) {
+                return new SetExt(nterm(s.getArg()));
+            }
+            if (arity == 2) {                
                 Term a = nterm(s.getArg(0));
                 Term b = nterm(s.getArg(1));
                 if ((a!=null) && (b!=null)) {
@@ -429,11 +463,11 @@ public class NARPrologMirror extends AbstractObserver {
                         case "equivalence":
                             return Equivalence.make(a, b);
                         //TODO more types
-                        default:
-                            System.err.println("nterm() does not yet support: " + term);
+                            
                     }
                 }
             }
+            System.err.println("nterm() does not yet support translation to NARS terms of Prolog: " + term);
         }
         else if (term instanceof Var) {
             Var v = (Var)term;
@@ -529,14 +563,35 @@ public class NARPrologMirror extends AbstractObserver {
         return axioms;
     }
     
-    public Theory getTheory(Map<Sentence, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
+    public static Theory getTheory(Map<Sentence, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
         return new Theory(new Struct(beliefMap.values().toArray(new Struct[beliefMap.size()])));
+    }
+    
+    public Theory getBeliefsTheory() throws InvalidTheoryException {
+        return getTheory(beliefs);
     }
 
     protected void onQuestion(Sentence s) {
     }
 
-    
+    protected nars.prolog.Term[] pterms(Term[] term) {
+        nars.prolog.Term[] tt = new nars.prolog.Term[term.length];
+        int i = 0;
+        for (Term x : term) {
+            if ((tt[i++] = pterm(x)) == null) return null;
+        }
+        return tt;
+    }
+
+    public Term[] nterm(final nars.prolog.Term[] term) {
+        Term[] tt = new Term[term.length];
+        int i = 0;
+        for (nars.prolog.Term x : term) {
+            if ((tt[i++] = nterm(x)) == null) return null;
+        }
+        return tt;        
+    }
+
     
 }
 

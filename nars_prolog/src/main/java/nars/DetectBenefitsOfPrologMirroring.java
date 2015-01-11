@@ -19,6 +19,8 @@ import nars.util.NALPerformance;
  * @author me
  */
 public class DetectBenefitsOfPrologMirroring {
+    private NARPrologMirror currentPrologEternal;
+    private NARPrologMirror currentPrologPresent;
 
     public DetectBenefitsOfPrologMirroring(String path) throws Exception {
         Parameters.DEBUG = false;
@@ -43,6 +45,8 @@ public class DetectBenefitsOfPrologMirroring {
             System.out.println(path + "\n  " + np.getScore() + " " + pp.getScore());
         }
         
+        System.out.println(currentPrologEternal.getBeliefsTheory());
+        System.out.println(currentPrologPresent.getBeliefsTheory());
         
     }
     
@@ -52,8 +56,6 @@ public class DetectBenefitsOfPrologMirroring {
         for (String path : ExampleFileInput.getUnitTestPaths()) {
             new DetectBenefitsOfPrologMirroring(path);
         }
-        
-        
     }
 
     private NAR newNAR() {
@@ -62,22 +64,9 @@ public class DetectBenefitsOfPrologMirroring {
     }
 
     private NAR newPrologNAR(NAR n) {
-        new NARPrologMirror(n, 0.3f, true) {
-            
-            @Override
-            public Term answer(Task question, Term t, nars.prolog.Term pt) {
-                Term a = super.answer(question, t, pt);
-                System.out.println("  ANSWER: " + a);
-                return a;
-            }
-
-            @Override
-            protected void onQuestion(Sentence s) {
-                System.out.println("  QUESTION: " + s);
-            }
-            
-            
-        }.temporal(true, true);        
+        float confidenceThresh = 0.3f;
+        currentPrologEternal = new NARPrologMirror(n, confidenceThresh, true, true, false);        
+        currentPrologPresent = new NARPrologMirror(n, confidenceThresh, true, false, true);        
         return n;
     }
 
