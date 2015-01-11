@@ -79,11 +79,11 @@ public class WAMProlog {
                 //need to (re-)execute because a different query was previously set
                 //TODO optionally through an exception if interleaved queries
                 //System.out.println("setting query: " + Arrays.toString(compiled));
-                System.out.println("setting query: " + Arrays.toString(compiled));
+                //System.out.println("setting query: " + Arrays.toString(compiled));
                 w.setQuery(compiled);
             }
             else {
-                System.out.println("query already exist: " + Arrays.toString(compiled));
+                //System.out.println("query already exist: " + Arrays.toString(compiled));
             }
             
             

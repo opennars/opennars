@@ -2,9 +2,13 @@ package nars.johkra;
 
 import java.io.*;
 import java.text.ParseException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * User: Johannes Krampf <johkra@gmail.com>
@@ -15,7 +19,8 @@ import java.util.HashMap;
  * See http://web.archive.org/web/20071014055005/ibiblio.org/obp/py4fun/prolog/prolog2.html for the code and explanations.
  */
 public final class Prolog {
-    private static ArrayList<Rule> rules = new ArrayList<Rule>();
+    
+    private static Set<Rule> rules = new LinkedHashSet<Rule>();
     private static Boolean trace = false;
     private static String indent = "";
 
@@ -66,7 +71,7 @@ public final class Prolog {
                     } else if (punc == '?') {
                         search(new Term(line, null));
                     } else {
-                        rules.add(new Rule(line));
+                        rules.add(Rule.make(line));
                     }
                 } catch (ParseException e) {
                     System.err.println("err: " + e.getMessage());
@@ -140,14 +145,12 @@ public final class Prolog {
     }
 
     private static void search(Term term) throws ParseException {
-        Goal goal = new Goal(new Rule("all(done):-x(y)"), null);
-        ArrayList<Term> list = new ArrayList<Term>();
-        list.add(term);
-        goal.getRule().setGoals(list);
-        ArrayList<Goal> queue = new ArrayList<Goal>();
-        queue.add(goal);
-        while (queue.size() > 0) {
-            Goal c = queue.remove(0);
+        Goal goal = new Goal(Rule.make("all(done):-x(y)"), null);
+        goal.getRule().setGoal(term);
+        Deque<Goal> queue = new ArrayDeque<Goal>();
+        queue.addLast(goal);
+        while (!queue.isEmpty()) {
+            Goal c = queue.removeFirst();
             if (trace) {
                 System.out.println("deque: " + c);
             }
@@ -165,7 +168,7 @@ public final class Prolog {
                 Term currentGoal = parent.getRule().getGoals().get(parent.getInx());
                 unify(head, c.getEnv(), currentGoal, parent.getEnv());
                 parent.setInx(parent.getInx() + 1);
-                queue.add(parent);
+                queue.addLast(parent);
                 if (trace) {
                     System.out.println("Requeuing " + parent);
                 }
@@ -184,14 +187,14 @@ public final class Prolog {
                         continue;
                     }
                 } else if (currentPred.equals("cut")) {
-                    queue = new ArrayList<Goal>();
+                    queue.clear();
                 } else if (currentPred.equals("fail")) {
                     continue;
                 } else if (eval(term, c.getEnv()) == null) {
                     continue;
                 }
                 c.setInx(c.getInx() + 1);
-                queue.add(c);
+                queue.addLast(c);
                 continue;
             }
             for (Rule rule : rules) {
@@ -204,7 +207,7 @@ public final class Prolog {
                 }
                 Goal child = new Goal(rule, c);
                 if (unify(currentGoal, c.getEnv(), head, child.getEnv())) {
-                    queue.add(child);
+                    queue.addLast(child);
                 }
             }
         }

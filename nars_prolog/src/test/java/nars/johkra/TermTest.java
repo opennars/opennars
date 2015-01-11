@@ -3,7 +3,6 @@ package nars.johkra;
 import org.junit.Test;
 
 import java.text.ParseException;
-import nars.johkra.Term;
 
 /**
  * User: Johannes Krampf <johkra@gmail.com>
