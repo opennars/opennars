@@ -1,7 +1,7 @@
 package nars.jwam;
 
-import nars.jwam.builtins.Arithmetic;
-import nars.jwam.builtins.PredicateDynamics;
+import nars.jwam.library.Arithmetic;
+import nars.jwam.library.PredicateDynamics;
 
 public class Library {
 

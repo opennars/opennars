@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import nars.jwam.datastructures.Numbers;
 import nars.jwam.datastructures.IntArrayList;
 import nars.jwam.datastructures.IntHashMap;
@@ -228,7 +229,7 @@ public class RuleHeap {
      * Put the query code of the last compiled query in the WAM.
      */
     public void loadQuery() {
-        wam.append_query_code(query_instructions);
+        wam.setQuery(query_instructions);
     }
 
     /**
@@ -274,6 +275,10 @@ public class RuleHeap {
     public HashMap<Integer, ArrayList<int[]>> getInstructions() {
         return instructions;
     }
+    
+    public ArrayList<int[]> instruction(int i) {
+        return instructions.get(i);
+    }
 
     public ArrayList<int[]> getAreas() {
         return areas;
@@ -318,11 +323,23 @@ public class RuleHeap {
     }
 
     public boolean isDynamic(int functor) {
-        return dynamics.contains(wam.strings().get(functor));
+        return dynamics.contains(wam.string(functor));
     }
 
     public boolean isDynamic(String functor) {
         return dynamics.contains(functor);
+    }
+
+    public ArrayList<int[]> heap(int fn) {
+        return heaps.get(fn);
+    }
+    
+    
+    public static class Rule { /* TODO */ }
+    
+    public Iterator<Rule> getRules() {
+        //TODO wrap rules in an accessible object
+        return null;
     }
 
     public String toString(Strings strings, Numbers nums, int registerstart) {

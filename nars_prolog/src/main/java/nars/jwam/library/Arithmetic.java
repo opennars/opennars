@@ -1,4 +1,4 @@
-package nars.jwam.builtins;
+package nars.jwam.library;
 
 import java.util.HashSet;
 import nars.jwam.WAM;
@@ -105,9 +105,9 @@ public class Arithmetic {
                 if (min > 0) {
                     value *= -1;
                 }
-                num = WAM.make_cell(WAM.NUM, (((int) value) << 3) | min);
+                num = WAM.newCell(WAM.NUM, (((int) value) << 3) | min);
             } else {
-                num = WAM.make_cell(WAM.NUM, w.numbers().store_temp(value));
+                num = WAM.newCell(WAM.NUM, w.numbers().store_temp(value));
             }
             if (tag1 == WAM.REF) {
                 heap[arg1address] = num;

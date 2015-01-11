@@ -11,22 +11,22 @@ public class ClauseSequenceCompiler {
 
     Strings strings = null;
 
-    public int[] compile_sequence(RuleHeap dsm, int functor) {
-        this.strings = dsm.getWAM().strings();
-        ArrayList<int[]> entries = dsm.getInstructions().get(functor); 	// The instructions of the individual clauses
+    public int[] compile_sequence(RuleHeap r, int functor) {
+        this.strings = r.getWAM().strings();
+        ArrayList<int[]> entries = r.instruction(functor); 	// The instructions of the individual clauses
         int[] prim_result = null;
         if (entries.size() == 1) {
             prim_result = Arrays.copyOf(entries.get(0), entries.get(0).length + 1); 				// Only one entry, return its instructions
             prim_result[prim_result.length - 1] = WAM.make_instruction(WAM.DYNAMIC_CODE_END, prim_result.length - 1);
         } else {
             ArrayList<Integer> result = new ArrayList<Integer>();
-            if (dsm.isDynamic(functor)) {
+            if (r.isDynamic(functor)) {
                 addDynamicTRT(result, entries, 0, entries.size());
                 result.add(WAM.make_instruction(WAM.DYNAMIC_CODE_END, result.size()));
             } else if (WAM.numArgs(functor) == 0) {
                 addTRT(result, entries, 0, entries.size()); // If dynamic or no arguments: simply do TRT
             } else {
-                ArrayList<int[]> sequences = toSequences(dsm, functor);		// Determine the sequences
+                ArrayList<int[]> sequences = toSequences(r, functor);		// Determine the sequences
                 if (sequences.size() == 1) {
                     prim_result = Arrays.copyOf(sequences.get(0), sequences.get(0).length + 1); 	// Only one sequence 
                 } else {
@@ -78,7 +78,7 @@ public class ClauseSequenceCompiler {
 
     private ArrayList<int[]> toSequences(RuleHeap dsm, int functor) {
         ArrayList<int[]> r = new ArrayList<int[]>();						 // The result instructions
-        ArrayList<int[]> clauses = dsm.getInstructions().get(functor);		 // The instructions of the individual clauses
+        ArrayList<int[]> clauses = dsm.instruction(functor);		 // The instructions of the individual clauses
         ArrayList<int[]> heaps = dsm.getHeaps().get(functor);				 // The heap data of each instruction
         boolean appendToSequence = false;									 // Boolean for whether a new sequence is needed or not
         ArrayList<int[]> sequence = new ArrayList<int[]>();

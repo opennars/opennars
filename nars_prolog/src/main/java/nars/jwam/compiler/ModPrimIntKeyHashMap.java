@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ModPrimIntKeyHashMap {
 
-    int entry_count = 0, next = 1, entry_space = 0;
+    int entries = 0, next = 1, entry_space = 0;
     public int[] table = new int[0];
 
     private int indexFor(int h) {
@@ -13,21 +13,21 @@ public class ModPrimIntKeyHashMap {
 
     public void put(int key, int value) {
         //System.out.println(key+" -> "+value);
-        if (entry_count > 0 && contains(key, value)) {
+        if (entries > 0 && contains(key, value)) {
             return;
         }
-        entry_count++;
+        entries++;
         int old_entry_space = entry_space;
-        if (entry_count > entry_space) {
+        if (entries > entry_space) {
             entry_space = entry_space * 2 + 1; // c.f. 15 goes to 31: 01111 => 11111, its the entry space that gets put in switch_on_X as an argument
         }
         next = entry_space + 1;
-        int[] new_table = new int[entry_space + 1 + entry_count * 3];
+        int[] new_table = new int[entry_space + 1 + entries * 3];
         //System.out.println(entry_space+" "+entry_count+" "+new_table.length);
         for (int i = 0; i < new_table.length; i++) {
             new_table[i] = Integer.MIN_VALUE;
         }
-        for (int i = 0; i < entry_count - 1; i++) {
+        for (int i = 0; i < entries - 1; i++) {
             int j = i * 3 + old_entry_space + 1;
             add(new_table, table[j + 1], table[j + 2]);
         }
@@ -75,7 +75,7 @@ public class ModPrimIntKeyHashMap {
     }
 
     public ArrayList<Integer> toArrayList() {
-        ArrayList<Integer> r = new ArrayList<Integer>();
+        ArrayList<Integer> r = new ArrayList<Integer>(table.length);
         for (int i = 0; i < table.length; i++) {
             r.add(table[i]);
         }
@@ -86,7 +86,7 @@ public class ModPrimIntKeyHashMap {
         for (int i = 0; i < table.length; i++) {
             System.out.println(table[i] + " ");
         }
-        for (int i = 0; i < entry_count; i++) {
+        for (int i = 0; i < entries; i++) {
             int j = i * 3 + entry_space + 1;
             System.out.println(i + ": " + table[j + 1] + " = " + table[j + 2]);
         }

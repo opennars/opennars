@@ -72,16 +72,16 @@ public class ToHeap {
             addConstant(functorname);
         } else {
             int index = heap.size();								// Otherwise create the functor cell <PN,functor>
-            heap.add(WAM.make_cell(WAM.PN, strings.add(functorname, args.size())));
+            heap.add(WAM.newCell(WAM.PN, strings.add(functorname, args.size())));
             for (int i = 0; i < args.size(); i++) {
                 heap.add(args.get(i)); 						// Add the arguments in consecutive order
             }
             if (argrefs.isEmpty()) // Returned to rule level
             {
-                heap.add(WAM.make_cell(WAM.STR, index)); 		// So store the start of the action in the heap itself 
+                heap.add(WAM.newCell(WAM.STR, index)); 		// So store the start of the action in the heap itself 
             } else // Otherwise store the STR cell in the parent's arguments
             {
-                argrefs.get(argrefs.size() - 1).add(WAM.make_cell(WAM.STR, index));
+                argrefs.get(argrefs.size() - 1).add(WAM.newCell(WAM.STR, index));
             }
         }
     }
@@ -101,7 +101,7 @@ public class ToHeap {
             int index = heap.size();
             heap.add(args.get(0)); 							// Add list element
             heap.add(args.get(1)); 							// Add tail
-            argrefs.get(argrefs.size() - 1).add(WAM.make_cell(WAM.LIS, index)); // Add LIS cell to parent
+            argrefs.get(argrefs.size() - 1).add(WAM.newCell(WAM.LIS, index)); // Add LIS cell to parent
         }
     }
 
@@ -114,7 +114,7 @@ public class ToHeap {
      */
     public void addNum(String str) {
         int value = nums.new_number(str);
-        argrefs.get(argrefs.size() - 1).add(WAM.make_cell(WAM.NUM, value)); // Otherwise create the functor cell <PN,functor>
+        argrefs.get(argrefs.size() - 1).add(WAM.newCell(WAM.NUM, value)); // Otherwise create the functor cell <PN,functor>
     }
 
     /**
@@ -132,7 +132,7 @@ public class ToHeap {
         if (isQuery) {
             rules.getQueryVars().put(var_index, name);		// Store the last reference to a variable in a query
         }
-        argrefs.get(argrefs.size() - 1).add(WAM.make_cell(WAM.REF, var_index));
+        argrefs.get(argrefs.size() - 1).add(WAM.newCell(WAM.REF, var_index));
     }
 
     /**
@@ -143,10 +143,10 @@ public class ToHeap {
     public void addConstant(String name) {
         if (argrefs.isEmpty()) // Top level construction (entry of constant as fact, e.g. "a.")
         {
-            heap.add(WAM.make_cell(WAM.CON, strings.add(name, 0) >> 7));
+            heap.add(WAM.newCell(WAM.CON, strings.add(name, 0) >> 7));
         } else // Otherwise add to parent's arguments
         {
-            argrefs.get(argrefs.size() - 1).add(WAM.make_cell(WAM.CON, strings.add(name, 0) >> 7));
+            argrefs.get(argrefs.size() - 1).add(WAM.newCell(WAM.CON, strings.add(name, 0) >> 7));
         }
     }
 

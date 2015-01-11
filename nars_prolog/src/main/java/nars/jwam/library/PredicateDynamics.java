@@ -1,4 +1,4 @@
-package nars.jwam.builtins;
+package nars.jwam.library;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,9 +51,9 @@ public class PredicateDynamics {
 
     private boolean assertion(boolean front) {
         int[] heap = deep_copy(wam.getStorage(), wam.getA1()); // deep copy heap, temp nums become dynamic nums, (:-(a,b),c) becomes :-(a,b,c) 
-        int[] instructions = wam.getCompiler().getSingleClauseCompiler().compile_heap(heap, false, heap.length - 1, wam.getRuleHeap()); // heap to instructions
+        int[] instructions = wam.getCompiler().getSingleClauseCompiler().compile_heap(heap, false, heap.length - 1, wam.rules()); // heap to instructions
         int fn = Compiler.getTopFN(heap, heap.length - 1, wam.strings());
-        wam.getRuleHeap().dynamic_assert(fn, instructions, heap, front); // trt update
+        wam.rules().dynamic_assert(fn, instructions, heap, front); // trt update
         return true;
     }
 
@@ -65,18 +65,18 @@ public class PredicateDynamics {
             wam.meta_retry(0, 0);
         }
         int fn = Compiler.getTopFN(wam.getStorage(), wam.getA1(), wam.strings());
-        ArrayList<int[]> heaps = wam.getRuleHeap().getHeaps().get(fn);
-        ArrayList<int[]> instr = wam.getRuleHeap().getInstructions().get(fn);
+        ArrayList<int[]> heaps = wam.rules().heap(fn);
+        ArrayList<int[]> instr = wam.rules().instruction(fn);
         if (heaps == null) {
             return all; // entire predicate doesn't exist  
         }
         if (heaps.isEmpty() && is_retry) { // Retrying a retract with no more entries
             wam.trust_me(); // Remove choice point 
             return false;
-        } else if (heaps.size() > 0) { // if there is an entry 
+        } else if (!heaps.isEmpty()) { // if there is an entry 
             int startTR = wam.getTR(); // Remember trail and heap top, the start values are used when making a choicepoint later on 
             int startH = wam.getH();
-            int h = startH;
+            int h;// = startH;
             int[] vars = new int[8]; // For copying, need to create right REF values
             int nr = is_retry ? storage[b + 2] : 0; // If it is a retry, continue where ended (note that many asserta's/assertz's can mess this up. It is a little imperfection I am willing to live with. I welcome any proper and fast assert/retract scheme.
 
@@ -96,9 +96,9 @@ public class PredicateDynamics {
                         {
                             vars[v] = h; // The ref cannot be at heap[0]
                         }
-                        cell = WAM.make_cell(WAM.REF, vars[v]); // Make new cell
+                        cell = WAM.newCell(WAM.REF, vars[v]); // Make new cell
                     } else if (tag == WAM.STR || tag == WAM.LIS) {
-                        cell = WAM.make_cell(tag, v + startH);
+                        cell = WAM.newCell(tag, v + startH);
                     }
                     storage[h] = cell; // Store cell on heap
                     h++; // Update heap
@@ -108,7 +108,7 @@ public class PredicateDynamics {
 //				System.out.println(WAMToString.oneLineHeap(wam.getStorage(), 0, wam.getH(), wam.getStringContainer(), wam.getNums()));
 //				System.out.println("A1: "+WAMToString.cellToString(wam.getStorage(), wam.getA1(), wam.getStringContainer(), wam.getNums()));
                 if (wam.unify(h - 1, wam.getA1())) { // Unify  
-                    wam.getRuleHeap().dynamic_retract(nr, heaps.size(), fn);// Adapt TRT and point.x
+                    wam.rules().dynamic_retract(nr, heaps.size(), fn);// Adapt TRT and point.x
                     heaps.remove(nr); // TODO: clean number registration 
                     instr.remove(nr);
                     if (!all) { // There are more candidates to retract but it is not a retractall call
@@ -157,11 +157,11 @@ public class PredicateDynamics {
         } else if (tag == WAM.STR) {
             int pn_address = WAM.cell_value(store[address]);
             int pn = WAM.cell_value(store[pn_address]);
-            if (wam.strings().get(pn).startsWith(",/")) {
+            if (wam.string(pn).startsWith(",/")) {
                 if (WAM.cell_tag(store[pn_address + 1]) == WAM.STR) {
                     int pn2_address = WAM.cell_value(store[pn_address + 1]);
                     int pn2 = WAM.cell_value(store[pn2_address]);
-                    if (wam.strings().get(pn2).equals(":-/2")) {
+                    if (wam.string(pn2).equals(":-/2")) {
                         IntArrayList children = new IntArrayList();
                         deep_copy_child(store, pn2_address + 1);
                         children.add(dclist.removeLast());
@@ -173,11 +173,11 @@ public class PredicateDynamics {
                             children.add(dclist.removeLast());
                         }
                         int start = dclist.size();
-                        dclist.add(WAM.make_cell(WAM.PN, wam.strings().add(":-", args + 1)));
+                        dclist.add(WAM.newCell(WAM.PN, wam.strings().add(":-", args + 1)));
                         for (int i = 0; i < children.size(); i++) {
                             dclist.add(children.data[i]);
                         }
-                        dclist.add(WAM.make_cell(WAM.STR, start));
+                        dclist.add(WAM.newCell(WAM.STR, start));
                     } else {
                         System.out.println("ERROR in PredicateDynamics.deepcopy 1");
                     }
@@ -196,12 +196,12 @@ public class PredicateDynamics {
         int tag = WAM.cell_tag(store[address]);
         int value = WAM.cell_value(store[address]);
         if (tag == WAM.REF) {
-            dclist.add(WAM.make_cell(WAM.REF, value + 1)); // Removes anonymous if accidently at heap[0] a ref is placed
+            dclist.add(WAM.newCell(WAM.REF, value + 1)); // Removes anonymous if accidently at heap[0] a ref is placed
         } else if (tag == WAM.CON) {
             dclist.add(store[address]);
         } else if (tag == WAM.NUM) {
             if ((value & 3) > 0) {
-                dclist.add(WAM.make_cell(WAM.NUM, wam.numbers().add_num(value)));
+                dclist.add(WAM.newCell(WAM.NUM, wam.numbers().add_num(value)));
             } else {
                 dclist.add(store[address]);
             }
@@ -213,7 +213,7 @@ public class PredicateDynamics {
             int start = dclist.size();
             dclist.add(c1);
             dclist.add(c2);
-            dclist.add(WAM.make_cell(WAM.LIS, start));
+            dclist.add(WAM.newCell(WAM.LIS, start));
         } else if (tag == WAM.STR) {
             int pn = WAM.cell_value(store[value]);
             int arg = WAM.numArgs(pn);
@@ -223,11 +223,11 @@ public class PredicateDynamics {
                 children.add(dclist.removeLast());
             }
             int start = dclist.size();
-            dclist.add(WAM.make_cell(WAM.PN, pn));
+            dclist.add(WAM.newCell(WAM.PN, pn));
             for (int i = 0; i < children.size(); i++) {
                 dclist.add(children.data[i]);
             }
-            dclist.add(WAM.make_cell(WAM.STR, start));
+            dclist.add(WAM.newCell(WAM.STR, start));
         }
     }
 }

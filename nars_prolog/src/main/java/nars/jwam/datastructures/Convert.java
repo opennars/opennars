@@ -109,11 +109,11 @@ public class Convert {
     }
 
     public static int javaToWAMNumber(WAM w, double d) {
-        return WAM.make_cell(WAM.NUM, w.numbers().new_number("" + d));
+        return WAM.newCell(WAM.NUM, w.numbers().new_number("" + d));
     }
 
     public static int javaToWAMString(WAM w, String s) {
-        return WAM.make_cell(WAM.CON, w.strings().add(s, 0) >>> 7);
+        return WAM.newCell(WAM.CON, w.strings().add(s, 0) >>> 7);
     }
 
     public static void javaToWAMList(WAM w, List<Object> list, IntArrayList result) {
@@ -130,10 +130,10 @@ public class Convert {
             result.add(javaToWAMString(w, "[]")); // The last cell contains emtpy tail
             for (int i = 1; i < items.size(); i++) {
                 result.add(items.get(i)); // Add item
-                result.add(WAM.make_cell(WAM.LIS, last)); // Add list cell to previous 
+                result.add(WAM.newCell(WAM.LIS, last)); // Add list cell to previous 
                 last = result.size() - 2;
             }
-            result.add(WAM.make_cell(WAM.LIS, last)); // Add list cell to point to the start of the list
+            result.add(WAM.newCell(WAM.LIS, last)); // Add list cell to point to the start of the list
         }
     }
 
@@ -145,9 +145,9 @@ public class Convert {
             args.add(result.removeLast()); // Add last int to the arg array
         }
         int start = result.size(); // pointer to p/n cell
-        result.add(WAM.make_cell(WAM.PN, w.strings().add(name, args.size()))); // make p/n cell
+        result.add(WAM.newCell(WAM.PN, w.strings().add(name, args.size()))); // make p/n cell
         result.addAll(args); // Add the arguments
-        result.add(WAM.make_cell(WAM.STR, start)); // Add the STR cell that points to the structure
+        result.add(WAM.newCell(WAM.STR, start)); // Add the STR cell that points to the structure
     }
 
     private static boolean isEmptyList(WAM wam, int tag, int value) {

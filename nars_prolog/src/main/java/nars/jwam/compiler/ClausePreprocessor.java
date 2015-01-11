@@ -239,7 +239,7 @@ public class ClausePreprocessor {
         {
             if (occurrences.get(key).size() == 1) // Only one occurrence in the entire rule, so it is anonymous
             {
-                heap[occurrences.get(key).get(0).index] = WAM.make_cell(WAM.REF, 0); 	// Make it anonymous  
+                heap[occurrences.get(key).get(0).index] = WAM.newCell(WAM.REF, 0); 	// Make it anonymous  
             }
         }
     }

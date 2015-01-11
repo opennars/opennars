@@ -37,6 +37,15 @@ public class Compiler {
         clause_sequence_compiler = new ClauseSequenceCompiler();
     }
 
+
+    /**
+     * Reset the compiler. Will remove all rule entries as well.
+     */
+//    Compiler reset() {
+//        //for now, do nothing here. any reset will be triggered and managed by the WAM 
+//        return this;
+//    }
+    
     /**
      * Compiles a file and adds the data to previously compiled rules.
      *
@@ -46,7 +55,7 @@ public class Compiler {
         try {
             File f = new File(file);            
             FileReader fr = new FileReader(f);
-            parser.ReInit(fr);
+            parser.reset(fr);
             parser.Prolog();
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,13 +67,14 @@ public class Compiler {
      *
      * @param file File to compile.
      */
-    public void compile_string(String str) {
+    public Compiler compile_string(String str) {
         try {
-            parser.ReInit(new StringReader(str));
+            parser.reset(new StringReader(str));
             parser.Prolog();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return this;
     }
 
     /**
@@ -75,7 +85,7 @@ public class Compiler {
         try {
             String s = str.startsWith("?") ? str : ("? " + str);
             s = s.endsWith(".") ? s : (s + ".");
-            parser.ReInit(new StringReader(s));
+            parser.reset(new StringReader(s));
             parser.Query(); 											// Convert to heap
             single_clause_compiler.compile_clause(sources.getQueryHeap(), true, sources); // Convert to instructions 
             sources.loadQuery();										// Put query in the WAM
@@ -87,10 +97,9 @@ public class Compiler {
     }
 
     /**
-     * Compile the sequences and put the code in the WAM. Should be used after
-     * compiling files.
+     * Finalize compilation; Compile the sequences and put the code in the WAM. Should be used after compiling files.
      */
-    public void finalize_compilation() {
+    public Compiler commit() {
         for (Integer key : sources.getHeaps().keySet()) {
             for (int[] heap : sources.getHeaps().get(key)) {
                 single_clause_compiler.compile_clause(heap, false, sources);
@@ -99,22 +108,18 @@ public class Compiler {
             sources.getCallStarts().put(key, sources.getAreas().size());			// Get the functor start point in the code
             sources.getAreas().add(r); 									// Add code to the code area's
         }
-        sources.injectAllCode(); 													// Transfer the code into the WAM
+        // Transfer the code into the WAM
+        sources.injectAllCode(); 	
+        
+        return this;
     }
 
-    /**
-     * Reset the compiler. Will remove all rule entries as well.
-     */
-    public void reset() {
-
-    }
 
     public Parser getParser() {
         return parser;
     }
 
-    ;
-	public SingleClauseCompiler getSingleClauseCompiler() {
+    public SingleClauseCompiler getSingleClauseCompiler() {
         return single_clause_compiler;
     }
 

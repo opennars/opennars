@@ -94,25 +94,6 @@ public class WAMToString {
         return "none";
     }
 
-    /**
-     * Obtain the result of a query from the WAM.
-     *
-     * @param w The WAM.
-     * @return The result of the last query.
-     */
-    public static String queryResult(WAM w) {
-        StringBuilder r = new StringBuilder();
-        //int[] instr = w.getRuleHeap().getQueryInstructions();
-        //int amount_perm = WAM.instruction_arg(instr[instr.length - 3]);
-        for (Integer i : w.getRuleHeap().getQueryVars().keySet()) {
-            r.append( w.getRuleHeap().getQueryVars().get(i));
-            r.append( ":\t" );
-            r.append( termToString(w.getStorage(), w.getHeapSize() + 12 + i, w.strings(), w.numbers(), false) );
-            r.append("\r\n" );
-        }
-        r.append(Boolean.toString(!w.hasFailed()));
-        return r.toString();
-    }
 
     /**
      * Convert a single instruction to a String.

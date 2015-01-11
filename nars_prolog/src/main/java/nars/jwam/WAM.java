@@ -35,7 +35,7 @@ public class WAM {
     // Code area's
     private ArrayList<int[]> areas = new ArrayList<int[]>();	   					
     // Main data, unification stack and current code area
-    private int[] storage, unify_pdl, code_area;				   					
+    private int[] storage, unify_pdl, code;				   					
     
     // Globals for execution and debugging
     private boolean read = true, fail, trace, untilCall, untilPoint; 					
@@ -44,26 +44,37 @@ public class WAM {
     private IntHashMap<Point> call = null;						   			
     
     // Built in functions, predicates, etc
-    private Library built_ins = null;					   					
+    private Library library = null;					   					
     
 // Can compile Prolog to heaps or WAM instructions
     private Compiler compiler = null;												
     
     // Can edit the rule base
-    private RuleHeap src_manager = null;								
-
-    // Execute instructions. Get the instruction at p and execute it. Instruction methods update p so this method loops until either
-    // the end of the query is reached (in which case we have success) or if failure occurs.
+    private RuleHeap rules = null;			
+    
+    /** execute without time limit */
     public boolean execute() {
-        int instruction = instruction_code(code_area[p]);  							// Get the initial instruction code
+        return execute(0);
+    }
+    
+    /** Execute instructions. Get the instruction at p and execute it. Instruction methods update p so this method loops until either
+     the end of the query is reached (in which case we have success) or if failure occurs.
+     * 
+     * time is in seconds, if == 0 then no limit
+     * 
+     * TODO implement timeout with periodic ms or ns check (not every cycle)
+     * 
+     */
+    public boolean execute(double time) {
+        int instruction = instruction_code(code[p]);  							// Get the initial instruction code
         while (instruction != END_OF_QUERY) {  											// While not at the end of the query 
-            int argument = instruction_arg(code_area[p]);  							// Get the instruction's direct argument 
+            int argument = instruction_arg(code[p]);  							// Get the instruction's direct argument 
             switch (instruction) {													// Look up the correct method
                 case GET_STR:
-                    get_structure(argument, code_area[p + 1]);
+                    get_structure(argument, code[p + 1]);
                     break;
                 case PUT_STR:
-                    put_structure(argument, code_area[p + 1]);
+                    put_structure(argument, code[p + 1]);
                     break;
                 case SET_VAR:
                     set_variable(argument);
@@ -102,16 +113,16 @@ public class WAM {
                     unify_local_value(e + 2 + argument);
                     break;
                 case CALL:
-                    call(code_area[p + 1], true, Integer.MIN_VALUE);
+                    call(code[p + 1], true, Integer.MIN_VALUE);
                     break;
                 case CALL_VAR:
-                    variable_as_goal(code_area[p + 1], true);
+                    variable_as_goal(code[p + 1], true);
                     break;
                 case CALL_VAR_PERM:
-                    variable_as_goal(e + 2 + code_area[p + 1], true);
+                    variable_as_goal(e + 2 + code[p + 1], true);
                     break;
                 case EXECUTE:
-                    call(code_area[p + 1], false, Integer.MIN_VALUE);
+                    call(code[p + 1], false, Integer.MIN_VALUE);
                     break;
                 case EXECUTE_VAR:
                     variable_as_goal(argument, false);
@@ -120,16 +131,16 @@ public class WAM {
                     proceed();
                     break;
                 case PUT_VAR:
-                    put_variable(argument, code_area[p + 1]);
+                    put_variable(argument, code[p + 1]);
                     break;
                 case PUT_VAL:
-                    put_value(argument, code_area[p + 1]);
+                    put_value(argument, code[p + 1]);
                     break;
                 case GET_VAR:
-                    get_variable(argument, code_area[p + 1]);
+                    get_variable(argument, code[p + 1]);
                     break;
                 case GET_VAL:
-                    get_value(argument, code_area[p + 1]);
+                    get_value(argument, code[p + 1]);
                     break;
                 case DEALLOCATE:
                     deallocate();
@@ -138,19 +149,19 @@ public class WAM {
                     allocate();
                     break;
                 case PUT_VAR_PERM:
-                    put_variable_perm(argument, code_area[p + 1]);
+                    put_variable_perm(argument, code[p + 1]);
                     break;
                 case PUT_VAL_PERM:
-                    put_value(e + 2 + argument, code_area[p + 1]);
+                    put_value(e + 2 + argument, code[p + 1]);
                     break;
                 case PUT_UNSAFE_VALUE:
-                    put_unsafe_value(argument, code_area[p + 1]);
+                    put_unsafe_value(argument, code[p + 1]);
                     break;
                 case GET_VAR_PERM:
-                    get_variable(e + 2 + argument, code_area[p + 1]);
+                    get_variable(e + 2 + argument, code[p + 1]);
                     break;
                 case GET_VAL_PERM:
-                    get_value(e + 2 + argument, code_area[p + 1]);
+                    get_value(e + 2 + argument, code[p + 1]);
                     break;
                 case TRY_ME_ELSE:
                     try_me_else(argument);
@@ -171,10 +182,10 @@ public class WAM {
                     trust(argument);
                     break;
                 case D_TRY:
-                    d_try(argument, code_area[p + 1]);
+                    d_try(argument, code[p + 1]);
                     break;
                 case D_RETRY:
-                    d_retry(argument, code_area[p + 1]);
+                    d_retry(argument, code[p + 1]);
                     break;
                 case D_TRUST:
                     trust(argument);
@@ -189,13 +200,13 @@ public class WAM {
                     switch_on_num(argument);
                     break;
                 case SWITCH_TERM:
-                    switch_on_term(argument, code_area[p + 1], code_area[p + 2], code_area[p + 3], code_area[p + 4]);
+                    switch_on_term(argument, code[p + 1], code[p + 2], code[p + 3], code[p + 4]);
                     break;
                 case PUT_CONSTANT:
-                    put_constant(argument, code_area[p + 1]);
+                    put_constant(argument, code[p + 1]);
                     break;
                 case GET_CONSTANT:
-                    get_constant(argument, code_area[p + 1]);
+                    get_constant(argument, code[p + 1]);
                     break;
                 case SET_CONSTANT:
                     set_constant(argument);
@@ -204,10 +215,10 @@ public class WAM {
                     unify_constant(argument);
                     break;
                 case PUT_NUM:
-                    put_num(argument, code_area[p + 1]);
+                    put_num(argument, code[p + 1]);
                     break;
                 case GET_NUM:
-                    get_num(argument, code_area[p + 1]);
+                    get_num(argument, code[p + 1]);
                     break;
                 case SET_NUM:
                     set_num(argument);
@@ -228,7 +239,7 @@ public class WAM {
                     unify_void(argument);
                     break;
                 case PUT_VOID:
-                    put_void(argument, code_area[p + 1]);
+                    put_void(argument, code[p + 1]);
                     break;
                 case GET_LEVEL:
                     get_level(argument);
@@ -252,7 +263,7 @@ public class WAM {
                     retract();
                     break;
                 case BUILT_IN_BINARY:
-                    if (!built_ins.call(code_area[p + 1])) {
+                    if (!library.call(code[p + 1])) {
                         backtrack();
                     } else {
                         p += 2;
@@ -262,7 +273,7 @@ public class WAM {
             if (fail) {
                 return false; 													// Break upon failure
             }
-            instruction = instruction_code(code_area[p]);  							// Get next instruction
+            instruction = instruction_code(code[p]);  							// Get next instruction
             if (trace) {
                 if ((untilCall && (instruction == CALL || instruction == CALL_VAR || instruction == CALL_VAR_PERM || instruction == EXECUTE || instruction == EXECUTE_VAR)) || (untilPoint && ca == untilCA && p == untilP)) {
                     break;
@@ -279,15 +290,15 @@ public class WAM {
 
     // Put a functor cell on the heap, and make a structure cell that points towards.
     private void put_structure(int register, int functor) {
-        storage[h] = make_cell(PN, functor);	// Make the functor cell, which also holds the arity
-        storage[register] = make_cell(STR, h);	// Make at the given address (normally a register) a structure cell
+        storage[h] = newCell(PN, functor);	// Make the functor cell, which also holds the arity
+        storage[register] = newCell(STR, h);	// Make at the given address (normally a register) a structure cell
         h++;									// Heap is increased by one
         p += 2;									// Register is the direct argument and the functor takes another integer
     }
 
     // Put a new, and thus unbound, variable (REF cell) on the heap and let the temporary and argument register point to it.
     private void put_variable(int Xn, int Ai) {
-        storage[h] = make_cell(REF, h); 		// Make the cell
+        storage[h] = newCell(REF, h); 		// Make the cell
         storage[Xn] = storage[h];				// Temporary register has to point to it
         storage[Ai] = storage[h];				// Also the argument register
         h++;									// Takes one cell integer to make the variable
@@ -303,7 +314,7 @@ public class WAM {
     // Create a permanent variable in the environment stack and make a argument register point to it.
     private void put_variable_perm(int Yn, int Ai) {
         int addr = e + 2 + Yn;						// Get the environment stack address
-        storage[addr] = make_cell(REF, addr);   // Create the REF cell
+        storage[addr] = newCell(REF, addr);   // Create the REF cell
         storage[Ai] = storage[addr];		    // Make argument register point to it
         p += 2;									// Takes two integers, Yn as direct argument and Ai is another int
     }
@@ -316,7 +327,7 @@ public class WAM {
         if (addr < e) {
             storage[Ai] = storage[addr]; // Permanent value will not be disposed while this argument is used
         } else { 									// Permanent value can be overwritten by a deallocate/allocate combination
-            storage[h] = make_cell(REF, h); 	// Make unbound variable
+            storage[h] = newCell(REF, h); 	// Make unbound variable
             bind(addr, h);						// Bind the permanent value to the unbound variable
             storage[Ai] = storage[h];			// The argument can now safely point towards this variable on the heap
             h++;								// Heap is increased by one
@@ -327,26 +338,26 @@ public class WAM {
     // Create a number cell in a register. Numbers take 1 integer at all times so no need to put them on the heap if they are assigned
     // to a register.
     private void put_num(int n, int register) {
-        storage[register] = make_cell(NUM, n);	// Make the number cell in the register
+        storage[register] = newCell(NUM, n);	// Make the number cell in the register
         p += 2;									// One integer for the number reference, one integer for the argument register
     }
 
     // Similar to put_num but in this case for constants.
     private void put_constant(int c, int register) {
-        storage[register] = make_cell(CON, c);	 // Make the constant cell in the register
+        storage[register] = newCell(CON, c);	 // Make the constant cell in the register
         p += 2;									 // One integer for the number reference, one integer for the argument register
     }
 
     // Make a LIS cell for starting a list tree an make a register point to it.
     private void put_list(int register) {
-        storage[register] = make_cell(LIS, h);	// Create the LIS cell to which the register points
+        storage[register] = newCell(LIS, h);	// Create the LIS cell to which the register points
         p++; 									// Register is incorporated in the instruction integer
     }
 
     // Put n unbound variables on the heap and let arguments Ai to A(i+n) point towards them.
     private void put_void(int Ai, int n) {
         for (int i = h; i < h + n; i++) {			// Start at h and end at h+n
-            storage[i] = make_cell(REF, i);		// Make the unbound variable
+            storage[i] = newCell(REF, i);		// Make the unbound variable
             storage[Ai + (i - h)] = storage[i];		// Let an argument register point towards it
         }
         h += n;									// n variables takes n cells
@@ -365,8 +376,8 @@ public class WAM {
         int tag = cell_tag(storage[addr]);							// Get the cell's tag
         boolean fail = false;										// Init the failure boolean
         if (tag == REF) {												// If the register is a unbound variable
-            storage[h] = make_cell(STR, h + 1);						// Then make the structure and functor cell
-            storage[h + 1] = make_cell(PN, functor);
+            storage[h] = newCell(STR, h + 1);						// Then make the structure and functor cell
+            storage[h + 1] = newCell(PN, functor);
             bind(addr, h);											// Bind the register to the structure cell
             h += 2; 												// Created two cells
             s = h;													// Set the unify pointer to the first argument
@@ -410,7 +421,7 @@ public class WAM {
         int tag = cell_tag(storage[addr]);							// Get the cell tag
         boolean fail = false;
         if (tag == REF) {												// If the bottom contains an unbound variable: bind it
-            storage[addr] = make_cell(CON, c);  					// Create constant cell
+            storage[addr] = newCell(CON, c);  					// Create constant cell
             trail(addr); 											// Might be made undone at some later point
         } else if (tag == CON) {
             fail = c != cell_value(storage[addr]);	// If bottom contains a constant, compare it with c
@@ -430,7 +441,7 @@ public class WAM {
         int tag = cell_tag(storage[addr]);							// Get the cell tag
         boolean fail = false;
         if (tag == REF) {												// If the bottom contains an unbound variable: bind it
-            storage[addr] = make_cell(NUM, n);  					// Create number cell
+            storage[addr] = newCell(NUM, n);  					// Create number cell
             trail(addr); 											// Might be made undone at some later point
         } else if (tag == NUM) {										// If bottom contains a number, compare it with n
             fail = !num_equality(n, cell_value(storage[addr])); 		// Call number equality method for this
@@ -450,7 +461,7 @@ public class WAM {
         int addr = deref(register);									// Go to the bottom of the reference chain
         int tag = cell_tag(storage[addr]);							// Get the cell's tag number
         if (tag == REF) {												// If the register is an unbound variable
-            storage[h] = make_cell(LIS, h + 1);						// Create list cell
+            storage[h] = newCell(LIS, h + 1);						// Create list cell
             bind(addr, h);											// Bind the register
             h++;													// Update the top-of-heap pointer
             read = false;											// Write the next elements
@@ -472,7 +483,7 @@ public class WAM {
     //// register copying. Anonymous variables have a specialized instruction (set void) as a way of optimization.
     // Create a new unbound variable on the heap and let a register point to it.
     private void set_variable(int register) {
-        storage[h] = make_cell(REF, h);								// Create unbound variable
+        storage[h] = newCell(REF, h);								// Create unbound variable
         storage[register] = storage[h];								// Register points to it
         h++;														// Update top-of-heap and next-instruction pointers
         p++;
@@ -487,14 +498,14 @@ public class WAM {
 
     // Set a constant on the heap.
     private void set_constant(int c) {
-        storage[h] = make_cell(CON, c);								// Create constant cell
+        storage[h] = newCell(CON, c);								// Create constant cell
         h++;														// Update top-of-heap and next-instruction pointers
         p++;
     }
 
     // Set a number on the heap.
     private void set_num(int n) {
-        storage[h] = make_cell(NUM, n);								// Create number cell
+        storage[h] = newCell(NUM, n);								// Create number cell
         h++;														// Update top-of-heap and next-instruction pointers
         p++;
     }
@@ -502,7 +513,7 @@ public class WAM {
     private void set_void(int n) {
         for (int i = h; i < h + n; i++) // Start at h and make variables until h+n
         {
-            storage[i] = make_cell(REF, i);							// Create unbound variable
+            storage[i] = newCell(REF, i);							// Create unbound variable
         }
         h += n;														// Update top-of-heap and next-instruction pointers
         p++;
@@ -515,7 +526,7 @@ public class WAM {
         if (addr < h) {
             storage[h] = storage[addr];						// If the address is already on the heap: set its data
         } else {
-            storage[h] = make_cell(REF, h);							// Otherwise make new variable
+            storage[h] = newCell(REF, h);							// Otherwise make new variable
             bind(addr, h);											// And bind it to the referred address
         }
         h++;														// Update top-of-heap and next-instruction pointers
@@ -562,7 +573,7 @@ public class WAM {
             int addr = deref(s);									// Get the address that is referred to
             int tag = cell_tag(storage[addr]);						// Get its tag
             if (tag == REF) {											// If s points to an unbound variable
-                storage[addr] = make_cell(CON, c);					// Bind it with a constant cell for c
+                storage[addr] = newCell(CON, c);					// Bind it with a constant cell for c
                 trail(addr);										// Might be made undone
             } else if (tag == CON) // If s points to a constant
             {
@@ -577,7 +588,7 @@ public class WAM {
                 p++;
             }
         } else {													// In write mode just put an new constant cell on the heap
-            storage[h] = make_cell(CON, c);
+            storage[h] = newCell(CON, c);
             h++;													// Update top-of-heap and instruction pointers
             p++;
         }
@@ -590,7 +601,7 @@ public class WAM {
             int addr = deref(s);									// Get the address that is referred to
             int tag = cell_tag(storage[addr]);						// Get its tag
             if (tag == REF) {											// If s points to an unbound variable
-                storage[addr] = make_cell(NUM, n);					// Bind it with a number cell for n
+                storage[addr] = newCell(NUM, n);					// Bind it with a number cell for n
                 trail(addr);										// Might be made undone
             } else if (tag == NUM) // If s points to a number 
             {
@@ -605,7 +616,7 @@ public class WAM {
                 p++;
             }
         } else {
-            storage[h] = make_cell(NUM, n);							// In read mode just put a new number cell on the heap
+            storage[h] = newCell(NUM, n);							// In read mode just put a new number cell on the heap
             h++;
             p++;
         }
@@ -619,7 +630,7 @@ public class WAM {
         } else {
             for (int i = h; i < h + n; i++) // Create n new unbound variables on the heap
             {
-                storage[i] = make_cell(REF, i);
+                storage[i] = newCell(REF, i);
             }
             h += n;													// Update the top-of-heap pointer
         }
@@ -641,7 +652,7 @@ public class WAM {
             if (addr < h) {
                 storage[h] = storage[addr];					// If the address is on the heap, then copy the value to the top
             } else {
-                storage[h] = make_cell(REF, h);						// Otherwise create a new unbound variable
+                storage[h] = newCell(REF, h);						// Otherwise create a new unbound variable
                 bind(addr, h);										// And make Vi's dereferenced value point to it
             }
             h++;													// Either way update the top of the heap pointer
@@ -672,7 +683,7 @@ public class WAM {
             b0 = b;													// Set the last choice point pointer (for cuts)
             p = point.x;											// Move to the instruction point of the functor
             ca = point.y;
-            code_area = areas.get(ca);
+            code = areas.get(ca);
             if (d_address != Integer.MIN_VALUE) // When executing/calling variables, update the argument registers
             {
                 for (int arg = 1; arg <= num_of_args; arg++) {
@@ -700,7 +711,7 @@ public class WAM {
     private void proceed() {
         p = cp; 													// Continuation instruction
         ca = cca;													// Continuation code area
-        code_area = areas.get(ca);									// Update pointer current code area
+        code = areas.get(ca);									// Update pointer current code area
     }
 
     // Create a new environment on the environment/choice point stack. 
@@ -894,13 +905,13 @@ public class WAM {
         int newP = Integer.MIN_VALUE;								// Init the pointer modifier
         int cursor = p + start;										// Go to the start of the list
         while (cursor >= 0) {											// While entries exist
-            if (code_area[cursor + 1] == cell) {							// Check whether the key matches
-                newP = code_area[cursor + 2];							// If so: get the pointer modifier
+            if (code[cursor + 1] == cell) {							// Check whether the key matches
+                newP = code[cursor + 2];							// If so: get the pointer modifier
                 cursor = -1;
             } else // Else:
             {
-                cursor = code_area[cursor] == Integer.MIN_VALUE ? -1 : // If we reached the end of the list, set cursor to -1
-                        cursor + code_area[cursor];					// Otherwise continue with next entry
+                cursor = code[cursor] == Integer.MIN_VALUE ? -1 : // If we reached the end of the list, set cursor to -1
+                        cursor + code[cursor];					// Otherwise continue with next entry
             }
         }
         if (newP == Integer.MIN_VALUE) {
@@ -947,7 +958,7 @@ public class WAM {
         cp = p + 2;													// Update the continuation pointer and code area
         cca = ca;
         b0 = b;
-        if (!built_ins.getPredDynamics().retract(false)) {
+        if (!library.getPredDynamics().retract(false)) {
             backtrack();
         } else {
             p++;
@@ -1065,7 +1076,7 @@ public class WAM {
             p = storage[b + storage[b] + 4];
             cca = storage[b + storage[b] + 8];
             ca = storage[b + storage[b] + 9];
-            code_area = areas.get(ca);
+            code = areas.get(ca);
             b0 = storage[b + storage[b] + 7];
         }
     }
@@ -1081,7 +1092,7 @@ public class WAM {
     // Undo part of the variable bindings by replacing them with unbound REF cells.
     public void unwind_trail(int a1, int a2) {
         for (int i = a1; i < a2; i++) {
-            storage[storage[i]] = make_cell(REF, storage[i]);
+            storage[storage[i]] = newCell(REF, storage[i]);
         }
     }
 
@@ -1102,15 +1113,15 @@ public class WAM {
     // Search the value of a key in a hashmap. Note that for these hashmaps the hash function is the identity function.
     private int search(int key, int N) {
         int e = p + 1 + ((key >>> 7) & N); 									  // Get the bucket array in the hashmap
-        if (code_area[e] == Integer.MIN_VALUE) {
+        if (code[e] == Integer.MIN_VALUE) {
             return Integer.MIN_VALUE; // Not even a chain at this index so does not exist
         }
-        e = code_area[e]; 											  // Move to first entry of the chain
+        e = code[e]; 											  // Move to first entry of the chain
         do {
-            if (code_area[p + e + 2] == key) {
-                return code_area[p + e + 3];		  // If the key is found, return the value
+            if (code[p + e + 2] == key) {
+                return code[p + e + 3];		  // If the key is found, return the value
             } else {
-                e = code_area[p + e + 1];								  // Else move to the next entry in the bucket array
+                e = code[p + e + 1];								  // Else move to the next entry in the bucket array
             }
         } while (e != Integer.MIN_VALUE);								  // Will reach MIN_VALUE if key does not exist
         return Integer.MIN_VALUE;									  // Return MIN_VALUE as equivalent of null
@@ -1122,7 +1133,7 @@ public class WAM {
     }
 
     // Cell (de-)composition:
-    public static final int make_cell(int tag, int value) {
+    public static final int newCell(int tag, int value) {
         return (value << 3) | tag;
     }
 
@@ -1162,11 +1173,16 @@ public class WAM {
      *
      * @param query The query (compiled WAM code) to append to the code area's.
      */
-    public void append_query_code(int[] query) {
-        code_area = areas.set(1, query);									// Overwrite the query area
-        code_area = areas.get(1);										// Set the engine's current code area to the query code
+    public void setQuery(int[] query) {
+        int[] prevCode = areas.set(1, query);									// Overwrite the query area
+        code = areas.get(1);										// Set the engine's current code area to the query code
         ca = 1;															// Set the execution point to the query area at position 1
         p = 0;
+    }
+    
+    /** get current query (compiled) code */
+    public int[] getQuery() {
+        return areas.get(1);
     }
 
     /////////////////////////////
@@ -1276,6 +1292,9 @@ public class WAM {
         this.heap_size = heap_size;
     }
 
+    public String string(int x) {
+        return strings.get(x);
+    }
     public Strings strings() {
         return strings;
     }
@@ -1333,11 +1352,11 @@ public class WAM {
     }
 
     public int[] getCodeArea() {
-        return code_area;
+        return code;
     }
 
     public void setCodeArea(int[] code) {
-        this.code_area = code;
+        this.code = code;
         areas.add(code);
     }
 
@@ -1390,11 +1409,11 @@ public class WAM {
     }
 
     public Library getLibrary() {
-        return built_ins;
+        return library;
     }
 
     public void setBuiltIns(Library bi) {
-        built_ins = bi;
+        library = bi;
     }
 
     public Numbers numbers() {
@@ -1410,12 +1429,12 @@ public class WAM {
     }
 
 
-    public RuleHeap getRuleHeap() {
-        return src_manager;
+    public RuleHeap rules() {
+        return rules;
     }
 
     public void setSrcManager(RuleHeap d) {
-        src_manager = d;
+        rules = d;
     }
 
     public int regStart() {
@@ -1443,7 +1462,7 @@ public class WAM {
         cca = ca = 0;
         A1 = regStart() + 1;
         numbers.reset_temps(); // Remove temporary numbers
-        src_manager.cleanDirty(); // Remake try retry trust code of previously changed predicates
+        rules.cleanDirty(); // Remake try retry trust code of previously changed predicates
     }
 
     /**
@@ -1451,27 +1470,27 @@ public class WAM {
      */
     public WAM(int heap_size, int register_size, int stack_size, int trail_size, int unify_pdl_size, int query_space) {
         setGlobals(heap_size, register_size, stack_size, trail_size, unify_pdl_size, query_space);
-        reInit();									// Initialize the memory
+        clear();									// Initialize the memory
     }
 
     /**
      * Recreate all used memory.
      */
-    public void reInit() {
+    public void clear() {
         storage = new int[heap_size + register_size + stack_size + trail_size];
         unify_pdl = new int[unify_pdl_size + 1];
         areas = new ArrayList<int[]>();
         areas.add(new int[0]); 						// Reserve for static code
         areas.add(new int[0]); 						// Reserve for query
-        code_area = areas.get(0);
+        code = areas.get(0);
         cca = ca = 0;
         call = new IntHashMap<Point>(IntHashMap.OBJ);
         strings = new Strings();
         strings.add("!", 0);
         numbers = new Numbers();
-        src_manager = new RuleHeap(this);
-        compiler = new nars.jwam.compiler.Compiler(src_manager, strings, numbers, regStart());
-        built_ins = new Library(this);
+        rules = new RuleHeap(this);
+        compiler = new nars.jwam.compiler.Compiler(rules, strings, numbers, regStart());
+        library = new Library(this);
         A1 = regStart() + 1;
     }
 
