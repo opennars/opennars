@@ -12,17 +12,16 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
 import nars.language.Term;
+import nars.narclear.jbox2d.TestbedPanel;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
 import nars.plugin.app.plan.TemporalParticlePlanner;
-import nars.plugin.mental.InternalExperience;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -373,8 +372,8 @@ public class Rover extends PhysicsModel {
     }
 
     @Override
-    public void step(float timeStep, TestbedSettings settings) {
-        super.step(timeStep, settings);
+    public void step(float timeStep, TestbedSettings settings, TestbedPanel panel) {
+        super.step(timeStep, settings, panel);
 
         rover.step();
         if(rover.torso.getTransform().p.x>sz) {

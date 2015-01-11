@@ -62,23 +62,23 @@ public class AntAttention extends WaveAttention {
     }
 
     @Override
-    public void cycle() {
-        run.clear();
+    public synchronized void cycle() {
         
-        int numNew, numNovel, numConcepts = 0;
+        int numNew, numNovel, numConcepts = 0, other;
             
         numNew = memory.processNewTasks(ants.size(), run);
 
         numNovel = memory.processNovelTasks(ants.size(), run);
 
-        for (Ant a : ants)
-            a.cycle(cycleSpeed, run);                             
+        other = memory.processOtherTasks(run);
+        
+        for (Ant a : ants) {            
+            numConcepts += a.cycle(cycleSpeed, run);
+        }
 
         long t = memory.time();
         if (t % 10 == 0)
-            System.out.println(t + ": " + run.size() + "[" + numNew + "|" + numNovel /*+ "|" + numConcepts */ + "] ");
-        //+ occupied.size() + " " + ensureAntsOccupyUniqueConcepts() );
-                //run);
+            System.out.println(t+": "+ run.size() + "[" + numNew + "|" + numNovel + "|" + numConcepts + "|" + other);
             
         if (run.isEmpty()) return;
         
@@ -89,7 +89,8 @@ public class AntAttention extends WaveAttention {
         } finally {
             ctx.exit();
         }
-        
+
+        run.clear();        
         
     }
 
@@ -208,9 +209,11 @@ public class AntAttention extends WaveAttention {
         boolean inConcept() { return (link==null); } 
         boolean inLink() { return (link!=null); }
         
-        void cycle(float dt, List<Runnable> queue) {
+        /** returns how many tasks were queued */
+        public int cycle(float dt, List<Runnable> queue) {
  
-        
+            int queueBefore = queue.size();
+            
             boolean c = inConcept();
             boolean l = inLink();
             
@@ -241,6 +244,8 @@ public class AntAttention extends WaveAttention {
                 goRandomConcept(queue);                
             }
             
+            int queueAfter = queue.size();
+            return queueAfter - queueBefore;
         }
         
         void onConcept(Concept c, double progress, List<Runnable> queue) {

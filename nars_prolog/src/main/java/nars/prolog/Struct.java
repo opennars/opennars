@@ -194,7 +194,7 @@ public class Struct extends Term {
         if (arity > 0) {
             arg = new Term[arity];
         }
-        predicateIndicator = name + "/" + arity;
+        predicateIndicator = new StringBuilder(name.length() + 1 + 4).append(name).append('/').append(arity).toString();
         resolved = false;
     }
     

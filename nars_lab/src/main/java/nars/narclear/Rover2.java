@@ -19,6 +19,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;
+import nars.narclear.jbox2d.TestbedPanel;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.operator.NullOperator;
@@ -187,11 +188,10 @@ public class Rover2 extends PhysicsModel {
     }
 
     @Override
-    public void step(float timeStep, TestbedSettings settings) {
-
+    public void step(float timeStep, TestbedSettings settings, TestbedPanel panel) {
         cnt++;
-        
-        super.step(timeStep, settings);
+
+        super.step(timeStep, settings, panel);
 
         rover.step();
 
@@ -355,17 +355,20 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = new NAR(new Neuromorphic(64).setConceptBagSize(1200).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
+        NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(1200).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
                 
         new NARPrologMirror(nar, 0.30f, true) {
 
-            @Override
-            public nars.prolog.Term pterm(Term term) {
-                nars.prolog.Term x = super.pterm(term);
-                if ((x!=null) && (!x.isAtomic()))
-                    System.out.println("PROLOG TERM: " + x);
-                return x;
-            }
+//            @Override
+//            public nars.prolog.Term pterm(Term term) {
+//                nars.prolog.Term x = super.pterm(term);
+//                /*if ((x!=null) && (!x.isAtomic()))
+//                    System.out.println("PROLOG TERM: " + x);
+//                else if (x == null) {
+//                    System.out.println("PROLOG CONFUSED by: " + term);
+//                }*/
+//                return x;
+//            }
 
 
             
@@ -392,7 +395,7 @@ public class Rover2 extends PhysicsModel {
         float framesPerSecond = 30f;
         
         Parameters.STM_SIZE = 4;
-        nar.setCyclesPerFrame(4);
+        nar.setCyclesPerFrame(2);
         (nar.param).noiseLevel.set(3);
         (nar.param).duration.set(5);
         (nar.param).conceptForgetDurations.set(25f);

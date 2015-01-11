@@ -44,9 +44,9 @@ import nars.io.TextOutput;
 public class NARSwing  {
 
     
-    /*static {
+    static {
         System.setProperty("sun.java2d.opengl","True");        
-    }*/
+    }
 
     public static void themeInvert() {
         //http://alvinalexander.com/java/java-swing-uimanager-defaults

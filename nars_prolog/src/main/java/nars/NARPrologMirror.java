@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import nars.core.Events;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
@@ -357,8 +358,10 @@ public class NARPrologMirror extends AbstractObserver {
         return new Struct("negation", t);
     }
     
+    final static Pattern pescPattern = Pattern.compile("\\$");
+    
     public String pescape(String p) {
-        return p.replaceAll("\\$", "_d");
+        return pescPattern.matcher(p).replaceAll("_d");
     }
             
     //NARS term -> Prolog term

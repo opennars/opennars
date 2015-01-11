@@ -71,7 +71,7 @@ public class NAR implements Runnable, TaskSource {
 
     
     private Thread thread = null;
-    long minCyclePeriodMS;
+    long minFramePeriodMS;
     
     /**
      * The name of the reasoner
@@ -411,7 +411,7 @@ public class NAR implements Runnable, TaskSource {
 
     
     @Deprecated public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
-        this.minCyclePeriodMS = minCyclePeriodMS;
+        this.minFramePeriodMS = minCyclePeriodMS;
         this.cyclesPerFrame = cyclesPerFrame;
         if (thread == null) {
             thread = new Thread(this, "Inference");
@@ -503,8 +503,10 @@ public class NAR implements Runnable, TaskSource {
     }
     
 
-    /** Main loop executed by the Thread.  Should not be called directly. */
+    /** Main loop executed by the Thread.  Should not be called directly. */    
     @Override public void run() {
+        //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
+        
         stopped = false;
         
         while (running && !stopped) {      
@@ -515,15 +517,19 @@ public class NAR implements Runnable, TaskSource {
             
             long postFrame = System.currentTimeMillis();
                         
-            if (minCyclePeriodMS > 0) {
+            if (minFramePeriodMS > 0) {
                 
                 long frameTime = postFrame - preFrame;
-                long remainingTime = minCyclePeriodMS - frameTime;
+                long remainingTime = minFramePeriodMS - frameTime;
                 if (remainingTime > 0) {
                     try {
-                        Thread.sleep(minCyclePeriodMS);
+                        Thread.sleep(minFramePeriodMS);
                     } catch (InterruptedException e) { }
-                }                
+                }
+                else if (remainingTime < 0) {
+                    minFramePeriodMS++;
+                    System.err.println("Expected framerate not achieved: " + remainingTime + "ms too slow; incresing frame period to " + minFramePeriodMS + "ms");
+                }
             }
             else if (threadYield) {
                 Thread.yield();
@@ -676,8 +682,8 @@ public class NAR implements Runnable, TaskSource {
         return running;
     }    
 
-    public long getMinCyclePeriodMS() {
-        return minCyclePeriodMS;
+    public long getMinFramePeriodMS() {
+        return minFramePeriodMS;
     }
 
     /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay). 

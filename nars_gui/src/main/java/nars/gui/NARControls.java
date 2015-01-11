@@ -665,7 +665,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 } else if (currentSpeed == 1.0) {
                     sb.append(" - run max speed");
                 } else {
-                    sb.append(" - run ").append(nar.getMinCyclePeriodMS()).append(" ms / step");
+                    sb.append(" - run ").append(nar.getMinFramePeriodMS()).append(" ms / frame");
                 }
                 return sb.toString();
             }

@@ -14,7 +14,6 @@ import nars.core.NAR;
 public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runnable {
     public final P model;
     public final PhysicsRun phy;
-    ExecutorService physExe = Executors.newFixedThreadPool(1);
     private Future<?> phyCycle;
 
     public NARPhysics(NAR nar, float simulationRate, P model) {
@@ -54,19 +53,22 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
 
     @Override
     public void cycle() {
-        if (phy!=null) {
-            
-            //wait for previous cycle to finish if it hasnt
-            if (phyCycle!=null) {
-                try {
-                    phyCycle.get();
-                } catch (Exception ex) {
-                    Logger.getLogger(NARPhysics.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            
-            phyCycle = physExe.submit(this);            
-        }
+        
+        nar.memory.addOtherTask(this);
+        
+//        if (phy!=null) {
+//            
+//            //wait for previous cycle to finish if it hasnt
+//            if (phyCycle!=null) {
+//                try {
+//                    phyCycle.get();
+//                } catch (Exception ex) {
+//                    Logger.getLogger(NARPhysics.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//            
+//            phyCycle = exe.submit(this);            
+//        }
     }
 
     @Override

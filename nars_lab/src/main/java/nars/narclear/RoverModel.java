@@ -13,6 +13,7 @@ import nars.io.ChangedTextInput;
 import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
+import nars.narclear.jbox2d.j2d.DrawPhy2D.LayerDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -183,7 +184,7 @@ public class RoverModel {
         sim.nar.addInput("<goal --> Food>. :|:");
     }
 
-    public class VisionRay {
+    public class VisionRay implements LayerDraw {
 
         final Vec2 point; //where the retina receives vision at
         final float angle;
@@ -214,9 +215,11 @@ public class RoverModel {
             this.resolution = resolution;
             this.distance = length;
             this.distanceSteps = steps;
+            draw.addLayer(this);
         }
+        
 
-        public void step() {
+        public void step(boolean feel, boolean drawing) {
             point1 = body.getWorldPoint(point);
             Body hit = null;
             float minDist = distance * 1.1f; //far enough away
@@ -231,22 +234,23 @@ public class RoverModel {
                 world.raycast(ccallback, point1, point2);
                 if (ccallback.m_hit) {
                     float d = ccallback.m_point.sub(point1).length() / distance;
-                    laserHitColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
-                    draw.drawPoint(ccallback.m_point, 5.0f, sparkColor);
-                    draw.drawSegment(point1, ccallback.m_point, laserHitColor, 0.25f);
+                    if (drawing) {
+                        laserHitColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
+                        draw.drawPoint(ccallback.m_point, 5.0f, sparkColor);
+                        draw.drawSegment(point1, ccallback.m_point, laserHitColor, 0.25f);
+                    }
                     
-
                     //pooledHead.set(ccallback.m_normal);
                     //pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
-                    //draw.drawSegment(ccallback.m_point, pooledHead, normalColor, 0.25f);
-                    
+                    //draw.drawSegment(ccallback.m_point, pooledHead, normalColor, 0.25f);                    
                     totalDist += d;
                     if (d < minDist) {
                         hit = ccallback.body;
                         minDist = d;
                     }
                 } else {
-                    draw.drawSegment(point1, point2, laserUnhitColor);
+                    if (drawing)
+                        draw.drawSegment(point1, point2, laserUnhitColor);
                     totalDist += 1;
                 }
             }
@@ -300,6 +304,15 @@ public class RoverModel {
         
         public void onTouch(Body hit, float di) {
         }
+
+        @Override
+        public void drawGround(DrawPhy2D draw, World w) {
+        }
+
+        @Override
+        public void drawSky(DrawPhy2D draw, World w) {
+            step(false, true);
+        }
     }
     boolean feel_motion = true; //todo add option in gui
 
@@ -309,7 +322,7 @@ public class RoverModel {
         }
         
         for (VisionRay v : vision) {
-            v.step();
+            v.step(true, false);
         }
         /*if(cnt>=do_sth_importance) {
         cnt=0;

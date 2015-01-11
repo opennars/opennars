@@ -21,7 +21,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************
+ * ****************************************************************************
  */
 package nars.narclear.jbox2d;
 
@@ -203,21 +203,17 @@ public class PhysicsController {
             if (i == null) {
                 continue;
             }
-                        
-            
+
             /*
-            boolean oldFlip = transform.isYFlip();
-            if (mouseBehavior == MouseBehavior.FORCE_Y_FLIP) {
-                transform.setYFlip(true);
-            }
-            currTest.getCamera().getTransform().getScreenToWorld(i.p, i.p);
-            if (mouseBehavior == MouseBehavior.FORCE_Y_FLIP) {
-                transform.setYFlip(oldFlip);
-            }
-            */
-            
-            
-            
+             boolean oldFlip = transform.isYFlip();
+             if (mouseBehavior == MouseBehavior.FORCE_Y_FLIP) {
+             transform.setYFlip(true);
+             }
+             currTest.getCamera().getTransform().getScreenToWorld(i.p, i.p);
+             if (mouseBehavior == MouseBehavior.FORCE_Y_FLIP) {
+             transform.setYFlip(oldFlip);
+             }
+             */
             switch (i.type) {
                 case KeyPressed:
                     if (i.c != KeyEvent.CHAR_UNDEFINED) {
@@ -255,7 +251,7 @@ public class PhysicsController {
         }
 
         if (currTest != null) {
-            currTest.step(timeStep, model.getSettings());
+            currTest.step(timeStep, model.getSettings(), model.getPanel());
         }
     }
 
@@ -371,11 +367,8 @@ public class PhysicsController {
         }
         TestbedPanel panel = model.getPanel();
 
-        if (panel.render()) {
-            if (currTest != null && updateBehavior == UpdateBehavior.UPDATE_CALLED) {
-                updateTest(timeStep);
-            }
-            panel.paintScreen();
+        if (currTest != null && updateBehavior == UpdateBehavior.UPDATE_CALLED) {
+            updateTest(timeStep);
         }
         frameCount++;
 
@@ -417,8 +410,8 @@ class QueueItem {
 
     final public QueueItemType type;
     final public Vec2 p = new Vec2();
-    
-  final public char c;
+
+    final public char c;
     final public int button;
     final public int code;
 

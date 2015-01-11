@@ -1,6 +1,7 @@
 package nars.narclear;
 
 import nars.narclear.jbox2d.PhysicsCamera;
+import nars.narclear.jbox2d.TestbedPanel;
 import nars.narclear.jbox2d.TestbedSettings;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.EdgeShape;
@@ -184,8 +185,8 @@ public class RobotArm extends PhysicsModel {
     Color3f laserColor = new Color3f(0.85f, 0, 0);
               
     @Override
-    public void step(float timeStep, TestbedSettings settings) {
-        super.step(timeStep, settings);
+    public void step(float timeStep, TestbedSettings settings, TestbedPanel panel) {
+        super.step(timeStep, settings, panel);
 
     
         int pixels = 5;

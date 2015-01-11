@@ -22,6 +22,7 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
@@ -30,11 +31,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javolution.context.ConcurrentContext;
 import nars.core.Core.AttentionAware;
 import nars.core.Events.ResetEnd;
@@ -139,11 +135,12 @@ public class Memory implements Serializable {
     private long timeRealNow;
     private long timePreviousCycle;
     private long timeSimulation;
+    
     private final Environment env;
+    private List<Runnable> otherTasks = new ArrayList();
 
 
     public static enum Forgetting {
-
         Iterative, Periodic
     }
 
@@ -756,19 +753,35 @@ public class Memory implements Serializable {
         timeRealNow = System.currentTimeMillis();
     }
 
+    public void addOtherTask(Runnable t) {
+        synchronized (otherTasks) {
+            otherTasks.add(t);
+        }
+    }
+    
+    public synchronized int processOtherTasks(Collection<Runnable> queue) {
+        int num;
+        synchronized (otherTasks) {            
+            num = otherTasks.size();
+            if (num > 0) {
+                queue.addAll(otherTasks);
+                otherTasks.clear();
+            }
+        }
+        return num;
+    }
+    
     /**
      * Processes a specific number of new tasks
      */
-    public int processNewTasks(int maxTasks, Collection<Runnable> queue) {
+    public synchronized int processNewTasks(int maxTasks, Collection<Runnable> queue) {
         if (maxTasks == 0) {
             return 0;
         }
 
         int processed = 0;
 
-        int numTasks = Math.min(maxTasks, newTasks.size());
-
-        for (int i = 0; (!newTasks.isEmpty()) && (i < numTasks); i++) {
+        for (int i = maxTasks; (!newTasks.isEmpty()) && (i > 0); i--) {
 
             final Task task = newTasks.removeFirst();
 
@@ -778,7 +791,7 @@ public class Memory implements Serializable {
 
             if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists                   
                 // ok so lets fire it                
-                queue.add(new ImmediateProcess(this, task, numTasks - 1));
+                queue.add(new ImmediateProcess(this, task));
                 
             } else {
                 final Sentence s = task.sentence;
@@ -858,26 +871,21 @@ public class Memory implements Serializable {
 
     /**
      * Select a novel task to process.
-     *
+     * TODO obey 'num' as a maximum # of tasks to return
      * @return whether a task was processed
      */
-    public int processNovelTasks(int num, Collection<Runnable> queue) {
+    public synchronized int processNovelTasks(int num, Collection<Runnable> queue) {
         if (num == 0) {
             return 0;
         }
 
-        int executed = 0;
+        int executed = 0;        
 
         for (int i = 0; i < novelTasks.size(); i++) {
-
-            final Task task = novelTasks.takeNext();       // select a task from novelTasks
-            /*if (task == null) {
-                continue;
-            }*/
-            if (task == null)
-             throw new RuntimeException("novelTasks.takeNext() returned null but non-empty: " + novelTasks );
-
-            queue.add(new ImmediateProcess(this, task, 0));
+            
+            // select a task from novelTasks
+            final Task task = novelTasks.takeNext();                   
+            queue.add(new ImmediateProcess(this, task));
             executed++;
         }
 
