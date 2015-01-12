@@ -208,8 +208,8 @@ public final class SyllogisticRules {
             
             budget = BudgetFunctions.forward(truth, nal);
         }
-        
-        nal.mem().logic.ANALOGY.commit();
+
+        nal.mem().logic.ANALOGY.hit();
         nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false);
     }
 

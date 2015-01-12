@@ -23,12 +23,12 @@ public class NALPerfCompare {
         for (int r = 0; r < 96; r+=12) {
             Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = r;            
             System.out.print("ROPE_TERMLINK_TERM_SIZE_THRESHOLD " + r + ":\t");
-            perfNAL(new Default().build(), examplePath,extraCycles,repeats,warmups,true);
+            perfNAL(new NAR(new Default()), examplePath,extraCycles,repeats,warmups,true);
         }
         
         Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = -1;
         System.out.print("ROPE_TERMLINK_TERM_SIZE_THRESHOLD NO:\t");
-        perfNAL(new Default().build(), examplePath,extraCycles,repeats,warmups,true);
+        perfNAL(new NAR(new Default()), examplePath,extraCycles,repeats,warmups,true);
         
         System.out.println();
 
@@ -36,13 +36,13 @@ public class NALPerfCompare {
     
     public static void compareDiscreteContinuousBag(String examplePath) {
         System.out.print("DISCRETE:");
-        perfNAL(new Default().build(), examplePath,extraCycles,repeats,warmups,true);
+        perfNAL(new NAR(new Default()), examplePath,extraCycles,repeats,warmups,true);
         
         System.out.print("CONTINUOUS:\t");
-        perfNAL(new Curve().build(), examplePath,extraCycles,repeats,warmups,true);
+        perfNAL(new NAR(new Curve()), examplePath,extraCycles,repeats,warmups,true);
         
         System.out.print("DISCRETE:");
-        perfNAL(new Default().build(), examplePath,extraCycles,repeats,warmups,true);
+        perfNAL(new NAR(new Default()), examplePath,extraCycles,repeats,warmups,true);
 
         
         System.out.println();
@@ -50,9 +50,9 @@ public class NALPerfCompare {
     }
 
     public static void main(String[] args) {
-       
 
-        NAR n = new Default().build();
+
+        NAR n = new NAR(new Default());
         
         Collection c = NALTest.params();
         while (true) {

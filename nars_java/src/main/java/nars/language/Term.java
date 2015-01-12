@@ -31,6 +31,7 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.util.sort.SortedList;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
@@ -349,7 +350,7 @@ public class Term implements AbstractTerm, Termable {
     public static TreeSet<Term> toSortedSet(final Term... arg) {
         //use toSortedSetArray where possible
         TreeSet<Term> t = new TreeSet();
-        for (Term x : arg) t.add(x);
+        Collections.addAll(t, arg);
         return t;        
     }
     
@@ -384,8 +385,8 @@ public class Term implements AbstractTerm, Termable {
         
         SortedList<Term> s = new SortedList(arg.length);
         s.setAllowDuplicate(false);
-        
-        for (Term a: arg) s.add(a);        
+
+        Collections.addAll(s, arg);
         
         return s.toArray(new Term[s.size()] );
         

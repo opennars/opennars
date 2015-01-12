@@ -17,6 +17,7 @@
 
 package nars;
 
+import nars.core.NAR;
 import nars.core.build.Default;
 import nars.gui.NARSwing;
 import nars.nario.NARio;
@@ -312,7 +313,7 @@ public class Launcher extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        NARSwing sw=new NARSwing(new Default().build());
+        NARSwing sw=new NARSwing(new NAR(new Default()));
         this.dispose();
 
     }//GEN-LAST:event_jButton1ActionPerformed

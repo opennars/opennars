@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ApplySubstituteTest {
     
-    NAR n = new Default().build();
+    NAR n = new NAR(new Default());
     Narsese np = new Narsese(n);
     
     @Test
@@ -44,7 +44,7 @@ public class ApplySubstituteTest {
     @Test
     public void test2() throws Narsese.InvalidInputException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
             
         Map<Term,Term> h = new HashMap();
         h.put(np.parseTerm("$1"), np.parseTerm("0"));        

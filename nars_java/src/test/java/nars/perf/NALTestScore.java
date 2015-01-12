@@ -59,7 +59,7 @@ public class NALTestScore extends NALTest {
             
             NALTest.saveSimilar = false;
             
-            Memory.resetStatic();
+            Memory.resetStatic(1);
             n.reset();
 
             if (maxCycles!=-1) {

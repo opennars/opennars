@@ -1228,8 +1228,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     nal.setCurrentTask(dummy);
                     
                     if (nal.derivedTask(newTask, false, false, task, second_belief)) {
-                        
-                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.commit();
+
+                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
                         nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
                         unifiedAnything = true;
                         
@@ -1295,7 +1295,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                     if (nal.derivedTask(newTask, false, false, task, second_belief)) {
 
-                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
+                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 
                     }
                 }

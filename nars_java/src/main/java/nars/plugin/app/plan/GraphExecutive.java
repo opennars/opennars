@@ -791,10 +791,10 @@ public class GraphExecutive {
             if (n++ == maxTasks)
                 break;
         }
-        
-        memory.logic.PLAN_TASK_PLANNED.commit(n);
-        
-        return n;
+
+       memory.logic.PLAN_TASK_PLANNED.set((double) n);
+
+       return n;
        
     }
     

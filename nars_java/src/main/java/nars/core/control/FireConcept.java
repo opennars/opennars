@@ -101,7 +101,7 @@ abstract public class FireConcept extends NAL {
                 reason(currentTaskLink, termLink);                    
 
                 emit(Events.TermLinkSelect.class, termLink, currentConcept, this);
-                memory.logic.REASON.commit(termLink.getPriority());                    
+                memory.logic.REASON.set((double) termLink.getPriority());
 
                 currentConcept.returnTermLink(termLink);
 
@@ -110,8 +110,8 @@ abstract public class FireConcept extends NAL {
         }
                 
         emit(Events.ConceptFire.class, this);
-        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
-        
+        memory.logic.TASKLINK_FIRE.set((double) currentTaskLink.budget.getPriority());
+
     }
 
     

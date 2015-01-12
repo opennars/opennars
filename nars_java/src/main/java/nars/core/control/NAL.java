@@ -128,7 +128,7 @@ public abstract class NAL implements Runnable {
             stamp.setOccurrenceTime(occurence2.getOccurenceTime());
         }
         if (stamp.latency > 0) {
-            memory.logic.DERIVATION_LATENCY.commit(stamp.latency);
+            memory.logic.DERIVATION_LATENCY.set((double) stamp.latency);
         }
         
         final Term currentTaskContent = getCurrentTask().getTerm();
@@ -188,7 +188,7 @@ public abstract class NAL implements Runnable {
         
         task.setParticipateInTemporalInduction(false);
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
-        memory.logic.TASK_DERIVED.commit();//task.budget.getPriority());
+        memory.logic.TASK_DERIVED.hit();
         addTask(task, "Derived");
         return true;
     }

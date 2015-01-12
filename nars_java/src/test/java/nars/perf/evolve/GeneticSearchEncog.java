@@ -245,7 +245,7 @@ public class GeneticSearchEncog {
             b.setTermLinkBagSize(numTermLinks);
             b.setSubconceptBagSize(numSubconcepts);
 
-            NAR n = b.build();
+            NAR n = new NAR(b);
 
             (n.param).duration.set(duration);
             (n.param).conceptForgetDurations.set(conceptForget);
@@ -355,7 +355,7 @@ public class GeneticSearchEncog {
 
         System.out.println(param);
 
-        System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new Default().build()));
+        System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new NAR(new Default())));
 
         while (true) {
 

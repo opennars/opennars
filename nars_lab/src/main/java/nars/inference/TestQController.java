@@ -144,7 +144,9 @@ public class TestQController {
     
     public static NAR newNAR() {
         //return new Default().build();        
-        return new Discretinuous().setConceptBagSize(8192).build();        
+        return new NAR(new Discretinuous().setConceptBagSize(8192))
+        //return build(g, g.param);
+        ;
     }
     
     public static void main(String[] arg) {

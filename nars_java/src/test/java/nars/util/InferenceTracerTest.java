@@ -14,7 +14,7 @@ public class InferenceTracerTest {
     
     @Test
     public void testConceptAndTask() {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         
         NARTrace tracer = new NARTrace(n);        
         
@@ -34,7 +34,7 @@ public class InferenceTracerTest {
     
     @Test
     public void test2() {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         
         NARTrace tracer = new NARTrace(n);
         

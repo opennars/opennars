@@ -492,9 +492,9 @@ public class MultipleExecutionManager {
 //        
 //    }
     protected void updateSensors() {
-        memory.logic.PLAN_GRAPH_EDGE.commit(graph.implication.edgeSet().size());
-        memory.logic.PLAN_GRAPH_VERTEX.commit(graph.implication.vertexSet().size());
-        memory.logic.PLAN_TASK_EXECUTABLE.commit(tasks.size());
+        memory.logic.PLAN_GRAPH_EDGE.set((double) graph.implication.edgeSet().size());
+        memory.logic.PLAN_GRAPH_VERTEX.set((double) graph.implication.vertexSet().size());
+        memory.logic.PLAN_TASK_EXECUTABLE.set((double) tasks.size());
     }
 
 }

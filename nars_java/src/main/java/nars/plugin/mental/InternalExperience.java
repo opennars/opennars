@@ -1,6 +1,5 @@
 package nars.plugin.mental;
 
-import nars.core.EventEmitter.EventObserver;
 import nars.core.*;
 import nars.core.control.NAL;
 import nars.entity.*;
@@ -19,7 +18,7 @@ import java.util.Arrays;
  * called from Concept
  * @param task The task processed
  */
-public class InternalExperience implements Plugin, EventObserver {
+public class InternalExperience extends AbstractPlugin {
         
     public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.75f;
     
@@ -52,19 +51,29 @@ public class InternalExperience implements Plugin, EventObserver {
     public boolean isFull() {
         return false;
     }
-    
-    @Override public boolean setEnabled(NAR n, boolean enabled) {        
-        memory = n.memory;
-        
-        memory.event.set(this, enabled, Events.ConceptDirectProcessedTask.class);
-        
-        if (isFull())
-            memory.event.set(this, enabled, Events.BeliefReason.class);
-                
-        return true;
+
+
+    @Override
+    public Class[] getEvents() {
+        if (isFull()) {
+            return new Class[] { Events.ConceptDirectProcessedTask.class, Events.BeliefReason.class };
+        }
+        else {
+            return new Class[] { Events.ConceptDirectProcessedTask.class };
+        }
     }
-    
-        public static Term toTerm(final Sentence s, final Memory mem) {
+
+    @Override
+    public void onEnabled(NAR n) {
+        this.memory = n.memory;
+    }
+
+    @Override
+    public void onDisabled(NAR n) {
+
+    }
+
+    public static Term toTerm(final Sentence s, final Memory mem) {
         String opName;
         switch (s.punctuation) {
             case Symbols.JUDGMENT_MARK:

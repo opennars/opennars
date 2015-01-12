@@ -199,7 +199,7 @@ public class Concept extends Item<Term> implements Termable {
         }
 
         if (task.aboveThreshold()) {    // still need to be processed
-            memory.logic.LINK_TO_TASK.commit();
+            memory.logic.LINK_TO_TASK.hit();
             linkToTask(task);
         }
 
@@ -643,7 +643,7 @@ public class Concept extends Item<Term> implements Termable {
         final String itemString = item.toString();
 
         return new StringBuilder(2 + title.length() + itemString.length() + 1).
-                append(" ").append(title).append(':').append(itemString).toString();
+                append(' ').append(title).append(':').append(itemString).toString();
     }
 
     /**

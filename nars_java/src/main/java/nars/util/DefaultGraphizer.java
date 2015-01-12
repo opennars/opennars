@@ -149,18 +149,18 @@ public class DefaultGraphizer implements NARGraph.Graphize {
 
     @Override
     public void onFinish(NARGraph g) {
-        if (includeSyntax > 0) {
-            for (final Term a : terms.keySet()) {
-                if (a instanceof CompoundTerm) {
-                    CompoundTerm c = (CompoundTerm) a;
-                    g.addVertex(c.operator());
-                    g.addEdge(c.operator(), c, new NARGraph.TermType());
-                    if (includeSyntax - 1 > 0) {
-                        recurseTermComponents(g, c, includeSyntax - 1);
-                    }
-                }
-            }
-        }
+//        if (includeSyntax > 0) {
+//            for (final Term a : terms.keySet()) {
+//                if (a instanceof CompoundTerm) {
+//                    CompoundTerm c = (CompoundTerm) a;
+//                    g.addVertex(c.operator());
+//                    g.addEdge(c.operator(), c, new NARGraph.TermType());
+//                    if (includeSyntax - 1 > 0) {
+//                        recurseTermComponents(g, c, includeSyntax - 1);
+//                    }
+//                }
+//            }
+//        }
         if (includeTermContent) {
             for (final Term a : terms.keySet()) {
                 for (final Term b : terms.keySet()) {

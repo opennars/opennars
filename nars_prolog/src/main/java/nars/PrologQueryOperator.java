@@ -197,7 +197,7 @@ public class PrologQueryOperator extends Operator {
         
         // if we are here it must be a number, either a double or a integer
         if (containsDot(termAsString)) {
-            double doubleValue = Double.parseDouble(termAsString);
+            double doubleValue = java.lang.Double.parseDouble(termAsString);
             
             return new nars.prolog.Double(doubleValue);
         }

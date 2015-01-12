@@ -263,7 +263,7 @@ public class DefaultCore implements Core {
             concept = conceptBuilder.newConcept(budget, term, memory);
 
             if (memory.logic!=null)
-                memory.logic.CONCEPT_NEW.commit();
+                memory.logic.CONCEPT_NEW.hit();
             memory.emit(Events.ConceptNew.class, concept);                
         }
         else if (concept!=null) {            

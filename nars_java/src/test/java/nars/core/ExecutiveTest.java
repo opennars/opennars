@@ -19,7 +19,7 @@ public class ExecutiveTest {
     
     @Test
     public void testTaskExecution() {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         MultipleExecutionManager e = n.memory.executive;
         
         e.setNumActiveTasks(1);

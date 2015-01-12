@@ -100,8 +100,10 @@ public class Equivalence extends Statement {
             Term interm = subject;
             subject = predicate;
             predicate = interm;
-            temporalOrder = TemporalRules.ORDER_FORWARD;
         }
+
+        if (temporalOrder == TemporalRules.ORDER_BACKWARD)
+            temporalOrder = TemporalRules.ORDER_FORWARD;
 
         Term[] t = Term.toSortedSetArray(subject, predicate);
         if (t.length != 2)

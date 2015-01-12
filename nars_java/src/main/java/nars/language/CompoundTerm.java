@@ -785,8 +785,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
 
     final public void addTermsTo(final Collection<Term> c) {
-        for (final Term t : term)
-            c.add(t);
+        Collections.addAll(c, term);
     }
 
 

@@ -144,7 +144,7 @@ public class ParameterSearch {
         //p.termLinkRecordLength.set(10);
         experiments.clear();
         for (int i = 1; i < 15; i++) {
-            NAR a = new Default().build();
+            NAR a = new NAR(new Default());
             
             (a.param).termLinkRecordLength.set(i);
             score("termLinkRecordLength_" + String.format("%03d", i), a);
@@ -154,7 +154,7 @@ public class ParameterSearch {
         //p.beliefCyclesToForget.set(50);
         experiments.clear();
         for (int i = 2; i < 100; i+=4) {
-            NAR a = new Default().build();
+            NAR a = new NAR(new Default());
             
             (a.param).termLinkForgetDurations.set(i);
             score("beliefCyclesToForget_" + String.format("%03d", i), a);
@@ -164,7 +164,7 @@ public class ParameterSearch {
         //p.conceptCyclesToForget.set(10);             
         experiments.clear();
         for (int i = 2; i < 20; i++) {
-            NAR a = new Default().build();
+            NAR a = new NAR(new Default());
             
             (a.param).conceptForgetDurations.set(i);
             score("conceptCyclesToForget_" + String.format("%03d", i), a);
@@ -174,7 +174,7 @@ public class ParameterSearch {
         //p.taskCyclesToForget.set(20);
         experiments.clear();
         for (int i = 2; i < 40; i+=2) {
-            NAR a = new Default().build();
+            NAR a = new NAR(new Default());
             
             (a.param).taskLinkForgetDurations.set(i);
             score("taskCyclesToForget_" + String.format("%03d", i), a);
@@ -185,7 +185,7 @@ public class ParameterSearch {
         //p.termLinkMaxMatched.set(10);        
         experiments.clear();        
         for (int i = 1; i < 13; i++) {
-            NAR a = new Default().build();
+            NAR a = new NAR(new Default());
             
             (a.param).termLinkMaxMatched.set(i);
             score("termLinkMaxMatched_" + String.format("%03d", i), a);
@@ -195,7 +195,7 @@ public class ParameterSearch {
         //p.termLinkMaxReasoned.set(3);
         experiments.clear();
         for (int i = 1; i < 13; i++) {
-            NAR a = new Default().build();
+            NAR a = new NAR(new Default());
             
             (a.param).termLinkMaxReasoned.set(i);
             score("termLinkMaxReasoned_" + String.format("%03d", i), a);

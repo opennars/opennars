@@ -2,12 +2,8 @@ package nars.plugin.mental;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.core.EventEmitter.EventObserver;
+import nars.core.*;
 import nars.core.Events.TaskDerive;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.Plugin;
 import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
@@ -26,10 +22,13 @@ import static nars.language.CompoundTerm.termArray;
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
  * Experimental alternative to Abbreviation plugin.
  */
-public class Abbreviation implements Plugin {
+public class Abbreviation extends AbstractPlugin {
 
     private final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
-    
+    private Operator abbreviate = null;
+    private Memory memory;
+
+
     /**
     * Operator that give a CompoundTerm an atomic name
     */
@@ -80,8 +79,7 @@ public class Abbreviation implements Plugin {
     
     public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
     public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
-    public EventObserver obs;
-    
+
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
     
@@ -90,47 +88,55 @@ public class Abbreviation implements Plugin {
                 (task.sentence.term.getComplexity() > abbreviationComplexityMin.get()) &&
                 (task.budget.getQuality() > abbreviationQualityMin.get());
     }
-    
+
+
+
+
     @Override
-    public boolean setEnabled(final NAR n, final boolean enabled) {
-        final Memory memory = n.memory;
-        
-        Operator _abbreviate = memory.getOperator("^abbreviate");
-        if (_abbreviate == null) {
-            _abbreviate = memory.addOperator(new Abbreviate());
+    public void event(Class event, Object[] a) {
+        if (event != TaskDerive.class)
+            return;
+
+        if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
+            return;
+
+        Task task = (Task)a[0];
+
+        //is it complex and also important? then give it a name:
+        if (canAbbreviate(task)) {
+
+            Operation operation = Operation.make(
+                    abbreviate, termArray(task.sentence.term ),
+                    false);
+
+            operation.setTask(task);
+
+            abbreviate.call(operation, memory);
         }
-        final Operator abbreviate = _abbreviate;
-        
-        if(obs==null) {
-            obs=new EventObserver() {            
-                @Override public void event(Class event, Object[] a) {
-                    if (event != TaskDerive.class)
-                        return;
-                    
-                    if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
-                        return;
-
-                    Task task = (Task)a[0];
-
-                    //is it complex and also important? then give it a name:
-                    if (canAbbreviate(task)) {
-
-                        Operation operation = Operation.make(
-                                abbreviate, termArray(task.sentence.term ), 
-                                false);
-                        
-                        operation.setTask(task);
-
-                        abbreviate.call(operation, memory);
-                    }
-
-                }
-            };
-        }
-        
-        memory.event.set(obs, enabled, TaskDerive.class);
-        
-        return true;
     }
-    
+
+    @Override
+    public Class[] getEvents() {
+        return new Class[] { TaskDerive.class };
+    }
+
+    @Override
+    public void onEnabled(NAR n) {
+        memory = n.memory;
+
+        if (abbreviate == null) {
+            Operator _abbreviate = memory.getOperator("^abbreviate");
+            if (_abbreviate == null) {
+                abbreviate = memory.addOperator(new Abbreviate());
+            }
+        }
+        
+        
+    }
+
+    @Override
+    public void onDisabled(NAR n) {
+
+    }
+
 }

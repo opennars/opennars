@@ -231,7 +231,7 @@ public class NAR implements Runnable, TaskSource {
         
     }
     
-    public NAR addInput(final Sentence sentence) throws InvalidInputException {
+    public NAR addInput(final Sentence sentence) {
         
         //TODO use correct default values depending on sentence punctuation
         float priority = 

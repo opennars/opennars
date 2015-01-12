@@ -20,6 +20,7 @@ package nars.perf;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.BudgetValue;
@@ -41,7 +42,7 @@ public class BagPerf {
     
     int repeats = 8;
     int warmups = 1;
-    final static AtomicDouble forgetRate = (new Default().build().param).conceptForgetDurations;
+    final static AtomicDouble forgetRate = (new NAR(new Default()).param).conceptForgetDurations;
     int randomAccesses;
     double insertRatio = 0.9;
     
@@ -148,7 +149,7 @@ public class BagPerf {
     //final boolean first, final int levels, final int levelCapacity, 
     public static double getTime(String label, BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
         
-        Memory.resetStatic();
+        Memory.resetStatic(1);
         
         Performance p = new Performance(label, repeats, warmups) {
 

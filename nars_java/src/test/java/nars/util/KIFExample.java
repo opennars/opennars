@@ -29,11 +29,10 @@ public class KIFExample {
     
  
     public static void main(String[] args) throws Exception {
-        
-        
-        NAR n = new Curve(true)
-                .setConceptBagSize(16192)
-                .build();
+
+
+        NAR n = new NAR(new Curve(true)
+                .setConceptBagSize(16192));
                 
         
         (n.param).noiseLevel.set(40);

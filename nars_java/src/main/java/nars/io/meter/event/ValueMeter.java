@@ -59,10 +59,5 @@ public class ValueMeter extends SourceFunctionMeter<Double> {
     
     public boolean getAutoReset() { return autoReset; }
 
-    @Deprecated public void commit(double newValue) {
-        set(newValue);
-    }
 
-    
-    
 }

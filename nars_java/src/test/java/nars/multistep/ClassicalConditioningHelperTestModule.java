@@ -18,7 +18,7 @@ public class ClassicalConditioningHelperTestModule {
     
     public static void main(String[] args) {
         ClassicalConditioningHelper blub=new ClassicalConditioningHelper();
-        NAR nar=new Default().build();
+        NAR nar= new NAR(new Default());
         nar.addPlugin(blub);
         blub.EnableAutomaticConditioning=false;
         nar.addInput("<a --> M>. :|:"); //abcbbbabc

@@ -50,10 +50,9 @@ public class Number1DInputTest {
         int N = 4;
         
         double[] x = randomArray(N, 1.0, 0);
-        
-        NAR n = new Curve(true).
-                setConceptBagSize(32367).
-                build();
+
+        NAR n = new NAR(new Curve(true).
+                setConceptBagSize(32367));
                 
         (n.param).conceptsFiredPerCycle.set(1024);
         
@@ -88,8 +87,8 @@ public class Number1DInputTest {
         int resolution = 4;
         
         double[] x = randomArray(N, 1.0, 0);
-        
-        NAR n = new Default().build();
+
+        NAR n = new NAR(new Default());
         
         //new TextOutput(n, System.out);
         

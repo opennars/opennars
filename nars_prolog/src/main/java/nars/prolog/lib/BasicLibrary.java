@@ -21,6 +21,7 @@ import nars.prolog.*;
 import nars.prolog.Number;
 import nars.prolog.util.Tools;
 
+import java.lang.Double;
 import java.util.ArrayList;
 
 /**
@@ -836,7 +837,7 @@ public class BasicLibrary extends Library {
                 st = Integer.toString(n0.intValue());
             } 
             else {
-                st = Double.toString(n0.doubleValue());
+                st = java.lang.Double.toString(n0.doubleValue());
             }
             return (unify(arg1, new Struct(st)));
         } else {

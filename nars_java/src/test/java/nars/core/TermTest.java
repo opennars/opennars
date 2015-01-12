@@ -39,12 +39,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class TermTest {
     
-    NAR n = new Default().build();
+    NAR n = new NAR(new Default());
     Narsese np = new Narsese(n);
     
     protected void assertEquivalent(String term1String, String term2String) {
         try {
-            NAR n = new Default().build();
+            NAR n = new NAR(new Default());
 
             Term term1 = np.parseTerm(term1String);
             Term term2 = np.parseTerm(term2String);
@@ -62,7 +62,7 @@ public class TermTest {
     
     @Test
     public void testCommutativeCompoundTerm() throws Exception {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
@@ -72,7 +72,7 @@ public class TermTest {
     
     @Test
     public void testTermSort() throws Exception {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         
         Narsese m = new Narsese(n);
         Term a = m.parseTerm("a");
@@ -88,7 +88,7 @@ public class TermTest {
     
     @Test
     public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         
         
             
@@ -145,7 +145,7 @@ public class TermTest {
     
     @Test
     public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException {
-       NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         
        String term1String ="<a --> b>";
        Term term1 = np.parseTerm(term1String);
@@ -164,7 +164,7 @@ public class TermTest {
     
     @Test
     public void testConceptInstancing() throws Narsese.InvalidInputException {
-       NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         
        String statement1 = "<a --> b>.";
        

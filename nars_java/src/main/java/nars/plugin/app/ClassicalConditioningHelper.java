@@ -300,10 +300,8 @@ public class ClassicalConditioningHelper implements Plugin {
                     if (event!=Events.TaskImmediateProcess.class)
                         return;
                     Task task = (Task)a[0];
-                    try{
-                       HandleInput(task);     
-                    } catch(Exception ex){}
-                    
+                    HandleInput(task);
+
                     
                 }
             };

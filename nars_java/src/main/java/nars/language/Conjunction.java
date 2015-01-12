@@ -24,10 +24,7 @@ import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 import static java.lang.System.arraycopy;
 
@@ -139,7 +136,7 @@ public class Conjunction extends CompoundTerm {
             
             // sort/merge arguments
             final TreeSet<Term> set = new TreeSet<>();
-            for (Term t : argList) set.add(t);
+            Collections.addAll(set, argList);
             
             if (set.size() == 1) return set.first();
             

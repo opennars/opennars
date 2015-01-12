@@ -339,19 +339,21 @@ public class AntCore extends ConceptWaveCore {
                 return;
             }
 
-            if (viaLink instanceof TermLink) {
-                concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
+            if (viaLink!=null) {
+                if (viaLink instanceof TermLink) {
+                    concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
+                }
+                else if (viaLink instanceof TaskLink) {
+                    concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
+                }
+
+                eta = viaLink.getPriority();
+                link = viaLink;
+                viaLink = null;
             }
-            else if (viaLink instanceof TaskLink) {
-                concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
-            }
-
-            eta = viaLink.getPriority();
-            link = viaLink;
-            viaLink = null;
 
 
-            if (goNextConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f)) == null)
+            if (viaLink == null || (goNextConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f)) == null))
                 return;
             
             onLink(link, eta, queue);

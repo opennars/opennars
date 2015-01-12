@@ -47,7 +47,7 @@ public class NALPerformance implements Runnable {
             }
             
             nar.addInput(new TextInput(input));
-            
+
             nar.run(cycles);
             
         } catch (Throwable e) {
@@ -57,13 +57,16 @@ public class NALPerformance implements Runnable {
             }
             error = true;
         }
+        score = Double.POSITIVE_INFINITY;
         success = expects.size() > 0 && (!error);
-        for (OutputCondition e : expects) {
-            if (!e.succeeded) {
-                success = false;
+        if (success) {
+            for (OutputCondition e : expects) {
+                if (!e.succeeded) {
+                    success = false;
+                    break;
+                }
             }
         }
-        score = Double.POSITIVE_INFINITY;
         if (success) {
             long lastSuccess = -1;
             for (OutputCondition e : expects) {

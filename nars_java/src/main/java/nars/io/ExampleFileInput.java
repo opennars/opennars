@@ -10,6 +10,8 @@ import nars.core.NAR;
 import nars.io.condition.OutputCondition;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,7 @@ import java.util.TreeMap;
  */
 public class ExampleFileInput extends TextInput {
 
-    public static String load(String path) throws FileNotFoundException, IOException {
+    public static String load(String path) throws IOException {
         StringBuilder  sb  = new StringBuilder();
         String line;
         File fp = new File(path);
@@ -47,7 +49,7 @@ public class ExampleFileInput extends TextInput {
     /** narsese source code, one instruction per line */
     private final String source;
 
-    protected ExampleFileInput(String input) throws FileNotFoundException {
+    protected ExampleFileInput(String input)  {
         super(input);
         this.source = input;
     }
@@ -60,10 +62,20 @@ public class ExampleFileInput extends TextInput {
                 
         return new ExampleFileInput(load(path));
     }
-    
+
+    final static String cwd;
+
+    static {
+        Path currentRelativePath = Paths.get("");
+        cwd = currentRelativePath.toAbsolutePath().toString();
+    }
+
     public static String getExamplePath(String path) {
         if (path.startsWith("/")) return path; //dont modify, it's already absolute
-        return "../nal/" + path;
+        if (cwd.endsWith("nars_java"))
+            return "../nal/" + path;
+        else
+            return "nal/" + path;
     }
     
     public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
@@ -78,7 +90,12 @@ public class ExampleFileInput extends TextInput {
         for (String dir : directories ) {
 
             File folder = new File(getExamplePath(dir));
-        
+            File[] files = folder.listFiles();
+            if (files == null) {
+                System.err.println(folder.getAbsoluteFile() + " is not a directory or does not exist");
+                break;
+            }
+
             for (final File file : folder.listFiles()) {
                 if (file.getName().equals("README.txt") || file.getName().contains(".png"))
                     continue;

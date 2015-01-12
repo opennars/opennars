@@ -13,6 +13,6 @@ public interface Plugin extends Serializable {
     default public CharSequence name() {
         return this.getClass().getSimpleName();
     }
-    
+
 
 }

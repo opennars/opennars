@@ -320,7 +320,7 @@ public class BooleanChallenge {
             
     public static void main(String[] args) {
         //NAR n = new DefaultNARBuilder().build();
-        NAR n = new Discretinuous().build();
+        NAR n = new NAR(new Discretinuous());
 
         
         new NARPrologMirror(n, 0.9f, true, true, false);

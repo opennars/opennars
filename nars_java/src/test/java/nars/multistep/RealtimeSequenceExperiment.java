@@ -12,9 +12,8 @@ public class RealtimeSequenceExperiment {
         int framePeriodMS = 100;
         int seqPeriodMS = 800;
         int durationMS = 50;
-        int cycPerFrame = 5;
-        
-        NAR n = new Default().realTime().build();
+
+        NAR n = new NAR(new Default().realTime());
                 
         (n.param).duration.set(durationMS);
         (n.param).noiseLevel.set(0);
@@ -26,7 +25,7 @@ public class RealtimeSequenceExperiment {
 //                                    new ImplicationGraphCanvas(
 //                                            n.memory.executive.graph))).show(500, 500);
         
-        n.start(framePeriodMS, cycPerFrame);
+        n.start(framePeriodMS);
     
         int last = 0;
         int i = 1;

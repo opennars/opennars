@@ -552,7 +552,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
             if (e.weight != e.sumup()) {
                 throw new Exception("Weight is incorrect:" + e.weight + "!=" + e.sumup() + " for " + e.key);
             }
-            e = ((IndexedTreeMap) m).successor(e);
+            e = IndexedTreeMap.successor(e);
         }
     }
 }

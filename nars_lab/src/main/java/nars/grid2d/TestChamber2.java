@@ -286,7 +286,7 @@ public class TestChamber2 extends TestChamber {
     }
 
     public static void main(String[] arg) {
-        NAR nar = new Curve(true).build();
+        NAR nar = new NAR(new Curve(true));
         
         
         new TestChamber2(nar);

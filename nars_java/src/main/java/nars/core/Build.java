@@ -39,14 +39,8 @@ abstract public class Build extends Parameters  {
 //    public ConceptBuilder getConceptBuilder() {
 //        return conceptBuilder;
 //    }
-    
-    @Deprecated public NAR build() {
-        return new NAR(this)
-        //return build(g, g.param);
-        ;
-    }
 
-    protected Memory newMemory(Param p) {        
+    protected Memory newMemory(Param p) {
         return new Memory(p, newAttention(), newNovelTaskBag());
     }
 
@@ -57,7 +51,7 @@ abstract public class Build extends Parameters  {
     
     @Override
     public String toString() {
-        return Param.json.toJson(this).toString();
+        return Param.json.toJson(this);
     }
     
 }

@@ -79,9 +79,7 @@ public class Operation extends Inheritance {
 //        }
         if(addSelf && !Term.isSelf(arg[arg.length-1])) {
             Term[] arg2=new Term[arg.length+1];
-            for(int i=0;i<arg.length;i++) {
-                arg2[i]=arg[i];
-            }
+            System.arraycopy(arg, 0, arg2, 0, arg.length);
             arg2[arg.length] = Term.SELF;
             arg=arg2;
         }

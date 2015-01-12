@@ -114,10 +114,10 @@ public class Memory implements Serializable {
     }
 
     //public static Random randomNumber = new Random(1);
-    public static long randomSeed = 1;
-    public static final Random randomNumber = new Random(randomSeed);
+    private static long defaultRandomSeed = 1;
+    public static final Random randomNumber = new Random(defaultRandomSeed);
 
-    public static void resetStatic() {
+    public static void resetStatic(long randomSeed) {
         randomNumber.setSeed(randomSeed);
     }
 
@@ -661,7 +661,7 @@ public class Memory implements Serializable {
 
         resource.CYCLE_DURATION.start();
 
-        logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());
+        logic.IO_INPUTS_BUFFERED.set((double) inputs.getInputItemsBuffered());
 
         event.emit(Events.CycleStart.class);
 
@@ -746,7 +746,7 @@ public class Memory implements Serializable {
                         //just imagine a board game where you are confident about all the board rules
                         //but the implications reach all the frequency spectrum in certain situations
                         //but every concept can also be represented with (--,) so i guess its ok
-                        logic.TASK_ADD_NOVEL.commit();
+                        logic.TASK_ADD_NOVEL.hit();
 
                         // new concept formation                        
                         Task displacedNovelTask = novelTasks.putIn(task);
@@ -793,7 +793,11 @@ public class Memory implements Serializable {
         for (int i = 0; i < novelTasks.size(); i++) {
             
             // select a task from novelTasks
-            final Task task = novelTasks.takeNext();                   
+            final Task task = novelTasks.takeNext();
+
+            if (task == null)
+                break;
+
             queue.add(new ImmediateProcess(this, task));
             executed++;
         }

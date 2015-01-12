@@ -36,7 +36,9 @@ public class NaturalLanguagePerception {
                     results.add(t);
                 }
             }
-            catch (Narsese.InvalidInputException e) { }            
+            catch (Narsese.InvalidInputException e) {
+                throw new RuntimeException(e);
+            }
         }
         
         return results;

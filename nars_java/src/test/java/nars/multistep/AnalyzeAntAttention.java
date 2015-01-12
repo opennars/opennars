@@ -20,7 +20,7 @@ public class AnalyzeAntAttention {
         
         boolean showOutput = true;
 
-        NAR nar = new Neuromorphic(1).build();
+        NAR nar = new NAR(new Neuromorphic(1));
 
         nar.addInput(new TextInput(new File("nal/test/nal7.15.nal")));
             

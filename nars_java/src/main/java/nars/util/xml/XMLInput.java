@@ -35,11 +35,10 @@ public class XMLInput extends PrintWriterInput {
     final int maxWords = 4;
 
     public static void main(String[] args) throws Exception {
-        NAR n = new Default().
+        NAR n = new NAR(new Default().
                 setConceptBagSize(8192).
                 setTermLinkBagLevels(8).
-                setTaskLinkBagLevels(8).
-                build();
+                setTaskLinkBagLevels(8));
 
         new TextOutput(n, System.out);
 

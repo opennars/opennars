@@ -131,8 +131,9 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                     int cycles = Integer.parseInt(input);
                     return new PauseInput(cycles);                    
                 }
-                catch (NumberFormatException e) {                }
-                return null;
+                catch (NumberFormatException e) {
+                    return null;
+                }
             }
         });
         

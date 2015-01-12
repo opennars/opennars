@@ -142,7 +142,7 @@ public class Interval extends Term {
     }
     
     public static long magnitudeToTime(final int magnitude, final AtomicDuration duration) {
-        return (long)Math.round(magnitudeToTime((double)magnitude, duration));
+        return Math.round(magnitudeToTime((double)magnitude, duration));
     }
     
     /** Calculates the average of the -0.5, +0.5 interval surrounding the integer magnitude */
@@ -150,7 +150,7 @@ public class Interval extends Term {
         //TODO cache this result because it will be equal for all similar integer magnitudes
         double magMin = magnitude - 0.5;
         double magMax = magnitude + 0.5;
-        return (long)Math.round((magnitudeToTime(magMin,duration) + magnitudeToTime(magMax, duration))/2.0);
+        return Math.round((magnitudeToTime(magMin,duration) + magnitudeToTime(magMax, duration))/2.0);
     }
     
     @Deprecated public static long magnitudeToTime(int magnitude) {

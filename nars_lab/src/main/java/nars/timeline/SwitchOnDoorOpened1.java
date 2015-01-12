@@ -35,8 +35,8 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
     public static void main(String[] args) throws Exception {
         int cycles = 1000;
         int inputDelay = 5;
-        
-        NAR nar = new Default().build();
+
+        NAR nar = new NAR(new Default());
         new TestChamber(nar, false);
         
         NARTrace t = new NARTrace(nar);

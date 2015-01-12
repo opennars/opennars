@@ -101,19 +101,23 @@ public class EventEmitter extends Eventer<Object> {
         
         return r;
     }
-    
-    @Override
-    @Deprecated public void emit(Class channel, Object arg) {
-        
-        if (!(arg instanceof Object[]))
-            super.emit(channel, new Object[] { arg });
-        else
-            super.emit(channel, arg);
-    }
+
+//
+//    @Override
+//    @Deprecated public void emit(Class channel, Object arg) {
+//
+//        if (!(arg instanceof Object[]))
+//            super.emit(channel, new Object[] { arg });
+//        else
+//            super.emit(channel, arg);
+//    }
 
     
     public void emit(Class channel, Object... args) {
-        emit(channel, (Object)args);
+        if (args.length == 1)
+            super.emit(channel, args[0]);
+        else
+            super.emit(channel, (Object)args);
     }
 
     

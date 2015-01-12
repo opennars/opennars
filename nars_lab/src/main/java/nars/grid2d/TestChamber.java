@@ -44,7 +44,7 @@ public class TestChamber {
         //set NAR architecture parameters:
         //builder...
         Parameters.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
-        NAR nar = builder.build();
+        NAR nar = new NAR(builder);
         //set NAR runtime parmeters:  
 
         for(NAR.PluginState pluginstate : nar.getPlugins()) {

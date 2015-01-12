@@ -484,7 +484,7 @@ public class OWLInput extends PrintWriterInput {
     }
 
     public static void main(String[] args) throws Exception {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
 
         new TextOutput(n, System.out);
 

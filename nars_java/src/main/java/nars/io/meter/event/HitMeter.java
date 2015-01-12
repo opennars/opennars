@@ -31,9 +31,7 @@ public class HitMeter extends FunctionMeter<Long> {
         hits.set(0);
         return this;
     }
-    
-    @Deprecated public void commit() { hit(); }
-    
+
     public long hit() {
         return hits.incrementAndGet();
     }

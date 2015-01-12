@@ -12,8 +12,8 @@ public class TestNARGraph {
     
     @Test
     public void testGraph() {
-    
-        NAR n = new Default().build();
+
+        NAR n = new NAR(new Default());
         
         n.addInput("<a --> b>.");
         

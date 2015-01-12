@@ -47,7 +47,6 @@ public class RuleTables {
      *
      * @param tLink The selected TaskLink, which will provide a task
      * @param bLink The selected TermLink, which may provide a belief
-     * @param memory Reference to the memory
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final NAL nal) {
         final Memory memory = nal.mem();

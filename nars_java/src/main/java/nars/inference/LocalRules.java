@@ -68,7 +68,7 @@ public class LocalRules {
             if (matchingOrder(sentence, belief)) {
                 Term[] u = new Term[] { sentence.term, belief.term };
                 if (Variables.unify(Symbols.VAR_QUERY, u)) {
-                    trySolution(belief, task, nal);
+                    return trySolution(belief, task, nal);
                 }
             }
         }
@@ -108,7 +108,7 @@ public class LocalRules {
         
         if (budget.aboveThreshold()) {
             if (nal.doublePremiseTaskRevised(newBelief.term, truth, budget)) {
-                nal.mem().logic.BELIEF_REVISION.commit();
+                nal.mem().logic.BELIEF_REVISION.hit();
                 return true;
             }
         }
@@ -166,8 +166,8 @@ public class LocalRules {
         }
 
         task.setBestSolution(belief);
-        
-        memory.logic.SOLUTION_BEST.commit(task.getPriority());
+
+        memory.logic.SOLUTION_BEST.set((double) task.getPriority());
 
         if (problem.isGoal()) {
             memory.emotion.adjustHappy(newQ, task.getPriority());

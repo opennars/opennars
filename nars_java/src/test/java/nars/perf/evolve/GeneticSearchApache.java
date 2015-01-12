@@ -215,7 +215,7 @@ public class GeneticSearchApache {
 
         System.out.println(param);
 
-        System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new Default().build()));
+        System.out.println("Default Score: " + CalculateNALTestScore.score(maxCycles, new NAR(new Default())));
 
         // initialize a new genetic algorithm
         GeneticAlgorithm ga = new GeneticAlgorithm(

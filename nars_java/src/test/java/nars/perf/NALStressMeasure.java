@@ -85,11 +85,11 @@ public class NALStressMeasure  {
     }
     
     public static void main(String[] args) {
-        
-        NAR nc = new Curve().build();
+
+        NAR nc = new NAR(new Curve());
         test(nc);
 
-        NAR nd = new Default().build();
+        NAR nd = new NAR(new Default());
         test(nd);
         
         

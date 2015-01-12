@@ -1,6 +1,7 @@
 package nars.core.bag;
 
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.Param;
 import nars.core.build.Default;
 import nars.entity.Item;
@@ -22,7 +23,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class CurveBagTest {
     
-    Param p = new Default().build().param;
+    Param p = new NAR(new Default()).param;
     final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test 
@@ -47,7 +48,7 @@ public class CurveBagTest {
     }
     
     public int[] testCurveBag(SortedIndex<NullItem> items) {
-        Memory.resetStatic();
+        Memory.resetStatic(1);
         
         testCurveBag(true, items);
         testCurveBag(false, items);

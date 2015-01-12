@@ -221,11 +221,11 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     
     protected void meter(Term a) {
         if (a instanceof Interval)
-            memory.logic.PLAN_GRAPH_IN_DELAY_MAGNITUDE.commit(((Interval)a).magnitude);
+            memory.logic.PLAN_GRAPH_IN_DELAY_MAGNITUDE.set((double) ((Interval) a).magnitude);
         else if (a instanceof Operation)
-            memory.logic.PLAN_GRAPH_IN_OPERATION.commit(1);
+            memory.logic.PLAN_GRAPH_IN_OPERATION.set((double) 1);
         else
-            memory.logic.PLAN_GRAPH_IN_OTHER.commit(1);
+            memory.logic.PLAN_GRAPH_IN_OTHER.set((double) 1);
     }
     
     protected static Term postcondition(Term t) {

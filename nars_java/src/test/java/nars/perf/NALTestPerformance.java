@@ -69,7 +69,7 @@ public class NALTestPerformance {
 
             final String input = NALTest.getExample(example);
 
-            Memory.resetStatic();
+            Memory.resetStatic(1);
 
             final List<OutputCondition> expects = new ArrayList();
 
@@ -411,8 +411,8 @@ public class NALTestPerformance {
         int[] ins = new int[] { 1, 17, 11, 13 };
         int[] outs = new int[] { 5 };
         //int[] ins = null, outs = null;
-        
-        NALControlMLDataSet trainingSet = test(new Default().build(), tests, 2000, additionalCycles, ins, outs, historySize);
+
+        NALControlMLDataSet trainingSet = test(new NAR(new Default()), tests, 2000, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);
@@ -500,8 +500,8 @@ public class NALTestPerformance {
         int[] ins = new int[] { 23, 10, 19 };
         int[] outs = new int[] {  10 };
         //int[] ins = null, outs = null;
-        
-        NALControlMLDataSet trainingSet = test(new Default().build(), tests, 2000, additionalCycles, ins, outs, historySize);
+
+        NALControlMLDataSet trainingSet = test(new NAR(new Default()), tests, 2000, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);

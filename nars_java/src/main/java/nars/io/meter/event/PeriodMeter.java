@@ -18,7 +18,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 public class PeriodMeter extends FunctionMeter<Double> {
     
-    double lastReset, lastHit = Double.NaN;
+    double lastReset;
     private final boolean nanoSeconds;
     final DescriptiveStatistics stat;
     private final double window;

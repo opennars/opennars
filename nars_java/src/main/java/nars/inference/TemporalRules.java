@@ -166,14 +166,14 @@ public class TemporalRules {
                     Conjunction ConjA=(Conjunction) A;
                     args=new ArrayList(CB2.term.length+ConjA.term.length);
                     beginoffset=ConjA.size();
-                    
-                    for(final Term t: ConjA.term) args.add(t);
+
+                    Collections.addAll(args, ConjA.term);
                 } else {
                     args = new ArrayList(CB2.term.length + 1);
                     args.add(A);
                     beginoffset=1;
                 }
-                for (final Term t : CB2.term) args.add(t);
+                Collections.addAll(args, CB2.term);
             }
         }
         else {
@@ -196,7 +196,7 @@ public class TemporalRules {
                     term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
                     if(term[i]==null) { 
                         //it resulted in invalid term for example <a --> a>, so wrong
-                        return false;
+                        throw new RuntimeException("Invalid term resulting from substitution");
                     }
                 }
             }
@@ -436,7 +436,7 @@ public class TemporalRules {
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
         
-        if (!matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
+        if (!matchingOrder(problem, solution)) {
             return 0.0F;
         }
         
