@@ -65,7 +65,7 @@ public class JavaInputField
         });
         
         JButton solveButton = new JButton();
-        URL urlImage = getClass().getResource("img/Solve18.png");
+        URL urlImage = ToolBar.getIcon("img/Solve18.png");
         solveButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         solveButton.setPreferredSize(new Dimension(18,18));
         solveButton.setToolTipText("Solve");
@@ -76,7 +76,7 @@ public class JavaInputField
         });
 
         JButton solveAllButton = new JButton();
-        urlImage = getClass().getResource("img/SolveAll18.png");
+        urlImage = ToolBar.getIcon("img/SolveAll18.png");
         solveAllButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         solveAllButton.setPreferredSize(new Dimension(18,18));
         solveAllButton.setToolTipText("Solve All");

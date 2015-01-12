@@ -20,7 +20,7 @@ public class AboutFrame extends GenericFrame
     {
         Container c=this.getContentPane();
         JLabel icon=new JLabel();
-        URL urlImage = getClass().getResource("img/tuProlog.gif");
+        URL urlImage = ToolBar.getIcon("img/tuProlog.gif");
         icon.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         
         JLabel versionSystem=new JLabel(" tuProlog engine version " + Prolog.getVersion() );

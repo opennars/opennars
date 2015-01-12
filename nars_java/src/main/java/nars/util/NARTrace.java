@@ -9,6 +9,7 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.inference.MemoryObserver;
+import nars.io.meter.Meter;
 import nars.io.meter.SignalData;
 import nars.io.meter.TemporalMetrics;
 import nars.io.meter.func.BasicStatistics;
@@ -152,7 +153,10 @@ public class NARTrace extends MemoryObserver implements Serializable {
         metrics.addMeters(n.memory.logic);
         
     }
-    
+
+    public void addMeter(Meter m) {
+        metrics.addMeter(m);
+    }
     
 
     public void addEvent(InferenceEvent e) {

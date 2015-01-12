@@ -6,6 +6,7 @@ import reactor.event.Event;
 import reactor.event.registry.Registration;
 import reactor.event.selector.Selector;
 import reactor.event.selector.Selectors;
+import reactor.function.Consumer;
 
 import java.util.ArrayList;
 
@@ -35,12 +36,12 @@ public class EventEmitter extends Eventer<Object> {
     }
     
     public Registration on(Selector s, EventEmitter.EventObserver obs) {
-        return on(s,  event -> {
-
-            Class channel = (Class)(((Event)event).getKey());
-            Object o = ((Event)event).getData();
-            obs.event(channel, (Object[]) o);
-
+        return on(s,  new Consumer<Event>() {
+            @Override public void accept(Event event) {
+                Class channel = (Class)(((Event)event).getKey());
+                Object o = ((Event)event).getData();
+                obs.event(channel, (Object[]) o);
+            }
         });
     }
 

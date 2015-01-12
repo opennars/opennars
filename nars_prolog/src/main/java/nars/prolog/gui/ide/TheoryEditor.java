@@ -56,7 +56,7 @@ public class TheoryEditor
         caretPanel.add(caretLineLabel);
 
         JButton bGetTheory=new JButton();
-        URL urlImage = getClass().getResource("img/GetTheory20.png");
+        URL urlImage = ToolBar.getIcon("img/GetTheory20.png");
         bGetTheory.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bGetTheory.setToolTipText("Get Theory");
         bGetTheory.setPreferredSize(new Dimension(32,32));
@@ -68,7 +68,7 @@ public class TheoryEditor
             }
         });
         bSetTheory=new JButton();
-        urlImage = getClass().getResource("img/SetTheory20.png");
+        urlImage = ToolBar.getIcon("img/SetTheory20.png");
         bSetTheory.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bSetTheory.setToolTipText("Set Theory");
         bSetTheory.setPreferredSize(new Dimension(32,32));
@@ -80,7 +80,7 @@ public class TheoryEditor
             }
         });
         JButton bUndo=new JButton();
-        urlImage = getClass().getResource("img/Undo20.png");
+        urlImage = ToolBar.getIcon("img/Undo20.png");
         bUndo.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bUndo.setToolTipText("Undo Edit Action");
         bUndo.setPreferredSize(new Dimension(32,32));
@@ -92,7 +92,7 @@ public class TheoryEditor
             }
         });
         JButton bRedo=new JButton();
-        urlImage = getClass().getResource("img/Redo20.png");
+        urlImage = ToolBar.getIcon("img/Redo20.png");
         bRedo.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bRedo.setToolTipText("Redo Edit Action");
         bRedo.setPreferredSize(new Dimension(32,32));

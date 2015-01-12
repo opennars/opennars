@@ -458,9 +458,42 @@ public class NAR implements Runnable, TaskSource {
         }
         running = wasRunning;        
     }
-    
+
+    /**
+     * Execute a minimum number of cycles, allowing additional cycles (less than maxCycles) for finishing any pending inputs
+     * @param maxCycles max cycles, or -1 to allow any number of additional cycles until input finishes
+     * */
+    public NAR run(int minCycles, int maxCycles) {
+        if (maxCycles <= 0) return this;
+        if (minCycles > maxCycles)
+            throw new RuntimeException("minCycles " + minCycles + " required <= maxCycles " + maxCycles);
+
+        running = true;
+        stopped = false;
+
+        updateIO();
+
+        long cycleStart = time();
+        do {
+            step(1);
+
+            long now = time();
+
+            if (now < minCycles)
+                running = !stopped;
+            else
+                running = (!inputChannels.isEmpty()) && (!stopped) &&
+                    ((time() - cycleStart) < maxCycles);
+        }
+        while (running);
+
+        return this;
+    }
+
     /** Execute a fixed number of cycles, then finish any remaining walking steps. */
     public NAR run(int cycles) {
+        //TODO see if this entire method can be implemented as run(0, cycles);
+
         if (cycles <= 0) return this;
         
         running = true;

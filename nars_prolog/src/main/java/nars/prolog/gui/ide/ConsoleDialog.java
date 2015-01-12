@@ -130,7 +130,7 @@ public class ConsoleDialog
 		/**/
 
         bNext=new JButton("Next");
-        URL urlImage = getClass().getResource("img/Next16.png");
+        URL urlImage = ToolBar.getIcon("img/Next16.png");
         bNext.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bNext.setEnabled(false);
         bNext.addActionListener(new ActionListener()
@@ -141,7 +141,7 @@ public class ConsoleDialog
             }
         });
         bAccept=new JButton("Accept");
-        urlImage = getClass().getResource("img/Accept16.png");
+        urlImage = ToolBar.getIcon("img/Accept16.png");
         bAccept.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bAccept.setEnabled(false);
         bAccept.addActionListener(new ActionListener()
@@ -152,7 +152,7 @@ public class ConsoleDialog
             }
         });
         bStop=new JButton("Stop");
-        urlImage = getClass().getResource("img/Stop16.png");
+        urlImage = ToolBar.getIcon("img/Stop16.png");
         bStop.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bStop.setEnabled(false);
         bStop.addActionListener(new ActionListener()
@@ -163,7 +163,7 @@ public class ConsoleDialog
             }
         });
         bClear=new JButton("Clear");
-        urlImage = getClass().getResource("img/Clear16.png");
+        urlImage = ToolBar.getIcon("img/Clear16.png");
         bClear.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bClear.setEnabled(false);
         bClear.addActionListener(new ActionListener()
@@ -174,7 +174,7 @@ public class ConsoleDialog
             }
         });
         bExport=new JButton("Export CSV");
-        urlImage = getClass().getResource("img/ExportCSV24.png");
+        urlImage = ToolBar.getIcon("img/ExportCSV24.png");
         bExport.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bExport.setEnabled(false);
         bExport.addActionListener(new ActionListener()

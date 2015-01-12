@@ -40,11 +40,12 @@ public class GenericFrame
         setVisible(false);
         this.mainWindow=mainWindow;
         setTitle(title);
+        /*
         if (iconPathName != "") {
             // Set a title bar icon
             ImageIcon icon = new ImageIcon(getClass().getResource(getFrameIcon()));
             setIconImage(icon.getImage());
-        }
+        }*/
 
         if ((width > 0) && (height > 0)) {
             Insets insets = getInsets();

@@ -98,7 +98,7 @@ public class DebugAreaFrame extends GenericFrame implements SpyListener, Warning
         otherPanel.add(debug,constraints);
 
         JButton clear=new JButton();
-        URL urlImage = getClass().getResource("img/Clear24.png");
+        URL urlImage = ToolBar.getIcon("img/Clear24.png");
         clear.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         clear.setToolTipText("Clear");
         clear.setPreferredSize(new Dimension(32,32));
@@ -110,7 +110,7 @@ public class DebugAreaFrame extends GenericFrame implements SpyListener, Warning
             }
         });
         collapseAllButton = new JButton();
-        urlImage = getClass().getResource("img/collapseAll.png");
+        urlImage = ToolBar.getIcon("img/collapseAll.png");
         collapseAllButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         collapseAllButton.setEnabled(false);
         collapseAllButton.setPreferredSize(new Dimension(32,32));
@@ -123,7 +123,7 @@ public class DebugAreaFrame extends GenericFrame implements SpyListener, Warning
             }
         });
         expandAllButton = new JButton();
-        urlImage = getClass().getResource("img/expandAll.png");
+        urlImage = ToolBar.getIcon("img/expandAll.png");
         expandAllButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         expandAllButton.setEnabled(false);
         expandAllButton.setPreferredSize(new Dimension(32,32));
@@ -136,7 +136,7 @@ public class DebugAreaFrame extends GenericFrame implements SpyListener, Warning
             }
         });
         expandSelectedNodesButton = new JButton();
-        urlImage = getClass().getResource("img/expandSelected.png");
+        urlImage = ToolBar.getIcon("img/expandSelected.png");
         expandSelectedNodesButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         expandSelectedNodesButton.setEnabled(false);
         expandSelectedNodesButton.setPreferredSize(new Dimension(32,32));
@@ -149,7 +149,7 @@ public class DebugAreaFrame extends GenericFrame implements SpyListener, Warning
             }
         });
         collapseSelectedNodesButton = new JButton();
-        urlImage = getClass().getResource("img/collapseSelected.png");
+        urlImage = ToolBar.getIcon("img/collapseSelected.png");
         collapseSelectedNodesButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         collapseSelectedNodesButton.setEnabled(false);
         collapseSelectedNodesButton.setPreferredSize(new Dimension(32,32));

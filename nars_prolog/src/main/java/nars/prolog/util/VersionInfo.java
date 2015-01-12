@@ -2,7 +2,7 @@ package nars.prolog.util;
 
 public class VersionInfo 
 {
-	private static final String ENGINE_VERSION = "2.9";
+	private static final String ENGINE_VERSION = "2.9++";
 	private static final String JAVA_SPECIFIC_VERSION = "0";
 	private static final String NET_SPECIFIC_VERSION = "0";
 	

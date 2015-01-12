@@ -56,7 +56,7 @@ public class Eventer<E> {
         return new Eventer(Reactors.reactor(new Environment(), Environment.WORK_QUEUE));
     }*/
 
-    public Registration on(Selector s, Consumer c) {
+    public <E extends Event<?>> Registration on(Selector s, Consumer<E> c) {
         return r.on(s, c);
     }
     

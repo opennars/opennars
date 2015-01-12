@@ -86,7 +86,11 @@ public class Theory implements Serializable, PrologTermIterator {
         }
         this.clauseList = clauseList;
     }
-    
+
+    public Theory(Term[] t) throws InvalidTheoryException {
+        this(new Struct(t));
+    }
+
     public static Theory parse(Prolog engine, String input) throws InvalidTheoryException {
        LinkedList<Term> tc = Lists.newLinkedList(new Parser(engine.getOperatorManager(), input));
        return new Theory(new Struct(".", tc));       

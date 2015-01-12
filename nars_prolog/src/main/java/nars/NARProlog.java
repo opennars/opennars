@@ -1,28 +1,35 @@
 package nars;
 
 import nars.core.NAR;
-import nars.jwam.WAM;
-import nars.jwam.WAMProlog;
+import nars.prolog.InvalidTheoryException;
+import nars.prolog.SolveInfo;
+import nars.prolog.Term;
+import nars.prolog.Theory;
+
+import java.io.PrintStream;
 
 
 /**
  * Wraps a Prolog instance loaded with nal.pl with some utility methods
  */
-public class NARProlog extends WAMProlog  {
+abstract public class NARProlog {
     
     public final NAR nar;
     
-    public NARProlog(NAR n)  {
-        this(n, WAM.newMedium());        
-    }
+
     
-    public NARProlog(NAR n, WAM w)  {
-        super(w);
+    public NARProlog(NAR n)  {
+        super();
         this.nar = n;                     
     }
 
- 
-    
+    abstract public void setTheory(Theory t) throws InvalidTheoryException;
+
+    public abstract void printRules(PrintStream out);
+
+    public abstract SolveInfo query(Term s, double time);
+
+
 //    public static void main(String[] args) throws Exception {
 //        NAR nar = new DefaultNARBuilder().build();
 //        new TextOutput(nar, System.out);

@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 
@@ -86,10 +88,18 @@ public class ToolBar extends JPanel
         fileIDE=new FileIDE("",null);
     }
 
+    public static URL getIcon(String p) {
+        //getIcon(p);
+        try {
+            return new File("nars_prolog/src/main/java/nars/prolog/gui/ide/" + p).toURI().toURL();
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
     private void initComponents()
     {
         bNew=new JButton();
-        URL urlImage = getClass().getResource("img/New24.png");
+        URL urlImage = getIcon("img/New24.png");
         bNew.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bNew.setToolTipText("New Theory");
         bNew.setPreferredSize(new Dimension(32,32));
@@ -101,7 +111,7 @@ public class ToolBar extends JPanel
             }
         });
         bOpen=new JButton();
-        urlImage = getClass().getResource("img/Open24.png");
+        urlImage = getIcon("img/Open24.png");
         bOpen.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bOpen.setToolTipText("Load Theory");
         bOpen.setPreferredSize(new Dimension(32,32));
@@ -113,7 +123,7 @@ public class ToolBar extends JPanel
             }
         });
         bSave=new JButton();
-        urlImage = getClass().getResource("img/Save24.png");
+        urlImage = getIcon("img/Save24.png");
         bSave.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bSave.setToolTipText("Save Theory");
         bSave.setPreferredSize(new Dimension(32,32));
@@ -125,7 +135,7 @@ public class ToolBar extends JPanel
             }
         });
         bSaveAs=new JButton();
-        urlImage = getClass().getResource("img/SaveAs24.png");
+        urlImage = getIcon("img/SaveAs24.png");
         bSaveAs.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bSaveAs.setToolTipText("Save Theory As...");
         bSaveAs.setPreferredSize(new Dimension(32,32));
@@ -137,7 +147,7 @@ public class ToolBar extends JPanel
             }
         });
         bLibMan=new JButton();
-        urlImage = getClass().getResource("img/Library24.png");
+        urlImage = getIcon("img/Library24.png");
         bLibMan.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bLibMan.setToolTipText("Open Library Manager");
         bLibMan.setPreferredSize(new Dimension(32,32));
@@ -149,7 +159,7 @@ public class ToolBar extends JPanel
             }
         });
         bDebug=new JButton();
-        urlImage = getClass().getResource("img/Debugger24.png");
+        urlImage = getIcon("img/Debugger24.png");
         bDebug.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bDebug.setToolTipText("View Debug Information");
         bDebug.setPreferredSize(new Dimension(32,32));
@@ -161,7 +171,7 @@ public class ToolBar extends JPanel
             }
         });
         bConfigure=new JButton();
-        urlImage = getClass().getResource("img/Configure24.png");
+        urlImage = getIcon("img/Configure24.png");
         bConfigure.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bConfigure.setToolTipText("Configure tuProlog");
         bConfigure.setPreferredSize(new Dimension(32,32));
@@ -173,7 +183,7 @@ public class ToolBar extends JPanel
             }
         });
         bAbout=new JButton();
-        urlImage = getClass().getResource("img/About24.png");
+        urlImage = getIcon("img/About24.png");
         bAbout.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bAbout.setToolTipText("About...");
         bAbout.setPreferredSize(new Dimension(32,32));
@@ -186,7 +196,7 @@ public class ToolBar extends JPanel
         });
 
         bSpy = new JButton();
-        urlImage = getClass().getResource("img/AlberoBinario.png");
+        urlImage = getIcon("img/AlberoBinario.png");
         bSpy.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bSpy.setToolTipText("Spy Frame");
         bSpy.setPreferredSize(new Dimension(32,32));
@@ -268,7 +278,7 @@ public class ToolBar extends JPanel
     /**
      * Set the tuProlog config frame
      *
-     * @param libraryManager a libraryManager to associate to the libraryDialog 
+     * @param configFrame a libraryManager to associate to the libraryDialog
      */
     public void setPrologConfig(PrologConfigFrame configFrame)
     {

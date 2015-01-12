@@ -77,7 +77,7 @@
 //    
 //    /** in seconds */
 //    float maxSolveTime = 5.0f / 1e3f; //5ms
-//    float baseSolveTime = 1.0f / 1e3f; //1ms
+//    float minSolveTime = 1.0f / 1e3f; //1ms
 //
 //    /** max # answers returned in response to a question */
 //    int maxAnswers = 3;
@@ -207,7 +207,7 @@
 //            onQuestion(s);
 //            
 //            float priority = task.getPriority();
-//            float solveTime = ((maxSolveTime-baseSolveTime) * priority) + baseSolveTime;
+//            float solveTime = ((maxSolveTime-minSolveTime) * priority) + minSolveTime;
 //
 //            if (beliefs.containsKey(s)) {
 //                //already determined it to be true

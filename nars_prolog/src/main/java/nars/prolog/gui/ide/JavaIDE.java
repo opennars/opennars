@@ -56,7 +56,7 @@ public class JavaIDE
      * Initialize the graphic components and set the dependencies among them.
      */
     private void initComponents() {
-        System.out.println("tuProlog system - release " + Prolog.getVersion());
+        System.out.println("tuProlog/NARS - " + Prolog.getVersion());
 
         Prolog engine = new Prolog();
         
@@ -157,7 +157,7 @@ public class JavaIDE
         splitPaneV.setResizeWeight(0.7);
 
         // Set a title bar icon
-        ImageIcon icon = new ImageIcon(getClass().getResource("img/tuProlog.gif"));
+        ImageIcon icon = new ImageIcon(ToolBar.getIcon("img/tuProlog.gif"));
         setIconImage(icon.getImage());
         
         //Aggiunto Mastrovito 12/2013

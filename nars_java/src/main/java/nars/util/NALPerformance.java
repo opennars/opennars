@@ -48,7 +48,7 @@ public class NALPerformance implements Runnable {
             
             nar.addInput(new TextInput(input));
 
-            nar.run(cycles);
+            nar.run(0, cycles);
             
         } catch (Throwable e) {
             System.err.println(e);

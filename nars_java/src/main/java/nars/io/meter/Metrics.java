@@ -412,10 +412,16 @@ JsonSerializationContext context) {
         }
         return r;
     }
-        
-    
-    public void printCSV(PrintStream out) {
+
+    public void printCSVHeader(PrintStream out) {
         printJSONArray(out, getSignalIDs(),false );
+    }
+    public void printCSVLastLine(PrintStream out) {
+        printJSONArray(out, rowLast(), false);
+    }
+
+    public void printCSV(PrintStream out) {
+        printCSVHeader(out);
         for (Object[] row : this) {
             printJSONArray(out, row, false);
         }

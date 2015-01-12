@@ -71,13 +71,6 @@ public class GUILauncher {
     }
 
     /**
-     * Launch a GUI suitable for the .NET platform (Java 1.1 platform).
-     */
-    private void launchDotNetGUI() {
-        System.exit(1);
-    }
-
-    /**
      * Choose which GUI to launch based on the subversion number of the J2SE
      * this program is running on.
      */
@@ -87,16 +80,9 @@ public class GUILauncher {
         String version = System.getProperty("java.version");
         int versionNumber = launcher.getVersionNumber(version);
         int subVersionNumber = launcher.getSubVersionNumber(version);
-        System.out.println("We are on a J2SE " + versionNumber + "." + subVersionNumber + ".x plaftorm");
-        if (versionNumber == 1)
-            if (subVersionNumber == 1)
-                launcher.launchDotNetGUI();
-            else {
-                launcher.launchJavaGUI();
-                // launcher.launchDotNetGUI();
-            }
-        else
-            launcher.launchJavaGUI();
+        System.out.println("J2SE " + versionNumber + "." + subVersionNumber + ".x plaftorm");
+
+        launcher.launchJavaGUI();
     }
 
 } // end GUILauncher class

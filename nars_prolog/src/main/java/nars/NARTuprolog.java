@@ -1,32 +1,50 @@
 package nars;
 
 import nars.core.NAR;
-import nars.prolog.InvalidLibraryException;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.Prolog;
+import nars.core.build.Default;
+import nars.io.TextOutput;
+import nars.prolog.*;
 import nars.prolog.event.*;
 import nars.prolog.lib.BasicLibrary;
+
+import java.io.PrintStream;
 
 /**
  * Wraps a Prolog instance loaded with nal.pl with some utility methods
  */
-public class NARTuprolog extends Prolog implements OutputListener, WarningListener, TheoryListener, QueryListener {
+public class NARTuprolog extends NARProlog implements OutputListener, WarningListener, TheoryListener, QueryListener {
     
-    public final NAR nar;
+    public final Prolog prolog;
     
     public NARTuprolog(NAR n)  {
-        super();
-        this.nar = n;
-        
-        addOutputListener(this);
-        addTheoryListener(this);
-        addWarningListener(this);
-        addQueryListener(this);        
-             
+        super(n);
+        this.prolog = new Prolog();
+
+        prolog.addOutputListener(this);
+        prolog.addTheoryListener(this);
+        prolog.addWarningListener(this);
+        prolog.addQueryListener(this);
+
+
     }
-    
+
+    @Override
+    public void setTheory(Theory t) throws InvalidTheoryException {
+        prolog.setTheory(t);
+    }
+
+    @Override
+    public void printRules(PrintStream out) {
+        out.println( prolog.getTheory().toString() );
+    }
+
+    @Override
+    public SolveInfo query(nars.prolog.Term s, double time) {
+        return prolog.solve(s, time);
+    }
+
     public NARTuprolog loadBasicLibrary() throws InvalidLibraryException {
-        loadLibrary(new BasicLibrary());
+        prolog.loadLibrary(new BasicLibrary());
         return this;
     }
     
@@ -63,12 +81,12 @@ public class NARTuprolog extends Prolog implements OutputListener, WarningListen
     
     @Override
     public void newQueryResultAvailable(QueryEvent e) {
+
+        nar.emit(Prolog.class, e.getSolveInfo());
         /*
-        output.output(Prolog.class, e.getSolveInfo());
-        
         //TEMPORARY
         try {
-            SolveInfo s = e.getSolveInfo();            
+            SolveInfo s = e.getSolveInfo();
             System.out.println("Question:  " + s.getQuery() + " ?");
             System.out.println("  Answer:  " + s.getSolution());
         } catch (NoSolutionException ex) {
@@ -80,15 +98,16 @@ public class NARTuprolog extends Prolog implements OutputListener, WarningListen
         
     }
     
-//    public static void main(String[] args) throws Exception {
-//        NAR nar = new DefaultNARBuilder().build();
-//        new TextOutput(nar, System.out);
-//        
-//        Prolog prolog = new NARProlog(nar);
-//        prolog.solve("revision([inheritance(bird, swimmer), [1, 0.8]], [inheritance(bird, swimmer), [0, 0.5]], R).");
-//        prolog.solve("inference([inheritance(swan, bird), [0.9, 0.8]], [inheritance(bird, swan), T]).");
-//        
-//    }
+    public static void main(String[] args) throws Exception {
+        NAR nar = new NAR(new Default());
+        new TextOutput(nar, System.out);
 
-    
+        NARTuprolog prolog = new NARTuprolog(nar);
+        prolog.prolog.solve("revision([inheritance(bird, swimmer), [1, 0.8]], [inheritance(bird, swimmer), [0, 0.5]], R).");
+        prolog.prolog.solve("inference([inheritance(swan, bird), [0.9, 0.8]], [inheritance(bird, swan), T]).");
+
+    }
+
+
+
 }

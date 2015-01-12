@@ -105,7 +105,7 @@ public class LibraryDialogFrame extends GenericFrame implements LibraryListener
         displayLibraryPanel();
         
         JButton bOpen=new JButton();
-        URL urlImage = getClass().getResource("img/Open24.png");
+        URL urlImage = ToolBar.getIcon("img/Open24.png");
         bOpen.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bOpen.setToolTipText("Load preferences");
         bOpen.setPreferredSize(new Dimension(32,32));
@@ -117,7 +117,7 @@ public class LibraryDialogFrame extends GenericFrame implements LibraryListener
             }
         });
         JButton bSave=new JButton();
-        urlImage = getClass().getResource("img/Save24.png");
+        urlImage = ToolBar.getIcon("img/Save24.png");
         bSave.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(urlImage)));
         bSave.setToolTipText("Save preferences");
         bSave.setPreferredSize(new Dimension(32,32));
