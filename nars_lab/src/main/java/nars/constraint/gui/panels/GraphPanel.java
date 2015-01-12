@@ -12,7 +12,6 @@ import nars.io.meter.TemporalMetrics;
 import nars.io.meter.event.ValueMeter;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.search.loop.monitors.IMonitorOpenNode;
-import reactor.core.Environment;
 
 /**
  *
@@ -25,7 +24,7 @@ public class GraphPanel extends MeterVis {
 
     public static class ChocoMetrics extends TemporalMetrics<Object> implements IMonitorOpenNode {
 
-        public final Eventer event = new Eventer(Environment.WORK_QUEUE);
+        public final Eventer event = Eventer.newSynchronous();
         private final Solver solver;
         
         public ChocoMetrics(Solver solver) {
@@ -74,7 +73,7 @@ public class GraphPanel extends MeterVis {
     public void update() {
         //metrics.update( t() - start );
         metrics.update(t++);
-        metrics.event.emit(FrameEnd.class, FrameEnd.class);
+        metrics.event.notify(FrameEnd.class);
         //metrics.printCSV(System.out);
     }
 

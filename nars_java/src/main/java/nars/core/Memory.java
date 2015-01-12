@@ -47,8 +47,6 @@ import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.plugin.app.plan.MultipleExecutionManager;
 import nars.storage.Bag;
-import reactor.core.Environment;
-import reactor.event.dispatch.SynchronousDispatcher;
 
 import java.io.Serializable;
 import java.util.*;
@@ -80,7 +78,6 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     
-    private final Environment env;
     private final List<Runnable> otherTasks = new ArrayList();
 
 
@@ -179,9 +176,8 @@ public class Memory implements Serializable {
 
     private class MemoryEventEmitter extends EventEmitter {
 
-        public MemoryEventEmitter(Environment e) {
-            super(e, new SynchronousDispatcher());
-            //super(Environment.WORK_QUEUE);
+        public MemoryEventEmitter() {
+            super();
         }
 
         public void emit(final Class eventClass, final Object... params) {
@@ -216,11 +212,9 @@ public class Memory implements Serializable {
      */
     public Memory(Param param, Core concepts, Bag<Task<Term>, Sentence<Term>> novelTasks) {
 
-        this.env = new Environment();
 
         this.param = param;
 
-        this.event = new MemoryEventEmitter(env);
 
         this.concepts = concepts;
         this.concepts.init(this);
@@ -293,6 +287,9 @@ public class Memory implements Serializable {
             }
 
         };
+
+        this.event = new MemoryEventEmitter();
+
 
         this.executive = new MultipleExecutionManager(this);
 
@@ -659,8 +656,6 @@ public class Memory implements Serializable {
             return;
         }
 
-        resource.CYCLE_DURATION.start();
-
         logic.IO_INPUTS_BUFFERED.set((double) inputs.getInputItemsBuffered());
 
         event.emit(Events.CycleStart.class);
@@ -678,14 +673,11 @@ public class Memory implements Serializable {
         }
         
         concepts.cycle();
-        
 
-        //executive.cycle();
         event.emit(Events.CycleEnd.class);
 
         updateTime();
 
-        resource.CYCLE_DURATION.stop();
     }
 
     /**
@@ -694,8 +686,10 @@ public class Memory implements Serializable {
     protected void updateTime() {
         timePreviousCycle = time();
         cycle++;
-        timeRealNow = System.currentTimeMillis();
+        if (getTiming()==Timing.Real)
+            timeRealNow = System.currentTimeMillis();
     }
+
 
     public void addOtherTask(Runnable t) {
         synchronized (otherTasks) {

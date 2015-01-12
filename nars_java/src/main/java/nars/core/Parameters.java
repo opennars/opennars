@@ -26,10 +26,11 @@ package nars.core;
  * All static values will be removed so that this is an entirely dynamic class.
  */
 public class Parameters {
-    
+
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
+    public static final boolean DEBUG_TRACE_EVENTS = false;
 
     /** for thorough bag debugging (slow) */
     public static boolean DEBUG_BAG = false;

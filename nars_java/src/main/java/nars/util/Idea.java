@@ -6,6 +6,7 @@ package nars.util;
 
 import com.google.common.base.Objects;
 import nars.core.EventEmitter.EventObserver;
+import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
 import nars.core.NAR;
@@ -272,12 +273,14 @@ public class Idea implements Iterable<Concept> {
 
         @Override
         public void event(Class event, Object[] args) {
-            Concept c = (Concept)args[0];
             if (event == ConceptNew.class) {
-                add(c);
+                add((Concept)args[0]);
             }
             else if (event == ConceptForget.class) {
-                remove(c);
+                remove((Concept)args[0]);
+            }
+            else if (event == Events.ConceptDirectProcessedTask.class) {
+                update((Concept)args[1]);
             }
         }
         
@@ -287,7 +290,7 @@ public class Idea implements Iterable<Concept> {
             clear();
                         
             nar.memory.event.set(this, enabled, 
-                    ConceptNew.class, ConceptForget.class);            
+                    ConceptNew.class, ConceptForget.class, Events.ConceptDirectProcessedTask.class);
             
             if (enabled) {
                 ///add existing
@@ -300,14 +303,20 @@ public class Idea implements Iterable<Concept> {
         public Idea get(Termable t) {
             return get(Idea.getKey(t.getTerm()));
         }
-        
+
+        public Idea update(Concept c) {
+            Idea existing = get(c);
+            if (existing != null) {
+                existing.update();
+            }
+            return existing;
+        }
+
         public Idea add(Concept c) {
             Idea existing = get(c);
             if (existing == null) {
                 existing = new Idea(c);
                 put(Idea.getKey(c), existing); //calculating getKey() twice can be avoided by caching it when it's uesd to get Idea existing above
-    
-                
             }
             else {
                 existing.add(c);

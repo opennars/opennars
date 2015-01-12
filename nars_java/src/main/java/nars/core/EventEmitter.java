@@ -1,9 +1,8 @@
 
 package nars.core;
 
-import reactor.core.Environment;
+import reactor.core.spec.Reactors;
 import reactor.event.Event;
-import reactor.event.dispatch.Dispatcher;
 import reactor.event.registry.Registration;
 import reactor.event.selector.Selector;
 import reactor.event.selector.Selectors;
@@ -24,19 +23,13 @@ public class EventEmitter extends Eventer<Object> {
     public interface EventObserver<C> {
         public void event(Class<? extends C> event, Object[] args);
     }
-                
-    public EventEmitter(String type) {
-        super(type);
-    }
 
-    public EventEmitter(Environment e, Dispatcher d) {
-        super(e, d);
+    public EventEmitter() {
+        super(Reactors.reactor().synchronousDispatcher().broadcastEventRouting().get());
     }
-    
-    
 
     public final boolean isActive(final Class event) {
-        return r.getConsumerRegistry().select(T(event)).isEmpty();
+        return !r.getConsumerRegistry().select(T(event)).isEmpty();
     }
 
     public Registration on(Class<?> channel, EventEmitter.EventObserver obs) {
@@ -48,12 +41,8 @@ public class EventEmitter extends Eventer<Object> {
 
             Class channel = (Class)(((Event)event).getKey());
             Object o = ((Event)event).getData();
-            
-            if (o instanceof Object[]) {
-                obs.event(channel, (Object[]) o);
-            } else {
-                obs.event(channel, new Object[]{o});
-            }
+            obs.event(channel, (Object[]) o);
+
         });
     }
 
@@ -114,10 +103,10 @@ public class EventEmitter extends Eventer<Object> {
 
     
     public void emit(Class channel, Object... args) {
-        if (args.length == 1)
-            super.emit(channel, args[0]);
+        if (args.length == 0)
+            notify(channel);
         else
-            super.emit(channel, (Object)args);
+            notify(channel, args);
     }
 
     

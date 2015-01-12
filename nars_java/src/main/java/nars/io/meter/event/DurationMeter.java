@@ -32,21 +32,26 @@ public class DurationMeter extends ValueMeter {
     }
     
     public boolean isStarted() { return !Double.isNaN(startTime); }
-    
-    public synchronized void start() {
+
+    /** returns the stored start time of the event */
+    public synchronized double start() {
         if (strict && isStarted()) {
             startTime = Double.NaN;
             throw new RuntimeException(this + " already started");            
         }
         startTime = PeriodMeter.now(nanoSeconds);
+        return startTime;
     }
-    
-    public synchronized void stop() {
+
+    /** returns the value which it stores (duration time, or frequency) */
+    public synchronized double stop() {
         if (strict && !isStarted())
             throw new RuntimeException(this + " not previously started");
         double duration = sinceStart();
-        set(frequency ? (1.0 / duration) : duration);
+        double v = frequency ? (1.0 / duration) : duration;
+        set(v);
         startTime = Double.NaN;
+        return v;
     }
     
     public double sinceStart() {

@@ -6,6 +6,7 @@ import nars.io.InferenceLogger;
 import nars.io.TextOutput;
 import nars.util.NALPerformance;
 import org.junit.Test;
+import org.junit.runner.Computer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
@@ -99,7 +100,7 @@ public class NALTest  {
         
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
         //Result result = JUnitCore.runClasses(new ParallelComputer(true, true),c);
-        Result result = JUnitCore.runClasses(c);
+        Result result = JUnitCore.runClasses(Computer.serial(), c);
 
         if (result.getFailures()!=null) {
             for (Failure f : result.getFailures()) {

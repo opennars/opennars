@@ -27,11 +27,11 @@ public class EventTest {
         AtomicBoolean b = new AtomicBoolean();
         
         e.on(T(Events.CycleEnd.class), x -> {
-            System.err.println("EVENT: " + x);
+            //System.err.println("EVENT: " + x);
             b.set(true);
         });
         
-        e.emit(Events.CycleEnd.class, Event.wrap(true));
+        e.notify(Events.CycleEnd.class, Event.wrap(true));
         
         
         Thread.sleep(100);

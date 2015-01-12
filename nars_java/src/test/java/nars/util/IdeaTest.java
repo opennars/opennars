@@ -7,7 +7,6 @@ package nars.util;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.io.TextOutput;
 import nars.util.Idea.IdeaSet;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,9 +53,6 @@ public class IdeaTest {
         //n.run(2);
         //assertEquals(i.get("[a, b]").getSentenceTypes().toString(), 1, i.get("[a, b]").getSentenceTypes().size());
 
-
-        new TextOutput(n, System.out);
-
         n.addInput("<a <-> b>.");
         n.addInput("<a <=> b>.");
         n.addInput("<a <=> b>!");
@@ -65,12 +61,10 @@ public class IdeaTest {
         n.addInput("<a <-> b>!");
         n.addInput("<b <-> a>?");
         
-        n.run(13);
+        n.run(12);
 
-        
-        assertEquals(i.get("[a, b]").getSentenceTypes().toString(), 3, i.get("[a, b]").getSentenceTypes().size());
-        
-        
-        
+        /** [<-> ?, <-> ., <-> !, <=> !, <=> ., <=> ?]  */
+        assertEquals(i.get("[a, b]").getSentenceTypes().toString(), 6, i.get("[a, b]").getSentenceTypes().size());
+
     }    
 }

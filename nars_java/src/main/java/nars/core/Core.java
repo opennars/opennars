@@ -87,10 +87,7 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
             }
         } else {
             
-            //TEMPORARY
-            
-            
-            //execute in parallel, multithreaded                        
+            //execute in parallel, multithreaded
             final ConcurrentContext ctx = ConcurrentContext.enter();
 
             ctx.setConcurrency(concurrency);

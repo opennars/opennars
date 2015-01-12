@@ -374,13 +374,13 @@ public class Rover2 extends PhysicsModel {
         (nar.param).taskLinkForgetDurations.set(25f);
         (nar.param).termLinkForgetDurations.set(25f);
         (nar.param).novelTaskForgetDurations.set(20f);
-        
-        Rover2 theRover;
+
+        final Rover2 theRover = new Rover2(nar);
 
         //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
         //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
         // RoverWorld.world= new RoverWorld(rv, 48, 48);
-        new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, theRover = new Rover2(nar)) {
+        new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, theRover ) {
 
             @Override
             public void cycle() {

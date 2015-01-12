@@ -146,7 +146,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         metrics.addMeters(n.memory.resource);
         
 
-        metrics.addMeter(new BasicStatistics(metrics, n.memory.resource.CYCLE_DURATION.id(), 16));
+        metrics.addMeter(new BasicStatistics(metrics, n.memory.resource.FRAME_DURATION.id(), 16));
         metrics.addMeter(new FirstOrderDifference(metrics, n.memory.resource.CYCLE_RAM_USED.id()));
      
         metrics.addMeters(n.memory.logic);

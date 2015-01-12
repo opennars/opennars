@@ -357,7 +357,7 @@ public class NAR implements Runnable, TaskSource {
         ioChanged = true;
         
         if (!running)
-            updatePorts();
+            updateIO();
 
         return i;
     }
@@ -466,7 +466,7 @@ public class NAR implements Runnable, TaskSource {
         running = true;
         stopped = false;
 
-        updatePorts();
+        updateIO();
 
         //clear existing input
         
@@ -502,16 +502,12 @@ public class NAR implements Runnable, TaskSource {
         
         while (running && !stopped) {      
             
-            long preFrame = System.currentTimeMillis();
-            
-            frame();
-            
-            long postFrame = System.currentTimeMillis();
-                        
+
+            double frameTime = frame(); //in seconds
+
             if (minFramePeriodMS > 0) {
                 
-                long frameTime = postFrame - preFrame;
-                long remainingTime = minFramePeriodMS - frameTime;
+                double remainingTime = minFramePeriodMS - (frameTime/1E3);
                 if (remainingTime > 0) {
                     try {
                         Thread.sleep(minFramePeriodMS);
@@ -545,7 +541,7 @@ public class NAR implements Runnable, TaskSource {
         }
     }
     
-    protected void updatePorts() {
+    protected void updateIO() {
         if (!ioChanged) {
             return;
         }
@@ -614,44 +610,48 @@ public class NAR implements Runnable, TaskSource {
     }
     
     
-    protected void frame() {
-        frame(cyclesPerFrame);
+    protected double frame() {
+        return frame(cyclesPerFrame);
     }
     
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
-    public void frame(int cycles) {
-        
-        long timeStart = System.currentTimeMillis();
+    public double frame(int cycles) {
+
+        memory.resource.FRAME_DURATION.start();
 
         emit(FrameStart.class);
 
-        updatePorts();
+        updateIO();
 
         try {
             for (int i = 0; i < cycles; i++)
                 memory.cycle(this);
         }
         catch (Throwable e) {
-            memory.error(e);
+            if (Parameters.DEBUG)
+                throw new RuntimeException(e);
+            else
+                memory.error(e);
         }
 
         emit(FrameEnd.class);
 
-        long timeEnd = System.currentTimeMillis();
+        double frameTime = memory.resource.FRAME_DURATION.stop();
 
         if (memory.getTiming() == Timing.Real) {
-            long frameTime = timeEnd - timeStart;
             final int d = param.duration.get();
 
             //warn if frame consumed more time than reasoner duration
             if (frameTime > d) {
                 emit(ERR.class, 
-                        "@" + timeEnd + ": Real-time consumed by frame (" + 
+                        "Real-time consumed by frame (" +
                                 frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
             }
         }
+
+        return frameTime;
     }
 
     @Override

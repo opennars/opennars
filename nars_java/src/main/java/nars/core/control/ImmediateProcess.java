@@ -53,7 +53,7 @@ public class ImmediateProcess extends NAL {
         if (getCurrentConcept() != null) {
             boolean processed = getCurrentConcept().directProcess(this, currentTask);
             if (processed) {
-                memory.event.emit(Events.ConceptDirectProcessedTask.class, currentTask);
+                memory.event.emit(Events.ConceptDirectProcessedTask.class, currentTask, getCurrentConcept());
             }
         }
         if (!currentTask.sentence.isEternal()) {

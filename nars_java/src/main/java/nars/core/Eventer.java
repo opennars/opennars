@@ -9,10 +9,9 @@ import reactor.core.Environment;
 import reactor.core.Reactor;
 import reactor.core.spec.Reactors;
 import reactor.event.Event;
-import reactor.event.dispatch.Dispatcher;
-import reactor.event.dispatch.SynchronousDispatcher;
 import reactor.event.registry.Registration;
 import reactor.event.selector.Selector;
+import reactor.event.selector.Selectors;
 import reactor.function.Consumer;
 
 /**
@@ -20,36 +19,42 @@ import reactor.function.Consumer;
  * @author me
  */
 public class Eventer<E> {
-    public final Environment env;
     public final Reactor r;
 
     public Eventer(Reactor r) {
-        this(new Environment(), r);
-    }
-    
-    public Eventer(Environment e, Reactor r) {
         this.r = r;
-        this.env = e;
+
+        if (Parameters.DEBUG_TRACE_EVENTS) {
+
+            System.out.println(r);
+            System.out.println(r.getDispatcher());
+            System.out.println(r.getEventRouter());
+
+            r.on(Selectors.matchAll(), x -> {
+                System.out.println(x + " --> " +
+                        r.getConsumerRegistry().select(x.getKey()).size());
+            });
+        }
+
     }
 
-    public Eventer(Environment e, Dispatcher d) {
-        this(e, Reactors.reactor().env(e).dispatcher(d).get());
+    public void synch() {
+        r.getDispatcher().awaitAndShutdown();
     }
-    
-    public Eventer(String dispatcher) {
-        this(Reactors.reactor().env(new Environment()).dispatcher(dispatcher).get());        
+
+    public void shutdown() {
+        r.getDispatcher().shutdown();
     }
 
     /** new Eventer with a dispatcher mode that runs in the same thread */
     public static Eventer newSynchronous() {
-        SynchronousDispatcher d = new SynchronousDispatcher();
-        return new Eventer(new Environment(), d);
+        return new Eventer(Reactors.reactor().env(new Environment()).synchronousDispatcher().firstEventRouting().get());
     }
 
-    /** new Eventer with a dispatcher mode that runs in 1 separate */
-    public static Eventer newWorkQueue() {
+
+    /*public static Eventer newWorkQueue() {
         return new Eventer(Reactors.reactor(new Environment(), Environment.WORK_QUEUE));
-    }
+    }*/
 
     public Registration on(Selector s, Consumer c) {
         return r.on(s, c);
@@ -57,12 +62,13 @@ public class Eventer<E> {
     
 
 
-    public void shutdown() {
-        r.getDispatcher().shutdown();
+
+
+    public void notify(Class channel, Object arg) {
+        r.notify(channel, Event.wrap(arg));
     }
 
-    public void emit(Class channel, Object arg) {        
-        r.notify(channel, Event.wrap(arg));
-    }    
-    
+    public void notify(E channel) {
+        r.notify(channel);
+    }
 }
