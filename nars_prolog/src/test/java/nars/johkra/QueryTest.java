@@ -1,5 +1,6 @@
 package nars.johkra;
 
+import nars.WAMPrologTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,28 +23,36 @@ public class QueryTest {
         System.setOut(new PrintStream(outContent));
     }
 
-    private void verifyOutput(String commands, String exceptedOutput) throws Exception {
+    private void testJohkra(String commands, String expectedOutput) throws Exception {
         byte[] bytes = commands.getBytes("utf-8");
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
         JoProlog.procFile(input, "");
-        assertEquals(exceptedOutput, outContent.toString());
+        assertEquals(expectedOutput, outContent.toString());
+    }
+
+    private void testJohkra(String theory, String query, String expectedOutput) throws Exception {
+        String o = theory + '\n' + query + "?\n";
+        testJohkra(o, expectedOutput + '\n');
+
+        if (!theory.endsWith(".")) theory = theory + ".";
+        WAMPrologTest.test(theory, query, expectedOutput);
     }
 
     @Test
     public void testSimpleQuery() throws Exception {
-        verifyOutput("boy(bill)\n" +
-                "boy(bill)?",
-                "Yes\n");
+        testJohkra("boy(bill)",
+                "boy(bill)",
+                "Yes");
     }
 
     @Test
     public void testVariableQuery() throws Exception {
-        verifyOutput("boy(X)?", "{X=bill}\n");
+        testJohkra("boy(X)?", "{X=bill}\n");
     }
 
     @Test
     public void testIndirectQuery() throws Exception {
-        verifyOutput("mother(alice,bill)\n" +
+        testJohkra("mother(alice,bill)\n" +
                 "child(J,K) :- mother(K,J)\n" +
                 "son(X,Y) :- child(X,Y),boy(X)\n" +
                 "son(X,alice)?", "{X=bill}\n");
@@ -51,7 +60,7 @@ public class QueryTest {
 
     @Test
     public void testMember() throws Exception {
-        verifyOutput("member(X,[X|T])\n" +
+        testJohkra("member(X,[X|T])\n" +
                 "member(X,[H|T]) :- member(X,T)\n" +
                 "member(a,[a,b,c])?\n" +
                 "member(b,[a,b,c])?\n" +
@@ -60,14 +69,14 @@ public class QueryTest {
 
     @Test
     public void testAppend() throws Exception {
-        verifyOutput("append([],L,L)\n" +
+        testJohkra("append([],L,L)\n" +
                 "append([X|A],B,[X|C]) :- append(A,B,C)\n" +
                 "append([a,b],[c,d],X)?", "{X=[a,b,c,d]}\n");
     }
 
     @Test
     public void testLength() throws Exception {
-        verifyOutput("length([],0)\n" +
+        testJohkra("length([],0)\n" +
                 "length([H|T],N) :- length(T,Nt), N is Nt+1\n" +
                 "length([],X)?\n" +
                 "length([1],X)?\n" +
@@ -76,17 +85,17 @@ public class QueryTest {
 
     @Test
     public void testWithoutCut() throws Exception {
-        verifyOutput("childOf(X,Y) :- parent(Y,X)\n" +
+        testJohkra("childOf(X,Y) :- parent(Y,X)\n" +
                 "parent(chris,jon)\n" +
                 "parent(maryann,jon)\n" +
-                "childOf(A,B)?","{A=jon, B=chris}\n" +
+                "childOf(A,B)?", "{A=jon, B=chris}\n" +
                 "{A=jon, B=maryann}\n");
     }
 
     @Test
     public void testFail() throws Exception {
-        verifyOutput("childOfCut(X,Y) :- parent(Y,X),cut\n" +
-                "childOfCut(A,B)?",
+        testJohkra("childOfCut(X,Y) :- parent(Y,X),cut\n" +
+                        "childOfCut(A,B)?",
                 "{A=jon, B=chris}\n");
     }
 

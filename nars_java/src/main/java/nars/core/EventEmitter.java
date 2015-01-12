@@ -9,8 +9,6 @@ import reactor.event.selector.Selectors;
 
 import java.util.ArrayList;
 
-import static reactor.event.selector.Selectors.T;
-
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
  * TODO separate this into a single-thread and multithread implementation
@@ -29,7 +27,7 @@ public class EventEmitter extends Eventer<Object> {
     }
 
     public final boolean isActive(final Class event) {
-        return !r.getConsumerRegistry().select(T(event)).isEmpty();
+        return !r.getConsumerRegistry().select(event).isEmpty();
     }
 
     public Registration on(Class<?> channel, EventEmitter.EventObserver obs) {

@@ -5,7 +5,11 @@ import nars.io.meter.event.ValueMeter;
 
 /**
  * Logic/reasoning sensors
- * TODO convert all sensors so that what is in commit(m) becomes the commit() method of each sensor
+ *
+ * TODO make a distinction between ValueMeter and IncrementingValueMeter for
+ * accumulating multiple cycless data into one frame's aggregate
+ *
+ * TODO add the remaining meter types for NARS data structures (ex: Concept metrics)
  */
 public class LogicMeter {
     
@@ -13,17 +17,17 @@ public class LogicMeter {
     
     public final HitMeter TASK_IMMEDIATE_PROCESS = new HitMeter("task.immediate_process");
     
-    public final ValueMeter TASKLINK_FIRE = new ValueMeter("tasklink.fire");
+    public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
     
     /** triggered at beginning of StructuralRules.reason(), entry point of inference. counts invocation and records priority of termlink parameter.
      */
-    public final ValueMeter REASON = new ValueMeter("reason.tasktermlinks"); 
+    public final HitMeter REASON = new HitMeter("reason.tasktermlinks");
     
     /**
        triggered for each StructuralRules.contraposition().
        counts invocation and records complexity of statement parameter      
      */
-    public final ValueMeter CONTRAPOSITION = new ValueMeter("reason.contraposition"); 
+    public final HitMeter CONTRAPOSITION = new HitMeter("reason.contraposition");
     
     
     public final HitMeter TASK_ADD_NEW = new HitMeter("task.new.add");

@@ -162,8 +162,12 @@ public class WAMProlog {
                 r.append( "\r\n" );
             }
             return r.append(Boolean.toString(success)).toString();
-        }    
-    
+        }
+
+        public String toJSON() {
+            return super.toString();
+        }
+
     }
     
     public Query query(String query) throws ParseException {

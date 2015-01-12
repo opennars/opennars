@@ -106,7 +106,7 @@ public class NALTest  {
             for (Failure f : result.getFailures()) {
                 System.err.println(f);
                 System.err.println("  " + f.getException());
-                f.getException().printStackTrace();;
+                f.getException().printStackTrace();
 
                 String test = f.getMessage().substring(f.getMessage().indexOf("test/nal") + 8, f.getMessage().indexOf(".nal"));
 

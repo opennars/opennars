@@ -71,7 +71,7 @@ public class Engine /*Castagna 06/2011*/ implements IEngine/**/ {
     StateEnd run(double maxTimeSeconds) {
         String action;
 
-        long timeoutNS = (long) (maxTimeSeconds * 1e9);
+        long timeoutNS = maxTimeSeconds > 0 ? (long) (maxTimeSeconds * 1e9) : 0;
 
         long start = System.nanoTime();
 

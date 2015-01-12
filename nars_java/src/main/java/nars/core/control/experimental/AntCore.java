@@ -67,10 +67,13 @@ public class AntCore extends ConceptWaveCore {
             numConcepts += a.cycle(cycleSpeed, run);
         }
 
+        /*
         long t = memory.time();
         if (t % 10 == 0)
             System.out.println(t+": "+ run.size() + "[" + numNew + "|" + numNovel + "|" + numConcepts + "|" + other);
-            
+        */
+
+
         if (run.isEmpty()) return;
         
         final ConcurrentContext ctx = ConcurrentContext.enter();

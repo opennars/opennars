@@ -748,7 +748,7 @@ public class Struct extends Term {
         } else {
             CharSequence s = (Parser.isAtom(name) ? name : atomEscape(name));
             if (arity > 0) {
-                s += "(";
+                s = s + "(";
                 for (int c = 1;c < arity;c++) {
                     if (!(arg[c - 1] instanceof Var)) {
                         s = s + arg[c - 1].toString() + ",";

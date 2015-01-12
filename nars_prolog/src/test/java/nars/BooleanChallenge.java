@@ -1,4 +1,4 @@
-package perf;
+package nars;
 
 import nars.NARPrologMirror;
 import nars.core.EventEmitter.EventObserver;

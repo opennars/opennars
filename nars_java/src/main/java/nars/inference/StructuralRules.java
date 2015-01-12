@@ -636,7 +636,7 @@ public final class StructuralRules {
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final NAL nal) {
         Memory memory = nal.mem();
-        memory.logic.CONTRAPOSITION.set((double) statement.complexity);
+        memory.logic.CONTRAPOSITION.hit();
 
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();

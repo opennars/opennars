@@ -57,9 +57,23 @@ public class WAMPrologTest {
         test(t, "s(x,y)", true, null, null);
         test(t, "s(y,x)", true, null, null);
         test(t, "s(x,w)", false, null, null);
-    }    
-    
-    void test(String theory, String query, boolean expected, String variable, String value) throws ParseException {
+    }
+
+    public static void test(String theory, String query, String result) throws ParseException {
+        WAMProlog p = WAMProlog.newSmall().setTheory(theory.trim());
+
+        Query q = p.query(query.trim());
+
+        Answer a = q.nextAnswer();
+
+        assertTrue(a.success);
+
+        if (!result.equals("Yes"))
+            assertEquals(result, a.toJSON());
+
+    }
+
+    public static void test(String theory, String query, boolean expected, String variable, String value) throws ParseException {
         
         WAMProlog p = WAMProlog.newSmall().setTheory(theory);
 

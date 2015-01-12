@@ -1,10 +1,10 @@
 package nars.narclear;
 
-import nars.NARPrologMirror;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
+import nars.core.build.Neuromorphic;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;
@@ -43,6 +43,114 @@ public class Rover2 extends PhysicsModel {
     public RoverModel rover;
     final NAR nar;
     int mission = 0;
+
+
+    public static void main(String[] args) {
+        Parameters.DEBUG = false;
+        boolean multithread = true;
+
+        NARSwing.themeInvert();
+
+        NAR nar;
+        if (multithread) {
+            Parameters.THREADS = 4;
+            nar = new NAR(new Neuromorphic(128).simulationTime()
+                    .setConceptBagSize(1500).setSubconceptBagSize(4000)
+                    .setNovelTaskBagSize(512)
+                    .setTermLinkBagSize(150)
+                    .setTaskLinkBagSize(60)
+                    .setInternalExperience(null));
+            nar.setCyclesPerFrame(256);
+        }
+        else {
+            Parameters.THREADS = 1;
+            nar = new NAR(new Default().simulationTime());
+            nar.setCyclesPerFrame(8);
+        }
+
+        //NAR nar = new CurveBagNARBuilder().
+
+        //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
+
+
+        //new NARPrologMirror(nar, 0.30f, true, true, false);
+
+
+
+        float framesPerSecond = 30f;
+
+        Parameters.STM_SIZE = 4;
+        (nar.param).noiseLevel.set(3);
+        (nar.param).duration.set(5);
+        (nar.param).conceptForgetDurations.set(25f);
+        (nar.param).taskLinkForgetDurations.set(25f);
+        (nar.param).termLinkForgetDurations.set(25f);
+        (nar.param).novelTaskForgetDurations.set(20f);
+
+        final Rover2 theRover = new Rover2(nar);
+
+        //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
+        //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
+        // RoverWorld.world= new RoverWorld(rv, 48, 48);
+        new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, theRover ) {
+
+            @Override
+            public void cycle() {
+                super.cycle();
+                nar.memory.addSimulationTime(1);
+            }
+
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+                if (e.getKeyChar() == 'm') {
+                    theRover.mission = (theRover.mission + 1) % 2;
+                    System.out.println("Mission: " + theRover.mission);
+                } else if (e.getKeyChar() == 'g') {
+                    System.out.println(nar.memory.concepts);
+                    //removedConcepts.report(System.out);
+                }
+
+//                if (e.getKeyCode() == KeyEvent.VK_UP) {
+//                    if(!Rover2.allow_imitate) {
+//                        nar.addInput("(^motor,linear,1). :|:");
+//                    } else {
+//                        nar.addInput("(^motor,linear,1)!");
+//                    }
+//                }
+//                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+//                    if(!Rover2.allow_imitate) {
+//                        nar.addInput("(^motor,linear,-1). :|:");
+//                    } else {
+//                        nar.addInput("(^motor,linear,-1)!");
+//                    }
+//                }
+//                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+//                    if(!Rover2.allow_imitate) {
+//                        nar.addInput("(^motor,turn,-1). :|:");
+//                    } else {
+//                        nar.addInput("(^motor,turn,-1)!");
+//                    }
+//                }
+//                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+//                    if(!Rover2.allow_imitate) {
+//                        nar.addInput("(^motor,turn,1). :|:");
+//                    } else {
+//                        nar.addInput("(^motor,turn,1)!");
+//                    }
+//                }
+            }
+
+        };
+
+        nar.start((long)(1000f/framesPerSecond));
+
+        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
+    }
+
+
+
 
     private static final double TWO_PI = 2 * Math.PI;
 
@@ -338,103 +446,9 @@ public class Rover2 extends PhysicsModel {
 
     }
 
-    @Override
-    public String getTestName() {
+
+    @Override     public String getTestName() {
         return "NARS Rover";
-    }
-
-    public static void main(String[] args) {
-        Parameters.DEBUG = false;
-        
-        
-        NARSwing.themeInvert();
-
-        Parameters.THREADS = 1;
-        NAR nar = new NAR(new Default().simulationTime());
-        nar.setCyclesPerFrame(8);
-        
-        //NAR nar = new CurveBagNARBuilder().
-
-        //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-                
-        //Parameters.THREADS = 2;
-        //NAR nar = new NAR(new Neuromorphic(32).setConceptBagSize(1200).setSubconceptBagSize(4000).setTaskLinkBagLevels(10).setTermLinkBagLevels(10).setNovelTaskBagSize(128).simulationTime().setInternalExperience(null));
-        //nar.setCyclesPerFrame(2);
-                
-        new NARPrologMirror(nar, 0.30f, true, true, false);      
-        
-        
-
-        float framesPerSecond = 30f;
-        
-        Parameters.STM_SIZE = 4;
-        (nar.param).noiseLevel.set(3);
-        (nar.param).duration.set(5);
-        (nar.param).conceptForgetDurations.set(25f);
-        (nar.param).taskLinkForgetDurations.set(25f);
-        (nar.param).termLinkForgetDurations.set(25f);
-        (nar.param).novelTaskForgetDurations.set(20f);
-
-        final Rover2 theRover = new Rover2(nar);
-
-        //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
-        //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
-        // RoverWorld.world= new RoverWorld(rv, 48, 48);
-        new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, theRover ) {
-
-            @Override
-            public void cycle() {
-                super.cycle(); 
-                nar.memory.addSimulationTime(1);
-            }
-
-            
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-                if (e.getKeyChar() == 'm') {
-                    theRover.mission = (theRover.mission + 1) % 2;
-                    System.out.println("Mission: " + theRover.mission);
-                } else if (e.getKeyChar() == 'g') {
-                    System.out.println(nar.memory.concepts);
-                    //removedConcepts.report(System.out);
-                }
-
-//                if (e.getKeyCode() == KeyEvent.VK_UP) {
-//                    if(!Rover2.allow_imitate) {
-//                        nar.addInput("(^motor,linear,1). :|:");
-//                    } else {
-//                        nar.addInput("(^motor,linear,1)!");
-//                    }
-//                }
-//                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-//                    if(!Rover2.allow_imitate) {
-//                        nar.addInput("(^motor,linear,-1). :|:");
-//                    } else {
-//                        nar.addInput("(^motor,linear,-1)!");
-//                    }
-//                }
-//                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-//                    if(!Rover2.allow_imitate) {
-//                        nar.addInput("(^motor,turn,-1). :|:");
-//                    } else {
-//                        nar.addInput("(^motor,turn,-1)!");
-//                    }
-//                }
-//                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-//                    if(!Rover2.allow_imitate) {
-//                        nar.addInput("(^motor,turn,1). :|:");
-//                    } else {
-//                        nar.addInput("(^motor,turn,1)!");
-//                    }
-//                }
-            }
-
-        };
-
-        nar.start((long)(1000f/framesPerSecond));
-
-        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }
 
 }
