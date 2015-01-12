@@ -226,7 +226,7 @@ public class JavaLibrary extends Library {
                 getEngine().warn("Invalid constructor arguments.");
                 throw new JavaException(ex);
             } catch (NoSuchMethodException ex) {
-                getEngine().warn("Constructor not found: " + args.getTypes());
+                getEngine().warn("Constructor not found: " + Arrays.toString(args.getTypes()));
                 throw new JavaException(ex);
             } catch (InstantiationException ex) {
                 getEngine().warn(
@@ -325,7 +325,7 @@ public class JavaLibrary extends Library {
                 if (cp.length() > 0) {
                     cp += ";";
                 }
-                cp += Tools.removeApices(((Struct) it.next())
+                cp += Tools.removeApices(it.next()
                         .toString());
             }
             if (cp.length() > 0) {
@@ -1188,7 +1188,7 @@ public class JavaLibrary extends Library {
         Object[] values = new Object[method.getArity()];
         Class<?>[] types = new Class[method.getArity()];
         for (int i = 0; i < method.getArity(); i++) {
-            if (!parse_arg(values, types, i, (Term) method.getTerm(i))) {
+            if (!parse_arg(values, types, i, method.getTerm(i))) {
                 return null;
             }
         }
@@ -1231,16 +1231,16 @@ public class JavaLibrary extends Library {
             } else if (term instanceof Number) {
                 Number t = (Number) term;
                 if (t instanceof Int) {
-                    values[i] = new java.lang.Integer(t.intValue());
+                    values[i] = t.intValue();
                     types[i] = java.lang.Integer.TYPE;
                 } else if (t instanceof nars.prolog.Double) {
-                    values[i] = new java.lang.Double(t.doubleValue());
+                    values[i] = t.doubleValue();
                     types[i] = java.lang.Double.TYPE;
                 } else if (t instanceof nars.prolog.Long) {
-                    values[i] = new java.lang.Long(t.longValue());
+                    values[i] = t.longValue();
                     types[i] = java.lang.Long.TYPE;
                 } else if (t instanceof nars.prolog.Float) {
-                    values[i] = new java.lang.Float(t.floatValue());
+                    values[i] = t.floatValue();
                     types[i] = java.lang.Float.TYPE;
                 }
             } else if (term instanceof Struct) {
@@ -1325,9 +1325,9 @@ public class JavaLibrary extends Library {
                     if (obj_to_cast == null) {
                         if (castTo_name.equals("boolean")) {
                             if (castWhat_name.equals("true")) {
-                                values[i] = new Boolean(true);
+                                values[i] = true;
                             } else if (castWhat_name.equals("false")) {
-                                values[i] = new Boolean(false);
+                                values[i] = false;
                             } else {
                                 return false;
                             }
@@ -1378,22 +1378,22 @@ public class JavaLibrary extends Library {
                 Number num = (Number) castWhat;
                 String castTo_name = ((Struct) castTo).getName();
                 if (castTo_name.equals("byte")) {
-                    values[i] = new Byte((byte) num.intValue());
+                    values[i] = (byte) num.intValue();
                     types[i] = Byte.TYPE;
                 } else if (castTo_name.equals("short")) {
-                    values[i] = new Short((short) num.intValue());
+                    values[i] = (short) num.intValue();
                     types[i] = Short.TYPE;
                 } else if (castTo_name.equals("int")) {
-                    values[i] = new Integer(num.intValue());
+                    values[i] = num.intValue();
                     types[i] = Integer.TYPE;
                 } else if (castTo_name.equals("long")) {
-                    values[i] = new java.lang.Long(num.longValue());
+                    values[i] = num.longValue();
                     types[i] = java.lang.Long.TYPE;
                 } else if (castTo_name.equals("float")) {
-                    values[i] = new java.lang.Float(num.floatValue());
+                    values[i] = num.floatValue();
                     types[i] = java.lang.Float.TYPE;
                 } else if (castTo_name.equals("double")) {
-                    values[i] = new java.lang.Double(num.doubleValue());
+                    values[i] = num.doubleValue();
                     types[i] = java.lang.Double.TYPE;
                 } else {
                     return false;
@@ -1417,7 +1417,7 @@ public class JavaLibrary extends Library {
         }
         try {
             if (Boolean.class.isInstance(obj)) {
-                if (((Boolean) obj).booleanValue()) {
+                if ((Boolean) obj) {
                     return unify(id, Term.TRUE);
                 } else {
                     return unify(id, Term.FALSE);
@@ -1427,20 +1427,19 @@ public class JavaLibrary extends Library {
             } else if (Short.class.isInstance(obj)) {
                 return unify(id, new Int(((Short) obj).intValue()));
             } else if (Integer.class.isInstance(obj)) {
-                return unify(id, new Int(((Integer) obj).intValue()));
+                return unify(id, new Int((Integer) obj));
             } else if (java.lang.Long.class.isInstance(obj)) {
-                return unify(id, new nars.prolog.Long(((java.lang.Long) obj)
-                        .longValue()));
+                return unify(id, new nars.prolog.Long((java.lang.Long) obj));
             } else if (java.lang.Float.class.isInstance(obj)) {
                 return unify(id, new nars.prolog.Float(
-                        ((java.lang.Float) obj).floatValue()));
+                        (java.lang.Float) obj));
             } else if (java.lang.Double.class.isInstance(obj)) {
                 return unify(id, new nars.prolog.Double(
-                        ((java.lang.Double) obj).doubleValue()));
+                        (java.lang.Double) obj));
             } else if (String.class.isInstance(obj)) {
                 return unify(id, new Struct((String) obj));
             } else if (Character.class.isInstance(obj)) {
-                return unify(id, new Struct(((Character) obj).toString()));
+                return unify(id, new Struct(obj.toString()));
             } else {
                 return bindDynamicObject(id, obj);
             }
@@ -1825,7 +1824,7 @@ public class JavaLibrary extends Library {
 
                 return null;
             case 1:
-                return (Method) goodMethods.firstElement();
+                return goodMethods.firstElement();
             default:
                 return mostSpecificMethod(goodMethods);
         }
@@ -1915,8 +1914,8 @@ public class JavaLibrary extends Library {
         for (int i = 0; i != methods.size(); i++) {
             for (int j = 0; j != methods.size(); j++) {
                 if ((i != j)
-                        && (moreSpecific((Method) methods.elementAt(i),
-                                (Method) methods.elementAt(j)))) {
+                        && (moreSpecific(methods.elementAt(i),
+                        methods.elementAt(j)))) {
                     methods.removeElementAt(j);
                     if (i > j) {
                         i--;
@@ -1926,7 +1925,7 @@ public class JavaLibrary extends Library {
             }
         }
         if (methods.size() == 1) {
-            return (Method) methods.elementAt(0);
+            return methods.elementAt(0);
         } else {
             throw new NoSuchMethodException(">1 most specific method");
         }
@@ -2012,20 +2011,17 @@ public class JavaLibrary extends Library {
                         && pclasses[i].equals(java.lang.Double.TYPE)) {
                     // arg required: a float, arg provided: a double
                     // so we need an explicit conversion...
-                    newvalues[i] = new java.lang.Float(
-                            ((java.lang.Double) values[i]).floatValue());
+                    newvalues[i] = ((java.lang.Double) values[i]).floatValue();
                 } else if (mclasses[i].equals(java.lang.Float.TYPE)
                         && pclasses[i].equals(java.lang.Integer.TYPE)) {
                     // arg required: a float, arg provided: an int
                     // so we need an explicit conversion...
-                    newvalues[i] = new java.lang.Float(
-                            ((java.lang.Integer) values[i]).intValue());
+                    newvalues[i] = (float) ((Integer) values[i]).intValue();
                 } else if (mclasses[i].equals(java.lang.Double.TYPE)
                         && pclasses[i].equals(java.lang.Integer.TYPE)) {
                     // arg required: a double, arg provided: an int
                     // so we need an explicit conversion...
-                    newvalues[i] = new java.lang.Double(
-                            ((java.lang.Integer) values[i]).doubleValue());
+                    newvalues[i] = ((Integer) values[i]).doubleValue();
                 } else if (values[i] == null && !mclasses[i].isPrimitive()) {
                     newvalues[i] = null;
                 } else {

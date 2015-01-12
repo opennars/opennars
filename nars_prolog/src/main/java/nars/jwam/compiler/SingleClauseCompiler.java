@@ -28,16 +28,16 @@ public class SingleClauseCompiler {
     ArrayList<Integer> instructions;
 
     public SingleClauseCompiler(Strings strings, Numbers nums, int registerstart, RuleHeap dsm) {
-        this.built_ins = new HashSet<Integer>();
+        this.built_ins = new HashSet<>();
         this.strings = strings;
         this.nums = nums;
         this.registerstart = registerstart;
         preprocessor = new ClausePreprocessor(strings, nums, dsm);
-        enc_perm = new ArrayList<Integer>(); // encountered permanent registers
-        enc_temp = new ArrayList<Integer>(); // encountered temporary registers
-        explicitly_initialized = new ArrayList<Integer>(); // encountered temporary registers
-        sec_enc_perm = new ArrayList<Integer>(); // encountered temporary registers
-        instructions = new ArrayList<Integer>();
+        enc_perm = new ArrayList<>(); // encountered permanent registers
+        enc_temp = new ArrayList<>(); // encountered temporary registers
+        explicitly_initialized = new ArrayList<>(); // encountered temporary registers
+        sec_enc_perm = new ArrayList<>(); // encountered temporary registers
+        instructions = new ArrayList<>();
     }
 
     public HashSet<Integer> getBuiltIns() {

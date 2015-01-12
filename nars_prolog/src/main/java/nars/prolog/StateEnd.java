@@ -110,11 +110,11 @@ public class StateEnd extends State {
 				Term gVar=(Var)a[y];						
 				while(!findName && gVar !=null && gVar instanceof Var){
 					//System.out.println("**** ----- verifico uguaglianza con "+gVar);
-					if(((Var)gVar).getName().toString().compareTo(((Var)link).getName().toString())==0){
+					if(((Var) gVar).getName().compareTo(((Var) link).getName())==0){
 						//System.out.println(link +" **** ----- ***** il nome uguale a "+gVar);
 						//System.out.println(((Struct)initGoalBag).getArg(0));
 						//System.out.println(link +" **** ----- ***** sostituisco "+initGoalBag+" in pos "+pos+" con "+(Var)a[y]);
-						((Struct)initGoalBag).setArg(pos,new Var(((Var)a[y]).getName().toString()));
+						((Struct)initGoalBag).setArg(pos,new Var(((Var) a[y]).getName()));
 						findName=true;
 					}
 					gVar=((Var)gVar).getLink();
@@ -163,13 +163,13 @@ public class StateEnd extends State {
 	    	
     		if(((Struct)query).getName().equals(";")){
     			Struct query_temp = (Struct)((Struct)query).getArg(0);
-    			if(((Struct)query_temp).getName().equals("setof") && setOfCounter==0){
+    			if(query_temp.getName().equals("setof") && setOfCounter==0){
     				query=query_temp;
     				this.setOfCounter++;
     			}
     			else{ 
     				query_temp = (Struct)((Struct)query).getArg(1);
-    				if(((Struct)query_temp).getName().equals("setof"))
+    				if(query_temp.getName().equals("setof"))
     					query=query_temp;
     			}
     		}
@@ -193,7 +193,7 @@ public class StateEnd extends State {
 		    			else if(((Var)initBag).getLink() instanceof Struct){
 		    				Struct s=(Struct)((Var)initBag).getLink();
 		    				//System.out.println("primitive della bag iniziale "+s.getPredicateIndicator().toString());
-		    				if(tgoal instanceof Struct && s.getPredicateIndicator().toString().compareTo(((Struct)tgoal).getPredicateIndicator().toString())==0){
+		    				if(tgoal instanceof Struct && s.getPredicateIndicator().compareTo(((Struct) tgoal).getPredicateIndicator())==0){
 		    					//System.out.println("primitive della bag tgoal "+((Struct)tgoal).getPredicateIndicator().toString());
 		    					findSamePredicateIndicator=true;
 		    					find=true;
@@ -402,7 +402,7 @@ public class StateEnd extends State {
 		    	    		t = resVar.getLink();
 		    	    		//System.out.println("---RESVAR BAG LINK "+resVar);	
 	    				}
-	    				lSolVar.add(((Var)resVar).getName());
+	    				lSolVar.add(resVar.getName());
 	    				bag.set(i, resVar);
 	    			}
 	    		}
@@ -530,7 +530,7 @@ public class StateEnd extends State {
 		    	}
 		    	//System.out.println("La variabile da sostituire � "+bagVarName+" con valore "+goalSolution);
 		    	for(int j=0; j<vars.size(); j++){
-		    		Var vv=(Var)vars.get(j);
+		    		Var vv= vars.get(j);
 		    		if(vv.getOriginalName().equals(bagVarName)){
 		    			Var solVar=varValue2(goalSolution);
 		    			// qui sarebbe bello fare un set del nome
@@ -553,7 +553,7 @@ public class StateEnd extends State {
 	    	for(int m=0; m<bagString.size(); m++){
 	    		String bagResString=bag.get(m).toString();
 	    		boolean var=false;
-	    		if(bag.get(m) instanceof Var && ((Var)bag.get(m)).getLink()!=null && (((Var)bag.get(m)).getLink() instanceof Struct) && !((Struct)((Var)bag.get(m)).getLink()).isAtomic())
+	    		if(bag.get(m) instanceof Var && ((Var)bag.get(m)).getLink()!=null && (((Var)bag.get(m)).getLink() instanceof Struct) && !((Var)bag.get(m)).getLink().isAtomic())
 	    				var = true;
 	    		//System.out.println("&&&&&& Var "+var);
 	    		if(var && bagResString.length()!=bagString.get(m).length()){
@@ -567,7 +567,7 @@ public class StateEnd extends State {
 			        	//System.out.println("COMPARE "+t1+" "+t2);
 			        	if(t1.compareTo(t2)!=0 && !t2.contains("_")){
 			        		//System.out.println("DIVERSO TOKEN "+t1+" "+t2);
-			        		s=s+lGoalVar.get(i).toString()+"="+t2+" ";
+			        		s=s+ lGoalVar.get(i) +"="+t2+" ";
 			        		//System.out.println(s);
 			        		c.getEngineMan().setSetOfSolution(s);
 			        		i++;

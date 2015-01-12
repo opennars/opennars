@@ -144,13 +144,13 @@ public class IOLibrary extends Library {
         	inputStreamName = STDIN_NAME;
         } else {
             try {
-                inputStream = new FileInputStream(((Struct) arg0).getName());
+                inputStream = new FileInputStream(arg0.getName());
             } catch (FileNotFoundException e) {
                 throw PrologError.domain_error(engine.getEngineManager(), 1,
                         "stream", arg0);
             }
         }
-        inputStreamName = ((Struct) arg0).getName();
+        inputStreamName = arg0.getName();
         return true;
     }
 
@@ -192,13 +192,13 @@ public class IOLibrary extends Library {
             outputStreamName = STDOUT_NAME;
         } else {
             try {
-                outputStream = new FileOutputStream(((Struct) arg0).getName());
+                outputStream = new FileOutputStream(arg0.getName());
             } catch (FileNotFoundException e) {
                 throw PrologError.domain_error(engine.getEngineManager(), 1,
                         "stream", arg);
             }
         }
-        outputStreamName = ((Struct) arg0).getName();
+        outputStreamName = arg0.getName();
         return true;
     }
 
@@ -262,7 +262,7 @@ public class IOLibrary extends Library {
         if (ch == -1) {
             return unify(arg0, new Int(-1));
         } else {
-            return unify(arg0, new Struct(new Character((char) ch).toString()));
+            return unify(arg0, new Struct(Character.toString((char) ch)));
         }
     }
 
@@ -281,7 +281,7 @@ public class IOLibrary extends Library {
             return unify(arg0, new Int(-1));
         } else {
             return unify(arg0,
-                    new Struct(new Character(((char) ch)).toString()));
+                    new Struct(Character.toString(((char) ch))));
         }
     }
 
@@ -338,17 +338,9 @@ public class IOLibrary extends Library {
             boolean can_add = true;
 
             if (ch == '\'') {
-                if (!open_apices) {
-                    open_apices = true;
-                } else {
-                    open_apices = false;
-                }
+                open_apices = !open_apices;
             } else if (ch == '\"') {
-                if (!open_apices2) {
-                    open_apices2 = true;
-                } else {
-                    open_apices2 = false;
-                }
+                open_apices2 = !open_apices2;
             } else {
                 if (ch == '.') {
                     if (!open_apices && !open_apices2) {
@@ -358,7 +350,7 @@ public class IOLibrary extends Library {
             }
 
             if (can_add) {
-                st += new Character(((char) ch)).toString();
+                st += Character.toString(((char) ch));
             }
         } while (true);
         try {
@@ -445,7 +437,7 @@ public class IOLibrary extends Library {
                     file_name);
         Struct fileName = (Struct) file_name.getTerm();
         Struct goal = null;
-        String path = Tools.removeApices(((Struct) fileName).toString());
+        String path = Tools.removeApices(fileName.toString());
         if(! new File(path).isAbsolute()) {
             path = engine.getCurrentDirectory()  + File.separator + path;
         }
@@ -475,7 +467,7 @@ public class IOLibrary extends Library {
         if( !seed.isInteger() ){
             throw PrologError.type_error(engine.getEngineManager(), 1, "Integer Number", t);
         }
-        gen.setSeed(((Number)seed).longValue());
+        gen.setSeed(seed.longValue());
         return true;
     }
 

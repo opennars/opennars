@@ -17,7 +17,7 @@ public class InternalDatabase implements Serializable {
 
     /* For GC */
     /** A list of reusable entry indices. */
-    protected LinkedList<Integer> reusableIndices = new LinkedList<Integer>();
+    protected LinkedList<Integer> reusableIndices = new LinkedList<>();
 
     /** the top index of this <code>InternalDatabase</code>. */
     protected int top;
@@ -54,9 +54,7 @@ public class InternalDatabase implements Serializable {
 	    System.out.println("{expanding internal database...}");
 	    int len = buffer.length;
 	    Term[] new_buffer = new Term[len+10000];
-	    for(int i=0; i<len; i++){
-		new_buffer[i] = buffer[i];
-	    }
+		System.arraycopy(buffer, 0, new_buffer, 0, len);
 	    buffer = new_buffer;
 	    buffer[top] = t;
 	    maxContents = len+20000;

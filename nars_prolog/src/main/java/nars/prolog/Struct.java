@@ -805,7 +805,7 @@ public class Struct extends Term {
             // comma case 
             Term head = ((Struct)arg[0]).getTerm(0);
             Term tail = ((Struct)arg[0]).getTerm(1);
-            StringBuffer buf = new StringBuffer(head.toString());
+            StringBuilder buf = new StringBuilder(head.toString());
             while (tail instanceof Struct && ((Struct)tail).getName().equals(",")){
                 head = ((Struct)tail).getTerm(0);
                 buf.append(",").append(head.toString());

@@ -212,7 +212,7 @@ public class VariableTerm extends Term implements Undoable {
 	    return BEFORE;
 	if (this == anotherTerm) 
 	    return EQUAL;
-	int x = this.hashCode() - ((VariableTerm)anotherTerm).hashCode();
+	int x = this.hashCode() - anotherTerm.hashCode();
 	if (x != 0)
 	    return x;
 	throw new InternalException("VariableTerm is not unique");

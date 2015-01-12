@@ -134,7 +134,7 @@ public abstract class InputHandler extends KeyAdapter
      */
     public static ActionListener getAction(String name)
     {
-        return (ActionListener)actions.get(name);
+        return actions.get(name);
     }
 
     /**
@@ -146,7 +146,7 @@ public abstract class InputHandler extends KeyAdapter
         Enumeration<String> en = getActions();
         while(en.hasMoreElements())
         {
-            String name = (String)en.nextElement();
+            String name = en.nextElement();
             ActionListener _listener = getAction(name);
             if(_listener == listener)
                 return name;
@@ -1069,7 +1069,7 @@ public abstract class InputHandler extends KeyAdapter
 
             if(textArea.isEditable())
             {
-                StringBuffer buf = new StringBuffer();
+                StringBuilder buf = new StringBuilder();
                 for(int i = 0; i < repeatCount; i++)
                     buf.append(str);
                 textArea.overwriteSetSelectedText(buf.toString());

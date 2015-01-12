@@ -19,6 +19,7 @@ package nars.prolog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 
 /**
@@ -121,7 +122,7 @@ public class PrimitiveInfo {
         }
         try {
         	//System.out.println("PRIMITIVE INFO evalAsPredicate sto invocando metodo "+method.getName());
-            return ((Boolean)method.invoke(source,primitive_args)).booleanValue();
+            return (Boolean) method.invoke(source, primitive_args);
         } catch (InvocationTargetException e) {
             throw e.getCause();
         }
@@ -146,7 +147,7 @@ public class PrimitiveInfo {
     
     
     public String toString() {
-        return "[ primitive: method "+method.getName()+" - "+primitive_args+" - N args: "+primitive_args.length+" - "+source.getClass().getName()+" ]\n";
+        return "[ primitive: method "+method.getName()+" - "+ Arrays.toString(primitive_args) +" - N args: "+primitive_args.length+" - "+source.getClass().getName()+" ]\n";
     }
     
 }

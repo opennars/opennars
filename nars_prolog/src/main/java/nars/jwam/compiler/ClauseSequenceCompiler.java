@@ -20,7 +20,7 @@ public class ClauseSequenceCompiler {
             prim_result = Arrays.copyOf(entries.get(0), entries.get(0).length + 1); 				// Only one entry, return its instructions
             prim_result[prim_result.length - 1] = WAM.make_instruction(WAM.DYNAMIC_CODE_END, prim_result.length - 1);
         } else {
-            ArrayList<Integer> result = new ArrayList<Integer>();
+            ArrayList<Integer> result = new ArrayList<>();
             if (r.isDynamic(functor)) {
                 addDynamicTRT(result, entries, 0, entries.size());
                 result.add(WAM.make_instruction(WAM.DYNAMIC_CODE_END, result.size()));
@@ -78,12 +78,12 @@ public class ClauseSequenceCompiler {
     }
 
     private ArrayList<int[]> toSequences(RuleHeap dsm, int functor) {
-        ArrayList<int[]> r = new ArrayList<int[]>();						 // The result instructions
+        ArrayList<int[]> r = new ArrayList<>();						 // The result instructions
         ArrayList<int[]> clauses = dsm.instruction(functor);		 // The instructions of the individual clauses
         ArrayList<int[]> heaps = dsm.getHeaps().get(functor);				 // The heap data of each instruction
         boolean appendToSequence = false;									 // Boolean for whether a new sequence is needed or not
-        ArrayList<int[]> sequence = new ArrayList<int[]>();
-        ArrayList<int[]> heap_sequence = new ArrayList<int[]>();
+        ArrayList<int[]> sequence = new ArrayList<>();
+        ArrayList<int[]> heap_sequence = new ArrayList<>();
         for (int i = 0; i < clauses.size(); i++) {
             int[] c = clauses.get(i);
             int[] h = heaps.get(i);
@@ -99,8 +99,8 @@ public class ClauseSequenceCompiler {
             } else {														 // No REF as first argument
                 if (!appendToSequence) {										 // New sequence needed
                     appendToSequence = true;								 // Next element is added to this sequence
-                    sequence = new ArrayList<int[]>();
-                    heap_sequence = new ArrayList<int[]>();
+                    sequence = new ArrayList<>();
+                    heap_sequence = new ArrayList<>();
                 }
                 sequence.add(c);											 // Add this clause to the sequence
                 heap_sequence.add(h);										 // Add this heap to the sequence
@@ -115,12 +115,12 @@ public class ClauseSequenceCompiler {
     }
 
     private int[] sequenceToInstructions(ArrayList<int[]> sequence, ArrayList<int[]> heap_sequence) {
-        ArrayList<Integer> r = new ArrayList<Integer>();
-        HashMap<int[], Integer> start = new HashMap<int[], Integer>();
-        HashMap<Integer, ArrayList<int[]>> constants = new HashMap<Integer, ArrayList<int[]>>();
-        HashMap<Integer, ArrayList<int[]>> structures = new HashMap<Integer, ArrayList<int[]>>();
-        HashMap<Integer, ArrayList<int[]>> lists = new HashMap<Integer, ArrayList<int[]>>();
-        HashMap<Integer, ArrayList<int[]>> nums = new HashMap<Integer, ArrayList<int[]>>();
+        ArrayList<Integer> r = new ArrayList<>();
+        HashMap<int[], Integer> start = new HashMap<>();
+        HashMap<Integer, ArrayList<int[]>> constants = new HashMap<>();
+        HashMap<Integer, ArrayList<int[]>> structures = new HashMap<>();
+        HashMap<Integer, ArrayList<int[]>> lists = new HashMap<>();
+        HashMap<Integer, ArrayList<int[]>> nums = new HashMap<>();
         r.add(0);
         r.add(0);
         r.add(0);
@@ -136,13 +136,13 @@ public class ClauseSequenceCompiler {
             switch (type) {
                 case WAM.CON:
                     if (constants.get(key) == null) {
-                        constants.put(key, new ArrayList<int[]>());
+                        constants.put(key, new ArrayList<>());
                     }
                     constants.get(key).add(c);
                     break;
                 case WAM.NUM:
                     if (nums.get(key) == null) {
-                        nums.put(key, new ArrayList<int[]>());
+                        nums.put(key, new ArrayList<>());
                     }
                     nums.get(key).add(c);
                     break;
@@ -150,13 +150,13 @@ public class ClauseSequenceCompiler {
                     System.out.println("blabla " + WAM.cell_value(h[WAM.cell_value(key)]) + " " + WAM.cell_tag(h[WAM.cell_value(key)]));
                     key = h[WAM.cell_value(key)]; 									// Get the PN cell
                     if (structures.get(key) == null) {
-                        structures.put(key, new ArrayList<int[]>());
+                        structures.put(key, new ArrayList<>());
                     }
                     structures.get(key).add(c);
                     break;
                 case WAM.LIS:
                     if (lists.get(0) == null) {
-                        lists.put(0, new ArrayList<int[]>());
+                        lists.put(0, new ArrayList<>());
                     }
                     lists.get(0).add(c);
                     break;

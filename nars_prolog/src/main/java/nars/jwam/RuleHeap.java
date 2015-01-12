@@ -20,16 +20,16 @@ public class RuleHeap {
 
     public RuleHeap(WAM wam) {
         this.wam = wam;
-        heaps = new HashMap<Integer, ArrayList<int[]>>();
-        instructions = new HashMap<Integer, ArrayList<int[]>>();
-        areas = new ArrayList<int[]>();
+        heaps = new HashMap<>();
+        instructions = new HashMap<>();
+        areas = new ArrayList<>();
         areas.add(0, new int[0]);
         areas.add(0, new int[0]);			// Reserved space for query
-        call_starts = new HashMap<Integer, Integer>();
-        query_vars = new HashMap<Integer, String>();
-        dynamics = new ArrayList<String>();
-        dirty_functors = new HashSet<Integer>();
-        marked_for_removal = new HashMap<Integer, IntArrayList>();
+        call_starts = new HashMap<>();
+        query_vars = new HashMap<>();
+        dynamics = new ArrayList<>();
+        dirty_functors = new HashSet<>();
+        marked_for_removal = new HashMap<>();
     }
 
     /**
@@ -37,7 +37,7 @@ public class RuleHeap {
      * Also refreshes the call function.
      */
     public void injectAllCode() {
-        IntHashMap<int[]> call = new IntHashMap<int[]>(IntHashMap.OBJ);
+        IntHashMap<int[]> call = new IntHashMap<>(IntHashMap.OBJ);
         for (Integer key : call_starts.keySet()) // Make updated call function
         {
             call.putObj(key, WAM.call(0, call_starts.get(key)));
@@ -232,7 +232,7 @@ public class RuleHeap {
      */
     public void addHeap(int functor, int[] heap, boolean front) {
         if (heaps.get(functor) == null) {
-            heaps.put(functor, new ArrayList<int[]>());
+            heaps.put(functor, new ArrayList<>());
         }
         if (front) {
             heaps.get(functor).add(0, heap);
@@ -250,7 +250,7 @@ public class RuleHeap {
      */
     public void addInstructions(int functor, int[] instr, boolean front) {
         if (instructions.get(functor) == null) {
-            instructions.put(functor, new ArrayList<int[]>());
+            instructions.put(functor, new ArrayList<>());
         }
         if (front) {
             instructions.get(functor).add(0, instr);

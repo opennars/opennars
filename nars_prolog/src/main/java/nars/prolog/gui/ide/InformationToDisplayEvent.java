@@ -34,7 +34,7 @@ public class InformationToDisplayEvent extends PrologEvent {
 
     public QueryEvent[] getQueryResults()
     {
-        return (QueryEvent[]) queryEventList.toArray(new QueryEvent[queryEventList.size()]);
+        return queryEventList.toArray(new QueryEvent[queryEventList.size()]);
     }
     
     public ArrayList<String> getQueryResultsString()
@@ -44,7 +44,7 @@ public class InformationToDisplayEvent extends PrologEvent {
 
     public SolveInfo getQueryResult()
     {
-        return ( (QueryEvent) queryEventList.get(0)).getSolveInfo();
+        return queryEventList.get(0).getSolveInfo();
     }
 
     public int getListSize()

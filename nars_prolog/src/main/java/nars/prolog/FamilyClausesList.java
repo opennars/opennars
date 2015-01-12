@@ -99,7 +99,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 
 	@Override
 	public boolean remove(Object ci){
-		if(super.remove((ClauseInfo) ci))
+		if(super.remove(ci))
 		{
 			unregister((ClauseInfo) ci);
 

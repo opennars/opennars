@@ -51,13 +51,13 @@ public class ClausePreprocessor {
     public ClausePreprocessor(Strings strings, Numbers numbers, RuleHeap dsm) {
         this.strings = strings;										// Instantiate the data
         this.numbers = numbers;
-        first_occ = new HashMap<Integer, Integer>();
-        first_occ_as_body_arg = new ArrayList<Integer>();
-        unsafe = new ArrayList<Integer>();
-        last_occ = new HashMap<Integer, Integer>();
-        occurrences = new HashMap<Integer, ArrayList<Token>>();
-        var_registers = new HashMap<Integer, Integer>();
-        query_vars = new HashMap<Integer, String>();
+        first_occ = new HashMap<>();
+        first_occ_as_body_arg = new ArrayList<>();
+        unsafe = new ArrayList<>();
+        last_occ = new HashMap<>();
+        occurrences = new HashMap<>();
+        var_registers = new HashMap<>();
+        query_vars = new HashMap<>();
         this.dsm = dsm;
     }
 
@@ -140,7 +140,7 @@ public class ClausePreprocessor {
                     first_occ_as_body_arg.add(var_nr); // First occurence, and part of the body, thus possibly unsafe if the variable is permanent
                 }
                 first_occ.put(var_nr, occ_part); 										// Remember the bodypart number (for programs the head and first part are numbered 1)
-                occurrences.put(var_nr, new ArrayList<Token>()); 						// Make space for remembering the occurrences
+                occurrences.put(var_nr, new ArrayList<>()); 						// Make space for remembering the occurrences
                 occurrences.get(var_nr).add(tokens[index]); 							// Remember this occurrence
                 if (isQuery) {															// Within a query we keep all variables permanent so we can see after the query execution which values they've got
                     tokens[index].is_perm = true;
@@ -191,10 +191,10 @@ public class ClausePreprocessor {
         if (isQuery) {
             query_vars.clear();															// Clear vars
         }
-        ArrayList<ArrayList<Integer>> last_occ_per_part = new ArrayList<ArrayList<Integer>>(); 	// Make space for computation of Y registers
+        ArrayList<ArrayList<Integer>> last_occ_per_part = new ArrayList<>(); 	// Make space for computation of Y registers
         for (int part = start_of_parts; part <= end_of_parts; part++) // Initiate administration memory
         {
-            last_occ_per_part.add(new ArrayList<Integer>());
+            last_occ_per_part.add(new ArrayList<>());
         }
         for (Integer key : last_occ.keySet()) // Assign variables to parts where they last occurred
         {
@@ -226,7 +226,7 @@ public class ClausePreprocessor {
         if (isQuery) {
             dsm.setQueryVars(query_vars);															// Replace heap indices for perm variables
         }
-        query_vars = new HashMap<Integer, String>();
+        query_vars = new HashMap<>();
     }
 
     /**

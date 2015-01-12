@@ -78,7 +78,7 @@ public class PrologQueryOperator extends Operator {
         
         
         
-        Term queryTerm = (Term)args[0];
+        Term queryTerm = args[0];
         String query = getStringOfTerm(queryTerm);
         
         

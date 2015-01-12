@@ -16,7 +16,7 @@ import java.util.Hashtable;
 public class SymbolTerm extends Term {
 
     /** Symbol table. */
-    protected static Hashtable<String,SymbolTerm> SYMBOL_TABLE = new Hashtable<String,SymbolTerm>();
+    protected static Hashtable<String,SymbolTerm> SYMBOL_TABLE = new Hashtable<>();
 
     /** Holds a string representation of this <code>SymbolTerm</code>. */
     protected String name;

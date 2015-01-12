@@ -21,7 +21,6 @@ import nars.prolog.*;
 import nars.prolog.Number;
 import nars.prolog.util.Tools;
 
-import java.lang.Double;
 import java.util.ArrayList;
 
 /**
@@ -348,9 +347,9 @@ public class BasicLibrary extends Library {
             // by ED: note that this would work also with intValue, even with Long args,
             // because in that case both values would be wrong, but 'equally wrong' :)
             // However, it is much better to always operate consistently on long values
-            return (val0n.longValue() == val1n.longValue()) ? true : false;
+            return (val0n.longValue() == val1n.longValue());
         } else {
-            return (val0n.doubleValue() == val1n.doubleValue()) ? true : false;
+            return (val0n.doubleValue() == val1n.doubleValue());
         }
     }
 

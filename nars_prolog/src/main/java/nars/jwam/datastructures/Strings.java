@@ -20,8 +20,8 @@ public class Strings {
 
     //TODO use BidiHashmap from Guava
     
-    private final HashMap<Integer, String> intToString = new HashMap<Integer, String>(); // The maps that store the Strings and integers
-    private final HashMap<String, Integer> stringToInt = new HashMap<String, Integer>();
+    private final HashMap<Integer, String> intToString = new HashMap<>(); // The maps that store the Strings and integers
+    private final HashMap<String, Integer> stringToInt = new HashMap<>();
     
     private int counter = 0;// Keeps track of how many Strings are known
 
@@ -58,7 +58,7 @@ public class Strings {
         Integer i = stringToInt.get(s);
         if (i == null)
             throw new RuntimeException("Not found: " + s);
-        return i.intValue();
+        return i;
     }
 
     /**

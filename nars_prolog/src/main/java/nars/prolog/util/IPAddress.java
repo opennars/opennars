@@ -16,7 +16,7 @@ package nars.prolog.util;
  * <IPAddress>:<port>
  *
  */
-public class IPAddress extends Object {
+public class IPAddress {
 
     static public int getPort(String address){
         int index=address.indexOf(':');

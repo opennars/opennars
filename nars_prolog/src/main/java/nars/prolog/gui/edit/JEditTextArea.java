@@ -1158,7 +1158,7 @@ public class JEditTextArea extends JComponent
 				start = tmp;
 			}
 
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			Segment seg = new Segment();
 
 			for(int i = selectionStartLine; i <= selectionEndLine; i++)
@@ -1477,7 +1477,7 @@ public class JEditTextArea extends JComponent
 			String selection = getSelectedText();
 
 			int repeatCount = inputHandler.getRepeatCount();
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			for(int i = 0; i < repeatCount; i++)
 				buf.append(selection);
 
@@ -1503,7 +1503,7 @@ public class JEditTextArea extends JComponent
 								.replace('\r','\n');
 
 				int repeatCount = inputHandler.getRepeatCount();
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				for(int i = 0; i < repeatCount; i++)
 					buf.append(selection);
 				selection = buf.toString();
@@ -1763,7 +1763,7 @@ public class JEditTextArea extends JComponent
 			Enumeration<Component> status = leftOfScrollBar.elements();
 			while(status.hasMoreElements())
 			{
-				Component comp = (Component)status.nextElement();
+				Component comp = status.nextElement();
 				Dimension dim = comp.getPreferredSize();
 				comp.setBounds(ileft,
 						itop + centerHeight,

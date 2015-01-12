@@ -317,7 +317,7 @@ public class TheoryManager implements Serializable {
 		while (!startGoalStack.empty()) {
 			s = (s == null) ?
 					(Struct) startGoalStack.pop() :
-						new Struct(",", (Struct) startGoalStack.pop(), s);
+						new Struct(",", startGoalStack.pop(), s);
 		}
 		if (s != null) {
 			try {
@@ -354,7 +354,7 @@ public class TheoryManager implements Serializable {
 	 * @param onlyDynamic if true, fetches only dynamic clauses
 	 */
 	public synchronized String getTheory(boolean onlyDynamic) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (Iterator<ClauseInfo> dynamicClauses = dynamicDBase.iterator(); dynamicClauses.hasNext();) {
 			ClauseInfo d = dynamicClauses.next();
 			buffer.append(d.toString(engine.getOperatorManager())).append("\n");

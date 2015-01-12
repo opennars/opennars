@@ -75,11 +75,11 @@ public class TextAreaRenderer
     if (rows == null) {
       cellSizes.put(table, rows = new HashMap<>());
     }
-    Map<Integer,Integer> rowheights = rows.get(new Integer(row));
+    Map<Integer,Integer> rowheights = rows.get(row);
     if (rowheights == null) {
-      rows.put(new Integer(row), rowheights = new HashMap<>());
+      rows.put(row, rowheights = new HashMap<>());
     }
-    rowheights.put(new Integer(column), new Integer(height));
+    rowheights.put(column, height);
   }
 
   /**
@@ -91,7 +91,7 @@ public class TextAreaRenderer
     int maximum_height = 0;
     Enumeration<TableColumn> columns = table.getColumnModel().getColumns();
     while (columns.hasMoreElements()) {
-      TableColumn tc = (TableColumn) columns.nextElement();
+      TableColumn tc = columns.nextElement();
       TableCellRenderer cellRenderer = tc.getCellRenderer();
       if (cellRenderer instanceof TextAreaRenderer) {
         TextAreaRenderer tar = (TextAreaRenderer) cellRenderer;
@@ -105,7 +105,7 @@ public class TextAreaRenderer
   private int findMaximumRowSize(JTable table, int row) {
     Map<Integer,Map<Integer,Integer>> rows = cellSizes.get(table);
     if (rows == null) return 0;
-    Map<Integer,Integer> rowheights = rows.get(new Integer(row));
+    Map<Integer,Integer> rowheights = rows.get(row);
     if (rowheights == null) return 0;
     int maximum_height = 0;
     for( Map.Entry<Integer, Integer> entry:rowheights.entrySet()){

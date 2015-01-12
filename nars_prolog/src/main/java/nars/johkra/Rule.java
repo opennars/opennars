@@ -14,7 +14,7 @@ public final class Rule extends Pair<Term,List<Term>> {
     public static Rule make(String rule) throws ParseException {
         List<String> flds = Util.split(rule,":-", false);
         Term head = new Term(flds.get(0), null);
-        ArrayList<Term> goals = new ArrayList<Term>();
+        ArrayList<Term> goals = new ArrayList<>();
 
         if (flds.size() == 2) {
             flds = Util.split(flds.get(1),",",true);

@@ -49,8 +49,8 @@ public class ToHeap {
         this.nums = nums;
         this.rules = rules;
         heap = new IntArrayList();								// The rest is initialized
-        var_ids = new HashMap<String, Integer>();
-        argrefs = new ArrayList<IntArrayList>();
+        var_ids = new HashMap<>();
+        argrefs = new ArrayList<>();
     }
 
     /**

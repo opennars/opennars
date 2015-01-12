@@ -47,7 +47,7 @@ public class InputDialog extends JPanel{
 			public void keyPressed(KeyEvent arg0) {
 				if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
 				{ 
-					stream.putInput(new ByteArrayInputStream(inputText.getText().toString().getBytes()));
+					stream.putInput(new ByteArrayInputStream(inputText.getText().getBytes()));
 					setVisible(false);
 					inputText.setText("");
 				}

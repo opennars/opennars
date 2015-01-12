@@ -84,7 +84,7 @@ public class PRED_open_4 extends Predicate {
 		if (! file.exists())
 		    throw new ExistenceException(this, 1, "source_sink", a1, "");
 		PushbackReader in = 
-		    new PushbackReader(new BufferedReader(new FileReader(file)), engine.PUSHBACK_SIZE);
+		    new PushbackReader(new BufferedReader(new FileReader(file)), Prolog.PUSHBACK_SIZE);
 		streamObject = new JavaObjectTerm(in);
 		opts = new ListTerm(SYM_INPUT, opts);
 	    } else if (a2.equals(SYM_WRITE)) {

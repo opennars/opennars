@@ -289,7 +289,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
         // quotes
         if (typea == '\'' || typea == '\"' || typea == '`' ) {
             int qType = typea;
-            StringBuffer quote = new StringBuffer();
+            StringBuilder quote = new StringBuilder();
             while (true) { // run through entire quote and added body to quote buffer
             	/*Castagna 06/2011*/
                 //typea = super.nextToken();
@@ -383,7 +383,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
         	// the symbols are parsed individually by the super.nextToken(), so accumulate symbollist
         	// the symbols are parsed individually by the tokenConsume(), so accumulate symbollist
         	/**/
-            StringBuffer symbols = new StringBuffer();
+            StringBuilder symbols = new StringBuilder();
             int typeb = typea;
             // String svalb = null;
             while (Arrays.binarySearch(Tokenizer.GRAPHIC_CHARS, (char) typeb) >= 0) {

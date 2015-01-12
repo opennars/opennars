@@ -18,7 +18,7 @@ import java.io.InputStream;
  * miscellaneous static services
  *
  */
-public class Tools extends Object {
+public class Tools {
 
     
     /**

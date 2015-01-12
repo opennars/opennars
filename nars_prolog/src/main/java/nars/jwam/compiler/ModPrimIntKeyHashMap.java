@@ -75,7 +75,7 @@ public class ModPrimIntKeyHashMap {
     }
 
     public ArrayList<Integer> toArrayList() {
-        ArrayList<Integer> r = new ArrayList<Integer>(table.length);
+        ArrayList<Integer> r = new ArrayList<>(table.length);
         for (int i = 0; i < table.length; i++) {
             r.add(table[i]);
         }

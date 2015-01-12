@@ -14,7 +14,7 @@ import java.util.*;
  */
 public final class JoProlog {
     
-    private static Set<Rule> rules = new LinkedHashSet<Rule>();
+    private static Set<Rule> rules = new LinkedHashSet<>();
     private static Boolean trace = false;
     private static String indent = "";
 
@@ -120,7 +120,7 @@ public final class JoProlog {
         } else if (src.getArgs().size() != dest.getArgs().size()) {
             return sts(false, "Diff # args");
         }
-        HashMap<String, Term> dde = new HashMap<String, Term>(destEnv);
+        HashMap<String, Term> dde = new HashMap<>(destEnv);
         for (int i = 0; i < src.getArgs().size(); i++) {
             if (!unify(src.getArgs().get(i), srcEnv, dest.getArgs().get(i), dde)) {
                 return sts(false, "Arg doesn't unify");
@@ -141,7 +141,7 @@ public final class JoProlog {
     private static void search(Term term) throws ParseException {
         Goal goal = new Goal(Rule.make("all(done):-x(y)"), null);
         goal.getRule().setGoal(term);
-        Deque<Goal> queue = new ArrayDeque<Goal>();
+        Deque<Goal> queue = new ArrayDeque<>();
         queue.addLast(goal);
         while (!queue.isEmpty()) {
             Goal c = queue.removeFirst();
@@ -212,13 +212,13 @@ public final class JoProlog {
             Integer a = Integer.parseInt(eval(term.getArgs().get(0), env).getPred());
             Integer b = Integer.parseInt(eval(term.getArgs().get(1), env).getPred());
             if (term.getPred().equals("+")) {
-                return new Term(new Integer(a + b).toString(), null);
+                return new Term(Integer.toString(a + b), null);
             }
             if (term.getPred().equals("-")) {
-                return new Term(new Integer(a - b).toString(), null);
+                return new Term(Integer.toString(a - b), null);
             }
             if (term.getPred().equals("*")) {
-                return new Term(new Integer(a * b).toString(), null);
+                return new Term(Integer.toString(a * b), null);
             }
         }
         // TODO: How to set types for lt, eq, original uses booleans
@@ -232,7 +232,7 @@ public final class JoProlog {
             }
             return eval(ans, env);
         }
-        ArrayList<Term> args = new ArrayList<Term>();
+        ArrayList<Term> args = new ArrayList<>();
         for (Term arg : term.getArgs()) {
             Term a = eval(arg, env);
             if (a == null) {

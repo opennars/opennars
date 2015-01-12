@@ -38,7 +38,7 @@ public class TheoryTabbedPane
 
     public FileIDE getTheoryTitleNamesAt(int index)
     {
-        return (FileIDE)theoryFileNames.get(index);
+        return theoryFileNames.get(index);
     }
 
     public void addTab(String FileName, Component component)
@@ -81,18 +81,18 @@ public class TheoryTabbedPane
         String propertyName = event.getPropertyName();
         if (propertyName.equals("saved"))
         {
-            if (event.getNewValue().equals(new Boolean(true)))
+            if (event.getNewValue().equals(true))
             {
                 if (getTitleAt(getSelectedIndex()).charAt(0)=='*')
                 {
                     setTitleAt(getSelectedIndex(),getTitleAt(getSelectedIndex()).substring(1));
                 }
             }
-            if (event.getNewValue().equals(new Boolean(false)))
+            if (event.getNewValue().equals(false))
             {
                 if (getTitleAt(getSelectedIndex()).charAt(0)!='*')
                 {
-                    String newTitle = new String("*");
+                    String newTitle = "*";
                     newTitle=newTitle.concat(getTitleAt(getSelectedIndex()));
                     setTitleAt(getSelectedIndex(),newTitle);
                 }
@@ -157,7 +157,7 @@ public class TheoryTabbedPane
     {
         if (getSelectedIndex()>=0 && theoryFileNames.size()>0)
         {
-            toolBar.setFileIDE((FileIDE)theoryFileNames.get(getSelectedIndex()));
+            toolBar.setFileIDE(theoryFileNames.get(getSelectedIndex()));
             editor.setEditArea(getSelectedTheoryEditArea());
             if (getSelectedTheoryEditArea().getCaretLine()==0)
                 editor.setCaretLine(1);
@@ -185,7 +185,7 @@ public class TheoryTabbedPane
     }
     public String getEditorContentTabName()
     {
-        return ((FileIDE)theoryFileNames.get(getSelectedIndex())).getFileName();
+        return theoryFileNames.get(getSelectedIndex()).getFileName();
     }
     public void newTheory() {
         JavaEditArea editArea = new JavaEditArea();
@@ -193,7 +193,7 @@ public class TheoryTabbedPane
         theoryFileNames.add(new FileIDE("",null));
         setSelectedIndex(getTabCount()-1);
         setEditorContent("");
-        toolBar.setFileIDE((FileIDE)theoryFileNames.get(getSelectedIndex()));
+        toolBar.setFileIDE(theoryFileNames.get(getSelectedIndex()));
         setFontDimension(getFontDimension());
         getSelectedJavaEditArea().setSaved(true);
         editArea.addPropertyChangeListener(this);
@@ -205,7 +205,7 @@ public class TheoryTabbedPane
         int index = -1;
         for (int i=0 ;i<theoryFileNames.size() && !found;i++)
         {
-            if(fileIDE.getFileName().equals(((FileIDE)theoryFileNames.get(i)).getFileName()) && fileIDE.getFilePath().equals(((FileIDE)theoryFileNames.get(i)).getFilePath()))
+            if(fileIDE.getFileName().equals(theoryFileNames.get(i).getFileName()) && fileIDE.getFilePath().equals(theoryFileNames.get(i).getFilePath()))
             {
                 found = true;
                 index = i;
@@ -239,7 +239,7 @@ public class TheoryTabbedPane
         addTab("Theory loaded", editArea);
         theoryFileNames.add(fileIDE);
         setSelectedIndex(getTabCount()-1);
-        toolBar.setFileIDE((FileIDE)fileIDE);
+        toolBar.setFileIDE(fileIDE);
         setFontDimension(getFontDimension());
 
         editArea.setTheory(fileIDE.getContent());
@@ -280,7 +280,7 @@ public class TheoryTabbedPane
         boolean isClosable = false;
         if (!getJavaEditAreaAt(index).isSaved())
         {
-            FileIDE fileIDE = (FileIDE)theoryFileNames.get(index);
+            FileIDE fileIDE = theoryFileNames.get(index);
             Object[] options = {"Yes", "No", "Cancel"};
             int result = JOptionPane.showOptionDialog(this,
                 "The file '"

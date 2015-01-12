@@ -137,11 +137,7 @@ public class Int extends Number {
             return value>((Number)t).intValue();
         } else if (t instanceof Struct) {
             return false;
-        } else if (t instanceof Var) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return t instanceof Var;
     }
     public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
         t = t.getTerm();
@@ -149,11 +145,7 @@ public class Int extends Number {
             return value>((Number)t).intValue();
         } else if (t instanceof Struct) {
             return false;
-        } else if (t instanceof Var) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return t instanceof Var;
     }
     
     /**

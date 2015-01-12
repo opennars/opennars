@@ -1,6 +1,5 @@
 package nars.prolog.util;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +41,7 @@ public abstract class AbstractDynamicClassLoader extends ClassLoader
         return findClass(className);  
 	}
 		
-	public void addURLs(URL[] urls) throws MalformedURLException
-	{
+	public void addURLs(URL[] urls) {
 		if(urls == null)
 			throw new IllegalArgumentException("Array URLs must not be null.");
 		for (URL url : urls) {

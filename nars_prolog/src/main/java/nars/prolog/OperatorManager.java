@@ -127,10 +127,10 @@ import java.util.List;
         @Override		 
         public Object clone() {		 
         	OperatorRegister or = (OperatorRegister)super.clone();		 
-        	Iterator<Operator> ior = (Iterator<Operator>)or.iterator();		 
+        	Iterator<Operator> ior = or.iterator();
         	or.nameTypeToKey = HashBasedTable.create(nameTypeToKey);
         	while(ior.hasNext()) {		 
-        		Operator o = (Operator)ior.next();		 
+        		Operator o = ior.next();
         		or.nameTypeToKey.put(o.name, o.type, o);		 
         	}		 
         	return or;

@@ -45,7 +45,7 @@ public class WAM {
     private Numbers numbers = null; 				 	   					// Management of doubles
     
     // Code area's
-    private ArrayList<int[]> areas = new ArrayList<int[]>();	   					
+    private ArrayList<int[]> areas = new ArrayList<>();
     // Main data, unification stack and current code area
     private int[] storage, unify_pdl, code;				   					
     
@@ -704,9 +704,7 @@ public class WAM {
             code = areas.get(ca);
             if (d_address != Integer.MIN_VALUE) // When executing/calling variables, update the argument registers
             {
-                for (int arg = 1; arg <= num_of_args; arg++) {
-                    storage[storage.length - register_size + arg] = storage[d_address + arg];
-                }
+                System.arraycopy(storage, d_address + 1, storage, storage.length - register_size + 1, num_of_args);
             }
         }
     }
@@ -1147,7 +1145,7 @@ public class WAM {
 
     // Check whether two NUM cell value's are equal. If they are not simple numbers, then the number container will be called upon.
     public boolean num_equality(int v1, int v2) {
-        return (v1 & 3) == 0 ? ((v2 & 3) == 0 ? (v2 == v1) : false) : numbers.are_equal(v1, v2);
+        return (v1 & 3) == 0 ? ((v2 & 3) == 0 && (v2 == v1)) : numbers.are_equal(v1, v2);
     }
 
     // Cell (de-)composition:
@@ -1497,12 +1495,12 @@ public class WAM {
     public void clear() {
         storage = new int[heap_size + register_size + stack_size + trail_size];
         unify_pdl = new int[unify_pdl_size + 1];
-        areas = new ArrayList<int[]>();
+        areas = new ArrayList<>();
         areas.add(new int[0]); 						// Reserve for static code
         areas.add(new int[0]); 						// Reserve for query
         code = areas.get(0);
         cca = ca = 0;
-        call = new IntHashMap<int[]>(IntHashMap.OBJ);
+        call = new IntHashMap<>(IntHashMap.OBJ);
         strings = new Strings();
         strings.add("!", 0);
         numbers = new Numbers();
@@ -1529,7 +1527,7 @@ public class WAM {
         unify_pdl = new int[unify_pdl_size];
         A1 = regStart() + 1;
         cca = ca = 0;
-        areas = new ArrayList<int[]>();
+        areas = new ArrayList<>();
         areas.add(new int[0]);
         areas.add(new int[0]);
     }

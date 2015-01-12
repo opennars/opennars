@@ -51,7 +51,7 @@ public class ClauseStore {
         deunify(vars);
         if (!checkCompatibility(goal))
             return null;
-        ClauseInfo clause = (ClauseInfo) clauses.getHead();
+        ClauseInfo clause = clauses.getHead();
         clauses = clauses.getTail();
         haveAlternatives = checkCompatibility(goal);
         return clause;
@@ -88,7 +88,7 @@ public class ClauseStore {
         //deunifico le variabili termporaneamente
         Iterator<Var> it = varsToDeunify.iterator();
         while (it.hasNext()) {
-            Var v = ((Var) it.next());
+            Var v = it.next();
             saveUnifications.add(v.getLink());
             v.free();
         }
@@ -125,7 +125,7 @@ public class ClauseStore {
         if (clauses == null) return false;
         ClauseInfo clause = null;
         do {
-            clause = (ClauseInfo) clauses.getHead();
+            clause = clauses.getHead();
             if (goal.match(clause.getHead())) return true;
             clauses = clauses.getTail();
         } while (clauses != null);

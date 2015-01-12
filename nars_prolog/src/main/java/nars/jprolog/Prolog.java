@@ -123,7 +123,7 @@ public class Prolog implements Serializable {
 	//	pdl        = new PushDownList();
 	this.pcl   = pcl;
 	internalDB = new InternalDatabase();
-        copyHash = new Hashtable<VariableTerm,VariableTerm>();
+        copyHash = new Hashtable<>();
 	initOnce();
     }
 

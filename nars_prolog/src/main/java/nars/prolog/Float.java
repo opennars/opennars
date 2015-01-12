@@ -139,11 +139,7 @@ public class Float extends Number {
             return value>((Number)t).floatValue();
         } else if (t instanceof Struct) {
             return false;
-        } else if (t instanceof Var) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return t instanceof Var;
     }
     public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
         t = t.getTerm();
@@ -151,11 +147,7 @@ public class Float extends Number {
             return value>((Number)t).floatValue();
         } else if (t instanceof Struct) {
             return false;
-        } else if (t instanceof Var) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return t instanceof Var;
     }
     
     /**

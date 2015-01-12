@@ -81,10 +81,7 @@ public class IntArrayList {
      */
     public void add(int index, int element) {
         //RangeCheck(index - 1);						// Check if the index is legal (-1 for the case where the index equals size())
-        for (int i = size; i > index; i--) // Shove all consecutive integers backwards
-        {
-            data[i] = data[i - 1];
-        }
+        System.arraycopy(data, index, data, index + 1, size - index);
         data[index] = element; 					// Add the new element
         size++; 									// Update the size
         if (size == data.length) // Expand if necessary 

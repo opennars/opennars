@@ -42,7 +42,7 @@ public class IntegerTerm extends NumberTerm {
     /* Term */
     public boolean unify(Term t, Trail trail) {
 	if (t.isVariable())
-	    return ((VariableTerm)t).unify(this, trail);
+	    return t.unify(this, trail);
 	if (! t.isInteger())
 	    return false;
 	else 
@@ -64,7 +64,7 @@ public class IntegerTerm extends NumberTerm {
      * @return a <code>java.lang.Integer</code> object equivalent to
      * this <code>IntegerTerm</code>.
      */
-    public Object toJava() { return new Integer(this.val); }
+    public Object toJava() { return this.val; }
 
     /* Object */
     /** Returns a string representation of this <code>IntegerTerm</code>. */
@@ -185,7 +185,7 @@ public class IntegerTerm extends NumberTerm {
 	    throw new IllegalTypeException("integer", t);
 	if (t.intValue() == 0)
 	    throw new EvaluationException("zero_divisor");
-	return new IntegerTerm((int) (this.val / t.intValue()));
+	return new IntegerTerm(this.val / t.intValue());
     }
 
     /** 

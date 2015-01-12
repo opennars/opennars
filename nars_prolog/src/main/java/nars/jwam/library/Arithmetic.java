@@ -19,7 +19,7 @@ public class Arithmetic {
     }
 
     public void make_built_ins_known() {
-        HashSet<Integer> bi = new HashSet<Integer>();
+        HashSet<Integer> bi = new HashSet<>();
         bi.add(IS = w.strings().add(" is ", 2));
         bi.add(ARITHUNIFY = w.strings().add("=:=", 2));
         bi.add(ARITHNUNIFY = w.strings().add("=\\=", 2));

@@ -13,7 +13,7 @@ import java.util.*;
     public static List<String> split(String l, String sep, Boolean all) {
         int nest = 0;
         int lsep = sep.length();
-        ArrayList<String> returnValue = new ArrayList<String>();
+        ArrayList<String> returnValue = new ArrayList<>();
         if (l.equals("")) {
             return returnValue;
         }
@@ -47,7 +47,7 @@ import java.util.*;
         for (String op: infixOps) {
             List<String> p = Util.split(s, op, false);
             if (p.size() > 1) {
-                return new AbstractMap.SimpleEntry<String,List<String>>(op, p);
+                return new AbstractMap.SimpleEntry<>(op, p);
             }
         }
         return null;

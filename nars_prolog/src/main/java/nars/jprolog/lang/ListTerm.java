@@ -106,10 +106,8 @@ public class ListTerm extends Term {
     public boolean isGround() {
 	if (! car.isGround())
 	    return false;
-	if (! cdr.isGround())
-	    return false;
-	return true;
-    }
+		return cdr.isGround();
+	}
 
     /** Returns the length of this <code>ListTerm</code>. */
     public int length() {
@@ -129,7 +127,7 @@ public class ListTerm extends Term {
      * this <code>IntegerTerm</code>.
      */
     public Object toJava() { 
-	Vector<Object> vec = new Vector<Object>();
+	Vector<Object> vec = new Vector<>();
 	Term t = this;
 	while(t.isList()) {
 	    vec.addElement(((ListTerm)t).car().dereference().toJava());

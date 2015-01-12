@@ -46,7 +46,7 @@ public class PRED_number_chars_2 extends Predicate {
 	    } else if (! a2.isList()) {
 		throw new IllegalTypeException(this, 2, "list", a2);
 	    }
-	    StringBuffer sb = new StringBuffer();
+	    StringBuilder sb = new StringBuilder();
 	    Term x = a2;
 	    while(! x.isNil()) {
 		if (x.isVariable())

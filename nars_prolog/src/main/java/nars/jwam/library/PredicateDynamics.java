@@ -18,7 +18,7 @@ public class PredicateDynamics {
     public PredicateDynamics(WAM wam) {
         this.wam = wam;
         dclist = new IntArrayList();
-        covered_built_ins = new HashSet<Integer>();
+        covered_built_ins = new HashSet<>();
 
         make_built_ins_known();        
     }

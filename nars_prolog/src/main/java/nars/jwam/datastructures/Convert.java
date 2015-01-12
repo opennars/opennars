@@ -70,7 +70,7 @@ public class Convert {
         value = WAM.cell_value(source[a]); // It holds the name and the argument count
         int args = WAM.numArgs(value); // Get the argument count
 
-        Predicate<Object> result = new Predicate<Object>(args);
+        Predicate<Object> result = new Predicate<>(args);
         
         result.add(wam.strings().getWithoutArity(value)); // First object is the functor
         for (int i = 1; i <= args; i++) // Add the arguments
@@ -84,13 +84,13 @@ public class Convert {
         int tag = WAM.cell_tag(source[heap_index]); // For checking whether tag is LIS
         int value = WAM.cell_value(source[heap_index]); // Address of the first element OR if [] it will be the []/0 identifier
         if (isEmptyList(wam, tag, value)) {
-            return new ArrayList<Object>();
+            return new ArrayList<>();
             //return Collections.EMPTY_LIST;
         }
         if (tag != WAM.LIS) {
             throw new IllegalArgumentException("listToArrayList encountered non LIS cell, encountered tag = " + tag);
         }
-        List<Object> result = new ArrayList<Object>();
+        List<Object> result = new ArrayList<>();
         int first = value;
         int second;
         int tag_second;
@@ -109,7 +109,7 @@ public class Convert {
         } else if (o instanceof Character) {
             result.add(javaToWAMString(w, (String) o));
         } else if (o instanceof Number) {
-            result.add(javaToWAMNumber(w, (Double) ((Number) o).doubleValue()));
+            result.add(javaToWAMNumber(w, ((Number) o).doubleValue()));
         } else if (o instanceof List<?>) {
             javaToWAMList(w, (List<Object>) o, result);
         } else if (o instanceof Convert.Predicate<?>) {

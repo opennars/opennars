@@ -368,7 +368,7 @@ public boolean write_to_socket_2(Term Socket, Term Msg) throws PrologError {
 		throw PrologError.instantiation_error(engine.getEngineManager(), 2);
 
 	} else {
-		Socket sock = ((Socket) ((Client_Socket) Socket.getTerm()).getSocket());
+		Socket sock = ((Client_Socket) Socket.getTerm()).getSocket();
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
 			out.writeObject(Msg);		// Write message in OutputStream
@@ -397,7 +397,7 @@ public boolean read_from_socket_3(Term Socket, Term Msg, Struct Options) throws 
 	if (!((AbstractSocket) Socket.getTerm()).isClientSocket()) { // Only Client_Sockets can receive data
 		throw PrologError.instantiation_error(engine.getEngineManager(), 1);
 	} else {
-		Socket sock = ((Socket) ((Client_Socket) Socket.getTerm()).getSocket());
+		Socket sock = ((Client_Socket) Socket.getTerm()).getSocket();
 
 		// Check if a Reader associated to the Socket passed already exists
 		ThreadReader r = readerExist(sock);
@@ -463,7 +463,7 @@ public boolean aread_from_socket_2(Term Socket, Struct Options) throws PrologErr
 		throw PrologError.instantiation_error(engine.getEngineManager(), 1);
 	} else {
 		// Retrieve socket from the term Socket passed to this method
-		Socket sock = ((Socket) ((Client_Socket) Socket.getTerm()).getSocket());
+		Socket sock = ((Client_Socket) Socket.getTerm()).getSocket();
 
 		// Find reader associated with the socket if already exists,
 		// otherwise create a new reader
@@ -579,7 +579,7 @@ public boolean getAddress_2(Term sock, Term addr) throws PrologError {
 	}
 	AbstractSocket abs = (AbstractSocket) sock.getTerm();
 	if (abs.isClientSocket()) {
-		Socket s = ((Socket) ((Client_Socket) sock.getTerm()).getSocket());
+		Socket s = ((Client_Socket) sock.getTerm()).getSocket();
 		addr.unify(this.getEngine(), new Struct(s.getInetAddress().toString(), new Struct(new Int(s.getLocalPort()).toString())));
 		return true;
 	}
@@ -589,7 +589,7 @@ public boolean getAddress_2(Term sock, Term addr) throws PrologError {
 		return true;
 	}
 	if (abs.isDatagramSocket()) {
-		DatagramSocket s = ((DatagramSocket) ((Datagram_Socket) sock.getTerm()).getSocket());
+		DatagramSocket s = ((Datagram_Socket) sock.getTerm()).getSocket();
 		addr.unify(this.getEngine(), new Struct(s.getInetAddress().toString(), new Struct(new Int(s.getLocalPort()).toString())));
 		return true;
 	}

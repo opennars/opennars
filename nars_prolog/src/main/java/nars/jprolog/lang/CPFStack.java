@@ -95,9 +95,7 @@ public class CPFStack implements Serializable {
 	    System.out.println("{expanding choice point stack...}");
 	    int len = buffer.length;
 	    CPFEntry[] new_buffer = new CPFEntry[len+10000];
-	    for(int i=0; i<len; i++) {
-		new_buffer[i] = buffer[i];
-	    }
+        System.arraycopy(buffer, 0, new_buffer, 0, len);
 	    buffer = new_buffer;
 	    buffer[top] = new CPFEntry(args, p);
 	    maxContents = len+10000;

@@ -200,12 +200,12 @@ public class ConsoleManager
         String propertyName = event.getPropertyName();
         if (propertyName.equals("millsStopEngine"))
         {
-            millsStopEngine=((Integer)event.getNewValue()).intValue();
+            millsStopEngine= (Integer) event.getNewValue();
         }
         /*Castagna 06/2011*/  
         if (propertyName.equals("notifyExceptionEvent"))
         {
-        	engine.setException(((Boolean)event.getNewValue()).booleanValue());
+        	engine.setException((Boolean) event.getNewValue());
         }
         /**/
     }

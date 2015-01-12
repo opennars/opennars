@@ -299,7 +299,7 @@ public class LibraryManager
 		String[] libs = new String[currentLibraries.size()];
 		for (int i = 0; i < libs.length; i++)
 		{
-			libs[i] = ((Library) currentLibraries.get(i)).getName();
+			libs[i] = currentLibraries.get(i).getName();
 		}
 		return libs;
 	}
@@ -319,7 +319,7 @@ public class LibraryManager
 		Iterator<Library> it = currentLibraries.listIterator();
 		while (it.hasNext())
 		{
-			Library lib = (Library) it.next();
+			Library lib = it.next();
 			if (lib.getName().equals(name))
 			{
 				found = true;

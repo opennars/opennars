@@ -460,7 +460,7 @@ public class ConsoleDialog
         enableTheoryCommands(true);
         
         // shows solutions on the solution pane
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < querySolutions.length; i++) {
             SolveInfo s = querySolutions[i].getSolveInfo();
             if (s.isSuccess()) {
@@ -523,7 +523,7 @@ public class ConsoleDialog
             }
             String[][] data = new String[rows][columns];
             for (int i = 0; i < tableModelList.size(); i++)
-                data[i / columns][i % columns] = (String) tableModelList.get(i);
+                data[i / columns][i % columns] = tableModelList.get(i);
             return data;
         } else
             return null;
@@ -607,7 +607,7 @@ public class ConsoleDialog
                 }
                 tableModel = new String[tableModelList.size() / variables.length][variables.length];
                 for (int i = 0; i < tableModelList.size(); i++)
-                    tableModel[i / variables.length][i % variables.length] = (String) tableModelList.get(i);
+                    tableModel[i / variables.length][i % variables.length] = tableModelList.get(i);
                 tableSolve = newPrologTable(tableModel,variables);
             }
             if (selectDisplayModality == 1 || selectDisplayModality == 2) {
@@ -622,15 +622,15 @@ public class ConsoleDialog
                 tableModel = new String[tableModelList.size() / 2][2];
                 if (selectDisplayModality == 1) {
                     for (int i = 0; i < tableModelList.size(); i++)
-                        tableModel[i / 2][i % 2] = (String) tableModelList.get(i);
+                        tableModel[i / 2][i % 2] = tableModelList.get(i);
                 }
                 if (selectDisplayModality == 2) {
                     int j = 0;
                     for (int var = 0; var < variables.length; var++)
                         for(int i = 0 + 2 * var; i < tableModelList.size();) {
-                            tableModel[j / 2][j % 2] = (String) tableModelList.get(i);
+                            tableModel[j / 2][j % 2] = tableModelList.get(i);
                             j++;
-                            tableModel[j / 2][j % 2] = (String) tableModelList.get(i+1);
+                            tableModel[j / 2][j % 2] = tableModelList.get(i+1);
                             i += 2 * variables.length;
                             j++;
                         }
@@ -669,14 +669,14 @@ public class ConsoleDialog
         String propertyName = event.getPropertyName();
         if (propertyName.equals("selectDisplayModality"))
         {
-            selectDisplayModality=((Integer)event.getNewValue()).intValue();
+            selectDisplayModality= (Integer) event.getNewValue();
             if (bindings != null)
                 draw();
         }
         /*Castagna 06/2011*/        
         if (propertyName.equals("notifyExceptionEvent"))
         {
-        	setExceptionEnabled(((Boolean)event.getNewValue()).booleanValue());
+        	setExceptionEnabled((Boolean) event.getNewValue());
         }
         /**/
     }
@@ -715,20 +715,14 @@ public class ConsoleDialog
         {
             for (int j=0;j<length;j++)
             {
-                if (j%variables.length==0)
-                    array[j]=true;
-                else
-                    array[j]=false;
+                array[j] = j % variables.length == 0;
             }
         }
         if (selectDisplayModality==2)
         {
             for (int j=0;j<length;j++)
             {
-                if (j%(bindings.size()/variables.length)==0)
-                    array[j]=true;
-                else
-                    array[j]=false;
+                array[j] = j % (bindings.size() / variables.length) == 0;
             }
         }
         return array;

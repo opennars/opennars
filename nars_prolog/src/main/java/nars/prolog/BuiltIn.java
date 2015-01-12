@@ -21,7 +21,6 @@ import nars.prolog.util.Tools;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -480,7 +479,7 @@ public class BuiltIn extends Library {
 		 }
 		 java.util.Iterator<ClauseInfo> it = l.iterator();
 		 while (it.hasNext()) {
-			 ClauseInfo b = (ClauseInfo) it.next();
+			 ClauseInfo b = it.next();
 			 if (match(arg0, b.getHead())) {
 				 b.getClause().resolveTerm();
 				 ((Struct) arg1).append(b.getClause());
@@ -608,8 +607,8 @@ public class BuiltIn extends Library {
 			 libraryManager.loadLibrary(((Struct) lib).getName());
 	 }
 
-	 public void include_1(Term theory) throws FileNotFoundException,
-	 InvalidTheoryException, IOException {
+	 public void include_1(Term theory) throws
+			 InvalidTheoryException, IOException {
 		 theory = theory.getTerm();
          String path = Tools.removeApices(theory.toString());
          if(! new File(path).isAbsolute()) {

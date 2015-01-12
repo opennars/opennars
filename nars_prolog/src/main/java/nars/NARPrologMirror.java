@@ -270,7 +270,7 @@ public class NARPrologMirror extends AbstractMirror {
                 }
             } catch (InvalidTermException nse) {
                 nar.emit(NARPrologMirror.class, s + " : not supported yet");       
-                nse.printStackTrace();;
+                nse.printStackTrace();
             } catch (Exception ex) {                        
                 nar.emit(ERR.class, ex.toString());
                 ex.printStackTrace();
@@ -336,7 +336,7 @@ public class NARPrologMirror extends AbstractMirror {
             s = pterm(judgment.term);
         }
         catch (Exception e) {
-            e.printStackTrace();;
+            e.printStackTrace();
             return null;
         }
         //}

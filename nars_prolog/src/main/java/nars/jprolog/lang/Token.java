@@ -373,7 +373,7 @@ public class Token implements Serializable {
     }
 
     public static String toQuotedString(String s) {
-	StringBuffer quoted = new StringBuffer(s.length() * 2);
+	StringBuilder quoted = new StringBuilder(s.length() * 2);
 	char[] ch;
 
 	ch = s.toCharArray();

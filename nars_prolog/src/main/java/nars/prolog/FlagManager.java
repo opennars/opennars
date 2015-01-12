@@ -57,7 +57,7 @@ class FlagManager {
     public synchronized boolean setFlag(String name, Term value) {
         java.util.Iterator<Flag> it = flags.iterator();
         while (it.hasNext()) {
-            Flag flag = (Flag) it.next();
+            Flag flag = it.next();
             if (flag.getName().equals(name)) {
                 if (flag.isModifiable() && flag.isValidValue(value)) {
                     flag.setValue(value);
@@ -74,7 +74,7 @@ class FlagManager {
         Struct flist = new Struct();
         java.util.Iterator<Flag> it = flags.iterator();
         while (it.hasNext()) {
-            Flag fl = (Flag) it.next();
+            Flag fl = it.next();
             flist = new Struct(new Struct("flag", new Struct(fl.getName()), fl
                     .getValue()), flist);
         }
@@ -84,7 +84,7 @@ class FlagManager {
     public synchronized Term getFlag(String name) {
         java.util.Iterator<Flag> it = flags.iterator();
         while (it.hasNext()) {
-            Flag fl = (Flag) it.next();
+            Flag fl = it.next();
             if (fl.getName().equals(name)) {
                 return fl.getValue();
             }
@@ -97,7 +97,7 @@ class FlagManager {
     public boolean isModifiable(String name) {
         java.util.Iterator<Flag> it = flags.iterator();
         while (it.hasNext()) {
-            Flag flag = (Flag) it.next();
+            Flag flag = it.next();
             if (flag.getName().equals(name)) {
                 return flag.isModifiable();
             }
@@ -110,7 +110,7 @@ class FlagManager {
     public boolean isValidValue(String name, Term value) {
         java.util.Iterator<Flag> it = flags.iterator();
         while (it.hasNext()) {
-            Flag flag = (Flag) it.next();
+            Flag flag = it.next();
             if (flag.getName().equals(name)) {
                 return flag.isValidValue(value);
             }

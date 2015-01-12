@@ -28,7 +28,7 @@ public final class Term {
             this.args = args;
         } else if (parts != null) {
             this.pred = parts.getKey();
-            this.args = new ArrayList<Term>();
+            this.args = new ArrayList<>();
             for (String str : parts.getValue()) {
                 this.args.add(new Term(str, null));
             }
@@ -37,14 +37,14 @@ public final class Term {
             List<String> flds2 = Util.split(s.substring(1, s.length() - 1), "|", true);
             if (flds2.size() > 1) {
                 this.pred = ".";
-                this.args = new ArrayList<Term>();
+                this.args = new ArrayList<>();
                 for (String str : flds2) {
                     this.args.add(new Term(str, null));
                 }
             } else {
                 Term l = new Term(".", null);
                 for (int i = flds.size() - 1; i >= 0; i--) {
-                    List<Term> temp = new ArrayList<Term>();
+                    List<Term> temp = new ArrayList<>();
                     temp.add(new Term(flds.get(i), null));
                     temp.add(l);
                     l = new Term(".", temp);
@@ -58,13 +58,13 @@ public final class Term {
                 throw new ParseException("Syntax error in term: '" + s + "'", -1);
             }
             this.pred = flds.get(0);
-            this.args = new ArrayList<Term>();
+            this.args = new ArrayList<>();
             for (String str : Util.split(flds.get(1).substring(0, flds.get(1).length() - 1), ",", true)) {
                 this.args.add(new Term(str, null));
             }
         } else {
             this.pred = s;
-            this.args = new ArrayList<Term>();
+            this.args = new ArrayList<>();
         }
 
     }
@@ -84,7 +84,7 @@ public final class Term {
     public Term clone() {
         Term clone = new Term();
         clone.pred = pred;
-        clone.args = new ArrayList<Term>(args);
+        clone.args = new ArrayList<>(args);
         return clone;
     }
 

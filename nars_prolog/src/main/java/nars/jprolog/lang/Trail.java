@@ -52,9 +52,7 @@ public class Trail implements Serializable {
 	    System.out.println("{expanding trail...}");
 	    int len = buffer.length;
 	    Undoable[] new_buffer = new Undoable[len+20000];
-	    for(int i=0; i<len; i++){
-		new_buffer[i] = buffer[i];
-	    }
+        System.arraycopy(buffer, 0, new_buffer, 0, len);
 	    buffer = new_buffer;
 	    buffer[top] = t;
 	    maxContents = len+20000;

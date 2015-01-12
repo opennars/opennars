@@ -15,7 +15,7 @@ public final class Goal {
     public Goal(Rule rule, Goal parent) {
         this.rule = rule;
         this.parent = parent;
-        this.env = new HashMap<String, Term>();
+        this.env = new HashMap<>();
         this.inx = 0;
     }
 
@@ -61,7 +61,7 @@ public final class Goal {
         Goal clone = new Goal();
         clone.rule = rule.clone();
         clone.parent = parent;
-        clone.env = new HashMap<String, Term>(env);
+        clone.env = new HashMap<>(env);
         clone.inx = inx;
         return clone;
     }

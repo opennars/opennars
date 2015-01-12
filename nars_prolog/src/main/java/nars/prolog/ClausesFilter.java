@@ -102,7 +102,7 @@ class ClausesFilter {
             Term arg = clause.getHead().getArg(0).getTerm();
 
             if((arg instanceof Var) ||
-                    (arg instanceof Number && ((Number) arg).isEqual(t))){
+                    (arg instanceof Number && arg.isEqual(t))){
                 OneWayList<ClauseInfo> l = new OneWayList<>(clause, null);
             
                 if(result == null){
