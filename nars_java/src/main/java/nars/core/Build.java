@@ -14,7 +14,7 @@ abstract public class Build extends Parameters  {
      
     public String type = "abstract";
        
-    public Param param = new Param();
+    public final Param param = new Param();
     
     abstract public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag();
     abstract public Core newAttention();

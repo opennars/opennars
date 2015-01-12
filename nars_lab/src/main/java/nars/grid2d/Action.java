@@ -1,12 +1,6 @@
 package nars.grid2d;
 
-import static nars.grid2d.Hauto.DOWN;
-import static nars.grid2d.Hauto.DOWNLEFT;
-import static nars.grid2d.Hauto.LEFT;
-import static nars.grid2d.Hauto.RIGHT;
-import static nars.grid2d.Hauto.UP;
-import static nars.grid2d.Hauto.UPLEFT;
-import static nars.grid2d.Hauto.UPRIGHT;
+import static nars.grid2d.Hauto.*;
 
 /**
  * Defines an action that may or may not be allowed by the game engine.

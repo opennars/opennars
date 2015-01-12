@@ -17,25 +17,13 @@
  */
 package nars.prolog;
 
+import nars.prolog.event.*;
+import nars.prolog.interfaces.IProlog;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import nars.prolog.event.ExceptionEvent;
-import nars.prolog.event.ExceptionListener;
-import nars.prolog.event.LibraryEvent;
-import nars.prolog.event.LibraryListener;
-import nars.prolog.event.OutputEvent;
-import nars.prolog.event.OutputListener;
-import nars.prolog.event.QueryEvent;
-import nars.prolog.event.QueryListener;
-import nars.prolog.event.SpyEvent;
-import nars.prolog.event.SpyListener;
-import nars.prolog.event.TheoryEvent;
-import nars.prolog.event.TheoryListener;
-import nars.prolog.event.WarningEvent;
-import nars.prolog.event.WarningListener;
-import nars.prolog.interfaces.IProlog;
 //import alice.tuprologx.ide.ToolBar;
 
 

@@ -22,6 +22,8 @@
  */
 package nars.util.rope.impl;
 
+import nars.util.rope.Rope;
+
 import java.io.IOException;
 import java.io.ObjectStreamException;
 import java.io.StringWriter;
@@ -29,7 +31,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nars.util.rope.Rope;
 
 /**
  * Abstract base class for ropes that implements many of the common operations.
@@ -87,7 +88,7 @@ public abstract class AbstractRope implements Rope {
 
     @Override
     public boolean equals(final Object other) {
-        System.out.println(this.getClass() + " " + new Exception().getStackTrace());
+        System.out.println(this.getClass() + " " + Arrays.toString(new Exception().getStackTrace()));
         
         if (this == other) return true;
 

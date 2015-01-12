@@ -5,6 +5,7 @@
 package nars.util;
 
 import com.google.common.collect.Lists;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class MultiOutputStream extends OutputStream {
         this.out = new ArrayList<OutputStream>();
 
         for (Iterator<OutputStream> i = outStreams.iterator(); i.hasNext();) {
-            OutputStream outputStream = (OutputStream) i.next();
+            OutputStream outputStream = i.next();
 
             if (outputStream == null) {
                 throw new NullPointerException();

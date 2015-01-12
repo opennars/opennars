@@ -1,13 +1,14 @@
 package nars.grid2d.particle;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.Random;
 import javolution.util.FastTable;
 import nars.grid2d.Cell;
 import nars.grid2d.Grid2DSpace;
 import nars.grid2d.Hauto;
 import nars.util.XORShiftRandom;
+
+import java.awt.*;
+import java.util.List;
+import java.util.Random;
 
 public class ParticleSystem  {
 

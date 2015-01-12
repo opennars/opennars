@@ -1,8 +1,5 @@
 package nars.grid2d;
 
-import nars.grid2d.Cell.Logic;
-import nars.grid2d.Cell.Material;
-
 public class Cell {
     
     public String name="";
@@ -415,8 +412,8 @@ public class Cell {
 //	public static int[] mapColours=null;
 //	
 //	public static Thing[] tiles;
-//    private static java.util.Map<String, Integer> tileByName;
-//    private static java.util.Map<Integer, String> nameById;
+//    private static java.other.Map<String, Integer> tileByName;
+//    private static java.other.Map<Integer, String> nameById;
 //	
 //	public static int getMoveCost(int t) {
 //		return movecost[t];

@@ -18,13 +18,8 @@
 package nars.prolog.lib;
 
 
-import nars.prolog.Int;
-import nars.prolog.Library;
+import nars.prolog.*;
 import nars.prolog.Number;
-import nars.prolog.PrologError;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Var;
 
 /**
  * This class represents a tuProlog library providing most of the built-ins

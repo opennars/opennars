@@ -5,14 +5,11 @@
  */
 package nars.jwam;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import nars.jwam.datastructures.Convert;
 import nars.jwam.parser.ParseException;
+
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  * Main interface to a WAM Prolog context (rulebase, knowledgebase, etc..)

@@ -17,19 +17,11 @@
  */
 package nars.prolog.lib;
 
-import java.util.ArrayList;
-import nars.prolog.Agent;
-import nars.prolog.Int;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.Library;
+import nars.prolog.*;
 import nars.prolog.Number;
-import nars.prolog.Operator;
-import nars.prolog.PrologError;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Theory;
-import nars.prolog.Var;
 import nars.prolog.util.Tools;
+
+import java.util.ArrayList;
 
 /**
  * This class defines a set of basic built-in predicates for the tuProlog engine

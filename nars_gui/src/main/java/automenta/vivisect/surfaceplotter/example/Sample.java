@@ -4,19 +4,13 @@ package automenta.vivisect.surfaceplotter.example;
 import automenta.vivisect.surfaceplotter.JSurfacePanel;
 import automenta.vivisect.surfaceplotter.Mapper;
 import automenta.vivisect.surfaceplotter.ProgressiveSurfaceModel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
-
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.event.*;
 
 
 

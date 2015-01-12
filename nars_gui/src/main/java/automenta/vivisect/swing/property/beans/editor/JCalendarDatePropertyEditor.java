@@ -58,7 +58,7 @@ public class JCalendarDatePropertyEditor extends AbstractPropertyEditor {
 //  /**
 //   * Returns the Date of the Calendar
 //   * 
-//   * @return the date choosed as a <b>java.util.Date </b>b> object or
+//   * @return the date choosed as a <b>java.other.Date </b>b> object or
 //   *         null is the date is not set
 //   */
 //  public Object getValue() {

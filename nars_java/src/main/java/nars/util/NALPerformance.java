@@ -5,13 +5,14 @@
  */
 package nars.util;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.TextInput;
 import nars.io.condition.OutputCondition;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

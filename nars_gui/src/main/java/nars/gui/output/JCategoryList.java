@@ -1,16 +1,11 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
+
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 
 

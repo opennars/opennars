@@ -1,15 +1,12 @@
 package nars.util;
 
+import nars.entity.*;
+import nars.language.CompoundTerm;
+import nars.language.Term;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
-import nars.language.CompoundTerm;
-import nars.language.Term;
 
 
 

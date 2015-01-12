@@ -20,10 +20,11 @@
  */
 package nars.language;
 
-import java.util.Arrays;
 import nars.io.Symbols.NativeOperator;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import java.util.Arrays;
 
 /**
  * A Statement about an Inheritance relation.

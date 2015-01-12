@@ -20,10 +20,6 @@
  */
 package nars.language;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
@@ -34,6 +30,10 @@ import nars.language.Terms.Termable;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.util.sort.SortedList;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * Term is the basic component of Narsese, and the object of processing in NARS.

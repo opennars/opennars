@@ -20,12 +20,11 @@
  */
 package nars.language;
 
-import java.nio.CharBuffer;
 import nars.core.Parameters;
-import static nars.io.Symbols.VAR_DEPENDENT;
-import static nars.io.Symbols.VAR_INDEPENDENT;
-import static nars.io.Symbols.VAR_QUERY;
-import static nars.language.Variable.newName;
+
+import java.nio.CharBuffer;
+
+import static nars.io.Symbols.*;
 
 /**
  * A variable term, which does not correspond to a concept

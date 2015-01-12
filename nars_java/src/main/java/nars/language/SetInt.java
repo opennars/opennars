@@ -20,8 +20,10 @@
  */
 package nars.language;
 
-import java.util.Collection;
 import nars.io.Symbols.NativeOperator;
+
+import java.util.Collection;
+
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
 

@@ -17,6 +17,8 @@
  */
 package nars.prolog;
 
+import nars.prolog.util.Tools;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,7 +26,6 @@ import java.io.IOException;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
-import nars.prolog.util.Tools;
 
 /**
  * Library of built-in predicates

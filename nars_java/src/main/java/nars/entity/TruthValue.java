@@ -21,11 +21,12 @@
 package nars.entity;
 
 import nars.core.Parameters;
-import static nars.core.Parameters.TRUTH_EPSILON;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Term;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
+import static nars.core.Parameters.TRUTH_EPSILON;
 
 
 public class TruthValue implements Cloneable { // implements Cloneable {

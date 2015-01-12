@@ -1,9 +1,9 @@
 package automenta.vivisect.swing.property.sheet.renderer;
 
-import java.awt.Dimension;
-import java.text.NumberFormat;
-
 import automenta.vivisect.swing.property.swing.renderer.DefaultCellRenderer;
+
+import java.awt.*;
+import java.text.NumberFormat;
 
 
 public class DimensionRenderer extends DefaultCellRenderer {

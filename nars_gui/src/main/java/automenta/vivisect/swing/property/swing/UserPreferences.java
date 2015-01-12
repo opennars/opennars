@@ -17,34 +17,20 @@
  */
 package automenta.vivisect.swing.property.swing;
 
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import automenta.vivisect.swing.property.swing.table.TableHelper;
+import automenta.vivisect.swing.property.util.converter.ConverterRegistry;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.prefs.Preferences;
-
-import javax.swing.DefaultButtonModel;
-import javax.swing.JFileChooser;
-import javax.swing.JRadioButton;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.text.JTextComponent;
-
-import automenta.vivisect.swing.property.swing.table.TableHelper;
-import automenta.vivisect.swing.property.util.converter.ConverterRegistry;
 
 /**
  * UserPreferences. <BR>

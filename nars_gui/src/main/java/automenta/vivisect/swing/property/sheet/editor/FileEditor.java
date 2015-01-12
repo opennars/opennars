@@ -1,31 +1,18 @@
 package automenta.vivisect.swing.property.sheet.editor;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Image;
+import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
+import automenta.vivisect.swing.property.sheet.I18N;
+import automenta.vivisect.swing.property.swing.UserPreferences;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.TransferHandler;
-import javax.swing.UIManager;
-
-import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
-import automenta.vivisect.swing.property.sheet.I18N;
-import automenta.vivisect.swing.property.swing.UserPreferences;
 
 
 /**

@@ -17,15 +17,16 @@
  */
 package nars.prolog.gui.ide;
 
+import nars.prolog.InvalidLibraryException;
+import nars.prolog.Library;
+import nars.prolog.Prolog;
+
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import nars.prolog.InvalidLibraryException;
-import nars.prolog.Library;
-import nars.prolog.Prolog;
 
 /**
  * A dynamic manager for tuProlog libraries.

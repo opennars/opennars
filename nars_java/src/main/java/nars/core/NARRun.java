@@ -18,15 +18,11 @@
  */
 package nars.core;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import nars.core.build.Default.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+
+import java.io.*;
 
 
 

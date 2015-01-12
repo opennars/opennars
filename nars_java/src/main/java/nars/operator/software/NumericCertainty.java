@@ -1,6 +1,5 @@
 package nars.operator.software;
 
-import java.util.ArrayList;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
@@ -10,6 +9,8 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.operator.mental.Mental;
+
+import java.util.ArrayList;
 
 // Usage:
 // (^numericCertainty, min, max, value, term)

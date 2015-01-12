@@ -1,15 +1,7 @@
 package automenta.vivisect.surfaceplotter.beans;
 
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.awt.Rectangle;
-
-import javax.swing.JPanel;
-import javax.swing.JViewport;
-import javax.swing.Scrollable;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import java.awt.*;
 
 
 /** A panel that rely on its GridBagLayout to provide "smart" increment for scrolling, implementing the {@link Scrollable} interface 

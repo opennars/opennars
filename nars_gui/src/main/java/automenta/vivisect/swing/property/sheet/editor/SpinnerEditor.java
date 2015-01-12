@@ -1,24 +1,15 @@
 package automenta.vivisect.swing.property.sheet.editor;
 
-import java.awt.BorderLayout;
-import java.awt.ContainerOrderFocusTraversalPolicy;
-import java.awt.Graphics;
-import java.awt.Point;
+import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
+import automenta.vivisect.swing.property.sheet.ResizeLayout;
+
+import javax.swing.*;
+import javax.swing.JSpinner.DefaultEditor;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JSpinner.DefaultEditor;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-
-import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
-import automenta.vivisect.swing.property.sheet.ResizeLayout;
 
 
 /**

@@ -1,24 +1,20 @@
 package nars.util.graph;
 
-import java.util.Objects;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.TruthValue;
-import nars.plugin.app.plan.MultipleExecutionManager;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.language.CompoundTerm;
-import nars.language.Conjunction;
-import nars.language.Implication;
-import nars.language.Interval;
-import nars.language.Negation;
-import nars.language.Term;
+import nars.language.*;
 import nars.operator.Operation;
+import nars.plugin.app.plan.MultipleExecutionManager;
 import nars.util.graph.ImplicationGraph.Cause;
+
+import java.util.Objects;
 
 
 
@@ -196,8 +192,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 UniqueInterval u = (UniqueInterval)that;
                 if (magnitude!=u.magnitude) return false;
                 if (parent!=u.parent) return false;
-                if (!Objects.equals(u.previous, previous)) return false; //handles null value
-                return true;
+                return Objects.equals(u.previous, previous);
             }
             return false;
         }        
@@ -417,9 +412,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             return false;
         }
         float conf = s.truth.getConfidence();
-        if (conf > minConfidence)
-            return true;
-        return false;
+        return conf > minConfidence;
     }
 
 

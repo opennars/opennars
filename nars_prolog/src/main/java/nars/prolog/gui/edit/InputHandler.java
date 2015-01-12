@@ -8,7 +8,9 @@
  */
 package nars.prolog.gui.edit;
 
-import java.awt.Component;
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -16,8 +18,6 @@ import java.awt.event.KeyEvent;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.Hashtable;
-import javax.swing.JPopupMenu;
-import javax.swing.text.BadLocationException;
 
 /**
  * An input handler converts the user's key strokes into concrete actions.

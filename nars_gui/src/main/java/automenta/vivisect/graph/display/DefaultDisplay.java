@@ -10,7 +10,8 @@ import automenta.vivisect.graph.AbstractGraphVis;
 import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
-import java.awt.Color;
+
+import java.awt.*;
 
 /**
  *

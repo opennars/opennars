@@ -15,10 +15,9 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import javax.swing.JComponent;
-import javax.swing.JSplitPane;
+import javax.swing.*;
+import java.awt.*;
+
 import static javax.swing.SwingUtilities.convertPoint;
 
 /**

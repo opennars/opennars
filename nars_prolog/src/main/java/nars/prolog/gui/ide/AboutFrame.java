@@ -1,14 +1,10 @@
 package nars.prolog.gui.ide;
 
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.net.URL;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import nars.prolog.Prolog;
+
+import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 
 public class AboutFrame extends GenericFrame
 {
@@ -29,9 +25,9 @@ public class AboutFrame extends GenericFrame
         
         JLabel versionSystem=new JLabel(" tuProlog engine version " + Prolog.getVersion() );
         
-        //String platformMessage = " " + alice.util.VersionInfo.getPlatform();
+        //String platformMessage = " " + alice.other.VersionInfo.getPlatform();
         //platformMessage += " platform version ";
-        //platformMessage += alice.util.VersionInfo.getCompleteVersion();
+        //platformMessage += alice.other.VersionInfo.getCompleteVersion();
         JLabel versionIDE=new JLabel(" tuProlog for " + nars.prolog.util.VersionInfo.getPlatform() + " version " + nars.prolog.util.VersionInfo.getCompleteVersion() + "   ");
         
         JLabel copyright=new JLabel(" Copyright 2001-2013 ");

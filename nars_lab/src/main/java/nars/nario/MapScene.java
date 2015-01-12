@@ -1,14 +1,12 @@
 package nars.nario;
 
-import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Transparency;
-import java.text.DecimalFormat;
-import java.util.Random;
 import nars.nario.level.ImprovedNoise;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.Mario;
+
+import java.awt.*;
+import java.text.DecimalFormat;
+import java.util.Random;
 
 
 public class MapScene extends Scene

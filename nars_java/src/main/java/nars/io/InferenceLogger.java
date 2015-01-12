@@ -20,10 +20,6 @@
  */
 package nars.io;
 
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.Events.ConceptNew;
 import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskRemove;
@@ -32,6 +28,11 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.inference.MemoryObserver;
+
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Inference log, which record input/output of each inference step interface

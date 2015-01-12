@@ -16,20 +16,16 @@
  */
 package nars.timeline;
 
-import java.io.File;
-import java.io.IOException;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
-import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
 import nars.io.TextInput;
-import automenta.vivisect.timeline.TimelineVis;
-import automenta.vivisect.timeline.BarChart;
-import automenta.vivisect.timeline.LineChart;
 import nars.io.TextOutput;
 import nars.util.NARTrace;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  *

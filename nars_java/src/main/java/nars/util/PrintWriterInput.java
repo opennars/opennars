@@ -1,10 +1,11 @@
 package nars.util;
 
+import nars.io.TextInput;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-import nars.io.TextInput;
 
 /**
  * Creates a PrintWriter that pipes into a TextInput's BufferedReader. Useful

@@ -1,8 +1,9 @@
 package nars.gui.output;
 
-import java.awt.BorderLayout;
-import javax.swing.JPanel;
 import processing.core.PApplet;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Processing.org Panel

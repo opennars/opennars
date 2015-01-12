@@ -25,23 +25,9 @@
  */
 package nars.narclear;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.swing.SwingUtilities;
-import nars.narclear.jbox2d.ContactPoint;
-import nars.narclear.jbox2d.PhysicsCamera;
-import nars.narclear.jbox2d.TestbedPanel;
-import nars.narclear.jbox2d.TestbedSettings;
-import nars.narclear.jbox2d.TestbedState;
+import nars.narclear.jbox2d.*;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
-import org.jbox2d.callbacks.ContactImpulse;
-import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.callbacks.DebugDraw;
-import org.jbox2d.callbacks.DestructionListener;
-import org.jbox2d.callbacks.QueryCallback;
+import org.jbox2d.callbacks.*;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Collision;
 import org.jbox2d.collision.Collision.PointState;
@@ -52,16 +38,16 @@ import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.FixtureDef;
-import org.jbox2d.dynamics.Profile;
-import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Runnable is for Swing invokeLater to call this

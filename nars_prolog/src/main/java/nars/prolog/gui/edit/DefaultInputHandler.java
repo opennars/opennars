@@ -8,13 +8,13 @@
  */
 package nars.prolog.gui.edit;
 
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import javax.swing.KeyStroke;
 
 /**
  * The default input handler. It maps sequences of keystrokes into actions

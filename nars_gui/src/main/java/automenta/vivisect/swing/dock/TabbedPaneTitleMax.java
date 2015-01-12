@@ -22,6 +22,7 @@
 package automenta.vivisect.swing.dock;
 
 import automenta.vivisect.swing.AwesomeButton;
+
 import static javax.swing.BorderFactory.createEmptyBorder;
 
 

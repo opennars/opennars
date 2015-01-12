@@ -1,22 +1,9 @@
 package nars.perf;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.StringJoiner;
 import nars.core.Memory;
+import nars.core.NALTest;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.core.NALTest;
 import nars.io.condition.OutputCondition;
 import nars.util.XORShiftRandom;
 import org.encog.Encog;
@@ -39,6 +26,12 @@ import org.encog.neural.networks.training.TrainingSetScore;
 import org.encog.neural.networks.training.propagation.manhattan.ManhattanPropagation;
 import org.encog.util.arrayutil.NormalizeArray;
 import org.encog.util.simple.EncogUtility;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.text.DecimalFormat;
+import java.util.*;
 
 /**
  * Measures how well a NAR completes unit tests under various parameters
@@ -533,7 +526,7 @@ public class NALTestPerformance {
         int inputSize = trainingSet.getInputSize();
         int outputSize = trainingSet.getIdealSize();
         network.addLayer(new BasicLayer(null,true,inputSize));        
-        network.addLayer(new BasicLayer(new ActivationSigmoid(),true,(int)(inputSize/2)));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(),true, inputSize/2));
         network.addLayer(new BasicLayer(new ActivationSigmoid(),true,outputSize));
         network.getStructure().finalizeStructure();        
         network.reset();

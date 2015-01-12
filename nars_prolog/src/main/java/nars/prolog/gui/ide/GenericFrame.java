@@ -1,12 +1,9 @@
 package nars.prolog.gui.ide;
 
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 
 public class GenericFrame
     extends JFrame

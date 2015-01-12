@@ -1,35 +1,16 @@
 package nars.prolog.gui.spyframe;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import nars.prolog.*;
+import nars.prolog.event.SpyEvent;
+import nars.prolog.event.SpyListener;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import nars.prolog.AbstractSubGoalTree;
-import nars.prolog.Engine;
-import nars.prolog.ExecutionContext;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Struct;
-import nars.prolog.SubGoalElement;
-import nars.prolog.SubGoalTree;
-import nars.prolog.Term;
-import nars.prolog.Theory;
-import nars.prolog.event.SpyEvent;
-import nars.prolog.event.SpyListener;
 
 /** GUI-Window for tracing the solving process of a prolog goal.
  * This Frame runs its own prolog process and is its only SpyListener.

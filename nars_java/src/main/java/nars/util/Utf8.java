@@ -8,7 +8,7 @@ import java.util.Arrays;
 /**
  *
  * @author https://github.com/squito/jutf8
- * http://svn.apache.org/viewvc/avro/trunk/lang/java/avro/src/main/java/org/apache/avro/util/Utf8.java?revision=1552418&view=co
+ * http://svn.apache.org/viewvc/avro/trunk/lang/java/avro/src/main/java/org/apache/avro/other/Utf8.java?revision=1552418&view=co
  */
 public class Utf8 implements CharSequence, Comparable<Utf8> {
 

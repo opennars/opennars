@@ -20,8 +20,9 @@
  */
 package nars.inference;
 
-import static java.lang.Math.abs;
 import nars.entity.TruthValue;
+
+import static java.lang.Math.abs;
 
 /**
  * All truth-value (and desire-value) functions used in inference rules 

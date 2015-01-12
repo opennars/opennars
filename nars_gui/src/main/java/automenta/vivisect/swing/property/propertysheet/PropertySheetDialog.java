@@ -17,12 +17,9 @@
  */
 package automenta.vivisect.swing.property.propertysheet;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.HeadlessException;
-
 import automenta.vivisect.swing.property.swing.BaseDialog;
+
+import java.awt.*;
 
 /**
  * PropertySheetDialog. <br>

@@ -1,19 +1,14 @@
 package nars.operator;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
-import nars.language.CompoundTerm;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.Product;
-import nars.language.Similarity;
-import nars.language.Term;
-import nars.language.Variable;
+import nars.language.*;
+
+import java.util.ArrayList;
 
 
 /** 

@@ -17,16 +17,12 @@
  */
 package automenta.vivisect.swing.property.swing.renderer;
 
-import java.awt.Component;
-
-import javax.swing.Icon;
-import javax.swing.JList;
-import javax.swing.JTable;
-import javax.swing.ListCellRenderer;
-import javax.swing.table.DefaultTableCellRenderer;
-
 import automenta.vivisect.swing.property.model.DefaultObjectRenderer;
 import automenta.vivisect.swing.property.model.ObjectRenderer;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 
 
 /**

@@ -22,12 +22,13 @@
  */
 package nars.util.rope.impl;
 
+import nars.io.Texts;
+import nars.util.rope.Rope;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.Iterator;
-import nars.io.Texts;
-import nars.util.rope.Rope;
 
 /**
  * A rope constructed from a character array. This rope is even flatter than a

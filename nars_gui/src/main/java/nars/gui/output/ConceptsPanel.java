@@ -6,24 +6,6 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
-import automenta.vivisect.swing.PCanvas;
-import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.NORTH;
-import static java.awt.BorderLayout.SOUTH;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.util.Collection;
-import java.util.Collections;
-import static java.util.Collections.unmodifiableList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
@@ -33,7 +15,17 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.TruthValue.Truthable;
 import nars.gui.WrapLayout;
-import nars.gui.output.graph.TermSyntaxVis;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import static java.awt.BorderLayout.*;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Views one or more Concepts

@@ -1,14 +1,15 @@
 package nars.operator.software;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleBindings;
 import nars.core.Memory;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
 import nars.operator.mental.Mental;
+
+import javax.script.Bindings;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleBindings;
 
 /**
  * Executes a Javascript expression

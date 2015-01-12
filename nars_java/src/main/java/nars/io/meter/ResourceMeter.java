@@ -1,7 +1,5 @@
 package nars.io.meter;
 
-import nars.core.Memory;
-import nars.io.meter.depr.data.DataContainer;
 import nars.io.meter.event.DurationMeter;
 import nars.io.meter.resource.MemoryUseTracker;
 import nars.io.meter.resource.ThreadCPUTimeTracker;

@@ -24,7 +24,7 @@ package nars.gui.input.image;
 //import georegression.struct.line.LineSegment2D_F32;
 //import java.awt.Dimension;
 //import java.awt.image.BufferedImage;
-//import java.util.List;
+//import java.other.List;
 //
 ///**
 // * Transform bitmap to shapes

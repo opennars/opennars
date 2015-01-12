@@ -1,21 +1,10 @@
 package nars;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nars.core.NAR;
 import nars.prolog.InvalidLibraryException;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
-import nars.prolog.Theory;
-import nars.prolog.event.OutputEvent;
-import nars.prolog.event.OutputListener;
-import nars.prolog.event.QueryEvent;
-import nars.prolog.event.QueryListener;
-import nars.prolog.event.TheoryEvent;
-import nars.prolog.event.TheoryListener;
-import nars.prolog.event.WarningEvent;
-import nars.prolog.event.WarningListener;
+import nars.prolog.event.*;
 import nars.prolog.lib.BasicLibrary;
 
 /**

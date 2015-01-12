@@ -1,6 +1,9 @@
 package nars.jprolog.lang;
-import java.util.*;
-import java.io.*;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.PushbackReader;
+import java.io.Serializable;
 /**
  * The <code>Token</code> class contains methods
  * for character input/output.<br>

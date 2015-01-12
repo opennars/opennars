@@ -1,9 +1,9 @@
 package automenta.vivisect.swing;
 
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-import javax.swing.JPanel;
 
 /**
  * JPanel subclass that is aware of when it is shown. This allows event handlers to attach and reattach to NAR's

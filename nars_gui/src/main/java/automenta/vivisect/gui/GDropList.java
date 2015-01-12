@@ -24,16 +24,15 @@
 package automenta.vivisect.gui;
 
 import automenta.vivisect.gui.HotSpot.HSrect;
+import processing.core.PApplet;
+import processing.event.MouseEvent;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.font.TextLayout;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import processing.core.PApplet;
-import processing.event.MouseEvent;
 
 /**
  * A drop down list component. <br>

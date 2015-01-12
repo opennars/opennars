@@ -21,21 +21,20 @@
 package nars.gui;
 
 import automenta.vivisect.swing.NWindow;
-
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.Default.CommandLineNARBuilder;
 import nars.core.control.experimental.AntCore;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 
 /**
  * The main Swing GUI class of the open-nars project.  

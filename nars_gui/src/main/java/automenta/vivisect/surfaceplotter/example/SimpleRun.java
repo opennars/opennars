@@ -2,13 +2,10 @@ package automenta.vivisect.surfaceplotter.example;
 
 import automenta.vivisect.surfaceplotter.JSurfacePanel;
 import automenta.vivisect.surfaceplotter.surface.ArraySurfaceModel;
-import java.awt.BorderLayout;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.awt.*;
+import java.util.Random;
 
 public class SimpleRun {
 

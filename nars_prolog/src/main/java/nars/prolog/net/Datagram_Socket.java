@@ -1,10 +1,11 @@
 package nars.prolog.net;
 
+import nars.prolog.Term;
+import nars.prolog.Var;
+
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.List;
-import nars.prolog.Term;
-import nars.prolog.Var;
 
 public class Datagram_Socket extends AbstractSocket {
 	private static final long serialVersionUID = 1L;

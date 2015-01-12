@@ -28,8 +28,7 @@
 package nars.constraint.gui.example;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
-import org.kohsuke.args4j.Option;
-import org.slf4j.LoggerFactory;
+import nars.constraint.gui.GUI;
 import org.chocosolver.samples.AbstractProblem;
 import org.chocosolver.solver.ResolutionPolicy;
 import org.chocosolver.solver.Solver;
@@ -43,10 +42,11 @@ import org.chocosolver.solver.variables.BoolVar;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.VariableFactory;
 import org.chocosolver.util.ESat;
+import org.kohsuke.args4j.Option;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import nars.constraint.gui.GUI;
 
 /**
  * OR-LIBRARY:<br/>

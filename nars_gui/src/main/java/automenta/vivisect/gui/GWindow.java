@@ -23,17 +23,15 @@
 
 package automenta.vivisect.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.lang.reflect.Method;
-
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.lang.reflect.Method;
 
 /**
  * Objects of this class are separate windows which can be used to hold

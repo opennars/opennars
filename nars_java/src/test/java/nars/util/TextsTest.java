@@ -1,16 +1,11 @@
 package nars.util;
 
-import static java.lang.String.valueOf;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.TruthValue;
 import nars.io.Symbols;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
-import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
-import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 import nars.io.Texts;
 import nars.io.narsese.Narsese;
 import nars.language.CompoundTerm;
@@ -19,9 +14,12 @@ import nars.language.Term;
 import nars.util.rope.Rope;
 import nars.util.rope.impl.FastConcatenationRope;
 import nars.util.rope.impl.PrePostCharRope;
+import org.junit.Test;
+
+import static java.lang.String.valueOf;
+import static nars.io.Symbols.NativeOperator.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 
 public class TextsTest {

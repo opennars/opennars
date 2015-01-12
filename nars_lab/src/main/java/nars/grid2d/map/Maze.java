@@ -3,6 +3,7 @@ package nars.grid2d.map;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.Hauto;
 import nars.grid2d.Hauto.SetMaterial;
+
 import static nars.grid2d.Hauto.irand;
 
 /**

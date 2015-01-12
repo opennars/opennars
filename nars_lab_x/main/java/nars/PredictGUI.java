@@ -10,17 +10,7 @@ import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import com.google.common.util.concurrent.AtomicDouble;
-import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.WEST;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import javafx.scene.chart.BarChart;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import nars.core.Events;
 import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskImmediateProcess;
@@ -37,6 +27,12 @@ import nars.language.Interval;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.plugin.filter.LimitDerivationPriority;
+
+import javax.swing.*;
+import java.awt.*;
+
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.WEST;
 
 /**
  *

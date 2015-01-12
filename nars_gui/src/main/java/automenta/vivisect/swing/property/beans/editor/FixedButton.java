@@ -17,13 +17,10 @@
  */
 package automenta.vivisect.swing.property.beans.editor;
 
-import java.awt.Dimension;
-import java.awt.Insets;
-
-import javax.swing.JButton;
-import javax.swing.UIManager;
-
 import automenta.vivisect.swing.property.util.OS;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * A button with a fixed size to workaround bugs in OSX. Submitted by Hani

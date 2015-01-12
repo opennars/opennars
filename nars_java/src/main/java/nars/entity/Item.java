@@ -20,9 +20,10 @@
  */
 package nars.entity;
 
-import java.util.Comparator;
 import nars.core.Memory;
 import nars.entity.BudgetValue.Budgetable;
+
+import java.util.Comparator;
 
 /**
  * An item is an object that can be put into a Bag,

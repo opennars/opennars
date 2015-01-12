@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004-2013 Universidade do Porto - Faculdade de Engenharia
- * Laboratório de Sistemas e Tecnologia Subaquática (LSTS)
+ * Laborat\ufffd\ufffdrio de Sistemas e Tecnologia Subaqu\ufffd\ufffdtica (LSTS)
  * All rights reserved.
  * Rua Dr. Roberto Frias s/n, sala I203, 4200-465 Porto, Portugal
  *
@@ -26,21 +26,19 @@
  *
  * For more information please see <http://lsts.fe.up.pt/neptus>.
  *
- * Author: José Pinto
+ * Author: Jose Pinto
  * Nov 16, 2012
  */
 package automenta.vivisect.swing.property.sheet.editor;
 
+import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
+import automenta.vivisect.swing.property.swing.LookAndFeelTweaks;
+
+import javax.swing.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
-
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-
-import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
-import automenta.vivisect.swing.property.swing.LookAndFeelTweaks;
 
 /**
  * @author zp

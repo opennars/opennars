@@ -16,12 +16,12 @@
  */
 package nars.timeline;
 
-import nars.core.NAR;
-import nars.core.build.Default;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
+import nars.core.NAR;
+import nars.core.build.Default;
 import nars.util.NARTrace;
 
 /**

@@ -21,4 +21,8 @@ jacoco**
 /nars_gui/target/
 /nars_lab/target/
 /nars_prolog/target/
-/nars_web/target/
+/nars_web/target/.idea
+target/
+opennars.iml
+*.iml
+.idea/

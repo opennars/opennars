@@ -20,9 +20,10 @@
  */
 package nars.inference;
 
+import nars.core.Parameters;
+
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import nars.core.Parameters;
 
 /**
  * Common functions on real numbers, mostly in [0,1].

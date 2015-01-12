@@ -7,11 +7,6 @@ package nars.inference;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import nars.core.Events.ConceptFire;
 import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
@@ -33,6 +28,8 @@ import nars.util.NARGraph.TimeNode;
 import nars.util.NARGraph.UniqueEdge;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedSubgraph;
+
+import java.util.*;
 
 /**
  * Graph analysis of reasoning processes to determine essential and non-essential

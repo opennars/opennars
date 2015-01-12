@@ -8,10 +8,7 @@ package nars;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Discretinuous;
-import nars.entity.Sentence;
-import nars.entity.Task;
 import nars.io.ExampleFileInput;
-import nars.language.Term;
 import nars.util.NALPerformance;
 
 /**

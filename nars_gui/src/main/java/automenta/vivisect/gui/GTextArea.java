@@ -26,19 +26,17 @@ package automenta.vivisect.gui;
 import automenta.vivisect.gui.HotSpot.HSrect;
 import automenta.vivisect.gui.StyledString.TextLayoutHitInfo;
 import automenta.vivisect.gui.StyledString.TextLayoutInfo;
+import processing.core.PApplet;
+import processing.core.PGraphics;
+import processing.core.PGraphicsJava2D;
+import processing.event.MouseEvent;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextHitInfo;
 import java.awt.font.TextLayout;
 import java.awt.geom.GeneralPath;
 import java.util.LinkedList;
-
-import processing.core.PApplet;
-import processing.core.PGraphics;
-import processing.core.PGraphicsJava2D;
-import processing.event.MouseEvent;
 
 /**
  * The text area component. <br>

@@ -18,11 +18,12 @@
 package nars.prolog.gui.ide;
 
 
+import nars.prolog.Theory;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import javax.swing.JFileChooser;
-import nars.prolog.Theory;
 
 /**
  * A manager for Input/Output operations on the Java 2 platform.

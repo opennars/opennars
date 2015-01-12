@@ -1,7 +1,8 @@
 package nars.nario.level;
 
-import java.util.Random;
 import nars.nario.sprites.Enemy;
+
+import java.util.Random;
 
 
 public class LevelGenerator

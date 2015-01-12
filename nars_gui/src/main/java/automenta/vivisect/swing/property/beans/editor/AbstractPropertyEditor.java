@@ -17,9 +17,7 @@
  */
 package automenta.vivisect.swing.property.beans.editor;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyEditor;

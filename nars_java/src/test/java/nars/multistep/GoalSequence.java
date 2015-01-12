@@ -2,7 +2,6 @@ package nars.multistep;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.io.TextOutput;
 import nars.io.condition.OutputContainsCondition;
 import nars.io.narsese.Narsese;
 import nars.language.Tense;

@@ -17,8 +17,9 @@
  */
 package nars.prolog.event;
 
-import java.util.EventObject;
 import nars.prolog.Engine;
+
+import java.util.EventObject;
 
 /**
  *  This class defines an internal event

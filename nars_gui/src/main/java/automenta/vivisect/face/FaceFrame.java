@@ -1,7 +1,7 @@
 package automenta.vivisect.face;
 
 
-import java.awt.Image;
+import java.awt.*;
 import java.util.StringTokenizer;
 
 public class FaceFrame extends Object {

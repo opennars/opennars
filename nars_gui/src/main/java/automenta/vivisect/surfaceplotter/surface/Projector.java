@@ -21,8 +21,7 @@
  *----------------------------------------------------------------------------------------*/
 package automenta.vivisect.surfaceplotter.surface;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * The class <code>Projector</code> projects points in 3D space to 2D space.

@@ -4,16 +4,17 @@
  */
 package nars.io.condition;
 
+import nars.core.NAR;
+
 import java.util.LinkedList;
 import java.util.List;
-import nars.core.NAR;
 
 /**
  *
  * @author me
  */
 public class OutputEmptyCondition extends OutputCondition {
-    List<String> output = new LinkedList();
+    final List<String> output = new LinkedList();
 
     public OutputEmptyCondition(NAR nar) {
         super(nar);

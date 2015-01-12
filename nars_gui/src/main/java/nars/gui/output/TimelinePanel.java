@@ -1,7 +1,7 @@
 package nars.gui.output;
 
-import nars.core.EventEmitter.EventObserver;
 import automenta.vivisect.swing.NPanel;
+import nars.core.EventEmitter.EventObserver;
 
 /**
  *

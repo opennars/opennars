@@ -1,10 +1,11 @@
 package nars.gui.output;
 
-import java.util.HashMap;
-import java.util.Map;
 import nars.entity.Sentence;
 import nars.entity.TruthValue;
 import nars.language.Term;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 2D scatter plot of belief frequency/certainty

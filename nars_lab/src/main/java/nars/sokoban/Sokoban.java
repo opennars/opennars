@@ -1,21 +1,14 @@
 package nars.sokoban;
 
 import automenta.vivisect.swing.NWindow;
+
+import javax.imageio.ImageIO;
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Event;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.HeadlessException;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 
 /**
  * "Sokoban 1.0, Written by Yossie Silverman."

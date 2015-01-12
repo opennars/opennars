@@ -1,7 +1,7 @@
 package nars.util.budget;
 
-import nars.core.Parameters;
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 
 /**

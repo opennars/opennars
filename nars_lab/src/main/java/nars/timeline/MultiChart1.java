@@ -16,15 +16,16 @@
  */
 package nars.timeline;
 
-import nars.core.NAR;
-import nars.core.build.Default;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
-import automenta.vivisect.timeline.TimelineVis;
 import automenta.vivisect.timeline.LineChart;
-import java.awt.event.MouseAdapter;
+import automenta.vivisect.timeline.TimelineVis;
+import nars.core.NAR;
+import nars.core.build.Default;
 import nars.util.NARTrace;
+
+import java.awt.event.MouseAdapter;
 
 /**
  *

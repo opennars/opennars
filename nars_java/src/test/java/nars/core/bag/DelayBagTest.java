@@ -8,10 +8,10 @@ import nars.core.NAR;
 import nars.core.build.Neuromorphic;
 import nars.core.control.experimental.AntCore;
 import nars.io.narsese.Narsese;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  *

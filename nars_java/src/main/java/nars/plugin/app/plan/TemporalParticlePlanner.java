@@ -17,23 +17,15 @@
 
 package nars.plugin.app.plan;
 
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.TreeSet;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.NewTaskExecution;
 import nars.core.Events.UnexecutableGoal;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.core.control.NAL;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.plugin.app.plan.MultipleExecutionManager;
-import nars.plugin.app.plan.MultipleExecutionManager.Execution;
-import static nars.plugin.app.plan.MultipleExecutionManager.isPlanTerm;
-import nars.plugin.app.plan.GraphExecutive;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
@@ -42,6 +34,13 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
+import nars.plugin.app.plan.MultipleExecutionManager.Execution;
+
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.TreeSet;
+
+import static nars.plugin.app.plan.MultipleExecutionManager.isPlanTerm;
 
 /**
  *

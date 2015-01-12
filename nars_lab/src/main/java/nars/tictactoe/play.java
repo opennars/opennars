@@ -17,11 +17,6 @@
 
 package nars.tictactoe;
 
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
@@ -30,6 +25,11 @@ import nars.gui.NARSwing;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import javax.swing.*;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Old version, broken

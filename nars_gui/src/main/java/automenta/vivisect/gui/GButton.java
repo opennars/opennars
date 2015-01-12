@@ -24,14 +24,13 @@ package automenta.vivisect.gui;
 
 import automenta.vivisect.gui.HotSpot.HSrect;
 import automenta.vivisect.gui.StyledString.TextLayoutInfo;
-
-import java.awt.Graphics2D;
-import java.awt.font.TextLayout;
-import java.util.LinkedList;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.event.MouseEvent;
+
+import java.awt.*;
+import java.awt.font.TextLayout;
+import java.util.LinkedList;
 
 /**
  * This class is the Button component.

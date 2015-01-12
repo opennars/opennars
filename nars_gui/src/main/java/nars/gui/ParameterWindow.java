@@ -19,19 +19,14 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.gui;
+
 import automenta.vivisect.swing.NWindow;
-import java.awt.GridLayout;
-import java.awt.Scrollbar;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JScrollBar;
+
 import static nars.gui.NARSwing.SINGLE_WINDOW_COLOR;
 
 /**

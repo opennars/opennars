@@ -17,20 +17,16 @@
  */
 package nars.prolog.gui.ide;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import nars.prolog.Prolog;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.SpyEvent;
 import nars.prolog.event.WarningEvent;
 import nars.prolog.lib.IOLibrary;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * The tuProlog IDE to be run on a Java2 platform. Makes use of Thinlet and

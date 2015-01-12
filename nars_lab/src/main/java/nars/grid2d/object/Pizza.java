@@ -1,8 +1,9 @@
 package nars.grid2d.object;
 
-import java.awt.Color;
 import nars.grid2d.Effect;
 import nars.grid2d.LocalGridObject;
+
+import java.awt.*;
 
 /**
  *

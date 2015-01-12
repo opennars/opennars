@@ -1,12 +1,11 @@
 package automenta.vivisect.surfaceplotter;
 
-import java.util.List;
-
-import javax.swing.SwingWorker;
-
 import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.SurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.SurfaceVertex;
+
+import javax.swing.*;
+import java.util.List;
 
 /**
  * {@link ProgressiveSurfaceModel} fills the surface with increasing "definition".

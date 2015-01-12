@@ -17,9 +17,8 @@
  */
 package automenta.vivisect.swing.property.util;
 
-import java.awt.Toolkit;
-
-import javax.swing.UIManager;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Provides methods related to the runtime environment.

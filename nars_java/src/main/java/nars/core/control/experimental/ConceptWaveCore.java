@@ -4,9 +4,6 @@
  */
 package nars.core.control.experimental;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import nars.core.Core;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -19,6 +16,10 @@ import nars.language.Term;
 import nars.storage.Bag.MemoryAware;
 import nars.storage.experimental.DelayBag;
 import nars.storage.experimental.FairDelayBag;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Uses DelayBag to emulate a massively parallel spiking neural network of concept activation
@@ -125,9 +126,9 @@ abstract public class ConceptWaveCore implements Core {
         this.concepts = new FairDelayBag(memory.param.conceptForgetDurations, maxConcepts);      
         
         if (concepts instanceof MemoryAware)
-            ((MemoryAware)concepts).setMemory(m);
+            concepts.setMemory(m);
         if (concepts instanceof AttentionAware)
-            ((AttentionAware)concepts).setAttention(this);
+            concepts.setAttention(this);
     }
 
     @Override

@@ -1,18 +1,8 @@
 package nars.jprolog.builtin;
-import nars.jprolog.lang.SymbolTerm;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.ListTerm;
-import nars.jprolog.lang.ExistenceException;
-import nars.jprolog.lang.PermissionException;
-import nars.jprolog.lang.IllegalDomainException;
-import nars.jprolog.lang.VariableTerm;
-import nars.jprolog.lang.Term;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.IllegalTypeException;
-import nars.jprolog.lang.StructureTerm;
-import nars.jprolog.lang.InternalException;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
+import nars.jprolog.lang.*;
+
 import java.io.*;
 /**
    <code>open/4</code><br>

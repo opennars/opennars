@@ -1,20 +1,14 @@
 package prolog;
 
+import junit.framework.TestCase;
+import nars.prolog.*;
+import nars.prolog.lib.InvalidObjectIdException;
+import nars.prolog.lib.JavaLibrary;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import junit.framework.TestCase;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.Library;
-import nars.prolog.PrimitiveInfo;
-import nars.prolog.Prolog;
-import nars.prolog.PrologException;
-import nars.prolog.SolveInfo;
-import nars.prolog.Struct;
-import nars.prolog.Theory;
-import nars.prolog.lib.InvalidObjectIdException;
-import nars.prolog.lib.JavaLibrary;
 
 public class JavaLibraryTestCase extends TestCase {
 	String theory = null;

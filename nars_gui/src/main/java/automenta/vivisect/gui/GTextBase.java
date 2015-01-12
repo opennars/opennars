@@ -23,9 +23,10 @@
 
 package automenta.vivisect.gui;
 
-import java.awt.Font;
-import java.awt.font.TextAttribute;
 import processing.core.PApplet;
+
+import java.awt.*;
+import java.awt.font.TextAttribute;
 
 
 /**

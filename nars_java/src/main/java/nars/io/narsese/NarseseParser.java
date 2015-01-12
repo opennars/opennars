@@ -1,15 +1,16 @@
 package nars.io.narsese;
 
-import java.util.Scanner;
 import org.parboiled.BaseParser;
-import static org.parboiled.BaseParser.EOI;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.MatcherPath;
-import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 import org.parboiled.support.ParsingResult;
+
+import java.util.Scanner;
+
+import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
 /**
  * NARese, syntax and language for interacting with a NAR in NARS.

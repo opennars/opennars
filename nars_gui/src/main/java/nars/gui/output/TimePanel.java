@@ -3,9 +3,9 @@ package nars.gui.output;
 //package nars.gui.output;
 //
 //import java.awt.Dimension;
-//import java.util.Map;
-//import java.util.TreeMap;
-//import static java.util.stream.Collectors.toList;
+//import java.other.Map;
+//import java.other.TreeMap;
+//import static java.other.stream.Collectors.toList;
 //import javax.swing.BoxLayout;
 //import javax.swing.JComponent;
 //import javax.swing.JFrame;

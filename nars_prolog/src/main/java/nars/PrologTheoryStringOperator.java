@@ -1,12 +1,13 @@
 package nars;
 
-import java.util.List;
 import nars.core.Memory;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
+
+import java.util.List;
 
 
 /**

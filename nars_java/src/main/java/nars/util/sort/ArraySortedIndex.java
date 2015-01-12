@@ -1,14 +1,11 @@
 package nars.util.sort;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import javolution.util.FastSortedTable;
 import nars.core.Parameters;
 import nars.entity.Item;
+
+import java.util.*;
 
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    

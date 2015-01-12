@@ -1,17 +1,16 @@
 package automenta.vivisect.swing.property;
 
-import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
-import javax.xml.bind.DatatypeConverter;
-
 import automenta.vivisect.swing.property.propertysheet.DefaultProperty;
 import automenta.vivisect.swing.property.propertysheet.Property;
 import automenta.vivisect.swing.property.util.converter.Converter;
 import automenta.vivisect.swing.property.util.converter.ConverterRegistry;
+
+import javax.xml.bind.DatatypeConverter;
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class SerializableProperty extends DefaultProperty {
 

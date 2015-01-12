@@ -4,8 +4,6 @@
  */
 package nars.predict;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nars.core.NAR;
 import nars.core.control.ImmediateProcess;
 import nars.entity.Concept;
@@ -15,6 +13,9 @@ import nars.io.narsese.Narsese;
 import nars.language.Instance;
 import nars.language.Tense;
 import nars.language.Term;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *

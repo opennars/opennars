@@ -1,10 +1,11 @@
 package nars.multistep;
 
-import java.io.IOException;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.io.condition.OutputContainsCondition;
 import org.junit.Test;
+
+import java.io.IOException;
 
 
 

@@ -1,6 +1,7 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
+
 import nars.jprolog.Prolog;
+import nars.jprolog.lang.Predicate;
 import nars.jprolog.lang.Term;
 /**
  * <code>nl/0</code><br>

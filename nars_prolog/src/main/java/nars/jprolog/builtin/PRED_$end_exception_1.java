@@ -1,11 +1,7 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.IllegalTypeException;
-import nars.jprolog.lang.OutOfScope;
-import nars.jprolog.lang.SystemException;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
+import nars.jprolog.lang.*;
 /**
  * <code>'$end_exception'/1<code><br>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

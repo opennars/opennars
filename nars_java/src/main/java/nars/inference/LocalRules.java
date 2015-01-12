@@ -20,27 +20,19 @@
  */
 package nars.inference;
 
-import java.util.Arrays;
 import nars.core.Events.Answer;
 import nars.core.Events.Unsolved;
 import nars.core.Memory;
 import nars.core.control.NAL;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
-import static nars.inference.TemporalRules.matchingOrder;
-import static nars.inference.TemporalRules.reverseOrder;
+import nars.entity.*;
 import nars.io.Output;
 import nars.io.Symbols;
-import nars.language.CompoundTerm;
-import nars.language.Equivalence;
-import nars.language.Inheritance;
-import nars.language.Similarity;
-import nars.language.Statement;
-import nars.language.Term;
-import nars.language.Variables;
+import nars.language.*;
+
+import java.util.Arrays;
+
+import static nars.inference.TemporalRules.matchingOrder;
+import static nars.inference.TemporalRules.reverseOrder;
 
 
 /**

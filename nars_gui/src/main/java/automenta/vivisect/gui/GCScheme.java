@@ -23,10 +23,10 @@
 
 package automenta.vivisect.gui;
 
-import java.awt.Color;
-
 import processing.core.PApplet;
 import processing.core.PImage;
+
+import java.awt.*;
 
 /**
  * Defines a number of color schemes for the GUI components. <br>

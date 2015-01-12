@@ -36,32 +36,33 @@ package nars.rl;
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import automenta.vivisect.Video;
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
-import static javafx.application.Application.launch;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.transform.Rotate;
 import javafx.animation.Timeline;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.EventHandler;
-import static javafx.scene.input.KeyCode.*;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Duration;
-import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Sphere;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
+import javafx.util.Duration;
 import nars.language.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
+
+import static javafx.application.Application.launch;
 
 /**
  * MoleculeSampleApp

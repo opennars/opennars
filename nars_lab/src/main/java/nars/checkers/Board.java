@@ -1,14 +1,11 @@
 package checkers;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /**
  *

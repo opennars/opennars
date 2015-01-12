@@ -1,32 +1,25 @@
 package nars.grid2d.gui;
 
-import java.awt.BorderLayout;
+import nars.grid2d.Cell.Logic;
+import nars.grid2d.Cell.Machine;
+import nars.grid2d.Cell.Material;
+import nars.grid2d.*;
+import nars.grid2d.object.Key;
+import nars.grid2d.object.Pizza;
+import org.parboiled.common.FileUtils;
+import processing.core.PVector;
+
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import nars.grid2d.Cell.Logic;
-import nars.grid2d.Cell.Machine;
-import nars.grid2d.Cell.Material;
-import nars.grid2d.Grid2DSpace;
-import nars.grid2d.GridAgent;
-import nars.grid2d.GridObject;
-import nars.grid2d.Hauto;
-import nars.grid2d.LocalGridObject;
-import nars.grid2d.TestChamber;
-import nars.grid2d.object.Key;
-import nars.grid2d.object.Pizza;
-import org.parboiled.common.FileUtils;
-import processing.core.PVector;
 
 /**
  *

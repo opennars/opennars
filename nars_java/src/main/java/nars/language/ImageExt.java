@@ -20,8 +20,9 @@
  */
 package nars.language;
 
-import java.util.Arrays;
 import nars.io.Symbols.NativeOperator;
+
+import java.util.Arrays;
 
 /**
  * An extension image.

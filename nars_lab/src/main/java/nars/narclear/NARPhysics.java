@@ -1,13 +1,10 @@
 package nars.narclear;
 
-import java.awt.event.KeyEvent;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nars.NARGame;
 import nars.core.NAR;
+
+import java.awt.event.KeyEvent;
+import java.util.concurrent.Future;
 
 
 

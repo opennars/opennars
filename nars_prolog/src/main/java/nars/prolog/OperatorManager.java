@@ -18,12 +18,13 @@
 package nars.prolog;
 
 import com.google.common.collect.HashBasedTable;
+import nars.prolog.interfaces.IOperatorManager;
+
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import nars.prolog.interfaces.IOperatorManager;
 
 /**
  * This class manages Prolog operators.

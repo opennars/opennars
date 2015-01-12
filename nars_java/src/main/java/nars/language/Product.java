@@ -21,8 +21,9 @@
 
 package nars.language;
 
-import java.util.List;
 import nars.io.Symbols.NativeOperator;
+
+import java.util.List;
 
 /**
  * A Product is a sequence of 1 or more terms.

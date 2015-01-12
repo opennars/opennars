@@ -1,17 +1,21 @@
 package nars.core;
 
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+
 
 
 /**
  * runs a subset of the test cases, selected by the boolean include(filename) function
  */
 @RunWith(Parameterized.class)
+@Ignore
 public class NALTestSome extends NALTest {
 
     static {

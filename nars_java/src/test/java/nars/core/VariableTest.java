@@ -4,15 +4,16 @@
  */
 package nars.core;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.Events.Answer;
-import nars.core.NAR;
 import nars.core.build.Default;
 import nars.inference.AbstractObserver;
 import nars.io.condition.OutputContainsCondition;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  *

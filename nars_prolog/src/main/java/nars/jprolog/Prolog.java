@@ -1,21 +1,9 @@
 package nars.jprolog;
-import java.util.Hashtable;
+
+import nars.jprolog.lang.*;
+
 import java.io.*;
-import nars.jprolog.lang.CPFStack;
-import nars.jprolog.lang.Failure;
-import nars.jprolog.lang.HashtableOfTerm;
-import nars.jprolog.lang.InternalDatabase;
-import nars.jprolog.lang.JavaObjectTerm;
-import nars.jprolog.lang.ListTerm;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.PrologClassLoader;
-import nars.jprolog.lang.PrologControl;
-import nars.jprolog.lang.StructureTerm;
-import nars.jprolog.lang.SymbolTerm;
-import nars.jprolog.lang.SystemException;
-import nars.jprolog.lang.Term;
-import nars.jprolog.lang.Trail;
-import nars.jprolog.lang.VariableTerm;
+import java.util.Hashtable;
 /**
  * Prolog engine.
  *

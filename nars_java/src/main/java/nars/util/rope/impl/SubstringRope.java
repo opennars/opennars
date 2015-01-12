@@ -22,10 +22,11 @@
  */
 package nars.util.rope.impl;
 
+import nars.util.rope.Rope;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import nars.util.rope.Rope;
 
 /**
  * Represents a lazily-evaluated substring of another rope. For performance

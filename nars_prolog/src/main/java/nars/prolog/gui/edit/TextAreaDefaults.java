@@ -8,8 +8,8 @@
  */
 package nars.prolog.gui.edit;
 
-import java.awt.Color;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Encapsulates default settings for a text area. This can be passed

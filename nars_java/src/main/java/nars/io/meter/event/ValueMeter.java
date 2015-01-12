@@ -6,7 +6,6 @@
 package nars.io.meter.event;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.io.meter.FunctionMeter;
 
 /**
  * Stores the latest provided value for retrieval by a Metrics 
@@ -14,7 +13,7 @@ import nars.io.meter.FunctionMeter;
 public class ValueMeter extends SourceFunctionMeter<Double> {
     
     boolean autoReset;
-    AtomicDouble val = new AtomicDouble();
+    final AtomicDouble val = new AtomicDouble();
     private final String name;
     
     

@@ -1,16 +1,8 @@
 package nars.jwam;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import nars.jwam.datastructures.Numbers;
-import nars.jwam.datastructures.IntArrayList;
-import nars.jwam.datastructures.IntHashMap;
-import nars.jwam.datastructures.Strings;
-import nars.jwam.datastructures.WAMToString;
+import nars.jwam.datastructures.*;
+
+import java.util.*;
 
 // Editable rule base
 public class RuleHeap {

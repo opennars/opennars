@@ -5,10 +5,10 @@
  */
 package nars.io.meter.func;
 
-import java.util.Arrays;
-import java.util.List;
 import nars.io.meter.Metrics;
 import nars.io.meter.Signal;
+
+import java.util.List;
 
 /**
  * Computes the numeric first-order difference for the last 2 contiguous numeric

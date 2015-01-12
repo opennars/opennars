@@ -25,13 +25,12 @@ package automenta.vivisect.gui;
 
 import automenta.vivisect.gui.HotSpot.HSalpha;
 import automenta.vivisect.gui.HotSpot.HSrect;
-
-import java.awt.Graphics2D;
-import java.io.File;
-
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
+
+import java.awt.*;
+import java.io.File;
 
 /**
  * Slider that can be customised with user provided graphics. <br>

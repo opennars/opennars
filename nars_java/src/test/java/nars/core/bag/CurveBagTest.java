@@ -6,14 +6,15 @@ import nars.core.build.Default;
 import nars.entity.Item;
 import nars.perf.BagPerf.NullItem;
 import nars.storage.Bag;
-import nars.storage.LevelBag;
 import nars.storage.CurveBag;
 import nars.storage.CurveBag.BagCurve;
+import nars.storage.LevelBag;
 import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.SortedIndex;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *

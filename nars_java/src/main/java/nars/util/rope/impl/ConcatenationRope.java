@@ -22,10 +22,11 @@
  */
 package nars.util.rope.impl;
 
+import nars.util.rope.Rope;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import nars.util.rope.Rope;
 
 /**
  * A rope that represents the concatenation of two other ropes.

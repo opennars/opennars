@@ -1,8 +1,9 @@
 package nars.nario;
 
-import java.awt.Graphics;
 import nars.nario.sonar.SonarSoundEngine;
 import nars.nario.sonar.SoundListener;
+
+import java.awt.*;
 
 
 public abstract class Scene implements SoundListener

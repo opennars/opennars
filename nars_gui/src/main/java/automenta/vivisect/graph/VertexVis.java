@@ -7,14 +7,16 @@ package automenta.vivisect.graph;
 
 import automenta.vivisect.Vis;
 import automenta.vivisect.graph.GraphDisplay.Shape;
-import static automenta.vivisect.graph.GraphDisplay.Shape.Ellipse;
 import automenta.vivisect.swing.PCanvas;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
+import processing.core.PGraphics;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import processing.core.PGraphics;
+
+import static automenta.vivisect.graph.GraphDisplay.Shape.Ellipse;
 
 /**
  *

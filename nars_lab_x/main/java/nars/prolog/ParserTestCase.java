@@ -1,12 +1,7 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.DefaultOperatorManager;
-import nars.prolog.Int;
-import nars.prolog.InvalidTermException;
-import nars.prolog.Parser;
-import nars.prolog.Struct;
-import nars.prolog.Var;
+import nars.prolog.*;
 
 public class ParserTestCase extends TestCase {
 	

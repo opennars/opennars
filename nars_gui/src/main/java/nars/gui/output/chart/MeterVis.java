@@ -7,23 +7,22 @@ import automenta.vivisect.timeline.AxisPlot;
 import automenta.vivisect.timeline.AxisPlot.MultiChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
-import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import nars.core.Eventer;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.io.meter.Metrics;
-import nars.io.meter.SignalData;
 import nars.io.meter.Signal;
+import nars.io.meter.SignalData;
 import nars.io.meter.TemporalMetrics;
 import reactor.event.registry.Registration;
-import static reactor.event.selector.Selectors.T;
 import reactor.function.Consumer;
+
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.util.*;
+import java.util.List;
+
+import static reactor.event.selector.Selectors.T;
 
 public class MeterVis extends TimelineVis {
     private final Eventer nar;

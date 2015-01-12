@@ -5,13 +5,13 @@
 package nars.gui.output;
 
 import automenta.vivisect.swing.NWindow;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.language.Term;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /** represents either a Term or its Concept (if exists).
 if a concept is involved, there may be additional data to display.     */

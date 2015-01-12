@@ -1,15 +1,14 @@
 package automenta.vivisect.swing.property.sheet;
 
+import automenta.vivisect.swing.property.model.DefaultBeanInfoResolver;
+import automenta.vivisect.swing.property.propertysheet.Property;
+import automenta.vivisect.swing.property.propertysheet.PropertySheetPanel;
+
+import javax.swing.*;
 import java.beans.BeanInfo;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
-
-import javax.swing.UIManager;
-
-import automenta.vivisect.swing.property.model.DefaultBeanInfoResolver;
-import automenta.vivisect.swing.property.propertysheet.Property;
-import automenta.vivisect.swing.property.propertysheet.PropertySheetPanel;
 
 
 /**

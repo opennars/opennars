@@ -23,14 +23,11 @@
 
 package automenta.vivisect.gui;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.colorchooser.ColorSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
 
 /**
  * The preview panel class for the color selector.

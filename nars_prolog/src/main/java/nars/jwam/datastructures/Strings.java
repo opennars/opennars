@@ -1,7 +1,8 @@
 package nars.jwam.datastructures;
 
-import java.util.HashMap;
 import nars.jwam.WAM;
+
+import java.util.HashMap;
 
 /**
  * This class is for maintaining String objects. The WAM operates on integers so

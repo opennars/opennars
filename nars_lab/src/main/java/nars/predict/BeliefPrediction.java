@@ -5,11 +5,12 @@
 package nars.predict;
 
 import com.google.common.collect.Lists;
-import java.util.List;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.inference.AbstractObserver;
+
+import java.util.List;
 
 /**
  *

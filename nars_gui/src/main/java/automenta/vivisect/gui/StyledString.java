@@ -23,33 +23,18 @@
 
 package automenta.vivisect.gui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GraphicAttribute;
-import java.awt.font.ImageGraphicAttribute;
-import java.awt.font.LineBreakMeasurer;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextHitInfo;
-import java.awt.font.TextLayout;
+import processing.core.PApplet;
+
+import java.awt.*;
+import java.awt.font.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
-
-import processing.core.PApplet;
 
 /**
  * This class is used to represent text with attributes. <br>

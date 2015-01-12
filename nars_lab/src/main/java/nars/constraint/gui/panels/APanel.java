@@ -27,8 +27,8 @@
 package nars.constraint.gui.panels;
 
 import nars.constraint.gui.GUI;
-import org.jfree.chart.ChartPanel;
 import org.chocosolver.solver.Solver;
+import org.jfree.chart.ChartPanel;
 
 import javax.swing.*;
 

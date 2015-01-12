@@ -41,7 +41,7 @@ abstract public class FireConcept extends NAL {
     
     protected void fire() {
 
-        synchronized (currentConcept) {
+        synchronized (memory) {
             if (currentTaskLink !=null) {
                 fireTaskLink(termLinkCount);
                 returnTaskLink(currentTaskLink);

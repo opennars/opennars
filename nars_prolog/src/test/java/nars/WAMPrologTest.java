@@ -1,17 +1,16 @@
 package nars;
 
 
-import java.io.FileNotFoundException;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertNull;
-import static junit.framework.TestCase.assertTrue;
 import nars.jwam.WAM;
 import nars.jwam.WAMProlog;
 import nars.jwam.WAMProlog.Answer;
 import nars.jwam.WAMProlog.Query;
 import nars.jwam.parser.ParseException;
 import org.junit.Test;
+
+import java.io.FileNotFoundException;
+
+import static junit.framework.TestCase.*;
 
 public class WAMPrologTest {
 

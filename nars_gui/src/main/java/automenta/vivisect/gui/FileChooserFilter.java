@@ -23,9 +23,10 @@
 
 package automenta.vivisect.gui;
 
-import java.io.File;
-import javax.swing.filechooser.FileFilter;
 import processing.core.PApplet;
+
+import javax.swing.filechooser.FileFilter;
+import java.io.File;
 
 class FileChooserFilter extends FileFilter {
 	

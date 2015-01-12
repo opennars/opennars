@@ -1,25 +1,18 @@
 package nars;
 
-import java.util.ArrayList;
-import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.language.Inheritance;
-import nars.language.Product;
-import nars.language.Tense;
+import nars.language.*;
 import nars.language.Term;
-import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.prolog.Int;
-import nars.prolog.NoSolutionException;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Struct;
-import nars.prolog.Var;
+import nars.prolog.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 

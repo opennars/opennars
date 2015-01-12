@@ -1,15 +1,17 @@
 package prolog;
 
+import nars.prolog.util.JavaDynamicClassLoader;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import nars.prolog.util.JavaDynamicClassLoader;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Test;
 
 /**
  * JavaDynamicClassLoader Test Case

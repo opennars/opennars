@@ -17,21 +17,13 @@
  */
 package automenta.vivisect.swing.property.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Font;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.View;
 import javax.swing.text.html.HTMLDocument;
+import java.awt.*;
 
 /**
  * LookAndFeelTweaks. <br>

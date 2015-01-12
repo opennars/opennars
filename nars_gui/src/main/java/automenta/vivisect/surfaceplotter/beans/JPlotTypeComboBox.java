@@ -11,7 +11,6 @@
 */
 package automenta.vivisect.surfaceplotter.beans;
 
-import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotColor;
 import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotType;
 
 /**

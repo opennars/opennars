@@ -1,13 +1,12 @@
 package nars.nario.mapedit;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import nars.nario.Art;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import javax.swing.JComponent;
-import nars.nario.Art;
 
 
 public class TilePicker extends JComponent implements MouseListener, MouseMotionListener

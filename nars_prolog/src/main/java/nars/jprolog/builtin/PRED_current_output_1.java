@@ -1,10 +1,7 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.IllegalDomainException;
-import nars.jprolog.lang.VariableTerm;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
+import nars.jprolog.lang.*;
 /**
  * <code>current_output/1</code><br>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

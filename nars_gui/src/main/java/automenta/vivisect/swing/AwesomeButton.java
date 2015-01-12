@@ -1,7 +1,8 @@
 package automenta.vivisect.swing;
 
 import automenta.vivisect.Video;
-import javax.swing.JButton;
+
+import javax.swing.*;
 
 
 

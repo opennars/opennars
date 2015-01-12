@@ -1,9 +1,9 @@
 package automenta.vivisect.swing.property.sheet.renderer;
 
-import java.awt.Point;
-import java.text.NumberFormat;
-
 import automenta.vivisect.swing.property.swing.renderer.DefaultCellRenderer;
+
+import java.awt.*;
+import java.text.NumberFormat;
 
 
 public class PointRenderer extends DefaultCellRenderer {

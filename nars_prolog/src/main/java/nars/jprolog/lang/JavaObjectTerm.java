@@ -4,7 +4,7 @@ package nars.jprolog.lang;
  * The <code>JavaObjectTerm</code> class wraps a java object.<br>
  * 
  * <pre>
- *  import java.util.Hashtable;
+ *  import java.other.Hashtable;
  *  Term t = new JavaObjectTerm(new Hashtable());
  *  Hashtable hash = (Hashtable)(((JavaObjectTerm)t).object());
  * </pre>

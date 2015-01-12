@@ -24,12 +24,11 @@
 package automenta.vivisect.gui;
 
 import automenta.vivisect.gui.HotSpot.HSrect;
-
-import java.awt.Graphics2D;
-import java.awt.geom.RoundRectangle2D;
-
 import processing.core.PApplet;
 import processing.event.MouseEvent;
+
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 
 /**
  * This class is only used by the GDropList, GTextField and GTextArea components to provide

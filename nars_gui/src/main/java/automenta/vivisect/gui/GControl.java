@@ -24,7 +24,14 @@ package automenta.vivisect.gui;
 
 import automenta.vivisect.Widget;
 import automenta.vivisect.swing.PCanvas;
-import java.awt.Color;
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PGraphics;
+import processing.core.PGraphicsJava2D;
+import processing.event.KeyEvent;
+import processing.event.MouseEvent;
+
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.lang.reflect.Method;
@@ -32,13 +39,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import processing.core.PApplet;
-import processing.core.PConstants;
-import processing.core.PGraphics;
-import processing.core.PGraphicsJava2D;
-import processing.event.KeyEvent;
-import processing.event.MouseEvent;
 
 /**
  * Abstract base class for all GUI controls.

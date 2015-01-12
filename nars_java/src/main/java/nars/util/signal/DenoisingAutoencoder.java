@@ -1,8 +1,9 @@
 package nars.util.signal;
 
 
-import java.util.Random;
 import nars.util.XORShiftRandom;
+
+import java.util.Random;
 
 /** Denoising Autoencoder (from DeepLearning.net) */
 public class DenoisingAutoencoder {

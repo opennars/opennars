@@ -15,9 +15,8 @@
  */
 package automenta.vivisect.swing.dock;
 
+import javax.swing.*;
 import java.awt.datatransfer.Transferable;
-import javax.swing.JComponent;
-import javax.swing.TransferHandler;
 
 /**
  *

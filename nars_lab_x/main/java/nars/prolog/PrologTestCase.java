@@ -2,13 +2,7 @@ package prolog;
 
 
 import junit.framework.TestCase;
-import nars.prolog.InvalidLibraryException;
-import nars.prolog.InvalidTermException;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.Library;
-import nars.prolog.Prolog;
-import nars.prolog.StringLibrary;
-import nars.prolog.Theory;
+import nars.prolog.*;
 import nars.prolog.event.SpyEvent;
 import nars.prolog.event.SpyListener;
 

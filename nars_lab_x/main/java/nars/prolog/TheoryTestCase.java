@@ -1,12 +1,7 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.Prolog;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Theory;
+import nars.prolog.*;
 
 public class TheoryTestCase extends TestCase {
 

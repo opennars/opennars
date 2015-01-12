@@ -1,6 +1,6 @@
 package automenta.vivisect.surfaceplotter.surface;
 
-import java.awt.Color;
+import java.awt.*;
 
 
 /** Stands for a Color Model

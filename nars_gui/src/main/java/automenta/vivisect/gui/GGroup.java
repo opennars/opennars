@@ -23,11 +23,11 @@
 
 package automenta.vivisect.gui;
 
+import processing.core.PApplet;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import processing.core.PApplet;
 
 /**
  * This class allows you to group GUI controls so that they can be treated as a single 

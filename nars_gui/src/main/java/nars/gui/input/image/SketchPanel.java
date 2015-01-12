@@ -1,14 +1,10 @@
 package nars.gui.input.image;
 
 import automenta.vivisect.swing.NWindow;
-import java.util.Stack;
 import nars.gui.output.PPanel;
-import static processing.core.PApplet.append;
-import static processing.core.PApplet.dist;
-import static processing.core.PApplet.println;
-import static processing.core.PApplet.str;
-import static processing.core.PApplet.subset;
 import processing.core.PFont;
+
+import java.util.Stack;
 
 public class SketchPanel extends PPanel {
     /* OpenProcessing Tweak of *@*http://www.openprocessing.org/sketch/600*@* */

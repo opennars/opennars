@@ -1,9 +1,9 @@
 
 package automenta.vivisect.surfaceplotter.beans;
 
-import java.beans.PropertyChangeEvent;
-
 import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
+
+import java.beans.PropertyChangeEvent;
 
 
 

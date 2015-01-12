@@ -4,30 +4,16 @@
  */
 package nars.core.control;
 
+import nars.core.*;
+import nars.entity.*;
+import nars.inference.TruthFunctions;
+import nars.language.*;
+import nars.operator.Operation;
+import nars.operator.mental.Anticipate;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.Plugin;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
-import nars.entity.TruthValue;
-import nars.inference.TruthFunctions;
-import nars.language.CompoundTerm;
-import nars.language.Interval;
-import nars.language.Negation;
-import nars.language.Term;
-import nars.language.Variable;
-import nars.operator.Operation;
-import nars.operator.mental.Anticipate;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.

@@ -13,14 +13,7 @@ package nars.util.sort;
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.NavigableSet;
-import java.util.NoSuchElementException;
-import java.util.SortedSet;
+import java.util.*;
 
 
 /**

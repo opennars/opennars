@@ -8,14 +8,12 @@ package nars.io.meter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author me
  */
-public class TemporalMetrics<O extends Object> extends Metrics<Double,O> {
+public class TemporalMetrics<O> extends Metrics<Double,O> {
 
     public TemporalMetrics(int historySize) {
         super(historySize);
@@ -30,12 +28,13 @@ public class TemporalMetrics<O extends Object> extends Metrics<Double,O> {
 //System.out.println("field: " + f.getType() + " " + f.isAccessible() + " " + Meter.class.isAssignableFrom( f.getType() ));
             
             if ( meter.isAssignableFrom( f.getType() ) ) {
+                Meter m = null;
                 try {
-                    Meter m = (Meter)f.get(obj);
-                    addMeter(m);
-                } catch (Exception ex) {
-                    System.err.println(ex);  
-                } 
+                    m = (Meter)f.get(obj);
+                } catch (IllegalAccessException e) {
+                    //TODO ignore or handle errors?
+                }
+                addMeter(m);
             }
         }
     }

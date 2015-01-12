@@ -17,23 +17,21 @@
  */
 package automenta.vivisect.swing.property.swing.plaf;
 
+import automenta.vivisect.swing.property.swing.plaf.aqua.AquaLookAndFeelAddons;
+import automenta.vivisect.swing.property.swing.plaf.metal.MetalLookAndFeelAddons;
+import automenta.vivisect.swing.property.swing.plaf.windows.WindowsClassicLookAndFeelAddons;
+import automenta.vivisect.swing.property.swing.plaf.windows.WindowsLookAndFeelAddons;
+import automenta.vivisect.swing.property.util.OS;
+
+import javax.swing.*;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.JComponent;
-import javax.swing.UIManager;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-
-import automenta.vivisect.swing.property.swing.plaf.aqua.AquaLookAndFeelAddons;
-import automenta.vivisect.swing.property.swing.plaf.metal.MetalLookAndFeelAddons;
-import automenta.vivisect.swing.property.swing.plaf.windows.WindowsClassicLookAndFeelAddons;
-import automenta.vivisect.swing.property.swing.plaf.windows.WindowsLookAndFeelAddons;
-import automenta.vivisect.swing.property.util.OS;
 
 /**
  * Provides additional pluggable UI for new components added by the

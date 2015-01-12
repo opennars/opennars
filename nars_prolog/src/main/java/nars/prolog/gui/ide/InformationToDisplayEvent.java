@@ -1,10 +1,11 @@
 package nars.prolog.gui.ide;
 
-import java.util.ArrayList;
 import nars.prolog.Prolog;
 import nars.prolog.SolveInfo;
 import nars.prolog.event.PrologEvent;
 import nars.prolog.event.QueryEvent;
+
+import java.util.ArrayList;
 
 /**
  * This class represents events concerning information to display in the console.

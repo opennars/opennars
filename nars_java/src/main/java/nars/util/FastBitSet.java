@@ -14,8 +14,6 @@ package nars.util;
  * freely granted, provided that this notice is preserved.
  */
 
-import java.lang.UnsupportedOperationException;
-
 /**
  * <p> This class represents either a table of bits or a set of non-negative 
  *     numbers.</p>
@@ -461,10 +459,10 @@ public class FastBitSet {
     /**
      * Returns the cardinality of this bit set (number of bits set).
      * 
-     * <P>Note: Unlike {@code java.util.BitSet} this method does not 
+     * <P>Note: Unlike {@code java.other.BitSet} this method does not
      *          returns an approximation of the number of bits of space 
      *          actually in use. This method is compliant with 
-     *          java.util.Collection meaning for size().</p>
+     *          java.other.Collection meaning for size().</p>
      *
      * @return the cardinality of this bit set.
      */

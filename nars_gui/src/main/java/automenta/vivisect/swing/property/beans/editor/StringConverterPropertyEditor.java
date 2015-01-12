@@ -17,11 +17,10 @@
  */
 package automenta.vivisect.swing.property.beans.editor;
 
-import javax.swing.BorderFactory;
-import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
-
 import automenta.vivisect.swing.property.util.converter.ConverterRegistry;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
 
 
 /**

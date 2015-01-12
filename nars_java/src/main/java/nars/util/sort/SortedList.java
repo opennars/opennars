@@ -1,6 +1,6 @@
 package nars.util.sort;
 
-//package net.sourceforge.nite.util;
+//package net.sourceforge.nite.other;
 import java.util.ArrayList;
 import java.util.Comparator;
 

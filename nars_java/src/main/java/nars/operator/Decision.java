@@ -1,11 +1,12 @@
 package nars.operator;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import nars.core.Memory;
 import nars.entity.Task;
 import nars.language.Term;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A decision is a set of mutually exclusive actions (each represented as a Term parameter to an Operator).

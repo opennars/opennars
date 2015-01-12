@@ -25,11 +25,10 @@ package automenta.vivisect.gui;
 
 import automenta.vivisect.gui.HotSpot.HScircle;
 import automenta.vivisect.gui.HotSpot.HSrect;
-
-import java.awt.Graphics2D;
-import java.awt.geom.RoundRectangle2D;
-
 import processing.core.PApplet;
+
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 
 /**
  * A simple graphical slider.

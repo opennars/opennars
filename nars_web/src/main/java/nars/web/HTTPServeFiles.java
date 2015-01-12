@@ -22,14 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-import static nars.web.HTTPServer.HTTP_FORBIDDEN;
-import static nars.web.HTTPServer.HTTP_INTERNALERROR;
-import static nars.web.HTTPServer.HTTP_NOTFOUND;
-import static nars.web.HTTPServer.HTTP_OK;
-import static nars.web.HTTPServer.HTTP_REDIRECT;
-import static nars.web.HTTPServer.MIME_DEFAULT_BINARY;
-import static nars.web.HTTPServer.MIME_HTML;
-import static nars.web.HTTPServer.MIME_PLAINTEXT;
 
 /**
  *

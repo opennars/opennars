@@ -1,11 +1,6 @@
 package automenta.vivisect.surfaceplotter.beans;
 
-import java.beans.BeanInfo;
-import java.beans.EventSetDescriptor;
-import java.beans.Introspector;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyDescriptor;
+import java.beans.*;
 
 /** Observe a standard Bean's property, and provide easy, type safe access to the get and set.
  * 

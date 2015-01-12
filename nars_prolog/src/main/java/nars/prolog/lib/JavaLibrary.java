@@ -17,35 +17,18 @@
  */
 package nars.prolog.lib;
 
+import nars.prolog.*;
+import nars.prolog.Number;
+import nars.prolog.util.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-import nars.prolog.Int;
-import nars.prolog.JavaException;
-import nars.prolog.Library;
-import nars.prolog.Number;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Var;
-import nars.prolog.util.AbstractDynamicClassLoader;
-import nars.prolog.util.AndroidDynamicClassLoader;
-import nars.prolog.util.InspectionUtils;
-import nars.prolog.util.JavaDynamicClassLoader;
-import nars.prolog.util.Tools;
+import java.util.*;
 
 /**
  *

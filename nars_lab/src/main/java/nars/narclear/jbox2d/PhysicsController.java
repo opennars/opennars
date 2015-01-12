@@ -25,13 +25,14 @@
  */
 package nars.narclear.jbox2d;
 
+import nars.narclear.PhysicsModel;
+import org.jbox2d.common.IViewportTransform;
+import org.jbox2d.common.Vec2;
+
 import java.awt.event.KeyEvent;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Logger;
-import nars.narclear.PhysicsModel;
-import org.jbox2d.common.IViewportTransform;
-import org.jbox2d.common.Vec2;
 
 /**
  * This class contains most control logic for the testbed and the update loop.

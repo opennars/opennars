@@ -4,12 +4,10 @@
  */
 package nars.predict;
 
-import nars.util.TreeMLData;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
-import java.awt.Color;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
@@ -21,6 +19,9 @@ import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
 import nars.language.Tense;
 import nars.language.Term;
+import nars.util.TreeMLData;
+
+import java.awt.*;
 
 /**
  *

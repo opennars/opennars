@@ -16,14 +16,13 @@
  */
 package nars.timeline;
 
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
+import automenta.vivisect.timeline.LineChart;
+import automenta.vivisect.timeline.TimelineVis;
 import nars.core.NAR;
 import nars.core.Param;
 import nars.core.build.Default;
-import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.TimelineVis;
-import automenta.vivisect.timeline.BarChart;
-import automenta.vivisect.timeline.LineChart;
 import nars.util.NARTrace;
 
 public class NARCompare1 extends TimelineExample {

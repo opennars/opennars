@@ -1,6 +1,5 @@
 package nars.johkra;
 
-import nars.johkra.Util;
 import org.junit.Test;
 
 /**

@@ -19,22 +19,19 @@ package nars.perf;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
-import java.io.PrintStream;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.Bag;
-import nars.storage.LevelBag;
 import nars.storage.CurveBag;
+import nars.storage.LevelBag;
 import nars.storage.experimental.GearBag;
 import nars.util.sort.ArraySortedIndex;
+
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  *

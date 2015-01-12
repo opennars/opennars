@@ -5,13 +5,14 @@
  */
 package nars.jwam;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import nars.jwam.WAMProlog.Answer;
 import nars.jwam.WAMProlog.Answering;
 import nars.jwam.WAMProlog.Query;
 import nars.jwam.parser.ParseException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  *

@@ -2,18 +2,14 @@ package nars.storage.experimental;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
 import javolution.util.FastSet;
 import javolution.util.function.Equality;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.storage.Bag;
+
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Bag implementation which distributes items into
@@ -35,7 +31,7 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
     public final Map<K, E> index;
 
     /** level of items    */
-    public final Level<E>[] level;
+    public final Level[] level;
 
     /** outgoing queue */
     public final Deque<E> pending;
@@ -92,9 +88,9 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
         
         index = new WeakHashMap<K,E>(capacity);
         
-        pending = new ArrayDeque<E>();              
-        
-        level = new Level[this.levels];
+        pending = new ArrayDeque<E>();
+
+        level = (Level[]) Array.newInstance(Level.class, this.levels);
         
         toRemove = new FastSet(fastIdentity);
         
@@ -107,7 +103,7 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
     }
 
 
-    public class Level<E> extends ArrayDeque<E> {
+    public class Level extends ArrayDeque<E> {
         private final int thisLevel;
 
         public Level(int level, int numElements) {
@@ -214,7 +210,7 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
         if (size() == 0) {
             return 0.01f;
         }
-        float f = (float) mass / (size());
+        float f = mass / (size());
         if (f > 1) {
             return 1.0f;
         }
@@ -245,7 +241,7 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
                 
                 int j = 0;
                 while ((pending.size() < pendingBufferMaxSize) && (sizeLevels > 0)) {
-                    Level<E> l = level[currentLevel];
+                    Level l = level[currentLevel];
 
                     int maxLevelItemsToRemove = l.getAttention();
 

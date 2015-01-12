@@ -1,9 +1,7 @@
 package automenta.vivisect.surfaceplotter.beans;
 
-import java.awt.Component;
-import java.awt.Dimension;
-
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import java.awt.*;
 
 
 /** A scrollpane suitable for gridbag layout.

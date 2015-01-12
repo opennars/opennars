@@ -1,10 +1,12 @@
 package nars.prolog.net;
-import java.net.InetAddress;
-import java.util.AbstractMap;
-import java.util.ArrayList;
+
 import nars.prolog.Term;
 import nars.prolog.TermVisitor;
 import nars.prolog.Var;
+
+import java.net.InetAddress;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 @SuppressWarnings("serial")
 
 

@@ -21,16 +21,13 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import javax.swing.SwingUtilities;
+import automenta.vivisect.swing.dock.DockingRegionTabbed.PathRecordTabbed;
+
+import javax.swing.*;
+import java.awt.*;
+
 import static javax.swing.SwingUtilities.convertPoint;
 import static javax.swing.SwingUtilities.convertRectangle;
-import automenta.vivisect.swing.dock.DockingRegionTabbed.PathRecordTabbed;
 
 /**
  *

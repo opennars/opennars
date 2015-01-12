@@ -10,17 +10,13 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import automenta.vivisect.swing.NSlider;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import javax.swing.JPanel;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
+import nars.entity.*;
 import nars.language.Term;
 import nars.language.Terms.Termable;
 import nars.util.NARGraph;
+
+import javax.swing.*;
+import java.awt.*;
 /**
  *
  * @author me

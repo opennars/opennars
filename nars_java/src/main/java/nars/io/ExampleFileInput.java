@@ -6,17 +6,14 @@ package nars.io;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import nars.core.NAR;
+import nars.io.condition.OutputCondition;
+
+import java.io.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import nars.core.NAR;
-import nars.io.condition.OutputCondition;
 
 /**
  * Access to library of examples/unit tests

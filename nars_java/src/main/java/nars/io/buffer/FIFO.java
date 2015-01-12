@@ -7,7 +7,7 @@ import java.util.ArrayDeque;
  */
 public class FIFO<B> extends ArrayDeque<B> implements Buffer<B> {
 
-    public int DEFAULT_CAPACITY = 1024;
+    public final int DEFAULT_CAPACITY = 1024;
     
     public FIFO() {
         super();

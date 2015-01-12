@@ -16,12 +16,13 @@
  */
 package nars.util.kif;
 
+import nars.util.PrintWriterInput;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import nars.util.PrintWriterInput;
 
 /**
  * http://sigmakee.cvs.sourceforge.net/viewvc/sigmakee/sigma/suo-kif.pdf

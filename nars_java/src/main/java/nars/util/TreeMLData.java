@@ -1,13 +1,12 @@
 package nars.util;
 
-import java.awt.Color;
-import java.util.Comparator;
-import java.util.TreeMap;
-import nars.io.meter.depr.data.MutableInteger;
-import nars.io.meter.depr.data.MutableIntegerDouble;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLDataCentroid;
 import org.encog.util.kmeans.Centroid;
+
+import java.awt.*;
+import java.util.Comparator;
+import java.util.TreeMap;
 
 
 /**
@@ -23,7 +22,7 @@ import org.encog.util.kmeans.Centroid;
     private final MutableInteger temp = new MutableInteger(0);
     
     /** RGBA */
-    protected int colour;
+    protected final int colour;
     
 	//protected double strokeWeight = 1;
     //protected int[] colors = new int[0];
@@ -213,7 +212,7 @@ import org.encog.util.kmeans.Centroid;
 
     @Override
     public int size() {
-        return (int) (getEnd() - getStart());
+        return getEnd() - getStart();
     }
 
     

@@ -20,11 +20,12 @@
  */
 package nars.entity;
 
-import java.util.Arrays;
-import java.util.Objects;
 import nars.io.Symbols;
 import nars.language.Term;
 import nars.language.Terms.Termable;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A link between a compound term and a component term

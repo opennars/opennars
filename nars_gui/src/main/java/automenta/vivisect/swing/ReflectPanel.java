@@ -22,18 +22,13 @@ package automenta.vivisect.swing;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import automenta.vivisect.swing.property.propertysheet.PropertySheet;
 import automenta.vivisect.swing.property.propertysheet.PropertySheetPanel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.SimpleBeanInfo;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.beans.*;
 
 /**
  * Auto-reflect an object into a Swing PropertySheetPage

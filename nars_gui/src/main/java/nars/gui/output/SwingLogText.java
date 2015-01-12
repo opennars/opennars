@@ -1,19 +1,18 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.util.Deque;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import javax.swing.AbstractAction;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.io.Output.OUT;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 
 public class SwingLogText extends SwingText  {

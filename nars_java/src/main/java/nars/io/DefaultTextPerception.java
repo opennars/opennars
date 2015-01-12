@@ -1,19 +1,9 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
-import static com.google.common.collect.Iterators.singletonIterator;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import nars.core.EventEmitter.EventObserver;
-import nars.core.Events;
+import nars.core.*;
 import nars.core.Events.Perceive;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.Plugin;
 import nars.core.control.AbstractTask;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -23,11 +13,15 @@ import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;
-import nars.operator.io.Echo;
-import nars.operator.io.PauseInput;
-import nars.operator.io.Reboot;
-import nars.operator.io.Reset;
-import nars.operator.io.SetVolume;
+import nars.operator.io.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.google.common.collect.Iterators.singletonIterator;
 
 /**
  *  Default handlers for text perception.

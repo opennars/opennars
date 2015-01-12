@@ -1,13 +1,8 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.IllegalTypeException;
-import nars.jprolog.lang.ExistenceException;
-import nars.jprolog.lang.PermissionException;
-import nars.jprolog.lang.IllegalDomainException;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
+import nars.jprolog.lang.*;
+
 import java.io.PrintWriter;
 /**
  * <code>'$write_toString'/2</code><br>

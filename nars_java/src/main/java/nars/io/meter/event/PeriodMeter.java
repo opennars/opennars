@@ -20,7 +20,7 @@ public class PeriodMeter extends FunctionMeter<Double> {
     
     double lastReset, lastHit = Double.NaN;
     private final boolean nanoSeconds;
-    DescriptiveStatistics stat;
+    final DescriptiveStatistics stat;
     private final double window;
     private double prev;
     private final boolean frequency;
@@ -45,7 +45,7 @@ public class PeriodMeter extends FunctionMeter<Double> {
             return (double)System.nanoTime();
         }
         else {
-            return (double)(System.currentTimeMillis() * 1.0E6);
+            return System.currentTimeMillis() * 1.0E6;
         }
     }
 

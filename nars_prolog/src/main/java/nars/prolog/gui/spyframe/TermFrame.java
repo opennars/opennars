@@ -1,16 +1,13 @@
 package nars.prolog.gui.spyframe;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import nars.prolog.Struct;
 import nars.prolog.Term;
 import nars.prolog.Var;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /** GUI-Window containing a TermComponent that displays a prolog term.
  * Displaying should be a side effect of a corresponding prolog predicate

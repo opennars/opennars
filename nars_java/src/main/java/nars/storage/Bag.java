@@ -1,10 +1,11 @@
 package nars.storage;
 
-import java.util.Iterator;
-import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Item;
+
+import java.util.Iterator;
+import java.util.Set;
 
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
@@ -29,9 +30,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      */
     public boolean contains(final E it) {
         E exist = get(it.name());
-        if (exist.equals(it))
-            return true;
-        return false;
+        return exist.equals(it);
     }
     
     /**

@@ -1,6 +1,5 @@
 package nars.narclear;
 
-import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
@@ -10,6 +9,8 @@ import nars.language.Term;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
 import org.jbox2d.common.MathUtils;
+
+import java.util.List;
 
 
 

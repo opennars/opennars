@@ -23,10 +23,10 @@
 
 package automenta.vivisect.gui;
 
+import processing.core.PApplet;
+
 import java.io.File;
 import java.io.FilenameFilter;
-
-import processing.core.PApplet;
 
 class FilenameChooserFilter implements FilenameFilter {
 

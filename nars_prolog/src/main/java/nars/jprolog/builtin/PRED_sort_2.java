@@ -1,12 +1,8 @@
 package nars.jprolog.builtin;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.JavaException;
-import nars.jprolog.lang.SymbolTerm;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.IllegalTypeException;
-import nars.jprolog.lang.ListTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
+import nars.jprolog.lang.*;
+
 import java.util.Arrays;
 /**
  * <code>sort/2</code><br>

@@ -1,23 +1,13 @@
 package nars;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 import nars.core.Events;
+import nars.core.Events.Answer;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
-import nars.core.Events.Answer;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -25,25 +15,12 @@ import nars.io.Output.OUT;
 import nars.jwam.WAM;
 import nars.jwam.WAMProlog;
 import nars.jwam.WAMProlog.Query;
-import nars.language.CompoundTerm;
-import nars.language.Equivalence;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.Negation;
-import nars.language.Product;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.SetTensional;
-import nars.language.Similarity;
-import nars.language.Statement;
-import nars.language.Tense;
+import nars.language.*;
 import nars.language.Term;
-import nars.language.Variable;
-import nars.prolog.InvalidTermException;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.Struct;
-import nars.prolog.Theory;
-import nars.prolog.Var;
+import nars.prolog.*;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Causes a NARProlog to mirror certain activity of a NAR.  It generates

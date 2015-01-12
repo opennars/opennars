@@ -1,13 +1,12 @@
 package automenta.vivisect.surfaceplotter;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.SwingWorker;
-
 import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.SurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.SurfaceVertex;
+
+import javax.swing.*;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /**

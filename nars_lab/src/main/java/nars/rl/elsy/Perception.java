@@ -1,6 +1,7 @@
 package nars.rl.elsy;
 
 import java.io.Serializable;
+
 import static nars.rl.elsy.Mat.sigmoidBi;
 import static nars.rl.elsy.Mat.sigmoidUni;
 import static nars.rl.elsy.Rand.d;

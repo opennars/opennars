@@ -73,7 +73,7 @@ public class ResourceManager {
    * Gets the default ResourceManager. This is equivalent to
    * <code>all(ResourceManager.class)</code>. It returns the
    * ResourceManager named "AllRB" located in the same package
-   * ResourceManager class (i.e com.l2fprod.common.util.AllRB).
+   * ResourceManager class (i.e com.l2fprod.common.other.AllRB).
    * 
    * @return the default ResourceManager
    */

@@ -5,20 +5,9 @@
 
 package nars.plugin.app;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import nars.core.EventEmitter;
+import nars.core.*;
 import nars.core.EventEmitter.EventObserver;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.Plugin;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
@@ -26,6 +15,9 @@ import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Term;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -266,8 +258,7 @@ public class ClassicalConditioningHelper implements Plugin {
                 
                 BudgetFunctions.truthToQuality(Truth)), lastElems.get(lastElems.size()-1));
                 nar.addInput(TT);
-                boolean debugtillhere=true;
-                
+
                 break;
             }
         }

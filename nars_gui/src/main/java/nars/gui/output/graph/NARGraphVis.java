@@ -15,14 +15,6 @@ import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.GraphDisplays;
 import automenta.vivisect.swing.NSlider;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.ResetEnd;
@@ -32,6 +24,12 @@ import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
 import nars.util.graph.InheritanceGraph;
 import org.jgrapht.Graph;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *

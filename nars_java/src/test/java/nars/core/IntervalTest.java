@@ -1,14 +1,14 @@
 package nars.core;
 
-import java.util.List;
-import nars.core.Memory;
-import nars.core.NAR;
 import nars.core.build.Default;
 import nars.language.Interval;
 import nars.language.Interval.AtomicDuration;
+import org.junit.Test;
+
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *

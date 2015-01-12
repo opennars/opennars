@@ -1,9 +1,10 @@
 package nars.core.bag;
 
-import java.util.ArrayList;
-import java.util.List;
 import nars.storage.Distributor;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

@@ -23,11 +23,11 @@
 
 package automenta.vivisect.gui;
 
-import java.awt.Graphics2D;
-import java.awt.font.TextLayout;
-
 import processing.core.PApplet;
 import processing.event.MouseEvent;
+
+import java.awt.*;
+import java.awt.font.TextLayout;
 
 /**
  * Base class for linear sliders.

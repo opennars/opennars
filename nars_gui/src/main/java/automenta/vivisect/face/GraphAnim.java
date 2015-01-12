@@ -53,9 +53,9 @@ package automenta.vivisect.face;
 //import java.net.URL;
 //import java.net.URLConnection;
 //import java.net.URLEncoder;
-//import java.util.NoSuchElementException;
-//import java.util.StringTokenizer;
-//import java.util.Vector;
+//import java.other.NoSuchElementException;
+//import java.other.StringTokenizer;
+//import java.other.Vector;
 //
 //public class GraphAnim extends Applet {
 //    public static final int SNAPHEIGHT = 40;                     // height of snapshot in snap and anim components

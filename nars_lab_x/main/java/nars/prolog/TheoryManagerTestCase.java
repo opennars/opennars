@@ -1,17 +1,9 @@
 package prolog;
 
-import java.util.List;
 import junit.framework.TestCase;
-import nars.prolog.ClauseInfo;
-import nars.prolog.Int;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.Prolog;
-import nars.prolog.PrologException;
-import nars.prolog.SolveInfo;
-import nars.prolog.Struct;
-import nars.prolog.Theory;
-import nars.prolog.TheoryManager;
+import nars.prolog.*;
+
+import java.util.List;
 
 public class TheoryManagerTestCase extends TestCase {
 

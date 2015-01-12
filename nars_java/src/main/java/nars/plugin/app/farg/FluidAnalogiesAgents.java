@@ -22,7 +22,7 @@ public class FluidAnalogiesAgents implements Plugin {
     
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
-        if(enabled==true) {
+        if(enabled) {
             ws=new Workspace(this,n);
         }
         return true;

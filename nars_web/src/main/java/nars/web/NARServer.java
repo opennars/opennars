@@ -1,16 +1,14 @@
 package nars.web;
 
-import static io.undertow.Handlers.resource;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.FileResourceManager;
+
 import java.io.File;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-import nars.core.build.Default;
+
+import static io.undertow.Handlers.resource;
 
 
 public class NARServer extends PathHandler {

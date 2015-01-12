@@ -1,23 +1,17 @@
 package nars.rl.elsy;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import nars.rl.elsy.QLearner.Action;
+
+import java.io.*;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.System.arraycopy;
 import static java.lang.System.out;
 import static nars.rl.elsy.Mat.sigmoidBi;
 import static nars.rl.elsy.Mat.sigmoidUni;
-import nars.rl.elsy.QLearner.Action;
 import static nars.rl.elsy.RR.pickBestIndex;
-import static nars.rl.elsy.Rand.d;
-import static nars.rl.elsy.Rand.i;
-import static nars.rl.elsy.Rand.successWithPercent;
+import static nars.rl.elsy.Rand.*;
 
 
 /**

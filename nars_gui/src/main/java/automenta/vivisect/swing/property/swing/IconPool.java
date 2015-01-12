@@ -17,12 +17,10 @@
  */
 package automenta.vivisect.swing.property.swing;
 
+import javax.swing.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 /**
  * IconPool.<br>

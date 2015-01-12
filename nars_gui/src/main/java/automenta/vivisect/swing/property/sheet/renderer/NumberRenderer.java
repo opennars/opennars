@@ -1,18 +1,14 @@
 package automenta.vivisect.swing.property.sheet.renderer;
 
-import java.awt.Component;
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.JFormattedTextField;
-import javax.swing.JTable;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import java.awt.*;
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 
 public class NumberRenderer extends JFormattedTextField implements TableCellRenderer, Serializable {

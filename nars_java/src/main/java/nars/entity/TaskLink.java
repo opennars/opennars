@@ -20,12 +20,13 @@
  */
 package nars.entity;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
 import nars.core.Parameters;
 import nars.language.Term;
 import nars.language.Terms.Termable;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 
 /**
  * Reference to a Task.
@@ -158,10 +159,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
             return false;
         }
         TermLink linkKey = termLink.name();
-        int next, i;
-        
-        
-                
+
         //iterating the FIFO deque from oldest (first) to newest (last)
         Iterator<Recording> ir = records.iterator();
         while (ir.hasNext()) {

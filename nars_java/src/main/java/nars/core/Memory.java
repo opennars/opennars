@@ -20,98 +20,42 @@
  */
 package nars.core;
 
-import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import javolution.context.ConcurrentContext;
 import nars.core.Core.AttentionAware;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
-import static nars.core.Memory.Forgetting.Periodic;
-import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.ImmediateProcess;
 import nars.core.control.NAL;
-import nars.io.meter.EmotionMeter;
-import nars.io.meter.LogicMeter;
-import nars.io.meter.ResourceMeter;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.Item;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.inference.BudgetFunctions;
-import nars.plugin.app.plan.MultipleExecutionManager;
-import static nars.plugin.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import static nars.io.Symbols.NativeOperator.CONJUNCTION;
-import static nars.io.Symbols.NativeOperator.DIFFERENCE_EXT;
-import static nars.io.Symbols.NativeOperator.DIFFERENCE_INT;
-import static nars.io.Symbols.NativeOperator.DISJUNCTION;
-import static nars.io.Symbols.NativeOperator.EQUIVALENCE;
-import static nars.io.Symbols.NativeOperator.EQUIVALENCE_AFTER;
-import static nars.io.Symbols.NativeOperator.EQUIVALENCE_WHEN;
-import static nars.io.Symbols.NativeOperator.IMAGE_EXT;
-import static nars.io.Symbols.NativeOperator.IMAGE_INT;
-import static nars.io.Symbols.NativeOperator.IMPLICATION;
-import static nars.io.Symbols.NativeOperator.IMPLICATION_AFTER;
-import static nars.io.Symbols.NativeOperator.IMPLICATION_BEFORE;
-import static nars.io.Symbols.NativeOperator.IMPLICATION_WHEN;
-import static nars.io.Symbols.NativeOperator.INHERITANCE;
-import static nars.io.Symbols.NativeOperator.INTERSECTION_EXT;
-import static nars.io.Symbols.NativeOperator.INTERSECTION_INT;
-import static nars.io.Symbols.NativeOperator.NEGATION;
-import static nars.io.Symbols.NativeOperator.PARALLEL;
-import static nars.io.Symbols.NativeOperator.PRODUCT;
-import static nars.io.Symbols.NativeOperator.SEQUENCE;
-import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
-import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
-import nars.language.CompoundTerm;
-import nars.language.Conjunction;
-import nars.language.DifferenceExt;
-import nars.language.DifferenceInt;
-import nars.language.Disjunction;
-import nars.language.Equivalence;
-import nars.language.Image;
-import nars.language.ImageExt;
-import nars.language.ImageInt;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.IntersectionExt;
-import nars.language.IntersectionInt;
-import nars.language.Negation;
-import nars.language.Product;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.Tense;
-import nars.language.Term;
-import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
+import nars.io.meter.EmotionMeter;
+import nars.io.meter.LogicMeter;
+import nars.io.meter.ResourceMeter;
+import nars.language.*;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
+import nars.plugin.app.plan.MultipleExecutionManager;
 import nars.storage.Bag;
 import reactor.core.Environment;
 import reactor.event.dispatch.SynchronousDispatcher;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+
+import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
+import static nars.plugin.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -137,7 +81,7 @@ public class Memory implements Serializable {
     private long timeSimulation;
     
     private final Environment env;
-    private List<Runnable> otherTasks = new ArrayList();
+    private final List<Runnable> otherTasks = new ArrayList();
 
 
     public static enum Forgetting {
@@ -171,7 +115,7 @@ public class Memory implements Serializable {
 
     //public static Random randomNumber = new Random(1);
     public static long randomSeed = 1;
-    public static Random randomNumber = new Random(randomSeed);
+    public static final Random randomNumber = new Random(randomSeed);
 
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);
@@ -231,7 +175,7 @@ public class Memory implements Serializable {
     public final Param param;
 
     //index of Conjunction questions
-    transient private Set<Task> questionsConjunction = new HashSet();
+    final transient private Set<Task> questionsConjunction = new HashSet();
 
     private class MemoryEventEmitter extends EventEmitter {
 

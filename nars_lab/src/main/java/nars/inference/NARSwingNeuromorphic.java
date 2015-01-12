@@ -4,11 +4,12 @@
  */
 package nars.inference;
 
-import java.io.File;
 import nars.core.NAR;
 import nars.core.build.Neuromorphic;
 import nars.gui.NARSwing;
 import nars.io.TextInput;
+
+import java.io.File;
 
 /**
  *

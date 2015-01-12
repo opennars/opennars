@@ -15,16 +15,11 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.EventObject;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JSplitPane;
+
 import static javax.swing.SwingUtilities.getWindowAncestor;
 
 /**

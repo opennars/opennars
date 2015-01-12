@@ -1,7 +1,6 @@
 package nars.util.sort;
 
 import java.util.ArrayList;
-import static nars.language.Term.get;
 
 /**
  * UNTESTED

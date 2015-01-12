@@ -3,10 +3,6 @@ package nars.plugin.app.plan;
 //or by other plugins which demand adding of executions
 //GCM is always in the lead and should be so it does not need to use this.
 
-import java.util.HashSet;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import nars.core.Events;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.Memory;
@@ -22,6 +18,11 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.operator.mental.Mental;
+
+import java.util.HashSet;
+import java.util.NavigableSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Operation execution and planning support. Strengthens and accelerates

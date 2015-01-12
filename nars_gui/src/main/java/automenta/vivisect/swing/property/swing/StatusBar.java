@@ -17,17 +17,13 @@
  */
 package automenta.vivisect.swing.property.swing;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.util.Hashtable;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.UIResource;
+import java.awt.*;
+import java.util.Hashtable;
 
 /**
  * StatusBar. <BR>A status bar is made of multiple zones. A zone can be any

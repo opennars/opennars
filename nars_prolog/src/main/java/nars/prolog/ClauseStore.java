@@ -1,10 +1,11 @@
 package nars.prolog;
 
+import nars.prolog.util.OneWayList;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import nars.prolog.util.OneWayList;
 
 /**
  * A list of clauses belonging to the same family as a goal. A family is

@@ -26,6 +26,8 @@
  */
 package nars.constraint.gui;
 
+import nars.constraint.gui.panels.GraphPanel;
+import nars.constraint.gui.panels.GraphPanel.ChocoMetrics;
 import nars.constraint.gui.panels.Parameters;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.search.loop.monitors.IMonitorInitialize;
@@ -39,8 +41,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.constraint.gui.panels.GraphPanel;
-import nars.constraint.gui.panels.GraphPanel.ChocoMetrics;
 
 /**
  * <br/>

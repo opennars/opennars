@@ -1,10 +1,11 @@
 package nars.perf;
 
-import java.util.Collection;
+import nars.core.NALTest;
 import nars.core.NAR;
 import nars.core.build.Curve;
 import nars.core.build.Default;
-import nars.core.NALTest;
+
+import java.util.Collection;
 
 
 /** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load

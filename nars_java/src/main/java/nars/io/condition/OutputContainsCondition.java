@@ -4,16 +4,17 @@
  */
 package nars.io.condition;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.TextOutput;
 import nars.io.Texts;
 import nars.operator.Operator.ExecutionResult;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * OutputCondition that watches for a specific String output,
@@ -22,7 +23,7 @@ import nars.operator.Operator.ExecutionResult;
  */
 public class OutputContainsCondition extends OutputCondition<Task> {
     
-    public List<Task> exact = new ArrayList();
+    public final List<Task> exact = new ArrayList();
     
     public static class SimilarOutput implements Comparable<SimilarOutput> {
         public final String signal;
@@ -55,7 +56,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     
     
     final String containing;
-    public TreeSet<SimilarOutput> almost = new TreeSet();
+    public final TreeSet<SimilarOutput> almost = new TreeSet();
     final boolean saveSimilar;
     int maxSimilars = 5;
 

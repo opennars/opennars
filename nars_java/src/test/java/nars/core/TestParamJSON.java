@@ -4,12 +4,10 @@
  */
 package nars.core;
 
-import nars.core.NAR;
-import nars.core.Build;
-import nars.core.Param;
 import nars.core.build.Default;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -42,8 +40,8 @@ public class TestParamJSON {
     @Test 
     public void testReserializeGenome() {
         
-        Build p = new Default();;
-        
+        Build p = new Default();
+
         String j = p.toString();
         
         System.out.println(j);

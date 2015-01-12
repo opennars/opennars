@@ -16,7 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.prolog;
+
 import com.google.common.collect.Lists;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;

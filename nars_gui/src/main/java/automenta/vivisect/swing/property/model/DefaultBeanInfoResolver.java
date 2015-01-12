@@ -17,9 +17,9 @@
  */
 package automenta.vivisect.swing.property.model;
 
-import java.beans.BeanInfo;
-
 import automenta.vivisect.swing.property.beans.BeanInfoResolver;
+
+import java.beans.BeanInfo;
 
 /**
  * DefaultBeanInfoResolver. <br>

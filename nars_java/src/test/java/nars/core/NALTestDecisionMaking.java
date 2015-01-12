@@ -1,12 +1,13 @@
 package nars.core;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class NALTestDecisionMaking extends NALTest  {

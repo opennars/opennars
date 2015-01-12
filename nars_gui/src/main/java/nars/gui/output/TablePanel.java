@@ -1,15 +1,16 @@
 package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
-import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import nars.core.NAR;
 import nars.io.Output;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.awt.BorderLayout.CENTER;
 
 
 public abstract class TablePanel extends NPanel  {

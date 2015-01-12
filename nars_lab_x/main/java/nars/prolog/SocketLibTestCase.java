@@ -1,19 +1,11 @@
 package prolog;
 
-import nars.prolog.InvalidLibraryException;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.NoSolutionException;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Theory;
-import nars.prolog.UnknownVarException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import nars.prolog.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Eleonora Cau

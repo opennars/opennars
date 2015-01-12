@@ -1,13 +1,14 @@
 package nars.io.nlp;
 
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import javax.swing.*;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.gui.NARSwing;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class NlpGui extends JFrame {
     private class SentencePartContext {

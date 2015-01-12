@@ -22,16 +22,11 @@
  */
 package automenta.vivisect.swing.property.sheet.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.swing.table.TableCellRenderer;
-
 import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
 import automenta.vivisect.swing.property.sheet.AnnotatedBeanInfo;
+
+import javax.swing.table.TableCellRenderer;
+import java.lang.annotation.*;
 
 
 /**

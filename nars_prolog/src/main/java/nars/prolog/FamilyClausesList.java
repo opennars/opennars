@@ -1,12 +1,7 @@
 package nars.prolog;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * <code>FamilyClausesList</code> is a common <code>LinkedList</code>

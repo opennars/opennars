@@ -10,11 +10,11 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.gui.NARSwing;
 import nars.io.ExampleFileInput;
 import nars.language.Term;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  *

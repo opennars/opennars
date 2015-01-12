@@ -1,17 +1,7 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.BuiltIn;
-import nars.prolog.Int;
-import nars.prolog.InvalidTermException;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Theory;
-import nars.prolog.Var;
+import nars.prolog.*;
 
 public class BuiltInTestCase extends TestCase {
 	

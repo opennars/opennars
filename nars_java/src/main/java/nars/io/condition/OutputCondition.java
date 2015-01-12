@@ -4,11 +4,12 @@
  */
 package nars.io.condition;
 
+import nars.core.NAR;
+import nars.io.Output;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import nars.core.NAR;
-import nars.io.Output;
 
 /**
  * Monitors an output stream for certain conditions. Used in testing and

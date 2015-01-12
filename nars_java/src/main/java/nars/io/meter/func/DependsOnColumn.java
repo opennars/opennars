@@ -5,17 +5,17 @@
  */
 package nars.io.meter.func;
 
-import java.util.Iterator;
-import java.util.List;
+import nars.io.meter.FunctionMeter;
 import nars.io.meter.Metrics;
 import nars.io.meter.Signal;
-import nars.io.meter.FunctionMeter;
-import nars.io.meter.Meter;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @param Source Return type
  */
-abstract public class DependsOnColumn<Source extends Object,Result extends Object> extends FunctionMeter<Result> {
+abstract public class DependsOnColumn<Source,Result> extends FunctionMeter<Result> {
 
     protected final int sourceColumn;
     protected final Metrics metrics;

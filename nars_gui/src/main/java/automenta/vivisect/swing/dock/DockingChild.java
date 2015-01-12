@@ -15,8 +15,8 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.Point;
-import javax.swing.JComponent;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *

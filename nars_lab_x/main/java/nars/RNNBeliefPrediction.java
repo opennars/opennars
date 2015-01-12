@@ -12,14 +12,15 @@ import de.jannlab.data.SampleSet;
 import de.jannlab.generator.RNNGenerator;
 import de.jannlab.tools.NetTools;
 import de.jannlab.training.GradientDescent;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.TreeMap;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import org.apache.commons.math3.util.MathArrays;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.TreeMap;
 
 /** predicts the beliefs of a set of concepts */
 abstract public class RNNBeliefPrediction extends BeliefPrediction {

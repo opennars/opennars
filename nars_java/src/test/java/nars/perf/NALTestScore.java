@@ -4,18 +4,16 @@
  */
 package nars.perf;
 
+import nars.core.*;
+import org.junit.Ignore;
+
 import java.util.Collection;
-import nars.core.EventEmitter;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.NALTest;
 
 /**
  *
  * @author me
  */
+@Ignore
 public class NALTestScore extends NALTest {
 
     

@@ -1,14 +1,7 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.BlockPredicate;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.IllegalTypeException;
-import nars.jprolog.lang.SystemException;
-import nars.jprolog.lang.VariableTerm;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
-import nars.jprolog.lang.OutOfLoop;
+import nars.jprolog.lang.*;
 /**
  * <code>'$begin_sync'/2</code>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

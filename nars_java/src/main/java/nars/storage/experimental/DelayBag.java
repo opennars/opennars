@@ -2,14 +2,6 @@
 package nars.storage.experimental;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.Core;
 import nars.core.Core.AttentionAware;
 import nars.core.Memory;
@@ -19,6 +11,11 @@ import nars.entity.Item;
 import nars.inference.BudgetFunctions;
 import nars.storage.Bag;
 import nars.util.sort.ArraySortedIndex;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Bag which uses time-since-last-activation and priority to decide which items are eligible for firing.

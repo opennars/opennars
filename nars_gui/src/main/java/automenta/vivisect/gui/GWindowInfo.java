@@ -23,17 +23,18 @@
 package automenta.vivisect.gui;
 
 import automenta.vivisect.swing.PCanvas;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PMatrix;
 import processing.core.PMatrix3D;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import static processing.event.MouseEvent.PRESS;
 
 /**

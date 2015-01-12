@@ -4,20 +4,6 @@ package nars.gui.output;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import static javax.swing.SwingUtilities.invokeLater;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.NAR;
 import nars.entity.Task;
@@ -26,6 +12,13 @@ import nars.io.Output;
 import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import static javax.swing.SwingUtilities.invokeLater;
 
 /**
  *

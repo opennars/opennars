@@ -4,42 +4,27 @@
  */
 package nars.gui.output;
 
-import automenta.vivisect.swing.NWindow;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.WeakHashMap;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
-import nars.core.Events.ConceptBeliefAdd;
-import nars.core.Events.ConceptBeliefRemove;
-import nars.core.Events.ConceptForget;
-import nars.core.Events.ConceptGoalAdd;
-import nars.core.Events.ConceptGoalRemove;
-import nars.core.Events.ConceptNew;
-import nars.core.Events.ConceptQuestionAdd;
-import nars.core.Events.ConceptQuestionRemove;
+import nars.core.Events.*;
 import nars.core.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import static nars.io.Symbols.JUDGMENT_MARK;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.util.Idea;
 import nars.util.Idea.IdeaSet;
 import nars.util.Idea.SentenceType;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import static nars.io.Symbols.JUDGMENT_MARK;
 
 /**
  *

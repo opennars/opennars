@@ -15,15 +15,12 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
-import static java.lang.Math.min;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
+
+import static java.lang.Math.min;
 
 /**
  *

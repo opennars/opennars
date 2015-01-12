@@ -20,9 +20,10 @@
  */
 package nars.language;
 
-import java.util.Arrays;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
+
+import java.util.Arrays;
 
 /**
  * A Statement about an Equivalence relation.
@@ -99,23 +100,9 @@ public class Equivalence extends Statement {
             Term interm = subject;
             subject = predicate;
             predicate = interm;
+            temporalOrder = TemporalRules.ORDER_FORWARD;
         }
-        
-        NativeOperator copula;
-        switch (temporalOrder) {
-            case TemporalRules.ORDER_BACKWARD:
-                temporalOrder = TemporalRules.ORDER_FORWARD;
-                //TODO determine if this missing break is intended
-            case TemporalRules.ORDER_FORWARD:
-                copula = NativeOperator.EQUIVALENCE_AFTER;
-                break;
-            case TemporalRules.ORDER_CONCURRENT:
-                copula = NativeOperator.EQUIVALENCE_WHEN;
-                break;
-            default:
-                copula = NativeOperator.EQUIVALENCE;
-        }
-        
+
         Term[] t = Term.toSortedSetArray(subject, predicate);
         if (t.length != 2)
             return null;        

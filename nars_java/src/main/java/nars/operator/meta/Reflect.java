@@ -5,12 +5,7 @@
 package nars.operator.meta;
 
 import nars.core.Memory;
-import nars.language.CompoundTerm;
-import nars.language.Inheritance;
-import nars.language.Product;
-import nars.language.Similarity;
-import nars.language.Statement;
-import nars.language.Term;
+import nars.language.*;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term

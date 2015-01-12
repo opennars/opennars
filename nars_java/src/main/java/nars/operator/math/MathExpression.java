@@ -1,9 +1,7 @@
 package nars.operator.math;
 
-import java.util.List;
 import nars.core.Memory;
 import nars.io.Texts;
-import static nars.io.Texts.unescape;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
@@ -13,6 +11,10 @@ import org.encog.ml.prg.EncogProgramContext;
 import org.encog.ml.prg.ProgramNode;
 import org.encog.ml.prg.expvalue.ExpressionValue;
 import org.encog.ml.tree.TreeNode;
+
+import java.util.List;
+
+import static nars.io.Texts.unescape;
 
 /**
  * Parses an expression string to terms
@@ -75,7 +77,7 @@ public class MathExpression  extends SynchronousFunctionOperator {
         List<TreeNode> children = node.getChildNodes();
         
        
-        ExpressionValue[] data = null;
+        ExpressionValue[] data;
         
         ProgramNode p = (ProgramNode)node;
         data = p.getData();

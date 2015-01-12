@@ -14,19 +14,15 @@
  */
 package automenta.vivisect.dimensionalize;
 
-import static automenta.vivisect.dimensionalize.HyperassociativeMap.EdgeWeightToDistanceFunction.OneDivSum;
-import java.util.Map.Entry;
-import java.util.concurrent.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.WeakHashMap;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.Graph;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * FROM:

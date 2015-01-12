@@ -1,5 +1,7 @@
 package nars.jprolog.lang;
+
 import nars.jprolog.Prolog;
+
 import java.util.Vector;
 /**
  * List.<br>
@@ -121,9 +123,9 @@ public class ListTerm extends Term {
     }
 
     /** 
-     * Returns a <code>java.util.Vector</code> corresponds to this <code>ListTerm</code>
+     * Returns a <code>java.other.Vector</code> corresponds to this <code>ListTerm</code>
      * according to <em>Prolog Cafe interoperability with Java</em>.
-     * @return a <code>java.util.Vector</code> object equivalent to
+     * @return a <code>java.other.Vector</code> object equivalent to
      * this <code>IntegerTerm</code>.
      */
     public Object toJava() { 

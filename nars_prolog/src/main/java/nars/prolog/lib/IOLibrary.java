@@ -17,23 +17,12 @@
  */
 package nars.prolog.lib;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Random;
-import nars.prolog.Int;
-import nars.prolog.InvalidTermException;
-import nars.prolog.Library;
+import nars.prolog.*;
 import nars.prolog.Number;
-import nars.prolog.PrologError;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Var;
 import nars.prolog.util.Tools;
+
+import java.io.*;
+import java.util.Random;
 
 /**
  * This class provides basic I/O predicates.

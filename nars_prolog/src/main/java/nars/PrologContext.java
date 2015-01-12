@@ -1,12 +1,13 @@
 package nars;
 
+import nars.core.NAR;
+import nars.language.Term;
+import nars.prolog.Prolog;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import nars.core.NAR;
-import nars.language.Term;
-import nars.prolog.Prolog;
 
 /**
  *

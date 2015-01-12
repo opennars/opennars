@@ -4,32 +4,19 @@
  */
 package nars.perf.evolve;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.perf.NALTestScore;
 import nars.util.MultiOutputStream;
-import org.apache.commons.math3.genetics.AbstractListChromosome;
-import org.apache.commons.math3.genetics.Chromosome;
-import org.apache.commons.math3.genetics.ElitisticListPopulation;
-import org.apache.commons.math3.genetics.FixedGenerationCount;
-import org.apache.commons.math3.genetics.GeneticAlgorithm;
-import org.apache.commons.math3.genetics.InvalidRepresentationException;
-import org.apache.commons.math3.genetics.OnePointCrossover;
-import org.apache.commons.math3.genetics.Population;
-import org.apache.commons.math3.genetics.RandomKeyMutation;
-import org.apache.commons.math3.genetics.StoppingCondition;
-import org.apache.commons.math3.genetics.TournamentSelection;
+import org.apache.commons.math3.genetics.*;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLMethod;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  * Refactoring to use Apache Commons Genetics packages which should be more

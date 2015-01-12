@@ -20,14 +20,6 @@
  */
 package nars.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.TruthValue.Truthable;
@@ -35,15 +27,12 @@ import nars.inference.TruthFunctions;
 import nars.inference.TruthFunctions.EternalizedTruthValue;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.language.CompoundTerm;
-import nars.language.Conjunction;
-import nars.language.Interval;
-import nars.language.Statement;
-import nars.language.Term;
+import nars.language.*;
 import nars.language.Terms.Termable;
-import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import java.util.*;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -264,7 +253,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
      */
     public boolean equivalentTo(final Sentence that) {
         if (Parameters.DEBUG) {
-            if ((!term.equals(term)) || (punctuation != that.punctuation)) {
+            if ((!term.equals(that.term)) || (punctuation != that.punctuation)) {
                 throw new RuntimeException("invalid comparison for Sentence.equivalentTo");
             }
         }

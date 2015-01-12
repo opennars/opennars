@@ -17,27 +17,15 @@
  */
 package automenta.vivisect.swing.property.propertysheet;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import javax.swing.tree.TreeCellEditor;
+import java.awt.*;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.util.EventObject;
-
-import javax.swing.AbstractCellEditor;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.table.TableCellEditor;
-import javax.swing.tree.TreeCellEditor;
 
 /**
  * Allows to use any PropertyEditor as a Table or Tree cell editor. <br>

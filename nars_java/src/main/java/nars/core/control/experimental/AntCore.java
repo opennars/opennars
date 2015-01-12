@@ -4,28 +4,17 @@
  */
 package nars.core.control.experimental;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import javolution.context.ConcurrentContext;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.FireConcept;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.ConceptBuilder;
-import nars.entity.Item;
-import nars.entity.Sentence;
-import nars.entity.TLink;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
+import nars.entity.*;
 import nars.language.Term;
 import nars.language.Terms.Termable;
 import nars.util.XORShiftRandom;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Multiprocessor-capable NAR controller.
@@ -162,7 +151,7 @@ public class AntCore extends ConceptWaveCore {
             if (concepts.size() - occupied.size() - 1 /* an extra one to include this concept) */ <= 0)
                 return;
             
-            Concept c = null;
+            Concept c;
             
             synchronized (occupied) {
                 
@@ -349,22 +338,20 @@ public class AntCore extends ConceptWaveCore {
                 goRandomConcept(queue);
                 return;
             }
-            
-            if (viaLink!=null) {
-                if (viaLink instanceof TermLink) {
-                    concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);                               
-                }
-                else if (viaLink instanceof TaskLink) {
-                    concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);        
-                }
-            
-                eta = viaLink.getPriority();
-                link = viaLink;
-                viaLink = null;
+
+            if (viaLink instanceof TermLink) {
+                concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
             }
-                        
-            
-            if (viaLink == null || (goNextConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f)) == null))
+            else if (viaLink instanceof TaskLink) {
+                concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
+            }
+
+            eta = viaLink.getPriority();
+            link = viaLink;
+            viaLink = null;
+
+
+            if (goNextConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f)) == null)
                 return;
             
             onLink(link, eta, queue);

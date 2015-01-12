@@ -6,22 +6,6 @@ package nars.rl;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import automenta.vivisect.swing.NWindow;
-import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
-import java.awt.Color;
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.RowSorter;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import nars.core.EventEmitter;
 import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
@@ -33,10 +17,22 @@ import nars.io.Texts;
 import nars.io.narsese.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Image;
-import static nars.language.Tense.Eternal;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.util.NARGraph;
+
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static java.awt.BorderLayout.CENTER;
+import static nars.language.Tense.Eternal;
 
 /**
  * TODO add existing concepts before it is added

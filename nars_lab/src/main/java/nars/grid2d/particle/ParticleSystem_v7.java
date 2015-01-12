@@ -1,7 +1,7 @@
 package nars.grid2d.particle;
 
-import java.awt.Canvas;
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
 
 // TODO: make resizeable when paused (have getPaused method in renderClass
 // and if true setUndecorated(false);, and vice versa

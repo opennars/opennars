@@ -17,13 +17,10 @@
  */
 package nars.prolog.gui.ide;
 
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.StringTokenizer;
-import javax.swing.AbstractAction;
-import javax.swing.JPanel;
+import nars.prolog.gui.edit.JEditTextArea;
+import nars.prolog.gui.edit.SyntaxDocument;
+
+import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -32,8 +29,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
-import nars.prolog.gui.edit.JEditTextArea;
-import nars.prolog.gui.edit.SyntaxDocument;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.StringTokenizer;
 
 /**
  * An edit area for the Java 2 platform. Makes use of an advanced Swing text area.

@@ -17,11 +17,14 @@
  */
 package automenta.vivisect.swing.property.propertysheet;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import automenta.vivisect.swing.property.beans.editor.InsetsPropertyEditor;
+import automenta.vivisect.swing.property.beans.editor.JCalendarDatePropertyEditor;
+import automenta.vivisect.swing.property.beans.editor.RectanglePropertyEditor;
+import automenta.vivisect.swing.property.beans.editor.StringPropertyEditor;
+import automenta.vivisect.swing.property.sheet.editor.*;
+import automenta.vivisect.swing.property.sheet.editor.NumberEditor.*;
+
+import java.awt.*;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
@@ -32,23 +35,6 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import automenta.vivisect.swing.property.beans.editor.InsetsPropertyEditor;
-import automenta.vivisect.swing.property.beans.editor.JCalendarDatePropertyEditor;
-import automenta.vivisect.swing.property.beans.editor.RectanglePropertyEditor;
-import automenta.vivisect.swing.property.beans.editor.StringPropertyEditor;
-import automenta.vivisect.swing.property.sheet.editor.BooleanEditor;
-import automenta.vivisect.swing.property.sheet.editor.CharacterEditor;
-import automenta.vivisect.swing.property.sheet.editor.ColorEditor;
-import automenta.vivisect.swing.property.sheet.editor.DimensionEditor;
-import automenta.vivisect.swing.property.sheet.editor.EnumEditor;
-import automenta.vivisect.swing.property.sheet.editor.FileEditor;
-import automenta.vivisect.swing.property.sheet.editor.NumberEditor.ByteEditor;
-import automenta.vivisect.swing.property.sheet.editor.NumberEditor.DoubleEditor;
-import automenta.vivisect.swing.property.sheet.editor.NumberEditor.FloatEditor;
-import automenta.vivisect.swing.property.sheet.editor.NumberEditor.IntegerEditor;
-import automenta.vivisect.swing.property.sheet.editor.NumberEditor.LongEditor;
-import automenta.vivisect.swing.property.sheet.editor.NumberEditor.ShortEditor;
 
 
 /**

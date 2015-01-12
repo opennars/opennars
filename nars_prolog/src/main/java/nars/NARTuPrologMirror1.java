@@ -1,12 +1,12 @@
 //package nars;
 //
 //import com.google.common.collect.Lists;
-//import java.util.HashMap;
-//import java.util.HashSet;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Set;
-//import java.util.regex.Pattern;
+//import java.other.HashMap;
+//import java.other.HashSet;
+//import java.other.List;
+//import java.other.Map;
+//import java.other.Set;
+//import java.other.regex.Pattern;
 //import nars.core.Events;
 //import nars.core.Events.ConceptBeliefAdd;
 //import nars.core.Events.ConceptBeliefRemove;

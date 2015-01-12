@@ -17,15 +17,13 @@
  */
 package automenta.vivisect.swing.property.swing;
 
-import java.awt.Component;
-import java.awt.Container;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Timer;
 
 /**
  * Animates a PercentLayout

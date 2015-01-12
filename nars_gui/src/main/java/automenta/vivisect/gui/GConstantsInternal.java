@@ -23,7 +23,7 @@
 
 package automenta.vivisect.gui;
 
-import java.awt.BasicStroke;
+import java.awt.*;
 
 /**
  * Constants that are used internally by the library.

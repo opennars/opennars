@@ -1,15 +1,10 @@
 package nars.gui.input.image;
 
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.image.BufferedImage;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import nars.gui.output.BitmapPanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  *

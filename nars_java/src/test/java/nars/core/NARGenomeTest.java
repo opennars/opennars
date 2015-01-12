@@ -4,7 +4,6 @@
  */
 package nars.core;
 
-import java.util.Random;
 import nars.perf.evolve.GeneticSearchEncog;
 import org.encog.Encog;
 import org.encog.ml.ea.train.basic.TrainEA;
@@ -21,6 +20,8 @@ import org.encog.ml.prg.train.PrgPopulation;
 import org.encog.ml.prg.train.rewrite.RewriteAlgebraic;
 import org.encog.ml.prg.train.rewrite.RewriteConstants;
 import org.junit.Test;
+
+import java.util.Random;
 
 /**
  *

@@ -21,10 +21,8 @@
  */
 package automenta.vivisect.swing.dock;
 
+import javax.swing.*;
 import java.awt.event.MouseEvent;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.TransferHandler;
 
 /**
  *

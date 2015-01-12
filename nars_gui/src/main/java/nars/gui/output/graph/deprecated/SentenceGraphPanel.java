@@ -13,8 +13,8 @@ package nars.gui.output.graph.deprecated;
 //import nars.entity.Sentence;
 //import nars.inference.GraphExecutive;
 //import nars.language.Term;
-//import nars.util.graph.SentenceGraph;
-//import nars.util.graph.SentenceGraph.GraphChange;
+//import nars.other.graph.SentenceGraph;
+//import nars.other.graph.SentenceGraph.GraphChange;
 //import org.jgrapht.graph.DirectedMultigraph;
 //
 ///**

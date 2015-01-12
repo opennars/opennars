@@ -24,31 +24,19 @@
 package automenta.vivisect.gui;
 
 
-import java.awt.Color;
-import java.awt.FileDialog;
-import java.awt.Font;
-import java.awt.Frame;
+import processing.core.PApplet;
+import processing.core.PConstants;
+
+import javax.swing.*;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.colorchooser.AbstractColorChooserPanel;
-import javax.swing.filechooser.FileFilter;
-
-import processing.core.PApplet;
-import processing.core.PConstants;
+import java.util.*;
 
 /**
  * The core class for the global manipulation and execution of GUI. <br>

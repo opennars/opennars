@@ -4,15 +4,17 @@
  */
 package nars.core;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Answered;
 import nars.io.narsese.Narsese;
+import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static nars.language.Tense.Eternal;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *

@@ -1,13 +1,14 @@
 package nars.jwam.compiler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import nars.jwam.RuleHeap;
 import nars.jwam.WAM;
-import nars.jwam.datastructures.Numbers;
 import nars.jwam.datastructures.IntArrayList;
+import nars.jwam.datastructures.Numbers;
 import nars.jwam.datastructures.Strings;
 import nars.jwam.datastructures.WAMToString;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This whole class is dedicated to step one of converting heaps to

@@ -1,11 +1,7 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
+import nars.prolog.*;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.OutputListener;
 

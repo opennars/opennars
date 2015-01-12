@@ -1,8 +1,9 @@
 package nars.util.sort;
 
+import nars.entity.Item;
+
 import java.util.Collection;
 import java.util.Iterator;
-import nars.entity.Item;
 
 /**
  *

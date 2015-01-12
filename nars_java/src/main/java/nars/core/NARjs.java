@@ -1,10 +1,10 @@
 package nars.core;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
  * Javascript NAR Runner
@@ -20,7 +20,7 @@ public class NARjs {
         js.eval("load('nashorn:mozilla_compat.js')");
         
         js.eval("importPackage('java.lang')");
-        js.eval("importPackage('java.util')");
+        js.eval("importPackage('java.other')");
         js.eval("importPackage('java.io')");
 
         js.eval("importPackage('nars.core')");

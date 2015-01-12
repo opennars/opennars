@@ -1,14 +1,11 @@
 package automenta.vivisect.swing.property.sheet.renderer;
 
-import java.awt.Component;
-import java.io.Serializable;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
-
 import automenta.vivisect.swing.property.sheet.I18N;
+
+import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.io.Serializable;
 
 
 /**

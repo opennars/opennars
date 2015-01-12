@@ -17,10 +17,10 @@
  */
 package automenta.vivisect.swing.property.beans.editor;
 
-import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
-
 import automenta.vivisect.swing.property.swing.LookAndFeelTweaks;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
 
 /**
  * StringPropertyEditor.<br>

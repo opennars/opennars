@@ -1,20 +1,17 @@
 package nars.inference;
 
 
+import nars.core.NAR;
+import nars.core.Param;
+import nars.core.build.Discretinuous;
+import nars.io.TextInput;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
-import nars.core.NAR;
-import nars.core.Param;
-import nars.core.build.Discretinuous;
-import nars.io.TextInput;
+import java.util.*;
 
 /**
  * Dynamic inference controller experiment, using QLearning

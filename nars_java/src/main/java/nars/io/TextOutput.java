@@ -21,25 +21,17 @@
  */
 package nars.io;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
 import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.Output.ECHO;
-import nars.io.Output.ERR;
-import nars.io.Output.EXE;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
 import nars.language.Statement;
 import nars.operator.Operator;
+
+import java.io.*;
+import java.util.Arrays;
 
 /**
  * To read and write experience as Task streams
@@ -288,7 +280,7 @@ public class TextOutput extends Output {
                 Task task = (Task)o[0];
                 Sentence belief = (Sentence)o[1];
                 
-                Sentence question = task.sentence;
+                //Sentence question = task.sentence;
                 Sentence answer = belief;
                 
                 buffer.append(answer.toString(nar, showStamp));
@@ -395,7 +387,7 @@ public class TextOutput extends Output {
     
     public static String freqColor(float value, String width) {
         String pct = ((int)(Math.round(value * 100.0))) + "%";
-        final String background = "rgba(255,255,255,0.15)";
+        //final String background = "rgba(255,255,255,0.15)";
         String foreground  = value < 0.5 ? 
                 "rgba(" + (int)(255*(0.5 - value)*2) + ",0,0," + (0.5 - value)*2 + ")" : 
                 "rgba(0," + (int)(255*(value - 0.5)*2) + ",0," + (value-0.5)*2 + ")";

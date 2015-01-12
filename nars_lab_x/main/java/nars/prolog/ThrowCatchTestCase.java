@@ -1,11 +1,7 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Int;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Struct;
-import nars.prolog.Theory;
+import nars.prolog.*;
 
 /**
  * @author Matteo Iuliani

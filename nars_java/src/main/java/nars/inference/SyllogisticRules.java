@@ -21,32 +21,12 @@
 package nars.inference;
 
 import nars.core.control.NAL;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
-import static nars.inference.TemporalRules.ORDER_BACKWARD;
-import static nars.inference.TemporalRules.ORDER_FORWARD;
-import static nars.inference.TemporalRules.ORDER_INVALID;
-import static nars.inference.TemporalRules.ORDER_NONE;
-import static nars.inference.TemporalRules.abdIndComOrder;
-import static nars.inference.TemporalRules.analogyOrder;
-import static nars.inference.TemporalRules.applyExpectationOffset;
-import static nars.inference.TemporalRules.dedExeOrder;
-import static nars.inference.TemporalRules.resemblanceOrder;
-import static nars.inference.TemporalRules.reverseOrder;
+import nars.entity.*;
 import nars.io.Symbols;
-import nars.language.CompoundTerm;
-import nars.language.Conjunction;
-import nars.language.Equivalence;
-import nars.language.Implication;
-import nars.language.Interval;
-import nars.language.Statement;
-import nars.language.Term;
-import nars.language.Terms;
+import nars.language.*;
+
+import static nars.inference.TemporalRules.*;
 import static nars.language.Terms.reduceComponents;
-import nars.language.Variables;
 
 
 /**

@@ -3,8 +3,9 @@ package nars.multistep;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.io.ExampleFileInput;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example-MultiStep-edited.txt

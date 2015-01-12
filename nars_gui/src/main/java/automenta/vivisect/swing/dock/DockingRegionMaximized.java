@@ -15,9 +15,10 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.Component;
-import javax.swing.JTabbedPane;
 import automenta.vivisect.swing.dock.DockingRegionContainer.MinMaxRecord;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *

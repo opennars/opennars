@@ -18,20 +18,16 @@
 package nars.operator.mental;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
-import nars.inference.BudgetFunctions;
+import nars.entity.*;
 import nars.io.Symbols;
 import nars.language.Similarity;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import java.util.ArrayList;
 
 /**
  * Operator that give a CompoundTerm a new name

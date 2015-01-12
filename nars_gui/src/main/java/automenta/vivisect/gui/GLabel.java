@@ -24,12 +24,11 @@
 package automenta.vivisect.gui;
 
 import automenta.vivisect.gui.StyledString.TextLayoutInfo;
+import processing.core.PApplet;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.font.TextLayout;
 import java.util.LinkedList;
-
-import processing.core.PApplet;
 
 /**
  * The label component.

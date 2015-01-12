@@ -20,17 +20,13 @@
  */
 package nars.storage;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import nars.core.Parameters;
 import nars.entity.Item;
+
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static nars.storage.LevelBag.NextNonEmptyLevelMode.Default;
 
 /**
@@ -62,7 +58,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /**
      * array of lists of items, for items on different level
      */
-    public final Level<E>[] level;
+    public final Level[] level;
 
     /**
      * defined in different bags
@@ -111,8 +107,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
         nameTable = Parameters.THREADS == 1 ? new HashMap<>(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
 
-        level = new Level[this.levels];
-        
+        level = (Level[]) Array.newInstance(Level.class, this.levels);
+
         levelEmpty = new boolean[this.levels];
         Arrays.fill(levelEmpty, true);
 
@@ -122,12 +118,10 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         clear();
     }
 
-    public class Level<E> implements Iterable<E> {
+    public class Level implements Iterable<E> {
         private final int thisLevel;
-        
-        //Deque<E> items;
-        LinkedHashSet<E> items;
-        
+
+        final LinkedHashSet<E> items;
                 
         public Level(int level, int numElements) {
             super();
@@ -201,7 +195,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         
     }
     
-    private Level<E> newLevel(int l) {
+    private Level newLevel(int l) {
         return new Level(l, 1 + capacity / levels);
     }
     
@@ -244,7 +238,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /** this should always equal size(), but it's here for testing purposes */
     protected int sizeItems() {
         int t = 0;
-        for (Level<E> l : level) {
+        for (Level l : level) {
             if (l!=null)
                 t += l.size();
         }
@@ -267,7 +261,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if (size() == 0) {
             return 0.01f;
         }
-        float f = (float) mass / (size());
+        float f = mass / (size());
         if (f > 1) {
             return 1.0f;
         }
@@ -318,7 +312,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /** look for a non-empty level */
     protected void nextNonEmptyLevelDefault() {
                
-        int cl = currentLevel;
+        int cl;
 
         do {                        
         } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % distributorLength]]);
@@ -589,7 +583,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     public String showSizes() {
         StringBuilder buf = new StringBuilder(" ");
         int l = 0;
-        for (Level<E> items : level) {
+        for (Level items : level) {
             int s = items.size();
             if ((items != null) && (s > 0)) {
                 l++;

@@ -22,10 +22,11 @@
  */
 package nars.util.rope.impl;
 
+import nars.util.rope.Rope;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import nars.util.rope.Rope;
 
 /**
  * A rope representing the reversal of character sequence. Internal

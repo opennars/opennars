@@ -1,15 +1,8 @@
 package nars.jprolog.builtin;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.SymbolTerm;
-import nars.jprolog.lang.IntegerTerm;
-import nars.jprolog.lang.DoubleTerm;
-import nars.jprolog.lang.IllegalTypeException;
-import nars.jprolog.lang.ListTerm;
-import nars.jprolog.lang.EvaluationException;
-import nars.jprolog.lang.VariableTerm;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
+import nars.jprolog.lang.*;
+
 import java.util.Vector;
 /**
  * <code>java_conversion/2</code>

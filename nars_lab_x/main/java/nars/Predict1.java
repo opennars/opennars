@@ -4,13 +4,12 @@
  */
 package nars.rl;
 
-import java.awt.Color;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
+import automenta.vivisect.timeline.BarChart;
+import automenta.vivisect.timeline.LineChart;
+import automenta.vivisect.timeline.StackedPercentageChart;
+import automenta.vivisect.timeline.TimelineVis;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.FrameStart;
@@ -19,17 +18,15 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.util.TreeMLData;
-import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.BarChart;
-import automenta.vivisect.timeline.LineChart;
-import automenta.vivisect.timeline.StackedPercentageChart;
-import automenta.vivisect.timeline.TimelineVis;
 import nars.io.ChangedTextInput;
-import static nars.io.Texts.n2;
 import nars.language.Inheritance;
 import nars.language.Term;
+import nars.util.TreeMLData;
+
+import java.awt.*;
+import java.util.*;
+
+import static nars.io.Texts.n2;
 
 /**
  *

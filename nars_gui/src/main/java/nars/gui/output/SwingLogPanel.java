@@ -1,23 +1,18 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.JTextComponent;
 import nars.gui.NARControls;
 import nars.gui.output.SwingLogText.LogLine;
 import nars.io.TextOutput;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
 
 public class SwingLogPanel extends LogPanel {
 

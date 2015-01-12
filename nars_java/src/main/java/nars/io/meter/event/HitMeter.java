@@ -5,8 +5,9 @@
  */
 package nars.io.meter.event;
 
-import java.util.concurrent.atomic.AtomicLong;
 import nars.io.meter.FunctionMeter;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
@@ -15,7 +16,7 @@ import nars.io.meter.FunctionMeter;
 public class HitMeter extends FunctionMeter<Long> {
     
     boolean autoReset;
-    AtomicLong hits = new AtomicLong();
+    final AtomicLong hits = new AtomicLong();
     
     public HitMeter(String id, boolean autoReset) {
         super(id);

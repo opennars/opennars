@@ -16,7 +16,6 @@
  */
 package nars.core;
 
-import java.util.TreeSet;
 import nars.core.build.Default;
 import nars.entity.Concept;
 import nars.io.Symbols.NativeOperator;
@@ -27,9 +26,12 @@ import nars.language.Inheritance;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.operator.Operation;
+import org.junit.Test;
+
+import java.util.TreeSet;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *
@@ -132,8 +134,8 @@ public class TermTest {
         */
 
         TreeSet<Term> set = new TreeSet<>();
-        boolean added1 = set.add((Term) term1.clone());
-        boolean added2 = set.add((Term) term2.clone());
+        boolean added1 = set.add(term1.clone());
+        boolean added2 = set.add(term2.clone());
         assertTrue("term 1 added to set", added1);
         assertTrue("term 2 added to set", added2);
 

@@ -5,15 +5,7 @@
 
 package nars.prolog.lib;
 
-import nars.prolog.EngineManager;
-import nars.prolog.Int;
-import nars.prolog.InvalidTermException;
-import nars.prolog.Library;
-import nars.prolog.NoSolutionException;
-import nars.prolog.Prolog;
-import nars.prolog.PrologError;
-import nars.prolog.SolveInfo;
-import nars.prolog.Term;
+import nars.prolog.*;
 
 
 

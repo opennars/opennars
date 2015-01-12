@@ -22,12 +22,9 @@
  */
 package nars.util.rope.impl;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.ObjectStreamException;
 import nars.util.rope.Rope;
+
+import java.io.*;
 
 /**
  * An instance of this class replaces ropes during the serialization process.

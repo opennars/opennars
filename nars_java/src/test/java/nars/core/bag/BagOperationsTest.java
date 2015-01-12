@@ -10,11 +10,12 @@ import nars.entity.Item;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.CurveBag;
-import nars.storage.experimental.GearBag;
 import nars.storage.LevelBag;
+import nars.storage.experimental.GearBag;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *

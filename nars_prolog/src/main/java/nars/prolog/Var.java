@@ -17,11 +17,12 @@
  */
 package nars.prolog;
 
+import nars.language.AbstractTerm;
+import nars.prolog.net.AbstractSocket;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
-import nars.language.AbstractTerm;
-import nars.prolog.net.AbstractSocket;
 
 /**
  * This class represents a variable term. Variables are identified by a name
@@ -42,7 +43,7 @@ public class Var extends Term {
 
     private long timestamp;        /* timestamp is used for fix vars order */
 
-    private int id;            /* id of ExecCtx owners of this var util for renaming*/
+    private int id;            /* id of ExecCtx owners of this var other for renaming*/
 
 
     /**

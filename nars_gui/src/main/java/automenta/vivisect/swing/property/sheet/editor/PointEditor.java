@@ -17,11 +17,11 @@
  */
 package automenta.vivisect.swing.property.sheet.editor;
 
-import java.awt.Dimension;
-
 import automenta.vivisect.swing.property.beans.editor.StringConverterPropertyEditor;
 import automenta.vivisect.swing.property.sheet.Converter;
 import automenta.vivisect.swing.property.sheet.converter.DimensionConverter;
+
+import java.awt.*;
 
 
 /**

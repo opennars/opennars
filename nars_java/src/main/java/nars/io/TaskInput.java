@@ -4,8 +4,9 @@
  */
 package nars.io;
 
-import java.io.IOException;
 import nars.entity.Task;
+
+import java.io.IOException;
 
 /**
  * Wraps a pre-created Task as an Input

@@ -5,12 +5,9 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import com.mxgraph.util.mxRectangle;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.jgrapht.Graph;
+
+import java.util.*;
 
 /**
  * Fast organic layout algorithm, adapted from JGraph

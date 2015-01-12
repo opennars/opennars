@@ -20,12 +20,12 @@
  */
 package nars.operator;
 
-import java.util.Arrays;
-import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.language.Term;
+
+import java.util.List;
 
 /**
  *  A class used as a template for Operator definition.

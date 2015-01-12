@@ -1,17 +1,9 @@
 package nars.nario;
 
-import java.awt.event.KeyEvent;
-import static java.lang.Math.log;
-import static java.lang.Math.signum;
-import static java.lang.Math.signum;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -19,15 +11,18 @@ import nars.io.ChangedTextInput;
 import nars.language.Term;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
-import nars.nario.sprites.Enemy;
-import nars.nario.sprites.Mario;
-import nars.nario.sprites.Particle;
-import nars.nario.sprites.Sparkle;
-import nars.nario.sprites.Sprite;
+import nars.nario.sprites.*;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
 import nars.plugin.app.plan.TemporalParticlePlanner;
-import nars.plugin.mental.InternalExperience;
+
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.Math.log;
+import static java.lang.Math.signum;
 
 /**
  *

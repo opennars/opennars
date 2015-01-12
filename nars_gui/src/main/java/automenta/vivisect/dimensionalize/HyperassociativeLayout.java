@@ -8,10 +8,10 @@ import automenta.vivisect.graph.AbstractGraphVis;
 import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
-import java.util.concurrent.atomic.AtomicBoolean;
 import nars.entity.BudgetValue.Budgetable;
-
 import org.apache.commons.math3.linear.ArrayRealVector;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *

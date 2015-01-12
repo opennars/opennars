@@ -20,11 +20,11 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** 
  * A disjunction of Statements.

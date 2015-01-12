@@ -4,9 +4,9 @@
  */
 package nars.util;
 
-import nars.util.Utf8;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

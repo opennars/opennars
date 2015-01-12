@@ -1,21 +1,10 @@
 package nars.narclear;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JPanel;
 import nars.NARPrologMirror;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;
@@ -27,6 +16,14 @@ import nars.operator.Operation;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * NARS Rover

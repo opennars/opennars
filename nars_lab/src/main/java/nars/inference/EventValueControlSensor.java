@@ -1,7 +1,6 @@
 package nars.inference;
 
 import nars.core.NAR;
-import nars.io.meter.depr.sensor.EventValueSensor;
 import nars.io.meter.event.ValueMeter;
 
 

@@ -4,23 +4,15 @@
 
 package automenta.vivisect.surfaceplotter.surface;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.ResourceBundle;
-import javax.swing.*;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import javax.swing.border.EmptyBorder;
-
 import automenta.vivisect.surfaceplotter.DefaultSurfaceModel;
 import automenta.vivisect.surfaceplotter.beans.JBindedCheckBox;
 import automenta.vivisect.surfaceplotter.beans.JBindedRadioButton;
 import automenta.vivisect.surfaceplotter.beans.JScrollablePanel;
 import automenta.vivisect.surfaceplotter.beans.ModelSource;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 
 /** A Vertical Configuration panel for the {@link DefaultSurfaceModel}.

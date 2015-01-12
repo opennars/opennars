@@ -1,7 +1,9 @@
 package nars.util.rope.impl;
 
-import java.util.Iterator;
+import com.google.common.collect.Iterators;
 import nars.util.rope.Rope;
+
+import java.util.Iterator;
 
 /**
  * Variation on ConcatenationRope that provides a cheap non-iterating hashCode
@@ -57,7 +59,9 @@ public class FastConcatenationRope extends ConcatenationRope {
 
     @Override
     public Iterator<Character> iterator() {
-        return new CompoundIterator(left.iterator(), right.iterator());
+        return Iterators.concat(left.iterator(), right.iterator());
+        //return new CompoundIterator(left.iterator(), right.iterator())
+
     }
 
     @Override

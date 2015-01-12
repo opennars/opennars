@@ -20,11 +20,12 @@
  */
 package nars.io;
 
-import java.util.HashMap;
-import java.util.Map;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Symbols {
@@ -322,5 +323,5 @@ public class Symbols {
     }
     */
 
-    public static String SELF = "SELF";
+    public static final String SELF = "SELF";
 }

@@ -17,9 +17,10 @@
  */
 package nars.prolog;
 
+import nars.language.AbstractTerm;
+
 import java.util.ArrayList;
 import java.util.List;
-import nars.language.AbstractTerm;
 
 /**
  *

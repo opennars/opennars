@@ -1,10 +1,5 @@
 package nars.core.control;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Core;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
@@ -19,6 +14,12 @@ import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
 import nars.storage.CacheBag;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -37,7 +38,7 @@ public class DefaultCore implements Core {
     private final ConceptBuilder conceptBuilder;
     private Memory memory;
     
-    private Cycle loop = new Cycle();
+    private final Cycle loop = new Cycle();
     
        
     class Cycle {

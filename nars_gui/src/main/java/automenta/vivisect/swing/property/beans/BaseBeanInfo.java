@@ -17,7 +17,9 @@
  */
 package automenta.vivisect.swing.property.beans;
 
-import java.awt.Image;
+import automenta.vivisect.swing.property.util.ResourceManager;
+
+import java.awt.*;
 import java.beans.BeanDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -26,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
-
-import automenta.vivisect.swing.property.util.ResourceManager;
 
 
 /**

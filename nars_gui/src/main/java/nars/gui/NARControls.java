@@ -20,55 +20,40 @@
  */
 package nars.gui;
 
-import nars.io.InferenceLogger;
 import automenta.vivisect.dimensionalize.FastOrganicLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
-import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.NORTH;
-import java.awt.Dialog;
-import java.awt.FileDialog;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.Memory.Timing;
-import static nars.core.Memory.Timing.Real;
-import static nars.core.Memory.Timing.Simulation;
 import nars.core.NAR;
 import nars.gui.input.TextInputPanel;
-import nars.gui.output.IdeaPanel;
-import nars.gui.output.PluginPanel;
-import nars.gui.output.SentenceTablePanel;
-import nars.gui.output.SwingLogPanel;
-import nars.gui.output.TaskTree;
-import nars.gui.output.NARFacePanel;
+import nars.gui.output.*;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
+import nars.io.InferenceLogger;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.util.NARTrace;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
+import static nars.core.Memory.Timing.Real;
+import static nars.core.Memory.Timing.Simulation;
 
 
 public class NARControls extends JPanel implements ActionListener, EventObserver {

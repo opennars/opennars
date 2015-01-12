@@ -5,16 +5,18 @@
 package nars.gui.input;
 
 import automenta.vivisect.swing.NPanel;
-import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
+import nars.core.NAR;
+import nars.io.Texts;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
-import static java.awt.event.KeyEvent.CHAR_UNDEFINED;
 import java.awt.event.KeyListener;
-import javax.swing.JTextArea;
-import nars.core.NAR;
-import nars.io.Texts;
+
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.event.KeyEvent.CHAR_UNDEFINED;
 import static nars.io.Texts.n2;
 
 /**

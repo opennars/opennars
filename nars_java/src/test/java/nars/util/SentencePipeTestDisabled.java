@@ -17,14 +17,14 @@ package nars.util;
 // * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // */
 //
-//package nars.test.util;
+//package nars.test.other;
 //
 //import java.io.StringWriter;
 //import nars.core.build.DefaultNARBuilder;
 //import nars.core.NAR;
 //import nars.entity.Sentence;
 //import nars.io.TextOutput;
-//import nars.util.SentencePipe;
+//import nars.other.SentencePipe;
 //import org.junit.Test;
 //
 ///**

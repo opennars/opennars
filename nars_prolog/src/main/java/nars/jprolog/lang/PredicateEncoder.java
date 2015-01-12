@@ -1,6 +1,7 @@
 package nars.jprolog.lang;
-import java.util.regex.Pattern;
+
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 /**
  * The <code>PredicateEncoder</code> class contains static methods for encoding predicate names.<br>
  * The predicate with <code>hoge:f/n</code> is encoded to <code>hoge.PRED_f_n</code>, where

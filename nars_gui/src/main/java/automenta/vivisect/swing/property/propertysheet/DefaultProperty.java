@@ -17,14 +17,10 @@
  */
 package automenta.vivisect.swing.property.propertysheet;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import automenta.vivisect.swing.property.beans.BeanUtils;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 
 /**

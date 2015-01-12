@@ -1,14 +1,5 @@
 package nars.util;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import javax.xml.transform.TransformerConfigurationException;
 import nars.core.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.BudgetValue.Budgetable;
@@ -18,15 +9,16 @@ import nars.entity.TermLink;
 import nars.language.Term;
 import nars.language.Terms.Termable;
 import org.jgrapht.Graph;
-import org.jgrapht.ext.GmlExporter;
-import org.jgrapht.ext.GraphMLExporter;
-import org.jgrapht.ext.IntegerEdgeNameProvider;
-import org.jgrapht.ext.IntegerNameProvider;
-import org.jgrapht.ext.StringEdgeNameProvider;
-import org.jgrapht.ext.StringNameProvider;
+import org.jgrapht.ext.*;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.xml.sax.SAXException;
+
+import javax.xml.transform.TransformerConfigurationException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
 
 /**
  * Stores the contents of some, all, or of multiple NAR memory snapshots.
@@ -117,7 +109,7 @@ public class NARGraph extends DirectedMultigraph {
     abstract public static class NAREdge<X> extends DefaultEdge {
 
         private final X object;
-        private int hash;
+        private final int hash;
 
         public NAREdge(X x) {
             this.object = x;

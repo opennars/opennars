@@ -23,13 +23,12 @@
 
 package automenta.vivisect.gui;
 
+import processing.core.PApplet;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
-
-import javax.swing.Timer;
-
-import processing.core.PApplet;
 
 /**
  * This class is used to trigger events at user defined intervals. The event will

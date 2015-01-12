@@ -17,8 +17,14 @@
  */
 package automenta.vivisect.swing.property.propertysheet;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import automenta.vivisect.swing.property.swing.IconPool;
+import automenta.vivisect.swing.property.swing.LookAndFeelTweaks;
+import automenta.vivisect.swing.property.swing.plaf.blue.BlueishButtonUI;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.BeanInfo;
 import java.beans.PropertyChangeEvent;
@@ -27,21 +33,6 @@ import java.beans.PropertyDescriptor;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JToggleButton;
-import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import automenta.vivisect.swing.property.swing.IconPool;
-import automenta.vivisect.swing.property.swing.LookAndFeelTweaks;
-import automenta.vivisect.swing.property.swing.plaf.blue.BlueishButtonUI;
 
 
 /**
@@ -373,7 +364,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 	 * Sets the Comparator to be used with categories. Categories are treated as
 	 * String-objects.
 	 * 
-	 * @param comp java.util.Comparator used to compare categories
+	 * @param comp java.other.Comparator used to compare categories
 	 */
 	public void setCategorySortingComparator(Comparator comp) {
 		model.setCategorySortingComparator(comp);
@@ -382,7 +373,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 	/**
 	 * Sets the Comparator to be used with Property-objects.
 	 * 
-	 * @param comp java.util.Comparator used to compare Property-objects
+	 * @param comp java.other.Comparator used to compare Property-objects
 	 */
 	public void setPropertySortingComparator(Comparator comp) {
 		model.setPropertySortingComparator(comp);

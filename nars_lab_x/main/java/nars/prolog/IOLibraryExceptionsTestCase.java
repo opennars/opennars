@@ -1,14 +1,10 @@
 package prolog;
 
+import junit.framework.TestCase;
+import nars.prolog.*;
+
 import java.io.File;
 import java.io.PrintWriter;
-import junit.framework.TestCase;
-import nars.prolog.Int;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Var;
 
 /**
  * @author Matteo Iuliani

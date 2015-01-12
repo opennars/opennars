@@ -17,13 +17,10 @@
  */
 package nars.prolog;
 
-import java.nio.CharBuffer;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import nars.language.AbstractTerm;
+
+import java.nio.CharBuffer;
+import java.util.*;
 
 /**
  * Struct class represents both compound prolog term

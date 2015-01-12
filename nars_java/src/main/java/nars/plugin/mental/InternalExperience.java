@@ -1,29 +1,17 @@
 package nars.plugin.mental;
 
-import java.util.Arrays;
 import nars.core.EventEmitter.EventObserver;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.Plugin;
+import nars.core.*;
 import nars.core.control.NAL;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
-import nars.language.Conjunction;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.Interval;
-import nars.language.Product;
-import nars.language.Term;
+import nars.language.*;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import java.util.Arrays;
 
 /**
  * To rememberAction an internal action as an operation
@@ -150,7 +138,7 @@ public class InternalExperience implements Plugin, EventObserver {
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                     BudgetFunctions.truthToQuality(truth));
 
-            Task newTask = new Task(j, (BudgetValue) newbudget, 
+            Task newTask = new Task(j, newbudget,
                     isFull() ? null : task);
 
             memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
@@ -180,7 +168,7 @@ public class InternalExperience implements Plugin, EventObserver {
             //also get a chance to reveal its effects to the system this way
             Operator op=memory.getOperator(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
             
-            Product prod=new Product(new Term[]{belief.term});
+            Product prod=new Product(belief.term);
             
             if(op!=null && prod!=null) {
                 
@@ -228,7 +216,7 @@ public class InternalExperience implements Plugin, EventObserver {
                     if (op == null)
                         throw new RuntimeException(this + " requires ^anticipate operator");
                     
-                    Product args=new Product(new Term[]{imp.getPredicate()});
+                    Product args=new Product(imp.getPredicate());
                     Term new_term=Operation.make(args,op);
 
                     Sentence sentence = new Sentence(

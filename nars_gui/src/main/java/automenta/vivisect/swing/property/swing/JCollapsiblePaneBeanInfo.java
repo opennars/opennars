@@ -3,14 +3,8 @@
  */
 package automenta.vivisect.swing.property.swing;
 
-import java.awt.Image;
-import java.beans.BeanDescriptor;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.MethodDescriptor;
-import java.beans.PropertyDescriptor;
-import java.beans.SimpleBeanInfo;
+import java.awt.*;
+import java.beans.*;
 import java.util.Vector;
 
 /**

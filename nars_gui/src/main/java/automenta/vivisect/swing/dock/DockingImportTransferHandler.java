@@ -15,13 +15,14 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.logging.Level;
+
 import static java.util.logging.Logger.getLogger;
-import javax.swing.TransferHandler;
 
 /**
  *

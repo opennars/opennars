@@ -14,11 +14,7 @@ package nars.util.sort;
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-import java.util.AbstractCollection;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class provides a skeletal implementation of the <tt>Map</tt>
@@ -313,7 +309,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
             keySet = new AbstractSet<K>() {
                 public Iterator<K> iterator() {
                     return new Iterator<K>() {
-                        private Iterator<Entry<K, V>> i = entrySet().iterator();
+                        private final Iterator<Entry<K, V>> i = entrySet().iterator();
 
                         public boolean hasNext() {
                             return i.hasNext();
@@ -361,7 +357,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
             values = new AbstractCollection<V>() {
                 public Iterator<V> iterator() {
                     return new Iterator<V>() {
-                        private Iterator<Entry<K, V>> i = entrySet().iterator();
+                        private final Iterator<Entry<K, V>> i = entrySet().iterator();
 
                         public boolean hasNext() {
                             return i.hasNext();

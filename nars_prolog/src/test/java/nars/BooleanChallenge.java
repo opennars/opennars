@@ -1,11 +1,5 @@
 package perf;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nars.NARPrologMirror;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
@@ -13,11 +7,19 @@ import nars.core.NAR;
 import nars.core.build.Discretinuous;
 import nars.entity.Task;
 import nars.io.Output.OUT;
-import static nars.io.Texts.n2;
 import nars.io.narsese.Narsese;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static nars.io.Texts.n2;
 
 /**
  *

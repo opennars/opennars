@@ -1,9 +1,10 @@
 package nars.jwam.datastructures;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import nars.jwam.WAM;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static nars.jwam.datastructures.WAMToString.deref;
 
 /**

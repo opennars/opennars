@@ -1,10 +1,25 @@
 package nars.gui.output;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.FileDialog;
-import java.awt.FlowLayout;
+import automenta.vivisect.swing.AwesomeButton;
+import automenta.vivisect.swing.AwesomeToggleButton;
+import automenta.vivisect.swing.NPanel;
+import automenta.vivisect.swing.NSlider;
+import nars.core.NAR;
+import nars.entity.Sentence;
+import nars.entity.Task;
+import nars.gui.NARControls;
+import nars.gui.WrapLayout;
+import nars.inference.AbstractObserver;
+import nars.io.InferenceLogger;
+import nars.io.InferenceLogger.LogOutput;
+import nars.io.Output;
+import nars.io.Output.ERR;
+import nars.io.Output.EXE;
+import nars.io.TextOutput;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerEvent;
@@ -12,31 +27,6 @@ import java.awt.event.ContainerListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JToggleButton;
-import javax.swing.border.EmptyBorder;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import automenta.vivisect.swing.AwesomeToggleButton;
-import automenta.vivisect.swing.AwesomeButton;
-import automenta.vivisect.swing.NPanel;
-import automenta.vivisect.swing.NSlider;
-import nars.io.InferenceLogger;
-import nars.io.InferenceLogger.LogOutput;
-import nars.gui.NARControls;
-import nars.gui.WrapLayout;
-import nars.inference.AbstractObserver;
-import nars.io.Output;
-import nars.io.Output.ECHO;
-import nars.io.Output.ERR;
-import nars.io.Output.EXE;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
-import nars.io.TextOutput;
 
 abstract public class LogPanel extends NPanel implements LogOutput {
 

@@ -1,9 +1,6 @@
 package automenta.vivisect.swing.property.sheet;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Point;
+import java.awt.*;
 
 
 public class ResizeLayout extends BorderLayout {

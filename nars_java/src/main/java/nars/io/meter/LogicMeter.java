@@ -1,8 +1,5 @@
 package nars.io.meter;
 
-import java.io.Serializable;
-import nars.core.Memory;
-import nars.io.meter.depr.data.DataSet;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ValueMeter;
 

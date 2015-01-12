@@ -16,7 +16,6 @@
  */
 package nars.operator.mental;
 
-import java.util.ArrayList;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
@@ -26,6 +25,8 @@ import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import java.util.ArrayList;
 
 /**
  * Operator that activates a concept

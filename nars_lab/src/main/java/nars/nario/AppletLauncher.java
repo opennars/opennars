@@ -1,6 +1,6 @@
 package nars.nario;
 
-import javax.swing.JApplet;
+import javax.swing.*;
 
 
 public class AppletLauncher extends JApplet

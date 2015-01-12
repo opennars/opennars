@@ -22,26 +22,19 @@
  */
 package nars.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.regex.Pattern;
 import nars.util.rope.Rope;
 import nars.util.rope.impl.ConcatenationRope;
 import nars.util.rope.impl.FlatCharSequenceRope;
 import nars.util.rope.impl.ReverseRope;
 import nars.util.rope.impl.SubstringRope;
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Test;
+
+import java.io.*;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.*;
 
 public class RopeTest  {
 	
@@ -161,9 +154,9 @@ public class RopeTest  {
 		assertTrue(!i.hasNext());
 		i = z3.iterator();
 		assertTrue(i.hasNext());
-		assertEquals((char) '2',(char) i.next());
+		assertEquals('2',(char) i.next());
 		assertTrue(i.hasNext());
-		assertEquals((char) '3', (char) i.next());
+		assertEquals('3', (char) i.next());
 		assertTrue(!i.hasNext());
 		for (int j=0; j<=z3.length(); ++j) {
 			try {
@@ -184,9 +177,9 @@ public class RopeTest  {
 		assertTrue(!i.hasNext());
 		i=z4.iterator(2);
 		assertTrue(i.hasNext());
-		assertEquals((char) '6',(char) i.next());
+		assertEquals('6',(char) i.next());
 		assertTrue(i.hasNext());
-		assertEquals((char) '7',(char) i.next());
+		assertEquals('7',(char) i.next());
 		assertTrue(!i.hasNext());
 		
 		
@@ -348,102 +341,102 @@ public class RopeTest  {
 		
 		Iterator<Character> x = r1.reverseIterator();
 		assertTrue(x.hasNext());
-		assertEquals((char) '4',(char)  x.next());
+		assertEquals('4',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '3',(char)  x.next());
+		assertEquals('3',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '2',(char)  x.next());
+		assertEquals('2',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '1',(char)  x.next());
+		assertEquals('1',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertFalse(x.hasNext());
 		
 		x = r1.reverseIterator(4);
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertFalse(x.hasNext());
 		
 		x = r2.reverseIterator();
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '1',(char)  x.next());
+		assertEquals('1',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '2',(char)  x.next());
+		assertEquals('2',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '3',(char)  x.next());
+		assertEquals('3',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '4',(char)  x.next());
+		assertEquals('4',(char)  x.next());
 		assertFalse(x.hasNext());
 		
 		x = r2.reverseIterator(4);
 		assertTrue(x.hasNext());
-		assertEquals((char) '4',(char)  x.next());
+		assertEquals('4',(char)  x.next());
 		assertFalse(x.hasNext());
 		
 		x = r3.reverseIterator();
 		assertTrue(x.hasNext());
-		assertEquals((char) '2',(char)  x.next());
+		assertEquals('2',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '1',(char)  x.next());
+		assertEquals('1',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertFalse(x.hasNext());
 
 		x = r3.reverseIterator(1);
 		assertTrue(x.hasNext());
-		assertEquals((char) '1',(char)  x.next());
+		assertEquals('1',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertFalse(x.hasNext());
 		
 		x = r4.reverseIterator(); //0123443210012
 		assertTrue(x.hasNext());
-		assertEquals((char) '2',(char)  x.next());
+		assertEquals('2',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '1',(char)  x.next());
+		assertEquals('1',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '1',(char)  x.next());
+		assertEquals('1',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '2',(char)  x.next());
+		assertEquals('2',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '3',(char)  x.next());
+		assertEquals('3',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '4',(char)  x.next());
+		assertEquals('4',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '4',(char)  x.next());
+		assertEquals('4',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '3',(char)  x.next());
+		assertEquals('3',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '2',(char)  x.next());
+		assertEquals('2',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '1',(char)  x.next());
+		assertEquals('1',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertFalse(x.hasNext());
 		
 		x = r4.reverseIterator(7);
-		assertEquals((char) '4',(char)  x.next());
+		assertEquals('4',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '4',(char)  x.next());
+		assertEquals('4',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '3',(char)  x.next());
+		assertEquals('3',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '2',(char)  x.next());
+		assertEquals('2',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '1',(char)  x.next());
+		assertEquals('1',(char)  x.next());
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertFalse(x.hasNext());
 		
 		x = r4.reverseIterator(12);
 		assertTrue(x.hasNext());
-		assertEquals((char) '0',(char)  x.next());
+		assertEquals('0',(char)  x.next());
 		assertFalse(x.hasNext());
 		
 		x = r4.reverseIterator(13);

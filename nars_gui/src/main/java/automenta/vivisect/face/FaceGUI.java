@@ -1,7 +1,6 @@
 package automenta.vivisect.face;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -730,8 +729,8 @@ public class FaceGUI extends BaseClass {
 //import java.awt.Graphics;
 //import java.awt.Image;
 //import static java.lang.Thread.sleep;
-//import java.util.StringTokenizer;
-//import java.util.Vector;
+//import java.other.StringTokenizer;
+//import java.other.Vector;
 //
 ///** @author http://cs.nyu.edu/~lhs215/multimedia/face/ */
 //public class Face2bApplet extends Animator

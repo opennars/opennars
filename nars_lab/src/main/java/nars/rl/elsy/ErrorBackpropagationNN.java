@@ -1,20 +1,13 @@
 package nars.rl.elsy;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 import static java.lang.System.arraycopy;
 import static nars.rl.elsy.Mat.sigmoidBi;
 import static nars.rl.elsy.Mat.sigmoidUni;
-import static nars.rl.elsy.Rand.b;
-import static nars.rl.elsy.Rand.d;
-import static nars.rl.elsy.Rand.successWithPercent;
+import static nars.rl.elsy.Rand.*;
 
 
 

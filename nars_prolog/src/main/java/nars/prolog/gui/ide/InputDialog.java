@@ -1,14 +1,14 @@
 package nars.prolog.gui.ide;
 
-import java.awt.BorderLayout;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.ByteArrayInputStream;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import nars.prolog.event.ReadEvent;
 import nars.prolog.event.ReadListener;
 import nars.prolog.lib.UserContextInputStream;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.ByteArrayInputStream;
 
 /**
  * 

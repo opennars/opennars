@@ -1,10 +1,5 @@
 package nars.util.graph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import nars.core.EventEmitter;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
@@ -19,6 +14,8 @@ import nars.language.Term;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
 import reactor.core.Environment;
+
+import java.util.*;
 
 
 
@@ -97,7 +94,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
             add(s, c);
         }
         else if (event == Events.ConceptBeliefRemove.class) {
-            Concept c = (Concept)a[0];
+            //Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
             remove(s);
         }
@@ -107,7 +104,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
             add(s, c);
         }
         else if (event == Events.ConceptGoalRemove.class) {
-            Concept c = (Concept)a[0];
+            //Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
             remove(s);
         }
@@ -143,27 +140,15 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     }
     
     public void reset() {
-        try {
-            this.removeAllEdges( new ArrayList(edgeSet()) );
-        }
-        catch (Exception e) {
-            System.err.println(e);
-        }
-        
-        try {
-            this.removeAllVertices( new ArrayList(vertexSet()) );
-        }
-        catch (Exception e) {
-            System.err.println(e);
-        }
-        
+
+        this.removeAllEdges( new ArrayList(edgeSet()) );
+        this.removeAllVertices( new ArrayList(vertexSet()) );
+
         if (!edgeSet().isEmpty()) {
-            System.err.println(this + " edges not empty after reset()");
-            System.exit(1);
+            throw new RuntimeException(this + " edges not empty after reset()");
         }
         if (!vertexSet().isEmpty()) {
-            System.err.println(this + " vertices not empty after reset()");
-            System.exit(1);
+            throw new RuntimeException(this + " vertices not empty after reset()");
         }
             
         needInitialConcepts = true;

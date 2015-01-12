@@ -22,16 +22,15 @@
  */
 package automenta.vivisect.swing.property.sheet;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.table.TableCellRenderer;
-
 import automenta.vivisect.swing.property.beans.BaseBeanInfo;
 import automenta.vivisect.swing.property.beans.ExtendedPropertyDescriptor;
 import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
 import automenta.vivisect.swing.property.sheet.annotation.PropertyInfo;
+
+import javax.swing.table.TableCellRenderer;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class AnnotatedBeanInfo extends BaseBeanInfo {

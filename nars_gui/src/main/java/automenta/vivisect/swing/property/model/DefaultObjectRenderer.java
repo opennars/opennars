@@ -17,10 +17,10 @@
  */
 package automenta.vivisect.swing.property.model;
 
-import java.io.File;
-
 import automenta.vivisect.swing.property.util.ResourceManager;
 import automenta.vivisect.swing.property.util.converter.ConverterRegistry;
+
+import java.io.File;
 
 /**
  * DefaultObjectRenderer. <br>

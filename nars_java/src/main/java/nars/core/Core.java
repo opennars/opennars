@@ -1,11 +1,12 @@
 package nars.core;
 
-import java.util.List;
 import javolution.context.ConcurrentContext;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
+
+import java.util.List;
 
 
 /** Core implements a central reasoning component which references a set of Concepts and activates them during a memory cycle.*/

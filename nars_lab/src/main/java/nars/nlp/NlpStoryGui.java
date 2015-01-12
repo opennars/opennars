@@ -1,22 +1,16 @@
 package nars.io.nlp;
 
 import com.google.gson.Gson;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.TextArea;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import javax.swing.*;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.gui.NARSwing;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.ArrayList;
 
 public class NlpStoryGui extends JFrame {
     private class PreviousSceneActionListener implements ActionListener {

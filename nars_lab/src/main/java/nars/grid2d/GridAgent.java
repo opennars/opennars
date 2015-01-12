@@ -1,12 +1,13 @@
 package nars.grid2d;
 
-import java.awt.Color;
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Set;
 import nars.core.NAR;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Action.Turn;
+
+import java.awt.*;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
 
 
 

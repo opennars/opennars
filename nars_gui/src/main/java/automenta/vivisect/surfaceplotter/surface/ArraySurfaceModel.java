@@ -1,7 +1,5 @@
 package automenta.vivisect.surfaceplotter.surface;
 
-import javax.swing.SwingUtilities;
-
 public class ArraySurfaceModel extends AbstractSurfaceModel {
 
     SurfaceVertex[][] surfaceVertex;

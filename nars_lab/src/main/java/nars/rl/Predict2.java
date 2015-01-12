@@ -9,8 +9,8 @@
 //import automenta.vivisect.timeline.LineChart;
 //import automenta.vivisect.timeline.TimelineVis;
 //import java.awt.Color;
-//import java.util.Iterator;
-//import java.util.List;
+//import java.other.Iterator;
+//import java.other.List;
 //import nars.core.Events.CycleEnd;
 //import nars.core.Memory;
 //import nars.core.NAR;
@@ -47,7 +47,7 @@
 //import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
 //import org.encog.neural.pattern.ElmanPattern;
 //import org.encog.neural.pattern.FeedForwardPattern;
-//import org.encog.util.arrayutil.TemporalWindowArray;
+//import org.encog.other.arrayutil.TemporalWindowArray;
 //
 ///**
 // *

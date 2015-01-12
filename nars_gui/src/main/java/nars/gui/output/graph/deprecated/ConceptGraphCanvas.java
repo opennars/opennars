@@ -5,16 +5,16 @@ package nars.gui.output.graph.deprecated;
 //
 //
 //import automenta.vivisect.graph.ProcessingGraphCanvas;
-//import java.util.Comparator;
+//import java.other.Comparator;
 //import nars.core.NAR;
 //import nars.entity.Concept;
 //import nars.entity.Sentence;
 //import nars.entity.Task;
 //import nars.gui.NARSwing;
 //import nars.language.Term;
-//import nars.util.DefaultGraphizer;
-//import nars.util.NARGraph;
-//import nars.util.sort.IndexedTreeSet;
+//import nars.other.DefaultGraphizer;
+//import nars.other.NARGraph;
+//import nars.other.sort.IndexedTreeSet;
 //
 //
 //

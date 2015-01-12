@@ -1,16 +1,17 @@
 package nars;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.Memory;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Prolog operator which loads a theory from a file

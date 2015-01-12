@@ -1,11 +1,10 @@
 
 package automenta.vivisect.surfaceplotter.beans;
 
-import java.beans.PropertyChangeListener;
+import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
 
 import javax.swing.event.SwingPropertyChangeSupport;
-
-import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
+import java.beans.PropertyChangeListener;
 
 
 /** A Bean that "handles" an DefaultSurfaceModel, editors  get ginded to this source to display an attribute.

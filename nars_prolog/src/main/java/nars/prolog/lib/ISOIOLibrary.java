@@ -4,34 +4,13 @@ package nars.prolog.lib;
  * @author: Sara Sabioni
  */
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import nars.prolog.Int;
-import nars.prolog.InvalidLibraryException;
-import nars.prolog.Library;
+import nars.prolog.*;
 import nars.prolog.Long;
 import nars.prolog.Number;
-import nars.prolog.Operator;
-import nars.prolog.PrologError;
-import nars.prolog.Struct;
-import nars.prolog.Term;
-import nars.prolog.Var;
 import nars.prolog.util.Tools;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * This class provides basic ISO I/O predicates.

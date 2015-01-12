@@ -1,10 +1,11 @@
 package nars.jwam;
 
-import java.util.ArrayList;
 import nars.jwam.compiler.Compiler;
-import nars.jwam.datastructures.Numbers;
 import nars.jwam.datastructures.IntHashMap;
+import nars.jwam.datastructures.Numbers;
 import nars.jwam.datastructures.Strings;
+
+import java.util.ArrayList;
 
 public class WAM {
 

@@ -39,7 +39,7 @@ public abstract class Answered implements EventObserver {
     }
 
     protected void reportExistingSolutions() {
-        Concept c = (Concept)nar.memory.concept( question.getTerm() );
+        Concept c = nar.memory.concept( question.getTerm() );
         if (c == null) return;        
         
         for (Sentence s : c.beliefs) {

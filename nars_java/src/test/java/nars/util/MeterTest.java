@@ -1,19 +1,5 @@
 package nars.util;
 
-import nars.core.NAR;
-import nars.core.build.Default;
-import nars.io.meter.depr.Tracker;
-import nars.io.meter.depr.sensor.CompositeIncidentTracker;
-import nars.io.meter.depr.sensor.CompositeSpanTracker;
-import nars.io.meter.depr.sensor.DefaultEventMeter;
-import nars.io.meter.depr.sensor.EventValueSensor;
-import nars.io.meter.depr.sensor.HitPeriodTracker;
-import nars.io.meter.resource.MemoryUseTracker;
-import nars.io.meter.resource.ThreadCPUTimeTracker;
-import nars.io.meter.depr.util.Range;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-
 /**
  *
  * @author me

@@ -1,19 +1,11 @@
 package nars.jprolog.builtin;
-import nars.jprolog.lang.SymbolTerm;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.HashtableOfTerm;
-import nars.jprolog.lang.ExistenceException;
-import nars.jprolog.lang.ListTerm;
-import nars.jprolog.lang.IllegalDomainException;
-import nars.jprolog.lang.Term;
-import nars.jprolog.lang.TermException;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.IllegalTypeException;
-import nars.jprolog.lang.StructureTerm;
-import nars.jprolog.lang.SystemException;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import java.io.*;
+import nars.jprolog.lang.*;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.PushbackReader;
 /**
  * <code>close/2</code><br>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

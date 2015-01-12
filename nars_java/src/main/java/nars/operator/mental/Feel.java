@@ -17,22 +17,15 @@
 package nars.operator.mental;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
-import nars.language.Inheritance;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.Tense;
-import nars.language.Term;
+import nars.language.*;
 import nars.operator.Operator;
+
+import java.util.ArrayList;
 
 /**
  * Feeling common operations

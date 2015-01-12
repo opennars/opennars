@@ -25,15 +25,14 @@ package automenta.vivisect.gui;
 
 import automenta.vivisect.gui.StyledString.TextLayoutHitInfo;
 import automenta.vivisect.gui.StyledString.TextLayoutInfo;
+import processing.core.PApplet;
+import processing.event.KeyEvent;
 
-import java.awt.Font;
+import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextHitInfo;
 import java.awt.geom.GeneralPath;
 import java.util.LinkedList;
-
-import processing.core.PApplet;
-import processing.event.KeyEvent;
 
 /**
  * 

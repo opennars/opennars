@@ -1,21 +1,12 @@
 package nars.util.graph;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
+import nars.entity.*;
 import nars.language.Term;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.AbstractGraph;
+
+import java.util.*;
 
 /**
  * EXPERIMENTAL

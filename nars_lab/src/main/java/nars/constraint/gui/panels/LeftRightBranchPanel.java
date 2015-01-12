@@ -27,13 +27,13 @@
 package nars.constraint.gui.panels;
 
 import nars.constraint.gui.GUI;
+import org.chocosolver.solver.search.loop.monitors.IMonitorDownBranch;
+import org.chocosolver.solver.search.loop.monitors.IMonitorOpenNode;
+import org.chocosolver.solver.search.loop.monitors.IMonitorRestart;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.chocosolver.solver.search.loop.monitors.IMonitorDownBranch;
-import org.chocosolver.solver.search.loop.monitors.IMonitorOpenNode;
-import org.chocosolver.solver.search.loop.monitors.IMonitorRestart;
 
 import javax.swing.*;
 

@@ -1,11 +1,13 @@
 package nars.perf;
 
-import java.util.Collection;
+import nars.core.NALTest;
 import nars.core.NAR;
 import nars.core.Parameters;
-import static nars.perf.NALStressMeasure.perfNAL;
-import nars.core.NALTest;
 import nars.core.build.Default;
+
+import java.util.Collection;
+
+import static nars.perf.NALStressMeasure.perfNAL;
 
 /**
  * Runs NALTestPerf continuously, for profiling

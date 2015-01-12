@@ -1,32 +1,22 @@
 package nars.grid2d;
 
 import automenta.vivisect.swing.NWindow;
-import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.swing.JPanel;
 import nars.core.NAR;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.ParticleSystem;
 import processing.core.PApplet;
-import static processing.core.PConstants.DOWN;
-import static processing.core.PConstants.LEFT;
-import static processing.core.PConstants.RIGHT;
-import static processing.core.PConstants.UP;
 import processing.core.PVector;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.util.*;
+import java.util.List;
+
+import static processing.core.PConstants.*;
 
 
 public class Grid2DSpace extends PApplet {

@@ -8,12 +8,10 @@
  */
 package nars.prolog.gui.edit;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
 import javax.swing.text.Segment;
 import javax.swing.text.TabExpander;
 import javax.swing.text.Utilities;
+import java.awt.*;
 
 /**
  * Class with several utility functions used by jEdit's syntax colorizing

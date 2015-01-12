@@ -4,15 +4,6 @@
  */
 package nars.perf.evolve;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Curve;
@@ -29,6 +20,11 @@ import org.encog.ml.genetic.MLMethodGeneticAlgorithm;
 import org.encog.ml.genetic.MLMethodGenome;
 import org.encog.ml.genetic.mutate.MutatePerturb;
 import org.encog.ml.genetic.mutate.MutateShuffle;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  *

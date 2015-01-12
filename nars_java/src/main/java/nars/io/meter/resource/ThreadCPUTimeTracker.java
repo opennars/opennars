@@ -14,10 +14,11 @@
  */
 package nars.io.meter.resource;
 
+import nars.io.meter.event.ValueMeter;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import nars.io.meter.event.ValueMeter;
 
 /**
  * CPU Time, in milliseconds

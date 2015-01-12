@@ -1,10 +1,11 @@
 package nars.prolog.net;
 
+import nars.prolog.Term;
+import nars.prolog.Var;
+
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
-import nars.prolog.Term;
-import nars.prolog.Var;
 
 @SuppressWarnings("serial")
 

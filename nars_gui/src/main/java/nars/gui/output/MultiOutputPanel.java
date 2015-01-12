@@ -3,24 +3,18 @@ package nars.gui.output;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.dock.DockingContent;
 import automenta.vivisect.swing.dock.DockingRegionRoot;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import nars.core.NAR;
+import nars.entity.Task;
+import nars.gui.NARControls;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
-import nars.core.NAR;
-import nars.entity.Task;
-import nars.gui.NARControls;
 
 
 /**

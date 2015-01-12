@@ -1,10 +1,11 @@
 package automenta.vivisect.timeline;
 
 import automenta.vivisect.swing.PCanvas;
-import java.awt.GridLayout;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JPanel;
 
 
 public abstract class MultiTimeline extends JPanel {

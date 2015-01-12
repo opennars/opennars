@@ -17,10 +17,9 @@
  */
 package automenta.vivisect.swing.property.swing;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-
 import automenta.vivisect.swing.property.beans.editor.FixedButton;
+
+import javax.swing.*;
 
 public interface ComponentFactory {
 

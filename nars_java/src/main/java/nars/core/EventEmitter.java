@@ -1,13 +1,15 @@
 
 package nars.core;
 
-import java.util.ArrayList;
 import reactor.core.Environment;
 import reactor.event.Event;
 import reactor.event.dispatch.Dispatcher;
 import reactor.event.registry.Registration;
 import reactor.event.selector.Selector;
 import reactor.event.selector.Selectors;
+
+import java.util.ArrayList;
+
 import static reactor.event.selector.Selectors.T;
 
 /**

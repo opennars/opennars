@@ -15,9 +15,10 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.EventObject;
-import javax.swing.JDialog;
+
 import static javax.swing.SwingUtilities.getWindowAncestor;
 
 /**

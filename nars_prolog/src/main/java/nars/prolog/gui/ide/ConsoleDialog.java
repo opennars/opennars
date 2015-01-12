@@ -1,11 +1,18 @@
 package nars.prolog.gui.ide;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.Toolkit;
+import nars.prolog.SolveInfo;
+import nars.prolog.Var;
+import nars.prolog.event.*;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -15,28 +22,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URL;
 import java.util.ArrayList;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.TableModel;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-import nars.prolog.SolveInfo;
-import nars.prolog.Var;
-import nars.prolog.event.ExceptionEvent;
-import nars.prolog.event.ExceptionListener;
-import nars.prolog.event.OutputEvent;
-import nars.prolog.event.OutputListener;
-import nars.prolog.event.QueryEvent;
-import nars.prolog.event.ReadEvent;
-import nars.prolog.event.ReadListener;
 
 
 public class ConsoleDialog

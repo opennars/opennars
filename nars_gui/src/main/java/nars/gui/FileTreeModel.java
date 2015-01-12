@@ -1,9 +1,9 @@
 
 package nars.gui;
 
+import javax.swing.tree.TreeModel;
 import java.io.File;
 import java.util.Arrays;
-import javax.swing.tree.TreeModel;
 
 /**
  *http://java.dzone.com/news/taking-new-swing-tree-table-a-

@@ -1,19 +1,20 @@
 package nars.jwam.compiler;
 
+import javolution.io.CharSequenceReader;
+import nars.jwam.RuleHeap;
+import nars.jwam.WAM;
+import nars.jwam.datastructures.IntArrayList;
+import nars.jwam.datastructures.Numbers;
+import nars.jwam.datastructures.Strings;
+import nars.jwam.parser.ParseException;
+import nars.jwam.parser.Parser;
+import nars.jwam.parser.ToHeap;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.util.Arrays;
-import javolution.io.CharSequenceReader;
-import nars.jwam.RuleHeap;
-import nars.jwam.WAM;
-import nars.jwam.datastructures.Numbers;
-import nars.jwam.datastructures.IntArrayList;
-import nars.jwam.datastructures.Strings;
-import nars.jwam.parser.ParseException;
-import nars.jwam.parser.Parser;
-import nars.jwam.parser.ToHeap;
 
 /**
  * Can compile Prolog to heaps or WAM instructions

@@ -1,23 +1,18 @@
 package nars.prolog.gui.ide;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.net.URL;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Term;
 import nars.prolog.Theory;
 import nars.prolog.gui.spyframe.SpyFrame;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.net.URL;
 
 
 public class ToolBar extends JPanel

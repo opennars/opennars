@@ -4,14 +4,15 @@
  */
 package nars.core;
 
-import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.build.Neuromorphic;
+import org.junit.Ignore;
 
 /**
  *
  * @author me
  */
+
+@Ignore
 public class NALTestNeuromorphic extends NALTest {
 
     public NALTestNeuromorphic(String scriptPath) {

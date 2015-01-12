@@ -17,13 +17,11 @@
  */
 package automenta.vivisect.swing.property.sheet.editor;
 
+import automenta.vivisect.swing.property.propertysheet.Property;
+
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-
-import automenta.vivisect.swing.property.propertysheet.Property;
 
 
 /**

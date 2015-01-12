@@ -24,14 +24,12 @@
 package automenta.vivisect.gui;
 
 import automenta.vivisect.gui.HotSpot.HSrect;
-
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.font.TextLayout;
-import java.util.LinkedList;
-
 import processing.core.PApplet;
 import processing.event.MouseEvent;
+
+import java.awt.*;
+import java.awt.font.TextLayout;
+import java.util.LinkedList;
 
 
 /**

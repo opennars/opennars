@@ -20,54 +20,21 @@
  */
 package nars.inference;
 
+import nars.core.Events;
+import nars.core.Memory;
+import nars.core.control.NAL;
+import nars.entity.*;
+import nars.io.Symbols;
+import nars.language.*;
+import nars.language.CompoundTerm.UnableToCloneException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.core.control.NAL;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
-import static nars.inference.TruthFunctions.abduction;
-import static nars.inference.TruthFunctions.anonymousAnalogy;
-import static nars.inference.TruthFunctions.comparison;
-import static nars.inference.TruthFunctions.deduction;
-import static nars.inference.TruthFunctions.induction;
-import static nars.inference.TruthFunctions.intersection;
-import static nars.inference.TruthFunctions.negation;
-import static nars.inference.TruthFunctions.reduceConjunction;
-import static nars.inference.TruthFunctions.reduceConjunctionNeg;
-import static nars.inference.TruthFunctions.reduceDisjunction;
-import static nars.inference.TruthFunctions.union;
-import nars.io.Symbols;
-import nars.language.CompoundTerm;
-import nars.language.CompoundTerm.UnableToCloneException;
-import nars.language.Conjunction;
-import nars.language.DifferenceExt;
-import nars.language.DifferenceInt;
-import nars.language.Disjunction;
-import nars.language.Equivalence;
-import nars.language.ImageExt;
-import nars.language.ImageInt;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.IntersectionExt;
-import nars.language.IntersectionInt;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.Similarity;
-import nars.language.Statement;
-import nars.language.Term;
-import static nars.language.Terms.reduceComponents;
-import static nars.language.Terms.reduceUntilLayer2;
-import static nars.language.Terms.unwrapNegation;
-import nars.language.Variable;
-import nars.language.Variables;
+
+import static nars.inference.TruthFunctions.*;
+import static nars.language.Terms.*;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
@@ -903,6 +870,7 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
+
             S1 = T2.getSubject();
             S2 = T1.getSubject();
             P1 = T2.getPredicate();

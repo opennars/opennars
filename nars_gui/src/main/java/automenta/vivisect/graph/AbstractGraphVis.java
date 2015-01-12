@@ -1,18 +1,19 @@
 package automenta.vivisect.graph;
 
 
-
 import automenta.vivisect.Vis;
 import automenta.vivisect.swing.PCanvas;
+import org.apache.commons.math3.util.FastMath;
+import org.jgrapht.Graph;
+import processing.core.PGraphics;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.math3.util.FastMath;
-import org.jgrapht.Graph;
+
 import static processing.core.PConstants.MITER;
 import static processing.core.PConstants.SQUARE;
-import processing.core.PGraphics;
 
 /**
  *

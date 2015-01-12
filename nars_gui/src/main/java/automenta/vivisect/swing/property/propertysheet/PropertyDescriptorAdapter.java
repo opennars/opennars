@@ -17,12 +17,12 @@
  */
 package automenta.vivisect.swing.property.propertysheet;
 
+import automenta.vivisect.swing.property.beans.ExtendedPropertyDescriptor;
+
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import automenta.vivisect.swing.property.beans.ExtendedPropertyDescriptor;
 
 
 /**

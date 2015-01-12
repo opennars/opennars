@@ -1,18 +1,14 @@
 package automenta.vivisect.swing.property.sheet.editor;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-
-import javax.swing.AbstractAction;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
 import automenta.vivisect.swing.property.beans.editor.AbstractPropertyEditor;
 import automenta.vivisect.swing.property.propertysheet.Property;
 import automenta.vivisect.swing.property.sheet.I18N;
 import automenta.vivisect.swing.property.sheet.ResizeLayout;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 
 /**

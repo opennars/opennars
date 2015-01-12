@@ -17,9 +17,10 @@
  */
 package nars.prolog;
 
+import nars.prolog.util.OneWayList;
+
 import java.util.ArrayList;
 import java.util.List;
-import nars.prolog.util.OneWayList;
 
 /**
  * @author Alex Benini

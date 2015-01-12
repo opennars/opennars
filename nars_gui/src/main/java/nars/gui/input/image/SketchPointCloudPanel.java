@@ -1,26 +1,11 @@
 package nars.gui.input.image;
 
 import automenta.vivisect.swing.NWindow;
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Choice;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 import nars.core.NAR;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 
 public class SketchPointCloudPanel extends Panel implements MouseListener, MouseMotionListener, ActionListener {

@@ -17,18 +17,11 @@
  */
 package automenta.vivisect.swing.property.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.Icon;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.text.JTextComponent;
+import java.awt.*;
 
 /**
  * BannerPanel. <br>

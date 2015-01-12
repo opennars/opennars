@@ -17,20 +17,20 @@
 
 package nars;
 
-import java.awt.Desktop;
+import nars.core.build.Default;
+import nars.gui.NARSwing;
+import nars.nario.NARio;
+import nars.web.NARServer;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import nars.core.build.Default;
-import nars.gui.NARSwing;
-import nars.io.narsese.Narsese;
-import nars.nario.NARio;
-import nars.web.NARServer;
 
 /**
  *
@@ -405,13 +405,13 @@ public class Launcher extends javax.swing.JFrame {
 //                }
 //            }
 //        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(Launcher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//            java.other.logging.Logger.getLogger(Launcher.class.getName()).log(java.other.logging.Level.SEVERE, null, ex);
 //        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(Launcher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//            java.other.logging.Logger.getLogger(Launcher.class.getName()).log(java.other.logging.Level.SEVERE, null, ex);
 //        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(Launcher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//            java.other.logging.Logger.getLogger(Launcher.class.getName()).log(java.other.logging.Level.SEVERE, null, ex);
 //        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(Launcher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//            java.other.logging.Logger.getLogger(Launcher.class.getName()).log(java.other.logging.Level.SEVERE, null, ex);
 //        }
         //</editor-fold>
 

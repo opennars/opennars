@@ -1,13 +1,7 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.JavaException;
-import nars.jprolog.lang.PrologException;
-import nars.jprolog.lang.BlockPredicate;
-import nars.jprolog.lang.SystemException;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
-import nars.jprolog.lang.OutOfLoop;
+import nars.jprolog.lang.*;
 /**
  * <code>'$begin_exception'/1</code><br>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

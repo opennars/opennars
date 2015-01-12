@@ -1,14 +1,11 @@
 package nars.nario.sonar.mixer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import nars.nario.sonar.SoundListener;
 import nars.nario.sonar.SoundProducer;
 import nars.nario.sonar.SoundSource;
 import nars.nario.sonar.StereoSoundProducer;
+
+import java.util.*;
 
 
 public class ListenerMixer implements StereoSoundProducer

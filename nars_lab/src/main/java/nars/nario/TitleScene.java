@@ -1,10 +1,10 @@
 package nars.nario;
 
-import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
 import nars.nario.level.BgLevelGenerator;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.Mario;
+
+import java.awt.*;
 
 public class TitleScene extends Scene
 {

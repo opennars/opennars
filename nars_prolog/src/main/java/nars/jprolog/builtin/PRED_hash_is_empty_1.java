@@ -1,14 +1,7 @@
 package nars.jprolog.builtin;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.HashtableOfTerm;
-import nars.jprolog.lang.ExistenceException;
-import nars.jprolog.lang.IllegalDomainException;
-import nars.jprolog.lang.InternalException;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
-import java.util.Hashtable;
+import nars.jprolog.lang.*;
 /**
    <code>hash_is_empty/1</code><br>
    @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

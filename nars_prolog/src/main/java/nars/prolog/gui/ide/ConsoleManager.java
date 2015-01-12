@@ -1,14 +1,15 @@
 package nars.prolog.gui.ide;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
 import nars.prolog.event.QueryEvent;
 import nars.prolog.event.QueryListener;
 import nars.prolog.lib.IOLibrary;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public class ConsoleManager
     implements QueryListener, Console, PropertyChangeListener

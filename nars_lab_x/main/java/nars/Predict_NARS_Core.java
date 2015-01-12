@@ -8,7 +8,6 @@ import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
-import java.awt.Color;
 import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -19,6 +18,8 @@ import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
+
+import java.awt.*;
 
 /**
  *

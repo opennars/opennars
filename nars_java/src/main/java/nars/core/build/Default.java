@@ -1,5 +1,21 @@
 package nars.core.build;
 
+import nars.core.*;
+import nars.core.Memory.Forgetting;
+import nars.core.Memory.Timing;
+import nars.core.control.DefaultCore;
+import nars.entity.*;
+import nars.io.DefaultTextPerception;
+import nars.io.TextInput;
+import nars.language.Term;
+import nars.operator.Operator;
+import nars.operator.mental.Anticipate;
+import nars.plugin.app.plan.TemporalParticlePlanner;
+import nars.plugin.mental.*;
+import nars.storage.Bag;
+import nars.storage.CacheBag;
+import nars.storage.LevelBag;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -7,37 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.Core;
-import nars.core.Build;
-import nars.core.Memory;
-import nars.core.Memory.Forgetting;
-import nars.core.Memory.Timing;
-import nars.core.NAR;
-import nars.core.Param;
+
 import static nars.core.build.Default.InternalExperienceMode.Full;
 import static nars.core.build.Default.InternalExperienceMode.Minimal;
-import nars.core.control.DefaultCore;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.ConceptBuilder;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
-import nars.io.DefaultTextPerception;
-import nars.io.TextInput;
-import nars.language.Term;
-import nars.operator.Operator;
-import nars.operator.mental.Anticipate;
-import nars.plugin.app.plan.TemporalParticlePlanner;
-import nars.plugin.mental.Abbreviation;
-import nars.plugin.mental.Counting;
-import nars.plugin.mental.FullInternalExperience;
-import nars.plugin.mental.InternalExperience;
-import nars.plugin.mental.RuntimeNARSettings;
-import nars.storage.Bag;
-import nars.storage.CacheBag;
-import nars.storage.LevelBag;
 
 /**
  * Default set of NAR parameters which have been classically used for development.

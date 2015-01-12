@@ -3,14 +3,13 @@ package automenta.vivisect.timeline;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.AxisPlot.MultiChart;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import nars.io.Texts;
 import nars.io.meter.Metrics;
 import nars.io.meter.SignalData;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LineChart extends AxisPlot implements MultiChart {
     

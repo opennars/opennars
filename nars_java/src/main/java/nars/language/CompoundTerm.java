@@ -21,25 +21,18 @@
 package nars.language;
 
 import com.google.common.collect.Iterators;
-import java.nio.CharBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
+
+import java.nio.CharBuffer;
+import java.util.*;
+
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
-import static nars.language.CompoundTerm.makeCompoundName;
 
 
 public abstract class CompoundTerm extends Term implements Iterable<Term> {
@@ -210,7 +203,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             containedTemporalRelations = 0;
             
             if ((this instanceof Equivalence) || (this instanceof Implication)) {
-                int temporalOrder = ((Statement)this).getTemporalOrder();
+                int temporalOrder = this.getTemporalOrder();
                 switch (temporalOrder) {
                     case TemporalRules.ORDER_FORWARD:
                     case TemporalRules.ORDER_CONCURRENT:
@@ -533,8 +526,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public boolean containsTermRecursively(final Term target) { 
         if (super.containsTermRecursively(target))
             return true;
-        for (final Term term : term) {            
-            if (term.containsTermRecursively(target)) {
+        for (final Term t : term) {
+            if (t.containsTermRecursively(target)) {
                 return true;
             }
         }
@@ -583,7 +576,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     /**
      * Try to replace a component in a compound at a given index by another one
      *
-     * @param compound The compound
      * @param index The location of replacement
      * @param t The new component
      * @param memory Reference to the memory

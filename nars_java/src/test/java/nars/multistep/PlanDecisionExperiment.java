@@ -1,12 +1,13 @@
 package nars.multistep;
 
-import java.util.Arrays;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Output;
 import nars.io.Texts;
+
+import java.util.Arrays;
 
 
 

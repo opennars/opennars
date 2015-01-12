@@ -17,24 +17,10 @@
  */
 package automenta.vivisect.swing.property.propertysheet;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyEditor;
+import automenta.vivisect.swing.property.propertysheet.PropertySheetTableModel.Item;
+import automenta.vivisect.swing.property.swing.HeaderlessColumnResizer;
 
-import javax.swing.AbstractAction;
-import javax.swing.CellEditor;
-import javax.swing.Icon;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -42,9 +28,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
-
-import automenta.vivisect.swing.property.propertysheet.PropertySheetTableModel.Item;
-import automenta.vivisect.swing.property.swing.HeaderlessColumnResizer;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyEditor;
 
 /**
  * A table which allows the editing of Properties through

@@ -1,9 +1,10 @@
 package nars.inference;
 
-import java.util.ArrayList;
-import java.util.List;
 import nars.core.NAR;
 import nars.rl.elsy.QLearner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public abstract class QController extends AbstractController {

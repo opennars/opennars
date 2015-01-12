@@ -4,19 +4,15 @@
  */
 package nars.narclear;
 
-import java.awt.Graphics2D;
 import nars.core.Memory;
-import nars.grid2d.Cell;
-import nars.grid2d.CellFunction;
-import nars.grid2d.Grid2DSpace;
-import nars.grid2d.Hauto;
-import nars.grid2d.SimplexNoise;
+import nars.grid2d.*;
 import nars.grid2d.map.Maze;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.narclear.jbox2d.j2d.DrawPhy2D.LayerDraw;
 import org.jbox2d.dynamics.Body;
-
 import org.jbox2d.dynamics.World;
+
+import java.awt.*;
 
 /**
  *

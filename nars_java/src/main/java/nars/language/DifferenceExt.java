@@ -20,8 +20,10 @@
  */
 package nars.language;
 
-import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
+
+import java.util.TreeSet;
+
 import static nars.language.DifferenceInt.ensureValidDifferenceArguments;
 
 /**

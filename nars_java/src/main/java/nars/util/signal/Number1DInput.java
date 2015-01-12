@@ -16,9 +16,10 @@
  */
 package nars.util.signal;
 
-import java.text.NumberFormat;
 import nars.core.NAR;
 import nars.io.Texts;
+
+import java.text.NumberFormat;
 
 /** Product Vector */
 public class Number1DInput {

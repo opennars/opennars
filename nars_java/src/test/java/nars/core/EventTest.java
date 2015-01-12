@@ -5,10 +5,12 @@
  */
 package nars.core;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import reactor.event.Event;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.junit.Assert.assertTrue;
 import static reactor.event.selector.Selectors.T;
 
 /**

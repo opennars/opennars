@@ -23,9 +23,9 @@
 
 package automenta.vivisect.gui;
 
-import java.awt.Font;
+import java.awt.*;
 //import java.awt.GraphicsEnvironment;
-//import java.util.Arrays;
+//import java.other.Arrays;
 
 /**
  * 

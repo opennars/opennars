@@ -1,20 +1,13 @@
 package automenta.vivisect.surfaceplotter;
 
-import java.beans.PropertyChangeSupport;
-import java.io.File;
-import java.io.IOException;
+import automenta.vivisect.surfaceplotter.surface.*;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.SwingPropertyChangeSupport;
-
-import automenta.vivisect.surfaceplotter.surface.ColorModelSet;
-import automenta.vivisect.surfaceplotter.surface.Projector;
-import automenta.vivisect.surfaceplotter.surface.SurfaceColor;
-import automenta.vivisect.surfaceplotter.surface.SurfaceModel;
-import automenta.vivisect.surfaceplotter.surface.SurfaceVertex;
-import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotColor;
-import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotType;
+import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.IOException;
 
 
 /**

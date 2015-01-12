@@ -17,8 +17,8 @@
  */
 package nars.prolog.gui.ide;
 
+import javax.swing.*;
 import java.io.FileOutputStream;
-import javax.swing.JFrame;
 
 /**
  * A common interface to Input/Output file operations managers. Note that this

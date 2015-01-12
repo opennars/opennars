@@ -1,8 +1,9 @@
 package nars.core.bag;
 
 import nars.storage.Bag;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

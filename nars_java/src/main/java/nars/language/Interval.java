@@ -18,11 +18,12 @@
 package nars.language;
 
 import com.google.common.collect.Lists;
+import nars.core.Memory;
+import nars.io.Symbols;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.Memory;
-import nars.io.Symbols;
 
 /**
  * This stores the magnitude of a time difference, which is the logarithm of the time difference
@@ -77,7 +78,7 @@ public class Interval extends Term {
     }
     
     static final int INTERVAL_POOL_SIZE = 16;
-    static Interval[] INTERVAL = new Interval[INTERVAL_POOL_SIZE];
+    static final Interval[] INTERVAL = new Interval[INTERVAL_POOL_SIZE];
     
     public static Interval interval(final String i) {
         return intervalMagnitude( Integer.parseInt(i.substring(1)) - 1);

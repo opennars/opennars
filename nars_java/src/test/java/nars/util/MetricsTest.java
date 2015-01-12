@@ -5,14 +5,16 @@
  */
 package nars.util;
 
-import java.io.PrintStream;
 import nars.io.meter.FunctionMeter;
 import nars.io.meter.TemporalMetrics;
 import nars.io.meter.func.BasicStatistics;
 import nars.io.meter.func.FirstOrderDifference;
+import org.junit.Test;
+
+import java.io.PrintStream;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *
@@ -33,7 +35,7 @@ public class MetricsTest {
     @Test public void testTemporalMetrics() {
 
         
-        TemporalMetrics<Integer> tm = new TemporalMetrics<Integer>(3);
+        TemporalMetrics<Integer> tm = new TemporalMetrics<>(3);
         tm.addMeter(timeDoubler);
         
         assertEquals(0, tm.numRows());
@@ -56,7 +58,7 @@ public class MetricsTest {
 
     @Test public void testMeterDerivative() {
         
-        TemporalMetrics<Integer> tm = new TemporalMetrics<Integer>(3);
+        TemporalMetrics<Integer> tm = new TemporalMetrics<>(3);
         tm.addMeter(timeDoubler);
         tm.addMeter(new FirstOrderDifference(tm, timeDoubler.signalID(0)));
         
@@ -82,7 +84,7 @@ public class MetricsTest {
     
     @Test public void testSummaryStatistics() {
 
-        TemporalMetrics<Double> tm = new TemporalMetrics<Double>(10);        
+        TemporalMetrics<Double> tm = new TemporalMetrics<>(10);
         tm.addMeter(new BasicStatistics(tm, tm.getSignalIDs()[0]));
         
         for (int i = 0; i < 10; i++) {

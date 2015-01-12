@@ -1,16 +1,12 @@
 package nars.core.build;
 
 import nars.core.Memory;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
+import nars.entity.*;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.CurveBag;
 import nars.storage.LevelBag;
+
 import static nars.storage.LevelBag.NextNonEmptyLevelMode.Fast;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */

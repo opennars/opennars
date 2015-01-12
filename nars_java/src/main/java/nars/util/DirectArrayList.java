@@ -2,7 +2,6 @@ package nars.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -74,12 +73,12 @@ public class DirectArrayList<E> extends ArrayList<E> {
         return b;
     }
 
-    public static void main(String[] args) {
-        DirectArrayList a = new DirectArrayList();
-        System.out.println(Arrays.asList(a.data));
-        a.add("x");
-        System.out.println(Arrays.asList(a.data));
-        System.out.println(a.data[0]);
-    }
+//    public static void main(String[] args) {
+//        DirectArrayList a = new DirectArrayList();
+//        System.out.println(Arrays.asList(a.data));
+//        a.add("x");
+//        System.out.println(Arrays.asList(a.data));
+//        System.out.println(a.data[0]);
+//    }
 
 }

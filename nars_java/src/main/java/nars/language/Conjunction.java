@@ -20,14 +20,16 @@
  */
 package nars.language;
 
-import static java.lang.System.arraycopy;
+import nars.core.Parameters;
+import nars.inference.TemporalRules;
+import nars.io.Symbols.NativeOperator;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
-import nars.core.Parameters;
-import nars.inference.TemporalRules;
-import nars.io.Symbols.NativeOperator;
+
+import static java.lang.System.arraycopy;
 
 /**
  * Conjunction of statements

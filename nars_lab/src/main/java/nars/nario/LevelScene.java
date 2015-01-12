@@ -1,31 +1,19 @@
 package nars.nario;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
+import nars.nario.level.BgLevelGenerator;
+import nars.nario.level.Level;
+import nars.nario.level.LevelGenerator;
+import nars.nario.level.SpriteTemplate;
+import nars.nario.sonar.FixedSoundSource;
+import nars.nario.sprites.*;
+
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import nars.nario.level.BgLevelGenerator;
-import nars.nario.level.Level;
-import nars.nario.level.LevelGenerator;
-import nars.nario.level.SpriteTemplate;
-import nars.nario.sonar.FixedSoundSource;
-import nars.nario.sprites.BulletBill;
-import nars.nario.sprites.CoinAnim;
-import nars.nario.sprites.FireFlower;
-import nars.nario.sprites.Fireball;
-import nars.nario.sprites.Mario;
-import nars.nario.sprites.Mushroom;
-import nars.nario.sprites.Particle;
-import nars.nario.sprites.Shell;
-import nars.nario.sprites.Sparkle;
-import nars.nario.sprites.Sprite;
-import nars.nario.sprites.SpriteContext;
 
 
 public class LevelScene extends Scene implements SpriteContext

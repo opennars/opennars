@@ -1,17 +1,13 @@
 package nars.nario.sonar;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.SourceDataLine;
 import nars.nario.sonar.mixer.ListenerMixer;
 import nars.nario.sonar.sample.SampleLoader;
 import nars.nario.sonar.sample.SamplePlayer;
 import nars.nario.sonar.sample.SonarSample;
+
+import javax.sound.sampled.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 
 public class SonarSoundEngine implements Runnable

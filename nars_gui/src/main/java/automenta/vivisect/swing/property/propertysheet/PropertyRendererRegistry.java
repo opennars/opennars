@@ -17,26 +17,19 @@
  */
 package automenta.vivisect.swing.property.propertysheet;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
+import automenta.vivisect.swing.property.beans.ExtendedPropertyDescriptor;
+import automenta.vivisect.swing.property.sheet.renderer.*;
+import automenta.vivisect.swing.property.swing.renderer.ColorCellRenderer;
+import automenta.vivisect.swing.property.swing.renderer.DateRenderer;
+import automenta.vivisect.swing.property.swing.renderer.DefaultCellRenderer;
+
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.table.TableCellRenderer;
-
-import automenta.vivisect.swing.property.beans.ExtendedPropertyDescriptor;
-import automenta.vivisect.swing.property.sheet.renderer.BooleanRenderer;
-import automenta.vivisect.swing.property.sheet.renderer.DimensionRenderer;
-import automenta.vivisect.swing.property.sheet.renderer.EnumRenderer;
-import automenta.vivisect.swing.property.sheet.renderer.NumberRenderer;
-import automenta.vivisect.swing.property.sheet.renderer.PointRenderer;
-import automenta.vivisect.swing.property.swing.renderer.ColorCellRenderer;
-import automenta.vivisect.swing.property.swing.renderer.DateRenderer;
-import automenta.vivisect.swing.property.swing.renderer.DefaultCellRenderer;
 
 
 /**

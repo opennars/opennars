@@ -4,9 +4,18 @@ import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import nars.entity.Concept;
+import nars.entity.Sentence;
+import nars.language.CompoundTerm;
+import nars.language.Term;
+import nars.util.NARGraph;
+import org.jgrapht.ext.JGraphXAdapter;
+import org.jgrapht.graph.DirectedMultigraph;
+
+import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -15,19 +24,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.language.CompoundTerm;
-import nars.language.Term;
-import nars.util.NARGraph;
-import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DirectedMultigraph;
 
 abstract public class ProcessingGraphPanel2<V,E> extends NPanel {
 

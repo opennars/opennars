@@ -22,12 +22,6 @@
 
 package nars.operator.mental;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.CycleEnd;
@@ -35,11 +29,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.control.NAL;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
@@ -49,6 +39,8 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
+
+import java.util.*;
 
 //**
 //* Operator that creates a judgment with a given statement
@@ -181,7 +173,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     }
     
     public void anticipate(Term content,Memory memory, long occurenceTime, Task t) {
-        if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+        if(content instanceof Conjunction && content.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             return;
         }
         

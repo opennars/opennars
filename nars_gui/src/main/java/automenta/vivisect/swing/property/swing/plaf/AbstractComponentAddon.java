@@ -17,19 +17,17 @@
  */
 package automenta.vivisect.swing.property.swing.plaf;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.UIManager;
-
 import automenta.vivisect.swing.property.swing.plaf.aqua.AquaLookAndFeelAddons;
 import automenta.vivisect.swing.property.swing.plaf.metal.MetalLookAndFeelAddons;
 import automenta.vivisect.swing.property.swing.plaf.motif.MotifLookAndFeelAddons;
 import automenta.vivisect.swing.property.swing.plaf.windows.WindowsLookAndFeelAddons;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Ease the work of creating an addon for a component.<br>

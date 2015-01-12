@@ -4,9 +4,9 @@
  */
 package automenta.vivisect.timeline;
 
-import java.util.List;
-import nars.io.meter.Metrics;
 import nars.io.meter.SignalData;
+
+import java.util.List;
 
 /**
  * Modes: Line Line with vertical pole to base Stacked bar Stacked bar

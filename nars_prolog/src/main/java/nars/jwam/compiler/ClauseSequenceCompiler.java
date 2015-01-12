@@ -1,11 +1,12 @@
 package nars.jwam.compiler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import nars.jwam.RuleHeap;
 import nars.jwam.WAM;
 import nars.jwam.datastructures.Strings;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class ClauseSequenceCompiler {
 

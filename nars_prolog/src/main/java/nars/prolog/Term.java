@@ -17,14 +17,11 @@
  */
 package nars.prolog;
 
-import java.io.Serializable;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.List;
 import nars.language.AbstractTerm;
 import nars.prolog.util.OneWayList;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Term class is the root abstract class for prolog data type

@@ -21,8 +21,6 @@
 
 package nars.operator;
 
-import java.util.Arrays;
-import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -34,6 +32,9 @@ import nars.io.Output.EXE;
 import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * An individual operator that can be execute by the system, which can be either
@@ -154,10 +155,8 @@ public abstract class Operator extends Term implements Plugin {
         }
 
         if (memory.emitting(EXE.class)) {
-            final Operator operator = (Operator) opT;
-            
+            //final Operator operator = (Operator) opT;
 
-            
             if (feedback instanceof Exception)
                 feedback = feedback.getClass().getSimpleName() + ": " + ((Throwable)feedback).getMessage();
             

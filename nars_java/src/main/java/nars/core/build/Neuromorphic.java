@@ -1,18 +1,10 @@
 package nars.core.build;
 
 import nars.core.Core;
-import nars.core.Memory;
 import nars.core.control.experimental.AntCore;
-import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.storage.experimental.DelayBag;
-import nars.storage.experimental.FairDelayBag;
 
 /**
  *

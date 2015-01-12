@@ -1,13 +1,6 @@
 package nars.prolog.interfaces;
 
-import nars.prolog.InvalidLibraryException;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.Library;
-import nars.prolog.NoMoreSolutionException;
-import nars.prolog.PrologTermIterator;
-import nars.prolog.SolveInfo;
-import nars.prolog.Term;
-import nars.prolog.Theory;
+import nars.prolog.*;
 import nars.prolog.event.ExceptionListener;
 import nars.prolog.event.OutputListener;
 import nars.prolog.event.SpyListener;

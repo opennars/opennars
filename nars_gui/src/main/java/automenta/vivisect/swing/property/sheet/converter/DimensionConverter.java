@@ -1,8 +1,8 @@
 package automenta.vivisect.swing.property.sheet.converter;
 
-import java.awt.Dimension;
-
 import automenta.vivisect.swing.property.sheet.Converter;
+
+import java.awt.*;
 
 
 public class DimensionConverter implements Converter<Dimension> {

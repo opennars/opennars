@@ -20,9 +20,10 @@
  */
 package nars.language;
 
-import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
+
+import java.util.TreeSet;
 
 /**
  * A compound term whose extension is the difference of the intensions of its term

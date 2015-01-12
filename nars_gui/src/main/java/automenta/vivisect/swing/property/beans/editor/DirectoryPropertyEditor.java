@@ -18,14 +18,14 @@
 package automenta.vivisect.swing.property.beans.editor;
 
 //import com.l2fprod.common.swing.JDirectoryChooser;
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.JFileChooser;
 
 import automenta.vivisect.swing.property.sheet.editor.FileEditor;
 import automenta.vivisect.swing.property.swing.UserPreferences;
 import automenta.vivisect.swing.property.util.ResourceManager;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 
 /**

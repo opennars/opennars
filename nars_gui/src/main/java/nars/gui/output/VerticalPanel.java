@@ -5,13 +5,9 @@
 package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *

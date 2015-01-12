@@ -1,8 +1,9 @@
 package automenta.vivisect.swing;
 
 import automenta.vivisect.Video;
-import java.awt.Graphics;
-import javax.swing.JToggleButton;
+
+import javax.swing.*;
+import java.awt.*;
 
 
 /** ToggleButton with FontAwesome icon */

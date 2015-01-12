@@ -1,20 +1,21 @@
 package nars.util.rdfowl;
 
+import nars.core.NAR;
+import nars.core.build.Default;
+import nars.io.TextOutput;
+import nars.util.PrintWriterInput;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.events.Attribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.Attribute;
-import nars.core.NAR;
-import nars.core.build.Default;
-import nars.io.TextOutput;
-import nars.util.PrintWriterInput;
 
 /**
  * Simple combined OWL/RDF-S XML parser

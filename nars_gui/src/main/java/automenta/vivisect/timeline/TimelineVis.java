@@ -3,18 +3,18 @@ package automenta.vivisect.timeline;
 import automenta.vivisect.Vis;
 import automenta.vivisect.swing.PCanvas;
 import com.google.common.collect.Lists;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import javax.swing.SwingUtilities;
 import nars.io.meter.SignalData;
-import static processing.core.PConstants.HSB;
 import processing.core.PGraphics;
 import processing.core.PGraphicsJava2D;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.List;
+
+import static processing.core.PConstants.HSB;
 
 /**
  * Timeline view of an inference trace. Focuses on a specific window and certain

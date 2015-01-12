@@ -1,24 +1,11 @@
 package automenta.vivisect.face;
 
 
-   
-import java.awt.BorderLayout;
-import java.awt.Color;   
-import java.awt.Component;   
-import java.awt.Container;   
-import java.awt.Dimension;   
-import java.awt.Graphics;   
-import java.awt.GridBagConstraints;   
-import java.awt.GridBagLayout;   
-import java.awt.Image;   
-import java.awt.Insets;   
-import java.awt.Panel;   
-import java.awt.Point;   
-import java.awt.Polygon;   
-import java.awt.image.MemoryImageSource;   
-import java.awt.image.PixelGrabber;   
-import java.util.Vector;   
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
+import java.awt.image.PixelGrabber;
+import java.util.Vector;
    
 
 

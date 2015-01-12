@@ -22,11 +22,12 @@ package nars.operator;
 
 import nars.entity.Task;
 import nars.io.Symbols;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
+
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 /**
  * An operation is interpreted as an Inheritance relation.

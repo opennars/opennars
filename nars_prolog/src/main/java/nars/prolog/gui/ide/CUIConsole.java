@@ -1,27 +1,11 @@
 package nars.prolog.gui.ide;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.NoSolutionException;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
-import nars.prolog.Var;
-import nars.prolog.event.ExceptionEvent;
-import nars.prolog.event.ExceptionListener;
-import nars.prolog.event.OutputEvent;
-import nars.prolog.event.OutputListener;
-import nars.prolog.event.SpyEvent;
-import nars.prolog.event.SpyListener;
-import nars.prolog.event.WarningEvent;
-import nars.prolog.event.WarningListener;
+import nars.prolog.*;
+import nars.prolog.event.*;
 import nars.prolog.lib.IOLibrary;
 import nars.prolog.util.Automaton;
+
+import java.io.*;
 
 @SuppressWarnings("serial")
 public class CUIConsole extends Automaton implements Serializable, OutputListener, SpyListener, WarningListener/*Castagna 06/2011*/, ExceptionListener/**/{

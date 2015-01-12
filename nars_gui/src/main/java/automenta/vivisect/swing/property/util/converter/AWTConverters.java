@@ -17,17 +17,11 @@
  */
 package automenta.vivisect.swing.property.util.converter;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.StringTokenizer;
-
 import javax.swing.plaf.DimensionUIResource;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.InsetsUIResource;
+import java.awt.*;
+import java.util.StringTokenizer;
 
 
 /**

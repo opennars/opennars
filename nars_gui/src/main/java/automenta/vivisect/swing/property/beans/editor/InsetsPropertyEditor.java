@@ -17,9 +17,9 @@
  */
 package automenta.vivisect.swing.property.beans.editor;
 
-import java.awt.Insets;
-
 import automenta.vivisect.swing.property.util.converter.ConverterRegistry;
+
+import java.awt.*;
 
 /**
  * InsetsPropertyEditor. <br>

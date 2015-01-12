@@ -1,37 +1,22 @@
 package automenta.vivisect.swing.property;
 
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.awt.Frame;
-import java.awt.Window;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyEditor;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JButton;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-
 import automenta.vivisect.swing.property.propertysheet.PropertySheet;
 import automenta.vivisect.swing.property.propertysheet.PropertySheetDialog;
 import automenta.vivisect.swing.property.propertysheet.PropertySheetPanel;
 import automenta.vivisect.swing.property.swing.BannerPanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.Dialog.ModalityType;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyEditor;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PropertyUtils {
 

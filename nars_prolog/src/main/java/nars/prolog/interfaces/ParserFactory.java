@@ -1,9 +1,10 @@
 package nars.prolog.interfaces;
 
-import java.util.HashMap;
 import nars.prolog.OperatorManager;
 import nars.prolog.Parser;
 import nars.prolog.Term;
+
+import java.util.HashMap;
 
 public class ParserFactory {
 	

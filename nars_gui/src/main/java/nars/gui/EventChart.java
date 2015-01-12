@@ -9,18 +9,18 @@ package nars.gui;
 //import automenta.vivisect.Video;
 //import automenta.vivisect.timeline.AxisPlot;
 //import automenta.vivisect.timeline.TimelineVis;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.NavigableMap;
-//import java.util.TreeMap;
-//import java.util.concurrent.ConcurrentSkipListMap;
+//import java.other.ArrayList;
+//import java.other.HashMap;
+//import java.other.List;
+//import java.other.Map;
+//import java.other.NavigableMap;
+//import java.other.TreeMap;
+//import java.other.concurrent.ConcurrentSkipListMap;
 //import nars.core.Events;
 //import nars.entity.Item;
 //import nars.io.Output;
-//import nars.util.NARTrace;
-//import nars.util.NARTrace.HasLabel;
+//import nars.other.NARTrace;
+//import nars.other.NARTrace.HasLabel;
 //import processing.core.PConstants;
 //
 ///**

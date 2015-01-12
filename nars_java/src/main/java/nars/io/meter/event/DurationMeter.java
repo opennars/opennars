@@ -5,7 +5,6 @@
  */
 package nars.io.meter.event;
 
-import nars.io.meter.FunctionMeter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**

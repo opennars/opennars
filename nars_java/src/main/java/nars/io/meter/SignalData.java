@@ -28,12 +28,7 @@ public class SignalData {
 
     public Object[] getDataCached() {
         if (data == null) {
-            try {
-                this.data = getData();
-            }
-            catch (Exception e) {
-                System.err.println(e);
-            }
+            this.data = getData();
         }
         return data;
     }

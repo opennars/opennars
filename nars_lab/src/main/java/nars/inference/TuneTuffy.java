@@ -4,8 +4,6 @@
  */
 package nars.inference;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import nars.core.Build;
 import nars.core.Events.Answer;
 import nars.core.NAR;
@@ -14,9 +12,11 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
-import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  *

@@ -1,9 +1,10 @@
 package nars.io;
 
-import java.io.IOException;
-import java.util.Iterator;
 import nars.io.buffer.Buffer;
 import nars.operator.io.Reboot;
+
+import java.io.IOException;
+import java.util.Iterator;
 
 
 /**

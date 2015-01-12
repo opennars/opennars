@@ -20,9 +20,10 @@
  */
 package nars.language;
 
-import java.util.Arrays;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
+
+import java.util.Arrays;
 
 /**
  * A Statement about an Inheritance copula.

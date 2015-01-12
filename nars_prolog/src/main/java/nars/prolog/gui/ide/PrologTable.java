@@ -1,6 +1,6 @@
 package nars.prolog.gui.ide;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 

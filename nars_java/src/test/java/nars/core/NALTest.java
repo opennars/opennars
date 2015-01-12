@@ -1,20 +1,10 @@
 package nars.core;
 
-import nars.util.NALPerformance;
-import nars.io.condition.OutputCondition;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import nars.core.build.Default;
 import nars.io.ExampleFileInput;
 import nars.io.InferenceLogger;
-import nars.io.TextInput;
 import nars.io.TextOutput;
-import static org.junit.Assert.assertTrue;
+import nars.util.NALPerformance;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
@@ -22,6 +12,13 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(Parameterized.class)

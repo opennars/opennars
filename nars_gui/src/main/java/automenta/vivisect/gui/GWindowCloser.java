@@ -23,9 +23,9 @@
 
 package automenta.vivisect.gui;
 
-import java.util.ArrayList;
-
 import processing.core.PApplet;
+
+import java.util.ArrayList;
 
 /**
  * This class will be used to safely close windows provided that their actionOnClose 

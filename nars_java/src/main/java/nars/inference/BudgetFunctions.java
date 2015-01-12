@@ -20,19 +20,11 @@
  */
 package nars.inference;
 
-import static java.lang.Math.max;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
 import nars.core.Memory;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.Item;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.language.Term;
+
+import static java.lang.Math.*;
 
 /**
  * Budget functions for resources allocation

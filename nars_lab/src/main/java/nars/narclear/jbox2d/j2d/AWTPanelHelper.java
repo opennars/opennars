@@ -1,20 +1,15 @@
 package nars.narclear.jbox2d.j2d;
 
 import com.google.common.collect.Lists;
-import java.awt.Component;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.util.List;
 import nars.narclear.PhysicsModel;
 import nars.narclear.jbox2d.PhysicsCamera.ZoomType;
 import nars.narclear.jbox2d.PhysicsController;
 import nars.narclear.jbox2d.TestbedState;
 import org.jbox2d.common.Vec2;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
 
 public class AWTPanelHelper {
 

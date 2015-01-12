@@ -20,11 +20,13 @@
  */
 package nars.language;
 
-import java.nio.CharBuffer;
-import java.util.Arrays;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
+
+import java.nio.CharBuffer;
+import java.util.Arrays;
+
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 

@@ -11,14 +11,10 @@
 */
 package automenta.vivisect.surfaceplotter.beans;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
-
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JComboBox;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
 
 
 /**

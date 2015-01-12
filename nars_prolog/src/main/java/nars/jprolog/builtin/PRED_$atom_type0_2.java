@@ -1,10 +1,7 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.IntegerTerm;
-import nars.jprolog.lang.SymbolTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
-import nars.jprolog.lang.Token;
+import nars.jprolog.lang.*;
 /**
  * <code>'$atom_type0'/2</code><br>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

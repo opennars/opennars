@@ -1,24 +1,15 @@
 package nars.io.nlp;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
-import javax.swing.table.AbstractTableModel;
 
 
 public class ActionPanelContext {

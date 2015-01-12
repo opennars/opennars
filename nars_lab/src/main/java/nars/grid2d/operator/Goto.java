@@ -19,14 +19,15 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.grid2d.operator;
- 
-import java.util.List;
+
 import nars.core.Memory;
 import nars.entity.Task;
 import nars.grid2d.TestChamber;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import java.util.List;
 
 /**
  *  A class used as a template for Operator definition.

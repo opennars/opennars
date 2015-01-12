@@ -1,12 +1,8 @@
 package nars.jprolog;
+
+import nars.jprolog.lang.*;
+
 import java.util.StringTokenizer;
-import nars.jprolog.lang.ListTerm;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.PrologClassLoader;
-import nars.jprolog.lang.PrologControl;
-import nars.jprolog.lang.StructureTerm;
-import nars.jprolog.lang.SymbolTerm;
-import nars.jprolog.lang.Term;
 /**
  * Prolog Cafe launcher.
  * The <code>PrologMain</code> class launchs the Prolog Cafe system.<br>

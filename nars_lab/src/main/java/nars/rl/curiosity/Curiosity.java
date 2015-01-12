@@ -1,9 +1,10 @@
 package nars.rl.curiosity;
 
 
-import java.io.Serializable;
 import nars.rl.elsy.ErrorBackpropagationNN;
 import nars.rl.elsy.Perception;
+
+import java.io.Serializable;
 
 public class Curiosity implements Serializable {
 	private static final long serialVersionUID = 1L;

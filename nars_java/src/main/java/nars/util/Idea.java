@@ -5,15 +5,6 @@
 package nars.util;
 
 import com.google.common.base.Objects;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
@@ -22,13 +13,14 @@ import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.entity.TruthValue;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
 import nars.language.Image;
 import nars.language.Term;
 import nars.language.Terms.Termable;
+
+import java.util.*;
 
 /**
  *each of those rows can be a representation of something like a 'multiconcept' or 'aggregated concept' which combines concept data from related concepts

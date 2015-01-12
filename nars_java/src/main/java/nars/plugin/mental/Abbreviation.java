@@ -1,28 +1,26 @@
 package nars.plugin.mental;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.TaskDerive;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
-import static nars.language.CompoundTerm.termArray;
 import nars.language.Similarity;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.operator.mental.Mental;
+
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static nars.language.CompoundTerm.termArray;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
@@ -30,7 +28,7 @@ import nars.operator.mental.Mental;
  */
 public class Abbreviation implements Plugin {
 
-    private double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
+    private final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
     
     /**
     * Operator that give a CompoundTerm an atomic name
@@ -41,10 +39,10 @@ public class Abbreviation implements Plugin {
             super("^abbreviate");
         }
 
-        private static AtomicInteger currentTermSerial = new AtomicInteger(1);
+        private static final AtomicInteger currentTermSerial = new AtomicInteger(1);
 
-        public Term newSerialTerm(char prefix) {
-            return new Term(prefix + String.valueOf(currentTermSerial.incrementAndGet()));
+        public Term newSerialTerm() {
+            return new Term(Symbols.TERM_PREFIX + String.valueOf(currentTermSerial.incrementAndGet()));
         }
 
 
@@ -59,7 +57,7 @@ public class Abbreviation implements Plugin {
             
             Term compound = args[0];
             
-            Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
+            Term atomic = newSerialTerm();
                         
             Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
@@ -80,8 +78,8 @@ public class Abbreviation implements Plugin {
 
     }
     
-    public AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
-    public AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
+    public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
+    public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
     public EventObserver obs;
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment

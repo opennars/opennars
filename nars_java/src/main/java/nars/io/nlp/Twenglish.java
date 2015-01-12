@@ -16,13 +16,6 @@
  */
 package nars.io.nlp;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.AbstractTask;
@@ -31,12 +24,9 @@ import nars.inference.TemporalRules;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Twokenize.Span;
-import nars.language.Conjunction;
-import nars.language.Instance;
-import nars.language.Interval;
-import nars.language.Product;
-import nars.language.Property;
-import nars.language.Term;
+import nars.language.*;
+
+import java.util.*;
 
 /**
  * Twitter English - english with additional tags for twitter-like content 

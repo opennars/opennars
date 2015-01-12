@@ -16,14 +16,16 @@
  */
 package nars.io.nlp;
 
+import nars.core.control.AbstractTask;
+import nars.io.narsese.Narsese;
+import nars.io.narsese.Narsese.InvalidInputException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nars.core.control.AbstractTask;
+
 import static nars.io.Texts.levenshteinDistance;
-import nars.io.narsese.Narsese;
-import nars.io.narsese.Narsese.InvalidInputException;
 
 /**
  * "Englisch" (nearly-English) Input Perception To keep NLP overhead as small as
@@ -139,7 +141,7 @@ public class Englisch {
                 }
             }
 
-            if (contains_is == false) {
+            if (!contains_is) {
                 sentence = "<(*";
                 for (int i = 0; i < words.length; i++) {
                     sentence += "," + words[i];

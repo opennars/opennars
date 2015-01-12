@@ -17,11 +17,12 @@
  */
 package nars.prolog;
 
+import nars.prolog.interfaces.IEngine;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import nars.prolog.interfaces.IEngine;
 
 /**
  * @author Alex Benini

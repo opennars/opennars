@@ -8,7 +8,7 @@ package nars.gui.output.graph.deprecated;
 //import nars.inference.GraphExecutive;
 //import nars.language.Interval;
 //import nars.language.Term;
-//import nars.util.graph.ImplicationGraph.Cause;
+//import nars.other.graph.ImplicationGraph.Cause;
 //import org.jgrapht.Graph;
 //
 //

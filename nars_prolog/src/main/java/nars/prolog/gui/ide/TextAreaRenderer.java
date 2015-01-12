@@ -1,17 +1,14 @@
 package nars.prolog.gui.ide;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public class TextAreaRenderer

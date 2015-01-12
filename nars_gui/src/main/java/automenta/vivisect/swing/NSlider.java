@@ -19,14 +19,14 @@ package automenta.vivisect.swing;
 
 import automenta.vivisect.Video;
 import com.google.common.util.concurrent.AtomicDouble;
-import java.awt.Color;
-import java.awt.Graphics;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.text.NumberFormat;
-import javax.swing.JLabel;
-import javax.swing.border.LineBorder;
 
 
 

@@ -1,22 +1,18 @@
 package nars.nario;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
+import nars.nario.sonar.FakeSoundEngine;
+import nars.nario.sonar.SonarSoundEngine;
+import nars.nario.sprites.Mario;
+
+import javax.sound.sampled.LineUnavailableException;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.Random;
-import javax.sound.sampled.LineUnavailableException;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-import nars.nario.sonar.FakeSoundEngine;
-import nars.nario.sonar.SonarSoundEngine;
-import nars.nario.sprites.Mario;
 
 
 public class MarioComponent extends JComponent implements Runnable, KeyListener, FocusListener

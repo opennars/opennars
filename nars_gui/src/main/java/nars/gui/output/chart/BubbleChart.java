@@ -1,17 +1,15 @@
 package nars.gui.output.chart;
 
 import automenta.vivisect.swing.NPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 
 /**

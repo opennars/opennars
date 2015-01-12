@@ -15,10 +15,10 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import javax.swing.Icon;
 
 /**
  *

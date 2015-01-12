@@ -22,9 +22,10 @@
  */
 package nars.util.rope.impl;
 
+import nars.util.rope.Rope;
+
 import java.util.ArrayDeque;
 import java.util.Iterator;
-import nars.util.rope.Rope;
 
 /**
  * A fast iterator for concatenated ropes. Iterating over a complex rope

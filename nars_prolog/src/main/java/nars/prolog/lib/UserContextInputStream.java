@@ -1,10 +1,11 @@
 package nars.prolog.lib;
 
+import nars.prolog.event.ReadEvent;
+import nars.prolog.event.ReadListener;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import nars.prolog.event.ReadEvent;
-import nars.prolog.event.ReadListener;
 
 
 public class UserContextInputStream extends InputStream {

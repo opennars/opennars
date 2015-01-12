@@ -1,7 +1,8 @@
 package nars.prolog.event;
 
-import java.util.EventObject;
 import nars.prolog.lib.UserContextInputStream;
+
+import java.util.EventObject;
 
 public class ReadEvent extends EventObject {
 

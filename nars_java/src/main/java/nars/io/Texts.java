@@ -1,13 +1,14 @@
 package nars.io;
 
+import nars.util.rope.Rope;
+import nars.util.rope.impl.CharArrayRope;
+
 import java.lang.reflect.Field;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.HashMap;
 import java.util.Map;
-import nars.util.rope.Rope;
-import nars.util.rope.impl.CharArrayRope;
 
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 

@@ -4,6 +4,9 @@
  */
 package nars.prolog;
 
+import nars.prolog.event.LibraryEvent;
+import nars.prolog.event.WarningEvent;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,8 +14,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import nars.prolog.event.LibraryEvent;
-import nars.prolog.event.WarningEvent;
 
 
 /**

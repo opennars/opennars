@@ -1,6 +1,6 @@
 package automenta.vivisect.swing.property;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

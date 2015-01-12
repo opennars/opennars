@@ -1,8 +1,10 @@
 package nars.util.signal;
 
-import java.util.Arrays;
 import nars.core.NAR;
 import nars.core.Parameters;
+
+import java.util.Arrays;
+
 import static nars.io.Texts.n2;
 
 /**

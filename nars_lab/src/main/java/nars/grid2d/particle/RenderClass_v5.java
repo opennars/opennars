@@ -2,21 +2,16 @@
 // 11/14/2012
 package nars.grid2d.particle;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import javolution.util.FastTable;
+import nars.util.XORShiftRandom;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.List;
 import java.util.Random;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-import javolution.util.FastTable;
-import nars.util.XORShiftRandom;
 
 public class RenderClass_v5 extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
 

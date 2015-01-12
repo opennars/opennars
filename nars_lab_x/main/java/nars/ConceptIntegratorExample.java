@@ -16,27 +16,23 @@
  */
 package nars.timeline;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import automenta.vivisect.Video;
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.PCanvas;
+import automenta.vivisect.timeline.AxisPlot;
+import automenta.vivisect.timeline.BarChart;
+import automenta.vivisect.timeline.TimelineVis;
 import nars.core.Events;
 import nars.core.Events.ConceptFire;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Concept;
-import nars.util.TreeMLData;
-import automenta.vivisect.Video;
-import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.BarChart;
-import automenta.vivisect.timeline.AxisPlot;
-import automenta.vivisect.timeline.TimelineVis;
 import nars.inference.AbstractObserver;
 import nars.util.NARTrace;
+import nars.util.TreeMLData;
+
+import java.util.*;
 
 /**
  *

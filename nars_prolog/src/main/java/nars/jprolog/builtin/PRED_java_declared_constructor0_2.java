@@ -1,16 +1,10 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.JavaException;
-import nars.jprolog.lang.SymbolTerm;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.IllegalTypeException;
-import nars.jprolog.lang.ExistenceException;
-import nars.jprolog.lang.StructureTerm;
-import nars.jprolog.lang.JavaPredicate;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
-import java.lang.reflect.*;
+import nars.jprolog.lang.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 /**
  * <code>java_declared_constructor0/2</code>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

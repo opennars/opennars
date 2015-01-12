@@ -5,20 +5,15 @@
 package nars.tictactoe;
 
 import automenta.vivisect.swing.NPanel;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.lang.reflect.Array;
-import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.entity.Concept;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.lang.reflect.Array;
 
 /**
  * A grid panel of buttons, each associated with a particular NARS term

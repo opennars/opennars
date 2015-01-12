@@ -1,11 +1,12 @@
 package prolog;
 
-import java.io.File;
 import junit.framework.TestCase;
 import nars.prolog.Prolog;
 import nars.prolog.SolveInfo;
 import nars.prolog.Term;
 import nars.prolog.Var;
+
+import java.io.File;
 
 /**
  * @author Matteo Iuliani
@@ -34,7 +35,7 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 	// NoSuchMethodException se il costruttore non esiste
 	public void test_java_object_3_2() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_catch(java_object('java.util.ArrayList', [a], c), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
+		String goal = "java_catch(java_object('java.other.ArrayList', [a], c), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");
@@ -49,7 +50,7 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 	// InvocationTargetException se gli argomenti di ArgList non sono "ground"
 	public void test_java_object_3_3() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_catch(java_object('java.util.ArrayList', [X], c), [('java.lang.reflect.InvocationTargetException'(Cause, Message, StackTrace), true)], true).";
+		String goal = "java_catch(java_object('java.other.ArrayList', [X], c), [('java.lang.reflect.InvocationTargetException'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");
@@ -64,7 +65,7 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 	// Exception se ObjId gia' riferisce un altro oggetto nel sistema
 	public void test_java_object_3_4() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_object('java.util.ArrayList', [], c), java_catch(java_object('java.util.ArrayList', [], c), [('java.lang.Exception'(Cause, Message, StackTrace), true)], true).";
+		String goal = "java_object('java.other.ArrayList', [], c), java_catch(java_object('java.other.ArrayList', [], c), [('java.lang.Exception'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");
@@ -94,7 +95,7 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 	// NoSuchMethodException se il costruttore non esiste
 	public void test_java_object_bt_3_2() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_catch(java_object_bt('java.util.ArrayList', [a], c), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
+		String goal = "java_catch(java_object_bt('java.other.ArrayList', [a], c), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");
@@ -109,7 +110,7 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 	// InvocationTargetException se gli argomenti di ArgList non sono "ground"
 	public void test_java_object_bt_3_3() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_catch(java_object_bt('java.util.ArrayList', [X], c), [('java.lang.reflect.InvocationTargetException'(Cause, Message, StackTrace), true)], true).";
+		String goal = "java_catch(java_object_bt('java.other.ArrayList', [X], c), [('java.lang.reflect.InvocationTargetException'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");
@@ -124,7 +125,7 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 	// Exception se ObjId gia' riferisce un altro oggetto nel sistema
 	public void test_java_object_bt_3_4() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_object_bt('java.util.ArrayList', [], c), java_catch(java_object('java.util.ArrayList', [], c), [('java.lang.Exception'(Cause, Message, StackTrace), true)], true).";
+		String goal = "java_object_bt('java.other.ArrayList', [], c), java_catch(java_object('java.other.ArrayList', [], c), [('java.lang.Exception'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");
@@ -175,7 +176,7 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 	// la classe
 	public void test_java_call_3_1() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_object('java.util.ArrayList', [], l), java_catch(java_call(l, sizes, res), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
+		String goal = "java_object('java.other.ArrayList', [], l), java_catch(java_call(l, sizes, res), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");
@@ -221,7 +222,7 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 	// la classe
 	public void test_java_returns_2_1() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_object('java.util.ArrayList', [], l), java_catch((l <- sizes returns res), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
+		String goal = "java_object('java.other.ArrayList', [], l), java_catch((l <- sizes returns res), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");

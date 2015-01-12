@@ -1,7 +1,8 @@
 package nars.io.meter;
 
-import java.io.Serializable;
 import nars.io.meter.event.ValueMeter;
+
+import java.io.Serializable;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
 public class EmotionMeter implements Serializable {

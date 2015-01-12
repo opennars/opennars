@@ -1,22 +1,13 @@
 package nars.util;
 
-import java.awt.Color;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import nars.core.Events.InferenceEvent;
-import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Task;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.ConceptNew;
 import nars.core.Events.CycleEnd;
+import nars.core.Events.InferenceEvent;
+import nars.core.NAR;
+import nars.entity.Concept;
+import nars.entity.Task;
 import nars.inference.MemoryObserver;
 import nars.io.meter.SignalData;
 import nars.io.meter.TemporalMetrics;
@@ -24,6 +15,12 @@ import nars.io.meter.func.BasicStatistics;
 import nars.io.meter.func.FirstOrderDifference;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
+
+import java.awt.*;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.util.*;
+import java.util.List;
 
 
 /**
@@ -89,7 +86,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
         @Override
         public String toString() {
-            return ((Class)channel).getSimpleName() + ": " + 
+            return channel.getSimpleName() + ": " +
                     (signal.length > 1 ? Arrays.toString(signal) : signal[0]);
         }
         
@@ -113,7 +110,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         public final Task task;
         public final AddOrRemove type;
         public final String reason;
-        public float priority;
+        public final float priority;
 
         public TaskEvent(Task t, long when, AddOrRemove type, String reason) {
             super(when);
@@ -282,7 +279,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
         public static enum Mode {
 
-            ConceptPriorityTotal, TaskLinkPriorityMean, TermLinkPriorityMean /* add others */ };
+            ConceptPriorityTotal, TaskLinkPriorityMean, TermLinkPriorityMean /* add others */ }
 
         public ConceptBagTreeMLData(NAR n, Iterable<Concept> concepts, int historySize, Mode mode) {
             super(n, "Concepts: " + mode, historySize);
@@ -331,7 +328,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
         public static enum Mode {
 
-            Priority, Duration, BeliefConfidenceMax /* add others */ };
+            Priority, Duration, BeliefConfidenceMax /* add others */ }
 
         public ConceptTreeMLData(NAR n, String concept, int historySize, Mode mode) throws Narsese.InvalidInputException {
             super(n, concept + ": " + mode, 0, 1, historySize);

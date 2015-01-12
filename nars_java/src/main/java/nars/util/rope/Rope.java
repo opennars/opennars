@@ -22,6 +22,9 @@
  */
 package nars.util.rope;
 
+import nars.io.Texts;
+import nars.util.rope.impl.*;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -31,15 +34,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nars.io.Texts;
-import nars.util.rope.impl.AbstractRope;
-import nars.util.rope.impl.CharArrayRope;
-import nars.util.rope.impl.ConcatenationRope;
-import nars.util.rope.impl.FastConcatenationRope;
-import nars.util.rope.impl.FlatCharSequenceRope;
-import nars.util.rope.impl.FlatRope;
-import nars.util.rope.impl.PrePostCharRope;
-import nars.util.rope.impl.SubstringRope;
 
 /**
  * <p>

@@ -21,9 +21,10 @@
  */
 package automenta.vivisect.swing.dock;
 
+import automenta.vivisect.swing.dock.DockingRegionContainer.MinMaxRecord;
+
 import static javax.swing.BorderFactory.createBevelBorder;
 import static javax.swing.BorderFactory.createEmptyBorder;
-import automenta.vivisect.swing.dock.DockingRegionContainer.MinMaxRecord;
 
 /**
  *

@@ -19,15 +19,15 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.operator.io;
- 
+
 import com.google.common.collect.Lists;
-import java.util.List;
 import nars.core.Memory;
 import nars.entity.Task;
 import nars.language.Term;
-import nars.language.Terms;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import java.util.List;
 
 /**
  */

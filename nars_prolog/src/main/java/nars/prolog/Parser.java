@@ -17,16 +17,13 @@
  */
 package nars.prolog;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
+import nars.prolog.interfaces.IParser;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
-import nars.prolog.interfaces.IParser;
 
 /**
  * This class defines a parser of prolog terms and sentences.

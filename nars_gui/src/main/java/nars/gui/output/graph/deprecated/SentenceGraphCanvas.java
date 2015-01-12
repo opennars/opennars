@@ -5,7 +5,7 @@ package nars.gui.output.graph.deprecated;
 //import automenta.vivisect.graph.AnimatedProcessingGraphCanvas;
 //import nars.entity.Sentence;
 //import nars.language.Term;
-//import nars.util.graph.SentenceGraph;
+//import nars.other.graph.SentenceGraph;
 //
 ///**
 // *

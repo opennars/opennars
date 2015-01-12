@@ -21,15 +21,15 @@
 package nars.entity;
 
 import com.google.common.base.Strings;
-import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import nars.core.control.AbstractTask;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.language.Terms.Termable;
-import nars.operator.Operation;
+
+import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.

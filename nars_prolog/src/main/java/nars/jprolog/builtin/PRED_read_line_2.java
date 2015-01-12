@@ -1,17 +1,11 @@
 package nars.jprolog.builtin;
-import  nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.IntegerTerm;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.ListTerm;
-import nars.jprolog.lang.ExistenceException;
-import nars.jprolog.lang.PermissionException;
-import nars.jprolog.lang.IllegalDomainException;
-import nars.jprolog.lang.RepresentationException;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
-import nars.jprolog.lang.TermException;
-import java.io.*;
+import nars.jprolog.lang.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PushbackReader;
 /**
  * <code>read_line/2</code><br>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)

@@ -20,32 +20,10 @@
  */
 package nars.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import nars.core.Events.BeliefSelect;
-import nars.core.Events.ConceptBeliefAdd;
-import nars.core.Events.ConceptBeliefRemove;
-import nars.core.Events.ConceptGoalAdd;
-import nars.core.Events.ConceptGoalRemove;
-import nars.core.Events.ConceptQuestionAdd;
-import nars.core.Events.ConceptQuestionRemove;
-import nars.core.Events.TaskLinkAdd;
-import nars.core.Events.TaskLinkRemove;
-import nars.core.Events.TermLinkAdd;
-import nars.core.Events.TermLinkRemove;
-import nars.core.Events.UnexecutableGoal;
+import nars.core.Events.*;
 import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.control.NAL;
-import static nars.inference.BudgetFunctions.distributeAmongLinks;
-import static nars.inference.BudgetFunctions.rankBelief;
-import static nars.inference.LocalRules.revisible;
-import static nars.inference.LocalRules.revision;
-import static nars.inference.LocalRules.trySolution;
-import static nars.inference.TemporalRules.solutionQuality;
-import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
@@ -55,6 +33,17 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static nars.inference.BudgetFunctions.distributeAmongLinks;
+import static nars.inference.BudgetFunctions.rankBelief;
+import static nars.inference.LocalRules.*;
+import static nars.inference.TemporalRules.solutionQuality;
+import static nars.inference.UtilityFunctions.or;
 
 public class Concept extends Item<Term> implements Termable {
 
@@ -309,20 +298,16 @@ public class Concept extends Item<Term> implements Termable {
      * Returns true if the Task has a Term which can be executed
      */
     public boolean executeDecision(final Task t) {
-        
-            if ((term instanceof Operation) && (t.sentence.getOccurenceTime()==Stamp.ETERNAL || t.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) && isDesired()) {
 
-            Operation op=(Operation)term;
+        if ((term instanceof Operation) && (t.sentence.getOccurenceTime() == Stamp.ETERNAL || t.sentence.getOccurenceTime() >= memory.time() - memory.param.duration.get()) && isDesired()) {
+
+            Operation op = (Operation) term;
             Operator oper = op.getOperator();
 
             op.setTask(t);
-            if(!oper.call(op, memory)) {
-                return false;
-            }
-
-            return true;
+            return oper.call(op, memory);
         }
-        
+
         return false;
     }
     

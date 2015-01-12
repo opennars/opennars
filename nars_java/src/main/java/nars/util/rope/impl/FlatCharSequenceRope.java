@@ -22,12 +22,13 @@
  */
 package nars.util.rope.impl;
 
+import nars.util.rope.Rope;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nars.util.rope.Rope;
 
 /**
  * A rope constructed from an underlying character sequence.

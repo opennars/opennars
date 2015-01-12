@@ -2,14 +2,6 @@ package nars.core;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
-import static com.google.common.collect.Iterators.singletonIterator;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
@@ -18,20 +10,10 @@ import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
 import nars.core.control.AbstractTask;
 import nars.core.control.NAL.DerivationFilter;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.io.Answered;
-import nars.io.InPort;
-import nars.io.Input;
-import nars.io.Output;
+import nars.entity.*;
+import nars.io.*;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
-import nars.io.Symbols;
-import nars.io.TaskInput;
-import nars.io.TextInput;
 import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
 import nars.io.narsese.Narsese;
@@ -40,6 +22,16 @@ import nars.language.Tense;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
 import reactor.event.registry.Registration;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static com.google.common.collect.Iterators.singletonIterator;
 
 
 /**
@@ -66,10 +58,9 @@ public class NAR implements Runnable, TaskSource {
               " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
               "    Github website:  http://github.com/opennars/ \n" + 
-            "    IRC:  http://webchat.freenode.net/?channels=nars \n";    ;    
+            "    IRC:  http://webchat.freenode.net/?channels=nars \n";
 
 
-    
     private Thread thread = null;
     long minFramePeriodMS;
     
@@ -398,7 +389,7 @@ public class NAR implements Runnable, TaskSource {
                 memory.removeOperator((Operator)p);
             }
             if (p instanceof DerivationFilter) {
-                param.defaultDerivationFilters.remove((DerivationFilter)p);
+                param.defaultDerivationFilters.remove(p);
             }
             ps.setEnabled(false);
             emit(Events.PluginsChange.class, null, p);

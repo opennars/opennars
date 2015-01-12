@@ -18,36 +18,17 @@ package nars.inference;
 
 
 import com.google.common.collect.Lists;
+import nars.core.Memory;
+import nars.core.Parameters;
+import nars.entity.*;
+import nars.io.Symbols;
+import nars.language.*;
+import nars.operator.Operation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import nars.core.Memory;
-import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
-import nars.entity.TruthValue;
-import nars.io.Symbols;
-import nars.language.CompoundTerm;
-import nars.language.Conjunction;
-import nars.language.Equivalence;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.Interval;
-import nars.language.Product;
-import nars.language.Similarity;
-import nars.language.Statement;
-import nars.language.Term;
-import nars.language.Terms;
-import nars.language.Variable;
-import nars.language.Variables;
-import nars.operator.Operation;
 
 /**
  *
@@ -181,7 +162,7 @@ public class TemporalRules {
         if(B2 instanceof Conjunction) {
             Conjunction CB2=((Conjunction)B2);
             if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {       
-                if(A instanceof Conjunction && ((Conjunction)A).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                if(A instanceof Conjunction && A.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                     Conjunction ConjA=(Conjunction) A;
                     args=new ArrayList(CB2.term.length+ConjA.term.length);
                     beginoffset=ConjA.size();
@@ -312,9 +293,9 @@ public class TemporalRules {
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
                 if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
                     Term comp=ss1.getSubject();
-                    Term ss2_term = ((Operation)ss2).getSubject();
+                    Term ss2_term = ss2.getSubject();
                     
-                    boolean applicableVariableType = !(comp instanceof Variable && ((Variable)comp).hasVarIndep());
+                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
                     
                     if(ss2_term instanceof Product) {
                         Product ss2_prod=(Product) ss2_term;
@@ -335,9 +316,9 @@ public class TemporalRules {
                 }
                 if(ss1 instanceof Operation && !(ss1.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
                     Term comp=ss2.getSubject();
-                    Term ss1_term = ((Operation)ss1).getSubject();
+                    Term ss1_term = ss1.getSubject();
                     
-                    boolean applicableVariableType = !(comp instanceof Variable && ((Variable)comp).hasVarIndep());
+                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
                     
                     if(ss1_term instanceof Product) {
                         Product ss1_prod=(Product) ss1_term;

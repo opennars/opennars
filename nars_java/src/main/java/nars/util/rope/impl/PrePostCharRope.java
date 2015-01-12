@@ -1,10 +1,11 @@
 package nars.util.rope.impl;
 
+import nars.util.rope.Rope;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Objects;
-import nars.util.rope.Rope;
 
 /**
  * Nearly complete implementation of Rope that surrounds some content with a

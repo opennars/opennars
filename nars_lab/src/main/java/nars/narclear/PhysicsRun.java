@@ -25,12 +25,6 @@
  */
 package nars.narclear;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import nars.core.NAR;
 import nars.narclear.jbox2d.PhysicsController;
 import nars.narclear.jbox2d.PhysicsController.MouseBehavior;
@@ -40,6 +34,11 @@ import nars.narclear.jbox2d.TestbedState;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.narclear.jbox2d.j2d.TestPanelJ2D;
 import nars.narclear.jbox2d.j2d.TestbedSidePanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * The entry point for the testbed application

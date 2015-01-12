@@ -1,5 +1,7 @@
 package nars.jprolog.lang;
+
 import nars.jprolog.Prolog;
+
 import java.io.Serializable;
 /**
  * The superclass of classes for term structures.

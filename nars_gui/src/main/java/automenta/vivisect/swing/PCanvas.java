@@ -6,16 +6,13 @@
 package automenta.vivisect.swing;
 
 import automenta.vivisect.Vis;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import processing.core.PApplet;
-import static processing.core.PConstants.DOWN;
-import static processing.core.PConstants.LEFT;
-import static processing.core.PConstants.RIGHT;
-import static processing.core.PConstants.UP;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
+
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 
 /**
  *

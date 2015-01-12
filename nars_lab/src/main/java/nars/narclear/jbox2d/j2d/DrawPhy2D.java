@@ -25,28 +25,13 @@
  */
 package nars.narclear.jbox2d.j2d;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
-import java.util.List;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Color3f;
-import org.jbox2d.common.Mat22;
-import org.jbox2d.common.MathUtils;
-import org.jbox2d.common.OBBViewportTransform;
-import org.jbox2d.common.Settings;
-import org.jbox2d.common.Transform;
-import org.jbox2d.common.Vec2;
+import org.jbox2d.common.*;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
@@ -55,6 +40,12 @@ import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.PulleyJoint;
 import org.jbox2d.pooling.arrays.IntArray;
 import org.jbox2d.pooling.arrays.Vec2Array;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DrawPhy2D extends DebugDraw {

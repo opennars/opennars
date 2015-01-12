@@ -1,6 +1,5 @@
 package nars.grid2d;
 
-import java.util.List;
 import nars.core.Build;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
@@ -9,10 +8,6 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
-import static nars.grid2d.Hauto.DOWN;
-import static nars.grid2d.Hauto.LEFT;
-import static nars.grid2d.Hauto.RIGHT;
-import static nars.grid2d.Hauto.UP;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import nars.grid2d.operator.Activate;
@@ -24,6 +19,10 @@ import nars.plugin.app.plan.TemporalParticlePlanner;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
 import processing.core.PVector;
+
+import java.util.List;
+
+import static nars.grid2d.Hauto.*;
 
 public class TestChamber {
 

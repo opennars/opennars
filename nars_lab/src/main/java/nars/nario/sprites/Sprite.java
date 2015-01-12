@@ -1,9 +1,9 @@
 package nars.nario.sprites;
 
-import java.awt.Graphics;
-import java.awt.Image;
 import nars.nario.level.SpriteTemplate;
 import nars.nario.sonar.SoundSource;
+
+import java.awt.*;
 
 public class Sprite implements SoundSource
 {

@@ -1,9 +1,10 @@
 package nars.language;
 
-import java.util.HashMap;
-import java.util.Map;
 import nars.core.Memory;
 import nars.io.Symbols;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Static utility class for static methods related to Variables

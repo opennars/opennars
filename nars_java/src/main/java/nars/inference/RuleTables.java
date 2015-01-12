@@ -20,38 +20,19 @@
  */
 package nars.inference;
 
-import java.util.HashSet;
-import java.util.Set;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.core.control.NAL;
-import nars.entity.Sentence;
-import nars.entity.TLink;
-import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.io.Symbols;
-import static nars.io.Symbols.VAR_DEPENDENT;
-import static nars.io.Symbols.VAR_INDEPENDENT;
-import static nars.io.Symbols.VAR_QUERY;
-import nars.language.CompoundTerm;
-import nars.language.Conjunction;
-import nars.language.Disjunction;
-import nars.language.Equivalence;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.Negation;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.Similarity;
-import nars.language.Statement;
-import nars.language.Term;
+import nars.language.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static nars.io.Symbols.*;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
-import nars.language.Variables;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -89,7 +70,7 @@ public class RuleTables {
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
            return;
         
-        final Concept currentConcept = nal.getCurrentConcept();
+        //final Concept currentConcept = nal.getCurrentConcept();
         final Concept beliefConcept = memory.concept(beliefTerm);
         
         Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
@@ -746,7 +727,7 @@ public class RuleTables {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, nal);
                 } else if (Variables.unify(VAR_QUERY, component, statement, u)) {
                     compound = (CompoundTerm) u[0];
-                    statement = (Statement) u[1];                    
+                    //statement = (Statement) u[1];
                     CompositionalRules.decomposeStatement(compound, component, true, index, nal);                    
                 }
             }

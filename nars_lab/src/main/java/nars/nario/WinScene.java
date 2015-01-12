@@ -1,8 +1,8 @@
 package nars.nario;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import nars.nario.sprites.Mario;
+
+import java.awt.*;
 
 public class WinScene extends Scene
 {

@@ -22,29 +22,19 @@ package nars.entity;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
-import static nars.inference.TemporalRules.ORDER_BACKWARD;
-import static nars.inference.TemporalRules.ORDER_FORWARD;
-import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.language.Tense;
-import static nars.language.Tense.Future;
-import static nars.language.Tense.Past;
-import static nars.language.Tense.Present;
 import nars.language.Term;
 import nars.language.Terms;
+
+import java.lang.ref.WeakReference;
+import java.util.*;
+
+import static nars.inference.TemporalRules.*;
+import static nars.language.Tense.*;
 
 
 public class Stamp implements Cloneable {
@@ -622,7 +612,7 @@ public class Stamp implements Cloneable {
         if (occurrenceTime != ETERNAL) {
             int estTimeLength = 8; /* # digits */
             sb.ensureCapacity(estTimeLength + 1 + 1);
-            sb.append('[').append(occurrenceTime).append(']').toString();
+            sb.append('[').append(occurrenceTime).append(']');
         }
         return sb;
     }

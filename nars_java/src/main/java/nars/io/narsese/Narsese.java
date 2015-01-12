@@ -1,53 +1,25 @@
 package nars.io.narsese;
 
-import static java.lang.Float.parseFloat;
-import static java.lang.String.valueOf;
-import java.util.ArrayList;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
-import static nars.inference.BudgetFunctions.truthToQuality;
+import nars.entity.*;
 import nars.io.Symbols;
-import static nars.io.Symbols.ARGUMENT_SEPARATOR;
-import static nars.io.Symbols.BUDGET_VALUE_MARK;
-import static nars.io.Symbols.GOAL_MARK;
-import static nars.io.Symbols.INPUT_LINE_PREFIX;
-import static nars.io.Symbols.JUDGMENT_MARK;
-import nars.io.Symbols.NativeOperator;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
-import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
-import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
-import static nars.io.Symbols.OUTPUT_LINE_PREFIX;
-import static nars.io.Symbols.PREFIX_MARK;
-import static nars.io.Symbols.QUESTION_MARK;
-import static nars.io.Symbols.QUEST_MARK;
-import static nars.io.Symbols.STAMP_CLOSER;
-import static nars.io.Symbols.STAMP_OPENER;
-import static nars.io.Symbols.TRUTH_VALUE_MARK;
-import static nars.io.Symbols.VALUE_SEPARATOR;
-import static nars.io.Symbols.getCloser;
-import static nars.io.Symbols.getOpener;
-import static nars.io.Symbols.getOperator;
-import static nars.io.Symbols.getRelation;
-import static nars.io.Symbols.isRelation;
+import nars.io.Symbols.*;
 import nars.io.Texts;
-import nars.language.Interval;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.Statement;
-import nars.language.Tense;
-import nars.language.Term;
-import nars.language.Variable;
-import static nars.language.Variables.containVar;
+import nars.language.*;
 import nars.operator.Operation;
-import static nars.operator.Operation.make;
 import nars.operator.Operator;
+
+import java.util.ArrayList;
+
+import static java.lang.Float.parseFloat;
+import static java.lang.String.valueOf;
+import static nars.inference.BudgetFunctions.truthToQuality;
+import static nars.io.Symbols.*;
+import static nars.io.Symbols.NativeOperator.*;
+import static nars.language.Variables.containVar;
+import static nars.operator.Operation.make;
 
 /**
  * Utility methods for working and reacting to Narsese input.
@@ -642,10 +614,7 @@ public class Narsese {
     }
 
     public static boolean possiblyNarsese(String s) {
-        if(!s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">")) {
-            return true;
-        }
-        return false;
+        return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
     }
             
     

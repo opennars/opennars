@@ -1,7 +1,8 @@
 package nars.jwam.library;
 
-import java.util.HashSet;
 import nars.jwam.WAM;
+
+import java.util.HashSet;
 
 public class Arithmetic {
 

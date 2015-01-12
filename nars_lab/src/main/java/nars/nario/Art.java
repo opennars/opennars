@@ -1,18 +1,15 @@
 package nars.nario;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import nars.nario.sonar.SonarSoundEngine;
+import nars.nario.sonar.sample.SonarSample;
+
 import javax.imageio.ImageIO;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
-import nars.nario.sonar.SonarSoundEngine;
-import nars.nario.sonar.sample.SonarSample;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 
 public class Art

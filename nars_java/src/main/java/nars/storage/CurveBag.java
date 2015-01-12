@@ -1,17 +1,12 @@
 package nars.storage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.SortedIndex;
+
+import java.util.*;
 
 
 
@@ -369,8 +364,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         
         synchronized (nameTable) {
 
-            selected = items.get((int)index);
-            if (selected!=null) {            
+            selected = items.get(index);
+            if (selected!=null) {
                 nameTable.remove(selected.name());
                 mass -= selected.budget.getPriority();
             }

@@ -26,19 +26,17 @@ package automenta.vivisect.gui;
 import automenta.vivisect.gui.HotSpot.HSrect;
 import automenta.vivisect.gui.StyledString.TextLayoutHitInfo;
 import automenta.vivisect.gui.StyledString.TextLayoutInfo;
-
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.font.TextHitInfo;
-import java.awt.font.TextLayout;
-import java.awt.geom.GeneralPath;
-import java.util.LinkedList;
-
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PGraphicsJava2D;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+
+import java.awt.*;
+import java.awt.font.TextHitInfo;
+import java.awt.font.TextLayout;
+import java.awt.geom.GeneralPath;
+import java.util.LinkedList;
 
 /**
  * The password field component. <br>

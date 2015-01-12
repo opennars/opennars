@@ -1,7 +1,6 @@
 package automenta.vivisect.face;
 
-import java.awt.Graphics;
-import java.awt.Panel;
+import java.awt.*;
 
 
 public class DrawGraphAppPanel extends Panel {

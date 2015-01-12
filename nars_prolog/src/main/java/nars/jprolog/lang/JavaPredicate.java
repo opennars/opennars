@@ -1,5 +1,5 @@
 package nars.jprolog.lang;
-import java.util.ArrayList;
+
 /**
  * The abstract class <code>JavaPredicate</code> contains methods
  * for interoperating with Java</em>.<br>

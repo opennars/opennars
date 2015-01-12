@@ -29,32 +29,14 @@ eric : Modified to be swing compliant:                                          
  *----------------------------------------------------------------------------------------*/
 package automenta.vivisect.surfaceplotter.surface;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Label;
-import java.awt.Point;
-import java.awt.PrintGraphics;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import automenta.vivisect.surfaceplotter.DefaultSurfaceModel;
+import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotType;
+
+import java.awt.*;
+import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import automenta.vivisect.surfaceplotter.DefaultSurfaceModel;
-import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotType;
 
 
 /**

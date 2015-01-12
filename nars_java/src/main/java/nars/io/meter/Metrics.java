@@ -7,22 +7,12 @@ package nars.io.meter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
+
 import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A tabular data store where each (# indexed) column represents a different
@@ -30,7 +20,7 @@ import java.util.Map;
  * time point (first column).
  * 
  */
-public class Metrics<RowKey extends Object,Cell extends Object> implements Iterable<Object[]> {
+public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
     final static int PRECISION = 4;
     public final static Gson json = new GsonBuilder()
@@ -148,8 +138,8 @@ JsonSerializationContext context) {
     private RowKey nextRowKey = null;
     
     /** the columns of the table */
-    private List<Meter<?>> meters = new ArrayList<>();
-    private ArrayDeque<Object[]> rows = new ArrayDeque<>();
+    private final List<Meter<?>> meters = new ArrayList<>();
+    private final ArrayDeque<Object[]> rows = new ArrayDeque<>();
     
     transient private List<Signal> signalList = new ArrayList<>();
     transient private Map<String, Integer> signalIndex = new HashMap();
@@ -258,7 +248,7 @@ JsonSerializationContext context) {
             else {
                 //for rows which have been removed
                 if (minNAN || (n == min))  { extremaToInvalidate[i] = true; continue; }
-                if (maxNAN || (n == max))  { extremaToInvalidate[i] = true; continue; }                
+                if (maxNAN || (n == max))  { extremaToInvalidate[i] = true; continue; }
             }
                 
         }
@@ -369,7 +359,7 @@ JsonSerializationContext context) {
         if (columns.length == 1) {
             //fast 1-argument
             return Iterators.transform(iterator(), new Function<Object[], Object[]>() {
-                Object[] next = new Object[1];
+                final Object[] next = new Object[1];
                 final int thecolumn = columns[0];
 
                 @Override public Object[] apply(Object[] f) {
@@ -381,7 +371,7 @@ JsonSerializationContext context) {
                 
         return Iterators.transform(iterator(), new Function<Object[], Object[]>() {
 
-            Object[] next = new Object[columns.length];
+            final Object[] next = new Object[columns.length];
 
             @Override
             public Object[] apply(Object[] f) {

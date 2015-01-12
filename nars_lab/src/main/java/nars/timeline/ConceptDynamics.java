@@ -27,8 +27,8 @@
 //import automenta.vivisect.timeline.LineChart;
 //import automenta.vivisect.timeline.StackedPercentageChart;
 //import nars.gui.EventChart;
-//import nars.util.NARTrace;
-//import nars.util.NARTrace.ConceptTreeMLData.Mode;
+//import nars.other.NARTrace;
+//import nars.other.NARTrace.ConceptTreeMLData.Mode;
 //
 ///**
 // *

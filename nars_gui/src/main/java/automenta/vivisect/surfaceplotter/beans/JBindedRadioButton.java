@@ -1,12 +1,9 @@
 
 package automenta.vivisect.surfaceplotter.beans;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
-
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JRadioButton;
 
 /**A {@link JRadioButton} binded to a boolean property of a ModelSource bean
  * @author Eric

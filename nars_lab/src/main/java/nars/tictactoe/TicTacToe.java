@@ -20,28 +20,13 @@ package nars.tictactoe;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.SOUTH;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.build.Discretinuous;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -51,6 +36,18 @@ import nars.io.Output.OUT;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.SOUTH;
 
 /**
  *

@@ -1,16 +1,10 @@
 package nars.grid2d;
 
-import java.util.List;
 import nars.core.NAR;
 import nars.core.build.Curve;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
-import static nars.grid2d.Hauto.DOWN;
-import static nars.grid2d.Hauto.LEFT;
-import static nars.grid2d.Hauto.RIGHT;
-import static nars.grid2d.Hauto.UP;
-import static nars.grid2d.TestChamber.space;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import nars.grid2d.operator.Activate;
@@ -19,6 +13,10 @@ import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
 import processing.core.PVector;
+
+import java.util.List;
+
+import static nars.grid2d.Hauto.*;
 
 public class TestChamber2 extends TestChamber {
 

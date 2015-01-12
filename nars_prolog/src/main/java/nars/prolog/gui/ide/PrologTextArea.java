@@ -8,12 +8,9 @@
  */
 package nars.prolog.gui.ide;
 
-import java.awt.Color;
-import nars.prolog.gui.edit.DefaultInputHandler;
-import nars.prolog.gui.edit.SyntaxDocument;
-import nars.prolog.gui.edit.SyntaxStyle;
-import nars.prolog.gui.edit.TextAreaDefaults;
-import nars.prolog.gui.edit.Token;
+import nars.prolog.gui.edit.*;
+
+import java.awt.*;
 
 public class PrologTextArea extends TextAreaDefaults
 {

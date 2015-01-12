@@ -23,10 +23,10 @@
 
 package automenta.vivisect.gui;
 
-import java.util.HashMap;
-
 import processing.core.PApplet;
 import processing.core.PImage;
+
+import java.util.HashMap;
 
 /**
  * This class is used to load bitmap files and create images. <br>

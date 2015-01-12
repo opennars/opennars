@@ -460,7 +460,7 @@ public class RBTree<K extends Comparable<? super K>,V>
 //        RBTree<Integer,Integer> t = new RBTree<Integer,Integer>();
 //        t.print();
 //
-//        java.util.Random gen = new java.util.Random();
+//        java.other.Random gen = new java.other.Random();
 //
 //        for (int i = 0; i < 5000; i++) {
 //            int x = gen.nextInt(10000);

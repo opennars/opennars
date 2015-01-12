@@ -1,13 +1,14 @@
 package nars.jwam.parser;
 
+import nars.jwam.RuleHeap;
+import nars.jwam.WAM;
+import nars.jwam.datastructures.IntArrayList;
+import nars.jwam.datastructures.Numbers;
+import nars.jwam.datastructures.Strings;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import nars.jwam.RuleHeap;
-import nars.jwam.WAM;
-import nars.jwam.datastructures.Numbers;
-import nars.jwam.datastructures.IntArrayList;
-import nars.jwam.datastructures.Strings;
 
 /**
  * This class is used by the parser. By calling what is encountered during

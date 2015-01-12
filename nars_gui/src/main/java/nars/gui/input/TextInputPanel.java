@@ -23,36 +23,8 @@ package nars.gui.input;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NWindow;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
 import nars.core.NAR;
 import nars.gui.FileTreeModel;
-import nars.gui.input.TextInputPanel.InputAction;
-import nars.gui.input.TextInputPanel.TextInputMode;
-import static nars.gui.output.SwingLogPanel.setConsoleFont;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
@@ -61,6 +33,20 @@ import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static nars.gui.output.SwingLogPanel.setConsoleFont;
 
 
 public class TextInputPanel extends NPanel /*implements ActionListener*/ {

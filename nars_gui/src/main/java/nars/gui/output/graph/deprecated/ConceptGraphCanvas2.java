@@ -4,8 +4,8 @@ package nars.gui.output.graph.deprecated;
 //
 //import automenta.vivisect.graph.AnimatedProcessingGraphCanvas;
 //import nars.core.NAR;
-//import nars.util.DefaultGraphizer;
-//import nars.util.NARGraph;
+//import nars.other.DefaultGraphizer;
+//import nars.other.NARGraph;
 //import org.jgrapht.Graph;
 //import org.jgrapht.graph.DirectedMultigraph;
 //

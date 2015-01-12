@@ -2,18 +2,12 @@ package nars.grid2d;
 
 import nars.core.NAR;
 import nars.grid2d.Cell.Logic;
-import static nars.grid2d.Cell.Logic.AND;
-import static nars.grid2d.Cell.Logic.BRIDGE;
-import static nars.grid2d.Cell.Logic.NOT;
-import static nars.grid2d.Cell.Logic.OFFSWITCH;
-import static nars.grid2d.Cell.Logic.OR;
-import static nars.grid2d.Cell.Logic.SWITCH;
-import static nars.grid2d.Cell.Logic.WIRE;
-import static nars.grid2d.Cell.Logic.XOR;
 import nars.grid2d.Cell.Machine;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.object.Key;
 import nars.grid2d.object.Pizza;
+
+import static nars.grid2d.Cell.Logic.*;
 
 public class Hauto {
     private final NAR nar;

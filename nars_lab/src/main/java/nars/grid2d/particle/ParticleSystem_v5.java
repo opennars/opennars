@@ -3,8 +3,8 @@
 
 package nars.grid2d.particle;
 
-import java.awt.Canvas;
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
 
 
 

@@ -15,13 +15,11 @@
  */
 package automenta.vivisect.swing.dock;
 
-import java.awt.BorderLayout;
-import java.awt.Rectangle;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
-import javax.swing.JPanel;
 
 /**
  * The root window of the Raven docking system.

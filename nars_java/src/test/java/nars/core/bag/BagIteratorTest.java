@@ -1,12 +1,14 @@
 package nars.core.bag;
 
-import java.util.Iterator;
 import nars.perf.BagPerf.NullItem;
 import nars.storage.Bag;
-import nars.storage.LevelBag;
 import nars.storage.CurveBag;
-import static org.junit.Assert.assertTrue;
+import nars.storage.LevelBag;
 import org.junit.Test;
+
+import java.util.Iterator;
+
+import static org.junit.Assert.assertTrue;
 
 
 

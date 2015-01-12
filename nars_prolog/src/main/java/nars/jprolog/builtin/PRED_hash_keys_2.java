@@ -1,16 +1,8 @@
 package nars.jprolog.builtin;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.SymbolTerm;
-import nars.jprolog.lang.PInstantiationException;
-import nars.jprolog.lang.HashtableOfTerm;
-import nars.jprolog.lang.ListTerm;
-import nars.jprolog.lang.ExistenceException;
-import nars.jprolog.lang.IllegalDomainException;
-import nars.jprolog.lang.InternalException;
-import nars.jprolog.lang.JavaObjectTerm;
+
 import nars.jprolog.Prolog;
-import nars.jprolog.lang.Term;
-import java.util.Hashtable;
+import nars.jprolog.lang.*;
+
 import java.util.Enumeration;
 /**
    <code>hash_keys/2</code><br>

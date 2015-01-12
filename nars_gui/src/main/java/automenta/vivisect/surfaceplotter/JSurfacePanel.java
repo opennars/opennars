@@ -4,26 +4,6 @@
 
 package automenta.vivisect.surfaceplotter;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ResourceBundle;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-
 import automenta.vivisect.surfaceplotter.beans.JGridBagScrollPane;
 import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.JSurface;
@@ -31,6 +11,13 @@ import automenta.vivisect.surfaceplotter.surface.SurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotColor;
 import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotType;
 import automenta.vivisect.surfaceplotter.surface.VerticalConfigurationPanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 /** Main panel to display a surface plot.

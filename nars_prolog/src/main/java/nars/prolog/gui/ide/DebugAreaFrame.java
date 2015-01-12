@@ -1,32 +1,22 @@
 package nars.prolog.gui.ide;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.URL;
-import java.util.StringTokenizer;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.JTree;
+import nars.prolog.event.SpyEvent;
+import nars.prolog.event.SpyListener;
+import nars.prolog.event.WarningEvent;
+import nars.prolog.event.WarningListener;
+
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import nars.prolog.event.SpyEvent;
-import nars.prolog.event.SpyListener;
-import nars.prolog.event.WarningEvent;
-import nars.prolog.event.WarningListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+import java.util.StringTokenizer;
 
     /**
      * 

@@ -1,6 +1,8 @@
 package nars.rl.elsy;
-import static java.lang.Math.abs;
+
 import java.util.Random;
+
+import static java.lang.Math.abs;
 /**
  * Useful class for obtaining various random numbers
  * and also true with given probability.

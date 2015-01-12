@@ -1,15 +1,12 @@
 package automenta.vivisect.surfaceplotter.surface;
 
-import java.beans.PropertyChangeSupport;
-import java.io.File;
-import java.io.IOException;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.SwingPropertyChangeSupport;
-
-import automenta.vivisect.surfaceplotter.Mapper;
+import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.IOException;
 
 /** Abstract implementation that handles everything but the surfaceVertex array
  * 

@@ -1,21 +1,8 @@
 package nars.plugin.app.plan;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
@@ -25,10 +12,13 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
-import static nars.plugin.app.plan.MultipleExecutionManager.isPlanTerm;
 import nars.util.graph.ImplicationGraph;
 import nars.util.graph.ImplicationGraph.Cause;
 import nars.util.graph.ImplicationGraph.PostCondition;
+
+import java.util.*;
+
+import static nars.plugin.app.plan.MultipleExecutionManager.isPlanTerm;
 
 public class GraphExecutive {
 

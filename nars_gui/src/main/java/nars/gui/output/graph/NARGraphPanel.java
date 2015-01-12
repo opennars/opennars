@@ -7,13 +7,11 @@ package nars.gui.output.graph;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.PCanvas;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import nars.core.NAR;
 import nars.gui.WrapLayout;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *

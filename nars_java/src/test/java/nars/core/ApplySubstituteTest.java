@@ -1,14 +1,15 @@
 package nars.core;
 
-import java.util.HashMap;
-import java.util.Map;
-import nars.core.NAR;
 import nars.core.build.Default;
 import nars.io.narsese.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 
 

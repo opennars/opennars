@@ -20,7 +20,6 @@
  */
 package nars.inference;
 
-import java.util.List;
 import nars.core.Memory;
 import nars.core.control.NAL;
 import nars.entity.BudgetValue;
@@ -28,24 +27,9 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.io.Symbols;
-import nars.language.CompoundTerm;
-import nars.language.Conjunction;
-import nars.language.DifferenceExt;
-import nars.language.DifferenceInt;
-import nars.language.Equivalence;
-import nars.language.ImageExt;
-import nars.language.ImageInt;
-import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.IntersectionExt;
-import nars.language.IntersectionInt;
-import nars.language.Negation;
-import nars.language.Product;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.Similarity;
-import nars.language.Statement;
-import nars.language.Term;
+import nars.language.*;
+
+import java.util.List;
 
 /**
  * Single-premise inference rules involving compound terms. Input are one

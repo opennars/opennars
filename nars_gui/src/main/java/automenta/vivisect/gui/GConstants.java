@@ -23,9 +23,8 @@
 
 package automenta.vivisect.gui;
 
+import javax.swing.*;
 import java.awt.font.TextAttribute;
-
-import javax.swing.JOptionPane;
 
 /**
  * 

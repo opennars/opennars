@@ -1,7 +1,8 @@
 package nars.jprolog.builtin;
-import nars.jprolog.lang.Predicate;
-import nars.jprolog.lang.IntegerTerm;
+
 import nars.jprolog.Prolog;
+import nars.jprolog.lang.IntegerTerm;
+import nars.jprolog.lang.Predicate;
 import nars.jprolog.lang.Term;
 /**
  <code>'$get_level'/1</code><br>

@@ -1,8 +1,9 @@
 package nars.nario.sprites;
 
-import java.awt.Graphics;
 import nars.nario.Art;
 import nars.nario.LevelScene;
+
+import java.awt.*;
 
 
 public class Enemy extends Sprite

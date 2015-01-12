@@ -1,22 +1,14 @@
 package prolog;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
+import nars.prolog.*;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.OutputListener;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.*;
+
+import static org.junit.Assert.*;
 
 // Based on the work of Sara Sabioni
 public class ISOIOLibraryTestCase {

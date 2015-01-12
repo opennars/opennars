@@ -1,11 +1,12 @@
 package nars.jwam.library;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import nars.jwam.WAM;
 import nars.jwam.compiler.Compiler;
 import nars.jwam.datastructures.IntArrayList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class PredicateDynamics {
 
