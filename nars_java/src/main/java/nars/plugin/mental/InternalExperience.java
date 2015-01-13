@@ -65,6 +65,7 @@ public class InternalExperience extends AbstractPlugin {
 
     @Override
     public void onEnabled(NAR n) {
+
         this.memory = n.memory;
     }
 

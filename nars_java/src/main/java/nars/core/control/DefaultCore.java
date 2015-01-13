@@ -150,25 +150,23 @@ public class DefaultCore implements Core {
 
         //all new tasks
         memory.processNewTasks(-1, run);
-        Core.run(run);
+        Core.run(run); //run new tasks
+        run.clear();
 
-        if (run.isEmpty()) {
+        if (memory.getNewTasks().isEmpty()) {
 
-            //or... 1 novel task
+            // 1 novel task
             memory.processNovelTasks(1, run);
             Core.run(run);
+            run.clear();
 
-            if (run.isEmpty()) {
-
-                //or... 1 concept fired
-                processConcepts(loop.conceptsPriority(), run);
-                Core.run(run);
-            }
+            //1 concept fired
+            processConcepts(loop.conceptsPriority(), run);
+            Core.run(run); //fire concept
+            run.clear();
         }
-        
 
-        run.clear();
-        
+
         memory.processOtherTasks(run);
         Core.run(run);
         

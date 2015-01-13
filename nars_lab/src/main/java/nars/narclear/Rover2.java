@@ -46,7 +46,7 @@ public class Rover2 extends PhysicsModel {
 
 
     public static void main(String[] args) {
-        Parameters.DEBUG = false;
+        Parameters.DEBUG = true;
         boolean multithread = true;
 
         NARSwing.themeInvert();

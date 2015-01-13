@@ -11,12 +11,17 @@ abstract public class AbstractPlugin implements Plugin, EventEmitter.EventObserv
     public boolean setEnabled(NAR n, boolean enabled) {
         if (enabled) {
             regist = n.memory.event.on(this, getEvents());
+
+            onEnabled(n);
+
         }
         else  {
             if (regist!=null) {
                 regist.cancel();
                 regist = null;
             }
+
+            onDisabled(n);
         }
         return true;
     }

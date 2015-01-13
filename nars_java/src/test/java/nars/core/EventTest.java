@@ -5,8 +5,10 @@
  */
 package nars.core;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import reactor.event.Event;
+import reactor.event.registry.Registration;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -40,4 +42,36 @@ public class EventTest {
         
         assertTrue(b.get());
     }
+
+    //not working yet:
+    @Ignore
+    @Test public void testReactorException() throws InterruptedException {
+
+        Parameters.DEBUG = true;
+
+        AtomicBoolean b = new AtomicBoolean();
+
+        try {
+
+            EventEmitter e = new EventEmitter();
+
+            Registration on = e.on(Events.CycleEnd.class, new EventEmitter.EventObserver() {
+                @Override public void event(Class event, Object[] args) {
+                    throw new RuntimeException("12345");
+                }
+            });
+
+            e.notify(Events.CycleEnd.class, Event.wrap(true));
+
+            Thread.sleep(100);
+
+            //e.shutdown();
+        }
+        catch (Exception e) {
+            b.set(true);
+        }
+
+        assertTrue(b.get());
+    }
+
 }

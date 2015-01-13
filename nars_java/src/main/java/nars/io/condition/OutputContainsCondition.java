@@ -23,13 +23,17 @@ import java.util.TreeSet;
  */
 public class OutputContainsCondition extends OutputCondition<Task> {
     
-    public final List<Task> exact = new ArrayList();
-    
+
     public static class SimilarOutput implements Comparable<SimilarOutput> {
         public final String signal;
+
+        /** levenshtein text distance */
         public final int distance;
 
         public SimilarOutput(String signal, int distance) {
+            if (signal == null)
+                throw new RuntimeException("null signal");
+
             this.signal = signal;
             this.distance = distance;
         }
@@ -38,7 +42,9 @@ public class OutputContainsCondition extends OutputCondition<Task> {
         public int hashCode() {  return signal.hashCode();        }
 
         @Override
-        public boolean equals(Object obj) { return signal.equals(((SimilarOutput)obj).signal); }
+        public boolean equals(Object obj) {
+            return signal.equals(((SimilarOutput)obj).signal);
+        }
 
         @Override
         public String toString() {
@@ -47,7 +53,10 @@ public class OutputContainsCondition extends OutputCondition<Task> {
 
         @Override
         public int compareTo(SimilarOutput o) {
-            return Integer.compare(distance, o.distance);
+            int d = Integer.compare(distance, o.distance);
+            if (d == 0)
+                return signal.compareTo(o.signal);
+            return d;
         }
         
         
@@ -56,6 +65,9 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     
     
     final String containing;
+
+    public final List<Task> exact = new ArrayList();
+
     public final TreeSet<SimilarOutput> almost = new TreeSet();
     final boolean saveSimilar;
     int maxSimilars = 5;
@@ -77,14 +89,14 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     public String getFalseReason() {
         String s = "FAIL: No substring match: " + containing;
         if (!almost.isEmpty()) {
-            for (SimilarOutput cs : getCandidates(5)) {
+            for (SimilarOutput cs : getCandidates()) {
                 s += "\n\t" + cs;
             }
         }
         return s;
     }
 
-    public Collection<SimilarOutput> getCandidates(int max) {
+    public Collection<SimilarOutput> getCandidates() {
         return almost;
     }
 
@@ -144,7 +156,10 @@ public class OutputContainsCondition extends OutputCondition<Task> {
         if (succeeded) {
             return true;
         }
-        return cond(channel, signal);
+        boolean s = cond(channel, signal);
+        if (s)
+            setTrue();
+        return s;
     }
 
     @Override

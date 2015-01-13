@@ -285,8 +285,10 @@ public class TextOutput extends Output {
                 
                 buffer.append(answer.toString(nar, showStamp));
             }
-            else            
-                buffer.append( Arrays.toString((Object[])signal) );
+            else {
+                //TODO use repeat buffer.append(..) rather than Array.toString
+                buffer.append(Arrays.toString((Object[]) signal));
+            }
         }
         else {
             buffer.append(signal.toString());

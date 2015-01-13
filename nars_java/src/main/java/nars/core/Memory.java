@@ -270,7 +270,7 @@ public class Memory implements Serializable {
         timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
 
-        inputPausedUntil = 0;
+        inputPausedUntil = -1;
 
         emotion.set(0.5f, 0.5f);
 
@@ -679,45 +679,51 @@ public class Memory implements Serializable {
 
         int queued = 0;
 
-        while (!newTasks.isEmpty()) {
+        synchronized (newTasks) {
+            while (!newTasks.isEmpty()) {
 
-            final Task task = newTasks.removeFirst();
+                final Task task = newTasks.removeFirst();
 
-            emotion.adjustBusy(task.getPriority(), task.getDurability());
+                emotion.adjustBusy(task.getPriority(), task.getDurability());
 
-            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists                   
-                if (queued == maxTasks) {
-                    //limited # of new tasks requested; so stop here
-                    break;
-                }
+                if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists
+                    if (queued == maxTasks) {
+                        //limited # of new tasks requested; so stop here
+                        break;
+                    }
 
-                // ok so lets fire it
-                queue.add(new ImmediateProcess(this, task));
-                queued++;
+                    // ok so lets fire it
+                    queue.add(new ImmediateProcess(this, task));
+                    queued++;
 
-            } else {
-                final Sentence s = task.sentence;
-                if ((s != null) && (s.isJudgment() || s.isGoal())) {
-                    final double exp = s.truth.getExpectation();
-                    if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                        //i dont see yet how frequency could play a role here - patrick
-                        //just imagine a board game where you are confident about all the board rules
-                        //but the implications reach all the frequency spectrum in certain situations
-                        //but every concept can also be represented with (--,) so i guess its ok
-                        logic.TASK_ADD_NOVEL.hit();
+                } else {
 
-                        // new concept formation                        
-                        Task displacedNovelTask = novelTasks.putIn(task);
-                        if (displacedNovelTask != null) {
-                            if (displacedNovelTask == task) {
-                                removeTask(task, "Ignored");
-                            } else {
-                                removeTask(displacedNovelTask, "Displaced novel task");
+                    final Sentence s = task.sentence;
+
+                    if ((s != null) && (s.isJudgment() || s.isGoal())) {
+
+                        final double exp = s.truth.getExpectation();
+
+                        if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                            //i dont see yet how frequency could play a role here - patrick
+                            //just imagine a board game where you are confident about all the board rules
+                            //but the implications reach all the frequency spectrum in certain situations
+                            //but every concept can also be represented with (--,) so i guess its ok
+                            logic.TASK_ADD_NOVEL.hit();
+
+                            // new concept formation
+                            Task displacedNovelTask = novelTasks.putIn(task);
+                            if (displacedNovelTask != null) {
+                                if (displacedNovelTask == task) {
+                                    removeTask(task, "Ignored");
+                                } else {
+                                    removeTask(displacedNovelTask, "Displaced novel task");
+                                }
                             }
-                        }
 
-                    } else {
-                        removeTask(task, "Neglected");
+                        } else {
+                            removeTask(task, "Neglected");
+                        }
                     }
                 }
             }
