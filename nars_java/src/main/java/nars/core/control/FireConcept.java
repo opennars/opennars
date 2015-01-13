@@ -33,13 +33,7 @@ abstract public class FireConcept extends NAL {
     abstract public void onFinished();
     
     @Override
-    public void run() {     
-        fire();        
-        onFinished();                
-    }
-    
-    
-    protected void fire() {
+    public void run() {
 
         synchronized (getCurrentConcept()) {
             if (currentTaskLink !=null) {
@@ -64,7 +58,8 @@ abstract public class FireConcept extends NAL {
                 }
             }
         }
-        
+
+        onFinished();
     }
 
     

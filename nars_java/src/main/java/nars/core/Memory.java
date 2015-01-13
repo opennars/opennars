@@ -78,7 +78,6 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     
-    private final List<Runnable> otherTasks = new ArrayList();
 
 
     public static enum Forgetting {
@@ -118,6 +117,10 @@ public class Memory implements Serializable {
         randomNumber.setSeed(randomSeed);
     }
 
+    public final ArrayDeque<Task> stm = new ArrayDeque();
+
+    private final List<Runnable> otherTasks = new ArrayList();
+
     public final Core concepts;
 
     public final EventEmitter event;
@@ -139,20 +142,7 @@ public class Memory implements Serializable {
      */
     public final Deque<Task> newTasks;
 
-    // ----------------------------------------
-//    public Term currentTerm;
-//
-//    public Concept currentConcept;
-//
-//    private Task currentTask;
-//
-//    private TermLink currentBeliefLink;
-//    private TaskLink currentTaskLink;
-//
-//    private Sentence currentBelief;    
-//
-//    private Stamp newStamp;
-    // ----------------------------------------
+
     //public final Term self;
     public final EmotionMeter emotion = new EmotionMeter();
     public final LogicMeter logic;
@@ -171,38 +161,7 @@ public class Memory implements Serializable {
 
     public final Param param;
 
-    //index of Conjunction questions
-    final transient private Set<Task> questionsConjunction = new HashSet();
 
-    private class MemoryEventEmitter extends EventEmitter {
-
-        public MemoryEventEmitter() {
-            super();
-        }
-
-        public void emit(final Class eventClass, final Object... params) {
-            super.emit(eventClass, params);
-
-            if (eventClass == Events.ConceptQuestionAdd.class) {
-                //Concept c = params[0];
-                Task t = (Task) params[1];
-                Term term = t.getTerm();
-                if (term instanceof Conjunction) {
-                    questionsConjunction.add(t);
-                }
-            } else if (eventClass == Events.ConceptQuestionAdd.class) {
-                //Concept c = params[0];
-                Task t = (Task) params[1];
-                Term term = t.getTerm();
-                if (term instanceof Conjunction) {
-                    questionsConjunction.remove(t);
-                }
-            }
-        }
-    }
-    
-    
-    
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
@@ -288,7 +247,7 @@ public class Memory implements Serializable {
 
         };
 
-        this.event = new MemoryEventEmitter();
+        this.event = new EventEmitter();
 
 
         this.executive = new MultipleExecutionManager(this);
@@ -865,7 +824,7 @@ public class Memory implements Serializable {
     }
 
     /**
-     * get all tasks in the system by iterating all newTasks, novelTasks,
+     * get all tasks in the system by iterating all newTasks, novelTasks; does not change or remove any
      * Concept TaskLinks
      */
     public Set<Task> getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks) {
@@ -935,15 +894,7 @@ public class Memory implements Serializable {
         return timing;
     }
 
-    public Collection<Task> conceptQuestions(Class c) {
-        if (c == Conjunction.class) {
-            return questionsConjunction;
-        }
-        throw new RuntimeException("Questions index for " + c + " does not exist");
-    }
 
-    public final ArrayDeque<Task> stm = new ArrayDeque();
-    //public Task stmLast = null;
 
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 

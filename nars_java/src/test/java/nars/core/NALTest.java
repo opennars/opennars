@@ -31,6 +31,7 @@ public class NALTest  {
 
     int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public long randomSeed = 1;
+    static public boolean showInput = true;
     static public boolean showOutput = false;
     static public boolean saveSimilar = true;
     static public boolean showSuccess = false;
@@ -125,7 +126,7 @@ public class NALTest  {
                 level = Integer.parseInt(name.split("\\.")[0]);
             }
             catch (NumberFormatException ne) {
-                throw new RuntimeException(ne);
+                //throw new RuntimeException(ne);
             }
             levelTotals[level]++;
             if (e.getValue()) {
@@ -188,9 +189,10 @@ public class NALTest  {
         
         String input;
         NAR nar;
-        
+
+
         NALPerformance test = new NALPerformance(nar = newNAR(), input = getExample(path) );
-        
+
 
         if (showOutput)
             new TextOutput(nar, System.out);
@@ -218,7 +220,16 @@ public class NALTest  {
 
         if ((!success & showFail) || (success && showSuccess)) {
             System.out.print(path + ' ');
+
+            if (showInput)
+                System.out.println(input);
+            System.out.flush();
+
             test.printResults(System.err);
+            System.err.flush();
+
+            System.out.println("\n\n");
+
         }
         
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);

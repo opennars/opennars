@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class NALPerformance  {
     
-    static public int similarsToSave = 2;
+    static public int similarsToSave = 6;
 
     double score;
     private boolean success;

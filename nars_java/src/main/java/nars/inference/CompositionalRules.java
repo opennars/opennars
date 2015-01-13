@@ -29,7 +29,6 @@ import nars.language.*;
 import nars.language.CompoundTerm.UnableToCloneException;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -63,10 +62,10 @@ public final class CompositionalRules {
 
         //TODO make complete use of this index instead of iterating below, once the index is sorted in a similiar way
         Memory m = nal.mem();
-        Collection<Task> qq = m.conceptQuestions(Conjunction.class);
-        if (qq.isEmpty()) {
-            return;
-        }
+//        Collection<Task> qq = m.conceptQuestions(Conjunction.class);
+//        if (qq.isEmpty()) {
+//            return;
+//        }
 
         final Term term1 = sentence.term;
         final boolean term1ContainVar = term1.hasVar();

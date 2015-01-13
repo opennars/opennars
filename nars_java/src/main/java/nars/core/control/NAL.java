@@ -50,12 +50,6 @@ public abstract class NAL implements Runnable {
     public NAL(Memory mem) {
         super();
         this.memory = mem;
-        reset();
-    }
-
-    /** NAL and subclasses are recyclable; call reset() before using a recycled instance */
-    public void reset() {
-        tasksAdded.clear();
         currentTerm = null;
         currentConcept = null;
         currentTask = null;

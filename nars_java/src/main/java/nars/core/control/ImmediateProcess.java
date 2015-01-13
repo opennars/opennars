@@ -13,26 +13,11 @@ import nars.entity.Task;
  * one concept only
  */
 public class ImmediateProcess extends NAL {
-    Task task;
-    
-
-    /** when using this constructor, make sure to setup with init(..) before use */
-    public ImmediateProcess(Memory mem) {
-        super(mem);
-    }
+    final Task task;
 
     public ImmediateProcess(Memory mem, Task task) {
         super(mem);
-        
-        init(task);
-    }
 
-    public void init(Task task) {
-        if (task == null)
-            throw new RuntimeException("null Task for ImmediateProcess");
-
-        super.reset();
-        
         this.task = task;        
     }
     
