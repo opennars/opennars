@@ -42,6 +42,9 @@ public class ValueMeter extends SourceFunctionMeter<Double> {
         return oldValue;
     }
 
+    /** current stored value */
+    public double get() { return val.get(); }
+
     
     @Override
     protected Double getValue(Object key, int index) {

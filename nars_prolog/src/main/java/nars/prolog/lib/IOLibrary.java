@@ -66,7 +66,7 @@ public class IOLibrary extends Library {
         gen.setSeed(System.currentTimeMillis());
     }
     
-    /************ Mirco Mastrovito - Input da Console ***********/
+    /************ Mirco Mastrovito - Perceive da Console ***********/
     public UserContextInputStream getUserContextInputStream()
     {
     	return this.input;

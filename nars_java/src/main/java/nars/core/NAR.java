@@ -232,16 +232,8 @@ public class NAR implements Runnable, TaskSource {
     }
     
     public NAR addInput(final Sentence sentence) {
-        
-        //TODO use correct default values depending on sentence punctuation
-        float priority = 
-                Parameters.DEFAULT_JUDGMENT_PRIORITY;
-        float durability = 
-                Parameters.DEFAULT_JUDGMENT_DURABILITY;
-                
-        return addInput(                
-                new Task(sentence, new 
-                    BudgetValue(priority, durability, sentence.truth))
+        return addInput(
+                new Task(sentence, BudgetValue.newDefault(sentence, memory))
         );
     }
     
@@ -348,10 +340,9 @@ public class NAR implements Runnable, TaskSource {
         try {
             i.update();
             newInputChannels.add(i);
-        } catch (IOException ex) {  
-            if (Parameters.DEBUG)
-                throw new RuntimeException(ex.toString());
+        } catch (IOException ex) {
             emit(ERR.class, ex);
+            throw new RuntimeException(ex.toString());
         }
         
         ioChanged = true;
@@ -479,11 +470,13 @@ public class NAR implements Runnable, TaskSource {
 
             long now = time();
 
-            if (now < minCycles)
+            long elapsed = now - cycleStart;
+
+            if (elapsed < minCycles)
                 running = !stopped;
             else
                 running = (!inputChannels.isEmpty()) && (!stopped) &&
-                    ((time() - cycleStart) < maxCycles);
+                    (elapsed < maxCycles);
         }
         while (running);
 

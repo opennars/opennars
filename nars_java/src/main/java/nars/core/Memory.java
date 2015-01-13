@@ -711,26 +711,31 @@ public class Memory implements Serializable {
     
     /**
      * Processes a specific number of new tasks
+     * @param maxTasks max # of tasks to queue (in parameter queue), or -1 for unlimited
      */
     public synchronized int processNewTasks(int maxTasks, Collection<Runnable> queue) {
         if (maxTasks == 0) {
             return 0;
         }
 
-        int processed = 0;
+        int queued = 0;
 
-        for (int i = maxTasks; (!newTasks.isEmpty()) && (i > 0); i--) {
+        while (!newTasks.isEmpty()) {
 
             final Task task = newTasks.removeFirst();
-
-            processed++;
 
             emotion.adjustBusy(task.getPriority(), task.getDurability());
 
             if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists                   
-                // ok so lets fire it                
+                if (queued == maxTasks) {
+                    //limited # of new tasks requested; so stop here
+                    break;
+                }
+
+                // ok so lets fire it
                 queue.add(new ImmediateProcess(this, task));
-                
+                queued++;
+
             } else {
                 final Sentence s = task.sentence;
                 if ((s != null) && (s.isJudgment() || s.isGoal())) {
@@ -759,7 +764,7 @@ public class Memory implements Serializable {
             }
         }
 
-        return processed;
+        return queued;
     }
 
     protected void error(Throwable ex) {
@@ -794,6 +799,9 @@ public class Memory implements Serializable {
 
             queue.add(new ImmediateProcess(this, task));
             executed++;
+
+            if (executed == num)
+                break;
         }
 
         return executed;

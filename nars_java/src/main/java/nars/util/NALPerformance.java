@@ -11,44 +11,44 @@ import nars.io.TextInput;
 import nars.io.condition.OutputCondition;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  * @author me
  */
-public class NALPerformance implements Runnable {
+public class NALPerformance  {
     
-    static public int similarsToSave = 5;       
+    static public int similarsToSave = 2;
 
     double score;
     private boolean success;
     private boolean error;
-    public final List<OutputCondition> expects = new ArrayList();
+    public final List<OutputCondition> expects;
     private final NAR nar;
     private final String input;
-    private final int cycles;
 
-    public NALPerformance(NAR n, String input, int cycles) {
+    public NALPerformance(NAR n, String input) {
         this.nar = n;
         this.input = input;
-        this.cycles = cycles;
+        this.expects = OutputCondition.getConditions(nar, input, similarsToSave);
     }
 
-    @Override
-    public void run() {
+    public void run(int maxCycles) {
+        run(-1, maxCycles);
+    }
+
+    public void run(int minCycles, int maxCycles) {
         try {
             
-            List<OutputCondition> extractedExpects = OutputCondition.getConditions(nar, input, similarsToSave);
-            
-            for (OutputCondition e1 : extractedExpects) {
-                expects.add(e1);
-            }
+
             
             nar.addInput(new TextInput(input));
 
-            nar.run(0, cycles);
+            if (minCycles == -1)
+                nar.run(maxCycles);
+            else
+                nar.run(minCycles, maxCycles);
             
         } catch (Throwable e) {
             System.err.println(e);

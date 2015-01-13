@@ -63,7 +63,7 @@ public class NARPrologMirrorTest {
         
         
         //nal1.multistep.nal
-        NALPerformance nts = new NALPerformance(nar, ExampleFileInput.get("../nal/test/nars_multistep_1.nal").getSource(), 3500) {
+        NALPerformance nts = new NALPerformance(nar, ExampleFileInput.get("../nal/test/nars_multistep_1.nal").getSource()) {
 //            
 //            
 //            @Override
@@ -89,7 +89,7 @@ public class NARPrologMirrorTest {
 
         
         
-        nts.run();
+        nts.run(3500);
         
         assertTrue(prologAnswered);
         

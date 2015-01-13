@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
@@ -322,6 +323,28 @@ public class BudgetValue implements Cloneable {
 
     public long getLastForgetTime() {
         return lastForgetTime;
+    }
+
+    /** creates a new budget value appropriate for a given sentence type and memory's current parameters */
+    public static BudgetValue newDefault(Sentence s, Memory memory) {
+        float priority, durability;
+        switch (s.punctuation) {
+            case '.':
+                priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
+                durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
+                break;
+            case '?':
+                priority = Parameters.DEFAULT_QUESTION_PRIORITY;
+                durability = Parameters.DEFAULT_QUESTION_DURABILITY;
+                break;
+            case '!':
+                priority = Parameters.DEFAULT_GOAL_PRIORITY;
+                durability = Parameters.DEFAULT_GOAL_DURABILITY;
+                break;
+            default:
+                throw new RuntimeException("Unknown sentence type: " + s.punctuation);
+        }
+        return new BudgetValue(priority, durability, s.getTruth());
     }
 
 

@@ -189,7 +189,7 @@ public class NALTest  {
         String input;
         NAR nar;
         
-        NALPerformance test = new NALPerformance(nar = newNAR(), input = getExample(path), minCycles );
+        NALPerformance test = new NALPerformance(nar = newNAR(), input = getExample(path) );
         
 
         if (showOutput)
@@ -204,7 +204,7 @@ public class NALTest  {
             System.out.println();
         }
 
-        test.run();
+        test.run(minCycles);
 
         System.err.flush();
         System.out.flush();

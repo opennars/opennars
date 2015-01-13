@@ -30,7 +30,6 @@ public abstract class AbstractObserver implements EventEmitter.EventObserver {
         
         if (b && (this.active==null)) {
             this.active = source.on(this, events);
-
         }
         else if (!b && (this.active!=null)) {
             this.active.cancel();

@@ -555,7 +555,7 @@ public class LibraryDialogFrame extends GenericFrame implements LibraryListener
     }
 
     /**
-	 * Set the file manager referenced by the library dialog for use in Input/Output tasks.
+	 * Set the file manager referenced by the library dialog for use in Perceive/Output tasks.
 	 * @param fileManager  The file manager we want the toolbar to use.
 	 */
     public void setFileManager(IOFileOperations fileManager) {

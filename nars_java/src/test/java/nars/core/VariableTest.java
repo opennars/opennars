@@ -56,7 +56,7 @@ public class VariableTest {
         <a --> 4>. :/:
         <(&/,<a --> 3>,?what) =/> <a --> ?wat>>?
 
-        Solved <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
+        Answer <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
 
         because ?wat can be unified with 4 since ?wat is a query variable
        */

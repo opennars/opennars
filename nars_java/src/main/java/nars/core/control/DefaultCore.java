@@ -66,6 +66,7 @@ public class DefaultCore implements Core {
             return t(numThreads);
         }
 
+        /*
         public int newTasksPriority() {
             return memory.newTasks.size();
         }
@@ -76,7 +77,7 @@ public class DefaultCore implements Core {
             } else {
                 return 0;
             }
-        }
+        }*/
 
         public int conceptsPriority() {
             if (memory.getNewTasks().isEmpty()) {
@@ -146,20 +147,26 @@ public class DefaultCore implements Core {
     
     public void cycleSequential() {
         final List<Runnable> run = new ArrayList();
-        
-        memory.processNewTasks(loop.newTasksPriority(), run);
+
+        //all new tasks
+        memory.processNewTasks(-1, run);
         Core.run(run);
+
+        if (run.isEmpty()) {
+
+            //or... 1 novel task
+            memory.processNovelTasks(1, run);
+            Core.run(run);
+
+            if (run.isEmpty()) {
+
+                //or... 1 concept fired
+                processConcepts(loop.conceptsPriority(), run);
+                Core.run(run);
+            }
+        }
         
-        run.clear();
-        
-        memory.processNovelTasks(loop.novelTasksPriority(), run);
-        Core.run(run); 
-        
-        run.clear();   
-        
-        processConcepts(loop.conceptsPriority(), run);
-        Core.run(run);
-        
+
         run.clear();
         
         memory.processOtherTasks(run);
@@ -169,13 +176,13 @@ public class DefaultCore implements Core {
 
     }
 
-    public void cycleParallel() {
+    @Deprecated public void cycleParallel() {
 
         final List<Runnable> run = new ArrayList();
         
-        memory.processNewTasks(loop.newTasksPriority(), run);
+        memory.processNewTasks(-1, run);
         
-        memory.processNovelTasks(loop.novelTasksPriority(), run);
+        memory.processNovelTasks(1/*loop.novelTasksPriority()*/, run);
         
         processConcepts(loop.conceptsPriority(), run);
 

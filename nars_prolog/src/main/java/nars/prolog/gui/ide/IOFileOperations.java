@@ -21,7 +21,7 @@ import javax.swing.*;
 import java.io.FileOutputStream;
 
 /**
- * A common interface to Input/Output file operations managers. Note that this
+ * A common interface to Perceive/Output file operations managers. Note that this
  * interface is not public, since it is intended for internal use, and could be
  * subject to several changes in future releases.
  * 

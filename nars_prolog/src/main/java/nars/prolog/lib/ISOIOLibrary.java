@@ -641,7 +641,7 @@ public class ISOIOLibrary extends Library{
                 size = in.available();
                 
                 if(pos > size){
-                    throw PrologError.system_error(new Struct("Invalid operation. Input position is greater than file size."));
+                    throw PrologError.system_error(new Struct("Invalid operation. Perceive position is greater than file size."));
                 }
                 if(pos == size){
                     entry.put("end_of_file", new Struct("at"));
@@ -2045,7 +2045,7 @@ public class ISOIOLibrary extends Library{
 
         if(flag == 0)
             //se lo stream non si trova all'interno della hashtable, significa che non ? mai stato aperto
-                throw PrologError.existence_error(engine.getEngineManager(), 1, "stream", stream_or_alias, new Struct("Input stream should be opened."));
+                throw PrologError.existence_error(engine.getEngineManager(), 1, "stream", stream_or_alias, new Struct("Perceive stream should be opened."));
         
         return result;
     }
@@ -2105,7 +2105,7 @@ public class ISOIOLibrary extends Library{
             }
         }
         
-        if(stream_name.contains("Input") || stream_name.equals("stdin"))
+        if(stream_name.contains("Perceive") || stream_name.equals("stdin"))
                 throw PrologError.permission_error(engine.getEngineManager(), "input", "stream", stream_or_alias, new Struct("S_or_a is an input stream."));
 
         if(flag == 0)

@@ -312,7 +312,7 @@ public class ToolBar extends JPanel
     }
 
     /**
-	 * Set the file manager referenced by the toolbar for use in Input/Output tasks.
+	 * Set the file manager referenced by the toolbar for use in Perceive/Output tasks.
 	 * @param fileManager  The file manager we want the toolbar to use.
 	 */
     public void setFileManager(IOFileOperations fileManager) {

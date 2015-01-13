@@ -6,6 +6,10 @@
 package nars;
 
 import nars.core.NAR;
+import nars.core.control.ImmediateProcess;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.inference.AbstractObserver;
 
 /**
@@ -16,8 +20,50 @@ import nars.inference.AbstractObserver;
  * 
  */
 abstract public class AbstractMirror extends AbstractObserver {
-    
+
+    private final NAR nar;
+
     public AbstractMirror(NAR n, boolean active, Class... events) {
         super(n, active, events);
+        this.nar = n;
     }
+
+    public static enum InputMode {
+        /** normal input, ie. nar.addInput */
+        Perceive,
+
+        /** bypass input buffers, directly as a new memory Task, ie. memory.addTask */
+        InputTask,
+
+        /** instance an ImmediateProcess and run it immediately */
+        ImmediateProcess,
+
+        /** insert the sentence directly into a concept, attempt to create the concept if one does not exist */
+        Concept
+    }
+    
+    public boolean input(Sentence s, InputMode mode, Task parent) {
+        if (mode == InputMode.Perceive) {
+            nar.addInput(s);
+            return true;
+        }
+        else if ((mode == InputMode.InputTask)|| (mode == InputMode.ImmediateProcess)) {
+
+            Task t = new Task(s, BudgetValue.newDefault(s, nar.memory), parent  );
+
+            //System.err.println("  " + t);
+
+            if (mode == InputMode.InputTask)
+                nar.memory.inputTask(t);
+            else if (mode == InputMode.ImmediateProcess)
+                new ImmediateProcess(nar.memory, t).run();
+
+            return true;
+
+        }
+        else if (mode == InputMode.Concept) {
+            throw new RuntimeException("unimpl yet");
+        }
+        return false;
+    }    
 }

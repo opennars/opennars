@@ -34,7 +34,7 @@ public class ConsoleDialog
     private static final int BINDINGS_INDEX = 1;
     private static final int ALL_BINDINGS_INDEX = 2;
     private static final int OUTPUT_INDEX = 3;
-	private static final int INPUT_INDEX = 4; /* Index of Input Tab*/
+	private static final int INPUT_INDEX = 4; /* Index of Perceive Tab*/
     /*Castagna 06/2011*/	
 	private static final int EXCEPTION_INDEX = 5;
 	/**/
@@ -214,7 +214,7 @@ public class ConsoleDialog
     }
     
     /**
-	 * Set the file manager referenced by the toolbar for use in Input/Output tasks.
+	 * Set the file manager referenced by the toolbar for use in Perceive/Output tasks.
 	 * @param fileManager  The file manager we want the toolbar to use.
 	 */
     public void setFileManager(IOFileOperations fileManager) {

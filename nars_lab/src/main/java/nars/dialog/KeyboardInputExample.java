@@ -27,7 +27,7 @@ public class KeyboardInputExample {
                 
         new NARSwing(n).themeInvert();
 
-        new NWindow("Direct Keyboard Input", new KeyboardInputPanel(n)).show(300, 100, false);
+        new NWindow("Direct Keyboard Perceive", new KeyboardInputPanel(n)).show(300, 100, false);
         
         n.start(100, 5);
         

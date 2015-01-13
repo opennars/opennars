@@ -26,7 +26,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 
 /**
- * A manager for Input/Output operations on the Java 2 platform.
+ * A manager for Perceive/Output operations on the Java 2 platform.
  * 
  * @author    <a href="mailto:giulio.piancastelli@studio.unibo.it">Giulio Piancastelli</a>
  * @version    1.0 - 16-dic-02

@@ -38,8 +38,8 @@ public class EventEmitter extends Eventer<Object> {
     public Registration on(Selector s, EventEmitter.EventObserver obs) {
         return on(s,  new Consumer<Event>() {
             @Override public void accept(Event event) {
-                Class channel = (Class)(((Event)event).getKey());
-                Object o = ((Event)event).getData();
+                Class channel = (Class)(event.getKey());
+                Object o = event.getData();
                 obs.event(channel, (Object[]) o);
             }
         });

@@ -24,7 +24,7 @@ public class OneWayList<E> {
      * 
      * Method introduced during revision by Paolo Contessi
      *
-     * @param list  Input list to be transformed
+     * @param list  Perceive list to be transformed
      * @return      An equivalent OneWayList
      */
     public static <T> OneWayList<T> transform2(List<T> list){

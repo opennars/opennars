@@ -5,19 +5,18 @@
  */
 package nars;
 
-import nars.core.EventEmitter;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.build.Discretinuous;
+import nars.core.*;
+import nars.core.build.Default;
 import nars.entity.Task;
 import nars.io.ExampleFileInput;
+import nars.io.TextOutput;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ValueMeter;
 import nars.language.Term;
 import nars.util.NALPerformance;
 import nars.util.NARTrace;
 
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 /**
@@ -25,106 +24,149 @@ import java.io.PrintStream;
  * @author me
  */
 public class DetectBenefitsOfPrologMirroring implements EventEmitter.EventObserver {
+    private static PrintStream csvOut;
+    private static PrintStream logOut;
     private final NAR prolog;
     private final NARTrace trace;
-    int line = 0;
+
+    static long randomSeed = 1;
+
+    static int line = 0;
+
+    static int numCycles;
+
+    static String outputFile = null;// "/tmp/h.csv";
+    static String logFile = null; //"/tmp/h.log";
 
     private ValueMeter prologEternalBeliefs;
     private HitMeter prologEternalAnswers;
-    private ValueMeter prologPresentBeliefs;
-    private HitMeter prologPresentAnswers;
 
-    private NARPrologMirror currentPrologEternal;
-    private NARPrologMirror currentPrologPresent;
+    private NARPrologMirror prologMirror;
 
-    PrintStream output;
+    static double totalPrologScore = 0;
 
-    public DetectBenefitsOfPrologMirroring(String path) throws Exception {
+
+
+    public DetectBenefitsOfPrologMirroring(String path, int cycles) throws Exception {
         Parameters.DEBUG = false;
 
-        output = System.out;
+
 
         String input = ExampleFileInput.get(path).getSource();
-        int cycles = 500;
 
 
+        Memory.resetStatic(randomSeed);
         NAR normal = newNAR();
-        NALPerformance np = new NALPerformance(normal, input, cycles);
-        np.run();
+        NALPerformance np = new NALPerformance(normal, input);
+
+        if (logOut!=null) {
+            logOut.println(path);
+            logOut.println(input + "\n");
+            logOut.println("RUN NORMAL");
+            new TextOutput(normal, logOut);
+        }
+        np.run(cycles);
+
         double controlScore = np.getScore();
-        normal.reset();
-        normal = null; //GC
+        //normal.reset();
+        //normal = null; //GC
 
 
-
+        Memory.resetStatic(randomSeed);
         prolog = newPrologNAR(newNAR());
 
-        NALPerformance pp = new NALPerformance(prolog, input, cycles);
+        NALPerformance pp = new NALPerformance(prolog, input);
 
         trace = new NARTrace(prolog);
         trace.addMeter(prologEternalBeliefs = new ValueMeter("prolog.eternal.beliefs"));
         trace.addMeter(prologEternalAnswers = new HitMeter("prolog.eternal.answers"));
-        trace.addMeter(prologPresentBeliefs = new ValueMeter("prolog.present.beliefs"));
-        trace.addMeter(prologPresentAnswers = new HitMeter("prolog.present.answers"));
 
-        pp.run();
-        
+        if (logOut!=null) {
+            logOut.println("RUN PROLOG");
+            new TextOutput(prolog, logOut);
+        }
+        pp.run(cycles);
+
 
         //np.printResults(System.out);
         //pp.printResults(System.out);
-        if (controlScore != pp.getScore()) {
-            System.out.println();
-            System.out.println(path + "\n  " + np.getScore() + " " + pp.getScore());
-        }
+        double prologScore = pp.getScore();
+
+
+        /*
+        if (normal.time() != prolog.time())
+            System.out.println(normal + " " + normal.time() + " " + prolog + " " + prolog.time());
+        */
+        String summary = "\"" + path + "\"," + controlScore + "," + prologScore;
+        //if (controlScore != prologScore) {
+            System.out.println(summary);
+        //}
+
+        if (!Double.isFinite(controlScore)) controlScore = cycles;
+        if (!Double.isFinite(prologScore)) prologScore = cycles;
+
+        DetectBenefitsOfPrologMirroring.totalPrologScore += (controlScore - prologScore);
         
-        //System.out.println(currentPrologEternal.getBeliefsTheory());
+        //System.out.println(prologMirror.getBeliefsTheory());
         //System.out.println(currentPrologPresent.getBeliefsTheory());
 
         prolog.reset();
+
+        if (csvOut !=null) {
+            csvOut.flush();
+        }
+        if (logOut!=null) {
+            logOut.println(summary + "\n\n");
+            logOut.flush();
+        }
     }
 
     @Override
     public void event(Class event, Object[] args) {
         if (event == Events.CycleEnd.class) {
-            prologEternalBeliefs.set(currentPrologEternal.getBeliefs().size());
-            prologPresentBeliefs.set(currentPrologPresent.getBeliefs().size());
+            prologEternalBeliefs.set(prologMirror.getBeliefs().size());
 
-            if (line++ == 0) {
-                trace.metrics.printCSVHeader(output);
+            if (csvOut !=null) {
+                if (line++ == 0)
+                    trace.metrics.printCSVHeader(csvOut);
+                trace.metrics.printCSVLastLine(csvOut);
             }
-            trace.metrics.printCSVLastLine(output);
         }
     }
     
     public static void main(String[] arg) throws Exception {
+        if (outputFile!=null)
+            csvOut = new PrintStream(new FileOutputStream(outputFile));
+        if (logFile!=null)
+            logOut = new PrintStream(new FileOutputStream(logFile));
+
+        int numTests = 0;
+        totalPrologScore = 0;
+        numCycles = 200;
         for (String path : ExampleFileInput.getUnitTestPaths()) {
-            new DetectBenefitsOfPrologMirroring(path);
+            new DetectBenefitsOfPrologMirroring(path, numCycles);
+            numTests++;
         }
+        System.err.println("RESULT: " + totalPrologScore / numTests);
     }
 
     private NAR newNAR() {
-        NAR nar = new NAR(new Discretinuous().setInternalExperience(null));
+        //NAR nar = new NAR(new Discretinuous().setInternalExperience(null));
+        NAR nar = new NAR(new Default());
         return nar;
     }
 
     private NAR newPrologNAR(NAR n) {
-        float confidenceThresh = 0.6f;
-        currentPrologEternal = new NARPrologMirror(n, confidenceThresh, true, true, false) {
+        float confidenceThresh = 0.5f;
+        prologMirror = new NARPrologMirror(n, confidenceThresh, true, true, true) {
             @Override
             public Term answer(Task question, Term t, nars.prolog.Term pt) {
                 Term a = super.answer(question, t, pt);
                 if (a!=null) prologEternalAnswers.hit();
                 return a;
             }
-        };
-        currentPrologPresent = new NARPrologMirror(n, confidenceThresh, true, false, true) {
-            @Override
-            public Term answer(Task question, Term t, nars.prolog.Term pt) {
-                Term a = super.answer(question, t, pt);
-                if (a!=null) prologPresentAnswers.hit();
-                return a;
-            }
-        };
+        }.setInputMode(AbstractMirror.InputMode.InputTask);
+
         n.on(Events.CycleEnd.class, this);
         return n;
     }
