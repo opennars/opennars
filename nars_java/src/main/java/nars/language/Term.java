@@ -410,10 +410,10 @@ public class Term implements AbstractTerm, Termable {
             return cloned!=null;
         }
         catch (Throwable e) {
-            /*if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+            if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
                 System.err.println("INVALID TERM: " + content);
                 e.printStackTrace();
-            }*/
+            }
             return false;
         }
         
