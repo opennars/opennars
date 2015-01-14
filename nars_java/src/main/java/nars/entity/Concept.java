@@ -152,8 +152,8 @@ public class Concept extends Item<Term> implements Termable {
 
     @Override public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Termable)) return false;
-        return ((Termable)obj).getTerm().name().equals(name());
+        if (!(obj instanceof Concept)) return false;
+        return ((Concept)obj).name().equals(name());
     }
 
     @Override public int hashCode() { return name().hashCode();     }
@@ -252,7 +252,7 @@ public class Concept extends Item<Term> implements Termable {
                     nal.setCurrentBelief(projectedBelief);
                     revision(judg, projectedBelief, false, nal);
                 }
-//
+
             }
         }
         if (task.aboveThreshold()) {
@@ -265,7 +265,7 @@ public class Concept extends Item<Term> implements Termable {
         }
     }
 
-    protected void addToTable(final Task task, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+    protected void addToTable(final Task task, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
         final Sentence newSentence = task.sentence;
         int preSize = table.size();
 
@@ -275,10 +275,10 @@ public class Concept extends Item<Term> implements Termable {
         }
 
         if (removed != null) {
-            memory.event.emit(eventRemove, this, removed, task, extraEventArguments);
+            memory.event.emit(eventRemove, this, removed, task);
         }
         if ((preSize != table.size()) || (removed != null)) {
-            memory.event.emit(eventAdd, this, task, extraEventArguments);
+            memory.event.emit(eventAdd, this, task);
         }
     }
 

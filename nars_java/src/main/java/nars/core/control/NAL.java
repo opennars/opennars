@@ -181,7 +181,7 @@ public abstract class NAL implements Runnable {
         }
         
         task.setParticipateInTemporalInduction(false);
-        memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
+        memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2, getCurrentTask());
         memory.logic.TASK_DERIVED.hit();
         addTask(task, "Derived");
         return true;

@@ -761,8 +761,7 @@ public class GraphExecutive {
     protected Task planTask(nars.core.control.NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         
         Task newTask = plan.planTask(c, task, target, punctuation);
-        
-        System.out.println("TASK PLANNED: " + newTask);
+
         memory.inputTask(newTask);
         
         //it comes through temporal induction with correct truth value anyway

@@ -24,8 +24,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nars.core.build.Default.InternalExperienceMode.Full;
-import static nars.core.build.Default.InternalExperienceMode.Minimal;
+import static nars.plugin.mental.InternalExperience.InternalExperienceMode.Full;
+import static nars.plugin.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
@@ -57,12 +57,8 @@ public class Default extends Build implements ConceptBuilder {
     int taskBufferSize;
     
     int taskBufferLevels;
-    
-    public static enum InternalExperienceMode {
-        None, Minimal, Full
-    }
-    
-    InternalExperienceMode internalExperience = InternalExperienceMode.Minimal;
+
+    InternalExperience.InternalExperienceMode internalExperience = InternalExperience.InternalExperienceMode.Minimal;
         
     
     transient TemporalParticlePlanner pluginPlanner = null;
@@ -333,12 +329,13 @@ public class Default extends Build implements ConceptBuilder {
         }
     }
 
-    public InternalExperienceMode getInternalExperience() {
+    public InternalExperience.InternalExperienceMode getInternalExperience() {
         return internalExperience;
     }
 
-    public Default setInternalExperience(InternalExperienceMode internalExperience) {
-        this.internalExperience = internalExperience;
+    public Default setInternalExperience(InternalExperience.InternalExperienceMode i) {
+        if (i == null) i = InternalExperience.InternalExperienceMode.None;
+        this.internalExperience = i;
         return this;
     }
 

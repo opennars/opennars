@@ -3,10 +3,12 @@ package nars.multistep;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.io.condition.OutputContainsCondition;
+import nars.plugin.mental.InternalExperience;
 import org.junit.Test;
 
 import java.io.IOException;
 
+import static junit.framework.TestCase.assertEquals;
 
 
 public class TemporalParticlePlannerTest {
@@ -34,7 +36,7 @@ public class TemporalParticlePlannerTest {
 
     public void testGraphPlan(String input, String expected, boolean withPlanner, boolean expectSuccess, int cyclesToSolve) throws IOException {
         
-        Default d = new Default().setInternalExperience(Default.InternalExperienceMode.None);
+        Default d = new Default().setInternalExperience(InternalExperience.InternalExperienceMode.None);
         
         NAR n = new NAR(withPlanner?
                 d.temporalPlanner(12, 64, 24, 2) :
@@ -52,7 +54,7 @@ public class TemporalParticlePlannerTest {
         
         
         //TODO this was the real part of the test, but it's disabled now since temporal particle planner is still in development
-        //assertEquals("planner enabled? " + withPlanner + ".  ", expectSuccess, e.success());
+        assertEquals("planner enabled? " + withPlanner + ".  ", expectSuccess, e.isTrue());
         
     }
 

@@ -1,13 +1,14 @@
 package nars.core;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import nars.io.ExampleFileInput;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.File;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 
 
@@ -18,6 +19,8 @@ import java.util.List;
 @Ignore
 public class NALTestSome extends NALTest {
 
+    public static String testFilenameContains = "nal5.19";
+
     static {
         showOutput = true;
         showSuccess = showOutput;
@@ -25,26 +28,20 @@ public class NALTestSome extends NALTest {
     }
     
    public static boolean include(String filename) {
-       //return true; //filename.startsWith("nal6.8.nal");
-       return filename.startsWith("forward");
+       return filename.contains(testFilenameContains);
    }
 
    
     @Parameterized.Parameters
     public static Collection params() {
-        List l = new LinkedList();
-        
-        //File folder = new File("nal/ClassicalConditioning");
-        File folder = new File("nal/Examples/ClassicalConditioning");
-        
-        for (final File file : folder.listFiles()) {
-            if (file.getName().equals("README.txt") || file.getName().contains(".png"))
-                continue;
-            if (include(file.getName()))
-                l.add(new Object[] { file.getAbsolutePath() } );
-        }
-                  
-        return l;
+
+        return Lists.newLinkedList( Iterables.filter(ExampleFileInput.getUnitTestPaths(), new Predicate<String>(){
+            @Override
+            public boolean apply(String s) {
+                return include(s);
+            }
+        }));
+
     }
    
    public static void main(String[] args) {

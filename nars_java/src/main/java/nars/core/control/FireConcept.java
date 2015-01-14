@@ -29,18 +29,22 @@ abstract public class FireConcept extends NAL {
 
     private int numTaskLinks;
     private int termLinkCount;
-    
+
     abstract public void onFinished();
-    
+
+
+
     @Override
     public void run() {
 
         synchronized (getCurrentConcept()) {
             if (currentTaskLink !=null) {
+                //fire a pre-specified tasklink
                 fireTaskLink(termLinkCount);
                 returnTaskLink(currentTaskLink);
             }
             else {
+                //fire N tasklinks
                 for (int i = 0; i < numTaskLinks; i++) {
 
                     if (currentConcept.taskLinks.size() == 0) 
@@ -91,9 +95,7 @@ abstract public class FireConcept extends NAL {
                 
                 setCurrentBeliefLink(termLink);
 
-
-
-                reason(currentTaskLink, termLink);                    
+                reason(currentTaskLink, termLink);
 
                 emit(Events.TermLinkSelect.class, termLink, currentConcept, this);
                 memory.logic.REASON.hit();
@@ -120,6 +122,9 @@ abstract public class FireConcept extends NAL {
         return "FireConcept[" + currentConcept + "," + currentTaskLink + "]";
     }
 
-    
-    
+
+    @Override
+    public void setCurrentConcept(Concept currentConcept) {
+        throw new RuntimeException("FireConcept involves one specific concept");
+    }
 }

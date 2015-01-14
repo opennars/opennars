@@ -686,7 +686,7 @@ public class RuleTables {
      * @param nal Reference to the memory
      */
     private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, int index, NAL nal) {
-        if (taskTerm.getClass() == beliefTerm.getClass()) {
+        if (taskTerm.operator() == beliefTerm.operator()) {
             if (taskTerm.size() > beliefTerm.size()) {
                 compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
             } else if (taskTerm.size() < beliefTerm.size()) {

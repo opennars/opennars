@@ -2,11 +2,11 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.ReflectPanel;
-import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NAR.PluginState;
 import nars.core.Plugin;
+import nars.inference.AbstractObserver;
 import nars.util.PackageUtility;
 
 import javax.swing.*;
@@ -28,12 +28,20 @@ import java.util.logging.Logger;
 public class PluginPanel extends VerticalPanel {
     private final NAR nar;
     private final JMenuBar menu;
+    final AbstractObserver observer;
     
 
     public PluginPanel(NAR nar) {
         super();
         
         this.nar = nar;
+        this.observer = new AbstractObserver(nar, false, Events.PluginsChange.class) {
+            @Override
+            public void event(Class event, Object[] args) {
+                if (event == Events.PluginsChange.class)
+                    update();
+            }
+        };
         
         
         menu = new JMenuBar();
@@ -155,12 +163,7 @@ public class PluginPanel extends VerticalPanel {
 
     @Override
     public void onShowing(boolean b) {
-        nar.memory.event.set(new EventObserver() {
-            @Override public void event(Class event, Object[] arguments) {
-                if (event == Events.PluginsChange.class)
-                    update();
-            }            
-        }, b, Events.PluginsChange.class);
+        observer.setActive(b);
     }
 
     private JMenuItem newAddPluginItem(Class c) {

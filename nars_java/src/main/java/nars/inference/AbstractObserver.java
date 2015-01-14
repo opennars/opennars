@@ -14,7 +14,11 @@ public abstract class AbstractObserver implements EventEmitter.EventObserver {
     protected final EventEmitter source;
     protected Registrations active;
     private final Class[] events;
-    
+
+    public AbstractObserver(NAR n, Class... events) {
+        this(n, true, events);
+    }
+
     public AbstractObserver(NAR n, boolean active, Class... events) {
         this(n.memory.event, active, events);
     }

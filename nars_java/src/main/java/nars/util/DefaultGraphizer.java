@@ -97,10 +97,11 @@ public class DefaultGraphizer implements NARGraph.Graphize {
                 taskLinks.put(x, c);
             }
         }
+        //TERM and Concept share the same hash, equality check, etc.. so they will be seen as the same vertex
+        //that's why this isnt necessar and will cause a graph error
         if (includeTermContent) {
             g.addVertex(t);
             g.addEdge(c, c.term, new NARGraph.TermContent());
-            
         }
         if (includeBeliefs) {
             for (final Sentence belief : c.beliefs) {
@@ -230,10 +231,10 @@ public class DefaultGraphizer implements NARGraph.Graphize {
                         if (term != null) {
                             Concept c = terms.get(term);
                             if (c != null) {
-                                if (g.containsVertex(c)) {
+                                if (!g.containsVertex(c)) {
                                     g.addVertex(c);
+                                    g.addEdge(c, theTask, new NARGraph.TermContent());
                                 }
-                                g.addEdge(c, theTask, new NARGraph.TermContent());
                             }
                         }
                         onTask(theTask);

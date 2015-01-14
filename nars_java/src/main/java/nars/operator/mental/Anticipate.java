@@ -22,7 +22,6 @@
 
 package nars.operator.mental;
 
-import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
@@ -30,6 +29,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.control.NAL;
 import nars.entity.*;
+import nars.inference.AbstractObserver;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
@@ -42,10 +42,10 @@ import nars.plugin.mental.InternalExperience;
 
 import java.util.*;
 
-//**
-//* Operator that creates a judgment with a given statement
- //*
-public class Anticipate extends Operator implements EventObserver, Mental {
+/**
+* Operator that creates a judgment with a given statement
+ */
+public class Anticipate extends Operator implements Mental {
 
     public final Map<Long,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
             
@@ -56,14 +56,21 @@ public class Anticipate extends Operator implements EventObserver, Mental {
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
     
     transient private int duration;
-    
-    public Anticipate() {
-        super("^anticipate");        
-    }
+    private AbstractObserver observer;
+
+    public Anticipate() { super("^anticipate");     }
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
-        n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class);
+        if (observer == null) {
+            observer = new AbstractObserver(n, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class) {
+                @Override public void event(Class event, Object[] args) {
+                    Anticipate.this.event(event, args);
+                }
+            };
+        }
+        else
+            observer.setActive(enabled);
         return true;
     }
     
@@ -127,7 +134,6 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         newTasks.clear();        
     }
     
-    @Override
     public void event(Class event, Object[] args) {
         if (event == Events.InduceSucceedingEvent.class) {            
             Task newEvent = (Task)args[0];

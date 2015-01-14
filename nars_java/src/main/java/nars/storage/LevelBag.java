@@ -82,8 +82,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     int currentCounter;
     final boolean[] levelEmpty;
 
-    final int distributorLength;
-    
     public static enum NextNonEmptyLevelMode {
         Default, Fast
     }
@@ -113,8 +111,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         Arrays.fill(levelEmpty, true);
 
         DISTRIBUTOR = Distributor.get(this.levels).order;
-        distributorLength = DISTRIBUTOR.length;        
- 
+
         clear();
     }
 
@@ -315,7 +312,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         int cl;
 
         do {                        
-        } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % distributorLength]]);
+        } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % DISTRIBUTOR.length]]);
         
         currentLevel = cl;
                 
@@ -330,7 +327,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
  runs much faster.  The policy should be approximately equally fair as LevelBag */
     protected void nextNonEmptyLevelFast() {
                
-        int cl = DISTRIBUTOR[(levelIndex++) % distributorLength];        
+        int cl = DISTRIBUTOR[(levelIndex++) % DISTRIBUTOR.length];
         while (levelEmpty[cl]) {
             cl++;
             cl%=levels;

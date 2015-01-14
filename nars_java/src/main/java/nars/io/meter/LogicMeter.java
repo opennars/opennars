@@ -1,65 +1,61 @@
 package nars.io.meter;
 
+import nars.core.Memory;
+import nars.entity.Concept;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ValueMeter;
 
 /**
  * Logic/reasoning sensors
- *
+ * <p>
  * TODO make a distinction between ValueMeter and IncrementingValueMeter for
  * accumulating multiple cycless data into one frame's aggregate
- *
+ * <p>
  * TODO add the remaining meter types for NARS data structures (ex: Concept metrics)
  */
 public class LogicMeter {
-    
-    //public final Sensor CONCEPT_FIRE;
-    
+
+
     public final HitMeter TASK_IMMEDIATE_PROCESS = new HitMeter("task.immediate_process");
-    
+
     public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
-    
-    /** triggered at beginning of StructuralRules.reason(), entry point of inference. counts invocation and records priority of termlink parameter.
-     */
-    public final HitMeter REASON = new HitMeter("reason.tasktermlinks");
-    
+
+    public final ValueMeter CONCEPT_COUNT = new ValueMeter("concept.count");
+    public final ValueMeter CONCEPT_BELIEF_COUNT = new ValueMeter("concept.belief.count");
+    public final ValueMeter CONCEPT_QUESTION_COUNT = new ValueMeter("concept.question.count");
+    public final HitMeter REASON = new HitMeter("concept.termlink.fired");
+
     /**
-       triggered for each StructuralRules.contraposition().
-       counts invocation and records complexity of statement parameter      
+     * triggered for each StructuralRules.contraposition().
+     * counts invocation and records complexity of statement parameter
      */
     public final HitMeter CONTRAPOSITION = new HitMeter("reason.contraposition");
-    
-    
+
+
     public final HitMeter TASK_ADD_NEW = new HitMeter("task.new.add");
     public final HitMeter TASK_DERIVED = new HitMeter("task.derived");
     public final HitMeter TASK_EXECUTED = new HitMeter("task.executed");
     public final HitMeter TASK_ADD_NOVEL = new HitMeter("task.novel.add");
-    
+
     public final HitMeter CONCEPT_NEW = new HitMeter("concept.new");
-    
+
     public final HitMeter JUDGMENT_PROCESS = new HitMeter("judgment.process");
     public final HitMeter GOAL_PROCESS = new HitMeter("goal.process");
     public final HitMeter QUESTION_PROCESS = new HitMeter("question.process");
     public final HitMeter LINK_TO_TASK = new HitMeter("task.link_to");
-    
-    //public final ThreadBlockTimeTracker CYCLE_BLOCK_TIME;
-    private long conceptNum;
-    private double conceptPriorityMean;
-    //private Object conceptPrioritySum;
-    private long conceptBeliefsSum;
-    private long conceptQuestionsSum;               
-    
+
+
     public final HitMeter BELIEF_REVISION = new HitMeter("reason.belief.revised");
     public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS = new HitMeter("reason.ded2ndunifterms");
     public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION = new HitMeter("reason.ded2ndunif");
     public final HitMeter DED_CONJUNCTION_BY_QUESTION = new HitMeter("reason.dedconjbyquestion");
     public final HitMeter ANALOGY = new HitMeter("reason.analogy");
     public final ValueMeter IO_INPUTS_BUFFERED = new ValueMeter("io.inputs.buffered");
-    
+
     public final HitMeter SHORT_TERM_MEMORY_UPDATE = new HitMeter("exec.short_term_memory.update");
     public final ValueMeter DERIVATION_LATENCY = new ValueMeter("reason.derivation.latency");
     public final ValueMeter SOLUTION_BEST = new ValueMeter("task.solution.best");
-    
+
     public final ValueMeter PLAN_GRAPH_IN_DELAY_MAGNITUDE = new ValueMeter("plan.graph.add#delay_magnitude");
     public final ValueMeter PLAN_GRAPH_IN_OPERATION = new ValueMeter("plan.graph.add#operation");
     public final ValueMeter PLAN_GRAPH_IN_OTHER = new ValueMeter("plan.graph.add#other");
@@ -68,9 +64,66 @@ public class LogicMeter {
     public final ValueMeter PLAN_TASK_PLANNED = new ValueMeter("plan.task.planned");
     public final ValueMeter PLAN_TASK_EXECUTABLE = new ValueMeter("plan.task.executable");
 
-    private double conceptVariance;
-    private double[] conceptHistogram;
-   
+    //private double conceptVariance;
+    //private double[] conceptHistogram;
+
+    public void commit(Memory m) {
+        double prioritySum = 0;
+        double prioritySumSq = 0;
+        int count = 0;
+        int totalQuestions = 0;
+        int totalBeliefs = 0;
+        int histogramBins = 4;
+        double[] histogram = new double[histogramBins];
+
+        for (final Concept c : m.concepts) {
+            double p = c.getPriority();
+            totalQuestions += c.questions.size();
+            totalBeliefs += c.beliefs.size();
+            //TODO totalGoals...
+            //TODO totalQuests...
+
+            prioritySum += p;
+            prioritySumSq += p * p;
+
+            if (p > 0.75) {
+                histogram[0]++;
+            } else if (p > 0.5) {
+                histogram[1]++;
+            } else if (p > 0.25) {
+                histogram[2]++;
+            } else {
+                histogram[3]++;
+            }
+
+            count++;
+        }
+        double mean, variance;
+        if (count > 0) {
+            mean = prioritySum / count;
+
+            //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+            variance = (prioritySumSq - ((prioritySum * prioritySum) / count)) / (count - 1);
+            for (int i = 0; i < histogram.length; i++) {
+                histogram[i] /= count;
+            }
+        } else {
+            mean = variance = 0;
+        }
+
+        CONCEPT_COUNT.set(count);
+        CONCEPT_BELIEF_COUNT.set(totalBeliefs);
+        CONCEPT_QUESTION_COUNT.set(totalQuestions);
+
+        //TODO
+        /*
+        setConceptPriorityMean(mean);
+        setConceptPriorityVariance(variance);
+        setConceptPriorityHistogram(histogram);
+        */
+
+    }
+
 //    @Override
 //    public void commit(Memory memory) {
 //        super.commit(memory);
@@ -187,34 +240,23 @@ public class LogicMeter {
 //        put(s.getName(), s.get().mean());
 //    }
 
-    public void setConceptBeliefsSum(long conceptBeliefsSum) {
-        this.conceptBeliefsSum = conceptBeliefsSum;
-    }
 
-    public void setConceptNum(long conceptNum) {
-        this.conceptNum = conceptNum;
-    }
-
-    public void setConceptPriorityMean(double conceptPriorityMean) {
-        this.conceptPriorityMean = conceptPriorityMean;
-    }
-
-//    public void setConceptPrioritySum(double conceptPrioritySum) {
-//        this.conceptPrioritySum = conceptPrioritySum;
+//    public void setConceptPriorityMean(double conceptPriorityMean) {
+//        this.conceptPriorityMean = conceptPriorityMean;
+//    }
+//
+////    public void setConceptPrioritySum(double conceptPrioritySum) {
+////        this.conceptPrioritySum = conceptPrioritySum;
+////    }
+//
+//
+//    public void setConceptPriorityVariance(double variance) {
+//        this.conceptVariance = variance;
+//    }
+//
+//    public void setConceptPriorityHistogram(double[] histogram) {
+//        this.conceptHistogram = histogram;
 //    }
 
-    public void setConceptQuestionsSum(long conceptQuestionsSum) {
-        this.conceptQuestionsSum = conceptQuestionsSum;
-    }
 
-    public void setConceptPriorityVariance(double variance) {
-        this.conceptVariance = variance;
-    }
-
-    public void setConceptPriorityHistogram(double[] histogram) {
-        this.conceptHistogram = histogram;
-    }
-
-    
-    
 }

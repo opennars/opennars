@@ -211,7 +211,8 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     @Override
     public void onCycleEnd(long time) {
-        metrics.update((double)time);    
+        nar.memory.logic.commit(nar.memory);
+        metrics.update((double)time);
     }
 
     @Override

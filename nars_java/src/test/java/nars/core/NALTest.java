@@ -67,6 +67,7 @@ public class NALTest  {
     
     public NAR newNAR() {
         return new NAR(new Default());
+        //return new NAR(new Default().setInternalExperience(null));
         //return NAR.build(Default.fromJSON("nal/build/pei1.fast.nar"));        
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();
@@ -105,8 +106,8 @@ public class NALTest  {
 
         if (result.getFailures()!=null) {
             for (Failure f : result.getFailures()) {
-                System.err.println(f);
-                System.err.println("  " + f.getException());
+                System.out.println(f);
+                System.out.println("  " + f.getException());
                 f.getException().printStackTrace();
 
                 String test = f.getMessage().substring(f.getMessage().indexOf("test/nal") + 8, f.getMessage().indexOf(".nal"));
@@ -225,8 +226,8 @@ public class NALTest  {
                 System.out.println(input);
             System.out.flush();
 
-            test.printResults(System.err);
-            System.err.flush();
+            test.printResults(System.out);
+            System.out.flush();
 
             System.out.println("\n\n");
 

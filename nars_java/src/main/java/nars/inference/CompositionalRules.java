@@ -252,7 +252,7 @@ public final class CompositionalRules {
             return;
         }
         Term content = Statement.make(statement, subject, predicate, order);
-        if ((content == null) || statement == null || content.equals(statement) || content.equals(nal.getCurrentBelief().term)) {
+        if ((content == null) || statement == null || content.equals(statement.getTerm()) || content.equals(nal.getCurrentBelief().term)) {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);

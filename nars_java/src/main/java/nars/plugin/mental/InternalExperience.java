@@ -245,5 +245,9 @@ public class InternalExperience extends AbstractPlugin {
                 }
             }
         }
-    }    
+    }
+
+    public static enum InternalExperienceMode {
+        None, Minimal, Full
+    }
 }

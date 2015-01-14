@@ -1,6 +1,7 @@
 package nars.io;
 
 import nars.core.EventEmitter;
+import nars.core.Events;
 import nars.core.Events.Answer;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -28,7 +29,7 @@ public abstract class Output extends AbstractObserver {
     /** operation execution */
     public static interface EXE  { }
 
-    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Say.class, Answer.class };
+    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Say.class, Answer.class, Events.PluginsChange.class };
             
     public Output(EventEmitter source, boolean active) {
         super(source, active, DefaultOutputEvents );
