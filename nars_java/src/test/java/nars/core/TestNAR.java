@@ -34,8 +34,9 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.InvalidInputException {
+        float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
-        TaskCondition tc = new TaskCondition(this, Output.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
+        TaskCondition tc = new TaskCondition(this, Output.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         musts.add(tc);
 
         ExplainableTask et = new ExplainableTask(tc);
@@ -53,9 +54,8 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustOutput(long withinCycles, String term, char punc, float freq, float conf) throws Narsese.InvalidInputException {
-        float h = (freq!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
         long now = time();
-        return mustOutput(now, now + withinCycles, term, punc, freq-h, freq+h, conf-h, conf+h);
+        return mustOutput(now, now + withinCycles, term, punc, freq, freq, conf, conf);
     }
 
     public ExplainableTask mustBelieve(int withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.InvalidInputException {

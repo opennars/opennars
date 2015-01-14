@@ -221,6 +221,7 @@ public class NAR implements Runnable, TaskSource {
     }
     
     public Task ask(String termString) throws InvalidInputException {
+        //TODO remove '?' if it is attached at end
         return ask(termString, null);
     }
     

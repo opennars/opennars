@@ -104,18 +104,19 @@ public class TestNAL1Only extends AbstractNALTest {
         n.mustOutput(46, "<?1 --> bird>?").en("What is a type of bird?");
         n.mustOutput(46, "<bird --> ?1>?").en("What is the type of bird?");
     }
-/*
 
-*** multistep
-<a --> b>. %1.00;0.90%
-<b --> c>. %1.00;0.90%
-<c --> d>. %1.00;0.90%
-<a --> d>?
+    @Test
+    public void multistep() throws Narsese.InvalidInputException {
+        n.believe("<a --> b>", 1.0f, 0.9f);
+        n.believe("<b --> c>", 1.0f, 0.9f);
+        n.believe("<c --> d>", 1.0f, 0.9f);
+        n.ask("<a --> d>");
 
-500
+        //originally checked for 0.25% exact confidence
+        n.mustBelieve(43, "<a --> d>", 1f, 1f, 0.27f, 0.29f);
 
-''outputMustContain('<a --> d>. %1.00;0.27%')
-'0.73% is highest confidence this can reach
-     */
+        //but we know also 73% is highest it can reach
+        n.mustBelieve(43, "<a --> d>", 1f, 1f, 0.73f, 0.75f);
+    }
 
 }
