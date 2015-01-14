@@ -23,7 +23,8 @@ public class LogicMeter {
     public final ValueMeter CONCEPT_COUNT = new ValueMeter("concept.count");
     public final ValueMeter CONCEPT_BELIEF_COUNT = new ValueMeter("concept.belief.count");
     public final ValueMeter CONCEPT_QUESTION_COUNT = new ValueMeter("concept.question.count");
-    public final HitMeter REASON = new HitMeter("concept.termlink.fired");
+    public final HitMeter TERM_LINK_SELECT = new HitMeter("concept.termlink.select");
+    public final HitMeter TERM_LINK_TRANSFORM = new HitMeter("concept.termlink.transform");
 
     /**
      * triggered for each StructuralRules.contraposition().
@@ -153,10 +154,10 @@ public class LogicMeter {
 //            put("reason.fire.tasklink.pri.mean", TASKLINK_FIRE.mean());
 //            put("reason.fire.tasklinks", TASKLINK_FIRE.getHits());
 //            
-//            putHits(REASON);
+//            putHits(TERM_LINK_SELECT);
 //            
 //            //only makes commit as a mean, since it occurs multiple times during a cycle
-//            put("reason.tasktermlink.pri.mean", REASON.mean());                        
+//            put("reason.tasktermlink.pri.mean", TERM_LINK_SELECT.mean());
 //        }
 //        {
 //            putValue(IO_INPUTS_BUFFERED);

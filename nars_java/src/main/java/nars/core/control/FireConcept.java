@@ -30,32 +30,34 @@ abstract public class FireConcept extends NAL {
     private int numTaskLinks;
     private int termLinkCount;
 
+
     abstract public void onFinished();
-
-
 
     @Override
     public void run() {
+        fire();
+        onFinished();
+    }
+
+
+    protected void fire() {
 
         synchronized (getCurrentConcept()) {
-            if (currentTaskLink !=null) {
-                //fire a pre-specified tasklink
+            if (currentTaskLink != null) {
                 fireTaskLink(termLinkCount);
                 returnTaskLink(currentTaskLink);
-            }
-            else {
-                //fire N tasklinks
+            } else {
                 for (int i = 0; i < numTaskLinks; i++) {
 
-                    if (currentConcept.taskLinks.size() == 0) 
+                    if (currentConcept.taskLinks.size() == 0)
                         return;
 
-                    currentTaskLink = currentConcept.taskLinks.takeNext();                    
+                    currentTaskLink = currentConcept.taskLinks.takeNext();
                     if (currentTaskLink == null)
                         return;
 
                     if (currentTaskLink.budget.aboveThreshold()) {
-                        fireTaskLink(termLinkCount);                    
+                        fireTaskLink(termLinkCount);
                     }
 
                     returnTaskLink(currentTaskLink);
@@ -63,9 +65,7 @@ abstract public class FireConcept extends NAL {
             }
         }
 
-        onFinished();
     }
-
     
     protected void returnTaskLink(TaskLink t) {
         currentConcept.taskLinks.putBack(t, 
@@ -84,7 +84,10 @@ abstract public class FireConcept extends NAL {
             setCurrentBelief(null);
             
             RuleTables.transformTask(currentTaskLink, this); // to turn this into structural inference as below?
-            
+
+            emit(Events.TermLinkTransform.class, currentTaskLink, currentConcept, this);
+            memory.logic.TERM_LINK_TRANSFORM.hit();
+
         } else {            
             while (termLinks > 0) {
                 final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time());
@@ -98,7 +101,7 @@ abstract public class FireConcept extends NAL {
                 reason(currentTaskLink, termLink);
 
                 emit(Events.TermLinkSelect.class, termLink, currentConcept, this);
-                memory.logic.REASON.hit();
+                memory.logic.TERM_LINK_SELECT.hit();
 
                 currentConcept.returnTermLink(termLink);
 

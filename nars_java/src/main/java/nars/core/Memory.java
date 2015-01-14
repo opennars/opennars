@@ -568,10 +568,12 @@ public class Memory implements Serializable {
         /**
          * adds input tasks to newTasks
          */
-        for (int i = 0; (i < inputTaskPriority) && (isProcessingInput()); i++) {
-            AbstractTask t = inputs.nextTask();
-            if (t != null) {
-                inputTask(t);
+        if (isProcessingInput()) {
+            for (int i = 0; i < inputTaskPriority; i++) {
+                AbstractTask t = inputs.nextTask();
+                if (t != null) {
+                    inputTask(t);
+                }
             }
         }
         

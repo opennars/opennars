@@ -160,10 +160,14 @@ public class DefaultCore implements Core {
             Core.run(run);
             run.clear();
 
-            //1 concept fired
-            processConcepts(loop.conceptsPriority(), run);
-            Core.run(run); //fire concept
-            run.clear();
+            if (memory.getNewTasks().isEmpty()) {
+
+                //1 concept fired
+                processConcepts(loop.conceptsPriority(), run);
+                Core.run(run); //fire concept
+                run.clear();
+
+            }
         }
 
 

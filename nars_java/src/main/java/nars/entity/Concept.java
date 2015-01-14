@@ -292,22 +292,30 @@ public class Concept extends Item<Term> implements Termable {
         }
         return desire.getExpectation() > memory.param.decisionThreshold.get();
     }
-    
+
     /**
      * Entry point for all potentially executable tasks.
      * Returns true if the Task has a Term which can be executed
      */
     public boolean executeDecision(final Task t) {
 
-        if ((term instanceof Operation) && (t.sentence.getOccurenceTime() == Stamp.ETERNAL || t.sentence.getOccurenceTime() >= memory.time() - memory.param.duration.get()) && isDesired()) {
+        if (isDesired()) {
 
-            Operation op = (Operation) term;
-            Operator oper = op.getOperator();
+            Term content = term;
 
-            op.setTask(t);
-            return oper.call(op, memory);
+            if(content instanceof Operation) {
+
+                Operation op=(Operation)content;
+                Operator oper = op.getOperator();
+
+                op.setTask(t);
+                if(!oper.call(op, memory)) {
+                    return false;
+                }
+
+                return true;
+            }
         }
-
         return false;
     }
     
@@ -351,11 +359,14 @@ public class Concept extends Item<Term> implements Termable {
             if (task.aboveThreshold()) {
 
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
-                
-                
+
+
+
+                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
                     if(!executeDecision(task)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
+                }
                 
             }
         }
@@ -768,9 +779,9 @@ public class Concept extends Item<Term> implements Termable {
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
         
         synchronized (termLinks) {
+
             int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
             for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
-
                 final TermLink termLink = termLinks.takeNext();
                 if (termLink==null)
                     break;
