@@ -11,11 +11,10 @@ import nars.util.bag.Bag;
  * For runtime parameters, @see Param
  */
 abstract public class Build extends Parameters  {
-     
-    public String type = "abstract";
-       
+
     public final Param param = new Param();
-    
+    protected int level;
+
     abstract public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag();
     abstract public Core newAttention();
 
@@ -41,7 +40,7 @@ abstract public class Build extends Parameters  {
 //    }
 
     protected Memory newMemory(Param p) {
-        return new Memory(p, newAttention(), newNovelTaskBag());
+        return new Memory(level, p, newAttention(), newNovelTaskBag());
     }
 
     /** called after NAR created, for initializing it */

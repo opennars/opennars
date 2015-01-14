@@ -85,7 +85,7 @@ public class JGraphXGraphPanel extends JPanel {
         mxCompactTreeLayout layout = 
                 new mxCompactTreeLayout(jgxAdapter);
         
-        layout.setLevelDistance(40);
+        layout.levelDistance(40);
         layout.setNodeDistance(50);
         layout.setEdgeRouting(true);
         layout.setHorizontal(false);

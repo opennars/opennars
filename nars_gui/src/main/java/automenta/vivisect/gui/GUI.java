@@ -200,7 +200,7 @@ public class GUI implements GConstants, PConstants {
 
 
 	/**
-	 * Set the transparency of all controls. If the alpha level for a 
+	 * Set the transparency of all controls. If the alpha level for a
  control falls below GUI.ALPHA_BLOCK then it will no longer 
  respond to mouse and keyboard events.
 	 * 
@@ -217,7 +217,7 @@ public class GUI implements GConstants, PConstants {
 
 	/**
 	 * Set the transparency level for all controls drawn by the given
-	 * PApplet. If the alpha level for a control falls below 
+	 * PApplet. If the alpha level for a control falls below
  GUI.ALPHA_BLOCK then it will no longer respond to mouse
  and keyboard events.
 	 * 
@@ -233,7 +233,7 @@ public class GUI implements GConstants, PConstants {
 
 	/**
 	 * Set the transparency level for all controls drawn by the given
-	 * GWindow. If the alpha level for a control falls below 
+	 * GWindow. If the alpha level for a control falls below
  GUI.ALPHA_BLOCK then it will no longer respond to mouse
  and keyboard events.
 	 * 

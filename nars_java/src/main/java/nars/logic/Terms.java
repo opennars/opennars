@@ -1,6 +1,7 @@
 package nars.logic;
 
 import nars.core.Memory;
+import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
@@ -513,6 +514,28 @@ public class Terms {
                 return true;
         }
         return false;
+    }
+
+    public static boolean levelValid(Term t, int nal) {
+        Symbols.NativeOperator o = t.operator();
+        int minLevel = o.level;
+        if (minLevel > 0) {
+            if (nal < minLevel)
+                return false;
+        }
+        if (t instanceof CompoundTerm) {
+            for (Term sub : ((CompoundTerm)t).term) {
+                if (!levelValid(sub, nal))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean levelValid(Sentence sentence, int nal) {
+        Term t = sentence.getTerm();
+        if (!sentence.isEternal() && nal < 7) return false;
+        return levelValid(t, nal);
     }
 
 

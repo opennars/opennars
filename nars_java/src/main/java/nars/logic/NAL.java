@@ -73,7 +73,7 @@ public abstract class NAL implements Runnable {
     }
 
     public NAL(Memory mem) {
-        this(mem, 8);
+        this(mem, Parameters.DEFAULT_NAL);
     }
     
     public void emit(final Class c, final Object... o) {

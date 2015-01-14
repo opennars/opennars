@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -194,5 +195,6 @@ public class Param implements Serializable {
         
         json = b.create();            
     }
-    
+
+    public static final AtomicBoolean exceptionOnExceedingNALLevel = new AtomicBoolean(false);
 }

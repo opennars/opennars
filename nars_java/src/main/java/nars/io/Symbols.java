@@ -93,53 +93,53 @@ public class Symbols {
     public enum NativeOperator {
         
         /* CompountTerm operators, length = 1 */
-        INTERSECTION_EXT("&", false, true),
-        INTERSECTION_INT("|", false, true),
-        DIFFERENCE_EXT("-", false, true),
-        DIFFERENCE_INT("~", false, true),
-        PRODUCT("*", false, true),
-        IMAGE_EXT("/", false, true),
-        IMAGE_INT("\\", false, true),
+        INTERSECTION_EXT("&", 3, false, true),
+        INTERSECTION_INT("|", 3, false, true),
+        DIFFERENCE_EXT("-", 3, false, true),
+        DIFFERENCE_INT("~", 3, false, true),
+        PRODUCT("*", 4, false, true),
+        IMAGE_EXT("/", 4, false, true),
+        IMAGE_INT("\\", 4, false, true),
 
         /* CompoundStatement operators, length = 2 */        
-        NEGATION("--", false, true),
-        DISJUNCTION("||", false, true),
-        CONJUNCTION("&&", false, true),    
-        SEQUENCE("&/", false, true),    
-        PARALLEL("&|", false, true),        
+        NEGATION("--", 5, false, true),
+        DISJUNCTION("||", 5, false, true),
+        CONJUNCTION("&&", 5, false, true),
+        SEQUENCE("&/", 7, false, true),
+        PARALLEL("&|", 7, false, true),
         
         
         /* CompountTerm delimitors, must use 4 different pairs */
-        SET_INT_OPENER("[", false, true),
-        SET_INT_CLOSER("]", false, false),
-        SET_EXT_OPENER("{", false, true),
-        SET_EXT_CLOSER("}", false, false),    
+        SET_INT_OPENER("[", 3, false, true),
+        SET_INT_CLOSER("]", 3, false, false),
+        SET_EXT_OPENER("{", 3, false, true),
+        SET_EXT_CLOSER("}", 3, false, false),
         
         /* Syntactical, so is neither relation or isNative */
-        COMPOUND_TERM_OPENER("(", false, false),
-        COMPOUND_TERM_CLOSER(")", false, false),
-        STATEMENT_OPENER("<", false, false),
-        STATEMENT_CLOSER(">", false, false),
+        COMPOUND_TERM_OPENER("(", 0, false, false),
+        COMPOUND_TERM_CLOSER(")", 0, false, false),
+        STATEMENT_OPENER("<", 0, false, false),
+        STATEMENT_CLOSER(">", 0, false, false),
         
         
         /* Relations */
-        INHERITANCE("-->", true),
-        SIMILARITY("<->", true),
-        INSTANCE("{--", true),
-        PROPERTY("--]", true),
-        INSTANCE_PROPERTY("{-]", true),        
-        IMPLICATION("==>", true),
+        INHERITANCE("-->", 1, true),
+        SIMILARITY("<->", 2, true),
+        INSTANCE("{--", 2, true),
+        PROPERTY("--]", 2, true),
+        INSTANCE_PROPERTY("{-]", 2, true),
+        IMPLICATION("==>", 5, true),
         
         /* Temporal Relations */
-        IMPLICATION_AFTER("=/>", true),
-        IMPLICATION_WHEN("=|>", true),
-        IMPLICATION_BEFORE("=\\>", true),
-        EQUIVALENCE("<=>", true),
-        EQUIVALENCE_AFTER("</>", true),
-        EQUIVALENCE_WHEN("<|>", true),
+        IMPLICATION_AFTER("=/>", 7, true),
+        IMPLICATION_WHEN("=|>", 7, true),
+        IMPLICATION_BEFORE("=\\>", 7, true),
+        EQUIVALENCE("<=>", 5, true),
+        EQUIVALENCE_AFTER("</>", 7, true),
+        EQUIVALENCE_WHEN("<|>", 7, true),
 
         /** an atomic term; this value is set if not a compound term */
-        ATOM(".", false);
+        ATOM(".", 0, false);
         
         //-----------------------------------------------------
         
@@ -162,16 +162,20 @@ public class Symbols {
         /** closer? */
         public final boolean closer;
 
-        private NativeOperator(String string) {
-            this(string, false);
+        /** minimum NAL level required to use this operator, or 0 for N/A */
+        public final int level;
+
+        private NativeOperator(String string, int minLevel) {
+            this(string, minLevel, false);
         }
         
-        private NativeOperator(String string, boolean relation) {
-            this(string, relation, !relation);
+        private NativeOperator(String string, int minLevel, boolean relation) {
+            this(string, minLevel, relation, !relation);
         }
 
-        private NativeOperator(String string, boolean relation, boolean innate) {            
+        private NativeOperator(String string, int minLevel, boolean relation, boolean innate) {
             this.symbol = string;
+            this.level = minLevel;
             this.relation = relation;
             this.isNative = innate;
             this.ch = string.length() == 1 ? string.charAt(0) : 0;

@@ -375,7 +375,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         
         if (levelEmpty[currentLevel]) {
             if (Parameters.THREADS == 1) {
-                throw new RuntimeException("Empty level selected for takeNext");
+                throw new RuntimeException("Empty setLevel selected for takeNext");
             }
             else {
                 return null;
@@ -510,7 +510,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
         else {
             if (Parameters.THREADS == 1)
-                throw new RuntimeException("Attempt to remove item from empty level: " + level);
+                throw new RuntimeException("Attempt to remove item from empty setLevel: " + level);
         }
         return selected;
     }

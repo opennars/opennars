@@ -64,7 +64,7 @@ public class PluginPanel extends VerticalPanel {
                     return o1.getSimpleName().compareTo(o2.getSimpleName());
                 }                
             });
-            plugins.addAll(PackageUtility.getClasses("nars.plugin", false));
+            plugins.addAll(PackageUtility.getClasses("nars.operator", false));
             for (Class c : plugins) {
                 if (!Plugin.class.isAssignableFrom(c))
                     continue;

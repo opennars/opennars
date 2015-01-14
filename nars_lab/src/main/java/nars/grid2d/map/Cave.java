@@ -20,7 +20,7 @@ public class Cave {
 //		m.set("WanderingRate",500);
 //		m.set("Description","Sinister Cave");
 //		m.set("EnterMessage","Your hear maniacal laughter...");
-//		m.setLevel(level);
+//		m.level(level);
 //		
 //		m.fillArea(0,0,w-1,h-1,m.wall());
 //		
@@ -56,7 +56,7 @@ public class Cave {
 //	
 //		m.setTheme("caves");
 //		
-//		m.setLevel (2*l+4);
+//		m.level (2*l+4);
 //
 //		switch (t) {
 //			// top entrance of caves

@@ -1,6 +1,6 @@
 package nars.io;
 
-/** A low-level handler for parsing text.  
+/** A low-level handler for parsing text.
  *  Named reaction because it is analogous to an automatic reflex or reaction. */
 public interface TextReaction {
     

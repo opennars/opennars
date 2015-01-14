@@ -27,7 +27,7 @@ import java.util.ArrayList;
  */
 public class EditorPanel extends JPanel {
     
-    final String levelPath = "./nars_lab/nars/grid2d/level/";
+    final String levelPath = "./nars_lab/nars/grid2d/setLevel/";
 
     abstract public static class EditorMode extends DefaultMutableTreeNode {
 
@@ -299,7 +299,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 //todo save to new file with file name dummy_i
-                String filename= JOptionPane.showInputDialog("What is the name of the level?: ")+".lvl";
+                String filename= JOptionPane.showInputDialog("What is the name of the setLevel?: ")+".lvl";
                 filename = levelPath + filename;
                 StringBuilder wr=new StringBuilder();
                 for(int i=0;i<s.cells.h;i++) { //its not python, we have to export it to file ourselves:

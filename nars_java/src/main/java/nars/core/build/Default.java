@@ -63,15 +63,18 @@ public class Default extends Build implements ConceptBuilder {
     
     transient TemporalParticlePlanner pluginPlanner = null;
 
-    
+
+    public Build level(int nalLevel) {
+        this.level = nalLevel;
+        return this;
+    }
+
     public Default() {
         super();
-    
-        this.type = "level";
+
+        this.level = Parameters.DEFAULT_NAL;
         
-       // temporalPlanner(8, 64, 16);
-        
-        setConceptBagSize(1000);        
+        setConceptBagSize(1000);
         setSubconceptBagSize(0);
         setConceptBagLevels(100);
         
@@ -122,7 +125,9 @@ public class Default extends Build implements ConceptBuilder {
 
     @Override
     public NAR init(NAR n) {
-        
+
+        n.memory.setLevel(level);
+
         for (Operator o : DefaultOperators.get())
             n.memory.addOperator(o);
         for (Operator o : ExampleOperators.get())
@@ -271,8 +276,9 @@ public class Default extends Build implements ConceptBuilder {
         return this;
     }
 
-    
-    
+
+
+
     public static class CommandLineNARBuilder extends Default {
         
         List<String> filesToLoad = new ArrayList();

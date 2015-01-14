@@ -85,7 +85,17 @@ public class Memory implements Serializable {
     private long timeRealNow;
     private long timePreviousCycle;
     private long timeSimulation;
-    
+    private int level;
+
+    public void setLevel(int nalLevel) {
+        if ((nalLevel < 1) || (nalLevel > 8))
+            throw new RuntimeException("NAL level must be between 1 and 8 (inclusive)");
+        this.level = nalLevel;
+    }
+
+    public int nal() {
+        return level;
+    }
 
 
     public static enum Forgetting {
@@ -177,8 +187,9 @@ public class Memory implements Serializable {
      * @param initialOperators - initial set of available operators; more may be
      * added during runtime
      */
-    public Memory(Param param, Core concepts, Bag<Task<Term>, Sentence<Term>> novelTasks) {
+    public Memory(int nalLevel, Param param, Core concepts, Bag<Task<Term>, Sentence<Term>> novelTasks) {
 
+        this.level = nalLevel;
 
         this.param = param;
 
@@ -447,9 +458,19 @@ public class Memory implements Serializable {
     /**
      * add new task that waits to be processed in the next cycleMemory
      */
-    public void addNewTask(final Task t, final String reason) {
+    public boolean addNewTask(final Task t, final String reason) {
         /*if (!Term.valid(t.getContent()))
          throw new RuntimeException("Invalid term: " + t);*/
+
+        if (!Terms.levelValid(t.sentence, nal())) {
+            if (param.exceptionOnExceedingNALLevel.get())
+                throw new RuntimeException("Exceeds NAL level " + nal() + ": " + t + " (reason: " + reason + ")");
+            else {
+                removeTask(t, "NAL level too low");
+                return false;
+            }
+
+        }
 
         newTasks.add(t);
 
@@ -458,6 +479,8 @@ public class Memory implements Serializable {
         emit(Events.TaskAdd.class, t, reason);
 
         output(t);
+
+        return true;
     }
 
     /* There are several types of new tasks, all added into the
@@ -487,9 +510,8 @@ public class Memory implements Serializable {
 
                 temporalRuleOutputToGraph(task.sentence, task);
 
-                addNewTask(task, "Perceived");
-
-                return 1;
+                if (addNewTask(task, "Perceived"))
+                    return 1;
             } else {
                 removeTask(task, "Neglected");
             }

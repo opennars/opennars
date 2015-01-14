@@ -15,7 +15,6 @@ public class Neuromorphic extends Curve {
 
     public Neuromorphic(int numAnts) {
         super();        
-        this.type = "neuromorphic";
         this.numAnts = numAnts;
     }
 
