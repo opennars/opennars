@@ -73,12 +73,17 @@ public class TestNAL1Only extends AbstractNALTest {
                 .en("I guess animal is a type of robin.");
     }
 
+    long conversionTime() {
+        return 25;
+    }
+
+
     @Test
     public void conversion() throws Narsese.InvalidInputException {
         n.believe("<bird --> swimmer>");
         n.ask("<swimmer --> bird>")
                 .en("Is swimmer a type of bird?");
-        n.mustOutput(25, "<swimmer --> bird>. %1.00;0.47%");
+        n.mustOutput(conversionTime() , "<swimmer --> bird>. %1.00;0.47%");
     }
 
     @Test
@@ -97,12 +102,20 @@ public class TestNAL1Only extends AbstractNALTest {
         n.mustOutput(25, "<bird --> swimmer>. %1.00;0.80%");
     }
 
+    long backwardInferenceTime() {
+        return 46;
+    }
+
     @Test
     public void backwardInference() throws Narsese.InvalidInputException {
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
         n.ask("<?1 --> swimmer>");
-        n.mustOutput(46, "<?1 --> bird>?").en("What is a type of bird?");
-        n.mustOutput(46, "<bird --> ?1>?").en("What is the type of bird?");
+        n.mustOutput(backwardInferenceTime(), "<?1 --> bird>?").en("What is a type of bird?");
+        n.mustOutput(backwardInferenceTime(), "<bird --> ?1>?").en("What is the type of bird?");
+    }
+
+    long multistepTime() {
+        return 43;
     }
 
     @Test
@@ -113,10 +126,10 @@ public class TestNAL1Only extends AbstractNALTest {
         n.ask("<a --> d>");
 
         //originally checked for 0.25% exact confidence
-        n.mustBelieve(43, "<a --> d>", 1f, 1f, 0.27f, 0.29f);
+        n.mustBelieve(multistepTime(), "<a --> d>", 1f, 1f, 0.27f, 0.29f);
 
         //but we know also 73% is highest it can reach
-        n.mustBelieve(43, "<a --> d>", 1f, 1f, 0.73f, 0.75f);
+        n.mustBelieve(multistepTime(), "<a --> d>", 1f, 1f, 0.73f, 0.75f);
     }
 
 }

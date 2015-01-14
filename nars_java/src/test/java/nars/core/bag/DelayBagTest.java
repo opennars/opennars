@@ -4,6 +4,7 @@
  */
 package nars.core.bag;
 
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Neuromorphic;
 import nars.core.control.experimental.AntCore;
@@ -25,6 +26,7 @@ public class DelayBagTest {
         
     @Test 
     public void testIO() throws Narsese.InvalidInputException {
+
         test(new NAR(new Neuromorphic(1)));
         test(new NAR(new Neuromorphic(2)));
         test(new NAR(new Neuromorphic(4)));
@@ -32,7 +34,9 @@ public class DelayBagTest {
     
     public void test(NAR n) throws Narsese.InvalidInputException {
 
-        assertTrue(n.memory.concepts!=null);
+        Memory.resetStatic(1);
+
+        assertTrue(n.memory.concepts != null);
         
         n.addInput("<a --> b>.");
         

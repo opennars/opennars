@@ -71,7 +71,11 @@ public class JSONOutput extends TextOutput {
     }
 
     @Override
-    public String process(final Class c, Object o) {
+    public String process(final Class c, Object[] os) {
+        Object o;
+        if (os.length == 1) o = os[0];
+        else o = os;
+
         JsonElement t = gson.toJsonTree(o);
         t.getAsJsonObject().addProperty("_", o.getClass().getSimpleName());
         t.getAsJsonObject().addProperty("#", c.getSimpleName());

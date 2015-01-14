@@ -6,6 +6,8 @@ import org.junit.Before;
 
 abstract public class AbstractNALTest {
 
+    public static final long randomSeed = 1;
+
     public TestNAR n;
 
     abstract public Build build();
@@ -17,6 +19,8 @@ abstract public class AbstractNALTest {
 
     @After
     public void test() {
+        Memory.resetStatic(randomSeed);
+        Parameters.DEBUG = true;
         n.run();
     }
 

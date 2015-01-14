@@ -356,6 +356,12 @@ public class Stamp implements Cloneable {
         
         return eternalOccurrence;
     }
+
+    /** sets the creationTime to a non-value so that it will be set at a later point, ex: after traversing the input queue */
+    public void setNotCreatedYet() {
+        creationTime = -1;
+    }
+
     /** sets the creation time; used to set input tasks with the actual time they enter Memory */
     public void setCreationTime(long time, int duration) {
         creationTime = time;

@@ -196,5 +196,5 @@ public class Param implements Serializable {
         json = b.create();            
     }
 
-    public static final AtomicBoolean exceptionOnExceedingNALLevel = new AtomicBoolean(false);
+    public final AtomicBoolean exceptionOnExceedingNALLevel = new AtomicBoolean(false);
 }

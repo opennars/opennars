@@ -135,7 +135,6 @@ public class Memory implements Serializable {
         randomNumber.setSeed(randomSeed);
     }
 
-    public final ArrayDeque<Task> stm = new ArrayDeque();
 
     private final List<Runnable> otherTasks = new ArrayList();
 
@@ -879,51 +878,5 @@ public class Memory implements Serializable {
         return timing;
     }
 
-
-
-    public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
-
-        if (newEvent.budget == null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
-            return false;
-        }
-
-        //new one happened and duration is already over, so add as negative task
-        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
-
-        if (newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
-            return false;
-        }
-
-        synchronized (stm) {
-            for (Task stmLast : stm) {
-
-                if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
-                    return false;
-                }
-
-                nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, time());
-                nal.setCurrentTask(newEvent);
-
-                Sentence previousBelief = stmLast.sentence;
-                nal.setCurrentBelief(previousBelief);
-
-                Sentence currentBelief = newEvent.sentence;
-
-                //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-                TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
-            }
-
-            ////for this heuristic, only use input events & task effects of operations
-            ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-            //stmLast = newEvent;
-            ////}
-            while (stm.size() + 1 > Parameters.STM_SIZE) {
-                stm.removeFirst();
-            }
-            stm.addLast(newEvent);
-        }
-
-        return true;
-    }
 
 }

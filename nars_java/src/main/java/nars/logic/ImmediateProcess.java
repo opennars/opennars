@@ -41,12 +41,7 @@ public class ImmediateProcess extends NAL {
                 memory.event.emit(Events.ConceptDirectProcessedTask.class, currentTask, getCurrentConcept());
             }
         }
-        if (!currentTask.sentence.isEternal()) {
-            boolean stmUpdated = memory.inductionOnSucceedingEvents(currentTask, this);
-            if (stmUpdated) {
-                memory.logic.SHORT_TERM_MEMORY_UPDATE.hit();
-            }
-        }
+
         memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         emit(Events.TaskImmediateProcess.class, task, this);
     }

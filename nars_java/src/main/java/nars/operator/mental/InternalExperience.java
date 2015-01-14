@@ -1,21 +1,22 @@
 package nars.operator.mental;
 
 import nars.core.*;
+import nars.io.Symbols;
+import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.entity.*;
-import nars.logic.BudgetFunctions;
-import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
-import nars.io.Symbols;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * To rememberAction an internal action as an operation
@@ -41,7 +42,8 @@ public class InternalExperience extends AbstractPlugin {
     
     //dont use internal experience for want and believe if this setting is true
     public static boolean AllowWantBelieve=true;
-    
+    private NAR nar;
+
     public boolean isAllowWantBelieve() {
         return AllowWantBelieve;
     }
@@ -61,16 +63,17 @@ public class InternalExperience extends AbstractPlugin {
     @Override
     public Class[] getEvents() {
         if (isFull()) {
-            return new Class[] { Events.ConceptDirectProcessedTask.class, Events.BeliefReason.class };
+            return new Class[] { Events.CycleEnd.class, Events.ConceptDirectProcessedTask.class, Events.BeliefReason.class };
         }
         else {
-            return new Class[] { Events.ConceptDirectProcessedTask.class };
+            return new Class[] { Events.CycleEnd.class, Events.ConceptDirectProcessedTask.class };
         }
     }
 
     @Override
     public void onEnabled(NAR n) {
 
+        this.nar = n;
         this.memory = n.memory;
     }
 
@@ -119,11 +122,19 @@ public class InternalExperience extends AbstractPlugin {
         return operation;
     }
 
+    final List<Task> rememberedQueue = new ArrayList();
 
     @Override
     public void event(Class event, Object[] a) {
-        
-        if (event==Events.ConceptDirectProcessedTask.class) {
+
+        if (event == Events.CycleEnd.class) {
+            for (Task t : rememberedQueue) {
+                memory.addNewTask(t, "Remembered Action (Internal Experience)");
+            }
+            rememberedQueue.clear();
+        }
+
+        else if (event==Events.ConceptDirectProcessedTask.class) {
 
 
             Task task = (Task)a[0];                
@@ -153,10 +164,11 @@ public class InternalExperience extends AbstractPlugin {
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                     BudgetFunctions.truthToQuality(truth));
 
-            Task newTask = new Task(j, newbudget,
-                    isFull() ? null : task);
+            Task newTask = new Task(j, newbudget, isFull() ? null : task);
 
-            memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
+            //memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
+            rememberedQueue.add(newTask);
+
         }
         else if (event == Events.BeliefReason.class) {
             //belief, beliefTerm, taskTerm, nal

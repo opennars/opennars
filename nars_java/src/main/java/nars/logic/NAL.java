@@ -81,6 +81,8 @@ public abstract class NAL implements Runnable {
     }
 
     public int nal() { return nal; }
+
+    /** whether at least NAL level N is enabled */
     public boolean nal(int n) { return nal() >= n; }
 
     

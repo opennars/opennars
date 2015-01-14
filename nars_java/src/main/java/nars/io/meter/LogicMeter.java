@@ -53,7 +53,6 @@ public class LogicMeter {
     public final HitMeter ANALOGY = new HitMeter("reason.analogy");
     public final ValueMeter IO_INPUTS_BUFFERED = new ValueMeter("io.inputs.buffered");
 
-    public final HitMeter SHORT_TERM_MEMORY_UPDATE = new HitMeter("exec.short_term_memory.update");
     public final ValueMeter DERIVATION_LATENCY = new ValueMeter("reason.derivation.latency");
     public final ValueMeter SOLUTION_BEST = new ValueMeter("task.solution.best");
 

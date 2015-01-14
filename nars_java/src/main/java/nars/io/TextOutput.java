@@ -127,8 +127,7 @@ public class TextOutput extends Output {
             return;
         
         if ((outExp!=null) || (outExp2!=null)) {
-            Object o = oo[0];
-            final String s = process(channel, o);
+            final String s = process(channel, oo);
             if (s!=null) {
                 if (outExp != null) {
                     outExp.println(prefix + s);
@@ -143,9 +142,9 @@ public class TextOutput extends Output {
     
     final StringBuilder result = new StringBuilder(16 /* estimate */);
     
-    public String process(final Class c, final Object o) {
-        if (o instanceof Task) {
-            if (!allowTask((Task)o))
+    public String process(final Class c, final Object[] o) {
+        if (o[0] instanceof Task) {
+            if (!allowTask((Task)o[0]))
                 return null;
         }
         return getOutputString(c, o, true, showStamp, nar, result, minPriority);
@@ -178,18 +177,21 @@ public class TextOutput extends Output {
         return this;
     }
 
-    public static String getOutputString(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
-        return getOutputString(channel, signal, showChannel, showStamp, nar, buffer, 0);
+    public static String getOutputString(final Class channel, Object[] signals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+        return getOutputString(channel, signals, showChannel, showStamp, nar, buffer, 0);
     }
             
-    /** generates a human-readable string from an output channel and signal */
-    public static String getOutputString(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
+    /** generates a human-readable string from an output channel and signals */
+    public static String getOutputString(final Class channel, Object[] signals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
         buffer.setLength(0);
         
         if (showChannel)
-            buffer.append(channel.getSimpleName()).append(": ");        
-        
+            buffer.append(channel.getSimpleName()).append(": ");
+
+        Object signal = signals[0];
+
         if (channel == ERR.class) {
+
             if (signal instanceof Throwable) {
                 Throwable e = (Throwable)signal;
 
@@ -200,14 +202,19 @@ public class TextOutput extends Output {
                 }
             }
             else {
-                buffer.append(signal.toString());
+                buffer.append(signals.toString());
             }      
             
-        }        
-        else if ((channel == OUT.class) || (channel == IN.class) || (channel == Echo.class) || (channel == EXE.class) || (channel == Answer.class))  {
+        }
+        else if (channel == Answer.class) {
+            Task question = (Task)signals[0];
+            Sentence answer = (Sentence)signals[1];
+            buffer.append(question.sentence.toString(nar, showStamp) + " = " + answer.toString(nar, showStamp));
+        }
+        else if ((channel == OUT.class) || (channel == IN.class) || (channel == Echo.class) || (channel == EXE.class))  {
 
             if (signal instanceof Task) {
-                Task t = (Task)signal;                
+                Task t = (Task)signal;
                 if (t.getPriority() < minPriority)
                     return null;
                 
@@ -220,16 +227,16 @@ public class TextOutput extends Output {
                     buffer.append(" {{").append(root.sentence).append("}}");
                 */
 //            }            
-//            else if (signal instanceof Sentence) {
-//                Sentence s = (Sentence)signal;                
+//            else if (signals instanceof Sentence) {
+//                Sentence s = (Sentence)signals;
 //                buffer.append(s.toString(nar, showStamp));                        
             } else {
-                buffer.append(signal.toString());
+                buffer.append(signals.toString());
             }
             
         }
         else {
-            buffer.append(signal.toString());
+            buffer.append(signals.toString());
         }
         
         return Texts.unescape(buffer).toString();

@@ -9,6 +9,7 @@ import nars.io.DefaultTextPerception;
 import nars.io.TextInput;
 import nars.logic.entity.Term;
 import nars.logic.nal8.Operator;
+import nars.operator.app.STMInduction;
 import nars.operator.mental.Anticipate;
 import nars.operator.app.plan.TemporalParticlePlanner;
 import nars.operator.mental.*;
@@ -137,20 +138,24 @@ public class Default extends Build implements ConceptBuilder {
         n.addPlugin(new DefaultTextPerception());
         
         n.addPlugin(new RuntimeNARSettings());
-        
-        if(pluginPlanner!=null) {
-            n.addPlugin(pluginPlanner);
+
+        if (level >= 7) {
+            if (pluginPlanner != null) {
+                n.addPlugin(pluginPlanner);
+            }
+            n.addPlugin(new STMInduction(Parameters.STM_SIZE));
         }
-        
-        n.addPlugin(new Anticipate());      // expect an event
-        
-        if (internalExperience==Minimal) {            
-            n.addPlugin(new InternalExperience());
-        }
-        else if (internalExperience==Full) {            
-            n.addPlugin(new FullInternalExperience());
-            n.addPlugin(new Abbreviation());
-            n.addPlugin(new Counting());
+
+        if (level >= 8) {
+            n.addPlugin(new Anticipate());      // expect an event
+
+            if (internalExperience == Minimal) {
+                n.addPlugin(new InternalExperience());
+            } else if (internalExperience == Full) {
+                n.addPlugin(new FullInternalExperience());
+                n.addPlugin(new Abbreviation());
+                n.addPlugin(new Counting());
+            }
         }
         
         return n;
