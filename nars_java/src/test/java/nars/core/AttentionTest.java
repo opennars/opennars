@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * TODO run this for each different kind of attention/bag etc
+ * TODO test this for each different kind of attention/bag etc
  */
 public class AttentionTest {
     

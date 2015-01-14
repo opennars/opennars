@@ -230,10 +230,10 @@ public class GeneticSearchApache {
         Population initial = new ElitisticListPopulation(populationSize, elitismRate);
         initial.addChromosome(NARGenome.random());
 
-        // stopping condition
+        // stopping musts
         StoppingCondition stopCond = new FixedGenerationCount(generationsPerPopulation);
 
-        // run the algorithm
+        // test the algorithm
         Population finalPopulation = ga.evolve(initial, stopCond);
 
         // best chromosome from the final population

@@ -97,6 +97,7 @@ public class Narsese {
             int j = buffer.lastIndexOf(valueOf('['));
             buffer.delete(j-1, buffer.length());
         }
+
         return parseTask(buffer.toString().trim());
     }
 

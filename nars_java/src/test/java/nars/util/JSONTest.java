@@ -27,7 +27,7 @@ public class JSONTest {
  
     @Test
     public void testJSON() {
-        //No need to run this until an assertion exists to test it
+        //No need to test this until an assertion exists to test it
         
         /*
         int N = 2;

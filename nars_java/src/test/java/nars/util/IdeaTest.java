@@ -50,7 +50,7 @@ public class IdeaTest {
 
 
 
-        //n.run(2);
+        //n.test(2);
         //assertEquals(i.get("[a, b]").getSentenceTypes().toString(), 1, i.get("[a, b]").getSentenceTypes().size());
 
         n.addInput("<a <-> b>.");

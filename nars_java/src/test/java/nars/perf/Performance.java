@@ -63,8 +63,8 @@ public abstract class Performance {
     }    
  
     public Performance print() {
-        System.out.print(": " + df.format(getCycleTimeMS()) + "ms/run, ");
-        System.out.print(df.format(totalMemory/repeats/1024.0) + " kb/run");
+        System.out.print(": " + df.format(getCycleTimeMS()) + "ms/test, ");
+        System.out.print(df.format(totalMemory/repeats/1024.0) + " kb/test");
         return this;
     }
     public Performance printCSV(boolean finalComma) {

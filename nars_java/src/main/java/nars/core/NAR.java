@@ -80,10 +80,12 @@ public class NAR implements Runnable, TaskSource {
     
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
+    private Narsese narsese;
 
     public int nal() {
         return memory.nal();
     }
+
 
 
     public class PluginState implements Serializable {
@@ -139,6 +141,7 @@ public class NAR implements Runnable, TaskSource {
         inputChannels = new ArrayList();
         newInputChannels = new CopyOnWriteArrayList();
 
+        narsese = new Narsese(this);
     }
 
     /**
@@ -186,17 +189,32 @@ public class NAR implements Runnable, TaskSource {
     public NAR addInput(final String taskText, float frequency, float confidence) throws InvalidInputException {
         return addInput(-1, -1, taskText, frequency, confidence);
     }
-    
-   public NAR believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        
-        return addInput(memory.newTask(new Narsese(this).parseTerm(termString),
-                Symbols.JUDGMENT_MARK, freq, conf, pri, dur, tense));
+
+    public Term term(String t) throws InvalidInputException {
+        return narsese.parseTerm(t);
     }
 
-   
-    public NAR believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
+    public Task believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
+
+        Task t = memory.newTask(narsese.parseTerm(termString),
+                Symbols.JUDGMENT_MARK, freq, conf, pri, dur, tense);
+        addInput(t);
+        return t;
+    }
+
+    public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         
         return believe(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, tense, freq, conf);
+    }
+
+    public Task believe(String termString, float freq, float conf) throws InvalidInputException {
+        return believe(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, Tense.Eternal, freq, conf);
+    }
+    public Task believe(String termString, float conf) throws InvalidInputException {
+        return believe(termString, 1.0f, conf);
+    }
+    public Task believe(String termString) throws InvalidInputException {
+        return believe(termString, 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
     }
 
     
@@ -205,11 +223,11 @@ public class NAR implements Runnable, TaskSource {
         return memory.concept(new Narsese(this).parseTerm(concept));
     }
     
-    public NAR ask(String termString) throws InvalidInputException {
+    public Task ask(String termString) throws InvalidInputException {
         return ask(termString, null);
     }
     
-    public NAR ask(String termString, Answered answered) throws InvalidInputException {
+    public Task ask(String termString, Answered answered) throws InvalidInputException {
         
         Task t;
         addInput(
@@ -228,7 +246,7 @@ public class NAR implements Runnable, TaskSource {
         if (answered!=null) {
             answered.start(t, this);
         }
-        return this;
+        return t;
         
     }
     
@@ -455,7 +473,7 @@ public class NAR implements Runnable, TaskSource {
      * Execute a minimum number of cycles, allowing additional cycles (less than maxCycles) for finishing any pending inputs
      * @param maxCycles max cycles, or -1 to allow any number of additional cycles until input finishes
      * */
-    public NAR run(int minCycles, int maxCycles) {
+    public NAR run(long minCycles, long maxCycles) {
         if (maxCycles <= 0) return this;
         if (minCycles > maxCycles)
             throw new RuntimeException("minCycles " + minCycles + " required <= maxCycles " + maxCycles);

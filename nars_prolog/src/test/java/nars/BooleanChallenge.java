@@ -333,7 +333,7 @@ public class BooleanChallenge {
         /*new Thread(new Runnable() {
 
             @Override
-            public void run() { */
+            public void test() { */
                 new BooleanChallenge(n).run(1, 1500000,1500000);
 /*            }
             

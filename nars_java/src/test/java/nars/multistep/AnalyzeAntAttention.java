@@ -36,7 +36,7 @@ public class AnalyzeAntAttention {
 //            }
 //          
 //            
-//        }.run();
+//        }.test();
                 
         
 //        //nar.addInput(new TextInput(new File("nal/Examples/Example-MultiStep-edited.txt")));

@@ -533,6 +533,8 @@ public class Terms {
     }
 
     public static boolean levelValid(Sentence sentence, int nal) {
+        if (nal >= 8) return true;
+
         Term t = sentence.getTerm();
         if (!sentence.isEternal() && nal < 7) return false;
         return levelValid(t, nal);

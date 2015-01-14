@@ -46,13 +46,13 @@ public class NALQueryTest {
         NAR n = new NAR(new Default().setInternalExperience(null));
         new TextOutput(n, System.out);
                 
-                n.believe("<a <-> b>", Eternal, 1.0f, 0.5f).
+                n.believe("<a <-> b>", Eternal, 1.0f, 0.5f);
                 
-                believe("<b --> a>", Eternal, 1.0f, 0.5f).      
+                n.believe("<b --> a>", Eternal, 1.0f, 0.5f);
                 
-                run(cyclesBeforeQuestion).
+                n.run(cyclesBeforeQuestion);
                 
-                ask(question, new Answered() {
+                n.ask(question, new Answered() {
 
                     @Override
                     public void onSolution(Sentence belief) {
@@ -66,9 +66,9 @@ public class NALQueryTest {
                         //System.out.println("  child: " + 
                         //child + " solution: " + belief);
                     }            
-                }).
+                });
                 
-                run(cyclesAfterQuestion);
+                n.run(cyclesAfterQuestion);
                 
         assertTrue(b.get());
         

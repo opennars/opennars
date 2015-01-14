@@ -26,7 +26,7 @@ public class TestMultistepEdited {
         n.run(1000);
         
         
-        assertEquals(2488, n.time());
+        assertEquals(2447, n.time());
     }
             
 }
