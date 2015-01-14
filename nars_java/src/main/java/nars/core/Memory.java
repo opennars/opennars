@@ -806,7 +806,7 @@ public class Memory implements Serializable {
      *
      * @param cycles The number of logic steps
      */
-    public void stepLater(final int cycles) {
+    public void stepLater(final long cycles) {
         inputPausedUntil = (int) (time() + cycles);
     }
 
@@ -847,24 +847,22 @@ public class Memory implements Serializable {
         return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
     }
 
-    /**
-     * convenience method for forming a new Task from a term
-     */
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
         return newTask(content, sentenceType, freq, conf, priority, durability, null, tense);
     }
 
-    /**
-     * convenience method for forming a new Task from a term
-     */
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
+        return newTaskAt(content, sentenceType, freq, conf, priority, durability, parentTask, tense, time());
+    }
+
+    public Task newTaskAt(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense, long ocurrenceTime) {
 
         TruthValue truth = new TruthValue(freq, conf);
         Sentence sentence = new Sentence(
                 content,
                 sentenceType,
                 truth,
-                new Stamp(this, tense));
+                new Stamp(this, tense, ocurrenceTime));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         Task task = new Task(sentence, budget, parentTask);
         return task;

@@ -193,14 +193,14 @@ public class IOLibraryExceptionsTestCase extends TestCase {
 		assertTrue(argNo.intValue() == 1);
 	}
 
-	// verifico che print(X) lancia un errore di instanziazione
+	// verifico che printMeaning(X) lancia un errore di instanziazione
 	public void test_print_1_1() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "catch(print(X), error(instantiation_error, instantiation_error(Goal, ArgNo)), true).";
+		String goal = "catch(printMeaning(X), error(instantiation_error, instantiation_error(Goal, ArgNo)), true).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Struct g = (Struct) info.getTerm("Goal");
-		assertTrue(g.isEqual(new Struct("print", new Var("X"))));
+		assertTrue(g.isEqual(new Struct("printMeaning", new Var("X"))));
 		Int argNo = (Int) info.getTerm("ArgNo");
 		assertTrue(argNo.intValue() == 1);
 	}

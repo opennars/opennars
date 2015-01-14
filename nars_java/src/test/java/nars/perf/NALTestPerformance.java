@@ -225,18 +225,18 @@ public class NALTestPerformance {
 
     /*
      @Override
-     public Performance print() {                
-     super.print();
-     System.out.print(", " + df.format(getCycleTimeMS() / totalCycles * 1000.0) + " ns/cycle, " + (((float)totalCycles)/(warmups+repeats)) + " cycles/test");
+     public Performance printMeaning() {
+     super.printMeaning();
+     System.out.printMeaning(", " + df.format(getCycleTimeMS() / totalCycles * 1000.0) + " ns/cycle, " + (((float)totalCycles)/(warmups+repeats)) + " cycles/test");
      return this;
                 
      }
      @Override
      public Performance printCSV(boolean finalComma) {
      super.printCSV(true);
-     System.out.print(df.format(getCycleTimeMS() / totalCycles * 1000.0) + ", " + (((float)totalCycles)/(warmups+repeats)));
+     System.out.printMeaning(df.format(getCycleTimeMS() / totalCycles * 1000.0) + ", " + (((float)totalCycles)/(warmups+repeats)));
      if (finalComma)
-     System.out.print(", ");
+     System.out.printMeaning(", ");
      return this;
                 
      }

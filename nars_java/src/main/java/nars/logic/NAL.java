@@ -303,8 +303,8 @@ public abstract class NAL implements Runnable {
     //        if (newContent != null) {
     //            Sentence taskSentence = currentTask.getSentence();
     //            Sentence newSentence = new Sentence(newContent, taskSentence.getPunctuation(), newTruth, newStamp, revisible);
-    //            Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
-    //            derivedTask(newTask, false, false);
+    //            Task newTaskAt = new Task(newSentence, newBudget, currentTask, currentBelief);
+    //            derivedTask(newTaskAt, false, false);
     //        }
     //    }
     /**

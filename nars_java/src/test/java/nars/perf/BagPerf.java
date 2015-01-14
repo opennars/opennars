@@ -89,7 +89,7 @@ public class BagPerf {
         //items per lvel max
         //avg prioirty
         //avg norm mass
-        //System.out.print((totalMinItemsPerLevel/p.repeats) + ",");
+        //System.out.printMeaning((totalMinItemsPerLevel/p.repeats) + ",");
         System.out.print((totalMaxItemsPerLevel/p.repeats) + ",");
         System.out.print(totalPriority/p.repeats + ",");
         System.out.print(totalMass/repeats/levels + ",");
@@ -247,10 +247,10 @@ public class BagPerf {
                     bags
                 );
                 
-                /*System.out.print(Arrays.toString(new Object[] { "(x" + repeats + ")", "items", items, "inserts:removals", insertRatio, "accesses", randomAccesses, "nexts", iterations }));                
-                System.out.print("  ");
+                /*System.out.printMeaning(Arrays.toString(new Object[] { "(x" + repeats + ")", "items", items, "inserts:removals", insertRatio, "accesses", randomAccesses, "nexts", iterations }));
+                System.out.printMeaning("  ");
                 for (Map.Entry<Bag, Double> e : t.entrySet()) {
-                    System.out.print(e.getKey() + "," + e.getValue() + ",  ");
+                    System.out.printMeaning(e.getKey() + "," + e.getValue() + ",  ");
                 }*/
                 
                 if (!printedHeader) {

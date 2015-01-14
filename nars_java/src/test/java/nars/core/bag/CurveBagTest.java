@@ -229,7 +229,7 @@ public class CurveBagTest {
             
             //nametable and itemtable consistent size
             //assertEquals(items.size(), f.size());
-            //System.out.print("  "); items.reportPriority();            
+            //System.out.printMeaning("  "); items.reportPriority();
             
         }
 

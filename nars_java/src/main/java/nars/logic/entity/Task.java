@@ -102,6 +102,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
         this.parentBelief = parentBelief;
         this.bestSolution = solution;   
     }
+
     /**
      * Constructor for an activated task
      *

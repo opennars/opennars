@@ -228,9 +228,10 @@ public class Stamp implements Cloneable {
         }
         
     }
-    
+
+
     /** used for when the ocrrence time will be set later; so should not be called from externally but through another Stamp constructor */
-    protected Stamp(final Tense tense, final long serial) {
+    public Stamp(final Tense tense, final long serial) {
         this.baseLength = 1;
         this.evidentialBase = new long[baseLength];
         this.evidentialBase[0] = serial;
@@ -239,6 +240,8 @@ public class Stamp implements Cloneable {
         this.creationTime = -1;
         this.derivationBuilder = null;
         this.derivationChain = EmptyDerivationChain; // new LinkedHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+        if (tense == Tense.Eternal)
+            this.occurrenceTime = -1;
     }
     
     /**
@@ -327,8 +330,13 @@ public class Stamp implements Cloneable {
 
     }
 
+    public Stamp(final Memory memory, final Tense tense, long when) {
+        this(when, tense, memory.newStampSerial(), memory.param.duration.get());
+    }
+
+    /** create stamp at current memory time */
     public Stamp(final Memory memory, final Tense tense) {
-        this(memory.time(), tense, memory.newStampSerial(), memory.param.duration.get());
+        this(memory, tense, memory.time());
     }
 
     /** creates a stamp with default Present tense */

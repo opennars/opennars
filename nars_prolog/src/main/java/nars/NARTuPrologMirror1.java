@@ -498,7 +498,7 @@
 //        float conf = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
 //        float priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
 //        float durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
-//        return nar.memory.newTask(t, '.', freq, conf, priority, durability, parentTask,
+//        return nar.memory.newTaskAt(t, '.', freq, conf, priority, durability, parentTask,
 //                question.isEternal() ? Tense.Eternal : Tense.Present); //TODO may need to adjust tense of answer based on when question was asked
 //    }
 //    

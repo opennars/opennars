@@ -134,13 +134,13 @@
 //    }*/
 //    
 ////    protected void printResults(double insertProb, double removeProb) {
-////        System.out.print(insertProb + ", " + removeProb + ",    ");
+////        System.out.printMeaning(insertProb + ", " + removeProb + ",    ");
 ////        for (int i = bins-1; i >=0; i--) {
 ////            double percentStart = ((double)i)/bins;
 ////            double percentEnd = ((double)(i+1))/bins;
 ////            double amount = ((double)held[i]) / ((double)total);
 ////            //System.out.println( percentStart + ".." + percentEnd + ":\t\t" + amount);
-////            System.out.print(amount + ", ");
+////            System.out.printMeaning(amount + ", ");
 ////        }
 ////        System.out.println();
 ////    }

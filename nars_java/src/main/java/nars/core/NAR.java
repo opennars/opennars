@@ -80,7 +80,7 @@ public class NAR implements Runnable, TaskSource {
     
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
-    private Narsese narsese;
+    protected Narsese narsese;
 
     public int nal() {
         return memory.nal();
@@ -195,7 +195,6 @@ public class NAR implements Runnable, TaskSource {
     }
 
     public Task believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-
         Task t = memory.newTask(narsese.parseTerm(termString),
                 Symbols.JUDGMENT_MARK, freq, conf, pri, dur, tense);
         addInput(t);
@@ -203,10 +202,8 @@ public class NAR implements Runnable, TaskSource {
     }
 
     public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        
         return believe(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, tense, freq, conf);
     }
-
     public Task believe(String termString, float freq, float conf) throws InvalidInputException {
         return believe(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, Tense.Eternal, freq, conf);
     }
@@ -503,7 +500,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
     /** Execute a fixed number of cycles, then finish any remaining walking steps. */
-    public NAR run(int cycles) {
+    public NAR run(long cycles) {
         //TODO see if this entire method can be implemented as run(0, cycles);
 
         if (cycles <= 0) return this;

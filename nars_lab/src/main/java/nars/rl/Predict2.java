@@ -227,11 +227,11 @@
 //
 //            //Task t = 
 //            
-//            //new ImmediateProcess(memory, memory.newTask(implication, Symbols.JUDGMENT_MARK, truth, 0.90f, 1.0f, 0.8f), 0).run();
+//            //new ImmediateProcess(memory, memory.newTaskAt(implication, Symbols.JUDGMENT_MARK, truth, 0.90f, 1.0f, 0.8f), 0).run();
 //            
 //            //memory.inputTask(t);
 //            
-//            new ImmediateProcess(memory, memory.newTask(currentBelief, Symbols.JUDGMENT_MARK, truth, 0.90f, 1.0f, 0.8f), 0).run();
+//            new ImmediateProcess(memory, memory.newTaskAt(currentBelief, Symbols.JUDGMENT_MARK, truth, 0.90f, 1.0f, 0.8f), 0).run();
 //       }        
 //    
 //    public static void main(String[] args) throws Narsese.InvalidInputException, InterruptedException {

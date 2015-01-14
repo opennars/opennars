@@ -55,7 +55,13 @@ public class TextOutput extends Output {
         public void println(String s);
     }
 
-    
+    public static TextOutput out(NAR n) {
+        return new TextOutput(n, System.out);
+    }
+    public static TextOutput err(NAR n) {
+        return new TextOutput(n, System.err);
+    }
+
     /**
      * Default constructor; adds the reasoner to a NAR's outptu channels
      *

@@ -1,13 +1,12 @@
-package nars.core.logic.nal1;
+package nars.core;
 
-import nars.core.Build;
 import org.junit.After;
 import org.junit.Before;
 
 
 abstract public class AbstractNALTest {
 
-    TestNAR n;
+    public TestNAR n;
 
     abstract public Build build();
 

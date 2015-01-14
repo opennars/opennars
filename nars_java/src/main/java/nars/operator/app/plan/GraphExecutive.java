@@ -766,8 +766,8 @@ public class GraphExecutive {
         memory.inputTask(newTask);
         
         //it comes through temporal induction with correct truth value anyway
-        //nal.derivedTask(newTask, false, true, null, null);  //and if this is a implication then wrong
-        //memory.executive.addExecution(c, newTask);
+        //nal.derivedTask(newTaskAt, false, true, null, null);  //and if this is a implication then wrong
+        //memory.executive.addExecution(c, newTaskAt);
         
         return newTask;
         

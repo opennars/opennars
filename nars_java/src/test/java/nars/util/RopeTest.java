@@ -1630,7 +1630,7 @@ public class RopeTest  {
 //	
 //	private static void stat(PrintStream out, long[] stats, String unit, String prefix) {
 //		if (stats.length < 3) 
-//			System.err.println("Cannot print stats.");
+//			System.err.println("Cannot printMeaning stats.");
 //		Arrays.sort(stats);
 //		
 //		double median = ((stats.length & 1) == 1 ? stats[stats.length >> 1]: (stats[stats.length >> 1] + stats[1 + (stats.length >> 1)]) / 2);
