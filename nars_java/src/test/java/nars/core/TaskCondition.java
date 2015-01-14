@@ -1,9 +1,10 @@
 package nars.core;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
-import nars.core.NAR;
 import nars.io.condition.OutputCondition;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Task;
@@ -17,27 +18,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* Created by me on 1/14/15.
-*/
+ * Created by me on 1/14/15.
+ */
 public class TaskCondition extends OutputCondition implements Serializable {
 
-    @Expose public final Class channel;
-    @Expose public final Term term;
-    @Expose public final char punc;
-    @Expose public final Tense tense;
-    @Expose public final float freqMin;
-    @Expose public final float freqMax;
-    @Expose public final float confMin;
-    @Expose public final float confMax;
-    @Expose public final long cycleStart;
-    @Expose public final long cycleEnd;
+    @Expose
+    public final Class channel;
+    @Expose
+    public final Term term;
+    @Expose
+    public final char punc;
+    @Expose
+    public final Tense tense;
+    @Expose
+    public final float freqMin;
+    @Expose
+    public final float freqMax;
+    @Expose
+    public final float confMin;
+    @Expose
+    public final float confMax;
+    @Expose
+    public final long cycleStart;
+    @Expose
+    public final long cycleEnd;
 
-    public final List<Long> trueAt = new ArrayList();
+    public final List<Task> trueAt = new ArrayList();
 
     public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.InvalidInputException {
         super(n);
-        if (freqMax < freqMin)  throw new RuntimeException("freqMax < freqMin");
-        if (confMax < confMin)  throw new RuntimeException("confMax < confMin");
+        if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
+        if (confMax < confMin) throw new RuntimeException("confMax < confMin");
 
         this.channel = channel;
         this.tense = Tense.Eternal;
@@ -53,33 +64,38 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public boolean condition(Class channel, Object signal) {
-        long t = nar.time();
-        if ((t < cycleStart) || (t > cycleEnd))
-            return false;
+
 
         if (channel == OUT.class) {
 
             if (signal instanceof Task) {
 
-                Task task = (Task)signal;
+                Task task = (Task) signal;
+
+                long t = task.getCreationTime();
+
+                if ((t < cycleStart) || (t > cycleEnd))
+                    return false;
+
                 Term term = task.getTerm();
 
                 if (task.sentence.punctuation == punc) {
 
-                    if ((tense == Tense.Eternal) && (!task.sentence.isEternal()))
-                       return false;
                     //TODO use range of acceptable occurrenceTime's for non-eternal tests
+                    if ((tense == Tense.Eternal) && (!task.sentence.isEternal()))
+                        return false;
 
-                    float fr = task.sentence.truth.getFrequency();
-                    float co = task.sentence.truth.getConfidence();
+                    if ((punc == '.') || (punc == '!')) {
+                        float fr = task.sentence.truth.getFrequency();
+                        float co = task.sentence.truth.getConfidence();
 
-                    if ((co <= confMax) && (co >= confMin) && (fr <= freqMax) && (fr >= freqMin)) {
+                        if (!((co <= confMax) && (co >= confMin) && (fr <= freqMax) && (fr >= freqMin)))
+                            return false;
+                    }
 
-
-                        if (term.equals(this.term)) {
-                            trueAt.add(nar.time());
-                            return true;
-                        }
+                    if (term.equals(this.term)) {
+                        trueAt.add(task);
+                        return true;
                     }
                 }
             }
@@ -100,7 +116,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
         @Override
         public JsonElement serialize(Object o, Type type, JsonSerializationContext jsonSerializationContext) {
-            return new JsonPrimitive(((Class)o).getSimpleName());
+            return new JsonPrimitive(((Class) o).getSimpleName());
         }
 
     };
@@ -117,12 +133,20 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     public TruthValue getTruthMean() {
-        return new TruthValue( 0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin) );
+        return new TruthValue(0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin));
     }
 
     public List getTrueReasons() {
         if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
-        return Lists.newArrayList("match at: " + trueAt);
+        return Lists.newArrayList("match at: " +
+
+                Iterables.transform(trueAt, new Function<Task, String>() {
+                    @Override
+                    public String apply(Task task) {
+                        return task.toString() + " @ " + task.sentence.getCreationTime();
+                    }
+                }));
+
     }
 
     @Override

@@ -15,7 +15,6 @@ public class TestNAL1Only extends AbstractNALTest {
         return new Default().level(1);
     }
 
-
     @Test
     public void revision() throws Narsese.InvalidInputException {
         n.believe("<bird --> swimmer>")
@@ -51,8 +50,72 @@ public class TestNAL1Only extends AbstractNALTest {
                 .es("es posible que sport es un tipo de chess.");
         n.mustBelieve(23, "<chess --> sport>", 0.90f, 0.45f)
                 .en("I guess chess is a type of sport");
-
     }
 
+    @Test
+    public void induction() throws Narsese.InvalidInputException {
+        n.believe("<swan --> swimmer>", 0.90f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE)
+                .en("Swan is a type of swimmer.");
+        n.believe("<swan --> bird>")
+                .en("Swan is a type of bird.");
+
+        n.mustBelieve(23, "<bird --> swimmer>", 0.90f, 0.45f)
+                .en("I guess bird is a type of swimmer.");
+        n.mustBelieve(23, "<swimmer --> bird>", 1f, 0.42f)
+                .en("I guess swimmer is a type of bird.");
+    }
+
+    @Test
+    public void exemplification() throws Narsese.InvalidInputException {
+        n.believe("<robin --> bird>");
+        n.believe("<bird --> animal>");
+        n.mustOutput(25, "<animal --> robin>. %1.00;0.45%")
+                .en("I guess animal is a type of robin.");
+    }
+
+    @Test
+    public void conversion() throws Narsese.InvalidInputException {
+        n.believe("<bird --> swimmer>");
+        n.ask("<swimmer --> bird>")
+                .en("Is swimmer a type of bird?");
+        n.mustOutput(25, "<swimmer --> bird>. %1.00;0.47%");
+    }
+
+    @Test
+    public void yesnoQuestion() throws Narsese.InvalidInputException {
+        n.believe("<bird --> swimmer>");
+        n.ask("<bird --> swimmer>");
+        n.mustOutput(25, "<bird --> swimmer>. %1.00;0.90%");
+    }
+
+
+    @Test
+    public void whQuestion() throws Narsese.InvalidInputException {
+        n.believe("<bird --> swimmer>", 1.0f, 0.8f);
+        n.ask("<?x --> swimmer>")
+                .en("What is a type of swimmer");
+        n.mustOutput(25, "<bird --> swimmer>. %1.00;0.80%");
+    }
+
+    @Test
+    public void backwardInference() throws Narsese.InvalidInputException {
+        n.believe("<bird --> swimmer>", 1.0f, 0.8f);
+        n.ask("<?1 --> swimmer>");
+        n.mustOutput(46, "<?1 --> bird>?").en("What is a type of bird?");
+        n.mustOutput(46, "<bird --> ?1>?").en("What is the type of bird?");
+    }
+/*
+
+*** multistep
+<a --> b>. %1.00;0.90%
+<b --> c>. %1.00;0.90%
+<c --> d>. %1.00;0.90%
+<a --> d>?
+
+500
+
+''outputMustContain('<a --> d>. %1.00;0.27%')
+'0.73% is highest confidence this can reach
+     */
 
 }

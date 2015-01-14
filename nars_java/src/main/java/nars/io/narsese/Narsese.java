@@ -334,25 +334,25 @@ public class Narsese {
                     if (last == COMPOUND_TERM_CLOSER.ch) {
                        return parseCompoundTerm(s.substring(1, index));
                     } else {
-                        throw new InvalidInputException("missing CompoundTerm closer");
+                        throw new InvalidInputException("missing CompoundTerm closer: " + s);
                     }
                 case SET_EXT_OPENER:
                     if (last == SET_EXT_CLOSER.ch) {
                         return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
                     } else {
-                        throw new InvalidInputException("missing ExtensionSet closer");
+                        throw new InvalidInputException("missing ExtensionSet closer: " + s);
                     }                    
                 case SET_INT_OPENER:
                     if (last == SET_INT_CLOSER.ch) {
                         return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
                     } else {
-                        throw new InvalidInputException("missing IntensionSet closer");
+                        throw new InvalidInputException("missing IntensionSet closer: " + s);
                     }   
                 case STATEMENT_OPENER:
                     if (last == STATEMENT_CLOSER.ch) {
                         return parseStatement(s.substring(1, index));
                     } else {
-                        throw new InvalidInputException("missing Statement closer");
+                        throw new InvalidInputException("missing Statement closer: " + s);
                     }
             }
         }

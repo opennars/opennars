@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 public class TestNAR extends NAR {
 
     boolean showFail = true;
-    boolean showSuccess = false;
+    boolean showSuccess = true;
     boolean showExplanations = false;
     boolean showOutput = false;
 
@@ -43,10 +43,19 @@ public class TestNAR extends NAR {
         return et;
     }
 
-    public ExplainableTask mustOutput(long withinCycles, String sentence, char punc, float freq, float conf) throws Narsese.InvalidInputException {
-        float h = Parameters.TRUTH_EPSILON/2f;
+    public ExplainableTask mustOutput(long withinCycles, String task) throws Narsese.InvalidInputException {
+        Task t = narsese.parseTask(task);
+        //TODO avoid reparsing term from string
+        if (t.sentence.truth!=null)
+            return mustOutput(withinCycles, t.getTerm().toString(), t.sentence.punctuation, t.sentence.getTruth().getFrequency(), t.sentence.getTruth().getConfidence());
+        else
+            return mustOutput(withinCycles, t.getTerm().toString(), t.sentence.punctuation, -1, -1);
+    }
+
+    public ExplainableTask mustOutput(long withinCycles, String term, char punc, float freq, float conf) throws Narsese.InvalidInputException {
+        float h = (freq!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
         long now = time();
-        return mustOutput(now, now + withinCycles, sentence, punc, freq-h, freq+h, conf-h, conf+h);
+        return mustOutput(now, now + withinCycles, term, punc, freq-h, freq+h, conf-h, conf+h);
     }
 
     public ExplainableTask mustBelieve(int withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.InvalidInputException {
@@ -68,6 +77,9 @@ public class TestNAR extends NAR {
         return explain(t);
     }
 
+    @Override public ExplainableTask ask(String termString) throws Narsese.InvalidInputException {
+        return explainable(super.ask(termString));
+    }
 
     @Override
     public ExplainableTask believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws Narsese.InvalidInputException {
@@ -152,6 +164,7 @@ public class TestNAR extends NAR {
 
     public void report(PrintStream out, boolean showFail, boolean showSuccess, boolean showExplanations) {
 
+        boolean output = false;
 
         if (showFail || showSuccess) {
 
@@ -161,12 +174,14 @@ public class TestNAR extends NAR {
                         out.println(tc.toString());
                         out.print('\t');
                         out.println(tc.getFalseReason());
+                        output = true;
                     }
                 } else {
                     if (showSuccess) {
                         out.println(tc.toString());
                         out.print('\t');
                         out.println(tc.getTrueReasons());
+                        output = true;
                     }
                 }
             }
@@ -175,13 +190,11 @@ public class TestNAR extends NAR {
         if (showExplanations) {
             for (ExplainableTask x : explanations ) {
                 x.printMeaning(out);
+                output = true;
             }
         }
 
-        if (showExplanations || showFail || showSuccess)
+        if (output)
             out.println();
-
-
-
     }
 }
