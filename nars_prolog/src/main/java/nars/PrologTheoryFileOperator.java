@@ -1,8 +1,10 @@
 package nars;
 
 import nars.core.Memory;
-import nars.entity.Task;
-import nars.language.Term;
+import nars.logic.entity.Task;
+import nars.logic.entity.Term;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
@@ -20,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * (^prologTheoryFile **prolog interpreter key as identifier/term** **theory name as identifier/term or string** **string of the path to the file**)
  * 
  */
-public class PrologTheoryFileOperator extends nars.operator.Operator {
+public class PrologTheoryFileOperator extends Operator {
     private final PrologContext context;
     
     static public class ConversionFailedException extends RuntimeException {
@@ -35,7 +37,7 @@ public class PrologTheoryFileOperator extends nars.operator.Operator {
     }
 
     @Override
-    protected List<Task> execute(nars.operator.Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         if (args.length != 3) {
             return null;
         }

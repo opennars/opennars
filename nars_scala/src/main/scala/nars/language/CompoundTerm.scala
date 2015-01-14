@@ -1,7 +1,7 @@
-package nars.language
+package nars.logic.language
 
 import java.util._
-import nars.entity._
+import nars.logic.entity._
 import nars.storage._
 import nars.io.Symbols
 import CompoundTerm._

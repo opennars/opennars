@@ -2,9 +2,9 @@ package nars.operator.math;
 
 import nars.core.Memory;
 import nars.io.Texts;
-import nars.language.Inheritance;
-import nars.language.Product;
-import nars.language.Term;
+import nars.logic.nal1.Inheritance;
+import nars.logic.nal4.Product;
+import nars.logic.entity.Term;
 import nars.operator.SynchronousFunctionOperator;
 import org.encog.ml.prg.EncogProgram;
 import org.encog.ml.prg.EncogProgramContext;

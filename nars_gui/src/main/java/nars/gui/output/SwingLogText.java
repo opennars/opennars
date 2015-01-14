@@ -2,10 +2,10 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
+import nars.logic.entity.TruthValue;
 import nars.io.Output.OUT;
 
 import javax.swing.*;

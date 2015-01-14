@@ -6,8 +6,8 @@ package nars.gui.output;
 
 import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.language.Term;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Term;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

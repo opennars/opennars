@@ -1,4 +1,4 @@
-package nars.language
+package nars.logic.language
 
 //remove if not needed
 import scala.collection.JavaConversions._

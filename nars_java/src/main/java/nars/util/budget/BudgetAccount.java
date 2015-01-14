@@ -2,7 +2,7 @@ package nars.util.budget;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.core.Parameters;
-import nars.entity.BudgetValue;
+import nars.logic.entity.BudgetValue;
 
 /**
  * Manages a quantity of priority funds, its inflow and outflow, and analytics

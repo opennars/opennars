@@ -3,7 +3,7 @@ package nars.util.sort;
 import com.google.common.collect.Lists;
 import javolution.util.FastSortedTable;
 import nars.core.Parameters;
-import nars.entity.Item;
+import nars.logic.entity.Item;
 
 import java.util.*;
 

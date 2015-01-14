@@ -17,7 +17,7 @@
 package nars.operator.math;
 
 import nars.core.Memory;
-import nars.language.Term;
+import nars.logic.entity.Term;
 import nars.operator.SynchronousFunctionOperator;
 import nars.operator.mental.Mental;
 

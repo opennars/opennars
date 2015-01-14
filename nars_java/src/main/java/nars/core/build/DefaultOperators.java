@@ -1,7 +1,6 @@
 package nars.core.build;
 
-import nars.operator.NullOperator;
-import nars.operator.Operator;
+import nars.logic.nal8.Operator;
 import nars.operator.io.Say;
 import nars.operator.math.Add;
 import nars.operator.math.Count;
@@ -25,7 +24,6 @@ public class DefaultOperators {
         return new Operator[] {
             //new Wait(),            
             //new Wait(),            
-            new NullOperator(),
             new Believe(),  // accept a statement with a default truth-value
             new Want(),     // accept a statement with a default desire-value
             new Wonder(),   // find the truth-value of a statement
@@ -94,7 +92,7 @@ public class DefaultOperators {
          * count            // count the number of elements in a set
          * arithmatic       // + - * /
          * comparisons      // < = >
-         * inference        // binary inference
+         * logic        // binary logic
          *
         
         

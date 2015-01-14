@@ -1,4 +1,4 @@
-package nars.entity
+package nars.logic.entity
 
 import nars.io.Symbols
 import TruthValue._

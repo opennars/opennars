@@ -18,13 +18,17 @@ package nars.io.nlp;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.core.control.AbstractTask;
-import nars.entity.Task;
-import nars.inference.TemporalRules;
+import nars.logic.entity.AbstractTask;
+import nars.logic.entity.Task;
+import nars.logic.entity.Term;
+import nars.logic.nal2.Instance;
+import nars.logic.nal4.Product;
+import nars.logic.nal5.Conjunction;
+import nars.logic.nal7.Interval;
+import nars.logic.nal7.TemporalRules;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Twokenize.Span;
-import nars.language.*;
 
 import java.util.*;
 
@@ -131,7 +135,7 @@ public class Twenglish {
         //1. add the logical structure of the sequence of terms
         if (inputProduct) {
             Term p = 
-                    /*Conjunction*/Product.make( t.toArray(new Term[t.size()] ));        
+                    /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
             Term q = Instance.make( p, Term.get(sentenceType) );
             tt.add( 
                     memory.newTask(q, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
@@ -165,7 +169,7 @@ public class Twenglish {
             //TODO support >1 and probabalistic POS
             String pos = POS.get(c.content.toLowerCase());
             if (pos!=null) {
-                return Instance.make( lexToTerm(c.content), tagToTerm(pos) );
+                return Instance.make(lexToTerm(c.content), tagToTerm(pos));
             }
         }
             

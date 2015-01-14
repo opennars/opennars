@@ -24,12 +24,21 @@ import nars.core.Core.AttentionAware;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
-import nars.core.control.AbstractTask;
-import nars.core.control.ImmediateProcess;
-import nars.core.control.NAL;
-import nars.entity.*;
-import nars.inference.BudgetFunctions;
-import nars.inference.TemporalRules;
+import nars.logic.*;
+import nars.logic.entity.*;
+import nars.logic.nal1.Inheritance;
+import nars.logic.nal1.Negation;
+import nars.logic.nal3.*;
+import nars.logic.nal4.Image;
+import nars.logic.nal4.ImageExt;
+import nars.logic.nal4.ImageInt;
+import nars.logic.nal4.Product;
+import nars.logic.nal5.Conjunction;
+import nars.logic.nal5.Disjunction;
+import nars.logic.nal5.Equivalence;
+import nars.logic.nal5.Implication;
+import nars.logic.nal7.TemporalRules;
+import nars.logic.nal7.Tense;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
@@ -38,22 +47,21 @@ import nars.io.Symbols.NativeOperator;
 import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
-import nars.language.*;
-import nars.operator.Operation;
-import nars.operator.Operator;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
-import nars.plugin.app.plan.MultipleExecutionManager;
-import nars.storage.Bag;
+import nars.operator.app.plan.MultipleExecutionManager;
+import nars.util.bag.Bag;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
-import static nars.plugin.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
+import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
+import static nars.operator.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -87,7 +95,7 @@ public class Memory implements Serializable {
     public enum Timing {
 
         /**
-         * internal, subjective time (inference steps)
+         * internal, subjective time (logic steps)
          */
         Iterative,
         /**
@@ -151,7 +159,7 @@ public class Memory implements Serializable {
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
-    private int inputPausedUntil;
+    private int inputPausedUntil = -1;
 
     /**
      * System clock, relatively defined to guarantee the repeatability of
@@ -196,7 +204,7 @@ public class Memory implements Serializable {
 
         this.executive = new MultipleExecutionManager(this);
 
-        //after this line begins actual inference, now that the essential data strucures are allocated
+        //after this line begins actual logic, now that the essential data strucures are allocated
         //------------------------------------ 
         reset();
 
@@ -239,7 +247,7 @@ public class Memory implements Serializable {
     }
 
     /**
-     * internal, subjective time (inference steps)
+     * internal, subjective time (logic steps)
      */
     public long getCycleTime() {
         return cycle;
@@ -462,8 +470,9 @@ public class Memory implements Serializable {
      * task buffer.
      *
      * @param t The addInput task
+     * @return how many tasks were queued to newTasks
      */
-    public void inputTask(final AbstractTask t) {
+    public int inputTask(final AbstractTask t) {
 
         if (t instanceof Task) {
             Task task = (Task) t;
@@ -475,10 +484,12 @@ public class Memory implements Serializable {
             emit(IN.class, task);
 
             if (task.budget.aboveThreshold()) {
+
                 temporalRuleOutputToGraph(task.sentence, task);
 
                 addNewTask(task, "Perceived");
 
+                return 1;
             } else {
                 removeTask(task, "Neglected");
             }
@@ -497,6 +508,7 @@ public class Memory implements Serializable {
         } else {
             emit(IN.class, "Unrecognized Input Task: " + t);
         }
+        return 0;
     }
 
     public void removeTask(final Task task, final String reason) {
@@ -563,20 +575,21 @@ public class Memory implements Serializable {
 
         event.emit(Events.CycleStart.class);
 
-        int inputTaskPriority = concepts.getInputPriority();
+        int remainingInputTasks = concepts.getInputPriority();
 
         /**
          * adds input tasks to newTasks
          */
-        if (isProcessingInput()) {
-            for (int i = 0; i < inputTaskPriority; i++) {
-                AbstractTask t = inputs.nextTask();
-                if (t != null) {
-                    inputTask(t);
-                }
+        while (isProcessingInput() && (remainingInputTasks > 0)) {
+            AbstractTask t = inputs.nextTask();
+            if (t != null) {
+                int newTasks = inputTask(t);
+                remainingInputTasks -= newTasks;
             }
+            else
+                break;
         }
-        
+
         concepts.cycle();
 
         event.emit(Events.CycleEnd.class);
@@ -767,9 +780,9 @@ public class Memory implements Serializable {
     }
 
     /**
-     * Queue additional cycle()'s to the inference process.
+     * Queue additional cycle()'s to the logic process.
      *
-     * @param cycles The number of inference steps
+     * @param cycles The number of logic steps
      */
     public void stepLater(final int cycles) {
         inputPausedUntil = (int) (time() + cycles);

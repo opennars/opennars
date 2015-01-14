@@ -1,12 +1,12 @@
 package nars.util.graph;
 
 import nars.core.NAR;
-import nars.entity.Item;
-import nars.entity.Sentence;
+import nars.logic.entity.Item;
+import nars.logic.entity.Sentence;
 import nars.io.Symbols;
-import nars.language.CompoundTerm;
-import nars.language.Statement;
-import nars.language.Term;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Statement;
+import nars.logic.entity.Term;
 
 /** Maintains a directed grpah of Inheritance and Similiarty statements */
 public class InheritanceGraph extends SentenceGraph {

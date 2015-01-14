@@ -7,10 +7,10 @@ package nars.core.control.experimental;
 import javolution.context.ConcurrentContext;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.core.control.FireConcept;
-import nars.entity.*;
-import nars.language.Term;
-import nars.language.Terms.Termable;
+import nars.logic.FireConcept;
+import nars.logic.entity.*;
+import nars.logic.entity.Term;
+import nars.logic.Terms.Termable;
 import nars.util.XORShiftRandom;
 
 import java.util.*;

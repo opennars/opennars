@@ -1,13 +1,13 @@
 package nars.core.build;
 
 import nars.core.Memory;
-import nars.entity.*;
-import nars.language.Term;
-import nars.storage.Bag;
-import nars.storage.CurveBag;
-import nars.storage.LevelBag;
+import nars.logic.entity.*;
+import nars.logic.entity.Term;
+import nars.util.bag.Bag;
+import nars.util.bag.CurveBag;
+import nars.util.bag.LevelBag;
 
-import static nars.storage.LevelBag.NextNonEmptyLevelMode.Fast;
+import static nars.util.bag.LevelBag.NextNonEmptyLevelMode.Fast;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
 public class Discretinuous extends Default {

@@ -4,7 +4,7 @@
  */
 package nars.io;
 
-import nars.entity.Task;
+import nars.logic.entity.Task;
 
 import java.io.IOException;
 

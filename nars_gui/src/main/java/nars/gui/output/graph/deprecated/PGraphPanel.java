@@ -2,10 +2,10 @@ package nars.gui.output.graph.deprecated;
 
 import com.mxgraph.model.mxGeometry;
 import nars.core.Memory;
-import nars.entity.Concept;
-import nars.entity.Sentence;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
 import nars.gui.output.PPanel;
-import nars.language.Term;
+import nars.logic.entity.Term;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DirectedMultigraph;
 

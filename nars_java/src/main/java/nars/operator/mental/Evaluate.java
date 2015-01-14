@@ -20,14 +20,14 @@ package nars.operator.mental;
 import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
+import nars.logic.entity.BudgetValue;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Stamp;
+import nars.logic.entity.Task;
 import nars.io.Symbols;
-import nars.language.Term;
-import nars.operator.Operation;
-import nars.operator.Operator;
+import nars.logic.entity.Term;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 
 import java.util.ArrayList;
 

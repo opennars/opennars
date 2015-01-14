@@ -4,8 +4,8 @@ import automenta.vivisect.swing.NPanel;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Sentence;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,6 +1,6 @@
 package nars.core.bag;
 
-import nars.storage.Distributor;
+import nars.util.bag.Distributor;
 import org.junit.Test;
 
 import java.util.ArrayList;

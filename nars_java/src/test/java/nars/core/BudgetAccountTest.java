@@ -4,7 +4,7 @@
  */
 package nars.core;
 
-import nars.entity.BudgetValue;
+import nars.logic.entity.BudgetValue;
 import nars.util.budget.BudgetAccount;
 import org.junit.Test;
 

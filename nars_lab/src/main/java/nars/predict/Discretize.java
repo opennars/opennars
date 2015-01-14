@@ -5,14 +5,14 @@
 package nars.predict;
 
 import nars.core.NAR;
-import nars.core.control.ImmediateProcess;
-import nars.entity.Concept;
-import nars.entity.Task;
+import nars.logic.ImmediateProcess;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Task;
 import nars.io.Symbols;
 import nars.io.narsese.Narsese;
-import nars.language.Instance;
-import nars.language.Tense;
-import nars.language.Term;
+import nars.logic.nal2.Instance;
+import nars.logic.nal7.Tense;
+import nars.logic.entity.Term;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

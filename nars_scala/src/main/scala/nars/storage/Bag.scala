@@ -1,9 +1,9 @@
 package nars.storage
 
 import java.util._
-import nars.entity.Item
+import nars.logic.entity.Item
 import nars.gui.BagWindow
-import nars.inference.BudgetFunctions
+import nars.logic.BudgetFunctions
 import nars.main.Parameters
 import Bag._
 //remove if not needed

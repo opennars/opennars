@@ -1,10 +1,10 @@
 //package nars.util.graph;
 //
-//import nars.entity.Concept;
-//import nars.entity.Task;
-//import nars.entity.TaskLink;
-//import nars.entity.TermLink;
-//import nars.language.Term;
+//import nars.logic.entity.Concept;
+//import nars.logic.entity.Task;
+//import nars.logic.entity.TaskLink;
+//import nars.logic.entity.TermLink;
+//import nars.logic.entity.Term;
 //import org.jgrapht.graph.DirectedMultigraph;
 //
 ///**

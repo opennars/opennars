@@ -8,7 +8,7 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.entity.Concept;
+import nars.logic.entity.Concept;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 

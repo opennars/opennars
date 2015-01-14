@@ -7,9 +7,9 @@ package nars.io;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.Answer;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import reactor.event.registry.Registration;
 
 /**

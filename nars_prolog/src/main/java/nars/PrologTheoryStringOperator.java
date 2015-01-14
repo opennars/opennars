@@ -1,8 +1,10 @@
 package nars;
 
 import nars.core.Memory;
-import nars.entity.Task;
-import nars.language.Term;
+import nars.logic.entity.Task;
+import nars.logic.entity.Term;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
@@ -22,7 +24,7 @@ import java.util.List;
    Should return: 
         <(*, 0, "test") --> executed>
  */
-public class PrologTheoryStringOperator extends nars.operator.Operator {
+public class PrologTheoryStringOperator extends Operator {
     private final PrologContext context;
     
     static public class ConversionFailedException extends RuntimeException {
@@ -37,7 +39,7 @@ public class PrologTheoryStringOperator extends nars.operator.Operator {
     }
 
     @Override
-    protected List<Task> execute(nars.operator.Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         if (args.length != 3) {
             return null;
         }

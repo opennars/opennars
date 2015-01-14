@@ -40,7 +40,7 @@ import nars.gui.output.graph.NARGraphPanel;
 import nars.io.InferenceLogger;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.util.NARTrace;
+import nars.logic.NARTrace;
 
 import javax.swing.*;
 import java.awt.*;

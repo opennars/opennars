@@ -42,7 +42,7 @@ public class KBmanager {
      * ***************************************************************
      * A numeric (bitwise) constant used to signal whether the closure of
      * instance and subclass relastions should be "cached out" for use by the
-     * inference engine.
+     * logic engine.
      */
     public static final int USE_CACHE = 4;
 
@@ -236,7 +236,7 @@ public class KBmanager {
         }
         /*}
          catch (IOException ioe) {
-         System.out.println("Error in KBmanager.removeKB(): Error terminating inference engine: " + ioe.getMessage());
+         System.out.println("Error in KBmanager.removeKB(): Error terminating logic engine: " + ioe.getMessage());
          }*/
         kbs.remove(name);
         //try {
@@ -381,11 +381,11 @@ public class KBmanager {
     /**
      * ***************************************************************
      * Returns an int value, the bitwise interpretation of which indicates the
-     * current configuration of inference parameter (preference) settings. The
+     * current configuration of logic parameter (preference) settings. The
      * int value is computed from the KBmanager preferences at the time this
      * method is evaluated.
      *
-     * @return An int value indicating the current configuration of inference
+     * @return An int value indicating the current configuration of logic
      * parameters, according to KBmanager preference settings.
      */
     public int getInferenceBitValue() {
@@ -404,9 +404,9 @@ public class KBmanager {
 
     /**
      * ***************************************************************
-     * Returns the last cached inference bit value setting.
+     * Returns the last cached logic bit value setting.
      *
-     * @return An int value indicating the inference parameter configuration at
+     * @return An int value indicating the logic parameter configuration at
      * the time the value was set.
      */
     public int getOldInferenceBitValue() {

@@ -1,7 +1,7 @@
-package nars.entity
+package nars.logic.entity
 
 import nars.io.Symbols
-import nars.language.Term
+import nars.logic.entity.Term
 import TermLink._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 //remove if not needed

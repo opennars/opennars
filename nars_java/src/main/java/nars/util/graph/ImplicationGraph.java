@@ -2,16 +2,21 @@ package nars.util.graph;
 
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.entity.Item;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.TruthValue;
-import nars.inference.TemporalRules;
+import nars.logic.entity.Item;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Stamp;
+import nars.logic.entity.TruthValue;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Term;
+import nars.logic.nal1.Negation;
+import nars.logic.nal5.Conjunction;
+import nars.logic.nal5.Implication;
+import nars.logic.nal7.Interval;
+import nars.logic.nal7.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.language.*;
-import nars.operator.Operation;
-import nars.plugin.app.plan.MultipleExecutionManager;
+import nars.logic.nal8.Operation;
+import nars.operator.app.plan.MultipleExecutionManager;
 import nars.util.graph.ImplicationGraph.Cause;
 
 import java.util.Objects;
@@ -167,7 +172,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     
     public static class UniqueInterval extends Interval {
         
-        public final Implication parent;                
+        public final Implication parent;
         private final Term previous;
         private final int hash;
     

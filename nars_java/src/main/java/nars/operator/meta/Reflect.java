@@ -5,7 +5,12 @@
 package nars.operator.meta;
 
 import nars.core.Memory;
-import nars.language.*;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Statement;
+import nars.logic.entity.Term;
+import nars.logic.nal1.Inheritance;
+import nars.logic.nal2.Similarity;
+import nars.logic.nal4.Product;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term
@@ -46,7 +51,7 @@ public class Reflect extends TermTransform {
         return Inheritance.make(Product.make(getMetaTerm(subject),getMetaTerm(object)), predicate);
     }
     public static Term sop(Statement s, String operatorName) {
-        return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), Term.get(operatorName));
+        return Inheritance.make(Product.make(getMetaTerm(s.getSubject()), getMetaTerm(s.getPredicate())), Term.get(operatorName));
     }
     public static Term sop(Statement s, Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);

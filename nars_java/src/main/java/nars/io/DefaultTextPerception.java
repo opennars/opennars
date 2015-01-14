@@ -4,9 +4,9 @@ import com.google.common.collect.Iterators;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.*;
 import nars.core.Events.Perceive;
-import nars.core.control.AbstractTask;
-import nars.entity.Sentence;
-import nars.entity.Task;
+import nars.logic.entity.AbstractTask;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
@@ -47,7 +47,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     private boolean enableEnglisch = false;
     
     private boolean enableTwenglish = false; //the events should be introduced event-wise
-    //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal inference
+    //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal logic
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {

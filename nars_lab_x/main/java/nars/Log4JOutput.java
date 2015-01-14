@@ -64,7 +64,7 @@ public class Log4JOutput extends Output implements LogOutput {
     }
     
     @Override public void traceAppend(final Class channel, final String s) {
-        Logger.getLogger("nars.inference." + channel).info(s);
+        Logger.getLogger("nars.logic." + channel).info(s);
         
     }
     

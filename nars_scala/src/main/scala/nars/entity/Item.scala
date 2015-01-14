@@ -1,4 +1,4 @@
-package nars.entity
+package nars.logic.entity
 
 //remove if not needed
 import scala.collection.JavaConversions._

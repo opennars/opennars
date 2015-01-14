@@ -25,9 +25,9 @@ import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskRemove;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Task;
-import nars.inference.MemoryObserver;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Task;
+import nars.logic.MemoryObserver;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Inference log, which record input/output of each inference step interface
+ * Inference log, which record input/output of each logic step interface
  * with 1 implementation: GUI ( batch not implemented )
  */
 public class InferenceLogger extends MemoryObserver {

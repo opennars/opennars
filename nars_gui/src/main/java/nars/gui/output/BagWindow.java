@@ -38,10 +38,10 @@ package nars.gui.output;
 //import javax.swing.JScrollPane;
 //import javax.swing.JTextArea;
 //import nars.core.Parameters;
-//import nars.entity.Item;
+//import nars.logic.entity.Item;
 //import nars.gui.NWindow;
 //import nars.storage.AbstractBag;
-//import nars.storage.Bag;
+//import Bag;
 //import nars.storage.BagObserver;
 //
 ///**

@@ -1,4 +1,4 @@
-package nars.language
+package nars.logic.language
 
 import nars.storage.Memory
 //remove if not needed

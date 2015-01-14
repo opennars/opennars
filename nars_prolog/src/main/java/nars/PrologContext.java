@@ -1,7 +1,7 @@
 package nars;
 
 import nars.core.NAR;
-import nars.language.Term;
+import nars.logic.entity.Term;
 import nars.prolog.Prolog;
 
 import java.util.HashMap;

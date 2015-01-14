@@ -3,23 +3,29 @@ package nars.io.narsese;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.entity.*;
+import nars.logic.entity.*;
+import nars.logic.entity.Statement;
+import nars.logic.entity.Term;
+import nars.logic.entity.Variable;
+import nars.logic.nal3.SetExt;
+import nars.logic.nal3.SetInt;
+import nars.logic.nal7.Interval;
+import nars.logic.nal7.Tense;
 import nars.io.Symbols;
 import nars.io.Symbols.*;
 import nars.io.Texts;
-import nars.language.*;
-import nars.operator.Operation;
-import nars.operator.Operator;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 
 import java.util.ArrayList;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
-import static nars.inference.BudgetFunctions.truthToQuality;
+import static nars.logic.BudgetFunctions.truthToQuality;
 import static nars.io.Symbols.*;
 import static nars.io.Symbols.NativeOperator.*;
-import static nars.language.Variables.containVar;
-import static nars.operator.Operation.make;
+import static nars.logic.Variables.containVar;
+import static nars.logic.nal8.Operation.make;
 
 /**
  * Utility methods for working and reacting to Narsese input.

@@ -27,8 +27,8 @@ import nars.core.Events.ConceptFire;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.entity.Concept;
-import nars.inference.AbstractObserver;
+import nars.logic.entity.Concept;
+import nars.logic.AbstractObserver;
 import nars.util.NARTrace;
 import nars.util.TreeMLData;
 

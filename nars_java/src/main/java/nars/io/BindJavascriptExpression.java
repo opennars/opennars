@@ -8,8 +8,8 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Output.ERR;
 import nars.io.narsese.Narsese;
-import nars.language.Term;
-import nars.operator.Operator;
+import nars.logic.entity.Term;
+import nars.logic.nal8.Operator;
 import nars.operator.SynchronousFunctionOperator;
 
 import javax.script.ScriptEngine;

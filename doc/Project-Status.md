@@ -12,6 +12,6 @@ There are several ongoing activities:
 # Future tasks
 
 After the above tasks are accomplished, there are several further possibilities to be explored. 
-  **. Implementing the inference rules in a declarative manner, similar to [the Prolog version of NAL](http://www.cis.temple.edu/~pwang/Implementation/NAL/nal.pl). The current approach in the Java version, mainly shown in nars.inference.RuleTables, lacks clarity and elegance, and is also hard to maintain. 
+  **. Implementing the inference rules in a declarative manner, similar to [the Prolog version of NAL](http://www.cis.temple.edu/~pwang/Implementation/NAL/nal.pl). The current approach in the Java version, mainly shown in nars.logic.RuleTables, lacks clarity and elegance, and is also hard to maintain.
   **. Interfacing with other systems via various types of input/output channels, which is about how NARS can use other systems. It is also related to the ideas presented in AbstractDesignProposal, which is about how other systems can use NARS. 
   *. System refactoring, which is related to the above topics, as well as those discussed in Modules.

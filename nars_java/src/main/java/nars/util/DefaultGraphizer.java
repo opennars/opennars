@@ -1,8 +1,9 @@
 package nars.util;
 
-import nars.entity.*;
-import nars.language.CompoundTerm;
-import nars.language.Term;
+import nars.logic.entity.*;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Term;
+import nars.util.graph.NARGraph;
 
 import java.util.Collection;
 import java.util.HashMap;

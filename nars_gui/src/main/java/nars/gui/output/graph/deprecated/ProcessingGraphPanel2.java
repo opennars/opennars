@@ -4,11 +4,11 @@ import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.language.CompoundTerm;
-import nars.language.Term;
-import nars.util.NARGraph;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Term;
+import nars.util.graph.NARGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DirectedMultigraph;
 

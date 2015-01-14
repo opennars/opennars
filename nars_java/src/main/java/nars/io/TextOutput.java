@@ -23,12 +23,13 @@ package nars.io;
 
 import nars.core.Events.Answer;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.entity.TruthValue;
-import nars.language.Statement;
-import nars.operator.Operator;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
+import nars.logic.entity.TruthValue;
+import nars.logic.entity.Statement;
+import nars.logic.nal8.Operator;
+import nars.operator.io.Echo;
 
 import java.io.*;
 import java.util.Arrays;
@@ -197,11 +198,8 @@ public class TextOutput extends Output {
             }      
             
         }        
-        else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Answer.class))  {
+        else if ((channel == OUT.class) || (channel == IN.class) || (channel == Echo.class) || (channel == EXE.class) || (channel == Answer.class))  {
 
-
-
-            
             if (signal instanceof Task) {
                 Task t = (Task)signal;                
                 if (t.getPriority() < minPriority)
@@ -356,7 +354,7 @@ public class TextOutput extends Output {
             }                            
             
         }
-        else if ((channel == IN.class) || (channel == ECHO.class)) {
+        else if ((channel == IN.class) || (channel == Echo.class)) {
             buffer.append(signal.toString());
         }
         else if (channel == EXE.class) {

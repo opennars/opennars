@@ -5,7 +5,8 @@ import nars.core.Events;
 import nars.core.Events.Answer;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.inference.AbstractObserver;
+import nars.logic.AbstractObserver;
+import nars.operator.io.Echo;
 import nars.operator.io.Say;
 
 /**
@@ -23,13 +24,12 @@ public abstract class Output extends AbstractObserver {
     /** warnings, errors & exceptions */
     public static interface ERR { }
     
-    /** explicitly repeated input (repetition of the content of input ECHO commands) */
-    public static interface ECHO  { }
+
     
     /** operation execution */
     public static interface EXE  { }
 
-    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Say.class, Answer.class, Events.PluginsChange.class };
+    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, Echo.class, Say.class, Answer.class, Events.PluginsChange.class };
             
     public Output(EventEmitter source, boolean active) {
         super(source, active, DefaultOutputEvents );

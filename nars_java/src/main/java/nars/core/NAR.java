@@ -8,9 +8,9 @@ import nars.core.Events.FrameStart;
 import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
-import nars.core.control.AbstractTask;
-import nars.core.control.NAL.DerivationFilter;
-import nars.entity.*;
+import nars.logic.entity.AbstractTask;
+import nars.logic.NAL.DerivationFilter;
+import nars.logic.entity.*;
 import nars.io.*;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -18,8 +18,8 @@ import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
-import nars.language.Tense;
-import nars.operator.Operator;
+import nars.logic.nal7.Tense;
+import nars.logic.nal8.Operator;
 import nars.operator.io.Echo;
 import reactor.event.registry.Registration;
 
@@ -422,7 +422,7 @@ public class NAR implements Runnable, TaskSource {
     
     
     /**
-     * Stop the inference process, killing its thread.
+     * Stop the logic process, killing its thread.
      */
     public void stop() {
         if (thread!=null) {
@@ -686,7 +686,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
      /**
-     * Get the current time from the clock Called in {@link nars.entity.Stamp}
+     * Get the current time from the clock Called in {@link nars.logic.entity.Stamp}
      *
      * @return The current time
      */

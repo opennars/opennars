@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  */
 /**
  * Handle operations on an individual formula. This includes formatting for
- * presentation as well as pre-processing for sending to the inference engine.
+ * presentation as well as pre-processing for sending to the logic engine.
  */
 public class Formula implements Comparable {
 
@@ -2855,7 +2855,7 @@ public class Formula implements Comparable {
                         System.out.println("WARNING in Formula.preProcess()");
                         System.out.println("  REJECTING " + theNewFormula);
                         KBmanager.getMgr().setError(KBmanager.getMgr().getError()
-                                + "\n<br/>Formula rejected for inference:<br/>"
+                                + "\n<br/>Formula rejected for logic:<br/>"
                                 + fnew.htmlFormat(kb)
                                 + "<br/>\n");
                     }
@@ -2871,7 +2871,7 @@ public class Formula implements Comparable {
      * ***************************************************************
      * Returns true if this Formula appears not to have any of the
      * characteristics that would cause it to be rejected during translation to
-     * TPTP form, or cause problems during inference. Otherwise, returns false.
+     * TPTP form, or cause problems during logic. Otherwise, returns false.
      *
      * @param query true if this Formula represents a query, else false.
      *

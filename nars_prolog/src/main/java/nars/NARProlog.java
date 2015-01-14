@@ -36,7 +36,7 @@ abstract public class NARProlog {
 //        
 //        Prolog prolog = new NARProlog(nar);
 //        prolog.solve("revision([inheritance(bird, swimmer), [1, 0.8]], [inheritance(bird, swimmer), [0, 0.5]], R).");
-//        prolog.solve("inference([inheritance(swan, bird), [0.9, 0.8]], [inheritance(bird, swan), T]).");
+//        prolog.solve("logic([inheritance(swan, bird), [0.9, 0.8]], [inheritance(bird, swan), T]).");
 //        
 //    }
 

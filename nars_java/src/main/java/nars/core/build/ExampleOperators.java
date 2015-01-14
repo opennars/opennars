@@ -1,7 +1,7 @@
 package nars.core.build;
 
 import nars.operator.NullOperator;
-import nars.operator.Operator;
+import nars.logic.nal8.Operator;
 
 /**
  * Operators for NAL8 Examples

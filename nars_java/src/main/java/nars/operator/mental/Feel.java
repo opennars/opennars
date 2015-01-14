@@ -19,11 +19,15 @@ package nars.operator.mental;
 import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.*;
-import nars.inference.BudgetFunctions;
+import nars.logic.entity.*;
+import nars.logic.BudgetFunctions;
+import nars.logic.entity.Term;
+import nars.logic.nal1.Inheritance;
+import nars.logic.nal3.SetExt;
+import nars.logic.nal3.SetInt;
+import nars.logic.nal7.Tense;
 import nars.io.Symbols;
-import nars.language.*;
-import nars.operator.Operator;
+import nars.logic.nal8.Operator;
 
 import java.util.ArrayList;
 
@@ -54,7 +58,7 @@ public abstract class Feel extends Operator implements Mental {
         Stamp stamp = new Stamp(memory, Tense.Present);
         TruthValue truth = new TruthValue(value, 0.999f);
                 
-        Term predicate = new SetInt(feelingTerm); 
+        Term predicate = new SetInt(feelingTerm);
         
         Term content = Inheritance.make(selfSubject, predicate);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);

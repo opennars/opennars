@@ -10,19 +10,19 @@
 //import nars.core.Parameters;
 //import nars.core.build.Default;
 //import nars.core.control.DefaultAttention;
-//import nars.entity.Concept;
+//import nars.logic.entity.Concept;
 //import automenta.vivisect.swing.NWindow;
 //import automenta.vivisect.timeline.LineChart;
 //import nars.io.Input;
 //import nars.io.Texts;
-//import nars.language.Term;
-//import nars.storage.Bag;
+//import nars.logic.entity.Term;
+//import Bag;
 //import automenta.vivisect.timeline.Chart;
 //import automenta.vivisect.timeline.MultiTimeline;
 //import automenta.vivisect.timeline.StackedPercentageChart;
 //import nars.core.Memory.Timing;
-//import nars.core.control.FireConcept;
-//import nars.storage.CurveBag;
+//import nars.logic.FireConcept;
+//import CurveBag;
 //
 ///**
 // *

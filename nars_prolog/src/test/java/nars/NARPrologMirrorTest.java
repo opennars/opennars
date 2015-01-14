@@ -7,10 +7,10 @@ package nars;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.entity.Sentence;
-import nars.entity.Task;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import nars.io.ExampleFileInput;
-import nars.language.Term;
+import nars.logic.entity.Term;
 import nars.util.NALPerformance;
 import org.junit.Test;
 

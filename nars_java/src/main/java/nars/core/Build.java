@@ -1,9 +1,9 @@
 package nars.core;
 
-import nars.entity.Sentence;
-import nars.entity.Task;
-import nars.language.Term;
-import nars.storage.Bag;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
+import nars.logic.entity.Term;
+import nars.util.bag.Bag;
 
 /**
  * NAR design parameters which define a NAR at initialization.  

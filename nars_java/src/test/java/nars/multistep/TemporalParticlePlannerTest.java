@@ -3,7 +3,7 @@ package nars.multistep;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.io.condition.OutputContainsCondition;
-import nars.plugin.mental.InternalExperience;
+import nars.operator.mental.InternalExperience;
 import org.junit.Test;
 
 import java.io.IOException;

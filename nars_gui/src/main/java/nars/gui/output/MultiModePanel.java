@@ -6,11 +6,11 @@ import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.NAR;
-import nars.entity.Task;
+import nars.logic.entity.Task;
 import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
 import nars.io.Output;
 import nars.util.DefaultGraphizer;
-import nars.util.NARGraph;
+import nars.util.graph.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 
 import javax.swing.*;

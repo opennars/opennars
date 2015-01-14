@@ -20,7 +20,7 @@ import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.gui.output.chart.MeterVis;
-import nars.util.NARTrace;
+import nars.logic.NARTrace;
 
 /**
  *

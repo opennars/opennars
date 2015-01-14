@@ -1,4 +1,4 @@
-package nars.inference
+package nars.logic
 
 import nars.main.Parameters
 //remove if not needed

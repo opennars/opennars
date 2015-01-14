@@ -2,7 +2,7 @@ package nars.gui
 
 import java.awt._
 import java.awt.event._
-import nars.entity.Concept
+import nars.logic.entity.Concept
 import nars.storage.Memory
 //remove if not needed
 import scala.collection.JavaConversions._

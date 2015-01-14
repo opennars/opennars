@@ -1,7 +1,7 @@
-package nars.inference
+package nars.logic
 
-import nars.entity._
-import nars.language._
+import nars.logic.entity._
+import nars.logic.language._
 import nars.storage.Memory
 //remove if not needed
 import scala.collection.JavaConversions._

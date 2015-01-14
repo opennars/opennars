@@ -28,11 +28,6 @@ import nars.gui.FileTreeModel;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
-import nars.io.narsese.NarseseParser;
-import org.parboiled.errors.InvalidInputError;
-import org.parboiled.parserunners.ReportingParseRunner;
-import org.parboiled.support.MatcherPath;
-import org.parboiled.support.ParsingResult;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -187,9 +182,10 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             actionsCollected.add(library);
         }
     }
-    
+
+
     public class NarseseInput implements TextInputMode {
-        public final NarseseParser p = NarseseParser.newParser();
+        //public final NarseseParser p = NarseseParser.newParser();
         
         private String input;
         private NAR nar;
@@ -204,11 +200,12 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         public String getInterpretation() {
             if (input.length() == 0)
                 return null;
-            
-            ReportingParseRunner rpr = new ReportingParseRunner(p.Input());
-            ParsingResult r = rpr.run(input);
 
-            String s = "";
+            //TEMPORARILY DISABLED WHILE REFACTORING PARSER
+            //ReportingParseRunner rpr = new ReportingParseRunner(p.Input());
+            //ParsingResult r = rpr.run(input);
+
+            /*String s = "";
             boolean valid = (r.parseErrors.isEmpty());
             if (!valid) {
                 for (Object e : r.parseErrors) {
@@ -224,10 +221,10 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                         s += e.toString();
                     }
                 }
-            } else {
-                s = "OK. ";
-            }
-            return s;
+            } else {*/
+                return "OK. ";
+            //}
+            //return s;
         }
 
         public InputAction inputDirect = new InputAction() {
@@ -306,7 +303,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
         
     }
-    
+
     /*
     public class EnglishInput implements TextInputMode {
         private NAR nar;
@@ -380,7 +377,6 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
      * Constructor
      *
      * @param nar The reasoner
-     * @param title The title of the window
      */
     public TextInputPanel(final NAR nar) {
         super(new BorderLayout());

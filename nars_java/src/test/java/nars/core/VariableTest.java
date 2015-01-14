@@ -6,7 +6,7 @@ package nars.core;
 
 import nars.core.Events.Answer;
 import nars.core.build.Default;
-import nars.inference.AbstractObserver;
+import nars.logic.AbstractObserver;
 import nars.io.condition.OutputContainsCondition;
 import org.junit.Before;
 import org.junit.Test;

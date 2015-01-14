@@ -1,6 +1,6 @@
 package nars.operator.io;
 
-import nars.core.control.AbstractTask;
+import nars.logic.entity.AbstractTask;
 
 /**
  * Resets memory, @see memory.reset()

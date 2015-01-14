@@ -4,7 +4,7 @@ import nars.core.NAR;
 import nars.core.build.Default;
 import nars.io.condition.OutputContainsCondition;
 import nars.io.narsese.Narsese;
-import nars.language.Tense;
+import nars.logic.nal7.Tense;
 
 /**
 I played a lot with 1.6.0 version for long time now. I'm am pleased that it works that nicely.

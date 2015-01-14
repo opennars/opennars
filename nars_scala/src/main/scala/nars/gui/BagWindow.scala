@@ -3,7 +3,7 @@ package nars.gui
 import java.awt._
 import java.awt.event._
 import nars.main.Parameters
-import nars.storage.Bag
+import Bag
 import BagWindow._
 //remove if not needed
 import scala.collection.JavaConversions._

@@ -1,6 +1,6 @@
-package nars.inference
+package nars.logic
 
-import nars.entity._
+import nars.logic.entity._
 //remove if not needed
 import scala.collection.JavaConversions._
 import UtilityFunctions._

@@ -5,9 +5,9 @@
 package nars.core;
 
 import nars.core.build.Default;
-import nars.entity.TruthValue;
-import nars.plugin.app.plan.MultipleExecutionManager;
-import nars.plugin.app.plan.MultipleExecutionManager.Execution;
+import nars.logic.entity.TruthValue;
+import nars.operator.app.plan.MultipleExecutionManager;
+import nars.operator.app.plan.MultipleExecutionManager.Execution;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

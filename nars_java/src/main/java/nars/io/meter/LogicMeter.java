@@ -1,7 +1,7 @@
 package nars.io.meter;
 
 import nars.core.Memory;
-import nars.entity.Concept;
+import nars.logic.entity.Concept;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ValueMeter;
 

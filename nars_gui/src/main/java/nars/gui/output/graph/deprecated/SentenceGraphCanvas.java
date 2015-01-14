@@ -3,8 +3,8 @@ package nars.gui.output.graph.deprecated;
 //package nars.gui.output.graph;
 //
 //import automenta.vivisect.graph.AnimatedProcessingGraphCanvas;
-//import nars.entity.Sentence;
-//import nars.language.Term;
+//import nars.logic.entity.Sentence;
+//import nars.logic.entity.Term;
 //import nars.other.graph.SentenceGraph;
 //
 ///**

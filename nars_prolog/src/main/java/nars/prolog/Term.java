@@ -17,7 +17,7 @@
  */
 package nars.prolog;
 
-import nars.language.AbstractTerm;
+import nars.logic.entity.AbstractTerm;
 import nars.prolog.util.OneWayList;
 
 import java.io.Serializable;
@@ -29,7 +29,7 @@ import java.util.*;
  * @see Var
  * @see  Number
  */
-public abstract class Term implements nars.language.AbstractTerm, Serializable {
+public abstract class Term implements AbstractTerm, Serializable {
 	private static final long serialVersionUID = 1L;
 
     // true and false constants

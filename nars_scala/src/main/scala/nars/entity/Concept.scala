@@ -1,13 +1,13 @@
-package nars.entity
+package nars.logic.entity
 
 import java.util.ArrayList
 import nars.gui.ConceptWindow
-import nars.inference.BudgetFunctions
-import nars.inference.LocalRules
-import nars.inference.RuleTables
-import nars.inference.UtilityFunctions
-import nars.language.CompoundTerm
-import nars.language.Term
+import nars.logic.BudgetFunctions
+import nars.logic.nal1.LocalRules
+import nars.logic.RuleTables
+import nars.logic.UtilityFunctions
+import nars.logic.entity.CompoundTerm
+import nars.logic.entity.Term
 import nars.main.NARS
 import nars.main.Parameters
 import nars.main_nogui.NARSBatch

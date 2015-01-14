@@ -1,6 +1,6 @@
-package nars.entity
+package nars.logic.entity
 
-import nars.inference._
+import nars.logic._
 import nars.io.Symbols
 import nars.main._
 import BudgetValue._

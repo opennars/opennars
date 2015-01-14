@@ -11,14 +11,14 @@ import automenta.vivisect.timeline.TimelineVis;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.entity.Concept;
-import nars.entity.Task;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.output.ConceptsPanel;
 import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
-import nars.language.Tense;
-import nars.language.Term;
+import nars.logic.language.Tense;
+import nars.logic.language.Term;
 import nars.util.TreeMLData;
 
 import java.awt.*;

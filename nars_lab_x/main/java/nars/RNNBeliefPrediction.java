@@ -13,8 +13,8 @@ import de.jannlab.generator.RNNGenerator;
 import de.jannlab.tools.NetTools;
 import de.jannlab.training.GradientDescent;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Sentence;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
 import org.apache.commons.math3.util.MathArrays;
 
 import java.util.Arrays;

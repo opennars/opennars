@@ -31,8 +31,8 @@ package nars.gui.output;
 //import javax.swing.JLabel;
 //import javax.swing.JScrollPane;
 //import javax.swing.JTextField;
-//import nars.entity.Concept;
-//import nars.entity.EntityObserver;
+//import nars.logic.entity.Concept;
+//import nars.logic.entity.EntityObserver;
 //import nars.gui.NWindow;
 //import nars.core.Memory;
 //

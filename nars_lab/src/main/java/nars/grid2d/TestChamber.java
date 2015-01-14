@@ -15,9 +15,9 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
-import nars.plugin.app.plan.TemporalParticlePlanner;
-import nars.plugin.mental.FullInternalExperience;
-import nars.plugin.mental.InternalExperience;
+import nars.operator.app.plan.TemporalParticlePlanner;
+import nars.operator.mental.FullInternalExperience;
+import nars.operator.mental.InternalExperience;
 import processing.core.PVector;
 
 import java.util.List;

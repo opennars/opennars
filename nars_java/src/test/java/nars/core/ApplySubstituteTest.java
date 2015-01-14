@@ -2,8 +2,8 @@ package nars.core;
 
 import nars.core.build.Default;
 import nars.io.narsese.Narsese;
-import nars.language.CompoundTerm;
-import nars.language.Term;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Term;
 import org.junit.Test;
 
 import java.util.HashMap;

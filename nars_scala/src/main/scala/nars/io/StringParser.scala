@@ -1,9 +1,9 @@
 package nars.io
 
 import java.util._
-import nars.entity._
-import nars.inference._
-import nars.language._
+import nars.logic.entity._
+import nars.logic._
+import nars.logic.language._
 import nars.main._
 import nars.storage.Memory
 //remove if not needed

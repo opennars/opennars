@@ -1,6 +1,6 @@
-package nars.entity
+package nars.logic.entity
 
-import nars.language.Term
+import nars.logic.entity.Term
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 //remove if not needed
 import scala.collection.JavaConversions._

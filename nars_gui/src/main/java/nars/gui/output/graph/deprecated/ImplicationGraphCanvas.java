@@ -5,9 +5,9 @@ package nars.gui.output.graph.deprecated;
 //
 //import automenta.vivisect.graph.AnimatedProcessingGraphCanvas;
 //import java.awt.Color;
-//import nars.inference.GraphExecutive;
-//import nars.language.Interval;
-//import nars.language.Term;
+//import nars.logic.GraphExecutive;
+//import nars.logic.nal7.Interval;
+//import nars.logic.entity.Term;
 //import nars.other.graph.ImplicationGraph.Cause;
 //import org.jgrapht.Graph;
 //

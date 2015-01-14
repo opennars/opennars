@@ -22,7 +22,7 @@ import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.util.NARTrace;
+import nars.logic.NARTrace;
 
 import java.io.File;
 import java.io.IOException;

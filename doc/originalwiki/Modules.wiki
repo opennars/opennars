@@ -16,10 +16,10 @@ Each NARS-based system will consist of a _core_ module and one or more _channel 
 = The core module =
 
 The core consists of the system's memory, inference engine, and control mechanism. In the current NARS code, it includes the following packages
-  * nars.language (Narsese terms)
-  * nars.entity (data items)
+  * nars.logic.language (Narsese terms)
+  * nars.logic.entity (data items)
   * nars.storage (data structures)
-  * nars.inference (rules and functions)
+  * nars.logic (rules and functions)
 The four packages will be kept, after necessary modifications.
 
 Major refactoring is needed for the nars.main package, which currently include the following classes:

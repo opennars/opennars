@@ -1,4 +1,4 @@
-package nars.entity
+package nars.logic.entity
 
 import java.util._
 import nars.io.Symbols

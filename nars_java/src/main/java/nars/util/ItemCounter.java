@@ -3,7 +3,7 @@ package nars.util;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import nars.core.NAR;
-import nars.inference.AbstractObserver;
+import nars.logic.AbstractObserver;
 
 import java.io.PrintStream;
 

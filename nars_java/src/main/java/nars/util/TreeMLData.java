@@ -13,7 +13,7 @@ import java.util.TreeMap;
  * Used by Chart, a chart data set is a container to store chart data.
  * TODO add ArrayDeque implementation as originally, for fast insertion/removal
  */
-@Deprecated class TreeMLData implements MLData {
+@Deprecated public class TreeMLData implements MLData {
 
 
     //TODO use a primitive collection

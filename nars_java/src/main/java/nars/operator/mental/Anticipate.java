@@ -27,18 +27,17 @@ import nars.core.Events.CycleEnd;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.control.NAL;
-import nars.entity.*;
-import nars.inference.AbstractObserver;
-import nars.inference.BudgetFunctions;
-import nars.inference.TemporalRules;
+import nars.logic.NAL;
+import nars.logic.entity.*;
+import nars.logic.AbstractObserver;
+import nars.logic.BudgetFunctions;
+import nars.logic.nal7.TemporalRules;
 import nars.io.Symbols;
-import nars.language.Conjunction;
-import nars.language.Product;
-import nars.language.Term;
-import nars.operator.Operation;
-import nars.operator.Operator;
-import nars.plugin.mental.InternalExperience;
+import nars.logic.nal5.Conjunction;
+import nars.logic.nal4.Product;
+import nars.logic.entity.Term;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 
 import java.util.*;
 

@@ -7,7 +7,7 @@ package nars.core;
 
 import com.google.common.collect.Iterables;
 import nars.core.build.Default;
-import nars.entity.Concept;
+import nars.logic.entity.Concept;
 import org.junit.Test;
 
 import java.util.HashSet;

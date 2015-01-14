@@ -2,7 +2,7 @@
 
 # Introduction
 
-A Stamp (nars.entity.Stamp) serves several related functions in NARS. It is a component of a Sentence (nars.entity.Stamp), though conceptually some of its components are actually about the TruthValue or DesireValue of the sentence.
+A Stamp (nars.logic.entity.Stamp) serves several related functions in NARS. It is a component of a Sentence (nars.logic.entity.Stamp), though conceptually some of its components are actually about the TruthValue or DesireValue of the sentence.
 
 A Stamp contains an *evidential base*, a *derivation chain*, a *creation time*, and an optional *occurrence time*. Once created, all the information in a stamp remains unchanged.
 

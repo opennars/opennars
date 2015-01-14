@@ -1,6 +1,6 @@
 package nars.operator.io;
 
-import nars.core.control.AbstractTask;
+import nars.logic.entity.AbstractTask;
 
 /**
  * Sets the global volume / noise level, =(100% - "silence level")

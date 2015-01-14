@@ -15,7 +15,7 @@ package nars.gui.output;
 //import nars.core.Events.CycleEnd;
 //import nars.core.NAR;
 //import nars.core.build.DefaultNARBuilder;
-//import nars.entity.Task;
+//import nars.logic.entity.Task;
 //import nars.gui.NPanel;
 //import nars.gui.Window;
 //import nars.io.TextOutput;

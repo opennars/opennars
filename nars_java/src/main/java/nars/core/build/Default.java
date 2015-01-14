@@ -4,17 +4,17 @@ import nars.core.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.core.control.DefaultCore;
-import nars.entity.*;
+import nars.logic.entity.*;
 import nars.io.DefaultTextPerception;
 import nars.io.TextInput;
-import nars.language.Term;
-import nars.operator.Operator;
+import nars.logic.entity.Term;
+import nars.logic.nal8.Operator;
 import nars.operator.mental.Anticipate;
-import nars.plugin.app.plan.TemporalParticlePlanner;
-import nars.plugin.mental.*;
-import nars.storage.Bag;
-import nars.storage.CacheBag;
-import nars.storage.LevelBag;
+import nars.operator.app.plan.TemporalParticlePlanner;
+import nars.operator.mental.*;
+import nars.util.bag.Bag;
+import nars.util.bag.CacheBag;
+import nars.util.bag.LevelBag;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +24,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nars.plugin.mental.InternalExperience.InternalExperienceMode.Full;
-import static nars.plugin.mental.InternalExperience.InternalExperienceMode.Minimal;
+import static nars.operator.mental.InternalExperience.InternalExperienceMode.Full;
+import static nars.operator.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 /**
  * Default set of NAR parameters which have been classically used for development.

@@ -17,7 +17,7 @@ package nars.gui;
 //import java.other.TreeMap;
 //import java.other.concurrent.ConcurrentSkipListMap;
 //import nars.core.Events;
-//import nars.entity.Item;
+//import nars.logic.entity.Item;
 //import nars.io.Output;
 //import nars.other.NARTrace;
 //import nars.other.NARTrace.HasLabel;

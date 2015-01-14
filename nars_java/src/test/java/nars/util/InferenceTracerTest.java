@@ -2,6 +2,7 @@ package nars.util;
 
 import nars.core.NAR;
 import nars.core.build.Default;
+import nars.logic.NARTrace;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -16,7 +17,7 @@ public class InferenceTracerTest {
     public void testConceptAndTask() {
         NAR n = new NAR(new Default());
         
-        NARTrace tracer = new NARTrace(n);        
+        NARTrace tracer = new NARTrace(n);
         
         n.addInput("<a --> b>.");
         

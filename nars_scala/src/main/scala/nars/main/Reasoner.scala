@@ -5,7 +5,7 @@ import javax.swing.SwingUtilities
 import nars.storage._
 import nars.io._
 import nars.gui._
-import nars.entity._
+import nars.logic.entity._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 //remove if not needed
 import scala.collection.JavaConversions._
@@ -96,7 +96,7 @@ class Reasoner(var name: String) {
 
   /**
    * Get the current time from the clock
-   * Called in nars.entity.Stamp
+   * Called in nars.logic.entity.Stamp
    * @return The current time
    */
   def getTime(): Long = clock

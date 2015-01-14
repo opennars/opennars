@@ -1,4 +1,4 @@
-package nars.entity
+package nars.logic.entity
 
 object ShortFloat {
   def computeValue(v: Float): Short = {

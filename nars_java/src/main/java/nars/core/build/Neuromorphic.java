@@ -2,9 +2,9 @@ package nars.core.build;
 
 import nars.core.Core;
 import nars.core.control.experimental.AntCore;
-import nars.entity.Concept;
-import nars.language.Term;
-import nars.storage.Bag;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Term;
+import nars.util.bag.Bag;
 
 /**
  *

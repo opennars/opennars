@@ -1,8 +1,8 @@
 package nars.core;
 
 import nars.core.build.Default;
-import nars.language.Interval;
-import nars.language.Interval.AtomicDuration;
+import nars.logic.nal7.Interval;
+import nars.logic.nal7.Interval.AtomicDuration;
 import org.junit.Test;
 
 import java.util.List;

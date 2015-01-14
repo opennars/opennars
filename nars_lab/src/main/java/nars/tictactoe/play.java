@@ -20,11 +20,11 @@ package nars.tictactoe;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.entity.Task;
+import nars.logic.entity.Task;
 import nars.gui.NARSwing;
-import nars.language.Term;
-import nars.operator.Operation;
-import nars.operator.Operator;
+import nars.logic.entity.Term;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 
 import javax.swing.*;
 import java.util.List;

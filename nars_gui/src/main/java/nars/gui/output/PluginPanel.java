@@ -6,7 +6,7 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NAR.PluginState;
 import nars.core.Plugin;
-import nars.inference.AbstractObserver;
+import nars.logic.AbstractObserver;
 import nars.util.PackageUtility;
 
 import javax.swing.*;

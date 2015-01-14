@@ -17,7 +17,7 @@
  */
 package nars.prolog;
 
-import nars.language.AbstractTerm;
+import nars.logic.entity.AbstractTerm;
 
 import java.nio.CharBuffer;
 import java.util.*;

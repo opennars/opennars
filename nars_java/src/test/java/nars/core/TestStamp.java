@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
-import static nars.entity.Stamp.toSetArray;
+import static nars.logic.entity.Stamp.toSetArray;
 
 /**
  *

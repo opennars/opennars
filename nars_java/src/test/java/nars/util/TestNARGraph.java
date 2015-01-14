@@ -2,9 +2,10 @@ package nars.util;
 
 import nars.core.NAR;
 import nars.core.build.Default;
+import nars.util.graph.NARGraph;
 import org.junit.Test;
 
-import static nars.util.NARGraph.IncludeEverything;
+import static nars.util.graph.NARGraph.IncludeEverything;
 
 
 

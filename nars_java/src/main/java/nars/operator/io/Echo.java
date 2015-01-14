@@ -1,10 +1,9 @@
 package nars.operator.io;
 
-import nars.core.control.AbstractTask;
+import nars.logic.entity.AbstractTask;
 
 /**
- * TODO wrap as operator
- * @author me
+ * explicitly repeated input (repetition of the content of input ECHO commands)
  */
 public class Echo extends AbstractTask<CharSequence> {
     public final Object signal;

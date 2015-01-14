@@ -13,11 +13,11 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.control.NAL;
-import nars.entity.Task;
+import nars.logic.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.io.narsese.Narsese;
-import nars.language.Term;
+import nars.logic.language.Term;
 
 import java.awt.*;
 

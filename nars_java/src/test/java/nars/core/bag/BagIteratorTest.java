@@ -1,9 +1,9 @@
 package nars.core.bag;
 
 import nars.perf.BagPerf.NullItem;
-import nars.storage.Bag;
-import nars.storage.CurveBag;
-import nars.storage.LevelBag;
+import nars.util.bag.Bag;
+import nars.util.bag.CurveBag;
+import nars.util.bag.LevelBag;
 import org.junit.Test;
 
 import java.util.Iterator;

@@ -2,13 +2,16 @@ package nars;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.Task;
+import nars.logic.entity.Task;
+import nars.logic.entity.Variable;
+import nars.logic.nal1.Inheritance;
+import nars.logic.nal4.Product;
+import nars.logic.nal7.Tense;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.language.*;
-import nars.language.Term;
-import nars.operator.Operation;
-import nars.operator.Operator;
+import nars.logic.entity.Term;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 import nars.prolog.*;
 
 import java.util.ArrayList;
@@ -117,8 +120,8 @@ public class PrologQueryOperator extends Operator {
         
         //  create the nars result and return it
         Inheritance resultInheritance = Inheritance.make(
-            operatorInheritance,
-            new Term("prolog_evaluation")            
+                operatorInheritance,
+                new Term("prolog_evaluation")
         );
         
         

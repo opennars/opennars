@@ -3,10 +3,16 @@ package nars.operator;
 import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.Task;
-import nars.inference.TemporalRules;
+import nars.logic.entity.Task;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Term;
+import nars.logic.entity.Variable;
+import nars.logic.nal2.Similarity;
+import nars.logic.nal5.Implication;
+import nars.logic.nal7.TemporalRules;
+import nars.logic.nal8.Operation;
+import nars.logic.nal8.Operator;
 import nars.io.Symbols;
-import nars.language.*;
 
 import java.util.ArrayList;
 
@@ -81,7 +87,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
                 ((CompoundTerm)operation.getSubject()).setComponent(
                         numArgs-1, var, m), m); 
         
-        Term actual=Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
+        Term actual= Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         if (variable) {
             return Lists.newArrayList( 

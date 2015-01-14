@@ -1,6 +1,6 @@
 package nars.storage
 
-import nars.entity.Concept
+import nars.logic.entity.Concept
 import nars.main.Parameters
 //remove if not needed
 import scala.collection.JavaConversions._

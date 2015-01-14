@@ -23,12 +23,12 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.entity.BudgetValue;
-import nars.entity.Item;
-import nars.storage.Bag;
-import nars.storage.CurveBag;
-import nars.storage.LevelBag;
-import nars.storage.experimental.GearBag;
+import nars.logic.entity.BudgetValue;
+import nars.logic.entity.Item;
+import nars.util.bag.Bag;
+import nars.util.bag.CurveBag;
+import nars.util.bag.LevelBag;
+import nars.util.bag.experimental.GearBag;
 import nars.util.sort.ArraySortedIndex;
 
 import java.io.PrintStream;

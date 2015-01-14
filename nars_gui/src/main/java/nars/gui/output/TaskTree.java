@@ -7,9 +7,9 @@ import nars.core.Events.FrameEnd;
 import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskRemove;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Task;
-import nars.entity.TruthValue;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Task;
+import nars.logic.entity.TruthValue;
 import nars.gui.WrapLayout;
 
 import javax.swing.*;

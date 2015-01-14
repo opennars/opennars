@@ -5,7 +5,7 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import nars.core.NAR;
 import nars.util.DefaultGraphizer;
-import nars.util.NARGraph;
+import nars.util.graph.NARGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 
@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-import static nars.util.NARGraph.IncludeEverything;
+import static nars.util.graph.NARGraph.IncludeEverything;
 
 /**
  *

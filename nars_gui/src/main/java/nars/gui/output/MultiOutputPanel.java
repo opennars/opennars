@@ -4,7 +4,7 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.dock.DockingContent;
 import automenta.vivisect.swing.dock.DockingRegionRoot;
 import nars.core.NAR;
-import nars.entity.Task;
+import nars.logic.entity.Task;
 import nars.gui.NARControls;
 
 import javax.swing.*;

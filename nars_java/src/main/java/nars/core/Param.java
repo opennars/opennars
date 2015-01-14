@@ -4,8 +4,8 @@ import com.google.common.util.concurrent.AtomicDouble;
 import com.google.gson.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
-import nars.core.control.NAL.DerivationFilter;
-import nars.language.Interval.AtomicDuration;
+import nars.logic.NAL.DerivationFilter;
+import nars.logic.nal7.Interval.AtomicDuration;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;

@@ -104,7 +104,7 @@ public class NARTuprolog extends NARProlog implements OutputListener, WarningLis
 
         NARTuprolog prolog = new NARTuprolog(nar);
         prolog.prolog.solve("revision([inheritance(bird, swimmer), [1, 0.8]], [inheritance(bird, swimmer), [0, 0.5]], R).");
-        prolog.prolog.solve("inference([inheritance(swan, bird), [0.9, 0.8]], [inheritance(bird, swan), T]).");
+        prolog.prolog.solve("logic([inheritance(swan, bird), [0.9, 0.8]], [inheritance(bird, swan), T]).");
 
     }
 

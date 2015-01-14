@@ -22,7 +22,7 @@ package nars.util;
 //import java.io.StringWriter;
 //import nars.core.build.DefaultNARBuilder;
 //import nars.core.NAR;
-//import nars.entity.Sentence;
+//import nars.logic.entity.Sentence;
 //import nars.io.TextOutput;
 //import nars.other.SentencePipe;
 //import org.junit.Test;

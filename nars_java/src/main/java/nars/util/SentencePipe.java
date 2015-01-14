@@ -18,8 +18,8 @@
 //
 //import java.other.concurrent.ArrayBlockingQueue;
 //import nars.core.NAR;
-//import nars.entity.Sentence;
-//import nars.entity.Task;
+//import nars.logic.entity.Sentence;
+//import nars.logic.entity.Task;
 //import nars.io.Input;
 //import nars.io.Output;
 //

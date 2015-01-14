@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 /**
  * *****************************************************************
  * Contains methods for reading, writing knowledge bases and their
- * configurations. Also contains the inference engine process for the knowledge
+ * configurations. Also contains the logic engine process for the knowledge
  * base.
  */
 public class KB {
@@ -300,7 +300,7 @@ public class KB {
     /**
      * *************************************************************
      * Writes the cache .kif file, and then calls addConstituent() so that the
-     * file can be processed and loaded by the inference engine.
+     * file can be processed and loaded by the logic engine.
      *
      * @return a String indicating any errors, or the empty string if there were
      * no errors.
@@ -1526,7 +1526,7 @@ public class KB {
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     * Adds a formula to the knowledge base.  Returns an XML formatted
-//     * String that contains the response of the inference engine.  It
+//     * String that contains the response of the logic engine.  It
 //     * should be of the form "<assertionResponse>...</assertionResponse>"
 //     * where the body should be " Formula has been added to the session
 //     * database" if all went well.
@@ -1622,9 +1622,9 @@ public class KB {
 //                                    System.out.println("INFO in KB.tell()");
 //                                    System.out.println("  theTptpFormulas == " + parsedF.getTheTptpFormulas());
 //                                }
-//                                // 7. If there is an inference engine,
+//                                // 7. If there is an logic engine,
 //                                // 7. assert the formula to the
-//                                // 7. inference engine's database.
+//                                // 7. logic engine's database.
 //                                if (inferenceEngine != null) {
 //                                    String ieResult = null;
 //                                    Formula processedF = null;
@@ -1651,7 +1651,7 @@ public class KB {
 //                            // System.out.println("  parsedF.theTptpFormulas == " + parsedF.getTheTptpFormulas());
 //
 //                        }
-//                        result += (allAdded ? " and inference" : " but not for local inference");
+//                        result += (allAdded ? " and logic" : " but not for local logic");
 //                    }
 //                }
 //            }
@@ -1671,19 +1671,19 @@ public class KB {
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
-//     * Submits a query to the inference engine.  Returns an XML
-//     * formatted String that contains the response of the inference
+//     * Submits a query to the logic engine.  Returns an XML
+//     * formatted String that contains the response of the logic
 //     * engine.  It should be in the form
 //     * "<queryResponse>...</queryResponse>".
 //     *
 //     * @param suoKifFormula The String representation of the SUO-KIF
 //     * query.
 //     *
-//     * @param timeout The number of seconds after which the inference
+//     * @param timeout The number of seconds after which the logic
 //     * engine should give up.
 //     *
 //     * @param maxAnswers The maximum number of answers (binding sets)
-//     * the inference engine should return.
+//     * the logic engine should return.
 //     *
 //     * @return A String indicating the status of the ask operation.
 //     */
@@ -3040,7 +3040,7 @@ public class KB {
                 inferenceEngine = null;
 
                 if (Formula.isNonEmptyString(KBmanager.getMgr().getPref("inferenceEngine")) && vFileSaved) {
-                    //System.out.println("INFO in KB.loadVampire(): getting new inference engine");
+                    //System.out.println("INFO in KB.loadVampire(): getting new logic engine");
                     //inferenceEngine = Vampire.getNewInstance(filename);
                     inferenceEngine = new KIFInference() {
 
@@ -3645,9 +3645,9 @@ public class KB {
                     // Compute caches of "virtual" assertions,
                     true,
                     // Don't write a file of processed
-                    // SUO-KIF formulas for the inference
+                    // SUO-KIF formulas for the logic
                     // engine, and don't try to start an
-                    // inference engine process.
+                    // logic engine process.
                     false
             );
 

@@ -2,11 +2,11 @@ package nars.storage
 
 import nars.main._
 import java.util._
-import nars.entity._
-import nars.inference._
+import nars.logic.entity._
+import nars.logic._
 import nars.io._
 import nars.gui._
-import nars.language._
+import nars.logic.language._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 //remove if not needed
 import scala.collection.JavaConversions._

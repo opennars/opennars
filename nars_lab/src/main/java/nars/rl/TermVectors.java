@@ -11,15 +11,15 @@ import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.entity.Concept;
+import nars.logic.entity.Concept;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
 import nars.io.narsese.Narsese;
-import nars.language.CompoundTerm;
-import nars.language.Image;
-import nars.language.Term;
-import nars.language.Variable;
-import nars.util.NARGraph;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.nal4.Image;
+import nars.logic.entity.Term;
+import nars.logic.entity.Variable;
+import nars.util.graph.NARGraph;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.awt.BorderLayout.CENTER;
-import static nars.language.Tense.Eternal;
+import static nars.logic.nal7.Tense.Eternal;
 
 /**
  * TODO add existing concepts before it is added

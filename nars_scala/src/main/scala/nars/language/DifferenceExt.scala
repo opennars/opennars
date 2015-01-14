@@ -1,4 +1,4 @@
-package nars.language
+package nars.logic.language
 
 import java.util._
 import nars.io.Symbols

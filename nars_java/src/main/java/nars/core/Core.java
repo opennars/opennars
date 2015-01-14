@@ -1,10 +1,10 @@
 package nars.core;
 
 import javolution.context.ConcurrentContext;
-import nars.entity.BudgetValue;
-import nars.entity.Concept;
-import nars.inference.BudgetFunctions.Activating;
-import nars.language.Term;
+import nars.logic.entity.BudgetValue;
+import nars.logic.entity.Concept;
+import nars.logic.BudgetFunctions.Activating;
+import nars.logic.entity.Term;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
     //public void forget(Concept c);
     
     /**
-     * Provides a "next" concept for sampling during inference. 
+     * Provides a "next" concept for sampling during logic.
      */
     public Concept sampleNextConcept();
 

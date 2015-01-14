@@ -5,11 +5,11 @@
 package nars.io.condition;
 
 import nars.core.NAR;
-import nars.entity.Sentence;
-import nars.entity.Task;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import nars.io.TextOutput;
 import nars.io.Texts;
-import nars.operator.Operator.ExecutionResult;
+import nars.logic.nal8.Operator.ExecutionResult;
 
 import java.util.ArrayList;
 import java.util.Collection;

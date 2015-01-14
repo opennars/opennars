@@ -1,11 +1,11 @@
 package nars.core;
 
 import nars.core.EventEmitter.EventObserver;
-import nars.core.control.FireConcept;
-import nars.core.control.NAL;
-import nars.entity.Concept;
-import nars.entity.Sentence;
-import nars.entity.Task;
+import nars.logic.FireConcept;
+import nars.logic.NAL;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 
 import java.util.Arrays;
 import java.util.List;
