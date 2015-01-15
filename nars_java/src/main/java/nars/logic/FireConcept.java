@@ -99,11 +99,14 @@ abstract public class FireConcept extends NAL {
             emit(Events.TermLinkTransform.class, currentTaskLink, currentConcept, this);
             memory.logic.TERM_LINK_TRANSFORM.hit();
 
-        } else {            
+        } else {
+
+            //if termlinks is less than novelty horizon, it can suppress any from being selected for up to novelty horizon cycles
+            int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
+                        currentConcept.termLinks.size() - 1);
+
             while (termLinks > 0) {
 
-                int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
-                                        currentConcept.termLinks.size()-1);
 
                 final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time(), noveltyHorizon);
 

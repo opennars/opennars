@@ -99,7 +99,7 @@ public class TestNAL1Only extends AbstractNALTest {
     public void whQuestion() throws Narsese.InvalidInputException {
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
         n.ask("<?x --> swimmer>")
-                .en("What is a type of swimmer");
+                .en("What is a type of swimmer?");
         n.mustOutput(25, "<bird --> swimmer>. %1.00;0.80%");
     }
 

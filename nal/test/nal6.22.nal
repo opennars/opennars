@@ -9,7 +9,7 @@
 '3 is a number?
 <(*,(*,(*,0))) --> num>?  {0 : 3} 
 
-500
+''500
 
 'intermediate tests:
 ''outputMustContain('<0 --> (/,num,_)>. %1.00;0.81%')
@@ -19,9 +19,10 @@
 
 ''outputMustContain('<(*,(*,0)) --> num>. %1.00;0.73')
 
-1500
+''1500
 
 'I guess 3 is a number
 ''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.66%')                     
 
-550
+''550
+2500

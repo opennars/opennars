@@ -3,7 +3,6 @@ package nars.core.logic.nal5;
 import nars.core.AbstractNALTest;
 import nars.core.Build;
 import nars.core.build.Default;
-import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
 import org.junit.Test;
 
@@ -33,7 +32,6 @@ public class NAL5Test extends AbstractNALTest {
 
         long time = 25;
 
-        TextOutput.out(n);
         n.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", 0.9f, 0.9f)
                 .en("robin can fly and swim.")
                 .en("robin is one of the flying and is a swimmer.");
