@@ -48,7 +48,6 @@ public class EventEmitter extends Eventer<Object> {
                     if (Parameters.DEBUG) {
                         t.printStackTrace();
                     }
-                    r.notify(Exception.class, Event.wrap(t));
                     emit(Output.ERR.class, t);
                 }
             }
