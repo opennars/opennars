@@ -602,6 +602,8 @@ public class Memory implements Serializable {
      *  adding it to the new tasks queue for future reasoning.
      * @return how many tasks were generated as a result of perceiving, or -1 if no percept was available */
     public int nextPercept() {
+        if (!isProcessingInput()) return -1;
+
         AbstractTask t = inputs.nextTask();
         if (t != null) {
             return inputTask(t);
@@ -614,6 +616,8 @@ public class Memory implements Serializable {
      *  @return how many tasks perceived
      */
     public int nextPercept(int maxPercepts) {
+        if (!isProcessingInput()) return 0;
+
         int perceived = 0;
         boolean inputEverything;
 

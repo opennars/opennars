@@ -207,14 +207,14 @@ public class TextOutput extends Output {
             Sentence answer = (Sentence)signals[1];
             buffer.append(question.sentence.toString(nar, showStamp) + " = " + answer.toString(nar, showStamp));
         }
-        else if ((channel == OUT.class) || (channel == IN.class) || (channel == Echo.class) || (channel == EXE.class))  {
+        else if ((signal instanceof Task) && ((channel == OUT.class) || (channel == IN.class) || (channel == Echo.class) || (channel == EXE.class)))  {
 
-            if (signal instanceof Task) {
-                Task t = (Task)signal;
-                if (t.getPriority() < minPriority)
-                    return null;
-                
-                buffer.append(t.sentence.toString(nar, showStamp));                    
+
+            Task t = (Task)signal;
+            if (t.getPriority() < minPriority)
+                return null;
+
+            buffer.append(t.sentence.toString(nar, showStamp));
                 
                 
                 /*
@@ -226,15 +226,16 @@ public class TextOutput extends Output {
 //            else if (signals instanceof Sentence) {
 //                Sentence s = (Sentence)signals;
 //                buffer.append(s.toString(nar, showStamp));                        
-            } else {
-                buffer.append(signals.toString());
-            }
+
             
         }
         else {
-            buffer.append(signals.toString());
+            if (signals.length > 1)
+                buffer.append(Arrays.toString(signals));
+            else
+                buffer.append(signal.toString());
         }
-        
+
         return Texts.unescape(buffer).toString();
         
     }
