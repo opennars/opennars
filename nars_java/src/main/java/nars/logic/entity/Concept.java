@@ -23,6 +23,7 @@ package nars.logic.entity;
 import nars.core.Events.*;
 import nars.core.Memory;
 import nars.core.NARRun;
+import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.logic.NAL;
@@ -32,7 +33,6 @@ import nars.logic.nal8.Operator;
 import nars.util.bag.Bag;
 import nars.util.bag.Bag.MemoryAware;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -79,18 +79,18 @@ public class Concept extends Item<Term> implements Termable {
     /**
      * Pending Quests to be answered by new desire values
      */
-    public final ArrayList<Task> quests;
+    public final List<Task> quests;
 
     /**
      * Judgments directly made about the term Use ArrayList because of access
      * and insertion in the middle
      */
-    public final ArrayList<Sentence> beliefs;
+    public final List<Sentence> beliefs;
 
     /**
      * Desire values on the term, similar to the above one
      */
-    public final ArrayList<Sentence> desires;
+    public final List<Sentence> desires;
 
     /**
      * Reference to the memory to which the Concept belongs
@@ -115,10 +115,10 @@ public class Concept extends Item<Term> implements Termable {
         this.term = tm;
         this.memory = memory;
 
-        this.questions = new ArrayList<>();
-        this.beliefs = new ArrayList<>();
-        this.quests = new ArrayList<>();
-        this.desires = new ArrayList<>();
+        this.questions = Parameters.newArrayList();
+        this.beliefs = Parameters.newArrayList();
+        this.quests = Parameters.newArrayList();
+        this.desires = Parameters.newArrayList();
 
         this.taskLinks = taskLinks;
         this.termLinks = termLinks;
@@ -265,7 +265,7 @@ public class Concept extends Item<Term> implements Termable {
         }
     }
 
-    protected void addToTable(final Task task, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
+    protected void addToTable(final Task task, final List<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
         final Sentence newSentence = task.sentence;
         int preSize = table.size();
 

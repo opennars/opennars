@@ -2151,7 +2151,7 @@ public class KB {
                      found = true;
                      }
                      if (!found) 
-                     list.add(newList.get(i));  
+                     list.add(newArrayList.get(i));
                      */
                 }
             }

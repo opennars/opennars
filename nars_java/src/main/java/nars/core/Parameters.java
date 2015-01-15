@@ -21,6 +21,13 @@
 package nars.core;
 
 
+import com.gs.collections.impl.list.mutable.FastList;
+import com.gs.collections.impl.map.mutable.UnifiedMap;
+import nars.logic.entity.TermLink;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * NAR operating parameters.
  * All static values will be removed so that this is an entirely dynamic class.
@@ -184,9 +191,21 @@ public class Parameters {
     
     
     public static int STM_SIZE = 1;
-    
-    
-    
-    
+
+
+    public static <X> List<X> newArrayList() {
+        return new FastList();
+        //return new ArrayList();
+    }
+
+    public static <K, V> Map<K,V> newHashMap(int capacity) {
+        return new UnifiedMap<K,V>(capacity);
+        //return new HashMap<>(capacity);
+    }
+
+    public static List<TermLink> newArrayList(int capacity) {
+        return new FastList(capacity);
+        //return new ArrayList(capacity);
+    }
 }
 

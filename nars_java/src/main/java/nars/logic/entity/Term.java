@@ -32,7 +32,6 @@ import nars.logic.nal8.Operator;
 import nars.util.sort.SortedList;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -44,7 +43,7 @@ import java.util.TreeSet;
  * exists. Multiple objects may represent the same Term.
  */
 public class Term implements AbstractTerm, Termable {
-    private static final Map<CharSequence,Term> atoms = new HashMap();
+    private static final Map<CharSequence,Term> atoms = Parameters.newHashMap(16);
 
     final public static Term SELF = Term.get("SELF");
 

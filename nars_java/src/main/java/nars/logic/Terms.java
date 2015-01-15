@@ -333,12 +333,13 @@ public class Terms {
      * @param type The type of TermLink to be built
      * @param term The CompoundTerm for which the links are built
      */
-    public static ArrayList<TermLink> prepareComponentLinks(final ArrayList<TermLink> componentLinks, final short type, final CompoundTerm t) {
+    public static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm t) {
         
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
 
-        componentLinks.ensureCapacity(componentLinks.size() + t.complexity);
+
+        //componentLinks.ensureCapacity(componentLinks.size() + t.complexity);
 
         for (int i = 0; i < t.term.length; i++) {
             final Term t1 = t.term[i];
@@ -397,7 +398,7 @@ public class Terms {
         return componentLinks;
     }
 
-   public  static ArrayList<TermLink> prepareComponentLinks(ArrayList<TermLink> componentLinks, CompoundTerm ct) {
+   public  static List<TermLink> prepareComponentLinks(List<TermLink> componentLinks, CompoundTerm ct) {
         short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         return prepareComponentLinks(componentLinks, type, ct);
     }

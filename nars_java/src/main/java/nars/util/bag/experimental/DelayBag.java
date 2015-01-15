@@ -108,8 +108,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         this.forgetRate = forgetRate;
 
         if (Parameters.THREADS == 1) {
-             //this.items = new LinkedHashMap(capacity);
-             this.items = new ConcurrentHashMap(capacity);
+             this.items = new LinkedHashMap(capacity);
+             //this.items = new ConcurrentHashMap(capacity);
              this.pending = new ArrayDeque((int)(targetPendingBufferSize * capacity));
         }
         else {
