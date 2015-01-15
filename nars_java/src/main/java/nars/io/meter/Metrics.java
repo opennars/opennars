@@ -120,6 +120,45 @@ JsonSerializationContext context) {
         return new SignalData(this, s);
     }
 
+    private static class firstColumnIterator implements Function<Object[], Object[]> {
+        final Object[] next;
+        final int thecolumn;
+        private final int[] columns;
+
+        public firstColumnIterator(int... columns) {
+            this.columns = columns;
+            next = new Object[1];
+            thecolumn = columns[0];
+        }
+
+        @Override public Object[] apply(Object[] f) {
+            next[0] = f[thecolumn];
+            return next;
+        }
+    }
+
+    private static class nColumnIterator implements Function<Object[], Object[]> {
+
+        final Object[] next;
+        private final int[] columns;
+
+        public nColumnIterator(int... columns) {
+            this.columns = columns;
+            next = new Object[columns.length];
+        }
+
+        @Override
+        public Object[] apply(Object[] f) {
+
+            int j = 0;
+            for (int c : columns) {
+                next[j++] = f[c];
+            }
+            return next;
+        }
+
+    }
+
 
     /** generates the value of the first entry in each row */
     class RowKeyMeter extends FunctionMeter {
@@ -358,32 +397,10 @@ JsonSerializationContext context) {
     public Iterator<Object[]> iterator(final int... columns) {
         if (columns.length == 1) {
             //fast 1-argument
-            return Iterators.transform(iterator(), new Function<Object[], Object[]>() {
-                final Object[] next = new Object[1];
-                final int thecolumn = columns[0];
-
-                @Override public Object[] apply(Object[] f) {
-                    next[0] = f[thecolumn];
-                    return next;
-                }            
-            });           
+            return Iterators.transform(iterator(), new firstColumnIterator(columns));
         }
                 
-        return Iterators.transform(iterator(), new Function<Object[], Object[]>() {
-
-            final Object[] next = new Object[columns.length];
-
-            @Override
-            public Object[] apply(Object[] f) {
-                                
-                int j = 0;
-                for (int c : columns) {
-                    next[j++] = f[c];
-                }
-                return next;
-            }
-            
-        });
+        return Iterators.transform(iterator(), new nColumnIterator(columns));
     }
 
     public static List<Double> doubles(List<Object> l) {

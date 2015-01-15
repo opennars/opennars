@@ -135,14 +135,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
             
             List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
             
-            c.recurseSubtermsContainingVariables(new Term.TermVisitor() {                
-                @Override public void visit(final Term t, final Term parent) {
-                    if (t instanceof Variable) {
-                        Variable v = ((Variable)t);                        
-                        vars.add(v);
-                    }                    
-                }            
-            });
+            c.recurseSubtermsContainingVariables(new SubTermVarCollector(vars));
             
             Map<CharSequence,CharSequence> rename = new HashMap();            
             boolean renamed = false;
@@ -566,7 +559,20 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     public TruthValue getTruth() {
         return truth;
     }
-    
-    
-    
+
+
+    private static class SubTermVarCollector implements Term.TermVisitor {
+        private final List<Variable> vars;
+
+        public SubTermVarCollector(List<Variable> vars) {
+            this.vars = vars;
+        }
+
+        @Override public void visit(final Term t, final Term parent) {
+            if (t instanceof Variable) {
+                Variable v = ((Variable)t);
+                vars.add(v);
+            }
+        }
+    }
 }

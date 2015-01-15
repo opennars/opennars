@@ -14,6 +14,8 @@ import reactor.event.selector.Selector;
 import reactor.event.selector.Selectors;
 import reactor.function.Consumer;
 
+import static reactor.event.selector.Selectors.T;
+
 /**
  *
  * @author me
@@ -35,6 +37,17 @@ public class Eventer<E> {
                         r.getConsumerRegistry().select(x.getKey()).size());
             });
         }
+        r.on(T(Exception.class), t -> {
+            Throwable e = (Throwable)t.getData();
+            if (Parameters.DEBUG) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+            else {
+                System.err.println(e);
+            }
+
+        });
 
     }
 
@@ -58,7 +71,7 @@ public class Eventer<E> {
         return new Eventer(Reactors.reactor(new Environment(), Environment.WORK_QUEUE));
     }*/
 
-    public <E extends Event<?>> Registration on(Selector s, Consumer<E> c) {
+    public <X extends Event<?>> Registration on(Selector s, Consumer<X> c) {
         return r.on(s, c);
     }
     

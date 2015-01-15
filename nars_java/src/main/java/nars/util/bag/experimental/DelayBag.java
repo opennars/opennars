@@ -155,7 +155,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
     protected E removeItem(final K k) {             
         E x = items.remove(k);        
-        if ((attention!=null) && (x instanceof Concept) && (x != null)) {
+        if ((attention!=null) && (x != null) && (x instanceof Concept)) {
             attention.conceptRemoved((Concept)x);
         }
         return x;

@@ -28,13 +28,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     public final EventEmitter event;
     
     public SentenceGraph(Memory memory) {
-        super(/*null*/new EdgeFactory() {
-
-            @Override public Object createEdge(Object v, Object v1) {
-                return null;
-            }
-            
-        });
+        super(/*null*/new NullEdgeFactory());
         
         this.memory = memory;
         this.event = memory.event;
@@ -228,5 +222,12 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     /** default behavior, may override in subclass */
     abstract public boolean add(final Sentence s, final CompoundTerm ct, final Item c);
 
-    
+
+    private static class NullEdgeFactory implements EdgeFactory {
+
+        @Override public Object createEdge(Object v, Object v1) {
+            return null;
+        }
+
+    }
 }

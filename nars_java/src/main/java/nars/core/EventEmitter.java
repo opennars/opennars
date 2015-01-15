@@ -1,6 +1,7 @@
 
 package nars.core;
 
+import nars.io.Output;
 import reactor.core.spec.Reactors;
 import reactor.event.Event;
 import reactor.event.registry.Registration;
@@ -44,15 +45,11 @@ public class EventEmitter extends Eventer<Object> {
                     obs.event(channel, (Object[]) o);
                 }
                 catch (Throwable t) {
-
                     if (Parameters.DEBUG) {
                         t.printStackTrace();
                     }
-                    else {
-                        System.err.println(t);
-                    }
-
-                    //throw new RuntimeException(t);
+                    r.notify(Exception.class, Event.wrap(t));
+                    emit(Output.ERR.class, t);
                 }
             }
         });

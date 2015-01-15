@@ -14,9 +14,7 @@ import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * To rememberAction an internal action as an operation
@@ -42,7 +40,6 @@ public class InternalExperience extends AbstractPlugin {
     
     //dont use internal experience for want and believe if this setting is true
     public static boolean AllowWantBelieve=true;
-    private NAR nar;
 
     public boolean isAllowWantBelieve() {
         return AllowWantBelieve;
@@ -73,7 +70,6 @@ public class InternalExperience extends AbstractPlugin {
     @Override
     public void onEnabled(NAR n) {
 
-        this.nar = n;
         this.memory = n.memory;
     }
 

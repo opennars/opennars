@@ -54,7 +54,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
         
         //last argument a variable?
         Term lastTerm = args[numArgs-1];
-        boolean variable = lastTerm instanceof Variable;
+        final boolean variable = lastTerm instanceof Variable;
         
         if(!variable) {
             return null;
@@ -89,15 +89,16 @@ public abstract class SynchronousFunctionOperator extends Operator {
         
         Term actual= Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
-        if (variable) {
-            return Lists.newArrayList( 
-                    m.newTask(actual, Symbols.JUDGMENT_MARK, 
-                            1f, 0.99f, 
-                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                            Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
-            ));    
-        }
-        else {
+        return Lists.newArrayList(
+                m.newTask(actual, Symbols.JUDGMENT_MARK,
+                        1f, 0.99f,
+                        Parameters.DEFAULT_JUDGMENT_PRIORITY,
+                        Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
+                ));
+
+        //if (variable) {
+        //}
+        //else {
             /*float equal = equals(lastTerm, y);
             
             
@@ -120,9 +121,9 @@ public abstract class SynchronousFunctionOperator extends Operator {
             return rt;
             */
             
-            return null;
+         //   return null;
             
-        }
+        //}
     }
 
     /** (can be overridden in subclasses) the extent to which it is truth 

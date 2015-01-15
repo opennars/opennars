@@ -273,7 +273,7 @@ public abstract class NAL implements Runnable {
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added && temporalAdd) {
+                    if (added) {
                         memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
                 }
@@ -441,12 +441,7 @@ public abstract class NAL implements Runnable {
     /** creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked */
     public void setTheNewStamp(final Stamp first, final Stamp second, final long time) {
         newStamp = null;
-        newStampBuilder = new StampBuilder() {
-            @Override
-            public Stamp build() {
-                return new Stamp(first, second, time);
-            }
-        };
+        newStampBuilder = new NewStampBuilder(first, second, time);
     }
 
     /**
@@ -540,4 +535,20 @@ public abstract class NAL implements Runnable {
     }
 
 
+    private static class NewStampBuilder implements StampBuilder {
+        private final Stamp first;
+        private final Stamp second;
+        private final long time;
+
+        public NewStampBuilder(Stamp first, Stamp second, long time) {
+            this.first = first;
+            this.second = second;
+            this.time = time;
+        }
+
+        @Override
+        public Stamp build() {
+            return new Stamp(first, second, time);
+        }
+    }
 }

@@ -198,14 +198,14 @@ public class TextOutput extends Output {
                 }
             }
             else {
-                buffer.append(signals.toString());
+                buffer.append(Arrays.toString(signals));
             }      
             
         }
         else if (channel == Answer.class) {
             Task question = (Task)signals[0];
             Sentence answer = (Sentence)signals[1];
-            buffer.append(question.sentence.toString(nar, showStamp) + " = " + answer.toString(nar, showStamp));
+            buffer.append(question.sentence.toString(nar, showStamp)).append(" = ").append(answer.toString(nar, showStamp));
         }
         else if ((signal instanceof Task) && ((channel == OUT.class) || (channel == IN.class) || (channel == Echo.class) || (channel == EXE.class)))  {
 

@@ -72,7 +72,7 @@ public class GraphExecutive {
     }
 
     
-    public class ParticlePath implements Comparable<ParticlePath> {
+    public static class ParticlePath implements Comparable<ParticlePath> {
         final public Term goal;
         
         Cause[] bestPath;

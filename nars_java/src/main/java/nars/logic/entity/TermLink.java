@@ -68,7 +68,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
 
-    protected final int hash;
+    transient protected int hash;
    
 
             
@@ -96,7 +96,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
         } else {
             index = indices;            
         }
-        hash = init();
+        hash = 0;
     }
 
 
@@ -116,7 +116,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
                 ? (short)(template.type - 1) //// point to component
                 : template.type;
         index = template.index;
-        hash = init();
     }
 
     @Override public TermLink name() { return this; }
@@ -129,7 +128,11 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
 //    }
 
     @Override
-    public int hashCode() { return hash;     }
+    public int hashCode() {
+        if (hash == 0)
+            hash = Objects.hash(target, type, Arrays.hashCode(index));
+        return hash;
+    }
 
     
     @Override
@@ -148,7 +151,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
                 if (tt!=null) return false;
             }
             else if (tt == null) {
-                if (target!=null) return false;
+                return false;
             }
             else if (!target.equals(t.target)) return false;
             
@@ -157,32 +160,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
         return false;
     }
 
-    /**
-     * @return  hashcode
-     */
-    protected int init() {
-        //TODO lazy calculate this?
-        int h = Objects.hash(target, type, Arrays.hashCode(index));
-        return h;
-    }
-    
-    /*protected final void setKey() {
-        setKey(null);        
-    }*/
-
-    
-    /**
-     * Set the key of the link
-     * @param suffix optional suffix, may be null
-     */    
-    /*protected final void setKey(final CharSequence suffix) {
-        this.key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
-                        newKeyPrefix(), 
-                        target!=null ? target.name() : null, 
-                        suffix);        
-    }*/
-       
-    
     
     @Override
     public String toString() {
@@ -217,11 +194,11 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
      * @return The index value
      */
     public final short getIndex(final int i) {
-        if ((index != null) && (i < index.length)) {
+        //if (/*(index != null) &&*/ (i < index.length)) {
             return index[i];
-        } else {
-            return -1;
-        }
+        //} else {
+            //return -1;
+        //}
     }
 
     public TermLink(final short type, final Term target, final int i0) {

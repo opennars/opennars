@@ -33,7 +33,7 @@ public class ClassicalConditioningHelper implements Plugin {
     public int cnt=0; 
     NAR nar;
     
-    public class Tuple { 
+    public static class Tuple {
         public final ArrayList<Task> x; 
         public final double y; 
         public Tuple(ArrayList<Task> x, double y) { 
@@ -200,7 +200,7 @@ public class ClassicalConditioningHelper implements Plugin {
         }
         ArrayList<Tuple> Ret=new ArrayList<>();
         for(ArrayList<Task> a: filtered) {
-            Ret.add(new Tuple(a,TaskStringEqualSequentialTermCount(st,a)*a.size()));
+            Ret.add(new Tuple(a, TaskStringEqualSequentialTermCount(st, a) * a.size()));
         }
         ArrayList<Tuple> ToRemove=new ArrayList<Tuple>();
         for(Tuple T : Ret) {

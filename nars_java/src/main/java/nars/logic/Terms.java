@@ -211,7 +211,7 @@ public class Terms {
             return false;
         }
         
-        if (!(a instanceof Statement) && !(b instanceof Statement)) {
+        if (!(a instanceof Statement) || !(b instanceof Statement)) {
             return false;
         }
         
@@ -337,16 +337,20 @@ public class Terms {
         
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
-        
-        for (int i = 0; i < t.size(); i++) {
+
+        componentLinks.ensureCapacity(componentLinks.size() + t.complexity);
+
+        for (int i = 0; i < t.term.length; i++) {
             final Term t1 = t.term[i];
-            
-            
+
             if (!t1.hasVar()) {
                 componentLinks.add(new TermLink(type, t1, i));
             }
+
             if ((tEquivalence || (tImplication && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
+
                 prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
+
             } else if (t1 instanceof CompoundTerm) {
                 final CompoundTerm ct1 = (CompoundTerm)t1;
                 final int ct1Size = ct1.size(); //cache because this loop is critical
@@ -354,17 +358,21 @@ public class Terms {
                 
                 for (int j = 0; j < ct1Size; j++) {
                     final Term t2 = ct1.term[j];
+
                     if (!t2.hasVar()) {
+                        TermLink a;
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
-                                componentLinks.add(new TermLink(TermLink.TRANSFORM, t2, 0, i, j));
+                                a = new TermLink(TermLink.TRANSFORM, t2, 0, i, j);
                             } else {
-                                componentLinks.add(new TermLink(TermLink.TRANSFORM, t2, i, j));
+                                a = new TermLink(TermLink.TRANSFORM, t2, i, j);
                             }
                         } else {
-                            componentLinks.add(new TermLink(type, t2, i, j));
+                            a = new TermLink(type, t2, i, j);
                         }
+                        componentLinks.add(a);
                     }
+
                     if ((t2 instanceof Product) || (t2 instanceof ImageExt) || (t2 instanceof ImageInt)) {
                         CompoundTerm ct2 = (CompoundTerm)t2;
                         final int ct2Size = ct2.size();
@@ -373,11 +381,13 @@ public class Terms {
                             final Term t3 = ct2.term[k];
                             
                             if (!t3.hasVar()) {
+                                TermLink b;
                                 if (type == TermLink.COMPOUND_CONDITION) {
-                                    componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, 0, i, j, k));
+                                    b = new TermLink(TermLink.TRANSFORM, t3, 0, i, j, k);
                                 } else {
-                                    componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, i, j, k));
+                                    b = new TermLink(TermLink.TRANSFORM, t3, i, j, k);
                                 }
+                                componentLinks.add(b);
                             }
                         }
                     }

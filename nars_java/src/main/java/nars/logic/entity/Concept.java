@@ -259,7 +259,9 @@ public class Concept extends Item<Term> implements Termable {
                 trySolution(judg, questions.get(i), nal);
             }
 
-            addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+            synchronized (beliefs) {
+                addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+            }
         }
     }
 
@@ -267,10 +269,7 @@ public class Concept extends Item<Term> implements Termable {
         final Sentence newSentence = task.sentence;
         int preSize = table.size();
 
-        Sentence removed;
-        synchronized (table) {
-            removed = addToTable(newSentence, table, max);
-        }
+        Sentence removed = addToTable(newSentence, table, max);
 
         if (removed != null) {
             memory.event.emit(eventRemove, this, removed, task);
@@ -327,9 +326,12 @@ public class Concept extends Item<Term> implements Termable {
      */
     protected void processGoal(final NAL nal, final Task task) {        
         
-        final Sentence goal = task.sentence;
-        final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
-        
+        final Sentence goal = task.sentence, oldGoal;
+
+        synchronized (desires) {
+            oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
+        }
+
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
@@ -347,7 +349,11 @@ public class Concept extends Item<Term> implements Termable {
         
         if (task.aboveThreshold()) {
 
-            final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+            final Sentence belief;
+
+            synchronized (beliefs) {
+                belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+            }
 
             if (belief != null) {
                 trySolution(belief, task, nal); // check if the Goal is already satisfied
@@ -356,8 +362,9 @@ public class Concept extends Item<Term> implements Termable {
             // still worth pursuing?
             if (task.aboveThreshold()) {
 
-                addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
-
+                synchronized (desires) {
+                    addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+                }
 
 
                 if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
@@ -502,22 +509,19 @@ public class Concept extends Item<Term> implements Termable {
      * @return The best candidate selected
      */
     private Sentence selectCandidate(final Sentence query, final List<Sentence> list) {
- //        if (list == null) {
-        //            return null;
-        //        }
         float currentBest = 0;
         float beliefQuality;
         Sentence candidate = null;
-        synchronized (list) {            
-            for (int i = 0; i < list.size(); i++) {
-                Sentence judg = list.get(i);
-                beliefQuality = solutionQuality(query, judg, memory);
-                if (beliefQuality > currentBest) {
-                    currentBest = beliefQuality;
-                    candidate = judg;
-                }
+
+        for (int i = 0; i < list.size(); i++) {
+            Sentence judg = list.get(i);
+            beliefQuality = solutionQuality(query, judg, memory);
+            if (beliefQuality > currentBest) {
+                currentBest = beliefQuality;
+                candidate = judg;
             }
         }
+
         return candidate;
     }
 
@@ -534,15 +538,12 @@ public class Concept extends Item<Term> implements Termable {
         TaskLink removed = taskLinks.putIn(taskLink);
         
         if (removed!=null) {
+            memory.emit(TaskLinkRemove.class, removed, this);
+            removed.end();
+
             if (removed == taskLink) {
-                memory.emit(TaskLinkRemove.class, taskLink, this);
                 return false;
             }
-            else {
-                memory.emit(TaskLinkRemove.class, removed, this);
-            }
-            
-            removed.end();
         }
         memory.emit(TaskLinkAdd.class, taskLink, this);
         return true;

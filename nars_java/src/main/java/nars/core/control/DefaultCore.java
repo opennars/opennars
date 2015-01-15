@@ -111,23 +111,28 @@ public class DefaultCore implements Core {
             ((MemoryAware)concepts).setMemory(m);
     }
 
-    
-    
-    protected FireConcept nextConcept() {       
+    private static class DefaultFireConcept extends FireConcept {
 
+        private final Bag<Concept, Term> bag;
+
+        public DefaultFireConcept(Memory mem, Bag<Concept,Term> bag, Concept concept, int numTaskLinks) {
+            super(mem, concept, numTaskLinks);
+            this.bag = bag;
+        }
+        @Override
+        public void onFinished() {
+            float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
+
+            bag.putBack(currentConcept, forgetCycles, memory);
+        }
+    }
+    
+    protected FireConcept nextConcept() {
         Concept currentConcept = concepts.takeNext();
         if (currentConcept==null)
             return null;
             
-        return new FireConcept(memory, currentConcept, 1) {
-            
-            @Override public void onFinished() {
-                float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
-
-                concepts.putBack(currentConcept, forgetCycles, memory);
-            }
-        };
-        
+        return new DefaultFireConcept(memory, concepts, currentConcept, 1);
     }
 
     /**

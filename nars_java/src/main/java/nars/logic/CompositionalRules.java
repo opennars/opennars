@@ -1221,13 +1221,14 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 }
 
                 Stamp useEvidentalBase = new Stamp(taskSentence.stamp, second_belief.stamp, nal.getTime());
-                
-                Sentence newSentence = new Sentence(result, mark, truth,
-                        new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase));
 
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.term, nal);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, result, nal);
 
                 if (budget.aboveThreshold()) {
+
+                    Sentence newSentence = new Sentence(result, mark, truth,
+                            new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase));
+
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
 
@@ -1280,20 +1281,23 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 mark = Symbols.GOAL_MARK;
             }
 
-            if (sx == null)
-                sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
+
 
             try {
                 
                 if(result.subjectOrPredicateIsIndependentVar()) {
                     return;
                 }
-                
-                Sentence newSentence = new Sentence(result, mark, truth, sx);
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.term, nal);
 
+                if (sx == null)
+                    sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
+                
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, result, nal);
 
                 if (budget.aboveThreshold()) {
+
+                    Sentence newSentence = new Sentence(result, mark, truth, sx);
+
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
 

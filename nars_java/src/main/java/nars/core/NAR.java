@@ -1,6 +1,6 @@
 package nars.core;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
@@ -300,11 +300,13 @@ public class NAR implements Runnable, TaskSource {
         this.cyclesPerFrame = cyclesPerFrame;
     }
     
-    final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
+    static final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
+        private final Memory memory;
         private long creationTime = -1;
 
-        public ObjectTaskInPort(Input input, Buffer buffer, float initialAttention) {
+        public ObjectTaskInPort(Memory memory, Input input, Buffer buffer, float initialAttention) {
             super(input, buffer, initialAttention);
+            this.memory = memory;
         }
 
         @Override public void perceive(final Object x) {
@@ -320,18 +322,7 @@ public class NAR implements Runnable, TaskSource {
                     //Process tasks with overrides                    
                     final int duration = memory.param.duration.get();
                     
-                    return Iterators.filter(at, new Predicate<AbstractTask>() {
-                        @Override public boolean apply(AbstractTask at) {
-                            if (at instanceof Task) {
-                                Task t = (Task)at;
-                                if (t.sentence!=null)
-                                    if (t.sentence.stamp!=null) {
-                                        t.sentence.stamp.setCreationTime(creationTime, duration);
-                                    }
-                            }
-                            return true;
-                        }                        
-                    });
+                    return Iterators.transform(at, new TaskCreationTimeTransformer(duration));
                 }
             }
             catch (Throwable e) {
@@ -347,11 +338,29 @@ public class NAR implements Runnable, TaskSource {
             this.creationTime = creationTime;
         }
 
+        private class TaskCreationTimeTransformer implements Function<AbstractTask,AbstractTask> {
+            private final int duration;
+
+            public TaskCreationTimeTransformer(int duration) {
+                this.duration = duration;
+            }
+
+            @Override public AbstractTask apply(AbstractTask at) {
+                if (at instanceof Task) {
+                    Task t = (Task)at;
+                    if (t.sentence!=null)
+                        if (t.sentence.stamp!=null) {
+                            t.sentence.stamp.setCreationTime(creationTime, duration);
+                        }
+                }
+                return at;
+            }
+        }
     }
     
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
     public ObjectTaskInPort addInput(final Input channel) {
-        ObjectTaskInPort i = new ObjectTaskInPort(channel, new FIFO(), 1.0f);
+        ObjectTaskInPort i = new ObjectTaskInPort(memory, channel, new FIFO(), 1.0f);
                
         try {
             i.update();
@@ -553,7 +562,9 @@ public class NAR implements Runnable, TaskSource {
                 if (remainingTime > 0) {
                     try {
                         Thread.sleep(minFramePeriodMS);
-                    } catch (InterruptedException e) { }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 else if (remainingTime < 0) {
                     minFramePeriodMS++;
@@ -740,10 +751,11 @@ public class NAR implements Runnable, TaskSource {
     
     /** stops and empties an input channel into a receiver. 
      * this results in no pending input from this channel. */
-    public int flushInput(InPort i, EventObserver receiver) {
+    public static int flushInput(InPort i, EventObserver receiver) {
         int total = 0;
         i.finish();
-        
+
+        //TODO re=use constructed array if possible, assuming recipient knows to save the value and not the array
         while (i.hasNext()) {
             receiver.event(IN.class, new Object[] { i.next() });
             total++;

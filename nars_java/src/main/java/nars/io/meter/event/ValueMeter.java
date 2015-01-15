@@ -62,5 +62,8 @@ public class ValueMeter extends SourceFunctionMeter<Double> {
     
     public boolean getAutoReset() { return autoReset; }
 
-
+    @Override
+    public String toString() {
+        return name + super.toString();
+    }
 }

@@ -626,7 +626,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return capacity;
     }
 
-    public Iterable<E> getLevel(final int i) {
+    Iterable<E> getLevel(final int i) {
         if (level[i] == null) {
             return Collections.EMPTY_LIST;
         }
@@ -640,52 +640,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
     @Override
     public Iterator<E> iterator() {
-        return new Iterator<E>() {
-
-            int l = level.length - 1;
-            private Iterator<E> levelIterator;
-            private E next;
-            final int size = size();
-            int count = 0;
-
-            @Override
-            public boolean hasNext() {
-                if (next != null) {
-                    return true;
-                }
-
-                if (l >= 0 && levelIterator == null) {
-                    while (levelEmpty[l]) {
-                        if (--l == -1)
-                            return false; //end of the levels
-                    }
-                    levelIterator = level[l].descendingIterator();
-                }
-
-                if (levelIterator == null) {
-                    return false;
-                }
-
-                next = levelIterator.next();
-                count++;
-
-                if (levelIterator.hasNext()) {
-                    return true;
-                } else {
-                    levelIterator = null;
-                    l--;
-                    return count <= size;
-                }
-            }
-
-            @Override
-            public E next() {
-                E e = next;
-                next = null;
-                return e;
-            }
-
-        };
+        return new ItemIterator();
     }
 
     public int numEmptyLevels() {
@@ -698,6 +653,52 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return empty;
     }
 
+    final private class ItemIterator implements Iterator<E> {
+
+        int l = level.length - 1;
+        private Iterator<E> levelIterator;
+        private E next;
+        final int size = size();
+        int count = 0;
+
+        @Override
+        public boolean hasNext() {
+            if (next != null) {
+                return true;
+            }
+
+            if (l >= 0 && levelIterator == null) {
+                while (levelEmpty[l]) {
+                    if (--l == -1)
+                        return false; //end of the levels
+                }
+                levelIterator = level[l].descendingIterator();
+            }
+
+            if (levelIterator == null) {
+                return false;
+            }
+
+            next = levelIterator.next();
+            count++;
+
+            if (levelIterator.hasNext()) {
+                return true;
+            } else {
+                levelIterator = null;
+                l--;
+                return count <= size;
+            }
+        }
+
+        @Override
+        public E next() {
+            E e = next;
+            next = null;
+            return e;
+        }
+
+    }
 
 
 //    private void stat() {
