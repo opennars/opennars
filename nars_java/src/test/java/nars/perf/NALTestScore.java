@@ -5,6 +5,7 @@
 package nars.perf;
 
 import nars.core.*;
+import nars.core.logic.NALTest;
 import org.junit.Ignore;
 
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class NALTestScore extends NALTest {
     }
 
     public NALTestScore(String scriptPath) {
-        super(scriptPath);
+        super(null, scriptPath);
     }
     
     public static double score(NAR nn, int maxCycles/* randomseed, etc. */) {
@@ -74,7 +75,7 @@ public class NALTestScore extends NALTest {
                 });                
             }
                         
-            double s = new NALTestScore(examplePath).run();
+            double s = new NALTestScore(examplePath).score();
             if (s == Double.POSITIVE_INFINITY)
                 s = maxCycles + 1; //didnt complete so use the max time
             score += s;

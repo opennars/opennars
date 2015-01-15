@@ -5,6 +5,7 @@
 package nars.core;
 
 import nars.core.build.Neuromorphic;
+import nars.core.logic.NALTest;
 
 /**
  *
@@ -15,14 +16,10 @@ import nars.core.build.Neuromorphic;
 public class NALTestNeuromorphic extends NALTest {
 
     public NALTestNeuromorphic(String scriptPath) {
-        super(scriptPath);
+        super(new Neuromorphic(2), scriptPath);
         System.out.println(scriptPath);
     }
 
-    @Override
-    public NAR newNAR() {
-        return new NAR(new Neuromorphic(2));
-    }
 
     public static void main(String[] args) {        
         Parameters.DEBUG = false;

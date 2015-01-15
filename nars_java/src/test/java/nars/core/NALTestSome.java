@@ -3,6 +3,8 @@ package nars.core;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import nars.core.build.Default;
+import nars.core.logic.NALTest;
 import nars.io.ExampleFileInput;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -49,7 +51,7 @@ public class NALTestSome extends NALTest {
    }    
 
    public NALTestSome(String scriptPath) {
-       super(scriptPath);//, true);
+       super(new Default(), scriptPath);//, true);
 
    }
 //   

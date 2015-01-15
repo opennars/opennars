@@ -4,8 +4,6 @@
  */
 package nars.io;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import nars.core.NAR;
 import nars.io.condition.OutputCondition;
 
@@ -15,7 +13,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,15 +35,16 @@ public class ExampleFileInput extends TextInput {
     }
 
     public static Iterable<String> getUnitTestPaths() {
-        Collection<Object> v = getUnitTests().values();
-        return Iterables.transform(v, new Function<Object, String>() {
+        return getUnitTests().values();
+        //Collection<String> v = getUnitTests().values();
+        /*return Iterables.transform(v, new Function<String, String>() {
 
             @Override
-            public String apply(Object f) {
+            public String apply(String f) {
                 return (String)((Object[])f)[0];
             }
             
-        });
+        });*/
     }
     
     /** narsese source code, one instruction per line */
@@ -85,8 +83,8 @@ public class ExampleFileInput extends TextInput {
         return OutputCondition.getConditions(n, source, similarResultsToSave);
     }
     
-    public static Map<String,Object> getUnitTests() {
-        Map<String,Object> l = new TreeMap();
+    public static Map<String,String> getUnitTests() {
+        Map<String,String> l = new TreeMap();
                 
         final String[] directories = new String[] { "test", "Examples/DecisionMaking", "Examples/ClassicalConditioning" };
         
@@ -103,7 +101,7 @@ public class ExampleFileInput extends TextInput {
                 if (file.getName().equals("README.txt") || file.getName().contains(".png"))
                     continue;
                 if(!("extra".equals(file.getName()))) {
-                    l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
+                    l.put(file.getName(), file.getAbsolutePath() );
                 }
             }
             

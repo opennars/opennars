@@ -1,6 +1,12 @@
-package nars.core;
+package nars.core.logic;
 
+import junit.framework.TestCase;
+import nars.core.Build;
+import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.Default;
+import nars.core.build.Neuromorphic;
 import nars.io.ExampleFileInput;
 import nars.io.InferenceLogger;
 import nars.io.TextOutput;
@@ -14,20 +20,21 @@ import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
-
 
 @RunWith(Parameterized.class)
-public class NALTest  {
+public class NALTest extends TestCase {
         
 
     static {
         Parameters.DEBUG = true;
     }
+
+    private final Build build;
 
     int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public long randomSeed = 1;
@@ -66,20 +73,32 @@ public class NALTest  {
     }
     
     public NAR newNAR() {
+        if (build == null) throw new RuntimeException("Unknown build");
+        return new NAR(build);
+
         //return new NAR(new Default());
-        return new NAR(new Default());
+        //return new NAR(new Default());
         //return NAR.build(Default.fromJSON("nal/build/pei1.fast.nar"));        
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();
     }
     
     
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name="{0} {1}")
     public static Collection params() {
-        Map<String, Object> et = ExampleFileInput.getUnitTests();
-        Collection t = et.values();
+        Map<String, String> et = ExampleFileInput.getUnitTests();
+        Collection<String> t = et.values();
         for (String x : et.keySet()) addTest(x);
-        return t;
+
+        Build[] builds = new Build[] { new Default(), new Neuromorphic(2) };
+
+        Collection<Object[]> params = new ArrayList(t.size() * builds.length);
+        for (String script : t) {
+            for (Build b : builds) {
+                params.add(new Object[] { b, script });
+            }
+        }
+        return params;
     }
     
     
@@ -166,9 +185,10 @@ public class NALTest  {
     
     transient final String scriptPath;
 
-    public NALTest(String scriptPath) {        
+    
+    public NALTest(Build b, String scriptPath) {
         this.scriptPath = scriptPath;
-        
+        this.build = b;
     }
 
 //    public Sentence parseOutput(String o) {
@@ -177,7 +197,7 @@ public class NALTest  {
 //    }
     
     
-    public double run() {               
+    public double score() {
         return testNAL(scriptPath);
     }
     

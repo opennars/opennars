@@ -47,9 +47,13 @@ abstract public class Build extends Parameters  {
     public NAR init(NAR nar) {
         return nar;
     }
-    
+
     @Override
     public String toString() {
+        return getClass().getSimpleName();
+    }
+
+    public String toJSON() {
         return Param.json.toJson(this);
     }
     

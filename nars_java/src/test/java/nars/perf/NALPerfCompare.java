@@ -1,6 +1,6 @@
 package nars.perf;
 
-import nars.core.NALTest;
+import nars.core.logic.NALTest;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Curve;

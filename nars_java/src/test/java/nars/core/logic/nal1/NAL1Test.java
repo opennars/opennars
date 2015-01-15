@@ -1,19 +1,29 @@
 package nars.core.logic.nal1;
 
-import nars.core.AbstractNALTest;
 import nars.core.Build;
 import nars.core.Parameters;
 import nars.core.build.Default;
+import nars.core.logic.AbstractNALTest;
 import nars.io.narsese.Narsese;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 
-public class TestNAL1Only extends AbstractNALTest {
+public class NAL1Test extends AbstractNALTest {
 
-    @Override
-    public Build build() {
-        return new Default().level(1);
+    public NAL1Test(Build b) { super(b); }
+
+    @Parameterized.Parameters(name= "{0}")
+    public static Collection configurations() {
+        return Arrays.asList(new Object[][]{
+                {new Default()},
+                {new Default().level(1)}
+        });
     }
+
 
     @Test
     public void revision() throws Narsese.InvalidInputException {
@@ -74,17 +84,15 @@ public class TestNAL1Only extends AbstractNALTest {
                 .en("I guess animal is a type of robin.");
     }
 
-    long conversionTime() {
-        return 25;
-    }
 
 
     @Test
     public void conversion() throws Narsese.InvalidInputException {
+        long time = n.nal() == 1 ? 25 : 305;
         n.believe("<bird --> swimmer>");
         n.ask("<swimmer --> bird>")
                 .en("Is swimmer a type of bird?");
-        n.mustOutput(conversionTime() , "<swimmer --> bird>. %1.00;0.47%");
+        n.mustOutput(time, "<swimmer --> bird>. %1.00;0.47%");
     }
 
     @Test
@@ -103,35 +111,33 @@ public class TestNAL1Only extends AbstractNALTest {
         n.mustOutput(25, "<bird --> swimmer>. %1.00;0.80%");
     }
 
-    long backwardInferenceTime() {
-        return 46;
-    }
 
     @Test
     public void backwardInference() throws Narsese.InvalidInputException {
+        long time = 46;
+
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
         n.ask("<?1 --> swimmer>");
-        n.mustOutput(backwardInferenceTime(), "<?1 --> bird>?").en("What is a type of bird?");
-        n.mustOutput(backwardInferenceTime(), "<bird --> ?1>?").en("What is the type of bird?");
+        n.mustOutput(time, "<?1 --> bird>?").en("What is a type of bird?");
+        n.mustOutput(time, "<bird --> ?1>?").en("What is the type of bird?");
     }
 
-    long multistepTime() {
-        return 80;
-    }
 
     @Test
     public void multistep() throws Narsese.InvalidInputException {
+        long time = n.nal() == 1 ? 80 : 350;
+
         n.believe("<a --> b>", 1.0f, 0.9f);
         n.believe("<b --> c>", 1.0f, 0.9f);
         n.believe("<c --> d>", 1.0f, 0.9f);
         n.ask("<a --> d>");
 
         //originally checked for 0.25% exact confidence
-        n.mustBelieve(multistepTime(), "<a --> d>", 1f, 1f, 0.27f, 0.33f);
+        n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.27f, 0.33f);
 
         //but we know also 73% is highest it can reach
         if (n.nal() == 1)
-            n.mustBelieve(multistepTime(), "<a --> d>", 1f, 1f, 0.73f, 0.75f);
+            n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.73f, 0.75f);
     }
 
 }

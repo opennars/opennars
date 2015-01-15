@@ -115,7 +115,11 @@ public class Default extends Build implements ConceptBuilder {
         //param.getDefaultDerivationFilters().add(new BeRational());
     }
 
-    
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()+"[" + level + "]";
+    }
+
 
     public Default temporalPlanner(float searchDepth, int planParticles, int inlineParticles, int maxPlans) {
         pluginPlanner = new TemporalParticlePlanner(searchDepth, planParticles, inlineParticles, maxPlans);

@@ -1,17 +1,26 @@
 package nars.core.logic.nal4;
 
-import nars.core.AbstractNALTest;
 import nars.core.Build;
 import nars.core.build.Default;
+import nars.core.logic.AbstractNALTest;
 import nars.io.narsese.Narsese;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 
 public class NAL4Test extends AbstractNALTest {
 
-    @Override
-    public Build build() {
-        return new Default();
+    public NAL4Test(Build b) { super(b); }
+
+    @Parameterized.Parameters(name= "{0}")
+    public static Collection configurations() {
+        return Arrays.asList(new Object[][]{
+                {new Default()},
+                {new Default().level(6)}
+        });
     }
 
     @Test public void recursionSmall() throws Narsese.InvalidInputException {
