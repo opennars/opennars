@@ -7,8 +7,8 @@ import nars.core.build.Default;
 public class TestNAL1 extends TestNAL1Only  {
 
     //these need extra time because more NAL levels, including NAL9 InternalExperience are involved
-    @Override long backwardInferenceTime() { return 410;    }
-    @Override long multistepTime() { return 210;     }
+    @Override long backwardInferenceTime() { return 1710;    }
+    @Override long multistepTime() { return 350;     }
     @Override long conversionTime() { return 305; }
 
     @Override

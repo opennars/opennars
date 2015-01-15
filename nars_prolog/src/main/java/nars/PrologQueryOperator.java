@@ -2,14 +2,14 @@ package nars;
 
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.io.Symbols;
+import nars.io.Texts;
 import nars.logic.entity.Task;
+import nars.logic.entity.Term;
 import nars.logic.entity.Variable;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
 import nars.logic.nal7.Tense;
-import nars.io.Symbols;
-import nars.io.Texts;
-import nars.logic.entity.Term;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.prolog.*;

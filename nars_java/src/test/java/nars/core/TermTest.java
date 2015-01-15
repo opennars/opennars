@@ -17,14 +17,14 @@
 package nars.core;
 
 import nars.core.build.Default;
-import nars.logic.entity.Concept;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.CompoundTerm;
-import nars.logic.nal1.Inheritance;
+import nars.logic.entity.Concept;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
+import nars.logic.nal1.Inheritance;
 import nars.logic.nal8.Operation;
 import org.junit.Test;
 

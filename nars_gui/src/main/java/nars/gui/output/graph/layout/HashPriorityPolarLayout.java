@@ -9,8 +9,8 @@ import automenta.vivisect.graph.AbstractGraphVis;
 import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
-import nars.logic.entity.Item;
 import nars.logic.Terms.Termable;
+import nars.logic.entity.Item;
 
 /**
  * Item Hash = theta, Priority = radius

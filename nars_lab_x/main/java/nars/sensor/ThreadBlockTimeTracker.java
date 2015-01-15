@@ -14,9 +14,10 @@
  */
 package nars.io.meter.depr.sensor;
 
-import java.lang.management.ThreadInfo;
 import nars.io.meter.depr.Tracker;
 import nars.io.meter.depr.session.StatsSession;
+
+import java.lang.management.ThreadInfo;
 
 /**
  *

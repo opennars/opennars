@@ -4,11 +4,11 @@
  */
 package nars.operator.filter;
 
+import nars.io.Symbols;
 import nars.logic.NAL;
 import nars.logic.NAL.DerivationFilter;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
-import nars.io.Symbols;
 import nars.logic.nal8.Operation;
 
 /**

@@ -1,7 +1,6 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.*;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.OutputListener;
 

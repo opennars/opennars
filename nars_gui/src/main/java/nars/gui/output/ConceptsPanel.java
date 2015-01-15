@@ -10,11 +10,11 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
+import nars.gui.WrapLayout;
 import nars.logic.entity.BudgetValue.Budgetable;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.TruthValue.Truthable;
-import nars.gui.WrapLayout;
 
 import javax.swing.*;
 import java.awt.*;

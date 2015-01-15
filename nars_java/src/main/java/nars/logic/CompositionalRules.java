@@ -22,7 +22,9 @@ package nars.logic;
 
 import nars.core.Events;
 import nars.core.Memory;
+import nars.io.Symbols;
 import nars.logic.entity.*;
+import nars.logic.entity.CompoundTerm.UnableToCloneException;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal3.*;
@@ -33,15 +35,13 @@ import nars.logic.nal5.Disjunction;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
-import nars.io.Symbols;
-import nars.logic.entity.CompoundTerm.UnableToCloneException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static nars.logic.TruthFunctions.*;
 import static nars.logic.Terms.*;
+import static nars.logic.TruthFunctions.*;
 
 /**
  * Compound term composition and decomposition rules, with two premises.

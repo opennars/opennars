@@ -10,9 +10,8 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import automenta.vivisect.swing.NSlider;
-import nars.logic.entity.*;
-import nars.logic.entity.Term;
 import nars.logic.Terms.Termable;
+import nars.logic.entity.*;
 import nars.util.graph.NARGraph;
 
 import javax.swing.*;

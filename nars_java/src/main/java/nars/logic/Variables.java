@@ -1,14 +1,14 @@
 package nars.logic;
 
 import nars.core.Memory;
+import nars.io.Symbols;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 import nars.logic.entity.Variable;
 import nars.logic.nal1.Inheritance;
-import nars.io.Symbols;
+import nars.logic.nal2.Similarity;
 import nars.logic.nal4.ImageExt;
 import nars.logic.nal4.ImageInt;
-import nars.logic.nal2.Similarity;
 
 import java.util.HashMap;
 import java.util.Map;

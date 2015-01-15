@@ -7,14 +7,14 @@ package nars;
 
 import nars.core.*;
 import nars.core.build.Default;
-import nars.logic.entity.Task;
 import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ValueMeter;
+import nars.logic.NARTrace;
+import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.util.NALPerformance;
-import nars.logic.NARTrace;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;

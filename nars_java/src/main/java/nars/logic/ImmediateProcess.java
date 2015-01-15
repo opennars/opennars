@@ -18,7 +18,7 @@ public class ImmediateProcess extends NAL {
     public ImmediateProcess(Memory mem, Task task) {
         super(mem);
 
-        this.task = task;        
+        this.task = task;
     }
     
     
@@ -43,7 +43,7 @@ public class ImmediateProcess extends NAL {
         }
 
         memory.logic.TASK_IMMEDIATE_PROCESS.hit();
-        emit(Events.TaskImmediateProcess.class, task, this);
+        emit(Events.TaskImmediateProcessed.class, task, this);
     }
     
 }

@@ -1,7 +1,7 @@
 package nars.io.nlp;
 
-import nars.logic.entity.AbstractTask;
 import nars.io.narsese.Narsese;
+import nars.logic.entity.AbstractTask;
 
 import java.util.ArrayList;
 import java.util.List;

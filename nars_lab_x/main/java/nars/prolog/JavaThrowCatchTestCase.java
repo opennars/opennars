@@ -1,7 +1,6 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.*;
 
 /**
  * @author Matteo Iuliani

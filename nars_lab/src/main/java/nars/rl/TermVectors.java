@@ -11,14 +11,14 @@ import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.logic.entity.Concept;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.CompoundTerm;
-import nars.logic.nal4.Image;
+import nars.logic.entity.Concept;
 import nars.logic.entity.Term;
 import nars.logic.entity.Variable;
+import nars.logic.nal4.Image;
 import nars.util.graph.NARGraph;
 
 import javax.swing.*;

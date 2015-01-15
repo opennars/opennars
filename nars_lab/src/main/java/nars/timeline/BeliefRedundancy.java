@@ -8,9 +8,9 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.logic.entity.Concept;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.logic.entity.Concept;
 
 import java.io.File;
 import java.io.FileNotFoundException;

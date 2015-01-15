@@ -23,18 +23,15 @@ package nars.logic.nal1;
 import nars.core.Events.Answer;
 import nars.core.Events.Unsolved;
 import nars.core.Memory;
-import nars.logic.entity.*;
+import nars.io.Output;
+import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.TruthFunctions;
+import nars.logic.Variables;
+import nars.logic.entity.*;
 import nars.logic.nal2.NAL2;
 import nars.logic.nal7.TemporalRules;
-import nars.io.Output;
-import nars.io.Symbols;
-import nars.logic.entity.CompoundTerm;
-import nars.logic.entity.Statement;
-import nars.logic.entity.Term;
-import nars.logic.Variables;
 
 import java.util.Arrays;
 

@@ -1,7 +1,6 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.*;
 import nars.prolog.lib.InvalidObjectIdException;
 import nars.prolog.lib.JavaLibrary;
 

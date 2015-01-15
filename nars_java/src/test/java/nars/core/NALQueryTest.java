@@ -5,11 +5,11 @@
 package nars.core;
 
 import nars.core.build.Default;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
 import nars.io.Answered;
 import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import org.junit.Ignore;
 import org.junit.Test;
 

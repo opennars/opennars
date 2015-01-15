@@ -56,6 +56,7 @@ public class Param implements Serializable {
     public final AtomicDouble conceptForgetDurations = new AtomicDouble();
     
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
+    //TODO use separate termlink forget rates whether the termlink was actually selected for firing or not.
     public final AtomicDouble termLinkForgetDurations = new AtomicDouble();
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */

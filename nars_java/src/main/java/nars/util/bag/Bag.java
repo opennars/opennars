@@ -9,7 +9,7 @@ import java.util.Set;
 
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
-    
+
     public interface MemoryAware {
         public void setMemory(Memory m);
     }
@@ -66,6 +66,11 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return The overflow Item, or null if nothing displaced
      */
     abstract protected E addItem(final E newItem);
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
 
     /**
      * Add a new Item into the Bag

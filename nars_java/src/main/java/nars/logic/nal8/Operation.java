@@ -20,11 +20,11 @@
  */
 package nars.logic.nal8;
 
-import nars.logic.entity.Task;
 import nars.io.Symbols;
+import nars.logic.entity.Task;
+import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
-import nars.logic.entity.Term;
 
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;

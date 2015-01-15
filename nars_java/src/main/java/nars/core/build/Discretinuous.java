@@ -2,7 +2,6 @@ package nars.core.build;
 
 import nars.core.Memory;
 import nars.logic.entity.*;
-import nars.logic.entity.Term;
 import nars.util.bag.Bag;
 import nars.util.bag.CurveBag;
 import nars.util.bag.LevelBag;

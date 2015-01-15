@@ -1,7 +1,6 @@
 package nars.prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Prolog;
 import nars.prolog.event.SpyEvent;
 
 public class SpyEventTestCase extends TestCase {

@@ -5,15 +5,15 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.logic.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
+import nars.logic.entity.Task;
 import nars.logic.entity.Term;
+import nars.logic.nal8.Operation;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
 import nars.operator.NullOperator;
-import nars.logic.nal8.Operation;
 import nars.operator.app.plan.TemporalParticlePlanner;
 
 import javax.swing.*;

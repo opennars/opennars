@@ -1,9 +1,9 @@
 package nars.core;
 
 import javolution.context.ConcurrentContext;
+import nars.logic.BudgetFunctions.Activating;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
-import nars.logic.BudgetFunctions.Activating;
 import nars.logic.entity.Term;
 
 import java.util.List;
@@ -27,11 +27,7 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
      */
     public void cycle();
 
-    /** how many input tasks to process per cycle.  this allows Attention to regulate
-     *  input relative to other kinds of mental activity
-     * @return 
-     */
-    public int getInputPriority();
+
 
 
     /** Invoked during a memory reset to empty all concepts */

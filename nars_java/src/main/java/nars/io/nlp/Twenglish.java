@@ -18,6 +18,9 @@ package nars.io.nlp;
 
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.io.narsese.Narsese;
+import nars.io.narsese.Narsese.InvalidInputException;
+import nars.io.nlp.Twokenize.Span;
 import nars.logic.entity.AbstractTask;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -26,9 +29,6 @@ import nars.logic.nal4.Product;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
-import nars.io.narsese.Narsese;
-import nars.io.narsese.Narsese.InvalidInputException;
-import nars.io.nlp.Twokenize.Span;
 
 import java.util.*;
 

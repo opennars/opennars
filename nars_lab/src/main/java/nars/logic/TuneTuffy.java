@@ -8,11 +8,11 @@ import nars.core.Build;
 import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
 import nars.io.narsese.Narsese;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
 import java.io.File;

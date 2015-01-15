@@ -5,19 +5,18 @@ import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.ConceptBuilder;
 import nars.logic.BudgetFunctions;
 import nars.logic.BudgetFunctions.Activating;
 import nars.logic.FireConcept;
+import nars.logic.entity.BudgetValue;
+import nars.logic.entity.Concept;
+import nars.logic.entity.ConceptBuilder;
 import nars.logic.entity.Term;
 import nars.util.bag.Bag;
 import nars.util.bag.Bag.MemoryAware;
 import nars.util.bag.CacheBag;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,6 +39,7 @@ public class DefaultCore implements Core {
     private Memory memory;
     
     private final Cycle loop = new Cycle();
+    List<Runnable> run = new ArrayList();
     
        
     class Cycle {
@@ -63,9 +63,7 @@ public class DefaultCore implements Core {
             }
         }
 
-        public int inputTasksPriority() {
-            return t(numThreads);
-        }
+
 
         /*
         public int newTasksPriority() {
@@ -113,10 +111,6 @@ public class DefaultCore implements Core {
             ((MemoryAware)concepts).setMemory(m);
     }
 
-    @Override
-    public int getInputPriority() {
-        return loop.inputTasksPriority();
-    }
     
     
     protected FireConcept nextConcept() {       
@@ -136,80 +130,56 @@ public class DefaultCore implements Core {
         
     }
 
+    /**
+     * An atomic working cycle of the system: process new Tasks, then fire a
+     * concept
+     **/
     @Override
     public void cycle() {
-        if (Parameters.THREADS == 1)
-            cycleSequential();
-        else
-            cycleParallel();
-    }
 
-    
-    
-    public void cycleSequential() {
-        final List<Runnable> run = new ArrayList();
+        //1 input per cycle
+        memory.nextPercept(1);
 
         //all new tasks
-        memory.processNewTasks(-1, run);
-        Core.run(run); //run new tasks
-        run.clear();
-
-        if (memory.getNewTasks().isEmpty()) {
-
-            // 1 novel task
-            memory.processNovelTasks(1, run);
-            Core.run(run);
-            run.clear();
-
-            if (memory.getNewTasks().isEmpty()) {
-
-                //1 concept fired
-                processConcepts(loop.conceptsPriority(), run);
-                Core.run(run); //fire concept
-                run.clear();
-
+        int numNewTasks = memory.newTasks.size();
+        for (int i = 0; i < numNewTasks; i++) {
+            Runnable r = memory.nextNewTask();
+            if (r != null) {
+                r.run();
             }
+            else break;
         }
 
+        //all novel tasks
+        /*if (memory.newTasks.isEmpty())*/ {
+            int numNovelTasks = memory.novelTasks.size();
+            for (int i = 0; i < numNovelTasks; i++) {
+                Runnable novel = memory.nextNovelTask();
+                if (novel != null) novel.run();
+                else break;
+            }
 
-        memory.processOtherTasks(run);
-        Core.run(run);
-        
-        run.clear();
+            //1 noveltask if no newtasks
+            //Runnable novel = memory.nextNovelTask();
+            //if (novel != null) novel.run();
+        }
 
-    }
-
-    @Deprecated public void cycleParallel() {
-
-        final List<Runnable> run = new ArrayList();
-        
-        memory.processNewTasks(-1, run);
-        
-        memory.processNovelTasks(1/*loop.novelTasksPriority()*/, run);
-        
-        processConcepts(loop.conceptsPriority(), run);
-
-        memory.processOtherTasks(run);
-        
-        Core.run(run, Parameters.THREADS);
-        
-        run.clear();
-
-    }    
-    
-    public void processConcepts(int c, Collection<Runnable> run) {
-        if (c == 0) return;                
-        
-        for (int i = 0; i < c; i++) {
+        //1 concept
+        /*if (memory.newTasks.isEmpty())*/ {
             FireConcept f = nextConcept();
-            
-            if (f!=null)
-                run.add(f);                            
-            else
-                break;
+            if (f != null) {
+                f.run();
+            }
+
         }
-        
+
+        memory.dequeueOtherTasks(run);
+        Core.run(run);
+        run.clear();
+
     }
+
+
 
     
     public Iterable<Concept> getConcepts() {

@@ -74,29 +74,26 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                 long t = task.getCreationTime();
 
-                if ((t < cycleStart) || (t > cycleEnd))
+                if ((task.sentence.punctuation != punc) || (t < cycleStart) || (t > cycleEnd))
                     return false;
 
                 Term term = task.getTerm();
 
-                if (task.sentence.punctuation == punc) {
+                //TODO use range of acceptable occurrenceTime's for non-eternal tests
+                if ((tense == Tense.Eternal) && (!task.sentence.isEternal()))
+                    return false;
 
-                    //TODO use range of acceptable occurrenceTime's for non-eternal tests
-                    if ((tense == Tense.Eternal) && (!task.sentence.isEternal()))
+                if ((punc == '.') || (punc == '!')) {
+                    float fr = task.sentence.truth.getFrequency();
+                    float co = task.sentence.truth.getConfidence();
+
+                    if (!((co <= confMax) && (co >= confMin) && (fr <= freqMax) && (fr >= freqMin)))
                         return false;
+                }
 
-                    if ((punc == '.') || (punc == '!')) {
-                        float fr = task.sentence.truth.getFrequency();
-                        float co = task.sentence.truth.getConfidence();
-
-                        if (!((co <= confMax) && (co >= confMin) && (fr <= freqMax) && (fr >= freqMin)))
-                            return false;
-                    }
-
-                    if (term.equals(this.term)) {
-                        trueAt.add(task);
-                        return true;
-                    }
+                if (term.equals(this.term)) {
+                    trueAt.add(task);
+                    return true;
                 }
             }
         }

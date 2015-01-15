@@ -26,7 +26,7 @@ public class STMInduction extends AbstractPlugin {
 
     @Override
     public Class[] getEvents() {
-        return new Class[] { Events.TaskImmediateProcess.class };
+        return new Class[] { Events.TaskImmediateProcessed.class };
     }
 
     @Override
@@ -41,7 +41,7 @@ public class STMInduction extends AbstractPlugin {
 
     @Override
     public void event(Class event, Object[] args) {
-        if (event == Events.TaskImmediateProcess.class) {
+        if (event == Events.TaskImmediateProcessed.class) {
             Task t = (Task)args[0];
             NAL n = (NAL)args[1];
             inductionOnSucceedingEvents(t, n);

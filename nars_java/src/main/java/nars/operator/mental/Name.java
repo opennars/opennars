@@ -20,10 +20,9 @@ package nars.operator.mental;
 import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.entity.*;
 import nars.io.Symbols;
+import nars.logic.entity.*;
 import nars.logic.nal2.Similarity;
-import nars.logic.entity.Term;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 

@@ -19,14 +19,13 @@ package nars.operator.mental;
 import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.entity.*;
+import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
 import nars.logic.nal7.Tense;
-import nars.io.Symbols;
 import nars.logic.nal8.Operator;
 
 import java.util.ArrayList;

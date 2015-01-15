@@ -1,10 +1,6 @@
 package nars.prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.InvalidTheoryException;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.Prolog;
-import nars.prolog.Theory;
 
 public class StateRuleSelectionTestCase extends TestCase {
 	

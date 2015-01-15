@@ -14,11 +14,12 @@
  */
 package nars.io.meter.depr.sensor;
 
+import nars.io.meter.depr.session.StatsSession;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.logging.Logger;
-import nars.io.meter.depr.session.StatsSession;
 
 /**
  * @author The Stajistics Project

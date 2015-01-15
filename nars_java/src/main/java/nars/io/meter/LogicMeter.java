@@ -1,9 +1,9 @@
 package nars.io.meter;
 
 import nars.core.Memory;
-import nars.logic.entity.Concept;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ValueMeter;
+import nars.logic.entity.Concept;
 
 /**
  * Logic/reasoning sensors
@@ -51,7 +51,7 @@ public class LogicMeter {
     public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION = new HitMeter("reason.ded2ndunif");
     public final HitMeter DED_CONJUNCTION_BY_QUESTION = new HitMeter("reason.dedconjbyquestion");
     public final HitMeter ANALOGY = new HitMeter("reason.analogy");
-    public final ValueMeter IO_INPUTS_BUFFERED = new ValueMeter("io.inputs.buffered");
+
 
     public final ValueMeter DERIVATION_LATENCY = new ValueMeter("reason.derivation.latency");
     public final ValueMeter SOLUTION_BEST = new ValueMeter("task.solution.best");
@@ -63,6 +63,8 @@ public class LogicMeter {
     public final ValueMeter PLAN_GRAPH_VERTEX = new ValueMeter("plan.graph.vertex");
     public final ValueMeter PLAN_TASK_PLANNED = new ValueMeter("plan.task.planned");
     public final ValueMeter PLAN_TASK_EXECUTABLE = new ValueMeter("plan.task.executable");
+
+    public final ValueMeter TASK_INPUT = new ValueMeter("task.input");
 
     //private double conceptVariance;
     //private double[] conceptHistogram;
@@ -115,6 +117,7 @@ public class LogicMeter {
         CONCEPT_BELIEF_COUNT.set(totalBeliefs);
         CONCEPT_QUESTION_COUNT.set(totalQuestions);
 
+
         //TODO
         /*
         setConceptPriorityMean(mean);
@@ -159,7 +162,7 @@ public class LogicMeter {
 //            put("reason.tasktermlink.pri.mean", TERM_LINK_SELECT.mean());
 //        }
 //        {
-//            putValue(IO_INPUTS_BUFFERED);
+//            putValue(TASK_INPUT);
 //        }
 //        {            
 //            putHits(CONTRAPOSITION);

@@ -2,7 +2,6 @@ package nars.prolog;
 
 
 import junit.framework.TestCase;
-import nars.prolog.*;
 import nars.prolog.event.SpyEvent;
 import nars.prolog.event.SpyListener;
 

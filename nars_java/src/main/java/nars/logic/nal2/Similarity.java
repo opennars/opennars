@@ -20,9 +20,9 @@
  */
 package nars.logic.nal2;
 
+import nars.io.Symbols.NativeOperator;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
-import nars.io.Symbols.NativeOperator;
 
 /**
  * A Statement about a Similarity relation.

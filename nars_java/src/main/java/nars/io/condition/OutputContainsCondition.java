@@ -5,10 +5,10 @@
 package nars.io.condition;
 
 import nars.core.NAR;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
 import nars.io.TextOutput;
 import nars.io.Texts;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import nars.logic.nal8.Operator.ExecutionResult;
 
 import java.util.ArrayList;

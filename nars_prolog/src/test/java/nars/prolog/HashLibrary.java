@@ -20,9 +20,6 @@
  */
 package nars.prolog;
 
-import nars.prolog.Library;
-import nars.prolog.Term;
-
 import java.util.HashMap;
 
 public class HashLibrary extends Library {

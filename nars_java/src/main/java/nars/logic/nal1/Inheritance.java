@@ -22,9 +22,9 @@ package nars.logic.nal1;
 
 import nars.io.Symbols.NativeOperator;
 import nars.logic.entity.CompoundTerm;
-import nars.logic.nal4.Product;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
+import nars.logic.nal4.Product;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 

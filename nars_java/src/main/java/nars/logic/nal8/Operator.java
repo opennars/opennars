@@ -25,13 +25,9 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Task;
-import nars.logic.entity.TruthValue;
 import nars.io.Output.EXE;
+import nars.logic.entity.*;
 import nars.logic.nal4.Product;
-import nars.logic.entity.Statement;
-import nars.logic.entity.Term;
 
 import java.util.Arrays;
 import java.util.List;

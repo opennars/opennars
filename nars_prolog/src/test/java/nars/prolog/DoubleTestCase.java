@@ -1,10 +1,6 @@
 package nars.prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Int;
-import nars.prolog.InvalidTermException;
-import nars.prolog.Struct;
-import nars.prolog.Var;
 
 public class DoubleTestCase extends TestCase {
 	

@@ -4,9 +4,6 @@
  */
 package nars.prolog;
 
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
 import nars.prolog.event.LibraryEvent;
 import nars.prolog.event.PrologEventAdapter;
 import nars.prolog.event.QueryEvent;

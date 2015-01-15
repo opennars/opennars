@@ -16,8 +16,6 @@ import java.awt.event.MouseWheelListener;
 import java.util.*;
 import java.util.List;
 
-import static processing.core.PConstants.*;
-
 
 public class Grid2DSpace extends PApplet {
 

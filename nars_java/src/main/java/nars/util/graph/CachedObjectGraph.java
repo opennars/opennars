@@ -1,7 +1,6 @@
 package nars.util.graph;
 
 import nars.logic.entity.*;
-import nars.logic.entity.Term;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.AbstractGraph;

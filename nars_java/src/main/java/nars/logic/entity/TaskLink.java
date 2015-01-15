@@ -20,7 +20,6 @@
  */
 package nars.logic.entity;
 
-import nars.core.Parameters;
 import nars.logic.Terms.Termable;
 
 import java.util.ArrayDeque;
@@ -38,9 +37,10 @@ import java.util.Iterator;
 public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
 
     /**
-     * The Task linked. The "target" field in TermLink is not used here.
+     * The Task linked
      */
     public final Task targetTask;
+
     private final int recordLength;
     
     
@@ -152,19 +152,20 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
      * @param currentTime The current time
      * @return Whether they are novel to each other
      */
-    public boolean novel(final TermLink termLink, final long currentTime) {
+    public boolean novel(final TermLink termLink, final long currentTime, int noveltyHorizon) {
         final Term bTerm = termLink.target;
         if (bTerm.equals(targetTask.sentence.term)) {            
             return false;
         }
-        TermLink linkKey = termLink.name();
+
+        if (noveltyHorizon == 0) return true;
 
         //iterating the FIFO deque from oldest (first) to newest (last)
         Iterator<Recording> ir = records.iterator();
         while (ir.hasNext()) {
             Recording r = ir.next();
-            if (linkKey.equals(r.link)) {
-                if (currentTime < r.getTime() + Parameters.NOVELTY_HORIZON) {
+            if (termLink.equals(r.link)) {
+                if (currentTime < r.getTime() + noveltyHorizon) {
                     //too recent, not novel
                     return false;
                 } else {
@@ -175,6 +176,10 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
                     return true;
                 }
             }
+            else if (currentTime > r.getTime() + noveltyHorizon) {
+                //remove a record which will not apply to any other link
+                ir.remove();
+            }
         }
         
         
@@ -182,7 +187,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
         while (records.size() + 1 >= recordLength) records.removeFirst();
         
         // add knowledge reference to recordedLinks
-        records.addLast(new Recording(linkKey, currentTime));
+        records.addLast(new Recording(termLink, currentTime));
         
         return true;
     }

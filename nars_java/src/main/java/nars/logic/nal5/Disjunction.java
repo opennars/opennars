@@ -21,10 +21,10 @@
 package nars.logic.nal5;
 
 import nars.core.Parameters;
+import nars.io.Symbols.NativeOperator;
+import nars.logic.Terms;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
-import nars.logic.Terms;
-import nars.io.Symbols.NativeOperator;
 
 import java.util.ArrayList;
 import java.util.List;

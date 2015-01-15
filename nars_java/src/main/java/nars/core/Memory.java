@@ -24,7 +24,17 @@ import nars.core.Core.AttentionAware;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
-import nars.logic.*;
+import nars.io.Output.ERR;
+import nars.io.Output.IN;
+import nars.io.Output.OUT;
+import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
+import nars.io.meter.EmotionMeter;
+import nars.io.meter.LogicMeter;
+import nars.io.meter.ResourceMeter;
+import nars.logic.BudgetFunctions;
+import nars.logic.ImmediateProcess;
+import nars.logic.Terms;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
@@ -39,29 +49,18 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal7.Tense;
-import nars.io.Output.ERR;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
-import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
-import nars.io.meter.EmotionMeter;
-import nars.io.meter.LogicMeter;
-import nars.io.meter.ResourceMeter;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
+import nars.operator.app.plan.MultipleExecutionManager;
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
-import nars.operator.app.plan.MultipleExecutionManager;
 import nars.util.bag.Bag;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
-
-import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
-import static nars.operator.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -86,6 +85,7 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     private int level;
+    private TaskSource inputs;
 
     public void setLevel(int nalLevel) {
         if ((nalLevel < 1) || (nalLevel > 8))
@@ -124,7 +124,7 @@ public class Memory implements Serializable {
 
         public AbstractTask nextTask();
 
-        public int getInputItemsBuffered();
+        public int numBuffered();
     }
 
     //public static Random randomNumber = new Random(1);
@@ -236,7 +236,11 @@ public class Memory implements Serializable {
 
         emotion.set(0.5f, 0.5f);
 
+        //TODO end all plugins
+
         event.emit(ResetEnd.class);
+
+        //TODO re-enable if they were enabled
 
     }
 
@@ -511,6 +515,7 @@ public class Memory implements Serializable {
 
                 if (addNewTask(task, "Perceived"))
                     return 1;
+
             } else {
                 removeTask(task, "Neglected");
             }
@@ -586,30 +591,54 @@ public class Memory implements Serializable {
         return enabled;
     }
 
-    public void cycle(final TaskSource inputs) {
 
+    /** whether perceptual tasks are available to perceive */
+    public boolean hasPercepts() {
+        return isProcessingInput() && inputs.numBuffered() > 0;
+    }
+
+    /** attempts to perceive the next input from perception, and
+     *  handle it by immediately acting on it, or
+     *  adding it to the new tasks queue for future reasoning.
+     * @return how many tasks were generated as a result of perceiving, or -1 if no percept was available */
+    public int nextPercept() {
+        AbstractTask t = inputs.nextTask();
+        if (t != null) {
+            return inputTask(t);
+        }
+        return -1;
+    }
+    /** attempts to perceive at most N perceptual tasks.
+     *  this allows Attention to regulate input relative to other kinds of mental activity
+     *  if N == -1, continue perceives until perception buffer is emptied
+     *  @return how many tasks perceived
+     */
+    public int nextPercept(int maxPercepts) {
+        int perceived = 0;
+        boolean inputEverything;
+
+        if (maxPercepts == -1) { inputEverything = true; maxPercepts = 1; }
+        else inputEverything = false;
+
+        while (perceived < maxPercepts) {
+            int p = nextPercept();
+            if (p == -1) break;
+            else if (!inputEverything) perceived += p;
+        }
+        return perceived;
+    }
+
+    public synchronized void cycle(final TaskSource inputs) {
+
+        this.inputs = inputs;
+        
         if (!isEnabled()) {
             return;
         }
 
-        logic.IO_INPUTS_BUFFERED.set((double) inputs.getInputItemsBuffered());
+        logic.TASK_INPUT.set((double) inputs.numBuffered());
 
         event.emit(Events.CycleStart.class);
-
-        int remainingInputTasks = concepts.getInputPriority();
-
-        /**
-         * adds input tasks to newTasks
-         */
-        while (isProcessingInput() && (remainingInputTasks > 0)) {
-            AbstractTask t = inputs.nextTask();
-            if (t != null) {
-                int newTasks = inputTask(t);
-                remainingInputTasks -= newTasks;
-            }
-            else
-                break;
-        }
 
         concepts.cycle();
 
@@ -636,51 +665,54 @@ public class Memory implements Serializable {
         }
     }
     
-    public synchronized int processOtherTasks(Collection<Runnable> queue) {
+    public synchronized int dequeueOtherTasks(Collection<Runnable> target) {
         int num;
         synchronized (otherTasks) {            
             num = otherTasks.size();
             if (num > 0) {
-                queue.addAll(otherTasks);
+                target.addAll(otherTasks);
                 otherTasks.clear();
             }
         }
         return num;
     }
-    
+
     /**
-     * Processes a specific number of new tasks
-     * @param maxTasks max # of tasks to queue (in parameter queue), or -1 for unlimited
+     * Select a novel task to process.
      */
-    public synchronized int processNewTasks(int maxTasks, Collection<Runnable> queue) {
-        if (maxTasks == 0) {
-            return 0;
-        }
+    public Runnable nextNovelTask() {
+        if (novelTasks.isEmpty()) return null;
 
-        int queued = 0;
+        // select a task from novelTasks
+        final Task task = novelTasks.takeNext();
 
-        synchronized (newTasks) {
-            while (!newTasks.isEmpty()) {
+        if (task == null)
+            throw new RuntimeException("novelTasks bag output null item");
 
-                final Task task = newTasks.removeFirst();
+        return new ImmediateProcess(this, task);
+    }
 
-                emotion.adjustBusy(task.getPriority(), task.getDurability());
+    public Runnable nextNewTask() {
 
-                if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists
-                    if (queued == maxTasks) {
-                        //limited # of new tasks requested; so stop here
-                        break;
-                    }
+        if (newTasks.isEmpty()) return null;
 
-                    // ok so lets fire it
-                    queue.add(new ImmediateProcess(this, task));
-                    queued++;
+        final Task task = newTasks.removeFirst();
 
-                } else {
+        emotion.adjustBusy(task.getPriority(), task.getDurability());
 
-                    final Sentence s = task.sentence;
+        if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists
+            // ok so lets fire it
+            return new ImmediateProcess(this, task);
+        } else {
+            final Sentence s = task.sentence;
 
-                    if ((s != null) && (s.isJudgment() || s.isGoal())) {
+            if (s.isJudgment() || s.isGoal()) {
+
+                //TODO: extract to NovelProcess class
+                return new Runnable() {
+
+                    @Override
+                    public void run() {
 
                         final double exp = s.truth.getExpectation();
 
@@ -689,10 +721,12 @@ public class Memory implements Serializable {
                             //just imagine a board game where you are confident about all the board rules
                             //but the implications reach all the frequency spectrum in certain situations
                             //but every concept can also be represented with (--,) so i guess its ok
-                            logic.TASK_ADD_NOVEL.hit();
+
 
                             // new concept formation
                             Task displacedNovelTask = novelTasks.putIn(task);
+                            logic.TASK_ADD_NOVEL.hit();
+
                             if (displacedNovelTask != null) {
                                 if (displacedNovelTask == task) {
                                     removeTask(task, "Ignored");
@@ -705,12 +739,14 @@ public class Memory implements Serializable {
                             removeTask(task, "Neglected");
                         }
                     }
-                }
+
+                };
             }
         }
-
-        return queued;
+        throw new RuntimeException("Unrecognized NewTask: " + task);
     }
+
+
 
     protected void error(Throwable ex) {
         emit(ERR.class, ex);
@@ -722,35 +758,6 @@ public class Memory implements Serializable {
     }
 
 
-    /**
-     * Select a novel task to process.
-     * TODO obey 'num' as a maximum # of tasks to return
-     * @return whether a task was processed
-     */
-    public synchronized int processNovelTasks(int num, Collection<Runnable> queue) {
-        if (num == 0) {
-            return 0;
-        }
-
-        int executed = 0;        
-
-        for (int i = 0; i < novelTasks.size(); i++) {
-            
-            // select a task from novelTasks
-            final Task task = novelTasks.takeNext();
-
-            if (task == null)
-                break;
-
-            queue.add(new ImmediateProcess(this, task));
-            executed++;
-
-            if (executed == num)
-                break;
-        }
-
-        return executed;
-    }
 
     public Operator getOperator(final String op) {
         return operators.get(op);

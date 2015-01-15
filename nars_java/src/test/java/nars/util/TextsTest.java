@@ -2,15 +2,10 @@ package nars.util;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Stamp;
-import nars.logic.entity.TruthValue;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.io.narsese.Narsese;
-import nars.logic.entity.CompoundTerm;
-import nars.logic.entity.Statement;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import nars.util.rope.Rope;
 import nars.util.rope.impl.FastConcatenationRope;
 import nars.util.rope.impl.PrePostCharRope;

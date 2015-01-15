@@ -6,12 +6,10 @@ package nars.core.control.experimental;
 
 import nars.core.Core;
 import nars.core.Memory;
-import nars.core.Parameters;
-import nars.logic.FireConcept;
+import nars.logic.BudgetFunctions;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
 import nars.logic.entity.ConceptBuilder;
-import nars.logic.BudgetFunctions;
 import nars.logic.entity.Term;
 import nars.util.bag.Bag.MemoryAware;
 import nars.util.bag.experimental.DelayBag;
@@ -51,35 +49,7 @@ abstract public class ConceptWaveCore implements Core {
         //this.subcon = subcon
     }    
 
-    @Override
-    public void cycle() {
-
-        run.clear();
-        
-        memory.processNewTasks(newTaskPriority, run);
-                
-        memory.processNovelTasks(novelTaskPriority, run);
-        
-        for (int i = 0; i < conceptPriority; i++) {
-            Concept c = concepts.takeNext();
-            if (c == null)
-                break;
-            run.add(new FireConcept(memory, c, 1) {
-                @Override public void onFinished() {
-                    //putIn, not putBack; DelayBag has its own forgettable function
-                    concepts.putIn(currentConcept);
-                }
-            });
-        }
-
-        Core.run(run, Parameters.THREADS);
-        
-        /*if (!run.isEmpty())
-            System.out.println("run: "+ run.size() + " " + run + " " + concepts.size());*/
-        
-        
-    }
-    
+    abstract public void cycle();
 
 
     @Override
@@ -141,10 +111,6 @@ abstract public class ConceptWaveCore implements Core {
         return concepts.iterator();
     }
 
-    @Override
-    public int getInputPriority() {
-        return inputPriority;
-    }
 
     @Override
     public String toString() {

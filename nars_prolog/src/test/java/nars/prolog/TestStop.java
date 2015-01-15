@@ -1,9 +1,5 @@
 package nars.prolog;
 
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
-
 class PrologThread extends Thread {
 	Prolog core;
 	String goal;

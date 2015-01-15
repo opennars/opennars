@@ -2,13 +2,15 @@ package nars.operator.mental;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.core.*;
+import nars.core.AbstractPlugin;
 import nars.core.Events.TaskDerive;
-import nars.logic.entity.*;
-import nars.logic.BudgetFunctions;
+import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.Symbols;
+import nars.logic.BudgetFunctions;
+import nars.logic.entity.*;
 import nars.logic.nal2.Similarity;
-import nars.logic.entity.Term;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 

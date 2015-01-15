@@ -19,9 +19,9 @@ package nars.operator.math;
 
 import nars.core.Memory;
 import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Term;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
-import nars.logic.entity.Term;
 import nars.operator.SynchronousFunctionOperator;
 import nars.operator.mental.Mental;
 

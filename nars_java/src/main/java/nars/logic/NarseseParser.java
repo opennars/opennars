@@ -10,7 +10,7 @@ import org.parboiled.support.ParsingResult;
 
 import java.util.Scanner;
 
-import static nars.io.Symbols.*;
+import static nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.*;
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 

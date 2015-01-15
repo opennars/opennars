@@ -22,11 +22,11 @@ package nars.logic.entity;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.nal7.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
 import nars.logic.Terms.Termable;
+import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.util.sort.SortedList;

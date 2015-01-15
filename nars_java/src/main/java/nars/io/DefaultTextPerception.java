@@ -4,15 +4,15 @@ import com.google.common.collect.Iterators;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.*;
 import nars.core.Events.Perceive;
-import nars.logic.entity.AbstractTask;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
 import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;
+import nars.logic.entity.AbstractTask;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import nars.operator.io.*;
 
 import java.io.IOException;

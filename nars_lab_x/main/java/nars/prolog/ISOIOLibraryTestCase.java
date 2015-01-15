@@ -1,6 +1,5 @@
 package prolog;
 
-import nars.prolog.*;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.OutputListener;
 import org.junit.BeforeClass;

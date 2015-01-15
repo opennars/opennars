@@ -8,9 +8,6 @@ import nars.core.Events.FrameStart;
 import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
-import nars.logic.entity.AbstractTask;
-import nars.logic.NAL.DerivationFilter;
-import nars.logic.entity.*;
 import nars.io.*;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -18,6 +15,8 @@ import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
+import nars.logic.NAL.DerivationFilter;
+import nars.logic.entity.*;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
 import nars.operator.io.Echo;
@@ -640,7 +639,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
     /** count of how many items are buffered */
-    @Override public int getInputItemsBuffered() {
+    @Override public int numBuffered() {
         int total = 0;
         for (final InPort i : inputChannels)
             total += i.getItemsBuffered();

@@ -6,11 +6,11 @@
 package nars;
 
 import nars.core.NAR;
+import nars.logic.AbstractObserver;
 import nars.logic.ImmediateProcess;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
-import nars.logic.AbstractObserver;
 
 /**
  * Interface with which to implement a "mirror" - a mental prosthetic which

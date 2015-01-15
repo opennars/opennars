@@ -19,8 +19,8 @@ package nars.logic.nal7;
 
 import com.google.common.collect.Lists;
 import nars.core.Memory;
-import nars.logic.entity.Term;
 import nars.io.Symbols;
+import nars.logic.entity.Term;
 
 import java.util.ArrayList;
 import java.util.List;

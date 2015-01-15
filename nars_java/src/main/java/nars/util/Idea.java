@@ -11,15 +11,11 @@ import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.logic.entity.CompoundTerm;
-import nars.logic.nal4.Image;
-import nars.logic.entity.Term;
 import nars.logic.Terms.Termable;
+import nars.logic.entity.*;
+import nars.logic.nal4.Image;
 
 import java.util.*;
 

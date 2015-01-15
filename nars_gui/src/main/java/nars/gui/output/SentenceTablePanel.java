@@ -3,11 +3,11 @@ package nars.gui.output;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import nars.core.NAR;
+import nars.gui.output.graph.TermSyntaxVis;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
-import nars.logic.entity.TruthValue;
-import nars.gui.output.graph.TermSyntaxVis;
 import nars.logic.entity.Term;
+import nars.logic.entity.TruthValue;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

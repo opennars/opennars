@@ -20,13 +20,13 @@
  */
 package nars.logic.nal5;
 
-import nars.logic.entity.*;
-import nars.logic.*;
-import nars.logic.nal7.Interval;
 import nars.io.Symbols;
+import nars.logic.*;
+import nars.logic.entity.*;
+import nars.logic.nal7.Interval;
 
-import static nars.logic.nal7.TemporalRules.*;
 import static nars.logic.Terms.reduceComponents;
+import static nars.logic.nal7.TemporalRules.*;
 
 
 /**

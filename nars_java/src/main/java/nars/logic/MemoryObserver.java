@@ -5,9 +5,9 @@ import nars.core.Events.CycleEnd;
 import nars.core.Events.CycleStart;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.io.Output;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
-import nars.io.Output;
 
 public abstract class MemoryObserver extends AbstractObserver {
 
@@ -26,7 +26,7 @@ public abstract class MemoryObserver extends AbstractObserver {
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,
                 Events.ConceptDirectProcessedTask.class,
-                Events.ConceptFire.class,
+                Events.ConceptFired.class,
                 Events.ConceptGoalAdd.class,
                 Events.ConceptGoalRemove.class,
                 Events.ConceptQuestionAdd.class,
@@ -37,8 +37,8 @@ public abstract class MemoryObserver extends AbstractObserver {
                 Events.TaskAdd.class,
                 Events.TaskRemove.class,
                 Events.TaskDerive.class,
-                Events.TaskImmediateProcess.class,
-                Events.TermLinkSelect.class,
+                Events.TaskImmediateProcessed.class,
+                Events.TermLinkSelected.class,
                 Events.TermLinkTransform.class,
                 //Events.UnExecutedGoal.class,
 

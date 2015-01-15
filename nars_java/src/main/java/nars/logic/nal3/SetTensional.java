@@ -1,10 +1,10 @@
 package nars.logic.nal3;
 
 import nars.core.Parameters;
+import nars.io.Symbols;
+import nars.logic.Terms;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
-import nars.logic.Terms;
-import nars.io.Symbols;
 
 import java.nio.CharBuffer;
 

@@ -2,10 +2,10 @@ package nars.multistep;
 
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
 import nars.io.Output;
 import nars.io.Texts;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 
 import java.util.Arrays;
 

@@ -5,12 +5,11 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Plugin;
-import nars.logic.entity.*;
 import nars.io.Symbols;
+import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
-import nars.logic.nal4.Product;
 import nars.logic.nal3.SetExt;
-import nars.logic.entity.Term;
+import nars.logic.nal4.Product;
 
 /**
  * Counting and Cardinality

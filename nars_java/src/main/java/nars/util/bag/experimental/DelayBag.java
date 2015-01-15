@@ -6,9 +6,9 @@ import nars.core.Core;
 import nars.core.Core.AttentionAware;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.logic.BudgetFunctions;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
-import nars.logic.BudgetFunctions;
 import nars.util.bag.Bag;
 import nars.util.sort.ArraySortedIndex;
 

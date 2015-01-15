@@ -20,8 +20,8 @@
  */
 package nars.logic.nal3;
 
-import nars.logic.entity.Term;
 import nars.io.Symbols.NativeOperator;
+import nars.logic.entity.Term;
 
 import java.util.Collection;
 

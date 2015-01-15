@@ -7,18 +7,18 @@ package nars.logic;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
-import nars.core.Events.ConceptFire;
-import nars.core.Events.TaskImmediateProcess;
+import nars.core.Events.ConceptFired;
+import nars.core.Events.TaskImmediateProcessed;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.entity.TaskLink;
 import nars.gui.output.JGraphXGraphPanel;
 import nars.io.ExampleFileInput;
 import nars.io.condition.OutputCondition;
 import nars.io.condition.OutputContainsCondition;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
+import nars.logic.entity.TaskLink;
 import nars.logic.entity.Term;
 import nars.logic.nal8.Operation;
 import nars.util.graph.NARGraph;
@@ -262,12 +262,12 @@ public class LogicPerformance {
         TaskReasonGraph process = new TaskReasonGraph();
         
         
-        n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
+        n.on(TaskImmediateProcessed.class, new TaskImmediateProcessed() {
             @Override public void onProcessed(Task t, NAL nal) {
                 process.explain(t, analysisDepth, nal.tasksAdded);
             }            
         });
-         n.on(ConceptFire.class, new ConceptFire() {
+         n.on(ConceptFired.class, new ConceptFired() {
 
             @Override
             public void onFire(FireConcept f) {                

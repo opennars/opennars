@@ -63,10 +63,10 @@ public class InternalExperience extends AbstractPlugin {
     @Override
     public Class[] getEvents() {
         if (isFull()) {
-            return new Class[] { Events.CycleEnd.class, Events.ConceptDirectProcessedTask.class, Events.BeliefReason.class };
+            return new Class[] { Events.ConceptDirectProcessedTask.class, Events.BeliefReason.class };
         }
         else {
-            return new Class[] { Events.CycleEnd.class, Events.ConceptDirectProcessedTask.class };
+            return new Class[] { Events.ConceptDirectProcessedTask.class };
         }
     }
 
@@ -122,20 +122,12 @@ public class InternalExperience extends AbstractPlugin {
         return operation;
     }
 
-    final List<Task> rememberedQueue = new ArrayList();
 
     @Override
     public void event(Class event, Object[] a) {
 
-        if (event == Events.CycleEnd.class) {
-            for (Task t : rememberedQueue) {
-                memory.addNewTask(t, "Remembered Action (Internal Experience)");
-            }
-            rememberedQueue.clear();
-        }
 
-        else if (event==Events.ConceptDirectProcessedTask.class) {
-
+        if (event==Events.ConceptDirectProcessedTask.class) {
 
             Task task = (Task)a[0];                
 
@@ -166,8 +158,7 @@ public class InternalExperience extends AbstractPlugin {
 
             Task newTask = new Task(j, newbudget, isFull() ? null : task);
 
-            //memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
-            rememberedQueue.add(newTask);
+            memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
 
         }
         else if (event == Events.BeliefReason.class) {

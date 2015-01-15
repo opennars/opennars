@@ -14,11 +14,12 @@
  */
 package nars.io.meter.depr.sensor;
 
+import nars.io.meter.depr.Tracker;
+import nars.io.meter.depr.session.StatsSession;
+
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
-import nars.io.meter.depr.Tracker;
-import nars.io.meter.depr.session.StatsSession;
 
 /**
  * TODO: This tracker currently depends on the ordering of

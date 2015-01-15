@@ -21,6 +21,7 @@
 package nars.logic;
 
 import nars.core.Memory;
+import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
@@ -33,7 +34,6 @@ import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
-import nars.io.Symbols;
 
 import java.util.List;
 

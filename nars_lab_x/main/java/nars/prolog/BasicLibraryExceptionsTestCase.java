@@ -2,7 +2,6 @@ package prolog;
 
 
 import junit.framework.TestCase;
-import nars.prolog.*;
 
 import static junit.framework.TestCase.assertTrue;
 

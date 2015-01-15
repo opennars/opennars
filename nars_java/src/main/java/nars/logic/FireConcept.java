@@ -7,6 +7,7 @@ package nars.logic;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.nal1.LocalRules;
 import nars.logic.nal1.Negation;
@@ -15,7 +16,6 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal5.SyllogisticRules;
 import nars.logic.nal7.TemporalRules;
-import nars.io.Symbols;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,10 +58,10 @@ abstract public class FireConcept extends NAL {
                 fireTaskLink(termLinkCount);
                 returnTaskLink(currentTaskLink);
             } else {
-                for (int i = 0; i < numTaskLinks; i++) {
+                if (currentConcept.taskLinks.size() == 0)
+                    return;
 
-                    if (currentConcept.taskLinks.size() == 0)
-                        return;
+                for (int i = 0; i < numTaskLinks; i++) {
 
                     currentTaskLink = currentConcept.taskLinks.takeNext();
                     if (currentTaskLink == null)
@@ -83,7 +83,7 @@ abstract public class FireConcept extends NAL {
                 memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
         
     }
-    
+
     protected void fireTaskLink(int termLinks) {
         final Task task = currentTaskLink.getTarget();
         setCurrentTerm(currentConcept.term);
@@ -101,26 +101,32 @@ abstract public class FireConcept extends NAL {
 
         } else {            
             while (termLinks > 0) {
-                final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time());
-                
-                if (termLink == null) {
-                    break;
-                }
+
+                int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
+                                        currentConcept.termLinks.size()-1);
+
+                final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+
+                termLinks--;
+
+                //try again, because it may have selected a non-novel link
+                if (termLink == null)
+                    continue;
                 
                 setCurrentBeliefLink(termLink);
 
                 reason(currentTaskLink, termLink);
 
-                emit(Events.TermLinkSelect.class, termLink, currentConcept, this);
+                currentConcept.returnTermLink(termLink, true);
+
+                emit(Events.TermLinkSelected.class, termLink, currentConcept, this);
                 memory.logic.TERM_LINK_SELECT.hit();
 
-                currentConcept.returnTermLink(termLink);
 
-                termLinks--;
             }
         }
                 
-        emit(Events.ConceptFire.class, this);
+        emit(Events.ConceptFired.class, this);
         memory.logic.TASKLINK_FIRE.hit();
 
     }

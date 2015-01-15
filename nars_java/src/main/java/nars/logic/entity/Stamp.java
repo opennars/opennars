@@ -24,10 +24,10 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.nal7.TemporalRules;
 import nars.io.Symbols;
-import nars.logic.nal7.Tense;
 import nars.logic.Terms;
+import nars.logic.nal7.TemporalRules;
+import nars.logic.nal7.Tense;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -358,7 +358,7 @@ public class Stamp implements Cloneable {
     }
 
     /** sets the creationTime to a non-value so that it will be set at a later point, ex: after traversing the input queue */
-    public void setNotCreatedYet() {
+    public void setNotYetPerceived() {
         creationTime = -1;
     }
 

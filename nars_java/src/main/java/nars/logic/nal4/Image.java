@@ -1,11 +1,11 @@
 package nars.logic.nal4;
 
 import nars.core.Parameters;
+import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
 import nars.logic.entity.AbstractTerm;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
-import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
 
 import java.util.Objects;
 

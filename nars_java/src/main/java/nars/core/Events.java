@@ -2,6 +2,7 @@ package nars.core;
 
 import nars.core.EventEmitter.EventObserver;
 import nars.logic.FireConcept;
+import nars.logic.ImmediateProcess;
 import nars.logic.NAL;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
@@ -102,8 +103,8 @@ public class Events {
     public static class Unsolved { }
     
     
-    
-    abstract public static class ConceptFire implements EventObserver { 
+    /** fired at the END of a ConceptFire task */
+    abstract public static class ConceptFired implements EventObserver {
         
         /**
          * use:
@@ -117,18 +118,23 @@ public class Events {
         }
         
     }
-    abstract public static class TaskImmediateProcess implements EventObserver { 
+
+    /** fired at the end of an ImmediateProcess task */
+    abstract public static class TaskImmediateProcessed implements EventObserver {
 
         abstract public void onProcessed(Task t, NAL n);
         
         @Override public void event(Class event, Object[] args) {
-            onProcessed((Task)args[0], (NAL)args[1]);
+            onProcessed((Task)args[0], (ImmediateProcess)args[1]);
         }
         
     }
 
     public static class TermLinkTransform {    }
-    public static class TermLinkSelect { }
+
+    /** emitted after a TermLink has been selected and reasoned */
+    public static class TermLinkSelected { }
+
     public static class BeliefSelect { }
     
     /** called from RuleTables.reason for a given Belief */

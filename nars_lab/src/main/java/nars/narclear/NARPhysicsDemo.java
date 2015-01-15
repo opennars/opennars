@@ -3,11 +3,11 @@ package nars.narclear;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.logic.entity.Task;
 import nars.io.ChangedTextInput;
+import nars.logic.entity.Task;
 import nars.logic.entity.Term;
-import nars.operator.NullOperator;
 import nars.logic.nal8.Operation;
+import nars.operator.NullOperator;
 import org.jbox2d.common.MathUtils;
 
 import java.util.List;

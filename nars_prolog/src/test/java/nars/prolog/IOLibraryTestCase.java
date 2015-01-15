@@ -1,10 +1,6 @@
 package nars.prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Library;
-import nars.prolog.MalformedGoalException;
-import nars.prolog.PrimitiveInfo;
-import nars.prolog.Prolog;
 import nars.prolog.lib.IOLibrary;
 
 import java.util.List;

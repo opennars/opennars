@@ -18,10 +18,10 @@ package nars.operator.mental;
 
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.logic.BudgetFunctions.Activating;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
-import nars.logic.BudgetFunctions.Activating;
 import nars.logic.entity.Term;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;

@@ -20,9 +20,9 @@ package nars.operator.mental;
 import nars.core.Memory;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
-import nars.operator.NullOperator;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
+import nars.operator.NullOperator;
 
 import java.util.ArrayList;
 

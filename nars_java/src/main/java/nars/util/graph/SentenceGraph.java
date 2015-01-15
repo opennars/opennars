@@ -4,13 +4,7 @@ import nars.core.EventEmitter;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.Memory;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Item;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.entity.CompoundTerm;
-import nars.logic.entity.Statement;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
 

@@ -4,12 +4,12 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.build.Discretinuous;
-import nars.logic.entity.Task;
 import nars.io.Output.OUT;
 import nars.io.narsese.Narsese;
+import nars.logic.entity.Task;
+import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
-import nars.logic.entity.Term;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -1,7 +1,5 @@
 package nars.prolog;
 
-import nars.prolog.Agent;
-
 public class TestEinsteinRiddle {
     
     public static void main(String[] args) {

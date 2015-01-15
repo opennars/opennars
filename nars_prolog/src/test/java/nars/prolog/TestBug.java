@@ -6,9 +6,6 @@
  */
 package nars.prolog;
 
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
 import nars.prolog.event.SpyEvent;
 import nars.prolog.event.SpyListener;
 

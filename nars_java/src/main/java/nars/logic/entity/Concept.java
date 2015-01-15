@@ -23,9 +23,9 @@ package nars.logic.entity;
 import nars.core.Events.*;
 import nars.core.Memory;
 import nars.core.NARRun;
-import nars.logic.NAL;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
+import nars.logic.NAL;
 import nars.logic.Terms.Termable;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
@@ -39,9 +39,9 @@ import java.util.List;
 
 import static nars.logic.BudgetFunctions.distributeAmongLinks;
 import static nars.logic.BudgetFunctions.rankBelief;
+import static nars.logic.UtilityFunctions.or;
 import static nars.logic.nal1.LocalRules.*;
 import static nars.logic.nal7.TemporalRules.solutionQuality;
-import static nars.logic.UtilityFunctions.or;
 
 public class Concept extends Item<Term> implements Termable {
 
@@ -774,30 +774,35 @@ public class Concept extends Item<Term> implements Termable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectTermLink(final TaskLink taskLink, final long time) {
+    public TermLink selectTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
         
         synchronized (termLinks) {
 
-            int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
+            int toMatch = memory.param.termLinkMaxMatched.get();
             for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
-                final TermLink termLink = termLinks.takeNext();
-                if (termLink==null)
-                    break;
 
-                if (taskLink.novel(termLink, time)) {
+                final TermLink termLink = termLinks.takeNext();
+
+                if ((termLink==null) && (termLinks.size() > 0))
+                    throw new RuntimeException("termlink bag fault: " + this);
+
+                if (taskLink.novel(termLink, time, noveltyHorizon)) {
                     //return, will be re-inserted in caller method when finished processing it
                     return termLink;
                 }
 
-                returnTermLink(termLink);
+                returnTermLink(termLink, false);
+
             }
             return null;
         }
 
     }
 
-    public void returnTermLink(TermLink termLink) {
-        termLinks.putBack(termLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
+    public void returnTermLink(TermLink termLink, boolean used) {
+        synchronized (termLinks) {
+            termLinks.putBack(termLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
+        }
     }
 
     /**

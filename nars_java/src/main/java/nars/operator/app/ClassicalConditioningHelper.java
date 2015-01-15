@@ -7,14 +7,13 @@ package nars.operator.app;
 
 import nars.core.*;
 import nars.core.EventEmitter.EventObserver;
-import nars.logic.entity.*;
-import nars.logic.BudgetFunctions;
-import nars.logic.nal7.TemporalRules;
-import nars.logic.TruthFunctions;
 import nars.io.Symbols;
+import nars.logic.BudgetFunctions;
+import nars.logic.TruthFunctions;
+import nars.logic.entity.*;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
-import nars.logic.entity.Term;
+import nars.logic.nal7.TemporalRules;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -297,7 +296,7 @@ public class ClassicalConditioningHelper implements Plugin {
                 @Override
                 public void event(Class event, Object[] a) {
                     //is not working, keep for later:
-                    if (event!=Events.TaskImmediateProcess.class)
+                    if (event!=Events.TaskImmediateProcessed.class)
                         return;
                     Task task = (Task)a[0];
                     HandleInput(task);
@@ -315,7 +314,7 @@ public class ClassicalConditioningHelper implements Plugin {
         }
         
         
-        n.memory.event.set(obs, enabled, Events.TaskImmediateProcess.class);
+        n.memory.event.set(obs, enabled, Events.TaskImmediateProcessed.class);
         return true;
     }
     

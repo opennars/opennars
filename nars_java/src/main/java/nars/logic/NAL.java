@@ -50,8 +50,6 @@ public abstract class NAL implements Runnable {
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
 
-    /** which NAL level to use, default=8 */
-    protected final int nal;
 
     /** stores the tasks that this process generates, and adds to memory */
     public final List<Task> tasksAdded = new ArrayList();
@@ -60,7 +58,6 @@ public abstract class NAL implements Runnable {
 
     public NAL(Memory mem, int nalLevel) {
         super();
-        nal = nalLevel;
         memory = mem;
         currentTerm = null;
         currentConcept = null;
@@ -80,14 +77,14 @@ public abstract class NAL implements Runnable {
         memory.emit(c, o);
     }
 
-    public int nal() { return nal; }
+    public int nal() { return memory.nal(); }
 
     /** whether at least NAL level N is enabled */
     public boolean nal(int n) { return nal() >= n; }
 
     
     /**
-     * Derived task comes from the logic rules.
+     * iived task comes from the logic rules.
      *
      * @param task the derived task
      */

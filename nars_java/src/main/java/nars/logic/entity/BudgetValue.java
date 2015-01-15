@@ -22,9 +22,9 @@ package nars.logic.entity;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.BudgetFunctions;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.logic.BudgetFunctions;
 
 import static nars.core.Parameters.TRUTH_EPSILON;
 import static nars.logic.UtilityFunctions.*;

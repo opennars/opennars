@@ -1,15 +1,11 @@
 package nars.logic.nal2;
 
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.TruthValue;
 import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.TruthFunctions;
+import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal5.Equivalence;
-import nars.logic.entity.Statement;
-import nars.logic.entity.Term;
 
 /**
  * Created by me on 1/13/15.

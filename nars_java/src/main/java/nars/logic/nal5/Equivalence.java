@@ -20,11 +20,11 @@
  */
 package nars.logic.nal5;
 
+import nars.io.Symbols.NativeOperator;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
-import nars.io.Symbols.NativeOperator;
 
 import java.util.Arrays;
 

@@ -20,9 +20,9 @@
  */
 package nars.logic.nal3;
 
+import nars.io.Symbols.NativeOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
-import nars.io.Symbols.NativeOperator;
 
 import java.util.TreeSet;
 

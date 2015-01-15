@@ -8,9 +8,8 @@ import javolution.context.ConcurrentContext;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.FireConcept;
-import nars.logic.entity.*;
-import nars.logic.entity.Term;
 import nars.logic.Terms.Termable;
+import nars.logic.entity.*;
 import nars.util.XORShiftRandom;
 
 import java.util.*;
@@ -56,12 +55,25 @@ public class AntCore extends ConceptWaveCore {
     public synchronized void cycle() {
         
         int numNew, numNovel, numConcepts = 0, other;
-            
-        numNew = memory.processNewTasks(ants.size(), run);
 
-        numNovel = memory.processNovelTasks(ants.size(), run);
+        memory.nextPercept(-1);
 
-        other = memory.processOtherTasks(run);
+
+        int maxNewTasks = ants.size();
+        int maxNovelTasks = ants.size();
+
+        for (int i = 0; i < maxNewTasks; i++) {
+            Runnable t = memory.nextNewTask();
+            if (t != null) run.add(t);
+            else break;
+        }
+        for (int i = 0; i < maxNovelTasks; i++) {
+            Runnable t = memory.nextNovelTask();
+            if (t != null) run.add(t);
+            else break;
+        }
+
+        other = memory.dequeueOtherTasks(run);
         
         for (Ant a : ants) {            
             numConcepts += a.cycle(cycleSpeed, run);
@@ -72,7 +84,6 @@ public class AntCore extends ConceptWaveCore {
         if (t % 10 == 0)
             System.out.println(t+": "+ run.size() + "[" + numNew + "|" + numNovel + "|" + numConcepts + "|" + other);
         */
-
 
         if (run.isEmpty()) return;
         

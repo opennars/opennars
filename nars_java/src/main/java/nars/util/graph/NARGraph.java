@@ -1,13 +1,9 @@
 package nars.util.graph;
 
 import nars.core.NAR;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.BudgetValue.Budgetable;
-import nars.logic.entity.Concept;
-import nars.logic.entity.TaskLink;
-import nars.logic.entity.TermLink;
-import nars.logic.entity.Term;
 import nars.logic.Terms.Termable;
+import nars.logic.entity.*;
+import nars.logic.entity.BudgetValue.Budgetable;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.DefaultEdge;

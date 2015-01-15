@@ -1,8 +1,6 @@
 package nars.prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Double;
-import nars.prolog.*;
 
 /**
  * @author Matteo Iuliani

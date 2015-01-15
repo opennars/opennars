@@ -23,12 +23,12 @@ package nars.logic.entity;
 import com.google.common.collect.Iterators;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.Terms;
-import nars.logic.nal7.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
+import nars.logic.Terms;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
+import nars.logic.nal7.TemporalRules;
 
 import java.nio.CharBuffer;
 import java.util.*;

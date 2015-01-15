@@ -23,11 +23,7 @@ package nars.io;
 
 import nars.core.Events.Answer;
 import nars.core.NAR;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.entity.TruthValue;
-import nars.logic.entity.Statement;
+import nars.logic.entity.*;
 import nars.logic.nal8.Operator;
 import nars.operator.io.Echo;
 

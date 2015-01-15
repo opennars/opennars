@@ -21,6 +21,7 @@
 package nars.logic.entity;
 
 import nars.core.Parameters;
+import nars.io.Symbols.NativeOperator;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Instance;
 import nars.logic.nal2.InstanceProperty;
@@ -31,7 +32,6 @@ import nars.logic.nal4.ImageInt;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
-import nars.io.Symbols.NativeOperator;
 
 import java.nio.CharBuffer;
 import java.util.Arrays;

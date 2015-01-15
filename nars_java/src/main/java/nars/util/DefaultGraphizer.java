@@ -1,8 +1,6 @@
 package nars.util;
 
 import nars.logic.entity.*;
-import nars.logic.entity.CompoundTerm;
-import nars.logic.entity.Term;
 import nars.util.graph.NARGraph;
 
 import java.util.Collection;

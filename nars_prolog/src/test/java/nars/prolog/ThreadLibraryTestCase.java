@@ -1,6 +1,5 @@
 package nars.prolog;
 
-import nars.prolog.*;
 import org.junit.Before;
 import org.junit.Test;
 
