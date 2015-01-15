@@ -12,14 +12,14 @@
     <name>OpenNARS GUI (Swing)</name>
     <url>https://github.com/opennars/opennars</url>
 
-   
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>
         <plugins>
-          
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -27,25 +27,25 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <useIncrementalCompilation>false</useIncrementalCompilation>                    
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
                 </configuration>
             </plugin>
-            
-     <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.3.2</version>
-        <configuration>
-          <executable>java</executable>
-          <arguments>
-            <argument>-Dsun.java2d.opengl=True</argument>            
-          </arguments>
-        </configuration>
-      </plugin>            
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.3.2</version>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-Dsun.java2d.opengl=True</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
         </plugins>
-        
+
     </build>
-           
+
 
     <dependencies>
         <dependency>
@@ -53,19 +53,21 @@
             <artifactId>opennars-core</artifactId>
             <version>1.7-SNAPSHOT</version>
         </dependency>
-        
+
         <dependency>
             <groupId>processing</groupId>
             <artifactId>core</artifactId>
             <version>3.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/../lib/processing/core/3.0/core-3.0.jar</systemPath>
         </dependency>
-    
+
         <dependency>
             <groupId>org.tinyjee.jgraphx</groupId>
             <artifactId>jgraphx</artifactId>
             <version>2.3.0.5</version>
         </dependency>
-        
+
 
         <dependency>
             <groupId>org.abego.treelayout</groupId>
@@ -79,16 +81,9 @@
         </dependency>
 
     </dependencies>
-  
-    <repositories>
-        <repository>
-            <id>processing</id>
-            <name>Processing</name>
-            <url>file://${project.basedir}/lib</url>
-        </repository>
-    </repositories>
 
-  
-  
+
+
+
 </project>
 

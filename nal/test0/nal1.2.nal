@@ -1,0 +1,15 @@
+'********** abduction
+
+'Sport is a type of competition.
+<sport --> competition>.
+
+'Chess is a type of competition.
+<chess --> competition>. %0.90%
+
+3
+
+'I guess sport is a type of chess.
+''outputMustContain('<sport --> chess>. %1.00;0.42%')
+
+'I guess chess is a type of sport.
+''outputMustContain('<chess --> sport>. %0.90;0.45%')
