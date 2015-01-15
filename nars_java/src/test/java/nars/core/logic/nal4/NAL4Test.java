@@ -9,10 +9,9 @@ import org.junit.Test;
 
 public class NAL4Test extends AbstractNALTest {
 
-
     @Override
     public Build build() {
-        return new Default().level(6);
+        return new Default();
     }
 
     @Test public void recursionSmall() throws Narsese.InvalidInputException {
@@ -42,7 +41,7 @@ public class NAL4Test extends AbstractNALTest {
 
     }
     
-    @Test public void recursionSmall2() {
+    @Test public void recursionSmall2() throws Narsese.InvalidInputException {
     /*
         <0 --> n>. %1.0000;0.9000%  {0 : 1<0 --> n>}
         <<$1 --> n> ==> <(/,next,$1,_) --> n>>. %1.0000;0.9000%  {0 : 2 : }
@@ -56,7 +55,23 @@ public class NAL4Test extends AbstractNALTest {
 
 
      */
-        
+        long time;
+        float finalConf;
+
+        if (n.nal() <= 6) {
+            time = 20;
+            finalConf = 0.73f;
+        }
+        else {
+            time = 800;
+            finalConf = 0.29f;
+        }
+
+        n.believe(" <0 --> n>", 1.0f, 0.9f);
+        n.believe("<<$1 --> n> ==> <(/,next,$1,_) --> n>>", 1.0f, 0.9f);
+        n.ask("<(/,next,(/,next,0,_),_) --> n>");
+        n.mustBelieve(time, "<(/,next,0,_) --> n>", 1.0f, 1.0f, 0.81f, 1.0f);
+        n.mustBelieve(time, "<(/,next,(/,next,0,_),_) --> n>", 1.0f, 1.0f, finalConf, 1.0f);
     }
 
 }

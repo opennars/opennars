@@ -13,12 +13,12 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 /**
-* Created by me on 1/14/15.
+* TODO use a countdown latch to provide early termination for successful tests
 */
 public class TestNAR extends NAR {
 
     boolean showFail = true;
-    boolean showSuccess = false;
+    boolean showSuccess = true;
     boolean showExplanations = false;
     boolean showOutput = false;
 
