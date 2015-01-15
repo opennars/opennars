@@ -1,6 +1,7 @@
 package nars.core.build;
 
 import nars.core.Core;
+import nars.core.NAR;
 import nars.core.control.experimental.AntCore;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Term;
@@ -11,7 +12,11 @@ import nars.util.bag.Bag;
  * https://en.wikipedia.org/wiki/Neuromorphic_engineering
  */
 public class Neuromorphic extends Curve {
+
     private int numAnts;
+
+    /** defaults to all inputs */
+    private int maxInputsPerCycle = -1;
 
     public Neuromorphic(int numAnts) {
         super();        
@@ -30,6 +35,20 @@ public class Neuromorphic extends Curve {
     public Bag<Concept, Term> newConceptBag() {
         /** created by AntAttention */
         return null;
+    }
+
+    /** set to -1 for unlimited */
+    public Neuromorphic setMaxInputsPerCycle(int i) {
+        this.maxInputsPerCycle = i;
+
+        return this;
+    }
+
+    @Override
+    public NAR init(NAR x) {
+        NAR z = super.init(x);
+        z.param.inputsMaxPerCycle.set(maxInputsPerCycle);
+        return z;
     }
 
     /*

@@ -6,10 +6,12 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.TestNAR;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
+@Ignore
 public class AbstractNALTest extends TestCase {
 
     public static final long randomSeed = 1;

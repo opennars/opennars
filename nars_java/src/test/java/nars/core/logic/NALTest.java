@@ -12,7 +12,7 @@ import nars.io.InferenceLogger;
 import nars.io.TextOutput;
 import nars.util.NALPerformance;
 import org.junit.Test;
-import org.junit.runner.Computer;
+import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
@@ -28,10 +28,25 @@ import java.util.Map;
 
 @RunWith(Parameterized.class)
 public class NALTest extends TestCase {
-        
 
-    static {
-        Parameters.DEBUG = true;
+    static final Build[] builds = new Build[] {
+            new Default(),
+            new Neuromorphic(2).setMaxInputsPerCycle(1)
+    };
+
+    @Parameterized.Parameters(name="{1} {0}")
+    public static Collection params() {
+        Map<String, String> et = ExampleFileInput.getUnitTests();
+        Collection<String> t = et.values();
+        for (String x : et.keySet()) addTest(x);
+
+        Collection<Object[]> params = new ArrayList(t.size() * builds.length);
+        for (String script : t) {
+            for (Build b : builds) {
+                params.add(new Object[] { b, script });
+            }
+        }
+        return params;
     }
 
     private final Build build;
@@ -84,23 +99,7 @@ public class NALTest extends TestCase {
     }
     
     
-    @Parameterized.Parameters(name="{0} {1}")
-    public static Collection params() {
-        Map<String, String> et = ExampleFileInput.getUnitTests();
-        Collection<String> t = et.values();
-        for (String x : et.keySet()) addTest(x);
 
-        Build[] builds = new Build[] { new Default(), new Neuromorphic(2) };
-
-        Collection<Object[]> params = new ArrayList(t.size() * builds.length);
-        for (String script : t) {
-            for (Build b : builds) {
-                params.add(new Object[] { b, script });
-            }
-        }
-        return params;
-    }
-    
     
     public static void addTest(String name) {
         name = name.substring(3, name.indexOf(".nal"));
@@ -120,8 +119,8 @@ public class NALTest extends TestCase {
         }
         
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
-        //Result result = JUnitCore.runClasses(new ParallelComputer(true, true),c);
-        Result result = JUnitCore.runClasses(Computer.serial(), c);
+        Result result = JUnitCore.runClasses(new ParallelComputer(true, false),c);
+        //Result result = JUnitCore.runClasses(Computer.serial(), c);
 
         if (result.getFailures()!=null) {
             for (Failure f : result.getFailures()) {
@@ -207,10 +206,10 @@ public class NALTest extends TestCase {
         System.out.flush();
 
         Memory.resetStatic(randomSeed);
+        Parameters.DEBUG = true;
         
         String input;
         NAR nar;
-
 
         NALPerformance test = new NALPerformance(nar = newNAR(), input = getExample(path) );
 
@@ -265,9 +264,9 @@ public class NALTest extends TestCase {
     }
 
     
-    
-    
-    
+
+
+
     @Test
     public void test() {
         testNAL(scriptPath);

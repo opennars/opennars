@@ -18,8 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * NAR Parameters which can be changed during runtime.
  */
 public class Param implements Serializable {
-    
-    
+
+
+
 
     public Param() {    }
 
@@ -106,7 +107,9 @@ public class Param implements Serializable {
     /** Reliance factor, the empirical confidence of analytical truth.
         the same as default confidence  */        
     public final AtomicDouble reliance = new AtomicDouble();
-    
+
+    /** max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+    public AtomicInteger inputsMaxPerCycle = new AtomicInteger(1);
     
     /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
     public void setTiming(Timing time) {
