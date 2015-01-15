@@ -276,7 +276,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         
         int result = (int)Math.floor(y * s);            
         if (result == s) {
-            throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
+            //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
+            result = (int)(s - 1);
         }        
         
         return result;

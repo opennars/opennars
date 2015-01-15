@@ -60,15 +60,15 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean match(final Task task, final Sentence belief, final NAL nal) {
-        Sentence sentence = task.sentence;
+        Sentence taskSentence = task.sentence;
         
-        if (sentence.isJudgment()) {
-            if (revisible(sentence, belief)) {
-                return revision(sentence, belief, true, nal);
+        if (taskSentence.isJudgment()) {
+            if (revisible(taskSentence, belief)) {
+                return revision(taskSentence, belief, true, nal);
             }
         } else {
-            if (TemporalRules.matchingOrder(sentence, belief)) {
-                Term[] u = new Term[] { sentence.term, belief.term };
+            if (TemporalRules.matchingOrder(taskSentence, belief)) {
+                Term[] u = new Term[] { taskSentence.term, belief.term };
                 if (Variables.unify(Symbols.VAR_QUERY, u)) {
                     return trySolution(belief, task, nal);
                 }
@@ -85,10 +85,12 @@ public class LocalRules {
      * @return If revision is possible between the two sentences
      */
     public static boolean revisible(final Sentence s1, final Sentence s2) {
-        return (s1.getRevisible() && 
+        //System.out.println(s1.isRevisible() + " " + s1.equalsContent(s2) + " " + TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) + "(" + s1.getTemporalOrder() + "," + s2.getTemporalOrder() + ")");
+        return (s1.isRevisible() &&
                 s1.equalsContent(s2) && 
                 TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
     }
+
 
     /**
      * Belief revision

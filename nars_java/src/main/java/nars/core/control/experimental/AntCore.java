@@ -56,7 +56,7 @@ public class AntCore extends ConceptWaveCore {
         
         int numNew, numNovel, numConcepts = 0, other;
 
-        memory.nextPercept(-1);
+        memory.nextPercept(1);
 
 
         int maxNewTasks = ants.size();
@@ -86,13 +86,18 @@ public class AntCore extends ConceptWaveCore {
         */
 
         if (run.isEmpty()) return;
-        
-        final ConcurrentContext ctx = ConcurrentContext.enter();
-        ctx.setConcurrency(Parameters.THREADS);
-        try {
-            for (Runnable r : run) ctx.execute(r);            
-        } finally {
-            ctx.exit();
+
+        if (Parameters.THREADS == 1) {
+            for (Runnable r : run) r.run();
+        }
+        else {
+            final ConcurrentContext ctx = ConcurrentContext.enter();
+            ctx.setConcurrency(Parameters.THREADS);
+            try {
+                for (Runnable r : run) ctx.execute(r);
+            } finally {
+                ctx.exit();
+            }
         }
 
         run.clear();        

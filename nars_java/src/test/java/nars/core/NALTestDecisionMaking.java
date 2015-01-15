@@ -10,7 +10,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
+//These tests are already included in the standard tests.  see ExampleFileInput.java
 @Ignore
+@Deprecated
 @RunWith(Parameterized.class)
 public class NALTestDecisionMaking extends NALTest  {
 

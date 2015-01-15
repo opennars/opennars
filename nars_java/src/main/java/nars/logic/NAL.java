@@ -454,8 +454,9 @@ public abstract class NAL implements Runnable {
     /**
      * @param currentBelief the currentBelief to set
      */
-    public void setCurrentBelief(Sentence currentBelief) {
+    public Sentence setCurrentBelief(Sentence currentBelief) {
         this.currentBelief = currentBelief;
+        return currentBelief;
     }
 
     /**

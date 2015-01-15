@@ -203,7 +203,7 @@ public class Term implements AbstractTerm, Termable {
     }
     
     public void recurseSubtermsContainingVariables(final TermVisitor v) {
-        recurseTerms(v, null);
+        recurseSubtermsContainingVariables(v, null);
     }
     
     public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {

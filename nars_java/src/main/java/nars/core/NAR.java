@@ -683,8 +683,10 @@ public class NAR implements Runnable, TaskSource {
                 memory.cycle(this);
         }
         catch (Throwable e) {
-            if (Parameters.DEBUG)
+            if (Parameters.DEBUG) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
+            }
             else
                 memory.error(e);
         }

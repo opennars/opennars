@@ -5,14 +5,13 @@
 package nars.core;
 
 import nars.core.build.Neuromorphic;
-import org.junit.Ignore;
 
 /**
  *
  * @author me
  */
 
-@Ignore
+//@Ignore
 public class NALTestNeuromorphic extends NALTest {
 
     public NALTestNeuromorphic(String scriptPath) {
@@ -22,7 +21,7 @@ public class NALTestNeuromorphic extends NALTest {
 
     @Override
     public NAR newNAR() {
-        return new NAR(new Neuromorphic(16));
+        return new NAR(new Neuromorphic(2));
     }
 
     public static void main(String[] args) {        

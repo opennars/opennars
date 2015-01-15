@@ -9,7 +9,6 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.entity.*;
-import nars.logic.nal1.LocalRules;
 import nars.logic.nal1.Negation;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Equivalence;
@@ -18,14 +17,15 @@ import nars.logic.nal5.SyllogisticRules;
 import nars.logic.nal7.TemporalRules;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import static nars.io.Symbols.VAR_INDEPENDENT;
 import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 abstract public class FireConcept extends NAL {
-    
+
+
+
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
     }
@@ -41,6 +41,7 @@ abstract public class FireConcept extends NAL {
     private int numTaskLinks;
     private int termLinkCount;
 
+    transient private HashSet alreadyInducted;
 
     abstract public void onFinished();
 
@@ -159,15 +160,13 @@ abstract public class FireConcept extends NAL {
             }
         }
 
-        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
+
+        if(equalSubTermsInRespectToImageAndProduct(taskTerm, beliefTerm)) {
             return;
+        }
 
-        //final Concept currentConcept = getCurrentConcept();
         final Concept beliefConcept = memory.concept(beliefTerm);
-
-        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(this, task) : null;
-
-        setCurrentBelief(belief);  // may be null
+        Sentence belief = setCurrentConceptBelief(beliefConcept);
 
         if (belief != null) {
 
@@ -185,42 +184,51 @@ abstract public class FireConcept extends NAL {
 
 
 
-            //this is a new attempt/experiment to make nars effectively track temporal coherences
-            if(beliefTerm instanceof Implication &&
-                    (beliefTerm.getTemporalOrder()== TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
+            if (nal(7)) {
+                //this is a new attempt/experiment to make nars effectively track temporal coherences
+                if (beliefTerm instanceof Implication &&
+                        (beliefTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
 
-                //prevent duplicate inductions
-                Set<Term> alreadyInducted = new HashSet();
+                    final int chainSamples = Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
 
-                for(int i=0;i< Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;i++) {
+                    //prevent duplicate inductions
+                    if (alreadyInducted == null)
+                        alreadyInducted = new HashSet(chainSamples);
+                    else
+                        alreadyInducted.clear();
 
-                    Concept next=memory.concepts.sampleNextConcept();
-                    if (next == null) continue;
+                    for (int i = 0; i < chainSamples; i++) {
 
-                    Term t = next.getTerm();
+                        Concept next = memory.concepts.sampleNextConcept();
+                        if (next == null) continue;
 
-                    if ((t instanceof Implication) && (!alreadyInducted.contains(t))) {
+                        Term t = next.getTerm();
 
-                        Implication implication=(Implication) t;
+                        if ((t instanceof Implication) && (alreadyInducted.add(t))) {
 
-                        if (!next.beliefs.isEmpty() && (implication.isForward() || implication.isConcurrent())) {
+                            Implication implication = (Implication) t;
 
-                            Sentence s=next.beliefs.get(0);
+                            if (!next.beliefs.isEmpty() && (implication.isForward() || implication.isConcurrent())) {
 
-                            TemporalRules.temporalInductionChain(s, belief, this);
-                            TemporalRules.temporalInductionChain(belief, s, this);
-                            alreadyInducted.add(t);
+                                Sentence s = next.beliefs.get(0);
 
+                                TemporalRules.temporalInductionChain(s, belief, this);
+                                TemporalRules.temporalInductionChain(belief, s, this);
+
+                            }
                         }
                     }
                 }
+
+                /*
+                if (LocalRules.match(task, belief, this)) {
+                    return;
+                }
+                */
             }
 
-            if (LocalRules.match(task, belief, this)) {
-                //new tasks resulted from the match, so return
-                return;
-            }
         }
+
 
 
         // to be invoked by the corresponding links
@@ -365,8 +373,13 @@ abstract public class FireConcept extends NAL {
 
     }
 
+    Sentence setCurrentConceptBelief(Concept beliefConcept) {
+        return setCurrentBelief(
+                (beliefConcept != null) ? beliefConcept.getBelief(this, getCurrentTask()) : null
+        );
+    }
 
-    
+
     @Override
     public String toString() {
         return "FireConcept[" + currentConcept + "," + currentTaskLink + "]";

@@ -358,11 +358,11 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         return (punctuation == Symbols.QUEST_MARK);
     }    
     
-    public boolean containQueryVar() {
+    public boolean hasQueryVar() {
         return term.hasVarQuery();
     }
 
-    public boolean getRevisible() {
+    public boolean isRevisible() {
         return revisible;
     }
 
