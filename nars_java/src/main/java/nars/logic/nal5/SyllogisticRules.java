@@ -392,7 +392,7 @@ public final class SyllogisticRules {
             boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u);
             premise1 = (Implication) u[0]; premise2 = u[1];
             
-            if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
+            if (!match && (commonComponent.operator() == oldCondition.operator())) {
             
                 CompoundTerm compoundCommonComponent = ((CompoundTerm) commonComponent);
                 

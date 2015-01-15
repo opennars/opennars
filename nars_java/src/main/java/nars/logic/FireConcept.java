@@ -85,7 +85,7 @@ abstract public class FireConcept extends NAL {
         
     }
 
-    protected void fireTaskLink(int termLinks) {
+    protected void fireTaskLink(int termLinkSelectionAttempts) {
         final Task task = currentTaskLink.getTarget();
         setCurrentTerm(currentConcept.term);
         setCurrentTaskLink(currentTaskLink);
@@ -102,16 +102,24 @@ abstract public class FireConcept extends NAL {
 
         } else {
 
+//            //EXPERIMENTAL:
+//            //if termlinks is less than novelty horizon, it can suppress any from being selected for up to novelty horizon cycles
+//            int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
+//                        1+currentConcept.termLinks.size()/termLinkSelectionAttempts);
+//            termLinkSelectionAttempts = Math.min(termLinkSelectionAttempts, currentConcept.termLinks.size());
+//            //------
+
             //if termlinks is less than novelty horizon, it can suppress any from being selected for up to novelty horizon cycles
             int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
-                        currentConcept.termLinks.size() - 1);
+                    currentConcept.termLinks.size() - 1);
 
-            while (termLinks > 0) {
+
+            while (termLinkSelectionAttempts > 0) {
 
 
                 final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time(), noveltyHorizon);
 
-                termLinks--;
+                termLinkSelectionAttempts--;
 
                 //try again, because it may have selected a non-novel link
                 if (termLink == null)
@@ -160,13 +168,15 @@ abstract public class FireConcept extends NAL {
             }
         }
 
-
-        if(equalSubTermsInRespectToImageAndProduct(taskTerm, beliefTerm)) {
+        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
             return;
-        }
 
+        final Concept currentConcept = getCurrentConcept();
         final Concept beliefConcept = memory.concept(beliefTerm);
-        Sentence belief = setCurrentConceptBelief(beliefConcept);
+
+        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(this, task) : null;
+
+        setCurrentBelief( belief );  // may be null
 
         if (belief != null) {
 
@@ -373,11 +383,6 @@ abstract public class FireConcept extends NAL {
 
     }
 
-    Sentence setCurrentConceptBelief(Concept beliefConcept) {
-        return setCurrentBelief(
-                (beliefConcept != null) ? beliefConcept.getBelief(this, getCurrentTask()) : null
-        );
-    }
 
 
     @Override

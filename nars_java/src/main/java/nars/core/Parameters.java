@@ -133,7 +133,8 @@ public class Parameters {
     public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 10;
     
 
-    /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
+    /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle
+     * prevents a termlinks from redundantly repeated firing */
     public static final int NOVELTY_HORIZON = 10;
 
     /**

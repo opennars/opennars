@@ -38,7 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Inference log, which record input/output of each logic step interface
  * with 1 implementation: GUI ( batch not implemented )
  */
-public class InferenceLogger extends MemoryObserver {
+public class TraceWriter extends MemoryObserver {
 
 
     public static interface LogOutput {
@@ -47,16 +47,16 @@ public class InferenceLogger extends MemoryObserver {
     
     private final List<LogOutput> outputs = new CopyOnWriteArrayList<>();
 
-    public InferenceLogger(NAR n) {
+    public TraceWriter(NAR n) {
         super(n, true);
     }
     
-    public InferenceLogger(NAR n, PrintStream p) {
+    public TraceWriter(NAR n, PrintStream p) {
         super(n, true);
         addOutput(p);
     }
     
-    public InferenceLogger(NAR n, LogOutput l) {
+    public TraceWriter(NAR n, LogOutput l) {
         super(n, true);
         addOutput(l);        
     }
@@ -70,7 +70,7 @@ public class InferenceLogger extends MemoryObserver {
         
         addOutput(new LogOutput() {
             @Override public void traceAppend(Class channel, String s) {
-                p.println(channel + ": " + s);
+                p.println(channel.getSimpleName() + ": " + s);
             }
         });        
     }

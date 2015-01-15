@@ -113,19 +113,7 @@ public class Variable extends Term {
     }
 
 
-    @Override public boolean hasVar() {
-        return true;
-    }
-    @Override public boolean hasVarIndep() {
-        return isIndependentVariable();
-    }
-    @Override public boolean hasVarDep() {
-        return isDependentVariable();
-    }
-    @Override public boolean hasVarQuery() {
-        return isQueryVariable();
-    }
-    
+
 
     @Override public boolean equals(final Object that) {
         if (that == this) return true;
@@ -199,9 +187,18 @@ public class Variable extends Term {
         return (that instanceof Variable) ? ((Comparable)name()).compareTo(that.name()) : -1;
     }*/
 
-    public boolean isQueryVariable() { return getType() == VAR_QUERY;    }
-    public boolean isDependentVariable() { return getType() == VAR_DEPENDENT;    }
-    public boolean isIndependentVariable() { return getType() == VAR_INDEPENDENT;    }
+    @Override public boolean hasVar() {
+        return true;
+    }
+    @Override public boolean hasVarIndep() {
+        return getType() == VAR_INDEPENDENT;
+    }
+    @Override public boolean hasVarDep() {
+        return getType() == VAR_DEPENDENT;
+    }
+    @Override public boolean hasVarQuery() {
+        return getType() == VAR_QUERY;
+    }
 
     public boolean isCommon() {
         CharSequence n = name();

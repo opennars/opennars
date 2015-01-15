@@ -66,7 +66,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
         
     }
     
-    public final Deque<Recording> records;
+    final Deque<Recording> records;
     
 
     

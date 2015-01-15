@@ -8,7 +8,7 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.build.Neuromorphic;
 import nars.io.ExampleFileInput;
-import nars.io.InferenceLogger;
+import nars.io.TraceWriter;
 import nars.io.TextOutput;
 import nars.util.NALPerformance;
 import org.junit.Test;
@@ -217,7 +217,7 @@ public class NALTest extends TestCase {
         if (showOutput)
             new TextOutput(nar, System.out);
         if (showTrace) {
-            new InferenceLogger(nar, System.out);
+            new TraceWriter(nar, System.out);
         }
         
         

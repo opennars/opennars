@@ -59,7 +59,7 @@ public class Symbols {
     
     //?any asks for a concrete thing
     public static final char VAR_QUERY = '?';
-    public static final String VAR_QUERY_DEFAULT = VAR_QUERY + "any";
+    //public static final String VAR_QUERY_DEFAULT = VAR_QUERY + "any";
 
     /*
         $it $eth $1 $sth,   #sth #1    ?what      

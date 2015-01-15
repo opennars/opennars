@@ -162,7 +162,7 @@ public class Terms {
      */
     public static Term reduceComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
         final Term[] list;
-        if (t1.getClass() == t2.getClass()) {
+        if (t1.operator() == t2.operator()) {
             list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, new Term[] { t2 });
