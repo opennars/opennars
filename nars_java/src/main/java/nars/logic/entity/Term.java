@@ -70,6 +70,8 @@ public class Term implements AbstractTerm, Termable {
     }
 
 
+
+
     public interface TermVisitor {
         public void visit(Term t, Term superterm);
     }
@@ -199,6 +201,9 @@ public class Term implements AbstractTerm, Termable {
                 t.recurseTerms(v, this);
             }
         }
+    }
+    public void recurseTerms(final TermVisitor v) {
+        recurseTerms(v, null);
     }
     
     public void recurseSubtermsContainingVariables(final TermVisitor v) {

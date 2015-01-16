@@ -43,7 +43,9 @@ import java.util.*;
  */
 public class Sentence<T extends Term> implements Cloneable, Termable, Truthable {
 
-
+    public static interface Sentenceable<T2 extends Term> extends Termable {
+        public Sentence<T2> getSentence();
+    }
 
     /**
      * The content of a Sentence is a Term

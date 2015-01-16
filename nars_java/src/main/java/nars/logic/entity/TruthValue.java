@@ -238,6 +238,16 @@ public class TruthValue implements Cloneable { // implements Cloneable {
             .append(DELIMITER);        
     }
 
+    public String toStringExternal1() {
+        return new StringBuilder(5)
+                .append(DELIMITER)
+                .append(Texts.n1(frequency))
+                .append(SEPARATOR)
+                .append(Texts.n1(confidence))
+                .append(DELIMITER).toString();
+    }
+
+
     public CharSequence name() {
         //1 + 4 + 1 + 4 + 1
         StringBuilder sb =  new StringBuilder();
@@ -296,6 +306,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         setConfidence(confidence);
         return this;
     }
+
 
     /** indicates an implementation has, or is associated with a specific TruthValue */
     public interface Truthable {

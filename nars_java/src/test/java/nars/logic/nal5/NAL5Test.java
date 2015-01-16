@@ -43,7 +43,7 @@ public class NAL5Test extends AbstractNALTest {
 
         */
 
-        long time = 1250;
+        long time = 25;
 
 
         n.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", Eternal, 0.9f, 0.9f)

@@ -151,7 +151,7 @@ public class BudgetValue implements Cloneable {
 
     /**
      * Change durability value
-     * @param v The new durability
+     * @param d The new durability
      */
     public void setDurability(float d) {
         if(d>=1.0f) {
@@ -293,6 +293,21 @@ public class BudgetValue implements Cloneable {
             .append(qualityString)
             .append(MARK)
             .toString();                
+    }
+
+    /** 1 digit resolution */
+    public String toStringExternal1(boolean includeQuality) {
+        final char priorityString = Texts.n1(priority);
+        final char durabilityString = Texts.n1(durability);
+        StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)
+                .append(MARK)
+                .append(priorityString).append(SEPARATOR)
+                .append(durabilityString);
+
+        if (includeQuality)
+                sb.append(SEPARATOR).append(Texts.n1(quality));
+
+        return sb.append(MARK).toString();
     }
 
     /**

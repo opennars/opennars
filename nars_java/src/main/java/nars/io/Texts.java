@@ -329,6 +329,9 @@ public class Texts {
     public static long hundredths(final float d) {
         return (long) ((d * 100f + 0.5f));
     }
+    public static int tens(final float d) {
+        return (int) ((d * 10f + 0.5f));
+    }
      
     public static final CharSequence n2(final float x) {         
         if ((x < 0) || (x > 1.0f))
@@ -356,8 +359,14 @@ public class Texts {
         }            
     }
     
-    final static Format oneDecimal = new DecimalFormat("0.0");    
-    public static final String n1(final float x) { return oneDecimal.format(x);     }
+    //final static Format oneDecimal = new DecimalFormat("0.0");
+    /** 1 character representing a 1 decimal of a value between 0..1.0;
+     *  representation; 0..9, A=1.0 */
+    public static final char n1(final float x) {
+        int i = tens(x);
+        if (i == 10) return 'A';
+        else return (char)('0' + i);
+    }
 
     public static int compareTo(final CharSequence s, final CharSequence t) {
         if ((s instanceof String) && (t instanceof String)) {

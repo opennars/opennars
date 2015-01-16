@@ -129,11 +129,15 @@ abstract public class FireConcept extends NAL {
                 
                 setCurrentBeliefLink(termLink);
 
+                int numAddedTasksBefore = tasksAdded.size();
+
                 reason(currentTaskLink, termLink);
 
                 currentConcept.returnTermLink(termLink, true);
 
-                emit(Events.TermLinkSelected.class, termLink, currentConcept, this);
+                int numAddedTasksAfter = tasksAdded.size();
+
+                emit(Events.TermLinkSelected.class, termLink, getCurrentTaskLink(), getCurrentConcept(), this, numAddedTasksBefore, numAddedTasksAfter);
                 memory.logic.TERM_LINK_SELECT.hit();
 
 

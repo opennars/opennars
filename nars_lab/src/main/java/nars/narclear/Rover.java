@@ -255,7 +255,7 @@ public class Rover extends PhysicsModel {
                         dist = "hit";
                     }
                     else if (distanceSteps < 10) {
-                        dist = Texts.n1(di);
+                        dist = String.valueOf(Texts.n1(di));
                     }
                     
                     if(n%500==0) {
@@ -336,7 +336,7 @@ public class Rover extends PhysicsModel {
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
-                String da = Texts.n1(a);// + ",radPerFrame";
+                char da = Texts.n1(a);// + ",radPerFrame";
                 if (xa < 0) {
                     direction = "left";
                 } else /*if (xa > 0)*/ {
@@ -358,7 +358,7 @@ public class Rover extends PhysicsModel {
             if (speed > 0.9f) {
                 speed = 0.9f;
             }
-            String sp = Texts.n1(speed);
+            char sp = Texts.n1(speed);
             feltSpeed.set("$0.1;0.1$ <" + sp + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         }

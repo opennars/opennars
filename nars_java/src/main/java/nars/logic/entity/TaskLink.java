@@ -21,6 +21,7 @@
 package nars.logic.entity;
 
 import nars.logic.Terms.Termable;
+import nars.logic.entity.Sentence.Sentenceable;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -34,7 +35,7 @@ import java.util.Iterator;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
+public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sentenceable {
 
     /**
      * The Task linked
@@ -42,8 +43,9 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
     public final Task targetTask;
 
     private final int recordLength;
-    
-    
+
+
+
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
     public final static class Recording {
     
@@ -220,6 +222,8 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
         return getTarget().getTerm();
     }
 
+    @Override
+    public Sentence getSentence() {   return getTarget().sentence;  }
 
     
     
