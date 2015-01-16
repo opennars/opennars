@@ -72,9 +72,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                 Task task = (Task) signal;
 
-                long t = task.getCreationTime();
+                long now = nar.time();
 
-                if ((task.sentence.punctuation != punc) || (t < cycleStart) || (t > cycleEnd))
+                if ((task.sentence.punctuation != punc) || (now < cycleStart) || (now > cycleEnd))
                     return false;
 
                 Term term = task.getTerm();
