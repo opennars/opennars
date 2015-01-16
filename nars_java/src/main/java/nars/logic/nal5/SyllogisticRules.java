@@ -534,7 +534,7 @@ public final class SyllogisticRules {
         boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u);
         premise1 = (Equivalence) u[0]; premise2 = u[1];
         
-        if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
+        if (!match && (commonComponent.operator() == oldCondition.operator())) {
             u = new Term[] { premise1, premise2 };
             match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], u);
             premise1 = (Equivalence) u[0]; premise2 = u[1];

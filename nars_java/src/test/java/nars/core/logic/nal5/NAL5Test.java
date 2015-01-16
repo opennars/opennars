@@ -19,7 +19,9 @@ public class NAL5Test extends AbstractNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 { new Default() },
-                { new Default().level(5) }
+                { new Default().setInternalExperience(null) },
+                { new Default().level(5) },
+                //{ new Neuromorphic(4) },
         });
     }
 
@@ -39,7 +41,8 @@ public class NAL5Test extends AbstractNALTest {
 
         */
 
-        long time = 25;
+        long time = 1250;
+
 
         n.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", 0.9f, 0.9f)
                 .en("robin can fly and swim.")

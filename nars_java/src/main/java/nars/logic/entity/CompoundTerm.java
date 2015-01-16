@@ -491,11 +491,12 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
     }*/
     
-        public static void shuffle(final Term[] ar,final Random randomNumber)
+/*        public static void shuffle(final Term[] ar,final Random rnd)
         {
-            if (ar.length < 2)  {
+            if (ar.length < 2)
                 return;
-            }
+
+
 
           for (int i = ar.length - 1; i > 0; i--)
           {
@@ -505,9 +506,18 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             ar[index] = ar[i];
             ar[i] = a;
           }
+
+        }*/
+
+    public static <T> void shuffle(T[] ar, Random rnd) {
+        if (ar.length < 2) return;
+        for (int i = ar.length - 1; i > 0; i--) {
+            int index = rnd.nextInt(i + 1);
+            T a = ar[index];
+            ar[index] = ar[i];
+            ar[i] = a;
         }
-    
-    
+    }
 
     /**
      * Check whether the compound contains a certain component
@@ -549,7 +559,9 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * @return Whether the term are all in the compound
      */
     public boolean containsAllTermsOf(final Term t) {
-        if (getClass() == t.getClass()) { //(t instanceof CompoundTerm) {
+        if (t instanceof CompoundTerm) {
+        //if (operator() == t.operator()) {
+            //TODO make unit test for containsAll
             return Terms.containsAll(term, ((CompoundTerm) t).term );
         } else {
             return Terms.contains(term, t);
@@ -995,8 +1007,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         for (int i = 0; i < size(); i++) {
             Term a = term[i];
             Term b = c.term[i];
-            if ((a instanceof Variable) && (a.hasVarDep()) || 
-                    ((b instanceof Variable) && (b.hasVarDep())))
+            if ((a instanceof Variable) /*&& (a.hasVarDep())*/ ||
+                    ((b instanceof Variable) /*&& (b.hasVarDep())*/))
                 continue;
             if (!a.equals(b)) return false;
         }

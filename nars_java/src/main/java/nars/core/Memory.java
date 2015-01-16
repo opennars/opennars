@@ -56,6 +56,7 @@ import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
+import nars.util.XORShiftRandom;
 import nars.util.bag.Bag;
 
 import java.io.Serializable;
@@ -128,7 +129,8 @@ public class Memory implements Serializable {
     }
 
     private static long defaultRandomSeed = 1;
-    public static final Random randomNumber = new Random(defaultRandomSeed);
+    public static final Random randomNumber = new XORShiftRandom(defaultRandomSeed);
+    //new Random(defaultRandomSeed);
 
     public static void resetStatic(long randomSeed) {
         randomNumber.setSeed(randomSeed);

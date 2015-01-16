@@ -111,8 +111,9 @@ abstract public class FireConcept extends NAL {
 //            //------
 
             //if termlinks is less than novelty horizon, it can suppress any from being selected for up to novelty horizon cycles
-            int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
-                    currentConcept.termLinks.size() - 1);
+            /*int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
+                    currentConcept.termLinks.size() - 1);*/
+            int noveltyHorizon = Parameters.NOVELTY_HORIZON;
 
 
             while (termLinkSelectionAttempts > 0) {

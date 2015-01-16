@@ -176,7 +176,7 @@ public final class CompositionalRules {
      * @param nal Reference to the memory
      */
     static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final NAL nal) {
-        if ((!nal.getCurrentTask().sentence.isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
+        if ((!nal.getCurrentTask().sentence.isJudgment()) || (taskContent.operator() != beliefContent.operator())) {
             return;
         }
         final Term componentT = taskContent.term[1 - index];
@@ -189,11 +189,11 @@ public final class CompositionalRules {
             return;
         }
         if ((componentT instanceof CompoundTerm) && ((CompoundTerm) componentT).containsAllTermsOf(componentB)) {
-            decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, order, nal);
-            return;
+            if (decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, order, nal))
+                return;
         } else if ((componentB instanceof CompoundTerm) && ((CompoundTerm) componentB).containsAllTermsOf(componentT)) {
-            decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, nal);
-            return;
+            if (decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, nal))
+                return;
         }
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
@@ -277,15 +277,16 @@ public final class CompositionalRules {
      * predicate
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
+     * @return whether a double premise decomposition was derived
      */
-    private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
+    private static boolean decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
 
         if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
-            return;
+            return false;
         }
         Term term2 = reduceComponents(compound, component, nal.mem());
         if (term2 == null) {
-            return;
+            return false;
         }
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
@@ -305,7 +306,7 @@ public final class CompositionalRules {
         if (index == 0) {
             content = Statement.make(oldContent, term1, term2, order);
             if (content == null) {
-                return;
+                return false;
             }
             if (oldContent instanceof Inheritance) {
                 if (compound instanceof IntersectionExt) {
@@ -333,7 +334,7 @@ public final class CompositionalRules {
         } else {
             content = Statement.make(oldContent, term2, term1, order);
             if (content == null) {
-                return;
+                return false;
             }
             if (oldContent instanceof Inheritance) {
                 if (compound instanceof IntersectionInt) {
@@ -362,7 +363,9 @@ public final class CompositionalRules {
         if (truth != null) {
             BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
             nal.doublePremiseTask(content, truth, budget, false);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -373,9 +376,9 @@ public final class CompositionalRules {
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
      */
-    static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static boolean decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
-            return;
+            return false;
         }
 
         Task task = nal.getCurrentTask();
@@ -383,7 +386,7 @@ public final class CompositionalRules {
         Sentence belief = nal.getCurrentBelief();
         Term content = reduceComponents(compound, component, nal.mem());
         if (content == null) {
-            return;
+            return false;
         }
         TruthValue truth = null;
         BudgetValue budget;
@@ -394,11 +397,11 @@ public final class CompositionalRules {
             if (taskSentence.term.hasVarQuery()) {
                 Concept contentConcept = nal.mem().concept(content);
                 if (contentConcept == null) {
-                    return;
+                    return false;
                 }
                 Sentence contentBelief = contentConcept.getBelief(nal, task);
                 if (contentBelief == null) {
-                    return;
+                    return false;
                 }
                 Task contentTask = new Task(contentBelief, task.budget);
                 nal.setCurrentTask(contentTask);
@@ -421,7 +424,7 @@ public final class CompositionalRules {
                     if (compoundTask) {
                         truth = intersection(v1, v2);
                     } else {
-                        return;
+                        return false;
                     }
                 } else { // isJudgment
                     truth = reduceConjunction(v1, v2);
@@ -431,17 +434,18 @@ public final class CompositionalRules {
                     if (compoundTask) {
                         truth = reduceConjunction(v2, v1);
                     } else {
-                        return;
+                        return false;
                     }
                 } else {  // isJudgment
                     truth = reduceDisjunction(v1, v2);
                 }
             } else {
-                return;
+                return false;
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
         nal.doublePremiseTask(content, truth, budget, false);
+        return true;
     }
 
     /* till this general code is ready, the easier solution

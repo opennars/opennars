@@ -425,12 +425,12 @@ public class Terms {
      * comparing whether compound terms in which order doesn't matter (ex: conjunction)
      * are equivalent.
      */ 
-    public static <T> boolean containsAll(final T[] a, final T[] b) {
-        if (a.length != b.length) {
+    public static <T> boolean containsAll(final T[] container, final T[] content) {
+        if (container.length < content.length) {
             return false;
         }
-        for (final T ax : a) {
-            if (!contains(b, ax))
+        for (final T x : content) {
+            if (!contains(container, x))
                 return false;
         }
         return true;
@@ -451,8 +451,8 @@ public class Terms {
         return false;
     }
 
-    public static <T> boolean contains(final T[] array, final T v) {
-        for (final T e : array) {
+    public static <T> boolean contains(final T[] container, final T v) {
+        for (final T e : container) {
             if (v.equals(e)) {
                 return true;
             }
@@ -504,7 +504,7 @@ public class Terms {
      * comparison that will match constant terms, allowing variables to match regardless
      * ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
      */
-    static boolean containsVariablesAsWildcard(final Term[] term, final Term b) {        
+    public static boolean containsVariablesAsWildcard(final Term[] term, final Term b) {
         CompoundTerm bCompound = (b instanceof CompoundTerm) ? ((CompoundTerm)b) : null;
         for (Term a : term) {
             if (a.equals(b)) return true;

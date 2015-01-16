@@ -1,6 +1,7 @@
 package nars.logic;
 
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
@@ -44,7 +45,9 @@ public class Variables {
         /*if (termsEqual) {
             return true;
         }*/
-        
+
+        int ds = 4; //initial size of hashmap below TODO tune
+
         Term t;                
         if (term1Var && (((Variable) term1).getType() == type)) {
             final Variable var1 = (Variable) term1;            
@@ -54,7 +57,7 @@ public class Variables {
                 return findSubstitute(type, t, term2, map);
             } else {
                 
-                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+                if (map[0] == null) {  map[0] = Parameters.newHashMap(ds); map[1] = Parameters.newHashMap(ds); }
                 
                 if ((term2 instanceof Variable) && (((Variable) term2).getType() == type)) {
                     Variable CommonVar = makeCommonVariable(term1, term2);                    
@@ -76,7 +79,7 @@ public class Variables {
                 return findSubstitute(type, term1, t, map);
             } else {
                 
-                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+                if (map[0] == null) {  map[0] = Parameters.newHashMap(ds); map[1] = Parameters.newHashMap(ds); }
                 
                 map[1].put(var2, term1);
                 if (var2.isCommon()) {

@@ -27,8 +27,7 @@ import nars.logic.nal2.Instance;
 import nars.logic.nal2.InstanceProperty;
 import nars.logic.nal2.Property;
 import nars.logic.nal2.Similarity;
-import nars.logic.nal4.ImageExt;
-import nars.logic.nal4.ImageInt;
+import nars.logic.nal4.Image;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
@@ -300,10 +299,10 @@ public abstract class Statement extends CompoundTerm {
         if (!(t1 instanceof CompoundTerm)) {
             return false;
         }
-        final CompoundTerm ct1 = (CompoundTerm) t1;
-        if ((ct1 instanceof ImageExt) || (ct1 instanceof ImageInt)) {
+        if ((t1 instanceof Image /*Ext) || (t1 instanceof ImageInt*/)) {
             return false;
         }
+        final CompoundTerm ct1 = (CompoundTerm) t1;
         return ct1.containsTerm(t2);
     }
 

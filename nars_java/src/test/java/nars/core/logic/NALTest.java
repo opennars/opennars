@@ -31,7 +31,7 @@ public class NALTest extends TestCase {
 
     static final Build[] builds = new Build[] {
             new Default(),
-            new Neuromorphic(2).setMaxInputsPerCycle(1)
+            new Neuromorphic(4).setMaxInputsPerCycle(1)
     };
 
     @Parameterized.Parameters(name="{1} {0}")
@@ -51,7 +51,7 @@ public class NALTest extends TestCase {
 
     private final Build build;
 
-    int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
+    int minCycles = 1750; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public long randomSeed = 1;
     static public boolean showInput = true;
     static public boolean showOutput = false;
@@ -119,7 +119,7 @@ public class NALTest extends TestCase {
         }
         
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
-        Result result = JUnitCore.runClasses(new ParallelComputer(true, true),c);
+        Result result = JUnitCore.runClasses(new ParallelComputer(true, false),c);
         //Result result = JUnitCore.runClasses(Computer.serial(), c);
 
         if (result.getFailures()!=null) {

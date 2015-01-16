@@ -72,7 +72,8 @@ public class Param implements Serializable {
 
 
     /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
-    public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
+    //TODO move this to a Build-specific parameter
+    @Deprecated public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
     
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
