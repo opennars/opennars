@@ -4,6 +4,7 @@ import nars.core.Build;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.logic.AbstractNALTest;
+import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -114,7 +115,7 @@ public class NAL1Test extends AbstractNALTest {
 
     @Test
     public void backwardInference() throws Narsese.InvalidInputException {
-        long time = 46;
+        long time = 246;
 
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
         n.ask("<?1 --> swimmer>");
@@ -127,17 +128,18 @@ public class NAL1Test extends AbstractNALTest {
     public void multistep() throws Narsese.InvalidInputException {
         long time = n.nal() == 1 ? 80 : 350;
 
+        TextOutput.out(n);
         n.believe("<a --> b>", 1.0f, 0.9f);
         n.believe("<b --> c>", 1.0f, 0.9f);
         n.believe("<c --> d>", 1.0f, 0.9f);
         n.ask("<a --> d>");
 
         //originally checked for 0.25% exact confidence
-        n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.27f, 0.33f);
+        n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
 
-        //but we know also 73% is highest it can reach
+        //but we know also 73% is the theoretical maximum it can reach
         if (n.nal() == 1)
-            n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.73f, 0.75f);
+            n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
     }
 
 }

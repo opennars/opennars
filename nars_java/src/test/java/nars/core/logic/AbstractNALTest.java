@@ -10,8 +10,8 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-@RunWith(Parameterized.class)
 @Ignore
+@RunWith(Parameterized.class)
 public class AbstractNALTest extends TestCase {
 
     public static final long randomSeed = 1;
