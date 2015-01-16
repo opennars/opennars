@@ -144,7 +144,7 @@ public class LineChart extends AxisPlot implements MultiChart {
         
         float ytspace = dsy * 0.75f / data.size() / 2;
 
-        l.g.textFont(PCanvas.font9);
+        //l.g.textFont(PCanvas.font9);
         l.g.fill(210);
         
         //TODO number precision formatting

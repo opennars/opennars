@@ -83,7 +83,8 @@
                     <version>3.12.1.GA</version>
                 </dependency>-->
 
-        
+<!-- CHOCO CONSTRAINT SOLVER: -->
+        <!--
 <dependency>
 	<groupId>org.choco-solver</groupId>
 	<artifactId>choco-solver</artifactId>
@@ -94,7 +95,7 @@
 	<artifactId>jfreechart</artifactId>
 	<version>1.0.19</version>
 </dependency>
-
+-->
                 
     </dependencies>
   

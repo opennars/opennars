@@ -168,7 +168,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
         else
             b.smooth();
 
-        b.textFont(font12);
+        if (font12!=null)
+            b.textFont(font12);
         b.strokeJoin(MITER);
         b.strokeCap(PROJECT);        
         

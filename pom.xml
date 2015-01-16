@@ -114,30 +114,6 @@
   -->
 
 
-    <build>
-    <plugins>
-        <plugin>
-            <groupId>org.jboss.tattletale</groupId>
-            <artifactId>tattletale-maven</artifactId>
-            <!-- The version of the plugin you want to use -->
-            <version>1.1.0.Final</version>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>report</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <!--<configuration>-->
-                <!-- This is the location which will be scanned for generating tattletale reports-->
-                <!--<source>/absolutepath/to/source/dir</source>-->
-                <!-- This is where the reports will be generated -->
-                <!--<destination>/absolute/path/to/reports/dir</destination>-->
-            <!--</configuration>-->
-        </plugin>
-    </plugins>
-    </build>
-
     <reporting>
         <plugins>
             <plugin>

@@ -563,7 +563,8 @@ public class NAR implements Runnable, TaskSource {
                     try {
                         Thread.sleep(minFramePeriodMS);
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        emit(ERR.class, e);
+                        e.printStackTrace();
                     }
                 }
                 else if (remainingTime < 0) {

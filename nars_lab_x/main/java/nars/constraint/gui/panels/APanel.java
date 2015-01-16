@@ -30,8 +30,6 @@ import nars.constraint.gui.GUI;
 import org.chocosolver.solver.Solver;
 import org.jfree.chart.ChartPanel;
 
-import javax.swing.*;
-
 /**
  * <br/>
  *

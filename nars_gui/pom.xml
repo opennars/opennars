@@ -17,6 +17,22 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+
+    <repositories>
+        <repository>
+            <id>core</id>
+            <name>processing.org</name>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <url>file://${project.basedir}/lib</url>
+        </repository>
+
+    </repositories>
     <build>
         <plugins>
 
@@ -44,6 +60,7 @@
             </plugin>
         </plugins>
 
+
     </build>
 
 
@@ -58,8 +75,8 @@
             <groupId>processing</groupId>
             <artifactId>core</artifactId>
             <version>3.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/../lib/processing/core/3.0/core-3.0.jar</systemPath>
+            <!--<scope>system</scope>
+            <systemPath>${basedir}/lib/processing/core/3.0/core-3.0.jar</systemPath>-->
         </dependency>
 
         <dependency>
@@ -74,6 +91,7 @@
             <artifactId>org.abego.treelayout.core</artifactId>
             <version>1.0.1</version>
         </dependency>
+
 
     </dependencies>
 
