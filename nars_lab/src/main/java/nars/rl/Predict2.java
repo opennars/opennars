@@ -108,7 +108,7 @@
 //        
 //        TemporalWindowArray temp = new TemporalWindowArray(inputWindow, predictionWindow);
 //
-//        temp.analyze(trainingHistory);
+//        temp.analyzeUselessStores(trainingHistory);
 //
 //        return temp.process(trainingHistory);
 //    }

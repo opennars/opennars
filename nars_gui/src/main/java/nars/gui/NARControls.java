@@ -37,7 +37,7 @@ import nars.gui.output.*;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.io.InferenceLogger;
+import nars.io.TraceWriter;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.logic.NARTrace;
@@ -102,7 +102,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
     private NSlider volumeSlider;
 
     private boolean allowFullSpeed = true;
-    public final InferenceLogger logger;
+    public final TraceWriter logger;
 
     int chartHistoryLength = 128;
     private final NARTrace trace;
@@ -132,7 +132,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         
         experienceWriter = new TextOutput(nar);
         
-        logger = new InferenceLogger(nar);
+        logger = new TraceWriter(nar);
         logger.setActive(false);
         
         JMenuBar menuBar = new JMenuBar();

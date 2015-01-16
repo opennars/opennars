@@ -65,8 +65,19 @@
             <groupId>opennars</groupId>
             <artifactId>opennars-web</artifactId>
             <version>1.7-SNAPSHOT</version>
-        </dependency>        
-        
+        </dependency>
+
+                <dependency>
+                    <groupId>org.apache.bcel</groupId>
+                    <artifactId>bcel</artifactId>
+                    <version>5.2</version>
+                </dependency>
+                <dependency>
+                    <groupId>javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                    <version>3.12.1.GA</version>
+                </dependency>
+
         
 <dependency>
 	<groupId>org.choco-solver</groupId>

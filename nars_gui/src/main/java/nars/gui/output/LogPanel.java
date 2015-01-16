@@ -7,8 +7,8 @@ import automenta.vivisect.swing.NSlider;
 import nars.core.NAR;
 import nars.gui.NARControls;
 import nars.gui.WrapLayout;
-import nars.io.InferenceLogger;
-import nars.io.InferenceLogger.LogOutput;
+import nars.io.TraceWriter;
+import nars.io.TraceWriter.LogOutput;
 import nars.io.Output;
 import nars.io.Output.ERR;
 import nars.io.Output.EXE;
@@ -52,7 +52,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
      */
     protected PrintWriter logFile = null;
 
-    private final InferenceLogger logger;
+    private final TraceWriter logger;
     private String logFilePath;
 
     public static final Class[] outputEvents = Output.DefaultOutputEvents;
