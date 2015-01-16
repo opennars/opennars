@@ -2,34 +2,49 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.core;
+package nars.core.logic.nal7;
 
+import junit.framework.TestCase;
+import nars.core.Build;
 import nars.core.Events.Answer;
+import nars.core.NAR;
 import nars.core.build.Default;
 import nars.io.condition.OutputContainsCondition;
 import nars.logic.AbstractObserver;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  *
- * @author me
+ TODO convert this to AbstractNALTest
  */
-public class VariableTest {
- 
-    NAR n = new NAR(new Default());
-    
-    @Before public void init() {
-        n.addInput("<a --> 3>. :|:");
-        n.addInput("<a --> 4>. :/:");        
+@RunWith(Parameterized.class)
+public class VariableTest extends TestCase {
+
+    private final NAR n;
+
+    public VariableTest(Build b) {
+        super();
+        this.n = new NAR(b);
+    }
+
+    @Parameterized.Parameters(name= "{0}")
+    public static Collection configurations() {
+        return Arrays.asList(new Object[][]{
+                {new Default().setInternalExperience(null)},
+                {new Default()}
+        });
     }
     
     @Test public void testDepQueryVariableDistinct() {
-                          
+
+        n.addInput("<a --> 3>. :|:");
+        n.addInput("<a --> 4>. :/:");
         n.addInput("<(&/,<a --> 3>,?what) =/> <a --> #wat>>?");
         
         /*
@@ -61,6 +76,8 @@ public class VariableTest {
         because ?wat can be unified with 4 since ?wat is a query variable
        */
 
+        n.addInput("<a --> 3>. :|:");
+        n.addInput("<a --> 4>. :/:");
         n.addInput("<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
         
         AtomicBoolean solutionFound = new AtomicBoolean(false);
@@ -71,7 +88,10 @@ public class VariableTest {
             }
         };
 
-        n.run(1024);
+        //158
+        //1738
+        //n.run(200); //sufficient for case without internal experience
+        n.run(1800);
           
         assertTrue(solutionFound.get());
         
