@@ -34,19 +34,19 @@ public class InternalExperience extends AbstractPlugin {
             INTERNAL_EXPERIENCE_PROBABILITY/4f;
     
     //internal experience has less durability?
-    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
+    public static final float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
     //internal experience has less priority?
-    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
+    public static final float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
     
     //dont use internal experience for want and believe if this setting is true
-    public static boolean AllowWantBelieve=true;
+    public static final boolean AllowWantBelieve=true;
 
-    public boolean isAllowWantBelieve() {
+    /*public boolean isAllowWantBelieve() {
         return AllowWantBelieve;
     }
     public void setAllowWantBelieve(boolean val) {
         AllowWantBelieve=val;
-    }
+    }*/
 
     private Memory memory;
 

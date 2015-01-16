@@ -4,13 +4,15 @@
  */
 package nars.gui.output.graph;
 
-import automenta.vivisect.dimensionalize.AbegoTreeLayout;
-import automenta.vivisect.graph.AnimatingGraphVis;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.UniqueEdge;
+
 import org.jgrapht.Graph;
+
+import automenta.vivisect.dimensionalize.AbegoTreeLayout;
+import automenta.vivisect.graph.AnimatingGraphVis;
 
 /**
  *

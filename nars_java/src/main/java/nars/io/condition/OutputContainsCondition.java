@@ -87,13 +87,15 @@ public class OutputContainsCondition extends OutputCondition<Task> {
 
     @Override
     public String getFalseReason() {
-        String s = "FAIL: No substring match: " + containing;
+        StringBuilder s = new StringBuilder(128);
+        s.append("FAIL: No substring match: ").append(containing);
+
         if (!almost.isEmpty()) {
             for (SimilarOutput cs : getCandidates()) {
-                s += "\n\t" + cs;
+                s.append("\n\t").append(cs);
             }
         }
-        return s;
+        return s.toString();
     }
 
     public Collection<SimilarOutput> getCandidates() {

@@ -165,7 +165,7 @@ public class Events {
         public final List<StackTraceElement> stack;
 
         //how many stack frames down to record from; we don't need to include the current and the previous (InferenceEvent subclass's constructor
-        final int STACK_PREFIX = 4;
+        final static int STACK_PREFIX = 4;
 
         protected InferenceEvent(long when) {
             this(when, 0);

@@ -84,7 +84,7 @@ public class Variables {
                 }
                 return true;
             }
-        } else if ((term1HasVar || term2HasVar) && (term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
+        } else if ((term1HasVar || term2HasVar) && (term1 instanceof CompoundTerm) && (term1.operator() == term2.operator())) {
             final CompoundTerm cTerm1 = (CompoundTerm) term1;
             final CompoundTerm cTerm2 = (CompoundTerm) term2;
             if (cTerm1.size() != cTerm2.size()) {

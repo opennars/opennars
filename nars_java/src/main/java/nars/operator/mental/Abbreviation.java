@@ -25,7 +25,7 @@ import static nars.logic.entity.CompoundTerm.termArray;
  */
 public class Abbreviation extends AbstractPlugin {
 
-    private final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
+    private static final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
     private Operator abbreviate = null;
     private Memory memory;
 

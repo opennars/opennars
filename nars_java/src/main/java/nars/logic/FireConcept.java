@@ -171,7 +171,7 @@ abstract public class FireConcept extends NAL {
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
             return;
 
-        final Concept currentConcept = getCurrentConcept();
+        //final Concept currentConcept = getCurrentConcept();
         final Concept beliefConcept = memory.concept(beliefTerm);
 
         Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(this, task) : null;

@@ -1,4 +1,4 @@
-package checkers;
+package nars.checkers;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars;
+package nars.launcher;
 
 import nars.core.NAR;
 import nars.core.build.Default;

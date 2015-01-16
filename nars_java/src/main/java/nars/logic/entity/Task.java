@@ -274,14 +274,11 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
         Task p=getParentTask();
         do {            
             Task n = p.getParentTask();
-            if (n!=null) {
-                if (n.equals(t))
-                    return true;
-                p = n;
-            }
-            else
-                break;
-        } while (p!=null);
+            if (n == null) break;
+            if (n.equals(t))
+                return true;
+            p = n;
+        } while (true);
         return false;        
     }    
     
@@ -292,11 +289,9 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
         Task p=getParentTask();
         do {            
             Task n = p.getParentTask();
-            if (n!=null)
-                p = n;
-            else
-                break;
-        } while (p!=null);
+            if (n==null) break;
+            p = n;
+        } while (true);
         return p;
     }
 
@@ -312,6 +307,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
     }
 
     public String getExplanation() {
+        //TODO StringBuilder
         String x = toString() + "\n";
         if (cause!=null)
             x += "  cause=" + cause + "\n";
@@ -331,14 +327,10 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
             do {            
                 indentLevel++;
                 Task n = p.getParentTask();
-                if (n!=null) {
-                    x += Strings.repeat("  ",indentLevel) + n.toString();
-                    p = n;
-                }
-                else
-                    break;
-                
-            } while (p!=null);
+                if (n == null) break;
+                x += Strings.repeat("  ",indentLevel) + n.toString();
+                p = n;
+            } while (true);
         }
         
         return x;

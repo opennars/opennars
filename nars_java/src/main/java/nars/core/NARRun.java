@@ -40,7 +40,7 @@ public class NARRun {
 
     private boolean logging;
     private PrintStream out = System.out;
-    private final boolean dumpLastState = true;
+    private final static boolean dumpLastState = true;
     int maxTime = 0;
 
 

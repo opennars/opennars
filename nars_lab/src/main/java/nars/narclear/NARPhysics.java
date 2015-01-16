@@ -1,6 +1,5 @@
 package nars.narclear;
 
-import nars.NARGame;
 import nars.core.NAR;
 
 import java.awt.event.KeyEvent;

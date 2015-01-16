@@ -69,7 +69,7 @@ public final class CompositionalRules {
         }
 
         //TODO make complete use of this index instead of iterating below, once the index is sorted in a similiar way
-        Memory m = nal.mem();
+        //Memory m = nal.mem();
 //        Collection<Task> qq = m.conceptQuestions(Conjunction.class);
 //        if (qq.isEmpty()) {
 //            return;
@@ -485,7 +485,7 @@ public final class CompositionalRules {
                     commonTerm = term22;
                 }
                 
-                if(commonTerm == null && term12 instanceof ImageExt) {
+                if(commonTerm == null/* && term12 instanceof ImageExt*/) {
                     commonTerm = ((ImageExt) term12).getTheOtherComponent();
                     if (term22 instanceof ImageExt && ((commonTerm == null) || !(/*(ImageExt)*/term22).containsTermRecursively(commonTerm))) {
                         commonTerm = ((ImageExt) term22).getTheOtherComponent();
@@ -516,7 +516,7 @@ public final class CompositionalRules {
                     commonTerm = term11;
                 }
                 
-                if(term11 instanceof ImageInt && commonTerm == null && term21 instanceof ImageInt) {
+                if(term11 instanceof ImageInt && commonTerm == null/* && term21 instanceof ImageInt*/) {
                     commonTerm = ((ImageInt) term11).getTheOtherComponent();
                     if ((commonTerm == null) || !(/*(ImageInt)*/term21).containsTermRecursively(commonTerm)) {
                         commonTerm = ((ImageInt) term21).getTheOtherComponent();
@@ -602,7 +602,7 @@ public final class CompositionalRules {
     static boolean introVarInner(Statement premise1, Statement premise2, CompoundTerm oldCompound, NAL nal) {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
-        if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containsTerm(premise1)) {
+        if (!taskSentence.isJudgment() || (premise1.operator() != premise2.operator()) || oldCompound.containsTerm(premise1)) {
             return false;
         }
         
@@ -660,7 +660,7 @@ public final class CompositionalRules {
 
             Term content = Implication.make(premise1, oldCompound);
 
-            if ((content == null) || (!(content instanceof CompoundTerm))) {
+            if (content == null) {
                 return false;
             }
 
@@ -962,7 +962,7 @@ OUT: <lock1 --> lock>.
                             if(s2==null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
+                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.doublePremiseTask(s2, truth, budget, false);

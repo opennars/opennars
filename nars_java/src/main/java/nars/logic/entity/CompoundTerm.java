@@ -213,6 +213,9 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                     case TemporalRules.ORDER_CONCURRENT:
                     case TemporalRules.ORDER_BACKWARD:
                         containedTemporalRelations = 1;
+                        break;
+                    default:
+                        containedTemporalRelations = 0;
                 }                
             }
             

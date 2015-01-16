@@ -1,4 +1,5 @@
-package checkers;
+package nars.checkers;
+;
 
 /**
  *

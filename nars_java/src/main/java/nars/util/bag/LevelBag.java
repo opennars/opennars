@@ -300,8 +300,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             
     protected void nextNonEmptyLevel() {
         switch (nextNonEmptyMode) {
-            case Default: nextNonEmptyLevelDefault();
-            case Fast: nextNonEmptyLevelFast();
+            case Default: nextNonEmptyLevelDefault(); break;
+            case Fast: nextNonEmptyLevelFast(); break;
         }
     }
             
@@ -582,7 +582,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         int l = 0;
         for (Level items : level) {
             int s = items.size();
-            if ((items != null) && (s > 0)) {
+            if (s > 0) {
                 l++;
                 buf.append(s).append(' ');
             }
@@ -596,7 +596,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     }
 
     public float getAverageItemsPerLevel() {
-        return capacity / levels;
+        return ((float)capacity) / levels;
     }
 
     public float getMaxItemsPerLevel() {
@@ -692,7 +692,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
 
         @Override
-        public E next() {
+        public E next() throws NoSuchElementException {
+            if (next == null) throw new NoSuchElementException();
             E e = next;
             next = null;
             return e;

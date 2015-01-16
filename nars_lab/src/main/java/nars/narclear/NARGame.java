@@ -1,4 +1,4 @@
-package nars;
+package nars.narclear;
 
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;

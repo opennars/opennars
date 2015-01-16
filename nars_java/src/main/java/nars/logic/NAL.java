@@ -4,6 +4,7 @@
  */
 package nars.logic;
 
+import com.sun.istack.internal.NotNull;
 import nars.core.*;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
@@ -98,7 +99,7 @@ public abstract class NAL implements Runnable {
      *
      * @param task the derived task
      */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
+    public boolean derivedTask(@NotNull final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
         List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
 
         if (derivationFilters != null) {

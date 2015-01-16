@@ -374,8 +374,6 @@ public class Stamp implements Cloneable {
             occurrenceTime = time + duration;
         } else if (tense == Present) {
             occurrenceTime = time;
-        } else {
-            occurrenceTime = time;
         }
         
     }

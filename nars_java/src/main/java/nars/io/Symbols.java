@@ -24,6 +24,7 @@ import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -188,25 +189,33 @@ public class Symbols {
         public String toString() { return symbol; }
                 
         
-    }    
+    }
 
-    protected static final Map<String,NativeOperator> stringToOperator 
+
+
+
+    private static final Map<String,NativeOperator> _stringToOperator
             = new HashMap(NativeOperator.values().length * 2);
-    protected static final Map<Character,NativeOperator> charToOperator 
+    private static final Map<Character,NativeOperator> _charToOperator
             = new HashMap(NativeOperator.values().length * 2);
-            
     static {
         //Setup NativeOperator String index hashtable 
         for (final NativeOperator r : NativeOperator.values())
-            stringToOperator.put(r.toString(), r);
+            _stringToOperator.put(r.toString(), r);
         
         //Setup NativeOperator Character index hashtable 
         for (final NativeOperator r : NativeOperator.values()) {
             char c = r.ch;
             if (c!=0)
-                charToOperator.put(c, r);
+                _charToOperator.put(c, r);
         }
-    }    
+    }
+    protected static final Map<String,NativeOperator> stringToOperator
+            = Collections.unmodifiableMap(_stringToOperator);
+    protected static final Map<Character,NativeOperator> charToOperator
+            = Collections.unmodifiableMap(_charToOperator);
+
+
 
     public static NativeOperator getOperator(final char c) {
         return charToOperator.get(c);

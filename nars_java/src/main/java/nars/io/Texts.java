@@ -18,8 +18,8 @@ public class Texts {
     //TODO escape any mapped characters if they appear in input during encoding
     //http://www.ssec.wisc.edu/~tomw/java/unicode.html
     
-    public final static Map<Character,Character> escapeMap = new HashMap(256);
-    public final static Map<Character,Character> escapeMapReverse = new HashMap(256);
+    private final static Map<Character,Character> escapeMap = new HashMap(256);
+    private final static Map<Character,Character> escapeMapReverse = new HashMap(256);
     static {
         char[][] escapings = new char[][] {
             {':', '\u25B8'},

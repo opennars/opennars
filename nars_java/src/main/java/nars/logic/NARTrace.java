@@ -19,7 +19,6 @@ import nars.util.TreeMLData;
 
 import java.awt.*;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * Records all sensors, output, and trace events in an indexed data structure for runtime or subsequent analysis of a NAR's execution telemetry.
  */
-public class NARTrace extends MemoryObserver implements Serializable {
+public class NARTrace extends MemoryObserver {
 
     /**
      * utility method for diagnosing stack overflow errors caused by unbounded

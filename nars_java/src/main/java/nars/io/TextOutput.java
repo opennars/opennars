@@ -285,7 +285,7 @@ public class TextOutput extends Output {
         else if (signal instanceof Object[]) {
             if (channel == Answer.class) {
                 Object[] o = (Object[])signal;
-                Task task = (Task)o[0];
+                //Task task = (Task)o[0];
                 Sentence belief = (Sentence)o[1];
                 
                 //Sentence question = task.sentence;

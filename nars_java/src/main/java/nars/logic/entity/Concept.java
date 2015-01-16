@@ -784,8 +784,8 @@ public class Concept extends Item<Term> implements Termable {
 
                 final TermLink termLink = termLinks.takeNext();
 
-                if ((termLink==null) && (termLinks.size() > 0))
-                    throw new RuntimeException("termlink bag fault: " + this);
+                if (termLink==null)
+                    break;
 
                 if (taskLink.novel(termLink, time, noveltyHorizon)) {
                     //return, will be re-inserted in caller method when finished processing it
