@@ -2,7 +2,6 @@ package nars.cfg.bytecode;
 
 
 import com.google.common.collect.Maps;
-import com.sun.istack.internal.Nullable;
 import nars.core.Parameters;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.Analyzer;
@@ -46,7 +45,7 @@ public class ControlFlowGraph {
      */
     
     public static ControlFlowGraph create(
-            @Nullable ControlFlowGraph initial,
+            ControlFlowGraph initial,
              ClassNode classNode,
              MethodNode method) throws AnalyzerException {
         final ControlFlowGraph graph = initial != null ? initial : new ControlFlowGraph();
@@ -250,7 +249,7 @@ public class ControlFlowGraph {
      * @return a string version of the graph
      */
     
-    public String toString(@Nullable Node start) {
+    public String toString(Node start) {
         StringBuilder sb = new StringBuilder();
 
         AbstractInsnNode curr = null;

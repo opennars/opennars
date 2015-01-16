@@ -45,11 +45,11 @@
             <artifactId>opennars-core</artifactId>
             <version>1.7-SNAPSHOT</version>
         </dependency>
-         <dependency>
+         <!--<dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-gui</artifactId>
             <version>1.7-SNAPSHOT</version>
-        </dependency>        
+        </dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
