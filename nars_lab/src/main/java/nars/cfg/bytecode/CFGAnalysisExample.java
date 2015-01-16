@@ -1,4 +1,4 @@
-package nars.cfg;
+package nars.cfg.bytecode;
 
 /***
  * ASM examples: examples showing how ASM can be used
@@ -42,7 +42,7 @@ import java.util.*;
 public class CFGAnalysisExample implements Opcodes {
 
     public static void main(final String[] args) throws Exception {
-        ClassReader cr = new ClassReader("nars.cfg.CFGAnalysisExample");
+        ClassReader cr = new ClassReader("nars.cfg.bytecode.CFGAnalysisExample");
         ClassNode cn = new ClassNode();
         cr.accept(cn, ClassReader.SKIP_DEBUG);
 

@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class VariableTest {
  
-    NAR n = NAR.build(Default.class);
+    NAR n = new NAR(new Default());
     
     @Before public void init() {
         n.addInput("<a --> 3>. :|:");

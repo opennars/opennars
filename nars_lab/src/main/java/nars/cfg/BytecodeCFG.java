@@ -1,5 +1,6 @@
 package nars.cfg;
 
+import nars.cfg.bytecode.ControlFlowGraph;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -8,7 +9,7 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import java.io.IOException;
 import java.util.List;
 
-public class MethodCallDependency {
+public class BytecodeCFG {
     public static void main(String[] arg) throws IOException, AnalyzerException {
 
         /*

@@ -1,4 +1,4 @@
-package nars.cfg;
+package nars.cfg.bytecode;
 
 
 import com.google.common.collect.Maps;

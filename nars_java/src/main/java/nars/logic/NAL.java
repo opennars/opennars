@@ -17,29 +17,31 @@ import java.util.List;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
- *
+ * <p>
  * https://code.google.com/p/open-nars/wiki/SingleStepTestingCases
- according to derived Task: if it contains a mental operator it is NAL9, if it contains a operation it is NAL8, if it contains temporal information it is NAL7, if it contains in/dependent vars it is NAL6, if it contains higher order copulas like &&, ==> or negation it is NAL5
-
- if it contains product or image it is NAL4, if it contains sets or set operations like &, -, | it is NAL3
-
- if it contains similarity or instances or properties it is NAL2
- and if it only contains inheritance
+ * according to derived Task: if it contains a mental operator it is NAL9, if it contains a operation it is NAL8, if it contains temporal information it is NAL7, if it contains in/dependent vars it is NAL6, if it contains higher order copulas like &&, ==> or negation it is NAL5
+ * <p>
+ * if it contains product or image it is NAL4, if it contains sets or set operations like &, -, | it is NAL3
+ * <p>
+ * if it contains similarity or instances or properties it is NAL2
+ * and if it only contains inheritance
  */
 public abstract class NAL implements Runnable {
 
 
     public interface DerivationFilter extends Plugin {
-        /** returns null if allowed to derive, or a String containing a short rejection reason for logging */
+        /**
+         * returns null if allowed to derive, or a String containing a short rejection reason for logging
+         */
         public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief);
 
         @Override
         public default boolean setEnabled(NAR n, boolean enabled) {
             return true;
         }
-        
+
     }
-    
+
     public final Memory memory;
     protected Term currentTerm;
     protected Concept currentConcept;
@@ -51,9 +53,11 @@ public abstract class NAL implements Runnable {
     protected StampBuilder newStampBuilder;
 
 
-    /** stores the tasks that this process generates, and adds to memory */
+    /**
+     * stores the tasks that this process generates, and adds to memory
+     */
     public final List<Task> tasksAdded = new ArrayList();
-    
+
     //TODO tasksDicarded
 
     public NAL(Memory mem, int nalLevel) {
@@ -72,44 +76,50 @@ public abstract class NAL implements Runnable {
     public NAL(Memory mem) {
         this(mem, Parameters.DEFAULT_NAL);
     }
-    
+
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }
 
-    public int nal() { return memory.nal(); }
+    public int nal() {
+        return memory.nal();
+    }
 
-    /** whether at least NAL level N is enabled */
-    public boolean nal(int n) { return nal() >= n; }
+    /**
+     * whether at least NAL level N is enabled
+     */
+    public boolean nal(int n) {
+        return nal() >= n;
+    }
 
-    
+
     /**
      * iived task comes from the logic rules.
      *
      * @param task the derived task
      */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2) {                        
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
         List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
 
-        if (derivationFilters!=null) {            
+        if (derivationFilters != null) {
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);
                 String rejectionReason = d.reject(this, task, revised, single, parent, occurence2);
-                if (rejectionReason!=null) {
+                if (rejectionReason != null) {
                     memory.removeTask(task, rejectionReason);
                     return false;
                 }
             }
         }
-        
-        final Sentence occurence = parent!=null ? parent.sentence : null;
 
-        
+        final Sentence occurence = parent != null ? parent.sentence : null;
+
+
         if (!task.budget.aboveThreshold()) {
             memory.removeTask(task, "Insufficient Budget");
             return false;
         }
-        
+
         if (task.sentence != null && task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();
             if (conf == 0) {
@@ -118,9 +128,8 @@ public abstract class NAL implements Runnable {
                 return false;
             }
         }
-        
 
-    
+
         if (task.sentence.term instanceof Operation) {
             Operation op = (Operation) task.sentence.term;
             if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
@@ -128,9 +137,8 @@ public abstract class NAL implements Runnable {
                 return false;
             }
         }
-        
-        
-        
+
+
         final Stamp stamp = task.sentence.stamp;
         if (occurence != null && !occurence.isEternal()) {
             stamp.setOccurrenceTime(occurence.getOccurenceTime());
@@ -141,7 +149,7 @@ public abstract class NAL implements Runnable {
         if (stamp.latency > 0) {
             memory.logic.DERIVATION_LATENCY.set((double) stamp.latency);
         }
-        
+
         final Term currentTaskContent = getCurrentTask().getTerm();
         if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
             final Term currentBeliefContent = getCurrentBelief().term;
@@ -160,16 +168,16 @@ public abstract class NAL implements Runnable {
         }
         //its a logic rule, so we have to do the derivation chain check to hamper cycles
         if (!revised) {
-            Term tc = task.getTerm();            
-            
-            if (task.sentence.isJudgment()) { 
-                
+            Term tc = task.getTerm();
+
+            if (task.sentence.isJudgment()) {
+
                 Term ptc = task.getParentTask() != null ? task.getParentTask().getTerm() : null;
-                
+
                 if (
-                    (task.getParentTask() == null) || (!Negation.areMutuallyInverse(tc, ptc))
-                   ) {
-                
+                        (task.getParentTask() == null) || (!Negation.areMutuallyInverse(tc, ptc))
+                        ) {
+
                     final Collection<Term> chain = stamp.getChain();
                     if (chain.contains(tc)) {
                         memory.removeTask(task, "Cyclic Reasoning");
@@ -177,7 +185,7 @@ public abstract class NAL implements Runnable {
                     }
                 }
             }
-            
+
         } else {
             //its revision, of course its cyclic, apply evidental base policy
             final int stampLength = stamp.baseLength;
@@ -192,11 +200,11 @@ public abstract class NAL implements Runnable {
                 }
             }
         }
-        
-        if(task.sentence.getOccurenceTime()>memory.time()) {
-            ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(),task);
+
+        if (task.sentence.getOccurenceTime() > memory.time()) {
+            ((Anticipate) memory.getOperator("^anticipate")).anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(), task);
         }
-        
+
         task.setParticipateInTemporalInduction(false);
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2, getCurrentTask());
         memory.logic.TASK_DERIVED.hit();
@@ -205,13 +213,14 @@ public abstract class NAL implements Runnable {
     }
 
     /* --------------- new task building --------------- */
+
     /**
      * Shared final operations by all double-premise rules, called from the
      * rules except StructuralRules
      *
      * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
+     * @param newTruth   The truth value of the sentence in task
+     * @param newBudget  The budget value in task
      */
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
@@ -224,65 +233,65 @@ public abstract class NAL implements Runnable {
      * rules except StructuralRules
      *
      * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
+     * @param newTruth   The truth value of the sentence in task
+     * @param newBudget  The budget value in task
      */
     public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
-        
+
         if (!newBudget.aboveThreshold()) {
             return null;
         }
-        
+
+        temporalAdd = temporalAdd && nal(7);
+
         if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable)) && (!Sentence.invalidSentenceTerm(newContent))) {
-            
-            if(newContent.subjectOrPredicateIsIndependentVar()) {
+
+            if (newContent.subjectOrPredicateIsIndependentVar()) {
                 return null;
             }
-            
+
             Task derived = null;
-            
+
             try {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
 
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                
-                if (newTask!=null) {
+
+                if (newTask != null) {
                     boolean added = derivedTask(newTask, false, false, null, null);
                     if (added && temporalAdd) {
                         memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
-                    if(added) {
-                        derived=newTask;
+                    if (added) {
+                        derived = newTask;
                     }
                 }
-            }
-            catch (CompoundTerm.UnableToCloneException e) {
+            } catch (CompoundTerm.UnableToCloneException e) {
                 return null;
             }
-            
-            
+
+
             //"Since in principle it is always valid to eternalize a tensed belief"
-            if(temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
-                
+            if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
+
                 try {
 
-                TruthValue truthEt=TruthFunctions.eternalize(newTruth);               
-                Stamp st=getTheNewStamp().clone();
-                st.setEternal();
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added) {
-                        memory.temporalRuleOutputToGraph(newSentence, newTask);
+                    TruthValue truthEt = TruthFunctions.eternalize(newTruth);
+                    Stamp st = getTheNewStamp().clone();
+                    st.setEternal();
+                    final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
+                    final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                    if (newTask != null) {
+                        boolean added = derivedTask(newTask, false, false, null, null);
+                        if (added) {
+                            memory.temporalRuleOutputToGraph(newSentence, newTask);
+                        }
                     }
+
+                } catch (CompoundTerm.UnableToCloneException e) {
+                    return null;
                 }
-                
-            }
-            catch (CompoundTerm.UnableToCloneException e) {
-                return null;
-            }
-                
+
             }
             return derived;
         }
@@ -306,13 +315,14 @@ public abstract class NAL implements Runnable {
     //            derivedTask(newTaskAt, false, false);
     //        }
     //    }
+
     /**
      * Shared final operations by all single-premise rules, called in
      * StructuralRules
      *
      * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
+     * @param newTruth   The truth value of the sentence in task
+     * @param newBudget  The budget value in task
      */
     public boolean singlePremiseTask(CompoundTerm newContent, TruthValue newTruth, BudgetValue newBudget) {
         return singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
@@ -322,16 +332,16 @@ public abstract class NAL implements Runnable {
      * Shared final operations by all single-premise rules, called in
      * StructuralRules
      *
-     * @param newContent The content of the sentence in task
+     * @param newContent  The content of the sentence in task
      * @param punctuation The punctuation of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
+     * @param newTruth    The truth value of the sentence in task
+     * @param newBudget   The budget value in task
      */
     public boolean singlePremiseTask(final CompoundTerm newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
-        
+
         if (!newBudget.aboveThreshold())
             return false;
-        
+
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
             if (parentTask.getTerm() == null) {
@@ -351,14 +361,14 @@ public abstract class NAL implements Runnable {
             // to answer a question with negation in NAL-5 --- move to activated task?
             setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
         }
-        
-        if(newContent.subjectOrPredicateIsIndependentVar()) {
+
+        if (newContent.subjectOrPredicateIsIndependentVar()) {
             return false;
         }
-        
+
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
-        if (newTask!=null) {
+        if (newTask != null) {
             return derivedTask(newTask, false, true, null, null);
         }
         return false;
@@ -404,7 +414,7 @@ public abstract class NAL implements Runnable {
     /**
      * @param currentTask the currentTask to set
      */
-    public void setCurrentTask(Task currentTask) {        
+    public void setCurrentTask(Task currentTask) {
         this.currentTask = currentTask;
     }
 
@@ -438,7 +448,9 @@ public abstract class NAL implements Runnable {
         Stamp build();
     }
 
-    /** creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked */
+    /**
+     * creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked
+     */
     public void setTheNewStamp(final Stamp first, final Stamp second, final long time) {
         newStamp = null;
         newStampBuilder = new NewStampBuilder(first, second, time);
@@ -511,31 +523,34 @@ public abstract class NAL implements Runnable {
     public Memory mem() {
         return memory;
     }
-    
-    /** tasks added with this method will be remembered by this NAL instance; useful for feedback */
+
+    /**
+     * tasks added with this method will be remembered by this NAL instance; useful for feedback
+     */
     public void addTask(Task t, String reason) {
-        
+
         memory.addNewTask(t, reason);
-        
+
         tasksAdded.add(t);
-        
+
     }
-    
+
     /**
      * Activated task called in MatchingRules.trySolution and
      * Concept.processGoal
      *
-     * @param budget The budget value of the new Task
-     * @param sentence The content of the new Task
+     * @param budget          The budget value of the new Task
+     * @param sentence        The content of the new Task
      * @param candidateBelief The belief to be used in future logic, for
-     * forward/backward correspondence
+     *                        forward/backward correspondence
      */
-    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {        
+    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
         addTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
-                "Activated");        
+                "Activated");
     }
 
 
+    /** for lazily constructing a stamp, in case it will not actually be necessary to completely construct a stamp */
     private static class NewStampBuilder implements StampBuilder {
         private final Stamp first;
         private final Stamp second;

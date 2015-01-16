@@ -1,0 +1,187 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package nars.cfg.method;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import org.apache.bcel.Repository;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.InvokeInstruction;
+import org.apache.bcel.generic.MethodGen;
+import org.jgrapht.EdgeFactory;
+import org.jgrapht.graph.DirectedMultigraph;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author nmalik
+ */
+public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
+
+    private final Map<String, CGClass> cacheClass = new HashMap<>();
+    private final Map<String, CGMethod> cacheMethod = new HashMap<>();
+
+    public MethodCallGraph() {
+        super(new EdgeFactory<CGMethod, Object>() {
+            @Override
+            public Object createEdge(CGMethod cgMethod, CGMethod v1) {
+                return null;
+            }
+        });
+    }
+
+
+    public MethodCallGraph addClass(String rootClass) throws ClassNotFoundException  {
+        JavaClass c = Repository.lookupClass(rootClass);
+        ClassVisitor visitor = new ClassVisitor(this, c);
+        visitor.start();
+        return this;
+    }
+
+    private String getKeyForClass(String className) {
+        return className;
+    }
+
+    protected void register(CGClass cgc) {
+        if (cacheClass.containsKey(cgc.key())) {
+            return;
+        }
+
+        cacheClass.put(cgc.key(), cgc);
+    }
+
+    protected CGMethod register(CGMethod cgm) {
+        CGMethod existing = cacheMethod.get(cgm.key());
+        if (existing!=null) {
+            return existing;
+        }
+
+        cgm.post();
+        cgm.clazz = cacheClass.get(getKeyForClass(cgm.className));
+        cacheMethod.put(cgm.key(), cgm);
+        return cgm;
+    }
+
+    public void register(JavaClass jc, MethodGen mg) {
+//        System.out.println("register(JavaClass, MethodGen): " + jc.getClassName() + ", " + mg.getName());
+
+        register(CGClass.create(jc));
+        register(CGMethod.create(jc, mg));
+    }
+
+    public void registerPreceding(JavaClass jc, MethodGen mg, InvokeInstruction pp, InvokeInstruction nn) {
+        CGClass theClass = CGClass.create(jc, mg, pp);
+        register(theClass);
+        CGMethod sourceMethodCall = new CGMethodCall( CGMethod.create(jc, mg, pp), pp);
+        sourceMethodCall = register(sourceMethodCall);
+
+        CGMethod targetMethodCall = new CGMethodCall( CGMethod.create(jc, mg, nn), nn);
+        targetMethodCall = register(targetMethodCall);
+
+        addVertex(sourceMethodCall);
+        addVertex(targetMethodCall);
+        addEdge(sourceMethodCall,targetMethodCall,jc.getClassName()+pp+"pre"+nn);
+    }
+
+    public void register(JavaClass jc, MethodGen mg, CGMethodCall methodCall, InvokeInstruction ii) {
+        CGClass callerClass = CGClass.create(jc);
+        register(callerClass);
+        CGMethod callingMethod = (CGMethod) register(methodCall.method);
+        methodCall = (CGMethodCall) register(methodCall);
+        callerClass.methods.add(methodCall.method);
+
+
+        CGClass targetClass = CGClass.create(jc, mg, ii);
+        register(targetClass);
+        CGMethod targetMethod = CGMethod.create(jc, mg, ii);
+        targetMethod = register(targetMethod);
+        targetClass.methods.add(targetMethod);
+
+        addVertex(methodCall);
+        addVertex(targetMethod);
+        addEdge(methodCall, targetMethod, ii.toString());
+
+        addVertex(callingMethod);
+        addEdge(callingMethod, methodCall, callingMethod.key() + "@" + ii);
+    }
+
+    public void register(JavaClass jc, MethodGen mg, InvokeInstruction ii) {
+//        System.out.println("register(JavaClass, MethodGen, InvokeInstruction): " + jc.getClassName() + ", " + mg.getName());
+        // register caller class and method
+        CGClass callerClass = CGClass.create(jc);
+        register(callerClass);
+        CGMethod callerMethod = CGMethod.create(jc, mg);
+        register(callerMethod);
+        callerClass.methods.add(callerMethod);
+
+        // register target class and method
+        CGClass targetClass = CGClass.create(jc, mg, ii);
+        register(targetClass);
+        CGMethod targetMethod = CGMethod.create(jc, mg, ii);
+        register(targetMethod);
+        targetClass.methods.add(targetMethod);
+
+        addVertex(callerMethod);
+        addVertex(targetMethod);
+
+        //between methods directly
+        addEdge(callerMethod, targetMethod, ii);
+
+    }
+
+    public void register(JavaClass jc, Method m) {
+//        System.out.println("register(JavaClass, Method): " + jc.getClassName() + ", " + m.getName());
+        register(CGClass.create(jc));
+        register(CGMethod.create(jc, m));
+    }
+
+    public List<CGClass> getClasses(String rootRegex) {
+        List<CGClass> output = new ArrayList<>();
+
+        // find root classes
+        CGClass current;
+        for (CGClass root : cacheClass.values()) {
+            if (root.className.matches(rootRegex)) {
+                output.add(root);
+            }
+        }
+
+        return output;
+    }
+
+    public Iterable<CGMethod> getEntryPoints() {
+        return Iterables.filter( vertexSet(), new EntryMethodFilter());
+    }
+
+    public Iterable<CGMethod> getExitPoints() {
+        return Iterables.filter( vertexSet(), new ExitMethodFilter());
+    }
+
+    public CGMethod method(String s) {
+        return cacheMethod.get(s);
+    }
+
+    public boolean isInstructionLevel() {
+        return true;
+    }
+
+
+
+    private class EntryMethodFilter implements Predicate<CGMethod> {
+        @Override public boolean apply(CGMethod m) {
+            return inDegreeOf(m) == 0;
+        }
+    }
+    private class ExitMethodFilter implements Predicate<CGMethod> {
+        @Override public boolean apply(CGMethod m) {
+            return outDegreeOf(m) == 0;
+        }
+    }
+}

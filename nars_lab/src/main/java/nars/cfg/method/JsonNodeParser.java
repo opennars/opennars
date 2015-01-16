@@ -3,11 +3,11 @@
 // * To change this template file, choose Tools | Templates
 // * and open the template in the editor.
 // */
-//package nars.cfg.callgraph;
+//package nars.cfg.method;
 //
 //import jdk.nashorn.internal.ir.ObjectNode;
-//import nars.cfg.callgraph.model.CGClass;
-//import nars.cfg.callgraph.model.CGMethod;
+//import nars.cfg.method.CGClass;
+//import nars.cfg.method.CGMethod;
 //
 //import java.util.List;
 //

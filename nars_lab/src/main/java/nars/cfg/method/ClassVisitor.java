@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package nars.cfg.callgraph;
+package nars.cfg.method;
 
 import org.apache.bcel.classfile.EmptyVisitor;
 import org.apache.bcel.classfile.JavaClass;
@@ -40,8 +40,10 @@ public class ClassVisitor extends EmptyVisitor {
 
     private final JavaClass clazz;
     private final ConstantPoolGen constants;
+    private final MethodCallGraph graph;
 
-    public ClassVisitor(JavaClass jc) {
+    public ClassVisitor(MethodCallGraph graph, JavaClass jc) {
+        this.graph = graph;
         clazz = jc;
         constants = new ConstantPoolGen(clazz.getConstantPool());
     }
@@ -53,7 +55,7 @@ public class ClassVisitor extends EmptyVisitor {
         for (Method method : methods) {
             method.accept(this);
             if (jc.isInterface()) {
-                MethodCallGraph.register(jc, method);
+                graph.register(jc, method);
             }
         }
     }
@@ -61,7 +63,7 @@ public class ClassVisitor extends EmptyVisitor {
     @Override
     public void visitMethod(Method method) {
         MethodGen mg = new MethodGen(method, clazz.getClassName(), constants);
-        MethodVisitor visitor = new MethodVisitor(mg, clazz);
+        MethodVisitor visitor = new MethodVisitor(graph, mg, clazz);
         visitor.start();
     }
 

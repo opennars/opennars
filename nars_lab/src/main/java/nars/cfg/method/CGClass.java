@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nars.cfg.callgraph.model;
+package nars.cfg.method;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.ReferenceType;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -21,8 +21,8 @@ import java.util.List;
 public class CGClass {
     public String className;
     public String superClassName;
-    public final List<String> interfaceNames = new ArrayList<>();
-    public final List<CGMethod> methods = new ArrayList<>();
+    public final Set<String> interfaceNames = new HashSet<>();
+    public final Set<CGMethod> methods = new HashSet<>();
 
     public String key() {
         return className;

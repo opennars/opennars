@@ -17,9 +17,10 @@ public class QueryVariableTest {
         new TraceWriter(n, System.out);
 
         n.believe("<a --> b>");
+        n.step(1);
         n.ask("<?x --> b>");
-        n.step(2);
-        n.mustBelieve(100, "<a --> b>", 1.0f, 0.9f);
+        n.step(1);
+        n.mustBelieve(100, "<a --> b>", 1.0f, 0.1f);
         n.run();
     }
 }
