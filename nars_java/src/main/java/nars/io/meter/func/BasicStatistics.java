@@ -17,14 +17,13 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 public class BasicStatistics extends DependsOnColumn<Number,Double>  {
     
     private StatisticalSummary stat;
-    private int windowSize; //in seconds, or whatever time unit is applied
 
     /** no window, uses SummaryStatistics */
     public BasicStatistics(Metrics metrics, String derivedFrom) {
         this(metrics, derivedFrom, 0);        
     }
     
-    /** fixed window if windowSize>0, uses DescriptiveStatistics */
+    /** fixed window if windowSize>0 (in seconds, or whatever time unit is applied) , uses DescriptiveStatistics */
     public BasicStatistics(Metrics metrics, String derivedFrom, int windowSize) {
         super(metrics, derivedFrom, 2);
         
@@ -36,8 +35,6 @@ public class BasicStatistics extends DependsOnColumn<Number,Double>  {
             stat = new SummaryStatistics();
         else
             stat = new DescriptiveStatistics(w);
-        
-        this.windowSize = w;
     }
 
     

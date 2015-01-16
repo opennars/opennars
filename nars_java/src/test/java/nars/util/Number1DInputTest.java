@@ -17,6 +17,7 @@
 
 package nars.util;
 
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Curve;
 import nars.core.build.Default;
@@ -31,10 +32,14 @@ import org.junit.Test;
  */
 public class Number1DInputTest {
 
+    static {
+        Memory.randomNumber.setSeed(1);
+    }
+
     public static double[] randomArray(int size, double scale, double min) {
         double[] d = new double[size];
         for (int i = 0; i < size; i++) {
-            d[i] = Math.random() * scale + min;
+            d[i] = Memory.randomNumber.nextDouble() * scale + min;
         }
         return d;
     }

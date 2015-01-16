@@ -36,11 +36,7 @@ abstract public class ConceptWaveCore implements Core {
     private final ConceptBuilder conceptBuilder;
     Memory memory;
     List<Runnable> run = new ArrayList();
-    
-    int inputPriority = 2;
-    int newTaskPriority = 2;
-    int novelTaskPriority = 2;
-    int conceptPriority = 2;
+
     private final int maxConcepts;
                
     public ConceptWaveCore(int maxConcepts, ConceptBuilder conceptBuilder) {

@@ -127,7 +127,6 @@ public class Memory implements Serializable {
         public int numBuffered();
     }
 
-    //public static Random randomNumber = new Random(1);
     private static long defaultRandomSeed = 1;
     public static final Random randomNumber = new Random(defaultRandomSeed);
 

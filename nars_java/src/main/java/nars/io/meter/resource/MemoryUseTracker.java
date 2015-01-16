@@ -10,7 +10,7 @@ import nars.io.meter.event.ValueMeter;
  */
 public class MemoryUseTracker extends ValueMeter {
 
-    long lastUsedMemory = -1;
+    //long lastUsedMemory = -1;
 
     public MemoryUseTracker(String id) {
         super(id);

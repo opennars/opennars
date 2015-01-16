@@ -119,7 +119,7 @@ public class NALTest extends TestCase {
         }
         
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
-        Result result = JUnitCore.runClasses(new ParallelComputer(true, false),c);
+        Result result = JUnitCore.runClasses(new ParallelComputer(true, true),c);
         //Result result = JUnitCore.runClasses(Computer.serial(), c);
 
         if (result.getFailures()!=null) {

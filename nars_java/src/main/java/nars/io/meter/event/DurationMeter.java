@@ -5,8 +5,6 @@
  */
 package nars.io.meter.event;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 /**
  * Measures the period between start() and end() calls as a ValueMeter value.
  */
@@ -14,9 +12,9 @@ public class DurationMeter extends ValueMeter {
     
     double startTime = Double.NaN;
     private final boolean nanoSeconds;
-    DescriptiveStatistics stat;
+    //DescriptiveStatistics stat;
     private final double window;
-    private double prev;
+    //private double prev;
     private final boolean frequency;
     boolean strict = false;
     
@@ -25,7 +23,7 @@ public class DurationMeter extends ValueMeter {
         
         
         this.window = windowSec * 1E9;
-        this.stat = new DescriptiveStatistics();
+        //this.stat = new DescriptiveStatistics();
         this.nanoSeconds = nanoSeconds;
         this.frequency = asFrequency;
         reset();
@@ -54,7 +52,7 @@ public class DurationMeter extends ValueMeter {
         return v;
     }
     
-    public double sinceStart() {
+    public synchronized double sinceStart() {
         double resolutionTime = nanoSeconds ? 1E9 : 1E3;
         return (PeriodMeter.now(nanoSeconds) - startTime) / resolutionTime;
     }

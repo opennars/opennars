@@ -9,6 +9,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.entity.*;
+import nars.logic.nal1.LocalRules;
 import nars.logic.nal1.Negation;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Equivalence;
@@ -182,16 +183,18 @@ abstract public class FireConcept extends NAL {
 
             //TODO
             //(&/,a) goal didnt get unwinded, so lets unwind it
-            if(task.sentence.term instanceof Conjunction && task.sentence.punctuation== Symbols.GOAL_MARK) {
-                Conjunction s=(Conjunction) task.sentence.term;
+            if(taskSentence.term instanceof Conjunction && taskSentence.punctuation== Symbols.GOAL_MARK) {
+                Conjunction s=(Conjunction) taskSentence.term;
                 Term newterm=s.term[0];
-                TruthValue truth=task.sentence.truth;
+                TruthValue truth=taskSentence.truth;
                 BudgetValue newBudget=BudgetFunctions.forward(TruthFunctions.deduction(truth, truth), this);
                 doublePremiseTask(newterm, truth, newBudget, false);
             }
 
-            emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, this);
 
+            if (LocalRules.match(task, belief, this)) {
+                return;
+            }
 
 
             if (nal(7)) {
@@ -229,13 +232,9 @@ abstract public class FireConcept extends NAL {
                         }
                     }
                 }
-
-                /*
-                if (LocalRules.match(task, belief, this)) {
-                    return;
-                }
-                */
             }
+
+            emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, this);
 
         }
 

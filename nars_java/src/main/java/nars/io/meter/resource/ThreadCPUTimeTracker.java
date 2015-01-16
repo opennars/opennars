@@ -27,7 +27,7 @@ import java.lang.management.ThreadMXBean;
  */
 public class ThreadCPUTimeTracker extends ValueMeter {
 
-    private long startCPUTime; // nanos
+    //private long startCPUTime; // nanos
 
     public ThreadCPUTimeTracker(final String id) {
         super(id);

@@ -38,9 +38,11 @@ public class MathExpression  extends SynchronousFunctionOperator {
     protected Term function(Memory memory, Term[] x) {
 
         //TODO this may not be thread-safe, this block may need synchronized:
-        if (context == null) {
-            context = new EncogProgramContext();            
-            context.loadAllFunctions();
+        synchronized (context) {
+            if (context == null) {
+                context = new EncogProgramContext();
+                context.loadAllFunctions();
+            }
         }
         
         if (x.length!=1) {

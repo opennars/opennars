@@ -158,7 +158,7 @@ public class Term implements AbstractTerm, Termable {
     @Override
     public boolean equals(final Object that) {
         if (that == this) return true;
-        //if (operator() != ((Term)that).operator()) return false;
+        if (!(that instanceof Term)) return false;
         return name().equals(((Term)that).name());
     }
 

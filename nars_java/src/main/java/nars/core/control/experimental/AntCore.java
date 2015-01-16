@@ -10,10 +10,8 @@ import nars.core.Parameters;
 import nars.logic.FireConcept;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
-import nars.util.XORShiftRandom;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Multiprocessor-capable NAR controller.
@@ -23,12 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AntCore extends ConceptWaveCore {
     
-    public final Random random = new XORShiftRandom();
+    public final Random random = Memory.randomNumber;
 
     public final Deque<Ant> ants = new ArrayDeque();
     
     /** prevents Ants from moving to a concept in which another Ant occupies */
-    public final ConcurrentHashMap<Term,Ant> occupied = new ConcurrentHashMap();
+    public final HashMap<Term,Ant> occupied = new HashMap();
     
     float cycleSpeed;
     float conceptVisitDelivery;
@@ -158,60 +156,55 @@ public class AntCore extends ConceptWaveCore {
             this.speed = speed;                        
         }
                 
-        void goRandomConcept(List<Runnable> queue) {
-            
+        synchronized void goRandomConcept(List<Runnable> queue) {
+
             if (concept!=null)
-                occupied.remove(concept.getTerm());            
-            
+                occupied.remove(concept.getTerm());
+
             concept = null;
             link = null;
 
             //check if there are enough remaining concepts to transition to */
             if (concepts.size() - occupied.size() - 1 /* an extra one to include this concept) */ <= 0)
                 return;
-            
-            Concept c;
-            
-            synchronized (occupied) {
-                
-                boolean validDestination = false;
-                
-                int maxTries = 2;
-                int tries = 0;
-                do {
-                    
-                    c = concepts.takeNext();
 
-                    if (c == null)
-                        return;
-                    
-                    if (c == concept) { 
-                        //no need to move to self
+            Concept c;
+
+            boolean validDestination = false;
+
+            int maxTries = 2;
+            int tries = 0;
+            do {
+
+                c = concepts.takeNext();
+
+                if (c == null)
+                    return;
+
+                if (c == concept) {
+                    //no need to move to self
+                }
+                else {
+                    Ant occupier = occupied.get(c.getTerm());
+                    if ((occupier!=null) || (occupier!=null && this==occupier)) {
+                        //occupied, or it's me
                     }
                     else {
-                        Ant occupier = occupied.get(c.getTerm());
-                        if ((occupier!=null) || (occupier==this)) {
-                            //occupied, or it's me
-                        }           
-                        else {
-                            validDestination = true;
-                        }
+                        validDestination = true;
                     }
-                
-                    concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
+                }
 
-                    if (tries++ == maxTries)
-                        return;
-                    
-                } while (!validDestination);
-                        
+                concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
 
-              
-                occupied.put(c.getTerm(), this);
-                
-            }
-            
-            
+                if (tries++ == maxTries)
+                    return;
+
+            } while (!validDestination);
+
+
+
+            occupied.put(c.getTerm(), this);
+
             concept = c;
 
         }
@@ -311,7 +304,7 @@ public class AntCore extends ConceptWaveCore {
                 ii = concept.taskLinks;
             }
             else {
-                if (Math.random() % 2 == 0) {
+                if (random.nextInt() % 2 == 0) {
                     ii = concept.termLinks;
                 }
                 else
@@ -332,6 +325,7 @@ public class AntCore extends ConceptWaveCore {
             if (links.isEmpty()) return null;
             
             //TODO weighted probability selection
+            //TODO use Memory.random instance not Math.random
             int i = (int)(links.size() * Math.random());
             return links.get(i);
         }
@@ -357,8 +351,7 @@ public class AntCore extends ConceptWaveCore {
                 goRandomConcept(queue);
                 return;
             }
-
-            if (viaLink!=null) {
+            else {
                 if (viaLink instanceof TermLink) {
                     concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
                 }
@@ -368,37 +361,39 @@ public class AntCore extends ConceptWaveCore {
 
                 eta = viaLink.getPriority();
                 link = viaLink;
+                Termable target = viaLink.getTarget();
                 viaLink = null;
+                if (goNextConcept(target, new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f)) == null)
+                    return;
+
+                onLink(link, eta, queue);
             }
 
 
-            if (viaLink == null || (goNextConcept(viaLink.getTarget(), new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f)) == null))
-                return;
-            
-            onLink(link, eta, queue);
+
         }
         
         public float getConceptVisitDelivery() {
             return (float)(speed * conceptVisitDelivery);
         }                
         
-        protected Concept goNextConcept(Termable x, BudgetValue delivery) {
+        protected synchronized Concept goNextConcept(Termable x, BudgetValue delivery) {
+
             Term ct = x.getTerm();
-            
-            synchronized (occupied) {
-                if (concept!=null)
-                    occupied.remove(concept.getTerm());
+            if (concept!=null)
+                occupied.remove(concept.getTerm());
 
-                if (occupied.containsKey(ct)) {
-                    return concept = null;
-                }
-
-                Concept nextC = conceptualize(delivery, ct, false);
-                                
-                occupied.put(nextC.getTerm(), this);
-                
-                return concept = nextC;
+            if (occupied.containsKey(ct)) {
+                return concept = null;
             }
+
+            Concept nextC = conceptualize(delivery, ct, false);
+            if (nextC == null)
+                return concept = null;
+
+            occupied.put(nextC.getTerm(), this);
+
+            return concept = nextC;
         }
 
         @Override
