@@ -10,6 +10,8 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static nars.logic.nal7.Tense.Eternal;
+
 
 public class NAL5Test extends AbstractNALTest {
 
@@ -44,7 +46,7 @@ public class NAL5Test extends AbstractNALTest {
         long time = 1250;
 
 
-        n.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", 0.9f, 0.9f)
+        n.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", Eternal, 0.9f, 0.9f)
                 .en("robin can fly and swim.")
                 .en("robin is one of the flying and is a swimmer.");
 

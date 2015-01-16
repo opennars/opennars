@@ -21,7 +21,6 @@
 package nars.logic;
 
 import nars.core.Events;
-import nars.core.Memory;
 import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.entity.CompoundTerm.UnableToCloneException;
@@ -189,11 +188,11 @@ public final class CompositionalRules {
             return;
         }
         if ((componentT instanceof CompoundTerm) && ((CompoundTerm) componentT).containsAllTermsOf(componentB)) {
-            if (decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, order, nal))
-                return;
+            decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, order, nal);
+            return;
         } else if ((componentB instanceof CompoundTerm) && ((CompoundTerm) componentB).containsAllTermsOf(componentT)) {
-            if (decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, nal))
-                return;
+            decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, nal);
+            return;
         }
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
