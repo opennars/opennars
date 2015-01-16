@@ -16,9 +16,10 @@
  */
 package nars.core;
 
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
+import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Concept;
@@ -87,7 +88,7 @@ public class TermTest {
     }    
     
     @Test
-    public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
+    public void testConjunctionTreeSet() throws InvalidInputException {
         NAR n = new NAR(new Default());
         
         
@@ -144,7 +145,7 @@ public class TermTest {
     }
     
     @Test
-    public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException {
+    public void testUnconceptualizedTermInstancing() throws InvalidInputException {
         NAR n = new NAR(new Default());
         
        String term1String ="<a --> b>";
@@ -163,7 +164,7 @@ public class TermTest {
     }
     
     @Test
-    public void testConceptInstancing() throws Narsese.InvalidInputException {
+    public void testConceptInstancing() throws InvalidInputException {
         NAR n = new NAR(new Default());
         
        String statement1 = "<a --> b>.";
@@ -234,7 +235,7 @@ public class TermTest {
         try {
             p.parseNarsese(new StringBuilder(t + "."));
             assertTrue(false);
-        } catch (Narsese.InvalidInputException ex) {
+        } catch (InvalidInputException ex) {
             assertTrue(true);
         }
         
@@ -245,7 +246,7 @@ public class TermTest {
             
             assertTrue(true);
             
-        } catch (Narsese.InvalidInputException ex) {
+        } catch (InvalidInputException ex) {
             assertTrue(false);
         }
         
@@ -271,7 +272,7 @@ public class TermTest {
             assertEquals(null, cloned);
             
             
-        } catch (Narsese.InvalidInputException ex) {           
+        } catch (InvalidInputException ex) {
             assertTrue(false);
         }
     }
@@ -288,7 +289,7 @@ public class TermTest {
             assertEquals(Operation.class, x.getClass());
             assertEquals("(^wonder,a,b)", x.toString());
             
-        } catch (Narsese.InvalidInputException ex) {
+        } catch (InvalidInputException ex) {
             ex.printStackTrace();
             assertTrue(false);
         }

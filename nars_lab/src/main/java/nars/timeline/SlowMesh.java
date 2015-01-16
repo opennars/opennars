@@ -6,7 +6,7 @@
 //
 //import automenta.vivisect.swing.NWindow;
 //import nars.core.NAR;
-//import nars.core.build.Neuromorphic;
+//import nars.build.Neuromorphic;
 //import nars.gui.NARSwing;
 //import nars.gui.output.graph.ConceptGraphCanvas2;
 //import nars.gui.output.graph.ProcessingGraphPanel;

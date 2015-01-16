@@ -7,6 +7,7 @@ package nars.io;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Output.ERR;
+import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Term;
 import nars.logic.nal8.Operator;
@@ -97,7 +98,7 @@ public class BindJavascriptExpression implements TextReaction {
                         
                         try {
                             return narsese.parseTerm(result.toString());
-                        } catch (Narsese.InvalidInputException ex) {
+                        } catch (InvalidInputException ex) {
                             memory.emit(ERR.class, ex.toString());
                             if (Parameters.DEBUG)
                                 ex.printStackTrace();

@@ -6,7 +6,7 @@ package nars;
 
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.ExampleFileInput;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;

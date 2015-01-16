@@ -4,7 +4,7 @@
  */
 package nars.core;
 
-import nars.core.build.Default;
+import nars.build.Default;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

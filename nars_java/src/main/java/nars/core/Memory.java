@@ -24,6 +24,7 @@ import nars.core.Core.AttentionAware;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
+import nars.event.EventEmitter;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;

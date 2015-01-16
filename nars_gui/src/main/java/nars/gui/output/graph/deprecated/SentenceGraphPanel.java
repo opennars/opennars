@@ -7,7 +7,7 @@ package nars.gui.output.graph.deprecated;
 //import java.awt.BorderLayout;
 //import java.awt.Color;
 //import javax.swing.SwingUtilities;
-//import nars.core.EventEmitter.Observer;
+//import nars.event.EventEmitter.Observer;
 //import nars.core.Events;
 //import nars.core.NAR;
 //import nars.logic.entity.Sentence;

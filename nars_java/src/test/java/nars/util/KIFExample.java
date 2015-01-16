@@ -18,7 +18,7 @@
 package nars.util;
 
 import nars.core.NAR;
-import nars.core.build.Curve;
+import nars.build.Curve;
 import nars.util.kif.KIFInput;
 
 /**

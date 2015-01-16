@@ -26,7 +26,7 @@ import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
@@ -40,7 +40,7 @@ import nars.gui.output.graph.NARGraphPanel;
 import nars.io.TraceWriter;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.logic.NARTrace;
+import nars.logic.meta.NARTrace;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,7 +56,7 @@ import static nars.core.Memory.Timing.Real;
 import static nars.core.Memory.Timing.Simulation;
 
 
-public class NARControls extends JPanel implements ActionListener, EventObserver {
+public class NARControls extends JPanel implements ActionListener, Reaction {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 

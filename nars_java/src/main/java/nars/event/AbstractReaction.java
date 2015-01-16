@@ -1,0 +1,46 @@
+package nars.event;
+
+import nars.core.NAR;
+
+/**
+ * Class whch manages the registration and unregistration of event handlers
+ * with an EventEmitter. it may be enabled and disabled repeatedly with
+ * different event classes as selector keys for event bus messages.
+ */
+public abstract class AbstractReaction implements Reaction {
+    
+    protected final EventEmitter source;
+    protected EventEmitter.Registrations active;
+    private final Class[] events;
+
+    public AbstractReaction(NAR n, Class... events) {
+        this(n, true, events);
+    }
+
+    public AbstractReaction(NAR n, boolean active, Class... events) {
+        this(n.memory.event, active, events);
+    }
+
+    
+    public AbstractReaction(EventEmitter source, boolean active, Class... events) {
+        this.source = source;
+        this.events = events;
+        setActive(active);
+    }
+
+    public synchronized void setActive(boolean b) {        
+        
+        if (b && (this.active==null)) {
+            this.active = source.on(this, events);
+        }
+        else if (!b && (this.active!=null)) {
+            this.active.cancel();
+            this.active = null;
+        }
+    }
+
+    public boolean isActive() {
+        return active!=null;
+    }
+    
+}

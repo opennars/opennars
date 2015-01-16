@@ -15,7 +15,7 @@ import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.GraphDisplays;
 import automenta.vivisect.swing.NSlider;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.ResetEnd;
 import nars.core.NAR;
@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  *
  */
-public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements EventObserver {
+public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Reaction {
         
     
     final AtomicReference<Graph> displayedGraph = new AtomicReference();

@@ -18,7 +18,7 @@
  */
 package nars.core;
 
-import nars.core.build.Default.CommandLineNARBuilder;
+import nars.build.Default.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 

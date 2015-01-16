@@ -1,6 +1,6 @@
 package nars.operator.mental;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -16,7 +16,7 @@ import nars.logic.nal4.Product;
  */
 public class Counting implements Plugin {
 
-    public EventObserver obs;
+    public Reaction obs;
     
     final static Term CARDINALITY = Term.get("CARDINALITY");
     
@@ -24,7 +24,7 @@ public class Counting implements Plugin {
         Memory memory = n.memory;
         
         if(obs==null) {
-            obs=new EventObserver() {
+            obs=new Reaction() {
 
                 @Override
                 public void event(Class event, Object[] a) {

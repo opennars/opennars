@@ -33,22 +33,8 @@ public class Narsese {
     
     public final Memory memory;
 
-                
-    /**
-     * All kinds of invalid addInput lines
-     */
-    public static class InvalidInputException extends Exception {
 
-        /**
-         * An invalid addInput line.
-         * @param s type of error
-         */
-        InvalidInputException(String s) {
-            super(s);
-        }
-    }    
-    
-    public Narsese(Memory memory) {        
+    public Narsese(Memory memory) {
         this.memory = memory;
     }
 

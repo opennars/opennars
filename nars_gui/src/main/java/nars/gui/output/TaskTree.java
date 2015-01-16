@@ -2,7 +2,7 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskRemove;
@@ -31,7 +31,7 @@ import static java.awt.BorderLayout.NORTH;
  *
  * @author me
  */
-public class TaskTree extends NPanel implements EventObserver, Runnable {
+public class TaskTree extends NPanel implements Reaction, Runnable {
 
     long updatePeriodMS = 250;
     DefaultMutableTreeNode root = new DefaultMutableTreeNode("Tasks");

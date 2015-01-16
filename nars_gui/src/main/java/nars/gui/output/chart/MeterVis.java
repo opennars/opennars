@@ -7,7 +7,7 @@ import automenta.vivisect.timeline.AxisPlot;
 import automenta.vivisect.timeline.AxisPlot.MultiChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
-import nars.core.Eventer;
+import nars.event.EventEmitter;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.io.meter.Metrics;
@@ -25,9 +25,9 @@ import java.util.List;
 import static reactor.event.selector.Selectors.T;
 
 public class MeterVis extends TimelineVis {
-    private final Eventer nar;
 
-    
+    private final EventEmitter nar;
+
     @Deprecated public class DataChart {
         
         public final SignalData data;
@@ -73,7 +73,7 @@ public class MeterVis extends TimelineVis {
      * @param chartType use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA,
      * Chart.BAR_CENTERED
      */
-    public MeterVis(Eventer nar, TemporalMetrics<Object> meters) {
+    public MeterVis(EventEmitter nar, TemporalMetrics<Object> meters) {
         super(meters.newSignalData("time"));
 
         this.nar = nar;        

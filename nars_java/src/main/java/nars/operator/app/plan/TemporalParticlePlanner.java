@@ -17,7 +17,7 @@
 
 package nars.operator.app.plan;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.NewTaskExecution;
 import nars.core.Events.UnexecutableGoal;
 import nars.core.Events.UnexecutableOperation;
@@ -46,7 +46,7 @@ import static nars.operator.app.plan.MultipleExecutionManager.isPlanTerm;
  *
  * @author tc
  */
-public class TemporalParticlePlanner implements Plugin, EventObserver {
+public class TemporalParticlePlanner implements Plugin, Reaction {
     
     /**
      * global plan search parameters

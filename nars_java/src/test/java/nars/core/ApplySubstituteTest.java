@@ -1,6 +1,7 @@
 package nars.core;
 
-import nars.core.build.Default;
+import nars.build.Default;
+import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
@@ -19,7 +20,7 @@ public class ApplySubstituteTest {
     Narsese np = new Narsese(n);
     
     @Test
-    public void testApplySubstitute() throws Narsese.InvalidInputException {
+    public void testApplySubstitute() throws InvalidInputException {
             
         String abS ="<a --> b>";
         CompoundTerm ab = (CompoundTerm )np.parseTerm(abS);
@@ -42,7 +43,7 @@ public class ApplySubstituteTest {
     }
     
     @Test
-    public void test2() throws Narsese.InvalidInputException {
+    public void test2() throws InvalidInputException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
         NAR n = new NAR(new Default());
             

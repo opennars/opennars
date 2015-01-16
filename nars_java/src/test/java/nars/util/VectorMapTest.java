@@ -1,9 +1,9 @@
 package nars.util;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.CycleStart;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.util.signal.DenoisingAutoencoder;
 import nars.util.signal.UniformVector;
 import nars.util.signal.VectorMap;
@@ -67,7 +67,7 @@ public class VectorMapTest {
         
         n.run(16);
         
-        n.on(CycleStart.class, new EventObserver() {
+        n.on(CycleStart.class, new Reaction() {
 
             @Override public void event(Class event, Object[] arguments) {
                 

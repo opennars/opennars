@@ -6,7 +6,7 @@ package nars.util;
 
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.util.Idea.IdeaSet;
 import org.junit.Before;
 import org.junit.Test;

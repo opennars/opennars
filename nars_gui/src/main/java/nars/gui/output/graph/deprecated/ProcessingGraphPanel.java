@@ -6,7 +6,7 @@ package nars.gui.output.graph.deprecated;
 //import automenta.vivisect.swing.PCanvas;
 //import java.awt.BorderLayout;
 //import javax.swing.JPanel;
-//import nars.core.EventEmitter.Observer;
+//import nars.event.EventEmitter.Observer;
 //import nars.core.Events.FrameEnd;
 //import nars.core.NAR;
 //

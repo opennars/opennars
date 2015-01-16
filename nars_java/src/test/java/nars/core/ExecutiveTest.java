@@ -4,7 +4,7 @@
  */
 package nars.core;
 
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.logic.entity.TruthValue;
 import nars.operator.app.plan.MultipleExecutionManager;
 import nars.operator.app.plan.MultipleExecutionManager.Execution;

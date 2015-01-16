@@ -6,12 +6,13 @@
 package nars;
 
 import nars.core.*;
-import nars.core.build.Default;
+import nars.build.Default;
+import nars.event.Reaction;
 import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ValueMeter;
-import nars.logic.NARTrace;
+import nars.logic.meta.NARTrace;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.util.NALPerformance;
@@ -23,7 +24,7 @@ import java.io.PrintStream;
  *
  * @author me
  */
-public class DetectBenefitsOfPrologMirroring implements EventEmitter.EventObserver {
+public class DetectBenefitsOfPrologMirroring implements Reaction {
     private static PrintStream csvOut;
     private static PrintStream logOut;
     private final NAR prolog;

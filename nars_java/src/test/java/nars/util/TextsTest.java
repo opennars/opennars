@@ -1,9 +1,10 @@
 package nars.util;
 
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.*;
 import nars.util.rope.Rope;
@@ -76,7 +77,7 @@ public class TextsTest {
     }
     
     @Test
-    public void testRope() throws Narsese.InvalidInputException {
+    public void testRope() throws InvalidInputException {
         NAR n = new NAR(new Default());
         Narsese np = new Narsese(n);
         

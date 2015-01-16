@@ -1,5 +1,6 @@
 package nars.io.nlp;
 
+import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.AbstractTask;
 
@@ -36,7 +37,7 @@ public class NaturalLanguagePerception {
                     results.add(t);
                 }
             }
-            catch (Narsese.InvalidInputException e) {
+            catch (InvalidInputException e) {
                 throw new RuntimeException(e);
             }
         }

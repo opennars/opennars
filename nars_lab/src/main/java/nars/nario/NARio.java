@@ -1,10 +1,10 @@
 package nars.nario;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.logic.entity.Task;
@@ -221,7 +221,7 @@ public class NARio extends Run {
             
         });
                 
-        nar.memory.event.on(Events.FrameEnd.class, new EventObserver() {
+        nar.memory.event.on(Events.FrameEnd.class, new Reaction() {
             private int[] keyTime = new int[256];
             private float lastMX;
             private float lastMY;

@@ -5,7 +5,7 @@
 
 package nars.operator.app.farg;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.logic.entity.Concept;
@@ -25,7 +25,7 @@ public class Workspace {
         this.nar=nar;
         Workspace ws=this;
         farg.coderack=new LevelBag(farg.codelet_level,farg.max_codelets);
-        nar.on(CycleEnd.class, new EventObserver() { 
+        nar.on(CycleEnd.class, new Reaction() {
 
             @Override
             public void event(Class event, Object[] args) {

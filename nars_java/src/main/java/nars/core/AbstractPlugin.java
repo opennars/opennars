@@ -1,9 +1,12 @@
 package nars.core;
 
+import nars.event.EventEmitter;
+import nars.event.Reaction;
+
 /**
 * Created by me on 1/12/15.
 */
-abstract public class AbstractPlugin implements Plugin, EventEmitter.EventObserver {
+abstract public class AbstractPlugin implements Plugin, Reaction {
 
     private EventEmitter.Registrations regist = null;
 

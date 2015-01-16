@@ -1,9 +1,9 @@
 package nars.perf;
 
 import nars.core.Memory;
-import nars.core.logic.NALTest;
+import nars.logic.NALTest;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.condition.OutputCondition;
 import nars.util.XORShiftRandom;
 import org.encog.Encog;

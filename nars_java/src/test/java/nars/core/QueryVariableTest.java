@@ -1,13 +1,13 @@
 package nars.core;
 
-import nars.core.build.Default;
-import nars.io.narsese.Narsese;
+import nars.build.Default;
+import nars.io.narsese.InvalidInputException;
 import org.junit.Test;
 
 public class QueryVariableTest {
 
     /** simple test for solutions to query variable questions */
-    @Test public void testQueryVariableSolution() throws Narsese.InvalidInputException {
+    @Test public void testQueryVariableSolution() throws InvalidInputException {
 
         TestNAR n = new TestNAR(new Default().level(6));
 

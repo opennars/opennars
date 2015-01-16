@@ -1,12 +1,12 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.*;
 import nars.core.Events.Perceive;
 import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
-import nars.io.narsese.Narsese.InvalidInputException;
+import nars.io.narsese.InvalidInputException;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;
@@ -30,7 +30,7 @@ import static com.google.common.collect.Iterators.singletonIterator;
  *  
  *  TODO break into separate subclasses for each text mode
  */
-public class DefaultTextPerception implements Plugin, EventObserver {
+public class DefaultTextPerception implements Plugin, Reaction {
     
     private Memory memory;
     

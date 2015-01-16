@@ -10,7 +10,7 @@ import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.gui.NARSwing;
 import nars.gui.output.ConceptsPanel;
 import nars.io.TextOutput;

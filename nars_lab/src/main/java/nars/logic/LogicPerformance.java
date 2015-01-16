@@ -11,7 +11,7 @@ import nars.core.Events.ConceptFired;
 import nars.core.Events.TaskImmediateProcessed;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.gui.output.JGraphXGraphPanel;
 import nars.io.ExampleFileInput;
 import nars.io.condition.OutputCondition;

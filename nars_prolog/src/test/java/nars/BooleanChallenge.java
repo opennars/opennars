@@ -1,10 +1,11 @@
 package nars;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
-import nars.core.build.Discretinuous;
+import nars.build.Discretinuous;
 import nars.io.Output.OUT;
+import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -59,7 +60,7 @@ public class BooleanChallenge {
         this.nar = n;        
         this.parser = new Narsese(n);
                 
-        n.on(OUT.class, new EventObserver() {
+        n.on(OUT.class, new Reaction() {
 
             protected boolean evalAnd(int[] t) {
                 return (t[0] & t[1]) == t[2];
@@ -136,7 +137,7 @@ public class BooleanChallenge {
         });
         
         
-        n.on(CycleEnd.class, new EventObserver() {
+        n.on(CycleEnd.class, new Reaction() {
 
             @Override public void event(Class event, Object[] arguments) {
                 double p = Math.random();
@@ -248,7 +249,7 @@ public class BooleanChallenge {
         Term t;
         try {
             t = parser.parseTerm(term);
-        } catch (Narsese.InvalidInputException ex) {
+        } catch (InvalidInputException ex) {
             Logger.getLogger(BooleanChallenge.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }

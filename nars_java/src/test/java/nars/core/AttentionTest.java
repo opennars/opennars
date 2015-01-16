@@ -6,7 +6,7 @@ package nars.core;
 
 
 import com.google.common.collect.Iterables;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.logic.entity.Concept;
 import org.junit.Test;
 

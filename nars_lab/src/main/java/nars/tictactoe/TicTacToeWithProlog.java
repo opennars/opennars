@@ -24,11 +24,11 @@ package nars.tictactoe;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.NARPrologMirror;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.Discretinuous;
+import nars.build.Discretinuous;
 import nars.gui.NARSwing;
 import nars.io.Output.OUT;
 import nars.logic.entity.BudgetValue;
@@ -95,7 +95,7 @@ public class TicTacToeWithProlog extends JPanel {
         (nar.param).noiseLevel.set(0);
         
         new NARSwing(nar);    
-        nar.on(FrameEnd.class, new EventObserver() {
+        nar.on(FrameEnd.class, new Reaction() {
 
             @Override
             public void event(Class event, Object[] args) {

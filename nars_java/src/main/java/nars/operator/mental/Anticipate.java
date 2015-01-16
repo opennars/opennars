@@ -28,7 +28,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.logic.AbstractObserver;
+import nars.event.AbstractReaction;
 import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.entity.*;
@@ -54,14 +54,14 @@ public class Anticipate extends Operator implements Mental {
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
     
     transient private int duration;
-    private AbstractObserver observer;
+    private AbstractReaction observer;
 
     public Anticipate() { super("^anticipate");     }
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
         if (observer == null) {
-            observer = new AbstractObserver(n, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class) {
+            observer = new AbstractReaction(n, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class) {
                 @Override public void event(Class event, Object[] args) {
                     Anticipate.this.event(event, args);
                 }

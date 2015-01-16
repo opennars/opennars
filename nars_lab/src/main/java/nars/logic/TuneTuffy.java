@@ -4,12 +4,14 @@
  */
 package nars.logic;
 
+import nars.event.AbstractReaction;
 import nars.core.Build;
 import nars.core.Events.Answer;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
+import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
@@ -24,11 +26,11 @@ import java.io.FileNotFoundException;
  */
 public class TuneTuffy {
     
-    public static class SolutionMonitor extends AbstractObserver {
+    public static class SolutionMonitor extends AbstractReaction {
         private final Term term;
         Sentence mostConfident = null;
         
-        public SolutionMonitor(NAR n, String term) throws Narsese.InvalidInputException {
+        public SolutionMonitor(NAR n, String term) throws InvalidInputException {
             super(n, true, OUT.class, Answer.class);
             
             Term t = new Narsese(n).parseTerm(term);
@@ -67,7 +69,7 @@ public class TuneTuffy {
         
     }
     
-    public static void main(String[] args) throws FileNotFoundException, Narsese.InvalidInputException {
+    public static void main(String[] args) throws FileNotFoundException, InvalidInputException {
         Build b = new Default().
                 setInternalExperience(null);
                 

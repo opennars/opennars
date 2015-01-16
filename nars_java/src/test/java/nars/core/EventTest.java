@@ -5,6 +5,8 @@
  */
 package nars.core;
 
+import nars.event.EventEmitter;
+import nars.event.Reaction;
 import nars.io.Output;
 import org.junit.Test;
 import reactor.event.Event;
@@ -23,7 +25,7 @@ public class EventTest {
     @Test
     public void testReactor() throws InterruptedException {
 
-        Eventer e = Eventer.newSynchronous();
+        EventEmitter e = EventEmitter.newSynchronous();
 
         AtomicBoolean b = new AtomicBoolean();
 
@@ -49,13 +51,13 @@ public class EventTest {
 
         EventEmitter e = new EventEmitter();
 
-        e.on(Events.CycleEnd.class, new EventEmitter.EventObserver() {
+        e.on(Events.CycleEnd.class, new Reaction() {
             @Override
             public void event(Class event, Object[] args) {
                 throw new RuntimeException("12345");
             }
         });
-        e.on(Output.ERR.class, new EventEmitter.EventObserver() {
+        e.on(Output.ERR.class, new Reaction() {
             @Override
             public void event(Class event, Object[] args) {
                 b.set(true);

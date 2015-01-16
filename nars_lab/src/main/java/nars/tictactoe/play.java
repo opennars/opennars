@@ -19,7 +19,7 @@ package nars.tictactoe;
 
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.gui.NARSwing;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;

@@ -7,7 +7,7 @@ package nars.predict;
 import com.google.common.collect.Lists;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.logic.AbstractObserver;
+import nars.event.AbstractReaction;
 import nars.logic.entity.Concept;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author me
  */
-public abstract class BeliefPrediction extends AbstractObserver {
+public abstract class BeliefPrediction extends AbstractReaction {
     public final List<Concept> concepts;
     public final NAR nar;
     

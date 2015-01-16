@@ -4,12 +4,12 @@
 //import java.awt.Color;
 //import java.io.IOException;
 //import java.other.ArrayList;
-//import nars.core.EventEmitter.EventObserver;
+//import nars.event.EventEmitter.EventObserver;
 //import nars.core.Events;
 //import nars.core.NAR;
 //import nars.core.Parameters;
-//import nars.core.build.Default;
-//import nars.core.control.DefaultAttention;
+//import nars.build.Default;
+//import nars.control.DefaultAttention;
 //import nars.logic.entity.Concept;
 //import automenta.vivisect.swing.NWindow;
 //import automenta.vivisect.timeline.LineChart;

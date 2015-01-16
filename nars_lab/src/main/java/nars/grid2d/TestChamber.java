@@ -1,11 +1,11 @@
 package nars.grid2d;
 
 import nars.core.Build;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.map.Maze;
@@ -153,7 +153,7 @@ public class TestChamber {
         space.automataPeriod = automataPeriod/gridUpdatePeriod;
         space.agentPeriod = agentPeriod/gridUpdatePeriod;
         TestChamber into=this;
-        nar.memory.event.on(Events.FrameEnd.class, new EventObserver() {
+        nar.memory.event.on(Events.FrameEnd.class, new Reaction() {
             private long lastDrawn = 0;
             
             @Override

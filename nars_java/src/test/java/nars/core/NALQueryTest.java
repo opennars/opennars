@@ -4,10 +4,10 @@
  */
 package nars.core;
 
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.Answered;
 import nars.io.TextOutput;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import org.junit.Test;
@@ -24,17 +24,17 @@ public class NALQueryTest {
 
 
     @Test
-    public void testQuery2() throws Narsese.InvalidInputException {
+    public void testQuery2() throws InvalidInputException {
         testQueryAnswered(16, 0);
     }
 
     @Test
-    public void testQuery1() throws Narsese.InvalidInputException {
+    public void testQuery1() throws InvalidInputException {
         testQueryAnswered(0, 32);
     }
 
 
-    public void testQueryAnswered(int cyclesBeforeQuestion, int cyclesAfterQuestion) throws Narsese.InvalidInputException {
+    public void testQueryAnswered(int cyclesBeforeQuestion, int cyclesAfterQuestion) throws InvalidInputException {
 
         final AtomicBoolean b = new AtomicBoolean(false);
 

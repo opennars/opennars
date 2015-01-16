@@ -2,19 +2,20 @@ package nars.core;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
-import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
 import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
+import nars.event.EventEmitter;
+import nars.event.Reaction;
 import nars.io.*;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
 import nars.io.narsese.Narsese;
-import nars.io.narsese.Narsese.InvalidInputException;
+import nars.io.narsese.InvalidInputException;
 import nars.logic.NAL.DerivationFilter;
 import nars.logic.entity.*;
 import nars.logic.nal7.Tense;
@@ -277,17 +278,17 @@ public class NAR implements Runnable, TaskSource {
   
     
     /** attach event handler */
-    public Registration on(Class c, EventObserver o) {
+    public Registration on(Class c, Reaction o) {
         return memory.event.on(c, o);
     }
     
     /** remove event handler */
-    @Deprecated public void off(Class c, EventObserver o) {
+    @Deprecated public void off(Class c, Reaction o) {
         memory.event.off(c, o);
     }
     
     /** set an event handler. useful for multiple events. */
-    @Deprecated public void event(EventObserver e, boolean enabled, Class... events) {
+    @Deprecated public void event(Reaction e, boolean enabled, Class... events) {
         memory.event.set(e, enabled, events);
     }
 
@@ -563,8 +564,10 @@ public class NAR implements Runnable, TaskSource {
                     try {
                         Thread.sleep(minFramePeriodMS);
                     } catch (InterruptedException e) {
-                        emit(ERR.class, e);
-                        e.printStackTrace();
+                        if (e.getCause()!=null) {
+                            emit(ERR.class, e);
+                            e.printStackTrace();
+                        }
                     }
                 }
                 else if (remainingTime < 0) {
@@ -754,7 +757,7 @@ public class NAR implements Runnable, TaskSource {
     
     /** stops and empties an input channel into a receiver. 
      * this results in no pending input from this channel. */
-    public static int flushInput(InPort i, EventObserver receiver) {
+    public static int flushInput(InPort i, Reaction receiver) {
         int total = 0;
         i.finish();
 

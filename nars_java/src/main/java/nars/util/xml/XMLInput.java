@@ -1,7 +1,7 @@
 package nars.util.xml;
 
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.TextOutput;
 import nars.util.PrintWriterInput;
 import org.w3c.dom.Document;

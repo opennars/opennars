@@ -2,7 +2,7 @@ package nars.narclear;
 
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.ChangedTextInput;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;

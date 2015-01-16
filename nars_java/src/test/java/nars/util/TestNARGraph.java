@@ -1,7 +1,7 @@
 package nars.util;
 
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.util.graph.NARGraph;
 import org.junit.Test;
 

@@ -6,7 +6,7 @@
 package nars.operator.app;
 
 import nars.core.*;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
 import nars.logic.TruthFunctions;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class ClassicalConditioningHelper implements Plugin {
 
     public boolean EnableAutomaticConditioning=true;
-    public EventEmitter.EventObserver obs;
+    public Reaction obs;
     public float saved_priority;
     public ArrayList<Task> lastElems=new ArrayList<>();
     public int maxlen=20;
@@ -291,7 +291,7 @@ public class ClassicalConditioningHelper implements Plugin {
         this.nar=n;
         if(obs==null) {
             saved_priority=Parameters.DEFAULT_JUDGMENT_PRIORITY;
-            obs=new EventObserver() {
+            obs=new Reaction() {
 
                 @Override
                 public void event(Class event, Object[] a) {

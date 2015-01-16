@@ -4,10 +4,10 @@
  */
 package nars.timeline;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.logic.entity.Concept;
@@ -28,7 +28,7 @@ public class BeliefRedundancy {
     
         new TextOutput(n, System.out);
 
-        n.on(Events.ConceptBeliefAdd.class, new EventObserver() {
+        n.on(Events.ConceptBeliefAdd.class, new Reaction() {
             @Override public void event(Class event, Object[] a) {
                 Concept c = (Concept)a[0];
                 if (c.beliefs.size() > 2) {

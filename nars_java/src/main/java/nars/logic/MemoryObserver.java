@@ -1,5 +1,6 @@
 package nars.logic;
 
+import nars.event.AbstractReaction;
 import nars.core.Events;
 import nars.core.Events.CycleEnd;
 import nars.core.Events.CycleStart;
@@ -9,7 +10,7 @@ import nars.io.Output;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 
-public abstract class MemoryObserver extends AbstractObserver {
+public abstract class MemoryObserver extends AbstractReaction {
 
     private final Memory memory;
 

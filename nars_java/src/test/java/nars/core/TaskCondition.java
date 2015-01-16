@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import nars.io.condition.OutputCondition;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.entity.TruthValue;
@@ -45,7 +45,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     public final List<Task> trueAt = new ArrayList();
 
-    public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.InvalidInputException {
+    public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         super(n);
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");

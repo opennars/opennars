@@ -22,7 +22,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Item;
 import nars.util.bag.Bag;

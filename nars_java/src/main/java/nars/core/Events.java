@@ -1,6 +1,6 @@
 package nars.core;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.logic.FireConcept;
 import nars.logic.ImmediateProcess;
 import nars.logic.NAL;
@@ -11,7 +11,7 @@ import nars.logic.entity.Task;
 import java.util.Arrays;
 import java.util.List;
 
-/** empty event classes for use with EventEmitter */
+/* NAR reasoner events */
 public class Events {
 
 
@@ -61,7 +61,7 @@ public class Events {
     
     public static class ConceptForget { }
     
-    abstract public static class ConceptBeliefAdd implements EventObserver {  
+    abstract public static class ConceptBeliefAdd implements Reaction {
         
         abstract public void onBeliefAdd(Concept c, Task t, Object[] extra);
         
@@ -71,7 +71,7 @@ public class Events {
         
     }
     
-    abstract public static class ConceptBeliefRemove implements EventObserver { 
+    abstract public static class ConceptBeliefRemove implements Reaction {
         
         abstract public void onBeliefRemove(Concept c, Sentence removed, Task t, Object[] extra);
         
@@ -104,7 +104,7 @@ public class Events {
     
     
     /** fired at the END of a ConceptFire task */
-    abstract public static class ConceptFired implements EventObserver {
+    abstract public static class ConceptFired implements Reaction {
         
         /**
          * use:
@@ -120,7 +120,7 @@ public class Events {
     }
 
     /** fired at the end of an ImmediateProcess task */
-    abstract public static class TaskImmediateProcessed implements EventObserver {
+    abstract public static class TaskImmediateProcessed implements Reaction {
 
         abstract public void onProcessed(Task t, NAL n);
         
@@ -142,7 +142,7 @@ public class Events {
     
     public static class ConceptUnification { } //2nd level unification in CompositionalRules
 
-    abstract public static class TaskAdd implements EventObserver { 
+    abstract public static class TaskAdd implements Reaction {
         
         abstract public void onTaskAdd(Task t, String reason);
         

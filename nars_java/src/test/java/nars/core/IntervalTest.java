@@ -1,6 +1,6 @@
 package nars.core;
 
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.Interval.AtomicDuration;
 import org.junit.Test;

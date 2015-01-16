@@ -22,8 +22,8 @@ import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import nars.core.NAR;
-import nars.core.build.Default;
-import nars.logic.NARTrace;
+import nars.build.Default;
+import nars.logic.meta.NARTrace;
 
 import java.awt.event.MouseAdapter;
 

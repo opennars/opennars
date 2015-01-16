@@ -6,7 +6,7 @@ package nars.predict;
 
 import nars.core.NAR;
 import nars.io.Symbols;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.InvalidInputException;
 import nars.logic.ImmediateProcess;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
@@ -143,7 +143,7 @@ public class Discretize {
             try {
 
                 nar.believe(getValueTerm(variable, level).toString(), Tense.Present, freq, conf);
-            } catch (Narsese.InvalidInputException ex) {
+            } catch (InvalidInputException ex) {
                 Logger.getLogger(Discretize.class.getName()).log(Level.SEVERE, null, ex);
             }
             

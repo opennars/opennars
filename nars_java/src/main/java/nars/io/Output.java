@@ -1,18 +1,18 @@
 package nars.io;
 
-import nars.core.EventEmitter;
+import nars.event.EventEmitter;
 import nars.core.Events;
 import nars.core.Events.Answer;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.logic.AbstractObserver;
+import nars.event.AbstractReaction;
 import nars.operator.io.Echo;
 import nars.operator.io.Say;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
  */
-public abstract class Output extends AbstractObserver {
+public abstract class Output extends AbstractReaction {
     
     
     /** implicitly repeated input (a repetition of all input) */

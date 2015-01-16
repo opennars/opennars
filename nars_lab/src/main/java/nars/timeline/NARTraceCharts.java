@@ -18,9 +18,9 @@ package nars.timeline;
 
 import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.gui.output.chart.MeterVis;
-import nars.logic.NARTrace;
+import nars.logic.meta.NARTrace;
 
 /**
  *

@@ -6,9 +6,9 @@ package nars.perf.evolve;
 
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Curve;
-import nars.core.build.Default;
-import nars.core.build.Neuromorphic;
+import nars.build.Curve;
+import nars.build.Default;
+import nars.build.Neuromorphic;
 import nars.perf.NALTestScore;
 import nars.util.MultiOutputStream;
 import org.encog.ml.CalculateScore;

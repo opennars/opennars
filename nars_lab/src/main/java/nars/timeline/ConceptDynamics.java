@@ -20,7 +20,7 @@
 //import automenta.vivisect.timeline.MultiTimeline;
 //import nars.core.Memory;
 //import nars.core.NAR;
-//import nars.core.build.Discretinuous;
+//import nars.build.Discretinuous;
 //import automenta.vivisect.swing.NWindow;
 //import automenta.vivisect.timeline.BarChart;
 //import automenta.vivisect.timeline.Chart;

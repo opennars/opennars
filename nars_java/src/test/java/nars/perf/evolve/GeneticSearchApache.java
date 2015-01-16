@@ -6,7 +6,7 @@ package nars.perf.evolve;
 
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.perf.NALTestScore;
 import nars.util.MultiOutputStream;
 import org.apache.commons.math3.genetics.*;

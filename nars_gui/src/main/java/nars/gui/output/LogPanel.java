@@ -13,7 +13,7 @@ import nars.io.Output;
 import nars.io.Output.ERR;
 import nars.io.Output.EXE;
 import nars.io.TextOutput;
-import nars.logic.AbstractObserver;
+import nars.event.AbstractReaction;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 
@@ -36,7 +36,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
     protected final NAR nar;
 
-    private AbstractObserver out;
+    private AbstractReaction out;
     
     public static final int maxIOTextSize = (int) 3E5;
     public static final int clearMargin = (int) 3E4;
@@ -70,7 +70,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         this.nar = c.nar;
         this.logger = c.logger;
 
-        out = new AbstractObserver(nar, false, events) {
+        out = new AbstractReaction(nar, false, events) {
             @Override public void event(final Class event, final Object[] arguments) {
                 LogPanel.this.output(event, arguments.length > 1 ? arguments : arguments[0]);
             }

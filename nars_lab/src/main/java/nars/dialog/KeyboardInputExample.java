@@ -6,7 +6,7 @@ package nars.dialog;
 
 import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.gui.NARSwing;
 import nars.gui.input.KeyboardInputPanel;
 

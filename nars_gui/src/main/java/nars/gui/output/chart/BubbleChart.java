@@ -1,7 +1,7 @@
 package nars.gui.output.chart;
 
 import automenta.vivisect.swing.NPanel;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.logic.entity.Concept;
@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
  * 2D bubble chart with configurable dimensions
  * TODO reimplement colorization
  */
-public class BubbleChart extends NPanel implements EventObserver {
+public class BubbleChart extends NPanel implements Reaction {
     private final NAR nar;
     private BufferedImage buffer;
     private boolean needsPaint;

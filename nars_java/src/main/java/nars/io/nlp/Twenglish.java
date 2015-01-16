@@ -19,7 +19,7 @@ package nars.io.nlp;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.narsese.Narsese;
-import nars.io.narsese.Narsese.InvalidInputException;
+import nars.io.narsese.InvalidInputException;
 import nars.io.nlp.Twokenize.Span;
 import nars.logic.entity.AbstractTask;
 import nars.logic.entity.Task;

@@ -1,7 +1,7 @@
 package nars;
 
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.TextOutput;
 import nars.prolog.*;
 import nars.prolog.event.*;

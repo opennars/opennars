@@ -3,7 +3,7 @@ package nars.util;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import nars.core.NAR;
-import nars.logic.AbstractObserver;
+import nars.event.AbstractReaction;
 
 import java.io.PrintStream;
 
@@ -11,7 +11,7 @@ import java.io.PrintStream;
  *
  * @author me
  */
-public class ItemCounter<E> extends AbstractObserver {
+public class ItemCounter<E> extends AbstractReaction {
 
     public final Multiset<E> items = HashMultiset.create();
     

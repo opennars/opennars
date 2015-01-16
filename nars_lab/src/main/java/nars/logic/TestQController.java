@@ -3,7 +3,7 @@ package nars.logic;
 
 import nars.core.NAR;
 import nars.core.Param;
-import nars.core.build.Discretinuous;
+import nars.build.Discretinuous;
 import nars.io.TextInput;
 
 import java.io.BufferedReader;

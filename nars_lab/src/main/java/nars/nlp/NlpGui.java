@@ -1,7 +1,7 @@
 //package nars.io.nlp;
 //
 //import nars.core.NAR;
-//import nars.core.build.Default;
+//import nars.build.Default;
 //import nars.gui.NARSwing;
 //
 //import javax.swing.*;

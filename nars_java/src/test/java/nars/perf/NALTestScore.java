@@ -5,7 +5,8 @@
 package nars.perf;
 
 import nars.core.*;
-import nars.core.logic.NALTest;
+import nars.event.Reaction;
+import nars.logic.NALTest;
 import org.junit.Ignore;
 
 import java.util.Collection;
@@ -66,7 +67,7 @@ public class NALTestScore extends NALTest {
             if (maxCycles!=-1) {
                 
                 //TODO extract as TimeLimit plugin
-                n.on(Events.CycleEnd.class, new EventEmitter.EventObserver() {
+                n.on(Events.CycleEnd.class, new Reaction() {
                     @Override public void event(Class event, Object[] arguments) {
                         if (n.time() > maxCycles) {                            
                             n.stop();

@@ -6,7 +6,7 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
@@ -30,7 +30,7 @@ import static java.util.Collections.unmodifiableList;
 /**
  * Views one or more Concepts
  */
-public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
+public class ConceptsPanel extends NPanel implements Reaction, Runnable {
 
     private final NAR nar;
     private final LinkedHashMap<Concept, ConceptPanel> concept;

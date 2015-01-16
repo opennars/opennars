@@ -4,7 +4,7 @@
  */
 package nars.gui.output;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.*;
 import nars.core.NAR;
 import nars.logic.entity.*;
@@ -25,7 +25,7 @@ import static nars.io.Symbols.JUDGMENT_MARK;
  *
  * @author me
  */
-public class IdeaPanel extends VerticalPanel implements EventObserver {
+public class IdeaPanel extends VerticalPanel implements Reaction {
 
     
     private NAR nar;

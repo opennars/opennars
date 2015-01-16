@@ -5,7 +5,7 @@
 package nars.tictactoe;
 
 import automenta.vivisect.swing.NPanel;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.logic.entity.Concept;
@@ -21,7 +21,7 @@ import java.lang.reflect.Array;
  * in its appearance (font, color, etc..) and lines drawn between them on an overlay.
  * @author me
  */
-abstract public class GridButtonPanel extends NPanel implements EventObserver {
+abstract public class GridButtonPanel extends NPanel implements Reaction {
     
     public final NAR nar;
 

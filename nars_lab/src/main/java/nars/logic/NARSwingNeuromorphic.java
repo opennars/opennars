@@ -5,7 +5,7 @@
 package nars.logic;
 
 import nars.core.NAR;
-import nars.core.build.Neuromorphic;
+import nars.build.Neuromorphic;
 import nars.gui.NARSwing;
 import nars.io.TextInput;
 

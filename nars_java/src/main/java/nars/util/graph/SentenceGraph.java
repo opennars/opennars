@@ -1,7 +1,7 @@
 package nars.util.graph;
 
-import nars.core.EventEmitter;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.EventEmitter;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.logic.entity.*;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 
 
-abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> implements EventObserver {
+abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> implements Reaction {
     public final Memory memory;
 
     public static class GraphChange { }

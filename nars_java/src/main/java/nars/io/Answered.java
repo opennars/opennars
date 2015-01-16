@@ -4,7 +4,7 @@
  */
 package nars.io;
 
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.logic.entity.Concept;
@@ -16,7 +16,7 @@ import reactor.event.registry.Registration;
  *
  * @author me
  */
-public abstract class Answered implements EventObserver {
+public abstract class Answered implements Reaction {
     
     private Task question;
     private NAR nar;

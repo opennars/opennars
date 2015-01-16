@@ -22,8 +22,8 @@ package nars.gui;
 
 import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
-import nars.core.build.Default.CommandLineNARBuilder;
-import nars.core.control.experimental.AntCore;
+import nars.build.Default.CommandLineNARBuilder;
+import nars.control.experimental.AntCore;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 

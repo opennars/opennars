@@ -6,7 +6,7 @@
 package nars;
 
 import nars.core.NAR;
-import nars.logic.AbstractObserver;
+import nars.event.AbstractReaction;
 import nars.logic.ImmediateProcess;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Sentence;
@@ -19,7 +19,7 @@ import nars.logic.entity.Task;
  * improved performance.  However these can be uesd for comparing results.
  * 
  */
-abstract public class AbstractMirror extends AbstractObserver {
+abstract public class AbstractMirror extends AbstractReaction {
 
     private final NAR nar;
 

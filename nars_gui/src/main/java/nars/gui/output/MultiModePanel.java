@@ -4,7 +4,7 @@ package nars.gui.output;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.NAR;
 import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
 import nars.io.Output;
@@ -24,7 +24,7 @@ import static javax.swing.SwingUtilities.invokeLater;
  *
  * @author me
  */
-public class MultiModePanel extends NPanel implements EventObserver {
+public class MultiModePanel extends NPanel implements Reaction {
     final float activityIncrement = 0.5f; //per output
     final float activityMomentum = 0.95f;
 

@@ -6,14 +6,14 @@ package nars.rl;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import automenta.vivisect.swing.NWindow;
-import nars.core.EventEmitter;
 import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
 import nars.core.NAR;
-import nars.core.build.Default;
+import nars.event.Reaction;
+import nars.build.Default;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Term;
@@ -37,7 +37,7 @@ import static nars.logic.nal7.Tense.Eternal;
 /**
  * TODO add existing concepts before it is added
  */
-public class TermVectors implements EventEmitter.EventObserver {
+public class TermVectors implements Reaction {
 
     NARGraph graph;
     HyperassociativeMap map;
@@ -145,7 +145,7 @@ public class TermVectors implements EventEmitter.EventObserver {
         }
     }
 
-    public static void main(String[] args) throws Narsese.InvalidInputException {
+    public static void main(String[] args) throws InvalidInputException {
         int dimensions = 1;
 
         NAR n = new NAR(new Default());

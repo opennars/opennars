@@ -20,7 +20,7 @@ package nars.util;
 //package nars.test.other;
 //
 //import java.io.StringWriter;
-//import nars.core.build.DefaultNARBuilder;
+//import nars.build.DefaultNARBuilder;
 //import nars.core.NAR;
 //import nars.logic.entity.Sentence;
 //import nars.io.TextOutput;

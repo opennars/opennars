@@ -2,7 +2,7 @@ package nars.core;
 
 import nars.io.Output;
 import nars.io.TextOutput;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 import nars.logic.nal7.Tense;
 
@@ -33,7 +33,7 @@ public class TestNAR extends NAR {
         super(b);
     }
 
-    public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.InvalidInputException {
+    public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
         TaskCondition tc = new TaskCondition(this, Output.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
@@ -44,7 +44,7 @@ public class TestNAR extends NAR {
         return et;
     }
 
-    public ExplainableTask mustOutput(long withinCycles, String task) throws Narsese.InvalidInputException {
+    public ExplainableTask mustOutput(long withinCycles, String task) throws InvalidInputException {
         Task t = narsese.parseTask(task);
         //TODO avoid reparsing term from string
         if (t.sentence.truth!=null)
@@ -53,23 +53,23 @@ public class TestNAR extends NAR {
             return mustOutput(withinCycles, t.getTerm().toString(), t.sentence.punctuation, -1, -1);
     }
 
-    public ExplainableTask mustOutput(long withinCycles, String term, char punc, float freq, float conf) throws Narsese.InvalidInputException {
+    public ExplainableTask mustOutput(long withinCycles, String term, char punc, float freq, float conf) throws InvalidInputException {
         long now = time();
         return mustOutput(now, now + withinCycles, term, punc, freq, freq, conf, conf);
     }
 
-    public ExplainableTask mustBelieve(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.InvalidInputException {
+    public ExplainableTask mustBelieve(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         long now = time();
         return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
     }
-    public ExplainableTask mustBelieve(long cycleStart, long cycleStop, String term, float freq, float confidence) throws Narsese.InvalidInputException {
+    public ExplainableTask mustBelieve(long cycleStart, long cycleStop, String term, float freq, float confidence) throws InvalidInputException {
         long now = time();
         return mustOutput(now + cycleStart, now + cycleStop, term, '.', freq, freq, confidence, confidence);
     }
-    public ExplainableTask mustBelieve(long withinCycles, String term, float freq, float confidence) throws Narsese.InvalidInputException {
+    public ExplainableTask mustBelieve(long withinCycles, String term, float freq, float confidence) throws InvalidInputException {
         return mustOutput(withinCycles, term, '.', freq, confidence);
     }
-    public ExplainableTask mustBelieve(long withinCycles, String term, float confidence) throws Narsese.InvalidInputException {
+    public ExplainableTask mustBelieve(long withinCycles, String term, float confidence) throws InvalidInputException {
         return mustBelieve(withinCycles, term, 1.0f, confidence);
     }
 
@@ -82,7 +82,7 @@ public class TestNAR extends NAR {
         return explain(t);
     }
 
-    @Override public ExplainableTask ask(String termString) throws Narsese.InvalidInputException {
+    @Override public ExplainableTask ask(String termString) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
         Task t = super.ask(termString);
@@ -92,7 +92,7 @@ public class TestNAR extends NAR {
     }
 
     @Override
-    public ExplainableTask believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws Narsese.InvalidInputException {
+    public ExplainableTask believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
         Task t = super.believe(pri, dur, termString, tense, freq, conf);
@@ -102,23 +102,23 @@ public class TestNAR extends NAR {
     }
 
     @Override
-    public ExplainableTask believe(String termString) throws Narsese.InvalidInputException {
+    public ExplainableTask believe(String termString) throws InvalidInputException {
         return explainable(super.believe(termString));
     }
 
 
     @Override
-    public ExplainableTask believe(String termString, float conf) throws Narsese.InvalidInputException {
+    public ExplainableTask believe(String termString, float conf) throws InvalidInputException {
         return explainable(super.believe(termString, conf));
     }
 
     @Override
-    public ExplainableTask believe(String termString, float freq, float conf) throws Narsese.InvalidInputException {
+    public ExplainableTask believe(String termString, float freq, float conf) throws InvalidInputException {
         return explainable(super.believe(termString, freq, conf));
     }
 
     @Override
-    public ExplainableTask believe(String termString, Tense tense, float freq, float conf) throws Narsese.InvalidInputException {
+    public ExplainableTask believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         return explainable(super.believe(termString, tense, freq, conf));
     }
 

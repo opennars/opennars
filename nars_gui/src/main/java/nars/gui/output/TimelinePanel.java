@@ -1,7 +1,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 
 /**
  *
@@ -9,7 +9,7 @@ import nars.core.EventEmitter.EventObserver;
  */
 
 
-public class TimelinePanel extends NPanel implements EventObserver {
+public class TimelinePanel extends NPanel implements Reaction {
 
     @Override
     protected void onShowing(boolean showing) {

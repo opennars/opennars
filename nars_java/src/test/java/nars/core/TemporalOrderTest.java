@@ -4,7 +4,7 @@
  */
 package nars.core;
 
-import nars.core.build.Default;
+import nars.build.Default;
 import nars.io.TextOutput;
 import nars.io.condition.OutputContainsCondition;
 import org.junit.Test;

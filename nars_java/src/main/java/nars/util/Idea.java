@@ -5,7 +5,7 @@
 package nars.util;
 
 import com.google.common.base.Objects;
-import nars.core.EventEmitter.EventObserver;
+import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
@@ -258,7 +258,7 @@ public class Idea implements Iterable<Concept> {
         return false;
     }
     
-    public static class IdeaSet extends HashMap<CharSequence,Idea> implements EventObserver {
+    public static class IdeaSet extends HashMap<CharSequence,Idea> implements Reaction {
         private final NAR nar;
 
         public IdeaSet(NAR n) {
