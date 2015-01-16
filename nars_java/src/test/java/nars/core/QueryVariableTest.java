@@ -1,7 +1,7 @@
 package nars.core;
 
 import nars.core.build.Default;
-import nars.io.TraceWriter;
+import nars.io.TextOutput;
 import nars.io.narsese.Narsese;
 import org.junit.Test;
 
@@ -12,14 +12,15 @@ public class QueryVariableTest {
 
         TestNAR n = new TestNAR(new Default().level(6));
 
-        //TextOutput.out(n);
-        new TraceWriter(n, System.out);
+        TextOutput.out(n);
+        //new TraceWriter(n, System.out);
 
+        n.mustBelieve(0,1, "<a --> b>", 1.0f, 0.9f);
         n.believe("<a --> b>");
         n.step(1);
         n.ask("<?x --> b>");
         n.step(1);
-        n.mustBelieve(100, "<a --> b>", 1.0f, 0.1f);
+
         n.run();
     }
 }

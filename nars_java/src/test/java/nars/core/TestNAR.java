@@ -59,7 +59,12 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustBelieve(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.InvalidInputException {
-        return mustOutput(0, withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
+        long now = time();
+        return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
+    }
+    public ExplainableTask mustBelieve(long cycleStart, long cycleStop, String term, float freq, float confidence) throws Narsese.InvalidInputException {
+        long now = time();
+        return mustOutput(now + cycleStart, now + cycleStop, term, '.', freq, freq, confidence, confidence);
     }
     public ExplainableTask mustBelieve(long withinCycles, String term, float freq, float confidence) throws Narsese.InvalidInputException {
         return mustOutput(withinCycles, term, '.', freq, confidence);
@@ -137,7 +142,7 @@ public class TestNAR extends NAR {
             error = e;
         }
 
-        assertTrue("time exceeded", time() <= finalCycle);
+        assertTrue("time exceeded", time() > finalCycle);
 
         int conditions = musts.size();
 
