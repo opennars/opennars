@@ -31,7 +31,7 @@ public class DefaultOperators {
             
             //concept operations for internal perceptions
             new Remind(),   // create/activate a concept
-            //new Consider(nal),  // find the most active concept            
+            new Consider(),  // do one inference step on a concept
             new Name(),         // turn a compount term into an atomic term
             //new Abbreviate(),
             new Register(),
