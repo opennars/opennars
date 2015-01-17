@@ -433,7 +433,7 @@ public class Narsese {
         String s = s0.trim();
         int i = topRelation(s);
         if (i < 0) {
-            throw new InvalidInputException("invalid statement: topRelation(s) < 0");
+            throw new InvalidInputException("invalid statement: topRelation(s) < 0: " + s0);
         }
         String relation = s.substring(i, i + 3);
         Term subject = parseTerm(s.substring(0, i));

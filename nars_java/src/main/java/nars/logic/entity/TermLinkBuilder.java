@@ -3,6 +3,7 @@ package nars.logic.entity;
 import nars.core.Parameters;
 import nars.util.bag.Bag;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,6 +15,9 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
 
     final Map<Term,TermLinkTemplate> template;
 
+    /** cache of non-transform termlinks for fast iteration without iterator */
+    final List<TermLinkTemplate> nonTransforms;
+
     private final CompoundTerm host;
 
     private Term from = null;
@@ -23,33 +27,22 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
     private TermLinkTemplate temp;
     private boolean incoming;
     private BudgetValue budget = new BudgetValue(0,0,0);
-    private int nonTransforms;
 
     public TermLinkBuilder(Concept c) {
         this.concept = c;
 
         host = (CompoundTerm)c.getTerm();
-        nonTransforms = -1;
 
         int complexity = host.getComplexity();
 
         template = Parameters.newHashMap(complexity + 1);
+        nonTransforms = Parameters.newArrayList(complexity/2);
 
         host.prepareComponentLinks(this);
     }
 
     /** count how many termlinks are non-transform */
-    public int getNonTransforms() {
-        if (nonTransforms == -1) {
-            synchronized (template) {
-                int count = 0;
-                for (TermLinkTemplate tlt : template.values()) {
-                    if (tlt.type != TermLink.TRANSFORM)
-                        count++;
-                }
-                nonTransforms = count;
-            }
-        }
+    public List<TermLinkTemplate> getNonTransforms() {
         return nonTransforms;
     }
 
@@ -59,7 +52,8 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
 
         tl.setConcept(host);
 
-        nonTransforms = -1;
+        if (tl.type!=TermLink.TRANSFORM)
+            nonTransforms.add(tl);
     }
 
 
@@ -116,7 +110,7 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
 
     public void clear() {
         template.clear();
-        nonTransforms = -1;
+        nonTransforms.clear();
     }
 
 }

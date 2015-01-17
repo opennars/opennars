@@ -98,6 +98,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
     /** size below which to return items in flat, sequential, cyclic iterative order. */
     int flatThreshold = 2;
+
     
     public DelayBag(AtomicDouble forgetRate, int capacity) {
         this(forgetRate, capacity, (int)(0.25f * capacity));
@@ -108,8 +109,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         this.forgetRate = forgetRate;
 
         if (Parameters.THREADS == 1) {
-             this.items = new LinkedHashMap(capacity);
-             //this.items = new ConcurrentHashMap(capacity);
+             //this.items = new LinkedHashMap(capacity);
+             this.items = new ConcurrentHashMap(capacity);
              this.pending = new ArrayDeque((int)(targetPendingBufferSize * capacity));
         }
         else {

@@ -27,8 +27,6 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static nars.util.bag.LevelBag.NextNonEmptyLevelMode.Default;
-
 /**
  * Original Bag implementation which distributes items into
  * discrete levels (queues) according to priority
@@ -86,7 +84,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         Default, Fast
     }
     
-    NextNonEmptyLevelMode nextNonEmptyMode = Default;
+    NextNonEmptyLevelMode nextNonEmptyMode = Parameters.DEFAULT_LEVEL_BAG_MODE;
 
 
     
@@ -328,9 +326,19 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     protected void nextNonEmptyLevelFast() {
                
         int cl = DISTRIBUTOR[(levelIndex++) % DISTRIBUTOR.length];
-        while (levelEmpty[cl]) {
-            cl++;
-            cl%=levels;
+        if (cl % 2 == 0) {
+            //up
+            while (levelEmpty[cl]) {
+                cl++;
+                cl %= levels;
+            }
+        }
+        else {
+            //down
+            while (levelEmpty[cl]) {
+                cl--;
+                if (cl < 0) cl = levelEmpty.length-1;
+            }
         }
 
         currentLevel = cl;

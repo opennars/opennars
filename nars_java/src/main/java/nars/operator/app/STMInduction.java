@@ -19,9 +19,9 @@ public class STMInduction extends AbstractPlugin {
     public final ArrayDeque<Task> stm;
     int stmSize;
 
-    public STMInduction(int stmSize) {
-        this.stmSize = stmSize;
-        stm = new ArrayDeque(stmSize);
+    public STMInduction() {
+        this.stmSize = 1;
+        stm = new ArrayDeque();
     }
 
     @Override
@@ -48,15 +48,13 @@ public class STMInduction extends AbstractPlugin {
         }
     }
 
-    public void setStmSize(int stmSize) {
-        this.stmSize = stmSize;
-    }
-
     public int getStmSize() {
         return stmSize;
     }
 
     boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
+
+        stmSize = nal.memory.param.shortTermMemoryHistory.get();
 
         if (newEvent.budget == null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;

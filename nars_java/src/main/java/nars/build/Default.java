@@ -88,6 +88,8 @@ public class Default extends Build implements ConceptBuilder {
 
         
         param.duration.set(5);
+        param.shortTermMemoryHistory.set(1);
+
         param.conceptForgetDurations.set(2.0);
         param.taskLinkForgetDurations.set(4.0);
         param.termLinkForgetDurations.set(10.0);
@@ -145,7 +147,7 @@ public class Default extends Build implements ConceptBuilder {
             if (pluginPlanner != null) {
                 n.addPlugin(pluginPlanner);
             }
-            n.addPlugin(new STMInduction(Parameters.STM_SIZE));
+            n.addPlugin(new STMInduction());
         }
 
         if (level >= 8) {

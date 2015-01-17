@@ -24,6 +24,7 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
+import nars.util.bag.LevelBag;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.Set;
  * All static values will be removed so that this is an entirely dynamic class.
  */
 public class Parameters {
+
 
     public static int DEFAULT_NAL = 8;
 
@@ -182,8 +184,9 @@ public class Parameters {
     
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
-    
 
+
+    public static final LevelBag.NextNonEmptyLevelMode DEFAULT_LEVEL_BAG_MODE = LevelBag.NextNonEmptyLevelMode.Fast;;
     
     /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
     public static boolean TERM_ELEMENT_EQUIVALENCY = false;
@@ -193,7 +196,6 @@ public class Parameters {
     public static boolean IMMEDIATE_ETERNALIZATION=true;
     
     
-    public static int STM_SIZE = 1;
 
 
     public static <X> List<X> newArrayList() {

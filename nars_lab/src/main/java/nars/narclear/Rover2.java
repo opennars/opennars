@@ -79,13 +79,13 @@ public class Rover2 extends PhysicsModel {
 
         float framesPerSecond = 30f;
 
-        Parameters.STM_SIZE = 4;
         (nar.param).noiseLevel.set(3);
         (nar.param).duration.set(5);
         (nar.param).conceptForgetDurations.set(25f);
         (nar.param).taskLinkForgetDurations.set(25f);
         (nar.param).termLinkForgetDurations.set(25f);
         (nar.param).novelTaskForgetDurations.set(20f);
+        nar.param.shortTermMemoryHistory.set(4);
 
         final Rover2 theRover = new Rover2(nar);
 

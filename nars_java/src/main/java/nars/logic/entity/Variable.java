@@ -247,11 +247,11 @@ public class Variable extends Term {
     protected static CharSequence newName(char type, int index) {
         
         int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
-        CharBuffer cb  = CharBuffer.allocate(1 + digits).append(type);
+        StringBuilder cb  = new StringBuilder(1 + digits).append(type);
         do {
             cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
         } while (index != 0);
-        return cb.compact().toString();
+        return cb.toString();
 
     }
     

@@ -36,7 +36,6 @@ import nars.util.bag.Bag.MemoryAware;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static nars.logic.BudgetFunctions.divide;
 import static nars.logic.BudgetFunctions.rankBelief;
@@ -587,11 +586,12 @@ public class Concept extends Item<Term> implements Termable {
      * @return whether any activity happened as a result of this invocation
      */
     public synchronized boolean buildTermLinks(final BudgetValue taskBudget) {
-        int recipients = termLinker.getNonTransforms();
 
-        if (termLinker.size() == 0) {
+        if (termLinker.size() == 0)
             return false;
-        }
+
+        List<TermLinkTemplate> nonTransforms = termLinker.getNonTransforms();
+        int recipients = nonTransforms.size();
 
         //TODO make this parameterizable
         //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
@@ -614,30 +614,29 @@ public class Concept extends Item<Term> implements Termable {
 
 
         boolean activity = false;
-        for (final Map.Entry<Term,TermLinkTemplate> tlt : termLinker.template.entrySet()) {
-            TermLinkTemplate template = tlt.getValue();
-            if (template.type != TermLink.TRANSFORM) {
 
+        for (int i = 0; i < recipients; i++) {
+            TermLinkTemplate template = nonTransforms.get(i);
+            //if (template.type != TermLink.TRANSFORM) {
 
-                Term target = template.target;
+            Term target = template.target;
 
-                final Concept concept = memory.conceptualize(taskBudget, target);
-                if (concept == null) {
-                    termBudgetBalance += subBudget;
-                    continue;
-                }
+            final Concept concept = memory.conceptualize(taskBudget, target);
+            if (concept == null) {
+                termBudgetBalance += subBudget;
+                continue;
+            }
 
-                activity = true;
+            activity = true;
 
-                // this concept termLink to that concept
-                activateTermLink(termLinker.set(term, target));
+            // this concept termLink to that concept
+            activateTermLink(termLinker.set(term, target));
 
-                // that concept termLink to this concept
-                concept.activateTermLink(termLinker.set(target, term));
+            // that concept termLink to this concept
+            concept.activateTermLink(termLinker.set(target, term));
 
-                if (target instanceof CompoundTerm) {
-                    concept.buildTermLinks(termLinker.getBudget());
-                }
+            if (target instanceof CompoundTerm) {
+                concept.buildTermLinks(termLinker.getBudget());
             }
         }
         return activity;
@@ -748,7 +747,9 @@ public class Concept extends Item<Term> implements Termable {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.time();
 
-        for (final Sentence belief : beliefs) {            
+        final int b = beliefs.size();
+        for (int i = 0; i < b; i++) {
+            Sentence belief = beliefs.get(i);
             nal.emit(BeliefSelect.class, belief);
 
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);

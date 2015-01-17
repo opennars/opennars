@@ -24,13 +24,16 @@ package nars.tictactoe;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.NARPrologMirror;
-import nars.event.Reaction;
+import nars.build.Neuromorphic;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.build.Discretinuous;
+import nars.core.Parameters;
+import nars.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.Output.OUT;
+import nars.io.narsese.InvalidInputException;
+import nars.io.narsese.Narsese;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
@@ -42,10 +45,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
@@ -55,6 +56,8 @@ import static java.awt.BorderLayout.SOUTH;
  * @author tc
  */
 public class TicTacToeWithProlog extends JPanel {
+
+    static { Parameters.DEBUG =true; }
 
     final boolean HUMAN = false;
     final boolean COMPUTER = true;
@@ -82,29 +85,33 @@ public class TicTacToeWithProlog extends JPanel {
     public TicTacToeWithProlog() {
         super(new BorderLayout());
 
-        nar = new NAR(new Discretinuous().
+        nar = new NAR(new Neuromorphic(16).
                 setConceptBagSize(1000).
                 setSubconceptBagSize(10000).
+                setInternalExperience(null).
                 simulationTime());
         
-        new NARPrologMirror(nar, 0.75f, true, true, false);
-        new NARPrologMirror(nar, 0.75f, true, false, true);
-        
+        new NARPrologMirror(nar, 0.95f, true, true, true);
+
+
         nar.memory.addOperator(new AddO("^addO"));        
-        (nar.param).duration.set(1000);
-        (nar.param).noiseLevel.set(0);
+        nar.param.duration.set(5);
+        nar.param.noiseLevel.set(0);
+        nar.param.shortTermMemoryHistory.set(8);
+        nar.setCyclesPerFrame(64);
         
         new NARSwing(nar);    
         nar.on(FrameEnd.class, new Reaction() {
 
             @Override
             public void event(Class event, Object[] args) {
-                nar.memory.addSimulationTime(500);
+                nar.memory.addSimulationTime(1);
             }
             
         });
-        nar.start(30);
-        
+        nar.start(40);
+
+
         JPanel menu = new JPanel(new FlowLayout());
 
         JButton resetButton = new JButton("RESET");
@@ -216,7 +223,8 @@ public class TicTacToeWithProlog extends JPanel {
     public int index(GridButtonPanel.ConceptButton cp) {
         return cp.bx + 3 * cp.by;
     }
-    
+
+
 
     public class AddO extends Operator {
 
@@ -232,11 +240,11 @@ public class TicTacToeWithProlog extends JPanel {
                 i = Integer.parseInt( args[0].toString() );
             }
             catch (Throwable e) {
-                return null;
+                return inputSuccess(false);
             }
             
             if (!((i >=0) && (i <=8)))
-                return null;
+                return inputSuccess(false);
             
             if (playing == COMPUTER) {
                 
@@ -249,27 +257,45 @@ public class TicTacToeWithProlog extends JPanel {
                 
                 if (success) {
                     nar.emit(TicTacToeWithProlog.class, "NARS plays: " + i);
-                    nar.addInput("<input --> succeeded>. :|: %" + (success ? "1.00" : "0.00") + "%" );
                     nar.addInput("<(*," + i + ",nars) --> move>. :|:");
                     playing = !playing;
                     
                     System.out.println( operation.getTask().getExplanation() );
 
                     updateField();
-
+                    return inputSuccess(true);
                 }
                 else {
                     nar.emit(TicTacToeWithProlog.class, "NARS selects invalid cell: " + i);
-                    nar.addInput("(--,<input --> succeeded>). :|:");
+                    return inputSuccess(false, ("<" + i + " --> human>. :|:"));
                 }
             }
             else {
                 nar.emit(TicTacToeWithProlog.class, "NARS not playing, but wants: " + i);    
-                nar.addInput("(--,<input --> succeeded>). :|:");
+                return inputSuccess(false, "<(*,undecided,human) --> move>. :|:");
             }
             
-            
-            return null;
+        }
+
+        Narsese parser = new Narsese(nar);
+
+        private List<Task> inputSuccess(boolean succes, String... reason) {
+
+            List<Task> l = new ArrayList();
+
+            Task t = null;
+            try {
+                for (String r : reason)
+                    l.add(parser.parseTask(r));
+                String truth = (succes ? "%1.00;" : "%0.00;") + "0.95%";
+                t = parser.parseTask("<input --> succeeded>. :|: " + truth);
+                l.add(t);
+            } catch (InvalidInputException e) {
+                e.printStackTrace();
+            }
+
+            return l;
+
         }
 
     }
@@ -290,19 +316,28 @@ public class TicTacToeWithProlog extends JPanel {
     };
     
     public void updateField() {
-        if (playing == COMPUTER)
+        if (playing == COMPUTER) {
             status.setText("NARS Turn");
-        else
+            nar.addInput("<(*,undecided,nars) --> move>. :|:");
+        }
+        else {
             status.setText("Humans Turn");
+            nar.addInput("<(*,undecided,human) --> move>. :|:");
+        }
                     
         Boolean winner = null;
+
+
 
         for (int p = 1; p <= 2; p++) { // 1=human, 2=nars            
             for (int[] h : howToWin) {
                 if (field[h[0]]!=p) continue;
                 if (field[h[1]]!=p) continue;
                 if (field[h[2]]!=p) continue;
-                winner = p == 1 ? HUMAN : COMPUTER;
+                if (p == 1) winner = HUMAN;
+                else if (p == 2) winner = COMPUTER;
+                else
+                    winner = null;
             }
         }
 
@@ -347,7 +382,7 @@ public class TicTacToeWithProlog extends JPanel {
     public void teach() {
         
         String rules = "";
-        rules+=("<nars --> win>! %1.0;0.99%\n");
+        //rules+=("<nars --> win>! %1.0;0.99%\n");
 
         //+"<(^addO,$1) =/> <input --> succeeded>>.\n"); //usually input succeeds
         //+"<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //usually input succeeds but not when it was set by player cause overwrite is not valid
@@ -357,53 +392,61 @@ public class TicTacToeWithProlog extends JPanel {
             int a = h[0];
             int b = h[1];
             int c = h[2];
-            rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
-            rules+=("<(&|,<" + a + " --> $1>,<" + b + " --> $1>,<" + c + " --> $1>) =/> <$1 --> win>>.\n");
+            //rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
+            rules+=("$0.80;0.95$ <(&&,<" + a + " --> $1>,<" + b + " --> $1>,<" + c + " --> $1>) ==> <$1 --> win>>. %1.00;0.99%\n");
         }
-        
+
         //for NAL9 (anticipate)
+        //DOESNT PARSE THIS CORRECTLY
+        /*
         if (nar.memory.getOperator("^anticipate")!=null) {
-            rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> (--,<input --> succeeded>)>>.\n");
-            rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
-        }
-        
-        rules+=("<nars --> win>! %1.0;0.99%\n");
-        rules+=("<human --> win>! %0.0;0.99%\n");
+            rules+=("< (&/,(--,<$1 --> empty>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
+            rules+=("< (&/,(--,<$1 --> field>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
+        }*/
+
+        //no current winners
+        rules+=("<nars --> win>. %0.50;0.99%\n");
+        rules+=("<human --> win>. %0.50;0.99%\n");
+
+        rules+=("$0.99;0.90$ <nars --> win>! %1.00;0.99%\n");
+        rules+=("$0.99;0.90$ <human --> win>! %0.00;0.99%\n");
+        rules+=("$0.70;0.85$ <input --> succeeded>!\n");
 
         rules+=("(&/,<#1 --> field>,(^addO,#1))!\n"); //doing something is also a goal :D
-        
 
-        
-        rules+=("(^addO,0)! %1.0;0.7%\n");
-        rules+=("(^addO,1)! %1.0;0.7%\n");
-        rules+=("(^addO,2)! %1.0;0.7%\n");
-        rules+=("(^addO,3)! %1.0;0.7%\n");
-        rules+=("(^addO,4)! %1.0;0.7%\n");
-        rules+=("(^addO,5)! %1.0;0.7%\n");
-        rules+=("(^addO,6)! %1.0;0.7%\n");
-        rules+=("(^addO,7)! %1.0;0.7%\n");
-        rules+=("(^addO,8)! %1.0;0.7%\n");
-         
-        
-        rules+=("<{nars,human,empty} <-> field>.\n");        
+        rules+=("(^addO,0)! %1.0;0.5%\n");
+        rules+=("(^addO,1)! %1.0;0.5%\n");
+        rules+=("(^addO,2)! %1.0;0.5%\n");
+        rules+=("(^addO,3)! %1.0;0.5%\n");
+        rules+=("(^addO,4)! %1.0;0.5%\n");
+        rules+=("(^addO,5)! %1.0;0.5%\n");
+        rules+=("(^addO,6)! %1.0;0.5%\n");
+        rules+=("(^addO,7)! %1.0;0.5%\n");
+        rules+=("(^addO,8)! %1.0;0.5%\n");
+
+        rules+=("<{nars,human} --> players>.\n");
+        rules+=("<field --> [nars,human,empty]>.\n");
         rules+=("(||,<human --> win>,<nars --> win>).\n");
-        rules+=("<0 --> field>.\n");
-        rules+=("<1 --> field>.\n");
+        rules+=("<{0,1,2,3,4,5,6,7,8} --> field>.\n");
+        /*rules+=("<1 --> field>.\n");
         rules+=("<2 --> field>.\n");
         rules+=("<3 --> field>.\n");
         rules+=("<4 --> field>.\n");
         rules+=("<5 --> field>.\n");
         rules+=("<6 --> field>.\n");
         rules+=("<7 --> field>.\n");
-        rules+=("<8 --> field>.\n");
+        rules+=("<8 --> field>.\n");*/
          
-        rules+=("<input --> succeeded>!\n");
-        
-        nar.addInput(rules);
+
+        String[] rs = rules.split("\n");
+        for (String x : rs) {
+            nar.addInput(x);
+        }
         
         updateField();
 
     }
+
     
     private static final Font buttonFont = Video.monofont.deriveFont(Font.BOLD).deriveFont(34f);
 

@@ -30,7 +30,6 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 
-import java.nio.CharBuffer;
 import java.util.*;
 
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
@@ -305,7 +304,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             size += 1 + t.name().length();
         
         
-        final CharBuffer n = CharBuffer.allocate(size)
+        final StringBuilder n = new StringBuilder(size)
             .append(COMPOUND_TERM_OPENER.ch).append(opString);
             
         for (final Term t : arg) {            
@@ -314,7 +313,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         
         n.append(COMPOUND_TERM_CLOSER.ch);
                         
-        return n.compact().toString();
+        return n.toString();
     }
     
 

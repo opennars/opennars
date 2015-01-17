@@ -44,7 +44,7 @@ abstract public class SetTensional extends CompoundTerm {
             size += 1 + t.name().length();
         
         
-        final CharBuffer n = CharBuffer.allocate(size);
+        final StringBuilder n = new StringBuilder(size);
         
         n.append(opener);                    
         for (int i = 0; i < arg.length; i++) {
@@ -54,7 +54,7 @@ abstract public class SetTensional extends CompoundTerm {
         n.append(closer);
                
         
-        return n.compact().toString();
+        return n.toString();
     }
 
     

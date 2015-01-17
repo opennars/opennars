@@ -237,8 +237,8 @@ public abstract class Statement extends CompoundTerm {
         final CharSequence subjectName = subject.name();
         final CharSequence predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
-        
-        CharBuffer cb = CharBuffer.allocate(length);
+
+        StringBuilder cb = new StringBuilder(length);
         
         cb.append(STATEMENT_OPENER.ch);
         
@@ -252,7 +252,7 @@ public abstract class Statement extends CompoundTerm {
                 
         cb.append(STATEMENT_CLOSER.ch);
                         
-        return cb.compact().toString();
+        return cb.toString();
     }    
     /**
      * Check the validity of a potential Statement. [To be refined]

@@ -5,6 +5,7 @@
  */
 package nars.util;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.TextInput;
@@ -17,6 +18,7 @@ import java.util.List;
  *
  * @author me
  */
+@Ignore
 public class NALPerformance  {
     
     static public int similarsToSave = 6;

@@ -2,6 +2,7 @@ package nars.logic;
 
 import junit.framework.TestCase;
 import nars.build.Default;
+import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -28,9 +29,13 @@ import java.util.Map;
 @RunWith(Parameterized.class)
 public class NALTest extends TestCase {
 
+    static {
+        Parameters.DEBUG = false;
+    }
+
     static final Build[] builds = new Build[] {
-            new Default()
-            //new Neuromorphic(3).setMaxInputsPerCycle(1)
+            new Default().setInternalExperience(null),
+            new Neuromorphic(4).setMaxInputsPerCycle(1)
     };
 
     @Parameterized.Parameters(name="{1} {0}")
@@ -205,8 +210,7 @@ public class NALTest extends TestCase {
         System.out.flush();
 
         Memory.resetStatic(randomSeed);
-        Parameters.DEBUG = true;
-        
+
         String input;
         NAR nar;
 

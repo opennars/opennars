@@ -36,6 +36,10 @@ public class Param implements Serializable {
        The range of "now" is [-DURATION/2, +DURATION/2];      */
     public final AtomicDuration duration = new AtomicDuration();
 
+
+    public final AtomicInteger shortTermMemoryHistory = new AtomicDuration();
+
+
     Timing timing;
     Forgetting forgetting;
     final List<DerivationFilter> defaultDerivationFilters = new ArrayList();

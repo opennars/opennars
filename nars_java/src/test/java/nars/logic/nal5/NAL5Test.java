@@ -2,7 +2,6 @@ package nars.logic.nal5;
 
 import nars.build.Default;
 import nars.core.Build;
-import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.AbstractNALTest;
 import org.junit.Test;
@@ -43,9 +42,8 @@ public class NAL5Test extends AbstractNALTest {
         ''outputMustContain('<<robin --> bird> ==> <robin --> animal>>. %0.00;0.81%')
         */
 
-        long time = 25;
+        long time = 525;
 
-        TextOutput.out(n);
         n.believe("<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>", Eternal, 0.0f, 0.9f)
                 .en("If robin is a type of bird then robin is not a type of flying animal.");
         n.believe("<<robin --> bird> ==> <robin --> [flying]>>", Eternal, 1f, 0.9f )
@@ -54,7 +52,6 @@ public class NAL5Test extends AbstractNALTest {
         n.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 0f, 0.81f, 0.81f)
                 .en("It is unlikely that if a robin is a type of bird then robin is a type of animal.");
 
-        n.run(time);
     }
 
     /** 5.19 */
@@ -73,7 +70,7 @@ public class NAL5Test extends AbstractNALTest {
 
         */
 
-        long time = 25;
+        long time = 525;
 
 
         n.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", Eternal, 0.9f, 0.9f)
