@@ -51,6 +51,7 @@ public class Launcher extends javax.swing.JFrame {
         
         jLabel1.setIcon(new ImageIcon("./doc/opennars_logo2.png"));
 
+        this.setTitle("OpenNARS Launcher");
         
         try {
             BufferedImage myPicture = ImageIO.read(resource("mario.png"));
