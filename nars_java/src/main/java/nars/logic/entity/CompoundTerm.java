@@ -796,7 +796,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * Adds the termlink templates to parameter TermLinkBuilder which manages
      * them for a concept
      */
-    public void prepareComponentLinks(TermLinkBuilder t) {
+    public void prepareComponentLinks(TermLink.TermLinkBuilder t) {
         Terms.prepareComponentLinks(t, this);
     }
 

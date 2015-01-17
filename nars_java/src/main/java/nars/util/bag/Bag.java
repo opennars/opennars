@@ -2,7 +2,6 @@ package nars.util.bag;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Item;
 
 import java.util.Iterator;
@@ -15,19 +14,6 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         public void setMemory(Memory m);
     }
 
-    public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable {
-
-        public K name();
-
-        /** the budget value used by a new instance, or to merge with an existing */
-        public BudgetValue getBudget();
-
-        /** called if putIn a bag and the item specified by the key doesn't exist,
-         * so this will create it and the bag will insert the new instance  */
-        public V newInstance();
-
-    }
-    
     public static final int bin(final float x, final int bins) {
         int i = (int)Math.floor((x + 0.5f/bins) * bins);
         return i;

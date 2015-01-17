@@ -191,7 +191,8 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     
 
     protected boolean isUniqueByOcurrenceTime() {
-        return ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
+        return true;
+        //return ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
     }
     
     /**

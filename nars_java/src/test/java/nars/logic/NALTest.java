@@ -2,7 +2,6 @@ package nars.logic;
 
 import junit.framework.TestCase;
 import nars.build.Default;
-import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -34,13 +33,13 @@ public class NALTest extends TestCase {
     }
 
     static final Build[] builds = new Build[] {
-            new Default().setInternalExperience(null),
-            new Neuromorphic(4).setMaxInputsPerCycle(1)
+            new Default()
+            //new Neuromorphic(4).setMaxInputsPerCycle(1)
     };
 
     private final Build build;
 
-    int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
+    int minCycles = 1750; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public long randomSeed = 1;
     static public boolean showInput = true;
     static public boolean showOutput = false;
@@ -123,7 +122,7 @@ public class NALTest extends TestCase {
         }
         
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
-        Result result = JUnitCore.runClasses(new ParallelComputer(true, false),c);
+        Result result = JUnitCore.runClasses(new ParallelComputer(false, false),c);
         //Result result = JUnitCore.runClasses(Computer.serial(), c);
 
         if (result.getFailures()!=null) {

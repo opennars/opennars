@@ -328,7 +328,7 @@ public class Terms {
      * @param type The type of TermLink to be built
      * @param term The CompoundTerm for which the links are built
      */
-    public static void prepareComponentLinks(TermLinkBuilder tlb, final short type, final CompoundTerm t) {
+    public static void prepareComponentLinks(TermLink.TermLinkBuilder tlb, final short type, final CompoundTerm t) {
         
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
@@ -399,7 +399,7 @@ public class Terms {
         }
     }
 
-   public static void prepareComponentLinks(TermLinkBuilder t, CompoundTerm ct) {
+   public static void prepareComponentLinks(TermLink.TermLinkBuilder t, CompoundTerm ct) {
         short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         prepareComponentLinks(t, type, ct);
     }

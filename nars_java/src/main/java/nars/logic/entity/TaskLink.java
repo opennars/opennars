@@ -20,8 +20,10 @@
  */
 package nars.logic.entity;
 
+import nars.core.Memory;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.Sentence.Sentenceable;
+import nars.util.bag.BagSelector;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -80,7 +82,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
 
 
 
-    public TaskLink(final Task t, final BudgetValue v, int recordLength) {
+    private TaskLink(final Task t, final BudgetValue v, int recordLength) {
         super(v);
         this.type = TermLink.SELF;
         this.index = null;
@@ -91,6 +93,51 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
         this.records = new ArrayDeque(recordLength);
     }
 
+    public static class TaskLinkBuilder implements BagSelector<Task,TaskLink> {
+
+        private final Memory memory;
+        Task currentTask;
+        TermLinkTemplate currentTemplate;
+        BudgetValue currentBudget;
+
+        public TaskLinkBuilder(Memory memory) {
+            this.memory = memory;
+        }
+
+        public TaskLinkBuilder set(BudgetValue budget) {
+            this.currentBudget = budget;
+            return this;
+        }
+
+        public TaskLinkBuilder set(Task task, TermLinkTemplate temp, BudgetValue budget) {
+            return set(budget).set(task,temp);
+        }
+
+        public TaskLinkBuilder set(Task task, TermLinkTemplate temp) {
+            this.currentTask = task;
+            this.currentTemplate = temp;
+            return this;
+        }
+        
+        @Override
+        public Task name() {
+            return currentTask;
+        }
+
+        @Override
+        public BudgetValue getBudget() {
+            return currentBudget;
+        }
+
+        @Override
+        public TaskLink newInstance() {
+            int recordLength = memory.param.termLinkRecordLength.get();
+            if (currentTemplate == null)
+                return new TaskLink(currentTask, currentBudget, recordLength);
+            else
+                return new TaskLink(currentTask, currentTemplate, currentBudget, recordLength);
+        }
+    }
     /**
      * Constructor
      * <p>
@@ -100,7 +147,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
      * @param template The TermLink template
      * @param v The budget
      */
-    public TaskLink(final Task t, final TermLinkTemplate template, final BudgetValue v, int recordLength) {
+    private TaskLink(final Task t, final TermLinkTemplate template, final BudgetValue v, int recordLength) {
         super(v);
         this.type = template.type;
         this.index = template.index;
@@ -109,7 +156,6 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
         
         this.recordLength = recordLength;
         this.records = new ArrayDeque(recordLength);
-        
     }
 
 
