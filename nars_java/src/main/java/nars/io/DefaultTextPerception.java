@@ -140,8 +140,9 @@ public class DefaultTextPerception implements Plugin, Reaction {
         //reset
         parsers.add(new TextReaction() {
             @Override public Object react(String input) {                
-                if (input.equals(Symbols.RESET_COMMAND))
-                    return new Reset();
+                if (input.equals(Symbols.RESET_COMMAND) || (input.startsWith("*") && !input.startsWith("*start")
+                    && !input.startsWith("*stop") && !input.startsWith("*volume"))) //TODO!
+                    return new Reset(input);
                 return null;
             }
         });
