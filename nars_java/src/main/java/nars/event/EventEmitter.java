@@ -31,10 +31,11 @@ public class EventEmitter<E>  {
         this.r = r;
 
         if (Parameters.DEBUG_TRACE_EVENTS) {
-
+            /*
             System.out.println(r);
             System.out.println(r.getDispatcher());
-            System.out.println(r.getEventRouter());
+            System.out.println(r.getRouter());
+            */
 
             r.on(Selectors.matchAll(), x -> {
                 System.out.println(x + " --> " +

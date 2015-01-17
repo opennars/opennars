@@ -1,15 +1,14 @@
 package nars.logic;
 
 import junit.framework.TestCase;
+import nars.build.Default;
 import nars.core.Build;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.build.Default;
-import nars.build.Neuromorphic;
 import nars.io.ExampleFileInput;
-import nars.io.TraceWriter;
 import nars.io.TextOutput;
+import nars.io.TraceWriter;
 import nars.util.NALPerformance;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
@@ -30,8 +29,8 @@ import java.util.Map;
 public class NALTest extends TestCase {
 
     static final Build[] builds = new Build[] {
-            new Default(),
-            new Neuromorphic(3).setMaxInputsPerCycle(1)
+            new Default()
+            //new Neuromorphic(3).setMaxInputsPerCycle(1)
     };
 
     @Parameterized.Parameters(name="{1} {0}")

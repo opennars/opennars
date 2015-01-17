@@ -5,12 +5,13 @@
 package nars.logic.nal7;
 
 import junit.framework.TestCase;
+import nars.build.Default;
 import nars.core.Build;
 import nars.core.Events.Answer;
 import nars.core.NAR;
-import nars.build.Default;
-import nars.io.condition.OutputContainsCondition;
 import nars.event.AbstractReaction;
+import nars.io.TextOutput;
+import nars.io.condition.OutputContainsCondition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -76,22 +77,26 @@ public class VariableTest extends TestCase {
         because ?wat can be unified with 4 since ?wat is a query variable
        */
 
-        n.addInput("<a --> 3>. :|:");
-        n.addInput("<a --> 4>. :/:");
-        n.addInput("<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
-        
         AtomicBoolean solutionFound = new AtomicBoolean(false);
         new AbstractReaction(n, true, Answer.class) {
-            @Override public void event(Class event, Object[] args) {                
+            @Override public void event(Class event, Object[] args) {
                 solutionFound.set(true);
                 n.stop();
             }
         };
 
+        TextOutput.out(n);
+
+        n.addInput("<a --> 3>. :|:");
+        n.addInput("<a --> 4>. :/:");
+        n.addInput("<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
+        
+
+
         //158
         //1738
         //n.run(200); //sufficient for case without internal experience
-        n.run(1800);
+        n.run(100);
           
         assertTrue(solutionFound.get());
         
