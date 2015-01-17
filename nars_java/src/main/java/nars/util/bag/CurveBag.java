@@ -1,5 +1,6 @@
 package nars.util.bag;
 
+import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
@@ -80,26 +81,23 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             super(initialCapacity * 1 + 1);
         }
      
-        @Override public E put(final K key, final E value) {
+        @Override public synchronized E put(final K key, final E value) {
 
-            E removed;
-            
-            synchronized (nameTable) {
+            E removed = putKey(key, value);
+            addItem(value);
 
-                removed = putKey(key, value);
-                if (removed!=null) {
-                    removeItem(removed);
-                }
-
-                addItem(value);
-            }
+            if (removed==value) return null; //same object, nothing displaced
 
             return removed;            
         }
 
         /** put key in index, do not add value */
         public E putKey(final K key, final E value) {
-            return super.put(key, value);
+            E removed = super.put(key, value);
+            if (removed!=null) {
+                removeItem(removed);
+            }
+            return removed;
         }
 
         /** remove key only, not from items */
@@ -107,27 +105,25 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             return super.remove(key);
         }
 
+        /** remove item only, not from keys */
         public void removeItem(final E removed) {
             items.remove(removed);
             mass -= removed.budget.getPriority();
         }
 
-        public void addItem(final E removed) {
-            items.add(removed);
+        /** add item only, not to keys */
+        public void addItem(final E i) {
+            items.add(i);
         }
 
-        @Override public E remove(final Object key) {
+        @Override public synchronized E remove(final Object key) {
 
             E e;
-            
-            synchronized (nameTable) {
-
-                e = removeKey((K)key);
-                if (e!=null) {
-                    removeItem(e);
-                }
-
+            e = removeKey((K)key);
+            if (e!=null) {
+                removeItem(e);
             }
+
             return e;
         }
 
@@ -188,12 +184,12 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
                 System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);            
                 System.out.println(nameTable);
                 System.out.println(items);
-                if (is > in) {
-                    List<E> e = new ArrayList(items);                    
+                /*if (is > in) {
+                    List<E> e = Lists.newArrayList(items);
                     for (E f : nameTable.values())
                         e.remove(f);
                     System.out.println("difference: " + e);
-                }
+                }*/
                 throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
             }
         }
@@ -263,30 +259,22 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public E takeNext() {
-        
-        if (size()==0) return null; // empty bag          
-        if (items.isEmpty()) return null;
-        synchronized (nameTable) {
-            return removeItem( nextRemovalIndex() );    
-        }
+    public synchronized E takeNext() {
+        if (size()==0) return null; // empty bag
+        return removeItem(nextRemovalIndex());
     }
     
 
     @Override
-    public E peekNext() {
-        
+    public synchronized E peekNext() {
         if (size()==0) return null; // empty bag      
-        if (items.isEmpty()) return null;
-        synchronized (nameTable) {
-            return items.get( nextRemovalIndex() );
-        }
+        return items.get( nextRemovalIndex() );
     }
     
     
     /** distributor function */
     public int nextRemovalIndex() {      
-        final float s = size();
+        final float s = items.size(); //size();
         if (randomRemoval) {
             x = Memory.randomNumber.nextFloat();            
         }
@@ -354,31 +342,30 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @param i The Item to put in
      * @return The overflow Item, or null if nothing displaced
      */
-    @Override protected E addItem(E i, boolean index) {
+    @Override protected synchronized E addItem(E i, boolean index) {
 
-        synchronized (nameTable) {
-            float newPriority = i.getPriority();
+        float newPriority = i.getPriority();
 
-            E oldItem = null;
+        E oldItem = null;
 
-            if (size() >= capacity) {      // the bag is full            
-                if (newPriority < getMinPriority())
-                    return i;
+        if (nameTable.size() >= capacity) {
+            // the bag is full
 
-                oldItem = removeItem(0);            
-            }
+            // this item is below the bag's already minimum item
+            if (newPriority < getMinPriority())
+                return i;
 
-            if (index)
-                nameTable.put(i.name(), i);
-            else
-                nameTable.addItem(i);
-
-            mass += (i.budget.getPriority());                  // increase total mass
-            
-            return oldItem;
+            oldItem = removeItem(0);
         }
-        
-        
+
+        if (index)
+            nameTable.put(i.name(), i);
+        else
+            nameTable.addItem(i);
+
+        mass += (i.budget.getPriority());                  // increase total mass
+
+        return oldItem;
         
     }
 
@@ -391,19 +378,24 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @param level The current level
      * @return The first Item
      */
-    protected E removeItem(final int index) {
+    protected synchronized E removeItem(final int index) {
         
         final E selected;
         
-        synchronized (nameTable) {
+        selected = items.remove(index);
+        if (selected!=null) {
+            E removed = nameTable.removeKey(selected.name());
 
-            selected = items.get(index);
-            if (selected!=null) {
-                nameTable.remove(selected.name());
-                mass -= selected.budget.getPriority();
+            //should be the same object instance
+            if (removed!=selected) {
+                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " and index referenced " + removed + " + ");
             }
+            mass -= selected.budget.getPriority();
         }
-        
+        else {
+            throw new RuntimeException(this + " items array returned null item at index " + index);
+        }
+
         return selected;
     }
 
@@ -452,7 +444,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
 
 
     
-    public static class CubicBagCurve implements CurveBag.BagCurve {
+    public static class CubicBagCurve implements BagCurve {
 
         @Override public final double y(final double x) {
             //1.0 - ((1.0-x)^2)
@@ -465,7 +457,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     }
     
     /** Approximates priority -> probability fairness with an exponential curve */
-    public static class FairPriorityProbabilityCurve implements CurveBag.BagCurve {
+    public static class FairPriorityProbabilityCurve implements BagCurve {
 
         @Override public final double y(final double x) {
             return 1 - Math.exp(-5 * x);
@@ -475,7 +467,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     
     
     
-    public static class QuadraticBagCurve implements CurveBag.BagCurve {
+    public static class QuadraticBagCurve implements BagCurve {
 
         @Override public final double y(final double x) {
             //1.0 - ((1.0-x)^2)

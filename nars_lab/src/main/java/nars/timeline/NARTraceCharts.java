@@ -17,10 +17,10 @@
 package nars.timeline;
 
 import automenta.vivisect.swing.NWindow;
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.NAR;
 import nars.gui.output.chart.MeterVis;
-import nars.logic.meta.NARTrace;
+import nars.logic.meta.NARMetrics;
 
 /**
  *
@@ -31,7 +31,7 @@ public class NARTraceCharts extends TimelineExample {
         int cycles = 500;
 
         NAR nar = new NAR(new Default());
-        NARTrace t = new NARTrace(nar);
+        NARMetrics t = new NARMetrics(nar, 128);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");
         nar.addInput("<(^pick,x) =\\> a>.");
@@ -40,14 +40,14 @@ public class NARTraceCharts extends TimelineExample {
         nar.addInput("<a <-> ^pick>?");
         nar.run(cycles);
 
-        System.out.println(t.metrics.getSignals());
+        System.out.println(t.getMetrics().getSignals());
         
         nar.start(100);
 
         
         
         new NWindow("_", 
-                new MeterVis(nar, t.metrics).newPanel()).show(800, 800, true);
+                new MeterVis(nar, t.getMetrics()).newPanel()).show(800, 800, true);
 
     }
 

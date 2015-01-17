@@ -172,7 +172,7 @@ public class Default extends Build implements ConceptBuilder {
 
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {        
-        Bag<TaskLink,Task> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
+        Bag<TaskLink,Sentence> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
         Bag<TermLink,String> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
         
         return new Concept(b, t, taskLinks, termLinks, m);        

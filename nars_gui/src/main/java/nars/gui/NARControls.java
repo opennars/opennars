@@ -26,20 +26,21 @@ import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
-import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
+import nars.event.Reaction;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.*;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.io.TraceWriter;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.io.TraceWriter;
+import nars.logic.meta.NARMetrics;
 import nars.logic.meta.NARTrace;
 
 import javax.swing.*;
@@ -105,7 +106,7 @@ public class NARControls extends JPanel implements ActionListener, Reaction {
     public final TraceWriter logger;
 
     int chartHistoryLength = 128;
-    private final NARTrace trace;
+    private final NARMetrics metrics;
     
     /**
      * Constructor
@@ -114,22 +115,17 @@ public class NARControls extends JPanel implements ActionListener, Reaction {
      * @param title
      */
     public NARControls(final NAR nar) {
-        this(nar, new NARTrace(nar));
+        this(nar, null);
     }
     
-    public NARControls(final NAR nar, final NARTrace trace) {
+    public NARControls(final NAR nar, final NARMetrics metrics) {
         super(new BorderLayout());
         
         this.nar = nar;
-        this.trace = (trace == null) ? new NARTrace(nar) : trace;
-        memory = nar.memory;        
-        
-        
+        this.memory = nar.memory;
+        this.metrics = (metrics == null) ? new NARMetrics(nar, 128) : metrics;
 
-        
-        
-        
-        
+
         experienceWriter = new TextOutput(nar);
         
         logger = new TraceWriter(nar);
@@ -454,7 +450,7 @@ public class NARControls extends JPanel implements ActionListener, Reaction {
 //        senses.update(memory);        
         
         add(top, NORTH);
-        add(new MeterVis(nar, trace.getMetrics()).newPanel(), CENTER);
+        add(new MeterVis(nar, this.metrics.getMetrics()).newPanel(), CENTER);
         
         
         init();

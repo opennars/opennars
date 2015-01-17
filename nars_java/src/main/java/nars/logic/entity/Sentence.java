@@ -206,14 +206,11 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         if (this == that) return true;
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
-            //return getKey().equals(t.getKey());
-            
-            if (hash!=t.hash) return false;
-            
+
             if (punctuation!=t.punctuation) return false;
             if (isUniqueByOcurrenceTime()) {
-                if (stamp.getOccurrenceTime()!=t.stamp.getOccurrenceTime()) return false;
-            }                
+                if (stamp.getOccurrenceTime() != t.stamp.getOccurrenceTime()) return false;
+            }
             
             if (truth==null) {
                 if (t.truth!=null) return false;
@@ -223,9 +220,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
             }
             else if (!truth.equals(t.truth)) return false;            
             
-            if (!term.equals(t.term)) return false;
-                    
-            return true;
+            return (term.equals(t.term));
         }
         return false;
     }
@@ -486,6 +481,9 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
    
     /**
      * Get the truth value (or desire value) of the sentence
+     *
+     * Should only be used in Concept's sentences, not in other location where Sentence is expected to be immutable
+     * TODO make a distinct superclass between Mutable & ImmutableSentence for the different places Sentence are used (ex: Task vs. Concept)
      *
      * @return Truth value, null for question
      */

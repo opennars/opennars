@@ -25,6 +25,8 @@ import nars.io.Symbols;
 import nars.io.Texts;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import java.util.Objects;
+
 import static nars.core.Parameters.TRUTH_EPSILON;
 
 
@@ -183,7 +185,8 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return Whether the two are equivalent
      */
     @Override
-    public boolean equals(final Object that) { 
+    public boolean equals(final Object that) {
+        if (that == this) return true;
         if (that instanceof TruthValue) {
             final TruthValue t = ((TruthValue) that);
             if (!isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON))
@@ -197,12 +200,13 @@ public class TruthValue implements Cloneable { // implements Cloneable {
 
     /**
      * The hash code of a TruthValue
-     *
+     * TODO this is not accurate, must use both freq and conf otherwise there is missing information
      * @return The hash code
      */
     @Override
     public int hashCode() {
-        return (int) (getExpectation() * 37);
+        return Objects.hash(frequency, confidence, analytic);
+        //return (int) (getExpectation() * 37);
     }
 
     @Override

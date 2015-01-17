@@ -4,15 +4,18 @@
  */
 package nars.util.bag;
 
-import nars.core.Memory;
-import nars.core.NAR;
 import nars.build.Neuromorphic;
 import nars.control.experimental.AntCore;
+import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -20,22 +23,28 @@ import static org.junit.Assert.assertTrue;
  * @author me
  */
 public class DelayBagTest {
-    
+
+    private NAR n;
+
     static int numConcepts(NAR n) {
         return ((AntCore)n.memory.concepts).concepts.size();
     }
-        
-    @Test 
-    public void testIO() throws InvalidInputException {
 
-        test(new NAR(new Neuromorphic(1)));
-        test(new NAR(new Neuromorphic(2)));
-        test(new NAR(new Neuromorphic(4)));
-    }
-    
-    public void test(NAR n) throws InvalidInputException {
-
+    @Before
+    public void start() {
+        Parameters.THREADS = 1;
         Memory.resetStatic(1);
+    }
+
+    @Test
+    public void testAnt1() { n = new NAR(new Neuromorphic(1));    }
+    @Test
+    public void testAnt2() { n = new NAR(new Neuromorphic(2));    }
+    @Test
+    public void testAnt4() { n = new NAR(new Neuromorphic(4));    }
+
+    @After
+    public void test() throws InvalidInputException {
 
         assertTrue(n.memory.concepts != null);
         
@@ -69,4 +78,5 @@ public class DelayBagTest {
         n.run(5);
         assertEquals(6, numConcepts(n) );
     }
+
 }

@@ -54,7 +54,7 @@ public class Concept extends Item<Term> implements Termable {
     /**
      * Task links for indirect processing
      */
-    public final Bag<TaskLink,Task> taskLinks;
+    public final Bag<TaskLink,Sentence> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
@@ -117,7 +117,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final BudgetValue b, final Term term, Bag<TaskLink,Task> taskLinks, Bag<TermLink,String> termLinks, final Memory memory) {
+    public Concept(final BudgetValue b, final Term term, Bag<TaskLink,Sentence> taskLinks, Bag<TermLink,String> termLinks, final Memory memory) {
         super(b);        
         
         this.term = term;

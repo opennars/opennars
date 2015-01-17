@@ -132,7 +132,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
     public boolean equals(final Object obj) {
         if (obj == this) return true;
         if (obj instanceof Task) {
-            Task t = (Task)obj;            
+            Task t = (Task)obj;
             return t.sentence.equals(sentence);
         }
         return false;        

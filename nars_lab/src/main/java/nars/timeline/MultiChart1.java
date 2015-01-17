@@ -21,9 +21,9 @@ import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
-import nars.core.NAR;
 import nars.build.Default;
-import nars.logic.meta.NARTrace;
+import nars.core.NAR;
+import nars.logic.meta.NARMetrics;
 
 import java.awt.event.MouseAdapter;
 
@@ -36,7 +36,7 @@ public class MultiChart1 extends TimelineExample {
         int cycles = 500;
 
         NAR nar = new NAR(new Default());
-        NARTrace t = new NARTrace(nar);
+        NARMetrics t = new NARMetrics(nar, 128);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");
         nar.addInput("<(^pick,x) =\\> a>.");
@@ -44,7 +44,7 @@ public class MultiChart1 extends TimelineExample {
         nar.addInput("a!");
         nar.run(cycles);
 
-        System.out.println(t.metrics.getSignals());
+        System.out.println(t.getMetrics().getSignals());
         //t.metrics.printCSV(System.out);
         
         PCanvas p;

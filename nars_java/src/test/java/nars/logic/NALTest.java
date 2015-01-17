@@ -30,6 +30,7 @@ public class NALTest extends TestCase {
 
     static {
         Parameters.DEBUG = true;
+        Parameters.THREADS = 1;
     }
 
     static final Build[] builds = new Build[] {

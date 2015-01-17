@@ -1,4 +1,4 @@
-package nars.core;
+package nars.logic.nal6;
 
 import nars.build.Default;
 import nars.io.narsese.InvalidInputException;

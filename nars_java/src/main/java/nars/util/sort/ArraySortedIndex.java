@@ -137,6 +137,11 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
     }
 
     @Override
+    public String toString() {
+        return list.toString();
+    }
+
+    @Override
     public Iterator<E> descendingIterator() {
         if (reverse == null) {
             reverse = Lists.reverse(list);

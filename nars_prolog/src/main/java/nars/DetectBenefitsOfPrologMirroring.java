@@ -5,16 +5,19 @@
  */
 package nars;
 
-import nars.core.*;
 import nars.build.Default;
+import nars.core.Events;
+import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.event.Reaction;
 import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ValueMeter;
-import nars.logic.meta.NARTrace;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
+import nars.logic.meta.NARMetrics;
 import nars.util.NALPerformance;
 
 import java.io.FileOutputStream;
@@ -28,7 +31,7 @@ public class DetectBenefitsOfPrologMirroring implements Reaction {
     private static PrintStream csvOut;
     private static PrintStream logOut;
     private final NAR prolog;
-    private final NARTrace trace;
+    private final NARMetrics trace;
 
     static long randomSeed = 1;
 
@@ -78,7 +81,7 @@ public class DetectBenefitsOfPrologMirroring implements Reaction {
 
         NALPerformance pp = new NALPerformance(prolog, input);
 
-        trace = new NARTrace(prolog);
+        trace = new NARMetrics(prolog, 128);
         trace.addMeter(prologEternalBeliefs = new ValueMeter("prolog.eternal.beliefs"));
         trace.addMeter(prologEternalAnswers = new HitMeter("prolog.eternal.answers"));
 
@@ -129,8 +132,8 @@ public class DetectBenefitsOfPrologMirroring implements Reaction {
 
             if (csvOut !=null) {
                 if (line++ == 0)
-                    trace.metrics.printCSVHeader(csvOut);
-                trace.metrics.printCSVLastLine(csvOut);
+                    trace.getMetrics().printCSVHeader(csvOut);
+                trace.getMetrics().printCSVLastLine(csvOut);
             }
         }
     }

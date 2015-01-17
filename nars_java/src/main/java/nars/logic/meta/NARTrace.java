@@ -52,26 +52,12 @@ public class NARTrace extends MemoryObserver {
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
         
-    public final TemporalMetrics<Object> metrics;
-    
+
     
 
     private long t;
     public final NAR nar;
 
-    public SignalData[] getCharts(String... names) {
-        List<SignalData> l = new ArrayList(names.length);
-        for (String n : names) {
-            SignalData t = metrics.newSignalData(n);
-            if (t!=null)
-                l.add(t);
-        }
-        return l.toArray(new SignalData[l.size()]);
-    }
-    
-    public List<SignalData> getCharts() {
-        return metrics.getSignalDatas();
-    }    
 
 
 
@@ -133,32 +119,13 @@ public class NARTrace extends MemoryObserver {
     }
 
     
+
     public NARTrace(NAR n) {
-        this(n, 64);
-    }
-    
-    public NARTrace(NAR n, int metricsHistoryLength) {
         super(n, true);
         this.nar = n;
-    
-        metrics = new TemporalMetrics(metricsHistoryLength);
-        
-        metrics.addMeters(n.memory.emotion);
-        
-        metrics.addMeters(n.memory.resource);
-        
-
-        metrics.addMeter(new BasicStatistics(metrics, n.memory.resource.FRAME_DURATION.id(), 16));
-        metrics.addMeter(new FirstOrderDifference(metrics, n.memory.resource.CYCLE_RAM_USED.id()));
-     
-        metrics.addMeters(n.memory.logic);
-        
     }
 
-    public void addMeter(Meter m) {
-        metrics.addMeter(m);
-    }
-    
+
 
     public void addEvent(InferenceEvent e) {
         List<InferenceEvent> timeslot = time.get(t);
@@ -200,10 +167,6 @@ public class NARTrace extends MemoryObserver {
         this.concept.put(concept, lc);
     }
 
-    public TemporalMetrics getMetrics() {
-        return metrics;
-    }
-
     
     @Override
     public void onCycleStart(long clock) {
@@ -213,7 +176,6 @@ public class NARTrace extends MemoryObserver {
     @Override
     public void onCycleEnd(long time) {
         nar.memory.logic.commit(nar.memory);
-        metrics.update((double)time);
     }
 
     @Override

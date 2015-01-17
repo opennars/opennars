@@ -37,7 +37,7 @@ import java.util.Iterator;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sentenceable {
+public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, Sentenceable {
 
     /**
      * The Task linked
@@ -93,7 +93,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
         this.records = new ArrayDeque(recordLength);
     }
 
-    public static class TaskLinkBuilder implements BagSelector<Task,TaskLink> {
+    public static class TaskLinkBuilder implements BagSelector<Sentence,TaskLink> {
 
         private final Memory memory;
         Task currentTask;
@@ -120,9 +120,10 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
         }
         
         @Override
-        public Task name() {
-            return currentTask;
+        public Sentence name() {
+            return currentTask.sentence;
         }
+
 
         @Override
         public BudgetValue getBudget() {
@@ -160,22 +161,22 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
 
 
     @Override
-    public int hashCode() {        
-        return targetTask.hashCode();                
+    public Sentence name() {
+        return targetTask.sentence;
     }
 
     @Override
-    public Task name() {
-        return targetTask;
+    public int hashCode() {
+        return name().hashCode();
     }
 
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj instanceof TaskLink) {
             TaskLink t = (TaskLink)obj;
-            return t.targetTask.equals(targetTask);                    
+            return t.name().equals(name());
         }
         return false;
     }    
@@ -246,7 +247,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
 
     @Override
     public String toString() {
-        return super.toString() + " " + getTarget().sentence.stamp;
+        return super.toString() + " " + name().stamp;
     }
     
     public String toStringBrief() {
