@@ -4,7 +4,6 @@ import nars.core.Parameters;
 import nars.util.bag.Bag;
 
 import java.util.List;
-import java.util.Map;
 
 /**
 * Created by me on 1/17/15.
@@ -13,10 +12,8 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
 
     public final Concept concept;
 
-    final Map<Term,TermLinkTemplate> template;
-
-    /** cache of non-transform termlinks for fast iteration without iterator */
-    final List<TermLinkTemplate> nonTransforms;
+    List<TermLinkTemplate> template;
+    int nonTransforms;
 
     private final CompoundTerm host;
 
@@ -24,7 +21,7 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
     private Term to = null;
     private Term other = null;
 
-    private TermLinkTemplate temp;
+    private TermLinkTemplate currentTemplate;
     private boolean incoming;
     private BudgetValue budget = new BudgetValue(0,0,0);
 
@@ -35,25 +32,25 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
 
         int complexity = host.getComplexity();
 
-        template = Parameters.newHashMap(complexity + 1);
-        nonTransforms = Parameters.newArrayList(complexity/2);
+        template = Parameters.newArrayList(complexity + 1);
+        nonTransforms = 0;
 
         host.prepareComponentLinks(this);
     }
 
     /** count how many termlinks are non-transform */
-    public List<TermLinkTemplate> getNonTransforms() {
-        return nonTransforms;
+    public List<TermLinkTemplate> templates() {
+        return template;
     }
 
 
     public void addTemplate(TermLinkTemplate tl) {
-        template.put(tl.target, tl);
+        template.add(tl);
 
         tl.setConcept(host);
 
         if (tl.type!=TermLink.TRANSFORM)
-            nonTransforms.add(tl);
+            nonTransforms++;
     }
 
 
@@ -62,7 +59,7 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
     }
 
     public String name(Term from) {
-        return temp.name( from!= concept.term );
+        return currentTemplate.name( from!= concept.term );
     }
 
     /** configures this selector's current budget for the next bag operation */
@@ -74,11 +71,11 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
     }
 
     /** configures this selector's current bag key for the next bag operation */
-    public TermLinkBuilder set(Term source, Term target) {
+    public TermLinkBuilder set(TermLinkTemplate temp, Term source, Term target) {
         if ((this.from == source) && (this.to == target)) return this;
+        this.currentTemplate = temp;
         this.incoming = !source.equals(concept.term);
         this.other = incoming ? source : target;
-        this.temp = template.get(other);
         this.from = source;
         this.to = target;
         return this;
@@ -101,7 +98,7 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
 
     @Override
     public TermLink newInstance() {
-        return new TermLink(incoming, concept.getTerm(), temp, name(), getBudget());
+        return new TermLink(incoming, concept.getTerm(), currentTemplate, name(), getBudget());
     }
 
     public int size() {
@@ -110,7 +107,11 @@ public class TermLinkBuilder implements Bag.BagSelector<String,TermLink> {
 
     public void clear() {
         template.clear();
-        nonTransforms.clear();
+        nonTransforms = 0;
     }
 
+    /** count of how many templates are non-transforms */
+    public int getNonTransforms() {
+        return nonTransforms;
+    }
 }

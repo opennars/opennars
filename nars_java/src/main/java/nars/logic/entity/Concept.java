@@ -447,21 +447,23 @@ public class Concept extends Item<Term> implements Termable {
             return;
         }
 
-        Collection<TermLinkTemplate> termLinkTemplates = termLinker.template.values();
+        List<TermLinkTemplate> templates = termLinker.templates();
 
-        if (termLinkTemplates.isEmpty()) {
+        if (templates.isEmpty()) {
             //distribute budget to incoming termlinks?
             return;
         }
 
         //TODO parameter to use linear division, conserving total budget
         //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
-        float linkSubBudgetDivisor = (float)termLinkTemplates.size();
+        int numTemplates = templates.size();
+        float linkSubBudgetDivisor = (float)numTemplates;
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
         if (subBudget.aboveThreshold()) {
 
-            for (TermLinkTemplate termLink : termLinkTemplates) {
+            for (int i = 0; i < numTemplates; i++) {
+                TermLinkTemplate termLink = templates.get(i);
 
 //              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                 Term componentTerm = termLink.target;
@@ -590,11 +592,9 @@ public class Concept extends Item<Term> implements Termable {
         if (termLinker.size() == 0)
             return false;
 
-        List<TermLinkTemplate> nonTransforms = termLinker.getNonTransforms();
-        int recipients = nonTransforms.size();
+        List<TermLinkTemplate> templates = termLinker.templates();
+        int recipients = termLinker.getNonTransforms();
 
-        //TODO make this parameterizable
-        //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
 
         float subBudget = 0;
         if (recipients == 0) {
@@ -604,8 +604,14 @@ public class Concept extends Item<Term> implements Termable {
             return false;
         }
 
-        float linkSubBudgetDivisor = (float) recipients;
+        //TODO make this parameterizable
+
+        //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
+
+        //half of each subBudget is spent on this concept and the other concept's termlink
+        float linkSubBudgetDivisor = (float) recipients * 2;
         subBudget = taskBudget.getPriority() / linkSubBudgetDivisor;
+
         if (!termLinker.set(subBudget, taskBudget.getDurability(), taskBudget.getQuality()).aboveThreshold()) {
             //account for unused priority
             termBudgetBalance += taskBudget.getPriority();
@@ -616,27 +622,38 @@ public class Concept extends Item<Term> implements Termable {
         boolean activity = false;
 
         for (int i = 0; i < recipients; i++) {
-            TermLinkTemplate template = nonTransforms.get(i);
-            //if (template.type != TermLink.TRANSFORM) {
+            TermLinkTemplate template = templates.get(i);
+
+            //only apply this loop to non-transform termlink templates
+            if (template.type == TermLink.TRANSFORM)
+                continue;
 
             Term target = template.target;
 
-            final Concept concept = memory.conceptualize(taskBudget, target);
-            if (concept == null) {
-                termBudgetBalance += subBudget;
+            final Concept otherConcept = memory.conceptualize(taskBudget, target);
+            if (otherConcept == null) {
+                termBudgetBalance += subBudget*2;
                 continue;
             }
 
             activity = true;
 
+            TermLink displaced;
+
             // this concept termLink to that concept
-            activateTermLink(termLinker.set(term, target));
+            displaced = activateTermLink(termLinker.set(template, term, target));
+            if (displaced!=null && displaced.name().equals(termLinker.name())) {
+                termBudgetBalance += subBudget; //was not inserted; absorb budget
+            }
 
             // that concept termLink to this concept
-            concept.activateTermLink(termLinker.set(target, term));
+            displaced = otherConcept.activateTermLink(termLinker.set(template, target, term));
+            if (displaced!=null && displaced.name().equals(termLinker.name())) {
+                termBudgetBalance += subBudget; //was not inserted; absorb budget
+            }
 
             if (target instanceof CompoundTerm) {
-                concept.buildTermLinks(termLinker.getBudget());
+                otherConcept.buildTermLinks(termLinker.getBudget());
             }
         }
         return activity;
@@ -723,15 +740,7 @@ public class Concept extends Item<Term> implements Termable {
 
     }
 
-    /**
-     * Return the templates for TermLinks, only called in
-     * Memory.continuedProcess
-     *
-     * @return The template get
-     */
-    public Collection<TermLinkTemplate> getTermLinkTemplates() {
-        return termLinker.template.values();
-    }
+
 
     /**
      * Select a isBelief to interact with the given task in logic
