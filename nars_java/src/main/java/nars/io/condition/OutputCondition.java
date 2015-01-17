@@ -38,7 +38,7 @@ public abstract class OutputCondition<O> extends Output {
 
     @Override
     public void event(Class channel, Object... args) {
-        if ((succeeded) && (!isInverse())) {
+        if ((succeeded) && (!isInverse() && (!continueAfterSuccess()))) {
             return;
         }
         if ((channel == OUT.class) || (channel == EXE.class)) {
@@ -48,6 +48,8 @@ public abstract class OutputCondition<O> extends Output {
             }
         }
     }
+
+    protected boolean continueAfterSuccess() { return false; }
 
     protected void setTrue() {
         if (successAt == -1) {

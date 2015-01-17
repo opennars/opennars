@@ -27,6 +27,34 @@ public class NAL5Test extends AbstractNALTest {
         });
     }
 
+    /** 5.15 */
+    @Test public void compoundDecompositionTwoPremises() throws InvalidInputException {
+        /*
+        'If robin is a type of bird then robin is not a type of flying animal.
+        <<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>. %0%
+
+        'If robin is a type of bird then robin can fly.
+        <<robin --> bird> ==> <robin --> [flying]>>.
+
+        8
+
+        'It is unlikely that if a robin is a type of bird then robin is a type of animal.
+        ''outputMustContain('<<robin --> bird> ==> <robin --> animal>>. %0.00;0.81%')
+        */
+
+        long time = 25;
+
+
+        n.believe("<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>", Eternal, 0.0f, 0.9f)
+                .en("If robin is a type of bird then robin is not a type of flying animal.");
+        n.believe("<<robin --> bird> ==> <robin --> [flying]>>", Eternal, 1f, 0.9f )
+                .en("If robin is a type of bird then robin can fly.");
+
+        n.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 0f, 0.81f, 0.81f)
+                .en("It is unlikely that if a robin is a type of bird then robin is a type of animal.");
+
+    }
+
     /** 5.19 */
     @Test public void compoundDecompositionOnePremise() throws InvalidInputException {
         /*

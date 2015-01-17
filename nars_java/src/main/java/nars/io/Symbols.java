@@ -264,7 +264,6 @@ public class Symbols {
     /* experience line prefix */
     public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
     public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
-    public static final String ERROR_LINE_PREFIX = ERR.class.getSimpleName();
 
     public static final char PREFIX_MARK = ':';
     public static final char COMMENT_MARK = '/';
@@ -275,8 +274,6 @@ public class Symbols {
     /* control commands */
     public static final String RESET_COMMAND = "*reset";
     public static final String REBOOT_COMMAND = "*reboot";
-    public static final String STOP_COMMAND = "*stop";
-    public static final String START_COMMAND = "*start";
     public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
     
     
@@ -286,7 +283,7 @@ public class Symbols {
     public static final char STAMP_SEPARATOR = ';';
     public static final char STAMP_STARTER = ':';
     
-    /* TermLink type, display only */
+    /* TermLink type, display and internal uniqueness purposes only */
     public static final String TO_COMPONENT_1 = "@(";
     public static final String TO_COMPONENT_2 = ")_";
     public static final String TO_COMPOUND_1 = "_@(";

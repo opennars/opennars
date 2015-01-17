@@ -23,10 +23,13 @@ package nars.core;
 
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
+import com.gs.collections.impl.set.mutable.UnifiedSet;
+import nars.logic.entity.Term;
 import nars.logic.entity.TermLink;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * NAR operating parameters.
@@ -207,6 +210,11 @@ public class Parameters {
     public static List<TermLink> newArrayList(int capacity) {
         return new FastList(capacity);
         //return new ArrayList(capacity);
+    }
+
+    public static Set<Term> newHashSet(int capacity) {
+        return new UnifiedSet<>(capacity);
+        //return new HashSet(capacity);
     }
 }
 

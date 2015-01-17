@@ -2,6 +2,7 @@ package nars.core;
 
 import nars.io.Output;
 import nars.io.TextOutput;
+import nars.io.condition.TaskCondition;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 import nars.logic.nal7.Tense;

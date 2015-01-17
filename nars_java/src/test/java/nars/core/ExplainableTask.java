@@ -2,6 +2,7 @@ package nars.core;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import nars.io.condition.TaskCondition;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Stamp;
 import nars.logic.entity.Task;

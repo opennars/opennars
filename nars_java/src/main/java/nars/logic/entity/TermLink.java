@@ -43,18 +43,22 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
     
     /** At C, point to C; TaskLink only */
     public static final short SELF = 0;
+
     /** At (&&, A, C), point to C */
     public static final short COMPONENT = 1;
     /** At C, point to (&&, A, C) */
     public static final short COMPOUND = 2;
+
     /** At <C --> A>, point to C */
     public static final short COMPONENT_STATEMENT = 3;
     /** At C, point to <C --> A> */
     public static final short COMPOUND_STATEMENT = 4;
+
     /** At <(&&, C, B) ==> A>, point to C */
     public static final short COMPONENT_CONDITION = 5;
     /** At C, point to <(&&, C, B) ==> A> */
     public static final short COMPOUND_CONDITION = 6;
+
     /** At C, point to <(*, C, B) --> A>; TaskLink only */
     public static final short TRANSFORM = 8;
     
@@ -81,10 +85,12 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
      * @param indices Component indices in compound, may be 1 to 4
      */
     public TermLink(final Term target, final short type, final short... indices) {
-        super(null);
+        super();
         this.target = target;
         this.type = type;
-        assert (type % 2 == 0); // template types all point to compound, though the target is component
+        if (type % 2 != 0)
+            throw new RuntimeException("template types all point to compound and target is component: " + target);
+
         if (type == TermLink.COMPOUND_CONDITION) {  // the first index is 0 by default
             
             index = new short[indices.length + 1];
@@ -116,16 +122,10 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
                 ? (short)(template.type - 1) //// point to component
                 : template.type;
         index = template.index;
+        hash = 0;
     }
 
     @Override public TermLink name() { return this; }
-    
-//    @Override
-//    public CharSequence name() {
-//        if (key == null)
-//            setKey();
-//        return key;
-//    }
 
     @Override
     public int hashCode() {
@@ -138,24 +138,23 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) return true;
-        if (hashCode()!=obj.hashCode()) return false;
-        
+
         if (obj instanceof TermLink) {
             TermLink t = (TermLink)obj;
             
             if (type != t.type) return false;
-            if (!Arrays.equals(t.index, index)) return false;
-            
+
             final Term tt = t.target;
             if (target == null) {
                 if (tt!=null) return false;
             }
-            else if (tt == null) {
+            else if (tt == null)
                 return false;
-            }
-            else if (!target.equals(t.target)) return false;
-            
-            return true;
+
+
+            if (!Arrays.equals(t.index, index)) return false;
+
+            return (target.equals(t.target));
         }
         return false;
     }
@@ -180,8 +179,9 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
         final StringBuilder prefix = new StringBuilder(estimatedLength);
         prefix.append(at1).append('T').append(type);
         if (index != null) {
-            for (int i : index) {
-                prefix.append('-').append( Integer.toString(i + 1, 16 /** hexadecimal */)  );
+            for (short i : index) {
+                //prefix.append('-').append( Integer.toString(i + 1, 16 /** hexadecimal */)  );
+                prefix.append('-').append( Integer.toString(i)  );
             }
         }
         prefix.append(at2);
@@ -194,6 +194,8 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
      * @return The index value
      */
     public final short getIndex(final int i) {
+        if ((i < 0) || ( i > index.length))
+            throw new RuntimeException(this + " index fault: " + i);
         //if (/*(index != null) &&*/ (i < index.length)) {
             return index[i];
         //} else {

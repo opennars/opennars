@@ -51,12 +51,16 @@ public abstract class Item<K> implements Budgetable {
     public final BudgetValue budget;
 
 
+    protected Item( ) {
+        this(null);
+    }
+
     /**
      * Constructor with initial budget
      * @param key The key value
      * @param budget The initial budget
      */
-    protected Item(final BudgetValue budget) {
+    protected Item( final BudgetValue budget) {
         if (budget!=null)
             this.budget = budget.clone(); // clone, not assignment
         else

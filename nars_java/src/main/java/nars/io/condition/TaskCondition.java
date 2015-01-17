@@ -1,11 +1,11 @@
-package nars.core;
+package nars.io.condition;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
-import nars.io.condition.OutputCondition;
+import nars.core.NAR;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -17,9 +17,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by me on 1/14/15.
- */
+
 public class TaskCondition extends OutputCondition implements Serializable {
 
     @Expose
@@ -45,10 +43,15 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     public final List<Task> trueAt = new ArrayList();
 
+    Task closest = null;
+    double closestDistance = Double.POSITIVE_INFINITY;
+
     public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         super(n);
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
+
+        if (cycleEnd - cycleStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
 
         this.channel = channel;
         this.tense = Tense.Eternal;
@@ -62,6 +65,46 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.term = n.term(sentenceTerm);
     }
 
+    //continue examining output task in case a closer result appears
+    @Override
+    protected boolean continueAfterSuccess() { return true; }
+
+    public double getAcceptableDistanceThreshold() {
+        return 0.01;
+    }
+
+    //how many multiples of the range it is away from the acceptable time interval
+    public static double rangeError(double value, double min, double max, boolean squash) {
+        double dt;
+        if (value < min)
+            dt = min - value;
+        else if (value > max)
+            dt = value - max;
+        else
+            return 0;
+
+        double result = dt/(max-min);
+
+        if (squash)
+            return Math.tanh(result);
+        else
+            return result;
+    }
+
+    //time distance function
+    public double getTimeDistance(long now) {
+        return rangeError(now, cycleStart, cycleEnd, true);
+    }
+
+    //truth distance function
+    public double getTruthDistance(TruthValue t) {
+        //manhattan distance:
+        return rangeError(t.getFrequency(), freqMin, freqMax, true) +
+                rangeError(t.getConfidence(), confMin, confMax, true);
+
+        //we could also calculate geometric/cartesian vector distance
+    }
+
     @Override
     public boolean condition(Class channel, Object signal) {
 
@@ -72,33 +115,66 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                 Task task = (Task) signal;
 
-                long now = nar.time();
-
-                if ((task.sentence.punctuation != punc) || (now < cycleStart) || (now > cycleEnd))
+                if (task.sentence.punctuation != punc)
                     return false;
 
-                Term term = task.getTerm();
-
-                //TODO use range of acceptable occurrenceTime's for non-eternal tests
+                //require right kind of tense
                 if ((tense == Tense.Eternal) && (!task.sentence.isEternal()))
                     return false;
+
+                Term tterm = task.getTerm();
+
+                //require exact term
+                if (!tterm.equals(this.term)) {
+                    return false;
+                }
+
+                double distance = 0;
+
+                long now = nar.time();
+
+                boolean match = false;
+
+                if ((now < cycleStart) || (now > cycleEnd)) {
+                    distance += getTimeDistance(now);
+                    match = false;
+                }
+
+
+                //TODO use range of acceptable occurrenceTime's for non-eternal tests
+
 
                 if ((punc == '.') || (punc == '!')) {
                     float fr = task.sentence.truth.getFrequency();
                     float co = task.sentence.truth.getConfidence();
 
-                    if (!((co <= confMax) && (co >= confMin) && (fr <= freqMax) && (fr >= freqMin)))
-                        return false;
+                    if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
+                        match = false;
+                        distance += getTruthDistance(task.sentence.truth);
+                    }
                 }
 
-                if (term.equals(this.term)) {
+                if (!match && distance < getAcceptableDistanceThreshold())
+                    match = true;
+
+                if (match) {
+                    //TODO record a different score for fine-tune optimization?
                     trueAt.add(task);
-                    return true;
                 }
+
+                if (distance < closestDistance) {
+                    closest = task;
+                    closestDistance = distance;
+                }
+
+                return match;
+
             }
         }
         return false;
     }
+
+
 
     public final static JsonSerializer asString = new JsonSerializer() {
 
@@ -126,7 +202,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public String getFalseReason() {
-        return "Unmatched: " + toString();
+        return "Unmatched: " + toString() + (closest==null ? "" :
+                "  closest=" + closest + " dist=" + closestDistance);
     }
 
     public TruthValue getTruthMean() {

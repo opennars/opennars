@@ -21,16 +21,15 @@ import java.util.Map;
  * table for holding derivation results for online & offline
  * testing and analysis
  *
- * associates an input condition to an output result
+ * associates an input condition to different instances of output results
  *
  * input:
  *      concept
  *      tasklink
  *      termlink (optional)
- *      int occurrances
  *
  * output(s):
- *      new tasks
+ *      list of new tasks derived
  *
  * terms are stored with their names normalized to generic values, ex;
  * <(*,<A --> B>,(--,C)) --> D>
@@ -139,7 +138,7 @@ public class Derivations {
             int i = e.getValue();
             if (i > 25) throw new RuntimeException("TODO support > 26 different unique atomic terms");
             String cc = String.valueOf((char) ('A' + i));
-            s = s.replaceAll(tn, cc);
+            s = s.replace(tn, cc); //this is replaceAll but without regex
         }
         return s;
 

@@ -23,7 +23,8 @@ public class AbstractNALTest extends TestCase {
 
     public static final long randomSeed = 1;
 
-    Derivations derivations = new Derivations(false, false);
+    //Derivations derivations = new Derivations(false, false);
+    Derivations derivations = null;
 
     public TestNAR n;
 

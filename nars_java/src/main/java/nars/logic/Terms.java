@@ -1,6 +1,7 @@
 package nars.logic;
 
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
@@ -42,32 +43,31 @@ public class Terms {
         }
         Term[] A = ((CompoundTerm) a).term;
         Term[] B = ((CompoundTerm) b).term;
-        if (A.length != B.length) {
+        if (A.length != B.length)
             return false;
-        } else {
-            for (int i = 0; i < A.length; i++) {
-                Term x = A[i];
-                Term y = B[i];
-                if (!x.equals(y)) {
-                    if (x instanceof Inheritance && y instanceof Inheritance) {
-                        if (!equalSubjectPredicateInRespectToImageAndProduct(x, y)) {
-                            return false;
-                        } else {
-                            continue;
-                        }
+
+        for (int i = 0; i < A.length; i++) {
+            Term x = A[i];
+            Term y = B[i];
+            if (!x.equals(y)) {
+                if (x instanceof Inheritance && y instanceof Inheritance) {
+                    if (!equalSubjectPredicateInRespectToImageAndProduct(x, y)) {
+                        return false;
+                    } else {
+                        continue;
                     }
-                    if (x instanceof Similarity && y instanceof Similarity) {
-                        if (!equalSubjectPredicateInRespectToImageAndProduct(x, y) && !equalSubjectPredicateInRespectToImageAndProduct(y, x)) {
-                            return false;
-                        } else {
-                            continue;
-                        }
-                    }
-                    return false;
                 }
+                if (x instanceof Similarity && y instanceof Similarity) {
+                    if (!equalSubjectPredicateInRespectToImageAndProduct(x, y) && !equalSubjectPredicateInRespectToImageAndProduct(y, x)) {
+                        return false;
+                    } else {
+                        continue;
+                    }
+                }
+                return false;
             }
-            return true;
         }
+        return true;
     }
 
     public static Term reduceUntilLayer2(final CompoundTerm _itself, Term replacement, Memory memory) {
@@ -206,6 +206,10 @@ public class Terms {
     }
 
     public static boolean equalSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b) {
+        return equalSubjectPredicateInRespectToImageAndProduct(a, b, true);
+    }
+
+    public static boolean equalSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b, boolean requireEqualImageRelation) {
         
         if (a == null || b == null) {
             return false;
@@ -222,8 +226,8 @@ public class Terms {
         Statement A = (Statement) a;
         Statement B = (Statement) b;
         
-        if (!(A instanceof Similarity && B instanceof Similarity
-                || A instanceof Inheritance && B instanceof Inheritance))
+        if (!((A instanceof Similarity && B instanceof Similarity)
+                || (A instanceof Inheritance && B instanceof Inheritance)))
             return false;
             
         Term subjA = A.getSubject();
@@ -231,8 +235,8 @@ public class Terms {
         Term subjB = B.getSubject();
         Term predB = B.getPredicate();
 
-        Term ta = null, tb = null;
-        Term sa = null, sb = null;
+        Term ta = null, tb = null; //the compound term to put itself in the comparison set
+        Term sa = null, sb = null; //the compound term to put its components in the comparison set
 
         if ((subjA instanceof Product) && (predB instanceof ImageExt)) {
             ta = predA; sa = subjA;
@@ -246,30 +250,12 @@ public class Terms {
             ta = subjA; sa = predA;
             tb = subjB; sb = predB;                
         }
-        //DUPLICATE?
-        /*if ((predA instanceof ImageExt) && (predB instanceof ImageExt)) {
-            ta = subjA; sa = predA;
-            tb = subjB; sb = predB;
-        }*/
+
         if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
             ta = predA; sa = subjA;
             tb = predB; sb = subjB;
         }
-        //ANOTHER DUPLICATE?
-        /*
-        if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
-                Set<Term> componentsA = new HashSet();
-                Set<Term> componentsB = new HashSet();
-                componentsA.add(predA);
-                componentsB.add(predB);
-                componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                if (componentsA.containsAll(componentsB)) {
-                    return true;
-                }
 
-        }
-        */
         if ((predA instanceof Product) && (subjB instanceof ImageInt)) {
             ta = subjA; sa = predA;
             tb = predB; sb = subjB;                
@@ -279,49 +265,58 @@ public class Terms {
             tb = subjB; sb = predB;
         }
 
-        if (ta!=null) {
-            Term[] sat = ((CompoundTerm)sa).term;
-            Term[] sbt = ((CompoundTerm)sb).term;
+        if (ta==null)
+            return false;
 
-            if(sa instanceof Image && sb instanceof Image) {
-                Image im1=(Image) sa;
-                Image im2=(Image) sb;
-                if(im1.relationIndex != im2.relationIndex) {
+        Term[] sat = ((CompoundTerm)sa).term;
+        Term[] sbt = ((CompoundTerm)sb).term;
+
+        //original code did not check relation index equality
+        //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/language/CompoundTerm.java
+        if (requireEqualImageRelation) {
+            if (sa instanceof Image && sb instanceof Image) {
+                if(((Image) sa).relationIndex != ((Image) sb).relationIndex) {
                     return false;
                 }
             }
-            
-            Set<Term> componentsA = new HashSet(1+sat.length);
-            Set<Term> componentsB = new HashSet(1+sbt.length);
+        }
 
-            componentsA.add(ta);
-            Collections.addAll(componentsA, sat);
+        return containsAll(sat, ta, sbt, tb);
 
-            componentsB.add(tb);
-            Collections.addAll(componentsB, sbt);
-
-            for(Term sA : componentsA) {
-                boolean had=false;
-                for(Term sB : componentsB) {
-                    if(sA instanceof Variable && sB instanceof Variable) {
-                        if(sA.name().equals(sB.name())) {
-                            had=true;
-            }
-                    } 
-                    else
-                    if(sA.equals(sB)) {
+        /*
+        for(Term sA : componentsA) {
+            boolean had=false;
+            for(Term sB : componentsB) {
+                if(sA instanceof Variable && sB instanceof Variable) {
+                    if(sA.name().equals(sB.name())) {
                         had=true;
                     }
                 }
-                if(!had) {
-                    return false;
+                else if(sA.equals(sB)) {
+                    had=true;
                 }
             }
-            
-            return true;
+            if(!had) {
+                return false;
+            }
         }
-            
-        return false;
+        */
+    }
+
+    private static boolean containsAll(Term[] sat, Term ta, Term[] sbt, Term tb) {
+        //temporary set for fast containment check
+        Set<Term> componentsA = Parameters.newHashSet(sat.length + 1);
+        componentsA.add(ta);
+        Collections.addAll(componentsA, sat);
+
+        //test A contains B
+        if (!componentsA.contains(tb))
+            return false;
+        for (Term bComponent : sbt)
+            if (!componentsA.contains(bComponent))
+                return false;
+
+        return true;
     }
 
     /**
@@ -341,7 +336,7 @@ public class Terms {
 
         //componentLinks.ensureCapacity(componentLinks.size() + t.complexity);
 
-        for (int i = 0; i < t.term.length; i++) {
+        for (short i = 0; i < t.term.length; i++) {
             final Term t1 = t.term[i];
 
             if (!t1.hasVar()) {
@@ -354,11 +349,12 @@ public class Terms {
 
             } else if (t1 instanceof CompoundTerm) {
                 final CompoundTerm ct1 = (CompoundTerm)t1;
-                final int ct1Size = ct1.size(); //cache because this loop is critical
-                boolean t1ProductOrImage = (t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt);
-                
-                for (int j = 0; j < ct1Size; j++) {
-                    final Term t2 = ct1.term[j];
+
+                boolean t1ProductOrImage = (t1 instanceof Product) || (t1 instanceof Image);
+
+                final short ct1Size = (short)ct1.term.length;
+                for (short j = 0; j < ct1Size; j++) {
+                    Term t2 = ct1.term[j];
 
                     if (!t2.hasVar()) {
                         TermLink a;
@@ -374,11 +370,11 @@ public class Terms {
                         componentLinks.add(a);
                     }
 
-                    if ((t2 instanceof Product) || (t2 instanceof ImageExt) || (t2 instanceof ImageInt)) {
+                    if ((t2 instanceof Product) || (t2 instanceof Image)) {
                         CompoundTerm ct2 = (CompoundTerm)t2;
-                        final int ct2Size = ct2.size();
-                        
-                        for (int k = 0; k < ct2Size; k++) {
+
+                        final short ct2Size = (short) ct2.size();
+                        for (short k = 0; k < ct2Size; k++) {
                             final Term t3 = ct2.term[k];
                             
                             if (!t3.hasVar()) {
@@ -405,11 +401,6 @@ public class Terms {
 
     //TODO move this to a utility method
     public static <T> int indexOf(final T[] array, final T v) {
-        /*if (v == null) {
-        for (final T e : array)
-        if (e == null)
-        return true;
-        } else {*/
         int i = 0;
         for (final T e : array) {
             if (v.equals(e)) {

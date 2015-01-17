@@ -31,10 +31,7 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal8.Operation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -192,18 +189,21 @@ public class TemporalRules {
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
         Term[] term = args.toArray(new Term[args.size()]);
         Term realB2 = term[beginoffset];
-        HashMap<Term, Term> res1 = new HashMap<>();
-        HashMap<Term, Term> res2 = new HashMap<>();
+
+        final int initialSubMapSize = 4;
+        Map<Term, Term> res1 = Parameters.newHashMap(initialSubMapSize);
+        Map<Term, Term> res2 = Parameters.newHashMap(initialSubMapSize);
 
         if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1,res2)) {
             //ok it unifies, so lets create a &/ term
             for(int i=0;i<term.length;i++) {
                 if(term[i] instanceof CompoundTerm) {
-                    term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
-                    if(term[i]==null) { 
-                        //it resulted in invalid term for example <a --> a>, so wrong
-                        throw new RuntimeException("Invalid term resulting from substitution");
-                    }
+                    Term ts = ((CompoundTerm) term[i]).applySubstitute(res1);
+                    if(ts!=null)
+                        term[i] = ts;
+                }
+                else if (res1.containsKey(term[i])) {
+                    term[i] = res1.get(term[i]);
                 }
             }
             int order1=s1.getTemporalOrder();
