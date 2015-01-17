@@ -563,14 +563,14 @@ public class Concept extends Item<Term> implements Termable {
         TaskLink removed = taskLinks.putIn(taskLink);
         
         if (removed!=null) {
-            memory.emit(TaskLinkRemove.class, removed, this);
+            //memory.emit(TaskLinkRemove.class, removed, this);
             removed.end();
 
             if (removed == taskLink) {
                 return false;
             }
         }
-        memory.emit(TaskLinkAdd.class, taskLink, this);
+        //memory.emit(TaskLinkAdd.class, taskLink, this);
         return true;
     }
 
@@ -616,10 +616,10 @@ public class Concept extends Item<Term> implements Termable {
                 activity = true;
 
                 // this termLink to that
-                insertTermLink(new TermLink(target, template, subBudget));
+                insertTermLink(new TermLink(term, false, template, subBudget));
 
                 // that termLink to this
-                concept.insertTermLink(new TermLink(term, template, subBudget));
+                concept.insertTermLink(new TermLink(term, true, template, subBudget));
 
                 if (target instanceof CompoundTerm) {
                     concept.buildTermLinks(subBudget);
@@ -642,14 +642,14 @@ public class Concept extends Item<Term> implements Termable {
         TermLink removed = termLinks.putIn(termLink);
         if (removed!=null) {
             if (removed == termLink) {
-                memory.emit(TermLinkRemove.class, termLink, this);
+                //memory.emit(TermLinkRemove.class, termLink, this);
                 return false;
             }
             else {
-                memory.emit(TermLinkRemove.class, removed, this);
+                //memory.emit(TermLinkRemove.class, removed, this);
             }
         }
-        memory.emit(TermLinkAdd.class, termLink, this);
+        //memory.emit(TermLinkAdd.class, termLink, this);
         return true;        
     }
 

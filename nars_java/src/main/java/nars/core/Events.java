@@ -94,10 +94,12 @@ public class Events {
     public static class InduceSucceedingEvent {    }
     
 
+    /*
     public static class TermLinkAdd { }
     public static class TermLinkRemove { }
     public static class TaskLinkAdd { }
     public static class TaskLinkRemove { }
+    */
     
     public static class Answer { }
     public static class Unsolved { }
