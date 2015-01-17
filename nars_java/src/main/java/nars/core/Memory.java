@@ -524,6 +524,7 @@ public class Memory implements Serializable {
             emit(IN.class, t);
         } else if (t instanceof Reset) {
             reset();
+            emit(OUT.class,((Reset) t).input);
             emit(IN.class, t);
         } else if (t instanceof Echo) {
             Echo e = (Echo) t;
