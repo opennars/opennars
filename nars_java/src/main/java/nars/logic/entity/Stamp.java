@@ -163,7 +163,9 @@ public class Stamp implements Cloneable {
             final Iterator<Term> iter2 = chain2.iterator();
             int i2 = chain2.size() - 1;
 
-            Set<Term> added = new HashSet();
+            //TODO verify this is pre-sized large enough
+            Set<Term> added = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+
             //set here is for fast contains() checking
             List<Term> sequence = new ArrayList<>(Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);      
 

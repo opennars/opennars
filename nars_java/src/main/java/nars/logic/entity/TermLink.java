@@ -103,6 +103,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
             index = indices;            
         }
         hash = 0;
+
     }
 
 
@@ -111,16 +112,23 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
      * Constructor to make actual TermLink from a template
      * <p>
      * called in Concept.buildTermLinks only
-     * @param t Target Term
+     * @param
+     * @param incoming or outgoing
      * @param template TermLink template previously prepared
      * @param v Budget value of the link
      */
-    public TermLink(final Term t, final TermLink template, final BudgetValue v) {
+    public TermLink(Term source, boolean incoming, final TermLink template, final BudgetValue v) {
         super(v);
-        target = t;
-        type = (template.target.equals(t)) 
-                ? (short)(template.type - 1) //// point to component
-                : template.type;
+
+
+        if (incoming) {
+            target = source;
+            type = template.type;
+        }
+        else {
+            target = template.target;
+            type = (short)(template.type - 1); //// point to component
+        }
         index = template.index;
         hash = 0;
     }
@@ -134,16 +142,28 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
         return hash;
     }
 
-    
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) return true;
 
         if (obj instanceof TermLink) {
             TermLink t = (TermLink)obj;
-            
+
+            short[] ti = t.index;
+            final int il = index.length;
+
+            //compare index length
+            if (il!=ti.length) return false;
+
+            //compare type
             if (type != t.type) return false;
 
+            //compare array content
+            for (int i=0; i<il; i++)
+                if (index[i] != ti[i])
+                    return false;
+
+            //compare target nullity
             final Term tt = t.target;
             if (target == null) {
                 if (tt!=null) return false;
@@ -151,9 +171,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
             else if (tt == null)
                 return false;
 
-
-            if (!Arrays.equals(t.index, index)) return false;
-
+            //compare target
             return (target.equals(t.target));
         }
         return false;
@@ -194,7 +212,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
      * @return The index value
      */
     public final short getIndex(final int i) {
-        if ((i < 0) || ( i > index.length))
+        if ((i < 0) || ( i >= index.length))
             throw new RuntimeException(this + " index fault: " + i);
         //if (/*(index != null) &&*/ (i < index.length)) {
             return index[i];

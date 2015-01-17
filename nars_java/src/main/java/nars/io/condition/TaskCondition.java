@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import nars.core.NAR;
+import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -202,8 +203,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public String getFalseReason() {
-        return "Unmatched: " + toString() + (closest==null ? "" :
-                "  closest=" + closest + " dist=" + closestDistance);
+        return "Unmatched: " + (closest==null ? "" :
+                "  closest=" + closest + " dist=" + Texts.n4((float) closestDistance)) + " " + toString();
     }
 
     public TruthValue getTruthMean() {

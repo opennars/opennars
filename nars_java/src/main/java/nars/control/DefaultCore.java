@@ -255,7 +255,8 @@ public class DefaultCore implements Core {
             
             //apply budget to existing concept
             //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
-            BudgetFunctions.activate(concept.budget, budget, Activating.TaskLink);            
+            if (budget!=null)
+                BudgetFunctions.activate(concept.budget, budget, Activating.TaskLink);
         }
         else {
             //unable to create, ex: has variables

@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static nars.logic.BudgetFunctions.distributeAmongLinks;
+import static nars.logic.BudgetFunctions.divide;
 import static nars.logic.BudgetFunctions.rankBelief;
 import static nars.logic.UtilityFunctions.or;
 import static nars.logic.nal1.LocalRules.*;
@@ -96,6 +96,13 @@ public class Concept extends Item<Term> implements Termable {
      * Reference to the memory to which the Concept belongs
      */
     public final Memory memory;
+
+    transient private final int nonTransformTermLinkTemplateCount;
+
+    /** remaining unspent budget from previous cycle can be accumulated */
+    float taskBudgetBalance = 0;
+    float termBudgetBalance = 0;
+
     /**
      * The display window
      */
@@ -128,8 +135,14 @@ public class Concept extends Item<Term> implements Termable {
                 
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
+            int tc = 0;
+            for (TermLink tl : termLinkTemplates)
+                if (tl.type!=TermLink.TRANSFORM)
+                    tc++;
+            this.nonTransformTermLinkTemplateCount = tc;
         } else {
             this.termLinkTemplates = null;
+            this.nonTransformTermLinkTemplateCount = 0;
         }
 
     }
@@ -435,10 +448,15 @@ public class Concept extends Item<Term> implements Termable {
             return;
         }
         if (termLinkTemplates.isEmpty()) {
+            //distribute budget to incoming termlinks?
             return;
         }
-                
-        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
+
+        //TODO parameter to use linear division, conserving total budget
+        //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
+        float linkSubBudgetDivisor = (float)termLinkTemplates.size();
+
+        final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
         if (subBudget.aboveThreshold()) {
 
             for (int t = 0; t < termLinkTemplates.size(); t++) {
@@ -454,10 +472,17 @@ public class Concept extends Item<Term> implements Termable {
                         new TaskLink(task, termLink, subBudget, memory.param.termLinkRecordLength.get())
                     );
                 }
+                else {
+                    taskBudgetBalance += subBudget.getPriority();
+                }
 //              }
             }
 
             buildTermLinks(taskBudget);  // recursively insert TermLink
+        }
+        else {
+            //unused
+            taskBudgetBalance += taskBudget.getPriority();
         }
     }
 
@@ -538,16 +563,18 @@ public class Concept extends Item<Term> implements Termable {
         TaskLink removed = taskLinks.putIn(taskLink);
         
         if (removed!=null) {
-            memory.emit(TaskLinkRemove.class, removed, this);
+            //memory.emit(TaskLinkRemove.class, removed, this);
             removed.end();
 
             if (removed == taskLink) {
                 return false;
             }
         }
-        memory.emit(TaskLinkAdd.class, taskLink, this);
+        //memory.emit(TaskLinkAdd.class, taskLink, this);
         return true;
     }
+
+
 
     /**
      * Recursively build TermLinks between a compound and its components
@@ -555,18 +582,26 @@ public class Concept extends Item<Term> implements Termable {
      * called only from Memory.continuedProcess
      *
      * @param taskBudget The BudgetValue of the task
+     * @return whether any activity happened as a result of this invocation
      */
-    public void buildTermLinks(final BudgetValue taskBudget) {
-        if (termLinkTemplates.size() == 0) {
-            return;
+    public boolean buildTermLinks(final BudgetValue taskBudget) {
+        if ((termLinkTemplates.size() == 0) || (nonTransformTermLinkTemplateCount == 0)) {
+            return false;
         }
-        
-        BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
+
+        //TODO parameter to use linear division, conserving total budget
+        //float linkSubBudgetDivisor = (float)Math.sqrt(nonTransformTermLinkTemplateCount);
+        float linkSubBudgetDivisor = (float)termLinkTemplates.size();
+
+        final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
 
         if (!subBudget.aboveThreshold()) {
-            return;
+            //unused
+            termBudgetBalance += taskBudget.getPriority();
+            return false;
         }
 
+        boolean activity = false;
         for (final TermLink template : termLinkTemplates) {
             if (template.type != TermLink.TRANSFORM) {
 
@@ -574,26 +609,32 @@ public class Concept extends Item<Term> implements Termable {
 
                 final Concept concept = memory.conceptualize(taskBudget, target);
                 if (concept == null) {
+                    termBudgetBalance += subBudget.getPriority();
                     continue;
                 }
 
+                activity = true;
+
                 // this termLink to that
-                insertTermLink(new TermLink(target, template, subBudget));
+                insertTermLink(new TermLink(term, false, template, subBudget));
 
                 // that termLink to this
-                concept.insertTermLink(new TermLink(term, template, subBudget));
+                concept.insertTermLink(new TermLink(term, true, template, subBudget));
 
                 if (target instanceof CompoundTerm) {
                     concept.buildTermLinks(subBudget);
                 }
             }
         }
+        return activity;
     }
 
     /**
      * Insert a TermLink into the TermLink bag
-     * <p>
+     *
      * called from buildTermLinks only
+     *
+     * If the link already exists, the budgets will be merged
      *
      * @param termLink The termLink to be inserted
      */
@@ -601,14 +642,14 @@ public class Concept extends Item<Term> implements Termable {
         TermLink removed = termLinks.putIn(termLink);
         if (removed!=null) {
             if (removed == termLink) {
-                memory.emit(TermLinkRemove.class, termLink, this);
+                //memory.emit(TermLinkRemove.class, termLink, this);
                 return false;
             }
             else {
-                memory.emit(TermLinkRemove.class, removed, this);
+                //memory.emit(TermLinkRemove.class, removed, this);
             }
         }
-        memory.emit(TermLinkAdd.class, termLink, this);
+        //memory.emit(TermLinkAdd.class, termLink, this);
         return true;        
     }
 

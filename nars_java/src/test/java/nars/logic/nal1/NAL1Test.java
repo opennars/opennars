@@ -1,11 +1,10 @@
 package nars.logic.nal1;
 
+import nars.build.Default;
 import nars.core.Build;
 import nars.core.Parameters;
-import nars.build.Default;
-import nars.logic.AbstractNALTest;
-import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
+import nars.logic.AbstractNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -128,7 +127,7 @@ public class NAL1Test extends AbstractNALTest {
     public void multistep() throws InvalidInputException {
         long time = n.nal() == 1 ? 80 : 350;
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
         n.believe("<a --> b>", 1.0f, 0.9f);
         n.believe("<b --> c>", 1.0f, 0.9f);
         n.believe("<c --> d>", 1.0f, 0.9f);

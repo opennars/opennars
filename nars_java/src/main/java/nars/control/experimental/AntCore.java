@@ -113,7 +113,7 @@ public class AntCore extends ConceptWaveCore {
 
     public boolean ensureAntsOccupyUniqueConcepts() {
         int numConcepts = occupied.size();
-        int uniqueOccupants = new HashSet(occupied.values()).size();
+        int uniqueOccupants = Parameters.newHashSet(occupied.values()).size();
         boolean fair = numConcepts == uniqueOccupants;
         if (!fair) {
             System.err.println("occupied concepts = " + numConcepts + ", unique registered ants = " + uniqueOccupants + ", total ants = " + ants.size());

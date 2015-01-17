@@ -29,6 +29,8 @@ import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
 import nars.logic.nal5.*;
 
+import java.util.Arrays;
+
 import static nars.io.Symbols.*;
 
 /**
@@ -474,8 +476,8 @@ public class RuleTables {
      */
     public static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {
         
-        if(index>compound.term.length) {
-            return;
+        if(index>=compound.term.length) {
+            throw new RuntimeException(index + " index out of bounds for compound " + compound + "( " + compound.getClass() + " = " + Arrays.toString(compound.term) + ") in compoundAndStatement with statement=" + statement);
         }
         Term component = compound.term[index];
         

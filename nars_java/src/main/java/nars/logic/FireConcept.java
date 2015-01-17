@@ -17,7 +17,7 @@ import nars.logic.nal5.Implication;
 import nars.logic.nal5.SyllogisticRules;
 import nars.logic.nal7.TemporalRules;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import static nars.io.Symbols.VAR_INDEPENDENT;
 import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
@@ -42,7 +42,7 @@ abstract public class FireConcept extends NAL {
     private int numTaskLinks;
     private int termLinkCount;
 
-    transient private HashSet alreadyInducted;
+    transient private Set alreadyInducted;
 
     abstract public void onFinished();
 
@@ -211,7 +211,7 @@ abstract public class FireConcept extends NAL {
 
                     //prevent duplicate inductions
                     if (alreadyInducted == null)
-                        alreadyInducted = new HashSet(chainSamples);
+                        alreadyInducted = Parameters.newHashSet(chainSamples);
                     else
                         alreadyInducted.clear();
 

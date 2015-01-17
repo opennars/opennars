@@ -2,6 +2,7 @@ package nars.core;
 
 import nars.build.Default;
 import nars.io.narsese.InvalidInputException;
+import nars.logic.TestNAR;
 import org.junit.Test;
 
 public class QueryVariableTest {
