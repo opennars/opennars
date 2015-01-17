@@ -58,14 +58,18 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      the bag is cycled so that subsequent elements are different. */    
     abstract public E peekNext();
     
-    
+
+    protected E addItem(final E newItem) {
+        return addItem(newItem, true);
+    }
+
     /**
      * Insert an item into the itemTable, and return the overflow
      *
      * @param newItem The Item to put in
      * @return The overflow Item, or null if nothing displaced
      */
-    abstract protected E addItem(final E newItem);
+    abstract protected E addItem(final E newItem, boolean index);
 
     public boolean isEmpty() {
         return size() == 0;
@@ -83,13 +87,17 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         final K newKey = newItem.name();
         
         final E existingItemWithSameKey = take(newKey);
-        
+
+        E item;
         if (existingItemWithSameKey != null) {            
-            newItem = (E)existingItemWithSameKey.merge(newItem);
+            item = (E)existingItemWithSameKey.merge(newItem);
+        }
+        else {
+            item = newItem;
         }
         
         // put the (new or merged) item into itemTable        
-        final E overflowItem = addItem(newItem);
+        final E overflowItem = addItem(item);
         
         
         if (overflowItem!=null) {
@@ -108,29 +116,36 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      */
     public E putIn(BagSelector<K,E> selector) {
 
-        E item = take( selector.name() );
+        E item = take( selector.name(), false );
 
         if (item != null) {
             item = (E)item.merge(selector);
+            final E overflow = addItem(item, false);
+            if (overflow == item) {
+                unindex(item.name());
+            }
+            return overflow;
         }
         else {
             item = selector.newInstance();
-        }
 
-        // put the (new or merged) item into itemTable
-        final E overflowItem = addItem(item);
-
-        if (overflowItem!=null) {
-            return overflowItem;
-        }
-        else {
-            return null;
+            // put the (new or merged) item into itemTable
+            return addItem(item);
         }
 
     }
 
+    /** registers the item */
+    abstract protected void index(E value);
+    /** unregisters it */
+    abstract protected E unindex(K key);
 
-    abstract public E take(final K key);
+
+    public E take(final K key) {
+        return take(key, true);
+    }
+
+    abstract public E take(final K key, boolean unindex);
 
     public E take(E value) { return take(value.name()); }
     

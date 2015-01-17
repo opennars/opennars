@@ -17,7 +17,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     /**
      * mapping from key to item
      */
-    public final Map<K, E> nameTable;
+    public final CurveMap nameTable;
     
     /**
      * array of lists of items, for items on different level
@@ -86,18 +86,35 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             
             synchronized (nameTable) {
 
-                removed = super.put(key, value);                
+                removed = putKey(key, value);
                 if (removed!=null) {
-                    items.remove(removed);
-                    mass -= removed.budget.getPriority();                
+                    removeItem(removed);
                 }
 
-                items.add(value);
+                addItem(value);
             }
 
             return removed;            
         }
 
+        /** put key in index, do not add value */
+        public E putKey(final K key, final E value) {
+            return super.put(key, value);
+        }
+
+        /** remove key only, not from items */
+        public E removeKey(final K key) {
+            return super.remove(key);
+        }
+
+        public void removeItem(final E removed) {
+            items.remove(removed);
+            mass -= removed.budget.getPriority();
+        }
+
+        public void addItem(final E removed) {
+            items.add(removed);
+        }
 
         @Override public E remove(final Object key) {
 
@@ -105,9 +122,9 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             
             synchronized (nameTable) {
 
-                e = super.remove(key);
+                e = removeKey((K)key);
                 if (e!=null) {
-                    items.remove(e);
+                    removeItem(e);
                 }
 
             }
@@ -204,6 +221,17 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             return 0.01f;
         return f;
     }
+
+    @Override
+    protected void index(E value) {
+        /*E oldValue = */ nameTable.putKey(value.name(), value);
+    }
+    @Override
+    protected E unindex(K name) {
+        E removed = nameTable.removeKey(name);
+        return removed;
+    }
+
 
     /**
      * Check if an item is in the bag
@@ -303,8 +331,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
 
     
 
-    @Override public E take(final K name) {        
-        return nameTable.remove(name);
+    @Override public E take(final K name, boolean unindex) {
+        return unindex ? nameTable.remove(name) : nameTable.removeKey(name);
     }
 
 
@@ -323,25 +351,29 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     /**
      * Insert an item into the itemTable, and return the overflow
      *
-     * @param newItem The Item to put in
+     * @param i The Item to put in
      * @return The overflow Item, or null if nothing displaced
      */
-    @Override protected E addItem(E newItem) {
+    @Override protected E addItem(E i, boolean index) {
 
         synchronized (nameTable) {
-            float newPriority = newItem.getPriority();        
+            float newPriority = i.getPriority();
 
             E oldItem = null;
 
             if (size() >= capacity) {      // the bag is full            
                 if (newPriority < getMinPriority())
-                    return newItem;
+                    return i;
 
                 oldItem = removeItem(0);            
             }
 
-            nameTable.put(newItem.name(), newItem);        
-            mass += (newItem.budget.getPriority());                  // increase total mass
+            if (index)
+                nameTable.put(i.name(), i);
+            else
+                nameTable.addItem(i);
+
+            mass += (i.budget.getPriority());                  // increase total mass
             
             return oldItem;
         }

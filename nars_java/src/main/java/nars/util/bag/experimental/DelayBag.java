@@ -72,7 +72,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
     private final int capacity;
     
-    public Map<K,E> items;
+    public Map<K,E> nameTable;
     private Deque<E> pending;
     private ArraySortedIndex<E> toRemove;
     
@@ -110,12 +110,12 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
         if (Parameters.THREADS == 1) {
              //this.items = new LinkedHashMap(capacity);
-             this.items = new ConcurrentHashMap(capacity);
+             this.nameTable = new ConcurrentHashMap(capacity);
              this.pending = new ArrayDeque((int)(targetPendingBufferSize * capacity));
         }
         else {
             //find a solution to make a concurrent analog of the LinkedHashMap, if cyclical balance of iteration order (reinsertion appends to end) is necessary
-            this.items = new ConcurrentHashMap(capacity);
+            this.nameTable = new ConcurrentHashMap(capacity);
             this.pending = new ConcurrentLinkedDeque<E>();            
         }
         
@@ -127,7 +127,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     
     @Override
     public synchronized void clear() {
-        items.clear();
+        nameTable.clear();
         pending.clear();
         avgPriority = 0.5f;
         mass = 0;
@@ -135,13 +135,24 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
 
     @Override
+    protected void index(E value) {
+        /*E oldValue = */ nameTable.put(value.name(), value);
+    }
+    @Override
+    protected E unindex(K name) {
+        E removed = nameTable.remove(name);
+        return removed;
+    }
+
+
+    @Override
     public E get(K key) {
-        return items.get(key);
+        return nameTable.get(key);
     }
 
     @Override
     public Set<K> keySet() {
-        return items.keySet();
+        return nameTable.keySet();
     }
 
     @Override
@@ -155,7 +166,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     }
 
     protected E removeItem(final K k) {             
-        E x = items.remove(k);        
+        E x = nameTable.remove(k);
         if ((attention!=null) && (x != null) && (x instanceof Concept)) {
             attention.conceptRemoved((Concept)x);
         }
@@ -188,7 +199,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         
             
         E e = null;
-        for (final Map.Entry<K, E> ee : items.entrySet()) {
+        for (final Map.Entry<K, E> ee : nameTable.entrySet()) {
         
             e = ee.getValue();
                            
@@ -293,11 +304,11 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     @Override
     public E takeNext() {                
        
-        int s = items.size();
+        int s = nameTable.size();
         if (s == 0) 
             return null;
         else if (s <= flatThreshold) {
-            K nn = items.keySet().iterator().next();
+            K nn = nameTable.keySet().iterator().next();
             return take(nn);
         }
         
@@ -343,9 +354,11 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     }
 
     @Override
-    protected E addItem(E x) {                    
-        
-        E previous = items.put(x.name(), x);
+    protected E addItem(E x, boolean index) {
+        E previous = null;
+        if (index) {
+            previous = nameTable.put(x.name(), x);
+        }
         
         if (x.budget.getLastForgetTime() == -1)
             x.budget.setLastForgetTime(now);
@@ -355,19 +368,21 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     }
 
     @Override
-    public E take(K key) {
-        
-        return items.remove(key);
+    public E take(K key, boolean index) {
+        if (index)
+            return nameTable.remove(key);
+        else
+            return nameTable.get(key);
     }
 
     @Override
     public int size() {
-        return items.size();
+        return nameTable.size();
     }
 
     @Override
     public Iterable<E> values() {
-        return items.values();
+        return nameTable.values();
     }
 
     @Override

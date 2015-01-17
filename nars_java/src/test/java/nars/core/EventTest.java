@@ -54,7 +54,7 @@ public class EventTest {
         e.on(Events.CycleEnd.class, new Reaction() {
             @Override
             public void event(Class event, Object[] args) {
-                throw new RuntimeException("12345");
+                throw new RuntimeException("Exception generated for testing purposes; everything is OK");
             }
         });
         e.on(Output.ERR.class, new Reaction() {

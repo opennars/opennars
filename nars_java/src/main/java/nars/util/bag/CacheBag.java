@@ -23,7 +23,9 @@ public class CacheBag<K, I extends Item<K>> implements RemovalListener<K,I> {
         .removalListener(this)
         .build();
     }
-    
+
+
+
     public I get(K key) {
         return data.getIfPresent(key);
     }
@@ -38,8 +40,8 @@ public class CacheBag<K, I extends Item<K>> implements RemovalListener<K,I> {
         return null;
     }
     
-    public void add(I i) {        
-        data.put(i.name(), i);        
+    public void add(I i) {
+        data.put(i.name(), i);
     }
 
     public long size() {

@@ -50,7 +50,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /**
      * mapping from key to item
      */
-    //public final Set<E> nameTable;
     public final Map<K, E> nameTable;
 
     /**
@@ -406,14 +405,23 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
 
 
-    @Override public E take(final K name) {
-        
-        E oldItem = nameTable.remove(name);
+    @Override
+    protected void index(E value) {
+        /*E oldValue = */ nameTable.put(value.name(), value);
+    }
+    @Override
+    protected E unindex(K name) {
+        E removed = nameTable.remove(name);
+        return removed;
+    }
+
+    @Override public E take(final K name, boolean unindex) {
+
+        E oldItem = unindex ? unindex(name) : get(name);
         if (oldItem == null) {
             return null;
         }
-        
-        
+
         final int expectedLevel = getLevel(oldItem);
 
         //TODO scan up/down iteratively, it is likely to be near where it was
@@ -465,6 +473,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return level;
     }
 
+    @Override protected E addItem(final E newItem) {
+        return addItem(newItem, true);
+    }
     
     /**
      * Insert an item into the itemTable, and return the overflow
@@ -473,7 +484,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      * @return null if nothing overflowed, non-null if an overflow Item, which
      * may be the attempted input item (in which case it was not inserted)
      */
-    @Override protected E addItem(final E newItem) {
+    @Override protected E addItem(final E newItem, boolean index) {
         E oldItem = null;
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next 
@@ -491,7 +502,10 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         
         
         level[inLevel].add(newItem);        // FIFO
-        nameTable.put(newItem.name(), newItem);        
+
+        if (index)
+            index(newItem);
+
         addMass(newItem);
         
         return oldItem;
@@ -513,7 +527,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     private E takeOutFirst(final int level) {
         final E selected = this.level[level].removeFirst();
         if (selected!=null) {
-            nameTable.remove(selected.name());
+            unindex(selected.name());
             removeMass(selected);
         }
         else {
