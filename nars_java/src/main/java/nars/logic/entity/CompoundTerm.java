@@ -794,13 +794,11 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * The compound type determines the link type; the component type determines
      * whether to build the link.
      *
-     * @return A list of TermLink templates
+     * Adds the termlink templates to parameter TermLinkBuilder which manages
+     * them for a concept
      */
-    public List<TermLink.TermLinkTemplate> prepareComponentLinks() {
-        //complexity seems like an upper bound for the resulting number of componentLinks. 
-        //so use it as an initial size for the array list
-        final List<TermLink.TermLinkTemplate> componentLinks = Parameters.newArrayList( getComplexity() );
-        return Terms.prepareComponentLinks(componentLinks, this);
+    public void prepareComponentLinks(TermLinkBuilder t) {
+        Terms.prepareComponentLinks(t, this);
     }
 
     final public void addTermsTo(final Collection<Term> c) {

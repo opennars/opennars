@@ -328,7 +328,7 @@ public class Terms {
      * @param type The type of TermLink to be built
      * @param term The CompoundTerm for which the links are built
      */
-    public static List<TermLink.TermLinkTemplate> prepareComponentLinks(final List<TermLink.TermLinkTemplate> componentLinks, final short type, final CompoundTerm t) {
+    public static void prepareComponentLinks(TermLinkBuilder tlb, final short type, final CompoundTerm t) {
         
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
@@ -340,12 +340,12 @@ public class Terms {
             final Term ti = t.term[i];
 
             if (!ti.hasVar()) {
-                componentLinks.add(new TermLink.TermLinkTemplate(type, ti, i));
+                tlb.addTemplate(new TermLinkTemplate(type, ti, i));
             }
 
             if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
 
-                prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) ti);
+                prepareComponentLinks(tlb, TermLink.COMPOUND_CONDITION, (CompoundTerm) ti);
 
             } else if (ti instanceof CompoundTerm) {
                 final CompoundTerm cti = (CompoundTerm)ti;
@@ -357,17 +357,17 @@ public class Terms {
                     Term tj = cti.term[j];
 
                     if (!tj.hasVar()) {
-                        TermLink.TermLinkTemplate a;
+                        TermLinkTemplate a;
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
-                                a = new TermLink.TermLinkTemplate(TermLink.TRANSFORM, tj, 0, i, j);
+                                a = new TermLinkTemplate(TermLink.TRANSFORM, tj, 0, i, j);
                             } else {
-                                a = new TermLink.TermLinkTemplate(TermLink.TRANSFORM, tj, i, j);
+                                a = new TermLinkTemplate(TermLink.TRANSFORM, tj, i, j);
                             }
                         } else {
-                            a = new TermLink.TermLinkTemplate(type, tj, i, j);
+                            a = new TermLinkTemplate(type, tj, i, j);
                         }
-                        componentLinks.add(a);
+                        tlb.addTemplate(a);
                     }
 
                     if ((tj instanceof Product) || (tj instanceof Image)) {
@@ -378,13 +378,13 @@ public class Terms {
                             final Term tk = ctj.term[k];
                             
                             if (!tk.hasVar()) {
-                                TermLink.TermLinkTemplate b;
+                                TermLinkTemplate b;
                                 if (type == TermLink.COMPOUND_CONDITION) {
-                                    b = new TermLink.TermLinkTemplate(TermLink.TRANSFORM, tk, 0, i, j, k);
+                                    b = new TermLinkTemplate(TermLink.TRANSFORM, tk, 0, i, j, k);
                                 } else {
-                                    b = new TermLink.TermLinkTemplate(TermLink.TRANSFORM, tk, i, j, k);
+                                    b = new TermLinkTemplate(TermLink.TRANSFORM, tk, i, j, k);
                                 }
-                                componentLinks.add(b);
+                                tlb.addTemplate(b);
                             }
 
                             k++; //increment at end in case it's the last iteration we want to use max n-1, not n
@@ -397,12 +397,11 @@ public class Terms {
 
             i++; //increment at end in case it's the last iteration we want to use max n-1, not n
         }
-        return componentLinks;
     }
 
-   public  static List<TermLink.TermLinkTemplate> prepareComponentLinks(List<TermLink.TermLinkTemplate> componentLinks, CompoundTerm ct) {
+   public static void prepareComponentLinks(TermLinkBuilder t, CompoundTerm ct) {
         short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
-        return prepareComponentLinks(componentLinks, type, ct);
+        prepareComponentLinks(t, type, ct);
     }
 
     //TODO move this to a utility method

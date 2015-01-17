@@ -100,7 +100,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
      * @param template The TermLink template
      * @param v The budget
      */
-    public TaskLink(final Task t, final TermLink.TermLinkTemplate template, final BudgetValue v, int recordLength) {
+    public TaskLink(final Task t, final TermLinkTemplate template, final BudgetValue v, int recordLength) {
         super(v);
         this.type = template.type;
         this.index = template.index;

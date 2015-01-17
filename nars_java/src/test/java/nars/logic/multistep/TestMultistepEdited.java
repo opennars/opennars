@@ -1,7 +1,7 @@
 package nars.logic.multistep;
 
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.NAR;
 import nars.io.ExampleFileInput;
 import org.junit.Test;
 
@@ -23,10 +23,10 @@ public class TestMultistepEdited {
         n.memory.setRecorder(logger);*/
         //System.out.println(n.memory.concepts);
         
-        n.run(1000);
+        n.run(100);
         
         
-        assertEquals(2447, n.time());
+        assertEquals(997, n.time());
     }
             
 }

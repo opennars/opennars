@@ -98,8 +98,7 @@ public class Concept extends Item<Term> implements Termable {
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
      * are used to improve the efficiency of TermLink building
      */
-    private final TermLinkSelector termLinker;
-    transient private final int nonTransformTermLinkTemplateCount;
+    private final TermLinkBuilder termLinker;
 
     /** remaining unspent budget from previous cycle can be accumulated */
     float taskBudgetBalance = 0;
@@ -115,13 +114,13 @@ public class Concept extends Item<Term> implements Termable {
     /**
      * Constructor, called in Memory.getConcept only
      *
-     * @param tm A term corresponding to the concept
+     * @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final BudgetValue b, final Term tm, Bag<TaskLink,Task> taskLinks, Bag<TermLink,String> termLinks, final Memory memory) {
+    public Concept(final BudgetValue b, final Term term, Bag<TaskLink,Task> taskLinks, Bag<TermLink,String> termLinks, final Memory memory) {
         super(b);        
         
-        this.term = tm;
+        this.term = term;
         this.memory = memory;
 
         this.questions = Parameters.newArrayList();
@@ -135,23 +134,10 @@ public class Concept extends Item<Term> implements Termable {
         if (taskLinks instanceof MemoryAware)  ((MemoryAware)taskLinks).setMemory(memory);
         if (termLinks instanceof MemoryAware)  ((MemoryAware)termLinks).setMemory(memory);
                 
-        if (tm instanceof CompoundTerm) {
-            //TODO move prepareComponentLinks to TermLinkTemplates class
-            final List<TermLink.TermLinkTemplate> termLinkTemplates;
-
-            termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
-            int tc = 0;
-            for (TermLink.TermLinkTemplate tl : termLinkTemplates) {
-                tl.setConcept(this.getTerm());
-                if (tl.type != TermLink.TRANSFORM)
-                    tc++;
-            }
-            this.nonTransformTermLinkTemplateCount = tc;
-
-            this.termLinker = new TermLinkSelector(this, termLinkTemplates);
+        if (term instanceof CompoundTerm) {
+            this.termLinker = new TermLinkBuilder(this);
         } else {
             this.termLinker = null;
-            this.nonTransformTermLinkTemplateCount = 0;
         }
 
     }
@@ -462,7 +448,7 @@ public class Concept extends Item<Term> implements Termable {
             return;
         }
 
-        Collection<TermLink.TermLinkTemplate> termLinkTemplates = termLinker.template.values();
+        Collection<TermLinkTemplate> termLinkTemplates = termLinker.template.values();
 
         if (termLinkTemplates.isEmpty()) {
             //distribute budget to incoming termlinks?
@@ -476,7 +462,7 @@ public class Concept extends Item<Term> implements Termable {
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
         if (subBudget.aboveThreshold()) {
 
-            for (TermLink.TermLinkTemplate termLink : termLinkTemplates) {
+            for (TermLinkTemplate termLink : termLinkTemplates) {
 
 //              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                 Term componentTerm = termLink.target;
@@ -601,34 +587,43 @@ public class Concept extends Item<Term> implements Termable {
      * @return whether any activity happened as a result of this invocation
      */
     public synchronized boolean buildTermLinks(final BudgetValue taskBudget) {
-        if ((termLinker.size() == 0) || (nonTransformTermLinkTemplateCount == 0)) {
+        int recipients = termLinker.getNonTransforms();
+
+        if (termLinker.size() == 0) {
             return false;
         }
 
-        //TODO parameter to use linear division, conserving total budget
-        //float linkSubBudgetDivisor = (float)Math.sqrt(nonTransformTermLinkTemplateCount);
-        float linkSubBudgetDivisor = (float)nonTransformTermLinkTemplateCount;
+        //TODO make this parameterizable
+        //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
 
-        final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
+        float subBudget = 0;
+        if (recipients == 0) {
+            termBudgetBalance += subBudget;
+            subBudget = 0;
+            termLinker.set(0,0,0);
+            return false;
+        }
 
-        if (!subBudget.aboveThreshold()) {
-            //unused
+        float linkSubBudgetDivisor = (float) recipients;
+        subBudget = taskBudget.getPriority() / linkSubBudgetDivisor;
+        if (!termLinker.set(subBudget, taskBudget.getDurability(), taskBudget.getQuality()).aboveThreshold()) {
+            //account for unused priority
             termBudgetBalance += taskBudget.getPriority();
             return false;
         }
 
-        termLinker.set(subBudget);
 
         boolean activity = false;
-        for (final Map.Entry<Term,TermLink.TermLinkTemplate> tlt : termLinker.template.entrySet()) {
-            TermLink.TermLinkTemplate template = tlt.getValue();
+        for (final Map.Entry<Term,TermLinkTemplate> tlt : termLinker.template.entrySet()) {
+            TermLinkTemplate template = tlt.getValue();
             if (template.type != TermLink.TRANSFORM) {
+
 
                 Term target = template.target;
 
                 final Concept concept = memory.conceptualize(taskBudget, target);
                 if (concept == null) {
-                    termBudgetBalance += subBudget.getPriority();
+                    termBudgetBalance += subBudget;
                     continue;
                 }
 
@@ -641,7 +636,7 @@ public class Concept extends Item<Term> implements Termable {
                 concept.activateTermLink(termLinker.set(target, term));
 
                 if (target instanceof CompoundTerm) {
-                    concept.buildTermLinks(subBudget);
+                    concept.buildTermLinks(termLinker.getBudget());
                 }
             }
         }
@@ -660,7 +655,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param termLink The termLink to be inserted
      * @return the termlink displaced by the insert, or null if none was
      */
-    public TermLink activateTermLink(final TermLinkSelector termLink) {
+    public TermLink activateTermLink(final TermLinkBuilder termLink) {
         synchronized (termLinks) {
             TermLink displaced = termLinks.putIn(termLink);
             return displaced;
@@ -735,7 +730,7 @@ public class Concept extends Item<Term> implements Termable {
      *
      * @return The template get
      */
-    public Collection<TermLink.TermLinkTemplate> getTermLinkTemplates() {
+    public Collection<TermLinkTemplate> getTermLinkTemplates() {
         return termLinker.template.values();
     }
 

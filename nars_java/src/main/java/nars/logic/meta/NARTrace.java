@@ -258,7 +258,7 @@ public class NARTrace extends MemoryObserver {
         private final NAR nar;
 
         public CycleTreeMLData(NAR n, String theName, int historySize) {
-            super(theName, Color.WHITE  /*Video.getColor(theName, 0.9f, 1f)*/, historySize);
+            super(theName, Color.WHITE  /*Video.getColor(name, 0.9f, 1f)*/, historySize);
             this.nar = n;
             n.on(CycleEnd.class, this);
         }
