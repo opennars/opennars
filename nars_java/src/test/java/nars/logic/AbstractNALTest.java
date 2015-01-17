@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 import nars.core.Build;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.core.TestNAR;
 import nars.logic.meta.Derivations;
 import org.junit.After;
 import org.junit.AssumptionViolatedException;
@@ -45,7 +44,6 @@ public class AbstractNALTest extends TestCase {
         Memory.resetStatic(randomSeed);
         Parameters.DEBUG = true;
         n.run();
-
     }
 
 
@@ -82,7 +80,7 @@ public class AbstractNALTest extends TestCase {
 
         @Override
         protected void finished(long nanos, Description description) {
-            finish(description, "finish", nanos);
+            //finish(description, "finish", nanos);
         }
     };
 }

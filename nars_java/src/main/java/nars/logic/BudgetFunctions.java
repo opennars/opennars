@@ -135,9 +135,9 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param n Number of links
      * @return Budget value for each link
      */
-    public static BudgetValue distributeAmongLinks(final BudgetValue b, final int n) {
-        final float priority = (float) (b.getPriority() / sqrt(n));
-        return new BudgetValue(priority, b.getDurability(), b.getQuality());
+    public static BudgetValue divide(final BudgetValue b, final float divisor) {
+        final float newPriority = b.getPriority() / divisor;
+        return new BudgetValue(newPriority, b.getDurability(), b.getQuality());
     }
 
     public enum Activating {

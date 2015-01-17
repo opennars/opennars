@@ -336,60 +336,66 @@ public class Terms {
 
         //componentLinks.ensureCapacity(componentLinks.size() + t.complexity);
 
-        for (short i = 0; i < t.term.length; i++) {
-            final Term t1 = t.term[i];
+        for (short i = 0; i < t.term.length; ) {
+            final Term ti = t.term[i];
 
-            if (!t1.hasVar()) {
-                componentLinks.add(new TermLink(type, t1, i));
+            if (!ti.hasVar()) {
+                componentLinks.add(new TermLink(type, ti, i));
             }
 
-            if ((tEquivalence || (tImplication && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
+            if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
 
-                prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
+                prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) ti);
 
-            } else if (t1 instanceof CompoundTerm) {
-                final CompoundTerm ct1 = (CompoundTerm)t1;
+            } else if (ti instanceof CompoundTerm) {
+                final CompoundTerm cti = (CompoundTerm)ti;
 
-                boolean t1ProductOrImage = (t1 instanceof Product) || (t1 instanceof Image);
+                boolean t1ProductOrImage = (ti instanceof Product) || (ti instanceof Image);
 
-                final short ct1Size = (short)ct1.term.length;
-                for (short j = 0; j < ct1Size; j++) {
-                    Term t2 = ct1.term[j];
+                final short tiSize = (short)cti.term.length;
+                for (short j = 0; j < tiSize; ) {
+                    Term tj = cti.term[j];
 
-                    if (!t2.hasVar()) {
+                    if (!tj.hasVar()) {
                         TermLink a;
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
-                                a = new TermLink(TermLink.TRANSFORM, t2, 0, i, j);
+                                a = new TermLink(TermLink.TRANSFORM, tj, 0, i, j);
                             } else {
-                                a = new TermLink(TermLink.TRANSFORM, t2, i, j);
+                                a = new TermLink(TermLink.TRANSFORM, tj, i, j);
                             }
                         } else {
-                            a = new TermLink(type, t2, i, j);
+                            a = new TermLink(type, tj, i, j);
                         }
                         componentLinks.add(a);
                     }
 
-                    if ((t2 instanceof Product) || (t2 instanceof Image)) {
-                        CompoundTerm ct2 = (CompoundTerm)t2;
+                    if ((tj instanceof Product) || (tj instanceof Image)) {
+                        CompoundTerm ctj = (CompoundTerm)tj;
 
-                        final short ct2Size = (short) ct2.size();
-                        for (short k = 0; k < ct2Size; k++) {
-                            final Term t3 = ct2.term[k];
+                        final short tjSize = (short) ctj.term.length;
+                        for (short k = 0; k < tjSize; ) {
+                            final Term tk = ctj.term[k];
                             
-                            if (!t3.hasVar()) {
+                            if (!tk.hasVar()) {
                                 TermLink b;
                                 if (type == TermLink.COMPOUND_CONDITION) {
-                                    b = new TermLink(TermLink.TRANSFORM, t3, 0, i, j, k);
+                                    b = new TermLink(TermLink.TRANSFORM, tk, 0, i, j, k);
                                 } else {
-                                    b = new TermLink(TermLink.TRANSFORM, t3, i, j, k);
+                                    b = new TermLink(TermLink.TRANSFORM, tk, i, j, k);
                                 }
                                 componentLinks.add(b);
                             }
+
+                            k++; //increment at end in case it's the last iteration we want to use max n-1, not n
                         }
                     }
+
+                    j++; //increment at end in case it's the last iteration we want to use max n-1, not n
                 }
             }
+
+            i++; //increment at end in case it's the last iteration we want to use max n-1, not n
         }
         return componentLinks;
     }

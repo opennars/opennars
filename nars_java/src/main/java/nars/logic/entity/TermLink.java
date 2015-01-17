@@ -103,6 +103,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
             index = indices;            
         }
         hash = 0;
+
     }
 
 
@@ -194,7 +195,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
      * @return The index value
      */
     public final short getIndex(final int i) {
-        if ((i < 0) || ( i > index.length))
+        if ((i < 0) || ( i >= index.length))
             throw new RuntimeException(this + " index fault: " + i);
         //if (/*(index != null) &&*/ (i < index.length)) {
             return index[i];

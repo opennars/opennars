@@ -1,5 +1,9 @@
-package nars.core;
+package nars.logic;
 
+import nars.core.Build;
+import nars.core.ExplainableTask;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.Output;
 import nars.io.TextOutput;
 import nars.io.condition.TaskCondition;
@@ -19,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class TestNAR extends NAR {
 
     boolean showFail = true;
-    boolean showSuccess = true;
+    boolean showSuccess = false;
     boolean showExplanations = false;
     boolean showOutput = false;
 
@@ -180,8 +184,6 @@ public class TestNAR extends NAR {
             for (TaskCondition tc : musts) {
                 if (!tc.isTrue()) {
                     if (showFail) {
-                        out.println(tc.toString());
-                        out.print('\t');
                         out.println(tc.getFalseReason());
                         output = true;
                     }

@@ -358,7 +358,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /** Gives a set of all contained term, recursively */
     public Set<Term> getContainedTerms() {
-        Set<Term> s = new HashSet(getComplexity());
+        Set<Term> s = Parameters.newHashSet(getComplexity());
         for (Term t : term) {
             s.add(t);
             if (t instanceof CompoundTerm)

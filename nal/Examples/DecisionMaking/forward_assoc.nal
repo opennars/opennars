@@ -10,4 +10,5 @@
 <{lamp} --> [on]>. :|:
 //i expect cheese
 30
-''outputMustContain('<{cheese} --> [here]>. :/: %1.00;0.21%')
+''outputMustContain('<{cheese} --> [here]>. :/: %1.00;0.22%')
+//changed from 21 to 22

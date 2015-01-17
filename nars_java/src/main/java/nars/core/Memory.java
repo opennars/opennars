@@ -826,7 +826,8 @@ public class Memory implements Serializable {
      */
     public Set<Task> getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks) {
 
-        Set<Task> t = new HashSet();
+        //TODO estimate size
+        Set<Task> t = Parameters.newHashSet(1000);
 
         if (includeTaskLinks) {
             for (Concept c : concepts) {

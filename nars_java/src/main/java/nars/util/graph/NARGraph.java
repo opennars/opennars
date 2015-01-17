@@ -1,6 +1,7 @@
 package nars.util.graph;
 
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
 import nars.logic.entity.BudgetValue.Budgetable;
@@ -14,7 +15,10 @@ import javax.xml.transform.TransformerConfigurationException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Stores the contents of some, all, or of multiple NAR memory snapshots.
@@ -24,7 +28,7 @@ import java.util.*;
 public class NARGraph extends DirectedMultigraph {
 
     public <X> Set<X> vertices(Class<? extends X> type) {
-        Set<X> s = new HashSet();
+        Set<X> s = Parameters.newHashSet(vertexSet().size());
         for (Object o : vertexSet()) {
             if (type.isInstance(o))
                 s.add((X)o);

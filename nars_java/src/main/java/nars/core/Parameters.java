@@ -24,9 +24,8 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.logic.entity.Term;
-import nars.logic.entity.TermLink;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -207,14 +206,21 @@ public class Parameters {
         //return new HashMap<>(capacity);
     }
 
-    public static List<TermLink> newArrayList(int capacity) {
+    public static <X> List<X> newArrayList(int capacity) {
         return new FastList(capacity);
         //return new ArrayList(capacity);
     }
 
-    public static Set<Term> newHashSet(int capacity) {
+    public static <X> Set<X> newHashSet(int capacity) {
         return new UnifiedSet<>(capacity);
+        //return new SimpleHashSet<>(capacity);
         //return new HashSet(capacity);
+    }
+
+    public static <X> Set<X> newHashSet(Collection<X> values) {
+        Set<X> s = newHashSet(values.size());
+        s.addAll(values);
+        return s;
     }
 }
 
