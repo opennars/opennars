@@ -23,9 +23,6 @@ package nars.logic.entity;
 import nars.io.Symbols;
 import nars.logic.Terms.Termable;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 /**
  * A link between a compound term and a component term
  * <p>
@@ -38,7 +35,7 @@ import java.util.Objects;
  * <p>
  * This class is mainly used in logic.RuleTable to dispatch premises to logic rules
  */
-public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
+public class TermLink extends Item<String> implements TLink<Term>, Termable {
     
     
     /** At C, point to C; TaskLink only */
@@ -72,38 +69,125 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
 
-    transient protected int hash;
-   
+    private final String name;
 
-            
-    /**
-     * Constructor for TermLink template
-     * <p>
-     * called in CompoundTerm.prepareComponentLinks only
-     * @param target Target Term
-     * @param type Link type
-     * @param indices Component indices in compound, may be 1 to 4
-     */
-    public TermLink(final Term target, final short type, final short... indices) {
-        super();
-        this.target = target;
-        this.type = type;
-        if (type % 2 != 0)
-            throw new RuntimeException("template types all point to compound and target is component: " + target);
 
-        if (type == TermLink.COMPOUND_CONDITION) {  // the first index is 0 by default
-            
-            index = new short[indices.length + 1];
-            //index[0] = 0; //first index is zero, but not necessary to set since index[] was just created
-            
-            System.arraycopy(indices, 0, index, 1, indices.length);
+
+
+
+
+
+    public static class TermLinkTemplate {
+
+        /** The linked Term */
+        public final Term target;
+
+        /** The type of link, one of the above */
+        public final short type;
+
+        /** The index of the component in the component list of the compound, may have up to 4 levels */
+        public final short[] index;
+
+        /** term of the concept where this template exists */
+        private Term concept;
+
+
+        protected String outgoing;
+        protected String incoming;
+
+
+        /**
+         * TermLink template
+         * <p>
+         * called in CompoundTerm.prepareComponentLinks only
+         * @param target Target Term
+         * @param type Link type
+         * @param indices Component indices in compound, may be 1 to 4
+         */
+        public TermLinkTemplate(final Term target, final short type, final short... indices) {
+            super();
+            this.target = target;
+            this.type = type;
+            if (type % 2 != 0)
+                throw new RuntimeException("template types all point to compound and target is component: " + target);
+
+            if (type == TermLink.COMPOUND_CONDITION) {  // the first index is 0 by default
+
+                index = new short[indices.length + 1];
+                //index[0] = 0; //first index is zero, but not necessary to set since index[] was just created
+
+                System.arraycopy(indices, 0, index, 1, indices.length);
             /* for (int i = 0; i < indices.length; i++)
                 index[i + 1] = (short) indices[i]; */
-        } else {
-            index = indices;            
-        }
-        hash = 0;
+            } else {
+                index = indices;
+            }
 
+        }
+
+
+        public TermLinkTemplate(final short type, final Term target, final int i0) {
+            this(target, type, (short)i0);
+        }
+
+        public TermLinkTemplate(final short type, final Term target, final int i0, final int i1) {
+            this(target, type, (short)i0, (short)i1);
+        }
+
+        public TermLinkTemplate(final short type, final Term target, final int i0, final int i1, final int i2) {
+            this(target, type, (short)i0, (short)i1, (short)i2);
+        }
+
+        public TermLinkTemplate(final short type, final Term target, final int i0, final int i1, final int i2, final int i3) {
+            this(target, type, (short)i0, (short)i1, (short)i2, (short)i3);
+        }
+
+        /** creates a new TermLink key consisting of:
+         *      type
+         *      target
+         *      index array
+         *
+         * determined by the current template ('temp')
+         */
+        public String theName(boolean incoming, Term other) {
+            short t = this.type;
+            if (!incoming) {
+                t--; //point to component
+            }
+
+            StringBuilder sb = new StringBuilder(64);
+            //use compact 1-char representation for type and each index component
+            sb.append((char)('A' + t));
+            for (short s : index) {
+                sb.append((char)('a' + s));
+            }
+            sb.append(other.name());
+            return sb.toString();
+        }
+
+        protected void setConcept(Term conceptTerm) {
+            if (this.concept != conceptTerm) {
+                //reset, concept has changed (if this instance is ever used with a different concept)
+                this.concept = conceptTerm;
+                incoming = outgoing = null;
+            }
+        }
+
+        public String name(boolean in) {
+            setConcept(concept);
+            if (in) {
+                if (incoming == null)
+                    incoming = theName(true, concept);
+                return incoming;
+            }
+            else {
+                if (outgoing == null)
+                    outgoing = theName(false, target);
+                return outgoing;
+            }
+        }
+        
+        
     }
 
 
@@ -117,30 +201,33 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
      * @param template TermLink template previously prepared
      * @param v Budget value of the link
      */
-    public TermLink(Term source, boolean incoming, final TermLink template, final BudgetValue v) {
+    public TermLink(boolean incoming, Term host, TermLinkTemplate template, String name, BudgetValue v) {
         super(v);
 
-
         if (incoming) {
-            target = source;
+            this.target = host;
             type = template.type;
         }
         else {
-            target = template.target;
+            this.target = template.target;
             type = (short)(template.type - 1); //// point to component
         }
         index = template.index;
-        hash = 0;
+        this.name = name;
     }
 
-    @Override public TermLink name() { return this; }
+    @Override
+    public String name() {
+        return name;
+    }
 
     @Override
     public int hashCode() {
-        if (hash == 0)
-            hash = Objects.hash(target, type, Arrays.hashCode(index));
-        return hash;
+        return name().hashCode();
     }
+
+
+
 
     @Override
     public boolean equals(final Object obj) {
@@ -219,22 +306,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
         //} else {
             //return -1;
         //}
-    }
-
-    public TermLink(final short type, final Term target, final int i0) {
-        this(target, type, (short)i0);
-    }
-    
-    public TermLink(final short type, final Term target, final int i0, final int i1) {
-        this(target, type, (short)i0, (short)i1);
-    }
-    
-    public TermLink(final short type, final Term target, final int i0, final int i1, final int i2) {
-        this(target, type, (short)i0, (short)i1, (short)i2);
-    }
-
-    public TermLink(final short type, final Term target, final int i0, final int i1, final int i2, final int i3) {
-        this(target, type, (short)i0, (short)i1, (short)i2, (short)i3);
     }
 
     @Override public void end() {

@@ -2,6 +2,7 @@ package nars.util.bag;
 
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Item;
 
 import java.util.Iterator;
@@ -12,6 +13,19 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     public interface MemoryAware {
         public void setMemory(Memory m);
+    }
+
+    public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable {
+
+        public K name();
+
+        /** the budget value used by a new instance, or to merge with an existing */
+        public BudgetValue getBudget();
+
+        /** called if putIn a bag and the item specified by the key doesn't exist,
+         * so this will create it and the bag will insert the new instance  */
+        public V newInstance();
+
     }
     
     public static final int bin(final float x, final int bins) {
@@ -100,6 +114,35 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         }
         
     }
+
+    /**
+     * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
+     *
+     * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
+     */
+    public E putIn(BagSelector<K,E> selector) {
+
+        E item = take( selector.name() );
+
+        if (item != null) {
+            item = (E)item.merge(selector);
+        }
+        else {
+            item = selector.newInstance();
+        }
+
+        // put the (new or merged) item into itemTable
+        final E overflowItem = addItem(item);
+
+        if (overflowItem!=null) {
+            return overflowItem;
+        }
+        else {
+            return null;
+        }
+
+    }
+
 
     abstract public E take(final K key);
 

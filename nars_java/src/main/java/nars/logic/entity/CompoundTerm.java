@@ -796,10 +796,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      *
      * @return A list of TermLink templates
      */
-    public List<TermLink> prepareComponentLinks() {
+    public List<TermLink.TermLinkTemplate> prepareComponentLinks() {
         //complexity seems like an upper bound for the resulting number of componentLinks. 
         //so use it as an initial size for the array list
-        final List<TermLink> componentLinks = Parameters.newArrayList( getComplexity() );
+        final List<TermLink.TermLinkTemplate> componentLinks = Parameters.newArrayList( getComplexity() );
         return Terms.prepareComponentLinks(componentLinks, this);
     }
 

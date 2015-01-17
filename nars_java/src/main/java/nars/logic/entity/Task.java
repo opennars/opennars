@@ -34,7 +34,7 @@ import java.util.Set;
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
  */
-public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements Termable {
+public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements Termable,BudgetValue.Budgetable {
 
     /** placeholder for a forgotten task */
     public static final Task Forgotten = new Task();
@@ -198,11 +198,11 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
      * @param that The other Task
      */
     @Override
-    public Item merge(final Item that) {
+    public Item merge(final BudgetValue.Budgetable that) {
         if (getCreationTime() >= ((Task) that).getCreationTime()) {
             return super.merge(that);
         } else {
-            return that.merge(this);
+            return ((Task)that).merge(this);
         }
     }
 

@@ -22,11 +22,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
- *
- * @author me
- */
+*
+* @author me
+*/
 public class EditorPanel extends JPanel {
-    
+
     final String levelPath = "./nars_lab/nars/grid2d/setLevel/";
 
     abstract public static class EditorMode extends DefaultMutableTreeNode {
@@ -37,7 +37,7 @@ public class EditorPanel extends JPanel {
 
         abstract public void run();
     }
-    
+
     public EditorPanel(final Grid2DSpace s) {
         super(new BorderLayout());
 
@@ -64,39 +64,39 @@ public class EditorPanel extends JPanel {
 
         DefaultMutableTreeNode resourceMenu = new DefaultMutableTreeNode("Need of Resources");
         root.add(resourceMenu);
-        
+
         DefaultMutableTreeNode mindSettings = new DefaultMutableTreeNode("Advanced Settings");
         root.add(mindSettings);
-        
+
         mindSettings.add(new EditorMode("Allow joy in action") {
             @Override
             public void run() {
                 Hauto.allow_imitating=true;
             }
         });
-        
+
         mindSettings.add(new EditorMode("Don't allow joy") {
             @Override
             public void run() {
                 Hauto.allow_imitating=false;
             }
         });
-        
+
         mindSettings.add(new EditorMode("Tell object categories") {
             @Override
             public void run() {
                 TestChamber.staticInformation=true;
             }
         });
-        
+
         mindSettings.add(new EditorMode("Don't tell object categories") {
             @Override
             public void run() {
                 TestChamber.staticInformation=false;
             }
         });
-        
-        
+
+
         DefaultMutableTreeNode load = new DefaultMutableTreeNode("Load Scenario");
         root.add(load);
         DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
@@ -112,7 +112,7 @@ public class EditorPanel extends JPanel {
                     try {
                         String path=file.getCanonicalPath();
                         String name=file.getName();
-                        
+
                         load.add(new EditorMode(name) {
                             @Override
                             public void run() {
@@ -124,36 +124,36 @@ public class EditorPanel extends JPanel {
                                     if(c.length<14) {
                                         continue;
                                     }
-                                    
+
                                     if(!c[11].equals("") && !c[11].contains("{")) {
                                         c[11]="{"+c[11]+"}";
                                     }
-                                    
+
                                     int i=Integer.valueOf(c[0]);
                                     int j=Integer.valueOf(c[1]);
                                     s.cells.readCells[i][j].charge=Float.valueOf(c[2]);
                                     s.cells.writeCells[i][j].charge=Float.valueOf(c[2]);
-                                    
+
                                     s.cells.readCells[i][j].chargeFront=Boolean.valueOf(c[3]);
                                     s.cells.writeCells[i][j].chargeFront=Boolean.valueOf(c[3]);
-                                    
+
                                     s.cells.readCells[i][j].conductivity=Float.valueOf(c[4]);
                                     s.cells.writeCells[i][j].conductivity=Float.valueOf(c[4]);
-                                    
+
                                     s.cells.readCells[i][j].height=Float.valueOf(c[5]);
                                     s.cells.writeCells[i][j].height=Float.valueOf(c[5]);
-                                    
+
                                     s.cells.readCells[i][j].is_solid=Boolean.valueOf(c[6]);
                                     s.cells.writeCells[i][j].is_solid=Boolean.valueOf(c[6]);
-                                    
+
                                     s.cells.readCells[i][j].light=Float.valueOf(c[7]);
                                     s.cells.writeCells[i][j].light=Float.valueOf(c[7]);
-                                    
+
                                     s.cells.readCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
                                     s.cells.writeCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
                                     if(s.cells.readCells[i][j].logic==Logic.SWITCH) {
                                         if(TestChamber.staticInformation)
-                                        s.nar.addInput("<"+c[11]+" --> switch>.");
+                                            s.nar.addInput("<"+c[11]+" --> switch>.");
                                         if(s.cells.readCells[i][j].light==1.0f) {
                                             //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                         }
@@ -163,7 +163,7 @@ public class EditorPanel extends JPanel {
                                     }
                                     if(s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
                                         if(TestChamber.staticInformation)
-                                        s.nar.addInput("<"+c[11]+" --> switch>.");
+                                            s.nar.addInput("<"+c[11]+" --> switch>.");
                                         if(s.cells.readCells[i][j].light==1.0f) {
                                             //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                         }
@@ -171,7 +171,7 @@ public class EditorPanel extends JPanel {
                                             //s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                         }
                                     }
-                                    
+
                                     if(!c[9].equals("")) {
                                         s.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
                                         s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
@@ -187,7 +187,7 @@ public class EditorPanel extends JPanel {
                                         }
                                         if(s.cells.readCells[i][j].machine==Machine.Light) {
                                             if(TestChamber.staticInformation)
-                                            s.nar.addInput("<"+c[11]+" --> light>.");
+                                                s.nar.addInput("<"+c[11]+" --> light>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
                                                 //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                             }
@@ -196,19 +196,19 @@ public class EditorPanel extends JPanel {
                                             }
                                         }
                                     }
-                                    
+
                                     s.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
                                     s.cells.writeCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
 
                                     if(s.cells.readCells[i][j].material==Material.Door) {
                                         if(TestChamber.staticInformation)
-                                        s.nar.addInput("<"+c[11]+" --> door>.");
+                                            s.nar.addInput("<"+c[11]+" --> door>.");
                                         //s.nar.addInput("<"+c[11]+" --> closed>. :|:");
                                     }
 
                                     s.cells.readCells[i][j].name=c[11];
                                     s.cells.writeCells[i][j].name=c[11];
-                                    
+
                                     try {
                                         if(!c[11].equals("")) {
                                             String value=c[11].replaceAll("[A-Za-z]","").replaceAll("\\}", "").replaceAll("\\{", "");
@@ -219,11 +219,11 @@ public class EditorPanel extends JPanel {
                                         }
                                     }
                                     catch(Exception ex){}
-                                    
-                                    
+
+
                                     s.cells.readCells[i][j].value=Float.valueOf(c[12]);
                                     s.cells.writeCells[i][j].value=Float.valueOf(c[12]);
-                                    
+
                                     s.cells.readCells[i][j].value2=Float.valueOf(c[13]);
                                     s.cells.writeCells[i][j].value2=Float.valueOf(c[13]);
                                 }
@@ -234,13 +234,13 @@ public class EditorPanel extends JPanel {
                                     if(val.length==0) {
                                         continue;
                                     }
-                                    
+
                                     if(!val[1].equals("") && !val[1].contains("{")) {
                                         val[1]="{"+val[1]+"}";
                                     }
-                                    
+
                                     String name=val[1];
-                                    
+
                                     try {
                                         if(!name.equals("")) {
                                             String value=name.replaceAll("[A-Za-z]","");
@@ -251,11 +251,11 @@ public class EditorPanel extends JPanel {
                                         }
                                     }
                                     catch(Exception ex){}
-                                    
+
                                     float cx=Float.valueOf(val[2]);
-                                    float cy=Float.valueOf(val[3]); 
-                                    int x=Integer.valueOf(val[5]); 
-                                    int y=Integer.valueOf(val[6]); 
+                                    float cy=Float.valueOf(val[3]);
+                                    int x=Integer.valueOf(val[5]);
+                                    int y=Integer.valueOf(val[6]);
                                     if(val[0].equals("GridAgent")) {
                                         for(GridObject z : s.objects) {
                                             if(z instanceof GridAgent) {
@@ -272,7 +272,7 @@ public class EditorPanel extends JPanel {
                                     if(val[0].equals("Key")) {
                                         Key addu=new Key(x,y,name);
                                         if(TestChamber.staticInformation)
-                                        s.nar.addInput("<"+name+" --> Key>.");
+                                            s.nar.addInput("<"+name+" --> Key>.");
                                         addu.space=s;
                                         newobj.add(addu);
                                     }
@@ -287,14 +287,14 @@ public class EditorPanel extends JPanel {
                                 s.objects=newobj;
                             }
                         });
-                        
+
                     } catch (IOException ex) {
                         System.out.println("not able to get path of "+file.getName());
                     }
                 }
             }
         }
-        
+
         save.add(new EditorMode("Save") {
             @Override
             public void run() {
@@ -325,19 +325,25 @@ public class EditorPanel extends JPanel {
                     }
                 }
                 wr.append("OBJECTS");
-                for(GridObject s : s.objects) {
-                    if(s instanceof LocalGridObject) {
-                        LocalGridObject toSave=(LocalGridObject) s;
+                try {
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                for(GridObject g : s.objects) {
+                    if(g instanceof LocalGridObject) {
+                        LocalGridObject toSave=(LocalGridObject) g;
                         boolean export=false;
-                        if(s instanceof GridAgent) {
+                        if(g instanceof GridAgent) {
                             export=true;
                             wr.append("GridAgent"+",");
                         }
-                        if(s instanceof Key) {
+                        if(g instanceof Key) {
                             export=true;
                             wr.append("Key"+",");
                         }
-                        if(s instanceof Pizza) {
+                        if(g instanceof Pizza) {
                             export=true;
                             wr.append("Pizza"+",");
                         }
@@ -359,10 +365,10 @@ public class EditorPanel extends JPanel {
                 }
             }
         });
-        
-       // DefaultMutableTreeNode extraMenu = new DefaultMutableTreeNode("Extra");
-       // root.add(extraMenu);
-        
+
+        // DefaultMutableTreeNode extraMenu = new DefaultMutableTreeNode("Extra");
+        // root.add(extraMenu);
+
         DefaultTreeModel model = new DefaultTreeModel(root);
 
         final JTree toolTree = new JTree(model);
@@ -469,8 +475,8 @@ public class EditorPanel extends JPanel {
         });
         //since firework doesnt serve a special functionality yet
         machineMenu.add(new EditorMode("Firework") {
-         @Override public void run() { s.cells.click("Turret","",""); }
-         });
+            @Override public void run() { s.cells.click("Turret","",""); }
+        });
 
         machineMenu.add(new EditorMode("Door and Key") {
             @Override
@@ -553,7 +559,7 @@ public class EditorPanel extends JPanel {
                         }
                     }
                 }
-                
+
                 s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
                 s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
                 s.nar.addInput("<Self --> [curious]>!");
@@ -635,7 +641,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
-        
+
         knowMenu.add(new EditorMode("common sense") {
             @Override
             public void run() {
@@ -647,7 +653,7 @@ public class EditorPanel extends JPanel {
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
             }
         });
-        
+
         knowMenu.add(new EditorMode("if you go to somewhere you will be there") {
             @Override
             public void run() {

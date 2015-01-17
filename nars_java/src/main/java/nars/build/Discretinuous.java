@@ -39,7 +39,7 @@ public class Discretinuous extends Default {
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
         
         Bag<TaskLink,Task> taskLinks = new CurveBag<>(getConceptTaskLinks(), randomRemoval);
-        Bag<TermLink,TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), randomRemoval);
+        Bag<TermLink,String> termLinks = new CurveBag<>(getConceptTermLinks(), randomRemoval);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }

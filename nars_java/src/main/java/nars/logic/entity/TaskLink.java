@@ -78,7 +78,19 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
 
-    
+
+
+    public TaskLink(final Task t, final BudgetValue v, int recordLength) {
+        super(v);
+        this.type = TermLink.SELF;
+        this.index = null;
+
+        this.targetTask = t;
+
+        this.recordLength = recordLength;
+        this.records = new ArrayDeque(recordLength);
+    }
+
     /**
      * Constructor
      * <p>
@@ -88,18 +100,10 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable, Sente
      * @param template The TermLink template
      * @param v The budget
      */
-    public TaskLink(final Task t, final TermLink template, final BudgetValue v, int recordLength) {
+    public TaskLink(final Task t, final TermLink.TermLinkTemplate template, final BudgetValue v, int recordLength) {
         super(v);
-        this.type =
-                template == null ? 
-                        TermLink.SELF : 
-                        template.type;
-        this.index =
-                
-                template == null ?
-                        null : 
-                        template.index
-        ;
+        this.type = template.type;
+        this.index = template.index;
         
         this.targetTask = t;
         

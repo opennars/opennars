@@ -364,8 +364,9 @@ public class Texts {
      *  representation; 0..9, A=1.0 */
     public static final char n1(final float x) {
         int i = tens(x);
-        if (i == 10) return 'A';
-        else return (char)('0' + i);
+        if (i >= 10)
+            i=9; //return 'A';
+        return (char)('0' + i);
     }
 
     public static int compareTo(final CharSequence s, final CharSequence t) {

@@ -167,8 +167,8 @@ public abstract class Item<K> implements Budgetable {
      * @param that The Item to be merged
      * @return the resulting Item: this or that
      */
-    public Item merge(final Item that) {
-        budget.merge(that.budget);
+    public Item merge(final Budgetable that) {
+        budget.merge(that.getBudget());
         return this;
     }
 

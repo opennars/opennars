@@ -51,7 +51,7 @@ public class Curve extends Default {
     public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
         
         Bag<TaskLink,Task> taskLinks = new CurveBag<>(getConceptTaskLinks(), curve, randomRemoval);
-        Bag<TermLink,TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), curve, randomRemoval);
+        Bag<TermLink,String> termLinks = new CurveBag<>(getConceptTermLinks(), curve, randomRemoval);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }
