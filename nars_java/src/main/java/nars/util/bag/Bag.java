@@ -133,6 +133,10 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         else {
             item = selector.newInstance();
 
+            //compare by reference, sanity check
+            if (item.name()!=selector.name())
+                throw new RuntimeException("Unrecognized selector and resulting new instance have different name()'s: item=" + item.name() + " selector=" + selector.name());
+
             // put the (new or merged) item into itemTable
             return addItem(item);
         }

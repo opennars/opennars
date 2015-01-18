@@ -440,7 +440,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    public void linkToTask(final Task task) {
+    public synchronized void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.budget;
 
         insertTaskLink(taskLinkBuilder.set(task, null, taskBudget));  // link type: SELF
@@ -567,16 +567,20 @@ public class Concept extends Item<Term> implements Termable {
      * @return the displaced tasklink
      */
     protected TaskLink insertTaskLink(final TaskLink.TaskLinkBuilder taskLink) {
-        
-        TaskLink removed = taskLinks.putIn(taskLink);
-        
-        if (removed!=null) {
+
+        TaskLink removed;
+
+        synchronized (taskLinks) {
+            removed = taskLinks.putIn(taskLink);
+        }
+
+        if (removed != null) {
             //memory.emit(TaskLinkRemove.class, removed, this);
-            removed.end();
 
             return removed;
         }
-        //memory.emit(TaskLinkAdd.class, taskLink, this);
+
+            //memory.emit(TaskLinkAdd.class, taskLink, this);
         return null;
     }
 

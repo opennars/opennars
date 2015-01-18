@@ -1,10 +1,11 @@
 package nars.narclear;
 
+import nars.NARPrologMirror;
+import nars.build.Default;
+import nars.build.Neuromorphic;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.build.Default;
-import nars.build.Neuromorphic;
 import nars.gui.NARSwing;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -54,13 +55,13 @@ public class Rover2 extends PhysicsModel {
         NAR nar;
         if (multithread) {
             Parameters.THREADS = 4;
-            nar = new NAR(new Neuromorphic(128).simulationTime()
+            nar = new NAR(new Neuromorphic(256).simulationTime()
                     .setConceptBagSize(1500).setSubconceptBagSize(4000)
                     .setNovelTaskBagSize(512)
                     .setTermLinkBagSize(150)
                     .setTaskLinkBagSize(60)
                     .setInternalExperience(null));
-            nar.setCyclesPerFrame(256);
+            nar.setCyclesPerFrame(512);
         }
         else {
             Parameters.THREADS = 1;
@@ -73,7 +74,7 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
 
 
-        //new NARPrologMirror(nar, 0.30f, true, true, false);
+        new NARPrologMirror(nar, 0.85f, true, true, false);
 
 
 
@@ -81,6 +82,7 @@ public class Rover2 extends PhysicsModel {
 
         (nar.param).noiseLevel.set(3);
         (nar.param).duration.set(5);
+        //nar.param.budgetThreshold.set(0.05);
         (nar.param).conceptForgetDurations.set(25f);
         (nar.param).taskLinkForgetDurations.set(25f);
         (nar.param).termLinkForgetDurations.set(25f);

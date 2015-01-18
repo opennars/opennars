@@ -29,7 +29,7 @@ import nars.logic.TruthFunctions;
 import nars.logic.TruthFunctions.EternalizedTruthValue;
 import nars.logic.entity.TruthValue.Truthable;
 import nars.logic.nal5.Conjunction;
-import nars.logic.nal7.Interval;
+import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
@@ -190,7 +190,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
     
 
-    protected boolean isUniqueByOcurrenceTime() {
+    final protected boolean isUniqueByOcurrenceTime() {
         return true;
         //return ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
     }
@@ -208,19 +208,24 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
             final Sentence t = (Sentence) that;
 
             if (punctuation!=t.punctuation) return false;
+
+
             if (isUniqueByOcurrenceTime()) {
-                if (stamp.getOccurrenceTime() != t.stamp.getOccurrenceTime()) return false;
+                int equalityWindow = 1;
+                if (!TemporalRules.concurrent(this, t, equalityWindow)) return false;
             }
-            
+
+
             if (truth==null) {
                 if (t.truth!=null) return false;
             }
-            else if (t.truth==null) {
-                return false;
+            else /*truth!=null*/ {
+                if (t.truth==null) return false;
+
+                if (!truth.equals(t.truth)) return false;
             }
-            else if (!truth.equals(t.truth)) return false;            
-            
-            return (term.equals(t.term));
+
+            return term.equals(t.term);
         }
         return false;
     }

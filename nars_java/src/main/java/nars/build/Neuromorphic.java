@@ -21,7 +21,7 @@ public class Neuromorphic extends Curve {
     private int maxInputsPerCycle = -1;
 
     /** temporary: true=curve bag, false=fairdelaybag */
-    private boolean conceptBagCurve = false;
+    private boolean fairdelaybag = true;
 
     public Neuromorphic(int numAnts) {
         super();        
@@ -58,7 +58,7 @@ public class Neuromorphic extends Curve {
     @Override
     public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
 
-        if (conceptBagCurve) {
+        if (fairdelaybag) {
             DelayBag<TaskLink, Sentence> taskLinks = new FairDelayBag(
                     param.taskLinkForgetDurations, getConceptTaskLinks());
             taskLinks.setMemory(m);

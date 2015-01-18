@@ -70,7 +70,7 @@ public class PluginPanel extends VerticalPanel {
                     continue;
                 
                 String[] p = c.getPackage().getName().split("\\.");
-                String category = p[2];
+                String category = p[1];
                 JMenu j = menus.get(category);
                 if (j == null) {
                     j = new JMenu(category);

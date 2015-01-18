@@ -249,7 +249,8 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
             
         } while ( (!finishedUp) || (!finishedDown) );
                 
-        throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
+        //throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
+        return false;
     }
 
 

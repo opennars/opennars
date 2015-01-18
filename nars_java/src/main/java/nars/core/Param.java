@@ -69,6 +69,14 @@ public class Param implements Serializable {
     
     public final AtomicDouble novelTaskForgetDurations = new AtomicDouble();
 
+    /** The budget threshold rate for task to be accepted.
+     *   Increasing this value decreases the resolution with which
+     *   budgets are propagated or otherwise measured, which can result
+     *   in a performance gain.
+     *   TODO implement, but will require using this value as parameter to aboveThreshold() and greaterThan() budget functions
+     */
+    private final AtomicDouble budgetThreshold = new AtomicDouble();
+
     
     /** Minimum expectation for a desire value. 
      *  the range of "now" is [-DURATION, DURATION]; */

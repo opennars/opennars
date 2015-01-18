@@ -524,7 +524,12 @@ public class TemporalRules {
         
         return order(b - a, durationCycles);
     }
-    
+
+    public static boolean concurrent(Sentence a, Sentence b, final int durationCycles) {
+        return concurrent(a.getOccurenceTime(), b.getOccurenceTime(), durationCycles);
+    }
+
+    /** whether two times are concurrent with respect ao a specific duration ("present moment") # of cycles */
     public static boolean concurrent(final long a, final long b, final int durationCycles) {        
         //since Stamp.ETERNAL is Integer.MIN_VALUE, 
         //avoid any overflow errors by checking eternal first

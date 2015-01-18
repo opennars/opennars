@@ -94,7 +94,9 @@ public class Default extends Build implements ConceptBuilder {
         param.taskLinkForgetDurations.set(4.0);
         param.termLinkForgetDurations.set(10.0);
         param.novelTaskForgetDurations.set(2.0);
-                
+
+        //param.budgetThreshold.set(0.01f);
+
         param.conceptBeliefsMax.set(7);
         param.conceptGoalsMax.set(7);
         param.conceptQuestionsMax.set(5);
