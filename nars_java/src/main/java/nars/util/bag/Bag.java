@@ -67,7 +67,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * Insert an item into the itemTable, and return the overflow
      *
      * @param newItem The Item to put in
-     * @return null if nothing was displaced, if the item itself replaced itself,
+     * @return null if nothing was displaced and if the item itself replaced itself,
      * or the The overflow Item if a different item had to be removed
      */
     abstract protected E addItem(final E newItem, boolean index);

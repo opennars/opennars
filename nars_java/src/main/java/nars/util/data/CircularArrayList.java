@@ -16,7 +16,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     private int tail = 0;
     private int size = 0;
 
-    public CircularArrayList(Class<E> clazz, int capacity) {
+    public CircularArrayList(int capacity) {
         n = capacity;
         //buf = (E[])Array.newInstance(clazz, capacity);
         buf = new Object[capacity];

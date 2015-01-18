@@ -106,6 +106,11 @@ public class BagPerf {
             this(Memory.randomNumber.nextFloat() * (1.0f - Parameters.TRUTH_EPSILON));
         }
 
+        public NullItem(float priority, String key) {
+            super(new BudgetValue(priority, priority, priority));
+            this.key = key;
+        }
+
         public NullItem(float priority) {
             super(new BudgetValue(priority, priority, priority));
             this.key = "" + (itemID++);
