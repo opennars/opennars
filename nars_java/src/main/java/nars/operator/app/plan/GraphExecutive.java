@@ -211,7 +211,7 @@ public class GraphExecutive {
                         Term etarget = forward ? s.effect : s.cause;
                         
                        
-                        if ((avoidCycles) && (etarget == goalPost)) {
+                        if ((avoidCycles) && (etarget.equals(goalPost))) {
                             edgeDecisionFailCyclical++;
                             continue;
                         }

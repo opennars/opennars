@@ -91,7 +91,7 @@ public class TermLinkTemplate {
 
 
     protected void setConcept(Term conceptTerm) {
-        if (this.concept != conceptTerm) {
+        if (this.concept == null || !this.concept.equals( conceptTerm) ) {
             //reset, concept has changed (if this instance is ever used with a different concept)
             this.concept = conceptTerm;
             incoming = outgoing = null;

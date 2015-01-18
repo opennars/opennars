@@ -17,6 +17,7 @@ import nars.logic.nal7.TemporalRules;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  *
@@ -150,8 +151,8 @@ public class ClassicalConditioningHelper implements Plugin {
                     while(B.contains(null)) {
                         B.remove(null);
                     }
-                    boolean caseA=A.get(A.size()-1)==B.get(0);
-                    boolean caseB=A.size()>2 && B.size()>1 && A.get(A.size()-1)==B.get(1) && A.get(A.size()-2)==B.get(0);
+                    boolean caseA=A.get(A.size()-1).equals(B.get(0));
+                    boolean caseB=A.size()>2 && B.size()>1 && A.get(A.size()-1).equals(B.get(1)) && Objects.equals(A.get(A.size() - 2), B.get(0));
                     
                     if((A.size()>1 && B.size()>1) && (caseA || caseB)) {
                         ArrayList<Task> compoundT=null;
@@ -209,7 +210,7 @@ public class ClassicalConditioningHelper implements Plugin {
             for(Tuple D : Ret) {
                 ArrayList<Task> c=D.x;
                 double d=D.y;
-                if(a!=c && TaskStringContains(c,a) && d>=b) {
+                if(!Objects.equals(a, c) && TaskStringContains(c,a) && d>=b) {
                     //Ret.remove(T);
                     ToRemove.add(T);
                 }

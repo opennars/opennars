@@ -260,7 +260,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
         }
 
         public String name(Term from) {
-            return currentTemplate.name( from!= concept.term );
+            return currentTemplate.name( !from.equals( concept.term ) );
         }
 
         /** configures this selector's current budget for the next bag operation */
@@ -273,10 +273,8 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
 
         /** configures this selector's current bag key for the next bag operation */
         public TermLinkBuilder set(TermLinkTemplate temp, Term source, Term target) {
-            if ((this.from == source) && (this.to == target)) return this;
             this.currentTemplate = temp;
             this.incoming = !source.equals(concept.term);
-            //this.other = incoming ? source : target;
             this.from = source;
             this.to = target;
             return this;
