@@ -34,16 +34,12 @@ public class UniformVector  {
         }
 
         boolean changed = false;
-        if (lastData == null) {
+        if ((lastData == null) || (lastData.length!=data.length)) {
             //first time
             lastData = new double[data.length];     
             changed = true;
         }
-        else if (lastData.length!=data.length) {
-            lastData = new double[data.length];
-            changed = true;
-        }
-        
+
         
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < data.length; i++) {

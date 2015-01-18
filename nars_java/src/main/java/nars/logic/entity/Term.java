@@ -43,7 +43,7 @@ import java.util.TreeSet;
  * exists. Multiple objects may represent the same Term.
  */
 public class Term implements AbstractTerm, Termable {
-    private static final Map<CharSequence,Term> atoms = Parameters.newHashMap(16);
+    private static final Map<CharSequence,Term> atoms = Parameters.newHashMap(1024);
 
     final public static Term SELF = Term.get("SELF");
 

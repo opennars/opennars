@@ -98,7 +98,7 @@ public class Abbreviation extends AbstractPlugin {
         if (event != TaskDerive.class)
             return;
 
-        if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
+        if ((Memory.randomNumber.nextDouble() < abbreviationProbability))
             return;
 
         Task task = (Task)a[0];

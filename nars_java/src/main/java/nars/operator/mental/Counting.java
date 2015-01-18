@@ -13,6 +13,7 @@ import nars.logic.nal4.Product;
 
 /**
  * Counting and Cardinality
+ * TODO extends AbstractPlugin
  */
 public class Counting implements Plugin {
 
