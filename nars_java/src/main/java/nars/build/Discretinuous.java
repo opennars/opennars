@@ -22,7 +22,7 @@ public class Discretinuous extends Default {
 
     
     @Override
-    public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag() {        
+    public Bag<Task<CompoundTerm>,Sentence<CompoundTerm>> newNovelTaskBag() {
         return new LevelBag(getNovelTaskBagLevels(), getNovelTaskBagSize()).setNextNonEmptyMode(Fast);        
     }
 

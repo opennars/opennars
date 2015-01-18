@@ -11,6 +11,7 @@ import nars.logic.ImmediateProcess;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
+import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Instance;
 import nars.logic.nal7.Tense;
 
@@ -92,8 +93,9 @@ public class Discretize {
         return 1.0 / (1 + levelsFromCenter/(discretization/2)*sharpness);
     }
     
-    public Term getValueTerm(String prefix, int level) {
-        return Instance.make( Term.get(prefix), Term.get("y" + level));       }
+    public Inheritance getValueTerm(String prefix, int level) {
+        return Instance.make( Term.get(prefix), Term.get("y" + level));
+    }
     
     public Term[] getValueTerms(String prefix) {
         Term t[] = new Term[discretization];

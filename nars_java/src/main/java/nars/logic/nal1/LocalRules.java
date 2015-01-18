@@ -33,8 +33,6 @@ import nars.logic.entity.*;
 import nars.logic.nal2.NAL2;
 import nars.logic.nal7.TemporalRules;
 
-import java.util.Arrays;
-
 
 
 /**
@@ -158,13 +156,19 @@ public class LocalRules {
             
             boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u);            
             content = u[0];
-            
-            belief = belief.clone(content);
-            
+
             if ((!unified) || (content == null)) {
-                throw new RuntimeException("Unification invalid: " + Arrays.toString(u));
+                //throw new RuntimeException("Unification invalid: " + Arrays.toString(u));
+                return false;
             }
-            
+
+            belief = belief.clone(content);
+
+            if (belief == null) {
+                //throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
+                return false;
+            }
+
             Stamp st = new Stamp(belief.stamp, memory.time());
             st.chainAdd(belief.term);
         }

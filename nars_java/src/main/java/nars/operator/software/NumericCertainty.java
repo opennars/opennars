@@ -3,6 +3,8 @@ package nars.operator.software;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal7.Tense;
@@ -32,14 +34,14 @@ public class NumericCertainty extends Operator implements Mental{
         
         float clampedValue = clamp(min, max, value);
         float resultCertainty = (clampedValue-min)/(max-min);
-        
-        
-        Term resultTerm = args[3];
-        
+
         // NOTE< no memory output ? >
-        
+
         ArrayList<Task> results = new ArrayList<>(1);
-        results.add(memory.newTask(resultTerm, Symbols.JUDGMENT_MARK, 1.0f, resultCertainty, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, Tense.Present));
+
+        CompoundTerm resultTerm = Sentence.termOrNull(args[3]);
+        if (resultTerm != null)
+            results.add(memory.newTask(resultTerm, Symbols.JUDGMENT_MARK, 1.0f, resultCertainty, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, Tense.Present));
         
         return results;
     }

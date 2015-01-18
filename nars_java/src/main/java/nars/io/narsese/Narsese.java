@@ -135,8 +135,9 @@ public class Narsese {
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));
         if (content == null) throw new InvalidInputException("Content term missing");
+        if (!(content instanceof CompoundTerm)) throw new InvalidInputException("Content term is not compound");
             
-        Sentence sentence = new Sentence(content, punc, truth, stamp);
+        Sentence sentence = new Sentence((CompoundTerm)content, punc, truth, stamp);
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);
         //}
@@ -285,7 +286,8 @@ public class Narsese {
         return Tense.tense(t);
     }
 
-    
+
+
     
     /* ---------- react String into term ---------- */
     /**
@@ -315,7 +317,7 @@ public class Narsese {
             switch (opener) {
                 case COMPOUND_TERM_OPENER:
                     if (last == COMPOUND_TERM_CLOSER.ch) {
-                       return parseCompoundTerm(s.substring(1, index));
+                       return parsePossibleCompoundTermTerm(s.substring(1, index));
                     } else {
                         throw new InvalidInputException("missing CompoundTerm closer: " + s);
                     }
@@ -445,6 +447,13 @@ public class Narsese {
         return t;
     }
 
+
+    public CompoundTerm parseCompoundTerm(String s) throws InvalidInputException {
+        Term t = parseTerm(s);
+        if (t instanceof CompoundTerm) return ((CompoundTerm)t);
+        throw new InvalidInputException(s + " is not a CompoundTerm");
+    }
+
     /**
      * Parse a String to create a CompoundTerm.
      *
@@ -453,7 +462,7 @@ public class Narsese {
      * @throws nars.io.StringParser.InvalidInputException the String cannot be
      * parsed into a Term
      */
-    private Term parseCompoundTerm(final String s0) throws InvalidInputException {
+    public Term parsePossibleCompoundTermTerm(final String s0) throws InvalidInputException {
         String s = s0.trim();
         if (s.isEmpty()) {
             throw new InvalidInputException("Empty compound term: " + s);

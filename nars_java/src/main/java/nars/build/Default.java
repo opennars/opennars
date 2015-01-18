@@ -193,7 +193,7 @@ public class Default extends Build implements ConceptBuilder {
         return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder());
     }
     
-    public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag() {
+    public Bag<Task<CompoundTerm>,Sentence<CompoundTerm>> newNovelTaskBag() {
         return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
     }
 

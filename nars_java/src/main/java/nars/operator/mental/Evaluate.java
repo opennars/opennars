@@ -44,8 +44,8 @@ public class Evaluate extends Operator implements Mental {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term content = args[0];
-        
+        CompoundTerm content = Sentence.termOrException(args[0]);
+
         Sentence sentence = new Sentence(content, Symbols.QUEST_MARK, null, new Stamp(memory));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUEST_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         

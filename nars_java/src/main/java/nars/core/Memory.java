@@ -151,7 +151,7 @@ public class Memory implements Serializable {
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
-    public final Bag<Task<Term>, Sentence<Term>> novelTasks;
+    public final Bag<Task<CompoundTerm>, Sentence<CompoundTerm>> novelTasks;
 
     /* ---------- Short-term workspace for a single cycle ---	------- */
     /**
@@ -187,7 +187,7 @@ public class Memory implements Serializable {
      * @param initialOperators - initial set of available operators; more may be
      * added during runtime
      */
-    public Memory(int nalLevel, Param param, Core concepts, Bag<Task<Term>, Sentence<Term>> novelTasks) {
+    public Memory(int nalLevel, Param param, Core concepts, Bag<Task<CompoundTerm>, Sentence<CompoundTerm>> novelTasks) {
 
         this.level = nalLevel;
 
@@ -875,23 +875,23 @@ public class Memory implements Serializable {
         return t;
     }
 
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability) {
+    public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability) {
         return newTask(content, sentenceType, freq, conf, priority, durability, (Task) null);
     }
 
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
+    public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
         return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
     }
 
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
+    public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
         return newTask(content, sentenceType, freq, conf, priority, durability, null, tense);
     }
 
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
+    public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
         return newTaskAt(content, sentenceType, freq, conf, priority, durability, parentTask, tense, time());
     }
 
-    public Task newTaskAt(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense, long ocurrenceTime) {
+    public Task newTaskAt(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense, long ocurrenceTime) {
 
         TruthValue truth = new TruthValue(freq, conf);
         Sentence sentence = new Sentence(

@@ -28,6 +28,7 @@ import nars.logic.entity.CompoundTerm.UnableToCloneException;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal3.*;
+import nars.logic.nal4.Image;
 import nars.logic.nal4.ImageExt;
 import nars.logic.nal4.ImageInt;
 import nars.logic.nal5.Conjunction;
@@ -138,7 +139,8 @@ public final class CompositionalRules {
                     }
                 }
 
-                Term conj = Conjunction.make(term1, term2);
+                CompoundTerm conj = Sentence.termOrNull( Conjunction.make(term1, term2) );
+                if (conj == null) break;
 
                 /*
                 since we already checked for term1 and term2 having a variable, the result
@@ -282,7 +284,7 @@ public final class CompositionalRules {
      */
     private static boolean decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
 
-        if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
+        if ((compound instanceof Statement) || (compound instanceof Image)) {
             return false;
         }
         Term term2 = reduceComponents(compound, component, nal.mem());

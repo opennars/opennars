@@ -18,12 +18,10 @@ package nars.io.nlp;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.io.narsese.Narsese;
 import nars.io.narsese.InvalidInputException;
+import nars.io.narsese.Narsese;
 import nars.io.nlp.Twokenize.Span;
-import nars.logic.entity.AbstractTask;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import nars.logic.nal2.Instance;
 import nars.logic.nal4.Product;
 import nars.logic.nal5.Conjunction;
@@ -136,10 +134,11 @@ public class Twenglish {
         if (inputProduct) {
             Term p = 
                     /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
-            Term q = Instance.make( p, Term.get(sentenceType) );
-            tt.add( 
-                    memory.newTask(q, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-            );
+            CompoundTerm q = Sentence.termOrNull( Instance.make( p, Term.get(sentenceType) ) );
+            if (q != null)
+                tt.add(
+                        memory.newTask(q, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+                );
         }
         
         //2. add the 'heard' sequence of just the terms
@@ -151,11 +150,12 @@ public class Twenglish {
                 cont.add(Interval.interval(memory.getDuration(), memory));
             }
             cont.removeLast(); //remove trailnig interval term
-            Term con = Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD);
 
-            tt.add( 
-                    memory.newTask(con, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-            );
+            CompoundTerm con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD));
+            if (con!=null)
+                tt.add(
+                        memory.newTask(con, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+                );
         }
         
         return tt;

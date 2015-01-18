@@ -41,9 +41,10 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends Term> implements Cloneable, Termable, Truthable {
+public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Truthable {
 
-    public static interface Sentenceable<T2 extends Term> extends Termable {
+
+    public static interface Sentenceable<T2 extends CompoundTerm> extends Termable {
         public Sentence<T2> getSentence();
     }
 
@@ -78,8 +79,12 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     private transient CharSequence key;
 
     private final int hash;
-    
-    
+
+
+    public Sentence(Term invalidTerm, char punctuation, TruthValue newTruth, Stamp newStamp) {
+        this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
+    }
+
     public Sentence(T term, char punctuation, TruthValue newTruth, Stamp newStamp) {
         this(term, punctuation, newTruth, newStamp, true);
     }
@@ -96,11 +101,11 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     private Sentence(final T _content, final char punctuation, final TruthValue truth, final Stamp stamp, boolean normalize) {
         
         this.punctuation = punctuation;
-        
-        if (_content instanceof Interval)
-            throw new RuntimeException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
-        
-        if ( (!isQuestion() && !isQuest()) && (truth == null) ) {            
+
+        if (invalidSentenceTerm(_content))
+            throw new RuntimeException("Invalid sentence content term: " + _content);
+
+        if ( (truth == null) && (!isQuestion() && !isQuest()) ) {
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
         
@@ -129,7 +134,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         
         //Variable name normalization
         //TODO move this to Concept method, like cloneNormalized()
-        if (normalize && _content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
+        if (normalize && _content.hasVar() && (!((CompoundTerm)_content).isNormalized() ) ) {
             
             this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
             
@@ -261,7 +266,21 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     public Sentence clone() {
         return clone(term);
     }
-    
+
+    /** returns a valid sentence CompoundTerm, or throws an exception */
+    public static CompoundTerm termOrException(Term t) {
+        if (invalidSentenceTerm(t))
+            throw new RuntimeException(t + " not valid sentence content");
+        return ((CompoundTerm)t);
+    }
+
+    /** returns a valid sentence CompoundTerm, or returns null */
+    public static CompoundTerm termOrNull(Term t) {
+        if (invalidSentenceTerm(t))
+            return null;
+        return ((CompoundTerm)t);
+    }
+
     
     public Sentence clone(boolean makeEternal) {
         Sentence clon = clone(term);
@@ -273,11 +292,17 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     }
 
     /** Clone with a different Term */    
-    public final Sentence clone(final Term t) {
+    public final Sentence clone(final CompoundTerm t) {
         return new Sentence(t, punctuation, 
                 truth!=null ? new TruthValue(truth) : null, 
                 stamp.clone());
     }
+
+    public final Sentence clone(final Term t) {
+        //sentence content must be compoundterm
+        return null;
+    }
+
 
     /**
       * project a judgment to a difference occurrence time
@@ -535,19 +560,19 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         return l;
     }
     
-    /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content */
-    public static final boolean invalidSentenceTerm(final Term T) {
-        if (!(T instanceof CompoundTerm)) {
+    /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
+     * returns true if the term is invalid for use as sentence content term
+     * */
+    public static final boolean invalidSentenceTerm(final Term t) {
+        if ((t == null) || (!(t instanceof CompoundTerm))) { //(t instanceof Interval) || (t instanceof Variable)
             return true;
         }
-        if (T instanceof Statement) {
-            Statement st = (Statement) T;
-            if (Statement.invalidStatement(st.getSubject(), st.getPredicate()))
-                return true;
-            if (st.getSubject().equals(st.getPredicate())) {
-                return true;
-            }
+
+        if (t instanceof Statement) {
+            Statement st = (Statement) t;
+            return (Statement.invalidStatement(st.getSubject(), st.getPredicate()));
         }
+
         return false;
     }
 

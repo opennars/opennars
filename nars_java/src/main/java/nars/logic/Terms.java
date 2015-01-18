@@ -80,7 +80,7 @@ public class Terms {
         int j = 0;
         for (Term t : itself.term) {
             Term t2 = unwrapNegation(t);
-            if (!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Conjunction) && !(t2 instanceof Disjunction)) {
+            if (!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Junction)) {
                 j++;
                 continue;
             }

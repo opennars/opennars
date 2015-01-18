@@ -195,7 +195,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
     public Task believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        Task t = memory.newTask(narsese.parseTerm(termString),
+        Task t = memory.newTask(narsese.parseCompoundTerm(termString),
                 Symbols.JUDGMENT_MARK, freq, conf, pri, dur, tense);
         addInput(t);
         return t;
@@ -226,12 +226,13 @@ public class NAR implements Runnable, TaskSource {
     }
     
     public Task ask(String termString, Answered answered) throws InvalidInputException {
-        
+
+
         Task t;
         addInput(
                 t = new Task(
                         new Sentence(
-                                new Narsese(this).parseTerm(termString),
+                                narsese.parseCompoundTerm(termString),
                                 Symbols.QUESTION_MARK, 
                                 null, 
                                 new Stamp(memory, Tense.Eternal)), 

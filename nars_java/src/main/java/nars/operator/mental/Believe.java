@@ -50,8 +50,8 @@ public class Believe extends Operator implements Mental {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
 
-        Term content = args[0];
-        
+        CompoundTerm content = Sentence.termOrException(args[0]);
+
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));
         float quality = BudgetFunctions.truthToQuality(truth);

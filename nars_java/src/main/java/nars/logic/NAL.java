@@ -7,7 +7,6 @@ package nars.logic;
 import nars.core.*;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
-import nars.logic.nal7.Interval;
 import nars.logic.nal8.Operation;
 import nars.operator.mental.Anticipate;
 
@@ -222,7 +221,7 @@ public abstract class NAL implements Runnable {
      * @param newTruth   The truth value of the sentence in task
      * @param newBudget  The budget value in task
      */
-    public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
+    public boolean doublePremiseTaskRevised(final CompoundTerm newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
         return derivedTask(newTask, true, false, null, null);
@@ -236,66 +235,71 @@ public abstract class NAL implements Runnable {
      * @param newTruth   The truth value of the sentence in task
      * @param newBudget  The budget value in task
      */
-    public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+    @Deprecated public Task doublePremiseTask(final Term _newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+        CompoundTerm newContent = Sentence.termOrNull(_newContent);
+        if (newContent == null)
+            return null;
+        return doublePremiseTask(newContent, newTruth, newBudget, temporalAdd);
+    }
 
+    public Task doublePremiseTask(final CompoundTerm newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
         if (!newBudget.aboveThreshold()) {
             return null;
         }
 
         temporalAdd = temporalAdd && nal(7);
 
-        if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable)) && (!Sentence.invalidSentenceTerm(newContent))) {
+        if (Sentence.invalidSentenceTerm(newContent)) {
+            return null;
+        }
+        if (newContent.subjectOrPredicateIsIndependentVar()) {
+            return null;
+        }
 
-            if (newContent.subjectOrPredicateIsIndependentVar()) {
-                return null;
+        Task derived = null;
+
+        try {
+            final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+
+            final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+
+            if (newTask != null) {
+                boolean added = derivedTask(newTask, false, false, null, null);
+                if (added && temporalAdd) {
+                    memory.temporalRuleOutputToGraph(newSentence, newTask);
+                }
+                if (added) {
+                    derived = newTask;
+                }
             }
+        } catch (CompoundTerm.UnableToCloneException e) {
+            return null;
+        }
 
-            Task derived = null;
+
+        //"Since in principle it is always valid to eternalize a tensed belief"
+        if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
 
             try {
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
 
+                TruthValue truthEt = TruthFunctions.eternalize(newTruth);
+                Stamp st = getTheNewStamp().clone();
+                st.setEternal();
+                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-
                 if (newTask != null) {
                     boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added && temporalAdd) {
+                    if (added) {
                         memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
-                    if (added) {
-                        derived = newTask;
-                    }
                 }
+
             } catch (CompoundTerm.UnableToCloneException e) {
                 return null;
             }
 
-
-            //"Since in principle it is always valid to eternalize a tensed belief"
-            if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
-
-                try {
-
-                    TruthValue truthEt = TruthFunctions.eternalize(newTruth);
-                    Stamp st = getTheNewStamp().clone();
-                    st.setEternal();
-                    final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
-                    final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                    if (newTask != null) {
-                        boolean added = derivedTask(newTask, false, false, null, null);
-                        if (added) {
-                            memory.temporalRuleOutputToGraph(newSentence, newTask);
-                        }
-                    }
-
-                } catch (CompoundTerm.UnableToCloneException e) {
-                    return null;
-                }
-
-            }
-            return derived;
         }
-        return null;
+        return derived;
     }
 
     /**

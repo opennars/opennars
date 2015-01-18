@@ -604,7 +604,7 @@ public class GraphExecutive {
 
 
             this.goal = goal;
-            this.solution = new Task(new Sentence(imp, punctuation, truth, stamp), budget, goal) {
+            this.solution = new Task(new Sentence((Implication)imp, punctuation, truth, stamp), budget, goal) {
 
                 @Override public void end(boolean success) {
                     super.end(success);

@@ -1,8 +1,8 @@
 package nars.core;
 
+import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
-import nars.logic.entity.Term;
 import nars.util.bag.Bag;
 
 /**
@@ -15,7 +15,7 @@ abstract public class Build extends Parameters  {
     public final Param param = new Param();
     protected int level;
 
-    abstract public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag();
+    abstract public Bag<Task<CompoundTerm>,Sentence<CompoundTerm>> newNovelTaskBag();
     abstract public Core newAttention();
 
     public Build() {

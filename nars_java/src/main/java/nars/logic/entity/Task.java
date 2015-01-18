@@ -34,7 +34,7 @@ import java.util.Set;
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
  */
-public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements Termable,BudgetValue.Budgetable {
+public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> implements Termable,BudgetValue.Budgetable {
 
     /** placeholder for a forgotten task */
     public static final Task Forgotten = new Task();
@@ -48,7 +48,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
     /**
      * Task from which the Task is derived, or null if input
      */
-    final WeakReference<? extends Task> parentTask;
+    final WeakReference<Task> parentTask;
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
@@ -69,11 +69,11 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
      * @param s The sentence
      * @param b The budget
      */
-    public Task(final Sentence<T> s, final BudgetValue b) {
+    public Task(final Sentence s, final BudgetValue b) {
         this(s, b, (WeakReference)null, null, null);
     }
  
-    public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask) {
+    public Task(final Sentence s, final BudgetValue b, final Task parentTask) {
         this(s, b, parentTask, null);        
     }
 
