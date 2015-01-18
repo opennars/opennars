@@ -2,6 +2,7 @@ package nars.logic.multistep;
 
 import nars.build.Default;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.ExampleFileInput;
 import org.junit.Test;
 
@@ -15,6 +16,9 @@ public class TestMultistepEdited {
 
     @Test
     public void testMultistepEndState() throws Exception {
+
+        Parameters.DEBUG = true;
+
         NAR n = new NAR(new Default());
         n.addInput(ExampleFileInput.get("Examples/Example-MultiStep-edited"));
         

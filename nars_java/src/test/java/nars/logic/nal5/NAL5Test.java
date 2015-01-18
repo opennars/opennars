@@ -1,6 +1,7 @@
 package nars.logic.nal5;
 
 import nars.build.Default;
+import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.AbstractNALTest;
@@ -23,7 +24,7 @@ public class NAL5Test extends AbstractNALTest {
                 { new Default() },
                 { new Default().setInternalExperience(null) },
                 { new Default().level(5) },
-                //{ new Neuromorphic(4) },
+                { new Neuromorphic(4) },
         });
     }
 
