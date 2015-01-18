@@ -4,7 +4,6 @@ import nars.core.Core;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.logic.BudgetFunctions;
 import nars.logic.BudgetFunctions.Activating;
 import nars.logic.FireConcept;
@@ -19,7 +18,6 @@ import nars.util.bag.CacheBag;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -38,58 +36,9 @@ public class DefaultCore implements Core {
     private final ConceptBuilder conceptBuilder;
     private Memory memory;
     
-    private final Cycle loop = new Cycle();
     List<Runnable> run = new ArrayList();
     
-       
-    class Cycle {
-        public final AtomicInteger threads = new AtomicInteger();
-        private final int numThreads;
 
-        public Cycle() {
-            this(Parameters.THREADS);
-        }
-
-        public Cycle(int threads) {
-            this.numThreads = threads;
-            this.threads.set(threads);
-
-        }
-
-        int t(int threads) {
-            if (threads == 1) return 1;
-            else {
-                return threads;
-            }
-        }
-
-
-
-        /*
-        public int newTasksPriority() {
-            return memory.newTasks.size();
-        }
-
-        public int novelTasksPriority() {
-            if (memory.getNewTasks().isEmpty()) {
-                return t(numThreads);
-            } else {
-                return 0;
-            }
-        }*/
-
-        public int conceptsPriority() {
-            if (memory.getNewTasks().isEmpty()) {
-                return memory.param.conceptsFiredPerCycle.get();
-            } else {
-                return 0;
-            }
-        }
-
-
-    }
-    
-            
     public DefaultCore(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.subcon = subcon;
@@ -321,3 +270,53 @@ public class DefaultCore implements Core {
     
     
 }
+      /*
+    //private final Cycle loop = new Cycle();
+    class Cycle {
+        public final AtomicInteger threads = new AtomicInteger();
+        private final int numThreads;
+
+        public Cycle() {
+            this(Parameters.THREADS);
+        }
+
+        public Cycle(int threads) {
+            this.numThreads = threads;
+            this.threads.set(threads);
+
+        }
+
+        int t(int threads) {
+            if (threads == 1) return 1;
+            else {
+                return threads;
+            }
+        }
+
+
+
+
+        public int newTasksPriority() {
+            return memory.newTasks.size();
+        }
+
+        public int novelTasksPriority() {
+            if (memory.getNewTasks().isEmpty()) {
+                return t(numThreads);
+            } else {
+                return 0;
+            }
+        }
+
+        public int conceptsPriority() {
+            if (memory.getNewTasks().isEmpty()) {
+                return memory.param.conceptsFiredPerCycle.get();
+            } else {
+                return 0;
+            }
+        }
+
+
+    }
+
+    */

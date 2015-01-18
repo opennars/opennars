@@ -369,7 +369,7 @@ public class NAR implements Runnable, TaskSource {
             newInputChannels.add(i);
         } catch (IOException ex) {
             emit(ERR.class, ex);
-            throw new RuntimeException(ex.toString());
+            throw new RuntimeException(ex);
         }
         
         ioChanged = true;

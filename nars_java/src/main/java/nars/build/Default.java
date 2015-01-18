@@ -129,7 +129,7 @@ public class Default extends Build implements ConceptBuilder {
     }
 
     @Override
-    public NAR init(NAR n) {
+    public void init(NAR n) {
 
         n.memory.setLevel(level);
 
@@ -162,7 +162,6 @@ public class Default extends Build implements ConceptBuilder {
             }
         }
         
-        return n;
     }
 
 
@@ -315,8 +314,8 @@ public class Default extends Build implements ConceptBuilder {
         }
 
         @Override
-        public NAR init(NAR n) {
-            n = super.init(n); 
+        public void init(NAR n) {
+            super.init(n);
             
             for (String x : filesToLoad) {
                 try {
@@ -327,7 +326,6 @@ public class Default extends Build implements ConceptBuilder {
                 n.run(1);
             }
             
-            return n;
         }
 
         

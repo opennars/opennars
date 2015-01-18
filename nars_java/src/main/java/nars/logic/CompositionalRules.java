@@ -737,11 +737,8 @@ OUT: <lock1 --> lock>.
         Term P1 = T2.getPredicate();
         Term P2 = T1.getPredicate();
 
-        //TODO use a Map<Term,Term>[] and pass as argument for re-use
         Map<Term, Term> res1 = Parameters.newHashMap();
         Map<Term, Term> res2 = Parameters.newHashMap();
-        Map<Term, Term> res3 = Parameters.newHashMap();
-        Map<Term, Term> res4 = Parameters.newHashMap();
 
         if (figure == 21) {
             res1.clear();
@@ -761,6 +758,9 @@ OUT: <lock1 --> lock>.
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             if (S1 instanceof Conjunction) {
+                Map<Term, Term> res3 = Parameters.newHashMap();
+                Map<Term, Term> res4 = Parameters.newHashMap();
+
                 //try to unify P2 with a component
                 for (final Term s1 : ((CompoundTerm) S1).term) {
                     res3.clear();
@@ -784,6 +784,9 @@ OUT: <lock1 --> lock>.
                 }
             }
             if (P2 instanceof Conjunction) {
+                Map<Term, Term> res3 = Parameters.newHashMap();
+                Map<Term, Term> res4 = Parameters.newHashMap();
+
                 //try to unify S1 with a component
                 for (final Term s1 : ((CompoundTerm) P2).term) {
                     res3.clear();
@@ -826,6 +829,9 @@ OUT: <lock1 --> lock>.
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             if (S2 instanceof Conjunction) {
+                Map<Term, Term> res3 = Parameters.newHashMap();
+                Map<Term, Term> res4 = Parameters.newHashMap();
+
                 //try to unify P1 with a component
                 for (final Term s1 : ((CompoundTerm) S2).term) {
                     res3.clear();
@@ -849,6 +855,9 @@ OUT: <lock1 --> lock>.
                 }
             }
             if (P1 instanceof Conjunction) {
+                Map<Term, Term> res3 = Parameters.newHashMap();
+                Map<Term, Term> res4 = Parameters.newHashMap();
+
                 //try to unify S2 with a component
                 for (final Term s1 : ((CompoundTerm) P1).term) {
                     res3.clear();
@@ -892,6 +901,9 @@ OUT: <lock1 --> lock>.
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             if (P1 instanceof Conjunction) {
+                Map<Term, Term> res3 = Parameters.newHashMap();
+                Map<Term, Term> res4 = Parameters.newHashMap();
+
                 //try to unify P2 with a component
                 for (final Term s1 : ((CompoundTerm) P1).term) {
                     res3.clear();
@@ -914,7 +926,11 @@ OUT: <lock1 --> lock>.
                     }
                 }
             }
+
             if (P2 instanceof Conjunction) {
+                Map<Term, Term> res3 = Parameters.newHashMap();
+                Map<Term, Term> res4 = Parameters.newHashMap();
+
                 //try to unify P1 with a component
                 for (final Term s1 : ((CompoundTerm) P2).term) {
                     res3.clear();
@@ -957,6 +973,9 @@ OUT: <lock1 --> lock>.
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             if (S1 instanceof Conjunction) {
+                Map<Term, Term> res3 = Parameters.newHashMap();
+                Map<Term, Term> res4 = Parameters.newHashMap();
+
                 //try to unify S2 with a component
                 for (final Term s1 : ((CompoundTerm) S1).term) {
                     res3.clear();
@@ -980,6 +999,9 @@ OUT: <lock1 --> lock>.
                 }
             }
             if (S2 instanceof Conjunction) {
+                Map<Term, Term> res3 = Parameters.newHashMap();
+                Map<Term, Term> res4 = Parameters.newHashMap();
+
                 //try to unify S1 with a component
                 for (final Term s1 : ((CompoundTerm) S2).term) {
                     res3.clear();
@@ -1347,4 +1369,6 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
         //TODO give appropraite size
         return new HashMap();
     }
+
+
 }

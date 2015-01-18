@@ -82,7 +82,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
     
     private float targetActivations;
     
-    private float numPriorityThru = 0;
+    //private float numPriorityThru = 0;
     private float mass = 0;
     
     
@@ -187,7 +187,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
         int originalSize = size();
         
                 
-        numPriorityThru = mass = 0;
+        float numPriorityThru = mass = 0;
                 
         overcapacity = originalSize >= capacity;
                 

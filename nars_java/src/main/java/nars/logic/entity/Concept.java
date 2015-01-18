@@ -238,8 +238,8 @@ public class Concept extends Item<Term> implements Termable {
                 memory.removeTask(task, "Duplicated");                
                 return;
             } else if (revisible(judg, oldBelief)) {
-                
-                nal.setTheNewStamp(newStamp, oldStamp, memory.time());
+                final long now = memory.time();
+                nal.setTheNewStamp(newStamp, oldStamp, now);
                 
 //                if (nal.setTheNewStamp( //temporarily removed
 //                /*
@@ -255,7 +255,7 @@ public class Concept extends Item<Term> implements Termable {
 //                ) != null) {
                     
                 
-                Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
+                Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), now);
                 if (projectedBelief!=null) {
                     if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
@@ -758,6 +758,7 @@ public class Concept extends Item<Term> implements Termable {
     public Sentence getBelief(final NAL nal, final Task task) {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.time();
+        long occurrenceTime = taskStamp.getOccurrenceTime();
 
         final int b = beliefs.size();
         for (int i = 0; i < b; i++) {
@@ -769,8 +770,8 @@ public class Concept extends Item<Term> implements Termable {
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }
-            
-            Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
+
+            Sentence projectedBelief = belief.projection(occurrenceTime, currentTime);
             if (projectedBelief.getOccurenceTime()!=belief.getOccurenceTime()) {
                 nal.singlePremiseTask(projectedBelief, task.budget);
             }

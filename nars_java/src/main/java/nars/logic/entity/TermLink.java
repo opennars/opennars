@@ -219,7 +219,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
         private final CompoundTerm host;
 
         private Term from = null;
-        private Term to = null;
+        //private Term to = null;
         //private Term other = null;
 
         private TermLinkTemplate currentTemplate;
@@ -276,7 +276,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
             this.currentTemplate = temp;
             this.incoming = !source.equals(concept.term);
             this.from = source;
-            this.to = target;
+            //this.to = target;
             return this;
         }
 

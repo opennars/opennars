@@ -190,25 +190,25 @@ public class TemporalRules {
         Term[] term = args.toArray(new Term[args.size()]);
         Term realB2 = term[beginoffset];
 
-        final int initialSubMapSize = 4;
-        Map<Term, Term> res1 = Parameters.newHashMap(initialSubMapSize);
-        Map<Term, Term> res2 = Parameters.newHashMap(initialSubMapSize);
+        Map<Term, Term> res1 = Parameters.newHashMap();
+        Map<Term, Term> res2 = Parameters.newHashMap();
 
         if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1,res2)) {
             //ok it unifies, so lets create a &/ term
             for(int i=0;i<term.length;i++) {
-                if(term[i] instanceof CompoundTerm) {
-                    Term ts = ((CompoundTerm) term[i]).applySubstitute(res1);
+                final Term ti = term[i];
+                if (ti instanceof CompoundTerm) {
+                    Term ts = ((CompoundTerm)ti).applySubstitute(res1);
                     if(ts!=null)
                         term[i] = ts;
                 }
-                else if (res1.containsKey(term[i])) {
-                    term[i] = res1.get(term[i]);
+                else {
+                    term[i] = res1.getOrDefault(ti,ti);
                 }
             }
             int order1=s1.getTemporalOrder();
             int order2=s2.getTemporalOrder();
-            Term S = Conjunction.make(term,order1);
+
             //check if term has a element which is equal to C
             for(Term t : term) {
                 if(Terms.equalSubTermsInRespectToImageAndProduct(t, C)) {
@@ -222,6 +222,8 @@ public class TemporalRules {
                     }
                 }
             }
+
+            Term S = Conjunction.make(term,order1);
             Implication whole=Implication.make(S, C,order2);
             
             if(whole!=null) {
@@ -237,6 +239,16 @@ public class TemporalRules {
     
     /** whether a term can be used in temoralInduction(,,) */
     protected static boolean termForTemporalInduction(final Term t) {
+        /*
+                //if(t1 instanceof Operation && t2 instanceof Operation) {
+        //   return; //maybe too restrictive
+        //}
+        if(((t1 instanceof Implication || t1 instanceof Equivalence) && t1.getTemporalOrder()!=TemporalRules.ORDER_NONE) ||
+           ((t2 instanceof Implication || t2 instanceof Equivalence) && t2.getTemporalOrder()!=TemporalRules.ORDER_NONE)) {
+            return; //better, if this is fullfilled, there would be more than one temporal operator in the statement, return
+        }
+        */
+
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
@@ -269,14 +281,7 @@ public class TemporalRules {
         Term t11=null;
         Term t22=null;
         
-        //if(t1 instanceof Operation && t2 instanceof Operation) {
-        //   return; //maybe too restrictive
-        //}
-        /*if(((t1 instanceof Implication || t1 instanceof Equivalence) && t1.getTemporalOrder()!=TemporalRules.ORDER_NONE) ||
-           ((t2 instanceof Implication || t2 instanceof Equivalence) && t2.getTemporalOrder()!=TemporalRules.ORDER_NONE)) {
-            return; //better, if this is fullfilled, there would be more than one temporal operator in the statement, return
-        }*/
-        
+
         //since induction shouldnt miss something trivial random is not good here
             ///ex: *Memory.randomNumber.nextDouble()>0.5 &&*/
         
@@ -446,10 +451,13 @@ public class TemporalRules {
             return 0.0F;
         }
         
-        TruthValue truth = solution.truth;
-        if (problem.getOccurenceTime()!=solution.getOccurenceTime()) {
-            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());            
-        }
+        long ptime = problem.getOccurenceTime();
+
+        TruthValue truth;
+        if (ptime!=solution.getOccurenceTime())
+            truth = solution.projectionTruth(ptime, memory.time());
+        else
+            truth = solution.truth;
         
         if (problem.hasQueryVar()) {
             return truth.getExpectation() / solution.term.getComplexity();

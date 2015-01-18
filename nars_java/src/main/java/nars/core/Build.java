@@ -44,8 +44,7 @@ abstract public class Build extends Parameters  {
     }
 
     /** called after NAR created, for initializing it */
-    public NAR init(NAR nar) {
-        return nar;
+    public void init(NAR nar) {
     }
 
     @Override

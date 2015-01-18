@@ -82,7 +82,11 @@ public class Parameters {
     public static final float BUDGET_EPSILON = 0.0001f;
     
     /* ---------- budget thresholds ---------- */
-    /** The budget threshold rate for task to be accepted. */
+    /** The budget threshold rate for task to be accepted.
+     *   Increasing this value decreases the resolution with which
+     *   budgets are propagated or otherwise measured, which can result
+     *   in a performance gain.
+     * */
     public static final float BUDGET_THRESHOLD = (float) 0.01;
 
     /* ---------- default input values ---------- */

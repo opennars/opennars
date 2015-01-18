@@ -50,10 +50,9 @@ public class Neuromorphic extends Curve {
     }
 
     @Override
-    public NAR init(NAR x) {
-        NAR z = super.init(x);
-        z.param.inputsMaxPerCycle.set(maxInputsPerCycle);
-        return z;
+    public void init(NAR x) {
+        super.init(x);
+        x.param.inputsMaxPerCycle.set(maxInputsPerCycle);
     }
 
     @Override
