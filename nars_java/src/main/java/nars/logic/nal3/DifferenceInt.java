@@ -30,7 +30,7 @@ import java.util.TreeSet;
 /**
  * A compound term whose extension is the difference of the intensions of its term
  */
-public class DifferenceInt extends CompoundTerm {
+public class DifferenceInt extends Difference {
 
     /**
      * Constructor with partial values, called by make
@@ -69,7 +69,7 @@ public class DifferenceInt extends CompoundTerm {
     }
 
     /**
-     * Try to make a new DifferenceExt. Called by StringParser.
+     * Try to make a new DifferenceExt
      * @return the Term generated from the arguments
      * @param arg The list of term
      * @param memory Reference to the memory

@@ -1,4 +1,4 @@
-package nars.util.rdfowl;
+package nars.rdfowl;
 
 import nars.core.NAR;
 import nars.build.Default;

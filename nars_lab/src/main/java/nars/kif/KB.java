@@ -1,4 +1,4 @@
-package nars.util.kif;
+package nars.kif;
 
 /**
  * This code is copyright Articulate Software (c) 2003. Some portions copyright

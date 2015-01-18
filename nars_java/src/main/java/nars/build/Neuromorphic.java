@@ -1,11 +1,13 @@
 package nars.build;
 
-import nars.core.Core;
-import nars.core.NAR;
 import nars.control.experimental.AntCore;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Term;
+import nars.core.Core;
+import nars.core.Memory;
+import nars.core.NAR;
+import nars.logic.entity.*;
 import nars.util.bag.Bag;
+import nars.util.bag.experimental.DelayBag;
+import nars.util.bag.experimental.FairDelayBag;
 
 /**
  *
@@ -17,6 +19,9 @@ public class Neuromorphic extends Curve {
 
     /** defaults to all inputs */
     private int maxInputsPerCycle = -1;
+
+    /** temporary: true=curve bag, false=fairdelaybag */
+    private boolean conceptBagCurve = false;
 
     public Neuromorphic(int numAnts) {
         super();        
@@ -51,6 +56,24 @@ public class Neuromorphic extends Curve {
         return z;
     }
 
+    @Override
+    public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
+
+        if (conceptBagCurve) {
+            DelayBag<TaskLink, Sentence> taskLinks = new FairDelayBag(
+                    param.taskLinkForgetDurations, getConceptTaskLinks());
+            taskLinks.setMemory(m);
+            DelayBag<TermLink, String> termLinks = new FairDelayBag(
+                    param.termLinkForgetDurations, getConceptTermLinks());
+            termLinks.setMemory(m);
+            return new Concept(b, t, taskLinks, termLinks, m);
+        }
+        else {
+            return super.newConcept(b, t, m);
+        }
+
+
+    }
     /*
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {

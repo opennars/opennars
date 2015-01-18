@@ -31,7 +31,7 @@ import static nars.logic.nal3.DifferenceInt.ensureValidDifferenceArguments;
 /**
  * A compound term whose extension is the difference of the extensions of its term
  */
-public class DifferenceExt extends CompoundTerm {
+public class DifferenceExt extends Difference {
 
     /**
      * Constructor with partial values, called by make

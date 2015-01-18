@@ -2,6 +2,7 @@ package nars.logic;
 
 import junit.framework.TestCase;
 import nars.build.Default;
+import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -34,8 +35,8 @@ public class NALTest extends TestCase {
     }
 
     static final Build[] builds = new Build[] {
-            new Default()
-            //new Neuromorphic(4).setMaxInputsPerCycle(1)
+            new Default(),
+            new Neuromorphic(4).setMaxInputsPerCycle(1)
     };
 
     private final Build build;

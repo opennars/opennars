@@ -386,8 +386,11 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         if (selected!=null) {
             E removed = nameTable.removeKey(selected.name());
 
+            if (removed == null)
+                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " but had no key referencing it");
+
             //should be the same object instance
-            if (removed!=selected) {
+            if ((removed!=null) && (removed!=selected)) {
                 throw new RuntimeException(this + " inconsistent index: items contained " + selected + " and index referenced " + removed + " + ");
             }
             mass -= selected.budget.getPriority();

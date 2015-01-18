@@ -34,7 +34,7 @@ import static java.lang.System.arraycopy;
 /**
  * Conjunction of statements
  */
-public class Conjunction extends CompoundTerm {
+public class Conjunction extends Junction {
 
     public final int temporalOrder;
 
@@ -43,15 +43,18 @@ public class Conjunction extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    protected Conjunction(final Term[] arg, final int order, boolean normalized) {
+    protected Conjunction(final Term[] arg, final int order) {
         super(arg);
-        
+
+        if (order == TemporalRules.ORDER_BACKWARD) {
+            throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(arg));
+            //although, we could reverse the arg terms..
+        }
+
         temporalOrder = order;
         
         init(arg);
-        
-        /*if (normalized)
-            setNormalized(true);*/
+
     }
 
     @Override
@@ -71,7 +74,7 @@ public class Conjunction extends CompoundTerm {
      */
     @Override
     public Conjunction clone() {
-        return new Conjunction(term, temporalOrder, isNormalized());
+        return new Conjunction(term, temporalOrder);
     }
     
     
@@ -114,7 +117,7 @@ public class Conjunction extends CompoundTerm {
     }
 
     /**
-     * Try to make a new compound from a list of term. Called by StringParser.
+     * Try to make a new compound from a list of term
      *
      * @param temporalOrder The temporal order among term
      * @param argList the list of arguments
@@ -133,17 +136,12 @@ public class Conjunction extends CompoundTerm {
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             
-            return new Conjunction(argList, temporalOrder, false);
+            return new Conjunction(argList, temporalOrder);
             
         } else {
-            
-            // sort/merge arguments
-            final TreeSet<Term> set = new TreeSet<>();
-            Collections.addAll(set, argList);
-            
-            if (set.size() == 1) return set.first();
-            
-            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder, false);
+            Term[] a = Term.toSortedSetArray(argList);
+            if (a.length == 1) return a[0];
+            return new Conjunction(a, temporalOrder);
         }
     }
 
@@ -159,12 +157,12 @@ public class Conjunction extends CompoundTerm {
     
     /**    
      *
-     * @param set a set of Term as term
+     * @param c a set of Term as term
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    final private static Term make(final Collection<Term> set, int temporalOrder) {
-        Term[] argument = set.toArray(new Term[set.size()]);
+    final private static Term make(final Collection<Term> c, int temporalOrder) {
+        Term[] argument = c.toArray(new Term[c.size()]);
         return make(argument, temporalOrder);
     }
 
@@ -187,63 +185,73 @@ public class Conjunction extends CompoundTerm {
         return make(term1, term2, TemporalRules.ORDER_NONE);
     }
 
+
     final public static Term make(final Term term1, final Term term2, int temporalOrder) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            
-            final Term[] components;
-            
-            if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-                
-                CompoundTerm cterm1 = (CompoundTerm) term1;
-                
-                ArrayList<Term> list = new ArrayList<>(cterm1.size());
-                cterm1.addTermsTo(list);
-                        
-                if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) { 
-                    // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
-                    ((CompoundTerm) term2).addTermsTo(list);
-                } 
-                else {
-                    // (&,(&,P,Q),R) = (&,P,Q,R)
-                    list.add(term2);
-                }
-                
-                components = list.toArray(new Term[list.size()]);
-                
-            } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-                CompoundTerm cterm2 = (CompoundTerm) term2;
-                components = new Term[((CompoundTerm) term2).size() + 1];
-                components[0] = term1;
-                arraycopy(cterm2.term, 0, components, 1, cterm2.size());
-            } else {
-                components = new Term[] { term1, term2 };
-            }
-            return make(components, temporalOrder);
-            
+
+            return makeForward(term1, term2);
+
         } else {
             
-            final List<Term> set = new ArrayList();
-            if (term1 instanceof Conjunction) {                
-                ((CompoundTerm) term1).addTermsTo(set);
-                if (term2 instanceof Conjunction) {                    
+
+            if (term1 instanceof Conjunction) {
+                CompoundTerm ct1 = ((CompoundTerm) term1);
+                final List<Term> set = Parameters.newArrayList(ct1.size() + 1);
+                Collections.addAll(set, ct1);
+                if (term2 instanceof Conjunction) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                    ((CompoundTerm) term2).addTermsTo(set);
-                } 
+                    Collections.addAll(set, ((CompoundTerm) term2));
+                }
                 else {
                     // (&,(&,P,Q),R) = (&,P,Q,R)
                     set.add(term2);
                 }                          
-                
+                return make(set, temporalOrder);
             } else if (term2 instanceof Conjunction) {
-                ((CompoundTerm) term2).addTermsTo(set);
+                CompoundTerm ct2 = ((CompoundTerm) term2);
+                final List<Term> set = Parameters.newArrayList(ct2.size() + 1);
+                Collections.addAll(set, ct2);
                 set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
-            } else {                
-                set.add(term1);
-                set.add(term2);
+                return make(set, temporalOrder);
+            } else {
+                return make(new Term[] { term1, term2 }, temporalOrder);
             }
             
-            return make(set, temporalOrder);
         }
+    }
+
+
+    protected static Term makeForward(Term term1, Term term2) {
+        final Term[] components;
+
+        if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+
+            CompoundTerm cterm1 = (CompoundTerm) term1;
+
+            ArrayList<Term> list = new ArrayList<>(cterm1.size());
+            cterm1.addTermsTo(list);
+
+            if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+                // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
+                ((CompoundTerm) term2).addTermsTo(list);
+            }
+            else {
+                // (&,(&,P,Q),R) = (&,P,Q,R)
+                list.add(term2);
+            }
+
+            components = list.toArray(new Term[list.size()]);
+
+        } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            CompoundTerm cterm2 = (CompoundTerm) term2;
+            components = new Term[((CompoundTerm) term2).size() + 1];
+            components[0] = term1;
+            arraycopy(cterm2.term, 0, components, 1, cterm2.size());
+        } else {
+            components = new Term[] { term1, term2 };
+        }
+
+        return make(components, TemporalRules.ORDER_FORWARD);
     }
 
     @Override

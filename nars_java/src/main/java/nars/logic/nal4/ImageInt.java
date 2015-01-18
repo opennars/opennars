@@ -42,7 +42,7 @@ public class ImageInt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    protected ImageInt(final Term[] arg, final short index) {
+    public ImageInt(final Term[] arg, final short index) {
         super(arg, index);
     }
 

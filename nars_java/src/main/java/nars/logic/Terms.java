@@ -7,20 +7,18 @@ import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
 import nars.logic.nal2.Similarity;
-import nars.logic.nal3.DifferenceExt;
-import nars.logic.nal3.DifferenceInt;
-import nars.logic.nal3.IntersectionExt;
-import nars.logic.nal3.IntersectionInt;
+import nars.logic.nal3.Difference;
+import nars.logic.nal3.Intersect;
 import nars.logic.nal4.Image;
 import nars.logic.nal4.ImageExt;
 import nars.logic.nal4.ImageInt;
 import nars.logic.nal4.Product;
-import nars.logic.nal5.Conjunction;
-import nars.logic.nal5.Disjunction;
-import nars.logic.nal5.Equivalence;
-import nars.logic.nal5.Implication;
+import nars.logic.nal5.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Static utility class for static methods related to Terms
@@ -172,7 +170,7 @@ public class Terms {
                 return memory.term(t1, list);
             }
             if (list.length == 1) {
-                if ((t1 instanceof Conjunction) || (t1 instanceof Disjunction) || (t1 instanceof IntersectionExt) || (t1 instanceof IntersectionInt) || (t1 instanceof DifferenceExt) || (t1 instanceof DifferenceInt)) {
+                if ((t1 instanceof Junction) || (t1 instanceof Intersect) || (t1 instanceof Difference)) {
                     return list[0];
                 }
             }
@@ -226,9 +224,14 @@ public class Terms {
         Statement A = (Statement) a;
         Statement B = (Statement) b;
         
+        /*
+        //REMOVED this prevents the non-statement cases further down
+            "if ((predA instanceof Product) && (subjB instanceof ImageInt))"
+            "if ((predB instanceof Product) && (subjA instanceof ImageInt))"
+                --both will never occur since this test prevents them
         if (!((A instanceof Similarity && B instanceof Similarity)
                 || (A instanceof Inheritance && B instanceof Inheritance)))
-            return false;
+            return false;*/
             
         Term subjA = A.getSubject();
         Term predA = A.getPredicate();

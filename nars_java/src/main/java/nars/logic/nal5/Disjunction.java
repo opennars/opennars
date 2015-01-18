@@ -27,12 +27,13 @@ import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /** 
  * A disjunction of Statements.
  */
-public class Disjunction extends CompoundTerm {
+public class Disjunction extends Junction {
 
     /**
      * Constructor with partial values, called by make
@@ -51,7 +52,7 @@ public class Disjunction extends CompoundTerm {
     @Override
     public int getMinimumRequiredComponents() {
         return 1;
-    }
+    } //2?
     
     /**
      * Clone an object
@@ -76,38 +77,52 @@ public class Disjunction extends CompoundTerm {
      * @return A Disjunction generated or a Term it reduced to
      */
     public static Term make(Term term1, Term term2) {
-        List<Term> set = new ArrayList();
+
         if (term1 instanceof Disjunction) {
-            set.addAll(((CompoundTerm) term1).asTermList());
+            CompoundTerm ct1 = ((CompoundTerm) term1);
+            List<Term> l = Parameters.newArrayList(ct1.size());
+            Collections.addAll(l, ((CompoundTerm)term1));
             if (term2 instanceof Disjunction) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                set.addAll(((CompoundTerm) term2).asTermList());
-            } 
+                Collections.addAll(l, ((CompoundTerm)term2));
+            }
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
-                set.add(term2);
-            }                          
+                l.add(term2);
+            }
+            return make(l);
         } else if (term2 instanceof Disjunction) {
+            CompoundTerm ct2 = ((CompoundTerm) term2);
             // (&,R,(&,P,Q)) = (&,P,Q,R)
-            set.addAll(((CompoundTerm) term2).asTermList());
-            set.add(term1);                              
+            List<Term> l = Parameters.newArrayList(ct2.size());
+            Collections.addAll(l, ct2);
+            l.add(term1);
+            return make(l);
         } else {
-            set.add(term1);
-            set.add(term2);
+            //the two terms by themselves, unreducable
+            return make(new Term[] { term1, term2 });
         }
-        return make(set.toArray(new Term[set.size()]));
     }
 
+    protected static Term make(List<Term> l) {
+        return make(l.toArray(new Term[l.size()]));
+    }
 
     public static Term make(Term[] t) {
-        t = Term.toSortedSetArray(t);
-        
         if (t.length == 0) return null;
+
+        if ((t.length == 2) && ((t[0] instanceof Disjunction) || (t[1] instanceof Disjunction))) {
+            //will call this method recursively
+            return make(t[0], t[1]);
+        }
+
+        t = Term.toSortedSetArray(t);
+
         if (t.length == 1) {
             // special case: single component
             return t[0];
-        }                         
-        
+        }
+
         return new Disjunction(t);
     }
     
@@ -126,6 +141,6 @@ public class Disjunction extends CompoundTerm {
      */
     @Override
     public boolean isCommutative() {
-        return true;
+        return true; //?
     }
 }

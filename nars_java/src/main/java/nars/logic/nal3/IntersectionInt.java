@@ -34,7 +34,7 @@ import java.util.TreeSet;
 /**
  * A compound term whose intension is the intersection of the extensions of its term
  */
-public class IntersectionInt extends CompoundTerm {
+public class IntersectionInt extends Intersect {
 
     /**
      * Constructor with partial values, called by make

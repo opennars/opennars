@@ -434,6 +434,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         
     }
 
+    /** creates a new ArrayList for terms */
     public List<Term> asTermList() {        
         ArrayList l = new ArrayList(term.length);
         addTermsTo(l);
@@ -526,37 +527,45 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * @param t The component to be checked
      * @return Whether the component is in the compound
      */
-    @Override
-    public boolean containsTerm(final Term t) {        
-        return Terms.contains(term, t);
-        //return Terms.containsVariablesAsWildcard(term, t);
-    }
+    //return Terms.containsVariablesAsWildcard(term, t);
+    //^^ ???
 
     /**
      * Recursively check if a compound contains a term
+     * This method does not check the equality of this term itself.
+     * Although that is how Term.containsTerm operates
      *
      * @param target The term to be searched
      * @return Whether the target is in the current term
      */
     @Override
-    public boolean containsTermRecursively(final Term target) { 
-        if (super.containsTermRecursively(target))
-            return true;
-        for (final Term t : term) {
-            if (t.containsTermRecursively(target)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean containsTerm(final Term t) {        
+        return Terms.contains(term, t);
     }
 
     /**
-     * Check whether the compound contains all term of another term, or
- that term as a whole
+     * Recursively check if a compound contains a term
+     * This method DOES check the equality of this term itself.
+     * Although that is how Term.containsTerm operates
      *
-     * @param t The other term
-     * @return Whether the term are all in the compound
+     * @param target The term to be searched
+     * @return Whether the target is in the current term
      */
+    @Override
+    public boolean equalsOrContainsTermRecursively(final Term target) {
+        if (this.equals(target)) return true;
+        return containsTerm(target);
+    }
+
+
+
+        /**
+         * Check whether the compound contains all term of another term, or
+     that term as a whole
+         *
+         * @param t The other term
+         * @return Whether the term are all in the compound
+         */
     public boolean containsAllTermsOf(final Term t) {
         if (t instanceof CompoundTerm) {
         //if (operator() == t.operator()) {

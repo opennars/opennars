@@ -12,7 +12,7 @@
  * Notes of the IJCAI-2003 Workshop on Ontology and Distributed Systems, August
  * 9, Acapulco, Mexico.
  */
-package nars.util.kif;
+package nars.kif;
 
 import java.io.*;
 import java.text.ParseException;
@@ -27,6 +27,8 @@ import java.util.*;
  * @author Adam Pease
  */
 public class KIF {
+
+
 
     /**
      * A numeric constant denoting normal parse mode, in which syntax

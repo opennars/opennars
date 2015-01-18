@@ -69,11 +69,17 @@ abstract public class FireConcept extends NAL {
                     if (currentTaskLink == null)
                         return;
 
-                    if (currentTaskLink.budget.aboveThreshold()) {
-                        fireTaskLink(termLinkCount);
+                    try {
+                        if (currentTaskLink.budget.aboveThreshold()) {
+                            fireTaskLink(termLinkCount);
+                        }
+                        returnTaskLink(currentTaskLink);
+                    }
+                    catch (Exception e) {
+                        returnTaskLink(currentTaskLink);
+                        throw e;
                     }
 
-                    returnTaskLink(currentTaskLink);
                 }
             }
         }

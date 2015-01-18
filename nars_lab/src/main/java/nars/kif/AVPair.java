@@ -4,7 +4,7 @@
  Users ofthis code also consent, by use of this code, to credit Articulate Software in any
  writings, briefings,publications, presentations, or other representations of any
  software which incorporates, builds on, or uses this code.*/
-package nars.util.kif;
+package nars.kif;
 
 public class AVPair {
 

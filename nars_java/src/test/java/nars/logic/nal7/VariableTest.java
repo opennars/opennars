@@ -96,7 +96,7 @@ public class VariableTest extends TestCase {
         //158
         //1738
         //n.run(200); //sufficient for case without internal experience
-        n.run(100);
+        n.run(1500);
           
         assertTrue(solutionFound.get());
         

@@ -26,6 +26,10 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
+import nars.logic.nal3.DifferenceExt;
+import nars.logic.nal3.DifferenceInt;
+import nars.logic.nal3.SetExt;
+import nars.logic.nal3.SetInt;
 import nars.logic.nal8.Operation;
 import org.junit.Test;
 
@@ -295,5 +299,27 @@ public class TermTest {
         }
         
         
+    }
+
+    @Test public void testDifferenceImmediate() {
+        {
+            SetInt a = SetInt.make(Term.get("a"), Term.get("b"), Term.get("c"));
+            SetInt b = SetInt.make(Term.get("d"), Term.get("b"));
+            Term d = DifferenceInt.make(a, b);
+            assertEquals(d.toString(), d.getClass(), SetInt.class);
+            assertEquals(d.toString(), 2, ((SetInt) d).size());
+            assertEquals(d.toString(), "[a,c]");
+        }
+
+        {
+            SetExt a = SetExt.make( Term.get("a"), Term.get("b"), Term.get("c") );
+            SetExt b = SetExt.make( Term.get("d"), Term.get("b") );
+            Term d = DifferenceExt.make(a, b);
+            assertEquals(d.toString(), d.getClass(), SetExt.class);
+            assertEquals(d.toString(), 2, ((SetExt)d).size() );
+            assertEquals(d.toString(), "{a,c}");
+
+        }
+
     }
 }

@@ -71,7 +71,6 @@ public class Term implements AbstractTerm, Termable {
 
 
 
-
     public interface TermVisitor {
         public void visit(Term t, Term superterm);
     }
@@ -296,7 +295,7 @@ public class Term implements AbstractTerm, Termable {
      * @param target The term to be searched
      * @return Whether the two have the same content
      */
-    public boolean containsTermRecursively(final Term target) {
+    public boolean equalsOrContainsTermRecursively(final Term target) {
         return equals(target);
     }
 
@@ -304,6 +303,7 @@ public class Term implements AbstractTerm, Termable {
     public boolean containsTerm(final Term target) {
         return equals(target);
     }
+
 
     /**
      * The same as getName by default, used in display only.
@@ -424,21 +424,19 @@ public class Term implements AbstractTerm, Termable {
     }
 
     public boolean subjectOrPredicateIsIndependentVar() {
-        if(this instanceof Statement) {
-            Statement cont=(Statement)this;
-            if(cont.getSubject() instanceof Variable) {
-                Variable v=(Variable) cont.getSubject();
-                if(v.hasVarIndep()) {
-                    return true;
-                }
-            }
-            if(cont.getPredicate()instanceof Variable) {
-                Variable v=(Variable) cont.getPredicate();
-                if(v.hasVarIndep()) {
-                    return true;
-                }
-            }
-        }
+        if (!(this instanceof Statement))
+            return false;
+
+        Statement cont=(Statement)this;
+        if (!cont.hasVarIndep()) return false;
+
+        Term subj = cont.getSubject();
+        if ((subj instanceof Variable) && (subj.hasVarIndep()))
+            return true;
+        Term pred = cont.getPredicate();
+        if ((pred instanceof Variable) && (pred.hasVarIndep()))
+            return true;
+
         return false;
     }
     

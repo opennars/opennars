@@ -1,4 +1,4 @@
-package nars.util.kif;
+package nars.kif;
 
 import java.io.*;
 import java.text.ParseException;

@@ -39,6 +39,7 @@ import nars.logic.Terms;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
+import nars.logic.nal2.Similarity;
 import nars.logic.nal3.*;
 import nars.logic.nal4.Image;
 import nars.logic.nal4.ImageExt;
@@ -369,7 +370,7 @@ public class Memory implements Serializable {
         if (compound instanceof ImageExt) {
             return new ImageExt(components, ((Image) compound).relationIndex);
         } else if (compound instanceof ImageInt) {
-            return ImageInt.make(components, ((Image) compound).relationIndex);
+            return new ImageInt(components, ((Image) compound).relationIndex);
         } else {
             return term(compound.operator(), components);
         }
@@ -378,6 +379,11 @@ public class Memory implements Serializable {
     public Term term(final CompoundTerm compound, Collection<Term> components) {
         Term[] c = components.toArray(new Term[components.size()]);
         return term(compound, c);
+    }
+
+    private void ensureTermLength(int num, Term[] a) {
+        if (a.length!=num)
+            throw new RuntimeException("Expected " + num + " args to create Term from " + Arrays.toString(a));
     }
 
     /**
@@ -390,6 +396,7 @@ public class Memory implements Serializable {
      * @return A term or null
      */
     public Term term(final NativeOperator op, final Term[] a) {
+
 
         switch (op) {
 
@@ -405,8 +412,6 @@ public class Memory implements Serializable {
                 return DifferenceExt.make(a);
             case DIFFERENCE_INT:
                 return DifferenceInt.make(a);
-            case INHERITANCE:
-                return Inheritance.make(a[0], a[1]);
             case PRODUCT:
                 return new Product(a);
             case IMAGE_EXT:
@@ -423,19 +428,38 @@ public class Memory implements Serializable {
                 return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
             case PARALLEL:
                 return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
+
+
+            //STATEMENTS --------------------------
+            case INHERITANCE:
+                ensureTermLength(2, a);
+                return Inheritance.make(a[0], a[1]);
+
+            case SIMILARITY:
+                ensureTermLength(2, a);
+                return Similarity.make(a[0], a[1]);
+
             case IMPLICATION:
+                ensureTermLength(2, a);
                 return Implication.make(a[0], a[1]);
             case IMPLICATION_AFTER:
+                ensureTermLength(2, a);
                 return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
             case IMPLICATION_BEFORE:
+                ensureTermLength(2, a);
                 return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD);
             case IMPLICATION_WHEN:
+                ensureTermLength(2, a);
                 return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
+
             case EQUIVALENCE:
+                ensureTermLength(2, a);
                 return Equivalence.make(a[0], a[1]);
             case EQUIVALENCE_WHEN:
+                ensureTermLength(2, a);
                 return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE_AFTER:
+                ensureTermLength(2, a);
                 return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
         }
         throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");

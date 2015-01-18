@@ -1,4 +1,4 @@
-package nars.util.xml;
+package nars.xml;
 
 import nars.core.NAR;
 import nars.build.Default;

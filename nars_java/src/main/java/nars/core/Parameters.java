@@ -224,5 +224,9 @@ public class Parameters {
         s.addAll(values);
         return s;
     }
+
+    public static <K,V> Map<K, V> newHashMap() {
+        return newHashMap(0);
+    }
 }
 
