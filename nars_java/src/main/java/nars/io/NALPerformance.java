@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nars.util;
+package nars.io;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.io.TextInput;
 import nars.io.condition.OutputCondition;
 
 import java.io.PrintStream;

@@ -1,4 +1,4 @@
-package nars.util;
+package nars.util.data;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;

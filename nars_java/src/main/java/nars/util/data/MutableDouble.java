@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.util;
+package nars.util.data;
 
 
 /*
@@ -23,10 +23,13 @@ package nars.util;
  */
 
 /**
- * A mutable <code>integer</code> wrapper.
+ * A mutable <code>double</code> wrapper.
  * 
+ * @see Double
+ * @since 2.1
+ * @version $Id: MutableDouble.java 618693 2008-02-05 16:33:29Z sebb $
  */
-public class MutableInteger extends Number implements Comparable, Mutable {
+public class MutableDouble extends Number implements Comparable, Mutable {
 
   /**
    * Required for serialization support.
@@ -36,12 +39,12 @@ public class MutableInteger extends Number implements Comparable, Mutable {
   private static final long serialVersionUID = 1587163916L;
 
   /** The mutable value. */
-  private int value;
+  private double value;
 
   /**
    * Constructs a new MutableDouble with the default value of zero.
    */
-  public MutableInteger() {
+  public MutableDouble() {
     super();
   }
 
@@ -51,7 +54,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @param value
    *          a value.
    */
-  public MutableInteger(int value) {
+  public MutableDouble(double value) {
     super();
     this.value = value;
   }
@@ -64,9 +67,9 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @throws NullPointerException
    *           if the object is null
    */
-  public MutableInteger(Number value) {
+  public MutableDouble(Number value) {
     super();
-    this.value = value.intValue();
+    this.value = value.doubleValue();
   }
 
   // -----------------------------------------------------------------------
@@ -85,9 +88,8 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @param value
    *          the value to set
    */
-  public MutableInteger setValue(int value) {
+  public void setValue(double value) {
     this.value = value;
-    return this;
   }
 
   /**
@@ -101,7 +103,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *           if the type is not a {@link Number}
    */
   public void setValue(Object value) {
-    setValue(((Number) value).intValue());
+    setValue(((Number) value).doubleValue());
   }
 
   // -----------------------------------------------------------------------
@@ -113,7 +115,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *         type int.
    */
   public int intValue() {
-    return value;
+    return (int) value;
   }
 
   /**
@@ -123,7 +125,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *         type long.
    */
   public long longValue() {
-    return value;
+    return (long) value;
   }
 
   /**
@@ -133,7 +135,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *         type float.
    */
   public float floatValue() {
-    return value;
+    return (float) value;
   }
 
   /**
@@ -152,7 +154,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @return true if NaN
    */
   public boolean isNaN() {
-    return false;
+    return Double.isNaN(value);
   }
 
   /**
@@ -161,7 +163,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @return true if infinite
    */
   public boolean isInfinite() {
-    return false;
+    return Double.isInfinite(value);
   }
 
   // -----------------------------------------------------------------------
@@ -286,7 +288,8 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *         otherwise.
    */
   public boolean equals(Object obj) {
-    return ((MutableInteger)obj).value == value;
+    return (obj instanceof MutableDouble)
+        && (Double.doubleToLongBits(((MutableDouble) obj).value) == Double.doubleToLongBits(value));
   }
 
   /**
@@ -295,7 +298,8 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @return a suitable hashcode
    */
   public int hashCode() {
-      return Integer.hashCode(value);
+    long bits = Double.doubleToLongBits(value);
+    return (int) (bits ^ (bits >>> 32));
   }
 
   /**
@@ -308,7 +312,9 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *           if the argument is not a MutableDouble
    */
   public int compareTo(Object obj) {
-      return Integer.compare( value, ((MutableInteger)obj).value );
+    MutableDouble other = (MutableDouble) obj;    
+    return Double.compare(value, other.value);
+    //return compare(value, anotherVal);
   }
 
   /**
@@ -352,4 +358,44 @@ public class MutableInteger extends Number implements Comparable, Mutable {
  * the License.
  */
 
+/**
+ * Provides mutable access to a value.
+ * <p>
+ * <code>Mutable</code> is used as a generic interface to the implementations
+ * in this package.
+ * <p>
+ * A typical use case would be to enable a primitive or string to be passed to a
+ * method and allow that method to effectively change the value of the
+ * primitive/string. Another use case is to store a frequently changing
+ * primitive in a collection (for example a total in a map) without needing to
+ * create new Integer/Long wrapper objects.
+ * 
+ * @author Matthew Hawthorne
+ * @since 2.1
+ * @version $Id: Mutable.java 618693 2008-02-05 16:33:29Z sebb $
+ */
+interface Mutable {
+
+  /**
+   * Gets the value of this mutable.
+   * 
+   * @return the stored value
+   */
+  Object getValue();
+
+  /**
+   * Sets the value of this mutable.
+   * 
+   * @param value
+   *          the value to store
+   * @throws NullPointerException
+   *           if the object is null and null is invalid
+   * @throws ClassCastException
+   *           if the type is invalid
+   */
+  void setValue(Object value);
+
+}
+
+   
     

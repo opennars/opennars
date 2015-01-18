@@ -1,6 +1,4 @@
-package nars.util;
-
-import nars.io.Input;
+package nars.io;
 
 /**
  * For translating Java objects (POJOs) into statements for input into NARS.

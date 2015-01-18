@@ -1,4 +1,4 @@
-package nars.util;
+package nars.io.meter.event;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;

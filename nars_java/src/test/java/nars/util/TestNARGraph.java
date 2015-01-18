@@ -2,6 +2,7 @@ package nars.util;
 
 import nars.core.NAR;
 import nars.build.Default;
+import nars.util.graph.DefaultGraphizer;
 import nars.util.graph.NARGraph;
 import org.junit.Test;
 

@@ -10,7 +10,7 @@ import nars.core.Parameters;
 import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
-import nars.util.NALPerformance;
+import nars.io.NALPerformance;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;

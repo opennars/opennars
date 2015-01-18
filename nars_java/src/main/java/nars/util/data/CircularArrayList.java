@@ -1,4 +1,4 @@
-package nars.util;
+package nars.util.data;
 
 import java.util.AbstractList;
 import java.util.Deque;

@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.util;
+package nars.io;
 
 import com.google.gson.*;
 import nars.core.NAR;
-import nars.io.TextOutput;
 
 import java.io.PrintStream;
 

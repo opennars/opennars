@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nars.util;
+package nars.util.data;
 
 /*
  * from: Javolution - Java(TM) Solution for Real-Time and Embedded Systems

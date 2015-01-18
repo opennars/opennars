@@ -8,7 +8,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.build.Default;
 import nars.perf.NALTestScore;
-import nars.util.MultiOutputStream;
+import nars.util.data.MultiOutputStream;
 import org.apache.commons.math3.genetics.*;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLMethod;

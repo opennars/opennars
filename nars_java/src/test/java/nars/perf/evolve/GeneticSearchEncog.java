@@ -10,7 +10,7 @@ import nars.build.Curve;
 import nars.build.Default;
 import nars.build.Neuromorphic;
 import nars.perf.NALTestScore;
-import nars.util.MultiOutputStream;
+import nars.util.data.MultiOutputStream;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLEncodable;
 import org.encog.ml.MLMethod;

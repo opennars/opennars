@@ -22,7 +22,7 @@ import nars.core.NAR;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.io.TextOutput;
-import nars.util.signal.Number1DInput;
+import nars.io.signal.Number1DInput;
 import org.junit.Assert;
 import org.junit.Test;
 

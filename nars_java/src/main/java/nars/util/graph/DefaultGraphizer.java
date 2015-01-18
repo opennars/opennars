@@ -1,7 +1,6 @@
-package nars.util;
+package nars.util.graph;
 
 import nars.logic.entity.*;
-import nars.util.graph.NARGraph;
 
 import java.util.Collection;
 import java.util.HashMap;

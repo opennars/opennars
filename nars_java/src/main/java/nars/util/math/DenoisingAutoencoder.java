@@ -1,7 +1,7 @@
-package nars.util.signal;
+package nars.util.math;
 
 
-import nars.util.XORShiftRandom;
+import nars.util.data.XORShiftRandom;
 
 import java.util.Random;
 

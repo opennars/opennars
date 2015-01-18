@@ -1,4 +1,4 @@
-package nars.util;
+package nars.util.data;
 
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLDataCentroid;

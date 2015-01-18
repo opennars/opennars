@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.util;
+package nars.util.graph;
 
 import com.google.common.base.Objects;
 import nars.event.Reaction;
