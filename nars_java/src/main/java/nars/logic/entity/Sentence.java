@@ -135,11 +135,11 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
             
             final CompoundTerm c = (CompoundTerm)term;
             
-            List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
+            List<Variable> vars = Parameters.newArrayList(); //may contain duplicates, list for efficiency
             
             c.recurseSubtermsContainingVariables(new SubTermVarCollector(vars));
             
-            Map<CharSequence,CharSequence> rename = new HashMap();            
+            Map<CharSequence,CharSequence> rename = Parameters.newHashMap();
             boolean renamed = false;
             
             for (final Variable v : vars) {

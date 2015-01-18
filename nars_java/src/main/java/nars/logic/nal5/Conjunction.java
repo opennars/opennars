@@ -197,10 +197,10 @@ public class Conjunction extends Junction {
             if (term1 instanceof Conjunction) {
                 CompoundTerm ct1 = ((CompoundTerm) term1);
                 final List<Term> set = Parameters.newArrayList(ct1.size() + 1);
-                Collections.addAll(set, ct1);
+                Collections.addAll(set, ct1.term);
                 if (term2 instanceof Conjunction) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                    Collections.addAll(set, ((CompoundTerm) term2));
+                    Collections.addAll(set, ((CompoundTerm) term2).term);
                 }
                 else {
                     // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -210,7 +210,7 @@ public class Conjunction extends Junction {
             } else if (term2 instanceof Conjunction) {
                 CompoundTerm ct2 = ((CompoundTerm) term2);
                 final List<Term> set = Parameters.newArrayList(ct2.size() + 1);
-                Collections.addAll(set, ct2);
+                Collections.addAll(set, ct2.term);
                 set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
                 return make(set, temporalOrder);
             } else {

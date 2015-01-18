@@ -16,7 +16,7 @@
  */
 package nars.kif;
 
-import nars.util.PrintWriterInput;
+import nars.util.data.PrintWriterInput;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -7,7 +7,7 @@ import nars.core.NAR;
 import nars.core.NAR.PluginState;
 import nars.core.Plugin;
 import nars.event.AbstractReaction;
-import nars.util.PackageUtility;
+import nars.util.data.PackageUtility;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;

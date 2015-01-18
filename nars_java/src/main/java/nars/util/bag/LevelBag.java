@@ -262,8 +262,12 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return f;
     }
 
-    
 
+    @Override
+    public synchronized E putIn(BagSelector<K, E> selector) {
+        //seems to work ok with levelbag
+        return super.putInFast(selector);
+    }
 
     /**
      * Get an Item by key
@@ -294,7 +298,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return this;
     }
     
-            
+
+
     protected void nextNonEmptyLevel() {
         switch (nextNonEmptyMode) {
             case Default: nextNonEmptyLevelDefault(); break;
@@ -485,7 +490,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      * may be the attempted input item (in which case it was not inserted)
      */
     @Override protected E addItem(final E newItem, boolean index) {
-        E oldItem = null;
+        E overflow = null;
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next 
             int outLevel = 0;
@@ -495,7 +500,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             if (outLevel > inLevel) {           // ignore the item and exit
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
-                oldItem = takeOutFirst(outLevel);
+                overflow = takeOutFirst(outLevel);
             }
         }
         ensureLevelExists(inLevel);
@@ -507,8 +512,12 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             index(newItem);
 
         addMass(newItem);
+
+        //unindex the overflow
+        if (overflow!=null)
+            unindex(overflow);
         
-        return oldItem;
+        return overflow;
     }
 
     protected final void ensureLevelExists(final int level) {

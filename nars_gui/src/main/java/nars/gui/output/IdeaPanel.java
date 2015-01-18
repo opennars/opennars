@@ -8,9 +8,9 @@ import nars.event.Reaction;
 import nars.core.Events.*;
 import nars.core.NAR;
 import nars.logic.entity.*;
-import nars.util.Idea;
-import nars.util.Idea.IdeaSet;
-import nars.util.Idea.SentenceType;
+import nars.util.graph.Idea;
+import nars.util.graph.Idea.IdeaSet;
+import nars.util.graph.Idea.SentenceType;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.swing.*;

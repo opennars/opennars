@@ -1,6 +1,6 @@
 package nars.rl.dl;
 
-import nars.util.signal.DenoisingAutoencoder;
+import nars.util.math.DenoisingAutoencoder;
 
 import java.util.Arrays;
 import java.util.Random;

@@ -9,7 +9,7 @@ import nars.core.NAR;
 import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
 import nars.io.Output;
 import nars.logic.entity.Task;
-import nars.util.DefaultGraphizer;
+import nars.util.graph.DefaultGraphizer;
 import nars.util.graph.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 

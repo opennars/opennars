@@ -81,10 +81,10 @@ public class Disjunction extends Junction {
         if (term1 instanceof Disjunction) {
             CompoundTerm ct1 = ((CompoundTerm) term1);
             List<Term> l = Parameters.newArrayList(ct1.size());
-            Collections.addAll(l, ((CompoundTerm)term1));
+            Collections.addAll(l, ((CompoundTerm)term1).term);
             if (term2 instanceof Disjunction) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                Collections.addAll(l, ((CompoundTerm)term2));
+                Collections.addAll(l, ((CompoundTerm)term2).term);
             }
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -95,7 +95,7 @@ public class Disjunction extends Junction {
             CompoundTerm ct2 = ((CompoundTerm) term2);
             // (&,R,(&,P,Q)) = (&,P,Q,R)
             List<Term> l = Parameters.newArrayList(ct2.size());
-            Collections.addAll(l, ct2);
+            Collections.addAll(l, ct2.term);
             l.add(term1);
             return make(l);
         } else {

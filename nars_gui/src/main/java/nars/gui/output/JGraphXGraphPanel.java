@@ -4,7 +4,7 @@ import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import nars.core.NAR;
-import nars.util.DefaultGraphizer;
+import nars.util.graph.DefaultGraphizer;
 import nars.util.graph.NARGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;

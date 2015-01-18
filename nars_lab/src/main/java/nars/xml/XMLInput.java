@@ -3,7 +3,7 @@ package nars.xml;
 import nars.core.NAR;
 import nars.build.Default;
 import nars.io.TextOutput;
-import nars.util.PrintWriterInput;
+import nars.util.data.PrintWriterInput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

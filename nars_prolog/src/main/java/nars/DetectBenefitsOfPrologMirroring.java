@@ -18,7 +18,7 @@ import nars.io.meter.event.ValueMeter;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.meta.NARMetrics;
-import nars.util.NALPerformance;
+import nars.io.NALPerformance;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;

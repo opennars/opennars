@@ -3,7 +3,7 @@ package nars.rdfowl;
 import nars.core.NAR;
 import nars.build.Default;
 import nars.io.TextOutput;
-import nars.util.PrintWriterInput;
+import nars.util.data.PrintWriterInput;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

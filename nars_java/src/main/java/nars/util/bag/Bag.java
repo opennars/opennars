@@ -115,8 +115,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      *
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      *
-     * WARNING This indexing-avoiding version not working yet, so it is not used as of this commit
+     * WARNING This indexing-avoiding version not completely working yet, so it is not used as of this commit
      */
+
     public synchronized E putInFast(BagSelector<K,E> selector) {
 
         E item = take( selector.name(), false );
@@ -124,14 +125,18 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         if (item != null) {
             item = (E)item.merge(selector);
             final E overflow = addItem(item, false);
+            if (overflow == item) {
+                unindex(item.name());
+            }
             return overflow;
         }
         else {
             item = selector.newInstance();
 
             // put the (new or merged) item into itemTable
-            return addItem(item, true);
+            return addItem(item);
         }
+
 
     }
 
@@ -163,6 +168,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     /** unregisters it */
     abstract protected E unindex(K key);
 
+    protected E unindex(E e) {
+        return unindex(e.name());
+    }
 
     public E take(final K key) {
         return take(key, true);

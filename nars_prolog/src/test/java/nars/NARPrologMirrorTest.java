@@ -11,7 +11,7 @@ import nars.io.ExampleFileInput;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
-import nars.util.NALPerformance;
+import nars.io.NALPerformance;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
