@@ -374,9 +374,9 @@ public class RuleTables {
                 if ((content instanceof Statement) && (s2.getSubject().equals(((Statement) content).getSubject()))) {
                     CompositionalRules.introVarInner((Statement) content, s2, statement, nal);
                 }
-                CompositionalRules.IntroVarSameSubjectOrPredicate(originalMainSentence,subSentence,component,content,index,nal);
+                CompositionalRules.introVarSameSubjectOrPredicate(originalMainSentence, subSentence, component, content, index, nal);
             } else if ((statement instanceof Equivalence) && (statement.getPredicate() instanceof Statement) && (nal.getCurrentTask().sentence.isJudgment())) {
-                CompositionalRules.IntroVarSameSubjectOrPredicate(originalMainSentence,subSentence,component,content,index,nal);                
+                CompositionalRules.introVarSameSubjectOrPredicate(originalMainSentence, subSentence, component, content, index, nal);
             }
         }
     }

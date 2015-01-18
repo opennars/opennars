@@ -21,7 +21,7 @@ public class Neuromorphic extends Curve {
     private int maxInputsPerCycle = -1;
 
     /** temporary: true=curve bag, false=fairdelaybag */
-    private boolean conceptBagCurve = true;
+    private boolean conceptBagCurve = false;
 
     public Neuromorphic(int numAnts) {
         super();        

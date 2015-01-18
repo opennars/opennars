@@ -108,11 +108,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         if ( (truth == null) && (!isQuestion() && !isQuest()) ) {
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
-        
-        if(_content.subjectOrPredicateIsIndependentVar()) {
-                throw new RuntimeException("A statement sentence is not allowed to have a independent variable as subj or pred");
-        }
-        
+
         if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
             if (!Term.valid(_content)) {
                 CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
@@ -120,7 +116,6 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
                 throw ntc;
             }
         }
-        
         
         if ((isQuestion() || isQuest()) && !stamp.isEternal()) {
             stamp.setEternal();
@@ -570,9 +565,17 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
         if (t instanceof Statement) {
             Statement st = (Statement) t;
-            return (Statement.invalidStatement(st.getSubject(), st.getPredicate()));
+
+            if (Statement.invalidStatement(st.getSubject(), st.getPredicate()))
+                return true;
+
+            /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
+            if (t.subjectOrPredicateIsIndependentVar())
+                return true;
         }
 
+
+        //ok valid
         return false;
     }
 

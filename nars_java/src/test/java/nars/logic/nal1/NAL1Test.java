@@ -1,6 +1,7 @@
 package nars.logic.nal1;
 
 import nars.build.Default;
+import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
@@ -20,7 +21,8 @@ public class NAL1Test extends AbstractNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
-                {new Default().level(1)}
+                {new Default().level(1)},
+                {new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });
     }
 

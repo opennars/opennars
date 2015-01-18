@@ -25,6 +25,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
+import nars.io.narsese.InvalidInputException;
 import nars.logic.Terms;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
@@ -71,6 +72,12 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * @return A clone of the compound term
      */
     @Override public abstract CompoundTerm clone();
+
+    public static class InvalidTermConstruction extends RuntimeException {
+        public InvalidTermConstruction(String reason) {
+            super(reason);
+        }
+    }
 
     
     /** subclasses should be sure to call init() in their constructors; it is not done here
@@ -612,7 +619,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         List<Term> list = asTermList();//Deep();
         list.remove(index);
         if (t != null) {
-            if (getClass() != t.getClass()) {
+            if (operator() != t.operator()) {
                 list.add(index, t);
             } else {
                 //final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
@@ -622,7 +629,13 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 }
             }
         }
-        return memory.term(this, list);
+
+        try {
+            return memory.term(this, list);
+        }
+        catch (InvalidTermConstruction i) {
+            return null;
+        }
     }
 
     /* ----- variable-related utilities ----- */

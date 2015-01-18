@@ -311,14 +311,7 @@ public class Memory implements Serializable {
         return concepts.concept(t);
     }
 
-    //TODO decide if this is necessary
-    public void temporalRuleOutputToGraph(Sentence s, Task t) {
-        if (t.sentence.term instanceof Implication && t.sentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
 
-            executive.graph.implication.add(s, (CompoundTerm) s.term, t);
-        }
-
-    }
 
     /**
      * Get the Concept associated to a Term, or create it.
@@ -351,7 +344,7 @@ public class Memory implements Serializable {
      * @param t The Term naming a concept
      * @return the priority value of the concept
      */
-    public float conceptActivation(final Term t) {
+    public float getConceptActivation(final Term t) {
         final Concept c = concept(t);
         return (c == null) ? 0f : c.getPriority();
     }
@@ -381,9 +374,10 @@ public class Memory implements Serializable {
         return term(compound, c);
     }
 
-    private void ensureTermLength(int num, Term[] a) {
-        if (a.length!=num)
-            throw new RuntimeException("Expected " + num + " args to create Term from " + Arrays.toString(a));
+    private boolean ensureTermLength(int num, Term[] a) {
+        return (a.length!=num);
+        /*if (a.length!=num)
+            throw new CompoundTerm.InvalidTermConstruction("Expected " + num + " args to create Term from " + Arrays.toString(a));*/
     }
 
     /**
@@ -432,37 +426,31 @@ public class Memory implements Serializable {
 
             //STATEMENTS --------------------------
             case INHERITANCE:
-                ensureTermLength(2, a);
-                return Inheritance.make(a[0], a[1]);
+                if (ensureTermLength(2, a)) return Inheritance.make(a[0], a[1]); break;
 
             case SIMILARITY:
-                ensureTermLength(2, a);
-                return Similarity.make(a[0], a[1]);
+                if (ensureTermLength(2, a)) return Similarity.make(a[0], a[1]); break;
 
             case IMPLICATION:
-                ensureTermLength(2, a);
-                return Implication.make(a[0], a[1]);
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1]); break;
             case IMPLICATION_AFTER:
-                ensureTermLength(2, a);
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
             case IMPLICATION_BEFORE:
-                ensureTermLength(2, a);
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD);
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD); break;
             case IMPLICATION_WHEN:
-                ensureTermLength(2, a);
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
 
             case EQUIVALENCE:
-                ensureTermLength(2, a);
-                return Equivalence.make(a[0], a[1]);
+                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1]); break;
             case EQUIVALENCE_WHEN:
-                ensureTermLength(2, a);
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
+                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
             case EQUIVALENCE_AFTER:
-                ensureTermLength(2, a);
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
+                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
+            default:
+                throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
         }
-        throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
+
+        return null;
     }
 
     /**
@@ -534,8 +522,6 @@ public class Memory implements Serializable {
             emit(IN.class, task);
 
             if (task.budget.aboveThreshold()) {
-
-                temporalRuleOutputToGraph(task.sentence, task);
 
                 if (addNewTask(task, "Perceived"))
                     return 1;

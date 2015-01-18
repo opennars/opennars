@@ -16,6 +16,9 @@ public abstract class AbstractReaction implements Reaction {
     public AbstractReaction(NAR n, Class... events) {
         this(n, true, events);
     }
+    public AbstractReaction(EventEmitter n, Class... events) {
+        this(n, true, events);
+    }
 
     public AbstractReaction(NAR n, boolean active, Class... events) {
         this(n.memory.event, active, events);

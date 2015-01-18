@@ -97,7 +97,7 @@ public abstract class NAL implements Runnable {
      *
      * @param task the derived task
      */
-    public boolean derivedTask( final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
         List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
 
         if (derivationFilters != null) {
@@ -235,70 +235,50 @@ public abstract class NAL implements Runnable {
      * @param newTruth   The truth value of the sentence in task
      * @param newBudget  The budget value in task
      */
-    @Deprecated public Task doublePremiseTask(final Term _newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
-        CompoundTerm newContent = Sentence.termOrNull(_newContent);
+    @Deprecated
+    public Task doublePremiseTask(final Term newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+        CompoundTerm newContent = Sentence.termOrNull(newTaskContent);
         if (newContent == null)
             return null;
         return doublePremiseTask(newContent, newTruth, newBudget, temporalAdd);
     }
 
-    public Task doublePremiseTask(final CompoundTerm newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+    public Task doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
         if (!newBudget.aboveThreshold()) {
             return null;
         }
 
-        temporalAdd = temporalAdd && nal(7);
-
-        if (Sentence.invalidSentenceTerm(newContent)) {
+        newTaskContent = Sentence.termOrNull(newTaskContent);
+        if (newTaskContent == null)
             return null;
-        }
-        if (newContent.subjectOrPredicateIsIndependentVar()) {
-            return null;
-        }
 
         Task derived = null;
 
-        try {
-            final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+        final Sentence newSentence = new Sentence(newTaskContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
 
-            final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+        final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
 
-            if (newTask != null) {
-                boolean added = derivedTask(newTask, false, false, null, null);
-                if (added && temporalAdd) {
-                    memory.temporalRuleOutputToGraph(newSentence, newTask);
-                }
-                if (added) {
-                    derived = newTask;
-                }
-            }
-        } catch (CompoundTerm.UnableToCloneException e) {
-            return null;
+        if (newTask != null) {
+            boolean added = derivedTask(newTask, false, false, null, null);
+            if (added)
+                derived = newTask;
         }
 
+        temporalAdd = temporalAdd && nal(7);
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
 
-            try {
-
-                TruthValue truthEt = TruthFunctions.eternalize(newTruth);
-                Stamp st = getTheNewStamp().clone();
-                st.setEternal();
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                if (newTask != null) {
-                    boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added) {
-                        memory.temporalRuleOutputToGraph(newSentence, newTask);
-                    }
-                }
-
-            } catch (CompoundTerm.UnableToCloneException e) {
-                return null;
+            TruthValue truthEt = TruthFunctions.eternalize(newTruth);
+            Stamp st = getTheNewStamp().clone();
+            st.setEternal();
+            final Sentence newSentence2 = new Sentence(newTaskContent, getCurrentTask().sentence.punctuation, truthEt, st);
+            final Task newTask2 = Task.make(newSentence2, newBudget, getCurrentTask(), getCurrentBelief());
+            if (newTask2 != null) {
+                derivedTask(newTask2, false, false, null, null);
             }
-
         }
+
         return derived;
     }
 
@@ -554,7 +534,9 @@ public abstract class NAL implements Runnable {
     }
 
 
-    /** for lazily constructing a stamp, in case it will not actually be necessary to completely construct a stamp */
+    /**
+     * for lazily constructing a stamp, in case it will not actually be necessary to completely construct a stamp
+     */
     private static class NewStampBuilder implements StampBuilder {
         private final Stamp first;
         private final Stamp second;

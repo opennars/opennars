@@ -1006,12 +1006,16 @@ OUT: <lock1 --> lock>.
         }
     }
 
-    static void IntroVarSameSubjectOrPredicate(final Sentence originalMainSentence, final Sentence subSentence, final Term component, final Term content, final int index, final NAL nal) {
-        Term T1 = originalMainSentence.term;
-        if (!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
-            return;
+    public static final Variable depIndVar1 = new Variable("#depIndVar1");
+    public static final Variable depIndVar2 = new Variable("#depIndVar2");
+
+    static boolean introVarSameSubjectOrPredicate(final Sentence originalMainSentence, final Sentence subSentence, final Term component, final Term content, final int index, final NAL nal) {
+
+        if (!(content instanceof CompoundTerm)) {
+            return false;
         }
-        CompoundTerm T = (CompoundTerm) T1;
+
+        CompoundTerm T = originalMainSentence.term;
         CompoundTerm T2 = (CompoundTerm) content;
         
         
@@ -1019,30 +1023,43 @@ OUT: <lock1 --> lock>.
                 || (component instanceof Similarity && content instanceof Similarity)) {
             //CompoundTerm result = T;
             if (component.equals(content)) {
-                return; //wouldnt make sense to create a conjunction here, would contain a statement twice
+                return false; //wouldnt make sense to create a conjunction here, would contain a statement twice
             }
-            Variable depIndVar1 = new Variable("#depIndVar1");
-            Variable depIndVar2 = new Variable("#depIndVar2");
+
 
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
+
                 zw = (CompoundTerm) zw.setComponent(1, depIndVar1, nal.mem());
+                if (zw == null) return false;
+
                 T2 = (CompoundTerm) T2.setComponent(1, depIndVar1, nal.mem());
+                if (T2 == null) return false;
+
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2);
+
                 T = (CompoundTerm) T.setComponent(index, res, nal.mem());
+
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
+
                 zw = (CompoundTerm) zw.setComponent(0, depIndVar2, nal.mem());
+                if (zw == null) return false;
+
                 T2 = (CompoundTerm) T2.setComponent(0, depIndVar2, nal.mem());
+                if (T2 == null) return false;
+
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2);
                 T = (CompoundTerm) T.setComponent(index, res, nal.mem());
             }
             TruthValue truth = induction(originalMainSentence.truth, subSentence.truth);
             BudgetValue budget = BudgetFunctions.compoundForward(truth, T, nal);
             nal.doublePremiseTask(T, truth, budget, false);
+            return true;
         }
+        return false;
     }
 
     

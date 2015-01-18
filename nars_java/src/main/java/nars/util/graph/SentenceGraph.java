@@ -1,9 +1,8 @@
 package nars.util.graph;
 
-import nars.event.EventEmitter;
-import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Memory;
+import nars.event.AbstractReaction;
 import nars.logic.entity.*;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
@@ -15,8 +14,9 @@ import java.util.Map;
 
 
 
-abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> implements Reaction {
+abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
     public final Memory memory;
+    private final AbstractReaction reaction;
 
     public static class GraphChange { }
     
@@ -25,48 +25,47 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     
     public final Map<Sentence, List<E>> components = new HashMap();
     
-    public final EventEmitter event;
-    
+
     public SentenceGraph(Memory memory) {
         super(/*null*/new NullEdgeFactory());
         
         this.memory = memory;
-        this.event = memory.event;
-        
+        this.reaction = new AbstractReaction(memory.event, false,
+                Events.FrameEnd.class,
+                Events.ConceptForget.class,
+                Events.ConceptBeliefAdd.class,
+                Events.ConceptBeliefRemove.class,
+                Events.ConceptGoalAdd.class,
+                Events.ConceptGoalRemove.class,
+                Events.ResetEnd.class) {
+
+            @Override
+            public void event(Class event, Object[] args) {
+                react(event,args);
+            }
+        };
+
+
         reset();
         
         start();
         
     }
     
-    private void setEvents(boolean n) {
-        if (memory!=null) {
-            memory.event.set(this, n, 
-                    Events.FrameEnd.class, 
-                    Events.ConceptForget.class, 
-                    Events.ConceptBeliefAdd.class, 
-                    Events.ConceptBeliefRemove.class, 
-                    Events.ConceptGoalAdd.class, 
-                    Events.ConceptGoalRemove.class, 
-                    Events.ResetEnd.class
-                    );
-        }
-    }
-    
+
     public void start() {
         if (started) return;        
         started = true;
-        setEvents(true);        
+        reaction.setActive(true);
     }
     
     public void stop() {
         if (!started) return;
         started = false;
-        setEvents(false);
+        reaction.setActive(false);
     }
 
-    @Override
-    public void event(final Class event, final Object[] a) {
+    public void react(final Class event, final Object[] a) {
 //        if (event!=FrameEnd.class)
 //            System.out.println(event + " " + Arrays.toString(a));
         
@@ -178,8 +177,8 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         ensureTermConnected(from);
         ensureTermConnected(to);
 
-        if (r)
-            event.emit(GraphChange.class, null, s);
+        //if (r)
+            //memory.event.emit(GraphChange.class, null, s);
         return true;
     }
     
@@ -198,23 +197,22 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         if (!allow(s))
             return false;               
         
-        if (s.term instanceof CompoundTerm) {
-            CompoundTerm cs = (CompoundTerm)s.term;
+            CompoundTerm cs = s.term;
         
             if (cs instanceof Statement) {
-                
-                
-                Statement st = (Statement)cs;
-                if (allow(st)) {                                                    
-                    
+
+
+                Statement st = (Statement) cs;
+                if (allow(st)) {
+
                     if (add(s, st, c)) {
-                        event.emit(GraphChange.class, st, null);
+                        //event.emit(GraphChange.class, st, null);
                         return true;
                     }
                 }
             }
-                
-        }        
+
+
         
         return false;
     }    
