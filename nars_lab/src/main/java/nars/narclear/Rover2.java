@@ -47,7 +47,7 @@ public class Rover2 extends PhysicsModel {
 
 
     public static void main(String[] args) {
-        Parameters.DEBUG = true;
+        Parameters.DEBUG = false;
         boolean multithread = true;
 
         NARSwing.themeInvert();
@@ -65,8 +65,8 @@ public class Rover2 extends PhysicsModel {
         }
         else {
             Parameters.THREADS = 1;
-            nar = new NAR(new Default().simulationTime());
-            nar.setCyclesPerFrame(8);
+            nar = new NAR(new Default().simulationTime().setConceptBagSize(1500).setSubconceptBagSize(4000));
+            nar.setCyclesPerFrame(1512);
         }
 
         //NAR nar = new CurveBagNARBuilder().

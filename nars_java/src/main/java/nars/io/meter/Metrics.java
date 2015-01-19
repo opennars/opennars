@@ -245,18 +245,30 @@ JsonSerializationContext context) {
 
             if (c + vl > nextRow.length) 
                 throw new RuntimeException("column overflow: " + m + " " + c + "+" + vl + ">" + nextRow.length);
-            
-            System.arraycopy(v, 0, nextRow, c, vl);
-            c += vl; 
+
+            if (vl == 1) {
+                nextRow[c++] = v[0];
+            }
+            else if (vl == 2) {
+                nextRow[c++] = v[0];
+                nextRow[c++] = v[1];
+            }
+            else {
+                System.arraycopy(v, 0, nextRow, c, vl);
+                c += vl;
+            }
+
         }
         
         invalidateExtrema(true, nextRow, extremaToInvalidate);
    
         
         for (int i = 0; i < getSignals().size(); i++) {
+            if (i == 0) extremaToInvalidate[i] = true;
             if (extremaToInvalidate[i]) {        
                 updateBounds(i);
             }
+            //if (i == 0) System.out.println(get extremaToInvalidate[0] + " "  + history);
         }
         
     }

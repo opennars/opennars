@@ -471,7 +471,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
 
     @Override
-    public synchronized E putIn(BagSelector<K, E> selector) {
+    public E putIn(BagSelector<K, E> selector) {
         return super.putIn(selector);
         //return super.putInFast(selector);
     }

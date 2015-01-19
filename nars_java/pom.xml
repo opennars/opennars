@@ -43,8 +43,9 @@
                     <threadCount>1</threadCount>
                 </configuration>-->
             </plugin>
-            <plugin>
-                <!-- mvn org.pitest:pitest-maven:mutationCoverage -->
+
+            <!-- mvn org.pitest:pitest-maven:mutationCoverage -->
+            <!--<plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
                 <version>LATEST</version>
@@ -63,7 +64,8 @@
                         <param>nars.*</param>
                     </targetTests>
                 </configuration>
-            </plugin>
+
+            </plugin>-->
         </plugins>
 
 
@@ -137,7 +139,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.4</version>
+            <version>3.4.1</version>
         </dependency>
 
         <dependency>
