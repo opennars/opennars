@@ -7,6 +7,7 @@ import nars.logic.entity.*;
  * this avoids construction when only updating the budget of an item already in the bag  */
 public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable {
 
+    /** item's key */
     public K name();
 
     /** called if putIn a bag and the item specified by the key doesn't exist,

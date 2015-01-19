@@ -9,14 +9,10 @@ import nars.logic.entity.Item;
 */
 abstract public class BagActivator<K,V extends Item<K>> implements BagSelector<K,V> {
 
-    public final Memory memory;
     protected BudgetValue budget;
 
-    K key;
+    protected K key;
 
-    public BagActivator(Memory memory) {
-        this.memory = memory;
-    }
 
     public K getKey() {
         return key;

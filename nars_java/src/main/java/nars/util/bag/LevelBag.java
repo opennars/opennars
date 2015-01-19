@@ -126,19 +126,25 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         clear();
     }
 
+    public static class Sentinel<E> extends DD<E> {        }
+    public static class HeadSentinel<E> extends Sentinel<E> {        }
+    public static class TailSentinel<E> extends Sentinel<E> {        }
 
     /** from: http://algs4.cs.princeton.edu/13stacks/DoublyLinkedList.java.html */
     public static class DDList<D extends DD<E>,E> implements Iterable<E> {
         private final DequePool<D> pool;
 
         int size;        // number of elements on list
-        D pre;     // sentinel before first item
-        private D post;    // sentinel after last item
+
+        public final D pre;
+        public final D post;    // sentinels before first and after last item
+
 
         public DDList(DequePool<D> nodepool) {
             this.pool = nodepool;
-            pre = (D) new DD<E>();
-            post = (D) new DD<E>();
+            pre = (D) new HeadSentinel();
+            post = (D) new TailSentinel();
+
             clear();
         }
 
@@ -180,18 +186,24 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
 
         public D getFirstNode() {
-            return (D) pre.next;
+            //if (isEmpty()) return null;
+            D x = (D) pre.next;
+            if (x instanceof Sentinel) return null;
+            return x;
         }
         public D getLastNode() {
-            return (D) post.prev;
+            //if (isEmpty()) return null;
+            D x = (D) post.prev;
+            if (x instanceof Sentinel) return null;
+            return x;
         }
 
         public E getFirst() {
-            if (pre.next==null) return null;
+            //if (isEmpty()) return null;
             return pre.next.item;
         }
         public E getLast() {
-            if (post.prev==null) return null;
+            //if (isEmpty()) return null;
             return post.prev.item;
         }
 
@@ -345,6 +357,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
         public Level(int level) {
             super(nodePool);
+            pre.level = post.level = level;
             this.level = level;
         }
 
@@ -763,7 +776,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
     }
 
     private E TAKE(int outLevel) {
-        return OUT(level[outLevel].getFirstNode());
+
+        Level l = level[outLevel];
+        if (l == null) return null;
+
+        DD<E> fn = l.getFirstNode();
+        if (fn == null) return null;
+
+        return OUT(fn);
     }
 
     protected final Level ensureLevelExists(final int l) {

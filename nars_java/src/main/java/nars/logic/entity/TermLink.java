@@ -23,6 +23,7 @@ package nars.logic.entity;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.Terms.Termable;
+import nars.util.bag.BagActivator;
 import nars.util.bag.BagSelector;
 
 import java.util.List;
@@ -40,7 +41,8 @@ import java.util.List;
  * This class is mainly used in logic.RuleTable to dispatch premises to logic rules
  */
 public class TermLink extends Item<String> implements TLink<Term>, Termable {
-    
+
+    NullPointerException e;
     
     /** At C, point to C; TaskLink only */
     public static final short SELF = 0;
@@ -209,25 +211,26 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
 
 
 
-    public static class TermLinkBuilder implements BagSelector<String,TermLink> {
+    public static class TermLinkBuilder extends BagActivator<String,TermLink> {
 
         public final Concept concept;
 
         List<TermLinkTemplate> template;
         int nonTransforms;
 
-        private final CompoundTerm host;
+        final CompoundTerm host;
 
-        private Term from = null;
-        //private Term to = null;
-        //private Term other = null;
+        Term from = null;
 
-        private TermLinkTemplate currentTemplate;
-        private boolean incoming;
-        private BudgetValue budget = new BudgetValue(0,0,0);
+        TermLinkTemplate currentTemplate;
+        boolean incoming;
 
         public TermLinkBuilder(Concept c) {
+            super();
+
             this.concept = c;
+
+            setBudget(new BudgetValue(0,0,0));
 
             host = (CompoundTerm)c.getTerm();
 

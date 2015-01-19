@@ -81,7 +81,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
     public final short[] index;
 
 
-
     private TaskLink(final Task t, final BudgetValue v, int recordLength) {
         super(v);
         this.type = TermLink.SELF;
@@ -98,9 +97,12 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
 
         TermLinkTemplate template;
         private Task task;
+        public final Memory memory;
+
 
         public TaskLinkBuilder(Memory memory) {
-            super(memory);
+            super();
+            this.memory = memory;
         }
 
         public void setTask(Task t) {
