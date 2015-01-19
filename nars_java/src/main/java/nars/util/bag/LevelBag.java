@@ -864,8 +864,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
 
     final Function<Level, Iterator<E>> levelIteratorFunc = new Function<Level,Iterator<E>>() {
+
+        final Iterator<E> empty = Collections.EMPTY_LIST.iterator();
+
         @Override
         public Iterator<E> apply(Level o) {
+            if (o == null) return empty;
             return o.iterator();
         }
     };
@@ -873,10 +877,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
     @Override
     public Iterator<E> iterator() {
 
-        if (reversedLevels == null) {
-            reversedLevels = Lists.reverse(Lists.newArrayList(Arrays.copyOf(level,level.length)));
-        }
-        return Iterators.concat( Iterators.transform(  reversedLevels.iterator(), levelIteratorFunc)  );
+        //TODO avoid copying
+            reversedLevels = (Lists.newArrayList(Arrays.copyOf(level,level.length)));
+
+        return Iterators.concat( Iterators.transform(  Lists.reverse(reversedLevels).iterator(), levelIteratorFunc)  );
 
         //return new ItemIterator();
         //return new DDIterators();

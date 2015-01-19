@@ -31,7 +31,7 @@ public class AttentionTest {
         n.run(100);
         
         int c = Iterables.size(n.memory.concepts);
-        assertTrue(c > 32);
+        assertTrue(c > 16);
         
         Set<Concept> uniqueconcepts = new HashSet();
         
