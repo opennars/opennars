@@ -43,6 +43,27 @@
                     <threadCount>1</threadCount>
                 </configuration>-->
             </plugin>
+            <plugin>
+                <!-- mvn org.pitest:pitest-maven:mutationCoverage -->
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>LATEST</version>
+                <configuration>
+                    <targetClasses>
+                        <param>nars.build.**</param>
+                        <param>nars.core.**</param>
+                        <param>nars.control.**</param>
+                        <param>nars.event.**</param>
+                        <param>nars.io.**</param>
+                        <param>nars.logic.**</param>
+                        <param>nars.operator.**</param>
+                        <param>nars.util.**</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>nars.*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
         </plugins>
 
 

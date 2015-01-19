@@ -68,7 +68,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * TODO make this abstract and derive ThresholdDelayBag subclass
  */
-public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements AttentionAware {
+public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implements AttentionAware {
 
     private final int capacity;
     

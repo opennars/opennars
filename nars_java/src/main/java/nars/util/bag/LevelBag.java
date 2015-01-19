@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Original Bag implementation which distributes items into
  * discrete levels (queues) according to priority
  */
-public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
+public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
 
     /**
      * priority levels

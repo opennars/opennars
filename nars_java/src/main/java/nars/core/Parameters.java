@@ -24,6 +24,7 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
+import javolution.util.FastMap;
 import nars.util.bag.LevelBag;
 
 import java.util.Collection;
@@ -203,12 +204,13 @@ public class Parameters {
 
 
     public static <X> List<X> newArrayList() {
-        return new FastList();
+        return new FastList(); //GS
         //return new ArrayList();
     }
 
     public static <K, V> Map<K,V> newHashMap(int capacity) {
-        return new UnifiedMap<K,V>(capacity);
+        return new FastMap<>(); //javolution http://javolution.org/apidocs/javolution/util/FastMap.html
+        //return new UnifiedMap<K,V>(capacity);
         //return new HashMap<>(capacity);
     }
 
@@ -232,5 +234,6 @@ public class Parameters {
     public static <K,V> Map<K, V> newHashMap() {
         return newHashMap(0);
     }
+
 }
 

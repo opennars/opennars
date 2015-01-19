@@ -10,6 +10,78 @@ import java.util.Set;
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
+
+    /** for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible */
+    abstract public static class IndexedBag<E extends Item<K>,K> extends Bag<E,K> {
+
+        public E take(final K key) {
+            return take(key, true);
+        }
+
+
+        /** registers the item */
+        abstract protected void index(E value);
+        /** unregisters it */
+        abstract protected E unindex(K key);
+
+        protected E unindex(E e) {
+            return unindex(e.name());
+        }
+
+        abstract public E take(final K key, boolean unindex);
+
+        public E take(E value) { return take(value.name()); }
+
+
+        /**
+         * Insert an item into the itemTable, and return the overflow
+         *
+         * @param newItem The Item to put in
+         * @return null if nothing was displaced and if the item itself replaced itself,
+         * or the The overflow Item if a different item had to be removed
+         */
+        abstract protected E addItem(final E newItem, boolean index);
+
+        protected E addItem(final E newItem) {
+            return addItem(newItem, true);
+        }
+
+
+        /**
+         * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
+         *
+         * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
+         *
+         * WARNING This indexing-avoiding version not completely working yet, so it is not used as of this commit
+         */
+
+        public synchronized E putInFast(BagSelector<K,E> selector) {
+
+            E item = take( selector.name(), false );
+
+            if (item != null) {
+                item = (E)item.merge(selector);
+                final E overflow = addItem(item, false);
+                if (overflow == item) {
+                    unindex(item.name());
+                }
+                return overflow;
+            }
+            else {
+                item = selector.newInstance();
+
+                //compare by reference, sanity check
+                if (item.name()!=selector.name())
+                    throw new RuntimeException("Unrecognized selector and resulting new instance have different name()'s: item=" + item.name() + " selector=" + selector.name());
+
+                // put the (new or merged) item into itemTable
+                return addItem(item);
+            }
+
+
+        }
+    }
+
     public interface MemoryAware {
         public void setMemory(Memory m);
     }
@@ -57,25 +129,18 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     /** gets the next value without removing changing it or removing it from any index.  however
      the bag is cycled so that subsequent elements are different. */    
     abstract public E peekNext();
-    
 
-    protected E addItem(final E newItem) {
-        return addItem(newItem, true);
-    }
-
-    /**
-     * Insert an item into the itemTable, and return the overflow
-     *
-     * @param newItem The Item to put in
-     * @return null if nothing was displaced and if the item itself replaced itself,
-     * or the The overflow Item if a different item had to be removed
-     */
-    abstract protected E addItem(final E newItem, boolean index);
+    abstract protected E addItem(E n);
 
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    abstract public E take(K key);
+
+    public E take(E item) {
+        return take(item.name());
+    }
 
     /**
      * Add a new Item into the Bag
@@ -83,7 +148,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param newItem The new Item
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
-    public synchronized E putIn(E newItem) {
+    public E putIn(E newItem) {
                 
         final K newKey = newItem.name();
         
@@ -110,39 +175,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         
     }
 
-    /**
-     * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
-     *
-     * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
-     *
-     * WARNING This indexing-avoiding version not completely working yet, so it is not used as of this commit
-     */
 
-    public synchronized E putInFast(BagSelector<K,E> selector) {
-
-        E item = take( selector.name(), false );
-
-        if (item != null) {
-            item = (E)item.merge(selector);
-            final E overflow = addItem(item, false);
-            if (overflow == item) {
-                unindex(item.name());
-            }
-            return overflow;
-        }
-        else {
-            item = selector.newInstance();
-
-            //compare by reference, sanity check
-            if (item.name()!=selector.name())
-                throw new RuntimeException("Unrecognized selector and resulting new instance have different name()'s: item=" + item.name() + " selector=" + selector.name());
-
-            // put the (new or merged) item into itemTable
-            return addItem(item);
-        }
-
-
-    }
 
     /**
      * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
@@ -167,24 +200,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     }
 
-    /** registers the item */
-    abstract protected void index(E value);
-    /** unregisters it */
-    abstract protected E unindex(K key);
 
-    protected E unindex(E e) {
-        return unindex(e.name());
-    }
 
-    public E take(final K key) {
-        return take(key, true);
-    }
-
-    abstract public E take(final K key, boolean unindex);
-
-    public E take(E value) { return take(value.name()); }
-    
-    
     /**
      * The number of items in the bag
      *

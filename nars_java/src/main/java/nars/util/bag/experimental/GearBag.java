@@ -17,7 +17,7 @@ import java.util.*;
  * with high-performance and multi-threaded capability
  * WARNING not tested
  */
-public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
+public class GearBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> {
 
     /**
      * priority levels

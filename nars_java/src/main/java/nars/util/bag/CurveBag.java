@@ -9,7 +9,7 @@ import nars.util.sort.SortedIndex;
 import java.util.*;
 
 
-public class CurveBag<E extends Item<K>, K> extends Bag<E, K> {
+public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
     final float MASS_EPSILON = 1e-5f;
 

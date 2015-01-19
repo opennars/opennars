@@ -76,7 +76,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     private void shiftBlock(final int startIndex, final int endIndex) {
         //assert (endIndex > startIndex);        
         for (int i = endIndex - 1; i >= startIndex; i--) {
-            set(i + 1, get(i));
+            setFast(i + 1, get(i));
         }
     }
 
@@ -95,6 +95,11 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
         //original code:
         //return buf[wrapIndex(head + i)];
+    }
+
+    public void setFast(final int i, final E e) {
+        int m = (head + i) % n;
+        buf[m] = e;
     }
 
     @Override
@@ -132,7 +137,19 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
             shiftBlock(i, s);
         }
 
-        set(i, e);
+        setFast(i, e);
+    }
+
+
+    public void removeFast(int i) {
+        if (i > 0) {
+            shiftBlock(0, i);
+        }
+
+        if (++head == n) {
+            head = 0;
+        }
+        size--;
     }
 
     @Override
@@ -144,15 +161,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
          */
 
         E e = get(i);
-        if (i > 0) {
-            shiftBlock(0, i);
-        }
-
-        if (++head == n) {
-            head = 0;
-        }
-        size--;
-
+        removeFast(i);
         return e;
     }
 
@@ -162,14 +171,48 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
     @Override
+    public E getLast() {
+        return get(size-1);
+    }
+
+    public void swapWithLast(int i) {
+        swap(i, size-1);
+    }
+
+    public void swap(int a, int b) {
+        E ap = get(a);
+        setFast(a, get(b));
+        setFast(b, ap);
+    }
+
+    @Override
     public void addLast(final E e) {
         add(size, e);
+    }
+
+    @Override
+    public E getFirst() {
+        return get(0);
     }
 
     @Override
     public E removeFirst() {
         return remove(0);
     }
+
+    @Override
+    public E removeLast() {
+        return remove(size-1);
+    }
+
+    public void removeFirstFast() {
+        removeFast(0);
+    }
+    public void removeLastFast() {
+        removeFast(size-1);
+    }
+
+
 
     @Override
     public boolean offerFirst(E e) {
@@ -181,10 +224,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public E removeLast() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+
 
     @Override
     public E pollFirst() {
@@ -196,15 +236,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public E getFirst() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
-    @Override
-    public E getLast() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     @Override
     public E peekFirst() {
@@ -259,6 +291,10 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     @Override
     public E pop() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public E getModulo(int i) {
+        return get(i % size());
     }
 
 }
