@@ -171,6 +171,11 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
         return sentence.stamp.getCreationTime();
     }
 
+    public long getOcurrenceTime() {
+        return sentence.stamp.getOccurrenceTime();
+    }
+
+
     /**
      * Check if a Task is a direct input
      *
@@ -393,7 +398,4 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
     }
 
 
-
-    
-    
 }

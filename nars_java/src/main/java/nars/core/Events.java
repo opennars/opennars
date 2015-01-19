@@ -153,7 +153,12 @@ public class Events {
         }
     }
     public static class TaskRemove { }
+
+    /** when a task has been derived */
     public static class TaskDerive {    }
+
+    /** for derivations that occurr in the future; events sent here are also sent to Taskderive event */
+    public static class TaskDeriveFuture {    }
 
     public static class PluginsChange {    }
 
