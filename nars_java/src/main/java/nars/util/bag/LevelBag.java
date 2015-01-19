@@ -31,6 +31,7 @@ import nars.util.data.CuckooMap2;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * Original Bag implementation which distributes items into
@@ -996,13 +997,32 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
 
     @Override
-    public Iterator<E> iterator() {
+    @Deprecated public Iterator<E> iterator() {
         return Iterators.concat(
                 Iterators.transform(
                         new ReversibleRecyclableArrayIterator(level, true), levelIteratorFunc)  );
         //return new ItemIterator();
         //return new DDIterators();
     }
+
+    @Override
+    public void forEach(Consumer<? super E> c) {
+        int count = size();
+
+        if (count == 0) return;
+
+        DoublyLinkedListIterator<E> x = null;
+        for (int l = level.length-1; l >= 0; l--) {
+            if (levelEmpty[l]) continue;
+            if (x == null)
+                x = level[l].iterator();
+            x.init(level[l]);
+            while (x.hasNext()) {
+                c.accept( x.next() );
+            }
+        }
+    }
+
 
 //    // assumes no calls to DDList.add() during iteration
 //    private class DDIterators implements Iterator<E> {

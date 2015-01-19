@@ -7,6 +7,7 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.Term;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 
 /** Core implements a central reasoning component which references a set of Concepts and activates them during a memory cycle.*/
@@ -98,5 +99,5 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
             }
         }
     }
-    
+
 }

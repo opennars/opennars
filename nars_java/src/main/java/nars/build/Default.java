@@ -153,6 +153,7 @@ public class Default extends Build implements ConceptBuilder {
         }
 
         if (level >= 8) {
+
             n.addPlugin(new Anticipate());      // expect an event
 
             if (internalExperience == Minimal) {

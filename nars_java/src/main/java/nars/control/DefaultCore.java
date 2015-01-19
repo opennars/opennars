@@ -1,5 +1,6 @@
 package nars.control;
 
+import com.nurkiewicz.typeof.TypeOf;
 import nars.core.Core;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
@@ -14,10 +15,12 @@ import nars.logic.entity.Term;
 import nars.util.bag.Bag;
 import nars.util.bag.Bag.MemoryAware;
 import nars.util.bag.CacheBag;
+import nars.util.bag.LevelBag;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -267,7 +270,18 @@ public class DefaultCore implements Core {
         return memory;
     }
 
-    
+
+    @Override
+    public void forEach(Consumer<? super Concept> action) {
+        //use experimental consumer for levelbag to avoid allocating so many iterators within iterators
+        TypeOf.whenTypeOf(concepts).is(LevelBag.class).then(l -> {
+            l.forEach(action);
+            return;
+        });
+
+        //use default iterator
+        iterator().forEachRemaining(action);
+    }
     
 }
       /*

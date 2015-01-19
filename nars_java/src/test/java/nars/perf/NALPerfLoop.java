@@ -34,8 +34,9 @@ public class NALPerfLoop {
         Collection c = NALTest.params();
         while (true) {
             for (Object o : c) {
-                String examplePath = (String)((Object[])o)[0];
+                String examplePath = (String)((Object[])o)[1];
                 Parameters.DEBUG = false;
+
                 
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,true);
             }
