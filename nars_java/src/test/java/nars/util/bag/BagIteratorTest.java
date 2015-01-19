@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.Iterator;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -32,7 +33,7 @@ public class BagIteratorTest {
             assertTrue(first.getPriority() > current.getPriority());
         }
         
-        assertTrue(count == b.size());
+        assertEquals(b.size(), count);
     }
     
     public void testBagIterator(Bag<NullItem,CharSequence> b) {

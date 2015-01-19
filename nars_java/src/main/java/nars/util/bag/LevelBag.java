@@ -20,6 +20,8 @@
  */
 package nars.util.bag;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
@@ -87,6 +89,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
      * array of lists of items, for items on different level
      */
     public final Level [] level;
+    private List<Level> reversedLevels;
 
 
     public static enum NextNonEmptyLevelMode {
@@ -130,8 +133,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
     public static class DDList<D extends DD<E>,E> implements Iterable<E> {
         private final DequePool<D> pool;
 
-        private int size;        // number of elements on list
-        private D pre;     // sentinel before first item
+        int size;        // number of elements on list
+        D pre;     // sentinel before first item
         private D post;    // sentinel after last item
 
         public DDList(DequePool<D> nodepool) {
@@ -217,101 +220,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
             return i.item;
         }
 
-        public ListIterator<E> iterator() {
-            return new DoublyLinkedListIterator();
+        public DoublyLinkedListIterator<E> iterator() {
+            DoublyLinkedListIterator dd = new DoublyLinkedListIterator();
+            dd.init(this);
+            return dd;
         }
 
-        // assumes no calls to DDList.add() during iteration
-        private class DoublyLinkedListIterator implements ListIterator<E> {
-            private DD<E> current = pre.next;  // the node that is returned by next()
-            private DD<E> lastAccessed = null;      // the last node to be returned by prev() or next()
-            // reset to null upon intervening remove() or add()
-            private int index = 0;
-
-            public boolean hasNext() {
-                return index < size;
-            }
-
-            public boolean hasPrevious() {
-                return index > 0;
-            }
-
-            public int previousIndex() {
-                return index - 1;
-            }
-
-            public int nextIndex() {
-                return index;
-            }
-
-            public E next() {
-                if (!hasNext()) throw new NoSuchElementException();
-                lastAccessed = current;
-                E item = current.item;
-                current = current.next;
-                index++;
-                return item;
-            }
-
-            public E previous() {
-                if (!hasPrevious()) throw new NoSuchElementException();
-                current = current.prev;
-                index--;
-                lastAccessed = current;
-                return current.item;
-            }
-
-            // replace the item of the element that was last accessed by next() or previous()
-            // condition: no calls to remove() or add() after last call to next() or previous()
-            public void set(E item) {
-                if (lastAccessed == null) throw new IllegalStateException();
-                lastAccessed.item = item;
-                changed();
-            }
-
-
-            // remove the element that was last accessed by next() or previous()
-            // condition: no calls to remove() or add() after last call to next() or previous()
-            public void remove() {
-                changed();
-                throw new RuntimeException("not fully implemented");
-                /*
-                if (lastAccessed == null) throw new IllegalStateException();
-                DDNode x = lastAccessed.prev;
-                DDNode y = lastAccessed.next;
-                x.next = y;
-                y.prev = x;
-                N--;
-                if (current == lastAccessed)
-                    current = y;
-                else
-                    index--;
-                lastAccessed = null;
-                */
-            }
-
-
-            // add element to list
-            public void add(E item) {
-                changed();
-                throw new RuntimeException("not fully implemented");
-                /*
-                DDNode x = current.prev;
-                DDNode y = pool.get();
-                DDNode z = current;
-                y.item = item;
-                x.next = y;
-                y.next = z;
-                z.prev = y;
-                y.prev = x;
-                N++;
-                index++;
-                lastAccessed = null;
-                */
-            }
-
-
-        }
 
         public String toString() {
             StringBuilder s = new StringBuilder();
@@ -319,6 +233,105 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
                 s.append(item + " ");
             return s.toString();
         }
+    }
+
+    // assumes no calls to DDList.add() during iteration
+    public static class DoublyLinkedListIterator<E> implements Iterator<E> {
+        private DD<E> current;  // the node that is returned by next()
+        private DD<E> lastAccessed;      // the last node to be returned by prev() or next()
+        // reset to null upon intervening remove() or add()
+        private int index;
+        private int size;
+
+        public void init(DDList<DD<E>,E> d) {
+            current = d.pre.next;
+            lastAccessed = null;
+            index = 0;
+            size = d.size;
+        }
+        public boolean hasNext() {
+            return index < size;
+        }
+
+        public boolean hasPrevious() {
+            return index > 0;
+        }
+
+        public int previousIndex() {
+            return index - 1;
+        }
+
+        public int nextIndex() {
+            return index;
+        }
+
+        public E next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            lastAccessed = current;
+            E item = current.item;
+            current = current.next;
+            index++;
+            return item;
+        }
+
+        public E previous() {
+            if (!hasPrevious()) throw new NoSuchElementException();
+            current = current.prev;
+            index--;
+            lastAccessed = current;
+            return current.item;
+        }
+
+//            // replace the item of the element that was last accessed by next() or previous()
+//            // condition: no calls to remove() or add() after last call to next() or previous()
+//            public void set(E item) {
+//                if (lastAccessed == null) throw new IllegalStateException();
+//                lastAccessed.item = item;
+//                changed();
+//            }
+//
+//
+//            // remove the element that was last accessed by next() or previous()
+//            // condition: no calls to remove() or add() after last call to next() or previous()
+//            public void remove() {
+//                changed();
+//                throw new RuntimeException("not fully implemented");
+//                /*
+//                if (lastAccessed == null) throw new IllegalStateException();
+//                DDNode x = lastAccessed.prev;
+//                DDNode y = lastAccessed.next;
+//                x.next = y;
+//                y.prev = x;
+//                N--;
+//                if (current == lastAccessed)
+//                    current = y;
+//                else
+//                    index--;
+//                lastAccessed = null;
+//                */
+//            }
+//
+//
+//            // add element to list
+//            public void add(E item) {
+//                changed();
+//                throw new RuntimeException("not fully implemented");
+//                /*
+//                DDNode x = current.prev;
+//                DDNode y = pool.get();
+//                DDNode z = current;
+//                y.item = item;
+//                x.next = y;
+//                y.next = z;
+//                z.prev = y;
+//                y.prev = x;
+//                N++;
+//                index++;
+//                lastAccessed = null;
+//                */
+//            }
+//
+
     }
 
     /** high performance linkedhashset/deque for use as a levelbag level */
@@ -849,10 +862,90 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         //return index.values();
     }
 
+
+    final Function<Level, Iterator<E>> levelIteratorFunc = new Function<Level,Iterator<E>>() {
+        @Override
+        public Iterator<E> apply(Level o) {
+            return o.iterator();
+        }
+    };
+
     @Override
     public Iterator<E> iterator() {
-        return new ItemIterator();
+
+        if (reversedLevels == null) {
+            reversedLevels = Lists.reverse(Lists.newArrayList(Arrays.copyOf(level,level.length)));
+        }
+        return Iterators.concat( Iterators.transform(  reversedLevels.iterator(), levelIteratorFunc)  );
+
+        //return new ItemIterator();
+        //return new DDIterators();
     }
+
+//    // assumes no calls to DDList.add() during iteration
+//    private class DDIterators implements Iterator<E> {
+//        private DD<E> current;  // the node that is returned by next()
+//        private DD<E> lastAccessed = null;      // the last node to be returned by prev() or next()
+//        // reset to null upon intervening remove() or add()
+//        private int index;
+//        private Level currentLevel;
+//        int currentLevelNum = 0;
+//
+//        DDIterators() {
+//            nextLevel();
+//        }
+//
+//        public void nextLevel() {
+//            currentLevel = level[currentLevelNum];
+//            current = currentLevel.pre.next;
+//            lastAccessed = null;
+//            index = 0;
+//        }
+//
+//        public boolean hasNext() {
+//            while (!((index < currentLevel.size))) {
+//            if  return true;
+//            else {
+//                currentLevelNum++;
+//                nextLevel();
+//
+//            }
+//        }
+//
+//        public boolean hasPrevious() {
+//            return index > 0;
+//        }
+//
+//        public int previousIndex() {
+//            return index - 1;
+//        }
+//
+//        public int nextIndex() {
+//            return index;
+//        }
+//
+//        public E next() {
+//            if (!hasNext()) throw new NoSuchElementException();
+//            lastAccessed = current;
+//            E item = current.item;
+//            current = current.next;
+//            index++;
+//            return item;
+//        }
+//
+//        public E previous() {
+//            if (!hasPrevious()) throw new NoSuchElementException();
+//            current = current.prev;
+//            index--;
+//            lastAccessed = current;
+//            return current.item;
+//        }
+//
+//
+//
+//
+//    }
+
 
     public int numEmptyLevels() {
         int empty = 0;
