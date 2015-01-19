@@ -6,6 +6,7 @@ package nars.util.bag.experimental;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.logic.entity.Item;
+import nars.util.bag.BagSelector;
 import nars.util.bag.Distributor;
 
 /**
@@ -43,8 +44,11 @@ public class FairDelayBag<E extends Item<K>, K> extends DelayBag<E,K> {
     protected void adjustActivationThreshold() {
         //do nothing about this, fireable in this impl doesn't depend on activation threshold
     }
-    
-    
-    
-    
+
+
+    @Override
+    public E UPDATE(BagSelector<K, E> selector) {
+        //TODO provide a full implementation
+        return super.putInFast(selector);
+    }
 }

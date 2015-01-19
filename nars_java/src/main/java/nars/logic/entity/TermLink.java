@@ -296,7 +296,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
 
 
         @Override
-        public TermLink newInstance() {
+        public TermLink newItem() {
             return new TermLink(incoming, concept.getTerm(), currentTemplate, name(), getBudget());
         }
 

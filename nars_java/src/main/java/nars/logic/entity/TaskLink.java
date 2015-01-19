@@ -23,7 +23,7 @@ package nars.logic.entity;
 import nars.core.Memory;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.Sentence.Sentenceable;
-import nars.util.bag.BagSelector;
+import nars.util.bag.BagActivator;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -93,50 +93,42 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
         this.records = new ArrayDeque(recordLength);
     }
 
-    public static class TaskLinkBuilder implements BagSelector<Sentence,TaskLink> {
+    /** adjusts budget of items in a Bag. ex: merge */
+    public static class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
-        private final Memory memory;
-        Task currentTask;
-        TermLinkTemplate currentTemplate;
-        BudgetValue currentBudget;
+        TermLinkTemplate template;
+        private Task task;
 
         public TaskLinkBuilder(Memory memory) {
-            this.memory = memory;
+            super(memory);
         }
 
-        public TaskLinkBuilder set(BudgetValue budget) {
-            this.currentBudget = budget;
-            return this;
+        public void setTask(Task t) {
+            this.task = t;
+            setKey(t.sentence);
         }
 
-        public TaskLinkBuilder set(Task task, TermLinkTemplate temp, BudgetValue budget) {
-            return set(budget).set(task,temp);
+        public Task getTask() {
+            return task;
         }
 
-        public TaskLinkBuilder set(Task task, TermLinkTemplate temp) {
-            this.currentTask = task;
-            this.currentTemplate = temp;
-            return this;
-        }
-        
-        @Override
-        public Sentence name() {
-            return currentTask.sentence;
-        }
-
-
-        @Override
-        public BudgetValue getBudget() {
-            return currentBudget;
+        public void setTemplate(TermLinkTemplate template) {
+            this.template = template;
         }
 
         @Override
-        public TaskLink newInstance() {
+        public TaskLink newItem() {
             int recordLength = memory.param.termLinkRecordLength.get();
-            if (currentTemplate == null)
-                return new TaskLink(currentTask, currentBudget, recordLength);
+            if (template == null)
+                return new TaskLink(getTask(), budget, recordLength);
             else
-                return new TaskLink(currentTask, currentTemplate, currentBudget, recordLength);
+                return new TaskLink(getTask(), template, budget, recordLength);
+        }
+
+        @Override
+        public TaskLink updateItem(TaskLink taskLink) {
+            taskLink.budget.merge(getBudget());
+            return taskLink;
         }
     }
     /**

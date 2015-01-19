@@ -155,10 +155,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         }
 
         public boolean isEmpty() {
+            /*
+            //THIS CAN OCCURR IN THE MIDDLE OF AN 'UPDATE' TRANSACTION, SO EITHER
+            DISABLE THIS TEST DURING TRANSACTION OR REMOVE IT
             if (Parameters.DEBUG) {
                 if ((size ==0) && (pre.next!=post) && (post.prev!=pre))
                     throw new RuntimeException("Invalid empty state: " + this);
             }
+            */
             return size == 0;
         }
 
@@ -166,13 +170,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
             return size;
         }
 
-        // add the item to the list
+        /** add the raw item to the list, will be bagged */
         public D add(E item) {
             D x = pool.get();
             x.item = item;
             add(x);
             return x;
         }
+
 
         public D getFirstNode() {
             return (D) pre.next;
@@ -190,7 +195,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
             return post.prev.item;
         }
 
-        public void add(D x) {
+        public D add(D x) {
             if (x == null)
                 throw new RuntimeException("attempt to add null element");
             DD<E> last = post.prev;
@@ -201,6 +206,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
             size++;
 
             changed();
+            return x;
         }
 
         public E remove(D i) {
@@ -582,6 +588,45 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         }
     }
 
+    @Override
+    public E UPDATE(BagSelector<K, E> selector) {
+
+        K key = selector.name();
+        DD<E> bx = index.get(key);
+        if (bx == null) {
+            //allow selector to provide a new instance
+            E n = selector.newItem();
+            if (n!=null) {
+                return PUT(n);
+            }
+            //no instance provided, nothing to do
+            return null;
+        }
+
+
+        E b = bx.item;
+
+        //allow selector to modify it, then if it returns non-null, reinsert
+        //TODO maybe divide this into a 2 stage transaction that can be aborted before the unlevel begins
+        E c = selector.updateItem(b);
+        if (c!=null) {
+            unlevel(bx);
+
+            bx.item = c;
+
+            relevel(bx, getLevel(c));
+
+            if (!b.name().equals(c.name())) {
+                //name changed, must be rehashed
+                index.remove(key);
+                key = c.name();
+                index.put(key, bx);
+            }
+
+        }
+
+        return c;
+    }
 
     @Override
     public E PEEKNEXT() {
@@ -656,28 +701,40 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
     }
 
 
-    /** guarantees removal of the bagged item from its level and the index */
+    /** removes an item from its position in the level without removing it from the hashtable */
+    protected E unlevel(DD<E> x) {
+        int outLevel = x.level;
+        removeMass(x.item);
+        return level[outLevel].remove(x);
+    }
+    protected DD<E> relevel(DD<E> x, int inLevel) {
+        addMass(x.item);
+        return ensureLevelExists(inLevel).add(x);
+    }
+    protected DD<E> relevel(E x, int inLevel) {
+        addMass(x);
+        return ensureLevelExists(inLevel).add(x);
+    }
+
+    /** removal of the bagged item from its level and the index */
     public E OUT(DD<E> node) {
         if (node == null) return null;
-        int outLevel = node.level;
-        level[outLevel].remove(node);
+        unlevel(node);
         index.remove(node.item.name());
-        removeMass(node.item);
         return node.item;
+    }
+
+    /** addition of the item to its level and the index */
+    public DD<E> IN(E newItem, int inLevel) {
+        DD<E> dd = relevel(newItem, inLevel);
+        this.index.put(newItem.name(), dd);
+        return dd;
     }
 
     public DD<E> IN(E newItem) {
         return IN(newItem, getLevel(newItem));
     }
 
-    /** guarantees addition of the item to its level and the index */
-    public DD<E> IN(E newItem, int inLevel) {
-        addMass(newItem);
-        DD<E> dd = level[inLevel].add(newItem);
-        this.index.put(newItem.name(), dd);
-        addMass(newItem);
-        return dd;
-    }
 
     @Override
     public E PUT(final E newItem) {
@@ -687,9 +744,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next
             int outLevel = 0;
-            while (levelEmpty[outLevel]) {
-                outLevel++;
-            }
+            while (levelEmpty[outLevel++]);
             if (outLevel > inLevel) {           // ignore the item and exit
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
@@ -711,10 +766,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         return OUT(level[outLevel].getFirstNode());
     }
 
-    protected final void ensureLevelExists(final int level) {
-        if (this.level[level] == null) {
-            this.level[level] = new Level(level);
+    protected final Level ensureLevelExists(final int l) {
+        if (this.level[l] == null) {
+            this.level[l] = new Level(l);
         }
+        return level[l];
     }
 
 

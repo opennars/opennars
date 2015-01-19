@@ -443,7 +443,10 @@ public class Concept extends Item<Term> implements Termable {
     public synchronized void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.budget;
 
-        insertTaskLink(taskLinkBuilder.set(task, null, taskBudget));  // link type: SELF
+        taskLinkBuilder.setBudget(taskBudget);
+        taskLinkBuilder.setTask(task);
+        taskLinkBuilder.setTemplate(null);
+        insertTaskLink(taskLinkBuilder);  // link type: SELF
 
         if (!(term instanceof CompoundTerm)) {
             return;
@@ -462,9 +465,12 @@ public class Concept extends Item<Term> implements Termable {
         float linkSubBudgetDivisor = (float)numTemplates;
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
-        taskLinkBuilder.set(subBudget);
+        taskLinkBuilder.setBudget(subBudget);
 
         if (subBudget.aboveThreshold()) {
+
+            taskLinkBuilder.setTask(task);
+            taskLinkBuilder.setBudget(taskBudget);
 
             for (int i = 0; i < numTemplates; i++) {
                 TermLinkTemplate termLink = templates.get(i);
@@ -475,10 +481,12 @@ public class Concept extends Item<Term> implements Termable {
                 Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
 
                 if (componentConcept != null) {
-                    componentConcept.insertTaskLink(
-                            taskLinkBuilder.set(task, termLink)
-                    );
-                }
+
+                    taskLinkBuilder.setTemplate(termLink);
+
+                    /** activate the task link */
+                    componentConcept.insertTaskLink(taskLinkBuilder);                }
+
                 else {
                     taskBudgetBalance += subBudget.getPriority();
                 }
@@ -570,13 +578,10 @@ public class Concept extends Item<Term> implements Termable {
 
         TaskLink removed;
 
-        synchronized (taskLinks) {
-            removed = taskLinks.PUT(taskLink);
-        }
+        removed = taskLinks.UPDATE(taskLink);
 
         if (removed != null) {
             //memory.emit(TaskLinkRemove.class, removed, this);
-
             return removed;
         }
 

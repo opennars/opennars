@@ -76,7 +76,12 @@ abstract public class FireConcept extends NAL {
                         returnTaskLink(currentTaskLink);
                     }
                     catch (Exception e) {
+
                         returnTaskLink(currentTaskLink);
+
+                        if (Parameters.DEBUG) {
+                            e.printStackTrace();
+                        }
                         throw e;
                     }
 

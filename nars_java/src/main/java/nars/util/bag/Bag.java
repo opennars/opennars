@@ -68,7 +68,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
                 return overflow;
             }
             else {
-                item = selector.newInstance();
+                item = selector.newItem();
 
                 //compare by reference, sanity check
                 if (item.name()!=selector.name())
@@ -170,6 +170,10 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     }
 
 
+    /*abstract */public E UPDATE(BagSelector<K, E> selector) {
+        throw new RuntimeException(this + " does not support Bag UPDATEs");
+    }
+
 
     /**
      * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
@@ -178,7 +182,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      */
     public E PUT(BagSelector<K, E> selector) {
 
-        E item = TAKE(selector.name());
+        E item = TAKE(selector.name()); //
 
         if (item != null) {
             item = (E)item.merge(selector);
@@ -186,7 +190,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
             return overflow;
         }
         else {
-            item = selector.newInstance();
+            item = selector.newItem();
 
             // put the (new or merged) item into itemTable
             return PUT(item);
