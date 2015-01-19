@@ -89,8 +89,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
      * array of lists of items, for items on different level
      */
     public final Level [] level;
-    private List<Level> reversedLevels;
-
 
     public static enum NextNonEmptyLevelMode {
         Default, Fast
@@ -874,14 +872,55 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         }
     };
 
+    /** recyclable reversable array iterator
+     *
+     * modified from: http://faculty.washington.edu/moishe/javademos/ch03%20Code/jss2/ArrayIterator.java
+     * */
+    public static class ReversibleRecyclableArrayIterator<T> implements Iterator<T> {
+        private int count;    // the number of elements in the collection
+        private int current;  // the current position in the iteration
+        private T[] a;
+        private boolean reverse;
+
+        public ReversibleRecyclableArrayIterator(T[] array, boolean reverse) {
+            init(array, array.length, reverse);
+        }
+
+        public ReversibleRecyclableArrayIterator(T[] array, int size, boolean reverse) {
+            init(array, size, reverse);
+        }
+
+        public void init(T[] array, int size, boolean reverse) {
+            a = array;
+            count = size;
+            current = 0;
+            this.reverse = reverse;
+        }
+
+        public boolean hasNext() {
+            return (current < count);
+        }
+
+        public T next() {
+            if (!hasNext()) throw new NoSuchElementException();
+
+            int i = (reverse) ? ((count-1) - current) : current;
+            current++;
+
+            return a[i];
+        }
+
+        public void remove() throws UnsupportedOperationException {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+
     @Override
     public Iterator<E> iterator() {
-
-        //TODO avoid copying
-            reversedLevels = (Lists.newArrayList(Arrays.copyOf(level,level.length)));
-
-        return Iterators.concat( Iterators.transform(  Lists.reverse(reversedLevels).iterator(), levelIteratorFunc)  );
-
+        return Iterators.concat(
+                Iterators.transform(
+                        new ReversibleRecyclableArrayIterator(level, true), levelIteratorFunc)  );
         //return new ItemIterator();
         //return new DDIterators();
     }
@@ -983,11 +1022,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
     private static class DDNodePool<E> extends DequePool<DD<E>> {
 
-
         public DDNodePool(int preallocate) {
             super(preallocate);
         }
-
 
         public DD<E> create() {
             return new DD();
@@ -995,55 +1032,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
     }
 
-    final private class ItemIterator implements Iterator<E> {
-
-        int l = level.length - 1;
-        private Iterator<E> levelIterator;
-        private E next;
-        final int size = size();
-        int count = 0;
-
-        @Override
-        public boolean hasNext() {
-            if (next != null) {
-                return true;
-            }
-
-            if (l >= 0 && levelIterator == null) {
-                while (levelEmpty[l]) {
-                    if (--l == -1)
-                        return false; //end of the levels
-                }
-                levelIterator = level[l].descendingIterator();
-            }
-
-            if (levelIterator == null) {
-                return false;
-            }
-
-            next = levelIterator.next();
-            count++;
-
-            if (levelIterator.hasNext()) {
-                return true;
-            } else {
-                levelIterator = null;
-                l--;
-                return count <= size;
-            }
-        }
-
-        @Override
-        public E next() throws NoSuchElementException {
-            if (next == null) throw new NoSuchElementException();
-            E e = next;
-            next = null;
-            return e;
-        }
-
-    }
-
-
+//TODO move this to a "bag metrics" class
 //    private void stat() {
 //        int itsize = 0;
 //        Set<CharSequence> items = new HashSet();
@@ -1071,3 +1060,55 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
 
 }
+
+
+
+//    final private class ItemIterator implements Iterator<E> {
+//
+//        int l = level.length - 1;
+//        private Iterator<E> levelIterator;
+//        private E next;
+//        final int size = size();
+//        int count = 0;
+//
+//        @Override
+//        public boolean hasNext() {
+//            if (next != null) {
+//                return true;
+//            }
+//
+//            if (l >= 0 && levelIterator == null) {
+//                while (levelEmpty[l]) {
+//                    if (--l == -1)
+//                        return false; //end of the levels
+//                }
+//                levelIterator = level[l].descendingIterator();
+//            }
+//
+//            if (levelIterator == null) {
+//                return false;
+//            }
+//
+//            next = levelIterator.next();
+//            count++;
+//
+//            if (levelIterator.hasNext()) {
+//                return true;
+//            } else {
+//                levelIterator = null;
+//                l--;
+//                return count <= size;
+//            }
+//        }
+//
+//        @Override
+//        public E next() throws NoSuchElementException {
+//            if (next == null) throw new NoSuchElementException();
+//            E e = next;
+//            next = null;
+//            return e;
+//        }
+//
+//    }
+
+
