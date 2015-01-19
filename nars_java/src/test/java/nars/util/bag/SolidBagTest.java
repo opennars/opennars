@@ -3,8 +3,10 @@ package nars.util.bag;
 
 import com.google.common.collect.Iterators;
 import nars.core.Memory;
+import nars.logic.entity.Item;
 import nars.perf.BagPerf;
 import nars.util.bag.experimental.SolidBag;
+import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -27,6 +29,7 @@ public class SolidBagTest extends AbstractBagTest {
         s.putIn(new NullItem(0.3f, "3"));
         s.putIn(new NullItem(0.2f, "2"));
 
+        assertEquals(3, s.inPriority. getN(), 0.001f);
         assertEquals(0.333f, s.inPriority.getMean(), 0.001f);
 
         assertEquals(3, s.size());
@@ -114,22 +117,37 @@ public class SolidBagTest extends AbstractBagTest {
                 false
         );
 
-        assertTrue(dist[0] + dist[dist.length-1] > 0);
+        assertTrue(dist[0] + dist[dist.length - 1] > 0);
     }
 
     @Test public void testPrioritization2() {
-        int loops = 100;
-        int insertsPerLoop = 2;
-        float fractionToAdjust = 0.2f;
-        float fractionTRemove = 0.05f;
-        SolidBag bag = new SolidBag(32);
+        int loops = 5000;
+        int insertsPerLoop = 1;
 
-        int[] dist =AbstractBagTest.testRemovalPriorityDistribution(
-                loops, insertsPerLoop, fractionToAdjust, fractionTRemove, bag,
-                false
+        SolidBag bag = new SolidBag(500) {
+
+            @Override
+            public Item onExit(Item item) {
+                Item e = super.onExit(item);
+                if (e!=null) {
+
+                }
+                return e;
+            }
+        };
+
+        AbstractBagTest.testRetaining(
+                loops, insertsPerLoop, bag
         );
 
-        System.out.println(Arrays.toString(dist));
+        System.out.println(bag.inPriority);
+        System.out.println(bag.outPriority);
+        System.out.println(bag.size());
+
+        //double[] dist = (bag.getPriorityDistribution(10));
+        Frequency f = bag.removal;
+        System.out.println(f);
+
     }
 
 }

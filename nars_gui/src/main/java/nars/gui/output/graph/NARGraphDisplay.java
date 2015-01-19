@@ -161,7 +161,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
                 //app.drawn = false;
             }
         };
-        nodeSize.setPrefix("Node Size: ");
+        nodeSize.setPrefix("DDNode Size: ");
         nodeSize.setPreferredSize(new Dimension(80, 25));
         menu.add(nodeSize);
         

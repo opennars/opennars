@@ -151,7 +151,7 @@ public class LineChart extends AxisPlot implements MultiChart {
         l.g.text(Texts.n4((float)min), 15, screenyLo - dsy / 10f);
         l.g.text(Texts.n4((float)max), 0, screenyHi + dsy / 10f);
 
-        l.g.textFont(PCanvas.font12);
+        //l.g.textFont(PCanvas.font12);
         float dsyt = screenyHi + 0.15f * dsy;
         int order = 0;
         for (SignalData chart : data) {

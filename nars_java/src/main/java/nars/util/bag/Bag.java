@@ -267,7 +267,11 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         }
         return x;
     }
-    
+
+    public double[] getPriorityDistribution(int bins) {
+        return getPriorityDistribution(new double[bins]);
+    }
+
     public double[] getPriorityDistribution(double[] x) {
         int bins = x.length;
         double total = 0;

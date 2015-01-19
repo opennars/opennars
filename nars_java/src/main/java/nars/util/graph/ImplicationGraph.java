@@ -145,7 +145,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
         
         @Override public boolean equals(final Object that) {
-            if (that == this) return true;
+            if (that == null || that == this) return true;
             if (hashCode()!=that.hashCode()) return false;
             
             if (that instanceof UniqueOperation) {

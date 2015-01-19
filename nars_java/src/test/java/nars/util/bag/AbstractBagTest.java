@@ -19,6 +19,7 @@ public class AbstractBagTest {
     public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<BagPerf.NullItem,CharSequence> f) {
         return testRemovalPriorityDistribution(loops, insertsPerLoop, fractionToAdjust, fractionToRemove, f, true);
     }
+
     public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<BagPerf.NullItem,CharSequence> f, boolean requireOrder) {
 
         int levels = 9;
@@ -116,6 +117,33 @@ public class AbstractBagTest {
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);
 
     }
+
+
+    public static int[] testRetaining(int loops, int insertsPerLoop, Bag<BagPerf.NullItem,CharSequence> f) {
+
+        int levels = 9;
+        int count[] = new int[levels];
+
+
+        for (int l = 0; l < loops; l++) {
+            //fill with random items
+            for (int i= 0; i < insertsPerLoop; i++) {
+                BagPerf.NullItem ni = new BagPerf.NullItem(Memory.randomNumber.nextFloat());
+                f.putIn(ni);
+            }
+
+
+
+            //nametable and itemtable consistent size
+            //assertEquals(items.size(), f.size());
+            //System.out.printMeaning("  "); items.reportPriority();
+
+        }
+
+
+        return count;
+    }
+
 
     /** removal rates are approximately monotonically increasing function; tests first, mid and last for this  ordering */
     public static boolean semiMonotonicallyIncreasing(int[] count) {

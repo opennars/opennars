@@ -28,7 +28,7 @@ public class XMLInput extends PrintWriterInput {
 
     private final String nodePrefix;
 
-    //Node -> ID
+    //DDNode -> ID
     private final Map<Node, String> nodes = new HashMap();
     private final Set<String> elementTypes = new HashSet();
 
@@ -168,7 +168,7 @@ public class XMLInput extends PrintWriterInput {
 
 
     /*
-     private void printlnCommon(Node n) {
+     private void printlnCommon(DDNode n) {
      out.print(" nodeName=\"" + n.getNodeName() + "\"");
 
      String val = n.getNamespaceURI();
@@ -251,22 +251,22 @@ public class XMLInput extends PrintWriterInput {
                 //indent -= 2;
                 break;
 
-            /*case Node.COMMENT_NODE:
+            /*case DDNode.COMMENT_NODE:
              out.print("COMM:");
              printlnCommon(n);
              break;*/
 
-            /*case Node.DOCUMENT_FRAGMENT_NODE:
+            /*case DDNode.DOCUMENT_FRAGMENT_NODE:
              out.print("DOC_FRAG:");
              printlnCommon(n);
              break;*/
 
-            /*case Node.DOCUMENT_NODE:
+            /*case DDNode.DOCUMENT_NODE:
              out.print("DOC:");
              printlnCommon(n);
              break;*/
 
-            /*case Node.DOCUMENT_TYPE_NODE:
+            /*case DDNode.DOCUMENT_TYPE_NODE:
              out.print("DOC_TYPE:");
              printlnCommon(n);
              NamedNodeMap nodeMap = ((DocumentType) n).getEntities();
@@ -277,22 +277,22 @@ public class XMLInput extends PrintWriterInput {
              }
              indent -= 2;
              break;*/
-            /*case Node.ENTITY_NODE:
+            /*case DDNode.ENTITY_NODE:
              out.print("ENT:");
              printlnCommon(n);
              break;
 
-             case Node.ENTITY_REFERENCE_NODE:
+             case DDNode.ENTITY_REFERENCE_NODE:
              out.print("ENT_REF:");
              printlnCommon(n);
              break;
 
-             case Node.NOTATION_NODE:
+             case DDNode.NOTATION_NODE:
              out.print("NOTATION:");
              printlnCommon(n);
              break;
 
-             case Node.PROCESSING_INSTRUCTION_NODE:
+             case DDNode.PROCESSING_INSTRUCTION_NODE:
              out.print("PROC_INST:");
              printlnCommon(n);
              break;

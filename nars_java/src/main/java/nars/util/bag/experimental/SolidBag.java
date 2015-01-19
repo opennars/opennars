@@ -7,6 +7,7 @@ import nars.logic.entity.Item;
 import nars.util.bag.Bag;
 import nars.util.data.CircularArrayList;
 import nars.util.data.ObjectMap;
+import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.*;
@@ -31,6 +32,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     //public final SummaryStatistics peekPriority = new SummaryStatistics();
     public final SummaryStatistics outPriority = new SummaryStatistics();
     double mass = 0;
+    public Frequency removal = new Frequency();
 
 
     //Deque<Bagged<E>> pool = new ArrayDeque<>();
@@ -186,10 +188,19 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     public boolean valid(E value) {
         return value!=null && get(value.name())==value;
     }
+    public float validPriority(E value) {
+        if (valid(value))
+            return value.getPriority();
+        return -1f;
+    }
 
     /** performs an organization iteration */
     protected void organize() {
+
+        sortFirstAndNths(1);
+        sortFirstAndNths(2);
         sortFirstAndNths(3);
+        sortFirstAndNths(4);
         //sortRandomPair();
     }
 
@@ -198,37 +209,55 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
         return queue.toString();
     }
 
-    /** bubble sort the top item with successive elements at each 'inc' interval.
-     *  if the target element is invalid, swap it and then remove the top */
-    protected void sortFirstAndNths(int inc) {
+    /** find starting point, removing trailing invalid items */
+    protected E getValidStart() {
         E root = null;
         while (!queue.isEmpty()) {
             root = queue.getFirst();
             if (!valid(root)) {
                 queue.removeFirstFast();
                 continue;
-            }
-            else
+            } else
                 break;
         }
+        return root;
+    }
+    protected E getValidEnd() {
+        E root = null;
+        while (!queue.isEmpty()) {
+            root = queue.getLast();
+            if (!valid(root)) {
+                queue.removeLastFast();
+                continue;
+            } else
+                break;
+        }
+        return root;
+    }
+
+    /** bubble sort the top item with successive elements at each 'inc' interval.
+     *  if the target element is invalid, swap it and then remove the top */
+    protected void sortFirstAndNths(int inc) {
+        E root = getValidStart();
+        E end = getValidEnd();
 
         if ((root == null) || (queue.size() < 2)) return; //nothing to do
 
-        for (int i = 1; i < queue.size(); i += inc) {
-            E n = queue.get(i);
-            if (valid(n)) {
-                //compare priority
-                float a = root.getPriority();
-                float b = n.getPriority();
-                if (b < a) {
-                    queue.swap(0, i);
-                    root = n;
-                }
+        int ai = 0;
+        for (int bi = 1; bi < queue.size(); bi += inc) {
+            E a = queue.get(ai);
+            E b = queue.get(bi);
+            float ap = validPriority(a);
+            float bp = validPriority(b);
+            if (bp > ap) {
+                queue.swap(ai, bi);
             }
             else {
                 //??
                 //queue.swapWithLast(i);
             }
+
+            ai++;
         }
     }
 
@@ -247,6 +276,9 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     @Override
     protected E addItem(E n) {
 
+        if (n==null)
+            throw new RuntimeException(this + " can not accept null item");
+
         E overflow;
 
         E existing = take(n.name());
@@ -264,28 +296,35 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
             overflow = null; //capacity remains
         }
 
+
         onEnter(n);
-        index.put(n.name(), n);
-        inPriority.addValue(n.getPriority());
-        queue.addFirst(n); //TODO determine insertion policy
-        swapToProportionalIndex(0, n.getPriority());
 
         return overflow;
     }
 
-    public E onEnter(E e) {
-        float p = e.getPriority();
+    public E onEnter(E n) {
+        float p = n.getPriority();
         inPriority.addValue(p);
         mass += p;
+        index.put(n.name(), n);
+        queue.addFirst(n); //TODO determine insertion policy
+        swapToProportionalIndex(0, n.getPriority());
+        return n;
+    }
+
+    public E onExit(E e) {
+        if (e == null) return null;
+
+        float p = e.getPriority();
+        outPriority.addValue(p);
+        mass -= p;
+        removal.addValue(bin(p));
         return e;
     }
-    public E onExit(E e) {
-        if (e!=null) {
-            float p = e.getPriority();
-            outPriority.addValue(p);
-            mass -= p;
-        }
-        return e;
+
+    /** bins a priority value to an integer */
+    protected int bin(float v) {
+        return bin(v,10);
     }
 
     @Override
@@ -302,7 +341,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
 
     @Override
     public Iterable<E> values() {
-        return index.values();
+        return index.v();
     }
 
     @Override
@@ -314,7 +353,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
 
 
     public Iterator<E> indexValues() {
-        return index.values().iterator();
+        return index.v().iterator();
     }
     public Iterator<K> indexKeys() {
         return index.keys().iterator();

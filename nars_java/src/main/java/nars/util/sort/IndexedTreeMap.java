@@ -2118,7 +2118,7 @@ public class IndexedTreeMap<K, V>
     private static final boolean BLACK = true;
 
     /**
-     * Node in the Tree.  Doubles as a means to pass key-value pairs back to
+     * DDNode in the Tree.  Doubles as a means to pass key-value pairs back to
      * user (see Map.Entry).
      */
 

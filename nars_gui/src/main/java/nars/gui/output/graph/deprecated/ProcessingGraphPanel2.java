@@ -107,7 +107,7 @@ abstract public class ProcessingGraphPanel2<V,E> extends NPanel {
                 redraw();
             }          
         };
-        nodeSize.setPrefix("Node Size: ");
+        nodeSize.setPrefix("DDNode Size: ");
         nodeSize.setPreferredSize(new Dimension(125, 25));
         menu.add(nodeSize);
 

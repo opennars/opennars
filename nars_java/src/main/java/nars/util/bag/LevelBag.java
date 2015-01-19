@@ -20,8 +20,10 @@
  */
 package nars.util.bag;
 
+import com.google.common.collect.Lists;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
+import nars.util.data.ObjectMap;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -31,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Original Bag implementation which distributes items into
  * discrete levels (queues) according to priority
  */
-public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
+public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
     /**
      * priority levels
@@ -55,7 +57,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
     /**
      * array of lists of items, for items on different level
      */
-    public final Level[] level;
+    public final Level<E>[] level;
 
     /**
      * defined in different bags
@@ -82,16 +84,17 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
     public static enum NextNonEmptyLevelMode {
         Default, Fast
     }
-    
+
     NextNonEmptyLevelMode nextNonEmptyMode = Parameters.DEFAULT_LEVEL_BAG_MODE;
 
 
-    
     public LevelBag(int levels, int capacity) {
         this(levels, capacity, (int) (Parameters.BAG_THRESHOLD * levels));
     }
 
-    /** thresholdLevel = 0 disables "fire level completely" threshold effect */
+    /**
+     * thresholdLevel = 0 disables "fire level completely" threshold effect
+     */
     public LevelBag(int levels, int capacity, int thresholdLevel) {
         this.levels = levels;
 
@@ -100,7 +103,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
 
         this.capacity = capacity;
 
-        nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
+        //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
+        nameTable = Parameters.THREADS == 1 ? new ObjectMap(capacity * 2) : new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);
 
@@ -112,87 +116,267 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
         clear();
     }
 
-    public class Level implements Iterable<E> {
-        private final int thisLevel;
 
-        final LinkedHashSet<E> items;
-                
-        public Level(int level, int numElements) {
-            super();
-            items = new LinkedHashSet(numElements);
-            
-            /*if (Parameters.THREADS == 1) {
-                items = new ArrayDeque(numElements);
-            }
-            else {
-                items = new ConcurrentLinkedDeque();
-            }*/
-            this.thisLevel = level;
+    // linked list node helper data type
+    public static class DDNode<Item> {
+        private Item item;
+        private DDNode<Item> next;
+        private DDNode<Item> prev;
+    }
+
+    public static class DDList<Item> implements Iterable<Item> {
+        private int N;        // number of elements on list
+        private DDNode<Item> pre;     // sentinel before first item
+        private DDNode<Item> post;    // sentinel after last item
+
+        public DDList() {
+            pre = new DDNode();
+            post = new DDNode();
+            clear();
         }
 
-        @Override
-        public Iterator<E> iterator() {
-            return items.iterator();
-        }
-        
-        public int size() { return items.size(); }
-        
-        
-        void levelIsEmpty(final boolean e) {
-            levelEmpty[thisLevel] = e;
-        }
-        
         public void clear() {
-            items.clear();
-            levelIsEmpty(true);
-        }
-        
-       
-       public boolean add(final E e) {
-           if (e == null)
-               throw new RuntimeException("Bag requires non-null items");
-           
-            if (items.add(e)) {
-                levelIsEmpty(false);
-                return true;
-            }
-            return false;
+            pre.next = post;
+            post.prev = pre;
         }
 
-        public boolean remove(E o) {
-            if (items.remove(o)) {
-                levelIsEmpty(items.isEmpty());
-                return true;
+        public boolean isEmpty() {
+            return N == 0;
+        }
+
+        public int size() {
+            return N;
+        }
+
+        // add the item to the list
+        public DDNode add(Item item) {
+            DDNode<Item> x = new DDNode();
+            x.item = item;
+            add(x);
+            return x;
+        }
+
+        public Item getFirst() {
+            if (pre.next==null) return null;
+            return pre.next.item;
+        }
+        public Item getLast() {
+            if (post.prev==null) return null;
+            return post.prev.item;
+        }
+
+        protected void add(DDNode<Item> x) {
+            DDNode last = post.prev;
+            x.next = post;
+            x.prev = last;
+            post.prev = x;
+            last.next = x;
+            N++;
+        }
+
+        public void remove(DDNode<Item> i) {
+            if ((i == pre) || (i == post))
+                throw new RuntimeException("DDList fault");
+
+            DDNode x = i.prev;
+            DDNode y = i.next;
+            x.next = y;
+            y.prev = x;
+            N--;
+        }
+
+        public ListIterator<Item> iterator() {
+            return new DoublyLinkedListIterator();
+        }
+
+        // assumes no calls to DDList.add() during iteration
+        private class DoublyLinkedListIterator implements ListIterator<Item> {
+            private DDNode<Item> current = pre.next;  // the node that is returned by next()
+            private DDNode<Item> lastAccessed = null;      // the last node to be returned by prev() or next()
+            // reset to null upon intervening remove() or add()
+            private int index = 0;
+
+            public boolean hasNext() {
+                return index < N;
             }
-            return false;
+
+            public boolean hasPrevious() {
+                return index > 0;
+            }
+
+            public int previousIndex() {
+                return index - 1;
+            }
+
+            public int nextIndex() {
+                return index;
+            }
+
+            public Item next() {
+                if (!hasNext()) throw new NoSuchElementException();
+                lastAccessed = current;
+                Item item = current.item;
+                current = current.next;
+                index++;
+                return item;
+            }
+
+            public Item previous() {
+                if (!hasPrevious()) throw new NoSuchElementException();
+                current = current.prev;
+                index--;
+                lastAccessed = current;
+                return current.item;
+            }
+
+            // replace the item of the element that was last accessed by next() or previous()
+            // condition: no calls to remove() or add() after last call to next() or previous()
+            public void set(Item item) {
+                if (lastAccessed == null) throw new IllegalStateException();
+                lastAccessed.item = item;
+            }
+
+
+            // remove the element that was last accessed by next() or previous()
+            // condition: no calls to remove() or add() after last call to next() or previous()
+            public void remove() {
+                if (lastAccessed == null) throw new IllegalStateException();
+                DDNode x = lastAccessed.prev;
+                DDNode y = lastAccessed.next;
+                x.next = y;
+                y.prev = x;
+                N--;
+                if (current == lastAccessed)
+                    current = y;
+                else
+                    index--;
+                lastAccessed = null;
+            }
+
+            // add element to list
+            public void add(Item item) {
+                DDNode x = current.prev;
+                DDNode y = new DDNode();
+                DDNode z = current;
+                y.item = item;
+                x.next = y;
+                y.next = z;
+                z.prev = y;
+                y.prev = x;
+                N++;
+                index++;
+                lastAccessed = null;
+            }
+
+        }
+
+        public String toString() {
+            StringBuilder s = new StringBuilder();
+            for (Item item : this)
+                s.append(item + " ");
+            return s.toString();
+        }
+    }
+
+    /** high performance linkedhashset/deque for use as a levelbag level */
+    public static class Level<E> extends DDList<E> {
+
+        final ObjectMap<E, DDNode<E>> items;
+
+        public Level(int numElements) {
+            super();
+            items = new ObjectMap(numElements * 4);
+            onChange();
+        }
+
+        public boolean contains(E x) {
+            return items.containsKey(x);
+        }
+
+        public void onChange() {
+            if ((items!=null) && items.size() != size()) {
+                throw new RuntimeException("level inconsistency:" + items.size() + " " + super.size());
+            }
+            onLevelEmptinessChange(isEmpty());
+        }
+
+        //called when the emptiness changes
+        void onLevelEmptinessChange(final boolean empty) {
+
+        }
+
+
+        public void clear() {
+            super.clear();
+            if (items != null)
+                items.clear();
+            onChange();
+        }
+
+
+
+        public DDNode add(final E e) {
+            if (e == null)
+                throw new RuntimeException("Bag requires non-null items");
+
+            DDNode d;
+
+            if (items.containsKey(e)) //avoid adding duplicate
+                return null;
+
+            items.put(e, d = super.add(e));
+
+            onChange();
+            return d;
+        }
+
+        public E remove(E o) {
+            if (o == null)
+                throw new RuntimeException("can not remove null");
+
+            DDNode<E> i = items.remove(o);
+            if (i == null) return null;
+
+            super.remove(i);
+            onChange();
+            return o;
+        }
+
+        public void print() {
+            System.out.println("head=" + super.getFirst() + ", tail=" + super.getLast() + ", " + items);
+            System.out.println("  " + Lists.newArrayList(iterator()));
         }
 
         public E removeFirst() {
-            E e = items.iterator().next();
-            items.remove(e);
-            if (e!=null) {
-                levelIsEmpty(items.isEmpty());
-            }
-            return e;
+            E e = getFirst();
+            if (e == null) return null;
+            return remove(e);
         }
 
-        public E peekFirst() {
-            return items.iterator().next();
+        @Deprecated public E peekFirst() {
+            return getFirst();
         }
 
         public Iterator<E> descendingIterator() {
-            return items.iterator();
+            //order wont matter within the level
+            return iterator();
             //return items.descendingIterator();
         }
-        
-        
-        
+
+
     }
-    
-    private Level newLevel(int l) {
-        return new Level(l, 1 + capacity / levels);
+
+    private Level newLevel(final int l) {
+        return new Level(1 + capacity / levels) {
+
+            @Override
+            void onLevelEmptinessChange(boolean e) {
+                levelEmpty[l] = e;
+            }
+
+        };
     }
-    
+
     @Override
     public final void clear() {
         for (int i = 0; i < levels; i++) {
@@ -214,32 +398,34 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
      */
     @Override
     public int size() {
-        
+
         int in = nameTable.size();
-        
-        if (Parameters.DEBUG_BAG && (Parameters.DEBUG) && (Parameters.THREADS==1)) {
-        
+
+        if (Parameters.DEBUG_BAG && (Parameters.DEBUG) && (Parameters.THREADS == 1)) {
+
             int is = sizeItems();
-            if (Math.abs(is-in) > 1 ) {                
+            if (Math.abs(is - in) > 1) {
                 throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
 
             }
         }
-        
+
         return in;
     }
-        
-    /** this should always equal size(), but it's here for testing purposes */
+
+    /**
+     * this should always equal size(), but it's here for testing purposes
+     */
     protected int sizeItems() {
         int t = 0;
         for (Level l : level) {
-            if (l!=null)
+            if (l != null)
                 t += l.size();
         }
         return t;
     }
 
-    
+
     @Override
     public Set<K> keySet() {
         return nameTable.keySet();
@@ -265,8 +451,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
 
     @Override
     public synchronized E putIn(BagSelector<K, E> selector) {
-        //seems to work ok with levelbag
-        return super.putInFast(selector);
+        return super.putIn(selector);
+        //return super.putInFast(selector);
     }
 
     /**
@@ -279,7 +465,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
     public E get(final K key) {
         return nameTable.get(key);
     }
-
 
 
 //    /**
@@ -297,38 +482,45 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
         this.nextNonEmptyMode = nextNonEmptyMode;
         return this;
     }
-    
 
 
     protected void nextNonEmptyLevel() {
         switch (nextNonEmptyMode) {
-            case Default: nextNonEmptyLevelDefault(); break;
-            case Fast: nextNonEmptyLevelFast(); break;
+            case Default:
+                nextNonEmptyLevelDefault();
+                break;
+            case Fast:
+                nextNonEmptyLevelFast();
+                break;
         }
     }
-            
-    
-    /** look for a non-empty level */
+
+
+    /**
+     * look for a non-empty level
+     */
     protected void nextNonEmptyLevelDefault() {
-               
+
         int cl;
 
-        do {                        
+        do {
         } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % DISTRIBUTOR.length]]);
-        
+
         currentLevel = cl;
-                
+
         if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
             currentCounter = 1;
         } else {                  // for active levels, take all current items
             currentCounter = getNonEmptyLevelSize(currentLevel);
         }
     }
-    
-     /** Variation of LevelBag which follows a different distributor policy but 
- runs much faster.  The policy should be approximately equally fair as LevelBag */
+
+    /**
+     * Variation of LevelBag which follows a different distributor policy but
+     * runs much faster.  The policy should be approximately equally fair as LevelBag
+     */
     protected void nextNonEmptyLevelFast() {
-               
+
         int cl = DISTRIBUTOR[(levelIndex++) % DISTRIBUTOR.length];
         if (cl % 2 == 0) {
             //up
@@ -336,67 +528,65 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
                 cl++;
                 cl %= levels;
             }
-        }
-        else {
+        } else {
             //down
             while (levelEmpty[cl]) {
                 cl--;
-                if (cl < 0) cl = levelEmpty.length-1;
+                if (cl < 0) cl = levelEmpty.length - 1;
             }
         }
 
         currentLevel = cl;
-                
+
         if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
             currentCounter = 1;
         } else {                  // for active levels, take all current items
             currentCounter = getNonEmptyLevelSize(currentLevel);
         }
     }
-    
+
 
     @Override
     public E peekNext() {
         if (size() == 0) return null; // empty bag                
-                
+
         E e = takeNext();
         putIn(e);
-        return e;        
+        return e;
     }
-    
-    public E peekNextWithoutAffectingBagOrder() {    
+
+    public E peekNextWithoutAffectingBagOrder() {
         if (size() == 0) return null; // empty bag                
-        
+
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }
-       
-        return level[currentLevel].peekFirst();        
+
+        return level[currentLevel].peekFirst();
     }
-    
+
     @Override
     public E takeNext() {
-        
+
         if (size() == 0) {
             return null; // empty bag                
         }
-        
+
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }
-        
+
         if (levelEmpty[currentLevel]) {
             if (Parameters.THREADS == 1) {
                 throw new RuntimeException("Empty setLevel selected for takeNext");
-            }
-            else {
+            } else {
                 return null;
             }
         }
-        
+
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
-        
-        currentCounter--;        
+
+        currentCounter--;
 
         return selected;
     }
@@ -404,23 +594,26 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
     public int getNonEmptyLevelSize(final int level) {
         return this.level[level].size();
     }
+
     public int getLevelSize(final int level) {
         return (levelEmpty[level]) ? 0 : this.level[level].size();
     }
 
 
-
     @Override
     protected void index(E value) {
-        /*E oldValue = */ nameTable.put(value.name(), value);
+        /*E oldValue = */
+        nameTable.put(value.name(), value);
     }
+
     @Override
     protected E unindex(K name) {
         E removed = nameTable.remove(name);
         return removed;
     }
 
-    @Override public E take(final K name, boolean unindex) {
+    @Override
+    public E take(final K name, boolean unindex) {
 
         E oldItem = unindex ? unindex(name) : get(name);
         if (oldItem == null) {
@@ -430,38 +623,37 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
         final int expectedLevel = getLevel(oldItem);
 
         //TODO scan up/down iteratively, it is likely to be near where it was
-        
+
         if (!levelEmpty[expectedLevel]) {
-            if (level[expectedLevel].remove(oldItem)) {                
+            if (level[expectedLevel].remove(oldItem)!=null) {
                 removeMass(oldItem);
                 return oldItem;
-            }            
+            }
         }
-        
+
         for (int l = 0; l < levels; l++) {
-            if ((!levelEmpty[l]) && (l!=expectedLevel)) {
-                if (level[l].remove(oldItem)) {
+            if ((!levelEmpty[l]) && (l != expectedLevel)) {
+                if (level[l].remove(oldItem)!=null) {
                     removeMass(oldItem);
                     return oldItem;
                 }
             }
         }
 
-        
+
         //If it wasn't found, it probably was removed already.  So this check is probably not necessary
-        
-            //search other levels for this item because it's not where we thought it was according to getLevel()
+
+        //search other levels for this item because it's not where we thought it was according to getLevel()
         if (Parameters.DEBUG) {
             int ns = nameTable.size();
             int is = sizeItems();
             int allowableDifference = (unindex ? 1 : 0);
-            if ( ((ns > is + allowableDifference) || (ns < is - allowableDifference)) && (Parameters.THREADS==1))
+            if (((ns > is + allowableDifference) || (ns < is - allowableDifference)) && (Parameters.THREADS == 1))
                 throw new RuntimeException("LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName());
         }
-        
+
         return oldItem;
     }
-
 
 
     /**
@@ -474,14 +666,15 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
         final float fl = item.getPriority() * levels;
         final int level = (int) Math.ceil(fl) - 1;
         if (level < 0) return 0;
-        if (level >= levels) return levels-1;
+        if (level >= levels) return levels - 1;
         return level;
     }
 
-    @Override protected E addItem(final E newItem) {
+    @Override
+    protected E addItem(final E newItem) {
         return addItem(newItem, true);
     }
-    
+
     /**
      * Insert an item into the itemTable, and return the overflow
      *
@@ -489,7 +682,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
      * @return null if nothing overflowed, non-null if an overflow Item, which
      * may be the attempted input item (in which case it was not inserted)
      */
-    @Override protected E addItem(final E newItem, boolean index) {
+    @Override
+    protected E addItem(final E newItem, boolean index) {
         E overflow = null;
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next 
@@ -504,8 +698,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
             }
         }
         ensureLevelExists(inLevel);
-        
-        
+
+
         level[inLevel].add(newItem);        // FIFO
 
         if (index)
@@ -514,9 +708,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
         addMass(newItem);
 
         //unindex the overflow
-        if (overflow!=null)
+        if (overflow != null)
             unindex(overflow);
-        
+
         return overflow;
     }
 
@@ -535,13 +729,13 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
      */
     private E takeOutFirst(final int level) {
         final E selected = this.level[level].removeFirst();
-        if (selected!=null) {
+        if (selected != null) {
             unindex(selected.name());
             removeMass(selected);
-        }
-        else {
-            if (Parameters.THREADS == 1)
+        } else {
+            if (Parameters.THREADS == 1) {
                 throw new RuntimeException("Attempt to remove item from empty setLevel: " + level);
+            }
         }
         return selected;
     }
@@ -549,11 +743,10 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
     protected void removeMass(E item) {
         mass -= item.getPriority();
     }
+
     protected void addMass(E item) {
         mass += item.getPriority();
     }
-    
-
 
 
 //    /**
@@ -566,7 +759,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
 //            }
 //    }
 
-    
+
     /**
      * Collect Bag content into a String for display
      */
@@ -627,7 +820,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
     }
 
     public float getAverageItemsPerLevel() {
-        return ((float)capacity) / levels;
+        return ((float) capacity) / levels;
     }
 
     public float getMaxItemsPerLevel() {
@@ -757,8 +950,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag.IndexedBag<E,K> {
 //        }
 //        
 //    }
-
-    
 
 
 }

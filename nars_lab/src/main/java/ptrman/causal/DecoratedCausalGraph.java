@@ -101,7 +101,7 @@ public class DecoratedCausalGraph
     public void updateEnergy() throws Exception
     {
         /*
-         * for each Node
+         * for each DDNode
          *  * calculate the energy(distance) to all outgoing nodes and add it to energy
          * 
          */
