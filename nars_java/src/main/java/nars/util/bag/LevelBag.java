@@ -80,6 +80,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      */
     int currentCounter;
     final boolean[] levelEmpty;
+    private DDNodePool nodePool;
 
     public static enum NextNonEmptyLevelMode {
         Default, Fast
@@ -104,9 +105,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         this.capacity = capacity;
 
         //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
-        nameTable = Parameters.THREADS == 1 ? new ObjectMap(capacity * 2) : new ConcurrentHashMap<>(capacity * 2);
+        nameTable = Parameters.THREADS == 1 ? new ObjectMap(capacity * 4) : new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);
+        nodePool = new DDNodePool(capacity/4);
 
         levelEmpty = new boolean[this.levels];
         Arrays.fill(levelEmpty, true);
@@ -117,25 +119,30 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     }
 
 
-    // linked list node helper data type
+    /** node in a linked list; wraps each Item stored in the bag */
     public static class DDNode<Item> {
-        private Item item;
-        private DDNode<Item> next;
-        private DDNode<Item> prev;
+        public Item item;
+        public DDNode<Item> next;
+        public DDNode<Item> prev;
     }
 
-    public static class DDList<Item> implements Iterable<Item> {
-        private int N;        // number of elements on list
-        private DDNode<Item> pre;     // sentinel before first item
-        private DDNode<Item> post;    // sentinel after last item
+    /** from: http://algs4.cs.princeton.edu/13stacks/DoublyLinkedList.java.html */
+    public static class DDList<E> implements Iterable<E> {
+        private final DDNodePool<E> pool;
 
-        public DDList() {
+        private int N;        // number of elements on list
+        private DDNode<E> pre;     // sentinel before first item
+        private DDNode<E> post;    // sentinel after last item
+
+        public DDList(DDNodePool<E> nodepool) {
+            this.pool = nodepool;
             pre = new DDNode();
             post = new DDNode();
             clear();
         }
 
         public void clear() {
+            N = 0;
             pre.next = post;
             post.prev = pre;
         }
@@ -149,23 +156,23 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         }
 
         // add the item to the list
-        public DDNode add(Item item) {
-            DDNode<Item> x = new DDNode();
+        public DDNode add(E item) {
+            DDNode<E> x = pool.get();
             x.item = item;
             add(x);
             return x;
         }
 
-        public Item getFirst() {
+        public E getFirst() {
             if (pre.next==null) return null;
             return pre.next.item;
         }
-        public Item getLast() {
+        public E getLast() {
             if (post.prev==null) return null;
             return post.prev.item;
         }
 
-        protected void add(DDNode<Item> x) {
+        protected void add(DDNode<E> x) {
             DDNode last = post.prev;
             x.next = post;
             x.prev = last;
@@ -174,7 +181,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             N++;
         }
 
-        public void remove(DDNode<Item> i) {
+        public void remove(DDNode<E> i) {
             if ((i == pre) || (i == post))
                 throw new RuntimeException("DDList fault");
 
@@ -183,16 +190,18 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             x.next = y;
             y.prev = x;
             N--;
+
+            pool.put(i);
         }
 
-        public ListIterator<Item> iterator() {
+        public ListIterator<E> iterator() {
             return new DoublyLinkedListIterator();
         }
 
         // assumes no calls to DDList.add() during iteration
-        private class DoublyLinkedListIterator implements ListIterator<Item> {
-            private DDNode<Item> current = pre.next;  // the node that is returned by next()
-            private DDNode<Item> lastAccessed = null;      // the last node to be returned by prev() or next()
+        private class DoublyLinkedListIterator implements ListIterator<E> {
+            private DDNode<E> current = pre.next;  // the node that is returned by next()
+            private DDNode<E> lastAccessed = null;      // the last node to be returned by prev() or next()
             // reset to null upon intervening remove() or add()
             private int index = 0;
 
@@ -212,16 +221,16 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
                 return index;
             }
 
-            public Item next() {
+            public E next() {
                 if (!hasNext()) throw new NoSuchElementException();
                 lastAccessed = current;
-                Item item = current.item;
+                E item = current.item;
                 current = current.next;
                 index++;
                 return item;
             }
 
-            public Item previous() {
+            public E previous() {
                 if (!hasPrevious()) throw new NoSuchElementException();
                 current = current.prev;
                 index--;
@@ -231,7 +240,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
             // replace the item of the element that was last accessed by next() or previous()
             // condition: no calls to remove() or add() after last call to next() or previous()
-            public void set(Item item) {
+            public void set(E item) {
                 if (lastAccessed == null) throw new IllegalStateException();
                 lastAccessed.item = item;
             }
@@ -240,6 +249,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             // remove the element that was last accessed by next() or previous()
             // condition: no calls to remove() or add() after last call to next() or previous()
             public void remove() {
+                throw new RuntimeException("not fully implemented");
+                /*
                 if (lastAccessed == null) throw new IllegalStateException();
                 DDNode x = lastAccessed.prev;
                 DDNode y = lastAccessed.next;
@@ -251,12 +262,16 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
                 else
                     index--;
                 lastAccessed = null;
+                */
             }
 
+
             // add element to list
-            public void add(Item item) {
+            public void add(E item) {
+                throw new RuntimeException("not fully implemented");
+                /*
                 DDNode x = current.prev;
-                DDNode y = new DDNode();
+                DDNode y = pool.get();
                 DDNode z = current;
                 y.item = item;
                 x.next = y;
@@ -266,13 +281,15 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
                 N++;
                 index++;
                 lastAccessed = null;
+                */
             }
+
 
         }
 
         public String toString() {
             StringBuilder s = new StringBuilder();
-            for (Item item : this)
+            for (E item : this)
                 s.append(item + " ");
             return s.toString();
         }
@@ -284,8 +301,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         final ObjectMap<E, DDNode<E>> items;
 
         public Level(int numElements) {
-            super();
-            items = new ObjectMap(numElements * 4);
+            this(new DDNodePool<E>(numElements), numElements);
+        }
+
+        public Level(DDNodePool<E> nodepool, int numElements) {
+            super(nodepool);
+            items = new ObjectMap(numElements * 8);
             onChange();
         }
 
@@ -367,7 +388,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     }
 
     private Level newLevel(final int l) {
-        return new Level(1 + capacity / levels) {
+        return new Level(nodePool, 1 + capacity / levels) {
 
             @Override
             void onLevelEmptinessChange(boolean e) {
@@ -875,6 +896,39 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             }
         }
         return empty;
+    }
+
+    abstract public static class DequePool<X> {
+        final Deque<X> data = new ArrayDeque();
+
+        public DequePool(int preallocate) {
+            for (int i = 0; i < preallocate; i++)
+                put(create());
+        }
+        public void put(X i) {
+            data.offer(i);
+        }
+
+        public X get() {
+            if (data.isEmpty()) return create();
+            return data.poll();
+        }
+
+        abstract public X create();
+    }
+
+    private static class DDNodePool<E> extends DequePool<DDNode<E>> {
+
+
+        public DDNodePool(int preallocate) {
+            super(preallocate);
+        }
+
+
+        public DDNode<E> create() {
+            return new DDNode();
+        }
+
     }
 
     final private class ItemIterator implements Iterator<E> {

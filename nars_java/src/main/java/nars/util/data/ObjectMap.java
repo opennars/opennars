@@ -22,6 +22,7 @@ package nars.util.data;
 
 
         import com.google.common.collect.Sets;
+        import nars.core.Memory;
 
         import java.util.*;
 
@@ -37,7 +38,7 @@ public class ObjectMap<K, V> implements Map<K,V> {
     private static final int PRIME2 = 0xb4b82e39;
     private static final int PRIME3 = 0xced1c241;
 
-    static Random random = new Random();
+    static Random random = Memory.randomNumber;
 
     public int size;
 
