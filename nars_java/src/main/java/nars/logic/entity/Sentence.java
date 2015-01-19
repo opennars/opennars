@@ -211,8 +211,8 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
 
             if (isUniqueByOcurrenceTime()) {
-                int equalityWindow = 1;
-                if (!TemporalRules.concurrent(this, t, equalityWindow)) return false;
+
+                if (!TemporalRules.concurrent(this, t, Parameters.SentenceOcurrenceTimeCyclesEqualityThreshold)) return false;
             }
 
 
@@ -300,6 +300,9 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
     public final Sentence clone(final Term t) {
         //sentence content must be compoundterm
+        if (t instanceof CompoundTerm) {
+            return this.clone((CompoundTerm)t);
+        }
         return null;
     }
 

@@ -35,8 +35,8 @@ public class NALTest extends TestCase {
     }
 
     static final Build[] builds = new Build[] {
-            new Default(),
-            new Neuromorphic(4).setMaxInputsPerCycle(1)
+            new Default()
+            //new Neuromorphic(4).setMaxInputsPerCycle(1)
     };
 
     private final Build build;

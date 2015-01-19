@@ -25,7 +25,7 @@ public class TestNAR extends NAR {
     boolean showFail = true;
     boolean showSuccess = false;
     boolean showExplanations = false;
-    boolean showOutput = false;
+    boolean showOutput = true;
 
 
     /** "must" requirement conditions specification */

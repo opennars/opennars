@@ -3,6 +3,7 @@ package nars.logic.nal5;
 import nars.build.Default;
 import nars.build.Neuromorphic;
 import nars.core.Build;
+import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.AbstractNALTest;
 import org.junit.Test;
@@ -44,6 +45,7 @@ public class NAL5Test extends AbstractNALTest {
         */
 
         long time = 525;
+        TextOutput.out(n);
 
         n.believe("<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>", Eternal, 0.0f, 0.9f)
                 .en("If robin is a type of bird then robin is not a type of flying animal.");

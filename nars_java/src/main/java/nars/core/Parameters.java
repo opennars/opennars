@@ -199,8 +199,14 @@ public class Parameters {
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
     public static boolean IMMEDIATE_ETERNALIZATION=true;
-    
-    
+
+
+    /** how many maximum cycles difference in ocurrence time
+     * are two non-eternal sentences considered equal, if all
+     * other features (term, punctuation, truth, ..) are equal.
+     * this is similar to Duration parameter
+     */
+    public static final int SentenceOcurrenceTimeCyclesEqualityThreshold = 1;
 
 
     public static <X> List<X> newArrayList() {
