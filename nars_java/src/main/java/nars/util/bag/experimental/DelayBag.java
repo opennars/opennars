@@ -146,7 +146,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implemen
 
 
     @Override
-    public E get(K key) {
+    public E GET(K key) {
         return nameTable.get(key);
     }
 
@@ -302,14 +302,14 @@ public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implemen
     
     
     @Override
-    public E takeNext() {                
+    public E TAKENEXT() {
        
         int s = nameTable.size();
         if (s == 0) 
             return null;
         else if (s <= flatThreshold) {
             K nn = nameTable.keySet().iterator().next();
-            return take(nn);
+            return TAKE(nn);
         }
         
         /* this doesnt seem to be necessary:
@@ -331,7 +331,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implemen
                
         E n = pending.pollFirst();
         if (n!=null) {
-            return take(n.name());
+            return TAKE(n.name());
         }
         else {
             if ((s!= 0) && (Parameters.THREADS == 1))
@@ -341,14 +341,14 @@ public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implemen
     }
 
     @Override
-    public E peekNext() {
+    public E PEEKNEXT() {
         if (size() == 0) return null;
         
-        E x = takeNext();
+        E x = TAKENEXT();
         
         if (x == null) return null;
         
-        addItem(x);
+        PUT(x);
 
         return x;
     }

@@ -48,7 +48,7 @@ public class DefaultCore implements Core {
 
     /** for removing a specific concept (if it's not putBack) */
     public Concept takeOut(Term t) {
-        return concepts.take(t);
+        return concepts.TAKE(t);
     }
             
     @Override
@@ -77,7 +77,7 @@ public class DefaultCore implements Core {
     }
     
     protected FireConcept nextConcept() {
-        Concept currentConcept = concepts.takeNext();
+        Concept currentConcept = concepts.TAKENEXT();
         if (currentConcept==null)
             return null;
             
@@ -147,7 +147,7 @@ public class DefaultCore implements Core {
 
     @Override
     public Concept concept(final Term term) {
-        return concepts.get(term);
+        return concepts.GET(term);
     }
 
     @Override
@@ -174,7 +174,7 @@ public class DefaultCore implements Core {
     public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
         
         //see if concept is active
-        Concept concept = concepts.take(term);
+        Concept concept = concepts.TAKE(term);
         
         //try remembering from subconscious
         if ((concept == null) && (subcon!=null)) {
@@ -241,7 +241,7 @@ public class DefaultCore implements Core {
     
     
     @Override public void activate(final Concept c, final BudgetValue b, Activating mode) {
-        concepts.take(c.name());
+        concepts.TAKE(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
     }
@@ -254,7 +254,7 @@ public class DefaultCore implements Core {
 
     @Override
     public Concept sampleNextConcept() {
-        return concepts.peekNext();
+        return concepts.PEEKNEXT();
     }
 
     @Override

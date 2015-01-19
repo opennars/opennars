@@ -55,7 +55,7 @@ abstract public class ConceptWaveCore implements Core {
 
     @Override
     public Concept concept(Term term) {
-        return concepts.get(term);
+        return concepts.GET(term);
     }
 
     @Override
@@ -70,7 +70,7 @@ abstract public class ConceptWaveCore implements Core {
                 c = conceptBuilder.newConcept(budget, term, memory);
             if (c == null)
                 return null;
-            concepts.putIn(c);
+            concepts.PUT(c);
         }
         return c;
     }
@@ -82,7 +82,7 @@ abstract public class ConceptWaveCore implements Core {
 
     @Override
     public Concept sampleNextConcept() {
-        return concepts.peekNext();
+        return concepts.PEEKNEXT();
     }
 
     @Override

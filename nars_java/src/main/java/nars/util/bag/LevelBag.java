@@ -33,7 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Original Bag implementation which distributes items into
  * discrete levels (queues) according to priority
  */
-public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
+public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
+
 
     /**
      * priority levels
@@ -49,15 +50,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      */
     final short[] DISTRIBUTOR;
 
-    /**
-     * mapping from key to item
-     */
-    public final Map<K, E> nameTable;
 
-    /**
-     * array of lists of items, for items on different level
-     */
-    public final Level<E>[] level;
 
     /**
      * defined in different bags
@@ -78,9 +71,23 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     /**
      * maximum number of items to be taken out at current level
      */
+
     int currentCounter;
-    final boolean[] levelEmpty;
+
+    protected final boolean[] levelEmpty;
+
     private DDNodePool nodePool;
+
+    /**
+     * mapping from key to item
+     */
+    public final Map<K, DD<E>> index;
+
+    /**
+     * array of lists of items, for items on different level
+     */
+    public final Level [] level;
+
 
     public static enum NextNonEmptyLevelMode {
         Default, Fast
@@ -105,7 +112,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         this.capacity = capacity;
 
         //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
-        nameTable = Parameters.THREADS == 1 ? new CuckooMap(capacity * 4) : new ConcurrentHashMap<>(capacity * 2);
+        index = Parameters.THREADS == 1 ? new CuckooMap(capacity * 4) : new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);
         nodePool = new DDNodePool(capacity/4);
@@ -119,48 +126,58 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     }
 
 
-    /** node in a linked list; wraps each Item stored in the bag */
-    public static class DDNode<Item> {
-        public Item item;
-        public DDNode<Item> next;
-        public DDNode<Item> prev;
-    }
-
     /** from: http://algs4.cs.princeton.edu/13stacks/DoublyLinkedList.java.html */
-    public static class DDList<E> implements Iterable<E> {
-        private final DDNodePool<E> pool;
+    public static class DDList<D extends DD<E>,E> implements Iterable<E> {
+        private final DequePool<D> pool;
 
-        private int N;        // number of elements on list
-        private DDNode<E> pre;     // sentinel before first item
-        private DDNode<E> post;    // sentinel after last item
+        private int size;        // number of elements on list
+        private D pre;     // sentinel before first item
+        private D post;    // sentinel after last item
 
-        public DDList(DDNodePool<E> nodepool) {
+        public DDList(DequePool<D> nodepool) {
             this.pool = nodepool;
-            pre = new DDNode();
-            post = new DDNode();
+            pre = (D) new DD<E>();
+            post = (D) new DD<E>();
             clear();
         }
 
         public void clear() {
-            N = 0;
+            size = 0;
             pre.next = post;
             post.prev = pre;
+            changed();
+        }
+
+        /** called when this list is changed in any way */
+        protected void changed() {
+
         }
 
         public boolean isEmpty() {
-            return N == 0;
+            if (Parameters.DEBUG) {
+                if ((size ==0) && (pre.next!=post) && (post.prev!=pre))
+                    throw new RuntimeException("Invalid empty state: " + this);
+            }
+            return size == 0;
         }
 
         public int size() {
-            return N;
+            return size;
         }
 
         // add the item to the list
-        public DDNode add(E item) {
-            DDNode<E> x = pool.get();
+        public D add(E item) {
+            D x = pool.get();
             x.item = item;
             add(x);
             return x;
+        }
+
+        public D getFirstNode() {
+            return (D) pre.next;
+        }
+        public D getLastNode() {
+            return (D) post.prev;
         }
 
         public E getFirst() {
@@ -172,26 +189,32 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             return post.prev.item;
         }
 
-        protected void add(DDNode<E> x) {
-            DDNode last = post.prev;
+        public void add(D x) {
+            if (x == null)
+                throw new RuntimeException("attempt to add null element");
+            DD<E> last = post.prev;
             x.next = post;
             x.prev = last;
             post.prev = x;
             last.next = x;
-            N++;
+            size++;
+
+            changed();
         }
 
-        public void remove(DDNode<E> i) {
+        public E remove(D i) {
             if ((i == pre) || (i == post))
                 throw new RuntimeException("DDList fault");
 
-            DDNode x = i.prev;
-            DDNode y = i.next;
+            DD<E> x = i.prev;
+            DD<E> y = i.next;
             x.next = y;
             y.prev = x;
-            N--;
-
+            size--;
             pool.put(i);
+
+            changed();
+            return i.item;
         }
 
         public ListIterator<E> iterator() {
@@ -200,13 +223,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
         // assumes no calls to DDList.add() during iteration
         private class DoublyLinkedListIterator implements ListIterator<E> {
-            private DDNode<E> current = pre.next;  // the node that is returned by next()
-            private DDNode<E> lastAccessed = null;      // the last node to be returned by prev() or next()
+            private DD<E> current = pre.next;  // the node that is returned by next()
+            private DD<E> lastAccessed = null;      // the last node to be returned by prev() or next()
             // reset to null upon intervening remove() or add()
             private int index = 0;
 
             public boolean hasNext() {
-                return index < N;
+                return index < size;
             }
 
             public boolean hasPrevious() {
@@ -243,12 +266,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             public void set(E item) {
                 if (lastAccessed == null) throw new IllegalStateException();
                 lastAccessed.item = item;
+                changed();
             }
 
 
             // remove the element that was last accessed by next() or previous()
             // condition: no calls to remove() or add() after last call to next() or previous()
             public void remove() {
+                changed();
                 throw new RuntimeException("not fully implemented");
                 /*
                 if (lastAccessed == null) throw new IllegalStateException();
@@ -268,6 +293,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
             // add element to list
             public void add(E item) {
+                changed();
                 throw new RuntimeException("not fully implemented");
                 /*
                 DDNode x = current.prev;
@@ -296,85 +322,54 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     }
 
     /** high performance linkedhashset/deque for use as a levelbag level */
-    public static class Level<E> extends DDList<E> {
+    public class Level extends DDList<DD<E>,E> {
 
-        final CuckooMap<E, DDNode<E>> items;
+        final int level;
 
-        public Level(int numElements) {
-            this(new DDNodePool<E>(numElements), numElements);
+        public Level(int level) {
+            super(nodePool);
+            this.level = level;
         }
 
-        public Level(DDNodePool<E> nodepool, int numElements) {
-            super(nodepool);
-            items = new CuckooMap(numElements * 8);
-            onChange();
-        }
+        @Override
+        public void changed() {
 
-        public boolean contains(E x) {
-            return items.containsKey(x);
-        }
-
-        public void onChange() {
-            if ((items!=null) && items.size() != size()) {
-                throw new RuntimeException("level inconsistency:" + items.size() + " " + super.size());
-            }
-            onLevelEmptinessChange(isEmpty());
-        }
-
-        //called when the emptiness changes
-        void onLevelEmptinessChange(final boolean empty) {
+            levelEmpty[this.level] = isEmpty();
 
         }
 
-
-        public void clear() {
-            super.clear();
-            if (items != null)
-                items.clear();
-            onChange();
-        }
-
-
-
-        public DDNode add(final E e) {
-            if (e == null)
-                throw new RuntimeException("Bag requires non-null items");
-
-            DDNode d;
-
-            if (items.containsKey(e)) //avoid adding duplicate
-                return null;
-
-            items.put(e, d = super.add(e));
-
-            onChange();
+        /** adds to end */
+        public DD<E> add(final E in) {
+            if (in == null) throw new RuntimeException("Bag requires non-null items");
+            DD<E> d = super.add(in);
+            d.level = level;
             return d;
         }
 
-        public E remove(E o) {
-            if (o == null)
-                throw new RuntimeException("can not remove null");
-
-            DDNode<E> i = items.remove(o);
-            if (i == null) return null;
-
-            super.remove(i);
-            onChange();
-            return o;
-        }
-
-        public void print() {
-            System.out.println("head=" + super.getFirst() + ", tail=" + super.getLast() + ", " + items);
-            System.out.println("  " + Lists.newArrayList(iterator()));
+        public E remove(DD<E> out) {
+            if (out == null) throw new RuntimeException("Bag requires non-null items");
+            if (out.level != level) throw new RuntimeException(out + " can not be removed from level " + level);
+            return super.remove(out);
         }
 
         public E removeFirst() {
+            DD<E> first = getFirstNode();
+            if (first == null) return null;
+            return remove(first);
+        }
+
+        public void print() {
+            System.out.println("head=" + super.getFirst() + ", tail=" + super.getLast() + ", ");
+            System.out.println("  " + Lists.newArrayList(iterator()));
+        }
+
+        /*public E removeFirst() {
             E e = getFirst();
             if (e == null) return null;
             return remove(e);
-        }
+        }*/
 
-        @Deprecated public E peekFirst() {
+        public E peekFirst() {
             return getFirst();
         }
 
@@ -387,25 +382,16 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
     }
 
-    private Level newLevel(final int l) {
-        return new Level(nodePool, 1 + capacity / levels) {
-
-            @Override
-            void onLevelEmptinessChange(boolean e) {
-                levelEmpty[l] = e;
-            }
-
-        };
-    }
-
     @Override
     public final void clear() {
+
+        index.clear();
         for (int i = 0; i < levels; i++) {
             if (level[i] != null) {
                 level[i].clear();
             }
         }
-        nameTable.clear();
+
         currentLevel = levels - 1;
         levelIndex = capacity % levels; // so that different bags start at different point
         mass = 0;
@@ -420,7 +406,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     @Override
     public int size() {
 
-        int in = nameTable.size();
+        int in = index.size();
 
         if (Parameters.DEBUG_BAG && (Parameters.DEBUG) && (Parameters.THREADS == 1)) {
 
@@ -449,7 +435,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
     @Override
     public Set<K> keySet() {
-        return nameTable.keySet();
+        return index.keySet();
     }
 
     /**
@@ -469,10 +455,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         return f;
     }
 
+    @Override
+    public E TAKE(final K name) {
+        return OUT(index.get(name));
+    }
 
     @Override
-    public E putIn(BagSelector<K, E> selector) {
-        return super.putIn(selector);
+    public E PUT(BagSelector<K, E> selector) {
+        return super.PUT(selector);
         //return super.putInFast(selector);
     }
 
@@ -483,8 +473,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      * @return The Item with the given key
      */
     @Override
-    public E get(final K key) {
-        return nameTable.get(key);
+    public E GET(final K key) {
+        DD<E> b = index.get(key);
+        if (b==null) return null;
+        return b.item;
     }
 
 
@@ -542,14 +534,17 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      */
     protected void nextNonEmptyLevelFast() {
 
-        boolean actuallyAnyNonEmpty = false;
-        for (int i = 0; i < levelEmpty.length; i++) {
-            if (!levelEmpty[i]) {
-                actuallyAnyNonEmpty = true; break;
+        if (Parameters.DEBUG) {
+            boolean actuallyAnyNonEmpty = false;
+            for (int i = 0; i < levelEmpty.length; i++) {
+                if (!levelEmpty[i]) {
+                    actuallyAnyNonEmpty = true;
+                    break;
+                }
             }
-        }
-        if (!actuallyAnyNonEmpty) {
-            throw new RuntimeException("inconsistent empty state");
+            if (!actuallyAnyNonEmpty) {
+                throw new RuntimeException("inconsistent empty state");
+            }
         }
 
         int cl = DISTRIBUTOR[(levelIndex++) % DISTRIBUTOR.length];
@@ -578,16 +573,16 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
 
     @Override
-    public E peekNext() {
-        if (size() == 0) return null; // empty bag                
+    public E PEEKNEXT() {
+        if (size() == 0) return null; // empty bag
 
-        E e = takeNext();
-        putIn(e);
+        E e = TAKENEXT();
+        PUT(e);
         return e;
     }
 
     public E peekNextWithoutAffectingBagOrder() {
-        if (size() == 0) return null; // empty bag                
+        if (size() == 0) return null; // empty bag
 
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
@@ -597,11 +592,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     }
 
     @Override
-    public E takeNext() {
+    public E TAKENEXT() {
 
-        if (size() == 0) {
-            return null; // empty bag                
-        }
+        if (size() == 0)
+            return null; // empty bag
+
 
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
@@ -615,11 +610,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             }
         }
 
-        final E selected = takeOutFirst(currentLevel); // take out the first item in the level
+        // take out the first item in the level
+        final E e = TAKE(currentLevel);
 
         currentCounter--;
 
-        return selected;
+        return e;
     }
 
     public int getNonEmptyLevelSize(final int level) {
@@ -631,60 +627,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     }
 
 
-    @Override
-    protected void index(E value) {
-        /*E oldValue = */
-        nameTable.put(value.name(), value);
-    }
 
-    @Override
-    protected E unindex(K name) {
-        E removed = nameTable.remove(name);
-        return removed;
-    }
-
-    @Override
-    public E take(final K name, boolean unindex) {
-
-        E oldItem = unindex ? unindex(name) : get(name);
-        if (oldItem == null) {
-            return null;
-        }
-
-        final int expectedLevel = getLevel(oldItem);
-
-        //TODO scan up/down iteratively, it is likely to be near where it was
-
-        if (!levelEmpty[expectedLevel]) {
-            if (level[expectedLevel].remove(oldItem)!=null) {
-                removeMass(oldItem);
-                return oldItem;
-            }
-        }
-
-        for (int l = 0; l < levels; l++) {
-            if ((!levelEmpty[l]) && (l != expectedLevel)) {
-                if (level[l].remove(oldItem)!=null) {
-                    removeMass(oldItem);
-                    return oldItem;
-                }
-            }
-        }
-
-
-        //If it wasn't found, it probably was removed already.  So this check is probably not necessary
-
-        //search other levels for this item because it's not where we thought it was according to getLevel()
-        if (Parameters.DEBUG) {
-            int ns = nameTable.size();
-            int is = sizeItems();
-            int allowableDifference = (unindex ? 1 : 0);
-            if (((ns > is + allowableDifference) || (ns < is - allowableDifference)) && (Parameters.THREADS == 1))
-                throw new RuntimeException("LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName());
-        }
-
-        return oldItem;
-    }
 
 
     /**
@@ -693,7 +636,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      * @param item The Item to put in
      * @return The put-in level
      */
-    private int getLevel(final E item) {
+    public int getLevel(final E item) {
         final float fl = item.getPriority() * levels;
         final int level = (int) Math.ceil(fl) - 1;
         if (level < 0) return 0;
@@ -701,23 +644,37 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         return level;
     }
 
-    @Override
-    protected E addItem(final E newItem) {
-        return addItem(newItem, true);
+
+    /** guarantees removal of the bagged item from its level and the index */
+    public E OUT(DD<E> node) {
+        if (node == null) return null;
+        int outLevel = node.level;
+        level[outLevel].remove(node);
+        index.remove(node.item.name());
+        removeMass(node.item);
+        return node.item;
     }
 
-    /**
-     * Insert an item into the itemTable, and return the overflow
-     *
-     * @param newItem The Item to put in
-     * @return null if nothing overflowed, non-null if an overflow Item, which
-     * may be the attempted input item (in which case it was not inserted)
-     */
+    public DD<E> IN(E newItem) {
+        return IN(newItem, getLevel(newItem));
+    }
+
+    /** guarantees addition of the item to its level and the index */
+    public DD<E> IN(E newItem, int inLevel) {
+        addMass(newItem);
+        DD<E> dd = level[inLevel].add(newItem);
+        this.index.put(newItem.name(), dd);
+        addMass(newItem);
+        return dd;
+    }
+
     @Override
-    protected E addItem(final E newItem, boolean index) {
+    public E PUT(final E newItem) {
         E overflow = null;
+
+        //1. ensure capacity
         int inLevel = getLevel(newItem);
-        if (size() >= capacity) {      // the bag will be full after the next 
+        if (size() >= capacity) {      // the bag will be full after the next
             int outLevel = 0;
             while (levelEmpty[outLevel]) {
                 outLevel++;
@@ -725,51 +682,49 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             if (outLevel > inLevel) {           // ignore the item and exit
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
-                overflow = takeOutFirst(outLevel);
+                overflow = TAKE(outLevel);
             }
         }
+
+        //2.
         ensureLevelExists(inLevel);
 
+        //3. insert
+        /*Bagged dd = */IN(newItem, inLevel);
 
-        level[inLevel].add(newItem);        // FIFO
-
-        if (index)
-            index(newItem);
-
-        addMass(newItem);
-
-        //unindex the overflow
-        if (overflow != null)
-            unindex(overflow);
-
+        //4.
         return overflow;
+    }
+
+    private E TAKE(int outLevel) {
+        return OUT(level[outLevel].getFirstNode());
     }
 
     protected final void ensureLevelExists(final int level) {
         if (this.level[level] == null) {
-            this.level[level] = newLevel(level);
+            this.level[level] = new Level(level);
         }
     }
 
 
-    /**
-     * Take out the first or last E in a level from the itemTable
-     *
-     * @param level The current level
-     * @return The first Item
-     */
-    private E takeOutFirst(final int level) {
-        final E selected = this.level[level].removeFirst();
-        if (selected != null) {
-            unindex(selected.name());
-            removeMass(selected);
-        } else {
-            if (Parameters.THREADS == 1) {
-                throw new RuntimeException("Attempt to remove item from empty setLevel: " + level);
-            }
-        }
-        return selected;
-    }
+//    /**
+//     * Take out the first or last E in a level from the itemTable
+//     *
+//     * @param level The current level
+//     * @return The first Item
+//     */
+//    private E takeOutFirst(final int level) {
+//        final E selected = this.level[level].removeFirst();
+//        if (selected != null) {
+//            E removed = index.remove(selected.name());
+//            removeMass(selected);
+//        } else {
+//            if (Parameters.THREADS == 1) {
+//                throw new RuntimeException("Attempt to remove item from empty setLevel: " + level);
+//            }
+//        }
+//        return selected;
+//    }
 
     protected void removeMass(E item) {
         mass -= item.getPriority();
@@ -818,9 +773,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
         for (int i = levels; i >= minLevel; i--) {
             if (!levelEmpty[i - 1]) {
-                buf = buf.append("\n --- LEVEL ").append(i).append(":\n ");
+                buf.append("\n --- LEVEL ").append(i).append(":\n ");
                 for (final E e : level[i - 1]) {
-                    buf = buf.append(e.toStringLong()).append('\n');
+                    buf.append(e.toStringLong()).append('\n');
                 }
 
             }
@@ -890,7 +845,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
     @Override
     public Collection<E> values() {
-        return nameTable.values();
+        throw new RuntimeException("Coming soon");
+        //return index.values();
     }
 
     @Override
@@ -915,7 +871,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
             for (int i = 0; i < preallocate; i++)
                 put(create());
         }
-        public void put(X i) {
+
+        final public void put(X i) {
             data.offer(i);
         }
 
@@ -927,7 +884,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         abstract public X create();
     }
 
-    private static class DDNodePool<E> extends DequePool<DDNode<E>> {
+    private static class DDNodePool<E> extends DequePool<DD<E>> {
 
 
         public DDNodePool(int preallocate) {
@@ -935,8 +892,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         }
 
 
-        public DDNode<E> create() {
-            return new DDNode();
+        public DD<E> create() {
+            return new DD();
         }
 
     }

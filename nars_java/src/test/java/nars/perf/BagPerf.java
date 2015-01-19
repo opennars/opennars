@@ -127,11 +127,11 @@ public class BagPerf {
         for (int i = 0; i < accesses; i++) {
             if (Memory.randomNumber.nextFloat() > insertProportion) {
                 //remove
-                b.takeNext();
+                b.TAKENEXT();
             }
             else {
                 //insert
-                b.putIn(new NullItem());
+                b.PUT(new NullItem());
             }            
         }
     }

@@ -238,7 +238,7 @@ public class GearBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> {
      * @return The Item with the given key
      */
     @Override
-    public E get(final K key) {
+    public E GET(final K key) {
         return nameTable.get(key);
     }
 
@@ -297,17 +297,17 @@ public class GearBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> {
     
 
     @Override
-    public E peekNext() {
+    public E PEEKNEXT() {
         if (size() == 0) return null;
         
         E e = pop();
-        addItem(e);
+        PUT(e);
         
         return e;
     }
     
     @Override
-    public E takeNext() {
+    public E TAKENEXT() {
         return pop();
     }
 

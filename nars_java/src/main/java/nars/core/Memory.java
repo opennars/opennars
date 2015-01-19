@@ -699,7 +699,7 @@ public class Memory implements Serializable {
         if (novelTasks.isEmpty()) return null;
 
         // select a task from novelTasks
-        final Task task = novelTasks.takeNext();
+        final Task task = novelTasks.TAKENEXT();
 
         if (task == null)
             throw new RuntimeException("novelTasks bag output null item");
@@ -739,7 +739,7 @@ public class Memory implements Serializable {
 
 
                             // new concept formation
-                            Task displacedNovelTask = novelTasks.putIn(task);
+                            Task displacedNovelTask = novelTasks.PUT(task);
                             logic.TASK_ADD_NOVEL.hit();
 
                             if (displacedNovelTask != null) {

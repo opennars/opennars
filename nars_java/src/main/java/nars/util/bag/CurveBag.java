@@ -274,7 +274,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      * @return The Item with the given key
      */
     @Override
-    public E get(final K key) {
+    public E GET(final K key) {
         return nameTable.get(key);
     }
 
@@ -286,7 +286,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public E takeNext() {
+    public E TAKENEXT() {
 
         if (size() == 0) return null; // empty bag
         return removeItem(nextRemovalIndex());
@@ -295,7 +295,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
 
     @Override
-    public E peekNext() {
+    public E PEEKNEXT() {
 
         if (size() == 0) return null; // empty bag
         return items.get(nextRemovalIndex());
@@ -356,7 +356,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         return unindex ? nameTable.remove(name) : nameTable.removeItem(name);
     }
 
-    public synchronized E putIn(BagSelector<K, E> selector) {
+    public synchronized E PUT(BagSelector<K, E> selector) {
         return super.putInFast(selector);
     }
 

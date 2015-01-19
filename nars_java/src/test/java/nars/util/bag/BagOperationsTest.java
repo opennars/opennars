@@ -45,17 +45,17 @@ public class BagOperationsTest {
     public static void testBagSequence(Bag b) {
         
         //different id, different priority
-        b.putIn(new NullConcept("a", 0.1f));
-        b.putIn(new NullConcept("b", 0.15f));
+        b.PUT(new NullConcept("a", 0.1f));
+        b.PUT(new NullConcept("b", 0.15f));
         assertEquals(2, b.size());
         b.clear();
         
         //same priority, different id
-        b.putIn(new NullConcept("a", 0.1f));
-        b.putIn(new NullConcept("b", 0.1f));
+        b.PUT(new NullConcept("a", 0.1f));
+        b.PUT(new NullConcept("b", 0.1f));
         assertEquals(2, b.size());
         
-        b.putIn(new NullConcept("c", 0.2f));
+        b.PUT(new NullConcept("c", 0.2f));
         assertEquals(2, b.size());
         assertEquals(0.1f, b.getMinPriority(),0.001f);
         assertEquals(0.2f, b.getMaxPriority(),0.001f);
@@ -63,7 +63,7 @@ public class BagOperationsTest {
         //if (b instanceof GearBag()) return;
         
         
-        b.putIn(new NullConcept("b", 0.4f));
+        b.PUT(new NullConcept("b", 0.4f));
         
         
         assertEquals(2, b.size());
@@ -71,35 +71,35 @@ public class BagOperationsTest {
         assertEquals(0.4f, b.getMaxPriority(),0.001f);
         
         
-        Item tb = b.take(new Term("b"));
+        Item tb = b.TAKE(new Term("b"));
         assertTrue(tb!=null);
         assertEquals(1, b.size());
         assertEquals(0.4f, tb.getPriority(), 0.001f);
         
-        Item tc = b.takeNext();
+        Item tc = b.TAKENEXT();
         assertEquals(0, b.size());
         assertEquals(0.2f, tc.getPriority(), 0.001f);
         
         
         
-        assertEquals(null, b.putIn(new NullConcept("a", 0.2f)));
-        b.putIn(new NullConcept("b", 0.3f));
+        assertEquals(null, b.PUT(new NullConcept("a", 0.2f)));
+        b.PUT(new NullConcept("b", 0.3f));
         //assertEquals(null, );
         
         if (b instanceof LevelBag) {
-            assertEquals("a", b.putIn(new NullConcept("c", 0.1f)).name().toString()); //replaces item on level
+            assertEquals("a", b.PUT(new NullConcept("c", 0.1f)).name().toString()); //replaces item on level
         }
         else if (b instanceof CurveBag) {
-            assertEquals("c", b.putIn(new NullConcept("c", 0.1f)).name().toString()); //could not insert, so got the object returned as result
+            assertEquals("c", b.PUT(new NullConcept("c", 0.1f)).name().toString()); //could not insert, so got the object returned as result
             assertEquals(2, b.size());
         
             //same id, different priority (lower, so ignored)
-            assertEquals(null, b.putIn(new NullConcept("b", 0.1f)));
+            assertEquals(null, b.PUT(new NullConcept("b", 0.1f)));
             assertEquals(0.2f, b.getMinPriority(),0.001f); //unaffected, 0.2 still lowest
 
             //same id, higher priority
             assertEquals(0.3f, b.getMaxPriority(),0.001f); //affected, 0.4 highest        
-            assertEquals(null, b.putIn(new NullConcept("b", 0.4f)));
+            assertEquals(null, b.PUT(new NullConcept("b", 0.4f)));
             assertEquals(0.4f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
 
         }

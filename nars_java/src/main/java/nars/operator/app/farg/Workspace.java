@@ -30,10 +30,10 @@ public class Workspace {
             @Override
             public void event(Class event, Object[] args) {
                 for(int i=0;i<10;i++) { //process 10 codelets in each step
-                    Codelet cod=farg.coderack.takeNext();
+                    Codelet cod=farg.coderack.TAKENEXT();
                     if(cod!=null) {
                         if(cod.run(ws)) {
-                            farg.coderack.putIn(cod);
+                            farg.coderack.PUT(cod);
                         }
                     }
                     temperature=calc_temperature();

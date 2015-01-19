@@ -12,9 +12,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
 
     /** for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible */
-    abstract public static class IndexedBag<E extends Item<K>,K> extends Bag<E,K> {
+    @Deprecated abstract public static class IndexedBag<E extends Item<K>,K> extends Bag<E,K> {
 
-        public E take(final K key) {
+        public E TAKE(final K key) {
             return take(key, true);
         }
 
@@ -30,7 +30,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
         abstract public E take(final K key, boolean unindex);
 
-        public E take(E value) { return take(value.name()); }
+        public E TAKE(E value) { return TAKE(value.name()); }
 
 
         /**
@@ -42,7 +42,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
          */
         abstract protected E addItem(final E newItem, boolean index);
 
-        protected E addItem(final E newItem) {
+        public E PUT(final E newItem) {
             return addItem(newItem, true);
         }
 
@@ -75,7 +75,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
                     throw new RuntimeException("Unrecognized selector and resulting new instance have different name()'s: item=" + item.name() + " selector=" + selector.name());
 
                 // put the (new or merged) item into itemTable
-                return addItem(item);
+                return PUT(item);
             }
 
 
@@ -101,7 +101,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return Whether the Item is in the Bag
      */
     public boolean contains(final E it) {
-        E exist = get(it.name());
+        E exist = GET(it.name());
         return exist.equals(it);
     }
     
@@ -111,7 +111,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param key The key of the Item
      * @return The Item with the given key
      */
-    abstract public E get(final K key);
+    abstract public E GET(final K key);
     
     abstract public Set<K> keySet();
 
@@ -123,23 +123,22 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * Choose an Item according to distribution policy and take it out of the Bag
      * @return The selected Item, or null if this bag is empty
      */
-    abstract public E takeNext();
+    abstract public E TAKENEXT();
     
 
     /** gets the next value without removing changing it or removing it from any index.  however
      the bag is cycled so that subsequent elements are different. */    
-    abstract public E peekNext();
+    abstract public E PEEKNEXT();
 
-    abstract protected E addItem(E n);
 
     public boolean isEmpty() {
         return size() == 0;
     }
 
-    abstract public E take(K key);
+    abstract public E TAKE(K key);
 
-    public E take(E item) {
-        return take(item.name());
+    public E TAKE(E item) {
+        return TAKE(item.name());
     }
 
     /**
@@ -148,11 +147,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param newItem The new Item
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
-    public E putIn(E newItem) {
+    public E PUT(E newItem) {
                 
-        final K newKey = newItem.name();
-        
-        final E existingItemWithSameKey = take(newKey);
+        final E existingItemWithSameKey = TAKE(newItem);
 
         E item;
         if (existingItemWithSameKey != null) {            
@@ -163,16 +160,13 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         }
         
         // put the (new or merged) item into itemTable        
-        final E overflowItem = addItem(item);
+        final E overflowItem = PUT(item);
         
         
-        if (overflowItem!=null) {
+        if (overflowItem!=null)
             return overflowItem;
-        }            
-        else {
-            return null;
-        }
-        
+
+        return null;
     }
 
 
@@ -182,20 +176,20 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      *
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
-    public E putIn(BagSelector<K,E> selector) {
+    public E PUT(BagSelector<K, E> selector) {
 
-        E item = take( selector.name() );
+        E item = TAKE(selector.name());
 
         if (item != null) {
             item = (E)item.merge(selector);
-            final E overflow = addItem(item );
+            final E overflow = PUT(item);
             return overflow;
         }
         else {
             item = selector.newInstance();
 
             // put the (new or merged) item into itemTable
-            return addItem(item);
+            return PUT(item);
         }
 
     }
@@ -247,7 +241,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
         float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
         m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
-        return putIn(oldItem);
+        return PUT(oldItem);
     }
     
     
@@ -257,7 +251,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      */
     public E processNext(final float forgetCycles, final Memory m) {
                 
-        final E x = takeNext();
+        final E x = TAKENEXT();
         if (x == null)
             return null;
         

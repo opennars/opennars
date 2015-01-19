@@ -63,7 +63,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     }
 
     @Override
-    public E get(K key) {
+    public E GET(K key) {
         return index.get(key);
     }
 
@@ -84,7 +84,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     }
 
     @Override
-    public E takeNext() {
+    public E TAKENEXT() {
         return next(true, true);
     }
 
@@ -101,7 +101,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     }
 
     @Override
-    public E peekNext() {
+    public E PEEKNEXT() {
         E selected = next(false, true);
 
         swapToProportionalIndex(0, selected.getPriority());
@@ -186,7 +186,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     /** tests whether a particular value is consistent (identity test)
      *  with regard to the index's value */
     public boolean valid(E value) {
-        return value!=null && get(value.name())==value;
+        return value!=null && GET(value.name())==value;
     }
     public float validPriority(E value) {
         if (valid(value))
@@ -269,19 +269,16 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
         }
     }
 
-    public E putIn(E newItem) {
-        return addItem(newItem);
-    }
 
     @Override
-    protected E addItem(E n) {
+    public E PUT(E n) {
 
         if (n==null)
             throw new RuntimeException(this + " can not accept null item");
 
         E overflow;
 
-        E existing = take(n.name());
+        E existing = TAKE(n.name());
         if (existing!=null) {
             //just value has changed, but doesn't matter we have removed it
             overflow = null;
@@ -328,7 +325,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     }
 
     @Override
-    public E take(K key) {
+    public E TAKE(K key) {
         return onExit(index.remove(key));
     }
 

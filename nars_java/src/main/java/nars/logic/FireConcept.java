@@ -65,7 +65,7 @@ abstract public class FireConcept extends NAL {
 
                 for (int i = 0; i < numTaskLinks; i++) {
 
-                    currentTaskLink = currentConcept.taskLinks.takeNext();
+                    currentTaskLink = currentConcept.taskLinks.TAKENEXT();
                     if (currentTaskLink == null)
                         return;
 

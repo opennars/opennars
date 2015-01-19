@@ -571,7 +571,7 @@ public class Concept extends Item<Term> implements Termable {
         TaskLink removed;
 
         synchronized (taskLinks) {
-            removed = taskLinks.putIn(taskLink);
+            removed = taskLinks.PUT(taskLink);
         }
 
         if (removed != null) {
@@ -680,7 +680,7 @@ public class Concept extends Item<Term> implements Termable {
      */
     public TermLink activateTermLink(final TermLink.TermLinkBuilder termLink) {
         synchronized (termLinks) {
-            TermLink displaced = termLinks.putIn(termLink);
+            TermLink displaced = termLinks.PUT(termLink);
             return displaced;
         }
     }
@@ -850,7 +850,7 @@ public class Concept extends Item<Term> implements Termable {
             int toMatch = memory.param.termLinkMaxMatched.get();
             for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
 
-                final TermLink termLink = termLinks.takeNext();
+                final TermLink termLink = termLinks.TAKENEXT();
 
                 if (termLink==null)
                     break;
