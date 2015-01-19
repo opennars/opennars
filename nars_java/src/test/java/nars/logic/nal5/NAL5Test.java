@@ -45,7 +45,7 @@ public class NAL5Test extends AbstractNALTest {
         */
 
         long time = 525;
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         n.believe("<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>", Eternal, 0.0f, 0.9f)
                 .en("If robin is a type of bird then robin is not a type of flying animal.");

@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class TestNAR extends NAR {
 
     boolean showFail = true;
-    boolean showSuccess = false;
+    boolean showSuccess = true;
     boolean showExplanations = false;
     boolean showOutput = false;
 

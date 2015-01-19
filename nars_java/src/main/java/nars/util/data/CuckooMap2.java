@@ -1,9 +1,8 @@
 package nars.util.data;
 
-/**
- * Created by me on 1/19/15.
- */
 /***************************************************************************
+   WARNING - SEEMS UNSTABLE
+
  * File: CuckooMap2.java
  * Author: Keith Schwarz (htiek@cs.stanford.edu)
  * http://www.keithschwarz.com/interesting/code/cuckoo-hashmap/

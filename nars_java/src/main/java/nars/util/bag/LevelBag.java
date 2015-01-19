@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
 import nars.util.data.CuckooMap;
+import nars.util.data.CuckooMap2;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -113,7 +114,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         this.capacity = capacity;
 
         //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
-        index = Parameters.THREADS == 1 ? new CuckooMap(capacity * 4) : new ConcurrentHashMap<>(capacity * 2);
+        index = Parameters.THREADS == 1 ?
+                new CuckooMap(capacity * 4) :
+                new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);
         nodePool = new DDNodePool(capacity/4);

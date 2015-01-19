@@ -110,7 +110,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implemen
 
         if (Parameters.THREADS == 1) {
              //this.items = new LinkedHashMap(capacity);
-             this.nameTable = new ConcurrentHashMap(capacity);
+             this.nameTable = Parameters.newHashMap(capacity);
              this.pending = new ArrayDeque((int)(targetPendingBufferSize * capacity));
         }
         else {

@@ -18,7 +18,9 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
     public final List<E> list;
     
     public static <E> List<E> bestList(int capacity) {
-        return capacity < 50 ? Parameters.newArrayList() : new FastSortedTable();
+        return capacity < 50 ?
+                Parameters.newArrayList() :
+                Parameters.newArrayList(); // : new FastSortedTable();
     }
 
     public ArraySortedIndex(int capacity) {

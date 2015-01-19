@@ -446,7 +446,7 @@ public class Concept extends Item<Term> implements Termable {
         taskLinkBuilder.setBudget(taskBudget);
         taskLinkBuilder.setTask(task);
         taskLinkBuilder.setTemplate(null);
-        insertTaskLink(taskLinkBuilder);  // link type: SELF
+        activateTaskLink(taskLinkBuilder);  // link type: SELF
 
         if (!(term instanceof CompoundTerm)) {
             return;
@@ -485,7 +485,7 @@ public class Concept extends Item<Term> implements Termable {
                     taskLinkBuilder.setTemplate(termLink);
 
                     /** activate the task link */
-                    componentConcept.insertTaskLink(taskLinkBuilder);                }
+                    componentConcept.activateTaskLink(taskLinkBuilder);                }
 
                 else {
                     taskBudgetBalance += subBudget.getPriority();
@@ -574,7 +574,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param taskLink The termLink to be inserted
      * @return the displaced tasklink
      */
-    protected TaskLink insertTaskLink(final TaskLink.TaskLinkBuilder taskLink) {
+    protected TaskLink activateTaskLink(final TaskLink.TaskLinkBuilder taskLink) {
 
         TaskLink removed;
 
@@ -599,7 +599,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param taskBudget The BudgetValue of the task
      * @return whether any activity happened as a result of this invocation
      */
-    public synchronized boolean buildTermLinks(final BudgetValue taskBudget) {
+    public /* synchronized */ boolean buildTermLinks(final BudgetValue taskBudget) {
 
         if (termLinkBuilder.size() == 0)
             return false;
@@ -685,7 +685,7 @@ public class Concept extends Item<Term> implements Termable {
      */
     public TermLink activateTermLink(final TermLink.TermLinkBuilder termLink) {
         synchronized (termLinks) {
-            TermLink displaced = termLinks.PUT(termLink);
+            TermLink displaced = termLinks.UPDATE(termLink);
             return displaced;
         }
     }
