@@ -6,7 +6,7 @@ import nars.core.Parameters;
 import nars.logic.entity.Item;
 import nars.util.bag.Bag;
 import nars.util.data.CircularArrayList;
-import nars.util.data.ObjectMap;
+import nars.util.data.CuckooMap;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
@@ -25,7 +25,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
 
     int capacity;
 
-    public final ObjectMap<K,E> index;
+    public final CuckooMap<K,E> index;
     public final CircularArrayList<E> queue;
 
     public final SummaryStatistics inPriority = new SummaryStatistics();
@@ -44,7 +44,7 @@ public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
     public SolidBag(int initialCapacity, float loadFactor) {
         super();
         this.capacity = initialCapacity;
-        this.index = new ObjectMap(capacity, loadFactor);
+        this.index = new CuckooMap(capacity, loadFactor);
         this.queue = new CircularArrayList<>(capacity*2 /* extra space for invalid items */ );
 
     }

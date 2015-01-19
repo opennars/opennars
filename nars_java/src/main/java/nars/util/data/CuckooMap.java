@@ -33,7 +33,7 @@ package nars.util.data;
  * depending on hash collisions. Load factors greater than 0.91 greatly increase the chances the map will have to rehash to the
  * next higher POT size.
  * @author Nathan Sweet */
-public class ObjectMap<K, V> implements Map<K,V> {
+public class CuckooMap<K, V> implements Map<K,V> {
     private static final int PRIME1 = 0xbe1f14b1;
     private static final int PRIME2 = 0xb4b82e39;
     private static final int PRIME3 = 0xced1c241;
@@ -53,19 +53,19 @@ public class ObjectMap<K, V> implements Map<K,V> {
 
     /** Creates a new map with an initial capacity of 32 and a load factor of 0.8. This map will hold 25 items before growing the
      * backing table. */
-    public ObjectMap () {
+    public CuckooMap() {
         this(32, 0.8f);
     }
 
     /** Creates a new map with a load factor of 0.8. This map will hold initialCapacity * 0.8 items before growing the backing
      * table. */
-    public ObjectMap (int initialCapacity) {
+    public CuckooMap(int initialCapacity) {
         this(initialCapacity, 0.8f);
     }
 
     /** Creates a new map with the specified initial capacity and load factor. This map will hold initialCapacity * loadFactor items
      * before growing the backing table. */
-    public ObjectMap (int initialCapacity, float loadFactor) {
+    public CuckooMap(int initialCapacity, float loadFactor) {
         if (initialCapacity < 0) throw new IllegalArgumentException("initialCapacity must be >= 0: " + initialCapacity);
         if (initialCapacity > 1 << 30) throw new IllegalArgumentException("initialCapacity is too large: " + initialCapacity);
         capacity = nextPowerOfTwo(initialCapacity);
@@ -84,7 +84,7 @@ public class ObjectMap<K, V> implements Map<K,V> {
     }
 
     /** Creates a new map identical to the specified map. */
-    public ObjectMap (ObjectMap<? extends K, ? extends V> map) {
+    public CuckooMap(CuckooMap<? extends K, ? extends V> map) {
         this(map.capacity, map.loadFactor);
         stashSize = map.stashSize;
         System.arraycopy(map.keyTable, 0, keyTable, 0, map.keyTable.length);
@@ -184,7 +184,7 @@ public class ObjectMap<K, V> implements Map<K,V> {
         return null;
     }
 
-    public void putAll (ObjectMap<K, V> map) {
+    public void putAll (CuckooMap<K, V> map) {
         ensureCapacity(map.size);
         for (Entry<K, V> entry : map.entries())
             put(entry.key, entry.value);
@@ -613,10 +613,10 @@ public class ObjectMap<K, V> implements Map<K,V> {
     static private class MapIterator<K, V> {
         public boolean hasNext;
 
-        final ObjectMap<K, V> map;
+        final CuckooMap<K, V> map;
         int nextIndex, currentIndex;
 
-        public MapIterator (ObjectMap<K, V> map) {
+        public MapIterator (CuckooMap<K, V> map) {
             this.map = map;
             reset();
         }
@@ -656,7 +656,7 @@ public class ObjectMap<K, V> implements Map<K,V> {
     static public class Entries<K, V> extends MapIterator<K, V> implements Iterable<Entry<K, V>>, Iterator<Entry<K, V>> {
         Entry<K, V> entry = new Entry();
 
-        public Entries (ObjectMap<K, V> map) {
+        public Entries (CuckooMap<K, V> map) {
             super(map);
         }
 
@@ -681,8 +681,8 @@ public class ObjectMap<K, V> implements Map<K,V> {
     }
 
     static public class Values<V> extends MapIterator<Object, V> implements Iterable<V>, Iterator<V> {
-        public Values (ObjectMap<?, V> map) {
-            super((ObjectMap<Object, V>)map);
+        public Values (CuckooMap<?, V> map) {
+            super((CuckooMap<Object, V>)map);
         }
 
         public boolean hasNext () {
@@ -717,8 +717,8 @@ public class ObjectMap<K, V> implements Map<K,V> {
     }
 
     static public class Keys<K> extends MapIterator<K, Object> implements Iterable<K>, Iterator<K> {
-        public Keys (ObjectMap<K, ?> map) {
-            super((ObjectMap<K, Object>)map);
+        public Keys (CuckooMap<K, ?> map) {
+            super((CuckooMap<K, Object>)map);
         }
 
         public boolean hasNext () {

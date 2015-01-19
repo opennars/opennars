@@ -23,7 +23,7 @@ package nars.util.bag;
 import com.google.common.collect.Lists;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
-import nars.util.data.ObjectMap;
+import nars.util.data.CuckooMap;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -105,7 +105,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         this.capacity = capacity;
 
         //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
-        nameTable = Parameters.THREADS == 1 ? new ObjectMap(capacity * 4) : new ConcurrentHashMap<>(capacity * 2);
+        nameTable = Parameters.THREADS == 1 ? new CuckooMap(capacity * 4) : new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);
         nodePool = new DDNodePool(capacity/4);
@@ -298,7 +298,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     /** high performance linkedhashset/deque for use as a levelbag level */
     public static class Level<E> extends DDList<E> {
 
-        final ObjectMap<E, DDNode<E>> items;
+        final CuckooMap<E, DDNode<E>> items;
 
         public Level(int numElements) {
             this(new DDNodePool<E>(numElements), numElements);
@@ -306,7 +306,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
         public Level(DDNodePool<E> nodepool, int numElements) {
             super(nodepool);
-            items = new ObjectMap(numElements * 8);
+            items = new CuckooMap(numElements * 8);
             onChange();
         }
 
@@ -541,6 +541,16 @@ public class LevelBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      * runs much faster.  The policy should be approximately equally fair as LevelBag
      */
     protected void nextNonEmptyLevelFast() {
+
+        boolean actuallyAnyNonEmpty = false;
+        for (int i = 0; i < levelEmpty.length; i++) {
+            if (!levelEmpty[i]) {
+                actuallyAnyNonEmpty = true; break;
+            }
+        }
+        if (!actuallyAnyNonEmpty) {
+            throw new RuntimeException("inconsistent empty state");
+        }
 
         int cl = DISTRIBUTOR[(levelIndex++) % DISTRIBUTOR.length];
         if (cl % 2 == 0) {

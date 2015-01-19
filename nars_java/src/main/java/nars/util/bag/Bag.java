@@ -55,7 +55,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
          * WARNING This indexing-avoiding version not completely working yet, so it is not used as of this commit
          */
 
-        public synchronized E putInFast(BagSelector<K,E> selector) {
+        public E putInFast(BagSelector<K,E> selector) {
 
             E item = take( selector.name(), false );
 
@@ -182,7 +182,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      *
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
-    public synchronized E putIn(BagSelector<K,E> selector) {
+    public E putIn(BagSelector<K,E> selector) {
 
         E item = take( selector.name() );
 
