@@ -25,6 +25,8 @@ package nars.operator.mental;
 
 import java.util.*;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import nars.core.Events;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
@@ -43,6 +45,20 @@ import nars.operator.ReactiveOperator;
 
 /**
  * Operator that creates a judgment with a given statement
+ *
+    b is expected, but b suddenly enters the system with low frequency?
+
+ Fine, no need to apply closed world assumption
+
+ "what I predicted to observe but I didnt observe didn't happen"
+ because it was observed is expected but b does not happen?
+
+ this means NARS predicted to experience something which did not occur
+
+ and as such anticipation will now generate a negative event
+
+ * "if I predicted to observe it but I didnt observe it is evidence that I didn't observe it" makes sense, while the general assumption often taken in AI is not: "what I didn't observe didn't happen"
+ *
  */
 public class Anticipate extends ReactiveOperator implements Mental {
 
@@ -50,17 +66,20 @@ public class Anticipate extends ReactiveOperator implements Mental {
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
 
 
-    final Deque<TaskTimes> anticipations = new ArrayDeque();
+    final Multimap<Term,TaskTime> anticipations = HashMultimap.create();
 
-    final LinkedHashSet<Task> newTasks = new LinkedHashSet();
+    /** buffers the terms of new incoming tasks */
+    final Set<Term> newTaskTerms = Parameters.newHashSet(16);
 
     NAL nal;
     AbstractReaction reaction;
 
     //a parameter which tells whether NARS should know if it anticipated or not
     //in one case its the base functionality needed for NAL8 and in the other its a mental NAL9 operator
-    boolean operatorEnabled = true;
+    boolean operatorEnabled = false;
     private Memory memory;
+    private boolean debug = false;
+    private long nextUpdateTime = -1;
 
 
     public Anticipate() {
@@ -84,10 +103,17 @@ public class Anticipate extends ReactiveOperator implements Mental {
             return;
         }
 
+        long now = memory.time();
+
         if (memory.time() > occurenceTime) //its about the past..
             return;
 
-        anticipations.add(new TaskTimes(memory.time(), occurenceTime) );
+        if (debug)
+            System.err.println("Anticipating " + term + " in " + (occurenceTime - now));
+
+        TaskTime tt = new TaskTime(memory.time(), occurenceTime, memory.param.duration);
+        anticipations.put(term, tt);
+        updateNextRequiredTime(tt, now);
 
         if (operatorEnabled) {
 
@@ -113,14 +139,14 @@ public class Anticipate extends ReactiveOperator implements Mental {
         }
     }
 
-    protected void deriveDidntHappen(Task prediction, long expectedOccurenceTime) {
+    protected void deriveDidntHappen(Term prediction, long expectedOccurenceTime) {
 
         //it did not happen, so the time of when it did not
         //happen is exactly the time it was expected
         //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
 
         Task task = new Task(
-                new Sentence<>(prediction.getTerm(),
+                new Sentence<>(prediction,
                         Symbols.JUDGMENT_MARK,
                         expiredTruth,
                         new Stamp(nal.memory).
@@ -130,7 +156,9 @@ public class Anticipate extends ReactiveOperator implements Mental {
                 expiredBudget
         );
 
-        System.out.println("Anticipation Negated" + task);
+        if (debug)
+            System.err.println("Anticipation Negated " + task);
+
         nal.derivedTask(task, false, true, null, null);
 
         //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
@@ -140,89 +168,81 @@ public class Anticipate extends ReactiveOperator implements Mental {
     /** called each cycle to update calculations of anticipations */
     protected void updateAnticipations() {
 
+        long now = nal.memory.time();
+
         if (anticipations.isEmpty()) return;
 
-        long now = nal.memory.time();
-        long dur = nal.memory.getDuration();
+        int dur = nal.memory.getDuration();
 
-        //share stamps created by tasks in this cycle
+        int news = newTaskTerms.size(), dids = 0, didnts =0, expireds = 0;
 
-        boolean hasNewTasks = !newTasks.isEmpty();
+        //1. filter anticipations which occurred
+        for (Term t : newTaskTerms) {
 
-        System.out.println("Anticipations=" + anticipations.size() + " NewPredictions=" + newTasks.size());
-        Iterator<TaskTimes> tti = anticipations.iterator();
-        while (tti.hasNext()) {
+            Collection<TaskTime> a = anticipations.get(t);
+            if (a == null) continue;
 
-            TaskTimes tt = tti.next();
+            Iterator<TaskTime> tti = a.iterator();
+            while (tti.hasNext()) {
 
-            if (!tt.relevant(now, dur)) {
-                tti.remove();
-                continue;
-            }
-            long aTime = tt.occurrTime;
-            long predictionstarted = tt.creationTime;
+                TaskTime tt = tti.next();
 
-            //Not necessary since such Prediction vectors will not be created
-//            //maybe ths should never have been created in the first place
-//            if (aTime < predictionstarted) { //its about the past..
-//                aei.remove();
-//                continue;
-//            }
+                long tOccurrs = tt.occurrTime;
 
-            //lets say a and <(&/,a,+4) =/> b> leaded to prediction of b with specific occurence time
-            //this indicates that this interval can be reconstructed by looking by when the prediction
-            //happened and for what time it predicted, Only when the happening would already lead to <(&/,a,+5) =/> b>
-            //we are allowed to apply CWA already, i think this is the perfect time to do this
-            //since there is no way anymore that the observation would support <(&/,a,+4) =/> b> at this time,
-            //also this way it is not applied to early, it seems to be the perfect time to me,
-            //making hopeExpirationWindow parameter entirely osbolete
-            Interval Int = Interval.interval(aTime - predictionstarted, nal.memory);
-            //ok we know the magnitude now, let's now construct a interval with magnitude one higher
-            //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
-            //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-            double expiredate = predictionstarted + Interval.magnitudeToTime(Int.magnitude + 1, nal.memory.param.duration);
-            //
-
-            boolean didntHappen = (now >= expiredate);
-            boolean maybeHappened = hasNewTasks && !didntHappen;
-
-            if ((!didntHappen) && (!maybeHappened))
-                continue;
-
-            Set<Task> knownPredictions = tt.tasks;
-
-
-
-            Iterator<Task> ii = knownPredictions.iterator();
-            while (ii.hasNext()) {
-                Task aTerm = ii.next();
-
-                boolean remove = false;
-
-                if (didntHappen) {
-                    deriveDidntHappen(aTerm, aTime);
-                    remove = true;
+                if (now > tOccurrs - dur/2) {
+                    tti.remove();
+                    expireds++;
+                    continue;
                 }
 
-                if (maybeHappened) {
-                    if (newTasks.remove(aTerm)) {
-                        //it happened, temporal induction will do the rest          
-                        remove = true;
-                        hasNewTasks = !newTasks.isEmpty();
-                    }
+                if (!tt.didNotAlreadyOccurr(now)) {
+                    //it happened, temporal induction will do the rest
+                    tti.remove();
+                    dids++;
                 }
-
-                if (remove)
-                    ii.remove();
             }
 
-            if (knownPredictions.isEmpty()) {
-                //remove this time entry because its terms have been emptied
-                tti.remove();
+        }
+
+        newTaskTerms.clear();
+
+        if ((nextUpdateTime == -1) || (nextUpdateTime > now)) return;
+
+        nextUpdateTime = -1;
+
+        //2. derive from remaining anticipations
+
+        Iterator<Map.Entry<Term, TaskTime>> it = anticipations.entries().iterator();
+        while (it.hasNext()) {
+
+            Map.Entry<Term, TaskTime> t = it.next();
+            Term term = t.getKey();
+            TaskTime tt = t.getValue();
+
+            if (tt.didNotAlreadyOccurr(now)) {
+                deriveDidntHappen(term, tt.occurrTime);
+
+                it.remove();
+
+                didnts++;
+            }
+            else {
+                updateNextRequiredTime(tt, now);
             }
         }
 
-        newTasks.clear();
+
+        if (debug)
+            System.err.println(now + ": Anticipations: pending=" + anticipations.size() + " newTasks=" + news + ", dids=" + dids + " , didnts=" + didnts + ", expired=" + expireds + ", nextUpdate=" + nextUpdateTime);
+
+
+    }
+
+    private void updateNextRequiredTime(TaskTime tt, long now) {
+        long nextRequiredUpdate = tt.expiredate;
+        if ((nextUpdateTime == -1) || (nextUpdateTime > nextRequiredUpdate) && (nextRequiredUpdate > now)) {
+            nextUpdateTime = nextRequiredUpdate;
+        }
     }
 
     @Override
@@ -239,7 +259,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
             Task newEvent = (Task) args[0];
             this.nal = (NAL)args[1];
             if (newEvent.sentence.truth != null)
-                newTasks.add(newEvent); //new: always add but keep truth value in mind
+                newTaskTerms.add(newEvent.getTerm()); //new: always add but keep truth value in mind
 
         } else if (nal != null && event == CycleEnd.class) {
 
@@ -286,19 +306,50 @@ public class Anticipate extends ReactiveOperator implements Mental {
     /** Prediction point vector / centroid of a group of Tasks
      *      time a prediction is made (creationTime), and
      *      tme it is expected (ocurrenceTime) */
-    public static class TaskTimes {
-        public long creationTime; //2014 and this is still the best way to define a data structure that simple?
-        public long occurrTime;
+    public static class TaskTime {
+        final public long expiredate;
+        final public long creationTime; //2014 and this is still the best way to define a data structure that simple?
+        final public long occurrTime;
 
-        Set<Task> tasks = new LinkedHashSet();
-
-        public TaskTimes(long creationTime, long occurrTime) {
+        public TaskTime(long creationTime, long occurrTime, Interval.AtomicDuration dura) {
+            super();
             this.creationTime = creationTime; //when the prediction happened
             this.occurrTime = occurrTime; //when the event is expected
+
+
+            //lets say a and <(&/,a,+4) =/> b> leaded to prediction of b with specific occurence time
+            //this indicates that this interval can be reconstructed by looking by when the prediction
+            //happened and for what time it predicted, Only when the happening would already lead to <(&/,a,+5) =/> b>
+            //we are allowed to apply CWA already, i think this is the perfect time to do this
+            //since there is no way anymore that the observation would support <(&/,a,+4) =/> b> at this time,
+            //also this way it is not applied to early, it seems to be the perfect time to me,
+            //making hopeExpirationWindow parameter entirely osbolete
+            int m = Interval.timeToMagnitude(occurrTime - creationTime, dura);
+
+            //ok we know the magnitude now, let's now construct a interval with magnitude one higher
+            //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
+            //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
+            expiredate = creationTime + Interval.magnitudeToTime(m + 1, dura);
         }
 
-        public boolean relevant(long now, long duration) {
-            return !(occurrTime < now - duration/2);
+        @Override
+        public int hashCode() {
+            return (int)(31 * creationTime + occurrTime);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            TaskTime t = (TaskTime)obj;
+            return creationTime == t.creationTime  &&  occurrTime == t.occurrTime;
+        }
+
+        public boolean didNotAlreadyOccurr(long now) {
+            return now >= expiredate;
+        }
+
+        public boolean relevant(long now, int durationCycles) {
+            return TemporalRules.concurrent(now, occurrTime, durationCycles);
         }
     }
 }

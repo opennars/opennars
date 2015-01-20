@@ -28,7 +28,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     @Expose
     public final char punc;
     @Expose
-    public final Tense tense;
+    public Tense tense;
     @Expose
     public final float freqMin;
     @Expose
@@ -41,6 +41,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final long cycleStart;
     @Expose
     public final long cycleEnd;
+
+    /** min and max occurrenceTime range (relative to current time which the task is output); not checked if tense==ETERNAL, checked otherwise */
+    @Expose
+    public int ocMin = -1,ocMax= -1;
 
     public final List<Task> trueAt = new ArrayList();
 
@@ -106,6 +110,13 @@ public class TaskCondition extends OutputCondition implements Serializable {
         //we could also calculate geometric/cartesian vector distance
     }
 
+    /** relative to the current time when processing */
+    public void setOccurrenceTime(int min, int max) {
+        this.ocMin = min;
+        this.ocMax = max;
+        this.tense = Tense.Present; //any tense will work here as long as it's not Eternal, so Present uesd here can still refer to past or future
+    }
+
     @Override
     public boolean condition(Class channel, Object signal) {
 
@@ -119,9 +130,18 @@ public class TaskCondition extends OutputCondition implements Serializable {
                 if (task.sentence.punctuation != punc)
                     return false;
 
+                long now = nar.time();
+
                 //require right kind of tense
-                if ((tense == Tense.Eternal) && (!task.sentence.isEternal()))
-                    return false;
+                if (tense==Tense.Eternal) {
+                    if (!task.sentence.isEternal())  return false;
+                }
+                else {
+                    if (task.sentence.isEternal()) return false;
+
+                    long oc = task.getOcurrenceTime() - now; //relative time
+                    if ((oc < ocMin) || (oc > ocMax)) return false;
+                }
 
                 Term tterm = task.getTerm();
 
@@ -132,7 +152,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                 double distance = 0;
 
-                long now = nar.time();
 
                 boolean match = false;
 

@@ -38,6 +38,18 @@ public class TestNAR extends NAR {
         super(b);
     }
 
+    public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int minOccurrenceDelta, int maxOccurrenceDelta) throws InvalidInputException {
+        float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
+
+        TaskCondition tc = new TaskCondition(this, Output.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
+        tc.setOccurrenceTime(minOccurrenceDelta, maxOccurrenceDelta);
+        musts.add(tc);
+
+
+        ExplainableTask et = new ExplainableTask(tc);
+        explanations.add(et);
+        return et;
+    }
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
@@ -64,6 +76,10 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustBelieve(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+        long now = time();
+        return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
+    }
+    public ExplainableTask mustBelievePast(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax, int maxPastWindow) throws InvalidInputException {
         long now = time();
         return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
     }
