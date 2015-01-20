@@ -291,8 +291,36 @@
 //            
 //            nar.addInput(linepartAsNarsese + ". :|:");
 //            nar.step(3);
+//
+//            recallAssociations(iterationLinePart);
 //            
 //            counter++;
+//        }
+//    }
+//
+//    /**
+//     * This is a implementation of a mechanism I(SquareOfTwo) call 'recall'.
+//     * The idea is from the book "Circuits in the Brain".
+//     * The stated theoretic possible mechanism is that many words trigger association neurons, which trigger other association neurons.
+//     * This way the "meaning" gets extracted.
+//     *
+//     * As the implementation in nars we just trigger the best n associations for a word.
+//     * The nars system can do with it higherlevel reasoning and sort out the correct meaning after the context.
+//     *
+//     */
+//    private void recallAssociations(NaturalLanguagePerception.LinePart linePart) {
+//        if( linePart.type != NaturalLanguagePerception.LinePart.EnumType.WORD ) {
+//            nar.step(3*4);
+//            return;
+//        }
+//
+//        // TODO< retrive the 'ideas' associated with the word >
+//        // for example if we have as a format for storing of associated concepts/interpretations of a word <(*, {concept-tree, concept-datastructure-tree, concept-name-tree}, $linePart.content$) --> meta-word-assoc>.
+//        // we retrive the n best associated concepts and recall them
+//        // the best concepts are the n concepts with the highest interest, which is the highest priority in the bag
+//        for (int ni = 0; ni < n; ni++) {
+//            nar.addInput(TODO best assocation + ". :|:");
+//            nar.step(4-1);
 //        }
 //    }
 //    
