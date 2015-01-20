@@ -116,7 +116,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
         //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
         index = Parameters.THREADS == 1 ?
-                new CuckooMap(capacity * 4) :
+                new CuckooMap() :
                 new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);
@@ -566,7 +566,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
      * Variation of LevelBag which follows a different distributor policy but
      * runs much faster.  The policy should be approximately equally fair as LevelBag
      */
-    protected void nextNonEmptyLevelFast() {
+    protected boolean nextNonEmptyLevelFast() {
 
         if (Parameters.DEBUG) {
             boolean actuallyAnyNonEmpty = false;
@@ -577,7 +577,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
                 }
             }
             if (!actuallyAnyNonEmpty) {
-                throw new RuntimeException("inconsistent empty state");
+                //throw new RuntimeException("inconsistent empty state");
+                new RuntimeException("inconsistent empty state").printStackTrace();
+                return false;
             }
         }
 
@@ -603,6 +605,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         } else {                  // for active levels, take all current items
             currentCounter = getNonEmptyLevelSize(currentLevel);
         }
+
+        return true;
     }
 
     @Override
@@ -664,8 +668,19 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         return level[currentLevel].peekFirst();
     }
 
+    private synchronized E TAKE(int outLevel) {
+
+        Level l = level[outLevel];
+        if (l == null) return null;
+
+        DD<E> fn = l.getFirstNode();
+        if (fn == null) return null;
+
+        return OUT(fn);
+    }
+
     @Override
-    public E TAKENEXT() {
+    public synchronized E TAKENEXT() {
 
         if (size() == 0)
             return null; // empty bag
@@ -719,22 +734,22 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
 
     /** removes an item from its position in the level without removing it from the hashtable */
-    protected E unlevel(DD<E> x) {
+    protected synchronized E unlevel(DD<E> x) {
         int outLevel = x.level;
         removeMass(x.item);
         return level[outLevel].remove(x);
     }
-    protected DD<E> relevel(DD<E> x, int inLevel) {
+    protected synchronized DD<E> relevel(DD<E> x, int inLevel) {
         addMass(x.item);
         return ensureLevelExists(inLevel).add(x);
     }
-    protected DD<E> relevel(E x, int inLevel) {
+    protected synchronized DD<E> relevel(E x, int inLevel) {
         addMass(x);
         return ensureLevelExists(inLevel).add(x);
     }
 
     /** removal of the bagged item from its level and the index */
-    public E OUT(DD<E> node) {
+    public synchronized  E OUT(DD<E> node) {
         if (node == null) return null;
         unlevel(node);
         index.remove(node.item.name());
@@ -742,13 +757,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
     }
 
     /** addition of the item to its level and the index */
-    public DD<E> IN(E newItem, int inLevel) {
+    public synchronized DD<E> IN(E newItem, int inLevel) {
         DD<E> dd = relevel(newItem, inLevel);
         this.index.put(newItem.name(), dd);
         return dd;
     }
 
-    public DD<E> IN(E newItem) {
+    public synchronized DD<E> IN(E newItem) {
         return IN(newItem, getLevel(newItem));
     }
 
@@ -779,16 +794,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         return overflow;
     }
 
-    private E TAKE(int outLevel) {
 
-        Level l = level[outLevel];
-        if (l == null) return null;
-
-        DD<E> fn = l.getFirstNode();
-        if (fn == null) return null;
-
-        return OUT(fn);
-    }
 
     protected final Level ensureLevelExists(final int l) {
         if (this.level[l] == null) {

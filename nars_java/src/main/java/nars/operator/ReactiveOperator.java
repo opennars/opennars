@@ -6,23 +6,30 @@ import nars.event.Reaction;
 import nars.logic.nal8.Operator;
 
 /**
- * This class combines Operator with a Reaction model to
+ * ReactiveOperator combines Operator with a Reaction interface to
  * provide a convenient API for defining an Operator that reacts
- * to both its own invocations and additional specific events.
+ * to both its own received invocations (via execute()) and additional specific events.
  */
 abstract public class ReactiveOperator extends Operator implements Reaction {
 
     private AbstractReaction reaction;
+    private NAR nar;
 
     public ReactiveOperator(String name) {
         super(name);
     }
+
+
+    public NAR nar() { return nar; }
 
     /** events to react to */
     abstract public Class[] getEvents();
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
+
+        this.nar = n;
+
         if (reaction == null) {
             reaction = new AbstractReaction(n, false, getEvents()) {
 

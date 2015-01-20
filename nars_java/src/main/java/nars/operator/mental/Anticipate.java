@@ -46,15 +46,22 @@ import nars.operator.ReactiveOperator;
  */
 public class Anticipate extends ReactiveOperator implements Mental {
 
-    public final Map<Vector2Int, LinkedHashSet<Term>> anticipations = new LinkedHashMap();
-
-    final Set<Term> newTasks = new LinkedHashSet();
-    NAL nal;
-
     final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
 
-    private AbstractReaction reaction;
+
+    final Deque<TaskTimes> anticipations = new ArrayDeque();
+
+    final LinkedHashSet<Task> newTasks = new LinkedHashSet();
+
+    NAL nal;
+    AbstractReaction reaction;
+
+    //a parameter which tells whether NARS should know if it anticipated or not
+    //in one case its the base functionality needed for NAL8 and in the other its a mental NAL9 operator
+    boolean operatorEnabled = true;
+    private Memory memory;
+
 
     public Anticipate() {
         super("^anticipate");
@@ -69,37 +76,98 @@ public class Anticipate extends ReactiveOperator implements Mental {
         };
     }
 
+    public void anticipate(Term term, long occurenceTime, Task t) {
+        if (memory == null)
+            memory = nal.memory;
 
-    public static class Vector2Int {
-        public long predictionCreationTime; //2014 and this is still the best way to define a data structure that simple?
-        public long predictedOccurenceTime;
+        if (term instanceof Conjunction && term.getTemporalOrder() != TemporalRules.ORDER_NONE) {
+            return;
+        }
 
-        public Vector2Int(long predictionCreationTime, long predictedOccurenceTime) { //rest of the crap:
-            this.predictionCreationTime = predictionCreationTime; //when the prediction happened
-            this.predictedOccurenceTime = predictedOccurenceTime; //when the event is expected
+        if (memory.time() > occurenceTime) //its about the past..
+            return;
+
+        anticipations.add(new TaskTimes(memory.time(), occurenceTime) );
+
+        if (operatorEnabled) {
+
+            Operation op = (Operation) Operation.make(Product.make(term), this);
+
+            TruthValue truth = new TruthValue(1.0f, 0.90f);
+
+            Stamp st;
+            if (t == null)
+                st = new Stamp(memory);
+            else
+                st = t.sentence.stamp.clone().setOccurrenceTime(memory.time());
+
+
+            Task newTask = new Task(
+                    new Sentence<>(op, Symbols.JUDGMENT_MARK, truth, st),
+                    new BudgetValue(
+                        Parameters.DEFAULT_JUDGMENT_PRIORITY * InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                        Parameters.DEFAULT_JUDGMENT_DURABILITY * InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                        BudgetFunctions.truthToQuality(truth))
+            );
+            memory.addNewTask(newTask, "Perceived Anticipation");
         }
     }
 
-    public void updateAnticipations() {
+    protected void deriveDidntHappen(Task prediction, long expectedOccurenceTime) {
+
+        //it did not happen, so the time of when it did not
+        //happen is exactly the time it was expected
+        //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
+
+        Task task = new Task(
+                new Sentence<>(prediction.getTerm(),
+                        Symbols.JUDGMENT_MARK,
+                        expiredTruth,
+                        new Stamp(nal.memory).
+                                setOccurrenceTime(
+                                        expectedOccurenceTime -
+                                                nal.memory.param.duration.get())),
+                expiredBudget
+        );
+
+        System.out.println("Anticipation Negated" + task);
+        nal.derivedTask(task, false, true, null, null);
+
+        //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
+        task.setParticipateInTemporalInduction(true);
+    }
+
+    /** called each cycle to update calculations of anticipations */
+    protected void updateAnticipations() {
 
         if (anticipations.isEmpty()) return;
 
         long now = nal.memory.time();
+        long dur = nal.memory.getDuration();
 
         //share stamps created by tasks in this cycle
 
         boolean hasNewTasks = !newTasks.isEmpty();
 
-        Iterator<Map.Entry<Vector2Int, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
-        while (aei.hasNext()) {
+        System.out.println("Anticipations=" + anticipations.size() + " NewPredictions=" + newTasks.size());
+        Iterator<TaskTimes> tti = anticipations.iterator();
+        while (tti.hasNext()) {
 
-            Map.Entry<Vector2Int, LinkedHashSet<Term>> ae = aei.next();
+            TaskTimes tt = tti.next();
 
-            long aTime = ae.getKey().predictedOccurenceTime;
-            long predictionstarted = ae.getKey().predictionCreationTime;
-            if (aTime < predictionstarted) { //its about the past..
-                return;
+            if (!tt.relevant(now, dur)) {
+                tti.remove();
+                continue;
             }
+            long aTime = tt.occurrTime;
+            long predictionstarted = tt.creationTime;
+
+            //Not necessary since such Prediction vectors will not be created
+//            //maybe ths should never have been created in the first place
+//            if (aTime < predictionstarted) { //its about the past..
+//                aei.remove();
+//                continue;
+//            }
 
             //lets say a and <(&/,a,+4) =/> b> leaded to prediction of b with specific occurence time
             //this indicates that this interval can be reconstructed by looking by when the prediction
@@ -121,11 +189,13 @@ public class Anticipate extends ReactiveOperator implements Mental {
             if ((!didntHappen) && (!maybeHappened))
                 continue;
 
-            LinkedHashSet<Term> terms = ae.getValue();
+            Set<Task> knownPredictions = tt.tasks;
 
-            Iterator<Term> ii = terms.iterator();
+
+
+            Iterator<Task> ii = knownPredictions.iterator();
             while (ii.hasNext()) {
-                Term aTerm = ii.next();
+                Task aTerm = ii.next();
 
                 boolean remove = false;
 
@@ -146,9 +216,9 @@ public class Anticipate extends ReactiveOperator implements Mental {
                     ii.remove();
             }
 
-            if (terms.isEmpty()) {
+            if (knownPredictions.isEmpty()) {
                 //remove this time entry because its terms have been emptied
-                aei.remove();
+                tti.remove();
             }
         }
 
@@ -157,20 +227,26 @@ public class Anticipate extends ReactiveOperator implements Mental {
 
     @Override
     public void event(Class event, Object[] args) {
-        if (event == Events.TaskDeriveFuture.class) {
-            Task newEvent = (Task) args[0];
-            this.nal = (NAL) args[1];
-            anticipate(newEvent);
-        } else if (event == Events.InduceSucceedingEvent.class) {
-            Task newEvent = (Task) args[0];
-            this.nal = (NAL) args[1];
 
-            if (newEvent.sentence.truth != null) {
-                newTasks.add(newEvent.getTerm()); //new: always add but keep truth value in mind
-            }
+        if (event == Events.TaskDeriveFuture.class) {
+
+            Task newEvent = (Task) args[0];
+            this.nal = (NAL)args[1];
+            anticipate(newEvent);
+
+        } else if (event == Events.InduceSucceedingEvent.class) {
+
+            Task newEvent = (Task) args[0];
+            this.nal = (NAL)args[1];
+            if (newEvent.sentence.truth != null)
+                newTasks.add(newEvent); //new: always add but keep truth value in mind
+
         } else if (nal != null && event == CycleEnd.class) {
+
             updateAnticipations();
+
         }
+
     }
 
 
@@ -182,19 +258,16 @@ public class Anticipate extends ReactiveOperator implements Mental {
     //  *
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        if (operation != null) {
+        if (operation != null)
             return null; //not as mental operator but as fundamental principle
-        }
 
-        anticipate(args[0], memory.time() + memory.getDuration());
+        anticipate(args[0], memory.time() + memory.getDuration(), operation.getTask());
 
         return null;
     }
 
 
-    //a parameter which tells whether NARS should know if it anticipated or not
-    //in one case its the base functionality needed for NAL8 and in the other its a mental NAL9 operator
-    boolean operatorEnabled = false;
+
 
 
     public boolean isOperatorEnabled() {
@@ -205,61 +278,27 @@ public class Anticipate extends ReactiveOperator implements Mental {
         operatorEnabled = val;
     }
 
-    private void anticipate(Term arg, long atTime) {
-        anticipate(arg, atTime, null);
-    }
-
     private void anticipate(Task t) {
         anticipate(t.getTerm(), t.getOcurrenceTime(), t);
     }
 
-    public void anticipate(Term content, long occurenceTime, Task t) {
-        Memory memory = nal.memory;
 
-        if (content instanceof Conjunction && content.getTemporalOrder() != TemporalRules.ORDER_NONE) {
-            return;
+    /** Prediction point vector / centroid of a group of Tasks
+     *      time a prediction is made (creationTime), and
+     *      tme it is expected (ocurrenceTime) */
+    public static class TaskTimes {
+        public long creationTime; //2014 and this is still the best way to define a data structure that simple?
+        public long occurrTime;
+
+        Set<Task> tasks = new LinkedHashSet();
+
+        public TaskTimes(long creationTime, long occurrTime) {
+            this.creationTime = creationTime; //when the prediction happened
+            this.occurrTime = occurrTime; //when the event is expected
         }
 
-        LinkedHashSet<Term> ae = anticipations.get(occurenceTime);
-        if (ae == null) {
-            ae = new LinkedHashSet();
-            anticipations.put(new Vector2Int(memory.time(), occurenceTime), ae);
+        public boolean relevant(long now, long duration) {
+            return !(occurrTime < now - duration/2);
         }
-        ae.add(content);
-
-        if (operatorEnabled) {
-            Operation op = (Operation) Operation.make(Product.make(content), this);
-            TruthValue truth = new TruthValue(1.0f, 0.90f);
-            Stamp st;
-            if (t == null) {
-                st = new Stamp(memory);
-            } else {
-                st = t.sentence.stamp.clone();
-                st.setOccurrenceTime(memory.time());
-            }
-
-            Sentence s = new Sentence(op, Symbols.JUDGMENT_MARK, truth, st);
-            Task newTask = new Task(s, new BudgetValue(
-                    Parameters.DEFAULT_JUDGMENT_PRIORITY * InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                    Parameters.DEFAULT_JUDGMENT_DURABILITY * InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                    BudgetFunctions.truthToQuality(truth)));
-            memory.addNewTask(newTask, "Perceived (Internal Experience: Anticipation)");
-        }
-    }
-
-    protected void deriveDidntHappen(Term aTerm, long expectedOccurenceTime) {
-
-        TruthValue truth = expiredTruth;
-        BudgetValue budget = expiredBudget;
-
-        Stamp stamp = new Stamp(nal.memory);
-        stamp.setOccurrenceTime(expectedOccurenceTime - nal.memory.param.duration.get()); //it did not happen, so the time of when it did not
-        //happen is exactly the time it was expected
-        //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
-
-        Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
-        Task task = new Task(S, budget);
-        nal.derivedTask(task, false, true, null, null);
-        task.setParticipateInTemporalInduction(true);
     }
 }

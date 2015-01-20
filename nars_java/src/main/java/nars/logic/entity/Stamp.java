@@ -272,7 +272,7 @@ public class Stamp implements Cloneable {
      * For single-premise rules
      *
      * @param old The stamp of the single premise
-     * @param creationTim The current time
+     * @param creationTime The current time
      */
     public Stamp(final Stamp old, final long creationTime) {
         this(old, creationTime, old);
@@ -659,7 +659,8 @@ public class Stamp implements Cloneable {
         }        
     }
 
-    public void setOccurrenceTime(final long time) {
+    /** returns this stamp, modified */
+    public Stamp setOccurrenceTime(final long time) {
         if (occurrenceTime!=time) {
             occurrenceTime = time;
             
@@ -668,6 +669,7 @@ public class Stamp implements Cloneable {
                         
             name = null;
         }
+        return this;
     }
 
 
