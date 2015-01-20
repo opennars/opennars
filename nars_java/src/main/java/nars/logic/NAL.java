@@ -123,7 +123,7 @@ public abstract class NAL implements Runnable {
             float conf = task.sentence.truth.getConfidence();
             if (conf < memory.param.confidenceThreshold.get()) {
                 //no confidence - we can delete the wrongs out that way.
-                memory.removeTask(task, "Ignored (zero confidence)");
+                memory.removeTask(task, "Insufficient confidence");
                 return false;
             }
         }
@@ -205,9 +205,12 @@ public abstract class NAL implements Runnable {
         }
 
         task.setParticipateInTemporalInduction(false);
+
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2, getCurrentTask());
         memory.logic.TASK_DERIVED.hit();
+
         addTask(task, "Derived");
+
         return true;
     }
 

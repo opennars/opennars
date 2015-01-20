@@ -1017,14 +1017,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
         if (count == 0) return;
 
-        DoublyLinkedListIterator<E> x = null;
         for (int l = level.length-1; l >= 0; l--) {
             if (levelEmpty[l]) continue;
-            if (x == null)
-                x = level[l].iterator();
-            x.init(level[l]);
-            while (x.hasNext()) {
-                c.accept( x.next() );
+            DD<E> node = level[l].getFirstNode();
+            while (node!=null) {
+                if (node.item!=null)
+                    c.accept( node.item );
+                node = node.next;
             }
         }
     }
