@@ -478,13 +478,8 @@ public class Memory implements Serializable {
          throw new RuntimeException("Invalid term: " + t);*/
 
         if (!Terms.levelValid(t.sentence, nal())) {
-            if (param.exceptionOnExceedingNALLevel.get())
-                throw new RuntimeException("Exceeds NAL level " + nal() + ": " + t + " (reason: " + reason + ")");
-            else {
-                removeTask(t, "NAL level too low");
-                return false;
-            }
-
+            removeTask(t, "Insufficient NAL level");
+            return false;
         }
 
         newTasks.add(t);

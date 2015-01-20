@@ -21,7 +21,6 @@ public class Param implements Serializable {
 
 
 
-
     public Param() {    }
 
     /** Silent threshold for task reporting, in [0, 100]. 
@@ -36,6 +35,7 @@ public class Param implements Serializable {
        The range of "now" is [-DURATION/2, +DURATION/2];      */
     public final AtomicDuration duration = new AtomicDuration();
 
+    public final AtomicDouble confidenceThreshold = new AtomicDouble();
 
     public final AtomicInteger shortTermMemoryHistory = new AtomicDuration();
 
@@ -213,5 +213,4 @@ public class Param implements Serializable {
         json = b.create();            
     }
 
-    public final AtomicBoolean exceptionOnExceedingNALLevel = new AtomicBoolean(false);
 }

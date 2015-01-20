@@ -121,7 +121,7 @@ public abstract class NAL implements Runnable {
 
         if (task.sentence != null && task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();
-            if (conf == 0) {
+            if (conf < memory.param.confidenceThreshold.get()) {
                 //no confidence - we can delete the wrongs out that way.
                 memory.removeTask(task, "Ignored (zero confidence)");
                 return false;

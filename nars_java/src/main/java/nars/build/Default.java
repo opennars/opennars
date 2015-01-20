@@ -88,6 +88,9 @@ public class Default extends Build implements ConceptBuilder {
 
         
         param.duration.set(5);
+
+        param.confidenceThreshold.set(0.01);
+
         param.shortTermMemoryHistory.set(1);
 
         param.conceptForgetDurations.set(2.0);

@@ -50,14 +50,19 @@ public class AnticipationTest extends AbstractNALTest {
         ''outputMustContain('<(&/,<a --> b>,+3) =/> <b --> c>>. :\: %0.92;0.91%')
          */
         String rule = "<(&/,<a --> b>,+3) =/> <b --> c>>";
-        long time = 55;
+        long time = 65;
 
         TextOutput.out(n);
 
         n.believe(rule, Tense.Eternal, 1.0f, 0.9f);
         n.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
-        n.mustOutput(0, time, rule, '.', 0.00f, 0.00f, 0.40f, 0.50f, -15, 0);
-        n.mustOutput(0, time, rule, '.', 0.91f, 0.93f, 0.90f, 0.91f, -15, 0);
+
+        //The actual output from Anticipate: <b --> c>. :\: %0.00;0.90%
+        n.mustOutput(0, time, "<b --> c>", '.', 0f, 0f, 0.9f, 0.9f, (int) (-1*time), 0);
+
+        //The induced result
+        n.mustOutput(0, time, rule, '.', 0.00f, 0.00f, 0.40f, 0.50f, -25, 0);
+        n.mustOutput(0, time, rule, '.', 0.91f, 0.93f, 0.90f, 0.91f, -25, 0);
         n.mustOutput(0, time, rule, '.', 0.00f, 1.00f, 0.0f, 1.0f, (int) (-1*time), 0); //match any
 
 
