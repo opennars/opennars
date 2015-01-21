@@ -28,6 +28,8 @@ import nars.gui.FileTreeModel;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
+import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -38,8 +40,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static nars.gui.output.SwingLogPanel.setConsoleFont;
 
@@ -359,7 +366,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
     /**
      * Input area
      */
-    private JTextArea inputText;
+    private RSyntaxTextArea inputText;
     
 //    /**
 //     * Whether the window is ready to accept new addInput (in fact whether the
@@ -548,8 +555,26 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         
         infoPane = new ReactionPanel();
 
-        inputText = new JTextArea("");
-        inputText.setRows(3);
+
+
+        inputText = new RSyntaxTextArea();
+        inputText.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LISP);
+        /*((RSyntaxDocument)inputText.getDocument()).setSyntaxStyle(new TokenMaker() {
+
+        });*/
+        try {
+            Theme theme = Theme.load(getClass().getResourceAsStream("/text_input_theme_dark.xml"));
+            theme.apply(inputText);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        inputText.setCodeFoldingEnabled(true);
+        inputText.setAntiAliasingEnabled(true);
+
+        RTextScrollPane sp = new RTextScrollPane(inputText);
+
+
+        this.inputText.setRows(3);
 
         DocumentListener documentListener = new DocumentListener() {
             public void changedUpdate(DocumentEvent documentEvent) {
@@ -565,7 +590,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             }
 
             private void updated(DocumentEvent documentEvent) {
-                String t = inputText.getText();
+                String t = TextInputPanel.this.inputText.getText();
                 
                 boolean valid = true, show;
 //                if (t.length() > 0) {
@@ -582,9 +607,9 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                 updateContext();
             }
         };
-        inputText.getDocument().addDocumentListener(documentListener);
+        this.inputText.getDocument().addDocumentListener(documentListener);
 
-        inputText.addKeyListener(new KeyAdapter() {
+        this.inputText.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 //control-enter evaluates
@@ -595,9 +620,9 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                 }
             }
         });
-        setConsoleFont(inputText, 20);
+        setConsoleFont(this.inputText, 20);
 
-        mainSplit.add(new JScrollPane(inputText), 0);
+        mainSplit.add(new JScrollPane(this.inputText), 0);
 
         infoPane.setVisible(false);
         mainSplit.add(infoPane, 1);
