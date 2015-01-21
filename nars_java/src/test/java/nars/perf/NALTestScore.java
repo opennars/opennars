@@ -57,7 +57,7 @@ public class NALTestScore extends NALTest {
         double score = 0;
 
         for (Object o : c) {
-            String examplePath = (String)((Object[])o)[0];
+            String examplePath = (String)((Object[])o)[1];
             
             NALTest.saveSimilar = false;
             

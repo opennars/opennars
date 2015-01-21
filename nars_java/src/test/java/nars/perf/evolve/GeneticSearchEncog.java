@@ -104,7 +104,7 @@ public class GeneticSearchEncog {
 
     static {
 
-        param.add(new IntegerParameter("builderType", 0, 1)); //result will be % number types
+        param.add(new IntegerParameter("builderType", 0, 0)); //result will be % number types
         param.add(new IntegerParameter("conceptMax", 200, 1100));
         param.add(new IntegerParameter("subConceptMax", 0, 200));
         param.add(new IntegerParameter("conceptTaskLinks", 4, 50));
