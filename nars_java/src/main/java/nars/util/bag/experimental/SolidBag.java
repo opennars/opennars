@@ -21,7 +21,7 @@ import java.util.*;
  *      6. nearly lock-free multithread access
  */
 
-public class SolidBag<E extends Item<K>,K> extends Bag<E,K> {
+public class SolidBag<E extends Item<K>,K> extends Bag<K, E> {
 
     int capacity;
 

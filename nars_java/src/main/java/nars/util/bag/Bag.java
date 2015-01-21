@@ -8,11 +8,15 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
+/** K=key, V = item/value of type Item
+ *
+ * TODO remove unnecessary methods, documetn
+ * */
+public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
 
 
     /** for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible */
-    @Deprecated abstract public static class IndexedBag<E extends Item<K>,K> extends Bag<E,K> {
+    @Deprecated abstract public static class IndexedBag<E extends Item<K>,K> extends Bag<K, E> {
 
         public E TAKE(final K key) {
             return take(key, true);
@@ -100,8 +104,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param it An item
      * @return Whether the Item is in the Bag
      */
-    public boolean contains(final E it) {
-        E exist = GET(it.name());
+    public boolean contains(final V it) {
+        V exist = GET(it.name());
         return exist.equals(it);
     }
     
@@ -111,7 +115,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param key The key of the Item
      * @return The Item with the given key
      */
-    abstract public E GET(final K key);
+    abstract public V GET(final K key);
     
     abstract public Set<K> keySet();
 
@@ -123,21 +127,21 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * Choose an Item according to distribution policy and take it out of the Bag
      * @return The selected Item, or null if this bag is empty
      */
-    abstract public E TAKENEXT();
+    abstract public V TAKENEXT();
     
 
     /** gets the next value without removing changing it or removing it from any index.  however
      the bag is cycled so that subsequent elements are different. */    
-    abstract public E PEEKNEXT();
+    abstract public V PEEKNEXT();
 
 
     public boolean isEmpty() {
         return size() == 0;
     }
 
-    abstract public E TAKE(K key);
+    abstract public V TAKE(K key);
 
-    public E TAKE(E item) {
+    public V TAKE(V item) {
         return TAKE(item.name());
     }
 
@@ -147,20 +151,20 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param newItem The new Item
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
-    public E PUT(E newItem) {
+    public V PUT(V newItem) {
                 
-        final E existingItemWithSameKey = TAKE(newItem);
+        final V existingItemWithSameKey = TAKE(newItem);
 
-        E item;
+        V item;
         if (existingItemWithSameKey != null) {            
-            item = (E)existingItemWithSameKey.merge(newItem);
+            item = (V)existingItemWithSameKey.merge(newItem);
         }
         else {
             item = newItem;
         }
         
         // put the (new or merged) item into itemTable        
-        final E overflowItem = PUT(item);
+        final V overflowItem = PUT(item);
         
         
         if (overflowItem!=null)
@@ -170,23 +174,44 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     }
 
 
-    /*abstract */public E UPDATE(BagSelector<K, E> selector) {
-        throw new RuntimeException(this + " does not support Bag UPDATEs");
+    /** returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics) */
+    /*abstract */public V UPDATE(BagSelector<K, V> selector) {
+        //TODO this is the generic version which may or may not work with some subclasses
+
+        V item = TAKE(selector.name()); //
+
+        if (item != null) {
+            item = (V)item.merge(selector);
+        }
+        else {
+            item = selector.newItem();
+        }
+
+        // put the (new or merged) item into itemTable
+        final V overflow = PUT(item);
+        if (overflow!=null)
+            selector.overflow(overflow);
+
+        return item;
     }
 
 
     /**
      * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
      *
-     * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
+     * @return the item which was removed,
+     * which may be the input item if it could not be inserted;
+     * or null if nothing needed removed.
+     *
+     * this return value follows the Map.put() semantics
      */
-    public E PUT(BagSelector<K, E> selector) {
+    @Deprecated public V PUT(BagSelector<K, V> selector) {
 
-        E item = TAKE(selector.name()); //
+        V item = TAKE(selector.name()); //
 
         if (item != null) {
-            item = (E)item.merge(selector);
-            final E overflow = PUT(item);
+            item = (V)item.merge(selector);
+            final V overflow = PUT(item);
             return overflow;
         }
         else {
@@ -209,13 +234,13 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     
     public void printAll() {
-        Iterator<E> d = iterator();
+        Iterator<V> d = iterator();
         while (d.hasNext()) {
             System.out.println("  " + d.next() + "\n" );
         }
     }
     
-    abstract public Iterable<E> values();
+    abstract public Iterable<V> values();
 
     public abstract float getAveragePriority();
 
@@ -226,10 +251,10 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     }
 
     /** iterates all items in (approximately) descending priority */
-    @Override public abstract Iterator<E> iterator();
+    @Override public abstract Iterator<V> iterator();
     
     /** allows adjusting forgetting rate in subclasses */    
-    public float getForgetCycles(final float baseForgetCycles, final E item) {
+    public float getForgetCycles(final float baseForgetCycles, final V item) {
         return baseForgetCycles;
     }
     
@@ -242,7 +267,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param oldItem The Item to put back
      * @return the item which was removed, or null if none removed
      */    
-    public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
+    @Deprecated public V putBack(final V oldItem, final float forgetCycles, final Memory m) {
         float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
         m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return PUT(oldItem);
@@ -253,13 +278,13 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      *  @forgetCycles forgetting time in cycles
      *  @return the variable that was updated, or null if none was taken out
      */
-    public E processNext(final float forgetCycles, final Memory m) {
+    public V processNext(final float forgetCycles, final Memory m) {
                 
-        final E x = TAKENEXT();
+        final V x = TAKENEXT();
         if (x == null)
             return null;
         
-        E r = putBack(x, forgetCycles, m);
+        V r = putBack(x, forgetCycles, m);
         if (r!=null) {
             throw new RuntimeException("Bag.processNext should always be able to re-insert item: " + r);
         }
@@ -273,7 +298,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public double[] getPriorityDistribution(double[] x) {
         int bins = x.length;
         double total = 0;
-        for (E e : values()) {
+        for (V e : values()) {
             float p = e.budget.getPriority();
             int b = bin(p, bins-1);
             x[b]++;

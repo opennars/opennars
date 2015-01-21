@@ -15,7 +15,7 @@ public class BagIteratorTest {
     int L = 4;
 
 
-    public void testIterator(Bag<NullItem,CharSequence> b) {
+    public void testIterator(Bag<CharSequence, NullItem> b) {
         int count = 0;
         NullItem first = null, current = null;
         Iterator<NullItem> i = b.iterator();
@@ -36,7 +36,7 @@ public class BagIteratorTest {
         assertEquals(b.size(), count);
     }
     
-    public void testBagIterator(Bag<NullItem,CharSequence> b) {
+    public void testBagIterator(Bag<CharSequence, NullItem> b) {
         
         b.PUT(new NullItem(0.1f));
         b.PUT(new NullItem(0.2f));

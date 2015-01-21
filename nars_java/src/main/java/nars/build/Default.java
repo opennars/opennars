@@ -177,14 +177,14 @@ public class Default extends Build implements ConceptBuilder {
 
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {        
-        Bag<TaskLink,Sentence> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
-        Bag<TermLink,String> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
+        Bag<Sentence, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
+        Bag<String, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }
 
     
-    public Bag<Concept,Term> newConceptBag() {
+    public Bag<Term, Concept> newConceptBag() {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
     }
     
@@ -198,7 +198,7 @@ public class Default extends Build implements ConceptBuilder {
         return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder());
     }
     
-    public Bag<Task<CompoundTerm>,Sentence<CompoundTerm>> newNovelTaskBag() {
+    public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag() {
         return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
     }
 

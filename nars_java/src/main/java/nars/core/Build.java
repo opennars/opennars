@@ -15,7 +15,7 @@ abstract public class Build extends Parameters  {
     public final Param param = new Param();
     protected int level;
 
-    abstract public Bag<Task<CompoundTerm>,Sentence<CompoundTerm>> newNovelTaskBag();
+    abstract public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag();
     abstract public Core newAttention();
 
     public Build() {

@@ -46,9 +46,12 @@ public class FairDelayBag<E extends Item<K>, K> extends DelayBag<E,K> {
     }
 
 
-    @Override
-    public E UPDATE(BagSelector<K, E> selector) {
-        //TODO provide a full implementation
-        return super.putInFast(selector);
-    }
+//    @Override
+//    public E UPDATE(BagSelector<K, E> selector) {
+//        //TODO provide a full implementation
+//        super.putInFast(selector);
+//        //this needs to return the selected or created item, not the result of PUT which is overflow
+//        return null;
+//    }
+
 }

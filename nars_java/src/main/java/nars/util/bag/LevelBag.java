@@ -25,8 +25,8 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
+import nars.util.bag.DDNodePool.DD;
 import nars.util.data.CuckooMap;
-import nars.util.data.CuckooMap2;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -37,7 +37,7 @@ import java.util.function.Consumer;
  * Original Bag implementation which distributes items into
  * discrete levels (queues) according to priority
  */
-public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
+public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     /**
@@ -130,130 +130,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         clear();
     }
 
-    public static class Sentinel<E> extends DD<E> {        }
-    public static class HeadSentinel<E> extends Sentinel<E> {        }
-    public static class TailSentinel<E> extends Sentinel<E> {        }
-
-    /** from: http://algs4.cs.princeton.edu/13stacks/DoublyLinkedList.java.html */
-    public static class DDList<D extends DD<E>,E> implements Iterable<E> {
-        private final DequePool<D> pool;
-
-        int size;        // number of elements on list
-
-        public final D pre;
-        public final D post;    // sentinels before first and after last item
-
-
-        public DDList(DequePool<D> nodepool) {
-            this.pool = nodepool;
-            pre = (D) new HeadSentinel();
-            post = (D) new TailSentinel();
-
-            clear();
-        }
-
-        public void clear() {
-            size = 0;
-            pre.next = post;
-            post.prev = pre;
-            changed();
-        }
-
-        /** called when this list is changed in any way */
-        protected void changed() {
-
-        }
-
-        public boolean isEmpty() {
-            /*
-            //THIS CAN OCCURR IN THE MIDDLE OF AN 'UPDATE' TRANSACTION, SO EITHER
-            DISABLE THIS TEST DURING TRANSACTION OR REMOVE IT
-            if (Parameters.DEBUG) {
-                if ((size ==0) && (pre.next!=post) && (post.prev!=pre))
-                    throw new RuntimeException("Invalid empty state: " + this);
-            }
-            */
-            return size == 0;
-        }
-
-        public int size() {
-            return size;
-        }
-
-        /** add the raw item to the list, will be bagged */
-        public D add(E item) {
-            D x = pool.get();
-            x.item = item;
-            add(x);
-            return x;
-        }
-
-
-        public D getFirstNode() {
-            //if (isEmpty()) return null;
-            D x = (D) pre.next;
-            if (x instanceof Sentinel) return null;
-            return x;
-        }
-        public D getLastNode() {
-            //if (isEmpty()) return null;
-            D x = (D) post.prev;
-            if (x instanceof Sentinel) return null;
-            return x;
-        }
-
-        public E getFirst() {
-            //if (isEmpty()) return null;
-            return pre.next.item;
-        }
-        public E getLast() {
-            //if (isEmpty()) return null;
-            return post.prev.item;
-        }
-
-        public D add(D x) {
-            if (x == null)
-                throw new RuntimeException("attempt to add null element");
-            DD<E> last = post.prev;
-            x.next = post;
-            x.prev = last;
-            post.prev = x;
-            last.next = x;
-            size++;
-
-            changed();
-            return x;
-        }
-
-        public E remove(D i) {
-            if ((i == pre) || (i == post))
-                throw new RuntimeException("DDList fault");
-
-            DD<E> x = i.prev;
-            DD<E> y = i.next;
-            x.next = y;
-            y.prev = x;
-            size--;
-            pool.put(i);
-
-            changed();
-            return i.item;
-        }
-
-        public DoublyLinkedListIterator<E> iterator() {
-            DoublyLinkedListIterator dd = new DoublyLinkedListIterator();
-            dd.init(this);
-            return dd;
-        }
-
-
-        public String toString() {
-            StringBuilder s = new StringBuilder();
-            for (E item : this)
-                s.append(item + " ");
-            return s.toString();
-        }
-    }
 
     // assumes no calls to DDList.add() during iteration
     public static class DoublyLinkedListIterator<E> implements Iterator<E> {
@@ -263,7 +139,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         private int index;
         private int size;
 
-        public void init(DDList<DD<E>,E> d) {
+        public void init(DDList<E> d) {
             current = d.pre.next;
             lastAccessed = null;
             index = 0;
@@ -355,35 +231,18 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
     }
 
     /** high performance linkedhashset/deque for use as a levelbag level */
-    public class Level extends DDList<DD<E>,E> {
+    public class Level extends DDList<E> {
 
-        final int level;
 
         public Level(int level) {
-            super(nodePool);
-            pre.level = post.level = level;
-            this.level = level;
+            super(level, nodePool);
         }
 
         @Override
         public void changed() {
 
-            levelEmpty[this.level] = isEmpty();
+            levelEmpty[this.getID()] = isEmpty();
 
-        }
-
-        /** adds to end */
-        public DD<E> add(final E in) {
-            if (in == null) throw new RuntimeException("Bag requires non-null items");
-            DD<E> d = super.add(in);
-            d.level = level;
-            return d;
-        }
-
-        public E remove(DD<E> out) {
-            if (out == null) throw new RuntimeException("Bag requires non-null items");
-            if (out.level != level) throw new RuntimeException(out + " can not be removed from level " + level);
-            return super.remove(out);
         }
 
         public E removeFirst() {
@@ -491,7 +350,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
     @Override
     public E TAKE(final K name) {
-        return OUT(index.get(name));
+        DD<E> t = index.get(name);
+        if (t == null) return null;
+        return OUT(t);
     }
 
     @Override
@@ -598,6 +459,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
             }
         }
 
+
         currentLevel = cl;
 
         if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
@@ -618,7 +480,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
             //allow selector to provide a new instance
             E n = selector.newItem();
             if (n!=null) {
-                return PUT(n);
+                E overflow = PUT(n);
+                if (overflow!=null)
+                    selector.overflow(overflow);
+                return n; //return the new instance
             }
             //no instance provided, nothing to do
             return null;
@@ -631,19 +496,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         //TODO maybe divide this into a 2 stage transaction that can be aborted before the unlevel begins
         E c = selector.updateItem(b);
         if (c!=null) {
-            unlevel(bx);
-
-            bx.item = c;
-
-            relevel(bx, getLevel(c));
-
-            if (!b.name().equals(c.name())) {
-                //name changed, must be rehashed
-                index.remove(key);
-                key = c.name();
-                index.put(key, bx);
-            }
-
+            relevel(bx, c);
         }
 
         return c;
@@ -671,10 +524,15 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
     private synchronized E TAKE(int outLevel) {
 
         Level l = level[outLevel];
-        if (l == null) return null;
+        if (l == null)
+            throw new RuntimeException("Attempted TAKE from empty (null) level " + outLevel);
+        if (l.isEmpty())
+            throw new RuntimeException("Attempted TAKE from empty level " + outLevel);
+
 
         DD<E> fn = l.getFirstNode();
-        if (fn == null) return null;
+        if (fn == null)
+            throw new RuntimeException("Attempted TAKE from empty level " + outLevel);
 
         return OUT(fn);
     }
@@ -690,7 +548,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
             nextNonEmptyLevel();
         }
 
-        if (levelEmpty[currentLevel]) {
+        if (levelEmpty[currentLevel] || (level[currentLevel] == null) || (level[currentLevel].isEmpty())) {
             if (Parameters.THREADS == 1) {
                 throw new RuntimeException("Empty setLevel selected for takeNext");
             } else {
@@ -733,32 +591,55 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
     }
 
 
-    /** removes an item from its position in the level without removing it from the hashtable */
-    protected synchronized E unlevel(DD<E> x) {
-        int outLevel = x.level;
-        removeMass(x.item);
-        return level[outLevel].remove(x);
-    }
-    protected synchronized DD<E> relevel(DD<E> x, int inLevel) {
-        addMass(x.item);
-        return ensureLevelExists(inLevel).add(x);
-    }
-    protected synchronized DD<E> relevel(E x, int inLevel) {
-        addMass(x);
-        return ensureLevelExists(inLevel).add(x);
+    /** removes from existing level and adds to new one */
+    protected synchronized DD<E> relevel(DD<E> x, E newValue) {
+        int prevLevel = x.owner();
+        int nextLevel = getLevel(newValue);
+        if (prevLevel == nextLevel)
+            return x;
+
+        E prevValue = x.item;
+
+        boolean keyChange = !newValue.name().equals(prevValue.name());
+
+        if (keyChange) {
+            //name changed, must be rehashed
+            index.remove(prevValue.name());
+        }
+
+        level[prevLevel].detach(x);
+        x.owner = nextLevel;
+        x.item = newValue;
+
+        ensureLevelExists(nextLevel).add(x);
+
+        if (keyChange) {
+            index.put(newValue.name(), x);
+        }
+
+        return x;
     }
 
     /** removal of the bagged item from its level and the index */
     public synchronized  E OUT(DD<E> node) {
-        if (node == null) return null;
-        unlevel(node);
-        index.remove(node.item.name());
-        return node.item;
+        if (node == null)
+            throw new RuntimeException("OUT must not be null");
+        int lev = node.owner();
+        if (lev == -1)
+            throw new RuntimeException(node + " has invalid level");
+        removeMass(node.item);
+        E i = node.item;
+        level[lev].remove(node);
+        index.remove(i.name());
+        return i;
     }
 
     /** addition of the item to its level and the index */
     public synchronized DD<E> IN(E newItem, int inLevel) {
-        DD<E> dd = relevel(newItem, inLevel);
+        if (newItem == null)
+            throw new RuntimeException("IN must not be null");
+        addMass(newItem);
+        DD<E> dd = ensureLevelExists(inLevel).add(newItem);
         this.index.put(newItem.name(), dd);
         return dd;
     }
@@ -770,13 +651,18 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
 
     @Override
     public E PUT(final E newItem) {
+        if (newItem==null)
+            throw new RuntimeException("PUT item muts be non-null");
+
         E overflow = null;
 
         //1. ensure capacity
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next
             int outLevel = 0;
-            while (levelEmpty[outLevel++]);
+            while (levelEmpty[outLevel]) {
+                outLevel++;
+            }
             if (outLevel > inLevel) {           // ignore the item and exit
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
@@ -1112,7 +998,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
                 put(create());
         }
 
-        final public void put(X i) {
+        public void put(X i) {
             data.offer(i);
         }
 
@@ -1122,21 +1008,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag<E, K> {
         }
 
         abstract public X create();
-    }
 
-    private static class DDNodePool<E> extends DequePool<DD<E>> {
-
-        public DDNodePool(int preallocate) {
-            super(preallocate);
-        }
-
-        public DD<E> create() {
-            return new DD();
-        }
 
     }
 
-//TODO move this to a "bag metrics" class
+    //TODO move this to a "bag metrics" class
 //    private void stat() {
 //        int itsize = 0;
 //        Set<CharSequence> items = new HashSet();

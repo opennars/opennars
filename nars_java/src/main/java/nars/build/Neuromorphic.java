@@ -37,7 +37,7 @@ public class Neuromorphic extends Curve {
 
     
     @Override
-    public Bag<Concept, Term> newConceptBag() {
+    public Bag<Term, Concept> newConceptBag() {
         /** created by AntAttention */
         return null;
     }

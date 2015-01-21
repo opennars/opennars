@@ -54,12 +54,12 @@ public class Concept extends Item<Term> implements Termable {
     /**
      * Task links for indirect processing
      */
-    public final Bag<TaskLink,Sentence> taskLinks;
+    public final Bag<Sentence, TaskLink> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
      */
-    public final Bag<TermLink,String> termLinks;
+    public final Bag<String, TermLink> termLinks;
 
 
 
@@ -117,7 +117,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final BudgetValue b, final Term term, Bag<TaskLink,Sentence> taskLinks, Bag<TermLink,String> termLinks, final Memory memory) {
+    public Concept(final BudgetValue b, final Term term, Bag<Sentence, TaskLink> taskLinks, Bag<String, TermLink> termLinks, final Memory memory) {
         super(b);        
         
         this.term = term;
@@ -572,21 +572,12 @@ public class Concept extends Item<Term> implements Termable {
      * called only from Memory.continuedProcess
      *
      * @param taskLink The termLink to be inserted
-     * @return the displaced tasklink
+     * @return the tasklink which was selected or updated
      */
     protected TaskLink activateTaskLink(final TaskLink.TaskLinkBuilder taskLink) {
 
-        TaskLink removed;
+        return taskLinks.UPDATE(taskLink);
 
-        removed = taskLinks.UPDATE(taskLink);
-
-        if (removed != null) {
-            //memory.emit(TaskLinkRemove.class, removed, this);
-            return removed;
-        }
-
-            //memory.emit(TaskLinkAdd.class, taskLink, this);
-        return null;
     }
 
 
@@ -650,19 +641,23 @@ public class Concept extends Item<Term> implements Termable {
 
             activity = true;
 
-            TermLink displaced;
-
             // this concept termLink to that concept
-            displaced = activateTermLink(termLinkBuilder.set(template, term, target));
+            activateTermLink(termLinkBuilder.set(template, term, target));
+            /*
+            //TODO handle displaced budget in selector callback
             if (displaced!=null && displaced.name().equals(termLinkBuilder.name())) {
                 termBudgetBalance += subBudget; //was not inserted; absorb budget
             }
+            */
 
             // that concept termLink to this concept
-            displaced = otherConcept.activateTermLink(termLinkBuilder.set(template, target, term));
+            otherConcept.activateTermLink(termLinkBuilder.set(template, target, term));
+            /*
+            ////TODO handle displaced budget in selector callback
             if (displaced!=null && displaced.name().equals(termLinkBuilder.name())) {
                 termBudgetBalance += subBudget; //was not inserted; absorb budget
             }
+            */
 
             if (target instanceof CompoundTerm) {
                 otherConcept.buildTermLinks(termLinkBuilder.getBudget());
@@ -681,13 +676,12 @@ public class Concept extends Item<Term> implements Termable {
      * If the link already exists, the budgets will be merged
      *
      * @param termLink The termLink to be inserted
-     * @return the termlink displaced by the insert, or null if none was
-     */
+     * @return the termlink which was selected or updated
+     * */
     public TermLink activateTermLink(final TermLink.TermLinkBuilder termLink) {
-        synchronized (termLinks) {
-            TermLink displaced = termLinks.UPDATE(termLink);
-            return displaced;
-        }
+
+        return termLinks.UPDATE(termLink);
+
     }
 
     /**

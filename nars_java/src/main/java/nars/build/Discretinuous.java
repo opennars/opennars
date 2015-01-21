@@ -22,12 +22,12 @@ public class Discretinuous extends Default {
 
     
     @Override
-    public Bag<Task<CompoundTerm>,Sentence<CompoundTerm>> newNovelTaskBag() {
+    public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag() {
         return new LevelBag(getNovelTaskBagLevels(), getNovelTaskBagSize()).setNextNonEmptyMode(Fast);        
     }
 
     @Override
-    public Bag<Concept,Term> newConceptBag() {
+    public Bag<Term, Concept> newConceptBag() {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize()).setNextNonEmptyMode(Fast);
     }
 
@@ -38,8 +38,8 @@ public class Discretinuous extends Default {
         /*AbstractBag<TaskLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, curve, randomRemoval);
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
         
-        Bag<TaskLink,Sentence> taskLinks = new CurveBag<>(getConceptTaskLinks(), randomRemoval);
-        Bag<TermLink,String> termLinks = new CurveBag<>(getConceptTermLinks(), randomRemoval);
+        Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(getConceptTaskLinks(), randomRemoval);
+        Bag<String, TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), randomRemoval);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }

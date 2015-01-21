@@ -123,7 +123,7 @@ public class BagPerf {
         
     }
     
-    public static void randomBagIO(Bag<NullItem,CharSequence> b, int accesses, double insertProportion) {
+    public static void randomBagIO(Bag<CharSequence, NullItem> b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
             if (Memory.randomNumber.nextFloat() > insertProportion) {
                 //remove
@@ -135,7 +135,7 @@ public class BagPerf {
             }            
         }
     }
-    public static void iterate(Bag<NullItem,CharSequence> b) {
+    public static void iterate(Bag<CharSequence, NullItem> b) {
         Iterator<NullItem> i = b.iterator();
         int count = 0;
         while (i.hasNext()) {
@@ -148,7 +148,7 @@ public class BagPerf {
     }
     
     public interface BagBuilder<E extends Item<K>,K> {
-        public Bag<E,K> newBag();
+        public Bag<K, E> newBag();
     }
     
     //final boolean first, final int levels, final int levelCapacity, 

@@ -147,11 +147,12 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
     private void getInitialConcepts() {
         needInitialConcepts = false;
 
-        for (final Concept c : memory.concepts) {
+        memory.concepts.forEach(c -> {
             for (final Sentence s : c.beliefs) {
                 add(s, c);
             }
-        }
+        });
+
     }
     
     protected final void ensureTermConnected(final Term t) {

@@ -151,7 +151,7 @@ public class Memory implements Serializable {
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
-    public final Bag<Task<CompoundTerm>, Sentence<CompoundTerm>> novelTasks;
+    public final Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> novelTasks;
 
     /* ---------- Short-term workspace for a single cycle ---	------- */
     /**
@@ -187,7 +187,7 @@ public class Memory implements Serializable {
      * @param initialOperators - initial set of available operators; more may be
      * added during runtime
      */
-    public Memory(int nalLevel, Param param, Core concepts, Bag<Task<CompoundTerm>, Sentence<CompoundTerm>> novelTasks) {
+    public Memory(int nalLevel, Param param, Core concepts, Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> novelTasks) {
 
         this.level = nalLevel;
 

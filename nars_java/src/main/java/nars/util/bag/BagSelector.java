@@ -6,6 +6,7 @@ import nars.logic.entity.*;
 /** interface for lazily constructing bag items, updating existing items.
  * this avoids construction when only updating the budget of an item already in the bag  */
 public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable {
+    //TODO make a version which accepts an array or list of keys to select in batch
 
     /** item's key */
     public K name();
@@ -21,4 +22,8 @@ public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable
         return null;
     }
 
+    /** called when a bag operation produces an overflow (displaced item) */
+    default void overflow(V overflow) {
+
+    }
 }

@@ -16,11 +16,11 @@ public class AbstractBagTest {
         return testRemovalPriorityDistribution(8, capacity, 0.2f, 0.2f, f);
     }
 
-    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<BagPerf.NullItem,CharSequence> f) {
+    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, BagPerf.NullItem> f) {
         return testRemovalPriorityDistribution(loops, insertsPerLoop, fractionToAdjust, fractionToRemove, f, true);
     }
 
-    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<BagPerf.NullItem,CharSequence> f, boolean requireOrder) {
+    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, BagPerf.NullItem> f, boolean requireOrder) {
 
         int levels = 9;
         int count[] = new int[levels];
@@ -119,7 +119,7 @@ public class AbstractBagTest {
     }
 
 
-    public static int[] testRetaining(int loops, int insertsPerLoop, Bag<BagPerf.NullItem,CharSequence> f) {
+    public static int[] testRetaining(int loops, int insertsPerLoop, Bag<CharSequence, BagPerf.NullItem> f) {
 
         int levels = 9;
         int count[] = new int[levels];

@@ -5,17 +5,13 @@ import nars.core.Core;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.logic.BudgetFunctions;
 import nars.logic.BudgetFunctions.Activating;
 import nars.logic.FireConcept;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.ConceptBuilder;
-import nars.logic.entity.Term;
-import nars.util.bag.Bag;
+import nars.logic.entity.*;
+import nars.util.bag.*;
 import nars.util.bag.Bag.MemoryAware;
-import nars.util.bag.CacheBag;
-import nars.util.bag.LevelBag;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +29,7 @@ public class DefaultCore implements Core {
     /**
      * Concept bag. Containing all Concepts of the system
      */
-    public final Bag<Concept,Term> concepts;
+    public final Bag<Term, Concept> concepts;
     public final CacheBag<Term, Concept> subcon;
     
     private final ConceptBuilder conceptBuilder;
@@ -42,7 +38,7 @@ public class DefaultCore implements Core {
     List<Runnable> run = new ArrayList();
     
 
-    public DefaultCore(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
+    public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
@@ -65,9 +61,9 @@ public class DefaultCore implements Core {
 
     private static class DefaultFireConcept extends FireConcept {
 
-        private final Bag<Concept, Term> bag;
+        private final Bag<Term, Concept> bag;
 
-        public DefaultFireConcept(Memory mem, Bag<Concept,Term> bag, Concept concept, int numTaskLinks) {
+        public DefaultFireConcept(Memory mem, Bag<Term, Concept> bag, Concept concept, int numTaskLinks) {
             super(mem, concept, numTaskLinks);
             this.bag = bag;
         }
@@ -172,73 +168,82 @@ public class DefaultCore implements Core {
         
         
     }
-    
+
+    public class ConceptActivator extends BagActivator<Term,Concept> {
+
+        final float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
+
+        private boolean createIfMissing;
+        private long now;
+
+        public Concept updateItem(Concept c) {
+
+            if (budget!=null) {
+                BudgetValue cb = c.budget;
+
+                BudgetFunctions.activate(cb, getBudget(), Activating.TaskLink);
+            }
+
+            long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();
+            memory.forget(c, cyclesSinceLastForgotten, relativeThreshold);
+
+            return c;
+        }
+
+        public ConceptActivator set(Term t, BudgetValue b, boolean createIfMissing, long now) {
+            setKey(t);
+            setBudget(b);
+            this.createIfMissing = createIfMissing;
+            this.now = now;
+            return this;
+        }
+
+        @Override
+        public Concept newItem() {
+
+            //try remembering from subconscious
+            if (subcon!=null) {
+                Concept concept = subcon.take(getKey());
+                if (concept!=null) {
+
+                    //reset the forgetting period to zero so that its time while forgotten will not continue to penalize it during next forgetting iteration
+                    concept.budget.setLastForgetTime(now);
+
+                    memory.emit(Events.ConceptRemember.class, concept);
+
+                    return concept;
+                }
+            }
+
+            //create new concept, with the applied budget
+            if (createIfMissing) {
+
+                Concept concept = conceptBuilder.newConcept(budget, getKey(), memory);
+
+                if (memory.logic!=null)
+                    memory.logic.CONCEPT_NEW.hit();
+
+                memory.emit(Events.ConceptNew.class, concept);
+
+                return concept;
+            }
+
+            return null;
+        }
+
+        @Override
+        public void overflow(Concept overflow) {
+            conceptRemoved(overflow);
+        }
+    };
+
+    final ConceptActivator activator = new ConceptActivator();
+
+
     @Override
     public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
-        
-        //see if concept is active
-        Concept concept = concepts.TAKE(term);
-        
-        //try remembering from subconscious
-        if ((concept == null) && (subcon!=null)) {
-            concept = subcon.take(term);
-            if (concept!=null) {                
-                
-                //reset the forgetting period to zero so that its time while forgotten will not continue to penalize it during next forgetting iteration
-                concept.budget.setLastForgetTime(memory.time());
-                
-                memory.emit(Events.ConceptRemember.class, concept);                
 
-                //System.out.println("retrieved: " + concept + "  subcon=" + subcon.size());
-            }
-        }               
-        
-        
-        if ((concept == null) && (createIfMissing)) {                            
-            //create new concept, with the applied budget
-            
-            concept = conceptBuilder.newConcept(budget, term, memory);
-
-            if (memory.logic!=null)
-                memory.logic.CONCEPT_NEW.hit();
-            memory.emit(Events.ConceptNew.class, concept);                
-        }
-        else if (concept!=null) {            
-            
-            //apply budget to existing concept
-            //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
-            if (budget!=null)
-                BudgetFunctions.activate(concept.budget, budget, Activating.TaskLink);
-        }
-        else {
-            //unable to create, ex: has variables
-            return null;
-            //throw new RuntimeException("Unable to conceptualize " + term);
-        }
-
-        
-        Concept displaced = concepts.putBack(concept, memory.param.cycles(memory.param.conceptForgetDurations), memory);
-                
-        if (displaced == null) {
-            //added without replacing anything
-            
-            //but we need to get the actual stored concept in case it was merged
-            return concept;
-        }        
-        else if (displaced == concept) {
-            //not able to insert
-            //System.out.println("can not insert: " + concept);   
-            
-            conceptRemoved(displaced);
-            return null;
-        }        
-        else {
-            //replaced something else
-            //System.out.println("replace: " + removed + " -> " + concept);            
-
-            conceptRemoved(displaced);
-            return concept;
-        }
+        return concepts.UPDATE( activator.set(term, budget, createIfMissing, memory.time()) );
 
     }
     
@@ -276,11 +281,10 @@ public class DefaultCore implements Core {
         //use experimental consumer for levelbag to avoid allocating so many iterators within iterators
         TypeOf.whenTypeOf(concepts).is(LevelBag.class).then(l -> {
             l.forEach(action);
-            return;
         });
 
         //use default iterator
-        iterator().forEachRemaining(action);
+        //iterator().forEachRemaining(action);
     }
     
 }
