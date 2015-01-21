@@ -78,7 +78,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     /** caches the 'getKey()' result */
     private transient CharSequence key;
 
-    private final int hash;
+    transient private int hash;
 
 
     public Sentence(Term invalidTerm, char punctuation, TruthValue newTruth, Stamp newStamp) {
@@ -181,11 +181,9 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
             this.term = _content;
         }
         
-    
-        if (isUniqueByOcurrenceTime())
-            this.hash = Objects.hash(term, punctuation, truth, stamp.getOccurrenceTime());
-        else 
-            this.hash = Objects.hash(term, punctuation, truth );
+
+        this.hash = 0;
+
     }
 
     
@@ -237,6 +235,12 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      */
     @Override
     public int hashCode() {
+        if (this.hash == 0) {
+            if (isUniqueByOcurrenceTime())
+                this.hash = Objects.hash(term, punctuation, truth, stamp.getOccurrenceTime());
+            else
+                this.hash = Objects.hash(term, punctuation, truth);
+        }
         return hash;
     }
 

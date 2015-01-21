@@ -16,7 +16,7 @@ public class NALPerfLoop {
     
     public static void main(String[] args) {
        
-        int repeats = 2;
+        int repeats = 1;
         int warmups = 1;
         int maxConcepts = 1024;
         int extraCycles = 2048;

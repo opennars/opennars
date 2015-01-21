@@ -385,7 +385,7 @@ public class Stamp implements Cloneable {
     }
     
     /** for creating the chain lazily */
-    protected synchronized void ensureChain() {
+    protected /* synchronized */ void ensureChain() {
         
         if (derivationChain == EmptyDerivationChain) {
             derivationChain = new LinkedHashSet();
@@ -455,7 +455,7 @@ public class Stamp implements Cloneable {
         if (Parameters.THREADS == 1)
             return derivationChain;
         else {
-            //unmodifiable list copy
+            //modifiable list copy
             return Lists.newArrayList(derivationChain);
         }
     }
@@ -492,7 +492,12 @@ public class Stamp implements Cloneable {
         derivationChain.remove(t);
         name = null;
     }
-    
+    public void chainReplace(final Term remove, final Term add) {
+        ensureChain();
+        derivationChain.remove(remove);
+        derivationChain.add(add);
+        name = null;
+    }
     
     public static long[] toSetArray(final long[] x) {
         long[] set = x.clone();
@@ -560,7 +565,13 @@ public class Stamp implements Cloneable {
             if (getOccurrenceTime()!=s.getOccurrenceTime()) return false;       
         if (evidentialBase) {
             if (evidentialHash() != s.evidentialHash()) return false;
-            if (!Arrays.equals(toSet(), s.toSet())) return false;
+
+            //iterate in reverse; the ending of the evidence chain is more likely to be different
+            final long[] a = toSet();
+            final long[] b = s.toSet();
+            if (a.length != b.length) return false;
+            for (int i = a.length-1; i >=0; i--)
+                if (a[i]!=b[i]) return false;
         }
         
         //two beliefs can have two different derivation chains altough they share same evidental bas

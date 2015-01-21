@@ -183,18 +183,15 @@ public abstract class NAL implements Runnable {
         final Term currentTaskContent = getCurrentTask().getTerm();
         if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
             final Term currentBeliefContent = getCurrentBelief().term;
-            stamp.chainRemove(currentBeliefContent);
-            stamp.chainAdd(currentBeliefContent);
+            stamp.chainReplace(currentBeliefContent, currentBeliefContent);
         }
         //workaround for single premise task issue:
         if (currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
-            stamp.chainRemove(currentTaskContent);
-            stamp.chainAdd(currentTaskContent);
+            stamp.chainReplace(currentTaskContent, currentTaskContent);
         }
         //end workaround
         if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
-            stamp.chainRemove(currentTaskContent);
-            stamp.chainAdd(currentTaskContent);
+            stamp.chainReplace(currentTaskContent,currentTaskContent);
         }
         //its a logic rule, so we have to do the derivation chain check to hamper cycles
         if (!revised) {
