@@ -409,12 +409,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
      */
     protected void nextNonEmptyLevelDefault() {
 
-        int cl;
+        //cache class fields as local variables for speed in the iteration
+        final int numLevels = DISTRIBUTOR.length;
+        int li = levelIndex;
 
-        do {
-        } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % DISTRIBUTOR.length]]);
+        while (levelEmpty[ DISTRIBUTOR[li++ % numLevels]]);
 
-        currentLevel = cl;
+        currentLevel = DISTRIBUTOR[(li-1) % numLevels];
+        levelIndex = li;
 
         if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
             currentCounter = 1;
