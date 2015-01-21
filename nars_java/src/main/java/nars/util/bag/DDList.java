@@ -30,14 +30,13 @@ public class DDList<E> implements Iterable<E> {
         pre = new HeadSentinel(id);
         post = new TailSentinel(id);
 
-        pre.next = post;
-        post.prev = pre;
-
         clear();
     }
 
     public void clear() {
         size = 0;
+        pre.next = post;
+        post.prev = pre;
         changed();
     }
 
@@ -110,7 +109,8 @@ public class DDList<E> implements Iterable<E> {
 
     /** unlinks the node from this list; partial removal only used for transferring between levels without pool involvement */
     public DD<E> detach(DD<E> i) {
-        if (size == 0) throw new RuntimeException("How are you going to remove " + i + " from a level with size=0");
+        if (size == 0)
+            throw new RuntimeException("How are you going to remove " + i + " from a level with size=0");
         if (i == null) throw new RuntimeException("Bag requires non-null items");
         if (i.owner() != getID()) throw new RuntimeException("Removal of non-owned item: " + i + " last on level " + id);
 
@@ -122,6 +122,9 @@ public class DDList<E> implements Iterable<E> {
         x.next = y;
         y.prev = x;
         size--;
+
+        i.prev = i.next = null;
+
         changed();
         return i;
     }

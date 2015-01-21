@@ -476,7 +476,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         K key = selector.name();
         DD<E> bx = index.get(key);
-        if (bx == null) {
+        if ((bx == null) || (bx.item == null)) {
             //allow selector to provide a new instance
             E n = selector.newItem();
             if (n!=null) {
@@ -489,8 +489,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             return null;
         }
 
-
         E b = bx.item;
+
+        /*if (b == null) {
+            printAll();
+            throw new RuntimeException("index provided a node with null value");
+        }*/
 
         //allow selector to modify it, then if it returns non-null, reinsert
         //TODO maybe divide this into a 2 stage transaction that can be aborted before the unlevel begins
@@ -595,8 +599,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     protected synchronized DD<E> relevel(DD<E> x, E newValue) {
         int prevLevel = x.owner();
         int nextLevel = getLevel(newValue);
-        if (prevLevel == nextLevel)
-            return x;
 
         E prevValue = x.item;
 
@@ -604,18 +606,22 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         if (keyChange) {
             //name changed, must be rehashed
-            index.remove(prevValue.name());
+            OUT(x);
+            IN(newValue);
+        }
+        else {
+            if (prevLevel == nextLevel)
+                return x;
+
+            level[prevLevel].detach(x);
+            x.owner = nextLevel;
+            x.item = newValue;
+            ensureLevelExists(nextLevel).add(x);
+            return x;
         }
 
-        level[prevLevel].detach(x);
-        x.owner = nextLevel;
-        x.item = newValue;
 
-        ensureLevelExists(nextLevel).add(x);
 
-        if (keyChange) {
-            index.put(newValue.name(), x);
-        }
 
         return x;
     }
