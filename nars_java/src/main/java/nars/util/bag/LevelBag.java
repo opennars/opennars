@@ -412,8 +412,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         //cache class fields as local variables for speed in the iteration
         final int numLevels = DISTRIBUTOR.length;
         int li = levelIndex;
+        final short D[] = DISTRIBUTOR;
+        final boolean le[] = levelEmpty;
 
-        while (levelEmpty[ DISTRIBUTOR[li++ % numLevels]]);
+        while (le[ D[li++ % numLevels]]);
 
         currentLevel = DISTRIBUTOR[(li-1) % numLevels];
         levelIndex = li;
