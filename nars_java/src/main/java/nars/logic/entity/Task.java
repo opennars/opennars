@@ -60,9 +60,9 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
     
     /** causal factor; usually an instance of Operation */
     private WeakReference<Term> cause;
-    
-    
-    
+    private String reason = null;
+
+
     /**
      * Constructor for input task
      *
@@ -398,4 +398,12 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
     }
 
 
+    /** optional string explanation about the reason for this task, useful for debugging but can also be applied to meta-analysis */
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getReason() {
+        return reason;
+    }
 }

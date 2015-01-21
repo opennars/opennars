@@ -269,17 +269,16 @@ public class TemporalRules {
     static final Variable var1 = new Variable("$0");
     static final Variable var2 = var1;
 
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
-        
+    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal, Collection<Task> success) {
         
         if ((s1.truth==null) || (s2.truth==null))
-            return Collections.EMPTY_LIST;
+            return;
         
         Term t1 = s1.term;
         Term t2 = s2.term;
                 
         if (Statement.invalidStatement(t1, t2))
-            return Collections.EMPTY_LIST;
+            return;
         
         Term t11=null;
         Term t22=null;
@@ -398,7 +397,6 @@ public class TemporalRules {
 
         final int inductionLimit = nal.param.temporalRelationsMax.get();
 
-        List<Task> success=new ArrayList<Task>();
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
@@ -440,7 +438,7 @@ public class TemporalRules {
                     success.add(t);
                 }
         }
-        return success;
+
     }
     
     /**

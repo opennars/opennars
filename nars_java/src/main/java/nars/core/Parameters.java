@@ -22,11 +22,14 @@ package nars.core;
 
 
 import com.gs.collections.impl.list.mutable.FastList;
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import javolution.util.FastMap;
 import nars.util.bag.LevelBag;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * NAR operating parameters.
@@ -186,14 +189,16 @@ public class Parameters {
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
 
+    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.04f;
 
-    public static final LevelBag.NextNonEmptyLevelMode DEFAULT_LEVEL_BAG_MODE = LevelBag.NextNonEmptyLevelMode.Fast;;
+    public static final LevelBag.NextNonEmptyLevelMode DEFAULT_LEVEL_BAG_MODE = LevelBag.NextNonEmptyLevelMode.Default;;
     
     /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
     public static boolean TERM_ELEMENT_EQUIVALENCY = false;
     
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
+
     public static boolean IMMEDIATE_ETERNALIZATION=true;
 
 
@@ -211,14 +216,14 @@ public class Parameters {
     }
 
     public static <K, V> Map<K,V> newHashMap(int capacity) {
-        return new FastMap<>(); //javolution http://javolution.org/apidocs/javolution/util/FastMap.html
-        //return new UnifiedMap<K,V>(capacity);
+        //return new FastMap<>(); //javolution http://javolution.org/apidocs/javolution/util/FastMap.html
+        return new UnifiedMap<K,V>(capacity);
         //return new HashMap<>(capacity);
     }
 
     public static <X> List<X> newArrayList(int capacity) {
-        //return new FastList(capacity);
-        return new ArrayList(capacity);
+        return new FastList(capacity);
+        //return new ArrayList(capacity);
     }
 
     public static <X> Set<X> newHashSet(int capacity) {
@@ -237,6 +242,6 @@ public class Parameters {
         return newHashMap(0);
     }
 
-    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.04f;
+
 }
 

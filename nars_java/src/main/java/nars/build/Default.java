@@ -57,7 +57,7 @@ public class Default extends Build implements ConceptBuilder {
     
     int taskBufferLevels;
 
-    InternalExperience.InternalExperienceMode internalExperience = InternalExperience.InternalExperienceMode.Minimal;
+    InternalExperience.InternalExperienceMode internalExperience;
         
     
     transient TemporalParticlePlanner pluginPlanner = null;
@@ -68,30 +68,38 @@ public class Default extends Build implements ConceptBuilder {
         return this;
     }
 
+    /** Default DEFAULTS */
     public Default() {
         super();
 
+        //Build Parameters
         this.level = Parameters.DEFAULT_NAL;
-        
-        setConceptBagSize(1000);
-        setSubconceptBagSize(0);
-        setConceptBagLevels(100);
-        
-        setTaskLinkBagSize(20);
-        setTaskLinkBagLevels(100);
+        this.internalExperience = InternalExperience.InternalExperienceMode.Minimal;
 
-        setTermLinkBagSize(100);
-        setTermLinkBagLevels(100);
-        
-        setNovelTaskBagSize(10);
-        setNovelTaskBagLevels(100);
 
+        setConceptBagSize(1024);
+        setSubconceptBagSize(1024);
+        setConceptBagLevels(64);
         
+        setTaskLinkBagSize(32);
+        setTaskLinkBagLevels(16);
+
+        setTermLinkBagSize(96);
+        setTermLinkBagLevels(8); //was 100, but lower value performs much better with no apparent degradation of results
+        
+        setNovelTaskBagSize(64);
+        setNovelTaskBagLevels(32);
+
+
+
+
+        //Runtime Initial Values
+
         param.duration.set(5);
 
-        param.confidenceThreshold.set(0.01);
+        param.confidenceThreshold.set(0.0075);
 
-        param.shortTermMemoryHistory.set(1);
+        param.shortTermMemoryHistory.set(2);
         param.temporalRelationsMax.set(1);
 
         param.conceptForgetDurations.set(2.0);
@@ -107,7 +115,7 @@ public class Default extends Build implements ConceptBuilder {
         
         param.conceptsFiredPerCycle.set(1);
         
-        param.termLinkMaxReasoned.set(3);
+        param.termLinkMaxReasoned.set(5);
         param.termLinkMaxMatched.set(10);
         param.termLinkRecordLength.set(10);
         

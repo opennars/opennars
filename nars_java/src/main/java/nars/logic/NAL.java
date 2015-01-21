@@ -81,6 +81,27 @@ public abstract class NAL implements Runnable {
         newStampBuilder = null;
     }
 
+
+    @Override
+    public void run() {
+        onStart();
+        reason();
+        onFinished();
+    }
+
+    protected void onStart() {
+        /** implement if necessary in subclasses */
+    }
+    protected void onFinished() {
+        /** implement if necessary in subclasses */
+    }
+
+    protected abstract void reason();
+
+
+
+
+
     public NAL(Memory mem) {
         this(mem, -1);
     }
@@ -415,6 +436,7 @@ public abstract class NAL implements Runnable {
         this.currentTask = currentTask;
     }
 
+
     public void setCurrentConcept(Concept currentConcept) {
         this.currentConcept = currentConcept;
     }
@@ -522,15 +544,26 @@ public abstract class NAL implements Runnable {
     }
 
     /**
-     * tasks added with this method will be remembered by this NAL instance; useful for feedback
+     * tasks added with this method will be buffered by this NAL instance;
+     * at the end of the processing they can be reviewed and filtered
+     * then they need to be added to memory with inputTask(t)
      */
     public void addTask(Task t, String reason) {
-
-        memory.addNewTask(t, reason);
-
+        t.setReason(reason);
         tasksAdded.add(t);
-
     }
+
+    /** insert the task into memory */
+    public void inputTask(Task t) {
+        memory.addNewTask(t, t.getReason());
+    }
+
+    public void inputTasks() {
+        for (int i = 0; i < tasksAdded.size(); i++) {
+            inputTask(tasksAdded.get(i));
+        }
+    }
+
 
     /**
      * Activated task called in MatchingRules.trySolution and

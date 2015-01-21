@@ -29,6 +29,15 @@ public class Abbreviation extends AbstractPlugin {
     private Operator abbreviate = null;
     private Memory memory;
 
+    //these two are AND-coupled:
+    //when a concept is important and exceeds a syntactic complexity, let NARS name it:
+    public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
+    public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
+
+    //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
+    //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
+
+
 
     /**
     * Operator that give a CompoundTerm an atomic name
@@ -78,12 +87,7 @@ public class Abbreviation extends AbstractPlugin {
 
     }
     
-    public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
-    public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
 
-    //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
-    //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
-    
     public boolean canAbbreviate(Task task) {
         return !(task.sentence.term instanceof Operation) && 
                 (task.sentence.term.getComplexity() > abbreviationComplexityMin.get()) &&

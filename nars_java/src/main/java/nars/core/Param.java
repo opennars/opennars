@@ -41,7 +41,7 @@ public class Param implements Serializable {
     public final AtomicInteger shortTermMemoryHistory = new AtomicDuration();
 
     public AtomicInteger temporalRelationsMax = new AtomicInteger();
-    
+
     Timing timing;
     Forgetting forgetting;
     final List<DerivationFilter> defaultDerivationFilters = new ArrayList();
@@ -86,24 +86,13 @@ public class Param implements Serializable {
 
 
     /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
-    //TODO move this to a Build-specific parameter
-    @Deprecated public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
+    public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger(); //TODO Core implementations should obey this value
     
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
             
-    
-//    //let NARS use NARS+ ideas (counting etc.)
-//    public final AtomicBoolean experimentalNarsPlus = new AtomicBoolean();
-//
-//    //let NARS use NAL9 operators to perceive its own mental actions
-//    public final AtomicBoolean internalExperience = new AtomicBoolean();
-    
-    //these two are AND-coupled:
-    //when a concept is important and exceeds a syntactic complexity, let NARS name it: 
-    public final AtomicInteger abbreviationMinComplexity = new AtomicInteger();
-    public final AtomicDouble abbreviationMinQuality = new AtomicDouble();
-    
+
+
     /** Maximum TermLinks used in reasoning for each Task in Concept */
     public final AtomicInteger termLinkMaxReasoned = new AtomicInteger();
 

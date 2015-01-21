@@ -27,11 +27,11 @@ public class ImmediateProcess extends NAL {
     public String toString() {
         return "ImmediateProcess[" + task.toString() + "]";
     }
-    
-    
+
+
 
     @Override
-    public void run() {
+    public void reason() {
         setCurrentTask(task);
         setCurrentTerm(currentTask.getTerm());
         setCurrentConcept(memory.conceptualize(currentTask.budget, getCurrentTerm()));
@@ -45,5 +45,11 @@ public class ImmediateProcess extends NAL {
         memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         emit(Events.TaskImmediateProcessed.class, task, this);
     }
-    
+
+
+    @Override
+    protected void onFinished() {
+        inputTasks();
+    }
+
 }

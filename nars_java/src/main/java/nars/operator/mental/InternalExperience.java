@@ -149,7 +149,7 @@ public class InternalExperience extends AbstractPlugin {
             Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
             BudgetValue newbudget=new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                    Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
+                    Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
                     BudgetFunctions.truthToQuality(truth));
 
             Task newTask = new Task(j, newbudget, isFull() ? null : task);

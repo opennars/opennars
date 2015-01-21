@@ -26,6 +26,7 @@ package nars.operator.mental;
 import java.util.*;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import nars.core.Events;
 import nars.core.Events.CycleEnd;
@@ -66,7 +67,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
 
 
-    final Multimap<Term,TaskTime> anticipations = HashMultimap.create();
+    final Multimap<Term,TaskTime> anticipations = LinkedHashMultimap.create();
 
     /** buffers the terms of new incoming tasks */
     final Set<Term> newTaskTerms = Parameters.newHashSet(16);
@@ -111,7 +112,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
         if (debug)
             System.err.println("Anticipating " + term + " in " + (occurenceTime - now));
 
-        TaskTime tt = new TaskTime(memory.time(), occurenceTime, memory.param.duration);
+        TaskTime tt = new TaskTime(t, memory.param.duration);
         anticipations.put(term, tt);
         updateNextRequiredTime(tt, now);
 
@@ -139,7 +140,9 @@ public class Anticipate extends ReactiveOperator implements Mental {
         }
     }
 
-    protected void deriveDidntHappen(Term prediction, long expectedOccurenceTime) {
+    protected void deriveDidntHappen(Term prediction, TaskTime tt) {
+
+        long expectedOccurenceTime = tt.getOccurrenceTime();
 
         //it did not happen, so the time of when it did not
         //happen is exactly the time it was expected
@@ -153,7 +156,8 @@ public class Anticipate extends ReactiveOperator implements Mental {
                                 setOccurrenceTime(
                                         expectedOccurenceTime -
                                                 nal.memory.param.duration.get())),
-                expiredBudget
+                //expiredBudget
+                tt.getBudget().clone()
         );
 
         if (debug)
@@ -220,7 +224,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
             TaskTime tt = t.getValue();
 
             if (tt.didNotAlreadyOccurr(now)) {
-                deriveDidntHappen(term, tt.occurrTime);
+                deriveDidntHappen(term, tt);
 
                 it.remove();
 
@@ -238,8 +242,8 @@ public class Anticipate extends ReactiveOperator implements Mental {
 
     }
 
-    private void updateNextRequiredTime(TaskTime tt, long now) {
-        long nextRequiredUpdate = tt.expiredate;
+    private void updateNextRequiredTime(final TaskTime tt, final long now) {
+        final long nextRequiredUpdate = tt.expiredate;
         if ((nextUpdateTime == -1) || (nextUpdateTime > nextRequiredUpdate) && (nextRequiredUpdate > now)) {
             nextUpdateTime = nextRequiredUpdate;
         }
@@ -307,15 +311,24 @@ public class Anticipate extends ReactiveOperator implements Mental {
      *      time a prediction is made (creationTime), and
      *      tme it is expected (ocurrenceTime) */
     public static class TaskTime {
-        final public long expiredate;
-        final public long creationTime; //2014 and this is still the best way to define a data structure that simple?
+
+        /** all data is from task */
+        final public Task task;
+
+        /** cached locally, same value as in task */
+        final public long creationTime; //2014 and this is still the best way to define a data structure that simple
         final public long occurrTime;
 
-        public TaskTime(long creationTime, long occurrTime, Interval.AtomicDuration dura) {
-            super();
-            this.creationTime = creationTime; //when the prediction happened
-            this.occurrTime = occurrTime; //when the event is expected
+        /** cached locally, same value as in task */
+        final public long expiredate;
+        private final int hash;
 
+        public TaskTime(Task task, Interval.AtomicDuration dura) {
+            super();
+            this.task = task;
+            this.creationTime = task.getCreationTime();
+            this.occurrTime = task.getOcurrenceTime();
+            this.hash = (int)(31 * creationTime + occurrTime);
 
             //lets say a and <(&/,a,+4) =/> b> leaded to prediction of b with specific occurence time
             //this indicates that this interval can be reconstructed by looking by when the prediction
@@ -324,17 +337,25 @@ public class Anticipate extends ReactiveOperator implements Mental {
             //since there is no way anymore that the observation would support <(&/,a,+4) =/> b> at this time,
             //also this way it is not applied to early, it seems to be the perfect time to me,
             //making hopeExpirationWindow parameter entirely osbolete
-            int m = Interval.timeToMagnitude(occurrTime - creationTime, dura);
+            int m = Interval.timeToMagnitude(getOccurrenceTime() - getCreationTime(), dura);
 
             //ok we know the magnitude now, let's now construct a interval with magnitude one higher
             //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
             //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-            expiredate = creationTime + Interval.magnitudeToTime(m + 1, dura);
+            expiredate = getCreationTime() + Interval.magnitudeToTime(m + 1, dura);
         }
+
+        public float getPriority() { return task.budget.getPriority(); }
+
+        /** when the prediction happened */
+        public long getCreationTime() { return creationTime; }
+
+        /** when the event is expected */
+        public long getOccurrenceTime() { return occurrTime; }
 
         @Override
         public int hashCode() {
-            return (int)(31 * creationTime + occurrTime);
+            return hash;
         }
 
         @Override
@@ -350,6 +371,10 @@ public class Anticipate extends ReactiveOperator implements Mental {
 
         public boolean relevant(long now, int durationCycles) {
             return TemporalRules.concurrent(now, occurrTime, durationCycles);
+        }
+
+        public BudgetValue getBudget() {
+            return task.budget;
         }
     }
 }

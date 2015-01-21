@@ -253,7 +253,7 @@ public class AntCore extends ConceptWaveCore {
         
         void onConcept(Concept c, double progress, List<Runnable> queue) {
             queue.add(new FireConcept(memory, c, 1) {                    
-                @Override public void onFinished() {                }
+                @Override public void beforeFinish() {                }
             });
         }
         
@@ -281,7 +281,7 @@ public class AntCore extends ConceptWaveCore {
                 
                 if (t!=null) {                    
                     queue.add(new FireConcept(memory, t, 1) {                    
-                        @Override public void onFinished() {                }
+                        @Override public void beforeFinish() {                }
                     });        
                 }
 

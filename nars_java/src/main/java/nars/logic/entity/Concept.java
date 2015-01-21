@@ -848,7 +848,7 @@ public class Concept extends Item<Term> implements Termable {
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
         
-        synchronized (termLinks) {
+        //synchronized (termLinks) {
 
             int toMatch = memory.param.termLinkMaxMatched.get();
             for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
@@ -867,7 +867,8 @@ public class Concept extends Item<Term> implements Termable {
 
             }
             return null;
-        }
+
+        //}
 
     }
 

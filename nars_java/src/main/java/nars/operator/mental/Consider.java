@@ -56,7 +56,7 @@ public class Consider extends Operator implements Mental {
         
         new FireConcept(memory, concept, 1) {
 
-            @Override public void onFinished() {             }
+            @Override public void beforeFinish() {             }
 
         }.run();
         

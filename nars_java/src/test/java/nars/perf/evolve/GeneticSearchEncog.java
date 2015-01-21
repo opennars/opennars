@@ -40,7 +40,7 @@ public class GeneticSearchEncog {
     //0: Default Score: 2023.0
     //1473.0 [0.0, 650.0, 415.0, 5.0, 57.0, 4.806817046483262, 15.098489110914961, 9.683106815451737, 1.0, 6.0]    
     //1367.0 [0.0, 760.0, 16.0, 77.0, 126.0, 1.9526462004203577, 1.1296896689902738, 1.5503616143067935, 1.0, 16.0]
-    int maxCycles = 100;
+    int maxCycles = 1000;
     int populationSize = 8;
     int generationsPerPopulation = 16;
 
@@ -346,6 +346,8 @@ public class GeneticSearchEncog {
     private TrainEA genetic;
 
     public GeneticSearchEncog() throws Exception {
+
+        Parameters.DEBUG = false;
 
         File file = new File("/home/me/Downloads/default_nar_param_genetic." + new Date().toString() + ".txt");
 

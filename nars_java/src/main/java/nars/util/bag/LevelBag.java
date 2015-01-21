@@ -120,7 +120,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
                 new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);
-        nodePool = new DDNodePool(capacity/4);
+        nodePool = new DDNodePool(capacity/2);
 
         levelEmpty = new boolean[this.levels];
         Arrays.fill(levelEmpty, true);

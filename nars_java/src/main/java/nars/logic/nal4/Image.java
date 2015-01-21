@@ -33,7 +33,10 @@ abstract public class Image extends CompoundTerm {
     @Override
     protected void init(Term[] components) {
         super.init(components);
-        this.hash = Objects.hash(super.hashCode(), relationIndex); 
+
+        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
+            this.hash = Objects.hash(super.hashCode(), relationIndex);
+        }
     }
 
     
@@ -52,11 +55,7 @@ abstract public class Image extends CompoundTerm {
     
     @Override
     public int compareTo(final AbstractTerm that) {
-        if (that instanceof Image) {
-            int r = relationIndex - ((Image)that).relationIndex;
-            if (r!=0)
-                return r;            
-        }
+        //compares by name
         return super.compareTo(that);
     }
 

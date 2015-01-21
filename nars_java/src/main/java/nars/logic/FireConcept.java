@@ -44,16 +44,27 @@ abstract public class FireConcept extends NAL {
 
     transient private Set alreadyInducted;
 
-    abstract public void onFinished();
+
+    abstract protected void beforeFinish();
 
     @Override
-    public void run() {
-        fire();
-        onFinished();
+    protected void onFinished() {
+        beforeFinish();
+
+        /*
+        System.err.println(this);
+        for (Task t : tasksAdded) {
+            System.err.println("  " + t);
+        }
+        System.err.println();
+        */
+
+        inputTasks();
     }
 
 
-    protected void fire() {
+    @Override
+    protected void reason() {
 
         synchronized (getCurrentConcept()) {
             if (currentTaskLink != null) {

@@ -9,8 +9,7 @@ import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.nal7.TemporalRules;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
@@ -75,11 +74,29 @@ public class STMInduction extends AbstractPlugin {
         final long now = nal.memory.time();
 
 
-        for (Task stmLast : stm) {
+        Iterator<Task> ss = stm.iterator();
 
-            if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
+        int numToRemoveFromBeginning = stm.size() - stmSize;
+
+        while (ss.hasNext()) {
+
+            Task stmLast = ss.next();
+
+
+            if (!equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
                 continue;
             }
+
+
+            if (numToRemoveFromBeginning > 0) {
+                ss.remove();
+            }
+        }
+
+        Collection<Task> results = new ArrayList();
+
+        for (Task stmLast : stm) {
+
 
             nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, now);
             nal.setCurrentTask(newEvent);
@@ -90,7 +107,7 @@ public class STMInduction extends AbstractPlugin {
             Sentence currentBelief = newEvent.sentence;
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
+            TemporalRules.temporalInduction(currentBelief, previousBelief, nal, results);
         }
 
         ////for this heuristic, only use input events & task effects of operations
@@ -100,7 +117,7 @@ public class STMInduction extends AbstractPlugin {
         while (stm.size() > stmSize) {
             stm.removeFirst();
         }
-        stm.addLast(newEvent);
+        stm.add(newEvent);
 
         return true;
     }

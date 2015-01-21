@@ -68,7 +68,7 @@ public class DefaultCore implements Core {
             this.bag = bag;
         }
         @Override
-        public void onFinished() {
+        public void beforeFinish() {
             float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
 
             bag.putBack(currentConcept, forgetCycles, memory);

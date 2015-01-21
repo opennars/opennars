@@ -41,6 +41,7 @@ public class NALTestScore extends NALTest {
         showSuccess = false;
         saveSimilar = false;
         showReport = false;
+
         
         //NAR n = new NeuromorphicNARBuilder().setConceptBagSize(maxConcepts).build();
         //NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
