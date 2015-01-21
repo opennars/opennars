@@ -82,12 +82,12 @@ public abstract class SynchronousFunctionOperator extends Operator {
         //it if we don't want to use the "resultof"-relation.
 
         Term actual_part = Similarity.make(var, y);
-        operation=(Operation) operation.setComponent(0, 
+        Operation opart =(Operation) operation.setComponent(0,
                 ((CompoundTerm)operation.getSubject()).setComponent(
-                        numArgs-1, var, m), m); 
+                        numArgs-1, var));
         
         CompoundTerm actual =
-                Sentence.termOrNull(Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD));
+                Sentence.termOrNull(Implication.make(opart, actual_part, TemporalRules.ORDER_FORWARD));
         if (actual == null) return null;
 
         return Lists.newArrayList(

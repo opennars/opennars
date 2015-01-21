@@ -21,6 +21,7 @@ public class Param implements Serializable {
 
 
 
+
     public Param() {    }
 
     /** Silent threshold for task reporting, in [0, 100]. 
@@ -39,7 +40,8 @@ public class Param implements Serializable {
 
     public final AtomicInteger shortTermMemoryHistory = new AtomicDuration();
 
-
+    public AtomicInteger temporalRelationsMax = new AtomicInteger();
+    
     Timing timing;
     Forgetting forgetting;
     final List<DerivationFilter> defaultDerivationFilters = new ArrayList();

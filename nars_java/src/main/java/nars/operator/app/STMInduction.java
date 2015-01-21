@@ -97,7 +97,7 @@ public class STMInduction extends AbstractPlugin {
         ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
         //stmLast = newEvent;
         ////}
-        while (stm.size() + 1 > stmSize) {
+        while (stm.size() > stmSize) {
             stm.removeFirst();
         }
         stm.addLast(newEvent);

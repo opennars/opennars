@@ -44,6 +44,7 @@ public class Rover2 extends PhysicsModel {
     public RoverModel rover;
     final NAR nar;
     int mission = 0;
+    final int angleResolution = 18;
 
 
     public static void main(String[] args) {
@@ -55,18 +56,22 @@ public class Rover2 extends PhysicsModel {
         NAR nar;
         if (multithread) {
             Parameters.THREADS = 4;
-            nar = new NAR(new Neuromorphic(256).simulationTime()
+            nar = new NAR(new Neuromorphic(16).simulationTime()
                     .setConceptBagSize(1500).setSubconceptBagSize(4000)
                     .setNovelTaskBagSize(512)
                     .setTermLinkBagSize(150)
                     .setTaskLinkBagSize(60)
                     .setInternalExperience(null));
-            nar.setCyclesPerFrame(512);
+            nar.setCyclesPerFrame(128);
         }
         else {
             Parameters.THREADS = 1;
-            nar = new NAR(new Default().simulationTime().setConceptBagSize(1024).setSubconceptBagSize(4000));
-            nar.setCyclesPerFrame(100);
+            nar = new NAR(new Default().simulationTime().
+                    setConceptBagSize(3000).
+                    setSubconceptBagSize(12000).
+                    setNovelTaskBagSize(512));
+            nar.param.inputsMaxPerCycle.set(1000);
+            nar.setCyclesPerFrame(512);
         }
 
         //NAR nar = new CurveBagNARBuilder().
@@ -74,22 +79,26 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
 
 
-        new NARPrologMirror(nar, 0.85f, true, true, false);
+        new NARPrologMirror(nar, 0.92f, true, true, false);
 
 
 
         float framesPerSecond = 30f;
 
+        nar.param.shortTermMemoryHistory.set(8);
+        nar.param.temporalRelationsMax.set(3);
+
         (nar.param).noiseLevel.set(3);
         (nar.param).duration.set(5);
-        //nar.param.budgetThreshold.set(0.05);
+        //nar.param.budgetThreshold.set(0.02);
+        nar.param.confidenceThreshold.set(0.02);
         (nar.param).conceptForgetDurations.set(25f);
         (nar.param).taskLinkForgetDurations.set(25f);
         (nar.param).termLinkForgetDurations.set(25f);
         (nar.param).novelTaskForgetDurations.set(20f);
-        nar.param.shortTermMemoryHistory.set(4);
 
         final Rover2 theRover = new Rover2(nar);
+
 
         //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
         //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
@@ -165,7 +174,6 @@ public class Rover2 extends PhysicsModel {
         return normalized;
     }
 
-    final int angleResolution = 8;
     int cnt = 0;
 
     public String angleTerm(final float a) {
@@ -190,7 +198,7 @@ public class Rover2 extends PhysicsModel {
     /**
      * maps a value (which must be in range 0..1.0) to a term name
      */
-    public static String f(double p) {
+    public static String f4(double p) {
         if (p < 0) {
             throw new RuntimeException("Invalid value for: " + p);
             //p = 0;
@@ -211,6 +219,39 @@ public class Rover2 extends PhysicsModel {
             case 3:
                 return "xx";
             case 2:
+            case 1:
+                return "x";
+            default:
+                return "0";
+        }
+    }
+
+    public static String f(double p) {
+        if (p < 0) {
+            throw new RuntimeException("Invalid value for: " + p);
+            //p = 0;
+        }
+        if (p > 0.99f) {
+            p = 0.99f;
+        }
+        int i = (int) (p * 10f);
+        switch (i) {
+            case 9:
+                return "xxxxxxxxx";
+            case 8:
+                return "xxxxxxxx";
+            case 7:
+                return "xxxxxxx";
+            case 6:
+                return "xxxxxx";
+            case 5:
+                return "xxxxx";
+            case 4:
+                return "xxxx";
+            case 3:
+                return "xxx";
+            case 2:
+                return "xx";
             case 1:
                 return "x";
             default:
@@ -264,13 +305,18 @@ public class Rover2 extends PhysicsModel {
 
         nar.addInput("<{left,right,forward,reverse} --> direction>.");
         nar.addInput("<{Wall,Empty,Food} --> material>.");
-        nar.addInput("<{0,x,xx,xxx,xxxx} --> magnitude>.");
+        nar.addInput("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
 
         nar.addInput("<0 <-> x>. %0.60;0.60%");
         nar.addInput("<x <-> xx>. %0.60;0.60%");
         nar.addInput("<xx <-> xxx>. %0.60;0.60%");
         nar.addInput("<xxx <-> xxxx>. %0.60;0.60%");
-        nar.addInput("<0 <-> xxxx>. %0.00;0.95%");
+        nar.addInput("<xxxx <-> xxxxx>. %0.60;0.60%");
+        nar.addInput("<xxxxx <-> xxxxxx>. %0.60;0.60%");
+        nar.addInput("<xxxxxx <-> xxxxxxx>. %0.60;0.60%");
+        nar.addInput("<xxxxxxx <-> xxxxxxxxx>. %0.60;0.60%");
+        nar.addInput("<xxxxxxxx <-> xxxxxxxxxx>. %0.60;0.60%");
+        nar.addInput("<0 <-> xxxxxxxxx>. %0.00;0.90%");
 
     }
 
@@ -278,18 +324,26 @@ public class Rover2 extends PhysicsModel {
 
         addAxioms();
 
-        if (mission == 0) {
-            //seek food  
-            curiosity = 0.05f;
-            nar.addInput("<goal --> Food>! %1.00;0.99%");
-            nar.addInput("<goal --> stop>! %0.00;0.99%");
-            //nar.addInput("Wall! %0.00;0.50%");            
-            nar.addInput("<goal --> feel>! %1.00;0.70%");
-        } else if (mission == 1) {
-            //rest
-            curiosity = 0;
-            nar.addInput("<goal --> stop>! %1.00;0.99%");
-            nar.addInput("<goal --> Food>! %0.00;0.99%");
+        try {
+            if (mission == 0) {
+                //seek food
+                curiosity = 0.05f;
+
+                nar.goal(0.95f, 0.9f, "<goal --> Food>", 1.00f, 0.99f);
+
+                nar.addInput("<goal --> Food>! %1.00;0.99%");
+                nar.addInput("<goal --> stop>! %0.00;0.99%");
+                //nar.addInput("Wall! %0.00;0.50%");
+                nar.addInput("<goal --> feel>! %1.00;0.70%");
+            } else if (mission == 1) {
+                //rest
+                curiosity = 0;
+                nar.addInput("<goal --> stop>! %1.00;0.99%");
+                nar.addInput("<goal --> Food>! %0.00;0.99%");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
         //..
     }

@@ -440,7 +440,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    public synchronized void linkToTask(final Task task) {
+    public void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.budget;
 
         taskLinkBuilder.setBudget(taskBudget);
@@ -461,7 +461,7 @@ public class Concept extends Item<Term> implements Termable {
 
         //TODO parameter to use linear division, conserving total budget
         //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
-        int numTemplates = templates.size();
+        final int numTemplates = templates.size();
         float linkSubBudgetDivisor = (float)numTemplates;
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
@@ -809,7 +809,9 @@ public class Concept extends Item<Term> implements Termable {
         termLinks.clear();
         taskLinks.clear();        
         beliefs.clear();
-        termLinkBuilder.clear();
+
+        if (termLinkBuilder != null)
+            termLinkBuilder.clear();
     }
     
 

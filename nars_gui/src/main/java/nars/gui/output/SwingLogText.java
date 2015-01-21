@@ -2,6 +2,7 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import nars.core.NAR;
+import nars.io.Output;
 import nars.io.Output.OUT;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
@@ -11,6 +12,7 @@ import nars.logic.entity.TruthValue;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -18,7 +20,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class SwingLogText extends SwingText  {
     private final NAR nar;
     public boolean showStamp = false;
-    final Deque<LogLine> pendingDisplay = new ConcurrentLinkedDeque<>();
+    final Deque<LogLine> pendingDisplay = new ArrayDeque(); //new ConcurrentLinkedDeque<>();
     private JScrollPane scroller;
 
 
@@ -209,7 +211,7 @@ public class SwingLogText extends SwingText  {
         CharSequence text = LogPanel.getText(c, o, showStamp, nar);
         StringBuilder sb = new StringBuilder(text.length()+2);
         sb.append(' ');
-        if (text.length() > maxLineWidth)
+        if ((text.length() > maxLineWidth) && (c!=Output.ERR.class))
             sb.append(text.subSequence(0,maxLineWidth));
         else
             sb.append(text);

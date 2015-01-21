@@ -28,6 +28,8 @@ import java.util.List;
 public abstract class NAL implements Runnable {
 
 
+
+
     public interface DerivationFilter extends Plugin {
         /**
          * returns null if allowed to derive, or a String containing a short rejection reason for logging
@@ -51,6 +53,7 @@ public abstract class NAL implements Runnable {
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
 
+    public final Param param;
 
     /**
      * stores the tasks that this process generates, and adds to memory
@@ -59,9 +62,15 @@ public abstract class NAL implements Runnable {
 
     //TODO tasksDicarded
 
+    /** @param nalLevel the NAL level to limit processing of this reasoning context. set to -1 to use Memory's default value */
     public NAL(Memory mem, int nalLevel) {
         super();
         memory = mem;
+        param = memory.param;
+
+        if ((nalLevel!=-1) && (nalLevel!=mem.nal()))
+            throw new RuntimeException("Different NAL level than Memory not supported yet");
+
         currentTerm = null;
         currentConcept = null;
         currentTask = null;
@@ -73,7 +82,7 @@ public abstract class NAL implements Runnable {
     }
 
     public NAL(Memory mem) {
-        this(mem, Parameters.DEFAULT_NAL);
+        this(mem, -1);
     }
 
     public void emit(final Class c, final Object... o) {
@@ -98,6 +107,7 @@ public abstract class NAL implements Runnable {
      * @param task the derived task
      */
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
+
         List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
 
         if (derivationFilters != null) {
@@ -234,9 +244,9 @@ public abstract class NAL implements Runnable {
      * Shared final operations by all double-premise rules, called from the
      * rules except StructuralRules
      *
-     * @param newContent The content of the sentence in task
-     * @param newTruth   The truth value of the sentence in task
-     * @param newBudget  The budget value in task
+     * @param newTaskContent The content of the sentence in task
+     * @param newTruth       The truth value of the sentence in task
+     * @param newBudget      The budget value in task
      */
     @Deprecated
     public Task doublePremiseTask(final Term newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {

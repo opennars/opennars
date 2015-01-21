@@ -1063,28 +1063,28 @@ public static final Variable depIndVar2 = new Variable("#depIndVar2");
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
 
-                zw = (CompoundTerm) zw.setComponent(1, depIndVar1, nal.mem());
+                zw = (CompoundTerm) zw.setComponent(1, depIndVar1);
                 if (zw == null) return false;
 
-                T2 = (CompoundTerm) T2.setComponent(1, depIndVar1, nal.mem());
+                T2 = (CompoundTerm) T2.setComponent(1, depIndVar1);
                 if (T2 == null) return false;
 
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2);
 
-                T = (CompoundTerm) T.setComponent(index, res, nal.mem());
+                T = (CompoundTerm) T.setComponent(index, res);
 
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
 
-                zw = (CompoundTerm) zw.setComponent(0, depIndVar2, nal.mem());
+                zw = (CompoundTerm) zw.setComponent(0, depIndVar2);
                 if (zw == null) return false;
 
-                T2 = (CompoundTerm) T2.setComponent(0, depIndVar2, nal.mem());
+                T2 = (CompoundTerm) T2.setComponent(0, depIndVar2);
                 if (T2 == null) return false;
 
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2);
-                T = (CompoundTerm) T.setComponent(index, res, nal.mem());
+                T = (CompoundTerm) T.setComponent(index, res);
             }
             TruthValue truth = induction(originalMainSentence.truth, subSentence.truth);
             BudgetValue budget = BudgetFunctions.compoundForward(truth, T, nal);

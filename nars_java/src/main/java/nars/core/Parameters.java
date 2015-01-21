@@ -22,15 +22,11 @@ package nars.core;
 
 
 import com.gs.collections.impl.list.mutable.FastList;
-import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import javolution.util.FastMap;
 import nars.util.bag.LevelBag;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * NAR operating parameters.
@@ -221,8 +217,8 @@ public class Parameters {
     }
 
     public static <X> List<X> newArrayList(int capacity) {
-        return new FastList(capacity);
-        //return new ArrayList(capacity);
+        //return new FastList(capacity);
+        return new ArrayList(capacity);
     }
 
     public static <X> Set<X> newHashSet(int capacity) {

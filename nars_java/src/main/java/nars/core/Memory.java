@@ -124,7 +124,7 @@ public class Memory implements Serializable {
 
     public static interface TaskSource {
 
-        public AbstractTask nextTask();
+        public AbstractTask nextInputTask();
 
         public int numBuffered();
     }
@@ -359,7 +359,7 @@ public class Memory implements Serializable {
      * @param memory Reference to the memory
      * @return A compound term or null
      */
-    public Term term(final CompoundTerm compound, final Term[] components) {
+    public static Term term(final CompoundTerm compound, final Term[] components) {
         if (compound instanceof ImageExt) {
             return new ImageExt(components, ((Image) compound).relationIndex);
         } else if (compound instanceof ImageInt) {
@@ -369,13 +369,13 @@ public class Memory implements Serializable {
         }
     }
 
-    public Term term(final CompoundTerm compound, Collection<Term> components) {
+    public static Term term(final CompoundTerm compound, Collection<Term> components) {
         Term[] c = components.toArray(new Term[components.size()]);
         return term(compound, c);
     }
 
-    private boolean ensureTermLength(int num, Term[] a) {
-        return (a.length!=num);
+    private static boolean ensureTermLength(int num, Term[] a) {
+        return (a.length==num);
         /*if (a.length!=num)
             throw new CompoundTerm.InvalidTermConstruction("Expected " + num + " args to create Term from " + Arrays.toString(a));*/
     }
@@ -389,7 +389,7 @@ public class Memory implements Serializable {
      * @param arg Component list
      * @return A term or null
      */
-    public Term term(final NativeOperator op, final Term[] a) {
+    public static Term term(final NativeOperator op, final Term[] a) {
 
 
         switch (op) {
@@ -610,7 +610,7 @@ public class Memory implements Serializable {
     public int nextPercept() {
         if (!isProcessingInput()) return -1;
 
-        AbstractTask t = inputs.nextTask();
+        AbstractTask t = inputs.nextInputTask();
         if (t != null) {
             return inputTask(t);
         }

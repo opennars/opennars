@@ -442,7 +442,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
 
     /** creates a new ArrayList for terms */
-    public List<Term> asTermList() {        
+    public List<Term> asTermList() {
         ArrayList l = new ArrayList(term.length);
         addTermsTo(l);
         return l;
@@ -610,12 +610,12 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     /**
      * Try to replace a component in a compound at a given index by another one
      *
+     * @param memory Reference to the memory
      * @param index The location of replacement
      * @param t The new component
-     * @param memory Reference to the memory
      * @return The new compound
      */
-    public Term setComponent(final int index, final Term t, final Memory memory) {
+    public Term setComponent(final int index, final Term t) {
         List<Term> list = asTermList();//Deep();
         list.remove(index);
         if (t != null) {
@@ -631,7 +631,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
 
         try {
-            return memory.term(this, list);
+            return Memory.term(this, list);
         }
         catch (InvalidTermConstruction i) {
             return null;

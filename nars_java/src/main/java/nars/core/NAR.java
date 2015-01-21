@@ -88,6 +88,7 @@ public class NAR implements Runnable, TaskSource {
 
 
 
+
     public class PluginState implements Serializable {
         final public Plugin plugin;
         boolean enabled = false;
@@ -192,6 +193,14 @@ public class NAR implements Runnable, TaskSource {
 
     public Term term(String t) throws InvalidInputException {
         return narsese.parseTerm(t);
+    }
+
+
+    public Task goal(float pri, float dur, String termString, float freq, float conf) throws InvalidInputException {
+        Task t = memory.newTask(narsese.parseCompoundTerm(termString),
+                Symbols.GOAL_MARK, freq, conf, pri, dur, Tense.Eternal);
+        addInput(t);
+        return t;
     }
 
     public Task believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
@@ -423,7 +432,7 @@ public class NAR implements Runnable, TaskSource {
         this.minFramePeriodMS = minCyclePeriodMS;
         this.cyclesPerFrame = cyclesPerFrame;
         if (thread == null) {
-            thread = new Thread(this, "Inference");
+            thread = new Thread(this, this.toString() + "_reasoner");
             thread.start();
         }
         running = true;        
@@ -435,7 +444,7 @@ public class NAR implements Runnable, TaskSource {
      * @param minCyclePeriodMS minimum cycle period (milliseconds).
      */    
     public void start(final long minCyclePeriodMS) {
-        start(minCyclePeriodMS, 1);
+        start(minCyclePeriodMS, getCyclesPerFrame());
     }
 
 
@@ -618,7 +627,7 @@ public class NAR implements Runnable, TaskSource {
      * @return whether to finish the reasoner afterward, which is true if any input exists.
      */
     @Override
-    public AbstractTask nextTask() {                
+    public AbstractTask nextInputTask() {
         if ((!inputting) || (inputChannels.isEmpty()))
            return null;        
         

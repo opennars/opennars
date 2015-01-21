@@ -139,8 +139,8 @@ public class TemporalRules {
     }
     
     /** whether temporal induction can generate a task by avoiding producing wrong terms; only one temporal operator is allowed */
-    public final static boolean tooMuchTemporalStatements(final Term t) {
-        return (t == null) || (t.containedTemporalRelations() > 1);
+    public final static boolean tooMuchTemporalStatements(final Term t, int maxTemporalRelations) {
+        return (t == null) || (t.containedTemporalRelations() > maxTemporalRelations);
     }
       
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
@@ -265,7 +265,10 @@ public class TemporalRules {
             }
         }
     }
-    
+
+    static final Variable var1 = new Variable("$0");
+    static final Variable var2 = var1;
+
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
         
         
@@ -290,8 +293,7 @@ public class TemporalRules {
             Statement ss1 = (Statement) t1;
             Statement ss2 = (Statement) t2;
 
-            Variable var1 = new Variable("$0");
-            Variable var2 = var1;
+
 
             if (ss1.getSubject().equals(ss2.getSubject())) {
                 t11 = Statement.make(ss1, var1, ss1.getPredicate());
@@ -392,44 +394,47 @@ public class TemporalRules {
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
-        
+
+
+        final int inductionLimit = nal.param.temporalRelationsMax.get();
+
         List<Task> success=new ArrayList<Task>();
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
-            if(!tooMuchTemporalStatements(statement11)) {
+            if(!tooMuchTemporalStatements(statement11,inductionLimit)) {
                 Task t=nal.doublePremiseTask(statement11, truth1, budget1,true);
                 if(t!=null) {
                     success.add(t);
                 }
             }
-            if(!tooMuchTemporalStatements(statement22)) {
+            if(!tooMuchTemporalStatements(statement22,inductionLimit)) {
                Task t=nal.doublePremiseTask(statement22, truth2, budget2,true);
                 if(t!=null) {
                     success.add(t);
                 }
             }
-            if(!tooMuchTemporalStatements(statement33)) {
+            if(!tooMuchTemporalStatements(statement33,inductionLimit)) {
                 Task t=nal.doublePremiseTask(statement33, truth3, budget3,true);
                 if(t!=null) {
                     success.add(t);
                 }
             }
         }
-        if(!tooMuchTemporalStatements(statement1)) {
+        if(!tooMuchTemporalStatements(statement1,inductionLimit)) {
             Task t=nal.doublePremiseTask(statement1, truth1, budget1,true);
             if(t!=null) {
                     success.add(t);
                 }
         }
-        if(!tooMuchTemporalStatements(statement2)) {
+        if(!tooMuchTemporalStatements(statement2,inductionLimit)) {
             Task t=nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
                  if(t!=null) {
                     success.add(t);
                 }
             }
-        if(!tooMuchTemporalStatements(statement3)) {
+        if(!tooMuchTemporalStatements(statement3,inductionLimit)) {
             Task t=nal.doublePremiseTask(statement3, truth3, budget3,true);
             if(t!=null) {
                     success.add(t);

@@ -10,6 +10,7 @@ import nars.logic.entity.Item;
  http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/cache/package-summary.html* 
  */
 public class CacheBag<K, I extends Item<K>> implements RemovalListener<K,I> {
+
     public final Cache<K, I> data;
 
     public CacheBag(int capacity) {

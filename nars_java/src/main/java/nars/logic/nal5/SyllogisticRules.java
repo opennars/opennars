@@ -426,7 +426,7 @@ public final class SyllogisticRules {
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
         } else {
-            newCondition = oldCondition.setComponent(index, newComponent, nal.mem());
+            newCondition = oldCondition.setComponent(index, newComponent);
         }
         Term content;
         
@@ -440,7 +440,7 @@ public final class SyllogisticRules {
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
                  Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
                  delta = interval.getTime(duration);
-                 newCondition = ((CompoundTerm)newCondition).setComponent(0, null, nal.mem());
+                 newCondition = ((CompoundTerm)newCondition).setComponent(0, null);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
              } else {
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
@@ -558,7 +558,7 @@ public final class SyllogisticRules {
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
         } else {
-            newCondition = oldCondition.setComponent(index, newComponent, nal.mem());
+            newCondition = oldCondition.setComponent(index, newComponent);
         }
         Term content;
         if (newCondition != null) {
