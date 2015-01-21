@@ -24,7 +24,9 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
+import nars.logic.entity.Term;
 import nars.util.bag.LevelBag;
+import nars.util.data.CuckooMap;
 
 import java.util.Collection;
 import java.util.List;
@@ -243,5 +245,8 @@ public class Parameters {
     }
 
 
+    public static <K,V> Map<K, V> newCuckoHashMap(int capacity) {
+        return new CuckooMap<K,V>(capacity, 0.6f);
+    }
 }
 

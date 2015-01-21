@@ -116,7 +116,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
         index = Parameters.THREADS == 1 ?
-                new CuckooMap() :
+                new CuckooMap(capacity * 2) :
                 new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);

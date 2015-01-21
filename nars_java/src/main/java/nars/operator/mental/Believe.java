@@ -60,4 +60,9 @@ public class Believe extends Operator implements Mental {
         return Lists.newArrayList( new Task(sentence, budget) );        
 
     }
+
+    @Override
+    public boolean isExecutable(Memory mem) {
+        return false;
+    }
 }
