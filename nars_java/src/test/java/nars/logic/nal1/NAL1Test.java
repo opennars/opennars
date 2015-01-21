@@ -4,6 +4,7 @@ import nars.build.Default;
 import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.core.Parameters;
+import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.AbstractNALTest;
 import org.junit.Test;
@@ -21,6 +22,7 @@ public class NAL1Test extends AbstractNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
+                {new Default().setInternalExperience(null)},
                 {new Default().level(1)}
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });
@@ -118,6 +120,7 @@ public class NAL1Test extends AbstractNALTest {
     public void backwardInference() throws InvalidInputException {
         long time = 246;
 
+        TextOutput.out(n);
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
         n.ask("<?1 --> swimmer>");
         n.mustOutput(time, "<?1 --> bird>?").en("What is a type of bird?");

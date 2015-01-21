@@ -6,6 +6,8 @@ package nars.io.condition;
 
 import nars.core.NAR;
 import nars.io.Output;
+import nars.io.narsese.InvalidInputException;
+import nars.logic.entity.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,16 +82,30 @@ public abstract class OutputCondition<O> extends Output {
             if (s.indexOf(expectOutContains2)==0) {
 
                 //remove ') suffix:
-                String e = s.substring(expectOutContains2.length(), s.length()-2); 
+                String match = s.substring(expectOutContains2.length(), s.length()-2);
                 
-                /*try {                    
-                    Task t = narsese.parseTask(e);                    
-                    expects.add(new ExpectContainsSentence(n, t.sentence));
-                } catch (Narsese.InvalidInputException ex) {
-                    expects.add(new ExpectContains(n, e, saveSimilar));
-                } */
-                
-                conditions.add(new OutputContainsCondition(n, e, similarResultsToSave));
+
+                //TEMPORARY: try to create TaskCondition which evaluate much faster than the string processing of OutputContainsCondition
+                boolean added = false;
+                try {
+                    Task t = n.narsese.parseTask(match);
+                    if (t!=null) {
+                        if (t.sentence.isEternal()) {
+
+                            conditions.add(new TaskCondition(n, OUT.class, t));
+                            added = true;
+                        }
+                    }
+
+                } catch (InvalidInputException e1) {
+                    //System.err.println("NOT A TASK: " + match);
+                    //...
+                }
+
+
+                if (!added)
+                    conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
+
 
             }     
             

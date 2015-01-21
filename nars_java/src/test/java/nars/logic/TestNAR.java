@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class TestNAR extends NAR {
 
     boolean showFail = true;
-    boolean showSuccess = true;
+    boolean showSuccess = false;
     boolean showExplanations = false;
     boolean showOutput = false;
 
@@ -47,7 +47,9 @@ public class TestNAR extends NAR {
 
 
         ExplainableTask et = new ExplainableTask(tc);
-        explanations.add(et);
+        if (showExplanations) {
+            explanations.add(et);
+        }
         return et;
     }
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
@@ -57,7 +59,9 @@ public class TestNAR extends NAR {
         musts.add(tc);
 
         ExplainableTask et = new ExplainableTask(tc);
-        explanations.add(et);
+        if (showExplanations) {
+            explanations.add(et);
+        }
         return et;
     }
 

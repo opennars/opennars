@@ -80,7 +80,7 @@ public class NAR implements Runnable, TaskSource {
     
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
-    protected Narsese narsese;
+    public final Narsese narsese;
 
     public int nal() {
         return memory.nal();

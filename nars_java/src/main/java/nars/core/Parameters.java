@@ -237,5 +237,6 @@ public class Parameters {
         return newHashMap(0);
     }
 
+    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.04f;
 }
 

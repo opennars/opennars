@@ -488,7 +488,7 @@ public class Narsese {
         Term t;
         
         if (oNative!=null) {
-            t = memory.term(oNative, argA);
+            t = Memory.term(oNative, argA);
         }
         else if (oRegistered!=null) {
             t = make(oRegistered, argA, true);

@@ -40,7 +40,7 @@ public class GeneticSearchEncog {
     //0: Default Score: 2023.0
     //1473.0 [0.0, 650.0, 415.0, 5.0, 57.0, 4.806817046483262, 15.098489110914961, 9.683106815451737, 1.0, 6.0]    
     //1367.0 [0.0, 760.0, 16.0, 77.0, 126.0, 1.9526462004203577, 1.1296896689902738, 1.5503616143067935, 1.0, 16.0]
-    int maxCycles = 180;
+    int maxCycles = 100;
     int populationSize = 8;
     int generationsPerPopulation = 16;
 
@@ -114,8 +114,8 @@ public class GeneticSearchEncog {
         param.add(new IntegerParameter("termLinkForgetDurations", 2, 8, false));
         param.add(new IntegerParameter("taskLinkForgetDurations", 5, 15, false));
 
-        param.add(new IntegerParameter("conceptsFiredPerCycle", 2, 8));
-        param.add(new IntegerParameter("cyclesPerDuration", 2, 7));
+        param.add(new IntegerParameter("conceptsFiredPerCycle", 1, 1));
+        param.add(new IntegerParameter("cyclesPerDuration", 5, 5));
 
         param.add(new IntegerParameter("conceptBeliefs", 3, 20));
         param.add(new IntegerParameter("conceptGoals", 3, 14));

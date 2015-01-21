@@ -41,9 +41,9 @@ public class NALTest extends TestCase {
 
     private final Build build;
 
-    int minCycles = 1750; //TODO reduce this to one or zero to avoid wasting any extra time during tests
+    int minCycles = 1250; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public long randomSeed = 1;
-    static public boolean showInput = true;
+    static public boolean showInput = false;
     static public boolean showOutput = false;
     static public boolean saveSimilar = true;
     static public boolean showSuccess = false;

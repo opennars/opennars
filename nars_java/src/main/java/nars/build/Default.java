@@ -125,7 +125,9 @@ public class Default extends Build implements ConceptBuilder {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"[" + level + "]";
+        return getClass().getSimpleName()+"[" + level +
+                ((internalExperience==internalExperience.None) || (internalExperience==null) ? "" : "+")
+                + "]";
     }
 
 

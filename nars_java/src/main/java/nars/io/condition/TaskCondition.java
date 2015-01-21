@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
@@ -38,9 +39,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
     @Expose
     public final float confMax;
     @Expose
-    public final long cycleStart;
+    public final long cycleStart; //-1 for not compared
     @Expose
-    public final long cycleEnd;
+    public final long cycleEnd;  //-1 for not compared
 
     /** min and max occurrenceTime range (relative to current time which the task is output); not checked if tense==ETERNAL, checked otherwise */
     @Expose
@@ -50,6 +51,27 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     Task closest = null;
     double closestDistance = Double.POSITIVE_INFINITY;
+
+    public TaskCondition(NAR n, Class channel, Task t)  {
+        super(n);
+        this.channel = channel;
+        this.tense = Tense.Eternal;
+        this.cycleStart = this.cycleEnd = -1;
+        if (t.sentence.truth!=null) {
+            float f = t.sentence.truth.getFrequency();
+            float c = t.sentence.truth.getConfidence();
+            float e = Parameters.TESTS_TRUTH_ERROR_TOLERANCE/2f; //error tolerance epsilon
+            this.freqMin = f - e;
+            this.freqMax = f + e;
+            this.confMin = c - e;
+            this.confMax = c + e;
+        }
+        else {
+            this.freqMin = this.freqMax =this.confMin = this.confMax = -1;
+        }
+        this.punc = t.sentence.punctuation;
+        this.term = t.getTerm();
+    }
 
     public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         super(n);
@@ -155,7 +177,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                 boolean match = false;
 
-                if ((now < cycleStart) || (now > cycleEnd)) {
+                if ( ((cycleStart!=-1) && (now < cycleStart)) ||
+                        ((cycleEnd!=-1) && (now > cycleEnd)))  {
                     distance += getTimeDistance(now);
                     match = false;
                 }

@@ -461,8 +461,8 @@ public class Concept extends Item<Term> implements Termable {
 
         //TODO parameter to use linear division, conserving total budget
         //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
-        //final int numTemplates = templates.size();
-        final int numTemplates = (int) Math.sqrt(templates.size());
+        final int numTemplates = templates.size();
+        //final int numTemplates = (int) Math.sqrt(templates.size());
         float linkSubBudgetDivisor = (float)numTemplates;
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
@@ -614,8 +614,8 @@ public class Concept extends Item<Term> implements Termable {
 
         //half of each subBudget is spent on this concept and the other concept's termlink
         float linkSubBudgetDivisor = (float) recipients;
-        //subBudget = taskBudget.getPriority() / (2 * linkSubBudgetDivisor);
-        subBudget = taskBudget.getPriority() / (int)(Math.sqrt(linkSubBudgetDivisor));
+        subBudget = taskBudget.getPriority() / (2 * linkSubBudgetDivisor);
+        //subBudget = taskBudget.getPriority() / (int)(Math.sqrt(linkSubBudgetDivisor));
 
         if (!termLinkBuilder.set(subBudget, taskBudget.getDurability(), taskBudget.getQuality()).aboveThreshold()) {
             //account for unused priority
