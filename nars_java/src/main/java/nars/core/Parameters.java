@@ -89,7 +89,7 @@ public class Parameters {
      *   budgets are propagated or otherwise measured, which can result
      *   in a performance gain.
      * */
-    public static final float BUDGET_THRESHOLD = (float) 0.01;
+    public static final float BUDGET_THRESHOLD = (float) 0.07;
 
     /* ---------- default input values ---------- */
     /** Default expectation for confirmation. */

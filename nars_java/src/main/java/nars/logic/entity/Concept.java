@@ -135,12 +135,32 @@ public class Concept extends Item<Term> implements Termable {
         if (termLinks instanceof MemoryAware)  ((MemoryAware)termLinks).setMemory(memory);
                 
         if (term instanceof CompoundTerm) {
-            this.termLinkBuilder = new TermLink.TermLinkBuilder(this);
+            this.termLinkBuilder = new TermLink.TermLinkBuilder(this) {
+
+                @Override
+                public void overflow(TermLink overflow) {
+                    if (overflow.name().equals(getKey())) {
+                        //the inserted item was returned, so absorb the refund
+                        termBudgetBalance += getBudget().getPriority();
+                    }
+                }
+            };
         } else {
             this.termLinkBuilder = null;
         }
 
-        this.taskLinkBuilder = new TaskLink.TaskLinkBuilder(memory);
+        this.taskLinkBuilder = new TaskLink.TaskLinkBuilder(memory) {
+            @Override
+            public void overflow(TaskLink overflow) {
+                if (overflow.name().equals(getKey())) {
+                    //the inserted item was returned, so absorb the refund
+                    termBudgetBalance += getBudget().getPriority();
+                }
+                else {
+                    //another item was displaced
+                }
+            }
+        };
 
     }
 
@@ -623,7 +643,6 @@ public class Concept extends Item<Term> implements Termable {
             return false;
         }
 
-
         boolean activity = false;
 
         for (int i = 0; i < recipients; i++) {
@@ -645,21 +664,9 @@ public class Concept extends Item<Term> implements Termable {
 
             // this concept termLink to that concept
             activateTermLink(termLinkBuilder.set(template, term, target));
-            /*
-            //TODO handle displaced budget in selector callback
-            if (displaced!=null && displaced.name().equals(termLinkBuilder.name())) {
-                termBudgetBalance += subBudget; //was not inserted; absorb budget
-            }
-            */
 
             // that concept termLink to this concept
             otherConcept.activateTermLink(termLinkBuilder.set(template, target, term));
-            /*
-            ////TODO handle displaced budget in selector callback
-            if (displaced!=null && displaced.name().equals(termLinkBuilder.name())) {
-                termBudgetBalance += subBudget; //was not inserted; absorb budget
-            }
-            */
 
             if (target instanceof CompoundTerm) {
                 otherConcept.buildTermLinks(termLinkBuilder.getBudget());
