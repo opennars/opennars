@@ -1,21 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>opennars</groupId>
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <artifactId>opennars-gui</artifactId>
     <packaging>jar</packaging>
+    <artifactId>opennars-gui</artifactId>
 
     <name>OpenNARS GUI (Swing)</name>
     <url>https://github.com/opennars/opennars</url>
 
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
 
     <repositories>
@@ -33,6 +31,12 @@
         </repository>
 
     </repositories>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
     <build>
         <plugins>
 
@@ -97,7 +101,7 @@
         <dependency>
             <groupId>org.abego.treelayout</groupId>
             <artifactId>org.abego.treelayout.core</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>
@@ -114,10 +118,11 @@
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx</artifactId>
-            <version>8.0.8</version>
+            <version>8.0.10</version>
         </dependency>
 
     </dependencies>
+
 
 
 

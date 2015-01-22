@@ -361,7 +361,7 @@ public class Texts {
     
     //final static Format oneDecimal = new DecimalFormat("0.0");
     /** 1 character representing a 1 decimal of a value between 0..1.0;
-     *  representation; 0..9, A=1.0 */
+     *  representation; 0..9 //, A=1.0 */
     public static final char n1(final float x) {
         int i = tens(x);
         if (i >= 10)

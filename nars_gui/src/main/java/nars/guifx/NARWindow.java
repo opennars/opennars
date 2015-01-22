@@ -152,7 +152,7 @@ public class NARWindow extends Stage {
             }
 
             if (memoryButtons) {
-                Button b0 = AwesomeDude.createIconButton(AwesomeIcon.FOLDER_OPEN);
+                Button b0 = AwesomeDude.createIconButton(AwesomeIcon.FOLDER);
                 b0.setTooltip(new Tooltip("Open"));
                 v.getChildren().add(b0);
 

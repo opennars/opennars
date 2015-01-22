@@ -34,6 +34,7 @@ public class FastBitSet {
      * Holds the bits (64 bits per long).
      */
     private long[] bits;
+
     /**
      * Holds the length in words (long) of this bit set.
      * Any word at or above the current length should be ignored (assumed

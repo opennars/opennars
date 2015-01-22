@@ -19,7 +19,7 @@ public class ChangedTextInput  {
     }
     
     public boolean set(String s, long time) {
-        if (allowRepeats() || (last == null) || (!last.equals(s))) {
+        if (allowRepeats() || (last == null) || (!last.equals(s)) && enable()) {
             nar.addInput(s, time);
             last = s;
             return true;
@@ -31,7 +31,10 @@ public class ChangedTextInput  {
     public boolean allowRepeats() {
         return allowRepeats;
     }
-    
+    public boolean enable() {
+        return true;
+    }
+
     public void setAllowRepeatInputs(boolean b) {
         this.allowRepeats = b;
     }
