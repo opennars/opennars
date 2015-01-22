@@ -13,14 +13,16 @@ import nars.util.data.XORShiftRandom;
  * a subsequent duplicate input. probability==0 yields same behavior as its superclass
  */
 public class SometimesChangedTextInput extends ChangedTextInput {
-    private final double prob;
+    private double prob;
 
     public SometimesChangedTextInput(NAR n, double probability) {
         super(n);
         this.prob = probability;
     }
-    
-    
+
+    public void setProbability(double prob) {
+        this.prob = prob;
+    }
 
     @Override
     public boolean allowRepeats() {

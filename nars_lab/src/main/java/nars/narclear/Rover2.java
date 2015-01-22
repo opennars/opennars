@@ -44,7 +44,7 @@ public class Rover2 extends PhysicsModel {
     public RoverModel rover;
     final NAR nar;
     int mission = 0;
-    final int angleResolution = 18;
+    final int angleResolution = 36;
 
 
     public static void main(String[] args) {
@@ -67,11 +67,11 @@ public class Rover2 extends PhysicsModel {
         else {
             Parameters.THREADS = 1;
             nar = new NAR(new Default().simulationTime().
-                    setConceptBagSize(3000).
+                    setConceptBagSize(2000).
                     setSubconceptBagSize(12000).
-                    setNovelTaskBagSize(512));
+                    setNovelTaskBagSize(256));
             nar.param.inputsMaxPerCycle.set(1000);
-            nar.setCyclesPerFrame(512);
+            nar.setCyclesPerFrame(256);
         }
 
         //NAR nar = new CurveBagNARBuilder().

@@ -559,20 +559,23 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
         inputText = new RSyntaxTextArea();
         inputText.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LISP);
-        /*((RSyntaxDocument)inputText.getDocument()).setSyntaxStyle(new TokenMaker() {
 
-        });*/
+        //http://fifesoft.com/rsyntaxtextarea/examples/example5.php
+        //http://fifesoft.com/rsyntaxtextarea/doc/CustomSyntaxHighlighting.html
+        /*((RSyntaxDocument)inputText.getDocument()).setSyntaxStyle(new TokenMaker() {        });*/
         try {
             Theme theme = Theme.load(getClass().getResourceAsStream("/text_input_theme_dark.xml"));
             theme.apply(inputText);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        inputText.setCodeFoldingEnabled(true);
+        inputText.setCodeFoldingEnabled(false);
         inputText.setAntiAliasingEnabled(true);
 
         RTextScrollPane sp = new RTextScrollPane(inputText);
-
+        sp.setLineNumbersEnabled(false);
+        sp.setFoldIndicatorEnabled(false);
+        mainSplit.add(new JScrollPane(sp), 0);
 
         this.inputText.setRows(3);
 
@@ -622,7 +625,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         });
         setConsoleFont(this.inputText, 20);
 
-        mainSplit.add(new JScrollPane(this.inputText), 0);
+
 
         infoPane.setVisible(false);
         mainSplit.add(infoPane, 1);

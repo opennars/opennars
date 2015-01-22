@@ -113,10 +113,13 @@ public class BudgetValue implements Cloneable {
      * @param v The new priority
      */
     public final void setPriority(float v) {
-        if(v>1.0f) {
+        if (Float.isNaN(v))
+            throw new RuntimeException("Priority is NaN");
+        if (v>1.0f)
             throw new RuntimeException("Priority > 1.0: " + v);
-            //v=1.0f;
-        }
+        if (v < 0f)
+            throw new RuntimeException("Priority < 1.0: " + v);
+
         priority = v;
     }
 

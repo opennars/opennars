@@ -8,6 +8,7 @@ import nars.core.NAR;
 import nars.io.ChangedTextInput;
 import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
+import nars.logic.entity.Concept;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.narclear.jbox2d.j2d.DrawPhy2D.LayerDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -42,7 +43,9 @@ public class RoverModel {
     private final ChangedTextInput feltSpeedAvg;
     private final World world;
     private final DrawPhy2D draw;
-    final double inputRepeatRate = 0.01;
+
+    final double minVisionInputProbability = 0.004;
+    final double maxVisionInputProbability = 0.07f;
 
     //public class DistanceInput extends ChangedTextInput
     public RoverModel(PhysicsModel p, final Rover2 sim) {
@@ -53,10 +56,10 @@ public class RoverModel {
         this.world = sim.getWorld();
         this.draw = (DrawPhy2D) sim.draw();
         
-        feltAngularVelocity = new SometimesChangedTextInput(sim.nar, inputRepeatRate);
-        feltOrientation = new SometimesChangedTextInput(sim.nar, inputRepeatRate);
-        feltSpeed = new SometimesChangedTextInput(sim.nar, inputRepeatRate);
-        feltSpeedAvg = new SometimesChangedTextInput(sim.nar, inputRepeatRate);
+        feltAngularVelocity = new SometimesChangedTextInput(sim.nar, minVisionInputProbability);
+        feltOrientation = new SometimesChangedTextInput(sim.nar, minVisionInputProbability);
+        feltSpeed = new SometimesChangedTextInput(sim.nar, minVisionInputProbability);
+        feltSpeedAvg = new SometimesChangedTextInput(sim.nar, minVisionInputProbability);
 
     
         float mass = 2.25f;
@@ -126,7 +129,7 @@ public class RoverModel {
         int distanceResolution = 9;
         for (int i = -1; i <= 1; i++) {
             final int ii = i;
-            vision.add(new VisionRay(torso, frontRetina, MathUtils.PI / 2f + aStep * i, retinaArc, retinaResolution, L, distanceResolution) {
+            VisionRay v = new VisionRay(torso, frontRetina, MathUtils.PI / 2f + aStep * i, retinaArc, retinaResolution, L, distanceResolution) {
                 float touchThresholdDistance = 0.1f;
 
                 @Override
@@ -140,7 +143,11 @@ public class RoverModel {
                         }
                     }
                 }
-            });
+            };
+            v.sparkColor = new Color3f(0.5f, 0.4f, 0.4f);
+            v.normalColor = new Color3f(0.4f, 0.4f, 0.4f);
+
+            vision.add(v);
         }
         pixels = 6;
         aStep = 1.2f / pixels;
@@ -153,7 +160,7 @@ public class RoverModel {
             Vec2 backRetina = new Vec2((float) Math.cos(angle) * d1, (float) Math.sin(angle) * d1);
             VisionRay v;
             vision.add(v = new VisionRay(torso, backRetina, angle, retinaArc, retinaResolution, L, distanceResolution));
-            v.sparkColor = new Color3f(0.4f, 0.4f, 0.9f);
+            v.sparkColor = new Color3f(0.4f, 0.4f, 0.5f);
             v.normalColor = new Color3f(0.4f, 0.4f, 0.4f);
         }
         //Vec2 backRetina = new Vec2(0, -0.5f);
@@ -178,7 +185,7 @@ public class RoverModel {
         //world.AddABlock(Phys, sz, sz);
         food.setTransform(new Vec2(x * 2.0f, y * 2.0f), food.getAngle());
         //Phys.getWorld().destroyBody(hit);
-        sim.nar.addInput("<goal --> Food>. :|:");
+        sim.nar.addInput("$0.95;0.50$ <goal --> Food>. :|: %0.95;0.95%");
     }
 
     public class VisionRay implements LayerDraw {
@@ -186,7 +193,7 @@ public class RoverModel {
         final Vec2 point; //where the retina receives vision at
         final float angle;
         private final float distance;
-        final ChangedTextInput sight = new SometimesChangedTextInput(sim.nar,inputRepeatRate);
+        final SometimesChangedTextInput sight = new SometimesChangedTextInput(sim.nar, minVisionInputProbability);
         RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
         private final Body body;
         private final int distanceSteps;
@@ -196,12 +203,15 @@ public class RoverModel {
         final Color3f laserHitColor = new Color3f(laserUnhitColor.x, laserUnhitColor.y, laserUnhitColor.z);
         Color3f sparkColor = new Color3f(0.4f, 0.9f, 0.4f);
         Color3f normalColor = new Color3f(0.9f, 0.9f, 0.4f);
+        final Color3f rayColor = new Color3f(); //current ray color
         private final String angleTerm;
         private float distMomentum = 0.75f;
         private float minDist;
         private Body hit;
         private float confMomentum = 0.75f;
         private float conf;
+        float senseActivity = 0.0f;
+        private Concept angleConcept;
 
         public VisionRay(Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
             this.body = body;
@@ -217,6 +227,15 @@ public class RoverModel {
         
 
         public synchronized void step(boolean feel, boolean drawing) {
+            float conceptActivity = 0.5f;
+            if (angleConcept!=null) {
+                conceptActivity = angleConcept.budget.getPriority();
+                sight.setProbability(Math.max(minVisionInputProbability, Math.min(1.0f, maxVisionInputProbability * conceptActivity)));
+            }
+
+            if (angleConcept == null) {
+                angleConcept = nar.memory.concept(angleTerm);
+            }
             point1 = body.getWorldPoint(point);
             Body hit = null;
             float minDist = distance * 1.1f; //far enough away
@@ -233,13 +252,15 @@ public class RoverModel {
                     world.raycast(ccallback, point1, point2);
                 }
                 catch (Exception e) { System.err.println("Phys2D raycast: " + e); }
-                
+
+                Vec2 endPoint = null;
                 if (ccallback.m_hit) {
                     float d = ccallback.m_point.sub(point1).length() / distance;
                     if (drawing) {
-                        laserHitColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
+                        rayColor.set(laserHitColor);
+                        rayColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
                         draw.drawPoint(ccallback.m_point, 5.0f, sparkColor);
-                        draw.drawSegment(point1, ccallback.m_point, laserHitColor, 0.25f);
+                        endPoint = ccallback.m_point;
                     }
                     
                     //pooledHead.set(ccallback.m_normal);
@@ -251,9 +272,22 @@ public class RoverModel {
                         minDist = d;
                     }
                 } else {
-                    if (drawing)
-                        draw.drawSegment(point1, point2, laserUnhitColor);
+                    rayColor.set(normalColor);
                     totalDist += 1;
+                    endPoint = point2;
+                }
+
+                if ((drawing) && (endPoint!=null)) {
+                    rayColor.x *= 0.15f + 0.85f * senseActivity;
+                    rayColor.y *= 0.15f + 0.85f * conceptActivity;
+                    rayColor.z *= 0.15f + 0.5f * (senseActivity + conceptActivity)/2f;
+                    rayColor.x = Math.min(rayColor.x, 1f);
+                    rayColor.y = Math.min(rayColor.y, 1f);
+                    rayColor.z = Math.min(rayColor.z, 1f);
+                    rayColor.x = Math.max(rayColor.x, 0f);
+                    rayColor.y = Math.max(rayColor.y, 0f);
+                    rayColor.z = Math.max(rayColor.z, 0f);
+                    draw.drawSegment(point1, endPoint, rayColor);
                 }
             }
             if (hit != null) {
@@ -284,10 +318,14 @@ public class RoverModel {
         
         protected void updatePerception() {
             onTouch(hit, minDist);
+
+            senseActivity *= 0.9f; //decay
             
             if (hit == null) {
                 if (minDist > 0.5f) {
-                    sight.set("<(*,empty," + angleTerm + ",unknownDistance) --> feel>. :|:");        
+                    if (sight.set("<(*,empty," + angleTerm + ",unknownDistance) --> feel>. :|:")) {
+                        senseActivity += minVisionInputProbability;
+                    }
                 }   
                 return;                                
             }
@@ -299,9 +337,11 @@ public class RoverModel {
             float freq = 1f;
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
             String ss = "<(*," + material + "," + angleTerm + "," + dist + ") --> " +  "feel>. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-            sight.set(ss);
+            if (sight.set(ss)) {
+                senseActivity += 10f * minVisionInputProbability;
+            }
             
-            
+            if (senseActivity > 1.0f) senseActivity = 1f;
         }
         
         public void onTouch(Body hit, float di) {

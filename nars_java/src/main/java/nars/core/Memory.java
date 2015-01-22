@@ -99,6 +99,10 @@ public class Memory implements Serializable {
         return level;
     }
 
+    public Concept concept(String t) {
+        return concept(Term.get(t));
+    }
+
 
     public static enum Forgetting {
         Iterative, Periodic
