@@ -115,10 +115,10 @@ public class NARControls extends JPanel implements ActionListener, Reaction {
      * @param title
      */
     public NARControls(final NAR nar) {
-        this(nar, null);
+        this(nar, null, true);
     }
     
-    public NARControls(final NAR nar, final NARMetrics metrics) {
+    public NARControls(final NAR nar, final NARMetrics metrics, boolean addCharts) {
         super(new BorderLayout());
         
         this.nar = nar;
@@ -450,7 +450,9 @@ public class NARControls extends JPanel implements ActionListener, Reaction {
 //        senses.update(memory);        
         
         add(top, NORTH);
-        add(new MeterVis(nar, this.metrics.getMetrics()).newPanel(), CENTER);
+
+        if (addCharts)
+            add(new MeterVis(nar, this.metrics.getMetrics()).newPanel(), CENTER);
         
         
         init();

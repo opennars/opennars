@@ -1,0 +1,71 @@
+/*
+ * Copyright 2013 John Smith
+ *
+ * This file is part of Willow.
+ *
+ * Willow is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Willow is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Willow. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact details: http://jewelsea.wordpress.com
+ */
+
+.root {
+    -fx-light-text-color: derive(#292929, 20%);
+}
+.current-menu {
+    -fx-font-weight: bold;
+}
+
+.location-field {
+    -fx-font-size: 14px;
+}
+
+.sidebar-background {
+    -fx-background-color: linear-gradient(to bottom, derive(white, -10%), derive(gray, 10%));
+}
+
+.status-background {
+    -fx-background-color: gray;
+    -fx-border-color: darkgray;
+}
+
+.icon-button {
+    -fx-font-size: 14px;
+}
+
+.sidebar-panel {
+    -fx-font-size: 16px;
+}
+
+.sidebar-scroll {
+    -fx-background-color: derive(gray, 10%);
+}
+
+.toolbar {
+    -fx-background-color: linear-gradient(to bottom, derive(gray, -5%), derive(gray, 5%));
+    -fx-padding: 2 5 2 2;
+}
+
+.alert-dialog {
+    -fx-background-color: linear-gradient(to bottom, derive(silver, 10%), derive(silver, -10%));
+    -fx-border-color: derive(silver, -30%);
+    -fx-border-width: 3;
+    -fx-border-radius: 5;
+    -fx-border-insets: -2;
+    -fx-font-size: 16px;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    /* TODO should not be using text-box-border I think? */
+    -fx-background-color: linear-gradient(to bottom, derive(gray, -4%), derive(gray, 5%));
+}

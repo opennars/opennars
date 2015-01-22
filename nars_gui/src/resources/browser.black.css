@@ -1,0 +1,134 @@
+/*
+ * Copyright 2013 John Smith
+ *
+ * This file is part of Willow.
+ *
+ * Willow is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Willow is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Willow. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact details: http://jewelsea.wordpress.com
+ */
+.root {
+-fx-base: rgb(50, 50, 50);
+-fx-background: rgb(50, 50, 50);
+-fx-control-inner-background:  rgb(50, 50, 50);
+
+-fx-border-color: rgb(90,90,90);
+-fx-border-style: solid;
+-fx-border-radius: 0;
+
+}
+ 
+.tab {
+-fx-background-color: linear-gradient(to top, -fx-base, derive(-fx-base,30%));
+}
+.tab:selected {
+-fx-background-color: linear-gradient(to top, -fx-base, derive(-fx-base,30%));
+-fx-border-color: rgb(160,160,160);
+-fx-background: rgb(80, 80, 80);
+}
+ 
+.menu-bar {
+-fx-background-color: linear-gradient(to bottom, -fx-base, derive(-fx-base,30%));
+}
+ 
+.tool-bar:horizontal {
+-fx-background-color:
+linear-gradient(to bottom, derive(-fx-base,+50%), derive(-fx-base,-40%), derive(-fx-base,-20%));
+}
+
+.textarea {
+-fx-border-color: rgb(120,120,120);    
+}
+ 
+.button {
+-fx-background-color: transparent;
+-fx-border-color: rgb(120,120,120);
+}
+ 
+.button:hover {
+-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+-fx-color: -fx-hover-base;
+}
+ 
+.table-view {
+-fx-table-cell-border-color:derive(-fx-base,+10%);
+-fx-table-header-border-color:derive(-fx-base,+20%);
+}
+ 
+.split-pane:horizontal > * > .split-pane-divider {
+-fx-border-color: transparent -fx-base transparent -fx-base;
+-fx-background-color: transparent, derive(-fx-base,20%);
+-fx-background-insets: 0, 0 1 0 1;
+}
+ 
+.my-gridpane {
+-fx-background-color: radial-gradient(radius 100%, derive(-fx-base,20%), derive(-fx-base,-20%));
+}
+ 
+.separator-label {
+-fx-text-fill: orange;
+}
+
+.current-menu {
+    -fx-font-weight: bold;
+}
+
+.location-field {
+    -fx-font-size: 14px;
+    
+}
+
+.sidebar-background {
+    /*-fx-background-color: linear-gradient(to bottom, derive(antiquewhite, -10%), derive(antiquewhite, 10%));*/
+}
+
+.status-background {
+/*
+    -fx-background-color: rgba(245, 222, 179, 0.65);
+    -fx-border-color: rgba(245, 222, 179, 0.85)
+    */
+}
+
+.icon-button {
+    -fx-font-size: 14px;
+}
+
+.sidebar-panel {
+    -fx-font-size: 16px;
+}
+
+.sidebar-scroll {
+    /*-fx-background-color: derive(antiquewhite, 10%);*/
+}
+
+.toolbar {
+    /*-fx-background-color: linear-gradient(to bottom, derive(antiquewhite, -5%), derive(antiquewhite, 5%));*/
+    -fx-padding: 2 5 2 2;
+}
+
+.alert-dialog {
+/*
+    -fx-background-color: linear-gradient(to bottom, derive(silver, 10%), derive(silver, -10%));
+    -fx-border-color: derive(silver, -30%);*/
+    -fx-border-width: 3;
+    -fx-border-radius: 5;
+    -fx-border-insets: -2;
+    -fx-font-size: 16px;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    /* TODO should not be using text-box-border I think? */
+    /*-fx-background-color: linear-gradient(to bottom, derive(antiquewhite, -4%), derive(antiquewhite, 5%));*/
+    
+}

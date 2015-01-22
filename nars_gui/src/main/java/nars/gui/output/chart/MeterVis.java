@@ -60,6 +60,11 @@ public class MeterVis extends TimelineVis {
     public MeterVisPanel newPanel() {
         return new MeterVisPanel();
     }
+    public MeterVisPanel newPanel(int w, int h) {
+        MeterVisPanel m = new MeterVisPanel();
+        m.setMinimumSize(new Dimension(w,h));
+        return m;
+    }
 
     
     public MeterVis(NAR n, TemporalMetrics<Object> metrics) {

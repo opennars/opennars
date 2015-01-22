@@ -158,6 +158,9 @@ public class PCanvas extends PApplet implements HierarchyListener {
             b = null;
         }
         if (b == null) {
+            if ((getWidth() == 0) || (getHeight() == 0))
+                return;
+
             b = createGraphics(getWidth(), getHeight(), JAVA2D);
         }
         
