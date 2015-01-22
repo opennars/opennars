@@ -245,20 +245,24 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
     /**
-     * Check whether the judgment is equivalent to another one
-     * <p>
-     * The two may have different keys
+     * Check whether different aspects of sentence are equivalent to another one
      *
      * @param that The other judgment
      * @return Whether the two are equivalent
      */
-    public boolean equivalentTo(final Sentence that) {
-        if (Parameters.DEBUG) {
-            if ((!term.equals(that.term)) || (punctuation != that.punctuation)) {
-                throw new RuntimeException("invalid comparison for Sentence.equivalentTo");
-            }
+    public boolean equivalentTo(final Sentence that, boolean term, boolean truth, boolean stamp) {
+
+        if (this == that) return true;
+        if (term) {
+            if (!equalsContent(that)) return false;
         }
-        return (truth.equals(that.truth) && stamp.equals(that.stamp,false,false,true,true));
+        if (truth) {
+            if (!this.truth.equals(that.truth)) return false;
+        }
+        if (stamp) {
+            if (!this.stamp.equals(that.stamp, true, true, true, true)) return false;
+        }
+        return true;
     }
 
     /**

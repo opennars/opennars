@@ -539,7 +539,7 @@ public class Concept extends Item<Term> implements Termable {
             Sentence judgment2 = table.get(i);
             rank2 = rankBelief(judgment2);
             if (rank1 >= rank2) {
-                if (newSentence.equivalentTo(judgment2)) {
+                if (newSentence.equivalentTo(judgment2, false, true, true)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return null;
                 }

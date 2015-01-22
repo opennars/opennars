@@ -68,7 +68,10 @@ public class Negation extends CompoundTerm {
         return make(replaced[0]);
     }
     
-    
+    /** get the term which is negated by this */
+    public Term negated() {
+        return term[0];
+    }
 
     /**
      * Try to make a Negation of one component. Called by the logic rules.
@@ -80,7 +83,7 @@ public class Negation extends CompoundTerm {
     public static Term make(final Term t) {
         if (t instanceof Negation) {
             // (--,(--,P)) = P
-            return ((Negation) t).term[0];
+            return ((Negation) t).negated();
         }         
         return new Negation(t);
     }
