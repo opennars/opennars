@@ -25,9 +25,10 @@ import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
 import nars.event.EventEmitter;
-import nars.io.Output.ERR;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
+import nars.core.Events.ERR;
+import nars.core.Events.IN;
+import nars.core.Events.OUT;
+import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.io.meter.EmotionMeter;
@@ -77,7 +78,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class Memory implements Serializable {
 
     @Deprecated
-    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
+    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo
+
     //get it out to plugin somehow
 
     private boolean enabled = true;
@@ -144,6 +146,8 @@ public class Memory implements Serializable {
     private final List<Runnable> otherTasks = new ArrayList();
 
     public final Core concepts;
+    final Set<Concept> questionConcepts = Parameters.newHashSet(100);
+    final Set<Concept> goalConcepts = Parameters.newHashSet(100);
 
     public final EventEmitter event;
 
@@ -223,7 +227,31 @@ public class Memory implements Serializable {
         //------------------------------------ 
         reset();
 
+        this.event.set(conceptIndices, true, Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class, Events.ConceptRemember.class, Events.ConceptForget.class, Events.ConceptNew.class );
     }
+
+    /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events */
+    private final Reaction conceptIndices = new Reaction() {
+
+        @Override
+        public void event(Class event, Object[] args) {
+
+            boolean conceptLifeCycle =
+                    (event == Events.ConceptForget.class) || (event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class);
+
+            if (conceptLifeCycle || (event == Events.ConceptQuestionAdd.class) || (event == Events.ConceptQuestionRemove.class)) {
+                Concept c = (Concept)args[0];
+                if (c.questions.isEmpty()) questionConcepts.remove(c);
+                else questionConcepts.add(c);
+            }
+            if (conceptLifeCycle || (event == Events.ConceptGoalAdd.class) || (event == Events.ConceptGoalRemove.class)) {
+                Concept c = (Concept)args[0];
+                if (c.desires.isEmpty()) goalConcepts.remove(c);
+                else goalConcepts.add(c);
+            }
+
+        }
+    };
 
     public void reset() {
         event.emit(ResetStart.class);
@@ -549,6 +577,7 @@ public class Memory implements Serializable {
 
     public void removeTask(final Task task, final String reason) {
         emit(TaskRemove.class, task, reason);
+        task.setReason(reason);
         task.end();
     }
 
@@ -769,6 +798,19 @@ public class Memory implements Serializable {
             ex.printStackTrace();
         }
 
+    }
+
+
+
+
+    /** gets the set of concepts which have question tasks */
+    public Set<Concept> getQuestions() {
+        return questionConcepts;
+    }
+
+    /** gets the set of concepts which have goal tasks */
+    public Set<Concept> getGoals() {
+        return goalConcepts;
     }
 
 

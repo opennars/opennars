@@ -1,5 +1,6 @@
 package nars.logic.multistep;
 
+import nars.core.Events;
 import nars.core.NAR;
 import nars.build.Default;
 import nars.io.Output;
@@ -55,7 +56,7 @@ public class PlanDecisionExperiment {
                 /*if (c == IN.class) {
                     System.out.println("IN: " + n.getTime() + ": " + o);
                 }*/
-                if (c == OUT.class) {
+                if (c == Events.OUT.class) {
                     if (o instanceof Task) {
                         Sentence s = ((Task)o).sentence;
                         if (s.punctuation == '!') {
@@ -63,7 +64,7 @@ public class PlanDecisionExperiment {
                         }
                     }
                 }
-                if (c == EXE.class) {
+                if (c == Events.EXE.class) {
                     System.out.println("EXE: " + n.time() + ": " + o);
                 }
             }

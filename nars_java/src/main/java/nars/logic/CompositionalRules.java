@@ -37,10 +37,7 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static nars.logic.Terms.*;
@@ -71,13 +68,11 @@ public final class CompositionalRules {
         if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }
+        Set<Concept> memoryQuestionConcepts = nal.mem().getQuestions();
+        if (memoryQuestionConcepts.isEmpty())
+            return;
 
-        //TODO make complete use of this index instead of iterating below, once the index is sorted in a similiar way
-        //Memory m = nal.mem();
-//        Collection<Task> qq = m.conceptQuestions(Conjunction.class);
-//        if (qq.isEmpty()) {
-//            return;
-//        }
+
 
         final Term term1 = sentence.term;
         final boolean term1ContainVar = term1.hasVar();
@@ -95,78 +90,73 @@ public final class CompositionalRules {
             return;
         }
 
-        //TODO use Question index
-        nal.mem().concepts.forEach(new Consumer<Concept>() {
+
+        memoryQuestionConcepts.forEach(new Consumer<Concept>() {
             @Override
             public void accept(Concept concept) {
 
-                final List<Task> questions = concept.questions;
+                final Term pcontent = concept.term;
 
-                for (int i = 0; i < questions.size(); i++) {
-                    final Task question = questions.get(i);
+                final List<Task> cQuestions = concept.questions;
+                if (cQuestions.isEmpty())
+                    throw new RuntimeException("Concept " + concept + " present in Concept Questions index, but has no questions");
 
-                    //if(question==null) { assert(false); continue; }
-                    Sentence qu = question.sentence;
 
-                    //if(qu==null) { assert(false); continue; }
-                    final Term pcontent = qu.term;
-                    if (!(pcontent instanceof Conjunction)) {
-                        continue;
-                    }
-
-                    final Conjunction ctpcontent = (Conjunction) pcontent;
-                    if (ctpcontent.hasVar()) {
-                        continue;
-                    }
-
-                    if (!term1Conjunction && !term2Conjunction) {
-                        if (!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
-                            continue;
-                        }
-                    } else {
-                        if (term1Conjunction) {
-                            if (!term2Conjunction && !ctpcontent.containsTerm(term2)) {
-                                continue;
-                            }
-                            if (!ctpcontent.containsAllTermsOf(term1)) {
-                                continue;
-                            }
-                        }
-
-                        if (term2Conjunction) {
-                            if (!term1Conjunction && !ctpcontent.containsTerm(term1)) {
-                                continue;
-                            }
-                            if (!ctpcontent.containsAllTermsOf(term2)) {
-                                continue;
-                            }
-                        }
-                    }
-
-                    CompoundTerm conj = Sentence.termOrNull(Conjunction.make(term1, term2));
-                    if (conj == null) break;
-
-                /*
-                since we already checked for term1 and term2 having a variable, the result
-                will not have a variable
-
-                if (Variables.containVarDepOrIndep(conj.name()))
-                    continue;
-                 */
-                    TruthValue truthT = nal.getCurrentTask().sentence.truth;
-                    TruthValue truthB = nal.getCurrentBelief().truth;
-                /*if(truthT==null || truthB==null) {
-                    //continue; //<- should this be return and not continue?
+                if (!(pcontent instanceof Conjunction)) {
                     return;
-                }*/
-
-                    nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.hit();
-
-                    TruthValue truthAnd = intersection(truthT, truthB);
-                    BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
-                    nal.doublePremiseTask(conj, truthAnd, budget, false);
-                    break;
                 }
+
+                final Conjunction ctpcontent = (Conjunction) pcontent;
+                if (ctpcontent.hasVar()) {
+                    return;
+                }
+
+                if (!term1Conjunction && !term2Conjunction) {
+                    if (!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
+                        return;
+                    }
+                } else {
+                    if (term1Conjunction) {
+                        if (!term2Conjunction && !ctpcontent.containsTerm(term2)) {
+                            return;
+                        }
+                        if (!ctpcontent.containsAllTermsOf(term1)) {
+                            return;
+                        }
+                    }
+
+                    if (term2Conjunction) {
+                        if (!term1Conjunction && !ctpcontent.containsTerm(term1)) {
+                            return;
+                        }
+                        if (!ctpcontent.containsAllTermsOf(term2)) {
+                            return;
+                        }
+                    }
+                }
+
+                CompoundTerm conj = Sentence.termOrNull(Conjunction.make(term1, term2));
+                if (conj == null) return;
+
+            /*
+            since we already checked for term1 and term2 having a variable, the result
+            will not have a variable
+
+            if (Variables.containVarDepOrIndep(conj.name()))
+                continue;
+             */
+                TruthValue truthT = nal.getCurrentTask().sentence.truth;
+                TruthValue truthB = nal.getCurrentBelief().truth;
+            /*if(truthT==null || truthB==null) {
+                //continue; //<- should this be return and not continue?
+                return;
+            }*/
+
+                nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.hit();
+
+                TruthValue truthAnd = intersection(truthT, truthB);
+                BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
+                nal.doublePremiseTask(conj, truthAnd, budget, false);
 
             }
         });

@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
+import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.Texts;
@@ -48,12 +49,16 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public int ocMin = -1,ocMax= -1;
 
     public final List<Task> trueAt = new ArrayList();
+    public final List<Task> removals = new ArrayList();
 
     Task closest = null;
     double closestDistance = Double.POSITIVE_INFINITY;
 
     public TaskCondition(NAR n, Class channel, Task t)  {
-        super(n);
+        super(n, Events.OUT.class, Events.TaskRemove.class);
+
+        //TODO verify that channel is included in the listened events
+
         this.channel = channel;
         this.tense = Tense.Eternal;
         this.cycleStart = this.cycleEnd = -1;
@@ -139,40 +144,65 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.tense = Tense.Present; //any tense will work here as long as it's not Eternal, so Present uesd here can still refer to past or future
     }
 
+    public boolean matches(Task task) {
+        if (task.sentence.punctuation != punc)
+            return false;
+        long now = nar.time();
+        if (task.sentence.punctuation != punc)
+            return false;
+
+
+        //require right kind of tense
+        if (tense==Tense.Eternal) {
+            if (!task.sentence.isEternal())  return false;
+        }
+        else {
+            if (task.sentence.isEternal()) return false;
+
+            long oc = task.getOcurrenceTime() - now; //relative time
+            if ((oc < ocMin) || (oc > ocMax)) return false;
+        }
+
+        Term tterm = task.getTerm();
+
+        //require exact term
+        if (!tterm.equals(this.term)) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    @Override
+    public void event(Class channel, Object... args) {
+        if (!succeeded && (channel == Events.TaskRemove.class)) {
+            Task task = (Task)args[0];
+            //String reason = (String)args[1];
+
+            if (matches(task)) {
+                removals.add(task);
+            }
+        }
+
+        super.event(channel, args);
+
+
+    }
+
     @Override
     public boolean condition(Class channel, Object signal) {
 
-
-        if (channel == OUT.class) {
+        if (channel == Events.OUT.class) {
 
             if (signal instanceof Task) {
 
                 Task task = (Task) signal;
 
-                if (task.sentence.punctuation != punc)
-                    return false;
-
-                long now = nar.time();
-
-                //require right kind of tense
-                if (tense==Tense.Eternal) {
-                    if (!task.sentence.isEternal())  return false;
-                }
-                else {
-                    if (task.sentence.isEternal()) return false;
-
-                    long oc = task.getOcurrenceTime() - now; //relative time
-                    if ((oc < ocMin) || (oc > ocMax)) return false;
-                }
-
-                Term tterm = task.getTerm();
-
-                //require exact term
-                if (!tterm.equals(this.term)) {
-                    return false;
-                }
+                if (!matches(task)) return false;
 
                 double distance = 0;
+                long now = nar.time();
 
 
                 boolean match = false;
@@ -245,8 +275,15 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public String getFalseReason() {
-        return "Unmatched: " + (closest==null ? "" :
+        String x = "Unmatched: " + (closest==null ? "" :
                 "  closest=" + closest + " dist=" + Texts.n4((float) closestDistance)) + " " + toString();
+
+        if (!removals.isEmpty()) {
+            x += "\n  Matching removals:\n";
+            for (Task t : removals)
+                x += t.toString() + " (" + t.getReason() + ")\n";
+        }
+        return x;
     }
 
     public TruthValue getTruthMean() {

@@ -25,7 +25,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.io.Output.EXE;
+import nars.core.Events.EXE;
 import nars.logic.entity.*;
 import nars.logic.nal4.Product;
 
@@ -67,63 +67,8 @@ public abstract class Operator extends Term implements Plugin {
      */
     protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory);
 
-    /**
-    * The standard way to carry out an operation, which invokes the execute
-    * method defined for the operator, and handles feedback tasks as input
-    *
-    * @param op The operator to be executed
-    * @param args The arguments to be taken by the operator
-    * @param memory The memory on which the operation is executed
-    * @return true if successful, false if an error occurred
-    */
-    public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
-        try {
-            List<Task> feedback = execute(operation, args, memory);            
-            
-            memory.executedTask(operation, new TruthValue(1f,executionConfidence));
-            
-            reportExecution(operation, args, feedback, memory);
-            
 
-            if (feedback!=null) {
-                for (final Task t : feedback) {
-                    memory.inputTask(t);
-                }            
-            }
-            
-            return true;
-        }
-//        catch (NegativeFeedback n) {
-//            
-//            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
-//                memory.executedTask(operation, new TruthValue(n.freqOcurred, n.confidenceOcurred));
-//            }
-//            
-//            if (n.freqCorrection >= 0 && n.confCorrection >=0) {
-//                //for inputting an inversely frequent goal to counteract a repeat invocation
-//                BudgetValue b = operation.getTask().budget;
-//                float priority = b.getPriority();
-//                float durability = b.getDurability();                
-//                
-//                memory.addNewTask(
-//                        memory.newTaskAt(operation, Symbols.GOAL_MARK, n.freqCorrection, n.confCorrection, priority, durability, (Tense)null),
-//                        "Negative feedback"
-//                );
-//                
-//            }
-//            
-//            if (!n.quiet) {
-//                reportExecution(operation, args, n, memory);
-//            }
-//        }
-        catch (Exception e) {                        
-            reportExecution(operation, args, e, memory);            
-        }
-        return false;
-        
-    }
-    
-   
+
     public static String operationExecutionString(final Statement operation) {
         Term operator = operation.getPredicate();
         Term arguments = operation.getSubject();
@@ -190,12 +135,64 @@ public abstract class Operator extends Term implements Plugin {
         
     }
 
+    /**
+     * The standard way to carry out an operation, which invokes the execute
+     * method defined for the operator, and handles feedback tasks as input
+     *
+     * @param op The operator to be executed
+     * @param memory The memory on which the operation is executed
+     * @return true if successful, false if an error occurred
+     */
     public final boolean call(final Operation op, final Memory memory) {
         if(!op.isExecutable(memory)) {
             return false;
         }
-        Product args = op.getArguments();
-        return call(op, args.term, memory);
+        Term[] args = op.getArguments().term;
+
+        try {
+            List<Task> feedback = execute(op, args, memory);
+
+            memory.executedTask(op, new TruthValue(1f,executionConfidence));
+
+            reportExecution(op, args, feedback, memory);
+
+
+            if (feedback!=null) {
+                for (final Task t : feedback) {
+                    memory.inputTask(t);
+                }
+            }
+
+            return true;
+        }
+//        catch (NegativeFeedback n) {
+//
+//            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
+//                memory.executedTask(operation, new TruthValue(n.freqOcurred, n.confidenceOcurred));
+//            }
+//
+//            if (n.freqCorrection >= 0 && n.confCorrection >=0) {
+//                //for inputting an inversely frequent goal to counteract a repeat invocation
+//                BudgetValue b = operation.getTask().budget;
+//                float priority = b.getPriority();
+//                float durability = b.getDurability();
+//
+//                memory.addNewTask(
+//                        memory.newTaskAt(operation, Symbols.GOAL_MARK, n.freqCorrection, n.confCorrection, priority, durability, (Tense)null),
+//                        "Negative feedback"
+//                );
+//
+//            }
+//
+//            if (!n.quiet) {
+//                reportExecution(operation, args, n, memory);
+//            }
+//        }
+        catch (Exception e) {
+            reportExecution(op, args, e, memory);
+        }
+        return false;
+
     }
     
 

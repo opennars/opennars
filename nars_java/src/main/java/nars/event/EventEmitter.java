@@ -1,8 +1,8 @@
 
 package nars.event;
 
+import nars.core.Events;
 import nars.core.Parameters;
-import nars.io.Output;
 import reactor.core.Environment;
 import reactor.core.Reactor;
 import reactor.core.spec.Reactors;
@@ -109,7 +109,7 @@ public class EventEmitter<E>  {
                     if (Parameters.DEBUG) {
                         t.printStackTrace();
                     }
-                    emit(Output.ERR.class, t);
+                    emit(Events.ERR.class, t);
                 }
             }
         });

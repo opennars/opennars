@@ -20,9 +20,8 @@
  */
 package nars.io;
 
-import nars.io.Output.ERR;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
+import nars.core.Events.IN;
+import nars.core.Events.OUT;
 
 import java.util.Collections;
 import java.util.HashMap;

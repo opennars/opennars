@@ -4,7 +4,9 @@
  */
 package nars.io.condition;
 
+import nars.core.Events;
 import nars.core.NAR;
+import nars.event.AbstractReaction;
 import nars.io.Output;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
@@ -20,7 +22,7 @@ import java.util.List;
  * Parameter O is the type of object which will be remembered that can make
  * the condition true
  */
-public abstract class OutputCondition<O> extends Output {
+public abstract class OutputCondition<O> extends AbstractReaction {
     public boolean succeeded = false;
     
     
@@ -28,9 +30,13 @@ public abstract class OutputCondition<O> extends Output {
     public final NAR nar;
     long successAt = -1;
 
-    public OutputCondition(NAR nar) {
-        super(nar);
+    public OutputCondition(NAR nar, Class... events) {
+        super(nar, events);
         this.nar = nar;
+    }
+
+    public OutputCondition(NAR nar) {
+        this(nar, Output.DefaultOutputEvents);
     }
 
     /** whether this is an "inverse" condition */
@@ -43,7 +49,7 @@ public abstract class OutputCondition<O> extends Output {
         if ((succeeded) && (!isInverse() && (!continueAfterSuccess()))) {
             return;
         }
-        if ((channel == OUT.class) || (channel == EXE.class)) {
+        if ((channel == Events.OUT.class) || (channel == Events.EXE.class)) {
             Object signal = args[0];
             if (condition(channel, signal)) {
                 setTrue();
@@ -92,7 +98,7 @@ public abstract class OutputCondition<O> extends Output {
                     if (t!=null) {
                         if (t.sentence.isEternal()) {
 
-                            conditions.add(new TaskCondition(n, OUT.class, t));
+                            conditions.add(new TaskCondition(n, Events.OUT.class, t));
                             added = true;
                         }
                     }

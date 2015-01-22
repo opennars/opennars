@@ -31,7 +31,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.Reaction;
 import nars.gui.NARSwing;
-import nars.io.Output.OUT;
+import nars.core.Events.OUT;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.BudgetValue;

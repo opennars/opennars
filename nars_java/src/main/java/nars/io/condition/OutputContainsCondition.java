@@ -4,10 +4,10 @@
  */
 package nars.io.condition;
 
+import nars.core.Events;
 import nars.core.NAR;
 import nars.io.TextOutput;
 import nars.io.Texts;
-import nars.io.narsese.Narsese;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.nal8.Operator.ExecutionResult;
@@ -105,7 +105,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     }
 
     public boolean cond(Class channel, Object signal) {
-        if ((channel == OUT.class) || (channel == EXE.class)) {
+        if ((channel == Events.OUT.class) || (channel == Events.EXE.class)) {
             String o;
             if (signal instanceof Task) {
                 //only compare for Sentence string, faster than TextOutput.getOutputString

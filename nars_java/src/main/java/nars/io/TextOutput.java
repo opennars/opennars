@@ -21,6 +21,7 @@
  */
 package nars.io;
 
+import nars.core.Events;
 import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.logic.entity.*;
@@ -116,10 +117,10 @@ public class TextOutput extends Output {
      */
     @Override
     public void event(final Class channel, final Object... oo) {
-        if (!showErrors && (channel == ERR.class))
+        if (!showErrors && (channel == Events.ERR.class))
             return;
         
-        if (!showInput && (channel == IN.class))
+        if (!showInput && (channel == Events.IN.class))
             return;
         
         if ((outExp!=null) || (outExp2!=null)) {
@@ -186,7 +187,7 @@ public class TextOutput extends Output {
 
         Object signal = signals[0];
 
-        if (channel == ERR.class) {
+        if (channel == Events.ERR.class) {
 
             if (signal instanceof Throwable) {
                 Throwable e = (Throwable)signal;
@@ -207,7 +208,7 @@ public class TextOutput extends Output {
             Sentence answer = (Sentence)signals[1];
             buffer.append(question.sentence.toString(nar, showStamp)).append(" = ").append(answer.toString(nar, showStamp));
         }
-        else if ((signal instanceof Task) && ((channel == OUT.class) || (channel == IN.class) || (channel == Echo.class) || (channel == EXE.class)))  {
+        else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class)))  {
 
 
             Task t = (Task)signal;
@@ -316,7 +317,7 @@ public class TextOutput extends Output {
         final StringBuilder buffer = new StringBuilder();
         
         
-        if (channel == OUT.class) {
+        if (channel == Events.OUT.class) {
             buffer.append("<div style='clear: both; float:left'>OUT:</div>");
             if (signal instanceof Task) {
                 Task t = (Task)signal;
@@ -347,7 +348,7 @@ public class TextOutput extends Output {
         if (showChannel)
             buffer.append(channel.getSimpleName()).append(": ");        
         
-        if (channel == ERR.class) {
+        if (channel == Events.ERR.class) {
             if (signal instanceof Exception) {
                 Exception e = (Exception)signal;
 
@@ -364,10 +365,10 @@ public class TextOutput extends Output {
             }                            
             
         }
-        else if ((channel == IN.class) || (channel == Echo.class)) {
+        else if ((channel == Events.IN.class) || (channel == Echo.class)) {
             buffer.append(signal.toString());
         }
-        else if (channel == EXE.class) {
+        else if (channel == Events.EXE.class) {
             if (signal instanceof Statement)
                 buffer.append(Operator.operationExecutionString((Statement)signal));
             else {

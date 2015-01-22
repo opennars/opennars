@@ -218,8 +218,8 @@ public class Concept extends Item<Term> implements Termable {
                 processGoal(nal, task);
                 break;
             case Symbols.QUESTION_MARK:
-            case Symbols.QUEST_MARK:
                 memory.logic.QUESTION_PROCESS.hit();
+            case Symbols.QUEST_MARK:
                 processQuestion(nal, task);
                 break;
             default:
@@ -400,7 +400,7 @@ public class Concept extends Item<Term> implements Termable {
                 }
 
 
-                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
+                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) { //should this be half duration?
                     if(!executeDecision(task)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
@@ -420,31 +420,50 @@ public class Concept extends Item<Term> implements Termable {
 
         Sentence ques = task.sentence;
 
-        synchronized (questions) {
-            boolean newQuestion = true;
-            for (final Task t : questions) {
+        int limit;
+        List<Task> table;
+        if (ques.punctuation == Symbols.QUESTION_MARK) {
+            table = questions;
+            limit = memory.param.conceptQuestionsMax.get();
+        }
+        else if (ques.punctuation == Symbols.QUEST_MARK) {
+            table = quests;
+            limit = memory.param.conceptQuestionsMax.get(); //TODO allow different value than questions
+        }
+        else
+            throw new RuntimeException(task + " is not a Question or Quest");
+
+        synchronized (table) {
+            boolean newQ = true;
+
+            //TODO use a set comparison on the unique part of the Task that we want to hold
+            for (final Task t : table) {
                 final Sentence q = t.sentence;
-                if (q.equalsContent(ques)) {
+                if (q.equals(ques)) {
                     ques = q;
-                    newQuestion = false;
+                    newQ = false;
                     break;
                 }
             }
 
-            if (newQuestion) {
-                if (questions.size() + 1 > memory.param.conceptQuestionsMax.get()) {
-                    Task removed = questions.remove(0);    // FIFO
-                    memory.event.emit(ConceptQuestionRemove.class, this, removed);
+            if (newQ) {
+
+                if (table.size() + 1 > limit) {
+                    Task removed = table.remove(0);    // FIFO
+                    if (table == questions)
+                        memory.event.emit(ConceptQuestionRemove.class, this, removed, false);
                 }
 
-                questions.add(task);
-                memory.event.emit(ConceptQuestionAdd.class, this, task);
+                table.add(task);
+
+                if (table == questions)
+                    memory.event.emit(ConceptQuestionAdd.class, this, task, true);
             }
         }
 
         final Sentence newAnswer = (ques.isQuestion())
-                ? selectCandidate(ques, beliefs)
-                : selectCandidate(ques, desires);
+                ? selectCandidate(ques, beliefs)  //question answers beliefs,
+                : selectCandidate(ques, desires); //quest answers desires
 
         if (newAnswer != null) {
             trySolution(newAnswer, task, nal);
@@ -804,10 +823,14 @@ public class Concept extends Item<Term> implements Termable {
         return topValue;
     }
 
-
-
     @Override
     public void end() {
+
+    }
+
+
+    /** should not call under any normal circumstance */
+    public void delete() {
         for (Task t : questions) t.end();
         for (Task t : quests) t.end();
         
@@ -960,7 +983,7 @@ public class Concept extends Item<Term> implements Termable {
         return term.operator();
     }
 
-    public Collection<Sentence> getSentences(char punc) {
+    public Collection<Sentence> getSentences(final char punc) {
         switch(punc) {
             case Symbols.JUDGMENT_MARK: return beliefs;
             case Symbols.GOAL_MARK: return desires;                

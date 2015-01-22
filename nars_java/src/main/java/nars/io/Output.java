@@ -13,23 +13,9 @@ import nars.operator.io.Say;
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
  */
 public abstract class Output extends AbstractReaction {
-    
-    
-    /** implicitly repeated input (a repetition of all input) */
-    public static interface IN  { }
-    
-    /** conversational (judgments, questions, etc...) output */
-    public static interface OUT  { }
-    
-    /** warnings, errors & exceptions */
-    public static interface ERR { }
-    
 
-    
-    /** operation execution */
-    public static interface EXE  { }
 
-    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, Echo.class, Say.class, Answer.class, Events.PluginsChange.class };
+    public static final Class[] DefaultOutputEvents = new Class[] { Events.IN.class, Events.EXE.class, Events.OUT.class, Events.ERR.class, Echo.class, Say.class, Answer.class, Events.PluginsChange.class };
             
     public Output(EventEmitter source, boolean active) {
         super(source, active, DefaultOutputEvents );

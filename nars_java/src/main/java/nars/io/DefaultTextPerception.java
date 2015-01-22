@@ -4,7 +4,7 @@ import com.google.common.collect.Iterators;
 import nars.event.Reaction;
 import nars.core.*;
 import nars.core.Events.Perceive;
-import nars.io.Output.IN;
+import nars.core.Events.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.InvalidInputException;
 import nars.io.nlp.Englisch;
@@ -99,7 +99,7 @@ public class DefaultTextPerception implements Plugin, Reaction {
             error = e;
         }
         
-        return singletonIterator(new Echo(Output.ERR.class, error) );
+        return singletonIterator(new Echo(Events.ERR.class, error) );
     }
     
     public List<TextReaction> getParsers() {
@@ -358,7 +358,7 @@ public class DefaultTextPerception implements Plugin, Reaction {
             errorMessage += " : " + lastException.toString(); 
         }
 
-        memory.emit(Output.ERR.class, errorMessage);
+        memory.emit(Events.ERR.class, errorMessage);
         
         return null;
     }

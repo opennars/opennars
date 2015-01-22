@@ -26,7 +26,7 @@ import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.output.SwingText;
-import nars.io.Output.OUT;
+import nars.core.Events.OUT;
 import nars.io.TextInput;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -40,13 +40,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static nars.gui.output.SwingLogPanel.setConsoleFont;
 

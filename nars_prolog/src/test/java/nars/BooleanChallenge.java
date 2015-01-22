@@ -4,7 +4,7 @@ import nars.event.Reaction;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.build.Discretinuous;
-import nars.io.Output.OUT;
+import nars.core.Events.OUT;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Task;

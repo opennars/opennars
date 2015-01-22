@@ -1,10 +1,6 @@
 package nars.logic;
 
-import nars.core.Build;
-import nars.core.ExplainableTask;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.io.Output;
+import nars.core.*;
 import nars.io.TextOutput;
 import nars.io.condition.TaskCondition;
 import nars.io.narsese.InvalidInputException;
@@ -41,7 +37,7 @@ public class TestNAR extends NAR {
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int minOccurrenceDelta, int maxOccurrenceDelta) throws InvalidInputException {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
-        TaskCondition tc = new TaskCondition(this, Output.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
+        TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         tc.setOccurrenceTime(minOccurrenceDelta, maxOccurrenceDelta);
         musts.add(tc);
 
@@ -55,7 +51,7 @@ public class TestNAR extends NAR {
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
-        TaskCondition tc = new TaskCondition(this, Output.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
+        TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         musts.add(tc);
 
         ExplainableTask et = new ExplainableTask(tc);

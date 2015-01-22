@@ -7,7 +7,6 @@ package nars.core;
 
 import nars.event.EventEmitter;
 import nars.event.Reaction;
-import nars.io.Output;
 import org.junit.Test;
 import reactor.event.Event;
 
@@ -57,7 +56,7 @@ public class EventTest {
                 throw new RuntimeException("Exception generated for testing purposes; everything is OK");
             }
         });
-        e.on(Output.ERR.class, new Reaction() {
+        e.on(Events.ERR.class, new Reaction() {
             @Override
             public void event(Class event, Object[] args) {
                 b.set(true);

@@ -29,7 +29,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.build.Discretinuous;
 import nars.gui.NARSwing;
-import nars.io.Output.OUT;
+import nars.core.Events.OUT;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;

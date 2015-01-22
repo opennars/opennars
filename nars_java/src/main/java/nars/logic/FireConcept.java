@@ -190,10 +190,12 @@ abstract public class FireConcept extends NAL {
 
         //CONTRAPOSITION //TODO: put into rule table
         if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
-            Concept d=memory.concepts.sampleNextConcept();
-            if(d!=null && d.term.equals(taskSentence.term)) {
+            //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
+
+            //Concept d=memory.concepts.sampleNextConcept();
+            //if(d!=null && d.term.equals(taskSentence.term)) {
                 StructuralRules.contraposition((Statement)taskTerm, taskSentence, this);
-            }
+            //}
         }
 
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
@@ -210,8 +212,8 @@ abstract public class FireConcept extends NAL {
 
             //TODO
             //(&/,a) goal didnt get unwinded, so lets unwind it
-            if(taskSentence.term instanceof Conjunction && taskSentence.punctuation== Symbols.GOAL_MARK) {
-                Conjunction s=(Conjunction) taskSentence.term;
+            if(taskTerm instanceof Conjunction && taskSentence.punctuation== Symbols.GOAL_MARK) {
+                Conjunction s=(Conjunction)taskTerm;
 
                 CompoundTerm newterm = Sentence.termOrNull(s.term[0]);
                 if (newterm!=null) {

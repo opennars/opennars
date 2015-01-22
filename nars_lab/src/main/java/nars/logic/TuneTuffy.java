@@ -9,7 +9,7 @@ import nars.core.Build;
 import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.build.Default;
-import nars.io.Output.OUT;
+import nars.core.Events.OUT;
 import nars.io.TextInput;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;

@@ -6,7 +6,6 @@ import nars.core.Events.CycleEnd;
 import nars.core.Events.CycleStart;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.io.Output;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 
@@ -53,7 +52,7 @@ public abstract class MemoryObserver extends AbstractReaction {
     public void event(final Class event, final Object[] arguments) {
         if (event == Events.ConceptNew.class) {
             onConceptAdd((Concept) arguments[0]);
-        } else if (event == Output.OUT.class) {
+        } else if (event == Events.OUT.class) {
             output(event, arguments[0].toString());
         } else if (event == Events.ResetEnd.class) {
             output(event);        

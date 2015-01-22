@@ -4,6 +4,7 @@
  */
 package nars.io.condition;
 
+import nars.core.Events;
 import nars.core.NAR;
 
 import java.util.LinkedList;
@@ -28,7 +29,7 @@ public class OutputEmptyCondition extends OutputCondition {
     @Override
     public boolean condition(Class channel, Object signal) {
         //any OUT or ERR output is a failure
-        if ((channel == OUT.class) || (channel == ERR.class)) {
+        if ((channel == Events.OUT.class) || (channel == Events.ERR.class)) {
             output.add(channel.getSimpleName() + ": " + signal.toString());
             succeeded = false;
             return false;
