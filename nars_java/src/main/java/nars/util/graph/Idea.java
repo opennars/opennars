@@ -142,16 +142,16 @@ public class Idea implements Iterable<Concept> {
                 sentences = new ArrayList();
                 for (Concept c : concepts) {
                     switch (punc) {
-                        case Symbols.JUDGMENT_MARK:
+                        case Symbols.JUDGMENT:
                             sentences.addAll(c.beliefs);
                             break;
-                        case Symbols.QUESTION_MARK:
+                        case Symbols.QUESTION:
                             sentences.addAll(Task.getSentences(c.questions));
                             break;
-                        case Symbols.QUEST_MARK:
+                        case Symbols.QUEST:
                             sentences.addAll(Task.getSentences(c.quests));
                             break;
-                        case Symbols.GOAL_MARK:
+                        case Symbols.GOAL:
                             sentences.addAll(c.desires);
                             break;
                     }
@@ -204,13 +204,13 @@ public class Idea implements Iterable<Concept> {
             operators.add(o);
             
             if (!c.beliefs.isEmpty())
-                feature.add(new SentenceType(o, Symbols.JUDGMENT_MARK));
+                feature.add(new SentenceType(o, Symbols.JUDGMENT));
             if (!c.questions.isEmpty())
-                feature.add(new SentenceType(o, Symbols.QUESTION_MARK));
+                feature.add(new SentenceType(o, Symbols.QUESTION));
             if (!c.desires.isEmpty())
-                feature.add(new SentenceType(o, Symbols.GOAL_MARK));
+                feature.add(new SentenceType(o, Symbols.GOAL));
             if (!c.quests.isEmpty())
-                feature.add(new SentenceType(o, Symbols.QUEST_MARK));
+                feature.add(new SentenceType(o, Symbols.QUEST));
         }
         
     }

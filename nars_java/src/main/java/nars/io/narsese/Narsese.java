@@ -206,7 +206,7 @@ public class Narsese {
      * @return the addInput TruthValue
      */
     private static TruthValue parseTruth(String s, char type) {
-        if ((type == QUESTION_MARK) || (type == QUEST_MARK)) {
+        if ((type == QUESTION) || (type == QUEST)) {
             return null;
         }
         float frequency = 1.0f;
@@ -236,19 +236,19 @@ public class Narsese {
     private static BudgetValue parseBudget(String s, char punctuation, TruthValue truth) throws InvalidInputException {
         float priority, durability;
         switch (punctuation) {
-            case JUDGMENT_MARK:
+            case JUDGMENT:
                 priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
                 durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
                 break;
-            case QUESTION_MARK:
+            case QUESTION:
                 priority = Parameters.DEFAULT_QUESTION_PRIORITY;
                 durability = Parameters.DEFAULT_QUESTION_DURABILITY;
                 break;
-            case GOAL_MARK:
+            case GOAL:
                 priority = Parameters.DEFAULT_GOAL_PRIORITY;
                 durability = Parameters.DEFAULT_GOAL_DURABILITY;
                 break;
-            case QUEST_MARK:
+            case QUEST:
                 priority = Parameters.DEFAULT_QUEST_PRIORITY;
                 durability = Parameters.DEFAULT_QUEST_DURABILITY;
                 break;                

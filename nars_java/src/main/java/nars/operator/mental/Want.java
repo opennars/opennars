@@ -48,7 +48,7 @@ public class Want extends Operator implements Mental {
         Term content = args[0];                
         
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.GOAL_MARK, truth, new Stamp(memory));
+        Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(memory));
         
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
 

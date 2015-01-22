@@ -10,8 +10,6 @@ import nars.core.Memory.Timing;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.*;
-import nars.core.Events.ERR;
-import nars.core.Events.IN;
 import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
 import nars.io.narsese.Narsese;
@@ -198,14 +196,14 @@ public class NAR implements Runnable, TaskSource {
 
     public Task goal(float pri, float dur, String termString, float freq, float conf) throws InvalidInputException {
         Task t = memory.newTask(narsese.parseCompoundTerm(termString),
-                Symbols.GOAL_MARK, freq, conf, pri, dur, Tense.Eternal);
+                Symbols.GOAL, freq, conf, pri, dur, Tense.Eternal);
         addInput(t);
         return t;
     }
 
     public Task believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         Task t = memory.newTask(narsese.parseCompoundTerm(termString),
-                Symbols.JUDGMENT_MARK, freq, conf, pri, dur, tense);
+                Symbols.JUDGMENT, freq, conf, pri, dur, tense);
         addInput(t);
         return t;
     }
@@ -233,8 +231,15 @@ public class NAR implements Runnable, TaskSource {
         //TODO remove '?' if it is attached at end
         return ask(termString, null);
     }
-    
+
+    public Task quest(String questString) throws InvalidInputException {
+        return ask(questString, null, Symbols.QUEST);
+    }
     public Task ask(String termString, Answered answered) throws InvalidInputException {
+        return ask(termString, answered, Symbols.QUESTION);
+    }
+
+    public Task ask(String termString, Answered answered, char questionOrQuest) throws InvalidInputException {
 
 
         Task t;
@@ -242,7 +247,7 @@ public class NAR implements Runnable, TaskSource {
                 t = new Task(
                         new Sentence(
                                 narsese.parseCompoundTerm(termString),
-                                Symbols.QUESTION_MARK, 
+                                questionOrQuest,
                                 null, 
                                 new Stamp(memory, Tense.Eternal)), 
                         new BudgetValue(
@@ -339,7 +344,7 @@ public class NAR implements Runnable, TaskSource {
             catch (Throwable e) {
                 if (Parameters.DEBUG)
                     throw e;
-                return singletonIterator(new Echo(ERR.class, e));
+                return singletonIterator(new Echo(Events.ERR.class, e));
             }
         }
 
@@ -377,7 +382,7 @@ public class NAR implements Runnable, TaskSource {
             i.update();
             newInputChannels.add(i);
         } catch (IOException ex) {
-            emit(ERR.class, ex);
+            emit(Events.ERR.class, ex);
             throw new RuntimeException(ex);
         }
         
@@ -575,7 +580,7 @@ public class NAR implements Runnable, TaskSource {
                         Thread.sleep(minFramePeriodMS);
                     } catch (InterruptedException e) {
                         if (e.getCause()!=null) {
-                            emit(ERR.class, e);
+                            emit(Events.ERR.class, e);
                             e.printStackTrace();
                         }
                     }
@@ -647,7 +652,7 @@ public class NAR implements Runnable, TaskSource {
             try {
                 i.update();
             } catch (IOException ex) {                    
-                emit(ERR.class, ex);
+                emit(Events.ERR.class, ex);
             }                
 
             if (i.hasNext()) {
@@ -719,7 +724,7 @@ public class NAR implements Runnable, TaskSource {
 
             //warn if frame consumed more time than reasoner duration
             if (frameTime > d) {
-                emit(ERR.class, 
+                emit(Events.ERR.class,
                         "Real-time consumed by frame (" +
                                 frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
             }
@@ -778,7 +783,7 @@ public class NAR implements Runnable, TaskSource {
 
         //TODO re=use constructed array if possible, assuming recipient knows to save the value and not the array
         while (i.hasNext()) {
-            receiver.event(IN.class, new Object[] { i.next() });
+            receiver.event(Events.IN.class, new Object[] { i.next() });
             total++;
         }        
         

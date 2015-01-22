@@ -25,9 +25,6 @@ import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
 import nars.event.EventEmitter;
-import nars.core.Events.ERR;
-import nars.core.Events.IN;
-import nars.core.Events.OUT;
 import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -78,8 +75,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class Memory implements Serializable {
 
     @Deprecated
-    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo
-
+    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
     //get it out to plugin somehow
 
     private boolean enabled = true;
@@ -105,6 +101,16 @@ public class Memory implements Serializable {
         return concept(Term.get(t));
     }
 
+
+    /** provides fast iteration to concepts with questions */
+    public Set<Concept> getQuestionConcepts() {
+        return questionConcepts;
+    }
+
+    /** provides fast iteration to concepts with goals */
+    public Set<Concept> getGoalConcepts() {
+        return goalConcepts;
+    }
 
     public static enum Forgetting {
         Iterative, Periodic
@@ -146,8 +152,8 @@ public class Memory implements Serializable {
     private final List<Runnable> otherTasks = new ArrayList();
 
     public final Core concepts;
-    final Set<Concept> questionConcepts = Parameters.newHashSet(100);
-    final Set<Concept> goalConcepts = Parameters.newHashSet(100);
+    private final Set<Concept> questionConcepts = Parameters.newHashSet(16);
+    private final Set<Concept> goalConcepts = Parameters.newHashSet(16);
 
     public final EventEmitter event;
 
@@ -230,24 +236,38 @@ public class Memory implements Serializable {
         this.event.set(conceptIndices, true, Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class, Events.ConceptRemember.class, Events.ConceptForget.class, Events.ConceptNew.class );
     }
 
+
     /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events */
     private final Reaction conceptIndices = new Reaction() {
 
         @Override
         public void event(Class event, Object[] args) {
 
-            boolean conceptLifeCycle =
-                    (event == Events.ConceptForget.class) || (event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class);
-
-            if (conceptLifeCycle || (event == Events.ConceptQuestionAdd.class) || (event == Events.ConceptQuestionRemove.class)) {
+            if ((event == Events.ConceptForget.class) || (event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class)) {
                 Concept c = (Concept)args[0];
                 if (c.questions.isEmpty()) questionConcepts.remove(c);
                 else questionConcepts.add(c);
-            }
-            if (conceptLifeCycle || (event == Events.ConceptGoalAdd.class) || (event == Events.ConceptGoalRemove.class)) {
-                Concept c = (Concept)args[0];
-                if (c.desires.isEmpty()) goalConcepts.remove(c);
+                if (c.desires.isEmpty())  goalConcepts.remove(c);
                 else goalConcepts.add(c);
+                return;
+            }
+
+
+            if ((event == Events.ConceptQuestionAdd.class) || (event == Events.ConceptQuestionRemove.class)) {
+                Concept c = (Concept)args[0];
+                Task incoming = args.length > 2 ? (Task)args[2] : null; //non-null indicates that a Add will be following this removal event
+                if (incoming==null && c.questions.isEmpty())
+                    questionConcepts.remove(c);
+                else if (c.questions.size() == 1)
+                    questionConcepts.add(c);
+            }
+            if ((event == Events.ConceptGoalAdd.class) || (event == Events.ConceptGoalRemove.class)) {
+                Concept c = (Concept)args[0];
+                Task incoming = args.length > 2 ? (Task)args[2] : null; //non-null indicates that a Add will be following this removal event
+                if (incoming==null && c.desires.isEmpty())
+                    goalConcepts.remove(c);
+                else if (c.desires.size() == 1)
+                    goalConcepts.add(c);
             }
 
         }
@@ -546,7 +566,7 @@ public class Memory implements Serializable {
                 s.setCreationTime(time(), param.duration.get());
             }
 
-            emit(IN.class, task);
+            emit(Events.IN.class, task);
 
             if (task.budget.aboveThreshold()) {
 
@@ -558,26 +578,25 @@ public class Memory implements Serializable {
             }
         } else if (t instanceof PauseInput) {
             stepLater(((PauseInput) t).cycles);
-            emit(IN.class, t);
+            emit(Events.IN.class, t);
         } else if (t instanceof Reset) {
             reset();
-            emit(OUT.class,((Reset) t).input);
-            emit(IN.class, t);
+            emit(Events.OUT.class,((Reset) t).input);
+            emit(Events.IN.class, t);
         } else if (t instanceof Echo) {
             Echo e = (Echo) t;
             emit(e.channel, e.signal);
         } else if (t instanceof SetVolume) {
             param.noiseLevel.set(((SetVolume) t).volume);
-            emit(IN.class, t);
+            emit(Events.IN.class, t);
         } else {
-            emit(IN.class, "Unrecognized Input Task: " + t);
+            emit(Events.IN.class, "Unrecognized Input Task: " + t);
         }
         return 0;
     }
 
     public void removeTask(final Task task, final String reason) {
         emit(TaskRemove.class, task, reason);
-        task.setReason(reason);
         task.end();
     }
 
@@ -591,7 +610,7 @@ public class Memory implements Serializable {
         logic.TASK_EXECUTED.hit(); //(opTask.budget.getPriority());
 
         Stamp stamp = new Stamp(this, Tense.Present);
-        Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
+        Sentence sentence = new Sentence(operation, Symbols.JUDGMENT, truth, stamp);
 
         Task task = new Task(sentence, opTask.budget, operation.getTask());
         task.setCause(operation);
@@ -605,7 +624,7 @@ public class Memory implements Serializable {
         final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
 
         if (budget >= noiseLevel) {  // only report significant derived Tasks
-            emit(OUT.class, t);
+            emit(Events.OUT.class, t);
         }
     }
 
@@ -792,25 +811,12 @@ public class Memory implements Serializable {
 
 
     protected void error(Throwable ex) {
-        emit(ERR.class, ex);
+        emit(Events.ERR.class, ex);
 
         if (Parameters.DEBUG) {
             ex.printStackTrace();
         }
 
-    }
-
-
-
-
-    /** gets the set of concepts which have question tasks */
-    public Set<Concept> getQuestions() {
-        return questionConcepts;
-    }
-
-    /** gets the set of concepts which have goal tasks */
-    public Set<Concept> getGoals() {
-        return goalConcepts;
     }
 
 

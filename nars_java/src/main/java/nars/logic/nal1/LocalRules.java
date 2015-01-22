@@ -185,7 +185,7 @@ public class LocalRules {
         if ((budget != null) && budget.aboveThreshold()) {                       
             
             //Solution Activated
-            if(task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK) {
+            if(task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST) {
                 if(task.isInput()) { //only show input tasks as solutions
                     memory.emit(Answer.class, task, belief); 
                 } else {
@@ -332,7 +332,7 @@ public class LocalRules {
         
         if (content == null) return;
         
-        nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
+        nal.singlePremiseTask(content, Symbols.JUDGMENT, newTruth, newBudget);
     }
 
     

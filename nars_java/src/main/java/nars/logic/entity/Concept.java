@@ -209,17 +209,17 @@ public class Concept extends Item<Term> implements Termable {
     public boolean directProcess(final NAL nal, final Task task) {
         char type = task.sentence.punctuation;
         switch (type) {
-            case Symbols.JUDGMENT_MARK:
+            case Symbols.JUDGMENT:
                 memory.logic.JUDGMENT_PROCESS.hit();
                 processJudgment(nal, task);
                 break;
-            case Symbols.GOAL_MARK:
+            case Symbols.GOAL:
                 memory.logic.GOAL_PROCESS.hit();
                 processGoal(nal, task);
                 break;
-            case Symbols.QUESTION_MARK:
+            case Symbols.QUESTION:
+            case Symbols.QUEST:
                 memory.logic.QUESTION_PROCESS.hit();
-            case Symbols.QUEST_MARK:
                 processQuestion(nal, task);
                 break;
             default:
@@ -400,7 +400,7 @@ public class Concept extends Item<Term> implements Termable {
                 }
 
 
-                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) { //should this be half duration?
+                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
                     if(!executeDecision(task)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
@@ -413,60 +413,41 @@ public class Concept extends Item<Term> implements Termable {
     /**
      * To answer a question by existing beliefs
      *
-     * @param task The task to be processed
+     * @param newTask The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processQuestion(final NAL nal, final Task task) {
+    protected void processQuestion(final NAL nal, final Task newTask) {
 
-        Sentence ques = task.sentence;
+        Sentence ques = newTask.sentence;
 
-        int limit;
-        List<Task> table;
-        if (ques.punctuation == Symbols.QUESTION_MARK) {
-            table = questions;
-            limit = memory.param.conceptQuestionsMax.get();
-        }
-        else if (ques.punctuation == Symbols.QUEST_MARK) {
-            table = quests;
-            limit = memory.param.conceptQuestionsMax.get(); //TODO allow different value than questions
-        }
-        else
-            throw new RuntimeException(task + " is not a Question or Quest");
-
-        synchronized (table) {
-            boolean newQ = true;
-
-            //TODO use a set comparison on the unique part of the Task that we want to hold
-            for (final Task t : table) {
+        synchronized (questions) {
+            boolean newQuestion = true;
+            for (final Task t : questions) {
                 final Sentence q = t.sentence;
-                if (q.equals(ques)) {
+                if (q.equalsContent(ques)) {
                     ques = q;
-                    newQ = false;
+                    newQuestion = false;
                     break;
                 }
             }
 
-            if (newQ) {
-
-                if (table.size() + 1 > limit) {
-                    Task removed = table.remove(0);    // FIFO
-                    if (table == questions)
-                        memory.event.emit(ConceptQuestionRemove.class, this, removed, false);
+            if (newQuestion) {
+                if (questions.size() + 1 > memory.param.conceptQuestionsMax.get()) {
+                    Task removed = questions.remove(0);    // FIFO
+                    memory.event.emit(ConceptQuestionRemove.class, this, removed, newTask);
                 }
 
-                table.add(task);
-
-                if (table == questions)
-                    memory.event.emit(ConceptQuestionAdd.class, this, task, true);
+                questions.add(newTask);
+                memory.event.emit(ConceptQuestionAdd.class, this, newTask);
             }
         }
 
         final Sentence newAnswer = (ques.isQuestion())
-                ? selectCandidate(ques, beliefs)  //question answers beliefs,
-                : selectCandidate(ques, desires); //quest answers desires
+                ? selectCandidate(ques, beliefs)
+                : selectCandidate(ques, desires);
 
         if (newAnswer != null) {
-            trySolution(newAnswer, task, nal);
+            trySolution(newAnswer, newTask, nal);
         }
     }
 
@@ -823,14 +804,14 @@ public class Concept extends Item<Term> implements Termable {
         return topValue;
     }
 
+
+
     @Override
     public void end() {
-
     }
 
-
-    /** should not call under any normal circumstance */
-    public void delete() {
+    /** not to be used normally */
+    protected void delete() {
         for (Task t : questions) t.end();
         for (Task t : quests) t.end();
         
@@ -983,12 +964,12 @@ public class Concept extends Item<Term> implements Termable {
         return term.operator();
     }
 
-    public Collection<Sentence> getSentences(final char punc) {
+    public Collection<Sentence> getSentences(char punc) {
         switch(punc) {
-            case Symbols.JUDGMENT_MARK: return beliefs;
-            case Symbols.GOAL_MARK: return desires;                
-            case Symbols.QUESTION_MARK: return Task.getSentences(questions);
-            case Symbols.QUEST_MARK: return Task.getSentences(quests);
+            case Symbols.JUDGMENT: return beliefs;
+            case Symbols.GOAL: return desires;
+            case Symbols.QUESTION: return Task.getSentences(questions);
+            case Symbols.QUEST: return Task.getSentences(quests);
         }
         throw new RuntimeException("Invalid punctuation: " + punc);
     }

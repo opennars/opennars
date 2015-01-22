@@ -50,7 +50,7 @@ public class Name extends Operator implements Mental {
         Similarity content = Similarity.make(compound, atomic);
         
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));
+        Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(memory));
         
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         

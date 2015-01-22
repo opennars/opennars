@@ -81,22 +81,22 @@ public class InternalExperience extends AbstractPlugin {
     public static Term toTerm(final Sentence s, final Memory mem) {
         String opName;
         switch (s.punctuation) {
-            case Symbols.JUDGMENT_MARK:
+            case Symbols.JUDGMENT:
                 opName = "^believe";
                 if(!AllowWantBelieve) {
                     return null;
                 }
                 break;
-            case Symbols.GOAL_MARK:
+            case Symbols.GOAL:
                 opName = "^want";
                 if(!AllowWantBelieve) {
                     return null;
                 }
                 break;
-            case Symbols.QUESTION_MARK:
+            case Symbols.QUESTION:
                 opName = "^wonder";
                 break;
-            case Symbols.QUEST_MARK:
+            case Symbols.QUEST:
                 opName = "^evaluate";
                 break;
             default:
@@ -146,7 +146,7 @@ public class InternalExperience extends AbstractPlugin {
             if(ret==null) {
                 return;
             }
-            Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
+            Sentence j = new Sentence(ret, Symbols.JUDGMENT, truth, stamp);
             BudgetValue newbudget=new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
@@ -188,7 +188,7 @@ public class InternalExperience extends AbstractPlugin {
                 
                 Term new_term=Inheritance.make(prod, op);
                 Sentence sentence = new Sentence(
-                    new_term, Symbols.GOAL_MARK, 
+                    new_term, Symbols.GOAL,
                     new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(memory));
                 
@@ -234,7 +234,7 @@ public class InternalExperience extends AbstractPlugin {
                     Term new_term=Operation.make(args,op);
 
                     Sentence sentence = new Sentence(
-                        new_term, Symbols.GOAL_MARK, 
+                        new_term, Symbols.GOAL,
                         new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                         new Stamp(memory));
 

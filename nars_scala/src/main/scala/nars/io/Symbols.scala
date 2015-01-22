@@ -5,9 +5,9 @@ import scala.collection.JavaConversions._
 
 object Symbols {
 
-  val JUDGMENT_MARK = '.'
+  val JUDGMENT = '.'
 
-  val QUESTION_MARK = '?'
+  val QUESTION = '?'
 
   val VAR_INDEPENDENT = '$'
 

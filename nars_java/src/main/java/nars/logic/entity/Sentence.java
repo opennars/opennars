@@ -190,7 +190,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
     final protected boolean isUniqueByOcurrenceTime() {
         return true;
-        //return ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
+        //return ((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
     }
     
     /**
@@ -368,7 +368,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      * @return Whether the object is a Judgment
      */
     public boolean isJudgment() {
-        return (punctuation == Symbols.JUDGMENT_MARK);
+        return (punctuation == Symbols.JUDGMENT);
     }
 
     /**
@@ -377,15 +377,15 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      * @return Whether the object is a Question
      */
     public boolean isQuestion() {
-        return (punctuation == Symbols.QUESTION_MARK);
+        return (punctuation == Symbols.QUESTION);
     }
 
     public boolean isGoal() {
-        return (punctuation == Symbols.GOAL_MARK);
+        return (punctuation == Symbols.GOAL);
     }
  
     public boolean isQuest() {
-        return (punctuation == Symbols.QUEST_MARK);
+        return (punctuation == Symbols.QUEST);
     }    
     
     public boolean hasQueryVar() {
@@ -437,7 +437,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         if (key == null) {
             final CharSequence contentName = term.name();
             
-            final boolean showOcurrenceTime = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
+            final boolean showOcurrenceTime = ((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
             //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
             
             //final CharSequence truthString = truth != null ? truth.name() : null;

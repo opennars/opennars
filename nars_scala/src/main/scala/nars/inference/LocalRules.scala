@@ -226,6 +226,6 @@ object LocalRules {
       otherTerm = if ((subjT == subjB)) predB else subjB
       content = Statement.make(content, subjT, otherTerm, memory)
     }
-    memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget)
+    memory.singlePremiseTask(content, Symbols.JUDGMENT, newTruth, newBudget)
   }
 }

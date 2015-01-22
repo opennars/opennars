@@ -178,7 +178,7 @@ public abstract class Operator extends Term implements Plugin {
 //                float durability = b.getDurability();
 //
 //                memory.addNewTask(
-//                        memory.newTaskAt(operation, Symbols.GOAL_MARK, n.freqCorrection, n.confCorrection, priority, durability, (Tense)null),
+//                        memory.newTaskAt(operation, Symbols.GOAL, n.freqCorrection, n.confCorrection, priority, durability, (Tense)null),
 //                        "Negative feedback"
 //                );
 //

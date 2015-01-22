@@ -212,7 +212,7 @@ abstract public class FireConcept extends NAL {
 
             //TODO
             //(&/,a) goal didnt get unwinded, so lets unwind it
-            if(taskTerm instanceof Conjunction && taskSentence.punctuation== Symbols.GOAL_MARK) {
+            if(taskTerm instanceof Conjunction && taskSentence.punctuation== Symbols.GOAL) {
                 Conjunction s=(Conjunction)taskTerm;
 
                 CompoundTerm newterm = Sentence.termOrNull(s.term[0]);

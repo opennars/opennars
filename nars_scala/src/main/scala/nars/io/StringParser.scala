@@ -129,7 +129,7 @@ object StringParser {
    * @return the input TruthValue
    */
   private def parseTruth(s: String, `type`: Char): TruthValue = {
-    if (`type` == QUESTION_MARK) {
+    if (`type` == QUESTION) {
       return null
     }
     var frequency = 1.0f
@@ -159,11 +159,11 @@ object StringParser {
     var priority: Float = 0
     var durability: Float = 0
     punctuation match {
-      case JUDGMENT_MARK => 
+      case JUDGMENT =>
         priority = Parameters.DEFAULT_JUDGMENT_PRIORITY
         durability = Parameters.DEFAULT_JUDGMENT_DURABILITY
 
-      case QUESTION_MARK => 
+      case QUESTION =>
         priority = Parameters.DEFAULT_QUESTION_PRIORITY
         durability = Parameters.DEFAULT_QUESTION_DURABILITY
 

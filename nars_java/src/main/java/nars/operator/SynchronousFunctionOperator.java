@@ -91,7 +91,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
         if (actual == null) return null;
 
         return Lists.newArrayList(
-                m.newTask(actual, Symbols.JUDGMENT_MARK,
+                m.newTask(actual, Symbols.JUDGMENT,
                         1f, 0.99f,
                         Parameters.DEFAULT_JUDGMENT_PRIORITY,
                         Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
@@ -106,14 +106,14 @@ public abstract class SynchronousFunctionOperator extends Operator {
             
             float confidence = 0.99f;
             ArrayList<Task> rt = Lists.newArrayList( 
-                    m.newTaskAt(actual, Symbols.JUDGMENT_MARK,
+                    m.newTaskAt(actual, Symbols.JUDGMENT,
                             1.0f, confidence, 
                             Parameters.DEFAULT_JUDGMENT_PRIORITY, 
                             Parameters.DEFAULT_JUDGMENT_DURABILITY, 
                             operation.getTask()));    
             
             if (equal < 1.0f) {
-                rt.add(m.newTaskAt(operation, Symbols.JUDGMENT_MARK,
+                rt.add(m.newTaskAt(operation, Symbols.JUDGMENT,
                             equal, confidence, 
                             Parameters.DEFAULT_JUDGMENT_PRIORITY, 
                             Parameters.DEFAULT_JUDGMENT_DURABILITY, 

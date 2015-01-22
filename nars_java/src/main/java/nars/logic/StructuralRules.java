@@ -662,13 +662,13 @@ public final class StructuralRules {
             } else {
                 budget = BudgetFunctions.compoundBackward(content, nal);
             }
-            return nal.singlePremiseTask(content, Symbols.QUESTION_MARK, truth, budget);
+            return nal.singlePremiseTask(content, Symbols.QUESTION, truth, budget);
         } else {
             if (content instanceof Implication) {
                 truth = TruthFunctions.contraposition(truth);
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
-            return nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, truth, budget);
+            return nal.singlePremiseTask(content, Symbols.JUDGMENT, truth, budget);
         }
     }
 }

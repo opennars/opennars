@@ -38,7 +38,7 @@ public class Counting implements Plugin {
                         return;
                     }
 
-                    if(task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
+                    if(task.sentence.punctuation==Symbols.JUDGMENT) {
                         //lets say we have <{...} --> M>.
                         if(task.sentence.term instanceof Inheritance) {
 
@@ -66,7 +66,7 @@ public class Counting implements Plugin {
                                 
                                 TruthValue truth = task.sentence.truth.clone();
                                 Stamp stampi = task.sentence.stamp.clone();
-                                Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
+                                Sentence j = new Sentence(new_term, Symbols.JUDGMENT, truth, stampi);
                                 BudgetValue budg = task.budget.clone();
                                 Task newTask = new Task(j, budg,task);                               
 

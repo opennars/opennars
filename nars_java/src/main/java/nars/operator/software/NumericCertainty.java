@@ -41,7 +41,7 @@ public class NumericCertainty extends Operator implements Mental{
 
         CompoundTerm resultTerm = Sentence.termOrNull(args[3]);
         if (resultTerm != null)
-            results.add(memory.newTask(resultTerm, Symbols.JUDGMENT_MARK, 1.0f, resultCertainty, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, Tense.Present));
+            results.add(memory.newTask(resultTerm, Symbols.JUDGMENT, 1.0f, resultCertainty, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, Tense.Present));
         
         return results;
     }

@@ -137,7 +137,7 @@
 //            int maxBeliefs = memory.param.conceptBeliefsMax.get();
 //            
 //            
-//            Sentence belief = new Sentence(beliefTerm, Symbols.JUDGMENT_MARK,new TruthValue(freq, conf), new Stamp(memory, Tense.Present) );
+//            Sentence belief = new Sentence(beliefTerm, Symbols.JUDGMENT,new TruthValue(freq, conf), new Stamp(memory, Tense.Present) );
 //            
 //            Concept c = memory.concept(beliefTerm);
 //
@@ -220,18 +220,18 @@
 //            Term implication = Implication.make(conj, currentBelief, TemporalRules.ORDER_CONCURRENT);
 //            
 //            
-//            //Sentence belief = new Sentence(beliefTerm, Symbols.JUDGMENT_MARK,new TruthValue(freq, conf), new Stamp(memory, Tense.Present) );
+//            //Sentence belief = new Sentence(beliefTerm, Symbols.JUDGMENT,new TruthValue(freq, conf), new Stamp(memory, Tense.Present) );
 //            
 //            //Concept c = memory.concept(beliefTerm);
 //
 //
 //            //Task t = 
 //            
-//            //new ImmediateProcess(memory, memory.newTaskAt(implication, Symbols.JUDGMENT_MARK, truth, 0.90f, 1.0f, 0.8f), 0).run();
+//            //new ImmediateProcess(memory, memory.newTaskAt(implication, Symbols.JUDGMENT, truth, 0.90f, 1.0f, 0.8f), 0).run();
 //            
 //            //memory.inputTask(t);
 //            
-//            new ImmediateProcess(memory, memory.newTaskAt(currentBelief, Symbols.JUDGMENT_MARK, truth, 0.90f, 1.0f, 0.8f), 0).run();
+//            new ImmediateProcess(memory, memory.newTaskAt(currentBelief, Symbols.JUDGMENT, truth, 0.90f, 1.0f, 0.8f), 0).run();
 //       }        
 //    
 //    public static void main(String[] args) throws Narsese.InvalidInputException, InterruptedException {

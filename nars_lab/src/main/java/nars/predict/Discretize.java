@@ -153,7 +153,7 @@ public class Discretize {
         }
         else if ((mode == BeliefInsertion.MemoryInput)|| (mode == BeliefInsertion.ImmediateProcess)) {
             
-            Task t = nar.memory.newTask(getValueTerm(variable, level), Symbols.JUDGMENT_MARK, freq, conf, 1.0f, 0.8f);
+            Task t = nar.memory.newTask(getValueTerm(variable, level), Symbols.JUDGMENT, freq, conf, 1.0f, 0.8f);
         
             System.out.println(t);
             

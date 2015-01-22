@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import static nars.io.Symbols.JUDGMENT_MARK;
+import static nars.io.Symbols.JUDGMENT;
 
 /**
  *
@@ -194,7 +194,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
             super(x.toString());
             
             switch (x.punc) {
-                case JUDGMENT_MARK:
+                case JUDGMENT:
                     DescriptiveStatistics d = TruthValue.statistics(x.getSentences(), TruthValue.TruthComponent.Expectation);
                     float mean = (float) d.getMean();
                                         

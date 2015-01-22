@@ -20,8 +20,8 @@
  */
 package nars.io;
 
-import nars.core.Events.IN;
-import nars.core.Events.OUT;
+
+import nars.core.Events;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,10 +31,10 @@ import java.util.Map;
 public class Symbols {
 
     /* sentence type and delimitors */
-    public static final char JUDGMENT_MARK = '.';
-    public static final char QUESTION_MARK = '?';
-    public static final char GOAL_MARK = '!';
-    public static final char QUEST_MARK = '@';
+    public static final char JUDGMENT = '.';
+    public static final char QUESTION = '?';
+    public static final char GOAL = '!';
+    public static final char QUEST = '@';
 
     
     
@@ -251,7 +251,7 @@ public class Symbols {
     /**
      * Check Statement getRelation symbol, called in StringPaser
      *
-     * @param s0 The String to be checked
+     * @param s The String to be checked
      * @return if the given String is a getRelation symbol
      */
     public static boolean isRelation(final String s) {
@@ -261,8 +261,8 @@ public class Symbols {
     
 
     /* experience line prefix */
-    public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
-    public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
+    public static final String INPUT_LINE_PREFIX = Events.IN.class.getSimpleName();
+    public static final String OUTPUT_LINE_PREFIX = Events.OUT.class.getSimpleName();
 
     public static final char PREFIX_MARK = ':';
     public static final char COMMENT_MARK = '/';

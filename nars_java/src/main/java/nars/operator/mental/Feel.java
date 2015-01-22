@@ -60,7 +60,7 @@ public abstract class Feel extends Operator implements Mental {
         Term predicate = new SetInt(feelingTerm);
         
         Term content = Inheritance.make(selfSubject, predicate);
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);
+        Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, stamp);
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
         

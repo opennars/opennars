@@ -130,7 +130,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
 
 
             Task newTask = new Task(
-                    new Sentence<>(op, Symbols.JUDGMENT_MARK, truth, st),
+                    new Sentence<>(op, Symbols.JUDGMENT, truth, st),
                     new BudgetValue(
                         Parameters.DEFAULT_JUDGMENT_PRIORITY * InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                         Parameters.DEFAULT_JUDGMENT_DURABILITY * InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
@@ -150,7 +150,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
 
         Task task = new Task(
                 new Sentence<>(prediction,
-                        Symbols.JUDGMENT_MARK,
+                        Symbols.JUDGMENT,
                         expiredTruth,
                         new Stamp(nal.memory).
                                 setOccurrenceTime(

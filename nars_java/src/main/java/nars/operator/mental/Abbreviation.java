@@ -70,7 +70,7 @@ public class Abbreviation extends AbstractPlugin {
                         
             Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
-                    Symbols.JUDGMENT_MARK, 
+                    Symbols.JUDGMENT,
                     new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(memory));
             

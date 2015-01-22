@@ -68,7 +68,7 @@ public final class CompositionalRules {
         if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }
-        Set<Concept> memoryQuestionConcepts = nal.mem().getQuestions();
+        Set<Concept> memoryQuestionConcepts = nal.mem().getQuestionConcepts();
         if (memoryQuestionConcepts.isEmpty())
             return;
 
@@ -1028,8 +1028,8 @@ OUT: <lock1 --> lock>.
         }
     }
 
-public static final Variable depIndVar1 = new Variable("#depIndVar1");
-public static final Variable depIndVar2 = new Variable("#depIndVar2");
+    public static final Variable depIndVar1 = new Variable("#depIndVar1");
+    public static final Variable depIndVar2 = new Variable("#depIndVar2");
 
     static boolean introVarSameSubjectOrPredicate(final Sentence originalMainSentence, final Sentence subSentence, final Term component, final Term content, final int index, final NAL nal) {
 
@@ -1261,10 +1261,10 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 TruthValue truth = deduction(taskSentence.truth, truthSecond);
 
-                char mark = Symbols.JUDGMENT_MARK;
+                char mark = Symbols.JUDGMENT;
                 if (taskSentence.isGoal() || second_belief.isGoal()) {
                     truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
-                    mark = Symbols.GOAL_MARK;
+                    mark = Symbols.GOAL;
                 }
 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, result, nal);
@@ -1323,14 +1323,14 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 continue;
             }
 
-            char mark = Symbols.JUDGMENT_MARK;
+            char mark = Symbols.JUDGMENT;
             if (task.sentence.isGoal() || second_belief.isGoal()) {
                 if (strong) {
                     truth = abduction(t1, t2);
                 } else {
                     truth = intersection(t1, t2);
                 }
-                mark = Symbols.GOAL_MARK;
+                mark = Symbols.GOAL;
             }
 
 

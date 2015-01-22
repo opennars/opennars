@@ -253,7 +253,7 @@ public class ClassicalConditioningHelper implements Plugin {
                 Implication res=Implication.make(con, pred,TemporalRules.ORDER_FORWARD);
                 Stamp stamp=new Stamp(nar.memory);
                 stamp.setOccurrenceTime(Stamp.ETERNAL);
-                Sentence s=new Sentence(res,Symbols.JUDGMENT_MARK,Truth,stamp);
+                Sentence s=new Sentence(res,Symbols.JUDGMENT,Truth,stamp);
                 Task TT=Task.make(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,
                 
                 BudgetFunctions.truthToQuality(Truth)), lastElems.get(lastElems.size()-1));
@@ -271,7 +271,7 @@ public class ClassicalConditioningHelper implements Plugin {
         if(!task.isInput()) {
             return;
         }
-        if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL && task.sentence.punctuation==Symbols.JUDGMENT_MARK) {
+        if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL && task.sentence.punctuation==Symbols.JUDGMENT) {
             lastElems.add(task);
             if(lastElems.size()>maxlen) {
                 lastElems.remove(0);

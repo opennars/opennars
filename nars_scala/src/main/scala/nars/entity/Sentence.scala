@@ -106,13 +106,13 @@ class Sentence(@BeanProperty var content: Term,
    * Distinguish Judgment from Goal ("instanceof Judgment" doesn't work)
    * @return Whether the object is a Judgment
    */
-  def isJudgment(): Boolean = (punctuation == Symbols.JUDGMENT_MARK)
+  def isJudgment(): Boolean = (punctuation == Symbols.JUDGMENT)
 
   /**
    * Distinguish Question from Quest ("instanceof Question" doesn't work)
    * @return Whether the object is a Question
    */
-  def isQuestion(): Boolean = (punctuation == Symbols.QUESTION_MARK)
+  def isQuestion(): Boolean = (punctuation == Symbols.QUESTION)
 
   /**
    * Get a String representation of the sentence
