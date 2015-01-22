@@ -26,3 +26,6 @@ target/
 opennars.iml
 *.iml
 .idea/
+/dev/netbeans/nbproject/private/
+/dev/netbeans/build/
+/dev/netbeans/dist/
