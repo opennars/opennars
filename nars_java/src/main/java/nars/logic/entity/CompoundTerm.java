@@ -292,8 +292,17 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 //        return true;*/
 //        
 //    }
-    
-    
+
+    /** single term version of makeCompoundName without iteration for efficiency */
+    protected static CharSequence makeCompoundName(final NativeOperator op, final Term singleTerm) {
+        int size = 2; // beginning and end parens
+        String opString = op.toString();
+        size += opString.length();
+        final CharSequence tString = singleTerm.name();
+        size += tString.length();
+        return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
+    }
+
     
     /**
      * default method to make the oldName of a compound term from given fields

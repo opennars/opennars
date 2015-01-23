@@ -41,7 +41,7 @@ public class Negation extends CompoundTerm {
 
     @Override
     protected CharSequence makeName() {
-        return makeCompoundName(NativeOperator.NEGATION, term[0]);
+        return makeCompoundName(NativeOperator.NEGATION, negated());
     }
     
     
@@ -112,10 +112,23 @@ public class Negation extends CompoundTerm {
     }
 
     
-    public static boolean areMutuallyInverse(Term tc, Term ptc) {
+    public static boolean areMutuallyInverse(Term a, Term b) {
+        boolean aNeg = a instanceof Negation;
+        boolean bNeg = b instanceof Negation;
+
+        if (aNeg && !bNeg)
+            return areMutuallyInverse((Negation)a, b);
+        else if (!aNeg && bNeg)
+            return areMutuallyInverse((Negation)b, a);
+        else
+            return false;
+
         //doesnt seem necessary to check both, one seems sufficient.
         //incurs cost of creating a Negation and its id
-        return (ptc.equals(Negation.make(tc)) /* || tc.equals(Negation.make(ptc))*/ );        
+        //return (b.equals(Negation.make(a)) /* || tc.equals(Negation.make(ptc))*/ );
+    }
+    public static boolean areMutuallyInverse(Negation a, Term b) {
+        return (a.negated().equals(b));
     }
 
 }

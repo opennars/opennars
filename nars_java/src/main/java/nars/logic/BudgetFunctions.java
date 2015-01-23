@@ -25,6 +25,7 @@ import nars.logic.entity.*;
 
 import static java.lang.Math.*;
 
+
 /**
  * Budget functions for resources allocation
  */

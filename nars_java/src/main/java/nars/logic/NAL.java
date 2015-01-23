@@ -195,18 +195,13 @@ public abstract class NAL implements Runnable {
         }
         //its a logic rule, so we have to do the derivation chain check to hamper cycles
         if (!revised) {
-            Term tc = task.getTerm();
+            Term taskTerm = task.getTerm();
 
             if (task.sentence.isJudgment()) {
 
-                Term ptc = task.getParentTask() != null ? task.getParentTask().getTerm() : null;
-
-                if (
-                        (task.getParentTask() == null) || (!Negation.areMutuallyInverse(tc, ptc))
-                        ) {
-
-                    final Collection<Term> chain = stamp.getChain();
-                    if (chain.contains(tc)) {
+                if (stamp.getChain().contains(taskTerm)) {
+                    Term parentTaskTerm = task.getParentTask() != null ? task.getParentTask().getTerm() : null;
+                    if ((parentTaskTerm == null) || (!Negation.areMutuallyInverse(taskTerm, parentTaskTerm))) {
                         memory.removeTask(task, "Cyclic Reasoning");
                         return false;
                     }

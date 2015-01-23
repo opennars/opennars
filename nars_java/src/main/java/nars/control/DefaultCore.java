@@ -184,8 +184,8 @@ public class DefaultCore implements Core {
                 BudgetFunctions.activate(cb, getBudget(), Activating.TaskLink);
             }
 
-            long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();
-            memory.forget(c, cyclesSinceLastForgotten, relativeThreshold);
+            //long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();
+            //memory.forget(c, cyclesSinceLastForgotten, relativeThreshold);
 
             return c;
         }

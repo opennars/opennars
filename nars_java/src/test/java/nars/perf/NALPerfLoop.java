@@ -38,7 +38,7 @@ public class NALPerfLoop {
                 Parameters.DEBUG = false;
 
                 
-                perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,true);
+                perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,false);
             }
         }        
     }
