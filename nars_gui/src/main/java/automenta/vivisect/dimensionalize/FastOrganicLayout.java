@@ -5,6 +5,7 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import com.mxgraph.util.mxRectangle;
+import nars.util.data.CuckooMap;
 import org.jgrapht.Graph;
 
 import java.util.*;
@@ -290,7 +291,7 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E> {
         Graph<V,E> graph = g.getGraph();
 
         if (indices == null)
-            indices = new HashMap<>();
+            indices = new CuckooMap<>();
         else
             indices.clear();
         
@@ -299,7 +300,10 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E> {
             vertexArray = new ArrayList();
         else
             vertexArray.clear();
-        
+
+        Set<V> vx = graph.vertexSet();
+        if (vx == null) return true;
+
         for (V v : graph.vertexSet()) {
             VertexVis vd = g.getVertexDisplay(v);
             if (vd == null) continue;

@@ -191,7 +191,8 @@ public class TimelineVis implements Vis {
                     int deltaY = currentLocation.y - startLocation.y;
                     camera.yScale = oy * (1.0f + (deltaY * scaleSpeed));
                     camera.xScale = ox * (1.0f + (deltaX * scaleSpeed));
-                    p.predraw();
+
+                    SwingUtilities.invokeLater(p::predraw);
 
                 }
             }

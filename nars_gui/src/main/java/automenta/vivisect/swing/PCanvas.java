@@ -11,6 +11,7 @@ import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
 
+import javax.swing.*;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 
@@ -31,7 +32,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
 
     boolean lowQuality = false;
     
-    boolean drawn = false;
+    boolean predrawing = false;
     float motionBlur = 0.0f;
     private final Vis vis;
 
@@ -53,7 +54,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
     public static PFont font9;
     public static PFont font15;
     private PGraphics b;
-    private boolean renderEveryFrame = false;
+    private boolean renderEveryFrame = false/*, renderEveryInput = true*/;
 
     public PCanvas() {
         this(null);
@@ -113,7 +114,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
     protected void resizeRenderer(int newWidth, int newHeight) {
         if ((newWidth > 0) && (newHeight > 0)) {
             super.resizeRenderer(newWidth, newHeight);
-            drawn = false;
+            predrawing = false;
         }
     }
 
@@ -152,8 +153,13 @@ public class PCanvas extends PApplet implements HierarchyListener {
         this.lowQuality = lowQuality;
     }
 
+    public boolean isPredrawing() {
+        return predrawing;
+    }
+
     public synchronized void predraw() {
-        drawn = false;
+        predrawing = true;
+
         if ((b!=null) && (b.width != getWidth() || b.height != getHeight())) {
             b.dispose();
             b = null;
@@ -186,16 +192,25 @@ public class PCanvas extends PApplet implements HierarchyListener {
         
         
         hnav.applyTransform(b);
-                
+
+
         vis.draw(b);
         
         b.endDraw();
-        
-        redraw();
-        drawn = true;
+
+        //if not autorendering, we need to invoke redraw manually here
+        if (!renderEveryFrame)
+            redraw();
+
     }
 
-   
+
+//    public boolean renderEveryInput() {
+        //return renderEveryInput;
+    //}
+  //  public void renderEveryInput(boolean f) {
+      //  this.renderEveryInput = f;
+    //}
 
     public boolean renderEveryFrame() {
         return renderEveryFrame;
@@ -207,11 +222,9 @@ public class PCanvas extends PApplet implements HierarchyListener {
     @Override
     public void draw() {
 
-        if (renderEveryFrame())
-            predraw();
-
-        if (drawn && b!=null && b.width == getWidth() && b.height==getHeight())  {
+        if (predrawing && b!=null && b.width == getWidth() && b.height==getHeight())  {
             this.background(b);
+            predrawing = false;
         }
     }
 
@@ -350,7 +363,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
                 savepx = mouseX;
                 savepy = mouseY;
                 if (!renderEveryFrame)
-                    predraw();
+                    SwingUtilities.invokeLater(PCanvas.this::predraw);
             }
         }
 
@@ -366,7 +379,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
                 savepx = mouseX;
                 savepy = mouseY;
                 if (!renderEveryFrame)
-                    predraw();
+                    SwingUtilities.invokeLater(PCanvas.this::predraw);
             }
         }
 
@@ -399,8 +412,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
                 dify = (dify) * (zoom / zoomBefore);
             }
             if (!renderEveryFrame)
-                predraw();
-            drawn = false;
+                SwingUtilities.invokeLater(PCanvas.this::predraw);
+            predrawing = false;
         }
 
         void Init() {
@@ -421,8 +434,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
             difx = (difx) * (zoom / zoomBefore);
             dify = (dify) * (zoom / zoomBefore);
             if (!renderEveryFrame)
-                predraw();
-            drawn = false;
+                SwingUtilities.invokeLater(PCanvas.this::predraw);
+            predrawing = false;
         }
 
         void applyTransform(PGraphics g) {

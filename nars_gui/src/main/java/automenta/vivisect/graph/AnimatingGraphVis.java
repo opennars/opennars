@@ -32,12 +32,14 @@ public class AnimatingGraphVis<V,E> extends AbstractGraphVis<V,E> {
     }
 
 
+    /*
     @Override
     public boolean draw(PGraphics g) {
-        updateGraph();
+            //updateGraph();
         return super.draw(g);
     }
-    
+    */
+
 
     
     @Override

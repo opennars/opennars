@@ -25,10 +25,8 @@ public class NARGraphPanel extends NPanel {
     private final JComponent menu;
     private final JPanel graphControl;
 
-    float paintFPS = 30f;
-    float updateFPS = 10f;
-    long lastUpdateMS = -1;
-    
+    float paintFPS = 25f;
+
     public NARGraphPanel(NAR n) {
         super(new BorderLayout());
         
@@ -42,24 +40,22 @@ public class NARGraphPanel extends NPanel {
                 updateUI();
             }
 
-            @Override
-            public void event(Class event, Object[] args) {
-                super.event(event, args);
+        };
+        canvas = new PCanvas(vis) {
 
-                long updateCycleFPS = (long)(1000f / updateFPS);
-                if (event == Events.FrameEnd.class) {
-                    if ((canvas!=null) && (isVisible())) {
-                        long now = System.currentTimeMillis();
-                        if (now - lastUpdateMS > updateCycleFPS) {
-                            canvas.predraw();
-                            canvas.redraw();
-                            lastUpdateMS = now;
-                        }
-                    }
-                }
+
+
+
+            @Override
+            public void draw() {
+                //MULTITHREADED RENDERING LOOP:
+                if (!isPredrawing())
+                    n.memory.addLaterTask(super::predraw);
+
+                super.draw();
+
             }
         };
-        canvas = new PCanvas(vis);
         canvas.setFrameRate(paintFPS);
         canvas.loop();
         canvas.renderEveryFrame(true);
@@ -82,7 +78,8 @@ public class NARGraphPanel extends NPanel {
         
     }
 
-    
+
+
     @Override  protected void onShowing(boolean showing) {
         canvas.predraw();
     }

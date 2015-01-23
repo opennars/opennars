@@ -136,11 +136,14 @@ public class MeterVis extends TimelineVis {
             //noLoop();
             //TODO disable event when window hiden
             framer = nar.on(T(FrameEnd.class), this);
-            
+
+            //renderEveryInput();
+
             final MouseAdapter m = newMouseDragPanScale(this);
             addMouseMotionListener(m);
             addMouseListener(m);
         }
+
 
         @Override
         public void accept(Object t) {

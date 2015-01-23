@@ -44,7 +44,11 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
     private NARGraphDisplay style;
     private GraphDisplay layout;
     private JPanel modePanelHolder;
-    
+
+    float updateCycleMS = 70;
+    long lastUpdateMS = -1;
+
+
     public static interface GraphMode {
         public Graph nextGraph();
         default public void stop() {
@@ -184,7 +188,16 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
     @Override
     public void event(Class event, Object[] args) {
         if (event == FrameEnd.class) {
-            displayedGraph.set(nextGraph());
+
+            long now = System.currentTimeMillis();
+
+            if (now - lastUpdateMS > updateCycleMS) {
+
+                displayedGraph.set(nextGraph());
+
+                lastUpdateMS = now;
+            }
+
         }
         else if (event == Restart.class) {
             displayedGraph.set(null);

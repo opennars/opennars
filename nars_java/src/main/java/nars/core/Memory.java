@@ -61,6 +61,8 @@ import nars.util.bag.Bag;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -193,6 +195,7 @@ public class Memory implements Serializable {
 
     public final Param param;
 
+    final ExecutorService laterTasks = Executors.newFixedThreadPool(1);
 
     /* ---------- Constructor ---------- */
     /**
@@ -723,6 +726,11 @@ public class Memory implements Serializable {
         cycle++;
         if (getTiming()==Timing.Real)
             timeRealNow = System.currentTimeMillis();
+    }
+
+    public void addLaterTask(Runnable t) {
+        laterTasks.submit(t);
+        laterTasks.execute(t);
     }
 
 
