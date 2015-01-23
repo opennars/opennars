@@ -998,28 +998,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         return empty;
     }
 
-    abstract public static class DequePool<X> {
-        final Deque<X> data = new ArrayDeque();
-
-        public DequePool(int preallocate) {
-            for (int i = 0; i < preallocate; i++)
-                put(create());
-        }
-
-        public void put(X i) {
-            data.offer(i);
-        }
-
-        public X get() {
-            if (data.isEmpty()) return create();
-            return data.poll();
-        }
-
-        abstract public X create();
-
-
-    }
-
     //TODO move this to a "bag metrics" class
 //    private void stat() {
 //        int itsize = 0;

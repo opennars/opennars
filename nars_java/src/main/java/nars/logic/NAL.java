@@ -11,6 +11,7 @@ import nars.logic.nal8.Operation;
 import nars.operator.mental.Anticipate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -122,12 +123,14 @@ public abstract class NAL implements Runnable {
     }
 
 
+
+
     /**
      * iived task comes from the logic rules.
      *
      * @param task the derived task
      */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
+    public boolean derivedTask(final Task task, @Deprecated final boolean revised, final boolean single, Task parent, Sentence occurence2) {
 
         List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
 
@@ -208,20 +211,23 @@ public abstract class NAL implements Runnable {
                 }
             }
 
-        } else {
-            //its revision, of course its cyclic, apply evidental base policy
-            final int stampLength = stamp.baseLength;
-            for (int i = 0; i < stampLength; i++) {
-                final long baseI = stamp.evidentialBase[i];
-                for (int j = 0; j < stampLength; j++) {
-                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
-                        memory.removeTask(task, "Overlapping Revision Evidence");
-                        //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
-                        return false;
-                    }
-                }
-            }
         }
+//        else {
+//            //its revision, of course its cyclic, apply evidental base policy
+//            final int stampLength = stamp.baseLength;
+//            for (int i = 0; i < stampLength; i++) {
+//                final long baseI = stamp.evidentialBase[i];
+//                for (int j = 0; j < stampLength; j++) {
+//                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
+//                        throw new RuntimeException("Overlapping Revision Evidence: Should have been discovered earlier: " + Arrays.toString(stamp.evidentialBase));
+//
+//                        //memory.removeTask(task, "Overlapping Revision Evidence");
+//                        //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
+//                        //return false;
+//                    }
+//                }
+//            }
+//        }
 
         if (task.sentence.getOccurenceTime() > memory.time()) {
             memory.event.emit(Events.TaskDeriveFuture.class, task, this);
@@ -238,20 +244,6 @@ public abstract class NAL implements Runnable {
     }
 
     /* --------------- new task building --------------- */
-
-    /**
-     * Shared final operations by all double-premise rules, called from the
-     * rules except StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param newTruth   The truth value of the sentence in task
-     * @param newBudget  The budget value in task
-     */
-    public boolean doublePremiseTaskRevised(final CompoundTerm newContent, final TruthValue newTruth, final BudgetValue newBudget) {
-        Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-        return derivedTask(newTask, true, false, null, null);
-    }
 
     /**
      * Shared final operations by all double-premise rules, called from the
@@ -444,6 +436,18 @@ public abstract class NAL implements Runnable {
         }
         return newStamp;
     }
+    public Stamp getTheNewStampForRevision() {
+        if (newStamp == null) {
+            if (newStampBuilder.overlapping()) {
+                newStamp = null;
+            }
+            else {
+                newStamp = newStampBuilder.build();
+            }
+            newStampBuilder = null;
+        }
+        return newStamp;
+    }
 
     /**
      * @param newStamp the newStamp to set
@@ -455,8 +459,30 @@ public abstract class NAL implements Runnable {
     }
 
     interface StampBuilder {
-
         Stamp build();
+        public Stamp getFirst();
+        public Stamp getSecond();
+
+        default public boolean overlapping() {
+            /*final int stampLength = stamp.baseLength;
+            for (int i = 0; i < stampLength; i++) {
+                final long baseI = stamp.evidentialBase[i];
+                for (int j = 0; j < stampLength; j++) {
+                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
+                        throw new RuntimeException("Overlapping Revision Evidence: Should have been discovered earlier: " + Arrays.toString(stamp.evidentialBase));
+                    }
+                }
+            }*/
+
+            long[] a = getFirst().toSet();
+            long[] b = getSecond().toSet();
+            for (long ae : a) {
+                for (long be : b) {
+                    if (ae == be) return true;
+                }
+            }
+            return false;
+        }
     }
 
     /**
@@ -585,6 +611,9 @@ public abstract class NAL implements Runnable {
             this.second = second;
             this.time = time;
         }
+
+        @Override public Stamp getFirst() { return first; }
+        @Override public Stamp getSecond() { return second; }
 
         @Override
         public Stamp build() {

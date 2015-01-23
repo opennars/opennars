@@ -536,7 +536,7 @@ public class Stamp implements Cloneable {
      *
      * @return The TreeSet representation of the evidential base
      */
-    private long[] toSet() {        
+    public long[] toSet() {
         if (evidentialSet == null) {        
             evidentialSet = toSetArray(evidentialBase);
             evidentialHash = Arrays.hashCode(evidentialSet);

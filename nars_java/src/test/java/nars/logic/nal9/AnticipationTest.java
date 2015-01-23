@@ -52,7 +52,7 @@ public class AnticipationTest extends AbstractNALTest {
         String rule = "<(&/,<a --> b>,+3) =/> <b --> c>>";
         long time = 65;
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         n.believe(rule, Tense.Eternal, 1.0f, 0.9f);
         n.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);

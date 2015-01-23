@@ -101,11 +101,13 @@ public class UtilityFunctions {
 
     //may be more efficient than the for-loop version above, for 2 params
     public final static float aveGeo(final float a, final float b) {
+        if ((a == 0)||(b==0)) return 0; //early result avoiding pow()
         return (float)sqrt(a*b);
     }
     
     //may be more efficient than the for-loop version above, for 3 params
     public final static float aveGeo(final float a, final float b, final float c) {
+        if ((a == 0)||(b==0)||(c==0)) return 0; //early result avoiding pow()
         return (float)pow(a*b*c, 1.0/3.0);
     }    
     

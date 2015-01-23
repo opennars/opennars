@@ -373,8 +373,8 @@ public class Concept extends Item<Term> implements Termable {
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
-                boolean successOfRevision = revision(goal, oldGoal, false, nal);
-                if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
+                boolean revisionSucceeded = revision(goal, oldGoal, false, nal);
+                if(revisionSucceeded) { // it is revised, so there is a new task for which this function will be called
                     return; // with higher/lower desire
                 } 
             } 

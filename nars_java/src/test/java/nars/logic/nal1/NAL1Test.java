@@ -120,7 +120,7 @@ public class NAL1Test extends AbstractNALTest {
     public void backwardInference() throws InvalidInputException {
         long time = 246;
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
         n.ask("<?1 --> swimmer>");
         n.mustOutput(time, "<?1 --> bird>?").en("What is a type of bird?");

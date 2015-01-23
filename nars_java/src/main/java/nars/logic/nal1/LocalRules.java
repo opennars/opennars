@@ -101,15 +101,27 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
-        if (newBelief.term==null) return false;
-        
-        TruthValue newTruth = newBelief.truth;
-        TruthValue oldTruth = oldBelief.truth;
-        TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
-        BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
-        
+
+        TruthValue newBeliefTruth = newBelief.truth;
+        TruthValue oldBeliefTruth = oldBelief.truth;
+        TruthValue truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
+        BudgetValue budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, feedbackToLinks, nal);
+
         if (budget.aboveThreshold()) {
-            if (nal.doublePremiseTaskRevised(newBelief.term, truth, budget)) {
+
+
+            Stamp stamp = nal.getTheNewStampForRevision();
+            if (stamp == null) {
+                //overlapping evidence on revision
+                return false;
+            }
+
+            Sentence newSentence = new Sentence(newBelief.term,
+                    nal.getCurrentTask().sentence.punctuation,
+                    truth,
+                    stamp);
+            Task newTask = new Task(newSentence, budget, nal.getCurrentTask(), nal.getCurrentBelief());
+            if (nal.derivedTask(newTask, true, false, null, null)) {
                 nal.mem().logic.BELIEF_REVISION.hit();
                 return true;
             }

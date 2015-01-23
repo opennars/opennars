@@ -3,6 +3,7 @@ package nars.event;
 
 import nars.core.Events;
 import nars.core.Parameters;
+import nars.util.bag.DequePool;
 import reactor.core.Environment;
 import reactor.core.Reactor;
 import reactor.core.spec.Reactors;
@@ -81,7 +82,9 @@ public class EventEmitter<E>  {
     }
 
     public void notify(Class channel, Object arg) {
-        r.notify(channel, Event.wrap(arg));
+        final Event e = Event.wrap(arg);
+        r.notify(channel, e);
+        e.recycle();
     }
 
     public void notify(Object channel) {

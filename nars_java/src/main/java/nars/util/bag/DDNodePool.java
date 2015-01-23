@@ -4,7 +4,7 @@ package nars.util.bag;
 /**
 * Created by me on 1/20/15.
 */
-public class DDNodePool<E> extends LevelBag.DequePool<DDNodePool.DD<E>> {
+public class DDNodePool<E> extends DequePool<DDNodePool.DD<E>> {
 
     /** node in a linked list; wraps each Item stored in the bag */
     public static class DD<E> {
