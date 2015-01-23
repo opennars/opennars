@@ -52,7 +52,7 @@ public class Events {
     }
 
     /** called after memory.reset() proceeds */
-    public static class ResetEnd {
+    public static class Restart {
     }
     
     

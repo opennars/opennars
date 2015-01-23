@@ -37,7 +37,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
                 Events.ConceptBeliefRemove.class,
                 Events.ConceptGoalAdd.class,
                 Events.ConceptGoalRemove.class,
-                Events.ResetEnd.class) {
+                Events.Restart.class) {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -102,7 +102,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
             if (needInitialConcepts)
                 getInitialConcepts();
         }
-        else if (event == Events.ResetEnd.class) {
+        else if (event == Events.Restart.class) {
             reset();
         }
     }    

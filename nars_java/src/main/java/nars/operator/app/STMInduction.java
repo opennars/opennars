@@ -16,7 +16,7 @@ import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 import static nars.operator.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 
 /**
- * Short-term memory Event Induction
+ * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.
  */
 public class STMInduction extends AbstractPlugin {
 
@@ -35,7 +35,7 @@ public class STMInduction extends AbstractPlugin {
 
     @Override
     public void onEnabled(NAR n) {
-
+        stm.clear();
     }
 
     @Override

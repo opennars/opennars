@@ -17,7 +17,7 @@ import automenta.vivisect.graph.GraphDisplays;
 import automenta.vivisect.swing.NSlider;
 import nars.event.Reaction;
 import nars.core.Events.FrameEnd;
-import nars.core.Events.ResetEnd;
+import nars.core.Events.Restart;
 import nars.core.NAR;
 import nars.gui.output.graph.layout.HashPriorityPolarLayout;
 import nars.util.graph.DefaultGraphizer;
@@ -175,7 +175,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
 
     @Override
     public void onVisible(boolean showing) {  
-        nar.memory.event.set(this, showing, FrameEnd.class, ResetEnd.class);        
+        nar.memory.event.set(this, showing, FrameEnd.class, Restart.class);
         if (!showing) {
             mode.stop();
         }
@@ -186,7 +186,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
         if (event == FrameEnd.class) {
             displayedGraph.set(nextGraph());
         }
-        else if (event == ResetEnd.class) {
+        else if (event == Restart.class) {
             displayedGraph.set(null);
         }
     }

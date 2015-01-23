@@ -138,28 +138,55 @@ public class NAR implements Runnable, TaskSource {
         
         //needs to be concurrent in case we change this while running
         inputChannels = new ArrayList();
-        newInputChannels = new CopyOnWriteArrayList();
+        newInputChannels = new ArrayList();
 
         narsese = new Narsese(this);
+
+        m.event.on(Events.ResetStart.class, resetReaction);
     }
 
     /**
-     * Reset the system with an empty memory and reset clock. Called locally and
-     * from {@link NARControls}.
-     */     
+     * Reset the system with an empty memory and reset clock.  Event handlers
+     * will remain attached but enabled plugins will have been deactivated and
+     * reactivated, a signal for them to empty their state (if necessary).
+     */
     public void reset() {
+        ioReset();
+        memory.reset();        
+    }
+
+    /** resets I/O channels, stopping all input */
+    protected void ioReset() {
+
         int numInputs = inputChannels.size();
         for (int i = 0; i < numInputs; i++) {
             InPort port = inputChannels.get(i);
             port.input.finished(true);
         }
-        inputChannels.clear();        
+
+        inputChannels.clear();
         newInputChannels.clear();
-        //newOutputChannels.clear();
-        //oldOutputChannels.clear();
+
         ioChanged = false;
-        memory.reset();        
+
     }
+
+    final Reaction resetReaction = new Reaction() {
+
+        @Override
+        public void event(Class event, Object[] args) {
+
+            //toggle plugins
+            for (PluginState p : getPlugins()) {
+                if (p.isEnabled()) {
+                    p.setEnabled(false);
+                    p.setEnabled(true);
+                }
+            }
+
+        }
+    };
+
 
     /**
      * Convenience method for creating a TextInput and adding as Input Channel.
@@ -375,7 +402,7 @@ public class NAR implements Runnable, TaskSource {
     }
     
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
-    public ObjectTaskInPort addInput(final Input channel) {
+    public synchronized ObjectTaskInPort addInput(final Input channel) {
         ObjectTaskInPort i = new ObjectTaskInPort(memory, channel, new FIFO(), 1.0f);
                
         try {

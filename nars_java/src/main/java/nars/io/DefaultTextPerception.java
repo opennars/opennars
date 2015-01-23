@@ -1,6 +1,7 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
+import nars.event.AbstractReaction;
 import nars.event.Reaction;
 import nars.core.*;
 import nars.core.Events.Perceive;
@@ -30,7 +31,7 @@ import static com.google.common.collect.Iterators.singletonIterator;
  *  
  *  TODO break into separate subclasses for each text mode
  */
-public class DefaultTextPerception implements Plugin, Reaction {
+public class DefaultTextPerception extends AbstractPlugin {
     
     private Memory memory;
     
@@ -49,18 +50,25 @@ public class DefaultTextPerception implements Plugin, Reaction {
     private boolean enableTwenglish = false; //the events should be introduced event-wise
     //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal logic
 
+
+
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
-        if (enabled) {
-            this.memory = n.memory;
-            this.narsese = new Narsese(memory);
-            this.englisch = new Englisch();
-            this.twenglish = new Twenglish(memory);
-            this.parsers = getParsers();
-            
-        }
-        n.memory.event.set(this, enabled, Events.Perceive.class);
-        return true;
+    public Class[] getEvents() {
+        return new Class[] { Events.Perceive.class };
+    }
+
+    @Override
+    public void onEnabled(NAR n) {
+        this.memory = n.memory;
+        this.narsese = new Narsese(memory);
+        this.englisch = new Englisch();
+        this.twenglish = new Twenglish(memory);
+        this.parsers = getParsers();
+    }
+
+    @Override
+    public void onDisabled(NAR n) {
+
     }
 
     @Override

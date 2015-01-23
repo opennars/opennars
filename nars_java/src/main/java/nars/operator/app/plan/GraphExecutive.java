@@ -850,9 +850,6 @@ public class GraphExecutive {
 //    }
 //    
 
-    /** TODO */
-    public void reset() {
-    }
 
 
 //    public boolean isActionable(final Task newEvent, Memory mem) {

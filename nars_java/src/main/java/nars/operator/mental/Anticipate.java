@@ -31,6 +31,7 @@ import com.google.common.collect.Multimap;
 import nars.core.Events;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.AbstractReaction;
 import nars.io.Symbols;
@@ -247,6 +248,15 @@ public class Anticipate extends ReactiveOperator implements Mental {
         if ((nextUpdateTime == -1) || (nextUpdateTime > nextRequiredUpdate) && (nextRequiredUpdate > now)) {
             nextUpdateTime = nextRequiredUpdate;
         }
+    }
+
+    @Override
+    public boolean setEnabled(NAR n, boolean enabled) {
+        if (enabled) {
+            newTaskTerms.clear();
+            anticipations.clear();
+        }
+        return true;
     }
 
     @Override

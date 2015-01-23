@@ -21,7 +21,7 @@
 package nars.core;
 
 import nars.core.Core.AttentionAware;
-import nars.core.Events.ResetEnd;
+import nars.core.Events.Restart;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
 import nars.event.EventEmitter;
@@ -274,7 +274,12 @@ public class Memory implements Serializable {
     };
 
     public void reset() {
+
         event.emit(ResetStart.class);
+
+
+
+
 
         concepts.reset();
         novelTasks.clear();
@@ -292,11 +297,8 @@ public class Memory implements Serializable {
 
         emotion.set(0.5f, 0.5f);
 
-        //TODO end all plugins
+        event.emit(Restart.class);
 
-        event.emit(ResetEnd.class);
-
-        //TODO re-enable if they were enabled
 
     }
 

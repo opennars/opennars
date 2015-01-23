@@ -309,6 +309,8 @@ public class ClassicalConditioningHelper implements Plugin {
         
         
         if(enabled) {
+            if (enabled)
+                lastElems.clear();
             Parameters.DEFAULT_JUDGMENT_PRIORITY=(float) 0.01;
         } else {
             Parameters.DEFAULT_JUDGMENT_PRIORITY=saved_priority;

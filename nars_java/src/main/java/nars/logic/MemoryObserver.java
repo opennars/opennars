@@ -44,7 +44,7 @@ public abstract class MemoryObserver extends AbstractReaction {
 
                 //Output.OUT.class, 
 
-                Events.ResetEnd.class);
+                Events.Restart.class);
         this.memory = m;
     }
 
@@ -54,7 +54,7 @@ public abstract class MemoryObserver extends AbstractReaction {
             onConceptAdd((Concept) arguments[0]);
         } else if (event == Events.OUT.class) {
             output(event, arguments[0].toString());
-        } else if (event == Events.ResetEnd.class) {
+        } else if (event == Events.Restart.class) {
             output(event);        
         } else if (event == CycleStart.class) {
             onCycleStart(memory.time());
