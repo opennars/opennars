@@ -630,12 +630,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             }
         }
 
-        try {
-            return Memory.term(this, list);
-        }
-        catch (InvalidTermConstruction i) {
-            return null;
-        }
+        return Memory.term(this, list);
     }
 
     /* ----- variable-related utilities ----- */

@@ -411,13 +411,13 @@ public abstract class NAL implements Runnable {
         return memory.time();
     }
 
-    public Stamp getNewStamp() {
-        return newStamp;
-    }
+    //public Stamp getNewStamp() {
+//        return newStamp;
+  //  }
 
-    public void setNewStamp(Stamp newStamp) {
-        this.newStamp = newStamp;
-    }
+    //public void setNewStamp(Stamp newStamp) {
+    //    this.newStamp = newStamp;
+    //}
 
     /**
      * @return the currentTask

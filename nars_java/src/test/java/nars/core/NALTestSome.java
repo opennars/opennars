@@ -21,7 +21,7 @@ import java.util.Collection;
 @Ignore
 public class NALTestSome extends NALTest {
 
-    public static String testFilenameContains = "nal5.19";
+    public static String testFilenameContains = "nal2.8";
 
     static {
         showOutput = true;

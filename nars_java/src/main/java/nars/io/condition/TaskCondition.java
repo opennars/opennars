@@ -305,6 +305,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public String toString() {
-        return j.toJson(this);
+        return succeeded  +": "  +j.toJson(this);
     }
 }

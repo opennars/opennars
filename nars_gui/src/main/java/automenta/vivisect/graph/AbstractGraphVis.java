@@ -168,7 +168,9 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
         return graphics;
     }
 
-    
+
+
+
     @Override
     public boolean draw(PGraphics g) {
 

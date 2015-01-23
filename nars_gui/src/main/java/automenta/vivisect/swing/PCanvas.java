@@ -53,6 +53,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
     public static PFont font9;
     public static PFont font15;
     private PGraphics b;
+    private boolean renderEveryFrame = false;
 
     public PCanvas() {
         this(null);
@@ -195,10 +196,20 @@ public class PCanvas extends PApplet implements HierarchyListener {
     }
 
    
-    
+
+    public boolean renderEveryFrame() {
+        return renderEveryFrame;
+    }
+    public void renderEveryFrame(boolean f) {
+        this.renderEveryFrame = f;
+    }
+
     @Override
     public void draw() {
-        
+
+        if (renderEveryFrame())
+            predraw();
+
         if (drawn && b!=null && b.width == getWidth() && b.height==getHeight())  {
             this.background(b);
         }
@@ -338,11 +349,13 @@ public class PCanvas extends PApplet implements HierarchyListener {
             if (mouseButton == RIGHT) {
                 savepx = mouseX;
                 savepy = mouseY;
-                predraw();
+                if (!renderEveryFrame)
+                    predraw();
             }
         }
 
         void mouseReleased() {
+
             md = false;
         }
 
@@ -352,7 +365,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
                 dify += (mouseY - savepy);
                 savepx = mouseX;
                 savepy = mouseY;
-                predraw();                
+                if (!renderEveryFrame)
+                    predraw();
             }
         }
 
@@ -384,7 +398,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
                 difx = (difx) * (zoom / zoomBefore);
                 dify = (dify) * (zoom / zoomBefore);
             }
-            predraw();            
+            if (!renderEveryFrame)
+                predraw();
             drawn = false;
         }
 
@@ -405,7 +420,8 @@ public class PCanvas extends PApplet implements HierarchyListener {
             }
             difx = (difx) * (zoom / zoomBefore);
             dify = (dify) * (zoom / zoomBefore);
-            predraw();
+            if (!renderEveryFrame)
+                predraw();
             drawn = false;
         }
 

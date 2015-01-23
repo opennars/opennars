@@ -7,6 +7,7 @@ package nars.gui.output.graph;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.PCanvas;
+import nars.core.Events;
 import nars.core.NAR;
 import nars.gui.WrapLayout;
 
@@ -24,20 +25,44 @@ public class NARGraphPanel extends NPanel {
     private final JComponent menu;
     private final JPanel graphControl;
 
+    float paintFPS = 30f;
+    float updateFPS = 10f;
+    long lastUpdateMS = -1;
     
     public NARGraphPanel(NAR n) {
         super(new BorderLayout());
         
-    
-        
+
+
+
         vis = new NARGraphVis(n) {
             @Override public void setMode(NARGraphVis.GraphMode g) {
                 super.setMode(g);
                 doLayout();
                 updateUI();
-            }            
+            }
+
+            @Override
+            public void event(Class event, Object[] args) {
+                super.event(event, args);
+
+                long updateCycleFPS = (long)(1000f / updateFPS);
+                if (event == Events.FrameEnd.class) {
+                    if ((canvas!=null) && (isVisible())) {
+                        long now = System.currentTimeMillis();
+                        if (now - lastUpdateMS > updateCycleFPS) {
+                            canvas.predraw();
+                            canvas.redraw();
+                            lastUpdateMS = now;
+                        }
+                    }
+                }
+            }
         };
         canvas = new PCanvas(vis);
+        canvas.setFrameRate(paintFPS);
+        canvas.loop();
+        canvas.renderEveryFrame(true);
 
         visControl = vis.newStylePanel();
         canvasControl = newCanvasPanel();
@@ -59,7 +84,7 @@ public class NARGraphPanel extends NPanel {
 
     
     @Override  protected void onShowing(boolean showing) {
-        
+        canvas.predraw();
     }
     
     

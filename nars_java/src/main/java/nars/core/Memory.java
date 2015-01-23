@@ -287,6 +287,9 @@ public class Memory implements Serializable {
 
         inputPausedUntil = -1;
 
+        questionConcepts.clear();
+        goalConcepts.clear();
+
         emotion.set(0.5f, 0.5f);
 
         //TODO end all plugins

@@ -118,7 +118,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
 
     public TruthValue setFrequency(final float f) {
         if (f > 1.0f) this.frequency = 1.0f;
-        else if (f == 0f) this.frequency = 0f;
+        else if (f < 0f) this.frequency = 0f;
         else this.frequency = f;
         return this;
     }
