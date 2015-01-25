@@ -3,6 +3,7 @@ package nars.util.bag;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
+import nars.util.data.CuckooMap;
 import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.SortedIndex;
 
@@ -80,6 +81,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     }
 
     public class CurveMap extends HashMap<K, E> {
+            //CuckooMap<K,E> {  //doesnt seem to work yet in CurveBag
 
         public CurveMap(int initialCapacity) {
             super(initialCapacity * 1 + 1);

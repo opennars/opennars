@@ -8,11 +8,8 @@ import nars.core.*;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal8.Operation;
-import nars.operator.mental.Anticipate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -377,9 +374,9 @@ public abstract class NAL implements Runnable {
     }
 
     public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
-        if (!newBudget.aboveThreshold()) {
+        /*if (!newBudget.aboveThreshold()) {
             return false;
-        }
+        }*/
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
         return derivedTask(newTask, false, true, null, null);
     }
@@ -571,14 +568,11 @@ public abstract class NAL implements Runnable {
         tasksAdded.add(t);
     }
 
-    /** insert the task into memory */
-    public void inputTask(Task t) {
-        memory.addNewTask(t, t.getReason());
-    }
-
+    /** add all accumulated tasks to memory */
     public void inputTasks() {
         for (int i = 0; i < tasksAdded.size(); i++) {
-            inputTask(tasksAdded.get(i));
+            Task t = tasksAdded.get(i);
+            memory.addNewTask(t, t.getReason());
         }
     }
 

@@ -207,6 +207,11 @@ public class Concept extends Item<Term> implements Termable {
      * @return whether it was processed
      */
     public boolean directProcess(final NAL nal, final Task task) {
+        if (!task.aboveThreshold()) {
+            this.taskBudgetBalance += task.getPriority();
+            return false;
+        }
+
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT:
@@ -226,10 +231,9 @@ public class Concept extends Item<Term> implements Termable {
                 return false;
         }
 
-        if (task.aboveThreshold()) {    // still need to be processed
-            memory.logic.LINK_TO_TASK.hit();
-            linkToTask(task);
-        }
+        linkToTask(task);
+
+        memory.logic.LINK_TO_TASK.hit();
 
         return true;
     }
@@ -286,7 +290,7 @@ public class Concept extends Item<Term> implements Termable {
 
             }
         }
-        if (task.aboveThreshold()) {
+        /*if (task.aboveThreshold())*/ {
             int nnq = questions.size();       
             for (int i = 0; i < nnq; i++) {                
                 trySolution(judg, questions.get(i), nal);
@@ -380,7 +384,7 @@ public class Concept extends Item<Term> implements Termable {
             } 
         } 
         
-        if (task.aboveThreshold()) {
+        /*if (task.aboveThreshold())*/ {
 
             final Sentence belief;
 
@@ -514,7 +518,7 @@ public class Concept extends Item<Term> implements Termable {
 //             }
             }
 
-            buildTermLinks(taskBudget);  // recursively insert TermLink
+            linkToTerms(taskBudget);  // recursively insert TermLink
         }
         else {
             //unused
@@ -611,7 +615,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param taskBudget The BudgetValue of the task
      * @return whether any activity happened as a result of this invocation
      */
-    public /* synchronized */ boolean buildTermLinks(final BudgetValue taskBudget) {
+    public /* synchronized */ boolean linkToTerms(final BudgetValue taskBudget) {
 
         if (termLinkBuilder.size() == 0)
             return false;
@@ -669,7 +673,7 @@ public class Concept extends Item<Term> implements Termable {
             otherConcept.activateTermLink(termLinkBuilder.set(template, target, term));
 
             if (target instanceof CompoundTerm) {
-                otherConcept.buildTermLinks(termLinkBuilder.getBudget());
+                otherConcept.linkToTerms(termLinkBuilder.getBudget());
             }
         }
         return activity;

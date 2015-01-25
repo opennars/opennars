@@ -16,6 +16,7 @@ import java.util.Map;
 
 /**
  * Static utility class for static methods related to Variables
+ * TODO rename all *substitute* methods to *unify*
  */
 public class Variables {
     

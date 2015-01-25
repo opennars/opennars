@@ -57,7 +57,6 @@ import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.util.bag.Bag;
-import nars.util.data.XORShiftRandom;
 
 import java.io.Serializable;
 import java.util.*;
@@ -551,7 +550,12 @@ public class Memory implements Serializable {
 
         emit(Events.TaskAdd.class, t, reason);
 
-        output(t);
+        final float budget = t.budget.summary();
+        final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
+
+        if (budget >= noiseLevel) {  // only report significant derived Tasks
+            emit(Events.OUT.class, t);
+        }
 
         return true;
     }
@@ -627,16 +631,6 @@ public class Memory implements Serializable {
         task.setCause(operation);
 
         addNewTask(task, "Executed");
-    }
-
-    public void output(final Task t) {
-
-        final float budget = t.budget.summary();
-        final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
-
-        if (budget >= noiseLevel) {  // only report significant derived Tasks
-            emit(Events.OUT.class, t);
-        }
     }
 
     final public void emit(final Class c, final Object... signal) {

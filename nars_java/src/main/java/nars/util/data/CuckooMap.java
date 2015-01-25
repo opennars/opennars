@@ -21,8 +21,11 @@ package nars.util.data;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 
+        import com.google.common.collect.Lists;
         import com.google.common.collect.Sets;
         import nars.core.Memory;
+        import nars.core.Parameters;
+        import org.jgrapht.util.ArrayUnenforcedSet;
 
         import java.util.*;
 
@@ -444,7 +447,10 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     @Override
     public Set<K> keySet() {
-        return null;
+        Set<K> s =Parameters.newHashSet(size());
+        for (K k : keyTable)
+            if (k!=null) s.add(k);
+        return s;
     }
 
     /** Returns true if the specified value is in the map. Note this traverses the entire map and compares every value, which may be
