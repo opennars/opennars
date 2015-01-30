@@ -98,16 +98,6 @@ public class RuleTables {
         
         if (belief != null) {   
             
-            //TODO
-            //(&/,a) goal didnt get unwinded, so lets unwind it
-            if(task.sentence.term instanceof Conjunction && task.sentence.punctuation==Symbols.GOAL_MARK) {
-                Conjunction s=(Conjunction) task.sentence.term;
-                Term newterm=s.term[0];
-                TruthValue truth=task.sentence.truth;
-                BudgetValue newBudget=BudgetFunctions.forward(TruthFunctions.deduction(truth, truth), nal);
-                nal.doublePremiseTask(newterm, truth, newBudget, false);
-            }
-            
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
             
