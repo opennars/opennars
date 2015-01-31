@@ -1,6 +1,7 @@
 package automenta.vivisect.audio.granular2.io;
 
-import granular.Wave;
+import automenta.vivisect.audio.granular2.Wave;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;

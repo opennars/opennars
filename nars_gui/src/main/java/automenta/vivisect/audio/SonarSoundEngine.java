@@ -101,7 +101,7 @@ public class SonarSoundEngine implements Runnable
         }
 
         soundBuffer.clear();
-        float gain = 32000;
+        final float gain = 32000;
         for (int i = 0; i < bufferSize; i++)
         {
             //            amplitude += (targetAmplitude - amplitude) / rate;
@@ -113,6 +113,7 @@ public class SonarSoundEngine implements Runnable
             if (r > 32767) r = 32767;
             if (l < -32767) l = -32767;
             if (r < -32767) r = -32767;
+            //soundBuffer.putInt instead of 2 putShorts
             soundBuffer.putShort((short)l);
             soundBuffer.putShort((short)r);
         }

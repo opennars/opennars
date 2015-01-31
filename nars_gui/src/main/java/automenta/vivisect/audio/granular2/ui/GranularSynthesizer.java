@@ -5,10 +5,11 @@
  */
 package automenta.vivisect.audio.granular2.ui;
 
-import granular.Envelope;
-import granular.Granulator;
-import granular.io.TextToWave;
-import granular.io.WaveToText;
+import automenta.vivisect.audio.granular2.Envelope;
+import automenta.vivisect.audio.granular2.Granulator;
+import automenta.vivisect.audio.granular2.io.TextToWave;
+import automenta.vivisect.audio.granular2.io.WaveToText;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -188,7 +189,6 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(0, 255, 0));
         jLabel7.setText("Grain Density:");
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/granular/ui/cooltext1500059209.png"))); // NOI18N
 
         numberOfGrainsTxt.setText("10");
         numberOfGrainsTxt.setEnabled(false);

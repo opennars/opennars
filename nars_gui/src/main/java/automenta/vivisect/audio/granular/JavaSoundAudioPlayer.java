@@ -12,36 +12,45 @@ import javax.sound.sampled.Mixer.Info;
 import javax.sound.sampled.SourceDataLine;
 
 
-public class JavaSoundAudioPlayer implements AudioPlayer {
+public class JavaSoundAudioPlayer implements AudioPlayer, Runnable {
 
 	private TimeStretcherCompact timeStretcher = null;
 	private boolean stopped;
 	private Thread audioThread;
 
 	public JavaSoundAudioPlayer() {
-		audioThread = new Thread() {
-			public void run() {
-				runAudio();
-			}
-        };
+		audioThread = new Thread(this);
 		audioThread.start();
 	}
 
-	private void runAudio() {
+    float[] buffer;
+    byte[] byteBuffer;
+
+    @Override
+	public void run() {
 		try {
 			int bufferSize = 8192;
 			DataLine.Info wanted = new DataLine.Info(SourceDataLine.class, new AudioFormat(44100F, 16, 2, true, true), bufferSize);
 			Info[] infos = AudioSystem.getMixerInfo();
-			
+
+            if ((buffer == null) || (buffer.length!=bufferSize)) {
+                buffer = new float[bufferSize];
+
+            }
+
 			for (Info info : infos) {
 				Mixer mixer = AudioSystem.getMixer(info);
 				if (!mixer.isLineSupported(wanted)) {
 					continue;
 				}
 				SourceDataLine outputLine = (SourceDataLine) mixer.getLine(wanted);
-				
-				float[] buffer = new float[bufferSize];
-				byte[] byteBuffer = new byte[bufferSize * outputLine.getFormat().getFrameSize()];
+                int byteBufferSize = bufferSize * outputLine.getFormat().getFrameSize();
+
+				if (byteBuffer == null || byteBuffer.length < byteBufferSize) {
+                    byteBuffer = new byte[ byteBufferSize ];
+                }
+
+
 
 				outputLine.open();
 				outputLine.start();
@@ -52,7 +61,7 @@ public class JavaSoundAudioPlayer implements AudioPlayer {
 							timeStretcher.process(buffer);
 						}
 						convertFloatBufferToBytes(buffer, byteBuffer);
-						outputLine.write(byteBuffer, 0, byteBuffer.length);
+						outputLine.write(byteBuffer, 0, byteBufferSize);
 					}
 				} finally {
 					outputLine.stop();
@@ -66,14 +75,17 @@ public class JavaSoundAudioPlayer implements AudioPlayer {
 		}
 	}
 
-	private void convertFloatBufferToBytes(float[] input, byte[] output) {
+	private void convertFloatBufferToBytes(final float[] input, final byte[] output) {
 		int byteIndex = 0;
-		for(int i = 0; i < input.length; i++) {
-			int iSample = quantize16(input[i]*twoPower15);
-			output[byteIndex++]=(byte) (iSample >> 8);
-			output[byteIndex++]=(byte) (iSample & 0xFF);
-			output[byteIndex++]=(byte) (iSample >> 8);
-			output[byteIndex++]=(byte) (iSample & 0xFF);
+        final int l = input.length;
+		for(int i = 0; i < l; i++) {
+			final int iSample = quantize16(input[i]*twoPower15);
+            final byte b1 = (byte) (iSample >> 8);
+            final byte b2 = (byte) (iSample & 0xFF);
+			output[byteIndex++]=b1;
+			output[byteIndex++]=b2;
+			output[byteIndex++]=b1;
+			output[byteIndex++]=b2;
 		}
 	}
 

@@ -62,9 +62,10 @@ public class ListenerMixer implements StereoSoundProducer
             if (i < maxChannels)
             {
                 sound.read(buf, readRate);
-                float rp = (sound.pan<0?1:1-sound.pan)*sound.amplitude;
-                float lp = (sound.pan>0?1:1+sound.pan)*sound.amplitude;
-                for (int j = 0; j < leftBuf.length; j++)
+                final float rp = (sound.pan<0?1:1-sound.pan)*sound.amplitude;
+                final float lp = (sound.pan>0?1:1+sound.pan)*sound.amplitude;
+                final int l = leftBuf.length;
+                for (int j = 0; j < l; j++)
                 {
                     leftBuf[j] += buf[j]*lp;
                     rightBuf[j] += buf[j]*rp;

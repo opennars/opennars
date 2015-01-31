@@ -1,6 +1,7 @@
 package automenta.vivisect.audio.granular2;
 
-import granular.ui.GranularSynthesizer;
+
+import automenta.vivisect.audio.granular2.ui.GranularSynthesizer;
 
 /**
  *
