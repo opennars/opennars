@@ -35,7 +35,8 @@ public class ListenerMixer implements StereoSoundProducer
         for (Iterator it = sounds.iterator(); it.hasNext();)
         {
             Sound sound = (Sound) it.next();
-            sound.update(soundListener, alpha);
+            if (soundListener!=null)
+                sound.update(soundListener, alpha);
             if (!sound.isLive())
             {
                 it.remove();
@@ -65,6 +66,7 @@ public class ListenerMixer implements StereoSoundProducer
                 final float rp = (sound.pan<0?1:1-sound.pan)*sound.amplitude;
                 final float lp = (sound.pan>0?1:1+sound.pan)*sound.amplitude;
                 final int l = leftBuf.length;
+
                 for (int j = 0; j < l; j++)
                 {
                     leftBuf[j] += buf[j]*lp;

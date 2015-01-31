@@ -9,5 +9,7 @@ public class SonarSample
     {
         this.buf = buf;
         this.rate = rate;
+        //System.out.println("SonarSample: " + buf.length + " " + rate);
+        //System.out.println(Arrays.toString(buf));
     }
 }

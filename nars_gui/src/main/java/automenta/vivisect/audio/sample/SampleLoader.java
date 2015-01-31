@@ -5,10 +5,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -23,6 +20,10 @@ public class SampleLoader
         byte[] d = rip(isis);
         AudioInputStream ais = AudioSystem.getAudioInputStream(new ByteArrayInputStream(d));
         return buildSample(rip(ais), ais.getFormat());
+    }
+
+    public static SonarSample loadSample(String path) throws UnsupportedAudioFileException, IOException {
+        return loadSample(new FileInputStream(path));
     }
 
     /**

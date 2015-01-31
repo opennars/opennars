@@ -1,28 +1,20 @@
 package automenta.vivisect.audio.granular;
 
-import java.awt.Button;
-import java.awt.Component;
-import java.awt.FileDialog;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import automenta.vivisect.audio.SonarSoundEngine;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class TimeStretchGui extends JPanel {
 
-	private final AudioPlayer player;
+	private final SonarSoundEngine player;
 	private final JSlider tempoSlider;
 
-	public TimeStretchGui(final AudioPlayer player) {
+	public TimeStretchGui(final SonarSoundEngine /*AudioPlayer */ player) {
 		this.player = player;
 		setLayout(null);
 		setSize(200, 340);
@@ -80,11 +72,12 @@ public class TimeStretchGui extends JPanel {
 	}
 
 	private void updateStretchFactor(double value) {
-		player.setStretchFactor(value);
+		//player.setStretchFactor(value);
 	}
 
 	@SuppressWarnings("unused")
 	private void showFileDialog() {
+        /*
 		Frame frame = (Frame) TimeStretchGui.this.getTopLevelAncestor();
 		FileDialog dialog = new FileDialog(frame, "Select audio file", FileDialog.LOAD);
 		dialog.setVisible(true);
@@ -96,13 +89,15 @@ public class TimeStretchGui extends JPanel {
 				throw new RuntimeException(e);
 			}
 		}
+		*/
 	}
 
 	private void play() {
-		player.play();
+		//*player.play();
 	}
 	
 	private void stop() {
-		player.stop();
+
+        //player.stop();
 	}
 }

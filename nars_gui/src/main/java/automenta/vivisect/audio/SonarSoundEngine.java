@@ -1,7 +1,6 @@
 package automenta.vivisect.audio;
 
 import automenta.vivisect.audio.mixer.ListenerMixer;
-import automenta.vivisect.audio.sample.SampleLoader;
 import automenta.vivisect.audio.sample.SamplePlayer;
 import automenta.vivisect.audio.sample.SonarSample;
 
@@ -22,6 +21,7 @@ public class SonarSoundEngine implements Runnable
     private float amplitude = 1;
     private float targetAmplitude = 1;
     private boolean alive = true;
+    private float alpha = 0;
 
     protected SonarSoundEngine()
     {
@@ -39,8 +39,8 @@ public class SonarSoundEngine implements Runnable
 
         try
         {
-/*            FloatControl volumeControl = (FloatControl) sdl.getControl(FloatControl.Type.MASTER_GAIN);
-            volumeControl.setValue(volumeControl.getMaximum());*/
+            FloatControl volumeControl = (FloatControl) sdl.getControl(FloatControl.Type.MASTER_GAIN);
+            volumeControl.setValue(volumeControl.getMaximum());
         }
         catch (IllegalArgumentException e)
         {
@@ -125,7 +125,14 @@ public class SonarSoundEngine implements Runnable
     {
         while (alive)
         {
+            clientTick(alpha);
             tick();
         }
+    }
+
+
+
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
     }
 }

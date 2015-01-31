@@ -26,6 +26,7 @@ public class Sound implements Comparable
         this.source = source;
         this.volume = volume;
         this.priority = priority;
+
     }
     
     public void update(SoundListener listener, float alpha)
