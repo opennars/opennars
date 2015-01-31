@@ -21,13 +21,11 @@ package nars.util.data;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 
-        import com.google.common.collect.Lists;
-        import com.google.common.collect.Sets;
-        import nars.core.Memory;
-        import nars.core.Parameters;
-        import org.jgrapht.util.ArrayUnenforcedSet;
+import com.google.common.collect.Sets;
+import nars.core.Memory;
+import nars.core.Parameters;
 
-        import java.util.*;
+import java.util.*;
 
 /** An unordered map. This implementation is a cuckoo hash map using 3 hashes, random walking, and a small stash for problematic
  * keys. Null keys are not allowed. Null values are allowed. No allocation is done except when growing the table size. <br>

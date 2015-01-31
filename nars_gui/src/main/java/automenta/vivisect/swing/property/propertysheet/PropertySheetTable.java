@@ -658,7 +658,7 @@ public class PropertySheetTable extends JTable {
       showToggle = item.hasToggle();
       
       indentWidth = getIndent(table, item);      
-      insets.left = indentWidth + (showToggle?HOTSPOT_SIZE:0) + 2;;
+      insets.left = indentWidth + (showToggle?HOTSPOT_SIZE:0) + 2;
     }
     
     public Insets getBorderInsets(Component c) {

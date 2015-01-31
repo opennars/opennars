@@ -129,11 +129,11 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         
         //Variable name normalization
         //TODO move this to Concept method, like cloneNormalized()
-        if (normalize && _content.hasVar() && (!((CompoundTerm)_content).isNormalized() ) ) {
+        if (normalize && _content.hasVar() && (!_content.isNormalized() ) ) {
             
-            this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
+            this.term = (T) _content.cloneDeepVariables();
             
-            final CompoundTerm c = (CompoundTerm)term;
+            final CompoundTerm c = term;
             
             List<Variable> vars = Parameters.newArrayList(); //may contain duplicates, list for efficiency
             

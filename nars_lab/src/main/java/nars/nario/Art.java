@@ -4,12 +4,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
-import nars.nario.sonar.SonarSoundEngine;
-import nars.nario.sonar.sample.SonarSample;
+import automenta.vivisect.audio.SonarSoundEngine;
+import automenta.vivisect.audio.sample.SampleLoader;
+import automenta.vivisect.audio.sample.SonarSample;
 
 
 public class Art
@@ -50,6 +52,20 @@ public class Art
     private static Sequencer sequencer;
 
 
+     public static SonarSample loadSample(String resourceName)    {
+        try
+        {
+            InputStream is = Art.class.getResourceAsStream("res" + resourceName);
+            return SampleLoader.loadSample(is);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed to load sample " + resourceName + ". Using silent sample");
+            e.printStackTrace();
+            return null;
+            //return silentSample;
+        }
+    }
     public static void init(GraphicsConfiguration gc, SonarSoundEngine sound)
     {
         try
@@ -71,20 +87,20 @@ public class Art
 
             if (sound != null)
             {
-                samples[SAMPLE_BREAK_BLOCK] = sound.loadSample("/snd/breakblock.wav");
-                samples[SAMPLE_GET_COIN] = sound.loadSample("/snd/coin.wav");
-                samples[SAMPLE_MARIO_JUMP] = sound.loadSample("/snd/jump.wav");
-                samples[SAMPLE_MARIO_STOMP] = sound.loadSample("/snd/stomp.wav");
-                samples[SAMPLE_MARIO_KICK] = sound.loadSample("/snd/kick.wav");
-                samples[SAMPLE_MARIO_POWER_UP] = sound.loadSample("/snd/powerup.wav");
-                samples[SAMPLE_MARIO_POWER_DOWN] = sound.loadSample("/snd/powerdown.wav");
-                samples[SAMPLE_MARIO_DEATH] = sound.loadSample("/snd/death.wav");
-                samples[SAMPLE_ITEM_SPROUT] = sound.loadSample("/snd/sprout.wav");
-                samples[SAMPLE_CANNON_FIRE] = sound.loadSample("/snd/cannon.wav");
-                samples[SAMPLE_SHELL_BUMP] = sound.loadSample("/snd/bump.wav");
-                samples[SAMPLE_LEVEL_EXIT] = sound.loadSample("/snd/exit.wav");
-                samples[SAMPLE_MARIO_1UP] = sound.loadSample("/snd/1-up.wav");
-                samples[SAMPLE_MARIO_FIREBALL] = sound.loadSample("/snd/fireball.wav");
+                samples[SAMPLE_BREAK_BLOCK] = loadSample("/snd/breakblock.wav");
+                samples[SAMPLE_GET_COIN] = loadSample("/snd/coin.wav");
+                samples[SAMPLE_MARIO_JUMP] = loadSample("/snd/jump.wav");
+                samples[SAMPLE_MARIO_STOMP] = loadSample("/snd/stomp.wav");
+                samples[SAMPLE_MARIO_KICK] = loadSample("/snd/kick.wav");
+                samples[SAMPLE_MARIO_POWER_UP] = loadSample("/snd/powerup.wav");
+                samples[SAMPLE_MARIO_POWER_DOWN] = loadSample("/snd/powerdown.wav");
+                samples[SAMPLE_MARIO_DEATH] = loadSample("/snd/death.wav");
+                samples[SAMPLE_ITEM_SPROUT] = loadSample("/snd/sprout.wav");
+                samples[SAMPLE_CANNON_FIRE] = loadSample("/snd/cannon.wav");
+                samples[SAMPLE_SHELL_BUMP] = loadSample("/snd/bump.wav");
+                samples[SAMPLE_LEVEL_EXIT] = loadSample("/snd/exit.wav");
+                samples[SAMPLE_MARIO_1UP] = loadSample("/snd/1-up.wav");
+                samples[SAMPLE_MARIO_FIREBALL] = loadSample("/snd/fireball.wav");
             }
         }
         catch (Exception e)

@@ -3,7 +3,6 @@ package nars.event;
 
 import nars.core.Events;
 import nars.core.Parameters;
-import nars.util.bag.DequePool;
 import reactor.core.Environment;
 import reactor.core.Reactor;
 import reactor.core.spec.Reactors;

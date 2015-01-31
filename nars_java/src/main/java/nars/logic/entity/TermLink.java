@@ -24,7 +24,6 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.Terms.Termable;
 import nars.util.bag.BagActivator;
-import nars.util.bag.BagSelector;
 
 import java.util.List;
 

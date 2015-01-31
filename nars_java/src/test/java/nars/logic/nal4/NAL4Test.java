@@ -19,6 +19,7 @@ public class NAL4Test extends AbstractNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
+                {new Default().setInternalExperience(null) },
                 {new Default().level(6)}
         });
     }
@@ -41,12 +42,13 @@ public class NAL4Test extends AbstractNALTest {
 
         long time = 1400;
 
+        float minConf = 0.26f;
         n.believe("<0 --> num>", 1.0f, 0.9f);
         n.believe("<<$1 --> num> ==> <(*,$1) --> num>>", 1.0f, 0.9f);
         n.ask("<(*,(*,(*,0))) --> num>");
         n.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
         n.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
-        n.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, 0.26f, 1.0f);
+        n.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
 
     }
     

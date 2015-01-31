@@ -23,9 +23,6 @@
 package nars.operator.mental;
 
 
-import java.util.*;
-
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import nars.core.Events;
@@ -44,6 +41,8 @@ import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.operator.ReactiveOperator;
+
+import java.util.*;
 
 /**
  * Operator that creates a judgment with a given statement
@@ -347,12 +346,12 @@ public class Anticipate extends ReactiveOperator implements Mental {
             //since there is no way anymore that the observation would support <(&/,a,+4) =/> b> at this time,
             //also this way it is not applied to early, it seems to be the perfect time to me,
             //making hopeExpirationWindow parameter entirely osbolete
-            int m = Interval.timeToMagnitude(getOccurrenceTime() - getCreationTime(), dura);
+            int m = Interval.magnitude(getOccurrenceTime() - getCreationTime(), dura);
 
             //ok we know the magnitude now, let's now construct a interval with magnitude one higher
             //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
             //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-            expiredate = getCreationTime() + Interval.magnitudeToTime(m + 1, dura);
+            expiredate = getCreationTime() + Interval.cycles(m + 1, dura);
         }
 
         public float getPriority() { return task.budget.getPriority(); }

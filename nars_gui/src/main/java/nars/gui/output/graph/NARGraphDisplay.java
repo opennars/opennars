@@ -180,7 +180,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
         NSlider nodeSpeed = new NSlider(this.nodeSpeed, 0.001f, 0.99f) {
             @Override
             public void onChange(float v) {
-                NARGraphDisplay.this.nodeSpeed = (float) v;
+                NARGraphDisplay.this.nodeSpeed = v;
                 //app.drawn = false;
             }
         };
@@ -191,7 +191,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
         NSlider fontSize = new NSlider(this.textSize, 0f, 2f) {
             @Override
             public void onChange(float v) {
-                NARGraphDisplay.this.textSize = (float) v;
+                NARGraphDisplay.this.textSize = v;
                 //app.drawn = false;
             }
         };

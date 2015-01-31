@@ -1,13 +1,11 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
-import nars.event.AbstractReaction;
-import nars.event.Reaction;
 import nars.core.*;
-import nars.core.Events.Perceive;
 import nars.core.Events.IN;
-import nars.io.narsese.Narsese;
+import nars.core.Events.Perceive;
 import nars.io.narsese.InvalidInputException;
+import nars.io.narsese.Narsese;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;

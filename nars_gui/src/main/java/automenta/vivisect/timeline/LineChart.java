@@ -93,7 +93,7 @@ public class LineChart extends AxisPlot implements MultiChart {
         minX = (float)xMin();
         maxX = (float)xMax();
         
-        float range = Math.abs((float)(maxX - minX));
+        float range = Math.abs(maxX - minX);
         
         //bottom line
         l.g.line(0, y + plotHeight, plotWidth * range, y + plotHeight);
@@ -190,7 +190,7 @@ public class LineChart extends AxisPlot implements MultiChart {
         
         drawChartPre(l, ccolor);
         
-        float cs = (float)minX;
+        float cs = minX;
         Object[] series = chart.getDataCached();
         if (series == null) return;
         for (int t = 0; t< series.length; t++) {
@@ -211,7 +211,7 @@ public class LineChart extends AxisPlot implements MultiChart {
 
     void drawPoint(TimelineVis l, float v, float width1, float x1, float height1, float y1, float t) {
         l.g.stroke = true;
-        float p = (float)((max == min) ? 0 : (double) ((v - min) / (max - min)));
+        float p = (float)((max == min) ? 0 : (v - min) / (max - min));
         float px = width1 * x1;
         float h = p * height1;
         float py = y1 + height1 - h;

@@ -92,10 +92,10 @@ public class Rover2 extends PhysicsModel {
         (nar.param).duration.set(5);
         //nar.param.budgetThreshold.set(0.02);
         nar.param.confidenceThreshold.set(0.02);
-        (nar.param).conceptForgetDurations.set(25f);
-        (nar.param).taskLinkForgetDurations.set(25f);
-        (nar.param).termLinkForgetDurations.set(25f);
-        (nar.param).novelTaskForgetDurations.set(20f);
+        (nar.param).conceptForgetDurations.set(5f);
+        (nar.param).taskLinkForgetDurations.set(10f);
+        (nar.param).termLinkForgetDurations.set(10f);
+        (nar.param).novelTaskForgetDurations.set(10f);
 
         final Rover2 theRover = new Rover2(nar);
 
@@ -290,7 +290,7 @@ public class Rover2 extends PhysicsModel {
                     break;
             }
         }
-    };
+    }
 
     public Rover2(NAR nar) {
         this.nar = nar;

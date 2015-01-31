@@ -13,7 +13,10 @@ import nars.logic.nal4.Image;
 import nars.logic.nal4.ImageExt;
 import nars.logic.nal4.ImageInt;
 import nars.logic.nal4.Product;
-import nars.logic.nal5.*;
+import nars.logic.nal5.Conjunction;
+import nars.logic.nal5.Equivalence;
+import nars.logic.nal5.Implication;
+import nars.logic.nal5.Junction;
 
 import java.util.Arrays;
 import java.util.Collection;

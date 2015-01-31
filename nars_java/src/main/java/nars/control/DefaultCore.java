@@ -9,9 +9,15 @@ import nars.core.Parameters;
 import nars.logic.BudgetFunctions;
 import nars.logic.BudgetFunctions.Activating;
 import nars.logic.FireConcept;
-import nars.logic.entity.*;
-import nars.util.bag.*;
+import nars.logic.entity.BudgetValue;
+import nars.logic.entity.Concept;
+import nars.logic.entity.ConceptBuilder;
+import nars.logic.entity.Term;
+import nars.util.bag.Bag;
 import nars.util.bag.Bag.MemoryAware;
+import nars.util.bag.BagActivator;
+import nars.util.bag.CacheBag;
+import nars.util.bag.LevelBag;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -235,7 +241,7 @@ public class DefaultCore implements Core {
         public void overflow(Concept overflow) {
             conceptRemoved(overflow);
         }
-    };
+    }
 
     final ConceptActivator activator = new ConceptActivator();
 

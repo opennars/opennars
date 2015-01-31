@@ -129,7 +129,7 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 		Constructor<?> ctor = null;
 
 		try {
-			ctor = clazz.getConstructor(new Class[] { Object.class });
+			ctor = clazz.getConstructor(Object.class);
 		} catch (Exception ex) {
 			// fall through
 		}
@@ -138,7 +138,7 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 			if (ctor == null) {
 				renderer = (TableCellRenderer) clazz.newInstance();
 			} else {
-				renderer = (TableCellRenderer) ctor.newInstance(new Object[] { property });
+				renderer = (TableCellRenderer) ctor.newInstance(property);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("PropertyEditor not instantiated", e);
@@ -176,7 +176,7 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 			Constructor<?> ctor = null;
 
 			try {
-				ctor = clazz.getConstructor(new Class[] { Object.class });
+				ctor = clazz.getConstructor(Object.class);
 			} catch (Exception ex) {
 				// fall through
 			}
@@ -185,7 +185,7 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 				if (ctor == null) {
 					renderer = (TableCellRenderer) clazz.newInstance();
 				} else {
-					renderer = (TableCellRenderer) ctor.newInstance(new Object[] { property });
+					renderer = (TableCellRenderer) ctor.newInstance(property);
 				}
 			} catch (Exception e) {
 				throw new RuntimeException("PropertyEditor not instantiated", e);

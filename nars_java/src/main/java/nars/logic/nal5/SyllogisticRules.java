@@ -182,7 +182,7 @@ public final class SyllogisticRules {
         TruthValue truth = null;
         BudgetValue budget;
         Sentence sentence = nal.getCurrentTask().sentence;
-        CompoundTerm taskTerm = (CompoundTerm) sentence.term;
+        CompoundTerm taskTerm = sentence.term;
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (taskTerm.isCommutative()) {
                 if(asym.truth==null) { //a question for example
@@ -436,10 +436,10 @@ public final class SyllogisticRules {
         if (newCondition != null) {
              if (newCondition instanceof Interval) {
                  content = premise1.getPredicate();
-                 delta = ((Interval) newCondition).getTime(duration);
+                 delta = ((Interval) newCondition).cycles(duration);
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
                  Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
-                 delta = interval.getTime(duration);
+                 delta = interval.cycles(duration);
                  newCondition = ((CompoundTerm)newCondition).setComponent(0, null);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
              } else {

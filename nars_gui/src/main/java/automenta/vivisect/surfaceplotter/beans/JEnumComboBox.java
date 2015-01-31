@@ -32,7 +32,7 @@ public abstract class JEnumComboBox<T extends Enum<T>> extends JComboBox {
 		@Override protected void onPropertyChanged(PropertyChangeEvent evt) {
 			Object newValue = evt.getNewValue();
 			if (newValue != null)
-				setSelectedItem((T) newValue);
+				setSelectedItem(newValue);
 		}
 	};
 	

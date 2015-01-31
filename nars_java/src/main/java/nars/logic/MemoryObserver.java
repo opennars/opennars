@@ -1,11 +1,11 @@
 package nars.logic;
 
-import nars.event.AbstractReaction;
 import nars.core.Events;
 import nars.core.Events.CycleEnd;
 import nars.core.Events.CycleStart;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.event.AbstractReaction;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 

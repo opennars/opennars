@@ -259,7 +259,7 @@ public class TemporalRules {
                 Conjunction conj=(Conjunction) imp.getSubject();
                 if(conj.term[conj.term.length-1] instanceof Interval) {
                     Interval intv=(Interval) conj.term[conj.term.length-1];
-                    long time_offset=intv.getTime(memory);
+                    long time_offset=intv.durationCycles(memory);
                     stamp.setOccurrenceTime(stamp.getOccurrenceTime()+time_offset);
                 }
             }
@@ -367,7 +367,7 @@ public class TemporalRules {
         
         if (!concurrent(time1, time2, durationCycles)) {
             
-            interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
+            interval = Interval.intervalSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
             
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);

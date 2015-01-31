@@ -50,7 +50,8 @@ package nars.util.data;
  *
  * Where 2^k is the number of buckets we're hashing into.
  */
-import java.util.*; // For AbstractMap, AbstractSet, Arrays
+
+import java.util.*;
 
 @SuppressWarnings("unchecked") // For array casts
 public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
@@ -157,7 +158,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
              */
             return (upper * mA + lower * mB) >>> (32 - mLgSize);
         }
-    };
+    }
 
     /**
      * Utility class representing a default generator of universal hash

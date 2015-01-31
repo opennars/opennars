@@ -124,7 +124,7 @@ public class GTimer implements GConstantsInternal {
 	 */
 	protected void createEventHandler(Object handlerObj, String methodName){
 		try{
-			eventHandlerMethod = handlerObj.getClass().getMethod(methodName, new Class<?>[] { GTimer.class } );
+			eventHandlerMethod = handlerObj.getClass().getMethod(methodName, GTimer.class);
 			eventHandlerObject = handlerObj;
 			eventHandlerMethodName = methodName;			
 		} catch (Exception e) {

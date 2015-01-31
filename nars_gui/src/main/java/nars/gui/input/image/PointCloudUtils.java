@@ -139,8 +139,8 @@ public class PointCloudUtils
     for(int i = 0; i < points.size(); i++)
     {
       PointCloudPoint p = points.get(i);
-      double qx = (p.getX() - minX) / (double) size;
-      double qy = (p.getY() - minY) / (double) size;
+      double qx = (p.getX() - minX) / size;
+      double qy = (p.getY() - minY) / size;
       newpoints.add(new PointCloudPoint(qx, qy, p.getID()));
     }
 

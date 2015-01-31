@@ -6,7 +6,6 @@ package nars.util.bag.experimental;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.logic.entity.Item;
-import nars.util.bag.BagSelector;
 import nars.util.bag.Distributor;
 
 /**

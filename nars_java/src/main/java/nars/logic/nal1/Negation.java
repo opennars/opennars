@@ -43,8 +43,7 @@ public class Negation extends CompoundTerm {
     protected CharSequence makeName() {
         return makeCompoundName(NativeOperator.NEGATION, negated());
     }
-    
-    
+
 
     @Override
     public int getMinimumRequiredComponents() {
@@ -77,7 +76,6 @@ public class Negation extends CompoundTerm {
      * Try to make a Negation of one component. Called by the logic rules.
      *
      * @param t The component
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term t) {
@@ -93,7 +91,6 @@ public class Negation extends CompoundTerm {
      *
      * @return the Term generated from the arguments
      * @param argument The list of term
-     * @param memory Reference to the memory
      */
     public static Term make(final Term[] argument) {
         if (argument.length != 1)
@@ -113,6 +110,12 @@ public class Negation extends CompoundTerm {
 
     
     public static boolean areMutuallyInverse(Term a, Term b) {
+        //doesnt seem necessary to check both, one seems sufficient.
+        //incurs cost of creating a Negation and its id
+        return (b.equals(Negation.make(a)) /* || tc.equals(Negation.make(ptc))*/ );
+    }
+
+    static boolean areMutuallyInverseNOTWORKINGYET(Term a, Term b) {
         boolean aNeg = a instanceof Negation;
         boolean bNeg = b instanceof Negation;
 
@@ -122,12 +125,9 @@ public class Negation extends CompoundTerm {
             return areMutuallyInverse((Negation)b, a);
         else
             return false;
-
-        //doesnt seem necessary to check both, one seems sufficient.
-        //incurs cost of creating a Negation and its id
-        //return (b.equals(Negation.make(a)) /* || tc.equals(Negation.make(ptc))*/ );
     }
-    public static boolean areMutuallyInverse(Negation a, Term b) {
+
+    static boolean areMutuallyInverse(Negation a, Term b) {
         return (a.negated().equals(b));
     }
 

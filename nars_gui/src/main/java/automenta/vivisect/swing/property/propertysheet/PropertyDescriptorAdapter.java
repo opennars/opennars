@@ -96,7 +96,7 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 		try {
 			Method method = descriptor.getWriteMethod();
 			if (method != null) {
-				method.invoke(object, new Object[] { getValue() });
+				method.invoke(object, getValue());
 			}
 		} catch (Exception e) {
 			// let PropertyVetoException go to the upper level without logging

@@ -1,8 +1,8 @@
 package nars.build;
 
+import nars.control.DefaultCore;
 import nars.core.Core;
 import nars.core.Memory;
-import nars.control.DefaultCore;
 import nars.logic.entity.*;
 import nars.util.bag.Bag;
 import nars.util.bag.CurveBag;

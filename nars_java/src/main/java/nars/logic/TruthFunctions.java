@@ -49,7 +49,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v1 Truth value of the premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue negation(final TruthValue v1) {
+    public static final TruthValue negation(final TruthValue v1) {
         final float f = 1 - v1.getFrequency();
         final float c = v1.getConfidence();
         return new TruthValue(f, c);
@@ -60,7 +60,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v1 Truth value of the premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue contraposition(final TruthValue v1) {
+    public static final TruthValue contraposition(final TruthValue v1) {
         final float f1 = v1.getFrequency();
         final float c1 = v1.getConfidence();
         final float w = and(1 - f1, c1);

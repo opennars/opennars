@@ -25,7 +25,6 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.io.narsese.InvalidInputException;
 import nars.logic.Terms;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
@@ -300,7 +299,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         size += opString.length();
         final CharSequence tString = singleTerm.name();
         size += tString.length();
-        return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
+        return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(Symbols.ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
     }
 
     

@@ -21,8 +21,8 @@
 package nars.core;
 
 import nars.core.Core.AttentionAware;
-import nars.core.Events.Restart;
 import nars.core.Events.ResetStart;
+import nars.core.Events.Restart;
 import nars.core.Events.TaskRemove;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
@@ -34,6 +34,7 @@ import nars.io.meter.ResourceMeter;
 import nars.logic.BudgetFunctions;
 import nars.logic.ImmediateProcess;
 import nars.logic.Terms;
+import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
@@ -124,12 +125,15 @@ public class Memory implements Serializable {
          * internal, subjective time (logic steps)
          */
         Iterative,
+
+        //TODO absolute realtime - does not cache a value throughout a cycle, but each call to time() yields an actual realtime measurement so that multiple time() calls during cycle may return different (increasing) values
+
         /**
-         * hard real-time, uses system clock
+         * actual real-time, uses system clock; time value is cached at beginning of each cycle for the remainder of it
          */
         Real,
         /**
-         * soft real-time, uses controlled simulation time
+         * simulated real-time, uses controlled simulation time
          */
         Simulation
     }
@@ -252,7 +256,7 @@ public class Memory implements Serializable {
                 Concept c = (Concept)args[0];
                 if (c.questions.isEmpty()) questionConcepts.remove(c);
                 else questionConcepts.add(c);
-                if (c.desires.isEmpty())  goalConcepts.remove(c);
+                if (c.goals.isEmpty())  goalConcepts.remove(c);
                 else goalConcepts.add(c);
                 return;
             }
@@ -269,9 +273,9 @@ public class Memory implements Serializable {
             if ((event == Events.ConceptGoalAdd.class) || (event == Events.ConceptGoalRemove.class)) {
                 Concept c = (Concept)args[0];
                 Task incoming = args.length > 2 ? (Task)args[2] : null; //non-null indicates that a Add will be following this removal event
-                if (incoming==null && c.desires.isEmpty())
+                if (incoming==null && c.goals.isEmpty())
                     goalConcepts.remove(c);
-                else if (c.desires.size() == 1)
+                else if (c.goals.size() == 1)
                     goalConcepts.add(c);
             }
 
@@ -731,7 +735,7 @@ public class Memory implements Serializable {
     }
 
 
-    public void addOtherTask(Runnable t) {
+    public void queueOtherTask(Runnable t) {
         synchronized (otherTasks) {
             otherTasks.add(t);
         }
@@ -768,7 +772,9 @@ public class Memory implements Serializable {
 
         if (newTasks.isEmpty()) return null;
 
-        final Task task = newTasks.removeFirst();
+        Task task = newTasks.removeFirst();
+
+
 
         emotion.adjustBusy(task.getPriority(), task.getDurability());
 
@@ -776,46 +782,50 @@ public class Memory implements Serializable {
             // ok so lets fire it
             return new ImmediateProcess(this, task);
         } else {
+
+            if (task.getTerm().operator() == NativeOperator.NEGATION) {
+                //unwrap an outer negative negative
+                task = task.clone(
+                        new Sentence(
+                                ((Negation)task.getTerm()).negated(),
+                                task.sentence.punctuation,
+                                TruthFunctions.negation(task.sentence.getTruth()),
+                                task.sentence.stamp
+                        ));
+
+            }
+
             final Sentence s = task.sentence;
 
-            if (s.isJudgment() || s.isGoal()) {
+            //if (s.isJudgment() || s.isGoal()) {
 
-                //TODO: extract to NovelProcess class
-                return new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        final double exp = s.truth.getExpectation();
-
-                        if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                            //i dont see yet how frequency could play a role here - patrick
-                            //just imagine a board game where you are confident about all the board rules
-                            //but the implications reach all the frequency spectrum in certain situations
-                            //but every concept can also be represented with (--,) so i guess its ok
+                //final double exp = s.truth.getExpectation();
+                final double exp = 1f;
+                if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                    //i dont see yet how frequency could play a role here - patrick
+                    //just imagine a board game where you are confident about all the board rules
+                    //but the implications reach all the frequency spectrum in certain situations
+                    //but every concept can also be represented with (--,) so i guess its ok
 
 
-                            // new concept formation
-                            Task displacedNovelTask = novelTasks.PUT(task);
-                            logic.TASK_ADD_NOVEL.hit();
+                    // new concept formation
+                    Task displacedNovelTask = novelTasks.PUT(task);
+                    logic.TASK_ADD_NOVEL.hit();
 
-                            if (displacedNovelTask != null) {
-                                if (displacedNovelTask == task) {
-                                    removeTask(task, "Ignored");
-                                } else {
-                                    removeTask(displacedNovelTask, "Displaced novel task");
-                                }
-                            }
-
+                    if (displacedNovelTask != null) {
+                        if (displacedNovelTask == task) {
+                            removeTask(task, "Ignored");
                         } else {
-                            removeTask(task, "Neglected");
+                            removeTask(displacedNovelTask, "Displaced novel task");
                         }
                     }
 
-                };
-            }
+                } else {
+                    removeTask(task, "Neglected");
+                }
+            //}
         }
-        throw new RuntimeException("Unrecognized NewTask: " + task);
+        return null;
     }
 
 

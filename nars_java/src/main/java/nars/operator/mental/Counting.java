@@ -1,10 +1,10 @@
 package nars.operator.mental;
 
-import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Plugin;
+import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;

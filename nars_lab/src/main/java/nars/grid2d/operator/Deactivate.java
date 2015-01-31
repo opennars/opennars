@@ -50,7 +50,7 @@ public class Deactivate extends Operator {
         System.out.println("Executed: " + this);
         for (Term t : args) {
             System.out.println(" --- " + t);
-            chamb.operateObj(t.toString(),"deactivate");
+            TestChamber.operateObj(t.toString(), "deactivate");
             break;
         }
         

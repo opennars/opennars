@@ -125,6 +125,9 @@ abstract public class FireConcept extends NAL {
 
         } else {
 
+
+            reason(currentTaskLink);
+
 //            //EXPERIMENTAL:
 //            //if termlinks is less than novelty horizon, it can suppress any from being selected for up to novelty horizon cycles
 //            int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
@@ -171,7 +174,31 @@ abstract public class FireConcept extends NAL {
 
     }
 
-    
+    /** reasoning processes involving only the task itself */
+    protected void reason(TaskLink taskLink) {
+
+        final Sentence taskSentence = taskLink.getSentence();
+
+        final Term taskTerm = taskSentence.term;         // cloning for substitution
+
+        if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
+            //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
+
+            //Concept d=memory.concepts.sampleNextConcept();
+            //if(d!=null && d.term.equals(taskSentence.term)) {
+
+            double n=taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
+            double w=1.0/((n*(n-1))/2.0); //let's assume hierachical tuple (triangle numbers) amount for this
+            if(Memory.randomNumber.nextDouble() < w) { //so that NARS memory will not be spammed with contrapositions
+
+                StructuralRules.contraposition((Statement) taskTerm, taskSentence, this);
+                //}
+            }
+        }
+
+    }
+
+
     /**
      * Entry point of the logic engine
      *
@@ -182,21 +209,13 @@ abstract public class FireConcept extends NAL {
         final Memory memory = mem();
 
 
-        final Task task = getCurrentTask();
+        final Task task = tLink.getTarget(); //== getCurrentTask();
         final Sentence taskSentence = task.sentence;
 
         final Term taskTerm = taskSentence.term;         // cloning for substitution
+
+
         final Term beliefTerm = bLink.target;       // cloning for substitution
-
-        //CONTRAPOSITION //TODO: put into rule table
-        if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
-            //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
-
-            //Concept d=memory.concepts.sampleNextConcept();
-            //if(d!=null && d.term.equals(taskSentence.term)) {
-                StructuralRules.contraposition((Statement)taskTerm, taskSentence, this);
-            //}
-        }
 
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
             return;
@@ -209,19 +228,6 @@ abstract public class FireConcept extends NAL {
         setCurrentBelief( belief );  // may be null
 
         if (belief != null) {
-
-            //TODO
-            //(&/,a) goal didnt get unwinded, so lets unwind it
-            if(taskTerm instanceof Conjunction && taskSentence.punctuation== Symbols.GOAL) {
-                Conjunction s=(Conjunction)taskTerm;
-
-                CompoundTerm newterm = Sentence.termOrNull(s.term[0]);
-                if (newterm!=null) {
-                    TruthValue truth = taskSentence.truth;
-                    BudgetValue newBudget = BudgetFunctions.forward(TruthFunctions.deduction(truth, truth), this);
-                    doublePremiseTask(newterm, truth, newBudget, false);
-                }
-            }
 
 
             if (LocalRules.match(task, belief, this)) {

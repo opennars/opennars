@@ -641,7 +641,7 @@ public abstract class GControl extends Widget implements PConstants, GConstants,
         try {
             eventHandlerObject = obj;
             eventHandlerMethodName = methodName;
-            eventHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[]{this.getClass(), GEvent.class});
+            eventHandlerMethod = obj.getClass().getMethod(methodName, this.getClass(), GEvent.class);
         } catch (Exception e) {
             GMessenger.message(NONEXISTANT, new Object[]{this, methodName, new Class<?>[]{this.getClass(), GEvent.class}});
             eventHandlerObject = null;

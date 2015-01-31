@@ -32,7 +32,6 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 
-import java.nio.CharBuffer;
 import java.util.Arrays;
 
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;

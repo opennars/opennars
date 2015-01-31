@@ -5,9 +5,9 @@
 
 package nars.operator.app.farg;
 
-import nars.event.Reaction;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
+import nars.event.Reaction;
 import nars.logic.entity.Concept;
 import nars.util.bag.LevelBag;
 
@@ -52,8 +52,8 @@ public class Workspace {
         double s=0.0f;
         n_concepts=0;
         for(Concept node : nar.memory.concepts) {
-            if(!node.desires.isEmpty()) {
-                s+=node.getPriority()*node.desires.get(0).truth.getExpectation();
+            if(!node.goals.isEmpty()) {
+                s+=node.getPriority()*node.goals.get(0).truth.getExpectation();
             }
             n_concepts++;
         }

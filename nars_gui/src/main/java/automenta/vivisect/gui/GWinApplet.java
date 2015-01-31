@@ -95,7 +95,7 @@ import processing.event.MouseEvent;
 		}
 		if(owner.drawHandlerObject != null){
 			try {
-				owner.drawHandlerMethod.invoke(owner.drawHandlerObject, new Object[] { this, owner.data });
+				owner.drawHandlerMethod.invoke(owner.drawHandlerObject, this, owner.data);
 			} catch (Exception e) {
 				GMessenger.message(EXCP_IN_HANDLER,  
 						new Object[] {owner.drawHandlerObject, owner.drawHandlerMethodName, e} );
@@ -110,7 +110,7 @@ import processing.event.MouseEvent;
 	public void mouseEvent(MouseEvent event){
 		if(owner.mouseHandlerObject != null){
 			try {
-				owner.mouseHandlerMethod.invoke(owner.mouseHandlerObject, new Object[] { this, owner.data, event });
+				owner.mouseHandlerMethod.invoke(owner.mouseHandlerObject, this, owner.data, event);
 			} catch (Exception e) {
 				GMessenger.message(EXCP_IN_HANDLER,
 						new Object[] {owner.mouseHandlerObject, owner.mouseHandlerMethodName, e} );
@@ -125,7 +125,7 @@ import processing.event.MouseEvent;
 	public void keyEvent(KeyEvent event){
 		if(owner.keyHandlerObject != null){
 			try {
-				owner.keyHandlerMethod.invoke(owner.keyHandlerObject, new Object[] { this, owner.data, event });
+				owner.keyHandlerMethod.invoke(owner.keyHandlerObject, this, owner.data, event);
 			} catch (Exception e) {
 				GMessenger.message(EXCP_IN_HANDLER,
 						new Object[] {owner.keyHandlerObject, owner.keyHandlerMethodName, e} );
@@ -140,8 +140,8 @@ import processing.event.MouseEvent;
 	public void pre(){
 		if(owner.preHandlerObject != null){
 			try {
-				owner.preHandlerMethod.invoke(owner.preHandlerObject, 
-						new Object[] { owner.papplet, owner.data });
+				owner.preHandlerMethod.invoke(owner.preHandlerObject,
+                        owner.papplet, owner.data);
 			} catch (Exception e) {
 				GMessenger.message(EXCP_IN_HANDLER, 
 						new Object[] {owner.preHandlerObject, owner.preHandlerMethodName, e} );
@@ -156,8 +156,8 @@ import processing.event.MouseEvent;
 	public void post(){
 		if(owner.postHandlerObject != null){
 			try {
-				owner.postHandlerMethod.invoke(owner.postHandlerObject, 
-						new Object[] { owner.papplet, owner.data });
+				owner.postHandlerMethod.invoke(owner.postHandlerObject,
+                        owner.papplet, owner.data);
 			} catch (Exception e) {
 				GMessenger.message(EXCP_IN_HANDLER, 
 						new Object[] {owner.postHandlerObject, owner.postHandlerMethodName, e} );

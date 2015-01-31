@@ -551,7 +551,7 @@ public class JCollapsiblePane extends JPanel {
 
       if (parent != null) {
         if (parent instanceof JComponent) {
-          ((JComponent)parent).revalidate();
+          parent.revalidate();
         } else {
           parent.invalidate();
         }
@@ -594,7 +594,7 @@ public class JCollapsiblePane extends JPanel {
       // we must ensure the container is opaque. It is not opaque it introduces
       // painting glitches specially on Linux with JDK 1.5 and GTK look and feel.
       // GTK look and feel calls setOpaque(false)
-      if (c instanceof JComponent && !((JComponent)c).isOpaque()) {
+      if (c instanceof JComponent && !c.isOpaque()) {
         ((JComponent)c).setOpaque(true);
       }
     }

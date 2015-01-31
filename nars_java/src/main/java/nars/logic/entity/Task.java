@@ -21,6 +21,7 @@
 package nars.logic.entity;
 
 import com.google.common.base.Strings;
+import nars.core.Parameters;
 import nars.logic.Terms.Termable;
 
 import java.lang.ref.WeakReference;
@@ -92,7 +93,7 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
      * @param parentBelief The belief from which this new task is derived
      */
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
-        this(s, b, new WeakReference(parentTask), parentBelief, null);
+        this(s, b, parentTask == null ? null : new WeakReference(parentTask), parentBelief, null);
     }
 
     public Task(final Sentence<T> s, final BudgetValue b, final WeakReference<Task> parentTask, final Sentence parentBelief, Sentence solution) {    
@@ -100,7 +101,12 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
         this.sentence = s;
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
-        this.bestSolution = solution;   
+        this.bestSolution = solution;
+
+        if (Parameters.DEBUG) {
+            if ((parentTask!=null && parentTask.get() == null))
+                throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
+        }
     }
 
     /**

@@ -1,6 +1,5 @@
 package nars.util.data;
 
-import java.util.Set;
 import java.util.*;
 
 /**

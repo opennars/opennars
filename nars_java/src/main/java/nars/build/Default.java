@@ -1,9 +1,9 @@
 package nars.build;
 
+import nars.control.DefaultCore;
 import nars.core.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
-import nars.control.DefaultCore;
 import nars.io.DefaultTextPerception;
 import nars.io.TextInput;
 import nars.logic.entity.*;
@@ -74,7 +74,8 @@ public class Default extends Build implements ConceptBuilder {
 
         //Build Parameters
         this.level = Parameters.DEFAULT_NAL;
-        this.internalExperience = InternalExperience.InternalExperienceMode.Minimal;
+        this.internalExperience =
+                level >= 8 ? InternalExperience.InternalExperienceMode.Minimal :  InternalExperience.InternalExperienceMode.None;
 
 
         setConceptBagSize(1024);
@@ -134,7 +135,7 @@ public class Default extends Build implements ConceptBuilder {
     @Override
     public String toString() {
         return getClass().getSimpleName()+"[" + level +
-                ((internalExperience==internalExperience.None) || (internalExperience==null) ? "" : "+")
+                ((internalExperience== InternalExperience.InternalExperienceMode.None) || (internalExperience==null) ? "" : "+")
                 + "]";
     }
 

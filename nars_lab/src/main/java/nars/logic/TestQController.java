@@ -212,7 +212,7 @@ public class TestQController {
             m.step(1);
             r.step(1);
             
-            avgCycleToForget += ((double)(n.param).conceptForgetDurations.get()) / displayCycles;
+            avgCycleToForget += (n.param).conceptForgetDurations.get() / displayCycles;
             mm += qm.reward();
             nn += qn.reward();
             rr += qr.reward();

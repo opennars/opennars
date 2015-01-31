@@ -6,8 +6,6 @@ import nars.logic.Terms;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
-import java.nio.CharBuffer;
-
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)
  */

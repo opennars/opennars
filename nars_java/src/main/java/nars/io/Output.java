@@ -1,11 +1,11 @@
 package nars.io;
 
-import nars.event.EventEmitter;
 import nars.core.Events;
 import nars.core.Events.Answer;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
+import nars.event.EventEmitter;
 import nars.operator.io.Echo;
 import nars.operator.io.Say;
 

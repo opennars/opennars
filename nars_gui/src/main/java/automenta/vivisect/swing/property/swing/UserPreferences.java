@@ -274,9 +274,9 @@ public class UserPreferences {
       Preferences prefs = node().node("JTextComponent");
       prefs.put(text.getName(), text.getText());
     }
-  };
+  }
 
-  public static void track(JSplitPane split) {
+    public static void track(JSplitPane split) {
     Preferences prefs = node().node("JSplitPane");
 
     // restore the previous location

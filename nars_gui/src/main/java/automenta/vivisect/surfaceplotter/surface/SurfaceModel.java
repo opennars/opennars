@@ -47,8 +47,8 @@ public interface SurfaceModel
 		PlotType(String att){this.att = att;}
 		public String getPropertyName() {return att;}
 	
-		};
-	//TODO replace with enum
+		}
+    //TODO replace with enum
 	//plot type constant 
 	
 	public enum PlotColor{
@@ -64,8 +64,8 @@ public interface SurfaceModel
 	
 		
 			
-	};
-	//TODO replace with enums
+	}
+    //TODO replace with enums
 	// plot color constant
 	
 	//events

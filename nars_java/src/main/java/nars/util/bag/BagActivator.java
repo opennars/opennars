@@ -1,6 +1,5 @@
 package nars.util.bag;
 
-import nars.core.Memory;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Item;
 

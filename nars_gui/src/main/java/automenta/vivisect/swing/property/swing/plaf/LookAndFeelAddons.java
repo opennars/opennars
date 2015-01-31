@@ -280,12 +280,12 @@ public class LookAndFeelAddons {
       }
       Method createUIMethod = null;
       try {
-        createUIMethod = realUIClass.getMethod("createUI", new Class[]{JComponent.class});
+        createUIMethod = realUIClass.getMethod("createUI", JComponent.class);
       } catch (NoSuchMethodException e1) {
         throw new RuntimeException("Class " + realUI + " has no method createUI(JComponent)");
       }
       try {
-        return (ComponentUI)createUIMethod.invoke(null, new Object[]{component});
+        return (ComponentUI)createUIMethod.invoke(null, component);
       } catch (Exception e2) {
         throw new RuntimeException("Failed to invoke " + realUI + "#createUI(JComponent)");
       }

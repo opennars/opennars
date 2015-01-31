@@ -21,8 +21,6 @@
 package nars.operator.io;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import java.util.List;
 import nars.core.Memory;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Task;
@@ -30,6 +28,9 @@ import nars.logic.entity.Term;
 import nars.logic.nal4.Product;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  */

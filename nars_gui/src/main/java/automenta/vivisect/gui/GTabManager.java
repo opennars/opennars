@@ -103,8 +103,8 @@ public class GTabManager {
 		int index = textControls.lastIndexOf(control);
 		if(textControls.size() > 1 && index >= 0 && index < textControls.size() - 1){
 			index++;
-			GControl.controlToTakeFocus = (GControl)textControls.get(index);;
-			return true;
+			GControl.controlToTakeFocus = (GControl)textControls.get(index);
+            return true;
 		}
 		return false;
 	}

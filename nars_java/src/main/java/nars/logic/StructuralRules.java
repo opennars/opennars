@@ -75,12 +75,12 @@ public final class StructuralRules {
             if (components.contains(sub)) {
                 sub = compound;
                 components.set(index, pred);
-                pred = mem.term(compound, components);
+                pred = Memory.term(compound, components);
             }
         } else {
             if (components.contains(pred)) {
                 components.set(index, sub);
-                sub = mem.term(compound, components);
+                sub = Memory.term(compound, components);
                 pred = compound;
             }
         }
@@ -420,13 +420,13 @@ public final class StructuralRules {
             if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
                 componentList = ((CompoundTerm) condition).cloneTerms();
                 componentList[indices[1]] = newInh;
-                Term newCond = memory.term((CompoundTerm) condition, componentList);
+                Term newCond = Memory.term((CompoundTerm) condition, componentList);
                 content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
             } else {
                 componentList = oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
-                    Term newContent = memory.term(oldContent, componentList);
+                    Term newContent = Memory.term(oldContent, componentList);
                     if (!(newContent instanceof CompoundTerm))
                         return;
                     content = (CompoundTerm)newContent;

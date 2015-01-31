@@ -482,7 +482,7 @@ import java.util.*;
         }
 
         private final Socket mySocket;
-    };
+    }
 
     /**
      * URL-encodes everything between "/"-characters. Encodes spaces as '%20'

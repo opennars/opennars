@@ -198,10 +198,10 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
             if (!concept.questions.isEmpty())
                 questionChart.update( unmodifiableList( concept.questions ) );
             
-            if (!concept.desires.isEmpty()) {
+            if (!concept.goals.isEmpty()) {
                 String s=subtitle.getText();
-                subtitle.setText(s+(s.equals("") ? "" : " ")+"desire: "+concept.desires.get(0).truth.toString());
-                desireChart.update( time, unmodifiableList( concept.desires ));
+                subtitle.setText(s+(s.equals("") ? "" : " ")+"desire: "+concept.goals.get(0).truth.toString());
+                desireChart.update( time, unmodifiableList( concept.goals));
             }
 
             updateUI();
@@ -283,7 +283,7 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
         }
 
         public int getX(long when) {
-            return (int)Math.round((when - minTime) / timeFactor);    
+            return Math.round((when - minTime) / timeFactor);
         }
         
         public boolean update(long time, Collection<Sentence> i) {
@@ -308,7 +308,7 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
             if (g == null) return false;
             
             int thick = 4;                
-            timeFactor = ((float)maxTime - minTime) / ((float)w-thick);
+            timeFactor = (maxTime - minTime) / ((float)w-thick);
             
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
@@ -358,7 +358,7 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
             if (g == null) return;
             
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
-            g.fillRect(0, 0, (int) getWidth(), (int) getHeight());
+            g.fillRect(0, 0, getWidth(), getHeight());
             for (Truthable s : i) {
                 float freq = s.getTruth().getFrequency();
                 float conf = s.getTruth().getConfidence();

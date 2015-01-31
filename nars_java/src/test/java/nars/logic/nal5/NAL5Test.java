@@ -44,16 +44,25 @@ public class NAL5Test extends AbstractNALTest {
         ''outputMustContain('<<robin --> bird> ==> <robin --> animal>>. %0.00;0.81%')
         */
 
-        long time = 525;
+        long time = 512;
         //TextOutput.out(n);
 
         n.believe("<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>", Eternal, 0.0f, 0.9f)
                 .en("If robin is a type of bird then robin is not a type of flying animal.");
+        /*n.believe("(--,<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>)", Eternal, 1.0f, 0.9f)
+                .en("If robin is a type of bird then robin is not a type of flying animal.");*/
+
+
         n.believe("<<robin --> bird> ==> <robin --> [flying]>>", Eternal, 1f, 0.9f )
                 .en("If robin is a type of bird then robin can fly.");
 
+        n.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 1f,0f, 1f); //matches any truth value
+
         n.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 0f, 0.81f, 0.81f)
                 .en("It is unlikely that if a robin is a type of bird then robin is a type of animal.");
+
+
+        System.out.println(n.time());
 
     }
 

@@ -234,7 +234,7 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 		try{
 			closeHandlerObject = obj;
 			closetHandlerMethodName = methodName;
-			closetHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] {GWindow.class } );
+			closetHandlerMethod = obj.getClass().getMethod(methodName, GWindow.class);
 		} catch (Exception e) {
 			GMessenger.message(NONEXISTANT, new Object[] {this, methodName, new Class<?>[] { GWindow.class } } );
 			closeHandlerObject = null;
@@ -248,7 +248,7 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	void onClose(){
 		if(closeHandlerObject != null){
 			try {
-				closetHandlerMethod.invoke(closeHandlerObject, new Object[] { this } );
+				closetHandlerMethod.invoke(closeHandlerObject, this);
 			} catch (Exception e) {
 				GMessenger.message(EXCP_IN_HANDLER,  
 						new Object[] {closeHandlerObject, closetHandlerMethod, e } );
@@ -431,7 +431,7 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	 */
 	public void addDrawHandler(Object obj, String methodName){
 		try{
-			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] {GWinApplet.class, GWinData.class } );
+			drawHandlerMethod = obj.getClass().getMethod(methodName, GWinApplet.class, GWinData.class);
 			drawHandlerObject = obj;
 			drawHandlerMethodName = methodName;
 		} catch (Exception e) {
@@ -449,7 +449,7 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	 */
 	public void addPreHandler(Object obj, String methodName){
 		try{
-			preHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] {GWinApplet.class, GWinData.class } );
+			preHandlerMethod = obj.getClass().getMethod(methodName, GWinApplet.class, GWinData.class);
 			preHandlerObject = obj;
 			preHandlerMethodName = methodName;
 		} catch (Exception e) {
@@ -467,8 +467,8 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	 */
 	public void addMouseHandler(Object obj, String methodName){
 		try{
-			mouseHandlerMethod = obj.getClass().getMethod(methodName, 
-					new Class<?>[] {GWinApplet.class, GWinData.class, MouseEvent.class } );
+			mouseHandlerMethod = obj.getClass().getMethod(methodName,
+                    GWinApplet.class, GWinData.class, MouseEvent.class);
 			mouseHandlerObject = obj;
 			mouseHandlerMethodName = methodName;
 		} catch (Exception e) {
@@ -486,8 +486,8 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	 */
 	public void addKeyHandler(Object obj, String methodName){
 		try{
-			keyHandlerMethod = obj.getClass().getMethod(methodName, 
-					new Class<?>[] {GWinApplet.class, GWinData.class, KeyEvent.class } );
+			keyHandlerMethod = obj.getClass().getMethod(methodName,
+                    GWinApplet.class, GWinData.class, KeyEvent.class);
 			keyHandlerObject = obj;
 			keyHandlerMethodName = methodName;
 		} catch (Exception e) {
@@ -505,8 +505,8 @@ public class GWindow extends Frame implements GConstants, GConstantsInternal {
 	 */
 	public void addPostHandler(Object obj, String methodName){
 		try{
-			postHandlerMethod = obj.getClass().getMethod(methodName, 
-					new Class<?>[] {GWinApplet.class, GWinData.class } );
+			postHandlerMethod = obj.getClass().getMethod(methodName,
+                    GWinApplet.class, GWinData.class);
 			postHandlerObject = obj;
 			postHandlerMethodName = methodName;
 		} catch (Exception e) {

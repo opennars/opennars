@@ -114,7 +114,7 @@ abstract public class ProcessingGraphPanel2<V,E> extends NPanel {
         NSlider edgeDist = new NSlider(edgeDistance, 1, 100) {
             @Override
             public void onChange(float v) {
-                edgeDistance = (float)v;
+                edgeDistance = v;
                 ProcessingGraphPanel2.this.update();
             }          
         };

@@ -150,7 +150,7 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
 
 			Constructor<?> ctor = null;
 			try {
-				ctor = cls.getConstructor(new Class[] { Object.class });
+				ctor = cls.getConstructor(Object.class);
 			} catch (Exception ex) {
 				// fall through
 			}
@@ -159,7 +159,7 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
 				if (ctor == null) {
 					editor = (PropertyEditor) cls.newInstance();
 				} else {
-					editor = (PropertyEditor) ctor.newInstance(new Object[] { property });
+					editor = (PropertyEditor) ctor.newInstance(property);
 				}
 			} catch (Exception e) {
 				throw new RuntimeException("PropertyEditor not instantiated", e);

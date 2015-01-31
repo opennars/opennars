@@ -345,8 +345,8 @@ public class NARio extends Run {
                         int dx = Math.round((x - lastX) / 1);
                         int dy = Math.round((y - lastY) / 1);
                         
-                        int mx = (int)Math.round((x-lastMX)/16);
-                        int my = (int)Math.round((y-lastMY)/16);
+                        int mx = Math.round((x-lastMX)/16);
+                        int my = Math.round((y-lastMY)/16);
 
                         //if no movement, decrease priority of sense
                         if ((dx == 0) && (dy == 0)) {

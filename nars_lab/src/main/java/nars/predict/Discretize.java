@@ -62,7 +62,7 @@ public class Discretize {
     
     /** inverse of discretize */
     public double continuous(double discretized) {
-        return ((double)discretized) / ((double)discretization-1);
+        return discretized / ((double)discretization-1);
     }
     public double continuous(int discretized) {
         return continuous((double)discretized);

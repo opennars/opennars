@@ -41,7 +41,7 @@ abstract public class NeuralDisplay<V, E> extends DefaultDisplay<V,E>  {
 
         float total = (float)(signal/4f + activity);
         
-        vv.radius = baseSize/2f + (float)(baseSize * Math.abs(total));
+        vv.radius = baseSize/2f + baseSize * Math.abs(total);
         
         vv.color = Video.getColor(layer.hashCode(), 0.75f, 0.75f, 0.75f);
         vv.label = layer;

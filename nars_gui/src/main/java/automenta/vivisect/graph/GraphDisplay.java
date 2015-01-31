@@ -22,7 +22,7 @@ public interface GraphDisplay<V,E> {
         return true;
     }
     
-    public static enum Shape { Rectangle, Ellipse };
+    public static enum Shape { Rectangle, Ellipse }
 
 //    
 //    public Shape getVertexShape(V v);

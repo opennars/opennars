@@ -22,8 +22,6 @@ package nars.logic.entity;
 
 import nars.core.Parameters;
 
-import java.nio.CharBuffer;
-
 import static nars.io.Symbols.*;
 
 /**

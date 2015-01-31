@@ -93,7 +93,7 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
     public void register(JavaClass jc, MethodGen mg, CGMethodCall methodCall, InvokeInstruction ii) {
         CGClass callerClass = CGClass.create(jc);
         register(callerClass);
-        CGMethod callingMethod = (CGMethod) register(methodCall.method);
+        CGMethod callingMethod = register(methodCall.method);
         methodCall = (CGMethodCall) register(methodCall);
         callerClass.methods.add(methodCall.method);
 

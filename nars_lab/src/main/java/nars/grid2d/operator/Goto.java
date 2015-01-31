@@ -51,7 +51,7 @@ public class Goto extends Operator {
         System.out.println("Executed: " + this);
         for (Term t : args) {
             System.out.println(" --- " + t);
-            chamb.operateObj(t.toString(),"go-to");
+            TestChamber.operateObj(t.toString(), "go-to");
             break;
         }
         

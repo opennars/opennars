@@ -23,7 +23,8 @@ package nars.logic;
 import nars.core.Memory;
 import nars.logic.entity.*;
 
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.pow;
 
 
 /**
@@ -42,7 +43,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public final static float truthToQuality(final TruthValue t) {
         final float exp = t.getExpectation();
-        return (float) max(exp, (1 - exp)*0.75);
+        return max(exp, (1f - exp)*0.75f);
     }
 
     /**
@@ -70,16 +71,16 @@ public final class BudgetFunctions extends UtilityFunctions {
     public static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final boolean feedbackToLinks, final NAL nal) {
         final float difT = truth.getExpDifAbs(tTruth);
         final Task task = nal.getCurrentTask();
-        task.decPriority(1 - difT);
-        task.decDurability(1 - difT);
+        task.decPriority(1f - difT);
+        task.decDurability(1f - difT);
         if (feedbackToLinks) {
             TaskLink tLink = nal.getCurrentTaskLink();
-            tLink.decPriority(1 - difT);
-            tLink.decDurability(1 - difT);
+            tLink.decPriority(1f - difT);
+            tLink.decDurability(1f - difT);
             TermLink bLink = nal.getCurrentBeliefLink();
             final float difB = truth.getExpDifAbs(bTruth);
-            bLink.decPriority(1 - difB);
-            bLink.decDurability(1 - difB);
+            bLink.decPriority(1f - difB);
+            bLink.decDurability(1f - difB);
         }
         float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
         

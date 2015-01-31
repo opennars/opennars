@@ -29,7 +29,7 @@ public class SketchPanel extends PPanel {
     float HalfDiagonal = 0.5f * sqrt((float) (250.0 * 250.0 + 250.0 * 250.0));
     float AngleRange = 45.0f;
     float AnglePrecision = 2.0f;
-    float Phi = 0.5f * (float) (-1.0f + sqrt(5.0f)); // Golden Ratio
+    float Phi = 0.5f * (-1.0f + sqrt(5.0f)); // Golden Ratio
 
     Recognizer recognizer;
     Recorder recorder;

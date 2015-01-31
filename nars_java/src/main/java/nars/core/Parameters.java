@@ -24,7 +24,6 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.logic.entity.Term;
 import nars.util.bag.LevelBag;
 import nars.util.data.CuckooMap;
 
@@ -89,7 +88,7 @@ public class Parameters {
      *   budgets are propagated or otherwise measured, which can result
      *   in a performance gain.
      * */
-    public static final float BUDGET_THRESHOLD = (float) 0.01;
+    public static final float BUDGET_THRESHOLD = (float) 0.02;
 
     /* ---------- default input values ---------- */
     /** Default expectation for confirmation. */
@@ -193,8 +192,8 @@ public class Parameters {
 
     public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.04f;
 
-    public static final LevelBag.NextNonEmptyLevelMode DEFAULT_LEVEL_BAG_MODE = LevelBag.NextNonEmptyLevelMode.Default;;
-    
+    public static final LevelBag.NextNonEmptyLevelMode DEFAULT_LEVEL_BAG_MODE = LevelBag.NextNonEmptyLevelMode.Default;
+
     /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
     public static boolean TERM_ELEMENT_EQUIVALENCY = false;
     

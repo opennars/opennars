@@ -1,7 +1,7 @@
 package nars.nario;
 
-import nars.nario.sonar.FakeSoundEngine;
-import nars.nario.sonar.SonarSoundEngine;
+import automenta.vivisect.audio.FakeSoundEngine;
+import automenta.vivisect.audio.SonarSoundEngine;
 import nars.nario.sprites.Mario;
 
 import javax.sound.sampled.LineUnavailableException;

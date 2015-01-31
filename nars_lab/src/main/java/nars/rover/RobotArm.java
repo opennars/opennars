@@ -297,6 +297,6 @@ public class RobotArm extends PhysicsModel {
         return fraction;
       }
 
-    };
+    }
 
 }

@@ -82,18 +82,18 @@ public class Interval extends Term {
     static final Interval[] INTERVAL = new Interval[INTERVAL_POOL_SIZE];
     
     public static Interval interval(final String i) {
-        return intervalMagnitude( Integer.parseInt(i.substring(1)) - 1);
+        return interval(Integer.parseInt(i.substring(1)) - 1);
     }
     
     public static Interval interval(final long time, final Memory memory) {
-        return intervalMagnitude( timeToMagnitude( time, memory.param.duration ) );
+        return interval(magnitude(time, memory.param.duration));
     }
     
     public static Interval interval(final long time, final AtomicDuration duration) {
-        return intervalMagnitude( timeToMagnitude( time, duration ) );
+        return interval(magnitude(time, duration));
     }
     
-    public static Interval intervalMagnitude(int magnitude) {
+    public static Interval interval(int magnitude) {
         if (magnitude >= INTERVAL_POOL_SIZE)
             return new Interval(magnitude, true);
         else if (magnitude < 0)
@@ -112,7 +112,7 @@ public class Interval extends Term {
 
     // time is a positive integer
     protected Interval(final long timeDiff, final AtomicDuration duration) {
-        this(timeToMagnitude(timeDiff, duration), true);
+        this(magnitude(timeDiff, duration), true);
     }
     
     
@@ -130,41 +130,37 @@ public class Interval extends Term {
 //        setName(s);
 //    }
 
-    public static int timeToMagnitude(final long timeDiff, final AtomicDuration duration) {
+    public static int magnitude(final long timeDiff, final AtomicDuration duration) {
         int m = (int) Math.round(Math.log(timeDiff) / duration.getSubDurationLog());
         if (m < 0) return 0;
         return m;
     }
     
-    public static double magnitudeToTime(final double magnitude, final AtomicDuration duration) {
+    public static double time(final double magnitude, final AtomicDuration duration) {
         if (magnitude <= 0)
             return 1;
         return Math.exp(magnitude * duration.getSubDurationLog());
     }
     
-    public static long magnitudeToTime(final int magnitude, final AtomicDuration duration) {
-        return Math.round(magnitudeToTime((double)magnitude, duration));
+    public static long cycles(final int magnitude, final AtomicDuration duration) {
+        return Math.round(time((double) magnitude, duration));
     }
     
     /** Calculates the average of the -0.5, +0.5 interval surrounding the integer magnitude */
-    public static long magnitudeToTimeHalfRadius(final int magnitude, final AtomicDuration duration) {
+    public static long cyclesAdjusted(final int magnitude, final AtomicDuration duration) {
         //TODO cache this result because it will be equal for all similar integer magnitudes
         double magMin = magnitude - 0.5;
         double magMax = magnitude + 0.5;
-        return Math.round((magnitudeToTime(magMin,duration) + magnitudeToTime(magMax, duration))/2.0);
+        return Math.round((time(magMin, duration) + time(magMax, duration))/2.0);
     }
-    
-    @Deprecated public static long magnitudeToTime(int magnitude) {
-        return (long) Math.ceil(Math.exp(magnitude));
-    }
-    
-    public final long getTime(final AtomicDuration duration) {
+
+    public final long cycles(final AtomicDuration duration) {
         //TODO use a lookup table for this
-        return magnitudeToTime(magnitude, duration);
+        return cycles(magnitude, duration);
     }
     
-    public final long getTime(final Memory memory) {        
-        return getTime(memory.param.duration);
+    public final long durationCycles(final Memory memory) {
+        return cycles(memory.param.duration);
     }
     
     @Override
@@ -175,29 +171,29 @@ public class Interval extends Term {
     }
 
     /** returns a sequence of intervals which approximate a time period with a maximum number of consecutive Interval terms */
-    public static List<Interval> intervalTimeSequence(final long t, final int maxTerms, final Memory memory) {
+    public static List<Interval> intervalSequence(final long t, final int maxTerms, final Memory memory) {
         if (maxTerms == 1)
             return Lists.newArrayList(interval(t, memory));
         
         long a; //current approximation value
         Interval first;
         first = interval(t, memory);
-        a = first.getTime(memory);
+        a = first.durationCycles(memory);
         if (a == t) return Lists.newArrayList(first);
         else if (a < t) {
             //ok we will add to it. nothing to do here
         }
         else if ((a > t) && (first.magnitude > 0)) {
             //use next lower magnitude
-            first = intervalMagnitude(first.magnitude - 1);
-            a = first.getTime(memory);
+            first = interval(first.magnitude - 1);
+            a = first.durationCycles(memory);
         }
                 
         List c = new ArrayList(maxTerms);
         c.add(first);
         
         long remaining = t - a;
-        c.addAll( intervalTimeSequence(remaining, maxTerms-1, memory));
+        c.addAll( intervalSequence(remaining, maxTerms - 1, memory));
         
         /*
         Interval approx = Interval.intervalTime(t, memory);                
@@ -209,12 +205,12 @@ public class Interval extends Term {
     }
 
     /** sum the time period contained in the Intervals (if any) in a sequence of objects (usually list of Terms) */
-    public static long intervalSequenceTime(final Iterable s, final Memory memory) {
+    public static long intervalSequence(final Iterable s, final Memory memory) {
         long time = 0;
         for (final Object t : s) {
             if (t instanceof Interval) {
                 Interval i = (Interval)t;
-                time += i.getTime(memory);
+                time += i.durationCycles(memory);
             }
         }
         return time;

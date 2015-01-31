@@ -1,7 +1,7 @@
 package nars.nario;
 
-import nars.nario.sonar.SonarSoundEngine;
-import nars.nario.sonar.SoundListener;
+import automenta.vivisect.audio.SonarSoundEngine;
+import automenta.vivisect.audio.SoundListener;
 
 import java.awt.*;
 

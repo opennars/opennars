@@ -17,12 +17,12 @@
 
 package nars.operator.app.plan;
 
-import nars.event.Reaction;
 import nars.core.Events.NewTaskExecution;
 import nars.core.Events.UnexecutableGoal;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.NAR;
 import nars.core.Plugin;
+import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.logic.NAL;
 import nars.logic.TruthFunctions;

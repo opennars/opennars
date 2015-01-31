@@ -1,11 +1,11 @@
 package nars.logic.meta;
 
-import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Events.ConceptNew;
 import nars.core.Events.CycleEnd;
 import nars.core.Events.InferenceEvent;
 import nars.core.NAR;
+import nars.event.Reaction;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.MemoryObserver;

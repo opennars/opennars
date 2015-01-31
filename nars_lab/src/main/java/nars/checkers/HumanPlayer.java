@@ -1,5 +1,4 @@
 package nars.checkers;
-;
 
 /**
  *

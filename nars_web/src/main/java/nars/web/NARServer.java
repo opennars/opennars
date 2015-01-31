@@ -76,7 +76,7 @@ public class NARServer extends PathHandler {
     //final NARSWebSocketServer websockets;
     //private final Map<WebSocket, NARConnection> socketSession = new HashMap();
 
-    public NARServer(int httpPort) throws UnknownHostException, IOException {
+    public NARServer(int httpPort) throws IOException {
         super();
         
         //websockets = new NARSWebSocketServer(new InetSocketAddress(webSocketsPort));

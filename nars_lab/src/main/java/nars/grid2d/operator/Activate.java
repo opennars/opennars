@@ -50,7 +50,7 @@ public class Activate extends Operator {
         System.out.println("Executed: " + this);
         for (Term t : args) {
             System.out.println(" --- " + t);
-            chamb.operateObj(t.toString(),"activate");
+            TestChamber.operateObj(t.toString(), "activate");
             break;
         }
         

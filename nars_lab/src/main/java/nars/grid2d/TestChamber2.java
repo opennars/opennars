@@ -145,7 +145,7 @@ public class TestChamber2 extends TestChamber {
                                     if("pick".equals(opname)) {
                                         if(inventorybag!=null && inventorybag instanceof LocalGridObject) {
                                             //we have to drop it
-                                            LocalGridObject ob=(LocalGridObject) inventorybag;
+                                            LocalGridObject ob= inventorybag;
                                             ob.x=(int)current.x;
                                             ob.y=(int)current.y;
                                             space.objects.add(ob);

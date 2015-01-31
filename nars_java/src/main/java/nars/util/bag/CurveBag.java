@@ -3,11 +3,13 @@ package nars.util.bag;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
-import nars.util.data.CuckooMap;
 import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.SortedIndex;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 
 public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {

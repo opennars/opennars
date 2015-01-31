@@ -316,8 +316,8 @@ public class PropertyUtils {
 					if (psp.getTable().getEditorComponent() != null)
 						psp.getTable().commitEditing();
 					super.ok();
-				};
-			};
+				}
+            };
 		}
 		if (editable) {
 			propertySheetDialog

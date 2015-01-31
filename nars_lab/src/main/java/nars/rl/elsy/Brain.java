@@ -587,13 +587,13 @@ public class Brain implements Serializable {
         this.w = w;
     }
 
-    public void save(String filename) throws FileNotFoundException, IOException {
+    public void save(String filename) throws IOException {
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename));
         out.writeObject(w);
         out.close();
     }
 
-    public void load(String filename) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public void load(String filename) throws IOException, ClassNotFoundException {
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
         w = (double[][][]) in.readObject();
         in.close();

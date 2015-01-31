@@ -410,7 +410,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
 //m_world.drawDebugData();
         Vec2 cc = getCamera().getTransform().getCenter();
 
-        ((DrawPhy2D) debugDraw).getViewportTranform().setCamera(cc.x, cc.y, getCamera().getTargetScale());
+        debugDraw.getViewportTranform().setCamera(cc.x, cc.y, getCamera().getTargetScale());
 
         ((DrawPhy2D) debugDraw).draw(m_world);
 

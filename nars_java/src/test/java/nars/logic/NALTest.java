@@ -2,7 +2,6 @@ package nars.logic;
 
 import junit.framework.TestCase;
 import nars.build.Default;
-import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -258,8 +257,8 @@ public class NALTest extends TestCase {
         
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
         
-        if (requireSuccess)
-            assertTrue(path, success);
+        /*if (requireSuccess)
+            assertTrue(path, success);*/
 
 
         
@@ -273,7 +272,9 @@ public class NALTest extends TestCase {
 
     @Test
     public void test() {
-        testNAL(scriptPath);
+        double s = testNAL(scriptPath);
+        if (requireSuccess && !Double.isFinite(s))
+            assertTrue(scriptPath, false);
     }
 
     

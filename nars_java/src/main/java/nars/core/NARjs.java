@@ -24,6 +24,8 @@ public class NARjs {
         js.eval("importPackage('java.io')");
 
         js.eval("importPackage('nars.core')");
+        js.eval("importPackage('nars.logic')");
+        js.eval("importPackage('nars.logic.nal7')");
         js.eval("importPackage('nars.build')");
         js.eval("importPackage('nars.io')");
         js.eval("importPackage('nars.gui')");

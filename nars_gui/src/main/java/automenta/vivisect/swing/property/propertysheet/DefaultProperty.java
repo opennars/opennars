@@ -122,7 +122,7 @@ public class DefaultProperty extends AbstractProperty {
 			Method method =
 			BeanUtils.getWriteMethod(object.getClass(), getName(), getType());
 			if (method != null) {
-				method.invoke(object, new Object[] { getValue() });
+				method.invoke(object, getValue());
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);

@@ -160,7 +160,7 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 				else
 					source = null;
 			}
-			else if(source.equals((Square) e.getSource()))
+			else if(source.equals(e.getSource()))
 			{
 				// selection equals previous set source, deselect
 				ArrayList<int[]> targets = game.pieceCouldMoveToFrom(source.getCoordinateX(), source.getCoordinateY());

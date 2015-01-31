@@ -88,7 +88,7 @@ public class Hsom {
                         * (coords1[i1][i2] - coords1[winnerx][winnery]);
         double diff2 = (coords2[i1][i2] - coords2[winnerx][winnery]) 
                         * (coords2[i1][i2] - coords2[winnerx][winnery]);
-        return 1.0f / ((double) Math.sqrt(2 * Math.PI * gamma * gamma)) 
+        return 1.0f / Math.sqrt(2 * Math.PI * gamma * gamma)
                         * Math.exp((diff1 + diff2) / (-2 * gamma * gamma));
     }
 

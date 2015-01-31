@@ -5,7 +5,10 @@
 
 package nars.operator.app;
 
-import nars.core.*;
+import nars.core.Events;
+import nars.core.NAR;
+import nars.core.Parameters;
+import nars.core.Plugin;
 import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.logic.BudgetFunctions;

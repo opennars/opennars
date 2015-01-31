@@ -57,7 +57,7 @@ public class NARRun {
         nars.run(args);
         
         // TODO only if single finish ( no reset in between )
-        if (nars.dumpLastState) {
+        if (dumpLastState) {
             System.out.println("\n==== Dump Last State ====\n"
                     + nars.nar.toString());
         }

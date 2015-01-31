@@ -86,7 +86,7 @@ public class Concept extends Item<Term> implements Termable {
     /**
      * Desire values on the term, similar to the above one
      */
-    public final List<Sentence> desires;
+    public final List<Sentence> goals;
 
     /**
      * Reference to the memory to which the Concept belongs
@@ -126,7 +126,7 @@ public class Concept extends Item<Term> implements Termable {
         this.questions = Parameters.newArrayList();
         this.beliefs = Parameters.newArrayList();
         this.quests = Parameters.newArrayList();
-        this.desires = Parameters.newArrayList();
+        this.goals = Parameters.newArrayList();
 
         this.taskLinks = taskLinks;
         this.termLinks = termLinks;
@@ -365,8 +365,8 @@ public class Concept extends Item<Term> implements Termable {
         
         final Sentence goal = task.sentence, oldGoal;
 
-        synchronized (desires) {
-            oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
+        synchronized (goals) {
+            oldGoal = selectCandidate(goal, goals); // revise with the existing desire values
         }
 
         if (oldGoal != null) {
@@ -399,8 +399,8 @@ public class Concept extends Item<Term> implements Termable {
             // still worth pursuing?
             if (task.aboveThreshold()) {
 
-                synchronized (desires) {
-                    addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+                synchronized (goals) {
+                    addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 }
 
 
@@ -448,7 +448,7 @@ public class Concept extends Item<Term> implements Termable {
 
         final Sentence newAnswer = (ques.isQuestion())
                 ? selectCandidate(ques, beliefs)
-                : selectCandidate(ques, desires);
+                : selectCandidate(ques, goals);
 
         if (newAnswer != null) {
             trySolution(newAnswer, newTask, nal);
@@ -718,7 +718,7 @@ public class Concept extends Item<Term> implements Termable {
                 + toStringIfNotNull(termLinks.size(), "termLinks")
                 + toStringIfNotNull(taskLinks.size(), "taskLinks")
                 + toStringIfNotNull(beliefs.size(), "beliefs")
-                + toStringIfNotNull(desires.size(), "desires")
+                + toStringIfNotNull(goals.size(), "goals")
                 + toStringIfNotNull(questions.size(), "questions")
                 + toStringIfNotNull(quests.size(), "quests");
         
@@ -801,10 +801,10 @@ public class Concept extends Item<Term> implements Termable {
      * Get the current overall desire value. TODO to be refined
      */
     public TruthValue getDesire() {
-        if (desires.isEmpty()) {
+        if (goals.isEmpty()) {
             return null;
         }
-        TruthValue topValue = desires.get(0).truth;
+        TruthValue topValue = goals.get(0).truth;
         return topValue;
     }
 
@@ -821,7 +821,7 @@ public class Concept extends Item<Term> implements Termable {
         
         questions.clear();
         quests.clear();                
-        desires.clear();
+        goals.clear();
         //evidentalDiscountBases.clear();
         termLinks.clear();
         taskLinks.clear();        
@@ -907,7 +907,7 @@ public class Concept extends Item<Term> implements Termable {
                 s.discountConfidence();
             }
         } else {
-            for (final Sentence s : desires) {
+            for (final Sentence s : goals) {
                 s.discountConfidence();
             }
         }
@@ -955,11 +955,11 @@ public class Concept extends Item<Term> implements Termable {
             sb.append(s.toString()).append('\n');       
         return sb;
     }
-    public CharSequence getDesiresSummary() {
-        if (desires.isEmpty())
-            return "0 desires";        
+    public CharSequence getGoalSummary() {
+        if (goals.isEmpty())
+            return "0 goals";
         StringBuilder sb = new StringBuilder();
-        for (Sentence s : desires)
+        for (Sentence s : goals)
             sb.append(s.toString()).append('\n');       
         return sb;
     }
@@ -971,7 +971,7 @@ public class Concept extends Item<Term> implements Termable {
     public Collection<Sentence> getSentences(char punc) {
         switch(punc) {
             case Symbols.JUDGMENT: return beliefs;
-            case Symbols.GOAL: return desires;
+            case Symbols.GOAL: return goals;
             case Symbols.QUESTION: return Task.getSentences(questions);
             case Symbols.QUEST: return Task.getSentences(quests);
         }

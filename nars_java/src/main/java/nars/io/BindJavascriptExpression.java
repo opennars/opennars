@@ -4,9 +4,9 @@
  */
 package nars.io;
 
+import nars.core.Events.ERR;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.core.Events.ERR;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Term;

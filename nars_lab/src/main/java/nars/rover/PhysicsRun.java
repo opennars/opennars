@@ -82,7 +82,7 @@ public class PhysicsRun {
         window.setTitle("NAR Physics");
         window.setLayout(new BorderLayout());
         TestbedSidePanel side = new TestbedSidePanel(model, controller);
-        window.add((Component) panel, "Center");
+        window.add(panel, "Center");
         //window.add(new JScrollPane(side), "East");
         window.pack();
         window.setVisible(true);

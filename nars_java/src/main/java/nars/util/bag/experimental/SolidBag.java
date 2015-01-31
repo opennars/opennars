@@ -10,7 +10,8 @@ import nars.util.data.CuckooMap;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Set;
 
 /** "solid state" prioritizing bag designed to exhibit with the following properties:
  *      1. entirely pre-allocated, requires no additional allocations during activity

@@ -5,12 +5,12 @@
 package nars.util.graph;
 
 import com.google.common.base.Objects;
-import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Events.ConceptNew;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.logic.Terms.Termable;
@@ -152,7 +152,7 @@ public class Idea implements Iterable<Concept> {
                             sentences.addAll(Task.getSentences(c.quests));
                             break;
                         case Symbols.GOAL:
-                            sentences.addAll(c.desires);
+                            sentences.addAll(c.goals);
                             break;
                     }
                 }
@@ -207,7 +207,7 @@ public class Idea implements Iterable<Concept> {
                 feature.add(new SentenceType(o, Symbols.JUDGMENT));
             if (!c.questions.isEmpty())
                 feature.add(new SentenceType(o, Symbols.QUESTION));
-            if (!c.desires.isEmpty())
+            if (!c.goals.isEmpty())
                 feature.add(new SentenceType(o, Symbols.GOAL));
             if (!c.quests.isEmpty())
                 feature.add(new SentenceType(o, Symbols.QUEST));

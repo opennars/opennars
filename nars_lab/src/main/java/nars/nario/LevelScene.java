@@ -4,7 +4,7 @@ import nars.nario.level.BgLevelGenerator;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.level.SpriteTemplate;
-import nars.nario.sonar.FixedSoundSource;
+import automenta.vivisect.audio.FixedSoundSource;
 import nars.nario.sprites.*;
 
 import java.awt.*;
@@ -378,7 +378,7 @@ public class LevelScene extends Scene implements SpriteContext
 //                init();
             }
 
-            renderBlackout(g, (int) (mario.xDeathPos - xCam), (int) (mario.yDeathPos - yCam), (int) (320 - t));
+            renderBlackout(g, mario.xDeathPos - xCam, mario.yDeathPos - yCam, (int) (320 - t));
         }
 
         if (mario.deathTime > 0)
@@ -393,7 +393,7 @@ public class LevelScene extends Scene implements SpriteContext
 //                init();
             }
 
-            renderBlackout(g, (int) (mario.xDeathPos - xCam), (int) (mario.yDeathPos - yCam), (int) (320 - t));
+            renderBlackout(g, mario.xDeathPos - xCam, mario.yDeathPos - yCam, (int) (320 - t));
         }
     }
 

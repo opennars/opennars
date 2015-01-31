@@ -1664,7 +1664,7 @@ public class JSurface extends javax.swing.JComponent {
 	 */
 
 	private final int contourConvertX(float x) {
-		return (int) Math.round(x * contour_width_x + contour_center_x);
+		return Math.round(x * contour_width_x + contour_center_x);
 	}
 
 	/**
@@ -1676,7 +1676,7 @@ public class JSurface extends javax.swing.JComponent {
 	 */
 
 	private final int contourConvertY(float y) {
-		return (int) Math.round(-y * contour_width_y + contour_center_y);
+		return Math.round(-y * contour_width_y + contour_center_y);
 	}
 
 	/**
@@ -1759,7 +1759,7 @@ public class JSurface extends javax.swing.JComponent {
 			outString(graphics, x2, y2, legend_label[0], Label.LEFT, CENTER);
 
 			for (int i = 1; i <= divisions + 1; i++) {
-				int y = y2 - (int) (i * height / (divisions + 1));
+				int y = y2 - i * height / (divisions + 1);
 				graphics.setColor(contour_color[i - 1]);
 				graphics.fillRect(x1, y, legend_width, lasty - y);
 				graphics.setColor(colors.getLineColor());

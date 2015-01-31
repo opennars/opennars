@@ -21,13 +21,12 @@
 
 package nars.logic.nal8;
 
+import nars.core.Events.EXE;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.core.Events.EXE;
 import nars.logic.entity.*;
-import nars.logic.nal4.Product;
 
 import java.util.Arrays;
 import java.util.List;

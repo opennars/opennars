@@ -703,7 +703,7 @@ public class GraphExecutive {
                                                 
                         
                         if (accumulatedDelay > 0) {
-                            seq.addAll(Interval.intervalTimeSequence(
+                            seq.addAll(Interval.intervalSequence(
                                     accumulatedDelay, maxConsecutiveIntervalTerms, memory)  );
                             accumulatedDelay = 0;                            
                         }
@@ -713,7 +713,7 @@ public class GraphExecutive {
                     }
                     else {
                         Interval in = (Interval)term;
-                        long time = in.getTime(memory);
+                        long time = in.durationCycles(memory);
                         accumulatedDelay += time;
                     }                    
                 }

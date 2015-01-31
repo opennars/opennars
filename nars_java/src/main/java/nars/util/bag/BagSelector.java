@@ -1,7 +1,7 @@
 package nars.util.bag;
 
-import nars.core.Memory;
-import nars.logic.entity.*;
+import nars.logic.entity.BudgetValue;
+import nars.logic.entity.Item;
 
 /** interface for lazily constructing bag items, updating existing items.
  * this avoids construction when only updating the budget of an item already in the bag  */

@@ -414,7 +414,7 @@ public class MultipleExecutionManager {
             s++;
         } else if (currentTerm instanceof Interval) {
             Interval ui = (Interval) currentTerm;
-            task.delayUntil = memory.time() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
+            task.delayUntil = memory.time() + Interval.cycles(ui.magnitude, memory.param.duration);
             s++;
         } else {
             /*System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);*/

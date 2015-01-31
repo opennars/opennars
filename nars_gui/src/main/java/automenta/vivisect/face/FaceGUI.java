@@ -208,7 +208,7 @@ public class FaceGUI extends BaseClass {
     
     public void map(String s, String s1, double d) {
         for (int i = 0; i < flexNamesVector.size(); i++) {
-            if (((String) flexNamesVector.elementAt(i)).equals(s1)) {
+            if (flexNamesVector.elementAt(i).equals(s1)) {
                 char c = s.charAt(0);
                 keyFlex[c] = i;
                 keyValue[c] = d;
@@ -276,7 +276,7 @@ public class FaceGUI extends BaseClass {
         if (flag) {
             return Color.black;
         } else {
-            return (Color) colorVector.elementAt(i);
+            return colorVector.elementAt(i);
         }
     }
 
@@ -580,7 +580,7 @@ public class FaceGUI extends BaseClass {
                                 for (int l2 = 0; l2 < k2; l2++) {
                                     int i3 = shape[l1][j2][l2];
                                     vector3d.set(pts[j1][i3][0], pts[j1][i3][1], pts[j1][i3][2]);
-                                    vector3d.transform(i3 >= noRotateIndex ? ((MatrixN) (matrix3d1)) : ((MatrixN) (matrix3d)));
+                                    vector3d.transform(i3 >= noRotateIndex ? matrix3d1 : matrix3d);
                                     ai[l2] = (int) vector3d.get(0);
                                     ai1[l2] = (int) vector3d.get(1);
                                     if (flag1) {
@@ -593,7 +593,7 @@ public class FaceGUI extends BaseClass {
                                     for (int j3 = 0; j3 < 2; j3++) {
                                         int l3 = shape[l1][j2][j3];
                                         vector3d.set(pts[1 - j1][l3][0], pts[1 - j1][l3][1], pts[1 - j1][l3][2]);
-                                        vector3d.transform(l3 >= noRotateIndex ? ((MatrixN) (matrix3d1)) : ((MatrixN) (matrix3d)));
+                                        vector3d.transform(l3 >= noRotateIndex ? matrix3d1 : matrix3d);
                                         ai[3 - j3] = (int) vector3d.get(0);
                                         ai1[3 - j3] = (int) vector3d.get(1);
                                         if (flag1) {
@@ -640,7 +640,7 @@ public class FaceGUI extends BaseClass {
                                         break;
 
                                     case 0: // '\0'   
-                                        if (flag && !((Color) colorVector.elementAt(l1)).equals(Color.black) && shape[l1][j2][0] < noRotateIndex) {
+                                        if (flag && !colorVector.elementAt(l1).equals(Color.black) && shape[l1][j2][0] < noRotateIndex) {
                                             ai[k2] = ai[0];
                                             ai1[k2] = ai1[0];
                                             g.drawPolygon(ai, ai1, k2 + 1);
