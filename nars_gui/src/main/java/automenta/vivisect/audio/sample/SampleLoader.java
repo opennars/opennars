@@ -22,7 +22,7 @@ public class SampleLoader
         return buildSample(rip(ais), ais.getFormat());
     }
 
-    public static SonarSample loadSample(String path) throws UnsupportedAudioFileException, IOException {
+    public static SonarSample load(String path) throws UnsupportedAudioFileException, IOException {
         return loadSample(new FileInputStream(path));
     }
 

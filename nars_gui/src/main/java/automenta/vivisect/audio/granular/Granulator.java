@@ -8,19 +8,52 @@ public class Granulator {
 	private int grainSizeSamples;
 	private final GrainWindow window;
 
-    public Granulator(SonarSample source, float grainSizeSecs) {
-        this(source.buf, source.rate, grainSizeSecs);
+    public Granulator(SonarSample source, float grainSizeSecs, float windowSizeFactor) {
+        this(source.buf, source.rate, grainSizeSecs, windowSizeFactor);
     }
 
-	public Granulator(float[] sourceBuffer, float sampleRate, float grainSizeSecs) {
+	public Granulator(float[] sourceBuffer, float sampleRate, float grainSizeSecs, float windowSizeFactor) {
 		this.sourceBuffer = sourceBuffer;
 		this.grainSizeSamples = Math.round(sampleRate * grainSizeSecs);
-		this.window = new HanningWindow(Math.round(sampleRate * grainSizeSecs / 5.0F));
+		this.window = new HanningWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
 	}
 
-	public Grain createGrain(int startIndex, long fadeInTime) {
-		long showTime = fadeInTime + window.getSize();
-		return new Grain(sourceBuffer, (startIndex + window.getSize()) % sourceBuffer.length, grainSizeSamples, showTime, window);
+    public boolean hasMoreSamples(long[] grain, long now) {
+        final long length = grain[1];
+        final long showTime = grain[2];
+        return now < showTime + length + window.getSize();
+    }
+
+    public float getSample(long[] grain, float[] sourceBuffer, long now) {
+        final long startIndex = grain[0];
+        final long length = grain[1];
+        final long showTime = grain[2];
+
+
+        long offset = now - showTime;
+        int sourceIndex = (int)((startIndex + offset + sourceBuffer.length) % sourceBuffer.length);
+        float sample = sourceBuffer[sourceIndex];
+        if (offset < 0) {
+            return sample * window.getFactor(offset);
+        }
+        if (offset > length) {
+            return sample * window.getFactor(offset - length);
+        }
+        return sample;
+    }
+
+    public boolean isFading(long[] grain, long now) {
+        final long length = grain[1];
+        final long showTime = grain[2];
+        return now > showTime + length;
+    }
+
+	public long[] createGrain(long[] grain, int startIndex, long fadeInTime) {
+        if (grain == null) grain = new long[3];
+        grain[0] = (startIndex + window.getSize()) % sourceBuffer.length;
+        grain[1] = grainSizeSamples;
+        grain[2] = fadeInTime + window.getSize();
+        return grain;
 	}
 
 }

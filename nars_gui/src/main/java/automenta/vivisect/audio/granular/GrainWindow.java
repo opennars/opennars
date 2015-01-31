@@ -13,11 +13,11 @@ public class GrainWindow {
 	}
 
 	public float getFactor(long offset) {
-		int index = (int) offset;
+		long index = offset;
 		if (offset < 0) { // Fade in
-			index = - (int)offset;
+			index = -offset;
 		}
-		return index < factors.length ? factors[index] : 0.0F;
+		return index < factors.length ? factors[(int)index] : 0.0F;
 	}
 
 }

@@ -15,6 +15,8 @@ public class TimeStretchGui extends JPanel {
 	private final JSlider tempoSlider;
 
 	public TimeStretchGui(final SonarSoundEngine /*AudioPlayer */ player) {
+
+
 		this.player = player;
 		setLayout(null);
 		setSize(200, 340);
