@@ -69,14 +69,18 @@ public class SonarSoundEngine implements Runnable
     }
 
 
-    public void play(SonarSample sample, SoundSource soundSource, float volume, float priority, float rate)
+    public void play(SonarSample sample, SoundSource soundSource, float volume, float priority, float rate) {
+        play(new SamplePlayer(sample, rate), soundSource, volume, priority, rate);
+    }
+
+    public void play(SoundProducer p, SoundSource soundSource, float volume, float priority, float rate)
     {
         if (!alive)
             return;
         
         synchronized (listenerMixer)
         {
-            listenerMixer.addSoundProducer(new SamplePlayer(sample, rate), soundSource, volume, priority);
+            listenerMixer.addSoundProducer(p, soundSource, volume, priority);
         }
     }
 

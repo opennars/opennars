@@ -1,6 +1,9 @@
 package automenta.vivisect.audio.granular;
 
-public class TimeStretcher {
+import automenta.vivisect.audio.SoundProducer;
+import automenta.vivisect.audio.sample.SonarSample;
+
+public class TimeStretcher implements SoundProducer {
 
 	private final float[] sourceBuffer;
 	private long now = 0L;
@@ -12,25 +15,30 @@ public class TimeStretcher {
 	private long playTime = 0L;
 	private int playOffset;
 
+    public TimeStretcher(SonarSample s, float grainSizeSecs) {
+        this(s.buf, s.rate, grainSizeSecs);
+        play();
+    }
+
 	public TimeStretcher(float[] buffer, float sampleRate, float grainSizeSecs) {
 		this.sourceBuffer = buffer;
 		this.granulator = new Granulator(buffer, sampleRate, grainSizeSecs);
 	}
 
-	public void process(float[] signal) {
+	public void process(float[] output) {
 		if (currentGrain == null && isPlaying) {
 			currentGrain = createGrain();
 		}
-		for (int i = 0; i < signal.length; i++) {
+		for (int i = 0; i < output.length; i++) {
 			if (currentGrain != null) {
-				signal[i] = currentGrain.getSample(now);
+				output[i] = currentGrain.getSample(now);
 				if (currentGrain.isFading(now)) {
 					fadingGrain = currentGrain;
 					currentGrain = isPlaying ? createGrain() : null;
 				}
 			}
 			if (fadingGrain != null) {
-				signal[i] += fadingGrain.getSample(now);
+				output[i] += fadingGrain.getSample(now);
 				if (!fadingGrain.hasMoreSamples(now)) {
 					fadingGrain = null;
 				}
@@ -57,10 +65,26 @@ public class TimeStretcher {
 		return (playOffset + Math.round((now - playTime) / stretchFactor)) % sourceBuffer.length;
 	}
 
-	public void setStretchFactor(float stretchFactor) {
+	public TimeStretcher setStretchFactor(float stretchFactor) {
 		playOffset = calculateCurrentBufferIndex();
 		playTime = now;
 		this.stretchFactor = stretchFactor;
+        return this;
 	}
 
+    @Override
+    public float read(float[] buf, int readRate) {
+        process(buf);
+        return 0f;
+    }
+
+    @Override
+    public void skip(int samplesToSkip, int readRate) {
+
+    }
+
+    @Override
+    public boolean isLive() {
+        return isPlaying;
+    }
 }

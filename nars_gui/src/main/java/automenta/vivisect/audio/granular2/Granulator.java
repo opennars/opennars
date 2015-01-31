@@ -1,7 +1,10 @@
 package automenta.vivisect.audio.granular2;
 
+import nars.core.Memory;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -10,10 +13,10 @@ import java.util.Random;
  */
 public class Granulator extends Wave {
 
-    private static final Random random = new Random();
+    private static final Random random = Memory.randomNumber;
     private int REPEAT = 1;
     private final ArrayList<String> samples;
-    private LinkedList<int[][]> grains;
+    private List<int[][]> grains;
     private int wavetableIndex = 0;
 
     public Granulator(int sc, int bps, int c, int sr, int f, ArrayList<String> l,
@@ -91,9 +94,9 @@ public class Granulator extends Wave {
         }
         System.out.println("FINSIHED CREATING GRAINS");
     }
-    private LinkedList<int[][]> grainDistance(int distance) {
+    private List<int[][]> grainDistance(int distance) {
 
-        LinkedList<int[][]> tempgrains = new LinkedList();
+        List<int[][]> tempgrains = new ArrayList(grains.size());
         for (int[][] grain : grains) {
             int[][] g = new int[super.getNumChannels()][grain[0].length + distance];
             int i = distance;

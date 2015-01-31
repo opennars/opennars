@@ -4,6 +4,7 @@ import automenta.vivisect.audio.SonarSoundEngine;
 import automenta.vivisect.audio.SoundListener;
 import automenta.vivisect.audio.SoundSource;
 import automenta.vivisect.audio.granular.TimeStretchGui;
+import automenta.vivisect.audio.granular.TimeStretcher;
 import automenta.vivisect.audio.sample.SampleLoader;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -90,7 +91,7 @@ public class PlayWAVDemo {
 
 
                 try {
-                    player.play(SampleLoader.loadSample("/tmp/p.wav"), new SoundSource() {
+                    player.play(new TimeStretcher(SampleLoader.loadSample("/tmp/p.wav"), 0.005f).setStretchFactor(20.1f), new SoundSource() {
 
                         @Override
                         public float getX(float alpha) {

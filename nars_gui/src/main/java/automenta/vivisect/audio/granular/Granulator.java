@@ -1,10 +1,16 @@
 package automenta.vivisect.audio.granular;
 
+import automenta.vivisect.audio.sample.SonarSample;
+
 public class Granulator {
 
 	private final float[] sourceBuffer;
 	private int grainSizeSamples;
 	private final GrainWindow window;
+
+    public Granulator(SonarSample source, float grainSizeSecs) {
+        this(source.buf, source.rate, grainSizeSecs);
+    }
 
 	public Granulator(float[] sourceBuffer, float sampleRate, float grainSizeSecs) {
 		this.sourceBuffer = sourceBuffer;
