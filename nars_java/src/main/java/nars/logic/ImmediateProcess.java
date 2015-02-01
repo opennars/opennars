@@ -16,10 +16,14 @@ import nars.logic.entity.Task;
 public class ImmediateProcess extends NAL {
     final Task task;
 
+    public ImmediateProcess(Memory mem) {
+        this(mem, null);
+    }
+
     public ImmediateProcess(Memory mem, Task task) {
         super(mem);
 
-        this.task = task;
+        setCurrentTask(this.task = task);
     }
     
     
@@ -33,19 +37,17 @@ public class ImmediateProcess extends NAL {
 
     @Override
     public void reason() {
-        setCurrentTask(task);
-        setCurrentConcept(memory.conceptualize(currentTask.budget, task.getTerm()));
+        Concept c;
+        setCurrentConcept(c = memory.conceptualize(currentTask.budget, task.getTerm()));
+        if (c == null) return;
 
-        Concept c = getCurrentConcept();
-        if (c != null) {
-            boolean processed = c.directProcess(this, currentTask);
-            if (processed) {
-                memory.event.emit(Events.ConceptDirectProcessedTask.class, currentTask, c);
-            }
-        }
+        boolean processed = c.directProcess(this, currentTask);
+        if (!processed) return;
+
+        c.link(currentTask);
 
         memory.logic.TASK_IMMEDIATE_PROCESS.hit();
-        emit(Events.TaskImmediateProcessed.class, task, this);
+        emit(Events.TaskImmediateProcessed.class, task, this, c);
     }
 
 

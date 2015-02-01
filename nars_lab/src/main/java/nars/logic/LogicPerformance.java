@@ -16,10 +16,7 @@ import nars.gui.output.JGraphXGraphPanel;
 import nars.io.ExampleFileInput;
 import nars.io.condition.OutputCondition;
 import nars.io.condition.OutputContainsCondition;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.entity.TaskLink;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import nars.logic.nal8.Operation;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.TimeNode;
@@ -263,7 +260,7 @@ public class LogicPerformance {
         
         
         n.on(TaskImmediateProcessed.class, new TaskImmediateProcessed() {
-            @Override public void onProcessed(Task t, NAL nal) {
+            @Override public void onProcessed(Task t, NAL nal, Concept c) {
                 process.explain(t, analysisDepth, nal.tasksAdded);
             }            
         });

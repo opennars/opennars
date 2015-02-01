@@ -35,6 +35,7 @@ import nars.util.bag.Bag.MemoryAware;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static nars.logic.BudgetFunctions.divide;
@@ -238,14 +239,44 @@ public class Concept extends Item<Term> implements Termable {
                 processQuestion(nal, task);
                 break;
             default:
-                return false;
+                throw new RuntimeException("Invalid sentence type");
         }
 
-        linkToTask(task);
-
-        memory.logic.LINK_TO_TASK.hit();
 
         return true;
+    }
+
+    public void link(Task t) {
+        if (linkToTask(t))
+            linkToTerms(t.budget);  // recursively insert TermLink
+    }
+
+    /** for batch processing a collection of tasks; more efficient than processing them individually */
+    public void link(Collection<Task> tasks) {
+        final int s = tasks.size();
+        if (s == 0) return;
+
+        if (s == 1) {
+            link(tasks.iterator().next());
+            return;
+        }
+
+
+        //aggregate a merged budget, allowing a maximum of (1,1,1)
+        BudgetValue aggregateBudget = null;
+        for (Task t : tasks) {
+            if (linkToTask(t)) {
+                if (aggregateBudget == null) aggregateBudget = new BudgetValue(t.budget);
+                else {
+                    aggregateBudget.merge(t.budget);
+                }
+            }
+        }
+
+        //linkToTerms the aggregate budget, rather than each task's budget separately
+        if (aggregateBudget!=null) {
+            linkToTerms(aggregateBudget);
+        }
     }
 
     /**
@@ -487,6 +518,7 @@ public class Concept extends Item<Term> implements Termable {
         }
     }
 
+
     /**
      * Link to a new task from all relevant concepts for continued processing in
      * the near future for unspecified time.
@@ -494,25 +526,23 @@ public class Concept extends Item<Term> implements Termable {
      * The only method that calls the TaskLink constructor.
      *
      * @param task The task to be linked
-     * @param content The content of the task
      */
-    public void linkToTask(final Task task) {
-        final BudgetValue taskBudget = task.budget;
-
+    public boolean linkToTask(final Task task) {
+        BudgetValue taskBudget = task.budget;
         taskLinkBuilder.setBudget(taskBudget);
         taskLinkBuilder.setTask(task);
         taskLinkBuilder.setTemplate(null);
         activateTaskLink(taskLinkBuilder);  // link type: SELF
 
         if (!(term instanceof CompoundTerm)) {
-            return;
+            return false;
         }
 
         List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
         if (templates.isEmpty()) {
             //distribute budget to incoming termlinks?
-            return;
+            return false;
         }
 
         //TODO parameter to use linear division, conserving total budget
@@ -524,38 +554,37 @@ public class Concept extends Item<Term> implements Termable {
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
         taskLinkBuilder.setBudget(subBudget);
 
-        if (subBudget.aboveThreshold()) {
-
-            taskLinkBuilder.setTask(task);
-            taskLinkBuilder.setBudget(taskBudget);
-
-            for (int i = 0; i < numTemplates; i++) {
-                TermLinkTemplate termLink = templates.get(i);
-
-//              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
-                Term componentTerm = termLink.target;
-
-                Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
-
-                if (componentConcept != null) {
-
-                    taskLinkBuilder.setTemplate(termLink);
-
-                    /** activate the task link */
-                    componentConcept.activateTaskLink(taskLinkBuilder);                }
-
-                else {
-                    taskBudgetBalance += subBudget.getPriority();
-                }
-//             }
-            }
-
-            linkToTerms(taskBudget);  // recursively insert TermLink
-        }
-        else {
+        if (!subBudget.aboveThreshold()) {
             //unused
             taskBudgetBalance += taskBudget.getPriority();
+            return false;
         }
+
+        taskLinkBuilder.setTask(task);
+        taskLinkBuilder.setBudget(taskBudget);
+
+        for (int i = 0; i < numTemplates; i++) {
+            TermLinkTemplate termLink = templates.get(i);
+
+//              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
+            Term componentTerm = termLink.target;
+
+            Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
+
+            if (componentConcept != null) {
+
+                taskLinkBuilder.setTemplate(termLink);
+
+                /** activate the task link */
+                componentConcept.activateTaskLink(taskLinkBuilder);                }
+
+            else {
+                taskBudgetBalance += subBudget.getPriority();
+            }
+//             }
+        }
+
+        return true;
     }
 
     /**

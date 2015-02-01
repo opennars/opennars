@@ -4,7 +4,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import nars.control.UniCore;
 import nars.core.Core;
+import nars.core.Events;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.FireConcept;
 import nars.logic.ImmediateProcess;
@@ -47,10 +49,10 @@ public class BufferCore extends UniCore {
         memory.nextPercept(memory.param.inputsMaxPerCycle.get());
 
 
-        ArrayList<Task> nextNovelTasks = new ArrayList(immediateTasks); //copy to new collection because the immediate processes will add to noveltasks, otherwise causing concurrentmodificationexceptions
+        ArrayList<Task> nextImmediates = new ArrayList(immediateTasks); //copy to new collection because the immediate processes will add to noveltasks, otherwise causing concurrentmodificationexceptions
         immediateTasks.clear();
 
-        for (Task n : nextNovelTasks) {
+        for (Task n : nextImmediates) {
             new ImmediateProcess(memory, n).run();
         }
 
@@ -66,6 +68,52 @@ public class BufferCore extends UniCore {
 
     }
 
+    /** all supplied tasks pertain to the same concept */
+    public static class BufferedImmediateProcess extends ImmediateProcess {
+
+        private final Collection<Task> tasks;
+
+
+        public BufferedImmediateProcess(Memory mem, Collection<Task> tasks) {
+            super(mem);
+            this.tasks = tasks;
+        }
+
+        @Override
+        public void reason() {
+            Concept c = null;
+            for (Task t : tasks) {
+
+                setCurrentTask(t);
+
+                if (c == null) {
+                    setCurrentConcept(c = memory.conceptualize(currentTask.budget, currentTask.getTerm()));
+                    if (c == null) return;
+                }
+                else {
+                    if (Parameters.DEBUG) {
+                        if (!getCurrentConcept().getTerm().equals(t.getTerm()))
+                            throw new RuntimeException("term mismatch");
+                    }
+                }
+
+                boolean processed = c.directProcess(this, currentTask);
+                if (!processed) return;
+
+
+                emit(Events.TaskImmediateProcessed.class, currentTask, this);
+                memory.logic.TASK_IMMEDIATE_PROCESS.hit();
+
+            }
+
+            if (c!=null)
+                c.link(tasks);
+
+        }
+
+
+    }
+
 
     public static class BufferedFireConcept extends DefaultFireConcept {
 
@@ -78,10 +126,7 @@ public class BufferCore extends UniCore {
 
         @Override
         protected void onStart() {
-            //System.err.println(currentConcept + " buffered " + preTasks);
-            for (Task p : preTasks) {
-                new ImmediateProcess(memory, p).run();
-            }
+            new BufferedImmediateProcess(memory, preTasks).run();
         }
     }
 

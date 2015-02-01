@@ -275,8 +275,8 @@ public class Idea implements Iterable<Concept> {
             else if (event == ConceptForget.class) {
                 remove((Concept)args[0]);
             }
-            else if (event == Events.ConceptDirectProcessedTask.class) {
-                update((Concept)args[1]);
+            else if (event == Events.TaskImmediateProcessed.class) {
+                update((Concept)args[2]);
             }
         }
         
@@ -286,7 +286,7 @@ public class Idea implements Iterable<Concept> {
             clear();
                         
             nar.memory.event.set(this, enabled, 
-                    ConceptNew.class, ConceptForget.class, Events.ConceptDirectProcessedTask.class);
+                    ConceptNew.class, ConceptForget.class, Events.TaskImmediateProcessed.class);
             
             if (enabled) {
                 ///add existing

@@ -25,7 +25,6 @@ public abstract class MemoryObserver extends AbstractReaction {
                 Events.ConceptForget.class,
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,
-                Events.ConceptDirectProcessedTask.class,
                 Events.ConceptFired.class,
                 Events.ConceptGoalAdd.class,
                 Events.ConceptGoalRemove.class,

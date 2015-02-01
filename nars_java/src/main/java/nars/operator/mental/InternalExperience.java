@@ -60,10 +60,10 @@ public class InternalExperience extends AbstractPlugin {
     @Override
     public Class[] getEvents() {
         if (isFull()) {
-            return new Class[] { Events.ConceptDirectProcessedTask.class, Events.BeliefReason.class };
+            return new Class[] { Events.TaskImmediateProcessed.class, Events.BeliefReason.class };
         }
         else {
-            return new Class[] { Events.ConceptDirectProcessedTask.class };
+            return new Class[] { Events.TaskImmediateProcessed.class };
         }
     }
 
@@ -123,7 +123,7 @@ public class InternalExperience extends AbstractPlugin {
     public void event(Class event, Object[] a) {
 
 
-        if (event==Events.ConceptDirectProcessedTask.class) {
+        if (event==Events.TaskImmediateProcessed.class) {
 
             Task task = (Task)a[0];                
 
