@@ -16,11 +16,6 @@ public class Video {
     public static Font monofont;
  
 
-        static {
-        System.setProperty("sun.java2d.opengl","False");        
-    }
-
-    
     static {
         Video.monofont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
         /*

@@ -86,7 +86,7 @@ public class BufferCore extends UniCore {
     }
 
     @Override
-    protected FireConcept getFireConcept(Concept c) {
+    protected FireConcept newFireConcept(Concept c) {
         Collection<Task> p = bufferedTasks.removeAll(c);
         return new BufferedFireConcept(memory, concepts, c, 1, p);
     }

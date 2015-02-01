@@ -76,7 +76,7 @@ abstract public class UniCore implements Core {
         }
     }
 
-    protected FireConcept getFireConcept(Concept c) {
+    protected FireConcept newFireConcept(Concept c) {
         return new DefaultFireConcept(memory, concepts, c, 1);
     }
 
@@ -85,7 +85,7 @@ abstract public class UniCore implements Core {
         if (currentConcept==null)
             return null;
 
-        return getFireConcept(currentConcept);
+        return newFireConcept(currentConcept);
     }
 
     @Override

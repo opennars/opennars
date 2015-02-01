@@ -44,10 +44,17 @@ public class NARSwing  {
 
     //System.out.println(Files.list(Paths.get(getClass().getResource("/").toURI())).collect(Collectors.toList()) );
 
-
     static {
-        System.setProperty("sun.java2d.opengl","False");        
+        Object e = System.getProperty("sun.java2d.opengl");
+        System.err.println("Java Swing OpenGL enabled: " + e);
+        if (e == null) {
+            System.err.println("  To enable, add command line parameter: -Dsun.java2d.opengl=True");
+            System.err.println("  Your system (not the JDK) is likely misconfigured if Java OpenGL pipeline malfunctions");
+            System.err.println("  For more information: http://docs.oracle.com/javase/7/docs/technotes/guides/2d/new_features.html");
+            System.err.println("  Please do not waste seconds or joules with a poorly configured computer!");
+        }
     }
+
 
     public static void themeInvert() {
         //http://alvinalexander.com/java/java-swing-uimanager-defaults
