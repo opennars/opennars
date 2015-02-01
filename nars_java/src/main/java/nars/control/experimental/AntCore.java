@@ -65,7 +65,7 @@ public class AntCore extends ConceptWaveCore {
         memory.nextPercept(1);
 
         if (!tasks.isEmpty()) {
-            int maxNewTasks = ants.size();
+            int maxNewTasks = Math.min(tasks.size(), ants.size());
             for (int i = 0; i < maxNewTasks; i++) {
                 Task t = tasks.removeFirst();
                 if (t == null) break;

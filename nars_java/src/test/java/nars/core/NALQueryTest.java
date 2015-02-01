@@ -43,7 +43,7 @@ public class NALQueryTest {
                 "<b --> a>" /* existing solution, to test finding existing solutions */;
 
         NAR n = new NAR(new Default().setInternalExperience(null));
-        new TextOutput(n, System.out);
+        //new TextOutput(n, System.out);
 
         n.believe("<a <-> b>", Eternal, 1.0f, 0.5f);
 

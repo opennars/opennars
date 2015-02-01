@@ -448,4 +448,8 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
     public boolean equalPunctuations(Task t) {
         return sentence.equalPunctuations(t.sentence);
     }
+
+    public char getPunctuation() {
+        return sentence.punctuation;
+    }
 }
