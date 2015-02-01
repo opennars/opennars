@@ -136,10 +136,10 @@ public class Events {
     /** fired at the end of an ImmediateProcess task */
     abstract public static class TaskImmediateProcessed implements Reaction {
 
-        abstract public void onProcessed(Task t, NAL n);
+        abstract public void onProcessed(Task t, NAL n, Concept c);
         
         @Override public void event(Class event, Object[] args) {
-            onProcessed((Task)args[0], (ImmediateProcess)args[1]);
+            onProcessed((Task)args[0], (ImmediateProcess)args[1], (Concept)args[2] );
         }
         
     }
@@ -176,7 +176,6 @@ public class Events {
 
     //public static class UnExecutedGoal {    }
 
-    public static class ConceptDirectProcessedTask {    }
 
     abstract public static class InferenceEvent {
 

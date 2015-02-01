@@ -43,7 +43,6 @@ public class LogicMeter {
     public final HitMeter JUDGMENT_PROCESS = new HitMeter("judgment.process");
     public final HitMeter GOAL_PROCESS = new HitMeter("goal.process");
     public final HitMeter QUESTION_PROCESS = new HitMeter("question.process");
-    public final HitMeter LINK_TO_TASK = new HitMeter("task.link_to");
 
 
     public final HitMeter BELIEF_REVISION = new HitMeter("reason.belief.revised");
