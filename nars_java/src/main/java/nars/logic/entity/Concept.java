@@ -28,6 +28,7 @@ import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.logic.NAL;
 import nars.logic.Terms.Termable;
+import nars.logic.TruthFunctions;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.util.bag.Bag;
@@ -347,7 +348,7 @@ public class Concept extends Item<Term> implements Termable {
         final Sentence newSentence = task.sentence;
         int preSize = table.size();
 
-        Sentence removed = addToTable(newSentence, table, max);
+        Sentence removed = addToTable(memory, newSentence, table, max);
 
         if (removed != null) {
             memory.event.emit(eventRemove, this, removed, task);
@@ -596,15 +597,39 @@ public class Concept extends Item<Term> implements Termable {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    public static Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
-        final float rank1 = rankBelief(newSentence);    // for the new isBelief
-        float rank2;        
+    public static Sentence addToTable(final Memory memory, final Sentence newSentence, final List<Sentence> table, final int capacity) {
+        float rank1 = rankBelief(newSentence);    // for the new isBelief
+
+        float rank2;
         int i;
+
+        boolean eternal = newSentence.isEternal();
+        long now = memory.time();
+        if (!eternal && newSentence.getOccurenceTime() < now) {
+            //discount newSentence by its delta-time
+            rank1 /= (1.0 + Math.abs(now - newSentence.getOccurenceTime()) / memory.getDuration());
+            //rank1 *= TruthFunctions.temporalProjection(now, newSentence.getOccurenceTime(), now); //DOESNT WORK
+        }
+
+        //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top
         for (i = 0; i < table.size(); i++) {
-            Sentence judgment2 = table.get(i);
-            rank2 = rankBelief(judgment2);
+            Sentence existingSentence = table.get(i);
+
+            rank2 = rankBelief(existingSentence);
+
+            if (!eternal && !existingSentence.isEternal()  && existingSentence.getOccurenceTime() < now) {
+                //discount existingSentence by delta-time
+                rank2 /= (1.0 + Math.abs( now - existingSentence.getOccurenceTime() ) / memory.getDuration());
+                //rank2 *= TruthFunctions.temporalProjection(now, existingSentence.getOccurenceTime(), now); //DOESNT WORK
+            }
+            else if (!eternal && existingSentence.isEternal()) {
+                //allow an eternal belief to be replaced by a newer non-eternal belief if its creation time is old
+                //this divisor may need to be reduced to make age cost much less than how occurrence time is calculated above
+                rank2 /= (1.0 + Math.abs( now - existingSentence.getCreationTime() ) / memory.getDuration());
+            }
+
             if (rank1 >= rank2) {
-                if (newSentence.equivalentTo(judgment2, false, true, true)) {
+                if (newSentence.equivalentTo(existingSentence, false, true, true)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return null;
                 }

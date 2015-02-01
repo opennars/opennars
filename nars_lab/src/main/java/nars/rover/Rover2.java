@@ -2,6 +2,7 @@ package nars.rover;
 
 import nars.NARPrologMirror;
 import nars.build.Default;
+import nars.build.DefaultBuffered;
 import nars.build.Neuromorphic;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -37,14 +38,14 @@ public class Rover2 extends PhysicsModel {
     float curiosity = 0.05f;
 
     /* how often to input mission, in frames */
-    int missionPeriod = 1000;
+    int missionPeriod = 50;
 
     boolean wraparound = false;
 
     public RoverModel rover;
     final NAR nar;
     int mission = 0;
-    final int angleResolution = 36;
+    final int angleResolution = 18;
 
 
     public static void main(String[] args) {
@@ -66,7 +67,7 @@ public class Rover2 extends PhysicsModel {
         }
         else {
             Parameters.THREADS = 1;
-            nar = new NAR(new Default().simulationTime().
+            nar = new NAR(new DefaultBuffered().simulationTime().
                     setConceptBagSize(1500).
                     setSubconceptBagSize(12000).
                     setNovelTaskBagSize(256));

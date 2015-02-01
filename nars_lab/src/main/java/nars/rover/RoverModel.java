@@ -48,8 +48,8 @@ public class RoverModel {
 
     final double minVisionInputProbability = 0.01f;
     final double maxVisionInputProbability = 0.08f;
-    float biteDistanceThreshold = 0.08f;
-    float tasteDistanceThreshold = 0.35f;
+    float biteDistanceThreshold = 0.10f;
+    float tasteDistanceThreshold = 1.0f;
     int pixels = 48;
     int retinaResolution = 1; //should be odd # to balance
     float aStep = (float)Math.PI*2f / pixels;
@@ -103,9 +103,9 @@ public class RoverModel {
                 @Override
                 public void onTouch(Body touched, float di) {
                     if (touched!=null && touched.getUserData() == Rover2.Material.Food) {
-                        if (di <= biteDistanceThreshold) {
+                        if (Math.abs(ii) <= mouthArc)  {
 
-                            if (Math.abs(ii) <= mouthArc) {
+                            if (di <= biteDistanceThreshold) {
                                 eat(touched);
                             } else if (di <= tasteDistanceThreshold) {
                                 taste(touched, di );
@@ -121,8 +121,8 @@ public class RoverModel {
         }
     }
     public void taste(Body food, float distance) {
-        float c = 1.0f / (1.0f + distance/biteDistanceThreshold);
-        mouthInput.set("<goal --> Food>. :|: %0.75;0." + Texts.n1(c) + "%");
+        float c = 1.0f / (1.0f + (distance-biteDistanceThreshold)/(tasteDistanceThreshold - biteDistanceThreshold));
+        mouthInput.set("<goal --> Food>. :|: %0." + Texts.n1(0.5f + c/2f) + ";0." + Texts.n1(c/2f) + "%");
     }
 
     public void eat(Body food) {
