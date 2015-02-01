@@ -119,13 +119,13 @@ public class DefaultCore extends UniCore {
 
         memory.emotion.adjustBusy(task.getPriority(), task.getDurability());
 
-        if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) {
-            //it is a question/goal/quest or a judgment for a concept which exists:
+        if (task.isInput() || task.sentence.isGoal() || task.sentence.isQuest() || concept(task.sentence.term) != null) {
+            //it is a question/quest or a judgment for a concept which exists:
 
             return new ImmediateProcess(memory, task);
 
         } else {
-            //it is a judgment which would create a new concept:
+            //it is a judgment or goal which would create a new concept:
 
             if (task.getTerm().operator() == Symbols.NativeOperator.NEGATION) {
                 //unwrap an outer negative negative
@@ -143,14 +143,8 @@ public class DefaultCore extends UniCore {
 
             //if (s.isJudgment() || s.isGoal()) {
 
-            //final double exp = s.truth.getExpectation();
-            final double exp = 1f;
+            final double exp = s.truth.getExpectation();
             if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                //i dont see yet how frequency could play a role here - patrick
-                //just imagine a board game where you are confident about all the board rules
-                //but the implications reach all the frequency spectrum in certain situations
-                //but every concept can also be represented with (--,) so i guess its ok
-
 
                 // new concept formation
                 Task displacedNovelTask = novelTasks.PUT(task);
