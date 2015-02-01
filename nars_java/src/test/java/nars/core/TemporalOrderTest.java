@@ -21,7 +21,7 @@ public class TemporalOrderTest {
     public void testFutureQuestion() {
         Parameters.DEBUG = true;
         NAR n = new NAR(new Default());
-        new TextOutput(n, System.out);
+        //new TextOutput(n, System.out);
         
         n.addInput("<e --> f>. :/:");
         n.addInput("<c --> d>. :|:");

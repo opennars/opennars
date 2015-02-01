@@ -71,8 +71,7 @@ public class DefaultCore extends UniCore {
     @Override
     public void cycle() {
 
-        //1 input per cycle
-        memory.nextPercept(1);
+        memory.nextPercept(memory.param.inputsMaxPerCycle.get());
 
         //all new tasks
         int numNewTasks = newTasks.size();

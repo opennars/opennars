@@ -85,7 +85,7 @@ public class VariableTest extends TestCase {
             }
         };
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         n.addInput("<a --> 3>. :|:");
         n.addInput("<a --> 4>. :/:");

@@ -76,12 +76,16 @@ abstract public class UniCore implements Core {
         }
     }
 
+    protected FireConcept newFireConcept(Concept c) {
+        return new DefaultFireConcept(memory, concepts, c, 1);
+    }
+
     protected FireConcept nextConcept() {
         Concept currentConcept = concepts.TAKENEXT();
         if (currentConcept==null)
             return null;
 
-        return new DefaultFireConcept(memory, concepts, currentConcept, 1);
+        return newFireConcept(currentConcept);
     }
 
     @Override

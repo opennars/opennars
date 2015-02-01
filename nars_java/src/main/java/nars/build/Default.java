@@ -1,6 +1,7 @@
 package nars.build;
 
 import nars.control.DefaultCore;
+import nars.control.experimental.BufferCore;
 import nars.core.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
@@ -113,7 +114,8 @@ public class Default extends Build implements ConceptBuilder {
         param.conceptBeliefsMax.set(7);
         param.conceptGoalsMax.set(7);
         param.conceptQuestionsMax.set(5);
-        
+
+        param.inputsMaxPerCycle.set(1);
         param.conceptsFiredPerCycle.set(1);
         
         param.termLinkMaxReasoned.set(6);
@@ -207,7 +209,8 @@ public class Default extends Build implements ConceptBuilder {
 
     @Override
     public Core newCore() {
-        return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
+        //return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
+        return new BufferCore(newConceptBag(), newSubconceptBag(), getConceptBuilder());
     }
     
     public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag() {
@@ -218,6 +221,7 @@ public class Default extends Build implements ConceptBuilder {
         this.subconceptBagSize = subconceptBagSize;
         return this;
     }
+
     public int getSubconceptBagSize() {
         return subconceptBagSize;
     }
