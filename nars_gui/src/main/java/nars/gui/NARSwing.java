@@ -47,7 +47,7 @@ public class NARSwing  {
     static {
         Object e = System.getProperty("sun.java2d.opengl");
         System.err.println("Java Swing OpenGL enabled: " + e);
-        if (e == null) {
+        if ((e == null) || (e.toString().toLowerCase().equals("false"))) {
             System.err.println("  To enable, add command line parameter: -Dsun.java2d.opengl=True");
             System.err.println("  Your system (not the JDK) is likely misconfigured if Java OpenGL pipeline malfunctions");
             System.err.println("  For more information: http://docs.oracle.com/javase/7/docs/technotes/guides/2d/new_features.html");
