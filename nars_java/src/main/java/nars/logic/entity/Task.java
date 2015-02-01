@@ -54,6 +54,14 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
      * Belief from which the Task is derived, or null if derived from a theorem
      */
     public final Sentence parentBelief;
+
+    /** hash calculated on creation; if parentTask reference is lost, the hash (which includes its hash) will still be preserved,
+     * allowing it to be differentiated from another equal task with a lost parent
+     * this may result in duplicate equivalent tasks that can be merged but it preserves their
+     * position within a bag. otherwise if the hash suddenly changed, there would be a bag fault.
+     */
+    private final int hash;
+
     /**
      * For Question and Goal: best solution found so far
      */
@@ -71,7 +79,7 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
      * @param b The budget
      */
     public Task(final Sentence s, final BudgetValue b) {
-        this(s, b, (WeakReference)null, null, null);
+        this(s, b, (Task)null, null, null);
     }
  
     public Task(final Sentence s, final BudgetValue b, final Task parentTask) {
@@ -103,6 +111,8 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
 
+        this.hash = (sentence==null? 0 : sentence.hashCode()) + parentHash();
+
         if (Parameters.DEBUG) {
             if ((parentTask!=null && parentTask.get() == null))
                 throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
@@ -119,7 +129,7 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
      * @param solution The belief to be used in future logic
      */
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-        this(s, b, new WeakReference(parentTask), parentBelief, solution);
+        this(s, b, parentTask == null ? null : new WeakReference(parentTask), parentBelief, solution);
     }
 
     public Task clone() {
@@ -136,17 +146,36 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
 
     @Override
     public boolean equals(final Object obj) {
+        if (obj == null) return false;
         if (obj == this) return true;
         if (obj instanceof Task) {
             Task t = (Task)obj;
-            return t.sentence.equals(sentence);
+            return sentence.equals(t.sentence) && parentEqual(t);
         }
         return false;        
     }
 
     @Override
     public int hashCode() {
-        return sentence.hashCode();
+        return hash;
+    }
+
+    private boolean parentEqual(Task t) {
+        Task p = getParentTask();
+        Task tp = t.getParentTask();
+        if (p == null) {
+            return (tp == null);
+        }
+        else {
+            return p.equals(tp);
+        }
+    }
+
+    private int parentHash() {
+        Task parent = getParentTask();
+        if (parent!=null)
+            return parent.hashCode();
+        return 0;
     }
     
     public static boolean isValidTerm(Term t) {
