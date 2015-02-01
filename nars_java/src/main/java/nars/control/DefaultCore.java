@@ -119,8 +119,8 @@ public class DefaultCore extends UniCore {
 
         memory.emotion.adjustBusy(task.getPriority(), task.getDurability());
 
-        if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) {
-            //it is a question/goal/quest or a judgment for a concept which exists:
+        if (task.isInput() || task.sentence.isGoal() || task.sentence.isQuest() || concept(task.sentence.term) != null) {
+            //it is a question/quest or a judgment for a concept which exists:
 
             return new ImmediateProcess(memory, task);
 
