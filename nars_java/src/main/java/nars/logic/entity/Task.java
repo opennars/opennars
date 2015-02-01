@@ -160,7 +160,7 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
         return hash;
     }
 
-    private boolean parentEqual(Task t) {
+    public boolean parentEqual(Task t) {
         Task p = getParentTask();
         Task tp = t.getParentTask();
         if (p == null) {

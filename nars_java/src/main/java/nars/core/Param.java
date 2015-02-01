@@ -101,7 +101,7 @@ public class Param implements Serializable {
     /** Maximum number of beliefs kept in a Concept */
     public final AtomicInteger conceptBeliefsMax = new AtomicInteger();
     
-    /** Maximum number of questions kept in a Concept */
+    /** Maximum number of questions, and max # of quests kept in a Concept */
     public final AtomicInteger conceptQuestionsMax = new AtomicInteger();
 
     /** Maximum number of goals kept in a Concept */

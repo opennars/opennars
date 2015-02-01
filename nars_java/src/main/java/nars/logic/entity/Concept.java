@@ -425,7 +425,7 @@ public class Concept extends Item<Term> implements Termable {
     }
 
     /**
-     * To answer a question by existing beliefs
+     * To answer a quest or question by existing beliefs
      *
      * @param newTask The task to be processed
      * @return Whether to continue the processing of the task
@@ -434,24 +434,43 @@ public class Concept extends Item<Term> implements Termable {
 
         Sentence ques = newTask.sentence;
 
-        synchronized (questions) {
-            boolean newQuestion = true;
-            for (final Task t : questions) {
-                final Sentence q = t.sentence;
-                if (q.equalsContent(ques)) {
-                    ques = q;
+        List<Task> existing = ques.isQuestion() ? questions : quests;
+
+        if (Parameters.DEBUG) {
+            if (newTask.sentence.truth!=null)
+                throw new RuntimeException(newTask.sentence + " has non-null truth");
+        }
+
+        synchronized (existing) {
+
+            boolean newQuestion = existing.isEmpty();
+
+            for (final Task t : existing) {
+
+                //equality test only needs to considers parent
+                // (truth==null in all cases, and term will be equal)
+
+                if (Parameters.DEBUG) {
+                    if (t.sentence.punctuation!=newTask.sentence.punctuation)
+                        throw new RuntimeException("Sentence punctuation mismatch");
+                    if (t.sentence.truth!=null)
+                        throw new RuntimeException("Non-null truth value in existing tasks buffer");
+                }
+
+                if (t.parentEqual(newTask)) {
+                    ques = t.sentence;
                     newQuestion = false;
                     break;
                 }
             }
 
             if (newQuestion) {
-                if (questions.size() + 1 > memory.param.conceptQuestionsMax.get()) {
-                    Task removed = questions.remove(0);    // FIFO
+                if (existing.size() + 1 > memory.param.conceptQuestionsMax.get()) {
+                    Task removed = existing.remove(0);    // FIFO
                     memory.event.emit(ConceptQuestionRemove.class, this, removed, newTask);
                 }
 
-                questions.add(newTask);
+                existing.add(newTask);
                 memory.event.emit(ConceptQuestionAdd.class, this, newTask);
             }
         }

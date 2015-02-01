@@ -6,6 +6,7 @@ package nars.logic;
 
 import nars.core.Events;
 import nars.core.Memory;
+import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 
 /**
@@ -36,10 +37,11 @@ public class ImmediateProcess extends NAL {
         setCurrentTerm(currentTask.getTerm());
         setCurrentConcept(memory.conceptualize(currentTask.budget, getCurrentTerm()));
 
-        if (getCurrentConcept() != null) {
-            boolean processed = getCurrentConcept().directProcess(this, currentTask);
+        Concept c = getCurrentConcept();
+        if (c != null) {
+            boolean processed = c.directProcess(this, currentTask);
             if (processed) {
-                memory.event.emit(Events.ConceptDirectProcessedTask.class, currentTask, getCurrentConcept());
+                memory.event.emit(Events.ConceptDirectProcessedTask.class, currentTask, c);
             }
         }
 
