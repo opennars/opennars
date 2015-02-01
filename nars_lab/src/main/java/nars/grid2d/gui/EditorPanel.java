@@ -27,7 +27,7 @@ import java.util.ArrayList;
 */
 public class EditorPanel extends JPanel {
 
-    final String levelPath = "./nars_lab/nars/grid2d/setLevel/";
+    final String levelPath = "./src/main/java/nars/grid2d/level/";
 
     abstract public static class EditorMode extends DefaultMutableTreeNode {
 
