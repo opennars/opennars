@@ -209,8 +209,7 @@ public class Default extends Build implements ConceptBuilder {
 
     @Override
     public Core newCore() {
-        //return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
-        return new BufferCore(newConceptBag(), newSubconceptBag(), getConceptBuilder());
+        return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
     }
     
     public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag() {
