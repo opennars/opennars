@@ -5,16 +5,81 @@
  */
 package automenta.vivisect;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
- *
- * @author me
+ * Utility class for video components
  */
 public class Video {
     public static Font FontAwesome;
     public static Font monofont;
- 
+
+    //System.out.println(Files.list(Paths.get(getClass().getResource("/").toURI())).collect(Collectors.toList()) );
+
+    static {
+        Object e = System.getProperty("sun.java2d.opengl");
+        System.err.println("Java Swing OpenGL enabled: " + e);
+        if ((e == null) || (e.toString().toLowerCase().equals("false"))) {
+            System.err.println("  To enable, add command line parameter: -Dsun.java2d.opengl=True");
+            System.err.println("  Your system (not the JDK) is likely misconfigured if Java OpenGL pipeline malfunctions");
+            System.err.println("  For more information: http://docs.oracle.com/javase/7/docs/technotes/guides/2d/new_features.html");
+            System.err.println("  Please do not waste seconds or joules with a poorly configured computer!");
+        }
+    }
+
+
+    public static void themeInvert() {
+        //http://alvinalexander.com/java/java-swing-uimanager-defaults
+        UIManager.put("Button.foreground", Color.WHITE);
+        UIManager.put("Button.background", Color.DARK_GRAY);
+        UIManager.put("Panel.background", Color.BLACK);
+        UIManager.put("Button.border", new EmptyBorder(4,8,4,8));
+        UIManager.put("ToggleButton.border", new EmptyBorder(4,8,4,8));
+        UIManager.put("ScrollPane.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("SplitPane.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextEdit.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextArea.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextField.border", new EmptyBorder(1,1,1,1));
+
+        UIManager.put("Label.foreground", Color.WHITE);
+
+        UIManager.put("Tree.background", Color.BLACK);
+        UIManager.put("Tree.foreground", Color.BLACK);
+        UIManager.put("Tree.textForeground", Color.WHITE);
+        UIManager.put("Tree.textBackground", Color.BLACK);
+        UIManager.put("TextPane.background", Color.BLACK);
+        UIManager.put("TextPane.foreground", Color.WHITE);
+        UIManager.put("TextEdit.background", Color.BLACK);
+        UIManager.put("TextEdit.foreground", Color.WHITE);
+        UIManager.put("TextArea.background", Color.BLACK);
+        UIManager.put("TextArea.foreground", Color.WHITE);
+
+        UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("Panel.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("Button.select", Color.GREEN);
+        UIManager.put("Button.highlight", Color.YELLOW);
+        UIManager.put("ToggleButton.foreground", Color.WHITE);
+        UIManager.put("ToggleButton.background", Color.DARK_GRAY);
+        UIManager.put("ToggleButton.select", Color.GRAY);
+        //UIManager.put("ToggleButton.border", Color.BLUE);
+        //UIManager.put("ToggleButton.light", Color.DARK_GRAY);
+        UIManager.put("Button.select", Color.ORANGE);
+        UIManager.put("Button.opaque", false);
+        UIManager.put("Panel.opaque", false);
+        UIManager.put("ScrollBar.opaque", false);
+        UIManager.put("ScrollBar.background", Color.BLACK);
+        UIManager.put("ScrollBar.border", new EmptyBorder(1,1,1,1));
+
+        UIManager.put("Table.background", Color.BLACK);
+        UIManager.put("Table.foreground", Color.WHITE);
+        UIManager.put("TableHeader.background", Color.BLACK);
+        UIManager.put("TableHeader.foreground", Color.ORANGE);
+    }
+
+
 
     static {
         Video.monofont = new Font(Font.MONOSPACED, Font.PLAIN, 12);

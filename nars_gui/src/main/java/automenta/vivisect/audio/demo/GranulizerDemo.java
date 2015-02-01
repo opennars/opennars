@@ -1,6 +1,6 @@
 package automenta.vivisect.audio.demo;
 
-import automenta.vivisect.audio.SonarSoundEngine;
+import automenta.vivisect.Audio;
 import automenta.vivisect.audio.SoundListener;
 import automenta.vivisect.audio.granular.TimeStretchGui;
 import automenta.vivisect.audio.granular.Granulize;
@@ -15,7 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-public class PlayWAVDemo {
+public class GranulizerDemo {
 
     //http://forum.renoise.com/index.php/topic/35858-royalty-free-sample-packs/
 
@@ -32,14 +32,13 @@ public class PlayWAVDemo {
     public static void main(String[] args) throws IOException, LineUnavailableException, UnsupportedAudioFileException {
 
 
-        final SonarSoundEngine player = new SonarSoundEngine(4);
+        final Audio audio = new Audio(4);
         float[] samples = new float[44100];
 
         for (int i = 0; i < samples.length; i++) {
             samples[i] = (float) Math.sin((i / 44100.0) * 60.0 * 2.0 * Math.PI);
         }
 
-        player.setListener(SoundListener.zero);
 
         //player.loadFile(samples);
 //		player.loadFile(PlayWAVDemo.class.getResourceAsStream("Beats example - Amen loop.wav"));
@@ -49,11 +48,11 @@ public class PlayWAVDemo {
         JFrame frame = new JFrame("Basic Timestretch Demo");
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                player.shutDown();
+                audio.shutDown();
                 System.exit(0);
             }
         });
-        TimeStretchGui gui = new TimeStretchGui(player);
+        TimeStretchGui gui = new TimeStretchGui(audio);
 
 
         Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.01f, 0.2f);
@@ -66,7 +65,7 @@ public class PlayWAVDemo {
         frame.setSize(200, 360);
         frame.setVisible(true);
 
-        player.play(ts, SoundListener.zero, 1, 1, 1);
+        audio.play(ts, SoundListener.zero, 1, 1, 1);
 
 
         /*    }

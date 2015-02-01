@@ -17,6 +17,9 @@ import nars.logic.nal8.Operator;
 import java.util.Arrays;
 
 /**
+ *
+ * https://www.youtube.com/watch?v=ia4wMU-vfrw
+ *
  * To rememberAction an internal action as an operation
  * <p>
  * called from Concept

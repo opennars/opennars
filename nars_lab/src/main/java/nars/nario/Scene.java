@@ -1,6 +1,6 @@
 package nars.nario;
 
-import automenta.vivisect.audio.SonarSoundEngine;
+import automenta.vivisect.Audio;
 import automenta.vivisect.audio.SoundListener;
 
 import java.awt.*;
@@ -8,7 +8,7 @@ import java.awt.*;
 
 public abstract class Scene implements SoundListener
 {
-    public SonarSoundEngine sound;
+    public Audio sound;
     public static boolean[] keys = new boolean[16];
 
     public void toggleKey(int key, boolean isPressed)
@@ -16,7 +16,7 @@ public abstract class Scene implements SoundListener
         keys[key] = isPressed;
     }
 
-    public final void setSound(SonarSoundEngine sound)
+    public final void setSound(Audio sound)
     {
         sound.setListener(this);
         this.sound = sound;

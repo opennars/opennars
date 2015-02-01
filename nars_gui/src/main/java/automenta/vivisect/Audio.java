@@ -1,15 +1,20 @@
-package automenta.vivisect.audio;
+package automenta.vivisect;
 
-import automenta.vivisect.audio.mixer.ListenerMixer;
+import automenta.vivisect.Sound;
+import automenta.vivisect.audio.ListenerMixer;
+import automenta.vivisect.audio.SoundListener;
+import automenta.vivisect.audio.SoundProducer;
+import automenta.vivisect.audio.SoundSource;
 import automenta.vivisect.audio.sample.SamplePlayer;
 import automenta.vivisect.audio.sample.SonarSample;
 
 import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.List;
 
 
-public class SonarSoundEngine implements Runnable
+public class Audio implements Runnable
 {
     private SonarSample silentSample;
     private SourceDataLine sdl;
@@ -18,17 +23,17 @@ public class SonarSoundEngine implements Runnable
     private int bufferSize = rate / 100; // 10 ms
     private ByteBuffer soundBuffer = ByteBuffer.allocate(bufferSize * 4);
     private float[] leftBuf, rightBuf;
-    private float amplitude = 1;
-    private float targetAmplitude = 1;
+    //private float amplitude = 1;
+    //private float targetAmplitude = 1;
     private boolean alive = true;
     private float alpha = 0;
 
-    protected SonarSoundEngine()
+    protected Audio()
     {
     }
     
-    public SonarSoundEngine(int maxChannels) throws LineUnavailableException
-    {
+    public Audio(int maxChannels) throws LineUnavailableException {
+
         silentSample = new SonarSample(new float[] {0}, 44100);
         Mixer mixer = AudioSystem.getMixer(null);
 
@@ -37,17 +42,18 @@ public class SonarSoundEngine implements Runnable
         soundBuffer.order(ByteOrder.LITTLE_ENDIAN);
         sdl.start();
 
+
         try
         {
             FloatControl volumeControl = (FloatControl) sdl.getControl(FloatControl.Type.MASTER_GAIN);
             volumeControl.setValue(volumeControl.getMaximum());
         }
-        catch (IllegalArgumentException e)
-        {
+        catch (IllegalArgumentException e)        {
             System.out.println("Failed to set the sound volume");
         }
 
         listenerMixer = new ListenerMixer(maxChannels);
+        setListener(SoundListener.zero);
 
         leftBuf = new float[bufferSize];
         rightBuf = new float[bufferSize];
@@ -56,6 +62,7 @@ public class SonarSoundEngine implements Runnable
         thread.setDaemon(true);
         thread.setPriority(10);
         thread.start();
+
     }
 
     public void setListener(SoundListener soundListener)
@@ -83,6 +90,8 @@ public class SonarSoundEngine implements Runnable
             listenerMixer.addSoundProducer(p, soundSource, volume, priority);
         }
     }
+
+    public List<Sound> getSounds() { return listenerMixer.sounds; }
 
     public void clientTick(float alpha)
     {

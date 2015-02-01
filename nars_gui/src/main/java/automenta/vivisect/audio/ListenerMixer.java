@@ -1,16 +1,13 @@
-package automenta.vivisect.audio.mixer;
+package automenta.vivisect.audio;
 
-import automenta.vivisect.audio.SoundListener;
-import automenta.vivisect.audio.SoundProducer;
-import automenta.vivisect.audio.SoundSource;
-import automenta.vivisect.audio.StereoSoundProducer;
+import automenta.vivisect.Sound;
 
 import java.util.*;
 
 
 public class ListenerMixer implements StereoSoundProducer
 {
-    private List<Sound> sounds = new ArrayList<>();
+    public final List<Sound> sounds = new ArrayList<>();
     private float[] buf = new float[0];
     private int maxChannels;
     private SoundListener soundListener;

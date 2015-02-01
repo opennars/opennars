@@ -1,11 +1,12 @@
-package automenta.vivisect.audio.mixer;
+package automenta.vivisect;
+
 
 import automenta.vivisect.audio.SoundListener;
 import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.SoundSource;
 
-
-public class Sound implements Comparable
+/** Auditory element */
+public class Sound implements SoundSource, Comparable
 {
     private static final double l10 = Math.log(10);
     
@@ -79,5 +80,15 @@ public class Sound implements Comparable
         if (s.score>score) return 1;
         if (s.score<score) return -1;
         return 0;
+    }
+
+    @Override
+    public float getX(float alpha) {
+        return source.getX(alpha);
+    }
+
+    @Override
+    public float getY(float alpha) {
+        return source.getY(alpha);
     }
 }

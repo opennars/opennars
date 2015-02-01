@@ -1,7 +1,7 @@
 package nars.nario;
 
 import automenta.vivisect.audio.FakeSoundEngine;
-import automenta.vivisect.audio.SonarSoundEngine;
+import automenta.vivisect.Audio;
 import nars.nario.sprites.Mario;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -23,7 +23,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     private boolean running = false;
     GraphicsConfiguration graphicsConfiguration;
     protected Scene scene;
-    SonarSoundEngine sound;
+    Audio sound;
     private boolean focused = false;
     protected MapScene mapScene;
     private BufferedImage image;
@@ -48,7 +48,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 
             try
             {
-                    sound = new SonarSoundEngine(16);
+                    sound = new Audio(16);
             }
             catch (LineUnavailableException e)
             {

@@ -1,9 +1,10 @@
 package automenta.vivisect.audio;
 
+import automenta.vivisect.Audio;
 import automenta.vivisect.audio.sample.SonarSample;
 
 
-public class FakeSoundEngine extends SonarSoundEngine
+public class FakeSoundEngine extends Audio
 {
     public void setListener(SoundListener soundListener)
     {

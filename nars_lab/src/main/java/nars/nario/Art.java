@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
-import automenta.vivisect.audio.SonarSoundEngine;
+import automenta.vivisect.Audio;
 import automenta.vivisect.audio.sample.SampleLoader;
 import automenta.vivisect.audio.sample.SonarSample;
 
@@ -66,7 +66,7 @@ public class Art
             //return silentSample;
         }
     }
-    public static void init(GraphicsConfiguration gc, SonarSoundEngine sound)
+    public static void init(GraphicsConfiguration gc, Audio sound)
     {
         try
         {

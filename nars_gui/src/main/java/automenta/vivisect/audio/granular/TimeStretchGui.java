@@ -1,6 +1,6 @@
 package automenta.vivisect.audio.granular;
 
-import automenta.vivisect.audio.SonarSoundEngine;
+import automenta.vivisect.Audio;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -11,10 +11,10 @@ import java.awt.event.ActionListener;
 
 public class TimeStretchGui extends JPanel {
 
-	private final SonarSoundEngine player;
+	private final Audio player;
 	private final JSlider tempoSlider;
 
-	public TimeStretchGui(final SonarSoundEngine /*AudioPlayer */ player) {
+	public TimeStretchGui(final Audio /*AudioPlayer */ player) {
 
 
 		this.player = player;
