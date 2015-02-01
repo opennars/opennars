@@ -44,6 +44,7 @@ import java.util.*;
 public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Truthable {
 
 
+
     public static interface Sentenceable<T2 extends CompoundTerm> extends Termable {
         public Sentence<T2> getSentence();
     }
@@ -254,7 +255,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
         if (this == that) return true;
         if (term) {
-            if (!equalsContent(that)) return false;
+            if (!equalTerms(that)) return false;
         }
         if (truth) {
             if (!this.truth.equals(that.truth)) return false;
@@ -408,10 +409,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         return term.getTemporalOrder();
     }
     
-    public long getOccurenceTime() {
-        return stamp.getOccurrenceTime();
-    }
-    
+
     public Operator getOperator() {
         if (term instanceof Operation) {
              return (Operator) ((Statement) term).getPredicate();
@@ -528,12 +526,20 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
 
-    final public boolean equalsContent(final Sentence s2) {
-        return term.equals(s2.term);
+    final public boolean equalTerms(final Sentence s) {
+        return term.equals(s.term);
+    }
+    final public boolean equalPunctuations(Sentence s) {
+        return punctuation == s.punctuation;
     }
 
-    public boolean isEternal() {
+    public final boolean isEternal() {
         return stamp.isEternal();
+    }
+
+    public long getCreationTime() { return stamp.getCreationTime();    }
+    public long getOccurenceTime() {
+        return stamp.getOccurrenceTime();
     }
 
     public boolean after(Sentence s, int duration) {
@@ -543,9 +549,6 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         return stamp.before(s.stamp, duration);
     }
 
-    public long getCreationTime() {
-        return stamp.getCreationTime();
-    }
 
     public static final class ExpectationComparator implements Comparator<Sentence> {
         final static ExpectationComparator the = new ExpectationComparator();

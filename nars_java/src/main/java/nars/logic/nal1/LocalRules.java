@@ -85,7 +85,7 @@ public class LocalRules {
     public static boolean revisible(final Sentence s1, final Sentence s2) {
         //System.out.println(s1.isRevisible() + " " + s1.equalsContent(s2) + " " + TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) + "(" + s1.getTemporalOrder() + "," + s2.getTemporalOrder() + ")");
         return (s1.isRevisible() &&
-                s1.equalsContent(s2) && 
+                s1.equalTerms(s2) &&
                 TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
     }
 

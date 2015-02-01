@@ -150,7 +150,7 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
         if (obj == this) return true;
         if (obj instanceof Task) {
             Task t = (Task)obj;
-            return sentence.equals(t.sentence) && parentEqual(t);
+            return sentence.equals(t.sentence) && equalParents(t);
         }
         return false;        
     }
@@ -160,7 +160,7 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
         return hash;
     }
 
-    public boolean parentEqual(Task t) {
+    public boolean equalParents(Task t) {
         Task p = getParentTask();
         Task tp = t.getParentTask();
         if (p == null) {
@@ -443,5 +443,9 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
 
     public String getReason() {
         return reason;
+    }
+
+    public boolean equalPunctuations(Task t) {
+        return sentence.equalPunctuations(t.sentence);
     }
 }
