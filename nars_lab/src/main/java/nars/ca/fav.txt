@@ -1,0 +1,39 @@
+// MJCell favourite patterns
+//
+LIFE|Conway's Life/GUN30.LIF
+LIFE|Day & Night/daynight.mcl
+USER|Digital Inkblots/Digital Inkblots.mcl
+USER|Hodge/Hodge.mcl
+USER|GreenHast/GreenHast_05.mcl
+GENE|Bombers/Seed_10x10b.mcl
+GENE|Brain 6/Brain 6 Oscillators 2.mcl
+GENE|Brian's Brain/Brian's Brain.mcl
+GENE|Ebb&Flow/Oscil_04.mcl
+GENE|Ebb&Flow_II/Ebb&Flow_II.mcl
+GENE|Faders/Faders.mcl
+GENE|Fireworks/Cross.mcl
+GENE|Fireworks/Fireworks_02.mcl
+GENE|Nova/Nova.mcl
+GENE|Spirals/Perfect spiral.mcl
+GENE|StarWars/Conveyer.mcl
+GENE|StarWars/StarWars_01.mcl
+GENE|StarWars/Steeplechase.mcl
+GENE|Worms/Worms.mcl
+CYCL|CCA/CCA.mcl
+CYCL|GH Macaroni/GH_Macaroni.mcl
+WLIF|HGlass/HGlass.mcl
+WLIF|Linguini/Linguini.mcl
+WLIF|Midges/Midges.mcl
+WLIF|Parity/Parity_01.mcl
+WLIF|PicturesH/PicturesH_02.mcl
+WLIF|ZipperMakers/ZipperMakers.mcl
+MARG|Sand/Sand.mcl
+RTBL|Cars/Highway.mcl
+RTBL|WireWorld/WireWorld.mcl
+1DTO|Marvel/Marvel.mcl
+1DTO|Date palms/Date_palms.mcl
+1DBI|Kites/Kites.mcl
+NMBI|Pond/Beauty_02.mcl
+NMBI|Typhoon/Typhoon.mcl
+LGTL|Bugs/Bugs.mcl
+

@@ -17,6 +17,8 @@ import java.io.IOException;
 
 public class PlayWAVDemo {
 
+    //http://forum.renoise.com/index.php/topic/35858-royalty-free-sample-packs/
+
     public static class GranularControlPanel extends JPanel {
 
         public GranularControlPanel(Granulize s) {
@@ -54,7 +56,7 @@ public class PlayWAVDemo {
         TimeStretchGui gui = new TimeStretchGui(player);
 
 
-        Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.05f, 0.2f);
+        Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.01f, 0.2f);
         ts.setStretchFactor(1f);
 
 

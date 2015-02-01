@@ -94,18 +94,18 @@ public class SonarSoundEngine implements Runnable
 
     public void tick()
     {
-        soundBuffer.clear();
+        //soundBuffer.clear();
 
         //        targetAmplitude = (targetAmplitude - 1) * 0.9f + 1;
         //        targetAmplitude = (targetAmplitude - 1) * 0.9f + 1;
-        synchronized (listenerMixer)
-        {
+        synchronized (listenerMixer)        {
             float maxAmplitude = listenerMixer.read(leftBuf, rightBuf, rate);
-            //            if (maxAmplitude > targetAmplitude) targetAmplitude = maxAmplitude;
+            ////            if (maxAmplitude > targetAmplitude) targetAmplitude = maxAmplitude;
         }
 
         soundBuffer.clear();
-        final float gain = 32000;
+        final int max16 = 32767;
+        final float gain = max16;
         for (int i = 0; i < bufferSize; i++)
         {
             //            amplitude += (targetAmplitude - amplitude) / rate;
@@ -113,13 +113,18 @@ public class SonarSoundEngine implements Runnable
             //              float gain = 30000;
             int l = (int) (leftBuf[i] * gain);
             int r = (int) (rightBuf[i] * gain);
-            if (l > 32767) l = 32767;
-            if (r > 32767) r = 32767;
-            if (l < -32767) l = -32767;
-            if (r < -32767) r = -32767;
-            //soundBuffer.putInt instead of 2 putShorts
+            if (l > max16) l = max16;
+            else if (l < -max16) l = -max16;
+            if (r > max16) r = max16;
+            else if (r < -max16) r = -max16;
+
             soundBuffer.putShort((short)l);
             soundBuffer.putShort((short)r);
+
+            //doesnt work right:
+            //soundBuffer.putInt( ((short)l) | ( ((short)r) << 16));
+
+
         }
 
         sdl.write(soundBuffer.array(), 0, bufferSize * 2 * 2);
