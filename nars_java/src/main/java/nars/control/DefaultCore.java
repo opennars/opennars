@@ -6,22 +6,22 @@ import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
 import nars.logic.BudgetFunctions.Activating;
 import nars.logic.FireConcept;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.ConceptBuilder;
-import nars.logic.entity.Term;
+import nars.logic.ImmediateProcess;
+import nars.logic.TruthFunctions;
+import nars.logic.entity.*;
+import nars.logic.nal1.Negation;
 import nars.util.bag.Bag;
 import nars.util.bag.Bag.MemoryAware;
 import nars.util.bag.BagActivator;
 import nars.util.bag.CacheBag;
 import nars.util.bag.LevelBag;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 
 /**
@@ -42,13 +42,39 @@ public class DefaultCore implements Core {
     private Memory memory;
     
     List<Runnable> run = new ArrayList();
-    
 
-    public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
+    /**
+     * New tasks with novel composed terms, for delayed and selective processing
+     */
+    public final Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> novelTasks;
+
+    /* ---------- Short-term workspace for a single cycle ---	------- */
+    /**
+     * List of new tasks accumulated in one cycle, to be processed in the next
+     * cycle
+     */
+    public final Deque<Task> newTasks;
+
+
+    public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder, Bag<Sentence<CompoundTerm>,Task<CompoundTerm>> novelTasks) {
         this.concepts = concepts;
         this.subcon = subcon;
-        this.conceptBuilder = conceptBuilder;        
-        
+        this.conceptBuilder = conceptBuilder;
+
+        this.novelTasks = novelTasks;
+        if (novelTasks instanceof CoreAware) {
+            ((CoreAware) novelTasks).setCore(this);
+        }
+
+        this.newTasks = (Parameters.THREADS > 1)
+                ? new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
+
+
+    }
+
+    @Override
+    public void addTask(Task t) {
+        newTasks.add(t);
     }
 
     /** for removing a specific concept (if it's not putBack) */
@@ -59,8 +85,8 @@ public class DefaultCore implements Core {
     @Override
     public void init(Memory m) {
         this.memory = m;
-        if (concepts instanceof AttentionAware)
-            ((AttentionAware)concepts).setAttention(this);
+        if (concepts instanceof CoreAware)
+            ((CoreAware)concepts).setCore(this);
         if (concepts instanceof MemoryAware)
             ((MemoryAware)concepts).setMemory(m);
     }
@@ -100,9 +126,9 @@ public class DefaultCore implements Core {
         memory.nextPercept(1);
 
         //all new tasks
-        int numNewTasks = memory.newTasks.size();
+        int numNewTasks = newTasks.size();
         for (int i = 0; i < numNewTasks; i++) {
-            Runnable r = memory.nextNewTask();
+            Runnable r = nextNewTask();
             if (r != null) {
                 r.run();
             }
@@ -111,9 +137,9 @@ public class DefaultCore implements Core {
 
         //all novel tasks
         /*if (memory.newTasks.isEmpty())*/ {
-            int numNovelTasks = memory.novelTasks.size();
+            int numNovelTasks = novelTasks.size();
             for (int i = 0; i < numNovelTasks; i++) {
-                Runnable novel = memory.nextNovelTask();
+                Runnable novel = nextNovelTask();
                 if (novel != null) novel.run();
                 else break;
             }
@@ -138,6 +164,80 @@ public class DefaultCore implements Core {
 
     }
 
+    protected Runnable nextNewTask() {
+        if (newTasks.isEmpty()) return null;
+
+        Task task = newTasks.removeFirst();
+
+        memory.emotion.adjustBusy(task.getPriority(), task.getDurability());
+
+        if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) {
+            //it is a question/goal/quest or a judgment for a concept which exists:
+
+            return new ImmediateProcess(memory, task);
+
+        } else {
+            //it is a judgment which would create a new concept:
+
+            if (task.getTerm().operator() == Symbols.NativeOperator.NEGATION) {
+                //unwrap an outer negative negative
+                task = task.clone(
+                        new Sentence(
+                                ((Negation)task.getTerm()).negated(),
+                                task.sentence.punctuation,
+                                TruthFunctions.negation(task.sentence.getTruth()),
+                                task.sentence.stamp
+                        ));
+
+            }
+
+            final Sentence s = task.sentence;
+
+            //if (s.isJudgment() || s.isGoal()) {
+
+            //final double exp = s.truth.getExpectation();
+            final double exp = 1f;
+            if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                //i dont see yet how frequency could play a role here - patrick
+                //just imagine a board game where you are confident about all the board rules
+                //but the implications reach all the frequency spectrum in certain situations
+                //but every concept can also be represented with (--,) so i guess its ok
+
+
+                // new concept formation
+                Task displacedNovelTask = novelTasks.PUT(task);
+                memory.logic.TASK_ADD_NOVEL.hit();
+
+                if (displacedNovelTask != null) {
+                    if (displacedNovelTask == task) {
+                        memory.removeTask(task, "Ignored");
+                    } else {
+                        memory.removeTask(displacedNovelTask, "Displaced novel task");
+                    }
+                }
+
+            } else {
+                memory.removeTask(task, "Neglected");
+            }
+            //}
+        }
+        return null;
+    }
+
+    /**
+     * Select a novel task to process.
+     */
+    protected Runnable nextNovelTask() {
+        if (novelTasks.isEmpty()) return null;
+
+        // select a task from novelTasks
+        final Task task = novelTasks.TAKENEXT();
+
+        if (task == null)
+            throw new RuntimeException("novelTasks bag output null item");
+
+        return new ImmediateProcess(memory, task);
+    }
 
 
     
@@ -148,6 +248,8 @@ public class DefaultCore implements Core {
     @Override
     public void reset() {
         concepts.clear();
+        novelTasks.clear();
+        newTasks.clear();
     }
 
     @Override

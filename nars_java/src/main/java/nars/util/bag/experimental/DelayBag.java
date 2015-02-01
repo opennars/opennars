@@ -3,7 +3,7 @@ package nars.util.bag.experimental;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.core.Core;
-import nars.core.Core.AttentionAware;
+import nars.core.Core.CoreAware;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.BudgetFunctions;
@@ -68,7 +68,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * TODO make this abstract and derive ThresholdDelayBag subclass
  */
-public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implements AttentionAware {
+public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implements CoreAware {
 
     private final int capacity;
     
@@ -398,7 +398,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag.IndexedBag<E, K> implemen
 
 
     @Override
-    public void setAttention(Core a) {
+    public void setCore(Core a) {
         this.attention = a;
         this.memory = a.getMemory();        
     }

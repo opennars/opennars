@@ -29,7 +29,7 @@ public class Neuromorphic extends Curve {
     }
 
     @Override
-    public Core newAttention() {
+    public Core newCore() {
         if (numAnts == -1)
             numAnts = param.conceptsFiredPerCycle.get();
         return new AntCore(numAnts, 2.0f, getConceptBagSize(), getConceptBuilder());

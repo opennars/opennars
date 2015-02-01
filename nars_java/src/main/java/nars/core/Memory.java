@@ -20,7 +20,6 @@
  */
 package nars.core;
 
-import nars.core.Core.AttentionAware;
 import nars.core.Events.ResetStart;
 import nars.core.Events.Restart;
 import nars.core.Events.TaskRemove;
@@ -61,7 +60,6 @@ import nars.util.bag.Bag;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -170,17 +168,6 @@ public class Memory implements Serializable {
 
     private long currentStampSerial = 0;
 
-    /**
-     * New tasks with novel composed terms, for delayed and selective processing
-     */
-    public final Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> novelTasks;
-
-    /* ---------- Short-term workspace for a single cycle ---	------- */
-    /**
-     * List of new tasks accumulated in one cycle, to be processed in the next
-     * cycle
-     */
-    public final Deque<Task> newTasks;
 
 
     //public final Term self;
@@ -207,10 +194,9 @@ public class Memory implements Serializable {
     /**
      * Create a new memory
      *
-     * @param initialOperators - initial set of available operators; more may be
      * added during runtime
      */
-    public Memory(int nalLevel, Param param, Core concepts, Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> novelTasks) {
+    public Memory(int nalLevel, Param param, Core concepts) {
 
         this.level = nalLevel;
 
@@ -220,13 +206,6 @@ public class Memory implements Serializable {
         this.concepts = concepts;
         this.concepts.init(this);
 
-        this.novelTasks = novelTasks;
-        if (novelTasks instanceof AttentionAware) {
-            ((AttentionAware) novelTasks).setAttention(concepts);
-        }
-
-        this.newTasks = (Parameters.THREADS > 1)
-                ? new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
 
         this.operators = new HashMap<>();
 
@@ -287,13 +266,7 @@ public class Memory implements Serializable {
 
         event.emit(ResetStart.class);
 
-
-
-
-
         concepts.reset();
-        novelTasks.clear();
-        newTasks.clear();
 
         timing = param.getTiming();
         cycle = 0;
@@ -360,10 +333,6 @@ public class Memory implements Serializable {
         return time() - timePreviousCycle;
     }
 
-    public Deque<Task> getNewTasks() {
-        return newTasks;
-    }
-
 
     /* ---------- conversion utilities ---------- */
     /**
@@ -423,7 +392,6 @@ public class Memory implements Serializable {
      *
      * @param compound The template
      * @param components The term
-     * @param memory Reference to the memory
      * @return A compound term or null
      */
     public static Term term(final CompoundTerm compound, final Term[] components) {
@@ -453,7 +421,6 @@ public class Memory implements Serializable {
      * Called from StringParser
      *
      * @param op Term operator
-     * @param arg Component list
      * @return A term or null
      */
     public static Term term(final NativeOperator op, final Term[] a) {
@@ -549,7 +516,7 @@ public class Memory implements Serializable {
             return false;
         }
 
-        newTasks.add(t);
+        concepts.addTask(t);
 
         logic.TASK_ADD_NEW.hit();
 
@@ -754,83 +721,7 @@ public class Memory implements Serializable {
         return num;
     }
 
-    /**
-     * Select a novel task to process.
-     */
-    public Runnable nextNovelTask() {
-        if (novelTasks.isEmpty()) return null;
 
-        // select a task from novelTasks
-        final Task task = novelTasks.TAKENEXT();
-
-        if (task == null)
-            throw new RuntimeException("novelTasks bag output null item");
-
-        return new ImmediateProcess(this, task);
-    }
-
-    public Runnable nextNewTask() {
-
-        if (newTasks.isEmpty()) return null;
-
-        Task task = newTasks.removeFirst();
-
-
-
-        emotion.adjustBusy(task.getPriority(), task.getDurability());
-
-        if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) {
-            //it is a question/goal/quest or a judgment for a concept which exists:
-
-            return new ImmediateProcess(this, task);
-
-        } else {
-            //it is a judgment which would create a new concept:
-
-            if (task.getTerm().operator() == NativeOperator.NEGATION) {
-                //unwrap an outer negative negative
-                task = task.clone(
-                        new Sentence(
-                                ((Negation)task.getTerm()).negated(),
-                                task.sentence.punctuation,
-                                TruthFunctions.negation(task.sentence.getTruth()),
-                                task.sentence.stamp
-                        ));
-
-            }
-
-            final Sentence s = task.sentence;
-
-            //if (s.isJudgment() || s.isGoal()) {
-
-                //final double exp = s.truth.getExpectation();
-                final double exp = 1f;
-                if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                    //i dont see yet how frequency could play a role here - patrick
-                    //just imagine a board game where you are confident about all the board rules
-                    //but the implications reach all the frequency spectrum in certain situations
-                    //but every concept can also be represented with (--,) so i guess its ok
-
-
-                    // new concept formation
-                    Task displacedNovelTask = novelTasks.PUT(task);
-                    logic.TASK_ADD_NOVEL.hit();
-
-                    if (displacedNovelTask != null) {
-                        if (displacedNovelTask == task) {
-                            removeTask(task, "Ignored");
-                        } else {
-                            removeTask(displacedNovelTask, "Displaced novel task");
-                        }
-                    }
-
-                } else {
-                    removeTask(task, "Neglected");
-                }
-            //}
-        }
-        return null;
-    }
 
 
 
@@ -919,6 +810,7 @@ public class Memory implements Serializable {
             }
         }
 
+        /*
         if (includeNewTasks) {
             t.addAll(newTasks);
         }
@@ -928,6 +820,7 @@ public class Memory implements Serializable {
                 t.add(n);
             }
         }
+        */
 
         return t;
     }

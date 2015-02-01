@@ -16,7 +16,7 @@ abstract public class Build extends Parameters  {
     protected int level;
 
     abstract public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag();
-    abstract public Core newAttention();
+    abstract public Core newCore();
 
     public Build() {
     }
@@ -40,7 +40,7 @@ abstract public class Build extends Parameters  {
 //    }
 
     protected Memory newMemory(Param p) {
-        return new Memory(level, p, newAttention(), newNovelTaskBag());
+        return new Memory(level, p, newCore());
     }
 
     /** called after NAR created, for initializing it */

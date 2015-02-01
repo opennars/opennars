@@ -8,6 +8,7 @@ import javolution.context.ConcurrentContext;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.FireConcept;
+import nars.logic.ImmediateProcess;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
 
@@ -49,6 +50,13 @@ public class AntCore extends ConceptWaveCore {
         concepts.setTargetActivated( (int)(ants.size() * 0.1f) );
     }
 
+    @Deprecated final Deque<Task> tasks = new ArrayDeque();
+
+    @Override
+    public void addTask(Task t) {
+        tasks.addLast(t);
+    }
+
     @Override
     public synchronized void cycle() {
         
@@ -56,19 +64,13 @@ public class AntCore extends ConceptWaveCore {
 
         memory.nextPercept(1);
 
-
-        int maxNewTasks = ants.size();
-        int maxNovelTasks = ants.size();
-
-        for (int i = 0; i < maxNewTasks; i++) {
-            Runnable t = memory.nextNewTask();
-            if (t != null) run.add(t);
-            else break;
-        }
-        for (int i = 0; i < maxNovelTasks; i++) {
-            Runnable t = memory.nextNovelTask();
-            if (t != null) run.add(t);
-            else break;
+        if (!tasks.isEmpty()) {
+            int maxNewTasks = ants.size();
+            for (int i = 0; i < maxNewTasks; i++) {
+                Task t = tasks.removeFirst();
+                if (t == null) break;
+                run.add(new ImmediateProcess(memory, t));
+            }
         }
 
         other = memory.dequeueOtherTasks(run);

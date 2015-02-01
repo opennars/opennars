@@ -4,6 +4,7 @@ import javolution.context.ConcurrentContext;
 import nars.logic.BudgetFunctions.Activating;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
+import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
 import java.util.List;
@@ -13,8 +14,11 @@ import java.util.List;
 public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
 
 
-    public interface AttentionAware {
-        public void setAttention(Core a);
+    void addTask(Task t);
+
+
+    public interface CoreAware {
+        public void setCore(Core a);
     }
 
 

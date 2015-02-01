@@ -206,8 +206,8 @@ public class Default extends Build implements ConceptBuilder {
     }
 
     @Override
-    public Core newAttention() {
-        return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder());
+    public Core newCore() {
+        return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
     }
     
     public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag() {

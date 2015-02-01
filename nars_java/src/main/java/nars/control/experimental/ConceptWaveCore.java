@@ -93,8 +93,8 @@ abstract public class ConceptWaveCore implements Core {
         
         if (concepts instanceof MemoryAware)
             concepts.setMemory(m);
-        if (concepts instanceof AttentionAware)
-            concepts.setAttention(this);
+        if (concepts instanceof CoreAware)
+            concepts.setCore(this);
     }
 
     @Override

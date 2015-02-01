@@ -42,9 +42,10 @@ public class Curve extends Default {
     
 
     @Override
-    public Core newAttention() {
+    public Core newCore() {
         //return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
-        return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder());
+        //return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
+        return super.newCore();
     }
     
     @Override
