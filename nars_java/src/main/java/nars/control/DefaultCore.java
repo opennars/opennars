@@ -125,7 +125,7 @@ public class DefaultCore extends UniCore {
             return new ImmediateProcess(memory, task);
 
         } else {
-            //it is a judgment which would create a new concept:
+            //it is a judgment or goal which would create a new concept:
 
             if (task.getTerm().operator() == Symbols.NativeOperator.NEGATION) {
                 //unwrap an outer negative negative
