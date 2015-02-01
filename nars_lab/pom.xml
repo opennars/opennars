@@ -36,7 +36,7 @@
         <version>1.3.2</version>
         <configuration>
           <arguments>
-            <argument>-Dsun.java2d.opengl=True</argument>            
+            <argument>-Dsun.java2d.opengl=False</argument>            
           </arguments>
         </configuration>
       </plugin>   

@@ -17,7 +17,7 @@ public class Video {
  
 
         static {
-        System.setProperty("sun.java2d.opengl","True");        
+        System.setProperty("sun.java2d.opengl","False");        
     }
 
     
