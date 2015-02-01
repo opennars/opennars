@@ -58,7 +58,7 @@
                 <configuration>
                     <!--<executable>java</executable>-->
                     <arguments>
-                        <argument>-Dsun.java2d.opengl=True</argument>
+                        <argument>-Dsun.java2d.opengl=False</argument>
                     </arguments>
                 </configuration>
             </plugin>

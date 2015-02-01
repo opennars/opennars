@@ -26,7 +26,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Dsun.java2d.opengl=True -classpath %classpath ${packageClassName}</exec.args>
+                <exec.args>-Dsun.java2d.opengl=False -classpath %classpath ${packageClassName}</exec.args>
                 <exec.executable>java</exec.executable>
                 <skipTests>true</skipTests>
             </properties>
@@ -41,7 +41,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Dsun.java2d.opengl=True -classpath %classpath ${packageClassName}</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Dsun.java2d.opengl=False -classpath %classpath ${packageClassName}</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
                 <skipTests>true</skipTests>
@@ -57,7 +57,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Dsun.java2d.opengl=True -classpath %classpath ${packageClassName}</exec.args>
+                <exec.args>-Dsun.java2d.opengl=False -classpath %classpath ${packageClassName}</exec.args>
                 <exec.executable>java</exec.executable>
                 <skipTests>true</skipTests>
             </properties>
