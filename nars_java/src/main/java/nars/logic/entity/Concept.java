@@ -451,8 +451,8 @@ public class Concept extends Item<Term> implements Termable {
                 // (truth==null in all cases, and term will be equal)
 
                 if (Parameters.DEBUG) {
-                    if (t.equalPunctuations(newTask))
-                        throw new RuntimeException("Sentence punctuation mismatch");
+                    if (!t.equalPunctuations(newTask))
+                        throw new RuntimeException("Sentence punctuation mismatch: " + t.sentence.punctuation + " != " + newTask.sentence.punctuation);
                     if (t.sentence.truth!=null)
                         throw new RuntimeException("Non-null truth value in existing tasks buffer");
                     //Not necessary, and somewhat expensive:

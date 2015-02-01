@@ -34,8 +34,7 @@ public class ImmediateProcess extends NAL {
     @Override
     public void reason() {
         setCurrentTask(task);
-        setCurrentTerm(currentTask.getTerm());
-        setCurrentConcept(memory.conceptualize(currentTask.budget, getCurrentTerm()));
+        setCurrentConcept(memory.conceptualize(currentTask.budget, task.getTerm()));
 
         Concept c = getCurrentConcept();
         if (c != null) {

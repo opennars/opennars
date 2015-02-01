@@ -420,6 +420,7 @@ public abstract class NAL implements Runnable {
 
     public void setCurrentConcept(Concept currentConcept) {
         this.currentConcept = currentConcept;
+        setCurrentTerm(currentConcept.term);
     }
 
     /**

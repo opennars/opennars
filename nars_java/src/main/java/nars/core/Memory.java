@@ -262,6 +262,7 @@ public class Memory implements Serializable {
             }
 
 
+            //TODO this may also be triggered by Quests; may want to distinguish them with a different event for Quests
             if ((event == Events.ConceptQuestionAdd.class) || (event == Events.ConceptQuestionRemove.class)) {
                 Concept c = (Concept)args[0];
                 Task incoming = args.length > 2 ? (Task)args[2] : null; //non-null indicates that a Add will be following this removal event
