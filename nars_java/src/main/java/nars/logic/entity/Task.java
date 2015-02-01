@@ -223,6 +223,9 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
     public boolean aboveThreshold() {
         return budget.aboveThreshold();
     }
+    public boolean aboveThreshold(float additionalPriority) {
+        return budget.aboveThreshold(additionalPriority);
+    }
 
     /**
      * Check if a Task is derived by a StructuralRule

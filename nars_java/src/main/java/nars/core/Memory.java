@@ -778,10 +778,13 @@ public class Memory implements Serializable {
 
         emotion.adjustBusy(task.getPriority(), task.getDurability());
 
-        if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) { //it is a question/goal/quest or a concept which exists
-            // ok so lets fire it
+        if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term) != null) {
+            //it is a question/goal/quest or a judgment for a concept which exists:
+
             return new ImmediateProcess(this, task);
+
         } else {
+            //it is a judgment which would create a new concept:
 
             if (task.getTerm().operator() == NativeOperator.NEGATION) {
                 //unwrap an outer negative negative

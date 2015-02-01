@@ -244,6 +244,10 @@ public class BudgetValue implements Cloneable {
         return aveGeo(priority, durability, quality);
     }
 
+    public float summary(float additionalPriority) {
+        return aveGeo(Math.min(1.0f, priority + additionalPriority), durability, quality);
+    }
+
     
     public boolean equalsByPrecision(final Object that) { 
         if (that instanceof BudgetValue) {
@@ -269,6 +273,37 @@ public class BudgetValue implements Cloneable {
     public boolean aboveThreshold() {
         return (summary() >= Parameters.BUDGET_THRESHOLD);
     }
+
+    /* Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
+     * @param additionalPriority saved credit to contribute to possibly push it over threshold
+     */
+    public boolean aboveThreshold(float additionalPriority) {
+        return (summary(additionalPriority) >= Parameters.BUDGET_THRESHOLD);
+    }
+
+
+//    /**
+//     * Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
+//     * @param additionalPriority
+//     * @return NaN if neither aboveThreshold, nor aboveThreshold with additional priority; 0 if no additional priority necessary to make above threshold, > 0 if that amount of the additional priority was "spent" to cause it to go above threshold
+//     */
+//    public float aboveThreshold(float additionalPriority) {
+//        float s = summary();
+//        if (s >= Parameters.BUDGET_THRESHOLD)
+//            return 0;
+//        if (summary(additionalPriority) >= Parameters.BUDGET_EPSILON) {
+//            //calculate how much was necessary
+//
+//            float dT = Parameters.BUDGET_THRESHOLD - s; //difference between how much needed
+//
+//            //TODO solve for additional:
+//            //  newSummary - s = dT
+//            //  ((priority+additional)*(duration)*(quality))^(1/3) - s = dT;
+//
+//            float used = 0;
+//        }
+//        return Float.NaN;
+//    }
 
 
 

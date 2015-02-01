@@ -203,13 +203,23 @@ public class Concept extends Item<Term> implements Termable {
      * <p>
      * called in Memory.immediateProcess only
      *
+     * @param nal reasoning context it is being processed in
      * @param task The task to be processed
      * @return whether it was processed
      */
     public boolean directProcess(final NAL nal, final Task task) {
         if (!task.aboveThreshold()) {
-            this.taskBudgetBalance += task.getPriority();
-            return false;
+            //available credit to boost priority (maximum=1-priority)
+            float credit = Math.min( taskBudgetBalance, 1.0f - budget.getPriority());
+            if (task.aboveThreshold(credit)) {
+                //spend credit
+                taskBudgetBalance -= credit;
+            }
+            else {
+                //save credit
+                this.taskBudgetBalance += task.getPriority();
+                return false;
+            }
         }
 
         char type = task.sentence.punctuation;

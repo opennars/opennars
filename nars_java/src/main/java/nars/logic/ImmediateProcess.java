@@ -35,6 +35,7 @@ public class ImmediateProcess extends NAL {
         setCurrentTask(task);
         setCurrentTerm(currentTask.getTerm());
         setCurrentConcept(memory.conceptualize(currentTask.budget, getCurrentTerm()));
+
         if (getCurrentConcept() != null) {
             boolean processed = getCurrentConcept().directProcess(this, currentTask);
             if (processed) {
