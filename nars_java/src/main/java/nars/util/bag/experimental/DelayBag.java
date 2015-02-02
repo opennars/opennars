@@ -1,7 +1,7 @@
 
 package nars.util.bag.experimental;
 
-import com.google.common.util.concurrent.AtomicDouble;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.core.Core;
 import nars.core.Core.CoreAware;
 import nars.core.Memory;

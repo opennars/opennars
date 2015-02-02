@@ -18,7 +18,7 @@ public class Sound implements SoundSource, Comparable
     private float x, y, z;
     private float score = 0;
     
-    public float pan;
+    public float pan = 0;
     public float amplitude;
     
     public Sound(SoundProducer producer, SoundSource source, float volume, float priority)
@@ -50,12 +50,11 @@ public class Sound implements SoundSource, Comparable
 
 //        double angle = WMath.atan2(y, x);
 		
-        float p = -x/320.0f;
+        float p = -x;
         if (p<-1) p = -1;
         if (p>1) p = 1;
-        float dd = distSqr/16;
-        if (dd>1) dd = 1;
-        pan =(p*dd);
+
+        pan = p;
         amplitude = volume*1f;
     }
 

@@ -6,8 +6,7 @@ import automenta.vivisect.audio.SoundListener;
 import java.awt.*;
 
 
-public abstract class Scene implements SoundListener
-{
+public abstract class Scene implements SoundListener {
     public Audio sound;
     public static boolean[] keys = new boolean[16];
 
@@ -16,8 +15,7 @@ public abstract class Scene implements SoundListener
         keys[key] = isPressed;
     }
 
-    public final void setSound(Audio sound)
-    {
+    public final void setSound(Audio sound) {
         sound.setListener(this);
         this.sound = sound;
     }

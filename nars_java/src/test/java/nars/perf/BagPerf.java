@@ -18,7 +18,7 @@
 package nars.perf;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AtomicDouble;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;

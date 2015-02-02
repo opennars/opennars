@@ -65,7 +65,7 @@ public class GranulizerDemo {
         frame.setSize(200, 360);
         frame.setVisible(true);
 
-        audio.play(ts, SoundListener.zero, 1, 1, 1);
+        audio.play(ts, SoundListener.zero, 1, 1);
 
 
         /*    }
