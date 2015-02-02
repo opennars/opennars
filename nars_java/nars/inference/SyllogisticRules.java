@@ -32,7 +32,6 @@ import static nars.inference.TemporalRules.ORDER_INVALID;
 import static nars.inference.TemporalRules.ORDER_NONE;
 import static nars.inference.TemporalRules.abdIndComOrder;
 import static nars.inference.TemporalRules.analogyOrder;
-import static nars.inference.TemporalRules.applyExpectationOffset;
 import static nars.inference.TemporalRules.dedExeOrder;
 import static nars.inference.TemporalRules.resemblanceOrder;
 import static nars.inference.TemporalRules.reverseOrder;
@@ -479,7 +478,10 @@ public final class SyllogisticRules {
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.getTime();
             }
-            baseTime += delta;
+            if(premise1.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)
+                return; //https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M - Interval Simplification
+            
+                baseTime += delta;
             nal.getTheNewStamp().setOccurrenceTime(baseTime);
         }
         
@@ -509,8 +511,6 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        
-        applyExpectationOffset(nal.memory, premise1, nal.getTheNewStamp());
         
         nal.doublePremiseTask(content, truth, budget,false);
     }

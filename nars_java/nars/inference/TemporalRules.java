@@ -247,20 +247,6 @@ public class TemporalRules {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
-    public static void applyExpectationOffset(Memory memory, Term temporalStatement, Stamp stamp) {
-        if(temporalStatement!=null && temporalStatement instanceof Implication) {
-            Implication imp=(Implication) temporalStatement;
-            if(imp.getSubject() instanceof Conjunction && imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD)  {
-                Conjunction conj=(Conjunction) imp.getSubject();
-                if(conj.term[conj.term.length-1] instanceof Interval) {
-                    Interval intv=(Interval) conj.term[conj.term.length-1];
-                    long time_offset=intv.getTime(memory);
-                    stamp.setOccurrenceTime(stamp.getOccurrenceTime()+time_offset);
-                }
-            }
-        }
-    }
-    
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
         
         
@@ -369,7 +355,7 @@ public class TemporalRules {
         if (!concurrent(time1, time2, durationCycles)) {
             
             interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
-            long st=interval.get(0).getTime(nal.memory);
+            //long st=interval.get(0).getTime(nal.memory);
             
             
             if (timeDiff > 0) {
@@ -384,7 +370,7 @@ public class TemporalRules {
                 }
             }
         }
-        int order = ORDER_CONCURRENT; //order(timeDiff, durationCycles);  <- already handled by interval
+        int order = order(timeDiff, durationCycles);
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
         TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
