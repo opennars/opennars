@@ -369,20 +369,22 @@ public class TemporalRules {
         if (!concurrent(time1, time2, durationCycles)) {
             
             interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
+            long st=interval.get(0).getTime(nal.memory);
+            
             
             if (timeDiff > 0) {
-                t1 = Conjunction.make(t1, interval, ORDER_CONCURRENT);
+                t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
                 if(t11!=null) {
-                    t11 = Conjunction.make(t11, interval, ORDER_CONCURRENT);
+                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD);
                 }
             } else {
-                t2 = Conjunction.make(t2, interval, ORDER_CONCURRENT);
+                t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
                 if(t22!=null) {
-                    t22 = Conjunction.make(t22, interval, ORDER_CONCURRENT);
+                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD);
                 }
             }
         }
-        int order = order(timeDiff, durationCycles);
+        int order = ORDER_CONCURRENT; //order(timeDiff, durationCycles);  <- already handled by interval
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
         TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
