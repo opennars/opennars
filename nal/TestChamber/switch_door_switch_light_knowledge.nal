@@ -8,5 +8,5 @@
 <(--,<{switch1} --> [on]>) =/> (--,<{light2} --> [on]>)>.
 <<{switch0} --> [on]> =/> <{door5} --> [opened]>>.
 <(--,<{switch0} --> [on]>) =/> (--,<{door5} --> [opened]>)>.
-<(^go-to,place4) =/> <place4 --> [at]>>.
-<(&/,<{door5} --> [opened]>,(^go-to,place3)) =/> <place3 --> [at]>>.
+<(^go-to,{place4}) =/> <{place4} --> [at]>>.
+<(&/,<{door5} --> [opened]>,(^go-to,{place3})) =/> <{place3} --> [at]>>.
