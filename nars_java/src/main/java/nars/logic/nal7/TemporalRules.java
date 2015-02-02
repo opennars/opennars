@@ -370,14 +370,14 @@ public class TemporalRules {
             interval = Interval.intervalSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
             
             if (timeDiff > 0) {
-                t1 = Conjunction.make(t1, interval, ORDER_CONCURRENT);
+                t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
                 if(t11!=null) {
-                    t11 = Conjunction.make(t11, interval, ORDER_CONCURRENT);
+                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD);
                 }
             } else {
-                t2 = Conjunction.make(t2, interval, ORDER_CONCURRENT);
+                t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
                 if(t22!=null) {
-                    t22 = Conjunction.make(t22, interval, ORDER_CONCURRENT);
+                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD);
                 }
             }
         }
