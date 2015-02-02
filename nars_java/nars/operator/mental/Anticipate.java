@@ -208,11 +208,13 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             return;
         }
         
-        LinkedHashSet<Term> ae = anticipations.get(occurenceTime);
-        if (ae == null) {
-            ae = new LinkedHashSet();
-            anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
-        }
+        if(t.sentence.truth.getExpectation()<Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+            return;
+        } 
+        
+        LinkedHashSet<Term> ae = new LinkedHashSet();
+        anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
+
         ae.add(content);
         
         if(anticipationOperator) {
@@ -241,6 +243,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         BudgetValue budget = expiredBudget;
 
         Stamp stamp = new Stamp(nal.memory);
+        //stamp.setOccurrenceTime(nal.memory.time());
         stamp.setOccurrenceTime(expectedOccurenceTime); //it did not happen, so the time of when it did not 
         //happen is exactly the time it was expected
         
