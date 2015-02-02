@@ -251,7 +251,8 @@ public class TemporalRules {
 
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
-    
+
+    /*
     public static void applyExpectationOffset(Memory memory, Term temporalStatement, Stamp stamp) {
         if(temporalStatement!=null && temporalStatement instanceof Implication) {
             Implication imp=(Implication) temporalStatement;
@@ -264,7 +265,8 @@ public class TemporalRules {
                 }
             }
         }
-    }
+    }*/
+
 
     static final Variable var1 = new Variable("$0");
     static final Variable var2 = var1;
@@ -382,10 +384,7 @@ public class TemporalRules {
             }
         }
 
-        int order = order(timeDiff, durationCycles); // <- already handled by interval
-
-        //This causes several more errors:
-        //int order = ORDER_CONCURRENT; //order(timeDiff, durationCycles);  <- already handled by interval
+        int order = order(timeDiff, durationCycles);
 
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;

@@ -24,6 +24,7 @@ import nars.io.Symbols;
 import nars.logic.*;
 import nars.logic.entity.*;
 import nars.logic.nal7.Interval;
+import nars.logic.nal7.TemporalRules;
 
 import static nars.logic.Terms.reduceComponents;
 import static nars.logic.nal7.TemporalRules.*;
@@ -459,7 +460,14 @@ public final class SyllogisticRules {
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.getTime();
             }
+
+            if(premise1.getTemporalOrder()== TemporalRules.ORDER_CONCURRENT) {
+                //https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M - Interval Simplification
+                return;
+            }
+
             baseTime += delta;
+
             nal.getTheNewStamp().setOccurrenceTime(baseTime);
         }
         
@@ -489,8 +497,6 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        
-        applyExpectationOffset(nal.memory, premise1, nal.getTheNewStamp());
         
         nal.doublePremiseTask(content, truth, budget,false);
     }
