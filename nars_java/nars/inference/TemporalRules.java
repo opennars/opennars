@@ -369,16 +369,18 @@ public class TemporalRules {
         if (!concurrent(time1, time2, durationCycles)) {
             
             interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
+            long st=interval.get(0).getTime(nal.memory);
+            
             
             if (timeDiff > 0) {
-                t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
+                t1 = Conjunction.make(t1, interval, ORDER_CONCURRENT);
                 if(t11!=null) {
-                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD);
+                    t11 = Conjunction.make(t11, interval, ORDER_CONCURRENT);
                 }
             } else {
-                t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
+                t2 = Conjunction.make(t2, interval, ORDER_CONCURRENT);
                 if(t22!=null) {
-                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD);
+                    t22 = Conjunction.make(t22, interval, ORDER_CONCURRENT);
                 }
             }
         }
