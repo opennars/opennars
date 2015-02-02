@@ -103,7 +103,13 @@ public class Term implements AbstractTerm, Termable {
         atoms.put(name, x);
         return x;
     }
-    
+
+    public final static Term get(Object o) {
+        if (o instanceof Term) return (Term)o;
+        if (o instanceof String) return get((String)o);
+        return null;
+    }
+
     /** gets the atomic term of an integer */
     public final static Term get(final int i) {
         //fast lookup for single digits

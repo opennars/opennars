@@ -1,10 +1,12 @@
 package nars.io.narsese;
 
-import org.parboiled.BaseParser;
-import org.parboiled.Parboiled;
-import org.parboiled.Rule;
+import nars.core.Memory;
+import nars.io.Texts;
+import nars.logic.entity.Term;
+import org.parboiled.*;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.RecoveringParseRunner;
+import org.parboiled.parserunners.TracingParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
 
@@ -16,11 +18,15 @@ import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
 /**
  * NARese, syntax and language for interacting with a NAR in NARS.
- * @see https://code.google.com/p/open-nars/wiki/InputOutputFormat
+ * https://code.google.com/p/open-nars/wiki/InputOutputFormat
  */
 public class NarseseParser extends BaseParser<Object> {
 
     private final int level;
+
+    public NarseseParser() {
+        this(8);
+    }
 
     public NarseseParser(int level) {
         this.level = level;
@@ -68,9 +74,7 @@ public class NarseseParser extends BaseParser<Object> {
     Rule SentenceTypeChar() {
         return anyOf(".?!");
     }
-    
 
-    
     Rule Copula() {
             /*<copula> ::= "-->"                              // inheritance
                         | "<->"                              // similarity
@@ -85,7 +89,17 @@ public class NarseseParser extends BaseParser<Object> {
                         | "</>"                              // (predictive equivalence)
                         | "<|>"                              // (concurrent equivalence)*/
         //TODO use separate rules for each so a parse can identify them
-        return sequence("<", WhiteSpace(), Term(), WhiteSpace(), CopulaOperator(), WhiteSpace(), Term(), WhiteSpace(),">");        
+        return sequence(
+                "<", WhiteSpace(), Term(), WhiteSpace(), CopulaOperator(), WhiteSpace(), Term(), WhiteSpace(),">",
+
+                swap(),
+                push(
+                        Memory.term(
+                                NativeOperator.INHERITANCE, //TODO decode operator type
+                                new Term[] { (Term)pop(), (Term)pop() }
+                        )
+                )
+        );
     }
     
     Rule CopulaOperator() {
@@ -118,18 +132,30 @@ public class NarseseParser extends BaseParser<Object> {
                         | <statement>                        // a statement can serve as a term
         */
 
-        return firstOf(Literal(), QuotedLiteral(), Variable(), CompoundTerm(),
-                Copula(),
-                nTimes(nal(8) ? 1 : 0, OperationExecution()));
+        return sequence(
+                firstOf(
+                        QuotedLiteral(),
+                        Literal(),
+                        Variable(),
+                        CompoundTerm(),
+                        Copula(),
+                        nTimes(nal(8) ? 1 : 0, OperationExecution()
+                        )
+                ),
+                push(Term.get(pop()))
+        );
     }
 
        
     Rule Literal() {
-        return oneOrMore(noneOf(" ,.!?<>-=|&()<>[]{}#$\""));
+        return sequence(
+                oneOrMore(noneOf(" ,.!?<>-=|&()<>[]{}#$\"")),
+                push(match())
+        );
     }
     
     Rule QuotedLiteral() {
-        return sequence("\"", AnyString(), "\"");
+        return sequence("\"", AnyString(), "\"", push(Texts.escapeLiteral(match())));
     }
     
     Rule AnyString() {
@@ -196,13 +222,23 @@ public class NarseseParser extends BaseParser<Object> {
     
     public static void main(String[] args) {
         NarseseParser p = NarseseParser.newParser();
-        
+
         Scanner sc = new Scanner(System.in);
+
+        String input = "<a --> b>.";
+
         while (true) {
-            String input = sc.nextLine();
+            if (input == null)
+                input = sc.nextLine();
+
             RecoveringParseRunner rpr = new RecoveringParseRunner(p.Input());
+            //TracingParseRunner rpr = new TracingParseRunner(p.Input());
+
             ParsingResult r = rpr.run(input);
+
             System.out.println("valid? " + (r.matched && (r.parseErrors.isEmpty())) );
+            r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + " " + x));
+
             for (Object e : r.parseErrors) {
                 if (e instanceof InvalidInputError) {
                     InvalidInputError iie = (InvalidInputError) e;
@@ -219,7 +255,10 @@ public class NarseseParser extends BaseParser<Object> {
                 }
                 
             }
+
             System.out.println(printNodeTree(r));
+
+            input = null;
         }
         
     }
