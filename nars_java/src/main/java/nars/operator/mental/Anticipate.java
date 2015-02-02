@@ -104,6 +104,10 @@ public class Anticipate extends ReactiveOperator implements Mental {
             return;
         }
 
+        if(t.sentence.truth.getExpectation()<Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+            return;
+        }
+
         long now = memory.time();
 
         if (memory.time() > occurenceTime) //its about the past..
