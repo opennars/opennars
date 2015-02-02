@@ -478,7 +478,7 @@ public class TemporalRules {
         if (judgmentTask) {
             task.incPriority(quality);
         } else {
-            float taskPriority = task.getPriority();
+            float taskPriority = task.getPriority(); //+goal satisfication is a matter of degree - https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M
             budget = new BudgetValue(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));
             task.setPriority(Math.min(1 - quality, taskPriority));
         }
