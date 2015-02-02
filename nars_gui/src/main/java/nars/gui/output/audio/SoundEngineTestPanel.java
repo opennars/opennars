@@ -2,6 +2,7 @@ package nars.gui.output.audio;
 
 import automenta.vivisect.Audio;
 import automenta.vivisect.audio.SoundListener;
+import automenta.vivisect.audio.brainwave.BinauralTones;
 import automenta.vivisect.audio.granular.Granulize;
 import automenta.vivisect.audio.sample.SampleLoader;
 import nars.core.NAR;
@@ -31,6 +32,7 @@ public class SoundEngineTestPanel extends JPanel {
         sound = s;
     }
 
+
     public SoundEngineTestPanel(NAR n) {
         super(new BorderLayout());
         add(new MixerPanel(sound), BorderLayout.CENTER);
@@ -42,9 +44,16 @@ public class SoundEngineTestPanel extends JPanel {
         }
     }
 
+
     protected void initAmbient() throws IOException, UnsupportedAudioFileException {
-        Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.01f, 0.2f);
-        ts.setStretchFactor(1f);
-        sound.play(ts, SoundListener.zero, 1, 1, 1);
+
+        //sound.play(new BinauralTones(12f, 200f), SoundListener.zero, 0.5f, 1);
+
+        //sound.play(SampleLoader.load("/tmp/p.wav"), SoundListener.zero, 1f, 1f);
+
+        Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.1f, 0.1f);
+        ts.setStretchFactor(4f);
+        sound.play(ts, SoundListener.zero, 1f, 1);
+
     }
 }

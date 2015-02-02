@@ -4,7 +4,7 @@
  */
 package nars.util.bag.experimental;
 
-import com.google.common.util.concurrent.AtomicDouble;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.logic.entity.Item;
 import nars.util.bag.Distributor;
 

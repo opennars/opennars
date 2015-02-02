@@ -20,7 +20,7 @@ public class Audio implements Runnable
     private SourceDataLine sdl;
     private int rate = 44100;
     private ListenerMixer listenerMixer;
-    private int bufferSize = rate / 100; // 10 ms
+    private int bufferSize = rate / 400; // 40 ms
     private ByteBuffer soundBuffer = ByteBuffer.allocate(bufferSize * 4);
     private float[] leftBuf, rightBuf;
     //private float amplitude = 1;
@@ -43,8 +43,7 @@ public class Audio implements Runnable
         sdl.start();
 
 
-        try
-        {
+        try {
             FloatControl volumeControl = (FloatControl) sdl.getControl(FloatControl.Type.MASTER_GAIN);
             volumeControl.setValue(volumeControl.getMaximum());
         }
@@ -76,17 +75,16 @@ public class Audio implements Runnable
     }
 
 
-    public void play(SonarSample sample, SoundSource soundSource, float volume, float priority, float rate) {
-        play(new SamplePlayer(sample, rate), soundSource, volume, priority, rate);
+    public void play(SonarSample sample, SoundSource soundSource, float volume, float priority) {
+        play(new SamplePlayer(sample, rate), soundSource, volume, priority);
     }
 
-    public void play(SoundProducer p, SoundSource soundSource, float volume, float priority, float rate)
+    public void play(SoundProducer p, SoundSource soundSource, float volume, float priority)
     {
         if (!alive)
             return;
         
-        synchronized (listenerMixer)
-        {
+        synchronized (listenerMixer) {
             listenerMixer.addSoundProducer(p, soundSource, volume, priority);
         }
     }
@@ -95,8 +93,7 @@ public class Audio implements Runnable
 
     public void clientTick(float alpha)
     {
-        synchronized (listenerMixer)
-        {
+        synchronized (listenerMixer) {
             listenerMixer.update(alpha);
         }
     }
@@ -131,7 +128,7 @@ public class Audio implements Runnable
             soundBuffer.putShort((short)r);
 
             //doesnt work right:
-            //soundBuffer.putInt( ((short)l) | ( ((short)r) << 16));
+            //soundBuffer.putInt( ((short)r) | ( ((short)l) << 16));
 
 
         }

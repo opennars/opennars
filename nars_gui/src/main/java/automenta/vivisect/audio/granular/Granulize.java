@@ -2,19 +2,21 @@ package automenta.vivisect.audio.granular;
 
 import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.sample.SonarSample;
-import com.google.common.util.concurrent.AtomicDouble;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 public class Granulize implements SoundProducer {
 
 	private final float[] sourceBuffer;
-	private long now = 0L;
+	private float now = 0L;
 	public final AtomicDouble stretchFactor = new AtomicDouble(1.0);
+    public final AtomicDouble pitchFactor = new AtomicDouble(1.0);
 	private long[] currentGrain = null;
 	private long[] fadingGrain = null;
 	private final Granulator granulator;
 	private boolean isPlaying = false;
-	private long playTime = 0L;
+	private float playTime = 0L;
 	private int playOffset;
+
 
 
     public Granulize(SonarSample s, float grainSizeSecs, float windowSizeFactor) {
@@ -27,15 +29,17 @@ public class Granulize implements SoundProducer {
 		this.granulator = new Granulator(buffer, sampleRate, grainSizeSecs, windowSizeFactor);
 	}
 
-	public void process(float[] output) {
+	public void process(float[] output, int readRate) {
 		if (currentGrain == null && isPlaying) {
 			currentGrain = createGrain(currentGrain);
 		}
-		for (int i = 0; i < output.length-1; ) {
+        final float dNow = ((granulator.sampleRate / (float)readRate)) * pitchFactor.floatValue();
+		for (int i = 0; i < output.length; i++ ) {
             float nextSample = 0;
+            long lnow = (long)now;
 			if (currentGrain != null) {
-				nextSample = granulator.getSample(currentGrain, sourceBuffer, now);
-				if (granulator.isFading(currentGrain, now)) {
+				nextSample = granulator.getSample(currentGrain, sourceBuffer, lnow);
+				if (granulator.isFading(currentGrain, lnow)) {
 					fadingGrain = currentGrain;
                     if (isPlaying)
                         currentGrain = createGrain(currentGrain);
@@ -44,15 +48,13 @@ public class Granulize implements SoundProducer {
 				}
 			}
 			if (fadingGrain != null) {
-                nextSample += granulator.getSample(fadingGrain, sourceBuffer, now);
-				if (!granulator.hasMoreSamples(fadingGrain, now)) {
+                nextSample += granulator.getSample(fadingGrain, sourceBuffer, lnow);
+				if (!granulator.hasMoreSamples(fadingGrain, lnow)) {
 					fadingGrain = null;
 				}
 			}
-			now++;
-            //duplicate for stereo
-            output[i++] = nextSample;
-            output[i++] = nextSample;
+			now += dNow;
+            output[i] = nextSample;
 		}
 	}
 
@@ -68,7 +70,7 @@ public class Granulize implements SoundProducer {
 
 	private long[] createGrain(long[] targetGrain) {
 		//System.out.println("create grain: " + calculateCurrentBufferIndex() + " " + now);
-        targetGrain = granulator.createGrain(targetGrain, calculateCurrentBufferIndex(), now);
+        targetGrain = granulator.createGrain(targetGrain, calculateCurrentBufferIndex(), (long)now);
         return targetGrain;
 	}
 
@@ -87,13 +89,13 @@ public class Granulize implements SoundProducer {
 
     @Override
     public float read(float[] buf, int readRate) {
-        process(buf);
+        process(buf, readRate);
         return 0f;
     }
 
     @Override
     public void skip(int samplesToSkip, int readRate) {
-
+        //TODO
     }
 
     @Override

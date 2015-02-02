@@ -19,6 +19,7 @@ public class SampleLoader
         // Hack to prevent "mark/reset not supported" on some systems 
         byte[] d = rip(isis);
         AudioInputStream ais = AudioSystem.getAudioInputStream(new ByteArrayInputStream(d));
+        System.out.println(ais.getFormat());
         return buildSample(rip(ais), ais.getFormat());
     }
 

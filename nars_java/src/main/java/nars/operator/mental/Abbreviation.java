@@ -1,7 +1,7 @@
 package nars.operator.mental;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AtomicDouble;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.core.AbstractPlugin;
 import nars.core.Events.TaskDerive;
 import nars.core.Memory;

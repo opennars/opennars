@@ -1,6 +1,6 @@
 package nars.util.budget;
 
-import com.google.common.util.concurrent.AtomicDouble;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.core.Parameters;
 import nars.logic.entity.BudgetValue;
 

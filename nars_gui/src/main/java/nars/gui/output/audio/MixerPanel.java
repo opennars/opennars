@@ -2,7 +2,9 @@ package nars.gui.output.audio;
 
 import automenta.vivisect.Audio;
 import automenta.vivisect.Sound;
+import automenta.vivisect.audio.SoundListener;
 import automenta.vivisect.swing.NPanel;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,18 +13,20 @@ import java.awt.*;
 /**
  * Created by me on 2/1/15.
  */
-public class MixerPanel extends NPanel implements Runnable {
+public class MixerPanel extends NPanel implements Runnable, SoundListener {
 
     private final Audio sound;
     private final DefaultTableModel playing;
     private final JTable playingTable;
     boolean running = false;
     final long updatePeriodMS = 512;
+    final AtomicDouble pan = new AtomicDouble(0f);
 
     public MixerPanel(Audio sound) {
         super(new BorderLayout());
 
         this.sound = sound;
+        sound.setListener(this);
 
         this.playing = new DefaultTableModel();
 
@@ -68,4 +72,13 @@ public class MixerPanel extends NPanel implements Runnable {
         }
     }
 
+    @Override
+    public float getX(float alpha) {
+        return pan.floatValue();
+    }
+
+    @Override
+    public float getY(float alpha) {
+        return 0;
+    }
 }

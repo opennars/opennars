@@ -1,6 +1,6 @@
 package nars.core;
 
-import com.google.common.util.concurrent.AtomicDouble;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import com.google.gson.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;

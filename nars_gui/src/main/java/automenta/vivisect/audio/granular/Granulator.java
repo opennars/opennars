@@ -5,7 +5,8 @@ import automenta.vivisect.audio.sample.SonarSample;
 public class Granulator {
 
 	private final float[] sourceBuffer;
-	private int grainSizeSamples;
+    public final float sampleRate;
+    private int grainSizeSamples;
 	private final GrainWindow window;
 
     public Granulator(SonarSample source, float grainSizeSecs, float windowSizeFactor) {
@@ -16,6 +17,7 @@ public class Granulator {
 		this.sourceBuffer = sourceBuffer;
 		this.grainSizeSamples = Math.round(sampleRate * grainSizeSecs);
 		this.window = new HanningWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
+        this.sampleRate = sampleRate;
 	}
 
     public boolean hasMoreSamples(long[] grain, long now) {
