@@ -1,6 +1,7 @@
 package nars.logic.nal5;
 
 import nars.build.Default;
+import nars.build.DefaultBuffered;
 import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.io.TextOutput;
@@ -26,6 +27,7 @@ public class NAL5Test extends AbstractNALTest {
                 { new Default().setInternalExperience(null) },
                 { new Default().level(5) },
                 { new Neuromorphic(4) },
+                { new DefaultBuffered().setInternalExperience(null) }
         });
     }
 

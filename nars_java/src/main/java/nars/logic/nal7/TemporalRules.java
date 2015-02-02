@@ -381,7 +381,12 @@ public class TemporalRules {
                 }
             }
         }
-        int order = order(timeDiff, durationCycles);
+
+        int order = order(timeDiff, durationCycles); // <- already handled by interval
+
+        //This causes several more errors:
+        //int order = ORDER_CONCURRENT; //order(timeDiff, durationCycles);  <- already handled by interval
+
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
         TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);

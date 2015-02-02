@@ -6,6 +6,8 @@ package nars.logic.nal7;
 
 import junit.framework.TestCase;
 import nars.build.Default;
+import nars.build.DefaultBuffered;
+import nars.build.Neuromorphic;
 import nars.core.Build;
 import nars.core.Events.Answer;
 import nars.core.NAR;
@@ -38,7 +40,11 @@ public class VariableTest extends TestCase {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default().setInternalExperience(null)},
-                {new Default()}
+                {new Default()},
+                {new DefaultBuffered()},
+                {new DefaultBuffered().setInternalExperience(null)},
+                {new Neuromorphic(1)},
+                {new Neuromorphic(4)}
         });
     }
     
@@ -96,7 +102,7 @@ public class VariableTest extends TestCase {
         //158
         //1738
         //n.run(200); //sufficient for case without internal experience
-        n.run(1500);
+        n.run(1200);
           
         assertTrue(solutionFound.get());
         

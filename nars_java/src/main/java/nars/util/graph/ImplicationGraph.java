@@ -247,8 +247,12 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         }
         
         final Implication st = (Implication)ct;
-                
-        if ((st.getTemporalOrder() == TemporalRules.ORDER_NONE) || (st.operator() == NativeOperator.IMPLICATION_BEFORE) || (!s.isEternal()))
+
+        //if(t.sentence.term instanceof Implication && t.sentence.term.getTemporalOrder()!=TemporalRules.ORDER_INVALID && t.sentence.term.getTemporalOrder()!=TemporalRules.ORDER_NONE && t.sentence.term.getTemporalOrder()!=TemporalRules.ORDER_BACKWARD) {
+        if ((st.getTemporalOrder() == TemporalRules.ORDER_INVALID)  ||
+                (st.getTemporalOrder() == TemporalRules.ORDER_NONE) ||
+                (st.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) ||
+                (st.operator() == NativeOperator.IMPLICATION_BEFORE) || (!s.isEternal()))
             return false;
                                 
         final Term subject, predicate;

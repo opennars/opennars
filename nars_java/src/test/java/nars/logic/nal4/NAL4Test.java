@@ -1,5 +1,6 @@
 package nars.logic.nal4;
 
+import nars.build.DefaultBuffered;
 import nars.core.Build;
 import nars.build.Default;
 import nars.logic.AbstractNALTest;
@@ -20,6 +21,7 @@ public class NAL4Test extends AbstractNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default()},
                 {new Default().setInternalExperience(null) },
+                {new DefaultBuffered().setInternalExperience(null) },
                 {new Default().level(6)}
         });
     }

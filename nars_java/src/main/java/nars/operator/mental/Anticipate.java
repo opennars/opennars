@@ -154,8 +154,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
                         expiredTruth,
                         new Stamp(nal.memory).
                                 setOccurrenceTime(
-                                        expectedOccurenceTime -
-                                                nal.memory.param.duration.get())),
+                                        expectedOccurenceTime /*- nal.memory.param.duration.get()*/ )),
                 //expiredBudget
                 tt.getBudget().clone()
         );
