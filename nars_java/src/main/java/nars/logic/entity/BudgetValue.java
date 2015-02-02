@@ -56,10 +56,27 @@ public class BudgetValue implements Cloneable {
 
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
     long lastForgetTime = -1;
-    
-    
+
+    public BudgetValue(char punctuation, TruthValue qualityFromTruth) {
+        this(punctuation == Symbols.JUDGMENT ? Parameters.DEFAULT_JUDGMENT_PRIORITY :
+                        (punctuation == Symbols.QUESTION ?  Parameters.DEFAULT_QUESTION_PRIORITY :
+                                (punctuation == Symbols.GOAL ? Parameters.DEFAULT_GOAL_PRIORITY :
+                                        Parameters.DEFAULT_QUEST_PRIORITY )),
+                punctuation, qualityFromTruth);
+    }
+
+    public BudgetValue(final float p, char punctuation, TruthValue qualityFromTruth) {
+        this(p,
+                punctuation == Symbols.JUDGMENT ? Parameters.DEFAULT_JUDGMENT_DURABILITY :
+                        (punctuation == Symbols.QUESTION ?  Parameters.DEFAULT_QUESTION_DURABILITY :
+                                (punctuation == Symbols.GOAL ? Parameters.DEFAULT_GOAL_DURABILITY :
+                                        Parameters.DEFAULT_QUEST_DURABILITY )),
+                qualityFromTruth);
+    }
+
     public BudgetValue(final float p, final float d, final TruthValue qualityFromTruth) {
-        this(p, d, BudgetFunctions.truthToQuality(qualityFromTruth));
+        this(p, d, qualityFromTruth !=
+                null ? BudgetFunctions.truthToQuality(qualityFromTruth) : 1f);
     }
 
 

@@ -236,7 +236,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      */
     @Override
     public int hashCode() {
-        if (this.hash == 0) {
+        if ((this.hash == 0) && (stamp!=null)) {
             if (isUniqueByOcurrenceTime())
                 this.hash = Objects.hash(term, punctuation, truth, stamp.getOccurrenceTime());
             else

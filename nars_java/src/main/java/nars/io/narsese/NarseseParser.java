@@ -1,14 +1,16 @@
 package nars.io.narsese;
 
 import nars.core.Memory;
+import nars.io.Symbols;
 import nars.io.Texts;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import org.parboiled.*;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.parserunners.TracingParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
+import org.parboiled.support.Var;
 
 import java.util.Scanner;
 
@@ -40,17 +42,51 @@ public class NarseseParser extends BaseParser<Object> {
     
     public Rule Task() {
         //TODO separate goal into an alternate form "!" because it does not use a tense
-        
+        Var<float[]> budget = new Var();
+        Var<Character> punc = new Var();
+        Var<Term> term = new Var();
+        Var<TruthValue> truth = new Var();
+
         return sequence(
                 WhiteSpace(),
-                optional(Budget()),
+
+                optional(sequence(Budget(), budget.set((float[]) pop()))),
+
                 WhiteSpace(),
+
                 Term(),
+                term.set( (Term)pop() ),
+
                 SentenceTypeChar(),
+                punc.set( matchedChar() ),
+
                 WhiteSpace(),
+
                 //optional(Tense())
-                optional(Truth()));
+
+                optional(sequence(Truth(), truth.set((TruthValue) pop()))),
+
+                push(getTask(budget, term, punc, truth))
+        );
     }
+
+    static Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<TruthValue> truth) {
+
+        char p = punc.get();
+
+        TruthValue t = truth.get();
+        if ((t == null) && ((p == Symbols.JUDGMENT) || (p == Symbols.GOAL)))
+            t = new TruthValue(p);
+
+        float[] b = budget.get();
+        BudgetValue B = (b == null) ? new BudgetValue(p, t) :
+                b.length == 1 ? new BudgetValue(b[0], p, t) : new BudgetValue(b[0], b[1], t);
+
+        Term content = term.get();
+
+        return new Task(new Sentence(content, p, t, null), B);
+    }
+
 
     Rule OperationExecution() {
         //TODO
@@ -58,12 +94,42 @@ public class NarseseParser extends BaseParser<Object> {
         return string("(^)");
     }
 
-    Rule Budget() {
-        return sequence("%", ShortFloat(), optional(sequence(";", ShortFloat(), optional(sequence(";", ShortFloat())))));
+//    Rule Budget() {
+//        return sequence('$',
+//                ShortFloat(),
+//                optional(sequence(";", ShortFloat(),
+//                        optional(sequence(";", ShortFloat())))),
+//                optional('$')
+//        );
+//    }
+
+    Rule Budget() { return firstOf(BudgetPriorityDurability(), BudgetPriority()); }
+
+    Rule BudgetPriority() {
+        return sequence('$',
+                ShortFloat(),
+                push( new float[] { (float)pop() } ), //intermediate representation
+                optional('$')
+        );
+    }
+
+    Rule BudgetPriorityDurability() {
+        return sequence('$',
+                ShortFloat(), ';', ShortFloat(),
+                swap(),
+                push(new float[]{(float) pop(), (float)pop() } ), //intermediate representation
+                optional('$')
+        );
     }
 
     Rule Truth() {
-        return sequence("%", ShortFloat(), optional(sequence(";", ShortFloat())));
+
+        return sequence(
+                '%', ShortFloat(), ';', ShortFloat(), //optional(sequence(";", ShortFloat())),
+                swap(),
+                push(new TruthValue( (float)pop(), (float)pop() )),
+                optional('%') //tailing '%' is optional
+        );
     }
     
     Rule ShortFloat() {
@@ -88,19 +154,20 @@ public class NarseseParser extends BaseParser<Object> {
                         | "<=>"                              // equivalence
                         | "</>"                              // (predictive equivalence)
                         | "<|>"                              // (concurrent equivalence)*/
+
+        /**
+         *   :- (apply, prolog implication)
+         *   -: (reverse apply)
+         */
         //TODO use separate rules for each so a parse can identify them
         return sequence(
                 "<", WhiteSpace(), Term(), WhiteSpace(), CopulaOperator(), WhiteSpace(), Term(), WhiteSpace(),">",
 
-                swap(),
-                push(
-                        Memory.term(
-                                NativeOperator.INHERITANCE, //TODO decode operator type
-                                new Term[] { (Term)pop(), (Term)pop() }
-                        )
-                )
+                push( getTerm( (Term)pop(), (NativeOperator)pop(), (Term)pop() ) )
         );
     }
+
+
     
     Rule CopulaOperator() {
         NativeOperator[] ops = getCopulas();
@@ -108,7 +175,10 @@ public class NarseseParser extends BaseParser<Object> {
         for (int i = 0; i < ops.length; i++) {
             copulas[i] = string(ops[i].symbol);
         }
-        return firstOf(copulas);
+        return sequence(
+                firstOf(copulas),
+                push(Symbols.getOperator(match()))
+        );
     }
 
     public NativeOperator[] getCopulas() {
@@ -116,14 +186,28 @@ public class NarseseParser extends BaseParser<Object> {
             case 1: return new NativeOperator[] {
                     INHERITANCE
             };
-            case 2:
-            default: return new NativeOperator[] {
+            case 2: return new NativeOperator[] {
                     INHERITANCE,
                     SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY
             };
+
+            //TODO case 5..6.. without temporal equiv &  impl..
+
+            default: return new NativeOperator[] {
+                    INHERITANCE,
+                    SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY,
+                    IMPLICATION,
+                    EQUIVALENCE,
+                    IMPLICATION_AFTER, IMPLICATION_BEFORE, IMPLICATION_WHEN,
+                    EQUIVALENCE_AFTER, EQUIVALENCE_WHEN
+            };
         }
     }
-        
+
+    static Term getTerm(Term predicate, NativeOperator op, Term subject) {
+        return Memory.term(op, subject, predicate);
+    }
+
     Rule Term() {
         /*
                  <term> ::= <word>                             // an atomic constant term
@@ -204,7 +288,11 @@ public class NarseseParser extends BaseParser<Object> {
         return sequence(
                 optional('-'),
                 oneOrMore(Digit()),
-                optional('.', oneOrMore(Digit()))
+                push( match() ),
+                optional('.', oneOrMore(Digit())),
+                push(matchOrDefault(".0")),
+                swap(),
+                push( Float.parseFloat( (String)pop() + (String)pop()))
         );
     }
 
@@ -225,7 +313,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         Scanner sc = new Scanner(System.in);
 
-        String input = "<a --> b>.";
+        String input = "<a ==> b>. %0.00;0.9%";
 
         while (true) {
             if (input == null)

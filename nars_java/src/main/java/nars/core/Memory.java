@@ -423,7 +423,7 @@ public class Memory implements Serializable {
      * @param op Term operator
      * @return A term or null
      */
-    public static Term term(final NativeOperator op, final Term[] a) {
+    public static Term term(final NativeOperator op, final Term... a) {
 
 
         switch (op) {
