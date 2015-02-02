@@ -241,9 +241,8 @@ public class Anticipate extends Operator implements EventObserver, Mental {
         BudgetValue budget = expiredBudget;
 
         Stamp stamp = new Stamp(nal.memory);
-        stamp.setOccurrenceTime(expectedOccurenceTime-nal.memory.param.duration.get()); //it did not happen, so the time of when it did not 
+        stamp.setOccurrenceTime(expectedOccurenceTime); //it did not happen, so the time of when it did not 
         //happen is exactly the time it was expected
-        //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
         
         Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
         Task task = new Task(S, budget);
