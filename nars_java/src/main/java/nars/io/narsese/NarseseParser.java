@@ -4,15 +4,20 @@ import nars.core.Memory;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.logic.entity.*;
+import nars.logic.nal3.SetExt;
+import nars.logic.nal3.SetInt;
+import nars.logic.nal4.Product;
 import org.parboiled.*;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.RecoveringParseRunner;
-import org.parboiled.parserunners.TracingParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
 import org.parboiled.support.Var;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import static nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.*;
@@ -25,19 +30,20 @@ import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 public class NarseseParser extends BaseParser<Object> {
 
     private final int level;
+    RecoveringParseRunner rpr = new RecoveringParseRunner(Input());
 
-    public NarseseParser() {
+    protected NarseseParser() {
         this(8);
     }
 
-    public NarseseParser(int level) {
+    protected NarseseParser(int level) {
         this.level = level;
     }
 
     public boolean nal(int n) { return n >= level; }
 
     public Rule Input() {
-        return sequence(zeroOrMore(Task()), WhiteSpace(), EOI);
+        return sequence(s(), zeroOrMore(sequence(Task(), s())), EOI);
     }
     
     public Rule Task() {
@@ -48,11 +54,11 @@ public class NarseseParser extends BaseParser<Object> {
         Var<TruthValue> truth = new Var();
 
         return sequence(
-                WhiteSpace(),
+                s(),
 
                 optional(sequence(Budget(), budget.set((float[]) pop()))),
 
-                WhiteSpace(),
+                s(),
 
                 Term(),
                 term.set( (Term)pop() ),
@@ -60,13 +66,14 @@ public class NarseseParser extends BaseParser<Object> {
                 SentenceTypeChar(),
                 punc.set( matchedChar() ),
 
-                WhiteSpace(),
+                s(),
 
                 //optional(Tense())
 
                 optional(sequence(Truth(), truth.set((TruthValue) pop()))),
 
                 push(getTask(budget, term, punc, truth))
+
         );
     }
 
@@ -79,6 +86,8 @@ public class NarseseParser extends BaseParser<Object> {
             t = new TruthValue(p);
 
         float[] b = budget.get();
+        if (b!=null && ((b.length == 0) || (Float.isNaN(b[0]))))
+            b = null;
         BudgetValue B = (b == null) ? new BudgetValue(p, t) :
                 b.length == 1 ? new BudgetValue(b[0], p, t) : new BudgetValue(b[0], b[1], t);
 
@@ -94,41 +103,31 @@ public class NarseseParser extends BaseParser<Object> {
         return string("(^)");
     }
 
-//    Rule Budget() {
-//        return sequence('$',
-//                ShortFloat(),
-//                optional(sequence(";", ShortFloat(),
-//                        optional(sequence(";", ShortFloat())))),
-//                optional('$')
-//        );
-//    }
 
     Rule Budget() { return firstOf(BudgetPriorityDurability(), BudgetPriority()); }
 
     Rule BudgetPriority() {
         return sequence('$',
                 ShortFloat(),
-                push( new float[] { (float)pop() } ), //intermediate representation
-                optional('$')
+                optional('$'),
+                push( new float[] { (float)pop() } ) //intermediate representation
         );
     }
 
     Rule BudgetPriorityDurability() {
-        return sequence('$',
-                ShortFloat(), ';', ShortFloat(),
-                swap(),
-                push(new float[]{(float) pop(), (float)pop() } ), //intermediate representation
-                optional('$')
+        return sequence("$",
+                ShortFloat(), ";", ShortFloat(),
+                optional("$"),
+                swap() && push(new float[]{(float) pop(), (float)pop() } ) //intermediate representation
         );
     }
 
     Rule Truth() {
 
         return sequence(
-                '%', ShortFloat(), ';', ShortFloat(), //optional(sequence(";", ShortFloat())),
-                swap(),
-                push(new TruthValue( (float)pop(), (float)pop() )),
-                optional('%') //tailing '%' is optional
+                '%', ShortFloat(), ';', ShortFloat(),
+                optional('%'), //tailing '%' is optional
+                swap() && push(new TruthValue( (float)pop(), (float)pop() ))
         );
     }
     
@@ -161,7 +160,7 @@ public class NarseseParser extends BaseParser<Object> {
          */
         //TODO use separate rules for each so a parse can identify them
         return sequence(
-                "<", WhiteSpace(), Term(), WhiteSpace(), CopulaOperator(), WhiteSpace(), Term(), WhiteSpace(),">",
+                "<", s(), Term(), s(), CopulaOperator(), s(), Term(), s(),">",
 
                 push( getTerm( (Term)pop(), (NativeOperator)pop(), (Term)pop() ) )
         );
@@ -279,41 +278,191 @@ public class NarseseParser extends BaseParser<Object> {
                         | "(~," <term> "," <term> ")"        // intensional difference
         
         */
-        return sequence("{", Term(), zeroOrMore(sequence(",",Term())),"}");
-        //TODO add the remaining ones
-    }
-    
-
-    Rule Number() {
-        return sequence(
-                optional('-'),
-                oneOrMore(Digit()),
-                push( match() ),
-                optional('.', oneOrMore(Digit())),
-                push(matchOrDefault(".0")),
-                swap(),
-                push( Float.parseFloat( (String)pop() + (String)pop()))
+        //return sequence("{", Term(), zeroOrMore(sequence(",",Term())),"}");
+        return firstOf(
+                VectorTerm(NativeOperator.SET_EXT_OPENER, NativeOperator.SET_EXT_CLOSER),
+                VectorTerm(NativeOperator.SET_INT_OPENER, NativeOperator.SET_INT_CLOSER),
+                VectorTerm(NativeOperator.COMPOUND_TERM_CLOSER, NativeOperator.COMPOUND_TERM_CLOSER), //NAL4
+                Infix2Term(),
+                MultiArgTerm()
         );
     }
 
-    Rule Digit() {
-        return charRange('0', '9');
+    Rule CompoundOperator() {
+        return sequence(
+                firstOf(
+                        NativeOperator.INTERSECTION_EXT.symbol,
+                        NativeOperator.INTERSECTION_INT.symbol,
+                        NativeOperator.PRODUCT.symbol,
+                        NativeOperator.IMAGE_EXT.symbol,
+                        NativeOperator.IMAGE_INT.symbol,
+                        NativeOperator.DISJUNCTION.symbol,
+                        NativeOperator.CONJUNCTION.symbol,
+                        NativeOperator.SEQUENCE.symbol,
+                        NativeOperator.PARALLEL.symbol,
+                        NativeOperator.NEGATION.symbol,
+                        NativeOperator.DIFFERENCE_EXT.symbol,
+                        NativeOperator.DIFFERENCE_INT.symbol
+                ),
+                push(Symbols.getOperator(match()))
+        );
+    }
+    /** those compound operators which can take 2 arguments */
+    Rule CompoundOperator2() {
+        return sequence(
+                firstOf(
+                        NativeOperator.INTERSECTION_EXT.symbol,
+                        NativeOperator.INTERSECTION_INT.symbol,
+                        NativeOperator.PRODUCT.symbol,
+                        NativeOperator.IMAGE_EXT.symbol,
+                        NativeOperator.IMAGE_INT.symbol,
+                        NativeOperator.DISJUNCTION.symbol,
+                        NativeOperator.CONJUNCTION.symbol,
+                        NativeOperator.SEQUENCE.symbol,
+                        NativeOperator.PARALLEL.symbol,
+                        NativeOperator.DIFFERENCE_EXT.symbol,
+                        NativeOperator.DIFFERENCE_INT.symbol
+                ),
+                push(Symbols.getOperator(match()))
+        );
     }
 
-    Rule WhiteSpace() {
+    /** a list of terms enclosed by an opener/closer pair, which may compose a set or product */
+    Rule VectorTerm(NativeOperator opener, NativeOperator closer) {
+        return sequence(
+            opener.ch, s(),
+            push(opener),
+            Term(), zeroOrMore(sequence(Symbols.ARGUMENT_SEPARATOR, s(), Term())),
+            s(), closer.ch,
+            push( nextTermVector() )
+        );
+    }
+
+    /** list of terms prefixed by a particular compound term operator */
+    Rule MultiArgTerm() {
+        return sequence(
+                NativeOperator.COMPOUND_TERM_OPENER.ch,
+
+                s(),
+
+                //special handling to allow (-- x) , without the comma
+                //TODO move the (-- x) case to a separate rule to prevent suggesting invalid completions like (-- x y)
+                firstOf(
+                    sequence(CompoundOperator(), s(), Symbols.ARGUMENT_SEPARATOR),
+                    sequence( NativeOperator.NEGATION.symbol, push(NativeOperator.NEGATION))
+                ),
+
+                s(),
+
+                Term(), zeroOrMore(sequence(Symbols.ARGUMENT_SEPARATOR,Term())),
+
+                s(),
+
+                NativeOperator.COMPOUND_TERM_CLOSER.ch,
+                push( nextTermVector() )
+        );
+    }
+
+    /** two terms separated by a compound term operator which supports exactly 2 arguments */
+    Rule Infix2Term() {
+        return sequence(
+                NativeOperator.COMPOUND_TERM_OPENER.ch,
+                s(),
+                Term(),
+                s(),
+                CompoundOperator2(),
+                s(),
+                Term(),
+                s(),
+                NativeOperator.COMPOUND_TERM_CLOSER.ch,
+                swap(2),
+                push( nextTermVector() )
+        );
+    }
+
+    List<Term> vectorterms = new ArrayList();
+
+    Term nextTermVector() {
+        Object nextPop;
+        vectorterms.clear();
+        while ( (nextPop = pop()) instanceof Term ) {
+            Term t = (Term)nextPop;
+            vectorterms.add(t);
+        }
+        NativeOperator n = (NativeOperator)nextPop;
+        switch (n) {
+            case COMPOUND_TERM_OPENER:
+                return new Product(vectorterms); //product, without leading '*'
+            case SET_EXT_OPENER:
+                return SetExt.make(vectorterms);
+            case SET_INT_OPENER:
+                return SetInt.make(vectorterms);
+            default:
+                throw new RuntimeException("Invalid operator for nextTermVector: " + n);
+        }
+    }
+
+    Rule Number() {
+        return sequence(
+            sequence(
+                optional('-'),
+                oneOrMore(digit()),
+                optional('.', oneOrMore(digit()))
+            ),
+            push(Float.parseFloat(matchOrDefault("NaN")))
+        );
+    }
+
+    /** whitespace, optional */
+    Rule s() {
         return zeroOrMore(anyOf(" \t\f\n"));
     }
 
     public static NarseseParser newParser() {
         return Parboiled.createParser(NarseseParser.class);
     }
-    
+
+
+    /** parse a series of tasks */
+    public void parse(String input, Consumer<Task> c) {
+        ParsingResult r = rpr.run(input);
+        //r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + " " + x));
+        r.getValueStack().iterator().forEachRemaining(x -> {
+           if (x instanceof Task)
+               c.accept((Task)x);
+            else {
+               throw new RuntimeException("Unknown parse result: " + x + " (" + x.getClass() + ")");
+           }
+        });
+    }
+
+    /** parse one task */
+    public Task parseTask(String input) {
+        ParsingResult r = rpr.run(input);
+        //r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + " " + x));
+        Var<Task> theTask = new Var();
+        r.getValueStack().iterator().forEachRemaining(x -> {
+            if (x instanceof Task) {
+                if (theTask.get() == null)
+                    theTask.set((Task)x);
+                else {
+                    throw new RuntimeException(input + " contained more than 1 Task: " + x + " (" + x.getClass() + ")");
+                }
+            }
+            else {
+                throw new RuntimeException(input + " produced unknown parse result: " + x + " (" + x.getClass() + ")");
+            }
+        });
+        return theTask.get();
+    }
+
+    /** interactive parse test */
     public static void main(String[] args) {
         NarseseParser p = NarseseParser.newParser();
 
         Scanner sc = new Scanner(System.in);
 
-        String input = "<a ==> b>. %0.00;0.9%";
+        String input = null; //"<a ==> b>. %0.00;0.9%";
 
         while (true) {
             if (input == null)
