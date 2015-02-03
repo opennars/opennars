@@ -16,10 +16,11 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
-        if(enabled) {
+        throw new UnsupportedOperationException("Not supported yet.");
+        /*if(enabled) {
             
-        }
-        return true;
+        }*/
+        //return true;
     }
 
     @Override
