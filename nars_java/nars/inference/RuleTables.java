@@ -97,6 +97,47 @@ public class RuleTables {
         
         nal.setCurrentBelief( belief );  // may be null
         
+        
+        for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
+
+            //prevent duplicate inductions
+            Set<Term> alreadyInducted = new HashSet();
+            
+            Concept next=nal.memory.concepts.sampleNextConcept();
+            if (next == null) continue;
+
+            Term t = next.getTerm();
+
+            if (!alreadyInducted.contains(t)) {
+
+                if (!next.beliefs.isEmpty()) {
+
+                    Sentence s=next.beliefs.get(0);
+
+                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
+                    Stamp SVSTamp=nal.getNewStamp();
+                    Task SVTask=nal.getCurrentTask();
+                    Sentence SVbelief=nal.getCurrentBelief();
+                    
+                    if(!taskSentence.isEternal() && !s.isEternal()) {
+                        if(s.after(taskSentence, memory.param.duration.get())) {
+                            nal.memory.proceedWithTemporalInduction(s,task.sentence,task,nal);
+                        } else {
+                            nal.memory.proceedWithTemporalInduction(task.sentence,s,task,nal);
+                        }
+                    }
+                    
+                    //RESTORE OF SPECIAL REASONING CONTEXT
+                    nal.setTheNewStamp(SVSTamp);
+                    nal.setCurrentTask(SVTask);
+                    nal.setCurrentBelief(SVbelief);
+                    
+                    alreadyInducted.add(t);
+
+                }
+            }
+        }
+        
         if (belief != null) {   
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
@@ -110,7 +151,7 @@ public class RuleTables {
                 //prevent duplicate inductions
                 Set<Term> alreadyInducted = new HashSet();
                 
-                for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
+                for(int i=0;i<Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;i++) {
                     
                     Concept next=nal.memory.concepts.sampleNextConcept();
                     if (next == null) continue;
@@ -124,16 +165,6 @@ public class RuleTables {
                         if (!next.beliefs.isEmpty() && (implication.isForward() || implication.isConcurrent())) {
                         
                             Sentence s=next.beliefs.get(0);
-                            
-                            if(Parameters.TEMPORAL_INDUCTION_ALSO_AS_INFERENCE_RULE) {
-                                if(s.getOccurenceTime()!=Stamp.ETERNAL && belief.getOccurenceTime()!=Stamp.ETERNAL) {
-                                    if(s.after(belief, memory.param.duration.get())) {
-                                        TemporalRules.temporalInduction(s, belief, nal);
-                                    } else {
-                                        TemporalRules.temporalInduction(belief,s, nal);
-                                    }
-                                }
-                            }
                             TemporalRules.temporalInductionChain(s, belief, nal);
                             TemporalRules.temporalInductionChain(belief, s, nal);
                             alreadyInducted.add(t);
