@@ -22,7 +22,7 @@ package nars.logic.nal3;
 
 import com.google.common.collect.ObjectArrays;
 import nars.core.Parameters;
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.Terms;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;

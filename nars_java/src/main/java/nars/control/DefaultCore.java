@@ -2,9 +2,9 @@ package nars.control;
 
 import nars.core.Core;
 import nars.core.Parameters;
-import nars.io.Symbols;
 import nars.logic.FireConcept;
 import nars.logic.ImmediateProcess;
+import nars.logic.NALOperator;
 import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
@@ -117,7 +117,7 @@ public class DefaultCore extends UniCore {
         } else {
             //it is a judgment or goal which would create a new concept:
 
-            if (task.getTerm().operator() == Symbols.NALOperator.NEGATION) {
+            if (task.getTerm().operator() == NALOperator.NEGATION) {
                 //unwrap an outer negative negative
                 task = task.clone(
                         new Sentence(

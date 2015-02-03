@@ -20,7 +20,7 @@
  */
 package nars.logic.nal5;
 
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
 import nars.logic.nal7.Interval;

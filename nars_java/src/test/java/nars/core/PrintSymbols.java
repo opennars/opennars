@@ -1,6 +1,6 @@
 package nars.core;
 
-import nars.io.Symbols.NALOperator;/**
+import nars.logic.NALOperator;/**
  *
  * @author me
  */

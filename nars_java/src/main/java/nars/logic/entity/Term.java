@@ -23,7 +23,7 @@ package nars.logic.entity;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.io.Texts;
 import nars.logic.Terms.Termable;
 import nars.logic.nal7.TemporalRules;

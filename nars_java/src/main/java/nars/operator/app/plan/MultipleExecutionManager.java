@@ -6,8 +6,8 @@ package nars.operator.app.plan;
 import nars.core.Events;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.Memory;
-import nars.io.Symbols;
 import nars.io.Texts;
+import nars.logic.NALOperator;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -385,7 +385,7 @@ public class MultipleExecutionManager {
     public static boolean isSequenceConjunction(final Term c) {
         if (c instanceof Conjunction) {
             Conjunction cc = ((Conjunction) c);
-            return (cc.operator() == Symbols.NALOperator.SEQUENCE);
+            return (cc.operator() == NALOperator.SEQUENCE);
             //{
             //return (cc.getTemporalOrder()==TemporalRules.ORDER_FORWARD) || (cc.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT);
             //}

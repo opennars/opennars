@@ -24,7 +24,7 @@ import com.google.common.collect.Iterators;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.Terms;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
@@ -32,8 +32,8 @@ import nars.logic.nal7.TemporalRules;
 
 import java.util.*;
 
-import static nars.io.Symbols.NALOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NALOperator.COMPOUND_TERM_OPENER;
+import static nars.logic.NALOperator.COMPOUND_TERM_CLOSER;
+import static nars.logic.NALOperator.COMPOUND_TERM_OPENER;
 
 
 public abstract class CompoundTerm extends Term implements Iterable<Term> {

@@ -17,7 +17,7 @@
 package nars.core;
 
 import nars.build.Default;
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;

@@ -13,7 +13,7 @@ import nars.util.rope.impl.PrePostCharRope;
 import org.junit.Test;
 
 import static java.lang.String.valueOf;
-import static nars.io.Symbols.NALOperator.*;
+import static nars.logic.NALOperator.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

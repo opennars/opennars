@@ -21,7 +21,7 @@
 package nars.logic.entity;
 
 import nars.core.Parameters;
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Instance;
 import nars.logic.nal2.InstanceProperty;
@@ -34,8 +34,8 @@ import nars.logic.nal7.TemporalRules;
 
 import java.util.Arrays;
 
-import static nars.io.Symbols.NALOperator.STATEMENT_CLOSER;
-import static nars.io.Symbols.NALOperator.STATEMENT_OPENER;
+import static nars.logic.NALOperator.STATEMENT_CLOSER;
+import static nars.logic.NALOperator.STATEMENT_OPENER;
 
 /**
  * A statement is a compound term, consisting of a subject, a predicate, and a

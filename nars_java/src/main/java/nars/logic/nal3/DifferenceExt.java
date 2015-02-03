@@ -20,7 +20,7 @@
  */
 package nars.logic.nal3;
 
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 

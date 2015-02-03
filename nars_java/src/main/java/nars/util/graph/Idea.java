@@ -12,7 +12,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.Reaction;
 import nars.io.Symbols;
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
 import nars.logic.nal4.Image;

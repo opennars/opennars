@@ -21,7 +21,7 @@
 
 package nars.logic.nal4;
 
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 

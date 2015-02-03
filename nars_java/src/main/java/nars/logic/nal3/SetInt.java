@@ -20,13 +20,13 @@
  */
 package nars.logic.nal3;
 
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.entity.Term;
 
 import java.util.Collection;
 
-import static nars.io.Symbols.NALOperator.SET_INT_CLOSER;
-import static nars.io.Symbols.NALOperator.SET_INT_OPENER;
+import static nars.logic.NALOperator.SET_INT_CLOSER;
+import static nars.logic.NALOperator.SET_INT_OPENER;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.

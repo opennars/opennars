@@ -26,7 +26,7 @@ import nars.core.Events.TaskRemove;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.Symbols;
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;

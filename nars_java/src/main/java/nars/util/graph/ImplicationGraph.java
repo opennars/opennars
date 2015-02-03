@@ -2,7 +2,7 @@ package nars.util.graph;
 
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.io.Symbols.NALOperator;
+import nars.logic.NALOperator;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal5.Conjunction;

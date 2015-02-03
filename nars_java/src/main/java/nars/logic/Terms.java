@@ -2,7 +2,6 @@ package nars.logic;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
@@ -530,7 +529,7 @@ public class Terms {
     }
 
     public static boolean levelValid(Term t, int nal) {
-        Symbols.NALOperator o = t.operator();
+        NALOperator o = t.operator();
         int minLevel = o.level;
         if (minLevel > 0) {
             if (nal < minLevel)

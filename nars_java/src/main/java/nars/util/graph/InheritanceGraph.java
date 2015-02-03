@@ -1,7 +1,7 @@
 package nars.util.graph;
 
 import nars.core.NAR;
-import nars.io.Symbols;
+import nars.logic.NALOperator;
 import nars.logic.entity.*;
 
 /** Maintains a directed grpah of Inheritance and Similiarty statements */
@@ -29,13 +29,13 @@ public class InheritanceGraph extends SentenceGraph {
 
     @Override
     public boolean allow(final CompoundTerm st) {
-        Symbols.NALOperator o = st.operator();
+        NALOperator o = st.operator();
         
         
         
-        if ((o == Symbols.NALOperator.INHERITANCE) && includeInheritance)
+        if ((o == NALOperator.INHERITANCE) && includeInheritance)
             return true;
-        if ((o == Symbols.NALOperator.SIMILARITY) && includeSimilarity)
+        if ((o == NALOperator.SIMILARITY) && includeSimilarity)
             return true;
 
         return false;

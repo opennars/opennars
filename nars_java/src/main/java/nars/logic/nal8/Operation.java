@@ -20,9 +20,9 @@
  */
 package nars.logic.nal8;
 
-import com.sun.jndi.toolkit.ctx.Continuation;
 import nars.core.Memory;
 import nars.io.Symbols;
+import nars.logic.NALOperator;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
@@ -30,8 +30,8 @@ import nars.logic.nal4.Product;
 
 import java.util.Arrays;
 
-import static nars.io.Symbols.NALOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NALOperator.COMPOUND_TERM_OPENER;
+import static nars.logic.NALOperator.COMPOUND_TERM_CLOSER;
+import static nars.logic.NALOperator.COMPOUND_TERM_OPENER;
 
 /**
  * An operation is interpreted as an Inheritance relation.
@@ -99,7 +99,7 @@ public class Operation extends Inheritance {
     protected CharSequence makeName() {
         if(getSubject() instanceof Product && getPredicate() instanceof Operator)
             return makeName(getPredicate().name(), ((Product)getSubject()).term);
-        return makeStatementName(getSubject(), Symbols.NALOperator.INHERITANCE, getPredicate());
+        return makeStatementName(getSubject(), NALOperator.INHERITANCE, getPredicate());
     }
 
     
@@ -150,9 +150,9 @@ public class Operation extends Inheritance {
         }
 
         String operator = raw[0].name().toString();
-        if (operator.charAt(0)!=Symbols.NALOperator.OPERATION.ch) {
+        if (operator.charAt(0)!= NALOperator.OPERATION.ch) {
             //prepend '^' if missing
-            operator = Symbols.NALOperator.OPERATION.symbol + operator;
+            operator = NALOperator.OPERATION.symbol + operator;
         }
 
         Term[] args = Arrays.copyOfRange(raw, 1, raw.length);
