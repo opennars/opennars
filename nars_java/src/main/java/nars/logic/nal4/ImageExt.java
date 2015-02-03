@@ -20,7 +20,7 @@
  */
 package nars.logic.nal4;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.Term;
 
 import java.util.Arrays;
@@ -136,7 +136,7 @@ public class ImageExt extends Image {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.IMAGE_EXT;
+    public NALOperator operator() {
+        return NALOperator.IMAGE_EXT;
     }
 }

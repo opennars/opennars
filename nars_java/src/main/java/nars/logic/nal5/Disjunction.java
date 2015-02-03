@@ -21,7 +21,7 @@
 package nars.logic.nal5;
 
 import nars.core.Parameters;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.Terms;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
@@ -130,8 +130,8 @@ public class Disjunction extends Junction {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.DISJUNCTION;
+    public NALOperator operator() {
+        return NALOperator.DISJUNCTION;
     }
 
     /**

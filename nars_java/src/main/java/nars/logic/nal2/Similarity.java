@@ -20,7 +20,7 @@
  */
 package nars.logic.nal2;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
 
@@ -92,8 +92,8 @@ public class Similarity extends Statement {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.SIMILARITY;
+    public NALOperator operator() {
+        return NALOperator.SIMILARITY;
     }
 
     /**

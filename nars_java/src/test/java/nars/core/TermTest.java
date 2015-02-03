@@ -17,7 +17,7 @@
 package nars.core;
 
 import nars.build.Default;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
@@ -255,7 +255,7 @@ public class TermTest {
         }
         
             
-        Statement s = Statement.make(NativeOperator.INHERITANCE, subj, pred, false, 0);
+        Statement s = Statement.make(NALOperator.INHERITANCE, subj, pred, false, 0);
         assertEquals(null, s);
 
         Inheritance i = Inheritance.make(subj, pred);

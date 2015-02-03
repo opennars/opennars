@@ -25,10 +25,9 @@ import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.NAL;
 import nars.logic.Terms.Termable;
-import nars.logic.TruthFunctions;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.util.bag.Bag;
@@ -36,7 +35,6 @@ import nars.util.bag.Bag.MemoryAware;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import static nars.logic.BudgetFunctions.divide;
@@ -1050,7 +1048,7 @@ public class Concept extends Item<Term> implements Termable {
         return sb;
     }
 
-    public NativeOperator operator() {
+    public NALOperator operator() {
         return term.operator();
     }
 

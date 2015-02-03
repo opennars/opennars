@@ -11,7 +11,7 @@ import nars.core.Events.ConceptNew;
 import nars.core.NAR;
 import nars.event.Reaction;
 import nars.build.Default;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.CompoundTerm;
@@ -85,7 +85,7 @@ public class TermVectors implements Reaction {
         };
     }
 
-    public NativeOperator getNativeOperator(NativeOperator t) {
+    public NALOperator getNativeOperator(NALOperator t) {
         if (!graph.containsVertex(t))
             graph.addVertex(t);
         return t;

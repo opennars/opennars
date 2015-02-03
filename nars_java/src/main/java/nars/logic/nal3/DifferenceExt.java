@@ -20,7 +20,7 @@
  */
 package nars.logic.nal3;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
@@ -107,7 +107,7 @@ public class DifferenceExt extends Difference {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.DIFFERENCE_EXT;
+    public NALOperator operator() {
+        return NALOperator.DIFFERENCE_EXT;
     }
 }

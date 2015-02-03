@@ -22,12 +22,13 @@ package nars.logic.nal3;
 
 import com.google.common.collect.ObjectArrays;
 import nars.core.Parameters;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.Terms;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -114,7 +115,10 @@ public class IntersectionInt extends Intersect {
         return make(se.toArray(new Term[se.size()]));
     }
 
-    
+    public static Term make(Collection<Term> unsorted) {
+        return make(unsorted.toArray(new Term[unsorted.size()]));
+    }
+
     public static Term make(Term[] t) {
         t = Term.toSortedSetArray(t);
         switch (t.length) {
@@ -131,8 +135,8 @@ public class IntersectionInt extends Intersect {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.INTERSECTION_INT;
+    public NALOperator operator() {
+        return NALOperator.INTERSECTION_INT;
     }
 
     /**

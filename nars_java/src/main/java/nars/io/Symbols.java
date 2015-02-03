@@ -90,7 +90,7 @@ public class Symbols {
     
 
     
-    public enum NativeOperator {
+    public enum NALOperator {
         
         /* CompountTerm operators, length = 1 */
         INTERSECTION_EXT("&", 3, false, true),
@@ -165,15 +165,15 @@ public class Symbols {
         /** minimum NAL level required to use this operator, or 0 for N/A */
         public final int level;
 
-        private NativeOperator(String string, int minLevel) {
+        private NALOperator(String string, int minLevel) {
             this(string, minLevel, false);
         }
         
-        private NativeOperator(String string, int minLevel, boolean relation) {
+        private NALOperator(String string, int minLevel, boolean relation) {
             this(string, minLevel, relation, !relation);
         }
 
-        private NativeOperator(String string, int minLevel, boolean relation, boolean innate) {
+        private NALOperator(String string, int minLevel, boolean relation, boolean innate) {
             this.symbol = string;
             this.level = minLevel;
             this.relation = relation;
@@ -193,55 +193,55 @@ public class Symbols {
 
 
 
-    private static final Map<String,NativeOperator> _stringToOperator
-            = new HashMap(NativeOperator.values().length * 2);
-    private static final Map<Character,NativeOperator> _charToOperator
-            = new HashMap(NativeOperator.values().length * 2);
+    private static final Map<String,NALOperator> _stringToOperator
+            = new HashMap(NALOperator.values().length * 2);
+    private static final Map<Character,NALOperator> _charToOperator
+            = new HashMap(NALOperator.values().length * 2);
     static {
         //Setup NativeOperator String index hashtable 
-        for (final NativeOperator r : NativeOperator.values())
+        for (final NALOperator r : NALOperator.values())
             _stringToOperator.put(r.toString(), r);
         
         //Setup NativeOperator Character index hashtable 
-        for (final NativeOperator r : NativeOperator.values()) {
+        for (final NALOperator r : NALOperator.values()) {
             char c = r.ch;
             if (c!=0)
                 _charToOperator.put(c, r);
         }
     }
-    protected static final Map<String,NativeOperator> stringToOperator
+    protected static final Map<String,NALOperator> stringToOperator
             = Collections.unmodifiableMap(_stringToOperator);
-    protected static final Map<Character,NativeOperator> charToOperator
+    protected static final Map<Character,NALOperator> charToOperator
             = Collections.unmodifiableMap(_charToOperator);
 
 
 
-    public static NativeOperator getOperator(final char c) {
+    public static NALOperator getOperator(final char c) {
         return charToOperator.get(c);
     }
     
-    public static NativeOperator getOperator(final String s) {
+    public static NALOperator getOperator(final String s) {
         return stringToOperator.get(s);
     }
     
-    public static NativeOperator getRelation(final String s) {
-        NativeOperator o = getOperator(s);
+    public static NALOperator getRelation(final String s) {
+        NALOperator o = getOperator(s);
         if (o == null) return null;
         if (o.relation)
             return o;
         return null;
     }
 
-    public static NativeOperator getOpener(final char c) {
-        NativeOperator o = getOperator(c);
+    public static NALOperator getOpener(final char c) {
+        NALOperator o = getOperator(c);
         if (o == null) return null;
         if (o.opener)
             return o;
         return null;
     }
     
-    public static NativeOperator getCloser(final char c) {
-        NativeOperator o = getOperator(c);
+    public static NALOperator getCloser(final char c) {
+        NALOperator o = getOperator(c);
         if (o == null) return null;
         if (o.closer)
             return o;

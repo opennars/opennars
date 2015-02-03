@@ -20,7 +20,7 @@
  */
 package nars.logic.nal1;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
@@ -103,8 +103,8 @@ public class Inheritance extends Statement {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.INHERITANCE;
+    public NALOperator operator() {
+        return NALOperator.INHERITANCE;
     }
 
 }

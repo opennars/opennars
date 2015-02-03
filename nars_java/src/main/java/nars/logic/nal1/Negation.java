@@ -20,7 +20,7 @@
  */
 package nars.logic.nal1;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
@@ -41,7 +41,7 @@ public class Negation extends CompoundTerm {
 
     @Override
     protected CharSequence makeName() {
-        return makeCompoundName(NativeOperator.NEGATION, negated());
+        return makeCompoundName(NALOperator.NEGATION, negated());
     }
 
 
@@ -104,8 +104,8 @@ public class Negation extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.NEGATION;
+    public NALOperator operator() {
+        return NALOperator.NEGATION;
     }
 
     

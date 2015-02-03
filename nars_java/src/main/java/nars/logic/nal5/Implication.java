@@ -20,7 +20,7 @@
  */
 package nars.logic.nal5;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
 import nars.logic.nal7.Interval;
@@ -82,19 +82,19 @@ public class Implication extends Statement {
     }
 
     public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
-        NativeOperator copula;
+        NALOperator copula;
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                copula = NativeOperator.IMPLICATION_AFTER;
+                copula = NALOperator.IMPLICATION_AFTER;
                 break;
             case TemporalRules.ORDER_CONCURRENT:
-                copula = NativeOperator.IMPLICATION_WHEN;
+                copula = NALOperator.IMPLICATION_WHEN;
                 break;
             case TemporalRules.ORDER_BACKWARD:
-                copula = NativeOperator.IMPLICATION_BEFORE;
+                copula = NALOperator.IMPLICATION_BEFORE;
                 break;
             default:
-                copula = NativeOperator.IMPLICATION;
+                copula = NALOperator.IMPLICATION;
         }                
         return makeStatementName(subject, copula, predicate);
     }
@@ -127,16 +127,16 @@ public class Implication extends Statement {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
+    public NALOperator operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return NativeOperator.IMPLICATION_AFTER;
+                return NALOperator.IMPLICATION_AFTER;
             case TemporalRules.ORDER_CONCURRENT:
-                return NativeOperator.IMPLICATION_WHEN;
+                return NALOperator.IMPLICATION_WHEN;
             case TemporalRules.ORDER_BACKWARD:
-                return NativeOperator.IMPLICATION_BEFORE;
+                return NALOperator.IMPLICATION_BEFORE;
         }
-        return NativeOperator.IMPLICATION;
+        return NALOperator.IMPLICATION;
     }
     
     @Override

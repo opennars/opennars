@@ -29,13 +29,13 @@ public class InheritanceGraph extends SentenceGraph {
 
     @Override
     public boolean allow(final CompoundTerm st) {
-        Symbols.NativeOperator o = st.operator();
+        Symbols.NALOperator o = st.operator();
         
         
         
-        if ((o == Symbols.NativeOperator.INHERITANCE) && includeInheritance)
+        if ((o == Symbols.NALOperator.INHERITANCE) && includeInheritance)
             return true;
-        if ((o == Symbols.NativeOperator.SIMILARITY) && includeSimilarity)
+        if ((o == Symbols.NALOperator.SIMILARITY) && includeSimilarity)
             return true;
 
         return false;

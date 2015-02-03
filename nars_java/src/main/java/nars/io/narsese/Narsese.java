@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import static nars.io.Symbols.*;
-import static nars.io.Symbols.NativeOperator.*;
+import static nars.io.Symbols.NALOperator.*;
 import static nars.logic.BudgetFunctions.truthToQuality;
 import static nars.logic.Variables.containVar;
 import static nars.logic.nal8.Operation.make;
@@ -312,7 +312,7 @@ public class Narsese {
         char first = s.charAt(0);
         char last = s.charAt(index);
 
-        NativeOperator opener = getOpener(first);
+        NALOperator opener = getOpener(first);
         if (opener!=null) {
             switch (opener) {
                 case COMPOUND_TERM_OPENER:
@@ -473,7 +473,7 @@ public class Narsese {
         }
                 
         String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
-        NativeOperator oNative = getOperator(op);
+        NALOperator oNative = getOperator(op);
         Operator oRegistered = memory.getOperator(op);
         
         if ((oRegistered==null) && (oNative == null)) {

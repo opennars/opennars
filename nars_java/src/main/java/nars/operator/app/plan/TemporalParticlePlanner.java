@@ -125,7 +125,7 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
         
             if (term instanceof Conjunction) {
                 Conjunction c = (Conjunction) term;
-                if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
+                if (c.operator() == Symbols.NALOperator.SEQUENCE) {
                     executive.executeConjunctionSequence(executing, c);
                     return;
                 }
@@ -135,7 +135,7 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
                 if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
                     if (it.getSubject() instanceof Conjunction) {
                         Conjunction c = (Conjunction) it.getSubject();
-                        if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
+                        if (c.operator() == Symbols.NALOperator.SEQUENCE) {
                             executive.executeConjunctionSequence(executing, c);
                             return;
                         }
@@ -187,7 +187,7 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
         ArrayDeque<Term> inlined = new ArrayDeque();
         boolean modified = false;
 
-        if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
+        if (c.operator() == Symbols.NALOperator.SEQUENCE) {
             for (Term e : c.term) {
 
                 if (!isPlanTerm(e)) {

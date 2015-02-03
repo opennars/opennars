@@ -20,13 +20,13 @@
  */
 package nars.logic.nal3;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.Term;
 
 import java.util.Collection;
 
-import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
-import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
+import static nars.io.Symbols.NALOperator.SET_INT_CLOSER;
+import static nars.io.Symbols.NALOperator.SET_INT_OPENER;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.
@@ -73,8 +73,8 @@ public class SetInt extends SetTensional {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.SET_INT_OPENER;
+    public NALOperator operator() {
+        return NALOperator.SET_INT_OPENER;
     }
 
 

@@ -11,4 +11,6 @@ abstract public class Intersect extends CompoundTerm {
     public Intersect(Term[] arg) {
         super(arg);
     }
+
+
 }

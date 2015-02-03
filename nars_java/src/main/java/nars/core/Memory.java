@@ -26,14 +26,12 @@ import nars.core.Events.TaskRemove;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
 import nars.logic.BudgetFunctions;
-import nars.logic.ImmediateProcess;
 import nars.logic.Terms;
-import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
@@ -423,7 +421,7 @@ public class Memory implements Serializable {
      * @param op Term operator
      * @return A term or null
      */
-    public static Term term(final NativeOperator op, final Term... a) {
+    public static Term term(final NALOperator op, final Term... a) {
 
 
         switch (op) {

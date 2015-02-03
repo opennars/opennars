@@ -21,7 +21,7 @@
 package nars.logic.nal5;
 
 import nars.core.Parameters;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.Terms;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
@@ -84,14 +84,14 @@ public class Conjunction extends Junction {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
+    public NALOperator operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return NativeOperator.SEQUENCE;
+                return NALOperator.SEQUENCE;
             case TemporalRules.ORDER_CONCURRENT:
-                return NativeOperator.PARALLEL;
+                return NALOperator.PARALLEL;
             default:
-                return NativeOperator.CONJUNCTION;
+                return NALOperator.CONJUNCTION;
         }
     }
 

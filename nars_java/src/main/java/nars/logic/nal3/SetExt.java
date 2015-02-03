@@ -20,13 +20,13 @@
  */
 package nars.logic.nal3;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.Term;
 
 import java.util.Collection;
 
-import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
-import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
+import static nars.io.Symbols.NALOperator.SET_EXT_CLOSER;
+import static nars.io.Symbols.NALOperator.SET_EXT_OPENER;
 
 /**
  * An extensionally defined set, which contains one or more instances.
@@ -73,8 +73,8 @@ public class SetExt extends SetTensional {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.SET_EXT_OPENER;
+    public NALOperator operator() {
+        return NALOperator.SET_EXT_OPENER;
     }
 
 

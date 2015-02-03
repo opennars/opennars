@@ -1,12 +1,18 @@
 package nars.io.narsese;
 
+import nars.build.Default;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.logic.Terms;
 import nars.logic.entity.*;
+import nars.logic.nal3.IntersectionExt;
+import nars.logic.nal3.IntersectionInt;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
 import nars.logic.nal4.Product;
+import nars.logic.nal7.Tense;
 import org.parboiled.*;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.RecoveringParseRunner;
@@ -15,12 +21,13 @@ import org.parboiled.support.ParsingResult;
 import org.parboiled.support.Var;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-import static nars.io.Symbols.NativeOperator;
-import static nars.io.Symbols.NativeOperator.*;
+import static nars.io.Symbols.NALOperator;
+import static nars.io.Symbols.NALOperator.*;
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
 /**
@@ -30,7 +37,11 @@ import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 public class NarseseParser extends BaseParser<Object> {
 
     private final int level;
-    RecoveringParseRunner rpr = new RecoveringParseRunner(Input());
+    RecoveringParseRunner inputParser = new RecoveringParseRunner(Input());
+    RecoveringParseRunner singleTaskParser = new RecoveringParseRunner(Task());
+    RecoveringParseRunner singleTermParser = new RecoveringParseRunner(Term());
+
+    public Memory memory;
 
     protected NarseseParser() {
         this(8);
@@ -77,7 +88,7 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    static Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<TruthValue> truth) {
+    Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<TruthValue> truth) {
 
         char p = punc.get();
 
@@ -93,7 +104,9 @@ public class NarseseParser extends BaseParser<Object> {
 
         Term content = term.get();
 
-        return new Task(new Sentence(content, p, t, null), B);
+        Tense tense = Tense.Eternal; //TODO support different tense
+
+        return new Task(new Sentence(content, p, t, new Stamp(memory, tense)), B);
     }
 
 
@@ -137,7 +150,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
     
     Rule SentenceTypeChar() {
-        return anyOf(".?!");
+        return anyOf(".?!@");
     }
 
     Rule Copula() {
@@ -160,16 +173,16 @@ public class NarseseParser extends BaseParser<Object> {
          */
         //TODO use separate rules for each so a parse can identify them
         return sequence(
-                "<", s(), Term(), s(), CopulaOperator(), s(), Term(), s(),">",
+                '<', s(), Term(), s(), CopulaOperator(), s(), Term(), s(), '>',
 
-                push( getTerm( (Term)pop(), (NativeOperator)pop(), (Term)pop() ) )
+                push( getTerm( (Term)pop(), (NALOperator)pop(), (Term)pop() ) )
         );
     }
 
 
     
     Rule CopulaOperator() {
-        NativeOperator[] ops = getCopulas();
+        NALOperator[] ops = getCopulas();
         Rule[] copulas = new Rule[ops.length];
         for (int i = 0; i < ops.length; i++) {
             copulas[i] = string(ops[i].symbol);
@@ -180,19 +193,19 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    public NativeOperator[] getCopulas() {
+    public NALOperator[] getCopulas() {
         switch (level) {
-            case 1: return new NativeOperator[] {
+            case 1: return new NALOperator[] {
                     INHERITANCE
             };
-            case 2: return new NativeOperator[] {
+            case 2: return new NALOperator[] {
                     INHERITANCE,
                     SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY
             };
 
             //TODO case 5..6.. without temporal equiv &  impl..
 
-            default: return new NativeOperator[] {
+            default: return new NALOperator[] {
                     INHERITANCE,
                     SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY,
                     IMPLICATION,
@@ -203,7 +216,7 @@ public class NarseseParser extends BaseParser<Object> {
         }
     }
 
-    static Term getTerm(Term predicate, NativeOperator op, Term subject) {
+    static Term getTerm(Term predicate, NALOperator op, Term subject) {
         return Memory.term(op, subject, predicate);
     }
 
@@ -222,8 +235,8 @@ public class NarseseParser extends BaseParser<Object> {
                         Variable(),
                         CompoundTerm(),
                         Copula(),
-                        nTimes(nal(8) ? 1 : 0, OperationExecution()
-                        )
+                        //nTimes(nal(8) ? 1 : 0,
+                        OperationExecution()
                 ),
                 push(Term.get(pop()))
         );
@@ -232,7 +245,7 @@ public class NarseseParser extends BaseParser<Object> {
        
     Rule Literal() {
         return sequence(
-                oneOrMore(noneOf(" ,.!?<>-=|&()<>[]{}#$\"")),
+                oneOrMore(noneOf(" ,.!?<>-=*|&()<>[]{}#$\"\t")),
                 push(match())
         );
     }
@@ -278,31 +291,30 @@ public class NarseseParser extends BaseParser<Object> {
                         | "(~," <term> "," <term> ")"        // intensional difference
         
         */
-        //return sequence("{", Term(), zeroOrMore(sequence(",",Term())),"}");
         return firstOf(
-                VectorTerm(NativeOperator.SET_EXT_OPENER, NativeOperator.SET_EXT_CLOSER),
-                VectorTerm(NativeOperator.SET_INT_OPENER, NativeOperator.SET_INT_CLOSER),
-                VectorTerm(NativeOperator.COMPOUND_TERM_CLOSER, NativeOperator.COMPOUND_TERM_CLOSER), //NAL4
-                Infix2Term(),
-                MultiArgTerm()
+                VectorTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER),
+                VectorTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER),
+                VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER), //NAL4
+                MultiArgTerm(),
+                Infix2Term()
         );
     }
 
     Rule CompoundOperator() {
         return sequence(
                 firstOf(
-                        NativeOperator.INTERSECTION_EXT.symbol,
-                        NativeOperator.INTERSECTION_INT.symbol,
-                        NativeOperator.PRODUCT.symbol,
-                        NativeOperator.IMAGE_EXT.symbol,
-                        NativeOperator.IMAGE_INT.symbol,
-                        NativeOperator.DISJUNCTION.symbol,
-                        NativeOperator.CONJUNCTION.symbol,
-                        NativeOperator.SEQUENCE.symbol,
-                        NativeOperator.PARALLEL.symbol,
-                        NativeOperator.NEGATION.symbol,
-                        NativeOperator.DIFFERENCE_EXT.symbol,
-                        NativeOperator.DIFFERENCE_INT.symbol
+                        NALOperator.INTERSECTION_EXT.symbol,
+                        NALOperator.INTERSECTION_INT.symbol,
+                        NALOperator.PRODUCT.symbol,
+                        NALOperator.IMAGE_EXT.symbol,
+                        NALOperator.IMAGE_INT.symbol,
+                        NALOperator.DISJUNCTION.symbol,
+                        NALOperator.CONJUNCTION.symbol,
+                        NALOperator.SEQUENCE.symbol,
+                        NALOperator.PARALLEL.symbol,
+                        NALOperator.NEGATION.symbol,
+                        NALOperator.DIFFERENCE_EXT.symbol,
+                        NALOperator.DIFFERENCE_INT.symbol
                 ),
                 push(Symbols.getOperator(match()))
         );
@@ -311,24 +323,24 @@ public class NarseseParser extends BaseParser<Object> {
     Rule CompoundOperator2() {
         return sequence(
                 firstOf(
-                        NativeOperator.INTERSECTION_EXT.symbol,
-                        NativeOperator.INTERSECTION_INT.symbol,
-                        NativeOperator.PRODUCT.symbol,
-                        NativeOperator.IMAGE_EXT.symbol,
-                        NativeOperator.IMAGE_INT.symbol,
-                        NativeOperator.DISJUNCTION.symbol,
-                        NativeOperator.CONJUNCTION.symbol,
-                        NativeOperator.SEQUENCE.symbol,
-                        NativeOperator.PARALLEL.symbol,
-                        NativeOperator.DIFFERENCE_EXT.symbol,
-                        NativeOperator.DIFFERENCE_INT.symbol
+                        NALOperator.INTERSECTION_EXT.symbol,
+                        NALOperator.INTERSECTION_INT.symbol,
+                        NALOperator.PRODUCT.symbol,
+                        NALOperator.IMAGE_EXT.symbol,
+                        NALOperator.IMAGE_INT.symbol,
+                        NALOperator.DISJUNCTION.symbol,
+                        NALOperator.CONJUNCTION.symbol,
+                        NALOperator.SEQUENCE.symbol,
+                        NALOperator.PARALLEL.symbol,
+                        NALOperator.DIFFERENCE_EXT.symbol,
+                        NALOperator.DIFFERENCE_INT.symbol
                 ),
                 push(Symbols.getOperator(match()))
         );
     }
 
     /** a list of terms enclosed by an opener/closer pair, which may compose a set or product */
-    Rule VectorTerm(NativeOperator opener, NativeOperator closer) {
+    Rule VectorTerm(NALOperator opener, NALOperator closer) {
         return sequence(
             opener.ch, s(),
             push(opener),
@@ -341,24 +353,35 @@ public class NarseseParser extends BaseParser<Object> {
     /** list of terms prefixed by a particular compound term operator */
     Rule MultiArgTerm() {
         return sequence(
-                NativeOperator.COMPOUND_TERM_OPENER.ch,
+                NALOperator.COMPOUND_TERM_OPENER.ch,
 
                 s(),
 
                 //special handling to allow (-- x) , without the comma
                 //TODO move the (-- x) case to a separate rule to prevent suggesting invalid completions like (-- x y)
                 firstOf(
-                    sequence(CompoundOperator(), s(), Symbols.ARGUMENT_SEPARATOR),
-                    sequence( NativeOperator.NEGATION.symbol, push(NativeOperator.NEGATION))
+                    sequence( CompoundOperator(), s(), Symbols.ARGUMENT_SEPARATOR),
+                    sequence( NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
+                    Term()
+                ),
+
+                //s(),
+
+                //Term(),
+
+
+                zeroOrMore(
+                        sequence(
+                                s(),
+                                optional(sequence(Symbols.ARGUMENT_SEPARATOR, s())),
+                                Term()
+                        )
                 ),
 
                 s(),
 
-                Term(), zeroOrMore(sequence(Symbols.ARGUMENT_SEPARATOR,Term())),
+                NALOperator.COMPOUND_TERM_CLOSER.ch,
 
-                s(),
-
-                NativeOperator.COMPOUND_TERM_CLOSER.ch,
                 push( nextTermVector() )
         );
     }
@@ -366,7 +389,7 @@ public class NarseseParser extends BaseParser<Object> {
     /** two terms separated by a compound term operator which supports exactly 2 arguments */
     Rule Infix2Term() {
         return sequence(
-                NativeOperator.COMPOUND_TERM_OPENER.ch,
+                NALOperator.COMPOUND_TERM_OPENER.ch,
                 s(),
                 Term(),
                 s(),
@@ -374,8 +397,7 @@ public class NarseseParser extends BaseParser<Object> {
                 s(),
                 Term(),
                 s(),
-                NativeOperator.COMPOUND_TERM_CLOSER.ch,
-                swap(2),
+                NALOperator.COMPOUND_TERM_CLOSER.ch,
                 push( nextTermVector() )
         );
     }
@@ -383,22 +405,45 @@ public class NarseseParser extends BaseParser<Object> {
     List<Term> vectorterms = new ArrayList();
 
     Term nextTermVector() {
-        Object nextPop;
+
+        NALOperator op = null;
         vectorterms.clear();
-        while ( (nextPop = pop()) instanceof Term ) {
-            Term t = (Term)nextPop;
-            vectorterms.add(t);
+
+        while ( !getContext().getValueStack().isEmpty() ) {
+            Object p = pop();
+            if (p instanceof Term) {
+                Term t = (Term) p;
+                vectorterms.add(t);
+            }
+            else if (p instanceof NALOperator) {
+                op = (NALOperator)p;
+            }
         }
-        NativeOperator n = (NativeOperator)nextPop;
-        switch (n) {
+
+        if (vectorterms.isEmpty()) return null;
+
+        Collections.reverse(vectorterms);
+
+        if (op == null) {
+            //product without '*,' prefix
+            return new Product(vectorterms);
+        }
+
+        switch (op) {
+            case PRODUCT:
             case COMPOUND_TERM_OPENER:
                 return new Product(vectorterms); //product, without leading '*'
             case SET_EXT_OPENER:
                 return SetExt.make(vectorterms);
             case SET_INT_OPENER:
                 return SetInt.make(vectorterms);
+            case INTERSECTION_EXT:
+                return IntersectionExt.make(vectorterms);
+            case INTERSECTION_INT:
+                return IntersectionInt.make(vectorterms);
+            //TODO others
             default:
-                throw new RuntimeException("Invalid operator for nextTermVector: " + n);
+                throw new RuntimeException("Invalid operator for nextTermVector: " + op);
         }
     }
 
@@ -418,14 +463,20 @@ public class NarseseParser extends BaseParser<Object> {
         return zeroOrMore(anyOf(" \t\f\n"));
     }
 
-    public static NarseseParser newParser() {
-        return Parboiled.createParser(NarseseParser.class);
+    public static NarseseParser newParser(NAR n) {
+        return newParser(n.memory);
+    }
+
+    public static NarseseParser newParser(Memory m) {
+        NarseseParser np = Parboiled.createParser(NarseseParser.class);
+        np.memory = m;
+        return np;
     }
 
 
     /** parse a series of tasks */
     public void parse(String input, Consumer<Task> c) {
-        ParsingResult r = rpr.run(input);
+        ParsingResult r = inputParser.run(input);
         //r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + " " + x));
         r.getValueStack().iterator().forEachRemaining(x -> {
            if (x instanceof Task)
@@ -438,27 +489,31 @@ public class NarseseParser extends BaseParser<Object> {
 
     /** parse one task */
     public Task parseTask(String input) {
-        ParsingResult r = rpr.run(input);
-        //r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + " " + x));
-        Var<Task> theTask = new Var();
-        r.getValueStack().iterator().forEachRemaining(x -> {
-            if (x instanceof Task) {
-                if (theTask.get() == null)
-                    theTask.set((Task)x);
-                else {
-                    throw new RuntimeException(input + " contained more than 1 Task: " + x + " (" + x.getClass() + ")");
-                }
-            }
-            else {
-                throw new RuntimeException(input + " produced unknown parse result: " + x + " (" + x.getClass() + ")");
-            }
-        });
-        return theTask.get();
+        ParsingResult r = singleTaskParser.run(input);
+
+        Object x = r.getValueStack().iterator().next();
+        if (x instanceof Task)
+            return (Task)x;
+
+        return null;
     }
+
+    /** parse one term */
+    public <T extends Term> T parseTerm(String input) {
+        ParsingResult r = singleTermParser.run(input);
+
+        Object x = r.getValueStack().iterator().next();
+        if (x == null) return null;
+
+        return (T)x;
+    }
+
+
 
     /** interactive parse test */
     public static void main(String[] args) {
-        NarseseParser p = NarseseParser.newParser();
+        NAR n = new NAR(new Default());
+        NarseseParser p = NarseseParser.newParser(n);
 
         Scanner sc = new Scanner(System.in);
 
@@ -499,4 +554,6 @@ public class NarseseParser extends BaseParser<Object> {
         }
         
     }
+
+
 }

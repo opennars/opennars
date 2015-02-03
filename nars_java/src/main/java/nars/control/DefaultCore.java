@@ -1,28 +1,18 @@
 package nars.control;
 
-import com.nurkiewicz.typeof.TypeOf;
 import nars.core.Core;
-import nars.core.Events;
-import nars.core.Events.ConceptForget;
-import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.logic.BudgetFunctions;
-import nars.logic.BudgetFunctions.Activating;
 import nars.logic.FireConcept;
 import nars.logic.ImmediateProcess;
 import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.util.bag.Bag;
-import nars.util.bag.Bag.MemoryAware;
-import nars.util.bag.BagActivator;
 import nars.util.bag.CacheBag;
-import nars.util.bag.LevelBag;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.function.Consumer;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -127,7 +117,7 @@ public class DefaultCore extends UniCore {
         } else {
             //it is a judgment or goal which would create a new concept:
 
-            if (task.getTerm().operator() == Symbols.NativeOperator.NEGATION) {
+            if (task.getTerm().operator() == Symbols.NALOperator.NEGATION) {
                 //unwrap an outer negative negative
                 task = task.clone(
                         new Sentence(

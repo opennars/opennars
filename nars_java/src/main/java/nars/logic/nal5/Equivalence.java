@@ -20,7 +20,7 @@
  */
 package nars.logic.nal5;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
 import nars.logic.nal7.Interval;
@@ -120,14 +120,14 @@ public class Equivalence extends Statement {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
+    public NALOperator operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return NativeOperator.EQUIVALENCE_AFTER;
+                return NALOperator.EQUIVALENCE_AFTER;
             case TemporalRules.ORDER_CONCURRENT:
-                return NativeOperator.EQUIVALENCE_WHEN;
+                return NALOperator.EQUIVALENCE_WHEN;
         }
-        return NativeOperator.EQUIVALENCE;
+        return NALOperator.EQUIVALENCE;
     }
 
     /**

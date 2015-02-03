@@ -21,7 +21,7 @@
 package nars.logic.entity;
 
 import nars.core.Parameters;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Instance;
 import nars.logic.nal2.InstanceProperty;
@@ -34,8 +34,8 @@ import nars.logic.nal7.TemporalRules;
 
 import java.util.Arrays;
 
-import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
-import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
+import static nars.io.Symbols.NALOperator.STATEMENT_CLOSER;
+import static nars.io.Symbols.NALOperator.STATEMENT_OPENER;
 
 /**
  * A statement is a compound term, consisting of a subject, a predicate, and a
@@ -105,7 +105,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, boolean customOrder, int order) {
+    final public static Statement make(final NALOperator o, final Term subject, final Term predicate, boolean customOrder, int order) {
         
         switch (o) {
             case INHERITANCE:
@@ -217,7 +217,7 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    final protected static CharSequence makeStatementNameSB(final Term subject, final NativeOperator relation, final Term predicate) {
+    final protected static CharSequence makeStatementNameSB(final Term subject, final NALOperator relation, final Term predicate) {
         final CharSequence subjectName = subject.name();
         final CharSequence predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
@@ -232,7 +232,7 @@ public abstract class Statement extends CompoundTerm {
         return sb.toString();
     }
     
-    final protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
+    final protected static CharSequence makeStatementName(final Term subject, final NALOperator relation, final Term predicate) {
         final CharSequence subjectName = subject.name();
         final CharSequence predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;

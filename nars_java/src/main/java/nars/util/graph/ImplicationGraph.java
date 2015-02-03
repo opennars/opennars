@@ -2,8 +2,7 @@ package nars.util.graph;
 
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal5.Conjunction;
@@ -252,7 +251,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         if ((st.getTemporalOrder() == TemporalRules.ORDER_INVALID)  ||
                 (st.getTemporalOrder() == TemporalRules.ORDER_NONE) ||
                 (st.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) ||
-                (st.operator() == NativeOperator.IMPLICATION_BEFORE) || (!s.isEternal()))
+                (st.operator() == NALOperator.IMPLICATION_BEFORE) || (!s.isEternal()))
             return false;
                                 
         final Term subject, predicate;
@@ -281,7 +280,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
         if (subject instanceof Conjunction) {
             Conjunction seq = (Conjunction)subject;
-            if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
+            if (seq.operator() == NALOperator.SEQUENCE) {
                 
                 Term prev = (predicatePre!=predicatePost) ? predicatePre : null;
                 if (prev!=null)
@@ -326,7 +325,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 newImplicationEdge(prev, predicatePost, c, s);
                 return true;
             }
-            else if (seq.operator() == Symbols.NativeOperator.PARALLEL) {
+            else if (seq.operator() == NALOperator.PARALLEL) {
                 //TODO
             }
         }
@@ -422,8 +421,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
     @Override
     public boolean allow(final CompoundTerm st) {
-        Symbols.NativeOperator o = st.operator();
-        if ((o == Symbols.NativeOperator.IMPLICATION_WHEN) || (o == Symbols.NativeOperator.IMPLICATION_BEFORE) || (o == Symbols.NativeOperator.IMPLICATION_AFTER)) {
+        NALOperator o = st.operator();
+        if ((o == NALOperator.IMPLICATION_WHEN) || (o == NALOperator.IMPLICATION_BEFORE) || (o == NALOperator.IMPLICATION_AFTER)) {
             return true;
         }
         else {

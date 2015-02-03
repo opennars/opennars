@@ -22,12 +22,13 @@ package nars.logic.nal3;
 
 import com.google.common.collect.ObjectArrays;
 import nars.core.Parameters;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.Terms;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -69,7 +70,6 @@ public class IntersectionExt extends Intersect {
      * Try to make a new compound from two term. Called by the logic rules.
      * @param term1 The first compoment
      * @param term2 The first compoment
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(Term term1, Term term2) {
@@ -124,17 +124,18 @@ public class IntersectionExt extends Intersect {
                return new IntersectionExt(t); 
         }
     }
+
+    public static Term make(Collection<Term> unsorted) {
+        return make(unsorted.toArray(new Term[unsorted.size()]));
+    }
     
-
-
-
     /**
      * Get the operator of the term.
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.INTERSECTION_EXT;
+    public NALOperator operator() {
+        return NALOperator.INTERSECTION_EXT;
     }
 
     /**
@@ -145,4 +146,6 @@ public class IntersectionExt extends Intersect {
     public boolean isCommutative() {
         return true;
     }
+
+
 }

@@ -2,15 +2,15 @@ package nars.logic.nal4;
 
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.AbstractTerm;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
 import java.util.Objects;
 
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import static nars.io.Symbols.NALOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NALOperator.COMPOUND_TERM_OPENER;
 
 /**
  *
@@ -80,7 +80,7 @@ abstract public class Image extends CompoundTerm {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static String makeImageName(final NativeOperator op, final Term[] arg, final int relationIndex) {
+    protected static String makeImageName(final NALOperator op, final Term[] arg, final int relationIndex) {
         final int sizeEstimate = 12 * arg.length + 2;
         
         StringBuilder name = new StringBuilder(sizeEstimate)

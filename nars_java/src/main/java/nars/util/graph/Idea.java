@@ -12,7 +12,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.Reaction;
 import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
 import nars.logic.nal4.Image;
@@ -28,7 +28,7 @@ public class Idea implements Iterable<Concept> {
     final public Set<Concept> concepts = Collections.synchronizedSet(new HashSet());
     final CharSequence key;
     final Set<SentenceType> feature = new HashSet();
-    final Set<NativeOperator> operators = new HashSet<NativeOperator>();
+    final Set<NALOperator> operators = new HashSet<NALOperator>();
 
 
     public static CharSequence getKey(Termable tt) {
@@ -73,7 +73,7 @@ public class Idea implements Iterable<Concept> {
             add(x);
     }
     
-    public Set<NativeOperator> operators() {
+    public Set<NALOperator> operators() {
         return operators;
     }
     
@@ -100,13 +100,13 @@ public class Idea implements Iterable<Concept> {
     
     public class SentenceType implements Comparable<SentenceType> {
         
-        public final NativeOperator op;
+        public final NALOperator op;
         public final char punc;
                 
         transient private final int hash;
         private ArrayList sentences;
 
-        public SentenceType(NativeOperator o, char c) {
+        public SentenceType(NALOperator o, char c) {
             this.op = o;
             this.punc = c;
             this.hash = Objects.hashCode(op, punc);
@@ -200,7 +200,7 @@ public class Idea implements Iterable<Concept> {
         feature.clear();
         
         for (Concept c : this) {
-            NativeOperator o = c.operator();
+            NALOperator o = c.operator();
             operators.add(o);
             
             if (!c.beliefs.isEmpty())

@@ -21,7 +21,7 @@
 
 package nars.logic.nal4;
 
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
@@ -94,8 +94,8 @@ public class Product extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.PRODUCT;
+    public NALOperator operator() {
+        return NALOperator.PRODUCT;
     }
 
 

@@ -26,8 +26,8 @@ import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
 
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import static nars.io.Symbols.NALOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NALOperator.COMPOUND_TERM_OPENER;
 
 /**
  * An operation is interpreted as an Inheritance relation.
@@ -95,7 +95,7 @@ public class Operation extends Inheritance {
     protected CharSequence makeName() {
         if(getSubject() instanceof Product && getPredicate() instanceof Operator)
             return makeName(getPredicate().name(), ((Product)getSubject()).term);
-        return makeStatementName(getSubject(), Symbols.NativeOperator.INHERITANCE, getPredicate());
+        return makeStatementName(getSubject(), Symbols.NALOperator.INHERITANCE, getPredicate());
     }
 
     

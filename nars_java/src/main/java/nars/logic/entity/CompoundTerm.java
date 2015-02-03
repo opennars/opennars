@@ -24,7 +24,7 @@ import com.google.common.collect.Iterators;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.Terms;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
@@ -32,8 +32,8 @@ import nars.logic.nal7.TemporalRules;
 
 import java.util.*;
 
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import static nars.io.Symbols.NALOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NALOperator.COMPOUND_TERM_OPENER;
 
 
 public abstract class CompoundTerm extends Term implements Iterable<Term> {
@@ -63,7 +63,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     /**
      * Abstract method to get the operator of the compound
      */
-    @Override public abstract NativeOperator operator();
+    @Override public abstract NALOperator operator();
 
     /**
      * Abstract clone method
@@ -293,7 +293,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 //    }
 
     /** single term version of makeCompoundName without iteration for efficiency */
-    protected static CharSequence makeCompoundName(final NativeOperator op, final Term singleTerm) {
+    protected static CharSequence makeCompoundName(final NALOperator op, final Term singleTerm) {
         int size = 2; // beginning and end parens
         String opString = op.toString();
         size += opString.length();
@@ -310,7 +310,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    protected static CharSequence makeCompoundName(final NativeOperator op, final Term... arg) {
+    protected static CharSequence makeCompoundName(final NALOperator op, final Term... arg) {
         int size = 1 + 1;
         
         String opString = op.toString();

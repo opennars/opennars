@@ -530,7 +530,7 @@ public class Terms {
     }
 
     public static boolean levelValid(Term t, int nal) {
-        Symbols.NativeOperator o = t.operator();
+        Symbols.NALOperator o = t.operator();
         int minLevel = o.level;
         if (minLevel > 0) {
             if (nal < minLevel)

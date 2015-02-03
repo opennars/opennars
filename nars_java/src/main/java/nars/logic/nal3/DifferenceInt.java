@@ -21,7 +21,7 @@
 package nars.logic.nal3;
 
 import nars.core.Parameters;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
@@ -115,8 +115,8 @@ public class DifferenceInt extends Difference {
      * @return the operator of the term
      */
     @Override
-    public NativeOperator operator() {
-        return NativeOperator.DIFFERENCE_INT;
+    public NALOperator operator() {
+        return NALOperator.DIFFERENCE_INT;
     }
 }
 

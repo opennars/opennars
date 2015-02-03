@@ -385,7 +385,7 @@ public class MultipleExecutionManager {
     public static boolean isSequenceConjunction(final Term c) {
         if (c instanceof Conjunction) {
             Conjunction cc = ((Conjunction) c);
-            return (cc.operator() == Symbols.NativeOperator.SEQUENCE);
+            return (cc.operator() == Symbols.NALOperator.SEQUENCE);
             //{
             //return (cc.getTemporalOrder()==TemporalRules.ORDER_FORWARD) || (cc.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT);
             //}

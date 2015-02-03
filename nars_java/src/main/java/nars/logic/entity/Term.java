@@ -23,7 +23,7 @@ package nars.logic.entity;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
+import nars.io.Symbols.NALOperator;
 import nars.io.Texts;
 import nars.logic.Terms.Termable;
 import nars.logic.nal7.TemporalRules;
@@ -51,8 +51,8 @@ public class Term implements AbstractTerm, Termable {
         return SELF.equals(t);
     }
 
-    public NativeOperator operator() {
-        return NativeOperator.ATOM;
+    public NALOperator operator() {
+        return NALOperator.ATOM;
     }
     
     public boolean isExecutable(final Memory mem) {
