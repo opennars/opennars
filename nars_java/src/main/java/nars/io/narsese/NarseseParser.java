@@ -5,14 +5,9 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.logic.Terms;
 import nars.logic.entity.*;
-import nars.logic.nal3.IntersectionExt;
-import nars.logic.nal3.IntersectionInt;
-import nars.logic.nal3.SetExt;
-import nars.logic.nal3.SetInt;
-import nars.logic.nal4.Product;
 import nars.logic.nal7.Tense;
+import nars.logic.nal8.Operation;
 import org.parboiled.*;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.RecoveringParseRunner;
@@ -110,27 +105,33 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    Rule OperationExecution() {
-        //TODO
-        // "(^"<word> {","<term>} ")"         // (an operation to be executed)   */
-        return string("(^)");
-    }
+//    Rule Operation() {
+//        //TODO
+//        // "(^"<word> {","<term>} ")"         // (an operation to be executed)   */
+//        return sequence(
+//                NALOperator.COMPOUND_TERM_OPENER.ch,
+//                s(),
+//                NALOperator.OPERATION,
+//                s(),
+//                Literal(),
+//                )
+//    }
 
 
     Rule Budget() { return firstOf(BudgetPriorityDurability(), BudgetPriority()); }
 
     Rule BudgetPriority() {
-        return sequence('$',
+        return sequence(Symbols.BUDGET_VALUE_MARK,
                 ShortFloat(),
-                optional('$'),
+                optional(Symbols.BUDGET_VALUE_MARK),
                 push( new float[] { (float)pop() } ) //intermediate representation
         );
     }
 
     Rule BudgetPriorityDurability() {
-        return sequence("$",
-                ShortFloat(), ";", ShortFloat(),
-                optional("$"),
+        return sequence(Symbols.BUDGET_VALUE_MARK,
+                ShortFloat(), Symbols.VALUE_SEPARATOR, ShortFloat(),
+                optional(Symbols.BUDGET_VALUE_MARK),
                 swap() && push(new float[]{(float) pop(), (float)pop() } ) //intermediate representation
         );
     }
@@ -138,8 +139,8 @@ public class NarseseParser extends BaseParser<Object> {
     Rule Truth() {
 
         return sequence(
-                '%', ShortFloat(), ';', ShortFloat(),
-                optional('%'), //tailing '%' is optional
+                Symbols.TRUTH_VALUE_MARK, ShortFloat(), Symbols.VALUE_SEPARATOR, ShortFloat(),
+                optional(Symbols.TRUTH_VALUE_MARK), //tailing '%' is optional
                 swap() && push(new TruthValue( (float)pop(), (float)pop() ))
         );
     }
@@ -233,10 +234,9 @@ public class NarseseParser extends BaseParser<Object> {
                         QuotedLiteral(),
                         Literal(),
                         Variable(),
+                        //OperationFunction(),
                         CompoundTerm(),
-                        Copula(),
-                        //nTimes(nal(8) ? 1 : 0,
-                        OperationExecution()
+                        Copula()
                 ),
                 push(Term.get(pop()))
         );
@@ -245,7 +245,7 @@ public class NarseseParser extends BaseParser<Object> {
        
     Rule Literal() {
         return sequence(
-                oneOrMore(noneOf(" ,.!?<>-=*|&()<>[]{}#$\"\t")),
+                oneOrMore(noneOf(" ,.!?^<>-=*|&()<>[]{}#$\"\t")),
                 push(match())
         );
     }
@@ -303,37 +303,39 @@ public class NarseseParser extends BaseParser<Object> {
     Rule CompoundOperator() {
         return sequence(
                 firstOf(
+                        NALOperator.NEGATION.symbol,
+                        NALOperator.DISJUNCTION.symbol,
+                        NALOperator.CONJUNCTION.symbol,
+                        NALOperator.SEQUENCE.symbol,
+                        NALOperator.PARALLEL.symbol,
+                        NALOperator.DIFFERENCE_EXT.symbol,
+                        NALOperator.DIFFERENCE_INT.symbol,
                         NALOperator.INTERSECTION_EXT.symbol,
                         NALOperator.INTERSECTION_INT.symbol,
                         NALOperator.PRODUCT.symbol,
                         NALOperator.IMAGE_EXT.symbol,
                         NALOperator.IMAGE_INT.symbol,
-                        NALOperator.DISJUNCTION.symbol,
-                        NALOperator.CONJUNCTION.symbol,
-                        NALOperator.SEQUENCE.symbol,
-                        NALOperator.PARALLEL.symbol,
-                        NALOperator.NEGATION.symbol,
-                        NALOperator.DIFFERENCE_EXT.symbol,
-                        NALOperator.DIFFERENCE_INT.symbol
+                        NALOperator.OPERATION.ch
                 ),
                 push(Symbols.getOperator(match()))
         );
     }
-    /** those compound operators which can take 2 arguments */
+    /** those compound operators which can take 2 arguments (should be everything except negation) */
     Rule CompoundOperator2() {
         return sequence(
                 firstOf(
-                        NALOperator.INTERSECTION_EXT.symbol,
-                        NALOperator.INTERSECTION_INT.symbol,
-                        NALOperator.PRODUCT.symbol,
-                        NALOperator.IMAGE_EXT.symbol,
-                        NALOperator.IMAGE_INT.symbol,
+                        //order the smaller ones last, because they are less specific
                         NALOperator.DISJUNCTION.symbol,
                         NALOperator.CONJUNCTION.symbol,
                         NALOperator.SEQUENCE.symbol,
                         NALOperator.PARALLEL.symbol,
                         NALOperator.DIFFERENCE_EXT.symbol,
-                        NALOperator.DIFFERENCE_INT.symbol
+                        NALOperator.DIFFERENCE_INT.symbol,
+                        NALOperator.INTERSECTION_EXT.symbol,
+                        NALOperator.INTERSECTION_INT.symbol,
+                        NALOperator.PRODUCT.symbol,
+                        NALOperator.IMAGE_EXT.symbol,
+                        NALOperator.IMAGE_INT.symbol
                 ),
                 push(Symbols.getOperator(match()))
         );
@@ -360,15 +362,10 @@ public class NarseseParser extends BaseParser<Object> {
                 //special handling to allow (-- x) , without the comma
                 //TODO move the (-- x) case to a separate rule to prevent suggesting invalid completions like (-- x y)
                 firstOf(
-                    sequence( CompoundOperator(), s(), Symbols.ARGUMENT_SEPARATOR),
-                    sequence( NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
+                    sequence( CompoundOperator(), s(), optional(Symbols.ARGUMENT_SEPARATOR)),
+                    sequence(NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
                     Term()
                 ),
-
-                //s(),
-
-                //Term(),
-
 
                 zeroOrMore(
                         sequence(
@@ -404,6 +401,7 @@ public class NarseseParser extends BaseParser<Object> {
 
     List<Term> vectorterms = new ArrayList();
 
+    /** produce a term from the terms (& <=1 NALOperator's) on the value stack */
     Term nextTermVector() {
 
         NALOperator op = null;
@@ -416,6 +414,8 @@ public class NarseseParser extends BaseParser<Object> {
                 vectorterms.add(t);
             }
             else if (p instanceof NALOperator) {
+                if (op!=null)
+                    throw new RuntimeException("CompoundTerm requires only one operator; " + p + " supplied in addition to existing " + op);
                 op = (NALOperator)p;
             }
         }
@@ -424,27 +424,17 @@ public class NarseseParser extends BaseParser<Object> {
 
         Collections.reverse(vectorterms);
 
-        if (op == null) {
+        if ((op == null) || (op == COMPOUND_TERM_OPENER)) {
             //product without '*,' prefix
-            return new Product(vectorterms);
+            op = PRODUCT;
         }
 
-        switch (op) {
-            case PRODUCT:
-            case COMPOUND_TERM_OPENER:
-                return new Product(vectorterms); //product, without leading '*'
-            case SET_EXT_OPENER:
-                return SetExt.make(vectorterms);
-            case SET_INT_OPENER:
-                return SetInt.make(vectorterms);
-            case INTERSECTION_EXT:
-                return IntersectionExt.make(vectorterms);
-            case INTERSECTION_INT:
-                return IntersectionInt.make(vectorterms);
-            //TODO others
-            default:
-                throw new RuntimeException("Invalid operator for nextTermVector: " + op);
-        }
+        Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
+
+        if (op == OPERATION)
+            return Operation.make(memory, va);
+
+        return Memory.term(op, va);
     }
 
     Rule Number() {

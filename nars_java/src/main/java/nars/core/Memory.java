@@ -455,6 +455,8 @@ public class Memory implements Serializable {
             case PARALLEL:
                 return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
 
+            case OPERATION:
+                throw new RuntimeException("Can not use this static method to instantiate an Operation, because a Memory instance is required to provide its Operator");
 
             //STATEMENTS --------------------------
             case INHERITANCE:
@@ -478,6 +480,7 @@ public class Memory implements Serializable {
                 if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
             case EQUIVALENCE_AFTER:
                 if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
+
             default:
                 throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
         }

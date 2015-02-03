@@ -20,11 +20,15 @@
  */
 package nars.logic.nal8;
 
+import com.sun.jndi.toolkit.ctx.Continuation;
+import nars.core.Memory;
 import nars.io.Symbols;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
+
+import java.util.Arrays;
 
 import static nars.io.Symbols.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NALOperator.COMPOUND_TERM_OPENER;
@@ -138,5 +142,29 @@ public class Operation extends Inheritance {
     public Product getArguments() {
         return (Product)getSubject();
     }
-    
+
+    public static Term make(Memory m, Term[] raw) {
+        if (raw.length < 1) {
+            //must include at least the operator as the first term in raw[]
+            return null;
+        }
+
+        String operator = raw[0].name().toString();
+        if (operator.charAt(0)!=Symbols.NALOperator.OPERATION.ch) {
+            //prepend '^' if missing
+            operator = Symbols.NALOperator.OPERATION.symbol + operator;
+        }
+
+        Term[] args = Arrays.copyOfRange(raw, 1, raw.length);
+
+        Operator o = m.getOperator(operator);
+        if (o == null)
+            throw new RuntimeException("Unknown operator: " + o); //TODO use a 'UnknownOperatorException' so this case can be detected by callers
+
+        return make(o, args, true);
+    }
+
+    public Term getArgument(int i) {
+        return getArguments().term[i];
+    }
 }

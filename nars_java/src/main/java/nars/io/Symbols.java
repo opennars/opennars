@@ -84,12 +84,10 @@ public class Symbols {
     
     /* prefix of special Term name */
     public static final char INTERVAL_PREFIX = '+';
-    public static final char OPERATOR_PREFIX = '^';
     public static final char TERM_PREFIX = 'T';
     public static final char QUOTE = '\"';
-    
 
-    
+
     public enum NALOperator {
         
         /* CompountTerm operators, length = 1 */
@@ -137,6 +135,8 @@ public class Symbols {
         EQUIVALENCE("<=>", 5, true),
         EQUIVALENCE_AFTER("</>", 7, true),
         EQUIVALENCE_WHEN("<|>", 7, true),
+
+        OPERATION("^", 8),
 
         /** an atomic term; this value is set if not a compound term */
         ATOM(".", 0, false);
