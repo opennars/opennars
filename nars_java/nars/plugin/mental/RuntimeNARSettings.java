@@ -38,10 +38,10 @@ public class RuntimeNARSettings implements Plugin {
     }
     
     public double getTemporalInductionPriority() {
-        return Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
+        return Parameters.TEMPORAL_INDUCTION_SAMPLES;
     }
     public void setTemporalInductionPriority(double val) {
-        Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES=(int) val;
+        Parameters.TEMPORAL_INDUCTION_SAMPLES=(int) val;
     }
     
     public double getEvidentalHorizon() {
