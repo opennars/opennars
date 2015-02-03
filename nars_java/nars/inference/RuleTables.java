@@ -138,9 +138,9 @@ public class RuleTables {
             }
         }
         
-        if(nal.newStampBuilder==null) {
-            return;
-        }
+       // if(nal.newStampBuilder==null) {
+         //   return;
+        //}
         
         if (belief != null) {   
             
