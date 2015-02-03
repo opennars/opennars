@@ -54,7 +54,7 @@ public abstract class NAL implements Runnable {
     protected TaskLink currentTaskLink;
     protected Sentence currentBelief;
     protected Stamp newStamp;
-    protected StampBuilder newStampBuilder;
+    public StampBuilder newStampBuilder;
     protected List<DerivationFilter> derivationFilters = null;
 
     /** stores the tasks that this process generates, and adds to memory */
