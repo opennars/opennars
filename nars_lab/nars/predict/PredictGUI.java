@@ -294,7 +294,7 @@ public class PredictGUI extends JPanel {
         n.param.noiseLevel.set(0);
         n.param.conceptForgetDurations.set(5);
         
-        Parameters.TEMPORAL_INDUCTION_SAMPLES = 32;
+        Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES = 32;
         Parameters.STM_SIZE = 6;
         
         

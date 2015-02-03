@@ -29,7 +29,7 @@ public class Parameters {
     
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 
     /** for thorough bag debugging (slow) */
     public static boolean DEBUG_BAG = false;
@@ -120,6 +120,7 @@ public class Parameters {
     /** Maximum length of Stamp, a power of 2 */
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
 
+    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule
     public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule
     
 
@@ -183,7 +184,6 @@ public class Parameters {
     public static int STM_SIZE = 1;
     
     public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=false;
-    public static boolean TEMPORAL_INDUCTION_ALSO_AS_INFERENCE_RULE=true;
     
     
 }
