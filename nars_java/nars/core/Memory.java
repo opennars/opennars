@@ -1018,7 +1018,7 @@ public class Memory implements Serializable {
     public final ArrayDeque<Task> stm = new ArrayDeque();
     //public Task stmLast = null;
     
-    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, NAL nal, boolean onSucceeding) {
+    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, NAL nal) {
         if(!controllerTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
         }
@@ -1029,10 +1029,6 @@ public class Memory implements Serializable {
 
         if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
             return false;
-        }
-        
-        if(onSucceeding) {
-            nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
         }
 
         nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, time());
@@ -1048,35 +1044,12 @@ public class Memory implements Serializable {
         return false;
     }
     
-    /*public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
-
-        
-        
-        if(!Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
-            return false;
-        }
-        
-        if(newEvent.isParticipatingInTemporalInduction()) {
-            for (Task stmLast : stm) {
-                proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
-            }
-        }
-        
-        while (stm.size()+1 > Parameters.STM_SIZE)
-            stm.removeFirst();
-        stm.addLast(newEvent);
-
-        return true;
-    }*/
-    
-    
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
         if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
         }
-        
-        //new one happened and duration is already over, so add as negative task
+
         nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
                 
 
@@ -1085,27 +1058,8 @@ public class Memory implements Serializable {
         }
 
         for (Task stmLast : stm) {
-
-            if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
-                return false;
-            }
-
-            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, time());
-            nal.setCurrentTask(newEvent);
-
-            Sentence previousBelief = stmLast.sentence;
-            nal.setCurrentBelief(previousBelief);
-            
-            Sentence currentBelief = newEvent.sentence;
-
-            //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
+            proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal);
         }
-
-        ////for this heuristic, only use input events & task effects of operations
-        ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-        //stmLast = newEvent;
-        ////}
         
         while (stm.size()+1 > Parameters.STM_SIZE)
             stm.removeFirst();

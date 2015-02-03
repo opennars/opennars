@@ -121,9 +121,9 @@ public class RuleTables {
                     
                     if(!taskSentence.isEternal() && !s.isEternal()) {
                         if(s.after(taskSentence, memory.param.duration.get())) {
-                            nal.memory.proceedWithTemporalInduction(s,task.sentence,task,nal,false);
+                            nal.memory.proceedWithTemporalInduction(s,task.sentence,task,nal);
                         } else {
-                            nal.memory.proceedWithTemporalInduction(task.sentence,s,task,nal,false);
+                            nal.memory.proceedWithTemporalInduction(task.sentence,s,task,nal);
                         }
                     }
                     
