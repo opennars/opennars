@@ -73,7 +73,7 @@ public class Parameters {
 
     /* ---------- default input values ---------- */
     /** Default expectation for confirmation. */
-    public static final float DEFAULT_CONFIRMATION_EXPECTATION = (float) 0.8;
+    public static final float DEFAULT_CONFIRMATION_EXPECTATION = (float) 0.66;
     /** Default expectation for confirmation. */
     public static final float DEFAULT_CREATION_EXPECTATION = (float) 0.66;
     /** Default confidence of input judgment. */
@@ -120,7 +120,7 @@ public class Parameters {
     /** Maximum length of Stamp, a power of 2 */
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
 
-    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 10;
+    public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule
     
 
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
@@ -182,7 +182,8 @@ public class Parameters {
     
     public static int STM_SIZE = 1;
     
-    
+    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=false;
+    public static boolean TEMPORAL_INDUCTION_ALSO_AS_INFERENCE_RULE=true;
     
     
 }

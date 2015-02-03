@@ -29,6 +29,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.core.control.NAL;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.TLink;
 import nars.entity.Task;
 import nars.entity.TaskLink;
@@ -109,7 +110,7 @@ public class RuleTables {
                 //prevent duplicate inductions
                 Set<Term> alreadyInducted = new HashSet();
                 
-                for(int i=0;i<Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;i++) {
+                for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
                     
                     Concept next=nal.memory.concepts.sampleNextConcept();
                     if (next == null) continue;
@@ -124,6 +125,15 @@ public class RuleTables {
                         
                             Sentence s=next.beliefs.get(0);
                             
+                            if(Parameters.TEMPORAL_INDUCTION_ALSO_AS_INFERENCE_RULE) {
+                                if(s.getOccurenceTime()!=Stamp.ETERNAL && belief.getOccurenceTime()!=Stamp.ETERNAL) {
+                                    if(s.after(belief, memory.param.duration.get())) {
+                                        TemporalRules.temporalInduction(s, belief, nal);
+                                    } else {
+                                        TemporalRules.temporalInduction(belief,s, nal);
+                                    }
+                                }
+                            }
                             TemporalRules.temporalInductionChain(s, belief, nal);
                             TemporalRules.temporalInductionChain(belief, s, nal);
                             alreadyInducted.add(t);
