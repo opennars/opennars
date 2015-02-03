@@ -427,7 +427,7 @@ public abstract class NAL implements Runnable {
         return newStamp;
     }
 
-    interface StampBuilder {
+    public interface StampBuilder {
 
         Stamp build();
     }
