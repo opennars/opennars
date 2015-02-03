@@ -121,7 +121,7 @@ public class Parameters {
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
 
     public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule
-    public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule
+    public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule, this should be 0 to restore 1.6.1 strategy
     
 
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
@@ -183,7 +183,7 @@ public class Parameters {
     
     public static int STM_SIZE = 1;
     
-    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=false;
+    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=false; //this should be true to restore 1.6.1 strategy
     
     
 }
