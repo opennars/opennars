@@ -138,6 +138,10 @@ public class RuleTables {
             }
         }
         
+        if(nal.newStampBuilder==null) {
+            return;
+        }
+        
         if (belief != null) {   
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
