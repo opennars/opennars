@@ -1018,7 +1018,7 @@ public class Memory implements Serializable {
     public final ArrayDeque<Task> stm = new ArrayDeque();
     //public Task stmLast = null;
     
-    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, NAL nal) {
+    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, NAL nal, boolean onSucceeding) {
         if(!controllerTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
         }
@@ -1029,6 +1029,10 @@ public class Memory implements Serializable {
 
         if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
             return false;
+        }
+        
+        if(onSucceeding) {
+            nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
         }
 
         nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, time());
@@ -1046,15 +1050,15 @@ public class Memory implements Serializable {
     
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
+        
+        
         if(!Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
             return false;
         }
         
-        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
-        
         if(newEvent.isParticipatingInTemporalInduction()) {
             for (Task stmLast : stm) {
-                proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal);
+                proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
             }
         }
         
