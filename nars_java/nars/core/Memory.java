@@ -379,6 +379,7 @@ public class Memory implements Serializable {
         inputPausedUntil = 0;
         
         emotion.set(0.5f, 0.5f);
+        resetStatic();
         
         event.emit(ResetEnd.class);
        
