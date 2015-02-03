@@ -117,7 +117,8 @@ public class RuleTables {
                     ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
                     Stamp SVSTamp=nal.getNewStamp();
                     Task SVTask=nal.getCurrentTask();
-                    Sentence SVbelief=nal.getCurrentBelief();
+                    Sentence SVBelief=nal.getCurrentBelief();
+                    NAL.StampBuilder SVstampBuilder=nal.newStampBuilder; 
                     
                     if(!taskSentence.isEternal() && !s.isEternal()) {
                         if(s.after(taskSentence, memory.param.duration.get())) {
@@ -128,19 +129,16 @@ public class RuleTables {
                     }
                     
                     //RESTORE OF SPECIAL REASONING CONTEXT
-                    nal.setTheNewStamp(SVSTamp);
+                    nal.setNewStamp(SVSTamp);
                     nal.setCurrentTask(SVTask);
-                    nal.setCurrentBelief(SVbelief);
+                    nal.setCurrentBelief(SVBelief);
+                    nal.newStampBuilder=SVstampBuilder; //also restore this one
                     
                     alreadyInducted.add(t);
 
                 }
             }
         }
-        
-       // if(nal.newStampBuilder==null) {
-         //   return;
-        //}
         
         if (belief != null) {   
             
