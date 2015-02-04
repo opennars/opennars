@@ -210,6 +210,18 @@ public class Parameters {
      */
     public static final int SentenceOcurrenceTimeCyclesEqualityThreshold = 1;
 
+    /**
+     * this determines the percentage of concepts which have their priority
+     * reduced by forgetting each cycle.  forgetting an item can be applied as often
+     * as possible since it is governed by rate over time.  however we can
+     * afford to update item priority less frequently than every cycle.
+     * an accuracy of 1.0 means to process approximatley all concepts every cycle,
+     * while an accuracy of 0.5 would mean to process approximately half.  the items
+     * selected for update are determined by bag selection, so higher priority items
+     * will be updated more frequently.
+     */
+    public static final float CONCEPT_FORGETTING_ACCURACY = 0.1f;
+
 
     public static <X> List<X> newArrayList() {
         return new FastList(); //GS

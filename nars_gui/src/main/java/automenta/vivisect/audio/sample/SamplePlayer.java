@@ -3,8 +3,7 @@ package automenta.vivisect.audio.sample;
 import automenta.vivisect.audio.SoundProducer;
 
 
-public class SamplePlayer implements SoundProducer
-{
+public class SamplePlayer implements SoundProducer {
     private SonarSample sample;
     private float pos = 0;
     public boolean alive = true;
@@ -51,5 +50,9 @@ public class SamplePlayer implements SoundProducer
     public boolean isLive()
     {
         return alive;
+    }
+
+    public void stop() {
+        this.alive = false;
     }
 }

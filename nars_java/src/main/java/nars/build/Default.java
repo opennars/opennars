@@ -122,7 +122,7 @@ public class Default extends Build implements ConceptBuilder {
         param.termLinkMaxMatched.set(6);
         param.termLinkRecordLength.set(10);
         
-        param.setForgetting(Forgetting.Iterative);
+        param.setForgetting(Forgetting.Periodic);
         param.setTiming(Timing.Iterative);
         param.noiseLevel.set(100);
 

@@ -13,11 +13,13 @@ public class BinauralTones implements SoundProducer {
 
     private final float carrier;
     float beat, x;
+    private boolean playing;
 
     public BinauralTones(float initialBeat, float initialCarrier) {
         this.beat = initialBeat;
         this.carrier = initialCarrier;
         this.x = 0;
+        this.playing = true;
     }
 
 
@@ -43,7 +45,11 @@ public class BinauralTones implements SoundProducer {
 
     @Override
     public boolean isLive() {
-        return true;
+        return playing;
     }
 
+    @Override
+    public void stop() {
+        playing = false;
+    }
 }

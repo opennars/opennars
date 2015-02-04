@@ -1,8 +1,11 @@
 package nars.sonification;
 
 import automenta.vivisect.Audio;
+import automenta.vivisect.Video;
+import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.granular.Granulize;
 import automenta.vivisect.audio.sample.SampleLoader;
+import automenta.vivisect.audio.synth.SineWave;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
@@ -23,7 +26,7 @@ public class ConceptSonification extends AbstractReaction {
     List<String> samples;
 
     private final Audio sound;
-    Map<Concept, Granulize> playing = new HashMap();
+    Map<Concept, SoundProducer> playing = new HashMap();
     float audiblePriorityThreshold = 0.8f;
 
 
@@ -52,13 +55,14 @@ public class ConceptSonification extends AbstractReaction {
 
     public void update(Concept c) {
         if (c.getPriority() > audiblePriorityThreshold) {
-            Granulize g = playing.get(c);
+            SoundProducer g = playing.get(c);
             if (g == null) {
                 if (!samples.isEmpty()) {
                     String sp = getSample(c);
                     //do {
                         try {
-                            g = new Granulize(SampleLoader.load(sp), 0.1f, 0.1f);
+                            //g = new Granulize(SampleLoader.load(sp), 0.1f, 0.1f);
+                            g = new SineWave(Video.hashFloat(c.hashCode()));
                         } catch (Exception e) {
                             samples.remove(sp);
                             g = null;
@@ -75,19 +79,23 @@ public class ConceptSonification extends AbstractReaction {
                 update(c, g);
         }
         else {
-            Granulize g = playing.remove(c);
+            SoundProducer g = playing.remove(c);
             if (g!=null)
                 g.stop();
         }
     }
 
-    private void update(Concept c, Granulize g) {
-        g.setStretchFactor(1f + 4f * (1f - c.getQuality()));
-        g.setAmplitude( (c.getPriority() - audiblePriorityThreshold) / (1f - audiblePriorityThreshold) );
+    private void update(Concept c, SoundProducer g) {
+        if (g instanceof Granulize) {
+            ((Granulize)g).setStretchFactor(1f + 4f * (1f - c.getQuality()));
+        }
+        if (g instanceof SoundProducer.Amplifiable) {
+            ((SoundProducer.Amplifiable)g).setAmplitude((c.getPriority() - audiblePriorityThreshold) / (1f - audiblePriorityThreshold));
+        }
     }
 
     protected void updateConceptsPlaying() {
-        for (Map.Entry<Concept, Granulize> e : playing.entrySet()) {
+        for (Map.Entry<Concept, SoundProducer> e : playing.entrySet()) {
             update(e.getKey(), e.getValue());
         }
     }

@@ -8,4 +8,9 @@ public interface SoundProducer {
 
     default float getAmplitude() { return 1f; }
 
+    abstract public void stop();
+
+    public static interface Amplifiable {
+        public void setAmplitude(float a);
+    }
 }

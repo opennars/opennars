@@ -71,7 +71,6 @@ abstract public class UniCore implements Core {
         @Override
         public void beforeFinish() {
             float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
-
             bag.putBack(currentConcept, forgetCycles, memory);
         }
     }
@@ -139,8 +138,8 @@ abstract public class UniCore implements Core {
                 BudgetFunctions.activate(cb, getBudget(), BudgetFunctions.Activating.TaskLink);
             }
 
-            //long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();
-            //memory.forget(c, cyclesSinceLastForgotten, relativeThreshold);
+            long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();
+            memory.forget(c, cyclesSinceLastForgotten, relativeThreshold);
 
             return c;
         }

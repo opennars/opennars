@@ -198,7 +198,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             return budget.getPriority();
 
         long forgetDelta = budget.setLastForgetTime(currentTime);
-        
+
         minPriority *= budget.getQuality();
 
         float currentPriority = budget.getPriority();

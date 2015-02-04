@@ -4,7 +4,7 @@ import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.sample.SonarSample;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
-public class Granulize implements SoundProducer {
+public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 
 	private final float[] sourceBuffer;
 	private float now = 0L;
