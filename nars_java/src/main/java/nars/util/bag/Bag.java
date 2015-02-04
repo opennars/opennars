@@ -3,6 +3,8 @@ package nars.util.bag;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
+import nars.logic.nal7.Interval;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.io.PrintStream;
 import java.util.Iterator;
@@ -15,77 +17,8 @@ import java.util.Set;
  * */
 public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
 
+    protected final BagSelector.ForgetNext<K,V> forgetNext = new BagSelector.ForgetNext(this);
 
-    /** for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible */
-    @Deprecated abstract public static class IndexedBag<E extends Item<K>,K> extends Bag<K, E> {
-
-        public E TAKE(final K key) {
-            return take(key, true);
-        }
-
-
-        /** registers the item */
-        abstract protected void index(E value);
-        /** unregisters it */
-        abstract protected E unindex(K key);
-
-        protected E unindex(E e) {
-            return unindex(e.name());
-        }
-
-        abstract public E take(final K key, boolean unindex);
-
-        public E TAKE(E value) { return TAKE(value.name()); }
-
-
-        /**
-         * Insert an item into the itemTable, and return the overflow
-         *
-         * @param newItem The Item to put in
-         * @return null if nothing was displaced and if the item itself replaced itself,
-         * or the The overflow Item if a different item had to be removed
-         */
-        abstract protected E addItem(final E newItem, boolean index);
-
-        public E PUT(final E newItem) {
-            return addItem(newItem, true);
-        }
-
-
-        /**
-         * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
-         *
-         * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
-         *
-         * WARNING This indexing-avoiding version not completely working yet, so it is not used as of this commit
-         */
-
-        public E putInFast(BagSelector<K,E> selector) {
-
-            E item = take( selector.name(), false );
-
-            if (item != null) {
-                item = (E)item.merge(selector);
-                final E overflow = addItem(item, false);
-                if (overflow == item) {
-                    unindex(item.name());
-                }
-                return overflow;
-            }
-            else {
-                item = selector.newItem();
-
-                //compare by reference, sanity check
-                if (item.name()!=selector.name())
-                    throw new RuntimeException("Unrecognized selector and resulting new instance have different name()'s: item=" + item.name() + " selector=" + selector.name());
-
-                // put the (new or merged) item into itemTable
-                return PUT(item);
-            }
-
-
-        }
-    }
 
     public interface MemoryAware {
         public void setMemory(Memory m);
@@ -259,7 +192,8 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
         return baseForgetCycles;
     }
     
-    
+
+
     /**
      * Put an item back into the itemTable
      * <p>
@@ -273,23 +207,36 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
         m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return PUT(oldItem);
     }
-    
-    
-    /** x = takeOut(), then putBack(x)
-     *  @forgetCycles forgetting time in cycles
-     *  @return the variable that was updated, or null if none was taken out
+
+    /** accuracy determines the percentage of items which will be processNext().
+     * this is a way to apply the forgetting process applied in putBack.
      */
-    public V processNext(final float forgetCycles, final Memory m) {
-                
-        final V x = TAKENEXT();
-        if (x == null)
-            return null;
-        
-        V r = putBack(x, forgetCycles, m);
-        if (r!=null) {
-            throw new RuntimeException("Bag.processNext should always be able to re-insert item: " + r);
+    public void processNext(final float forgetCycles, float accuracy, final Memory m) {
+        int conceptsToForget = Math.max(1, (int)Math.round(size() * accuracy));
+        synchronized (forgetNext) {
+            for (int i = 0; i < conceptsToForget; i++) {
+                forgetNext.set(forgetCycles, m);
+                UPDATE(forgetNext);
+            }
         }
-        return x;
+    }
+    public void processNext(AtomicDouble forgetDurations, float accuracy, final Memory m) {
+        float forgetCycles = m.param.cycles(forgetDurations);
+        processNext(forgetCycles, accuracy, m);
+    }
+
+        /** x = takeOut(), then putBack(x)
+         *  @forgetCycles forgetting time in cycles
+         *  @return the variable that was updated, or null if none was taken out
+         */
+    public V processNext(final float forgetCycles, final Memory m) {
+        V next;
+        synchronized (forgetNext) {
+            forgetNext.set(forgetCycles, m);
+            UPDATE(forgetNext);
+            next = forgetNext.getItem();
+        }
+        return next;
     }
 
     public double[] getPriorityDistribution(int bins) {
@@ -337,5 +284,75 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
         return max;
     }
 
-    
+    /** for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible */
+    @Deprecated abstract public static class IndexedBag<E extends Item<K>,K> extends Bag<K, E> {
+
+        public E TAKE(final K key) {
+            return take(key, true);
+        }
+
+
+        /** registers the item */
+        abstract protected void index(E value);
+        /** unregisters it */
+        abstract protected E unindex(K key);
+
+        protected E unindex(E e) {
+            return unindex(e.name());
+        }
+
+        abstract public E take(final K key, boolean unindex);
+
+        public E TAKE(E value) { return TAKE(value.name()); }
+
+
+        /**
+         * Insert an item into the itemTable, and return the overflow
+         *
+         * @param newItem The Item to put in
+         * @return null if nothing was displaced and if the item itself replaced itself,
+         * or the The overflow Item if a different item had to be removed
+         */
+        abstract protected E addItem(final E newItem, boolean index);
+
+        public E PUT(final E newItem) {
+            return addItem(newItem, true);
+        }
+
+
+        /**
+         * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
+         *
+         * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
+         *
+         * WARNING This indexing-avoiding version not completely working yet, so it is not used as of this commit
+         */
+
+        public E putInFast(BagSelector<K,E> selector) {
+
+            E item = take( selector.name(), false );
+
+            if (item != null) {
+                item = (E)item.merge(selector);
+                final E overflow = addItem(item, false);
+                if (overflow == item) {
+                    unindex(item.name());
+                }
+                return overflow;
+            }
+            else {
+                item = selector.newItem();
+
+                //compare by reference, sanity check
+                if (item.name()!=selector.name())
+                    throw new RuntimeException("Unrecognized selector and resulting new instance have different name()'s: item=" + item.name() + " selector=" + selector.name());
+
+                // put the (new or merged) item into itemTable
+                return PUT(item);
+            }
+
+
+        }
+    }
+
 }

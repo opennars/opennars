@@ -570,7 +570,7 @@ public abstract class NAL implements Runnable {
     }
 
     /** add all accumulated tasks to memory */
-    public void inputTasks() {
+    public void inputTasksToMemory() {
         for (int i = 0; i < tasksAdded.size(); i++) {
             Task t = tasksAdded.get(i);
             memory.addNewTask(t, t.getReason());

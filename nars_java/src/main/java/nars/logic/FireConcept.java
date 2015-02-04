@@ -7,11 +7,9 @@ package nars.logic;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.nal1.LocalRules;
 import nars.logic.nal1.Negation;
-import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal5.SyllogisticRules;
@@ -26,6 +24,7 @@ import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 abstract public class FireConcept extends NAL {
 
 
+    private final Concept concept;
 
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
@@ -34,7 +33,7 @@ abstract public class FireConcept extends NAL {
     public FireConcept(Memory mem, Concept concept, int numTaskLinks, int termLinkCount) {
         super(mem);
         this.termLinkCount = termLinkCount;
-        this.currentConcept = concept;
+        this.concept = this.currentConcept = concept;
         this.currentTaskLink = null;
         this.numTaskLinks = numTaskLinks;
     }
@@ -51,6 +50,16 @@ abstract public class FireConcept extends NAL {
     protected void onFinished() {
         beforeFinish();
 
+        this.concept.termLinks.processNext(
+                memory.param.termLinkForgetDurations,
+                Parameters.TERMLINK_FORGETTING_ACCURACY,
+                memory);
+
+        this.concept.taskLinks.processNext(
+                memory.param.taskLinkForgetDurations,
+                Parameters.TASKLINK_FORGETTING_ACCURACY,
+                memory);
+
         /*
         System.err.println(this);
         for (Task t : tasksAdded) {
@@ -59,7 +68,7 @@ abstract public class FireConcept extends NAL {
         System.err.println();
         */
 
-        inputTasks();
+        inputTasksToMemory();
     }
 
 

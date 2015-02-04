@@ -52,9 +52,13 @@ public class Param implements Serializable {
 
     /** converts durations to cycles */
     public final float cycles(AtomicDouble durations) {
-        return duration.floatValue() * durations.floatValue();
+        return cycles(durations.floatValue());
     }
-    
+
+    public final float cycles(float durations) {
+        return duration.floatValue() * durations;
+    }
+
     /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE 
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.

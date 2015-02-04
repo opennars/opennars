@@ -53,7 +53,7 @@ public class ImmediateProcess extends NAL {
 
     @Override
     protected void onFinished() {
-        inputTasks();
+        inputTasksToMemory();
     }
 
 }

@@ -221,6 +221,8 @@ public class Parameters {
      * will be updated more frequently.
      */
     public static final float CONCEPT_FORGETTING_ACCURACY = 0.1f;
+    public static final float TERMLINK_FORGETTING_ACCURACY = 0.1f;
+    public static final float TASKLINK_FORGETTING_ACCURACY = 0.1f;
 
 
     public static <X> List<X> newArrayList() {

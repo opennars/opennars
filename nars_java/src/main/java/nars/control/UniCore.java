@@ -132,14 +132,13 @@ abstract public class UniCore implements Core {
 
         public Concept updateItem(Concept c) {
 
-            if (budget!=null) {
-                BudgetValue cb = c.budget;
-
-                BudgetFunctions.activate(cb, getBudget(), BudgetFunctions.Activating.TaskLink);
-            }
-
             long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();
             memory.forget(c, cyclesSinceLastForgotten, relativeThreshold);
+
+            if (budget!=null) {
+                BudgetValue cb = c.budget;
+                BudgetFunctions.activate(cb, getBudget(), BudgetFunctions.Activating.TaskLink);
+            }
 
             return c;
         }

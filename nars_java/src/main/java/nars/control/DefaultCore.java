@@ -96,11 +96,10 @@ public class DefaultCore extends UniCore {
 
         }
 
-        final float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
-        int conceptsToForget = Math.max(1, (int)Math.round(concepts.size() * Parameters.CONCEPT_FORGETTING_ACCURACY));
-        for (int i = 0; i < conceptsToForget; i++) {
-            concepts.processNext(forgetCycles, memory);
-        }
+        concepts.processNext(
+                memory.param.conceptForgetDurations,
+                Parameters.CONCEPT_FORGETTING_ACCURACY,
+                memory);
 
         memory.dequeueOtherTasks(run);
         Core.run(run);

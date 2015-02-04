@@ -494,14 +494,14 @@ public class Memory implements Serializable {
      * been removed then before inserted
      */
     public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
-        switch (param.forgetting) {
+        /*switch (param.forgetting) {
             case Iterative:
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
-            case Periodic:
+            case Periodic:*/
                 BudgetFunctions.forgetPeriodic(x.budget, forgetCycles, relativeThreshold, time());
-                break;
-        }
+                //break;
+        //}
     }
 
     /* ---------- new task entries ---------- */
