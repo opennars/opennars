@@ -9,6 +9,8 @@ import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by me on 2/1/15.
@@ -51,20 +53,22 @@ public class MixerPanel extends NPanel implements Runnable, SoundListener {
     }
 
     protected void clear() {
+
         while (playing.getRowCount() > 0) {
             playing.removeRow(0);
         }
 
-        for (Sound s : sound.getSounds()) {
-            playing.addRow(new Object[] { s.toString(), s.amplitude, s.pan });
+        List<Sound> ss = new ArrayList<Sound>( sound.getSounds() );
+        for (Sound s : ss) {
+            playing.addRow(new Object[]{s.toString(), s.amplitude, s.pan});
         }
-
     }
+
     @Override
     public void run() {
         while (running) {
 
-            clear();
+            SwingUtilities.invokeLater(this::clear);
 
             try {
                 Thread.sleep(updatePeriodMS);

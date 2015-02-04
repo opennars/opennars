@@ -7,7 +7,7 @@ import java.util.*;
 
 public class ListenerMixer implements StereoSoundProducer
 {
-    public final List<Sound> sounds = new ArrayList<>();
+    public final List<Sound> sounds = Collections.synchronizedList( new ArrayList<>() );
     private float[] buf = new float[0];
     private int maxChannels;
     private SoundListener soundListener;
@@ -29,13 +29,14 @@ public class ListenerMixer implements StereoSoundProducer
 
     public void update(float alpha)
     {
-        for (Iterator it = sounds.iterator(); it.hasNext();)
-        {
+        for (Iterator it = sounds.iterator(); it.hasNext();)         {
+
             Sound sound = (Sound) it.next();
+
             if (soundListener!=null)
                 sound.update(soundListener, alpha);
-            if (!sound.isLive())
-            {
+
+            if (!sound.isLive()) {
                 it.remove();
             }
         }
@@ -53,8 +54,8 @@ public class ListenerMixer implements StereoSoundProducer
         Arrays.fill(leftBuf, 0);
         Arrays.fill(rightBuf, 0);
         float maxAmplitude = 0;
-        for (int i = 0; i < sounds.size(); i++)
-        {
+
+        for (int i = 0; i < sounds.size(); i++)        {
             Sound sound = sounds.get(i);
 
             if (i < maxChannels) {

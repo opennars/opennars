@@ -1,7 +1,6 @@
-package automenta.vivisect.audio.granular2.io;
+package automenta.vivisect.audio.granular.depr.io;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;

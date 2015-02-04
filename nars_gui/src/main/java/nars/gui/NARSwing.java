@@ -20,6 +20,7 @@
  */
 package nars.gui;
 
+import nars.sonification.ConceptSonification;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
@@ -32,7 +33,6 @@ import nars.io.TextOutput;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -63,10 +63,20 @@ public class NARSwing extends Video {
         mainWindow.setBounds(10, 10, 270, 650);
         mainWindow.setVisible(true);
 
+
+
+
         //TEMPORARY
         SoundEngineTestPanel soundEngineTestPanel = new SoundEngineTestPanel(nar);
         new NWindow("Sound Test", soundEngineTestPanel).show(500,400);
-        
+        try {
+            new ConceptSonification(nar, soundEngineTestPanel.sound);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
         //TEMPORARY
         //new Window("Plugins", new PluginPanel(nar)).show(300, 400);
         

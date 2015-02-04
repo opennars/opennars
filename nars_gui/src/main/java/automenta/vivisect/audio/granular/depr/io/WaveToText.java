@@ -1,6 +1,6 @@
-package automenta.vivisect.audio.granular2.io;
+package automenta.vivisect.audio.granular.depr.io;
 
-import automenta.vivisect.audio.granular2.Wave;
+import automenta.vivisect.audio.granular.depr.Wave;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

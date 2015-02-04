@@ -18,8 +18,8 @@ import java.io.IOException;
  */
 public class SoundEngineTestPanel extends JPanel {
 
-    static final int maxChannels = 16;
-    static final Audio sound;
+    static final int maxChannels = 4;
+    public static final Audio sound;
     static {
         Audio s;
         try {
@@ -51,9 +51,11 @@ public class SoundEngineTestPanel extends JPanel {
 
         //sound.play(SampleLoader.load("/tmp/p.wav"), SoundListener.zero, 1f, 1f);
 
+        /*
         Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.1f, 0.1f);
         ts.setStretchFactor(4f);
         sound.play(ts, SoundListener.zero, 1f, 1);
+        */
 
     }
 }

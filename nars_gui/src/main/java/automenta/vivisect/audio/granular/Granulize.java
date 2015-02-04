@@ -8,10 +8,19 @@ public class Granulize implements SoundProducer {
 
 	private final float[] sourceBuffer;
 	private float now = 0L;
+
+    /** this actually represents the target amplitude which the current amplitude will continuously interpolate towards */
+    public final AtomicDouble amplitude = new AtomicDouble(1.0);
+
+    protected float currentAmplitude = amplitude.floatValue();
+
 	public final AtomicDouble stretchFactor = new AtomicDouble(1.0);
     public final AtomicDouble pitchFactor = new AtomicDouble(1.0);
+
+    /** grains are represented as a triple of long integers (see Granulator.createGrain() which constructs these) */
 	private long[] currentGrain = null;
 	private long[] fadingGrain = null;
+
 	private final Granulator granulator;
 	private boolean isPlaying = false;
 	private float playTime = 0L;
@@ -34,31 +43,66 @@ public class Granulize implements SoundProducer {
 			currentGrain = createGrain(currentGrain);
 		}
         final float dNow = ((granulator.sampleRate / (float)readRate)) * pitchFactor.floatValue();
-		for (int i = 0; i < output.length; i++ ) {
+
+        float amp = currentAmplitude;
+        float dAmp = (amplitude.floatValue() - amp) / output.length;
+
+        float n = now;
+
+        final Granulator g = granulator;
+
+
+        final boolean p = isPlaying;
+        if (!p)
+            dAmp = (0 - amp) / output.length; //fade out smoothly if isPlaying false
+
+        final long samples = output.length;
+
+        long[] cGrain = currentGrain;
+        long[] fGrain = fadingGrain;
+
+		for (int i = 0; i < samples; i++ ) {
             float nextSample = 0;
-            long lnow = (long)now;
-			if (currentGrain != null) {
-				nextSample = granulator.getSample(currentGrain, sourceBuffer, lnow);
-				if (granulator.isFading(currentGrain, lnow)) {
-					fadingGrain = currentGrain;
-                    if (isPlaying)
-                        currentGrain = createGrain(currentGrain);
+            long lnow = (long)n;
+			if (cGrain != null) {
+				nextSample = g.getSample(cGrain, lnow);
+				if (g.isFading(cGrain, lnow)) {
+					fGrain = cGrain;
+                    if (p)
+                        cGrain = createGrain(cGrain);
                     else
-                        currentGrain = null;
+                        cGrain = null;
 				}
 			}
-			if (fadingGrain != null) {
-                nextSample += granulator.getSample(fadingGrain, sourceBuffer, lnow);
-				if (!granulator.hasMoreSamples(fadingGrain, lnow)) {
-					fadingGrain = null;
+			if (fGrain != null) {
+                nextSample += g.getSample(fGrain, lnow);
+				if (!g.hasMoreSamples(fGrain, lnow)) {
+					fGrain = null;
 				}
 			}
-			now += dNow;
-            output[i] = nextSample;
+			n += dNow;
+            output[i] = nextSample * amp;
+            amp += dAmp;
 		}
+
+
+        //access and modify these fields only outside of the critical rendering loop
+        currentGrain = cGrain;
+        fadingGrain = fGrain;
+        now = n;
+        currentAmplitude = amp;
 	}
 
-	public void play() {
+    public void setAmplitude(float amplitude) {
+        this.amplitude.set(amplitude);
+    }
+
+    @Override
+    public float getAmplitude() {
+        return amplitude.floatValue();
+    }
+
+    public void play() {
 		playOffset = 0;
 		playTime = now;
 		isPlaying = true;

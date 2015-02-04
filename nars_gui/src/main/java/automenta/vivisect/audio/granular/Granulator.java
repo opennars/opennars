@@ -26,20 +26,21 @@ public class Granulator {
         return now < showTime + length + window.getSize();
     }
 
-    public float getSample(long[] grain, float[] sourceBuffer, long now) {
+    public float getSample(long[] grain, long now) {
         final long startIndex = grain[0];
         final long length = grain[1];
         final long showTime = grain[2];
 
+        final float[] sb = sourceBuffer;
 
         long offset = now - showTime;
-        int sourceIndex = (int)((startIndex + offset + sourceBuffer.length) % sourceBuffer.length);
-        float sample = sourceBuffer[sourceIndex];
+        int sourceIndex = (int)((startIndex + offset + sb.length) % sb.length);
+        float sample = sb[sourceIndex];
         if (offset < 0) {
-            return sample * window.getFactor(offset);
+            return sample * window.getFactor((int)offset);
         }
         if (offset > length) {
-            return sample * window.getFactor(offset - length);
+            return sample * window.getFactor((int)(offset - length));
         }
         return sample;
     }

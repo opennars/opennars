@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.vivisect.audio.granular2.ui;
+package automenta.vivisect.audio.granular.depr.ui;
 
-import automenta.vivisect.audio.granular2.Envelope;
-import automenta.vivisect.audio.granular2.Granulator;
-import automenta.vivisect.audio.granular2.io.TextToWave;
-import automenta.vivisect.audio.granular2.io.WaveToText;
+import automenta.vivisect.audio.granular.depr.Envelope;
+import automenta.vivisect.audio.granular.depr.Granulator;
+import automenta.vivisect.audio.granular.depr.io.TextToWave;
+import automenta.vivisect.audio.granular.depr.io.WaveToText;
 
 import java.io.File;
 import java.io.IOException;

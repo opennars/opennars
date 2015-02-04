@@ -79,6 +79,32 @@ public class Audio implements Runnable
         play(new SamplePlayer(sample, rate), soundSource, volume, priority);
     }
 
+    static class DefaultSource implements SoundSource {
+
+        private final SoundProducer producer;
+        final float distanceFactor = 1f;
+
+        DefaultSource(SoundProducer p) {
+            super();
+            this.producer = p;
+        }
+
+        @Override
+        public float getY(float alpha) {
+            return 0 + (1f - producer.getAmplitude()) * distanceFactor;
+        }
+
+        @Override
+        public float getX(float alpha) {
+            return 0;
+        }
+    }
+
+
+    public void play(SoundProducer p, float volume, float priority) {
+        play(p, new DefaultSource(p), volume, priority);
+    }
+
     public void play(SoundProducer p, SoundSource soundSource, float volume, float priority)
     {
         if (!alive)

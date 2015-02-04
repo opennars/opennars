@@ -1,4 +1,4 @@
-package automenta.vivisect.audio.granular2;
+package automenta.vivisect.audio.granular.depr;
 
 import nars.core.Memory;
 
