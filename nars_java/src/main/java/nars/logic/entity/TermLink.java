@@ -41,8 +41,6 @@ import java.util.List;
  */
 public class TermLink extends Item<String> implements TLink<Term>, Termable {
 
-    NullPointerException e;
-    
     /** At C, point to C; TaskLink only */
     public static final short SELF = 0;
 
@@ -101,6 +99,15 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
         this.name = name;
     }
 
+    public boolean isReverse() {
+        if ((type == SELF) || (type == TRANSFORM)) return false;
+        return type % 2 == 1;
+    }
+    public boolean isForward() {
+        if ((type == SELF) || (type == TRANSFORM)) return false;
+        return type % 2 == 0;
+    }
+
     @Override
     public String name() {
         return name;
@@ -155,7 +162,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
         return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
     }
 
-    public CharSequence newKeyPrefix() {
+    protected CharSequence newKeyPrefix() {
         final String at1, at2;
         if ((type % 2) == 1) {  // to component
             at1 = Symbols.TO_COMPONENT_1;

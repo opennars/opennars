@@ -4,6 +4,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
 
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -233,10 +234,10 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
     public abstract int size();
     
     
-    public void printAll() {
+    public void printAll(PrintStream p) {
         Iterator<V> d = iterator();
         while (d.hasNext()) {
-            System.out.println("  " + d.next() + "\n" );
+            p.println("  " + d.next() + "\n" );
         }
     }
     

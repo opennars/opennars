@@ -1,0 +1,64 @@
+package nars.util.graph;
+
+import nars.build.Default;
+import nars.core.NAR;
+import nars.logic.NALOperator;
+import nars.logic.entity.Concept;
+import nars.logic.entity.TermLink;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+/**
+ * Created by me on 2/4/15.
+ */
+public class TermGraphTest {
+
+
+    NAR n = new NAR( new Default().setInternalExperience(null) );
+
+
+    @Test
+    public void testOutgoingTermLinks() {
+        n.believe("<a =/> b>");
+        n.run(4);
+
+        n.concept("a").termLinks.printAll(System.err);
+        n.concept("b").termLinks.printAll(System.err);
+
+        TermGraph g = new TermGraph(n) {
+
+            @Override public boolean include(Concept c, TermLink l, boolean asOutgoing) {
+                System.out.println("considering " + l + " of " + c);
+                System.out.println("  target=" + l.getTarget() + " , term=" + l.getTerm() + " , type=" + l.type);
+                return true;
+            }
+        };
+        g.outgoingEdgesOf(n.concept("a"));
+    }
+
+    @Test public void testInheritance() {
+
+        //TODO complete this
+
+        n.believe("<a --> b>");
+        n.believe("<c <-> d>");
+        n.run(4);
+
+        TermGraph g = new TermGraph.ParameterizedTermGraph(n, NALOperator.INHERITANCE, true, false);
+
+        assertEquals(0, g.incomingEdgesOf(n.concept("a")).size());
+        assertEquals(1, g.outgoingEdgesOf(n.concept("a")).size());
+
+        assertEquals(0, g.outgoingEdgesOf(n.concept("b")).size());
+        assertEquals(1, g.incomingEdgesOf(n.concept("b")).size());
+
+        assertEquals(0, g.incomingEdgesOf(n.concept("c")).size());
+        assertEquals(0, g.outgoingEdgesOf(n.concept("c")).size());
+        assertEquals(0, g.incomingEdgesOf(n.concept("d")).size());
+        assertEquals(0, g.outgoingEdgesOf(n.concept("d")).size());
+
+    }
+
+
+}

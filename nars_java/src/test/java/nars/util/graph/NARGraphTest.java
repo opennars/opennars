@@ -1,4 +1,4 @@
-package nars.util;
+package nars.util.graph;
 
 import nars.core.NAR;
 import nars.build.Default;
@@ -10,7 +10,7 @@ import static nars.util.graph.NARGraph.IncludeEverything;
 
 
 
-public class TestNARGraph {
+public class NARGraphTest {
     
     @Test
     public void testGraph() {
