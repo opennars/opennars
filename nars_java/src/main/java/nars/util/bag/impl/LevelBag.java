@@ -41,6 +41,8 @@ import java.util.function.Consumer;
 /**
  * Original Bag implementation which distributes items into
  * discrete levels (queues) according to priority
+ *
+ * TODO recycle Level[] arrays in an object pool when a LevelBag is finished, or just recycle anentire Concept
  */
 public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
@@ -85,7 +87,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
     protected final boolean[] levelEmpty;
 
-    private DDNodePool nodePool;
+    private final DDNodePool<E> nodePool = new DDNodePool(16);
+
 
     /**
      * mapping from key to item
@@ -125,7 +128,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
                 new ConcurrentHashMap<>(capacity * 2);
 
         level = (Level[]) Array.newInstance(Level.class, this.levels);
-        nodePool = new DDNodePool(16);
 
         levelEmpty = new boolean[this.levels];
         Arrays.fill(levelEmpty, true);
@@ -261,11 +263,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         return OUT(t);
     }
 
-    @Override
-    public E PUT(BagSelector<K, E> selector) {
-        return super.PUT(selector);
-        //return super.putInFast(selector);
-    }
 
     /**
      * Get an Item by key
@@ -408,7 +405,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         //allow selector to modify it, then if it returns non-null, reinsert
         //TODO maybe divide this into a 2 stage transaction that can be aborted before the unlevel begins
-        E c = selector.updateItem(b);
+        E c = selector.update(b);
         if (c!=null) {
             relevel(bx, c);
         }
@@ -435,11 +432,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             }
         }
 
+        currentCounter--;
+
         if (remove) {
             // take out the first item in the level
             final E e = TAKE(currentLevel);
 
-            currentCounter--;
 
             return e;
         }
@@ -579,7 +577,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             while (levelEmpty[outLevel]) {
                 outLevel++;
             }
-            if (outLevel > inLevel) {           // ignore the item and exit
+            if (outLevel > inLevel) {           // ignore the item due to insufficent budget and exit
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
                 overflow = TAKE(outLevel);

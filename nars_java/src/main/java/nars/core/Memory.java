@@ -58,6 +58,7 @@ import nars.util.bag.Bag;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -153,7 +154,7 @@ public class Memory implements Serializable {
     }
 
 
-    private final List<Runnable> otherTasks = new ArrayList();
+    private final Deque<Runnable> otherTasks = new ConcurrentLinkedDeque();
 
     public final Core concepts;
     private final Set<Concept> questionConcepts = Parameters.newHashSet(16);
@@ -705,21 +706,19 @@ public class Memory implements Serializable {
 
 
     public void queueOtherTask(Runnable t) {
-        synchronized (otherTasks) {
-            otherTasks.add(t);
-        }
+        otherTasks.addLast(t);
     }
     
-    public synchronized int dequeueOtherTasks(Collection<Runnable> target) {
-        int num;
-        synchronized (otherTasks) {            
-            num = otherTasks.size();
-            if (num > 0) {
-                target.addAll(otherTasks);
-                otherTasks.clear();
-            }
-        }
-        return num;
+    public int dequeueOtherTasks(Collection<Runnable> target) {
+        int originalSize = otherTasks.size();
+        if (originalSize == 0) return 0;
+
+        int count = 0;
+
+        while (!otherTasks.isEmpty() && count++ < originalSize)
+            target.add(otherTasks.removeFirst());
+
+        return count;
     }
 
 

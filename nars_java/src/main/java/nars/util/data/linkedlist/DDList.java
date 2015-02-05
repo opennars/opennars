@@ -128,7 +128,7 @@ public class DDList<E> implements Iterable<E> {
     }
 
     /** detaches and then returns the node to the pool; a complete removal / deletion */
-    public E remove(DD<E> i) {
+    final public E remove(final DD<E> i) {
         pool.put( detach(i) );
         return i.item;
     }

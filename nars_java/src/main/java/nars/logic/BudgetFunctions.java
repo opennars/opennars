@@ -236,11 +236,13 @@ public final class BudgetFunctions extends UtilityFunctions {
      *
      * @param b The budget baseValue to be modified
      * @param a The budget adjustValue doing the adjusting
+     * @return whether the merge had any effect in changing any of the budget components
      */
-    public static void merge(final BudgetValue b, final BudgetValue a) {        
-        b.setPriority(max(b.getPriority(), a.getPriority()));
-        b.setDurability(max(b.getDurability(), a.getDurability()));
-        b.setQuality(max(b.getQuality(), a.getQuality()));
+    public static boolean merge(final BudgetValue b, final BudgetValue a) {
+        return
+            b.setPriority(max(b.getPriority(), a.getPriority())) ||
+            b.setDurability(max(b.getDurability(), a.getDurability())) ||
+            b.setQuality(max(b.getQuality(), a.getQuality()));
     }
 
     /* ----- Task derivation in LocalRules and SyllogisticRules ----- */

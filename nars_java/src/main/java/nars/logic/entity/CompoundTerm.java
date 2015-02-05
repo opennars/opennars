@@ -56,7 +56,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     transient private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
     
     transient int containedTemporalRelations = -1;
-    protected int hash;
     private boolean normalized;
     
 
@@ -550,7 +549,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * This method does not check the equality of this term itself.
      * Although that is how Term.containsTerm operates
      *
-     * @param target The term to be searched
+     * @param t The term to be searched
      * @return Whether the target is in the current term
      */
     @Override
@@ -618,7 +617,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     /**
      * Try to replace a component in a compound at a given index by another one
      *
-     * @param memory Reference to the memory
      * @param index The location of replacement
      * @param t The new component
      * @return The new compound
@@ -831,58 +829,18 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
 
 
-    @Override
-    public int hashCode() {
-        if (!Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            return name().hashCode();
-        }
-        else {
-            return hash;
-        }
-    }
 
-    @Override
-    public int compareTo(final AbstractTerm that) {
-        if (that==this) return 0;
-        
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            if (that instanceof CompoundTerm) {
-                CompoundTerm t = (CompoundTerm)that;
 
-                int h = Integer.compare(hashCode(), t.hashCode());
-                if (h != 0) return h;
-
-                int o = operator().compareTo(t.operator());
-                if (o != 0) return o;
-
-                //same operator
-                int c = Integer.compare(getComplexity(), t.getComplexity());
-                if (c!=0) return c;
-
-                //should almost never reach here, the hashcode above will handle > 99% of comparisons
-                if (!equals(that)) {
-                    return Integer.compare(System.identityHashCode(this), System.identityHashCode(that));
-                }
-                return 0;
-            }
-            else
-                return super.compareTo(that);
-        }
-        return
-                super.compareTo(that);
-    }
-    
     @Override
     public boolean equals(final Object that) {
-        if (that==this) return true;                
+        if (this==that) return true;
         if (!(that instanceof Term))
             return false;
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY)
-            return equalsByTerm(that);
         return name().equals(((Term)that).name());
     }
-    
-    public boolean equalsByTerm(final Object that) {
+
+    /** performs a deep comparison of the term structure which should have the same result as normal equals(), but slower */
+    @Deprecated public boolean equalsByTerm(final Object that) {
         if (!(that instanceof CompoundTerm)) return false;
 
         final CompoundTerm t = (CompoundTerm)that;        
@@ -913,8 +871,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     
     
-    /** additional equality checks, in subclasses*/
-    public boolean equals2(final CompoundTerm other) {
+    /** additional equality checks, in subclasses, only called by equalsByTerm */
+    @Deprecated public boolean equals2(final CompoundTerm other) {
         return true;
     }
 

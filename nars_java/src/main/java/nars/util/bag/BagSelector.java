@@ -21,10 +21,30 @@ public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable
     public V newItem();
 
     /** allow selector to modify it, then if it returns non-null, reinsert
-     * if this method simply returns null it will have no effect
+     * if this method simply returns null it means it has not changed the item
      * */
-    default public V updateItem(V v) {
-        return null;
+    V updateItem(V v);
+
+    public default V update(V v) {
+        if (v == null) throw new RuntimeException("null item");
+
+        boolean changed = false;
+
+        //1. merge the budget, if specified
+        BudgetValue b = getBudget();
+        if (b!=null) {
+            changed = v.budget.merge(b);
+        }
+
+        //2. perform the update defined by implementations
+        V w = updateItem(v);
+        if (w != null)
+            return w;
+        else {
+            if (changed)
+                return v;
+            return null;
+        }
     }
 
     /** called when a bag operation produces an overflow (displaced item) */

@@ -24,7 +24,7 @@ public class AttentionTest {
     @Test public void testSampleNextConcept() {
         
         int numConcepts = 32;
-        NAR n = NAR.build(Default.class);
+        NAR n = new NAR(new Default());
         for (int i = 0; i < numConcepts; i++)
             n.addInput("<x" + i + " <-> x" + (i+1) + ">.");
         

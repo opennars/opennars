@@ -20,6 +20,7 @@
  */
 package nars.logic.entity;
 
+import com.google.common.base.Predicate;
 import nars.core.Events.*;
 import nars.core.Memory;
 import nars.core.NARRun;
@@ -938,6 +939,26 @@ public class Concept extends Item<Term> implements Termable {
         return buffer.toString();
     }
 
+    static final class TermLinkNovel implements Predicate<TermLink>    {
+
+        TaskLink taskLink;
+        private long now;
+        private int noveltyHorizon;
+
+        public void set(TaskLink t, long now, int noveltyHorizon) {
+            this.taskLink = t;
+            this.now = now;
+            this.noveltyHorizon = noveltyHorizon;
+        }
+
+        @Override
+        public boolean apply(TermLink termLink) {
+            return taskLink.novel(termLink, now, noveltyHorizon);
+        }
+    }
+
+    final TermLinkNovel termLinkNovel = new TermLinkNovel();
+
     /**
      * Replace default to prevent repeated logic, by checking TaskLink
      *
@@ -946,35 +967,26 @@ public class Concept extends Item<Term> implements Termable {
      * @return The selected TermLink
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
-        
-        //synchronized (termLinks) {
 
-            int toMatch = memory.param.termLinkMaxMatched.get();
-            for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
+        int toMatch = memory.param.termLinkMaxMatched.get();
 
-                final TermLink termLink = termLinks.TAKENEXT();
+        termLinkNovel.set(taskLink, time, noveltyHorizon);
 
-                if (termLink==null)
-                    break;
+        for (int i = 0; (i < toMatch); i++) {
 
-                if (taskLink.novel(termLink, time, noveltyHorizon)) {
-                    //return, will be re-inserted in caller method when finished processing it
-                    return termLink;
-                }
+            final TermLink termLink = termLinks.TAKENEXT(termLinkNovel);
 
-                returnTermLink(termLink, false);
-
+            if (termLink!=null) {
+                //return it, to be re-inserted in caller method when finished processing it
+                return termLink;
             }
-            return null;
+        }
 
-        //}
-
+        return null;
     }
 
     public void returnTermLink(TermLink termLink, boolean used) {
-        synchronized (termLinks) {
-            termLinks.putBack(termLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
-        }
+        termLinks.putBack(termLink);
     }
 
     /**

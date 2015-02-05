@@ -114,20 +114,15 @@ public class Variable extends Term {
 
 
     @Override public boolean equals(final Object that) {
-        if (that == this) return true;
+        if (this == that) return true;
         if (!(that instanceof Variable)) return false;
                 
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            return equalsTerm(that);
+        Variable v = (Variable)that;
+        if (!name().equals(v.name())) return false;
+        if (getScope() == this) {
+            if (v.getScope()!=v) return false;
         }
-        else {
-            Variable v = (Variable)that;
-            if (!name().equals(v.name())) return false;
-            if (getScope() == this) {
-                if (v.getScope()!=v) return false;
-            }
-            return (v.getScope().name().equals(getScope().name()));
-        }
+        return (v.getScope().name().equals(getScope().name()));
     }
     
     public boolean equalsTerm(Object that) {
@@ -173,17 +168,6 @@ public class Variable extends Term {
     
     
 
-
-    /**
-     * variable terms are listed first alphabetically
-     *
-     * @param that The Term to be compared with the current Term
-     * @return The same as compareTo as defined on Strings
-     */
-    /*@Override
-    public final int compareTo(final AbstractTerm that) {
-        return (that instanceof Variable) ? ((Comparable)name()).compareTo(that.name()) : -1;
-    }*/
 
     @Override public boolean hasVar() {
         return true;

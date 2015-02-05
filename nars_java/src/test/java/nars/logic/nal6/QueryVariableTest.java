@@ -1,5 +1,6 @@
 package nars.logic.nal6;
 
+import nars.build.Curve;
 import nars.build.Default;
 import nars.build.Neuromorphic;
 import nars.core.Build;
@@ -26,6 +27,8 @@ public class QueryVariableTest extends AbstractNALTest {
                 {new Default().setInternalExperience(null)},
                 {new Default().level(5)},
                 {new Neuromorphic(4)},
+                {new Curve().setInternalExperience(null)}
+
         });
     }
 

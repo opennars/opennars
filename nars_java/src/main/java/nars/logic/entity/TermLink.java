@@ -325,5 +325,9 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
         public int getNonTransforms() {
             return nonTransforms;
         }
+
+        @Override public TermLink updateItem(TermLink termLink) {
+            return null;
+        }
     }
 }

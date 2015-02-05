@@ -10,9 +10,9 @@ import nars.logic.entity.Item;
 import nars.logic.entity.Term;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.LevelBag;
-import nars.util.bag.impl.experimental.GearBag;
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -34,17 +34,17 @@ public class BagOperationsTest {
         }
         
     }
-    
-    
-    
-    @Test
-    public void testConcept() {
-        //testBagSequence(new CurveBag(2, new CurveBag.FairPriorityProbabilityCurve(), true, new FractalSortedItemList()));
-        //testBagSequence(new LevelBag(2, 2));
-        testBagSequence(new GearBag(2,2));        
+
+    @Test public void testLevelBag() {
+        testBagSequence(new LevelBag(2, 2));
     }
     
-    public static void testBagSequence(Bag b) {
+    
+    @Test public void testCurveBag() {
+        testBagSequence(new CurveBag(2, new CurveBag.FairPriorityProbabilityCurve(), true));
+    }
+    
+    void testBagSequence(Bag b) {
         
         //different id, different priority
         b.PUT(new NullConcept("a", 0.1f));
@@ -82,12 +82,9 @@ public class BagOperationsTest {
         assertEquals(0, b.size());
         assertEquals(0.2f, tc.getPriority(), 0.001f);
         
-        
-        
         assertEquals(null, b.PUT(new NullConcept("a", 0.2f)));
         b.PUT(new NullConcept("b", 0.3f));
-        //assertEquals(null, );
-        
+
         if (b instanceof LevelBag) {
             assertEquals("a", b.PUT(new NullConcept("c", 0.1f)).name().toString()); //replaces item on level
         }
@@ -95,13 +92,17 @@ public class BagOperationsTest {
             assertEquals("c", b.PUT(new NullConcept("c", 0.1f)).name().toString()); //could not insert, so got the object returned as result
             assertEquals(2, b.size());
         
-            //same id, different priority (lower, so ignored)
+            //same id, different priority (lower, so budget will not be affected)
             assertEquals(null, b.PUT(new NullConcept("b", 0.1f)));
             assertEquals(0.2f, b.getMinPriority(),0.001f); //unaffected, 0.2 still lowest
 
             //same id, higher priority
-            assertEquals(0.3f, b.getMaxPriority(),0.001f); //affected, 0.4 highest        
-            assertEquals(null, b.PUT(new NullConcept("b", 0.4f)));
+            assertEquals(0.3f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
+
+            //increasing b's priority should not cause 'a' to be removed
+            Item zzz = b.PUT(new NullConcept("b", 0.4f));
+            assertNull(null, zzz);
+
             assertEquals(0.4f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
 
         }

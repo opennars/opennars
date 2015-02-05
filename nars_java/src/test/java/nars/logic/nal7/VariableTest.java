@@ -5,6 +5,7 @@
 package nars.logic.nal7;
 
 import junit.framework.TestCase;
+import nars.build.Curve;
 import nars.build.Default;
 import nars.build.DefaultBuffered;
 import nars.build.Neuromorphic;
@@ -43,6 +44,8 @@ public class VariableTest extends TestCase {
                 {new Default()},
                 {new DefaultBuffered()},
                 {new DefaultBuffered().setInternalExperience(null)},
+                {new Curve().setInternalExperience(null)}
+
                 /*{new Neuromorphic(1)},
                 {new Neuromorphic(4)}*/
         });

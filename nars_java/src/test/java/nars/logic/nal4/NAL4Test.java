@@ -1,5 +1,6 @@
 package nars.logic.nal4;
 
+import nars.build.Curve;
 import nars.build.DefaultBuffered;
 import nars.core.Build;
 import nars.build.Default;
@@ -22,7 +23,9 @@ public class NAL4Test extends AbstractNALTest {
                 {new Default()},
                 {new Default().setInternalExperience(null) },
                 {new DefaultBuffered().setInternalExperience(null) },
-                {new Default().level(6)}
+                {new Default().level(6)},
+                {new Curve().setInternalExperience(null)}
+
         });
     }
 

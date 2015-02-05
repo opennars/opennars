@@ -165,7 +165,7 @@ public class Term implements AbstractTerm, Termable {
      */
     @Override
     public boolean equals(final Object that) {
-        if (that == this) return true;
+        if (this == that) return true;
         if (!(that instanceof Term)) return false;
         return name().equals(((Term)that).name());
     }
@@ -268,26 +268,14 @@ public class Term implements AbstractTerm, Termable {
     @Override
     public int compareTo(final AbstractTerm that) {
         if (that==this) return 0;
-        
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            if (!getClass().equals(that.getClass())) {
-                //differnt class, use class as ordering
-                return getClass().getSimpleName().compareTo(that.getClass().getSimpleName());
-            }
-            else {
-                //same class, compare by name()
-                return Texts.compareTo(name(), that.name());
-            }
 
-        }
-        else {
-            //previously: Orders among terms: variable < atomic < compound
-            if ((that instanceof Variable) && (getClass()!=Variable.class))
-                return 1;
-            else if ((this instanceof Variable) && (that.getClass()!=Variable.class))
-                return -1;
-            return Texts.compareTo(name(), that.name());            
-        }
+        //previously: Orders among terms: variable < atomic < compound
+        if ((that instanceof Variable) && (getClass()!=Variable.class))
+            return 1;
+        else if ((this instanceof Variable) && (that.getClass()!=Variable.class))
+            return -1;
+        return Texts.compareTo(name(), that.name());
+
     }
 
     

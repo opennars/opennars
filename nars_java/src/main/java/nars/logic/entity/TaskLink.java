@@ -127,12 +127,14 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
                 return new TaskLink(getTask(), template, budget, recordLength);
         }
 
+
         @Override
         public TaskLink updateItem(TaskLink taskLink) {
-            taskLink.budget.merge(getBudget());
-            return taskLink;
+            return null;
         }
+
     }
+
     /**
      * Constructor
      * <p>

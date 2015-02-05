@@ -128,16 +128,22 @@ public class BudgetValue implements Cloneable {
     /**
      * Change priority value
      * @param v The new priority
+     * @return whether the operation had any effect
      */
-    public final void setPriority(float v) {
-        if ((v <= 1.0f ) && (v >= 0f))
+    public final boolean setPriority(float v) {
+        if ((v <= 1.0f ) && (v >= 0f)) {
+            if (priority==v)
+                return false;
             priority = v;
+            return true;
+        }
         else if (Float.isNaN(v))
             throw new RuntimeException("Priority is NaN");
         else if (v > 1.0f)
             throw new RuntimeException("Priority > 1.0: " + v);
         else if (v < 0f)
             throw new RuntimeException("Priority < 1.0: " + v);
+        return false;
     }
 
     /**
@@ -173,11 +179,15 @@ public class BudgetValue implements Cloneable {
      * Change durability value
      * @param d The new durability
      */
-    public void setDurability(float d) {
+    public boolean setDurability(float d) {
         if(d>=1.0f) {
             d=1.0f-TRUTH_EPSILON;
         }
-        durability = d;
+        if (durability!=d) {
+            durability = d;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -212,8 +222,14 @@ public class BudgetValue implements Cloneable {
      * Change quality value
      * @param v The new quality
      */
-    public void setQuality(final float v) {
-        quality = v;
+    public boolean setQuality(final float v) {
+        if ((quality > 1f) || (quality < 0))
+            throw new RuntimeException("Invalid quality value: " + quality);
+        if (quality!=v) {
+            quality = v;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -235,9 +251,10 @@ public class BudgetValue implements Cloneable {
     /**
      * Merge one BudgetValue into another
      * @param that The other Budget
+     * @return whether the merge had any effect
      */
-    public void merge(final BudgetValue that) {
-        BudgetFunctions.merge(this, that);
+    public boolean merge(final BudgetValue that) {
+        return BudgetFunctions.merge(this, that);
     }
     
     /**

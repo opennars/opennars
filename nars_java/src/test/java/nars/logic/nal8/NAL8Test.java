@@ -1,5 +1,6 @@
 package nars.logic.nal8;
 
+import nars.build.Curve;
 import nars.build.Default;
 import nars.core.Build;
 import nars.core.Parameters;
@@ -21,7 +22,9 @@ public class NAL8Test extends AbstractNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
-                {new Default().setInternalExperience(null)}
+                {new Default().setInternalExperience(null)},
+                {new Curve().setInternalExperience(null)}
+
         });
     }
 

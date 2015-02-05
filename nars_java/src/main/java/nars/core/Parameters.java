@@ -194,9 +194,7 @@ public class Parameters {
 
     public static final LevelBag.NextNonEmptyLevelMode DEFAULT_LEVEL_BAG_MODE = LevelBag.NextNonEmptyLevelMode.Default;
 
-    /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
-    public static boolean TERM_ELEMENT_EQUIVALENCY = false;
-    
+
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
 

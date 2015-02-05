@@ -13,8 +13,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-
-public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
+/**
+ * Bag which stores items, sorted, in one array.
+ * Removal policy can select items by percentile via the array index.
+ * A curve function maps a probabilty distribution to an index allowing the bag
+ * to choose items with certain probabilities more than others.
+ *
+ * In theory, the curve can be calculated to emulate any potential removal policy.
+ *
+ * Insertion into the array is a O(log(n)) insertion sort, plus O(N) to shift items (unless the array is tree-like and can avoid this cost).
+ * Removal is O(N) to shift items, and an additional possible O(N) if a specific item to be removed is not found at the index expected for its current priority value.
+ *
+ * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
+ */
+public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
     final float MASS_EPSILON = 1e-5f;
 
@@ -249,17 +261,15 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
         return f;
     }
 
-    @Override
     protected void index(E value) {
         /*E oldValue = */
         nameTable.putKey(value.name(), value);
     }
 
-    @Override
-    protected E unindex(K name) {
-        E removed = nameTable.removeKey(name);
-        return removed;
-    }
+//    protected E unindex(K name) {
+//        E removed = nameTable.removeKey(name);
+//        return removed;
+//    }
 
 
     /**
@@ -282,6 +292,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
     @Override
     public E GET(final K key) {
         return nameTable.get(key);
+    }
+
+    public E TAKE(final K key) {
+        return nameTable.remove(key);
     }
 
 
@@ -357,14 +371,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 //    
 
 
-    @Override
-    public E take(final K name, boolean unindex) {
-        return unindex ? nameTable.remove(name) : nameTable.removeItem(name);
-    }
 
-    public synchronized E PUT(BagSelector<K, E> selector) {
-        return super.putInFast(selector);
-    }
 
 
     @Override
@@ -386,29 +393,35 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
      * @return The overflow Item, or null if nothing displaced
      */
     @Override
-    protected E addItem(E i, boolean index) {
+    public E PUT(E i) {
 
         synchronized (nameTable) {
             float newPriority = i.getPriority();
 
-            E oldItem = null;
+            E oldItem = nameTable.remove(i.name());
+            if (oldItem!=null) {
+                i.budget.merge(oldItem.budget);
+            }
 
             if (nameTable.size() >= capacity) {
                 // the bag is full
 
                 // this item is below the bag's already minimum item
-                if (newPriority < getMinPriority())
+                if (newPriority < getMinPriority()) {
                     return i;
+                }
 
                 oldItem = removeItem(0);
             }
 
-            if (index)
-                nameTable.put(i.name(), i);
-            else
-                nameTable.addItem(i);
+            nameTable.put(i.name(), i);
 
             mass += (i.budget.getPriority());                  // increase total mass
+
+            if ((oldItem!=null) && (oldItem.name().equals(i.name()))) {
+                //no overflow actually occurred
+                return null;
+            }
 
             return oldItem;
         }
@@ -416,29 +429,29 @@ public class CurveBag<E extends Item<K>, K> extends Bag.IndexedBag<E, K> {
 
     }
 
-
-    protected synchronized E removeItem2(final int index) {
-
-        final E selected;
-
-        selected = items.remove(index);
-        if (selected != null) {
-            E removed = nameTable.removeKey(selected.name());
-
-            if (removed == null)
-                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " but had no key referencing it");
-
-            //should be the same object instance
-            if ((removed != null) && (removed != selected)) {
-                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " and index referenced " + removed + " + ");
-            }
-            mass -= selected.budget.getPriority();
-        } else {
-            throw new RuntimeException(this + " items array returned null item at index " + index);
-        }
-
-        return selected;
-    }
+//
+//    protected synchronized E removeItem2(final int index) {
+//
+//        final E selected;
+//
+//        selected = items.remove(index);
+//        if (selected != null) {
+//            E removed = nameTable.removeKey(selected.name());
+//
+//            if (removed == null)
+//                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " but had no key referencing it");
+//
+//            //should be the same object instance
+//            if ((removed != null) && (removed != selected)) {
+//                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " and index referenced " + removed + " + ");
+//            }
+//            mass -= selected.budget.getPriority();
+//        } else {
+//            throw new RuntimeException(this + " items array returned null item at index " + index);
+//        }
+//
+//        return selected;
+//    }
 
 
     /**

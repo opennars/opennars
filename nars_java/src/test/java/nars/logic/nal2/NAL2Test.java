@@ -1,6 +1,7 @@
 package nars.logic.nal2;
 
 
+import nars.build.Curve;
 import nars.build.Default;
 import nars.build.Neuromorphic;
 import nars.core.Build;
@@ -24,7 +25,9 @@ public class NAL2Test extends AbstractNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default()}, //NAL8 + NAL9 didnt solve it
                 {new Default().level(3)}, //NAL2 didnt solve it as well as with 3
-                {new Default().setInternalExperience(null)}
+                {new Default().setInternalExperience(null)},
+                {new Curve().setInternalExperience(null)}
+
                 //{new Neuromorphic(4)},
         });
     }

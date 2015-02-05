@@ -30,8 +30,10 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
         if (x == null) return null;
 
         //check whether forgetting will actually change anything to avoid the cost of needlessly updating an item (ex: re-leveling in LevelBag)
-        if (!forgetWillChangeBudget())
+        if (!forgetWillChangeBudget()) {
+            this.currentItem = null;
             return null;
+        }
 
         return x.name();
     }
@@ -58,8 +60,6 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
 
     @Override
     public V newItem() {
-        System.err.println("This bag does not support creation of new items, only updating existing ones");
-        //throw new RuntimeException();
         return null;
     }
 

@@ -18,6 +18,7 @@
 package nars.perf;
 
 import com.google.common.collect.Lists;
+import nars.util.bag.impl.experimental.FairDelayBag;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -28,7 +29,6 @@ import nars.logic.entity.Item;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.LevelBag;
-import nars.util.bag.impl.experimental.GearBag;
 import nars.util.data.sorted.ArraySortedIndex;
 
 import java.io.PrintStream;
@@ -241,10 +241,12 @@ public class BagPerf {
                 int randomAccesses = accessesPerItem * items;
                         
                 Bag[] bags = new Bag[] { 
-                    new GearBag(levels, items),
+
                     new CurveBag(items, curve, true, new ArraySortedIndex<>(items)),
                     //new CurveBag(items, curve, true, new FractalSortedItemList<>()),                
-                    new LevelBag(levels, items)                        
+                    new LevelBag(levels, items),
+                        //new FairDelayBag(..., items)
+
                 };
                 
                 Map<Bag, Double> t = BagPerf.compare(                    

@@ -30,23 +30,6 @@ abstract public class Image extends CompoundTerm {
         init(components);
     }
 
-    @Override
-    protected void init(Term[] components) {
-        super.init(components);
-
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            this.hash = Objects.hash(super.hashCode(), relationIndex);
-        }
-    }
-
-    
-    @Override
-    public int hashCode() {
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY)
-            return hash;        
-        else
-            return super.hashCode();
-    }
 
     @Override
     public boolean equals2(final CompoundTerm other) {

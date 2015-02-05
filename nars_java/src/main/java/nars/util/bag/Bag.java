@@ -1,5 +1,6 @@
 package nars.util.bag;
 
+import com.google.common.base.Predicate;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
@@ -62,6 +63,18 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
      * @return The selected Item, or null if this bag is empty
      */
     abstract public V TAKENEXT();
+
+
+    /** if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected */
+    public V TAKENEXT(Predicate<V> iff) {
+        V v = PEEKNEXT();
+        if (v == null) return null;
+        if (iff.apply(v)) {
+            TAKE(v);
+            return v;
+        }
+        return null;
+    }
     
 
     /** gets the next value without removing changing it or removing it from any index.  however
@@ -111,13 +124,23 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
 
 
     /** returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics) */
-    /*abstract */public V UPDATE(final BagSelector<K, V> selector) {
-        //TODO this is the generic version which may or may not work with some subclasses
+    public V UPDATE(final BagSelector<K, V> selector) {
+        //TODO this is the generic version which may or may not work, or be entirely efficient in some subclasses
 
-        V item = TAKE(selector.name()); //
+        V item = GET(selector.name()); //
 
         if (item != null) {
-            item = (V)item.merge(selector);
+            V changed = selector.update(item);
+            if (changed == null)
+                return item;
+            else {
+                //it has changed
+
+                //this PUT(TAKE( sequence can be optimized in particular impl
+                //the default is a non-optimal failsafe
+                TAKE(item);
+                item = changed;
+            }
         }
         else {
             item = selector.newItem();
@@ -133,34 +156,40 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
     }
 
 
-    /**
-     * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
-     *
-     * @return the item which was removed,
-     * which may be the input item if it could not be inserted;
-     * or null if nothing needed removed.
-     *
-     * this return value follows the Map.put() semantics
-     */
-    @Deprecated public V PUT(final BagSelector<K, V> selector) {
-
-        final K key = selector.name();
-        if (key == null) return null;
-        V item = TAKE(key); //
-
-        if (item != null) {
-            item = (V)item.merge(selector);
-            final V overflow = PUT(item);
-            return overflow;
-        }
-        else {
-            item = selector.newItem();
-            if (item!=null)
-                return PUT(item); // put the (new or merged) item into itemTable
-        }
-
-        return null;
-    }
+//    /**
+//     * Add a new Item into the Bag via a BagSelector interface for lazy or cached instantiation of Bag items
+//     *
+//     * @return the item which was removed,
+//     * which may be the input item if it could not be inserted;
+//     * or null if nothing needed removed.
+//     *
+//     * this return value follows the Map.put() semantics
+//     */
+//    @Deprecated public V PUT(final BagSelector<K, V> selector) {
+//
+//        final K key = selector.name();
+//        if (key == null) return null;
+//        V item = GET(key);
+//
+//        if (item != null) {
+//            V itemChanged = selector.update(item);
+//            if (itemChanged != null) {
+//                //this PUT(TAKE( sequence can be optimized in particular impl
+//                //the default is a non-optimal failsafe
+//                final V overflow = PUT(TAKE(item));
+//                if (overflow!=null)
+//                    selector.overflow(overflow);
+//                return overflow;
+//            }
+//        }
+//        else {
+//            item = selector.newItem();
+//            if (item!=null)
+//                return PUT(item); // put the (new or merged) item into itemTable
+//        }
+//
+//        return null;
+//    }
 
 
 
@@ -207,10 +236,16 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
      * @param oldItem The Item to put back
      * @return the item which was removed, or null if none removed
      */    
-    @Deprecated public V putBack(final V oldItem, final float forgetCycles, final Memory m) {
-        m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), Parameters.FORGET_QUALITY_RELATIVE);
+    public V putBack(final V oldItem, final float forgetCycles, final Memory m) {
+        if (forgetCycles > 0)
+            m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), Parameters.FORGET_QUALITY_RELATIVE);
         return PUT(oldItem);
     }
+
+    public V putBack(final V oldItem) {
+        return putBack(oldItem, 0, null);
+    }
+
 
     /** accuracy determines the percentage of items which will be processNext().
      * this is a way to apply the forgetting process applied in putBack.
