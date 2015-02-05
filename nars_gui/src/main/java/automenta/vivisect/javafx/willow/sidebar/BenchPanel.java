@@ -44,7 +44,7 @@
 //        benchPanel.setStyle("-fx-padding: 5");
 //
 //        // info on benchmarks.
-//        // format: name, link, icon, (if link and icon are empty, then defines a benchmark category).
+//        // format: name, tlink, icon, (if tlink and icon are empty, then defines a benchmark category).
 //        final String[][] benchmarkLinks = {
 //                {getString("bench-panel.compliance"), "", ""},
 //                {"HTML 5 Test", "http://www.html5test.com", "HTML5_Badge_32.png"},
@@ -62,31 +62,31 @@
 //        // create the panel contents and insert it into the panel.
 //        ToggleGroup benchToggleGroup = new ToggleGroup();
 //        boolean firstCategory = true;
-//        for (final String[] link : benchmarkLinks) {
-//            if ("".equals(link[1])) {
+//        for (final String[] tlink : benchmarkLinks) {
+//            if ("".equals(tlink[1])) {
 //                // a category of benchmarks.
-//                final Label categoryLabel = new Label(link[0]);
+//                final Label categoryLabel = new Label(tlink[0]);
 //                categoryLabel.setStyle("-fx-text-fill: midnightblue; -fx-font-size: 16px;");
 //                VBox.setMargin(categoryLabel, new Insets(firstCategory ? 1 : 8, 0, 0, 0));
 //                benchPanel.getChildren().add(categoryLabel);
 //                firstCategory = false;
 //            } else {
 //                // create a toggle button to navigate to the given benchmark.
-//                final ToggleButton benchLink = new ToggleButton(link[0]);
+//                final ToggleButton benchLink = new ToggleButton(tlink[0]);
 //                benchLink.getStyleClass().add("icon-button");
 //                benchLink.setAlignment(Pos.CENTER_LEFT);
 //                benchLink.setContentDisplay(ContentDisplay.LEFT);
-//                benchLink.setOnAction(actionEvent -> chrome.getBrowser().go(link[1]));
+//                benchLink.setOnAction(actionEvent -> chrome.getBrowser().go(tlink[1]));
 //                benchPanel.getChildren().add(benchLink);
 //                benchLink.setMaxWidth(Double.MAX_VALUE);
 //                VBox.setMargin(benchLink, new Insets(0, 5, 0, 5));
 //
-//                // place the link in a toggle group.
+//                // place the tlink in a toggle group.
 //                benchLink.setToggleGroup(benchToggleGroup);
 //
-//                // add a graphic to the link.
-//                if (!link[2].isEmpty()) {
-//                    final Image image = ResourceUtil.getImage(link[2]);
+//                // add a graphic to the tlink.
+//                if (!tlink[2].isEmpty()) {
+//                    final Image image = ResourceUtil.getImage(tlink[2]);
 //                    final ImageView imageView = new ImageView(image);
 //                    imageView.setPreserveRatio(true);
 //                    imageView.setFitHeight(16);

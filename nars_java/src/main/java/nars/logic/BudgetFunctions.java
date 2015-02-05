@@ -135,7 +135,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      *
      * @param b The original budget
      * @param n Number of links
-     * @return Budget value for each link
+     * @return Budget value for each tlink
      */
     public static BudgetValue divide(final BudgetValue b, final float divisor) {
         final float newPriority = b.getPriority() / divisor;

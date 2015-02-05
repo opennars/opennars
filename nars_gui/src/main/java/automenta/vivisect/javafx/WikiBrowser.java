@@ -122,7 +122,7 @@ abstract public class WikiBrowser extends BorderPane {
             script += "$('body').after('<style>.crb { border: 1px solid #aaa; margin: 2px; padding: 1px; }</style>');";
             script += "$('head, .header, #page-actions, #jump-to-nav, .top-bar, .navigation-drawer, .edit-page').remove();";
 
-            //Add tag button to each link
+            //Add tag button to each tlink
             script += "$('a').each(function() { var t = $(this); var h = t.attr('href'); if (h && h.indexOf('#')!==-1) return; t.addClass('crb'); t.after('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>')});";
 
             //Add Tag button to H1 header of article
@@ -193,7 +193,7 @@ abstract public class WikiBrowser extends BorderPane {
 //			/*
 //			 * if (Uri.parse(url).getHost().equals("www.example.com")) { // This
 //			 * is my web site, so do not override; let my WebView load the page
-//			 * return false; } // Otherwise, the link is not for a page on my
+//			 * return false; } // Otherwise, the tlink is not for a page on my
 //			 * site, so launch another Activity that handles URLs Intent intent
 //			 * = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 //			 * startActivity(intent); return true;

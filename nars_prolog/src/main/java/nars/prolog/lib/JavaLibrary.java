@@ -285,7 +285,7 @@ public class JavaLibrary extends Library {
      }
      */
     /**
-     * Destroy the link to a java object - called not directly, but from
+     * Destroy the tlink to a java object - called not directly, but from
      * predicate java_object (as second choice, for backtracking)
      *
      * @throws JavaException
@@ -1460,7 +1460,7 @@ public class JavaLibrary extends Library {
     }
 
     /**
-     * Register an object with the specified id. The life-time of the link to
+     * Register an object with the specified id. The life-time of the tlink to
      * the object is engine life-time, available besides the individual query.
      *
      *
@@ -1496,7 +1496,7 @@ public class JavaLibrary extends Library {
     }
 
     /**
-     * Register an object with the specified id. The life-time of the link to
+     * Register an object with the specified id. The life-time of the tlink to
      * the object is engine life-time, available besides the individual query.
      *
      * The identifier must be a ground object.

@@ -343,7 +343,7 @@ public class AntCore extends ConceptWaveCore {
                 return;                
             }
                         
-            //link remains the same
+            //tlink remains the same
             eta = concept.getPriority();     
             onConcept(c, eta, queue);
         }
@@ -403,7 +403,7 @@ public class AntCore extends ConceptWaveCore {
             return "   {" + 
                     (link!=null ? ((Item)link).name() : null)  + " <<< " + 
                     (concept!=null ? concept.name() : null) +
-                    " | " + eta + " " + (inConcept() ? "concept" : (inLink() ? "link" : "")) + "}";            
+                    " | " + eta + " " + (inConcept() ? "concept" : (inLink() ? "tlink" : "")) + "}";
         }
 
                 

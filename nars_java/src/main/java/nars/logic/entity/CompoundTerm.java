@@ -26,6 +26,7 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.NALOperator;
 import nars.logic.Terms;
+import nars.logic.entity.tlink.TermLinkBuilder;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
@@ -809,19 +810,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
 
     
-    /* ----- link CompoundTerm and its term ----- */
-    /**
-     * Build TermLink templates to constant term and subcomponents
-     * <p>
-     * The compound type determines the link type; the component type determines
-     * whether to build the link.
-     *
-     * Adds the termlink templates to parameter TermLinkBuilder which manages
-     * them for a concept
-     */
-    public void prepareComponentLinks(TermLink.TermLinkBuilder t) {
-        Terms.prepareComponentLinks(t, this);
-    }
+    /* ----- tlink CompoundTerm and its term ----- */
 
     final public void addTermsTo(final Collection<Term> c) {
         Collections.addAll(c, term);

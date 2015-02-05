@@ -28,7 +28,7 @@
 // * <b>Note:</b> This class uses proprietary Sun APIs, therefore it is not
 // * guaranteed to work with future versions of the Sun VM, or other VMs. The
 // * safest way to use this tracker is to create it using
-// * {@link TimeDurationTracker#FACTORY} which safely selects the most precise
+// * {@tlink TimeDurationTracker#FACTORY} which safely selects the most precise
 // * method of time duration measurement available.
 // *
 // * @author The Stajistics Project

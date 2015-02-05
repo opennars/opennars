@@ -149,12 +149,6 @@ abstract public class FireConcept extends NAL {
                     currentConcept.termLinks.size() - 1);*/
             int noveltyHorizon = Parameters.NOVELTY_HORIZON;
 
-
-
-            if (currentConcept.termLinks.isEmpty())
-                throw new RuntimeException(currentConcept + " has no termlinks");
-
-
             while (termLinkSelectionAttempts > 0) {
 
 
@@ -162,7 +156,7 @@ abstract public class FireConcept extends NAL {
 
                 termLinkSelectionAttempts--;
 
-                //try again, because it may have selected a non-novel link
+                //try again, because it may have selected a non-novel tlink
                 if (termLink == null)
                     continue;
                 

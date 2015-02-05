@@ -3,6 +3,8 @@ package nars.logic;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.*;
+import nars.logic.entity.tlink.TermLinkBuilder;
+import nars.logic.entity.tlink.TermLinkTemplate;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
 import nars.logic.nal2.Similarity;
@@ -324,90 +326,7 @@ public class Terms {
         return true;
     }
 
-    /**
-     * Collect TermLink templates into a list, go down one level except in
-     * special cases
-     * <p>
-     *
-     * @param componentLinks The list of TermLink templates built so far
-     * @param type The type of TermLink to be built
-     * @param term The CompoundTerm for which the links are built
-     */
-    public static void prepareComponentLinks(TermLink.TermLinkBuilder tlb, final short type, final CompoundTerm t) {
-        
-        boolean tEquivalence = (t instanceof Equivalence);
-        boolean tImplication = (t instanceof Implication);
 
-
-        //componentLinks.ensureCapacity(componentLinks.size() + t.complexity);
-
-        for (short i = 0; i < t.term.length; ) {
-            final Term ti = t.term[i];
-
-            if (!ti.hasVar()) {
-                tlb.addTemplate(new TermLinkTemplate(type, ti, i));
-            }
-
-            if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
-
-                prepareComponentLinks(tlb, TermLink.COMPOUND_CONDITION, (CompoundTerm) ti);
-
-            } else if (ti instanceof CompoundTerm) {
-                final CompoundTerm cti = (CompoundTerm)ti;
-
-                boolean t1ProductOrImage = (ti instanceof Product) || (ti instanceof Image);
-
-                final short tiSize = (short)cti.term.length;
-                for (short j = 0; j < tiSize; ) {
-                    Term tj = cti.term[j];
-
-                    if (!tj.hasVar()) {
-                        TermLinkTemplate a;
-                        if (t1ProductOrImage) {
-                            if (type == TermLink.COMPOUND_CONDITION) {
-                                a = new TermLinkTemplate(TermLink.TRANSFORM, tj, 0, i, j);
-                            } else {
-                                a = new TermLinkTemplate(TermLink.TRANSFORM, tj, i, j);
-                            }
-                        } else {
-                            a = new TermLinkTemplate(type, tj, i, j);
-                        }
-                        tlb.addTemplate(a);
-                    }
-
-                    if ((tj instanceof Product) || (tj instanceof Image)) {
-                        CompoundTerm ctj = (CompoundTerm)tj;
-
-                        final short tjSize = (short) ctj.term.length;
-                        for (short k = 0; k < tjSize; ) {
-                            final Term tk = ctj.term[k];
-                            
-                            if (!tk.hasVar()) {
-                                TermLinkTemplate b;
-                                if (type == TermLink.COMPOUND_CONDITION) {
-                                    b = new TermLinkTemplate(TermLink.TRANSFORM, tk, 0, i, j, k);
-                                } else {
-                                    b = new TermLinkTemplate(TermLink.TRANSFORM, tk, i, j, k);
-                                }
-                                tlb.addTemplate(b);
-                            }
-
-                            k++; //increment at end in case it's the last iteration we want to use max n-1, not n
-                        }
-                    }
-
-                    j++; //increment at end in case it's the last iteration we want to use max n-1, not n
-                }
-            }
-
-            i++; //increment at end in case it's the last iteration we want to use max n-1, not n
-        }
-    }
-
-   public static void prepareComponentLinks(TermLink.TermLinkBuilder t, CompoundTerm ct) {
-        short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
-        prepareComponentLinks(t, type, ct);
-    }
 
     //TODO move this to a utility method
     public static <T> int indexOf(final T[] array, final T v) {

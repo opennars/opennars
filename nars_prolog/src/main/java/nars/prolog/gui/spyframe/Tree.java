@@ -68,8 +68,8 @@ public static final Font defaultfont=new Font(Font.SANS_SERIF, Font.PLAIN, 12);
   }
 
   /**Sets the horizontal spacing and remeasures the tree nodes. Changes will
-   * be made to the attributes @link{xspace}, @link{border}
-   * and eventually @link{font} and @link{textheight}.
+   * be made to the attributes @tlink{xspace}, @tlink{border}
+   * and eventually @tlink{font} and @tlink{textheight}.
    * 
    * @param xspace the new horizontal space between two closest possible nodes.
    * @param yspace the new vertical space between two closest possible nodes.
@@ -112,7 +112,7 @@ public static final Font defaultfont=new Font(Font.SANS_SERIF, Font.PLAIN, 12);
    * @param node the node to be posed.
    * @param xpos rightmost position of the neigbor to the left.
    * @param level logical depth of this node in the whole tree. (Zero-based.)
-   * @return width of this subtree including one @link{xspacing} left of each
+   * @return width of this subtree including one @tlink{xspacing} left of each
    * node. Two cases are considered: The children are together wider than the
    * node itself or they are not.
    */

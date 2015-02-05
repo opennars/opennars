@@ -351,7 +351,7 @@ public class NARControls extends JPanel implements ActionListener, Reaction {
             ct.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // see design for Bag and {@link BagWindow} in {@link Bag#startPlay(String)} 
+                    // see design for Bag and {@tlink BagWindow} in {@tlink Bag#startPlay(String)}
                     memory.conceptsStartPlay(new BagWindow<Concept>(), "Active Concepts");                    
                 }
             });

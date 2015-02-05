@@ -20,15 +20,12 @@
  */
 package nars.logic.entity;
 
-import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.Terms.Termable;
-import nars.util.bag.select.BagActivator;
-
-import java.util.List;
+import nars.logic.entity.tlink.TermLinkTemplate;
 
 /**
- * A link between a compound term and a component term
+ * A tlink between a compound term and a component term
  * <p>
  * A TermLink links the current Term to a target Term, which is 
  * either a component of, or compound made from, the current term.
@@ -66,7 +63,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
     /** The linked Term */
     public final Term target;
     
-    /** The type of link, one of the above */    
+    /** The type of tlink, one of the above */
     public final short type;
     
     /** The index of the component in the component list of the compound, may have up to 4 levels */
@@ -82,7 +79,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
      * @param
      * @param incoming or outgoing
      * @param template TermLink template previously prepared
-     * @param v Budget value of the link
+     * @param v Budget value of the tlink
      */
     public TermLink(boolean incoming, Term host, TermLinkTemplate template, String name, BudgetValue v) {
         super(v);
@@ -219,115 +216,4 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
     }
 
 
-
-    public static class TermLinkBuilder extends BagActivator<String,TermLink> {
-
-        public final Concept concept;
-
-        List<TermLinkTemplate> template;
-        int nonTransforms;
-
-        final CompoundTerm host;
-
-        Term from = null;
-
-        TermLinkTemplate currentTemplate;
-        boolean incoming;
-
-        public TermLinkBuilder(Concept c) {
-            super();
-
-            this.concept = c;
-
-            setBudget(new BudgetValue(0,0,0));
-
-            host = (CompoundTerm)c.getTerm();
-
-            int complexity = host.getComplexity();
-
-            template = Parameters.newArrayList(complexity + 1);
-            nonTransforms = 0;
-
-            host.prepareComponentLinks(this);
-        }
-
-        /** count how many termlinks are non-transform */
-        public List<TermLinkTemplate> templates() {
-            return template;
-        }
-
-
-        public void addTemplate(TermLinkTemplate tl) {
-            template.add(tl);
-
-            tl.setConcept(host);
-
-            if (tl.type!= TRANSFORM)
-                nonTransforms++;
-        }
-
-
-        @Override public BudgetValue getBudget() {
-            return budget;
-        }
-
-        public String name(Term from) {
-            return currentTemplate.name( !from.equals( concept.term ) );
-        }
-
-        /** configures this selector's current budget for the next bag operation */
-        public BudgetValue set(float subBudget, float durability, float quality) {
-            budget.setPriority(subBudget);
-            budget.setDurability(durability);
-            budget.setQuality(quality);
-            return budget;
-        }
-
-        /** configures this selector's current bag key for the next bag operation */
-        public TermLinkBuilder set(TermLinkTemplate temp, Term source, Term target) {
-            this.currentTemplate = temp;
-            this.incoming = !source.equals(concept.term);
-            this.from = source;
-            //this.to = target;
-            return this;
-        }
-
-        /**
-         *
-         * @return the amount of remaining budget priority
-         */
-        /*double invest(Bag<TermLink,String> bag) {
-            //TODO move code from Concept here
-            //iterate all items, both forward and backward
-            return 0;
-        }*/
-
-        @Override public String name() {
-            return name(this.from);
-        }
-
-
-        @Override
-        public TermLink newItem() {
-            return new TermLink(incoming, concept.getTerm(), currentTemplate, name(), getBudget());
-        }
-
-        public int size() {
-            return template.size();
-        }
-
-        public void clear() {
-            template.clear();
-            nonTransforms = 0;
-        }
-
-        /** count of how many templates are non-transforms */
-        public int getNonTransforms() {
-            return nonTransforms;
-        }
-
-        @Override public TermLink updateItem(TermLink termLink) {
-            return null;
-        }
-    }
 }

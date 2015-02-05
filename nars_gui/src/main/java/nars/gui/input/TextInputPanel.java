@@ -365,7 +365,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
     
 //    /**
 //     * Whether the window is ready to accept new addInput (in fact whether the
-//     * Reasoner will read the content of {@link #inputText} )
+//     * Reasoner will read the content of {@tlink #inputText} )
 //     */
 //    private boolean ready;
     
@@ -693,7 +693,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
 //    /**
 //     * Accept text addInput in a tick, which can be multiple lines TODO some
-// duplicated code with {@link ExperienceReader#nextInput()}
+// duplicated code with {@tlink ExperienceReader#nextInput()}
 //     *
 //     * @return Whether to check this channel again
 //     */

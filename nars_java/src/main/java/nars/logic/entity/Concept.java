@@ -29,6 +29,9 @@ import nars.io.Symbols;
 import nars.logic.NALOperator;
 import nars.logic.NAL;
 import nars.logic.Terms.Termable;
+import nars.logic.entity.tlink.TaskLinkBuilder;
+import nars.logic.entity.tlink.TermLinkBuilder;
+import nars.logic.entity.tlink.TermLinkTemplate;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.util.bag.Bag;
@@ -98,8 +101,8 @@ public class Concept extends Item<Term> implements Termable {
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
      * are used to improve the efficiency of TermLink building
      */
-    private final TermLink.TermLinkBuilder termLinkBuilder;
-    private final TaskLink.TaskLinkBuilder taskLinkBuilder;
+    private final TermLinkBuilder termLinkBuilder;
+    private final TaskLinkBuilder taskLinkBuilder;
 
     /** remaining unspent budget from previous cycle can be accumulated */
     float taskBudgetBalance = 0;
@@ -136,7 +139,7 @@ public class Concept extends Item<Term> implements Termable {
         if (termLinks instanceof MemoryAware)  ((MemoryAware)termLinks).setMemory(memory);
                 
         if (term instanceof CompoundTerm) {
-            this.termLinkBuilder = new TermLink.TermLinkBuilder(this) {
+            this.termLinkBuilder = new TermLinkBuilder(this) {
 
                 @Override
                 public void overflow(TermLink overflow) {
@@ -150,7 +153,7 @@ public class Concept extends Item<Term> implements Termable {
             this.termLinkBuilder = null;
         }
 
-        this.taskLinkBuilder = new TaskLink.TaskLinkBuilder(memory) {
+        this.taskLinkBuilder = new TaskLinkBuilder(memory) {
             @Override
             public void overflow(TaskLink overflow) {
                 if (overflow.name().equals(getKey())) {
@@ -532,7 +535,7 @@ public class Concept extends Item<Term> implements Termable {
         taskLinkBuilder.setBudget(taskBudget);
         taskLinkBuilder.setTask(task);
         taskLinkBuilder.setTemplate(null);
-        activateTaskLink(taskLinkBuilder);  // link type: SELF
+        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
 
         if (!(term instanceof CompoundTerm)) {
             return false;
@@ -575,7 +578,7 @@ public class Concept extends Item<Term> implements Termable {
 
                 taskLinkBuilder.setTemplate(termLink);
 
-                /** activate the task link */
+                /** activate the task tlink */
                 componentConcept.activateTaskLink(taskLinkBuilder);                }
 
             else {
@@ -684,7 +687,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param taskLink The termLink to be inserted
      * @return the tasklink which was selected or updated
      */
-    protected TaskLink activateTaskLink(final TaskLink.TaskLinkBuilder taskLink) {
+    protected TaskLink activateTaskLink(final TaskLinkBuilder taskLink) {
 
         return taskLinks.UPDATE(taskLink);
 
@@ -771,12 +774,12 @@ public class Concept extends Item<Term> implements Termable {
      *
      * called from buildTermLinks only
      *
-     * If the link already exists, the budgets will be merged
+     * If the tlink already exists, the budgets will be merged
      *
      * @param termLink The termLink to be inserted
      * @return the termlink which was selected or updated
      * */
-    public TermLink activateTermLink(final TermLink.TermLinkBuilder termLink) {
+    public TermLink activateTermLink(final TermLinkBuilder termLink) {
 
         return termLinks.UPDATE(termLink);
 

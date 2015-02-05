@@ -77,8 +77,8 @@ public class SwingText extends JTextPane {
                 //http://stackoverflow.com/questions/16131811/clickable-text-in-a-jtextpane
                 Style link = doc.addStyle(null, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
                 StyleConstants.setForeground(link, color);
-                //StyleConstants.setUnderline(link, true);
-                //StyleConstants.setBold(link, true);
+                //StyleConstants.setUnderline(tlink, true);
+                //StyleConstants.setBold(tlink, true);
                 link.addAttribute("linkact", action);
                 doc.insertString(doc.getLength(), text.toString(), link);
             }

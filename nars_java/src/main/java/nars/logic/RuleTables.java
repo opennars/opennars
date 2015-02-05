@@ -46,8 +46,8 @@ public class RuleTables {
      * Meta-table of syllogistic rules, indexed by the content classes of the
      * taskSentence and the belief
      *
-     * @param tLink The link to task
-     * @param bLink The link to belief
+     * @param tLink The tlink to task
+     * @param bLink The tlink to belief
      * @param taskTerm The content of task
      * @param beliefTerm The content of belief
      * @param nal Reference to the memory
@@ -101,8 +101,8 @@ public class RuleTables {
      * Decide the figure of syllogism according to the locations of the common
      * term in the premises
      *
-     * @param link1 The link to the first premise
-     * @param link2 The link to the second premise
+     * @param link1 The tlink to the first premise
+     * @param link2 The tlink to the second premise
      * @return The figure of the syllogism, one of the four: 11, 12, 21, or 22
      */
     public static final  int indexToFigure(final TLink link1, final TLink link2) {
@@ -554,7 +554,7 @@ public class RuleTables {
      * The TaskLink is of type TRANSFORM, and the conclusion is an equivalent
      * transformation
      *
-     * @param tLink The task link
+     * @param tLink The task tlink
      * @param nal Reference to the memory
      */
     public static void transformTask(TaskLink tLink, NAL nal) {

@@ -39,7 +39,7 @@ public class Var extends Term {
     private String name;
     private StringBuilder completeName;     /* Reviewed by Paolo Contessi: String -> StringBuilder */
 
-    private Term link;            /* link is used for unification process */
+    private Term link;            /* tlink is used for unification process */
 
     private long timestamp;        /* timestamp is used for fix vars order */
 
@@ -407,12 +407,12 @@ public class Var extends Term {
      * if are the same Var, unification must succeed, but without any new
      * bindings (to avoid cycles for extends in A = B, B = A)
      * <p>
-     * if the term is a number, then it's a success and new link is created
+     * if the term is a number, then it's a success and new tlink is created
      * (retractable by means of a code)
      * <p>
      * if the term is a compound, then occur check test is executed: the var
      * must not appear in the compound ( avoid X=p(X), or p(X,X)=p(Y,f(Y)) ); if
-     * occur check is ok then it's success and a new link is created
+     * occur check is ok then it's success and a new tlink is created
      * (retractable by a code)
      */
     public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
@@ -442,7 +442,7 @@ public class Var extends Term {
             } catch (NullPointerException e) {/* vl1==null mean nothing intresting for the caller */
 
             }
-            //System.out.println("VAR "+name+" BOUND to "+link+" - time: "+time+" - mark: "+mark);
+            //System.out.println("VAR "+name+" BOUND to "+tlink+" - time: "+time+" - mark: "+mark);
             return true;
         } else {
             return (tt.unify(vl1, vl2, t));

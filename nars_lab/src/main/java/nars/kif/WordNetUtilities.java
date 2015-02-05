@@ -671,7 +671,7 @@ public class WordNetUtilities {
 
     /**
      * ***************************************************************
-     * Use the WordNet hyper-/hypo-nym links to deduce a likely link for a SUMO
+     * Use the WordNet hyper-/hypo-nym links to deduce a likely tlink for a SUMO
      * term that has not yet been manually linked. This is a utility routine
      * that should not be called during normal Sigma operation.
      */

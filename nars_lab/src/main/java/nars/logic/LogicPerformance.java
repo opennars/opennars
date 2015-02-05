@@ -137,7 +137,7 @@ public class LogicPerformance {
         }
         
         public void explain(long t, FireConcept f) {
-            //Concept conceptFired, TaskLink link, List<Task> generated) {
+            //Concept conceptFired, TaskLink tlink, List<Task> generated) {
             Term term = f.getCurrentConcept().term;
             TaskLink link = f.getCurrentTaskLink();
             

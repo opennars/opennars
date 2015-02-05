@@ -20,10 +20,9 @@
  */
 package nars.logic.entity;
 
-import nars.core.Memory;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.Sentence.Sentenceable;
-import nars.util.bag.select.BagActivator;
+import nars.logic.entity.tlink.TermLinkTemplate;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -74,14 +73,14 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
     
 
     
-    /** The type of link, one of the above */    
+    /** The type of tlink, one of the above */
     public final short type;
 
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
 
 
-    private TaskLink(final Task t, final BudgetValue v, int recordLength) {
+    public TaskLink(final Task t, final BudgetValue v, int recordLength) {
         super(v);
         this.type = TermLink.SELF;
         this.index = null;
@@ -90,49 +89,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
 
         this.recordLength = recordLength;
         this.records = new ArrayDeque(recordLength);
-    }
-
-    /** adjusts budget of items in a Bag. ex: merge */
-    public static class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
-
-        TermLinkTemplate template;
-        private Task task;
-        public final Memory memory;
-
-
-        public TaskLinkBuilder(Memory memory) {
-            super();
-            this.memory = memory;
-        }
-
-        public void setTask(Task t) {
-            this.task = t;
-            setKey(t.sentence);
-        }
-
-        public Task getTask() {
-            return task;
-        }
-
-        public void setTemplate(TermLinkTemplate template) {
-            this.template = template;
-        }
-
-        @Override
-        public TaskLink newItem() {
-            int recordLength = memory.param.termLinkRecordLength.get();
-            if (template == null)
-                return new TaskLink(getTask(), budget, recordLength);
-            else
-                return new TaskLink(getTask(), template, budget, recordLength);
-        }
-
-
-        @Override
-        public TaskLink updateItem(TaskLink taskLink) {
-            return null;
-        }
-
     }
 
     /**
@@ -144,7 +100,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
      * @param template The TermLink template
      * @param v The budget
      */
-    private TaskLink(final Task t, final TermLinkTemplate template, final BudgetValue v, int recordLength) {
+    public TaskLink(final Task t, final TermLinkTemplate template, final BudgetValue v, int recordLength) {
         super(v);
         this.type = template.type;
         this.index = template.index;
@@ -226,7 +182,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
                 }
             }
             else if (currentTime > r.getTime() + noveltyHorizon) {
-                //remove a record which will not apply to any other link
+                //remove a record which will not apply to any other tlink
                 ir.remove();
             }
         }
