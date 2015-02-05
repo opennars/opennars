@@ -146,7 +146,7 @@ public class Twokenize {
     // "hello (#hashtag)" ==> "hello ( #hashtag )"  RIGHT
     // "hello (@person)" ==> "hello (@person )"  WRONG
     // "hello (@person)" ==> "hello ( @person )"  RIGHT
-    // ... Some sort of weird interaction with edgepunct I guess, because edgepunct 
+    // ... Some sorted of weird interaction with edgepunct I guess, because edgepunct
     // has poor content-symbol detection.
     // This also gets #1 #40 which probably aren't hashtags .. but good as tokens.
     // If you want good hashtag identification, use a different regex.

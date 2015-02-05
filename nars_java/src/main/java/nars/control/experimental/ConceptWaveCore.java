@@ -12,8 +12,8 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.ConceptBuilder;
 import nars.logic.entity.Term;
 import nars.util.bag.Bag.MemoryAware;
-import nars.util.bag.experimental.DelayBag;
-import nars.util.bag.experimental.FairDelayBag;
+import nars.util.bag.impl.experimental.DelayBag;
+import nars.util.bag.impl.experimental.FairDelayBag;
 
 import java.util.ArrayList;
 import java.util.Iterator;

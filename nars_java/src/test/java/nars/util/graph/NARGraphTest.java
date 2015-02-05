@@ -2,8 +2,6 @@ package nars.util.graph;
 
 import nars.core.NAR;
 import nars.build.Default;
-import nars.util.graph.DefaultGraphizer;
-import nars.util.graph.NARGraph;
 import org.junit.Test;
 
 import static nars.util.graph.NARGraph.IncludeEverything;
@@ -25,7 +23,7 @@ public class NARGraphTest {
 
         
         NARGraph g = new NARGraph();
-        g.add(n, IncludeEverything, new DefaultGraphizer(true,true,true,true,0,true,true));
+        g.add(n, IncludeEverything, new DefaultGrapher(true,true,true,true,0,true,true));
         
         //System.out.println(g);
         

@@ -4,7 +4,7 @@
  */
 package nars.util.bag;
 
-import nars.util.bag.experimental.GearBag;
+import nars.util.bag.impl.experimental.GearBag;
 import org.junit.Test;
 
 /**

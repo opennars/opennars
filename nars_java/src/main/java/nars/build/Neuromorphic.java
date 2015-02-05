@@ -6,8 +6,8 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.logic.entity.*;
 import nars.util.bag.Bag;
-import nars.util.bag.experimental.DelayBag;
-import nars.util.bag.experimental.FairDelayBag;
+import nars.util.bag.impl.experimental.DelayBag;
+import nars.util.bag.impl.experimental.FairDelayBag;
 
 /**
  *

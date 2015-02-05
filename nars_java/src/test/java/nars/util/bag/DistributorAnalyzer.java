@@ -1,5 +1,6 @@
 package nars.util.bag;
 
+import nars.util.math.Distributor;
 import org.junit.Test;
 
 import java.util.ArrayList;

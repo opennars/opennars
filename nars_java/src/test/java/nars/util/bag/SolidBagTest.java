@@ -4,7 +4,7 @@ package nars.util.bag;
 import com.google.common.collect.Iterators;
 import nars.core.Memory;
 import nars.logic.entity.Item;
-import nars.util.bag.experimental.SolidBag;
+import nars.util.bag.impl.experimental.BubbleBag;
 import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class SolidBagTest extends AbstractBagTest {
     public void testSolidBagSetOperations() {
 
 
-        SolidBag<NullItem,CharSequence> s = new SolidBag(4);
+        BubbleBag<NullItem,CharSequence> s = new BubbleBag(4);
 
         s.PUT(new NullItem(0.5f, "5"));
         s.PUT(new NullItem(0.3f, "3"));
@@ -72,7 +72,7 @@ public class SolidBagTest extends AbstractBagTest {
         Memory.resetStatic(1);
 
         int c = 4;
-        SolidBag<NullItem,CharSequence> s = new SolidBag(c);
+        BubbleBag<NullItem,CharSequence> s = new BubbleBag(c);
 
         int ii = 15;
         for (int i = 0; i < ii; i++) {
@@ -106,7 +106,7 @@ public class SolidBagTest extends AbstractBagTest {
         int insertsPerLoop = 1;
         float fractionToAdjust = 0.1f;
         float fractionTRemove = 0.1f;
-        SolidBag bag = new SolidBag(16);
+        BubbleBag bag = new BubbleBag(16);
 
         int[] dist =AbstractBagTest.testRemovalPriorityDistribution(
                 loops, insertsPerLoop, fractionToAdjust, fractionTRemove, bag,
@@ -120,7 +120,7 @@ public class SolidBagTest extends AbstractBagTest {
         int loops = 5000;
         int insertsPerLoop = 1;
 
-        SolidBag bag = new SolidBag(500) {
+        BubbleBag bag = new BubbleBag(500) {
 
             @Override
             public Item onExit(Item item) {

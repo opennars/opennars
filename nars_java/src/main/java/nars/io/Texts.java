@@ -1,7 +1,7 @@
 package nars.io;
 
-import nars.util.rope.Rope;
-import nars.util.rope.impl.CharArrayRope;
+import nars.util.data.rope.Rope;
+import nars.util.data.rope.impl.CharArrayRope;
 
 import java.lang.reflect.Field;
 import java.nio.CharBuffer;

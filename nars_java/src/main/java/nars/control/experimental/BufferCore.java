@@ -12,7 +12,7 @@ import nars.logic.FireConcept;
 import nars.logic.ImmediateProcess;
 import nars.logic.entity.*;
 import nars.util.bag.Bag;
-import nars.util.bag.CacheBag;
+import nars.util.bag.impl.CacheBag;
 
 import java.util.*;
 

@@ -8,7 +8,9 @@ import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
 import nars.logic.entity.Term;
-import nars.util.bag.experimental.GearBag;
+import nars.util.bag.impl.CurveBag;
+import nars.util.bag.impl.LevelBag;
+import nars.util.bag.impl.experimental.GearBag;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

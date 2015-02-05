@@ -24,15 +24,16 @@ public class AnticipationTest extends AbstractNALTest {
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-                {new Default()}
+                {new Default()},
+
 
                 //TODO compare result with ^anticipate enabled vs. disabled
-                //{new Default().setInternalExperience(null)},
+                {new Default().setInternalExperience(null)},
         });
     }
 
     @Test //test the occurrence time feature of TaskCondition
-    public void testTest()  throws InvalidInputException {
+    public void testOcurrenceTimeTesting()  throws InvalidInputException {
         n.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
         n.mustOutput(0, 50, "<a --> b>", '.', 0.00f, 1.00f, 0.0f, 1.0f, -55, 0);
     }

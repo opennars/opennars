@@ -14,7 +14,7 @@ package nars.gui.output.graph.deprecated;
 //import nars.logic.entity.Term;
 //import nars.other.DefaultGraphizer;
 //import nars.other.NARGraph;
-//import nars.other.sort.IndexedTreeSet;
+//import nars.other.sorted.IndexedTreeSet;
 //
 //
 //

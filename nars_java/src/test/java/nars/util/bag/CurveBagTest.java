@@ -6,9 +6,11 @@ import nars.core.Param;
 import nars.build.Default;
 import nars.logic.entity.Item;
 import nars.perf.BagPerf.NullItem;
-import nars.util.bag.CurveBag.BagCurve;
-import nars.util.sort.ArraySortedIndex;
-import nars.util.sort.SortedIndex;
+import nars.util.bag.impl.CurveBag;
+import nars.util.bag.impl.CurveBag.BagCurve;
+import nars.util.bag.impl.LevelBag;
+import nars.util.data.sorted.ArraySortedIndex;
+import nars.util.data.sorted.SortedIndex;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -1,12 +1,11 @@
 package nars.build;
 
-import nars.control.DefaultCore;
 import nars.core.Core;
 import nars.core.Memory;
 import nars.logic.entity.*;
 import nars.util.bag.Bag;
-import nars.util.bag.CurveBag;
-import nars.util.bag.CurveBag.FairPriorityProbabilityCurve;
+import nars.util.bag.impl.CurveBag;
+import nars.util.bag.impl.CurveBag.FairPriorityProbabilityCurve;
 
 
 public class Curve extends Default {

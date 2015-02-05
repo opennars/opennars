@@ -506,7 +506,7 @@ public class Stamp implements Cloneable {
             return set;
         
         //1. copy evidentialBse
-        //2. sort
+        //2. sorted
         //3. count duplicates
         //4. create new array 
         

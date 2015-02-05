@@ -43,8 +43,8 @@ public class VariableTest extends TestCase {
                 {new Default()},
                 {new DefaultBuffered()},
                 {new DefaultBuffered().setInternalExperience(null)},
-                {new Neuromorphic(1)},
-                {new Neuromorphic(4)}
+                /*{new Neuromorphic(1)},
+                {new Neuromorphic(4)}*/
         });
     }
     

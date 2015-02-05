@@ -12,9 +12,9 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.ConceptBuilder;
 import nars.logic.entity.Term;
 import nars.util.bag.Bag;
-import nars.util.bag.BagActivator;
-import nars.util.bag.CacheBag;
-import nars.util.bag.LevelBag;
+import nars.util.bag.select.BagActivator;
+import nars.util.bag.impl.CacheBag;
+import nars.util.bag.impl.LevelBag;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -129,7 +129,7 @@ public class DefaultTextPerception extends AbstractPlugin {
                     return null;
                 if (input.length() > 8) {
                     //if input > ~8 chars it wont fit as 32bit integer anyway so terminate early.
-                    //parseInt is sort of expensive
+                    //parseInt is sorted of expensive
                     return null;
                 }
                     

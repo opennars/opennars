@@ -5,7 +5,7 @@ import nars.jprolog.lang.*;
 
 import java.util.Arrays;
 /**
- * <code>sort/2</code><br>
+ * <code>sorted/2</code><br>
  * @author Mutsunori Banbara (banbara@kobe-u.ac.jp)
  * @author Naoyuki Tamura (tamura@kobe-u.ac.jp)
  * @version 1.1
@@ -30,7 +30,7 @@ public class PRED_sort_2 extends Predicate {
 
     public int arity() { return 2 ; }
 
-    public String toString() { return "sort(" + arg1 + "," + arg2 + ")"; }
+    public String toString() { return "sorted(" + arg1 + "," + arg2 + ")"; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

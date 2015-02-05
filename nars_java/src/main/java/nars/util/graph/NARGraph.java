@@ -80,7 +80,7 @@ public class NARGraph extends DirectedMultigraph {
     /**
      * creates graph features from NARS term
      */
-    public static interface Graphize {
+    public static interface Grapher {
 
         /**
          * called at beginning of operation
@@ -305,7 +305,7 @@ public class NARGraph extends DirectedMultigraph {
     public List<Concept> currentLevel = new ArrayList();
 
 
-    public NARGraph add(NAR n, Filter filter, Graphize graphize) {
+    public NARGraph add(NAR n, Filter filter, Grapher graphize) {
         graphize.onTime(this, n.time());
 
         //TODO support AbstractBag

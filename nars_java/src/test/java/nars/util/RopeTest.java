@@ -22,11 +22,11 @@
  */
 package nars.util;
 
-import nars.util.rope.Rope;
-import nars.util.rope.impl.ConcatenationRope;
-import nars.util.rope.impl.FlatCharSequenceRope;
-import nars.util.rope.impl.ReverseRope;
-import nars.util.rope.impl.SubstringRope;
+import nars.util.data.rope.Rope;
+import nars.util.data.rope.impl.ConcatenationRope;
+import nars.util.data.rope.impl.FlatCharSequenceRope;
+import nars.util.data.rope.impl.ReverseRope;
+import nars.util.data.rope.impl.SubstringRope;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1631,7 +1631,7 @@ public class RopeTest  {
 //	private static void stat(PrintStream out, long[] stats, String unit, String prefix) {
 //		if (stats.length < 3) 
 //			System.err.println("Cannot printMeaning stats.");
-//		Arrays.sort(stats);
+//		Arrays.sorted(stats);
 //		
 //		double median = ((stats.length & 1) == 1 ? stats[stats.length >> 1]: (stats[stats.length >> 1] + stats[1 + (stats.length >> 1)]) / 2);
 //		double average = 0;

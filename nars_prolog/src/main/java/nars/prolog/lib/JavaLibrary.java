@@ -662,7 +662,7 @@ public class JavaLibrary extends Library {
 //				for (Iterator<?> iterator = str.listIterator();iterator.hasNext();) {
 //					list.add(((Term)iterator.next()).toString());
 //				}
-//				Collections.sort(list);
+//				Collections.sorted(list);
 //				result = getStructFromStringList(list);
 //			}
 //			else

@@ -8,7 +8,7 @@ package nars.operator.app.farg;
 import nars.core.NAR;
 import nars.core.Plugin;
 import nars.logic.entity.Term;
-import nars.util.bag.LevelBag;
+import nars.util.bag.impl.LevelBag;
 
 /**
  *

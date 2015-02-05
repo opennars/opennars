@@ -23,7 +23,7 @@ package nars.logic.entity;
 import nars.core.Memory;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.Sentence.Sentenceable;
-import nars.util.bag.BagActivator;
+import nars.util.bag.select.BagActivator;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

@@ -3,7 +3,7 @@ package nars.util.bag;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
-import nars.logic.nal7.Interval;
+import nars.util.bag.select.ForgetNext;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.io.PrintStream;
@@ -17,7 +17,7 @@ import java.util.Set;
  * */
 public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
 
-    protected final BagSelector.ForgetNext<K,V> forgetNext = new BagSelector.ForgetNext(this);
+    protected final ForgetNext<K,V> forgetNext = new ForgetNext(this);
 
 
     public interface MemoryAware {
@@ -79,37 +79,39 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
         return TAKE(item.name());
     }
 
-    /**
-     * Add a new Item into the Bag
-     *
-     * @param newItem The new Item
-     * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
-     */
-    public V PUT(V newItem) {
-                
-        final V existingItemWithSameKey = TAKE(newItem);
+    abstract public V PUT(V newItem);
 
-        V item;
-        if (existingItemWithSameKey != null) {            
-            item = (V)existingItemWithSameKey.merge(newItem);
-        }
-        else {
-            item = newItem;
-        }
-        
-        // put the (new or merged) item into itemTable        
-        final V overflowItem = PUT(item);
-        
-        
-        if (overflowItem!=null)
-            return overflowItem;
-
-        return null;
-    }
+//    /**
+//     * Add a new Item into the Bag
+//     *
+//     * @param newItem The new Item
+//     * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
+//     */
+//    public V PUT(V newItem) {
+//
+//        final V existingItemWithSameKey = TAKE(newItem);
+//
+//        V item;
+//        if (existingItemWithSameKey != null) {
+//            item = (V)existingItemWithSameKey.merge(newItem);
+//        }
+//        else {
+//            item = newItem;
+//        }
+//
+//        // put the (new or merged) item into itemTable
+//        final V overflowItem = PUT(item);
+//
+//
+//        if (overflowItem!=null)
+//            return overflowItem;
+//
+//        return null;
+//    }
 
 
     /** returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics) */
-    /*abstract */public V UPDATE(BagSelector<K, V> selector) {
+    /*abstract */public V UPDATE(final BagSelector<K, V> selector) {
         //TODO this is the generic version which may or may not work with some subclasses
 
         V item = TAKE(selector.name()); //
@@ -119,6 +121,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
         }
         else {
             item = selector.newItem();
+            if (item == null) return null;
         }
 
         // put the (new or merged) item into itemTable
@@ -139,9 +142,11 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
      *
      * this return value follows the Map.put() semantics
      */
-    @Deprecated public V PUT(BagSelector<K, V> selector) {
+    @Deprecated public V PUT(final BagSelector<K, V> selector) {
 
-        V item = TAKE(selector.name()); //
+        final K key = selector.name();
+        if (key == null) return null;
+        V item = TAKE(key); //
 
         if (item != null) {
             item = (V)item.merge(selector);
@@ -150,11 +155,11 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
         }
         else {
             item = selector.newItem();
-
-            // put the (new or merged) item into itemTable
-            return PUT(item);
+            if (item!=null)
+                return PUT(item); // put the (new or merged) item into itemTable
         }
 
+        return null;
     }
 
 
@@ -170,7 +175,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
     public void printAll(PrintStream p) {
         Iterator<V> d = iterator();
         while (d.hasNext()) {
-            p.println("  " + d.next() + "\n" );
+            p.println("  " + d.next() );
         }
     }
     
@@ -203,8 +208,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
      * @return the item which was removed, or null if none removed
      */    
     @Deprecated public V putBack(final V oldItem, final float forgetCycles, final Memory m) {
-        float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
-        m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
+        m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), Parameters.FORGET_QUALITY_RELATIVE);
         return PUT(oldItem);
     }
 
@@ -214,8 +218,8 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
     public void processNext(final float forgetCycles, float accuracy, final Memory m) {
         int conceptsToForget = Math.max(1, (int)Math.round(size() * accuracy));
         synchronized (forgetNext) {
+            forgetNext.set(forgetCycles, m);
             for (int i = 0; i < conceptsToForget; i++) {
-                forgetNext.set(forgetCycles, m);
                 UPDATE(forgetNext);
             }
         }

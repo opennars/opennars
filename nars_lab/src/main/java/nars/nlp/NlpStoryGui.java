@@ -305,7 +305,7 @@
 //     * This way the "meaning" gets extracted.
 //     *
 //     * As the implementation in nars we just trigger the best n associations for a word.
-//     * The nars system can do with it higherlevel reasoning and sort out the correct meaning after the context.
+//     * The nars system can do with it higherlevel reasoning and sorted out the correct meaning after the context.
 //     *
 //     */
 //    private void recallAssociations(NaturalLanguagePerception.LinePart linePart) {

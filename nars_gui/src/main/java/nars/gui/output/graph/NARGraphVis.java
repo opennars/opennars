@@ -20,7 +20,7 @@ import nars.core.Events.FrameEnd;
 import nars.core.Events.Restart;
 import nars.core.NAR;
 import nars.gui.output.graph.layout.HashPriorityPolarLayout;
-import nars.util.graph.DefaultGraphizer;
+import nars.util.graph.DefaultGrapher;
 import nars.util.graph.InheritanceGraph;
 import nars.util.graph.NARGraph;
 import org.jgrapht.Graph;
@@ -90,7 +90,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
 
         @Override
         public Graph nextGraph() {
-            return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(showBeliefs, showBeliefs, showQuestions, showTermContent, 0, showTermLinks, showTaskLinks));
+            return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGrapher(showBeliefs, showBeliefs, showQuestions, showTermContent, 0, showTermLinks, showTaskLinks));
         }
 
         @Override

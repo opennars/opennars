@@ -2,7 +2,8 @@ package nars.util.bag;
 
 import nars.core.Memory;
 import nars.perf.BagPerf;
-import nars.util.sort.SortedIndex;
+import nars.util.bag.impl.CurveBag;
+import nars.util.data.sorted.SortedIndex;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

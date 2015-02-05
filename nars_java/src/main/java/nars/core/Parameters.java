@@ -24,7 +24,7 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.util.bag.LevelBag;
+import nars.util.bag.impl.LevelBag;
 import nars.util.data.CuckooMap;
 
 import java.util.Collection;

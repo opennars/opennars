@@ -193,16 +193,16 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     /** forgetting calculation for real-time timing */
-    public static float forgetPeriodic(final BudgetValue budget, final float forgetTime, float minPriority, final long currentTime) {
+    public static float forgetPeriodic(final BudgetValue budget, final float forgetTime, float minPriorityForgettingCanAffect, final long currentTime) {
         if (forgetTime <= 0)
             return budget.getPriority();
 
         long forgetDelta = budget.setLastForgetTime(currentTime);
 
-        minPriority *= budget.getQuality();
+        minPriorityForgettingCanAffect *= budget.getQuality();
 
         float currentPriority = budget.getPriority();
-        if (currentPriority < minPriority) {
+        if (currentPriority < minPriorityForgettingCanAffect) {
             //priority already below threshold, don't decrease any further
             return currentPriority;
         }
@@ -216,9 +216,9 @@ public final class BudgetFunctions extends UtilityFunctions {
         float newPriority;
         if (forgetProportion > 1.0f) {
             //forgetProportion = 1.0f;
-            newPriority = minPriority;
+            newPriority = minPriorityForgettingCanAffect;
         } else {
-            newPriority = currentPriority * (1.0f - forgetProportion) + minPriority * (forgetProportion);
+            newPriority = currentPriority * (1.0f - forgetProportion) + minPriorityForgettingCanAffect * (forgetProportion);
         }
         budget.setPriority(newPriority);
         return newPriority;

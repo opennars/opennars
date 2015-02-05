@@ -26,7 +26,7 @@ public class NAL5Test extends AbstractNALTest {
                 { new Default() },
                 { new Default().setInternalExperience(null) },
                 { new Default().level(5) },
-                { new Neuromorphic(4) },
+                //{ new Neuromorphic(4) },
                 { new DefaultBuffered().setInternalExperience(null) }
         });
     }

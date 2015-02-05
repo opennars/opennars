@@ -39,7 +39,7 @@ import java.util.Map;
  * An implementation of a PropertySheet which shows a table to edit/view values,
  * a description pane which updates when the selection changes and buttons to
  * toggle between a flat view and a by-category view of the properties. A button
- * in the toolbar allows to sort the properties and categories by name.
+ * in the toolbar allows to sorted the properties and categories by name.
  * <p>
  * Default sorting is by name (case-insensitive). Custom sorting can be
  * implemented through
@@ -535,10 +535,10 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 
 		public ToggleSortingAction() {
 			super("toggleSorting", IconPool.shared().get(
-			PropertySheet.class.getResource("icons/sort.gif")));
+			PropertySheet.class.getResource("icons/sorted.gif")));
 			/*putValue(Action.SHORT_DESCRIPTION, ResourceManager.get(
 			PropertySheet.class).getString(
-			"PropertySheetPanel.sort.shortDescription"));*/
+			"PropertySheetPanel.sorted.shortDescription"));*/
 		}
 
 		@Override

@@ -23,7 +23,7 @@ package nars.logic.entity;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.Terms.Termable;
-import nars.util.bag.BagActivator;
+import nars.util.bag.select.BagActivator;
 
 import java.util.List;
 
@@ -99,12 +99,15 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
         this.name = name;
     }
 
-    public boolean isReverse() {
-        if ((type == SELF) || (type == TRANSFORM)) return false;
+    public boolean toSelfOrTransform() {
+        return ((type == SELF) || (type == TRANSFORM));
+    }
+    public boolean toSuperTerm() {
+        if (toSelfOrTransform()) return false;
         return type % 2 == 1;
     }
-    public boolean isForward() {
-        if ((type == SELF) || (type == TRANSFORM)) return false;
+    public boolean toSubTerm() {
+        if (toSelfOrTransform()) return false;
         return type % 2 == 0;
     }
 

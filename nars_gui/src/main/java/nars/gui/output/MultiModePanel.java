@@ -9,7 +9,7 @@ import nars.core.NAR;
 import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
 import nars.io.Output;
 import nars.logic.entity.Task;
-import nars.util.graph.DefaultGraphizer;
+import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 
@@ -64,7 +64,7 @@ public class MultiModePanel extends NPanel implements Reaction {
         public DirectedMultigraph getGraph() {
             //TODO udpate this
             return new NARGraph().add(nar, NARGraph.IncludeEverything,
-                    new DefaultGraphizer(true,true,true,true,0,false, false) 
+                    new DefaultGrapher(true,true,true,true,0,false, false)
             );
         }
 

@@ -57,7 +57,7 @@ For an overview of reasoning features, see working examples explained in SingleS
 
 Run Requirements
 ----------------
- * Java 7+ (OpenJDK 8 recommended)
+ * Java 8 (OpenJDK or Oracle JDK)
 
 
 Command Shell Usage
@@ -65,7 +65,7 @@ Command Shell Usage
 You can launch NARS in several ways from command window (shell):
 
 ```
-- empty reasoner (reads from stdin and writes to stdout):
+- console (reads from stdin and writes to stdout):
     ./nars.sh
 
 - gui (Swing)
@@ -93,9 +93,7 @@ Unit tests are in nal/test.
 
 Development Requirements
 ------------------------
- * ant or IDE
-   * To build a complete OpenNARS.jar: build.sh
-   * To run unit tests: ant test
+ * maven, or an IDE with maven support
 
 
 History

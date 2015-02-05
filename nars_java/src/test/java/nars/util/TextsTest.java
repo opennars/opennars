@@ -7,9 +7,9 @@ import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.*;
-import nars.util.rope.Rope;
-import nars.util.rope.impl.FastConcatenationRope;
-import nars.util.rope.impl.PrePostCharRope;
+import nars.util.data.rope.Rope;
+import nars.util.data.rope.impl.FastConcatenationRope;
+import nars.util.data.rope.impl.PrePostCharRope;
 import org.junit.Test;
 
 import static java.lang.String.valueOf;

@@ -26,10 +26,10 @@ import nars.build.Default;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Item;
 import nars.util.bag.Bag;
-import nars.util.bag.CurveBag;
-import nars.util.bag.LevelBag;
-import nars.util.bag.experimental.GearBag;
-import nars.util.sort.ArraySortedIndex;
+import nars.util.bag.impl.CurveBag;
+import nars.util.bag.impl.LevelBag;
+import nars.util.bag.impl.experimental.GearBag;
+import nars.util.data.sorted.ArraySortedIndex;
 
 import java.io.PrintStream;
 import java.util.*;

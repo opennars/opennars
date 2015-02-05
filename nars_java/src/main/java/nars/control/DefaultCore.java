@@ -9,7 +9,7 @@ import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.util.bag.Bag;
-import nars.util.bag.CacheBag;
+import nars.util.bag.impl.CacheBag;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;

@@ -9,7 +9,7 @@ import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.event.Reaction;
 import nars.logic.entity.Concept;
-import nars.util.bag.LevelBag;
+import nars.util.bag.impl.LevelBag;
 
 /**
  *

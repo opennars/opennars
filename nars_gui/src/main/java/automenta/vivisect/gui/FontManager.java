@@ -46,7 +46,7 @@ public class FontManager {
 	
 //	static {
 //		ffnames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-//		Arrays.sort(ffnames); // Should have been sorted but just in case
+//		Arrays.sorted(ffnames); // Should have been sorted but just in case
 //		// listFontFamilyNames();
 //	}
 //	

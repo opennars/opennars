@@ -29,7 +29,7 @@ import nars.logic.Terms.Termable;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
-import nars.util.sort.SortedList;
+import nars.util.data.sorted.SortedList;
 
 import java.util.Collections;
 import java.util.Map;

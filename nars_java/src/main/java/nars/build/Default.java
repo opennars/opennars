@@ -1,7 +1,6 @@
 package nars.build;
 
 import nars.control.DefaultCore;
-import nars.control.experimental.BufferCore;
 import nars.core.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
@@ -13,8 +12,8 @@ import nars.operator.app.STMInduction;
 import nars.operator.app.plan.TemporalParticlePlanner;
 import nars.operator.mental.*;
 import nars.util.bag.Bag;
-import nars.util.bag.CacheBag;
-import nars.util.bag.LevelBag;
+import nars.util.bag.impl.CacheBag;
+import nars.util.bag.impl.LevelBag;
 
 import java.io.File;
 import java.io.IOException;
