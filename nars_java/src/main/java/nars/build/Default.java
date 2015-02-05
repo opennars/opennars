@@ -80,16 +80,16 @@ public class Default extends Build implements ConceptBuilder {
 
         setConceptBagSize(1024);
         setSubconceptBagSize(1024);
-        setConceptBagLevels(64);
+        setConceptBagLevels(32);
         
         setTaskLinkBagSize(32);
-        setTaskLinkBagLevels(16);
+        setTaskLinkBagLevels(8);
 
-        setTermLinkBagSize(91);
-        setTermLinkBagLevels(7); //was 100, but lower value performs much better with no apparent degradation of results
+        setTermLinkBagSize(128);
+        setTermLinkBagLevels(8); //was 100, but lower value performs much better with no apparent degradation of results
         
         setNovelTaskBagSize(64);
-        setNovelTaskBagLevels(32);
+        setNovelTaskBagLevels(8);
 
 
 
@@ -117,7 +117,7 @@ public class Default extends Build implements ConceptBuilder {
         param.inputsMaxPerCycle.set(1);
         param.conceptsFiredPerCycle.set(1);
         
-        param.termLinkMaxReasoned.set(3);
+        param.termLinkMaxReasoned.set(5);
         param.termLinkMaxMatched.set(10);
         param.termLinkRecordLength.set(10);
         

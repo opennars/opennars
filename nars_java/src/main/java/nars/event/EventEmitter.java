@@ -80,10 +80,27 @@ public class EventEmitter<E>  {
         return r.on(s, c);
     }
 
+
+    /** a pre-allocated event to re-use if it's available */
+    Event theEvent = Event.wrap(null);
+
     public void notify(Class channel, Object arg) {
-        final Event e = Event.wrap(arg);
+        final Event e;
+        if ((Parameters.THREADS == 1) && (theEvent != null)) {
+            e = theEvent;
+            theEvent = null;
+            e.setData(arg);
+        }
+        else {
+            e = Event.wrap(arg);
+        }
+
         r.notify(channel, e);
-        e.recycle();
+
+        if (theEvent == null) {
+            e.recycle();
+            theEvent = e;
+        }
     }
 
     public void notify(Object channel) {

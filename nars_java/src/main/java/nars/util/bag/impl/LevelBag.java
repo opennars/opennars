@@ -98,13 +98,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     /**
      * array of lists of items, for items on different level
      */
-    public final Level [] level;
+    public final Level[] level;
 
     public static enum NextNonEmptyLevelMode {
         Default, Fast
     }
 
-    NextNonEmptyLevelMode nextNonEmptyMode = Parameters.DEFAULT_LEVEL_BAG_MODE;
+    NextNonEmptyLevelMode nextNonEmptyMode = NextNonEmptyLevelMode.Default;
 
 
     public LevelBag(int levels, int capacity) {

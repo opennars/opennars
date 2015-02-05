@@ -192,7 +192,6 @@ public class Parameters {
 
     public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.04f;
 
-    public static final LevelBag.NextNonEmptyLevelMode DEFAULT_LEVEL_BAG_MODE = LevelBag.NextNonEmptyLevelMode.Default;
 
 
     //temporary parameter for setting #threads to use, globally
