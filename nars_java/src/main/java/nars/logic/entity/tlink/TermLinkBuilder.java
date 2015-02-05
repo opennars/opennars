@@ -1,7 +1,6 @@
 package nars.logic.entity.tlink;
 
 import nars.core.Parameters;
-import nars.logic.Terms;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal4.Image;
@@ -151,10 +150,6 @@ public class TermLinkBuilder extends BagActivator<String,TermLink> {
         return budget;
     }
 
-    public String name(Term from) {
-        return currentTemplate.name( !from.equals( concept.term ) );
-    }
-
     /** configures this selector's current budget for the next bag operation */
     public BudgetValue set(float subBudget, float durability, float quality) {
         budget.setPriority(subBudget);
@@ -183,7 +178,7 @@ public class TermLinkBuilder extends BagActivator<String,TermLink> {
     }*/
 
     @Override public String name() {
-        return name(this.from);
+        return currentTemplate.name( !this.from.equals(concept.term) );
     }
 
 

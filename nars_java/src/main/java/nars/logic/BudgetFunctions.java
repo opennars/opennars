@@ -22,6 +22,7 @@ package nars.logic;
 
 import nars.core.Memory;
 import nars.logic.entity.*;
+import org.apache.commons.math3.util.FastMath;
 
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
@@ -238,11 +239,16 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param a The budget adjustValue doing the adjusting
      * @return whether the merge had any effect in changing any of the budget components
      */
-    public static boolean merge(final BudgetValue b, final BudgetValue a) {
+    public final static boolean merge(final BudgetValue b, final BudgetValue a) {
         return
-            b.setPriority(max(b.getPriority(), a.getPriority())) ||
-            b.setDurability(max(b.getDurability(), a.getDurability())) ||
-            b.setQuality(max(b.getQuality(), a.getQuality()));
+            b.setPriority(m(b.getPriority(), a.getPriority())) ||
+            b.setDurability(m(b.getDurability(), a.getDurability())) ||
+            b.setQuality(m(b.getQuality(), a.getQuality()));
+    }
+
+    /** maximum, simpler and faster than Math.max without its additional tests */
+    public final static float m(final float a, final float b) {
+        return (a > b) ? a : b;
     }
 
     /* ----- Task derivation in LocalRules and SyllogisticRules ----- */

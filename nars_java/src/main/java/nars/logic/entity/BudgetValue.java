@@ -130,20 +130,23 @@ public class BudgetValue implements Cloneable {
      * @param v The new priority
      * @return whether the operation had any effect
      */
-    public final boolean setPriority(float v) {
-        if ((v <= 1.0f ) && (v >= 0f)) {
-            if (priority==v)
-                return false;
-            priority = v;
-            return true;
-        }
-        else if (Float.isNaN(v))
+    public final boolean setPriority(final float v) {
+        if (Parameters.DEBUG) ensureBetweenZeroAndOne(v);
+
+        if (priority==v)
+            return false;
+
+        priority = v;
+        return true;
+    }
+
+    public static void ensureBetweenZeroAndOne(float v) {
+        if (Float.isNaN(v))
             throw new RuntimeException("Priority is NaN");
-        else if (v > 1.0f)
+        if (v > 1.0f)
             throw new RuntimeException("Priority > 1.0: " + v);
-        else if (v < 0f)
+        if (v < 0f)
             throw new RuntimeException("Priority < 1.0: " + v);
-        return false;
     }
 
     /**
@@ -179,10 +182,9 @@ public class BudgetValue implements Cloneable {
      * Change durability value
      * @param d The new durability
      */
-    public boolean setDurability(float d) {
-        if(d>=1.0f) {
-            d=1.0f-TRUTH_EPSILON;
-        }
+    public boolean setDurability(final float d) {
+        if (Parameters.DEBUG) ensureBetweenZeroAndOne(d);
+
         if (durability!=d) {
             durability = d;
             return true;
@@ -223,8 +225,8 @@ public class BudgetValue implements Cloneable {
      * @param v The new quality
      */
     public boolean setQuality(final float v) {
-        if ((quality > 1f) || (quality < 0))
-            throw new RuntimeException("Invalid quality value: " + quality);
+        if (Parameters.DEBUG) ensureBetweenZeroAndOne(v);
+
         if (quality!=v) {
             quality = v;
             return true;
@@ -253,7 +255,7 @@ public class BudgetValue implements Cloneable {
      * @param that The other Budget
      * @return whether the merge had any effect
      */
-    public boolean merge(final BudgetValue that) {
+    public final boolean merge(final BudgetValue that) {
         return BudgetFunctions.merge(this, that);
     }
     

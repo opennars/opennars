@@ -310,7 +310,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     /**
      * look for a non-empty level
      */
-    protected void nextNonEmptyLevelDefault() {
+    protected final void nextNonEmptyLevelDefault() {
 
         //cache class fields as local variables for speed in the iteration
         final short D[] = DISTRIBUTOR;
@@ -377,12 +377,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public E UPDATE(BagSelector<K, E> selector) {
+    public E UPDATE(final BagSelector<K, E> selector) {
 
-        K key = selector.name();
+        final K key = selector.name();
         if (key == null) return null;
 
-        DD<E> bx = index.get(key);
+        final DD<E> bx = index.get(key);
         if ((bx == null) || (bx.item == null)) {
             //allow selector to provide a new instance
             E n = selector.newItem();
@@ -417,9 +417,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         if (size() == 0)
             return null; // empty bag
 
+
         if (levelEmpty[currentLevel] || (currentCounter <= 0)) { // done with the current level
             nextNonEmptyLevel();
         }
+
 
         if (Parameters.DEBUG) {
             if (levelEmpty[currentLevel] || (level[currentLevel] == null) || (level[currentLevel].isEmpty())) {
@@ -435,14 +437,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         if (remove) {
             // take out the first item in the level
-            final E e = TAKE(currentLevel);
-
-
-            return e;
+            return TAKE(currentLevel);
         }
         else {
-            E r = level[currentLevel].peekFirst();
-            level[currentLevel].rotate();
+            final Level cl = level[currentLevel];
+            E r = cl.peekFirst();
+            cl.rotate();
             return r;
         }
 
@@ -477,12 +477,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
 
-    public int getNonEmptyLevelSize(final int level) {
+    public final int getNonEmptyLevelSize(final int level) {
         return this.level[level].size();
     }
 
-    public int getLevelSize(final int level) {
-        return (levelEmpty[level]) ? 0 : this.level[level].size();
+    public final int getLevelSize(final int l) {
+        return this.level[l].size();
     }
 
 
@@ -497,7 +497,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
      */
     public int getLevel(final E item) {
         final float fl = item.getPriority() * levels;
-        final int level = (int) Math.ceil(fl) - 1;
+        final int level = (int)fl; //(int) Math.ceil(fl) - 1;
         if (level < 0) return 0;
         if (level >= levels) return levels - 1;
         return level;
@@ -505,13 +505,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     /** removes from existing level and adds to new one */
-    protected synchronized DD<E> relevel(DD<E> x, E newValue) {
-        int prevLevel = x.owner();
-        int nextLevel = getLevel(newValue);
+    protected /* synchronized */ DD<E> relevel(final DD<E> x, final E newValue) {
+        final int prevLevel = x.owner();
+        final int nextLevel = getLevel(newValue);
 
-        E prevValue = x.item;
+        final E prevValue = x.item;
 
-        boolean keyChange = !newValue.name().equals(prevValue.name());
+        final boolean keyChange = !newValue.name().equals(prevValue.name());
 
         if (keyChange) {
             //name changed, must be rehashed
@@ -519,24 +519,19 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             IN(newValue);
         }
         else {
-            if (prevLevel == nextLevel)
-                return x;
-
-            level[prevLevel].detach(x);
-            x.owner = nextLevel;
-            x.item = newValue;
-            ensureLevelExists(nextLevel).add(x);
-            return x;
+            if (prevLevel != nextLevel) {
+                level[prevLevel].detach(x);
+                x.owner = nextLevel;
+                x.item = newValue;
+                ensureLevelExists(nextLevel).add(x);
+            }
         }
-
-
-
 
         return x;
     }
 
     /** removal of the bagged item from its level and the index */
-    public synchronized  E OUT(DD<E> node) {
+    public /* synchronized */  E OUT(DD<E> node) {
         if (node == null)
             throw new RuntimeException("OUT must not be null");
         int lev = node.owner();
@@ -550,7 +545,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     /** addition of the item to its level and the index */
-    public synchronized DD<E> IN(E newItem, int inLevel) {
+    public /* synchronized */ DD<E> IN(E newItem, int inLevel) {
         if (newItem == null)
             throw new RuntimeException("IN must not be null");
         addMass(newItem);
@@ -559,7 +554,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         return dd;
     }
 
-    public synchronized DD<E> IN(E newItem) {
+    public /* synchronized */ DD<E> IN(E newItem) {
         return IN(newItem, getLevel(newItem));
     }
 
@@ -573,6 +568,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         //1. ensure capacity
         int inLevel = getLevel(newItem);
+
         if (size() >= capacity) {      // the bag will be full after the next
             int outLevel = 0;
             while (levelEmpty[outLevel]) {
@@ -598,10 +594,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     protected final Level ensureLevelExists(final int l) {
-        if (this.level[l] == null) {
-            this.level[l] = new Level(l);
+        final Level existing = this.level[l];
+        if (existing == null) {
+            return (this.level[l] = new Level(l));
         }
-        return level[l];
+        return existing;
     }
 
 

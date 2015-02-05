@@ -213,13 +213,22 @@ public class Parameters {
      * as possible since it is governed by rate over time.  however we can
      * afford to update item priority less frequently than every cycle.
      * an accuracy of 1.0 means to process approximatley all concepts every cycle,
-     * while an accuracy of 0.5 would mean to process approximately half.  the items
-     * selected for update are determined by bag selection, so higher priority items
-     * will be updated more frequently.
+     * while an accuracy of 0.5 would mean to process approximately half.
+     *
+     * since the items selected for update are determined by bag selection,
+     * higher priority items will tend to get updated more frequently.
+     *
+     * an estimate for average "error" due to latency can be calculated
+     * in terms of # of items, forgetting rate, and the accuracy rate.
+     * more accuracy = lower error because concepts are more likely to receive forget sooner
+     *
+     * a lower bound on accuracy is when the expected latency exceeds the forgetting time,
+     * in which case the forgetting will have been applied some amount of time past
+     * when it would have completed its forget descent.
      */
-    public static final float CONCEPT_FORGETTING_ACCURACY = 0.1f;
-    public static final float TERMLINK_FORGETTING_ACCURACY = 0.1f;
-    public static final float TASKLINK_FORGETTING_ACCURACY = 0.1f;
+    public static final float CONCEPT_FORGETTING_ACCURACY = 0.05f;
+    public static final float TERMLINK_FORGETTING_ACCURACY = 0.05f;
+    public static final float TASKLINK_FORGETTING_ACCURACY = 0.05f;
 
 
     public static <X> List<X> newArrayList() {
