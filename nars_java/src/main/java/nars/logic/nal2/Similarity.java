@@ -34,13 +34,13 @@ public class Similarity extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    public Similarity(final Term[] arg) {
+    protected Similarity(final Term[] arg) {
         super(arg);
         
         init(arg);
     }
 
-    public Similarity(final Term subj, final Term pred) {
+    protected Similarity(final Term subj, final Term pred) {
         this(new Term[] { subj, pred} );
     }
     

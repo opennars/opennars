@@ -80,6 +80,12 @@ public class DDList<E> implements Iterable<E> {
         return x;
     }
 
+    /** if there are more than 1 element, remove the first element and attach it to the end */
+    public void rotate() {
+        if (size() < 2) return;
+        add(detach(getFirstNode()));
+    }
+
     public E getFirst() {
         //if (isEmpty()) return null;
         return pre.next.item;

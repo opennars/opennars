@@ -413,12 +413,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         return c;
     }
 
-
     protected E next(boolean remove) {
         if (size() == 0)
             return null; // empty bag
 
-        if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
+        if (levelEmpty[currentLevel] || (currentCounter <= 0)) { // done with the current level
             nextNonEmptyLevel();
         }
 
@@ -442,7 +441,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             return e;
         }
         else {
-            return level[currentLevel].peekFirst();
+            E r = level[currentLevel].peekFirst();
+            level[currentLevel].rotate();
+            return r;
         }
 
     }

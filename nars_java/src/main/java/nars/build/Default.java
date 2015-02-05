@@ -73,7 +73,7 @@ public class Default extends Build implements ConceptBuilder {
         super();
 
         //Build Parameters
-        this.level = Parameters.DEFAULT_NAL;
+        this.level = Parameters.DEFAULT_NAL_LEVEL;
         this.internalExperience =
                 level >= 8 ? InternalExperience.InternalExperienceMode.Minimal :  InternalExperience.InternalExperienceMode.None;
 
@@ -117,8 +117,8 @@ public class Default extends Build implements ConceptBuilder {
         param.inputsMaxPerCycle.set(1);
         param.conceptsFiredPerCycle.set(1);
         
-        param.termLinkMaxReasoned.set(6);
-        param.termLinkMaxMatched.set(6);
+        param.termLinkMaxReasoned.set(3);
+        param.termLinkMaxMatched.set(10);
         param.termLinkRecordLength.set(10);
         
         param.setForgetting(Forgetting.Periodic);

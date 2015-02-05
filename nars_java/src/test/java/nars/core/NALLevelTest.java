@@ -18,7 +18,7 @@ public class NALLevelTest {
         Parameters.DEBUG = true;
 
         NAR nDefault = new NAR(new Default());
-        assertEquals(Parameters.DEFAULT_NAL, nDefault.nal());
+        assertEquals(Parameters.DEFAULT_NAL_LEVEL, nDefault.nal());
 
         NAR n1 = new NAR(new Default().level(1));
         OutputCount n1Count = new OutputCount(n1);

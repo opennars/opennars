@@ -979,6 +979,7 @@ public class Concept extends Item<Term> implements Termable {
 
             final TermLink termLink = termLinks.TAKENEXT(termLinkNovel);
 
+
             if (termLink!=null) {
                 //return it, to be re-inserted in caller method when finished processing it
                 return termLink;

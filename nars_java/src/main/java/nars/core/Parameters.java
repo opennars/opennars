@@ -39,7 +39,7 @@ import java.util.Set;
 public class Parameters {
 
 
-    public static int DEFAULT_NAL = 8;
+    public static int DEFAULT_NAL_LEVEL = 8;
 
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
@@ -88,7 +88,7 @@ public class Parameters {
      *   budgets are propagated or otherwise measured, which can result
      *   in a performance gain.
      * */
-    public static final float BUDGET_THRESHOLD = (float) 0.02;
+    public static final float BUDGET_THRESHOLD = 0.01f;
 
     /* ---------- default input values ---------- */
     /** Default expectation for confirmation. */
@@ -123,7 +123,7 @@ public class Parameters {
     
     /** Level separation in LevelBag, one digit, for display (run-time adjustable) and management (fixed)
      */
-    public static final float BAG_THRESHOLD = 1.0f;
+    @Deprecated public static final float BAG_THRESHOLD = 1.0f; //should be an option for LevelBag instances
 
     /** (see its use in budgetfunctions iterative forgetting) */
     public static float FORGET_QUALITY_RELATIVE = 0.1f;

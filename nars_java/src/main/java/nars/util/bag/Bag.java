@@ -68,6 +68,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
     /** if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected */
     public V TAKENEXT(Predicate<V> iff) {
         V v = PEEKNEXT();
+
         if (v == null) return null;
         if (iff.apply(v)) {
             TAKE(v);

@@ -67,13 +67,13 @@ public class NARSwing extends Video {
 
 
         //TEMPORARY
-        SoundEngineTestPanel soundEngineTestPanel = new SoundEngineTestPanel(nar);
+        /*SoundEngineTestPanel soundEngineTestPanel = new SoundEngineTestPanel(nar);
         new NWindow("Sound Test", soundEngineTestPanel).show(500,400);
         try {
             new ConceptSonification(nar, soundEngineTestPanel.sound);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
 

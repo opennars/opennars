@@ -1,8 +1,7 @@
 '********** set definition
 
 'Tweety is Birdie. 
-<{Tweety} --> {Birdie}>. 
-
+<{Tweety} --> {Birdie}>.
 3
 
 'Birdie is similar to Tweety. 

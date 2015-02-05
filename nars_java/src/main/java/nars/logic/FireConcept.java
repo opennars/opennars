@@ -24,8 +24,6 @@ import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 abstract public class FireConcept extends NAL {
 
 
-    private final Concept concept;
-
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
     }
@@ -33,7 +31,7 @@ abstract public class FireConcept extends NAL {
     public FireConcept(Memory mem, Concept concept, int numTaskLinks, int termLinkCount) {
         super(mem);
         this.termLinkCount = termLinkCount;
-        this.concept = this.currentConcept = concept;
+        this.currentConcept = concept;
         this.currentTaskLink = null;
         this.numTaskLinks = numTaskLinks;
     }
@@ -50,12 +48,12 @@ abstract public class FireConcept extends NAL {
     protected void onFinished() {
         beforeFinish();
 
-        this.concept.termLinks.processNext(
+        currentConcept.termLinks.processNext(
                 memory.param.termLinkForgetDurations,
                 Parameters.TERMLINK_FORGETTING_ACCURACY,
                 memory);
 
-        this.concept.taskLinks.processNext(
+        currentConcept.taskLinks.processNext(
                 memory.param.taskLinkForgetDurations,
                 Parameters.TASKLINK_FORGETTING_ACCURACY,
                 memory);
@@ -75,39 +73,45 @@ abstract public class FireConcept extends NAL {
     @Override
     protected void reason() {
 
-        synchronized (getCurrentConcept()) {
-            if (currentTaskLink != null) {
-                fireTaskLink(termLinkCount);
-                returnTaskLink(currentTaskLink);
-            } else {
-                if (currentConcept.taskLinks.size() == 0)
+
+        if (currentTaskLink != null) {
+
+            //TODO move this case to a separate implementation of FireConcept which takes 1 or more specific concepts to fire as constructor arg
+            fireTaskLink(termLinkCount);
+            returnTaskLink(currentTaskLink);
+
+        } else {
+
+            if (currentConcept.taskLinks.size() == 0)
+                return;
+
+            for (int i = 0; i < numTaskLinks; i++) {
+
+                currentTaskLink = currentConcept.taskLinks.TAKENEXT();
+                if (currentTaskLink == null)
                     return;
 
-                for (int i = 0; i < numTaskLinks; i++) {
+                try {
 
-                    currentTaskLink = currentConcept.taskLinks.TAKENEXT();
-                    if (currentTaskLink == null)
-                        return;
+                    //if (currentTaskLink.budget.aboveThreshold()) {
+                        fireTaskLink(termLinkCount);
+                    //}
 
-                    try {
-                        if (currentTaskLink.budget.aboveThreshold()) {
-                            fireTaskLink(termLinkCount);
-                        }
-                        returnTaskLink(currentTaskLink);
-                    }
-                    catch (Exception e) {
-
-                        returnTaskLink(currentTaskLink);
-
-                        if (Parameters.DEBUG) {
-                            e.printStackTrace();
-                        }
-                        throw e;
-                    }
-
+                    returnTaskLink(currentTaskLink);
                 }
+                catch (Exception e) {
+
+                    returnTaskLink(currentTaskLink);
+
+                    if (Parameters.DEBUG) {
+                        e.printStackTrace();
+                    }
+                    throw e;
+                }
+
             }
         }
+
 
     }
     
@@ -118,6 +122,7 @@ abstract public class FireConcept extends NAL {
     }
 
     protected void fireTaskLink(int termLinkSelectionAttempts) {
+
         final Task task = currentTaskLink.getTarget();
         setCurrentTerm(currentConcept.term);
         setCurrentTaskLink(currentTaskLink);
@@ -149,7 +154,10 @@ abstract public class FireConcept extends NAL {
                     currentConcept.termLinks.size() - 1);*/
             int noveltyHorizon = Parameters.NOVELTY_HORIZON;
 
-            while (termLinkSelectionAttempts > 0) {
+            //int numTermLinks = getCurrentConcept().termLinks.size();
+            //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
+
+            while (termLinkSelectionAttempts > 0)  {
 
 
                 final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time(), noveltyHorizon);
@@ -214,6 +222,8 @@ abstract public class FireConcept extends NAL {
      * @param bLink The selected TermLink, which may provide a belief
      */
     protected void reason(final TaskLink tLink, final TermLink bLink) {
+
+
         final Memory memory = mem();
 
 
@@ -237,11 +247,9 @@ abstract public class FireConcept extends NAL {
 
         if (belief != null) {
 
-
             if (LocalRules.match(task, belief, this)) {
                 return;
             }
-
 
             if (nal(7)) {
                 //this is a new attempt/experiment to make nars effectively track temporal coherences

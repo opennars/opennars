@@ -269,7 +269,16 @@ public abstract class NAL implements Runnable {
 
         Task derived = null;
 
-        final Sentence newSentence = new Sentence(newTaskContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+
+        final Sentence newSentence;
+
+        try {
+            newSentence = new Sentence(newTaskContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+        }
+        catch (CompoundTerm.UnableToCloneException e) {
+            System.err.println(e.toString());
+            return null;
+        }
 
         final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
 
