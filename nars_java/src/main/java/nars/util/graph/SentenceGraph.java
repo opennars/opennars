@@ -110,7 +110,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
 
     
         
-    protected synchronized boolean remove(Sentence s) {
+    protected /*synchronized*/ boolean remove(Sentence s) {
         List<E> componentList = components.get(s);
         if (componentList!=null) {
             for (E e : componentList) {
@@ -193,7 +193,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
         componentList.add(edge);        
     }
     
-    public synchronized boolean add(final Sentence s, final Item c) {
+    public /*synchronized*/ boolean add(final Sentence s, final Item c) {
 
         if (!allow(s))
             return false;               

@@ -471,6 +471,49 @@ public class Terms {
         return levelValid(t, nal);
     }
 
+    /**
+     * Make a Statement from given components, called by the rules
+     * @return The Statement built
+     * @param subj The first component
+     * @param pred The second component
+     * @param statement A sample statement providing the class type
+     */
+    public static Statement makeStatement(final Statement statement, final Term subj, final Term pred) {
+        if (statement instanceof Inheritance) {
+            return Inheritance.make(subj, pred);
+        }
+        if (statement instanceof Similarity) {
+            return Similarity.make(subj, pred);
+        }
+        if (statement instanceof Implication) {
+            return Implication.make(subj, pred, statement.getTemporalOrder());
+        }
+        if (statement instanceof Equivalence) {
+            return Equivalence.make(subj, pred, statement.getTemporalOrder());
+        }
+        return null;
+    }
+
+    /**
+     * Make a symmetric Statement from given term and temporal
+ information, called by the rules
+     *
+     * @param statement A sample asymmetric statement providing the class type
+     * @param subj The first component
+     * @param pred The second component
+     * @param order The temporal order
+     * @return The Statement built
+     */
+    final public static Statement makeSymStatement(final Statement statement, final Term subj, final Term pred, final int order) {
+        if (statement instanceof Inheritance) {
+            return Similarity.make(subj, pred);
+        }
+        if (statement instanceof Implication) {
+            return Equivalence.make(subj, pred, order);
+        }
+        return null;
+    }
+
 
     /** has, or is associated with a specific term */
     public static interface Termable<TT extends Term> {

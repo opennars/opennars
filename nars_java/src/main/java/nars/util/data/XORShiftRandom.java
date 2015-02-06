@@ -32,7 +32,7 @@ public class XORShiftRandom extends Random {
     }
 
     @Override
-    public void setSeed(long newSeed) {
+    public synchronized void setSeed(long newSeed) {
         this.seed = newSeed;
     }
 

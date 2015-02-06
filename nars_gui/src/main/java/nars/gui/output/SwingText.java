@@ -1,6 +1,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
+import nars.gui.NARSwing;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -66,7 +67,10 @@ public class SwingText extends JTextPane {
 
         MutableAttributeSet aset = getInputAttributes();
         StyleConstants.setForeground(aset, color);
-        StyleConstants.setBackground(aset, bgColor != null ? bgColor : Color.BLACK);
+
+
+        StyleConstants.setBackground(aset, bgColor != null ? bgColor : Video.transparent /* Color.BLACK */);
+
         //StyleConstants.setUnderline(aset, false);
         //StyleConstants.setBold(aset, bold);
         

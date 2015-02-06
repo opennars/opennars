@@ -71,31 +71,8 @@ public abstract class Statement extends CompoundTerm {
         }
         super.init(t);
     }
-    
-   
-    /**
-     * Make a Statement from given components, called by the rules
-     * @return The Statement built
-     * @param subj The first component
-     * @param pred The second component
-     * @param statement A sample statement providing the class type
-     */
-    public static Statement make(final Statement statement, final Term subj, final Term pred) {        
-        if (statement instanceof Inheritance) {
-            return Inheritance.make(subj, pred);
-        }
-        if (statement instanceof Similarity) {
-            return Similarity.make(subj, pred);
-        }
-        if (statement instanceof Implication) {
-            return Implication.make(subj, pred, statement.getTemporalOrder());
-        }
-        if (statement instanceof Equivalence) {
-            return Equivalence.make(subj, pred, statement.getTemporalOrder());
-        }
-        return null;
-    }
-    
+
+
     /**
      * Make a Statement from String, called by StringParser
      *
@@ -147,55 +124,10 @@ public abstract class Statement extends CompoundTerm {
      * @param statement A sample statement providing the class type
      * @param memory Reference to the memory
      */
-//    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {
-//        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
-//    }
-    //++ TODO
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
         return make(statement.operator(), subj, pred, true, order);
-        /*
-        if (invalidStatement(subj, pred)) {
-            return null;
-        }
-        if (statement instanceof Inheritance) {
-            return Inheritance.make(subj, pred);
-        }
-        if (statement instanceof Similarity) {
-            return Similarity.make(subj, pred);
-        }
-        if (statement instanceof Implication) {
-            return Implication.make(subj, pred, order);
-        }
-        if (statement instanceof Equivalence) {
-            return Equivalence.make(subj, pred, order);
-        }
-        
-        throw new RuntimeException("Unrecognized type for Statement.make: " + statement.getClass().getSimpleName() + ", subj=" + subj + ", pred=" + pred + ", order=" + order);        
-        */
     }
-
-    /**
-     * Make a symmetric Statement from given term and temporal
- information, called by the rules
-     *
-     * @param statement A sample asymmetric statement providing the class type
-     * @param subj The first component
-     * @param pred The second component
-     * @param order The temporal order
-     * @param memory Reference to the memory
-     * @return The Statement built
-     */
-    final public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order) {
-        if (statement instanceof Inheritance) {
-            return Similarity.make(subj, pred);
-        }
-        if (statement instanceof Implication) {
-            return Equivalence.make(subj, pred, order);
-        }
-        return null;
-    }
-
 
 
     /**

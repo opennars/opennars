@@ -29,7 +29,7 @@ public class NARTrace extends MemoryObserver {
      * utility method for diagnosing stack overflow errors caused by unbounded
      * recursion or other phenomena
      */
-    public static boolean guardStack(int alertDepth, String methodname, Object... args) {
+    public static boolean guardStack(int alertDepth, CharSequence methodname, Object... args) {
         StackTraceElement[] st = new Exception().getStackTrace();
         if (st.length < 1 + alertDepth) {
             return false;

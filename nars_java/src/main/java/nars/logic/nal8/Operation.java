@@ -167,4 +167,11 @@ public class Operation extends Inheritance {
     public Term getArgument(int i) {
         return getArguments().term[i];
     }
+
+    @Override
+    public boolean isExecutable(Memory mem) {
+        //don't allow ^want and ^believe to be active/have an effect,
+        //which means its only used as monitor
+        return getOperator().isExecutable(mem);
+    }
 }

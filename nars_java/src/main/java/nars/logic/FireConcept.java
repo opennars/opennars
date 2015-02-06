@@ -191,7 +191,7 @@ abstract public class FireConcept extends NAL {
     }
 
     /** reasoning processes involving only the task itself */
-    protected void reason(TaskLink taskLink) {
+    protected void reason(Sentence.Sentenceable taskLink) {
 
         final Sentence taskSentence = taskLink.getSentence();
 

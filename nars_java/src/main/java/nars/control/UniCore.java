@@ -56,8 +56,8 @@ abstract public class UniCore implements Core {
         this.memory = m;
         if (concepts instanceof CoreAware)
             ((CoreAware)concepts).setCore(this);
-        if (concepts instanceof Bag.MemoryAware)
-            ((Bag.MemoryAware)concepts).setMemory(m);
+        if (concepts instanceof Memory.MemoryAware)
+            ((Memory.MemoryAware)concepts).setMemory(m);
     }
 
     protected static class DefaultFireConcept extends FireConcept {
@@ -144,12 +144,11 @@ abstract public class UniCore implements Core {
             return c;
         }
 
-        public ConceptActivator set(Term t, BudgetValue b, boolean createIfMissing, long now) {
+        public void set(Term t, BudgetValue b, boolean createIfMissing, long now) {
             setKey(t);
             setBudget(b);
             this.createIfMissing = createIfMissing;
             this.now = now;
-            return this;
         }
 
         @Override
@@ -197,7 +196,8 @@ abstract public class UniCore implements Core {
     @Override
     public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
 
-        return concepts.UPDATE( activator.set(term, budget, createIfMissing, memory.time()) );
+        activator.set(term, budget, createIfMissing, memory.time());
+        return concepts.UPDATE( activator );
 
     }
 

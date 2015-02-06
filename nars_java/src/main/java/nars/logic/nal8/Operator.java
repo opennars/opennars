@@ -230,6 +230,11 @@ public abstract class Operator extends Term implements Plugin {
 //            this.quiet = quiet;
 //        }
 //    }
-    
+
+    public boolean isExecutable(final Memory mem) {
+        return true;
+    }
+
+
 }
 

@@ -12,6 +12,7 @@ import processing.core.PGraphics;
 import processing.event.MouseEvent;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 
@@ -66,7 +67,10 @@ public class PCanvas extends PApplet implements HierarchyListener {
 
     public PCanvas(Vis vis, int frameRate) {
         super();
+
+
         this.FrameRate = frameRate;
+
         init();
 
         

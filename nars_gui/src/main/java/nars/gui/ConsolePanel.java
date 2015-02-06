@@ -21,6 +21,8 @@ public class ConsolePanel extends JSplitPane {
         
         TextInputPanel inputPanel = new TextInputPanel(narControls.nar);
         add(inputPanel, 1);
+
+        setOpaque(false);
     }
     
     int cnt=0;

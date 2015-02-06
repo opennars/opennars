@@ -297,11 +297,11 @@ public class TemporalRules {
 
 
             if (ss1.getSubject().equals(ss2.getSubject())) {
-                t11 = Statement.make(ss1, var1, ss1.getPredicate());
-                t22 = Statement.make(ss2, var2, ss2.getPredicate());
+                t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
+                t22 = Terms.makeStatement(ss2, var2, ss2.getPredicate());
             } else if (ss1.getPredicate().equals(ss2.getPredicate())) {
-                t11 = Statement.make(ss1, ss1.getSubject(), var1);
-                t22 = Statement.make(ss2, ss2.getSubject(), var2);
+                t11 = Terms.makeStatement(ss1, ss1.getSubject(), var1);
+                t22 = Terms.makeStatement(ss2, ss2.getSubject(), var2);
             }
             //allow also temporal induction on operator arguments:
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
@@ -317,7 +317,7 @@ public class TemporalRules {
                         if(applicableVariableType && Terms.contains(ss2_prod.term, comp)) { //only if there is one and it isnt a variable already
                             Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
 
-                            t11 = Statement.make(ss1, var1, ss1.getPredicate());
+                            t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
                             
                             Operation op=(Operation) Operation.make(
                                     new Product(ars), 
@@ -342,7 +342,7 @@ public class TemporalRules {
                             Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
                             
 
-                            t22 = Statement.make(ss2, var1, ss2.getPredicate());
+                            t22 = Terms.makeStatement(ss2, var1, ss2.getPredicate());
                             
                             Operation op=(Operation) Operation.make(
                                     new Product(ars), 

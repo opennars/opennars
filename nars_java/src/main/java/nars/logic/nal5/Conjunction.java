@@ -145,7 +145,7 @@ public class Conjunction extends Junction {
         }
     }
 
-    final public static Term make(final Term prefix, final List<? extends Term> suffix, final int temporalOrder) {
+    final public static Term make(final Term prefix, final Collection<? extends Term> suffix, final int temporalOrder) {
         Term[] t = new Term[suffix.size()+1];
         int i = 0;
         t[i++] = prefix;

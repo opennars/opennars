@@ -415,7 +415,7 @@ JsonSerializationContext context) {
         return Iterators.transform(iterator(), new nColumnIterator(columns));
     }
 
-    public static List<Double> doubles(List<Object> l) {
+    public static List<Double> doubles(Iterable<Object> l) {
         List<Double> r = new ArrayList();
         for (Object o : l)
             if (o instanceof Number) r.add(((Number)o).doubleValue());

@@ -15,6 +15,7 @@ import java.awt.*;
 public class Video {
     public static Font FontAwesome;
     public static Font monofont;
+    public static final Color transparent = new Color(0,0,0,10);
 
     //System.out.println(Files.list(Paths.get(getClass().getResource("/").toURI())).collect(Collectors.toList()) );
 
@@ -32,9 +33,10 @@ public class Video {
 
     public static void themeInvert() {
         //http://alvinalexander.com/java/java-swing-uimanager-defaults
+        Color transparent = new Color(0,0,0,0);
+
         UIManager.put("Button.foreground", Color.WHITE);
         UIManager.put("Button.background", Color.DARK_GRAY);
-        UIManager.put("Panel.background", Color.BLACK);
         UIManager.put("Button.border", new EmptyBorder(4,8,4,8));
         UIManager.put("ToggleButton.border", new EmptyBorder(4,8,4,8));
         UIManager.put("ScrollPane.border", new EmptyBorder(1,1,1,1));
@@ -45,15 +47,19 @@ public class Video {
 
         UIManager.put("Label.foreground", Color.WHITE);
 
-        UIManager.put("Tree.background", Color.BLACK);
+        UIManager.put("Tree.background", transparent);
         UIManager.put("Tree.foreground", Color.BLACK);
         UIManager.put("Tree.textForeground", Color.WHITE);
-        UIManager.put("Tree.textBackground", Color.BLACK);
-        UIManager.put("TextPane.background", Color.BLACK);
+        UIManager.put("Tree.textBackground", transparent);
+        UIManager.put("TextPane.background", transparent);
         UIManager.put("TextPane.foreground", Color.WHITE);
-        UIManager.put("TextEdit.background", Color.BLACK);
+        UIManager.put("TextEdit.background", transparent);
         UIManager.put("TextEdit.foreground", Color.WHITE);
-        UIManager.put("TextArea.background", Color.BLACK);
+
+        UIManager.put("TextArea.background", transparent);
+        UIManager.put("SplitPane.background", transparent);
+        UIManager.put("ScrollPane.background", transparent);
+
         UIManager.put("TextArea.foreground", Color.WHITE);
 
         UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
@@ -69,13 +75,14 @@ public class Video {
         UIManager.put("Button.select", Color.ORANGE);
         UIManager.put("Button.opaque", false);
         UIManager.put("Panel.opaque", false);
+        UIManager.put("Panel.background", transparent);
         UIManager.put("ScrollBar.opaque", false);
-        UIManager.put("ScrollBar.background", Color.BLACK);
+        UIManager.put("ScrollBar.background", transparent);
         UIManager.put("ScrollBar.border", new EmptyBorder(1,1,1,1));
 
-        UIManager.put("Table.background", Color.BLACK);
+        UIManager.put("Table.background", transparent);
         UIManager.put("Table.foreground", Color.WHITE);
-        UIManager.put("TableHeader.background", Color.BLACK);
+        UIManager.put("TableHeader.background", transparent);
         UIManager.put("TableHeader.foreground", Color.ORANGE);
     }
 

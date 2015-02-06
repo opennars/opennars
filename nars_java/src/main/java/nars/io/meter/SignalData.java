@@ -33,7 +33,7 @@ public class SignalData {
         return data;
     }
 
-    public synchronized Object[] getData() {
+    public Object[] getData() {
         return this.data = metric.getData(index, data);
     }
 

@@ -234,7 +234,7 @@ public class Texts {
     TODO must reset the hashcode field
     TODO this is untested and probably not yet functional
      */
-    public static void overwrite(String s, String t) {
+    public static void overwrite(CharSequence s, CharSequence t) {
         try {
             char[] value = (char[]) val.get(s);
             for (int i = 0; i < Math.min(s.length(), t.length()); i++) {

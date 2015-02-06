@@ -63,7 +63,7 @@ abstract public class Image extends CompoundTerm {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static String makeImageName(final NALOperator op, final Term[] arg, final int relationIndex) {
+    protected static CharSequence makeImageName(final NALOperator op, final Term[] arg, final int relationIndex) {
         final int sizeEstimate = 12 * arg.length + 2;
         
         StringBuilder name = new StringBuilder(sizeEstimate)

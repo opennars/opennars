@@ -11,6 +11,7 @@ import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import org.parboiled.*;
 import org.parboiled.errors.InvalidInputError;
+import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
@@ -33,9 +34,9 @@ import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 public class NarseseParser extends BaseParser<Object> {
 
     private final int level;
-    RecoveringParseRunner inputParser = new RecoveringParseRunner(Input());
-    RecoveringParseRunner singleTaskParser = new RecoveringParseRunner(Task());
-    RecoveringParseRunner singleTermParser = new RecoveringParseRunner(Term());
+    ParseRunner inputParser = new RecoveringParseRunner(Input());
+    ParseRunner singleTaskParser = new RecoveringParseRunner(Task());
+    ParseRunner singleTermParser = new RecoveringParseRunner(Term());
 
     public Memory memory;
 
@@ -567,7 +568,7 @@ public class NarseseParser extends BaseParser<Object> {
             if (input == null)
                 input = sc.nextLine();
 
-            RecoveringParseRunner rpr = new RecoveringParseRunner(p.Input());
+            ParseRunner rpr = new RecoveringParseRunner(p.Input());
             //TracingParseRunner rpr = new TracingParseRunner(p.Input());
 
             ParsingResult r = rpr.run(input);

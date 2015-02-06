@@ -551,13 +551,13 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
 
     public static final class ExpectationComparator implements Comparator<Sentence> {
-        final static ExpectationComparator the = new ExpectationComparator();
+        final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.truth.getExpectation(), b.truth.getExpectation());
         }
     }
     public static final class ConfidenceComparator implements Comparator<Sentence> {
-        final static ExpectationComparator the = new ExpectationComparator();
+        final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.truth.getConfidence(), b.truth.getConfidence());
         }

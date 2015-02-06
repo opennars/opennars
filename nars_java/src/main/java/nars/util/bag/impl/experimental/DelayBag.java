@@ -72,7 +72,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag/*.IndexedBag*/<K,E> imple
 
     private final int capacity;
     
-    public Map<K,E> nameTable;
+    private Map<K,E> nameTable;
     private Deque<E> pending;
     private ArraySortedIndex<E> toRemove;
     

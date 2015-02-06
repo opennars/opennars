@@ -108,7 +108,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
             E removed;
 
-            synchronized (nameTable) {
+            /*synchronized (nameTable)*/ {
 
                 removed = putKey(key, value);
                 if (removed != null) {
@@ -136,7 +136,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
         }
 
         public E removeItem(K name) {
-            synchronized (nameTable) {
+            /*synchronized (nameTable)*/ {
                 E item = nameTable.get(name);
                 if (item == null) return null;
                 return removeItem(item);
@@ -160,7 +160,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
             E e;
 
-            synchronized (nameTable) {
+            /*synchronized (nameTable)*/ {
 
                 e = removeKey((K) key);
                 if (e != null) {
@@ -203,7 +203,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
     @Override
     public final void clear() {
-        synchronized (nameTable) {
+        /*synchronized (nameTable)*/ {
             items.clear();
             nameTable.clear();
             mass = 0;
@@ -395,7 +395,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
     @Override
     public E PUT(E i) {
 
-        synchronized (nameTable) {
+        /*synchronized (nameTable)*/ {
             float newPriority = i.getPriority();
 
             E oldItem = nameTable.remove(i.name());
@@ -464,7 +464,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
         final E selected;
 
-        synchronized (nameTable) {
+        /*synchronized (nameTable)*/ {
 
             selected = items.remove(index);
             if (selected == null)

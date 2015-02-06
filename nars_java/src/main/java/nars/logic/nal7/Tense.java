@@ -28,7 +28,7 @@ public enum Tense {
     protected static final Map<String, Tense> stringToTense;
     
     static {
-        HashMap<String, Tense> stt = new HashMap(Tense.values().length*2);
+        Map<String, Tense> stt = new HashMap(Tense.values().length*2);
         for (final Tense t : Tense.values()) {
             stt.put(t.toString(), t);
         }

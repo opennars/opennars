@@ -56,19 +56,9 @@ public class Term implements AbstractTerm, Termable {
     }
     
     public boolean isExecutable(final Memory mem) {
-        //don't allow ^want and ^believe to be active/have an effect, 
-        //which means its only used as monitor
-
-        if(this instanceof Operation) {
-            return ((Operation) this).getOperator().isExecutable(mem);
-        }
-
-        if (this instanceof Operator) {
-            return true;
-        }
-
         return false;
     }
+
 
 
 

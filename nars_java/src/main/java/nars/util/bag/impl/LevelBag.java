@@ -98,7 +98,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     /**
      * array of lists of items, for items on different level
      */
-    public final Level[] level;
+    public final Level<K,E>[] level;
 
     public static enum NextNonEmptyLevelMode {
         Default, Fast
@@ -127,9 +127,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
                 new CuckooMap(capacity * 2) :
                 new ConcurrentHashMap<>(capacity * 2);
 
+        levelEmpty = new boolean[this.levels];
+
         level = (Level[]) Array.newInstance(Level.class, this.levels);
 
-        levelEmpty = new boolean[this.levels];
         Arrays.fill(levelEmpty, true);
 
         DISTRIBUTOR = Distributor.get(this.levels).order;
@@ -139,22 +140,23 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     /** high performance linkedhashset/deque for use as a levelbag level */
-    public class Level extends DDList<E> {
+    public static class Level<KK,EE extends Item<KK>> extends DDList<EE> {
 
 
-        public Level(int level) {
+        private final boolean[] levelEmpty;
+
+        public Level(boolean[] levelEmpty, DDNodePool<EE> nodePool, int level) {
             super(level, nodePool);
+            this.levelEmpty = levelEmpty;
         }
 
         @Override
         public void changed() {
-
-            levelEmpty[this.getID()] = isEmpty();
-
+            this.levelEmpty[this.getID()] = isEmpty();
         }
 
-        public E removeFirst() {
-            DD<E> first = getFirstNode();
+        public EE removeFirst() {
+            DD<EE> first = getFirstNode();
             if (first == null) return null;
             return remove(first);
         }
@@ -170,11 +172,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             return remove(e);
         }*/
 
-        public E peekFirst() {
+        public EE peekFirst() {
             return getFirst();
         }
 
-        public Iterator<E> descendingIterator() {
+        public Iterator<EE> descendingIterator() {
             //order wont matter within the level
             return iterator();
             //return items.descendingIterator();
@@ -440,7 +442,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             return TAKE(currentLevel);
         }
         else {
-            final Level cl = level[currentLevel];
+            final Level<K,E> cl = level[currentLevel];
             E r = cl.peekFirst();
             cl.rotate();
             return r;
@@ -455,12 +457,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     @Override
-    public synchronized E TAKENEXT() {
+    public /*synchronized*/ E TAKENEXT() {
         return next(true);
     }
 
 
-    private synchronized E TAKE(int outLevel) {
+    private /*synchronized*/ E TAKE(int outLevel) {
 
         Level l = level[outLevel];
         if (l == null)
@@ -596,7 +598,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     protected final Level ensureLevelExists(final int l) {
         final Level existing = this.level[l];
         if (existing == null) {
-            return (this.level[l] = new Level(l));
+            return (this.level[l] = new Level<K,E>(levelEmpty, nodePool, l));
         }
         return existing;
     }

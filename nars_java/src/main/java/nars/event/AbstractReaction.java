@@ -31,7 +31,7 @@ public abstract class AbstractReaction implements Reaction {
         setActive(active);
     }
 
-    public synchronized void setActive(boolean b) {        
+    public void setActive(boolean b) {
         
         if (b && (this.active==null)) {
             this.active = source.on(this, events);

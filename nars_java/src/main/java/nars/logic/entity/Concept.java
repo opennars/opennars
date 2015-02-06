@@ -35,7 +35,7 @@ import nars.logic.entity.tlink.TermLinkTemplate;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.util.bag.Bag;
-import nars.util.bag.Bag.MemoryAware;
+import nars.core.Memory.MemoryAware;
 
 import java.util.Collection;
 import java.util.Collections;

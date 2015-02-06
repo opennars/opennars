@@ -22,10 +22,7 @@ package nars.gui;
 
 import automenta.vivisect.dimensionalize.FastOrganicLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
-import automenta.vivisect.swing.AwesomeButton;
-import automenta.vivisect.swing.NSlider;
-import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
+import automenta.vivisect.swing.*;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
@@ -57,7 +54,7 @@ import static nars.core.Memory.Timing.Real;
 import static nars.core.Memory.Timing.Simulation;
 
 
-public class NARControls extends JPanel implements ActionListener, Reaction {
+public class NARControls extends NPanel implements ActionListener, Reaction {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 
@@ -896,7 +893,9 @@ public class NARControls extends JPanel implements ActionListener, Reaction {
         this.allowFullSpeed = allowFullSpeed;
     }
 
-    
 
+    @Override
+    protected void onShowing(boolean showing) {
 
+    }
 }

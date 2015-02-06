@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class MultiOutputStream extends OutputStream {
         this(Lists.newArrayList(o));
     }
     
-    public MultiOutputStream(List<OutputStream> outStreams) {
+    public MultiOutputStream(Collection<OutputStream> outStreams) {
 
         this.out = new ArrayList<OutputStream>();
 

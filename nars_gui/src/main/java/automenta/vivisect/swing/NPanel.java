@@ -1,5 +1,7 @@
 package automenta.vivisect.swing;
 
+import automenta.vivisect.Video;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.HierarchyEvent;
@@ -13,12 +15,19 @@ abstract public class NPanel extends JPanel implements HierarchyListener {
 
     public NPanel() {
         super();
+        initialize();
     }
 
     public NPanel(LayoutManager l) {
         super(l);
+        initialize();
     }
-    
+
+    protected void initialize() {
+        //setOpaque(false);
+        setBackground(Video.transparent);
+    }
+
     @Override
     public void addNotify() {
         super.addNotify();
@@ -40,5 +49,6 @@ abstract public class NPanel extends JPanel implements HierarchyListener {
     }    
     
     abstract protected void onShowing(boolean showing);
-    
+
+
 }

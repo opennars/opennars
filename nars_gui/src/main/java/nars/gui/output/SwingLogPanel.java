@@ -51,7 +51,7 @@ public class SwingLogPanel extends LogPanel {
 
         setConsoleFont(ioText);
 
-        setBackground(Color.BLACK);
+        //setBackground(Color.BLACK);
     }
 
     @Override

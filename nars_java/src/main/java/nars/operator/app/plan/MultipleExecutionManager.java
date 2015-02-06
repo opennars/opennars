@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * Operation execution and planning support. Strengthens and accelerates
  * goal-reaching activity
  */
-public class MultipleExecutionManager {
+@Deprecated public class MultipleExecutionManager {
 
     public final GraphExecutive graph;
     public final Memory memory;

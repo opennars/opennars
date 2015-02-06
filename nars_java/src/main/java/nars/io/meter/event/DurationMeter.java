@@ -10,13 +10,13 @@ package nars.io.meter.event;
  */
 public class DurationMeter extends ValueMeter {
     
-    double startTime = Double.NaN;
+    private double startTime = Double.NaN;
     private final boolean nanoSeconds;
     //DescriptiveStatistics stat;
     private final double window;
     //private double prev;
     private final boolean frequency;
-    boolean strict = false;
+    private boolean strict = false;
     
     public DurationMeter(String id, boolean nanoSeconds, double windowSec, boolean asFrequency) {
         super(id);

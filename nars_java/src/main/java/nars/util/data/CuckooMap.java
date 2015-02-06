@@ -707,19 +707,20 @@ public class CuckooMap<K, V> implements Map<K,V> {
             return this;
         }
 
-        /** Returns a new array containing the remaining values. */
-        public ArrayList<V> toArray () {
-            ArrayList array = new ArrayList(map.size);
-            while (hasNext)
-                array.add(next());
-            return array;
-        }
-
-        /** Adds the remaining values to the specified array. */
-        public void toArray (ArrayList<V> array) {
-            while (hasNext)
-                array.add(next());
-        }
+        //these 2 methods are dangerous to use because while loop spins on hasNext field
+//        /** Returns a new array containing the remaining values. */
+//        public ArrayList<V> toArray () {
+//            ArrayList array = new ArrayList(map.size);
+//            while (hasNext)
+//                array.add(next());
+//            return array;
+//        }
+//
+//        /** Adds the remaining values to the specified array. */
+//        public void toArray (List<V> array) {
+//            while (hasNext)
+//                array.add(next());
+//        }
     }
 
     static public class Keys<K> extends MapIterator<K, Object> implements Iterable<K>, Iterator<K> {
@@ -743,13 +744,17 @@ public class CuckooMap<K, V> implements Map<K,V> {
             return this;
         }
 
+
         /** Returns a new array containing the remaining keys. */
+        /*
+        //dangerous to use because while loop spins on hasNext field
         public ArrayList<K> toArray () {
             ArrayList array = new ArrayList(map.size);
             while (hasNext)
                 array.add(next());
             return array;
         }
+        */
     }
 
     static public int nextPowerOfTwo (int value) {

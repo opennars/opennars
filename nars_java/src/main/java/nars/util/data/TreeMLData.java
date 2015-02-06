@@ -113,7 +113,7 @@ import java.util.TreeMap;
         setData(t, f + x);
     }
     
-    public synchronized MutableIntegerDouble get(int i) {        
+    public MutableIntegerDouble get(int i) {
         return values.get(temp.setValue(i));
     }
     

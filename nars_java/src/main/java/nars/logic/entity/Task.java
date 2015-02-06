@@ -423,7 +423,7 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
     }
 
     
-    public static Set<Sentence> getSentences(Collection<Task> tasks) {
+    public static Set<Sentence> getSentences(Iterable<Task> tasks) {
         Set<Sentence> s = new HashSet();
         for (Task t : tasks)
             s.add(t.sentence);

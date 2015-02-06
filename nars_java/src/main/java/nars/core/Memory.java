@@ -97,7 +97,7 @@ public class Memory implements Serializable {
         return level;
     }
 
-    public Concept concept(String t) {
+    public Concept concept(CharSequence t) {
         return concept(Term.get(t));
     }
 
@@ -669,7 +669,7 @@ public class Memory implements Serializable {
         return perceived;
     }
 
-    public synchronized void cycle(final TaskSource inputs) {
+    public /*synchronized*/ void cycle(final TaskSource inputs) {
 
         this.inputs = inputs;
         
@@ -736,7 +736,7 @@ public class Memory implements Serializable {
 
 
 
-    public Operator getOperator(final String op) {
+    public Operator getOperator(final CharSequence op) {
         return operators.get(op);
     }
 
@@ -865,4 +865,7 @@ public class Memory implements Serializable {
     }
 
 
+    public interface MemoryAware {
+        public void setMemory(Memory m);
+    }
 }

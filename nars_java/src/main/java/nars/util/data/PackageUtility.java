@@ -16,7 +16,7 @@ import java.util.jar.JarInputStream;
 public class PackageUtility {
 
     public static List<Class> getClasses(final String pkgName, boolean innerClasses) throws ClassNotFoundException {
-        final ArrayList<Class> classes = new ArrayList<>();
+        final List<Class> classes = new ArrayList<>();
         // Get a File object for the package
         File directory = null;
         String pkgPath;
@@ -73,7 +73,7 @@ public class PackageUtility {
     }
 
     public static List<Class> getClasses(final String jarName, final String packageName) throws IOException {
-        final ArrayList<Class> classes = new ArrayList<>();
+        final List<Class> classes = new ArrayList<>();
 
         final String cleanedPackageName = packageName.replaceAll("\\.", "/");
 

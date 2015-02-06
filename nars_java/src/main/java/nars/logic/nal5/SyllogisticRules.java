@@ -152,7 +152,7 @@ public final class SyllogisticRules {
                 Statement.make(taskContent, term2, term1, reverseOrder(order)), 
                     truth2, budget2,false);
         nal.doublePremiseTask(
-                Statement.makeSym(taskContent, term1, term2, order), 
+                Terms.makeSymStatement(taskContent, term1, term2, order),
                     truth3, budget3,false);
         
     }

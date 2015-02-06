@@ -211,7 +211,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             
             containedTemporalRelations = 0;
             
-            if ((this instanceof Equivalence) || (this instanceof Implication)) {
+            /*if ((this instanceof Equivalence) || (this instanceof Implication))*/ {
                 int temporalOrder = this.getTemporalOrder();
                 switch (temporalOrder) {
                     case TemporalRules.ORDER_FORWARD:
@@ -370,7 +370,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
 
 
-    /** Gives a set of all contained term, recursively */
+    /** Gives a set of all (unique) contained term, recursively */
     public Set<Term> getContainedTerms() {
         Set<Term> s = Parameters.newHashSet(getComplexity());
         for (Term t : term) {
@@ -451,7 +451,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /** creates a new ArrayList for terms */
     public List<Term> asTermList() {
-        ArrayList l = new ArrayList(term.length);
+        List<Term> l = new ArrayList(term.length);
         addTermsTo(l);
         return l;
     }

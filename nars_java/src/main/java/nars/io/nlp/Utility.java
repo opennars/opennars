@@ -3,7 +3,7 @@ package nars.io.nlp;
 import java.util.ArrayList;
 
 public class Utility {
-    public static String[] splitInclusive(String input, char[] splitChars) {
+    public static String[] splitInclusive(CharSequence input, char[] splitChars) {
         ArrayList<String> splited = new ArrayList<>();
         String readthusfar = "";
         

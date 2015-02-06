@@ -28,14 +28,18 @@ public class DDList<E> implements Iterable<E> {
         pre = new HeadSentinel(id);
         post = new TailSentinel(id);
 
-        clear();
+        _clear();
     }
 
     public void clear() {
+        _clear();
+        changed();
+    }
+    
+    protected void _clear() {
         size = 0;
         pre.next = post;
         post.prev = pre;
-        changed();
     }
 
     /** called when this list is changed in any way */
