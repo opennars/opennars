@@ -603,7 +603,7 @@ public final class StructuralRules {
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
         } else {  // need to redefine the cases
-            if ((sentence.isJudgment()) == (compoundTask == (compound instanceof Conjunction))) {
+            if ((sentence.isJudgment())) { // == (compoundTask == (compound instanceof Conjunction))) {
                 truth = TruthFunctions.deduction(truth, reliance);
             } else if (sentence.isGoal()) {
                 truth = TruthFunctions.deduction(truth, reliance);
