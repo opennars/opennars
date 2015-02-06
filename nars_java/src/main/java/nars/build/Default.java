@@ -101,7 +101,7 @@ public class Default extends Build implements ConceptBuilder {
         param.confidenceThreshold.set(0.0075);
 
         param.shortTermMemoryHistory.set(1);
-        param.temporalRelationsMax.set(1);
+        param.temporalRelationsMax.set(10);
 
         param.conceptForgetDurations.set(2.0);
         param.taskLinkForgetDurations.set(4.0);

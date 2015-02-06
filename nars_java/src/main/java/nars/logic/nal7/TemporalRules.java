@@ -513,9 +513,9 @@ public class TemporalRules {
 
     public static int order(final long timeDiff, final int durationCycles) {
         final int halfDuration = durationCycles/2;
-        if (timeDiff >= halfDuration) {
+        if (timeDiff > halfDuration) {
             return ORDER_FORWARD;
-        } else if (timeDiff <= -halfDuration) {
+        } else if (timeDiff < -halfDuration) {
             return ORDER_BACKWARD;
         } else {
             return ORDER_CONCURRENT;

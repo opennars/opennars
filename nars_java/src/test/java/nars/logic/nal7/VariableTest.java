@@ -53,23 +53,26 @@ public class VariableTest extends TestCase {
     
     @Test public void testDepQueryVariableDistinct() {
 
-        n.addInput("<a --> 3>. :|:");
-        n.addInput("<a --> 4>. :/:");
-        n.addInput("<(&/,<a --> 3>,?what) =/> <a --> #wat>>?");
-        
+
         /*
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
             shouldn't happen because it should not unify #wat with 4 because its not a query variable      
         */        
         new AbstractReaction(n, true, Answer.class) {
             @Override public void event(Class event, Object[] args) {
-                //nothing should arrive via Solved.class channel
-                assertTrue(false);
+                //nothing should cause this event
+                assertTrue(Arrays.toString(args), false);
             }
         };
         
         OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", 5);
-        
+
+
+        n.addInput(
+                "<a --> 3>. :\\: \n" +
+                "<a --> 4>. :/: \n" +
+                "<(&/,<a --> 3>,?what) =/> <a --> #wat>>?");
+
         n.run(32);
   
         assertTrue(e.isTrue());
@@ -96,9 +99,10 @@ public class VariableTest extends TestCase {
 
         //TextOutput.out(n);
 
-        n.addInput("<a --> 3>. :|:");
-        n.addInput("<a --> 4>. :/:");
-        n.addInput("<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
+        n.addInput(
+                "<a --> 3>. :|:" + '\n' +
+                "<a --> 4>. :/:" + '\n' +
+                "<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
         
 
 
