@@ -49,7 +49,7 @@ import static nars.gui.output.SwingLogPanel.setConsoleFont;
 public class TextInputPanel extends NPanel /*implements ActionListener*/ {
     private ReactionPanel infoPane;
     private final JMenuBar menu;
-    private JSplitPane mainSplit;
+    //private JSplitPane mainSplit;
     private JButton defaultButton;
 
     public interface InputAction {
@@ -444,20 +444,20 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
             List<String[]> interpretations = new ArrayList();
             List<InputAction> actions = new ArrayList();
-            
+
             String input = inputText.getText();
-            
+
             for (final TextInputMode t : modes) {
                 t.setInputState(nar, input);
-                
+
                 String interp = t.getInterpretation();
                 if (interp!=null) {
                     interpretations.add(new String[] { t.getClass().getSimpleName(), interp } );
                 }
-                
-                t.getActions(actions);                
+
+                t.getActions(actions);
             }
-            
+
             /*
             GridBagConstraints gc = new GridBagConstraints();
             gc.weightx = 1.0;
@@ -466,11 +466,11 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             gc.gridx = 1;
             gc.gridy = 1;
             */
-            
-            
+
+
             menu.removeAll();
-            
-            
+
+
             comments.setText("");
             for (String[] i : interpretations) {
                 Color c = Video.getColor(i[0], 0.7f, 0.6f);
@@ -480,41 +480,41 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             }
 
 
-            
-            if (comments.getText().length() > 0) {
-                if (!isVisible()) {
-                    int ll = mainSplit.getLastDividerLocation();
-                    if (ll <= 0)
-                        ll = (int)(getWidth() * 0.75);
-                    if (getWidth() == 0) {
-                        //component hasnt been instantiated yet, guessing at size
-                        //TODO use actual planned size
-                        ll = 500;
-                    }
-                    mainSplit.setDividerLocation(ll);
-                    mainSplit.setLastDividerLocation(ll);
-                    setVisible(true);
-                }                
-            }
-            else {                
-                if (isVisible()) {                    
-                    mainSplit.setLastDividerLocation(mainSplit.getDividerLocation());
-                    setVisible(false);
-                }
-            }
-            
+
+//            if (comments.getText().length() > 0) {
+//                if (!isVisible()) {
+//                    int ll = mainSplit.getLastDividerLocation();
+//                    if (ll <= 0)
+//                        ll = (int)(getWidth() * 0.75);
+//                    if (getWidth() == 0) {
+//                        //component hasnt been instantiated yet, guessing at size
+//                        //TODO use actual planned size
+//                        ll = 500;
+//                    }
+//                    mainSplit.setDividerLocation(ll);
+//                    mainSplit.setLastDividerLocation(ll);
+//                    setVisible(true);
+//                }
+//            }
+//            else {
+//                if (isVisible()) {
+//                    mainSplit.setLastDividerLocation(mainSplit.getDividerLocation());
+//                    setVisible(false);
+//                }
+//            }
+
             defaultButton = null;
             double maxStrength = 0;
             for (InputAction a : actions) {
                 JButton b = new JButton(a.getLabel());
-                
+
                 double strength = a.getStrength();
                 if (strength > maxStrength) {
                     defaultButton = b;
                     maxStrength = strength;
                 }
                 b.setFont(b.getFont().deriveFont((float)(b.getFont().getSize() * (0.5f + 0.5f * strength))));
-                        
+
                 b.setForeground(Color.WHITE);
                 b.setBackground(Color.DARK_GRAY);
                 b.addActionListener(new ActionListener() {
@@ -530,13 +530,13 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                         });
                     }
                 });
-                                
+
                 menu.add(b);
             }
 
             menu.validate();
             menu.repaint();
-            
+
             validate();
             repaint();
 
@@ -546,7 +546,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
     //TODO move this to its own class
     public JComponent newTextInput() {
-        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);        
+        //mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         
         infoPane = new ReactionPanel();
 
@@ -570,7 +570,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         RTextScrollPane sp = new RTextScrollPane(inputText);
         sp.setLineNumbersEnabled(false);
         sp.setFoldIndicatorEnabled(false);
-        mainSplit.add(new JScrollPane(sp), 0);
+        //mainSplit.add(sp, 0);
 
         this.inputText.setRows(3);
 
@@ -623,11 +623,12 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
 
         infoPane.setVisible(false);
-        mainSplit.add(infoPane, 1);
+        //mainSplit.add(infoPane, 1);
 
         updateContext();
-        
-        return mainSplit;
+
+        //return mainSplit;
+        return sp;
     }
 
     protected void updateContext() {

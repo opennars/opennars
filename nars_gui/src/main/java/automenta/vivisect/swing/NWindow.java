@@ -35,34 +35,34 @@ public class NWindow extends JFrame {
 
     //static final Font NarsFont = new Font("Arial", Font.PLAIN, 13);
 
-    static {
-        // Determine what the GraphicsDevice can support.
-        GraphicsEnvironment ge =
-                GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        boolean isPerPixelTranslucencySupported =
-                gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSLUCENT);
-        boolean isPerPixelTransparencySupported =
-                gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT);
-
-        //If translucent windows aren't supported, exit.
-        if (!isPerPixelTranslucencySupported) {
-            System.err.println("Per-pixel translucency is not supported");
-        }
-        else {
-            System.err.println("Per-pixel translucency supported");
-        }
-
-
-        if (!isPerPixelTransparencySupported) {
-            System.err.println("Per-pixel transparency is not supported");
-        }
-        else {
-            System.err.println("Per-pixel transparency supported");
-        }
-
-        JFrame.setDefaultLookAndFeelDecorated(false);
-    }
+//    static {
+//        // Determine what the GraphicsDevice can support.
+//        GraphicsEnvironment ge =
+//                GraphicsEnvironment.getLocalGraphicsEnvironment();
+//        GraphicsDevice gd = ge.getDefaultScreenDevice();
+//        boolean isPerPixelTranslucencySupported =
+//                gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSLUCENT);
+//        boolean isPerPixelTransparencySupported =
+//                gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT);
+//
+//        //If translucent windows aren't supported, exit.
+//        if (!isPerPixelTranslucencySupported) {
+//            System.err.println("Per-pixel translucency is not supported");
+//        }
+//        else {
+//            System.err.println("Per-pixel translucency supported");
+//        }
+//
+//
+//        if (!isPerPixelTransparencySupported) {
+//            System.err.println("Per-pixel transparency is not supported");
+//        }
+//        else {
+//            System.err.println("Per-pixel transparency supported");
+//        }
+//
+//        JFrame.setDefaultLookAndFeelDecorated(false);
+//    }
 
     boolean transparent = false;
 
@@ -89,14 +89,13 @@ public class NWindow extends JFrame {
             }                        
         });
 
-        setContentPane(background);
-        setTransparent(true);
+        //setContentPane(background);
+        //setTransparent(true);
     }
     
     public NWindow(String title, Component component) {
         this(title);
         getContentPane().add(component, BorderLayout.CENTER);
-        ((JComponent)component).setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
     }
 
     final Color transparentColor = new Color(0,0,0,0);

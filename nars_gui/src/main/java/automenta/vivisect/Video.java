@@ -33,7 +33,7 @@ public class Video {
 
     public static void themeInvert() {
         //http://alvinalexander.com/java/java-swing-uimanager-defaults
-        Color transparent = new Color(0,0,0,0);
+        Color bgColor = new Color(0,0,0);
 
         UIManager.put("Button.foreground", Color.WHITE);
         UIManager.put("Button.background", Color.DARK_GRAY);
@@ -47,18 +47,18 @@ public class Video {
 
         UIManager.put("Label.foreground", Color.WHITE);
 
-        UIManager.put("Tree.background", transparent);
+        UIManager.put("Tree.background", bgColor);
         UIManager.put("Tree.foreground", Color.BLACK);
         UIManager.put("Tree.textForeground", Color.WHITE);
-        UIManager.put("Tree.textBackground", transparent);
-        UIManager.put("TextPane.background", transparent);
+        UIManager.put("Tree.textBackground", bgColor);
+        UIManager.put("TextPane.background", bgColor);
         UIManager.put("TextPane.foreground", Color.WHITE);
-        UIManager.put("TextEdit.background", transparent);
+        UIManager.put("TextEdit.background", bgColor);
         UIManager.put("TextEdit.foreground", Color.WHITE);
 
-        UIManager.put("TextArea.background", transparent);
-        UIManager.put("SplitPane.background", transparent);
-        UIManager.put("ScrollPane.background", transparent);
+        UIManager.put("TextArea.background", bgColor);
+        UIManager.put("SplitPane.background", bgColor);
+        UIManager.put("ScrollPane.background", bgColor);
 
         UIManager.put("TextArea.foreground", Color.WHITE);
 
@@ -75,14 +75,14 @@ public class Video {
         UIManager.put("Button.select", Color.ORANGE);
         UIManager.put("Button.opaque", false);
         UIManager.put("Panel.opaque", false);
-        UIManager.put("Panel.background", transparent);
+        UIManager.put("Panel.background", bgColor);
         UIManager.put("ScrollBar.opaque", false);
-        UIManager.put("ScrollBar.background", transparent);
+        UIManager.put("ScrollBar.background", bgColor);
         UIManager.put("ScrollBar.border", new EmptyBorder(1,1,1,1));
 
-        UIManager.put("Table.background", transparent);
+        UIManager.put("Table.background", bgColor);
         UIManager.put("Table.foreground", Color.WHITE);
-        UIManager.put("TableHeader.background", transparent);
+        UIManager.put("TableHeader.background", bgColor);
         UIManager.put("TableHeader.foreground", Color.ORANGE);
     }
 

@@ -25,7 +25,7 @@ abstract public class NPanel extends JPanel implements HierarchyListener {
 
     protected void initialize() {
         //setOpaque(false);
-        setBackground(Video.transparent);
+        //setBackground(Video.transparent);
     }
 
     @Override
