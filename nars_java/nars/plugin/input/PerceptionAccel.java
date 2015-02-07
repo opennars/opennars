@@ -43,7 +43,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     int cur_maxlen=0;
     
     public void perceive(NAL nal) { //implement Peis idea here now
-        for(int Len=2;Len<=cur_maxlen;Len++) {
+        for(int Len=2;Len<=cur_maxlen+1;Len++) {
             //ok, this is the length we have to collect, measured from the end of event buffer
             Term[] relterms=new Term[2*Len-1]; //there is a interval term for every event
             //measuring its distance to the next event, but for the last event this is obsolete
@@ -104,6 +104,8 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 break;
             }
         }
+        //minimum size is 1, in which case only chaining of two will happen
+        cur_maxlen=Math.max(1, cur_maxlen);
     }
     
     @Override
