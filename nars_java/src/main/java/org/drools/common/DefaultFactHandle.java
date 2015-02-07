@@ -23,9 +23,8 @@ import org.drools.FactHandle;
  * @author <a href="mailto:mark.proctor@jboss.com">Mark Proctor</a>
  * @author <a href="mailto:bob@werken.com">bob mcwhirter </a>
  */
-public class DefaultFactHandle
-    implements
-    InternalFactHandle {
+public class DefaultFactHandle<O>    implements
+    InternalFactHandle<O> {
     // ----------------------------------------------------------------------
     // Instance members
     // ----------------------------------------------------------------------
@@ -37,7 +36,7 @@ public class DefaultFactHandle
     /** Handle id. */
     private long        id;
     private long        recency;
-    private Object      object;
+    private O      object;
     private EqualityKey key;
     private int         objectHashCode;
     
@@ -50,7 +49,7 @@ public class DefaultFactHandle
     }
 
     public DefaultFactHandle(final long id,
-                             final Object object) {
+                             final O object) {
         this.id = id;
         this.recency = id;
         this.object = object;
@@ -64,7 +63,7 @@ public class DefaultFactHandle
      *            Handle id.
      */
     public DefaultFactHandle(final long id,
-                             final Object object,
+                             final O object,
                              final long recency) {
         this.id = id;
         this.recency = recency;
@@ -133,11 +132,11 @@ public class DefaultFactHandle
         this.object = null;
     }
 
-    public Object getObject() {
+    public O getObject() {
         return this.object;
     }
 
-    public void setObject(final Object object) {
+    public void setObject(final O object) {
         this.object = object;
     }
 

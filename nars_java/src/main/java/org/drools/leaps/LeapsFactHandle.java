@@ -28,7 +28,7 @@ import org.drools.common.DefaultFactHandle;
  * @author Alexander Bagerman
  * 
  */
-public class LeapsFactHandle extends DefaultFactHandle {
+public class LeapsFactHandle<O> extends DefaultFactHandle<O> {
 
     private List activatedTuples = null;
 
@@ -36,7 +36,7 @@ public class LeapsFactHandle extends DefaultFactHandle {
 
     private List existsTuples    = null;
 
-    public LeapsFactHandle(final long id, final Object object) {
+    public LeapsFactHandle(final long id, final O object) {
         super( id, object );
     }
 

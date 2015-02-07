@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.drools.base.ClassObjectType;
 import org.drools.spi.ColumnExtractor;
 import org.drools.spi.Extractor;
 import org.drools.spi.FieldConstraint;
@@ -43,8 +44,12 @@ public class Column
     // tuple_fact_index = column_index + offset; 
     private int               offset;
 
-    public Column(final int index,
-                  final ObjectType objectType) {
+    /** matches any object type */
+    public Column(final int index) {
+        this(index, ClassObjectType.AnyObject);
+    }
+
+    public Column(final int index, final ObjectType objectType) {
         this( index,
               0,
               objectType,

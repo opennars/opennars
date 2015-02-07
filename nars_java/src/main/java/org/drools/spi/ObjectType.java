@@ -41,4 +41,6 @@ public interface ObjectType
     boolean matches(Object object);
 
     int getValueType();
+
+
 }

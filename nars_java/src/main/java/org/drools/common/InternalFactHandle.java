@@ -18,16 +18,14 @@ package org.drools.common;
 
 import org.drools.FactHandle;
 
-public interface InternalFactHandle
-    extends
-    FactHandle {
+public interface InternalFactHandle<O> extends FactHandle {
     public long getId();
 
     public long getRecency();
 
-    public Object getObject();
+    public O getObject();
 
-    public void setObject(Object object);
+    public void setObject(O object);
 
     public void setEqualityKey(EqualityKey key);
 

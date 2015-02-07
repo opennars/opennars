@@ -20,10 +20,10 @@ import org.drools.WorkingMemory;
 import org.drools.common.InternalFactHandle;
 import org.drools.rule.Declaration;
 
-public interface FieldConstraint
+public interface FieldConstraint<X>
     extends
     Constraint {
-    public boolean isAllowed(InternalFactHandle handle,
+    public boolean isAllowed(InternalFactHandle<X> handle,
                              Tuple tuple,
                              WorkingMemory workingMemory);
 
