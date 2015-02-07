@@ -6,7 +6,6 @@ import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
 import nars.logic.entity.BudgetValue.Budgetable;
 import org.jgrapht.Graph;
-import org.jgrapht.ext.*;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.xml.sax.SAXException;
@@ -352,33 +351,36 @@ public class NARGraph extends DirectedMultigraph {
         return super.addEdge(sourceVertex, targetVertex, e);
     }
 
-    public void toGraphML(Writer writer) throws SAXException, TransformerConfigurationException {
-        GraphMLExporter gme = new GraphMLExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
-        gme.export(writer, this);
-    }
-
-    public void toGraphML(String outputFile) throws SAXException, TransformerConfigurationException, IOException {
-        toGraphML(new FileWriter(outputFile, false));
-    }
-
-    public void toGML(Writer writer) {
-        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
-        gme.setPrintLabels(GmlExporter.PRINT_EDGE_VERTEX_LABELS);
-        gme.export(writer, this);
-    }
-
-    public void toGML(String outputFile) throws IOException {
-        toGML(new FileWriter(outputFile, false));
-    }
+    //THESE REQUIRE JGRAPHX LIBRARY WHICH WE OTHERWISE DO NOT NEED IN NARS_CORE
+    //    public void toGraphML(Writer writer) throws SAXException, TransformerConfigurationException {
+    //        GraphMLExporter gme = new GraphMLExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
+    //        gme.export(writer, this);
+    //    }
+    //
+    //    public void toGraphML(String outputFile) throws SAXException, TransformerConfigurationException, IOException {
+    //        toGraphML(new FileWriter(outputFile, false));
+    //    }
+    //
+    //    public void toGML(Writer writer) {
+    //        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
+    //        gme.setPrintLabels(GmlExporter.PRINT_EDGE_VERTEX_LABELS);
+    //        gme.export(writer, this);
+    //    }
+    //
+    //    public void graphMLWrite(String filename) throws Exception {
+    //        new GraphMLExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider()).export(new FileWriter(filename), this);
+    //    }
+    //
+    //    public void toGML(String outputFile) throws IOException {
+    //        toGML(new FileWriter(outputFile, false));
+    //    }
 
     @Override
     public Graph clone() {
         return (Graph) super.clone();
     }
 
-    public void graphMLWrite(String filename) throws Exception {
-        new GraphMLExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider()).export(new FileWriter(filename), this);
-    }
+
 
     public static class TimeNode {
 

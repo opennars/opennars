@@ -152,6 +152,16 @@
             <groupId>org.javolution</groupId>
             <artifactId>javolution-core-java</artifactId>
             <version>6.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.compendium</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.javabits.jgrapht</groupId>
@@ -159,11 +169,6 @@
             <version>0.9.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.javabits.jgrapht</groupId>
-            <artifactId>jgrapht-ext</artifactId>
-            <version>0.9.3</version>
-        </dependency>
 
 
         <dependency>
