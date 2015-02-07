@@ -43,7 +43,9 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     int cur_maxlen=0;
     
     public void perceive(NAL nal) { //implement Peis idea here now
+        //we start with length 2 compounds, and search for patterns which are one longer than the longest observed one
         for(int Len=2;Len<=cur_maxlen+1;Len++) {
+            //CRITICAL PART, NOT CHECKED FOR CORRECTNESS YET
             //ok, this is the length we have to collect, measured from the end of event buffer
             Term[] relterms=new Term[2*Len-1]; //there is a interval term for every event
             //measuring its distance to the next event, but for the last event this is obsolete
@@ -69,10 +71,30 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 }
                 k+=2;
             }
+            //END CRITICAL PART
             
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
             boolean after=newEvent.sentence.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence, nal.memory.param.duration.get());
+            
+            //we now have to look at if the first half + the second half already exists as concept, before we add it
+            Term[] firstHalf=new Term[Len]; //2*Len-1 in total
+            Term[] secondHalf=new Term[Len-1];
+            int h=0; //make index mapping easier by counting, this way at this place nothing can go wrong, code here is correct
+            for(int i=0;i<Len;i++) {
+                firstHalf[i]=relterms[h];
+                h++;
+            }
+            for(int i=0;i<Len-1;i++) {
+                secondHalf[i]=relterms[h];
+                h++;
+            }
+            Conjunction firstC=(Conjunction) Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
+            Conjunction secondC=(Conjunction) Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
+            
+            if(nal.memory.concept(firstC)==null || nal.memory.concept(secondC)==null) {
+                continue; //the components were not observed, so don't allow creating this compound
+            }
             
             Conjunction C=(Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_BACKWARD);
             
@@ -91,21 +113,20 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             return;
         }
         Conjunction c=(Conjunction) t;
-        if(Add) {
-            sv[c.term.length]++;
+        if(Add) { //manage concept counter
+            sv[c.term.length]++; 
         } else {
             sv[c.term.length]--;
         }
         //determine cur_maxlen 
         //by finding the first complexity which exists
-        for(int i=sz-1;i>=0;i--) {
+        cur_maxlen=1; //minimum size is 1 (the events itself), in which case only chaining of two will happen
+        for(int i=sz-1;i>=2;i--) { //>=2 because a conjunction with size=1 doesnt exist
             if(sv[i]>0) {
-                cur_maxlen=i+1;
+                cur_maxlen=i; //dont using the index 0 in sv makes it easier here
                 break;
             }
         }
-        //minimum size is 1, in which case only chaining of two will happen
-        cur_maxlen=Math.max(1, cur_maxlen);
     }
     
     @Override
