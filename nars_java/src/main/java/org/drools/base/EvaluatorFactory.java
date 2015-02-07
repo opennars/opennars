@@ -83,7 +83,7 @@ public class EvaluatorFactory {
             evaluator = getEvaluator( type,
                                       Evaluator.EXCLUDES );
         } else {
-            throw new IllegalArgumentException( "Unknown operator: '" + operator + "'" );
+            throw new IllegalArgumentException( "Unknown operator: '" + operator + '\'');
         }
 
         return evaluator;

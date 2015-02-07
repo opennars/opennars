@@ -273,7 +273,7 @@ class ObjectTypeNode extends ObjectSource
     }
 
     public String toString() {
-        return "[ObjectTypeNode("+this.id+") objectType=" + this.objectType + "]";
+        return "[ObjectTypeNode("+this.id+") objectType=" + this.objectType + ']';
     }
 
     /**

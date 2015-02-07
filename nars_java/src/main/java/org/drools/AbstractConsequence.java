@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 abstract public class AbstractConsequence<X> implements Consequence, Consumer<X> {
 
     @Override
-    public void evaluate(KnowledgeHelper knowledgeHelper, WorkingMemory workingMemory) throws Exception {
+    public void evaluate(KnowledgeHelper knowledgeHelper, WorkingMemory workingMemory) {
 
         for (FactHandle fh : knowledgeHelper.getTuple().getFactHandles()) {
             accept( (X)workingMemory.getObject(fh) );

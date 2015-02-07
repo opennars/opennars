@@ -279,7 +279,7 @@ public class ReteTuple extends BaseMultiLinkedListNode
     public String toString() {
         final StringBuffer buffer = new StringBuffer();
         for ( int i = 0; i < this.key.size(); i++ ) {
-            buffer.append( this.key.get( i ) + ", " );
+            buffer.append(this.key.get(i)).append(", ");
         }
         return buffer.toString();
     }

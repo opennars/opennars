@@ -232,14 +232,7 @@ public class ObjectEqualConstrLeftMemory
      * @inheritDoc
      */
     public final Iterator iterator() {
-        final TreeSet set = new TreeSet( new Comparator() {
-            public int compare(Object arg0,
-                               Object arg1) {
-                ReteTuple t0 = (ReteTuple) arg0;
-                ReteTuple t1 = (ReteTuple) arg1;
-                return (t0.getRecency() <= t1.getRecency()) ? -1 : 1;
-            }
-        } );
+        final TreeSet set = new TreeSet(new IteratorComparator());
         for ( final Iterator i = this.memoryMap.values().iterator(); i.hasNext(); ) {
             final MultiLinkedList list = (MultiLinkedList) i.next();
             for ( final Iterator j = list.iterator(); j.hasNext(); ) {
@@ -366,5 +359,14 @@ public class ObjectEqualConstrLeftMemory
      */
     public void setInnerMemory(final BetaLeftMemory innerMemory) {
         this.innerMemory = innerMemory;
+    }
+
+    private static class IteratorComparator implements Comparator {
+        public int compare(Object arg0,
+                           Object arg1) {
+            ReteTuple t0 = (ReteTuple) arg0;
+            ReteTuple t1 = (ReteTuple) arg1;
+            return (t0.getRecency() <= t1.getRecency()) ? -1 : 1;
+        }
     }
 }

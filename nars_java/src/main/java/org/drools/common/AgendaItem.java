@@ -161,7 +161,7 @@ public class AgendaItem
     }
 
     public String toString() {
-        return "[Activation rule=" + this.rule.getName() + ", tuple=" + this.tuple + "]";
+        return "[Activation rule=" + this.rule.getName() + ", tuple=" + this.tuple + ']';
     }
 
     /*

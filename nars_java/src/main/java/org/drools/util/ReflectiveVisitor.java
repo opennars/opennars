@@ -37,7 +37,7 @@ public abstract class ReflectiveVisitor
             if ( object != null ) {
                 final Method method = getMethod( object.getClass() );
                 method.invoke( this,
-                               new Object[]{object} );
+                        object);
             } else {
                 final Method method = getClass().getMethod( "visitNull",
                                                             (Class[]) null );
@@ -59,7 +59,7 @@ public abstract class ReflectiveVisitor
             methodName = "visit" + methodName.substring( methodName.lastIndexOf( '.' ) + 1 );
             try {
                 method = getClass().getMethod( methodName,
-                                               new Class[]{newClazz} );
+                        newClazz);
             } catch ( final NoSuchMethodException e ) {
                 newClazz = newClazz.getSuperclass();
             }
@@ -73,7 +73,7 @@ public abstract class ReflectiveVisitor
                 methodName = "visit" + methodName.substring( methodName.lastIndexOf( '.' ) + 1 );
                 try {
                     method = getClass().getMethod( methodName,
-                                                   new Class[]{interfaces[i]} );
+                            interfaces[i]);
                 } catch ( final NoSuchMethodException e ) {
                     // swallow
                 }
@@ -82,7 +82,7 @@ public abstract class ReflectiveVisitor
         if ( method == null ) {
             try {
                 method = getClass().getMethod( "visitObject",
-                                               new Class[]{Object.class} );
+                        Object.class);
             } catch ( final Exception e ) {
                 // Shouldn't happen as long as all Visitors extend this class
                 // and this class continues to implement visitObject(Object).

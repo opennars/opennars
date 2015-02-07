@@ -36,7 +36,7 @@ public class TableRecord implements Serializable {
     TableRecord               right;
 
     // content of the record
-    Object                    object;
+    final Object                    object;
 
     TableRecord(final Object o) {
         this.left = null;

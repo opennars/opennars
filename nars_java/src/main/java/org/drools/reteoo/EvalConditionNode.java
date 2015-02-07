@@ -221,7 +221,7 @@ class EvalConditionNode extends TupleSource
      * @return The debug string.
      */
     public String toString() {
-        return "[ConditionNode: cond=" + this.condition + "]";
+        return "[ConditionNode: cond=" + this.condition + ']';
     }
 
     public int hashCode() {

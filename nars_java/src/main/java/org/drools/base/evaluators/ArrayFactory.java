@@ -105,12 +105,8 @@ public class ArrayFactory {
             if ( object2 == null ) {
                 return false;
             }
-            if ( Arrays.binarySearch( (Object[]) object1,
-                                      object2 ) == -1 ) {
-                return false;
-            } else {
-                return true;
-            }
+            return Arrays.binarySearch((Object[]) object1,
+                    object2) != -1;
         }
 
         public String toString() {

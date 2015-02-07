@@ -24,5 +24,5 @@ public interface ReturnValueExpression
     Invoker {
     public Object evaluate(Tuple tuple,
                            Declaration[] requiredDeclarations,
-                           WorkingMemory workingMemory) throws Exception;
+                           WorkingMemory workingMemory);
 }

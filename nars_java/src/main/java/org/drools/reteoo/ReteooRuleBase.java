@@ -208,6 +208,8 @@ public class ReteooRuleBase extends AbstractRuleBase {
                                  workingMemory );
     }
 
+    final static Serializable EmptySerializable = new Serializable() { };
+
     /**
      * @see RuleBase
      */
@@ -217,7 +219,7 @@ public class ReteooRuleBase extends AbstractRuleBase {
         super.addWorkingMemory( workingMemory,
                                 keepReference );
 
-        final InitialFactHandle handle = new InitialFactHandle( workingMemory.getFactHandleFactory().newFactHandle( new Serializable() {} ) );
+        final InitialFactHandle handle = new InitialFactHandle( workingMemory.getFactHandleFactory().newFactHandle( EmptySerializable ) );
 
         final PropagationContext propagationContext = new PropagationContextImpl( workingMemory.getNextPropagationIdCounter(),
                                                                                   PropagationContext.ASSERTION,

@@ -508,57 +508,7 @@ public class PriorityQueue extends AbstractCollection
      * @return an iterator over this heap's elements
      */
     public Iterator iterator() {
-        return new Iterator() {
-
-            private int index             = 1;
-
-            private int lastReturnedIndex = -1;
-
-            public boolean hasNext() {
-                return this.index <= PriorityQueue.this.size;
-            }
-
-            public Object next() {
-                if ( !hasNext() ) {
-                    throw new NoSuchElementException();
-                }
-                this.lastReturnedIndex = this.index;
-                this.index++;
-                return PriorityQueue.this.elements[this.lastReturnedIndex];
-            }
-
-            public void remove() {
-                if ( this.lastReturnedIndex == -1 ) {
-                    throw new IllegalStateException();
-                }
-                PriorityQueue.this.elements[this.lastReturnedIndex] = PriorityQueue.this.elements[PriorityQueue.this.size];
-                PriorityQueue.this.elements[PriorityQueue.this.size] = null;
-                PriorityQueue.this.size--;
-                if ( PriorityQueue.this.size != 0 && this.lastReturnedIndex <= PriorityQueue.this.size ) {
-                    int compareToParent = 0;
-                    if ( this.lastReturnedIndex > 1 ) {
-                        compareToParent = compare( PriorityQueue.this.elements[this.lastReturnedIndex],
-                                                   PriorityQueue.this.elements[this.lastReturnedIndex / 2] );
-                    }
-                    if ( PriorityQueue.this.ascendingOrder ) {
-                        if ( this.lastReturnedIndex > 1 && compareToParent < 0 ) {
-                            percolateUpMinHeap( this.lastReturnedIndex );
-                        } else {
-                            percolateDownMinHeap( this.lastReturnedIndex );
-                        }
-                    } else { // max heap
-                        if ( this.lastReturnedIndex > 1 && compareToParent > 0 ) {
-                            percolateUpMaxHeap( this.lastReturnedIndex );
-                        } else {
-                            percolateDownMaxHeap( this.lastReturnedIndex );
-                        }
-                    }
-                }
-                this.index--;
-                this.lastReturnedIndex = -1;
-            }
-
-        };
+        return new PQIterator();
     }
 
     /**
@@ -584,4 +534,55 @@ public class PriorityQueue extends AbstractCollection
         return sb.toString();
     }
 
+    private class PQIterator implements Iterator {
+
+        private int index             = 1;
+
+        private int lastReturnedIndex = -1;
+
+        public boolean hasNext() {
+            return this.index <= PriorityQueue.this.size;
+        }
+
+        public Object next() {
+            if ( !hasNext() ) {
+                throw new NoSuchElementException();
+            }
+            this.lastReturnedIndex = this.index;
+            this.index++;
+            return PriorityQueue.this.elements[this.lastReturnedIndex];
+        }
+
+        public void remove() {
+            if ( this.lastReturnedIndex == -1 ) {
+                throw new IllegalStateException();
+            }
+            PriorityQueue.this.elements[this.lastReturnedIndex] = PriorityQueue.this.elements[PriorityQueue.this.size];
+            PriorityQueue.this.elements[PriorityQueue.this.size] = null;
+            PriorityQueue.this.size--;
+            if ( PriorityQueue.this.size != 0 && this.lastReturnedIndex <= PriorityQueue.this.size ) {
+                int compareToParent = 0;
+                if ( this.lastReturnedIndex > 1 ) {
+                    compareToParent = compare( PriorityQueue.this.elements[this.lastReturnedIndex],
+                                               PriorityQueue.this.elements[this.lastReturnedIndex / 2] );
+                }
+                if ( PriorityQueue.this.ascendingOrder ) {
+                    if ( this.lastReturnedIndex > 1 && compareToParent < 0 ) {
+                        percolateUpMinHeap( this.lastReturnedIndex );
+                    } else {
+                        percolateDownMinHeap( this.lastReturnedIndex );
+                    }
+                } else { // max heap
+                    if ( this.lastReturnedIndex > 1 && compareToParent > 0 ) {
+                        percolateUpMaxHeap( this.lastReturnedIndex );
+                    } else {
+                        percolateDownMaxHeap( this.lastReturnedIndex );
+                    }
+                }
+            }
+            this.index--;
+            this.lastReturnedIndex = -1;
+        }
+
+    }
 }

@@ -62,5 +62,5 @@ public class LoadOrderConflictResolver
                        final Object o2) {
         return (-1) * AbstractConflictResolver.compare( ((DefaultFactHandle) o1).getRecency(),
                                                         ((DefaultFactHandle) o2).getRecency() );
-    };
+    }
 }

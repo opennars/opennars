@@ -57,7 +57,7 @@ public class ColumnConstraints implements Serializable {
             this.betaPresent = false;
         }
         if ( alpha != null && alpha.size() > 0 ) {
-            this.alphaConstraints = (FieldConstraint[]) alpha.toArray( new FieldConstraint[0] );
+            this.alphaConstraints = (FieldConstraint[]) alpha.toArray(new FieldConstraint[alpha.size()]);
             this.alphaPresent = true;
         } else {
             this.alphaConstraints = null;

@@ -49,7 +49,7 @@ public class BooleanFactory {
             if ( object1 == null ) {
                 return object2 == null;
             }
-            return ((Boolean) object1).equals( object2 );
+            return object1.equals(object2);
         }
 
         public String toString() {
@@ -74,7 +74,7 @@ public class BooleanFactory {
             if ( object1 == null ) {
                 return object2 != null;
             }
-            return !((Boolean) object1).equals( object2 );
+            return !object1.equals(object2);
         }
 
         public String toString() {

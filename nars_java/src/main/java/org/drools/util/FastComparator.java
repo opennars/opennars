@@ -76,7 +76,7 @@ public abstract class FastComparator
             return "default";
         }
 
-    };
+    }
 
     /**
      * Holds the direct object comparator; no rehash is performed.
@@ -111,7 +111,7 @@ public abstract class FastComparator
             return "direct";
         }
 
-    };
+    }
 
     /**
      * Holds the comparator for objects with uneven hash distribution; objects
@@ -152,7 +152,7 @@ public abstract class FastComparator
             return "rehash";
         }
 
-    };
+    }
 
     /**
      * Holds the identity comparator; poorly distributed system hashcodes are
@@ -195,7 +195,7 @@ public abstract class FastComparator
         public String toString() {
             return "identity";
         }
-    };
+    }
 
     /**
      * Holds a lexicographic comparator for any {@link CharSequence} or 
@@ -320,7 +320,7 @@ public abstract class FastComparator
             return "lexical";
         }
 
-    };
+    }
 
     /**
      * Returns the hash code for the specified object (consistent with 

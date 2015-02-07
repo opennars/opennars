@@ -350,7 +350,7 @@ public class NotNode extends BetaNode {
                                            workingMemory );
                 }
 
-                tupleMatch = (TupleMatch) nextTupleMatch;
+                tupleMatch = nextTupleMatch;
             } else {
                 // no previous join, so attempt join now
                 final int previousSize = leftTuple.matchesSize();

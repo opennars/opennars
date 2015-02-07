@@ -194,19 +194,19 @@ class LeapsTuple
         final StringBuffer buffer = new StringBuffer( "LeapsTuple [" + this.leapsRule.getRule().getName() + "] " );
 
         for ( int i = 0, length = this.factHandles.length; i < length; i++ ) {
-            buffer.append( ((i == 0) ? "" : ", ") + this.factHandles[i] );
+            buffer.append((i == 0) ? "" : ", ").append(this.factHandles[i]);
         }
 
         if ( this.existsFactHandles != null ) {
             buffer.append( "\nExists fact handles by position" );
             for ( int i = 0, length = this.existsFactHandles.length; i < length; i++ ) {
-                buffer.append( "\nposition " + i ).append( this.existsFactHandles[i] );
+                buffer.append("\nposition ").append(i).append(this.existsFactHandles[i]);
             }
         }
         if ( this.blockingNotFactHandles != null ) {
             buffer.append( "\nblockingNot fact handles by position" );
             for ( int i = 0, length = this.blockingNotFactHandles.length; i < length; i++ ) {
-                buffer.append( "\nposition " + i ).append( this.blockingNotFactHandles[i] );
+                buffer.append("\nposition ").append(i).append(this.blockingNotFactHandles[i]);
             }
         }
 

@@ -227,15 +227,15 @@ public abstract class WorkingMemoryLogger
                 final Object value = declaration.getValue( this.workingMemory.getObject( handle ) );
 
                 result.append( declaration.getIdentifier() );
-                result.append( "=" );
+                result.append('=');
                 if ( value == null ) {
                     // this should never occur
                     result.append( "null" );
                 } else {
                     result.append( value );
-                    result.append( "(" );
+                    result.append('(');
                     result.append( handleImpl.getId() );
-                    result.append( ")" );
+                    result.append(')');
                 }
             }
             if ( i < declarations.length - 1 ) {
@@ -266,6 +266,6 @@ public abstract class WorkingMemoryLogger
                 result.append( ", " );
             }
         }
-        return result.append( "]" ).toString();
+        return result.append(']').toString();
     }
 }

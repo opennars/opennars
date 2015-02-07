@@ -24,5 +24,5 @@ public interface EvalExpression
     Invoker {
     public boolean evaluate(Tuple tuple,
                             Declaration[] requiredDeclarations,
-                            WorkingMemory workingMemory) throws Exception;
+                            WorkingMemory workingMemory);
 }

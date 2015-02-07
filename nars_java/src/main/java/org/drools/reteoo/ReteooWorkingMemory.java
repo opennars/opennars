@@ -16,10 +16,6 @@ package org.drools.reteoo;
  * limitations under the License.
  */
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
 import org.drools.FactException;
 import org.drools.FactHandle;
 import org.drools.WorkingMemory;

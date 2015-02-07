@@ -56,7 +56,7 @@ public class LeapsRuleBase extends AbstractRuleBase {
      *            The rete network.
      * @throws PackageIntegrationException
      */
-    public LeapsRuleBase() throws PackageIntegrationException {
+    public LeapsRuleBase() {
         this( null,
               new LeapsFactHandleFactory() );
     }

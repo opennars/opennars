@@ -35,10 +35,10 @@ public class AgendaEventSupport
      */
     private static final long   serialVersionUID = 9072017367081307109L;
     private final List          listeners        = Collections.synchronizedList( new ArrayList() );
-    private final WorkingMemory workingMemory;
+    //private final WorkingMemory workingMemory;
 
     public AgendaEventSupport(final WorkingMemory workingMemory) {
-        this.workingMemory = workingMemory;
+        /*this.workingMemory = workingMemory;*/
     }
 
     public void addEventListener(final AgendaEventListener listener) {

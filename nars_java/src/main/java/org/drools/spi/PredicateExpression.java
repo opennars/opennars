@@ -27,5 +27,5 @@ public interface PredicateExpression
                             FactHandle factHandle,
                             Declaration declaration,
                             Declaration[] requiredDeclarations,
-                            WorkingMemory workingMemory) throws Exception;
+                            WorkingMemory workingMemory);
 }

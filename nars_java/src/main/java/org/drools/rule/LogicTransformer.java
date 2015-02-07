@@ -69,13 +69,13 @@ class LogicTransformer {
         // these pairs will be transformed
         addTransformationPair( Not.class,
                                Or.class,
-                               new NotOrTransformation() );
+                new NotOrTransformation());
         addTransformationPair( Exists.class,
                                Or.class,
-                               new ExistOrTransformation() );
+                new ExistOrTransformation());
         addTransformationPair( And.class,
                                Or.class,
-                               new AndOrTransformation() );
+                new AndOrTransformation());
     }
 
     private void addTransformationPair(final Class parent,
@@ -239,7 +239,7 @@ class LogicTransformer {
         }
 
         if ( transformation == null ) {
-            throw new RuntimeException( "applyOrTransformation could not find transformation for parent '" + parent.getClass().getName() + "' and child '" + child.getClass().getName() + "'" );
+            throw new RuntimeException( "applyOrTransformation could not find transformation for parent '" + parent.getClass().getName() + "' and child '" + child.getClass().getName() + '\'');
         }
 
         return transformation.transform( parent );
@@ -276,7 +276,7 @@ class LogicTransformer {
      *       a   c    b   c
      * </pre>
      */
-    class AndOrTransformation
+    static class AndOrTransformation
         implements
         Transformation {
 
@@ -392,7 +392,7 @@ class LogicTransformer {
      *       a     b
      * </pre>
      */
-    class ExistOrTransformation
+    static class ExistOrTransformation
         implements
         Transformation {
 
@@ -438,7 +438,7 @@ class LogicTransformer {
      *       a     b
      * </pre>
      */
-    public class NotOrTransformation
+    public static class NotOrTransformation
         implements
         Transformation {
 

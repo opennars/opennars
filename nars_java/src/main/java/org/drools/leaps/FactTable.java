@@ -162,21 +162,20 @@ class FactTable extends Table {
 
         for (final Iterator it = this.iterator( ); it.hasNext( );) {
             final LeapsFactHandle handle = (LeapsFactHandle) it.next( );
-            ret.append( "\n" + handle + "[" + handle.getObject( ) + "]" );
+            ret.append("\n").append(handle).append('[').append(handle.getObject()).append(']');
         }
 
         ret.append( "\nTuples :" );
 
         for (final Iterator it = this.tuples.iterator( ); it.hasNext( );) {
-            ret.append( "\n" + it.next( ) );
+            ret.append("\n").append(it.next());
         }
 
         ret.append( "\nRules :" );
 
         for (final Iterator it = this.rules.iterator( ); it.hasNext( );) {
             final LeapsRuleHandle handle = (LeapsRuleHandle) it.next( );
-            ret.append( "\n\t" + handle.getLeapsRule( ).getRule( ).getName( )
-                    + "[dominant - " + handle.getDominantPosition( ) + "]" );
+            ret.append("\n\t").append(handle.getLeapsRule().getRule().getName()).append("[dominant - ").append(handle.getDominantPosition()).append(']');
         }
 
         return ret.toString( );

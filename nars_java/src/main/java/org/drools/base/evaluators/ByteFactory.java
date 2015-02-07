@@ -57,7 +57,7 @@ public class ByteFactory {
             if ( object1 == null ) {
                 return object2 == null;
             }
-            return ((Byte) object1).equals( object2 );
+            return object1.equals(object2);
         }
 
         public String toString() {
@@ -82,7 +82,7 @@ public class ByteFactory {
             if ( object1 == null ) {
                 return object2 != null;
             }
-            return !((Byte) object1).equals( object2 );
+            return !object1.equals(object2);
         }
 
         public String toString() {

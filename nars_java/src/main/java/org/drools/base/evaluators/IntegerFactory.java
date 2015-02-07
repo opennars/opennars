@@ -56,7 +56,7 @@ public class IntegerFactory {
             if ( object1 == null ) {
                 return object2 == null;
             }
-            return ((Number) object1).equals( object2 );
+            return object1.equals(object2);
         }
 
         public String toString() {
@@ -81,7 +81,7 @@ public class IntegerFactory {
             if ( object1 == null ) {
                 return (object2 != null);
             }
-            return !((Number) object1).equals( object2 );
+            return !object1.equals(object2);
         }
 
         public String toString() {

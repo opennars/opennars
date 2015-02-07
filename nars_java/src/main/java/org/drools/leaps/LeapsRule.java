@@ -55,10 +55,10 @@ class LeapsRule implements Serializable {
                      final ArrayList existsColumns,
                      final ArrayList evalConditions) {
         this.rule = rule;
-        this.columnConstraints = (ColumnConstraints[]) columns.toArray( new ColumnConstraints[0] );
-        this.notColumnConstraints = (ColumnConstraints[]) notColumns.toArray( new ColumnConstraints[0] );
-        this.existsColumnConstraints = (ColumnConstraints[]) existsColumns.toArray( new ColumnConstraints[0] );
-        this.evalConditions = (EvalCondition[]) evalConditions.toArray( new EvalCondition[0] );
+        this.columnConstraints = (ColumnConstraints[]) columns.toArray(new ColumnConstraints[columns.size()]);
+        this.notColumnConstraints = (ColumnConstraints[]) notColumns.toArray(new ColumnConstraints[notColumns.size()]);
+        this.existsColumnConstraints = (ColumnConstraints[]) existsColumns.toArray(new ColumnConstraints[existsColumns.size()]);
+        this.evalConditions = (EvalCondition[]) evalConditions.toArray(new EvalCondition[evalConditions.size()]);
         this.notColumnsPresent = (this.notColumnConstraints.length != 0);
         this.existsColumnsPresent = (this.existsColumnConstraints.length != 0);
         this.evalCoditionsPresent = (this.evalConditions.length != 0);
@@ -75,7 +75,7 @@ class LeapsRule implements Serializable {
             }
         }
 
-        this.existsNotsClasses = (Class[]) classes.toArray( new Class[0] );
+        this.existsNotsClasses = (Class[]) classes.toArray(new Class[classes.size()]);
     }
 
     Rule getRule() {

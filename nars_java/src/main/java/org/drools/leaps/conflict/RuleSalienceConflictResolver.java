@@ -61,5 +61,5 @@ class RuleSalienceConflictResolver
                        final Object o2) {
         return (-1) * AbstractConflictResolver.compare( ((LeapsRuleHandle) o1).getSalience(),
                                                         ((LeapsRuleHandle) o2).getSalience() );
-    };
+    }
 }

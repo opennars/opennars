@@ -49,10 +49,7 @@ class InitialFactImpl
             return true;
         }
 
-        if ( object == null || object.getClass() != InitialFactImpl.class ) {
-            return false;
-        }
+        return !(object == null || object.getClass() != InitialFactImpl.class);
 
-        return true;
     }
 }

@@ -184,15 +184,7 @@ public class InstanceEqualConstrRightMemory
      * @inheritDoc
      */
     public final Iterator iterator() {
-        final TreeSet set = new TreeSet( new Comparator() {
-            public int compare(Object arg0,
-                               Object arg1) {
-                DefaultFactHandle f0 = ((ObjectMatches) arg0).getFactHandle();
-                DefaultFactHandle f1 = ((ObjectMatches) arg1).getFactHandle();
-                return (f0.getRecency() == f1.getRecency()) ? 0 : (f0.getRecency() > f1.getRecency()) ? 1 : -1;
-            }
-
-        } );
+        final TreeSet set = new TreeSet(new IteratorComparator());
         for ( final Iterator i = this.memoryMap.values().iterator(); i.hasNext(); ) {
             final MultiLinkedList list = (MultiLinkedList) i.next();
             for ( final Iterator j = list.iterator(); j.hasNext(); ) {
@@ -217,4 +209,13 @@ public class InstanceEqualConstrRightMemory
         this.innerMemory = innerMemory;
     }
 
+    private static class IteratorComparator implements Comparator {
+        public int compare(Object arg0,
+                           Object arg1) {
+            DefaultFactHandle f0 = ((ObjectMatches) arg0).getFactHandle();
+            DefaultFactHandle f1 = ((ObjectMatches) arg1).getFactHandle();
+            return (f0.getRecency() == f1.getRecency()) ? 0 : (f0.getRecency() > f1.getRecency()) ? 1 : -1;
+        }
+
+    }
 }

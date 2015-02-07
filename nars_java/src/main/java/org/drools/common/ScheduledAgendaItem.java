@@ -164,7 +164,7 @@ public class ScheduledAgendaItem extends TimerTask
     }
 
     public String toString() {
-        return "[Activation rule=" + this.rule.getName() + ", tuple=" + this.tuple + "]";
+        return "[Activation rule=" + this.rule.getName() + ", tuple=" + this.tuple + ']';
     }
 
     public void addLogicalDependency(final LogicalDependency node) {

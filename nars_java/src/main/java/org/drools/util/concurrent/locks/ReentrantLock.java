@@ -462,6 +462,6 @@ public class ReentrantLock
      */
     public String toString() {
         final Thread o = getOwner();
-        return super.toString() + ((o == null) ? "[Unlocked]" : "[Locked by thread " + o.getName() + "]");
+        return super.toString() + ((o == null) ? "[Unlocked]" : "[Locked by thread " + o.getName() + ']');
     }
 }

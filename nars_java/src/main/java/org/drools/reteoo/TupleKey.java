@@ -79,7 +79,7 @@ class TupleKey
     }
 
     public String toString() {
-        return "[TupleKey: recency=" + this.recency + " handles=" + this.handles + "]";
+        return "[TupleKey: recency=" + this.recency + " handles=" + this.handles + ']';
     }
 
     // ------------------------------------------------------------

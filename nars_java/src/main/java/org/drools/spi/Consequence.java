@@ -41,5 +41,5 @@ public interface Consequence
      *             consequence.
      */
     void evaluate(KnowledgeHelper knowledgeHelper,
-                  WorkingMemory workingMemory) throws Exception;
+                  WorkingMemory workingMemory);
 }

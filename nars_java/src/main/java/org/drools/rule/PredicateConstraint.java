@@ -135,4 +135,4 @@ public class PredicateConstraint
 
         return this.expression.equals( other.expression );
     }
-};
+}

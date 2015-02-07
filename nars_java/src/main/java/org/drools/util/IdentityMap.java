@@ -180,7 +180,7 @@ public class IdentityMap extends AbstractHashedMap
             if ( obj == this ) {
                 return true;
             }
-            if ( obj instanceof Map.Entry == false ) {
+            if (!(obj instanceof Entry)) {
                 return false;
             }
             final Map.Entry other = (Map.Entry) obj;

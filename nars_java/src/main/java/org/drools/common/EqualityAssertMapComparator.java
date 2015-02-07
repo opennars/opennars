@@ -25,7 +25,7 @@ public class EqualityAssertMapComparator extends FastComparator {
 
     private final Class       factHandleClass;
 
-    private final boolean     _rehash          = FastComparator.REHASH_SYSTEM_HASHCODE;
+    private static final boolean     _rehash          = FastComparator.REHASH_SYSTEM_HASHCODE;
 
     public EqualityAssertMapComparator(final Class factHandleClass) {
         this.factHandleClass = factHandleClass;

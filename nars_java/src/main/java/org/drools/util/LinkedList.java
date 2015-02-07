@@ -66,7 +66,7 @@ public class LinkedList implements Serializable {
     public void add(final LinkedListNode node) {
         if ( this.firstNode == null ) {
             this.firstNode = node;
-            this.lastNode = node;;
+            this.lastNode = node;
         } else {
             this.lastNode.setNext( node );
             node.setPrevious( this.lastNode );

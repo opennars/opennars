@@ -81,11 +81,7 @@ public class DateFactory {
             }
             final Date left = (Date) object1;
 
-            if ( left.compareTo( getRightDate( object2 ) ) == 0 ) {
-                return true;
-            } else {
-                return false;
-            }
+            return left.compareTo(getRightDate(object2)) == 0;
         }
 
         public String toString() {
@@ -114,11 +110,7 @@ public class DateFactory {
                 return true;
             }
             final Date left = (Date) object1;
-            if ( left.compareTo( getRightDate( object2 ) ) != 0 ) {
-                return true;
-            } else {
-                return false;
-            }
+            return left.compareTo(getRightDate(object2)) != 0;
         }
 
         public String toString() {
@@ -141,11 +133,7 @@ public class DateFactory {
         public boolean evaluate(final Object object1,
                                 final Object object2) {
             final Date left = (Date) object1;
-            if ( left.compareTo( getRightDate( object2 ) ) < 0 ) {
-                return true;
-            } else {
-                return false;
-            }
+            return left.compareTo(getRightDate(object2)) < 0;
         }
 
         public String toString() {
@@ -168,11 +156,7 @@ public class DateFactory {
         public boolean evaluate(final Object object1,
                                 final Object object2) {
             final Date left = (Date) object1;
-            if ( left.compareTo( getRightDate( object2 ) ) <= 0 ) {
-                return true;
-            } else {
-                return false;
-            }
+            return left.compareTo(getRightDate(object2)) <= 0;
         }
 
         public String toString() {
@@ -195,11 +179,7 @@ public class DateFactory {
         public boolean evaluate(final Object object1,
                                 final Object object2) {
             final Date left = (Date) object1;
-            if ( left.compareTo( getRightDate( object2 ) ) > 0 ) {
-                return true;
-            } else {
-                return false;
-            }
+            return left.compareTo(getRightDate(object2)) > 0;
         }
 
         public String toString() {
@@ -222,11 +202,7 @@ public class DateFactory {
         public boolean evaluate(final Object object1,
                                 final Object object2) {
             final Date left = (Date) object1;
-            if ( left.compareTo( getRightDate( object2 ) ) >= 0 ) {
-                return true;
-            } else {
-                return false;
-            }
+            return left.compareTo(getRightDate(object2)) >= 0;
         }
 
         public String toString() {
@@ -241,7 +217,7 @@ public class DateFactory {
         try {
             return df.parse( input );
         } catch ( final ParseException e ) {
-            throw new IllegalArgumentException( "Invalid date input format: [" + input + "] it should follow: [" + DateFactory.DATE_FORMAT_MASK + "]" );
+            throw new IllegalArgumentException( "Invalid date input format: [" + input + "] it should follow: [" + DateFactory.DATE_FORMAT_MASK + ']');
         }
     }
 

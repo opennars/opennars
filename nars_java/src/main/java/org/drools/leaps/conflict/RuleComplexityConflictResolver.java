@@ -61,5 +61,5 @@ class RuleComplexityConflictResolver
                        final Object o2) {
         return (-1) * AbstractConflictResolver.compare( (((LeapsRuleHandle) o1).getRuleComplexity()),
                                                         (((LeapsRuleHandle) o2).getRuleComplexity()) );
-    };
+    }
 }

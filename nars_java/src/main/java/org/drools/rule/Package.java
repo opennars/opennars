@@ -232,7 +232,7 @@ public class Package
     }
 
     public void removeFunction(final String functionName) {
-        this.packageCompilationData.remove( this.name + "." + ucFirst( functionName ) );
+        this.packageCompilationData.remove( this.name + '.' + ucFirst( functionName ) );
     }
 
     /**
@@ -330,7 +330,7 @@ public class Package
     }
 
     public String toString() {
-        return "[Package name=" + this.name + "]";
+        return "[Package name=" + this.name + ']';
     }
 
     /** Once this is called, the package will be marked as invalid */
@@ -378,7 +378,7 @@ public class Package
         return this.name.hashCode();
     }
 
-    private String ucFirst(final String name) {
+    private static String ucFirst(final String name) {
         return name.toUpperCase().charAt( 0 ) + name.substring( 1 );
     }
 

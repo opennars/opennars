@@ -724,7 +724,7 @@ public class FastMap
 
         public boolean contains(final Object obj) { // Optimization.
             if ( obj instanceof Map.Entry ) {
-                final Map.Entry entry = (Entry) obj;
+                final Map.Entry entry = (Map.Entry) obj;
                 final Entry mapEntry = getEntry( entry.getKey() );
                 return entry.equals( mapEntry );
             } else {

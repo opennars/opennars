@@ -91,11 +91,11 @@ abstract class TupleSource extends BaseNode
         this.tupleSinks.remove( tupleSink );
     }
 
-    protected TupleMatch attemptJoin(final ReteTuple leftTuple,
-                                     final DefaultFactHandle handle,
-                                     final ObjectMatches objectMatches,
-                                     final BetaNodeBinder binder,
-                                     final ReteooWorkingMemory workingMemory) {
+    protected static TupleMatch attemptJoin(final ReteTuple leftTuple,
+                                            final DefaultFactHandle handle,
+                                            final ObjectMatches objectMatches,
+                                            final BetaNodeBinder binder,
+                                            final ReteooWorkingMemory workingMemory) {
         if ( binder.isAllowed( handle,
                                leftTuple,
                                workingMemory ) ) {

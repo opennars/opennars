@@ -78,7 +78,7 @@ public class LiteralConstraint
     }
 
     public String toString() {
-        return "[LiteralConstraint fieldExtractor=" + this.extractor + " evaluator=" + this.evaluator + " value=" + this.field.getValue() + "]";
+        return "[LiteralConstraint fieldExtractor=" + this.extractor + " evaluator=" + this.evaluator + " value=" + this.field.getValue() + ']';
     }
 
     public int hashCode() {
@@ -98,4 +98,4 @@ public class LiteralConstraint
         return this.field.equals( other.field ) && this.extractor.equals( other.extractor ) && this.evaluator.equals( other.evaluator );
     }
 
-};
+}

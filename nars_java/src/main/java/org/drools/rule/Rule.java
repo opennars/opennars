@@ -188,11 +188,8 @@ public class Rule
         //    return false;
         //}
 
-        if ( this.consequence == null || !isSemanticallyValid() ) {
-            return false;
-        }
+        return !(this.consequence == null || !isSemanticallyValid());
 
-        return true;
     }
 
     public String getPackage() {
@@ -376,7 +373,7 @@ public class Rule
         return specificity;
     }
 
-    private int getSpecifity(final Column column) {
+    private static int getSpecifity(final Column column) {
         int specificity = 0;
         for ( final Iterator it = column.getConstraints().iterator(); it.hasNext(); ) {
             if ( !(it.next() instanceof Declaration) ) {
@@ -418,7 +415,7 @@ public class Rule
     }
 
     public String toString() {
-        return "[Rule name=" + this.name + ", agendaGroup=" + this.agendaGroup + ", salience=" + this.salience + ", no-loop=" + this.noLoop + "]";
+        return "[Rule name=" + this.name + ", agendaGroup=" + this.agendaGroup + ", salience=" + this.salience + ", no-loop=" + this.noLoop + ']';
     }
 
     public boolean equals(final Object object) {

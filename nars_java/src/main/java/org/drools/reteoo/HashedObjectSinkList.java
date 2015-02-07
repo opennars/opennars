@@ -149,7 +149,7 @@ public class HashedObjectSinkList
                                     break;
                                 }
                             }
-                            if ( hasnext == false ) {
+                            if (!hasnext) {
                                 this.it = HashedObjectSinkList.this.otherSinks.iterator();
                                 hasnext = this.it.hasNext();
                                 if ( hasnext ) {

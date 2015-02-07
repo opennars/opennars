@@ -223,7 +223,7 @@ class AlphaNode extends ObjectSource
     }
 
     public String toString() {
-        return "[AlphaNode("+this.id+") constraint=" + this.constraint + "]";
+        return "[AlphaNode("+this.id+") constraint=" + this.constraint + ']';
     }
 
     public int hashCode() {

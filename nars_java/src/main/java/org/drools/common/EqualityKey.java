@@ -122,7 +122,7 @@ public class EqualityKey implements Serializable {
                 str = "JUSTIFIED";
                 break;
         }
-        return "[FactStatus status=" + this.status + "]";
+        return "[FactStatus status=" + this.status + ']';
     }
 
     /**

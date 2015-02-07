@@ -49,6 +49,6 @@ public class ObjectAssertedEvent extends WorkingMemoryEvent {
     }
 
     public String toString() {
-        return "[ObjectAsserted: handle=" + this.handle + "; object=" + this.object + "]";
+        return "[ObjectAsserted: handle=" + this.handle + "; object=" + this.object + ']';
     }
 }

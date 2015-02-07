@@ -130,12 +130,12 @@ public abstract class GroupElement extends ConditionalElement {
                         return false;
                     }
                 } else {
-                    System.out.println( "Should be the equal Conditionalelements but instead was '" + e1Object1.getClass().getName() + "', '" + e2Object1.getClass().getName() + "'" );
+                    System.out.println( "Should be the equal Conditionalelements but instead was '" + e1Object1.getClass().getName() + "', '" + e2Object1.getClass().getName() + '\'');
                     return false;
                 }
             } else if ( e1Object1 instanceof String ) {
                 if ( !e1Object1.equals( e2Object1 ) ) {
-                    System.out.println( "Should be the equal Strings but instead was '" + e1Object1 + "', '" + e2Object1 + "'" );
+                    System.out.println( "Should be the equal Strings but instead was '" + e1Object1 + "', '" + e2Object1 + '\'');
                     return false;
                 }
             } else {
@@ -163,11 +163,11 @@ public abstract class GroupElement extends ConditionalElement {
         GroupElement cloned = null;
 
         try {
-            cloned = (GroupElement) this.getClass().newInstance();
+            cloned = this.getClass().newInstance();
         } catch ( final InstantiationException e ) {
-            throw new RuntimeException( "Could not clone '" + this.getClass().getName() + "'" );
+            throw new RuntimeException( "Could not clone '" + this.getClass().getName() + '\'');
         } catch ( final IllegalAccessException e ) {
-            throw new RuntimeException( "Could not clone '" + this.getClass().getName() + "'" );
+            throw new RuntimeException( "Could not clone '" + this.getClass().getName() + '\'');
         }
 
         for ( final Iterator it = this.children.iterator(); it.hasNext(); ) {

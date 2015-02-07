@@ -48,7 +48,7 @@ public class Token
 
     private LeapsRuleHandle          currentRuleHandle  = null;
 
-    private LeapsFactHandle[]        currentFactHandles = new LeapsFactHandle[0];
+    private LeapsFactHandle[]        currentFactHandles = LeapsWorkingMemory.EMPTY_LEAPS_FACTHANDLE;
 
     boolean                          resume             = false;
 
@@ -207,13 +207,13 @@ public class Token
      */
     public String toString() {
         String ret = "TOKEN [" + this.dominantFactHandle + "]\n" + "\tRULE : "
-                + this.currentRuleHandle + "\n";
+                + this.currentRuleHandle + '\n';
         if (this.currentFactHandles != null) {
             for (int i = 0, length = this.currentFactHandles.length; i < length; i++) {
                 ret = ret
                         + ( ( i == this.currentRuleHandle.getDominantPosition( ) ) ? "***"
-                                : "" ) + "\t" + i + " -> "
-                        + this.currentFactHandles[i].getObject( ) + "\n";
+                                : "" ) + '\t' + i + " -> "
+                        + this.currentFactHandles[i].getObject( ) + '\n';
             }
         }
         return ret;

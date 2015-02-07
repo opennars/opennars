@@ -137,7 +137,7 @@ class Builder {
             final StringBuffer buffer = new StringBuffer();
             buffer.append( list.get( 0 ) );
             for ( int i = 1, size = list.size(); i < size; i++ ) {
-                buffer.append( ", " + list.get( i ) );
+                buffer.append(", ").append(list.get(i));
             }
 
             throw new InvalidPatternException( "Required Declarations not bound: '" + buffer );

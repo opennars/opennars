@@ -111,4 +111,4 @@ public class EvalCondition extends ConditionalElement {
 
         return this.expression.equals( other.expression );
     }
-};
+}

@@ -323,7 +323,7 @@ public class Table implements Serializable {
         String ret = "";
 
         for (final Iterator it = this.iterator( ); it.hasNext( );) {
-            ret = ret + it.next( ) + "\n";
+            ret = ret + it.next( ) + '\n';
         }
         return ret;
     }

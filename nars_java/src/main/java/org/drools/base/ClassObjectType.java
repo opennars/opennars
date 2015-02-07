@@ -140,7 +140,7 @@ public class ClassObjectType
     }
 
     public String toString() {
-        return "[ClassObjectType class=" + getClassType().getName() + "]";
+        return "[ClassObjectType class=" + getClassType().getName() + ']';
     }
 
     /**

@@ -29,7 +29,7 @@ public class InstanceNotEqualsConstraint
      */
     private static final long   serialVersionUID = -4913836428340400997L;
 
-    private final Declaration[] declarations     = new Declaration[0];
+    private static final Declaration[] declarations     = new Declaration[0];
 
     private int                 otherColumn;
 

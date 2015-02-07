@@ -17,6 +17,7 @@ package org.drools.common;
  */
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,9 +74,7 @@ public class BetaNodeBinder
         final Set declarations = new HashSet();
         for ( int i = 0; i < this.constraints.length; i++ ) {
             final Declaration[] array = this.constraints[i].getRequiredDeclarations();
-            for ( int j = 0; j < array.length; j++ ) {
-                declarations.add( array[j] );
-            }
+            Collections.addAll(declarations, array);
         }
         return declarations;
     }

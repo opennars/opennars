@@ -47,12 +47,13 @@ public class CompositeCollection
     /** Collections in the composite */
     protected Collection[]      all;
 
+    final static Collection[] emptyCollection = new Collection[0];
     /**
      * Create an empty CompositeCollection.
      */
     public CompositeCollection() {
         super();
-        this.all = new Collection[0];
+        this.all = emptyCollection;
     }
 
     /**
@@ -103,7 +104,7 @@ public class CompositeCollection
      */
     public boolean isEmpty() {
         for ( int i = this.all.length - 1; i >= 0; i-- ) {
-            if ( this.all[i].isEmpty() == false ) {
+            if (!this.all[i].isEmpty()) {
                 return false;
             }
         }
@@ -260,7 +261,7 @@ public class CompositeCollection
      */
     public boolean containsAll(final Collection coll) {
         for ( final Iterator it = coll.iterator(); it.hasNext(); ) {
-            if ( this.contains( it.next() ) == false ) {
+            if (!this.contains(it.next())) {
                 return false;
             }
         }

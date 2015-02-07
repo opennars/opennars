@@ -36,7 +36,7 @@ public class InstanceEqualsConstraint
 
     private static final long serialVersionUID = 2986814365490743953L;
 
-    private final Declaration[] declarations     = new Declaration[0];
+    private static final Declaration[] declarations     = new Declaration[0];
 
     private int                 otherColumn;
 

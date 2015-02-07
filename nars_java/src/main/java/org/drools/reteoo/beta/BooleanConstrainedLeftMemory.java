@@ -82,7 +82,7 @@ public class BooleanConstrainedLeftMemory
     public final void add(final WorkingMemory workingMemory,
                           final ReteTuple tuple) {
         final boolean select = ((Boolean) this.declaration.getValue( tuple.get( this.column ).getObject() )).booleanValue();
-        if ( select == true ) {
+        if (select) {
             this.trueList.add( tuple );
         } else {
             this.falseList.add( tuple );
@@ -116,7 +116,7 @@ public class BooleanConstrainedLeftMemory
     public final void add(final WorkingMemory workingMemory,
                           final MultiLinkedListNodeWrapper tuple) {
         final boolean partition = ((Boolean) this.declaration.getValue( ((ReteTuple) tuple.getNode()).get( this.column ).getObject() )).booleanValue();
-        if ( partition == true ) {
+        if (partition) {
             this.trueList.add( tuple );
         } else {
             this.falseList.add( tuple );
@@ -282,7 +282,7 @@ public class BooleanConstrainedLeftMemory
                                             final InternalFactHandle handle) {
         boolean select = ((Boolean) this.extractor.getValue( handle.getObject() )).booleanValue();
         select = (this.evaluator.getOperator()) == Evaluator.EQUAL ? select : !select;
-        if ( select == true ) {
+        if (select) {
             this.selectedList = this.trueList;
         } else {
             this.selectedList = this.falseList;

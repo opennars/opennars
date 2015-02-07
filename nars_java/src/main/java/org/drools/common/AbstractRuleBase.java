@@ -283,8 +283,8 @@ abstract public class AbstractRuleBase
      * but this class does some work (including combining imports, compilation data, globals,
      * and the actual Rule objects into the package).
      */
-    private void mergePackage(final Package pkg,
-                              final Package newPkg) throws PackageIntegrationException {
+    private static void mergePackage(final Package pkg,
+                                     final Package newPkg) throws PackageIntegrationException {
         final Map globals = pkg.getGlobals();
         final List imports = pkg.getImports();
         

@@ -155,7 +155,7 @@ final class TerminalNode extends BaseNode
             final TerminalNodeMemory memory = (TerminalNodeMemory) workingMemory.getNodeMemory( this );
             AgendaGroupImpl agendaGroup = memory.getAgendaGroup();
             if ( agendaGroup == null ) {
-                if ( this.rule.getAgendaGroup() == null || this.rule.getAgendaGroup().equals( "" ) || this.rule.getAgendaGroup().equals( AgendaGroup.MAIN ) ) {
+                if ( this.rule.getAgendaGroup() == null || this.rule.getAgendaGroup().isEmpty() || this.rule.getAgendaGroup().equals( AgendaGroup.MAIN ) ) {
                     // Is the Rule AgendaGroup undefined? If it is use MAIN,
                     // which is added to the Agenda by default
                     agendaGroup = (AgendaGroupImpl) agenda.getAgendaGroup( AgendaGroup.MAIN );
@@ -244,7 +244,7 @@ final class TerminalNode extends BaseNode
     }
 
     public String toString() {
-        return "[TerminalNode: rule=" + this.rule.getName() + "]";
+        return "[TerminalNode: rule=" + this.rule.getName() + ']';
     }
 
     public void ruleAttached() {
@@ -327,7 +327,7 @@ final class TerminalNode extends BaseNode
         return this.rule.equals( other.rule );
     }
 
-    class TerminalNodeMemory implements Serializable {
+    static class TerminalNodeMemory implements Serializable {
         private AgendaGroupImpl agendaGroup;
 
         private ActivationGroup activationGroup;

@@ -138,11 +138,7 @@ public abstract class AbstractWorkingMemory
         }
 
         // Only takes effect if are using idententity behaviour for assert
-        if ( RuleBaseConfiguration.WM_BEHAVIOR_DISCARD.equals( conf.getProperty( RuleBaseConfiguration.PROPERTY_LOGICAL_OVERRIDE_BEHAVIOR ) ) ) {
-            this.discardOnLogicalOverride = true;
-        } else {
-            this.discardOnLogicalOverride = false;
-        }
+        this.discardOnLogicalOverride = RuleBaseConfiguration.WM_BEHAVIOR_DISCARD.equals(conf.getProperty(RuleBaseConfiguration.PROPERTY_LOGICAL_OVERRIDE_BEHAVIOR));
 
     }
 
@@ -198,7 +194,7 @@ public abstract class AbstractWorkingMemory
         final Map globalDefintions = this.ruleBase.getGlobals();
         final Class type = (Class) globalDefintions.get( name );
         if ( (type == null) ) {
-            throw new RuntimeException( "Unexpected global [" + name + "]" );
+            throw new RuntimeException( "Unexpected global [" + name + ']');
         } else if ( !type.isInstance( value ) ) {
             throw new RuntimeException( "Illegal class for global. " + "Expected [" + type.getName() + "], " + "found [" + value.getClass().getName() + "]." );
 
@@ -265,7 +261,6 @@ public abstract class AbstractWorkingMemory
                 this.firing = true;
 
                 while ( this.agenda.fireNextItem( agendaFilter ) ) {
-                    ;
                 }
             } finally {
                 this.firing = false;

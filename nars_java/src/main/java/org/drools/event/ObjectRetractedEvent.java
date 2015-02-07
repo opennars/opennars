@@ -49,6 +49,6 @@ public class ObjectRetractedEvent extends WorkingMemoryEvent {
     }
 
     public String toString() {
-        return "[ObjectRetracted: handle=" + this.handle + "; old_object=" + this.oldObject + "]";
+        return "[ObjectRetracted: handle=" + this.handle + "; old_object=" + this.oldObject + ']';
     }
 }

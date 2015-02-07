@@ -40,6 +40,6 @@ public interface TypeResolver {
      * @see org.drools.semantics.base.Importer#importClass(java.lang.ClassLoader,
      *      java.lang.String)
      */
-    public abstract Class resolveType(String className) throws ClassNotFoundException;
+    public abstract Class resolveType(String className);
 
 }

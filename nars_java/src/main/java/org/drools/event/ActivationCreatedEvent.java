@@ -29,7 +29,7 @@ public class ActivationCreatedEvent extends ActivationEvent {
     }
 
     public String toString() {
-        return "==>[ActivationCreated(" + getActivation().getActivationNumber() + "): rule=" + getActivation().getRule().getName() + "; tuple=" + getActivation().getTuple() + "]";
+        return "==>[ActivationCreated(" + getActivation().getActivationNumber() + "): rule=" + getActivation().getRule().getName() + "; tuple=" + getActivation().getTuple() + ']';
         //        if (getActivation().getRule().getName().equals("fiSeating")) {
         //            return "==>[ActivationCreated: rule=" + getActivation().getRule().getName() + "; tuple=" + getActivation().getTuple() + "]";
         //        } else {

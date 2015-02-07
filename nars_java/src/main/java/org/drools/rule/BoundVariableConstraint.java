@@ -80,7 +80,7 @@ public class BoundVariableConstraint
     }
 
     public String toString() {
-        return "[BoundVariableConstraint fieldExtractor=" + this.fieldExtractor + " declaration=" + this.declaration + "]";
+        return "[BoundVariableConstraint fieldExtractor=" + this.fieldExtractor + " declaration=" + this.declaration + ']';
     }
 
     /* (non-Javadoc)

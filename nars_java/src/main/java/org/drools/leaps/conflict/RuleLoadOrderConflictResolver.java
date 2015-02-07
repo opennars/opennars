@@ -65,5 +65,5 @@ class RuleLoadOrderConflictResolver
                                                            ((LeapsRuleHandle) o2).getDominantPosition() );
         }
         return ret;
-    };
+    }
 }

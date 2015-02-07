@@ -159,7 +159,7 @@ public class Declaration
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     public String toString() {
-        return "[Declaration: " + this.identifier + "]";
+        return "[Declaration: " + this.identifier + ']';
     }
 
     public int hashCode() {

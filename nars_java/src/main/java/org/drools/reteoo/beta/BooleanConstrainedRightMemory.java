@@ -216,7 +216,7 @@ public class BooleanConstrainedRightMemory
                                             final ReteTuple tuple) {
         boolean select = ((Boolean) this.declaration.getValue( tuple.get( this.column ).getObject() )).booleanValue();
         select = (this.evaluator.getOperator()) == Evaluator.EQUAL ? select : !select;
-        this.selectedList = (select == true) ? this.trueList : this.falseList;
+        this.selectedList = (select) ? this.trueList : this.falseList;
 
         if ( this.innerMemory != null ) {
             this.innerMemory.selectPossibleMatches( workingMemory,
@@ -251,7 +251,7 @@ public class BooleanConstrainedRightMemory
     private final MultiLinkedList getMatchingList(final WorkingMemory workingMemory,
                                                   final DefaultFactHandle handle) {
         final boolean select = ((Boolean) this.extractor.getValue( handle.getObject() )).booleanValue();
-        final MultiLinkedList list = (select == true) ? this.trueList : this.falseList;
+        final MultiLinkedList list = (select) ? this.trueList : this.falseList;
         return list;
     }
 
@@ -269,15 +269,7 @@ public class BooleanConstrainedRightMemory
      * @inheritDoc
      */
     public final Iterator iterator() {
-        final TreeSet set = new TreeSet( new Comparator() {
-            public int compare(Object arg0,
-                               Object arg1) {
-                DefaultFactHandle f0 = ((ObjectMatches) arg0).getFactHandle();
-                DefaultFactHandle f1 = ((ObjectMatches) arg1).getFactHandle();
-                return (f0.getRecency() == f1.getRecency()) ? 0 : (f0.getRecency() > f1.getRecency()) ? 1 : -1;
-            }
-
-        } );
+        final TreeSet set = new TreeSet(new IteratorCompartor());
         for ( final Iterator i = this.trueList.iterator(); i.hasNext(); ) {
             set.add( i.next() );
         }
@@ -302,4 +294,13 @@ public class BooleanConstrainedRightMemory
         this.innerMemory = innerMemory;
     }
 
+    private static class IteratorCompartor implements Comparator {
+        public int compare(Object arg0,
+                           Object arg1) {
+            DefaultFactHandle f0 = ((ObjectMatches) arg0).getFactHandle();
+            DefaultFactHandle f1 = ((ObjectMatches) arg1).getFactHandle();
+            return (f0.getRecency() == f1.getRecency()) ? 0 : (f0.getRecency() > f1.getRecency()) ? 1 : -1;
+        }
+
+    }
 }

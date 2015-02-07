@@ -100,7 +100,7 @@ public class AgendaGroupImpl
     }
 
     public String toString() {
-        return "AgendaGroup '" + this.name + "'";
+        return "AgendaGroup '" + this.name + '\'';
     }
 
     public boolean equal(final Object object) {
@@ -108,11 +108,8 @@ public class AgendaGroupImpl
             return false;
         }
 
-        if ( ((AgendaGroupImpl) object).name.equals( this.name ) ) {
-            return true;
-        }
+        return ((AgendaGroupImpl) object).name.equals(this.name);
 
-        return false;
     }
 
     public int hashCode() {

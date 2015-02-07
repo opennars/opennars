@@ -74,6 +74,7 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
     private final IdentityMap leapsRulesToHandlesMap = new IdentityMap( );
 
     private final IdentityMap rulesActivationsMap    = new IdentityMap( );
+    final static LeapsFactHandle[] EMPTY_LEAPS_FACTHANDLE = new LeapsFactHandle[0];
 
     /**
      * Construct.
@@ -368,8 +369,7 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
             // and now assert
             //
             /* check to see if this is a logically asserted object */
-            this.assertObject( object, false, ( status == EqualityKey.STATED ) ? false
-                    : true, rule, activation );
+            this.assertObject( object, false, (status != EqualityKey.STATED), rule, activation );
 
             this.workingMemoryEventSupport.fireObjectModified( propagationContext,
                                                                handle,
@@ -518,7 +518,8 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
                                                                                        null,
                                                                                        null );
 
-                    TokenEvaluator.processAfterAllPositiveConstraintOk( new LeapsTuple( new LeapsFactHandle[0],
+
+                    TokenEvaluator.processAfterAllPositiveConstraintOk( new LeapsTuple( EMPTY_LEAPS_FACTHANDLE,
                                                                                         rule,
                                                                                         context ),
                                                                         rule,
@@ -555,7 +556,7 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
             if ( activations != null ) {
                 for ( final Iterator activationsIt = activations.keySet( ).iterator(); activationsIt.hasNext(); ) {
                     final Activation activation = (Activation) activationsIt.next();
-                    ((LeapsTuple) activation.getTuple()).setActivation( null );
+                    activation.getTuple().setActivation(null);
                     this.tms.removeLogicalDependencies( activation,
                                                         activation.getPropagationContext(),
                                                         rule );
@@ -621,7 +622,6 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
                             // and if there is no modules or anything like it
                             // it would fire just activated rule
                             while ( this.agenda.fireNextItem( agendaFilter ) ) {
-                                ;
                             }
                         }
                     }
@@ -629,7 +629,6 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
                     // can generate activations off exists and not pending
                     // tuples
                     while ( this.agenda.fireNextItem( agendaFilter ) ) {
-                        ;
                     }
                     if ( this.mainStack.empty() ) {
                         nothingToProcess = true;
@@ -655,16 +654,16 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
     public String toString() {
         String ret = "";
         Object key;
-        ret = ret + "\n" + "Working memory";
-        ret = ret + "\n" + "Fact Tables by types:";
+        ret = ret + '\n' + "Working memory";
+        ret = ret + '\n' + "Fact Tables by types:";
         for ( final Iterator it = this.factTables.keySet().iterator(); it.hasNext(); ) {
             key = it.next();
-            ret = ret + "\n" + "******************   " + key;
-            ret = ret + ((FactTable) this.factTables.get( key )).toString();
+            ret = ret + '\n' + "******************   " + key;
+            ret = ret + this.factTables.get( key ).toString();
         }
-        ret = ret + "\n" + "Stack:";
+        ret = ret + '\n' + "Stack:";
         for ( final Iterator it = this.mainStack.iterator(); it.hasNext(); ) {
-            ret = ret + "\n" + "\t" + it.next();
+            ret = ret + '\n' + '\t' + it.next();
         }
         return ret;
     }
@@ -705,7 +704,7 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
             final LeapsRule leapsRule = tuple.getLeapsRule();
             AgendaGroupImpl agendaGroup = leapsRule.getAgendaGroup();
             if ( agendaGroup == null ) {
-                if ( rule.getAgendaGroup() == null || rule.getAgendaGroup().equals( "" ) || rule.getAgendaGroup().equals( AgendaGroup.MAIN ) ) {
+                if ( rule.getAgendaGroup() == null || rule.getAgendaGroup().isEmpty() || rule.getAgendaGroup().equals( AgendaGroup.MAIN ) ) {
                     // Is the Rule AgendaGroup undefined? If it is use MAIN,
                     // which is added to the Agenda by default
                     agendaGroup = (AgendaGroupImpl) this.agenda.getAgendaGroup( AgendaGroup.MAIN );
@@ -809,9 +808,9 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
     /**
      * to store facts to cursor over it
      */
-    private final Map factTables = new FactTables(); 
+    private final Map factTables = new FactTables();
     
-    class FactTables implements Map, Serializable {
+    static class FactTables implements Map, Serializable {
         private LinkedList tables = new LinkedList( );
 
         private HashMap    map    = new HashMap( );

@@ -6,8 +6,6 @@ import org.drools.spi.FieldConstraint;
 import org.drools.spi.Tuple;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.function.Predicate;
 
 

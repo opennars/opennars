@@ -57,6 +57,6 @@ public class ObjectModifiedEvent extends WorkingMemoryEvent {
     }
 
     public String toString() {
-        return "[ObjectModified: handle=" + this.handle + "; old_object=" + this.oldObject + "; new_object=" + this.object + "]";
+        return "[ObjectModified: handle=" + this.handle + "; old_object=" + this.oldObject + "; new_object=" + this.object + ']';
     }
 }

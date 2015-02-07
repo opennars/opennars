@@ -56,12 +56,13 @@ final class FactHandleList
 
     /** The cached hash code value. */
     private final int                  hashCode;
+    private static final InternalFactHandle[] EMPTY_HANDLES = new DefaultFactHandle[0];
 
     /**
      * Private constructor for creating the {@link #EMPTY_LIST}.
      */
     private FactHandleList() {
-        this.handles = new DefaultFactHandle[0];
+        this.handles = EMPTY_HANDLES;
         this.hashCode = 0;
     }
 

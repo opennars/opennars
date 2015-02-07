@@ -43,11 +43,10 @@ public class RuleBaseFactory {
             case RuleBase.RETEOO :
                 return new org.drools.reteoo.ReteooRuleBase();
             case RuleBase.LEAPS :
-                try {
-                    return new org.drools.leaps.LeapsRuleBase();
-                } catch ( final PackageIntegrationException e ) {
-                    throw new IllegalStateException( "Unable to create Leaps engine. Error: " + e.getMessage() );
-                }
+                return new org.drools.leaps.LeapsRuleBase();
+//                } catch ( final PackageIntegrationException e ) {
+//                    throw new IllegalStateException( "Unable to create Leaps engine. Error: " + e.getMessage() );
+//                }
             default :
                 throw new IllegalArgumentException( "Unknown engine type: " + type );
 

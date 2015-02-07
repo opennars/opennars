@@ -222,7 +222,7 @@ public class IteratorChain
      * Checks whether the iterator chain is now locked and in use.
      */
     private void checkLocked() {
-        if ( this.isLocked == true ) {
+        if (this.isLocked) {
             throw new UnsupportedOperationException( "IteratorChain cannot be changed after the first use of a method from the Iterator interface" );
         }
     }
@@ -232,7 +232,7 @@ public class IteratorChain
      * from all Iterator interface methods.
      */
     private void lockChain() {
-        if ( this.isLocked == false ) {
+        if (!this.isLocked) {
             this.isLocked = true;
         }
     }
@@ -253,7 +253,7 @@ public class IteratorChain
             this.lastUsedIterator = this.currentIterator;
         }
 
-        while ( this.currentIterator.hasNext() == false && this.currentIteratorIndex < this.iteratorChain.size() - 1 ) {
+        while (!this.currentIterator.hasNext() && this.currentIteratorIndex < this.iteratorChain.size() - 1 ) {
             this.currentIteratorIndex++;
             this.currentIterator = (Iterator) this.iteratorChain.get( this.currentIteratorIndex );
         }

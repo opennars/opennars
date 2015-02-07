@@ -79,6 +79,6 @@ public class LeapsRuleHandle extends DefaultFactHandle {
      * @see java.lang.Object
      */
     public String toString() {
-        return "R-" + this.getId() + " \"" + this.getLeapsRule().toString() + "\" [pos - " + this.dominantPosition + "]";
+        return "R-" + this.getId() + " \"" + this.getLeapsRule().toString() + "\" [pos - " + this.dominantPosition + ']';
     }
 }
