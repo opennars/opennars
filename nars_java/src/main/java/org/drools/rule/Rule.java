@@ -290,7 +290,7 @@ public class Rule
      *            The <code>Test</code> to add.
      * @throws InvalidRuleException 
      */
-    public void addPattern(final ConditionalElement ce) {
+    public void addPattern(final Object /* ConditionalElement */ ce) {
         if ( ce instanceof GroupElement ) {
             addDeclarations( (GroupElement) ce );
         }

@@ -23,4 +23,11 @@ public class Or extends GroupElement {
      */
     private static final long serialVersionUID = 1519832383109314339L;
 
+    public Or() {
+        super();
+    }
+
+    public Or(Object[] conditions) {
+        super(conditions);
+    }
 }

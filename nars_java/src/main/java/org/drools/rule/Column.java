@@ -28,9 +28,7 @@ import org.drools.spi.Extractor;
 import org.drools.spi.FieldConstraint;
 import org.drools.spi.ObjectType;
 
-public class Column
-    implements
-    Serializable {
+public class Column implements Serializable {
     /**
      * 
      */
@@ -49,11 +47,12 @@ public class Column
         this(index, ClassObjectType.AnyObject);
     }
 
+
     public Column(final int index, final ObjectType objectType) {
         this( index,
               0,
               objectType,
-              null );
+              Integer.toString(index)  );
     }
 
     public Column(final int index,
@@ -151,7 +150,8 @@ public class Column
     }
 
     public String toString() {
-        return "Column type='" + this.objectType + "', index='" + this.index + "', offset='" + this.getOffset() + "', identifer='" + this.declaration.getIdentifier() + '\'';
+        return "Column type='" + this.objectType + "', index='" + this.index + "', offset='" + this.getOffset() + "', identifer='"
+                + (this.declaration!=null ? this.declaration.getIdentifier() : null) + '\'';
     }
 
 }

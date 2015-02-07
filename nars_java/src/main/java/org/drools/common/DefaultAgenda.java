@@ -315,7 +315,7 @@ public class DefaultAgenda
         if ( this.scheduledActivations != null && !this.scheduledActivations.isEmpty() ) {
             for ( ScheduledAgendaItem item = (ScheduledAgendaItem) this.scheduledActivations.removeFirst(); item != null; item = (ScheduledAgendaItem) this.scheduledActivations.removeFirst() ) {
                 item.remove();
-                eventsupport.getAgendaEventSupport().fireActivationCancelled( item );
+                eventsupport.getAgendaEvents().fireActivationCancelled( item );
             }
         }
     }
@@ -350,7 +350,7 @@ public class DefaultAgenda
                 item.getActivationGroupNode().getActivationGroup().removeActivation( item );
             }
 
-            eventsupport.getAgendaEventSupport().fireActivationCancelled( item );
+            eventsupport.getAgendaEvents().fireActivationCancelled( item );
         }
         ( ( AgendaGroupImpl )agendaGroup ).clear();
     }
@@ -377,7 +377,7 @@ public class DefaultAgenda
             if ( activation.isActivated() ) {
                 activation.setActivated( false );
                 activation.remove();
-                eventsupport.getAgendaEventSupport().fireActivationCancelled( activation );
+                eventsupport.getAgendaEvents().fireActivationCancelled( activation );
             }
         }
         activationGroup.clear();
@@ -421,7 +421,8 @@ public class DefaultAgenda
     public synchronized void fireActivation(final Activation activation) throws ConsequenceException {
         final EventSupport eventsupport = (EventSupport) this.workingMemory;
 
-        eventsupport.getAgendaEventSupport().fireBeforeActivationFired( activation );
+        if (eventsupport.getAgendaEvents()!=null)
+            eventsupport.getAgendaEvents().fireBeforeActivationFired( activation );
 
         if ( activation.getActivationGroupNode() != null ) {
             final ActivationGroup activationGroup = activation.getActivationGroupNode().getActivationGroup();
@@ -441,7 +442,8 @@ public class DefaultAgenda
                                             activation.getRule() );
         }
 
-        eventsupport.getAgendaEventSupport().fireAfterActivationFired( activation );
+        if (eventsupport.getAgendaEvents()!=null)
+            eventsupport.getAgendaEvents().fireAfterActivationFired( activation );
     }
 
 }

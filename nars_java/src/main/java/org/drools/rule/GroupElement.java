@@ -17,11 +17,20 @@ package org.drools.rule;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 public abstract class GroupElement extends ConditionalElement {
-    private final List children = new ArrayList();
+    private final List children;
+
+    public GroupElement() {
+        this.children = new ArrayList(1);
+    }
+
+    public GroupElement(Object[] children) {
+        this.children = Arrays.asList(children);
+    }
 
     /**
      * This removes single branch 'and' and 'or'

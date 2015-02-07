@@ -297,7 +297,8 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
             // invalidate agenda agendaItem
             if (activation.isActivated( )) {
                 activation.remove( );
-                getAgendaEventSupport( ).fireActivationCancelled( activation );
+                if (getAgendaEvents()!=null)
+                    getAgendaEvents().fireActivationCancelled( activation );
             }
             //
             tuple.setActivation( null );
@@ -342,7 +343,7 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
             // 
             // do subset of retractObject( )
             //
-            final InternalFactHandle handle = (InternalFactHandle) factHandle;
+            InternalFactHandle handle = (InternalFactHandle) factHandle;
             if (handle.getId( ) == -1) {
                 // can't retract an already retracted handle
                 return;
@@ -369,9 +370,10 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
             // and now assert
             //
             /* check to see if this is a logically asserted object */
-            this.assertObject( object, false, (status != EqualityKey.STATED), rule, activation );
+            this.assertObject(object, false, (status != EqualityKey.STATED), rule, activation);
 
-            this.workingMemoryEventSupport.fireObjectModified( propagationContext,
+            if (this.workingEvents!=null)
+                this.workingEvents.fireObjectModified( propagationContext,
                                                                handle,
                                                                handle.getObject( ),
                                                                object );
@@ -699,7 +701,9 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
             this.agenda.scheduleItem( (ScheduledAgendaItem) agendaItem );
             tuple.setActivation( agendaItem );
             agendaItem.setActivated( true );
-            this.getAgendaEventSupport().fireActivationCreated( agendaItem );
+
+            if (getAgendaEvents()!=null)
+                this.getAgendaEvents().fireActivationCreated( agendaItem );
         } else {
             final LeapsRule leapsRule = tuple.getLeapsRule();
             AgendaGroupImpl agendaGroup = leapsRule.getAgendaGroup();
@@ -738,7 +742,8 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
 
             tuple.setActivation( agendaItem );
             agendaItem.setActivated( true );
-            this.getAgendaEventSupport().fireActivationCreated( agendaItem );
+            if (getAgendaEvents()!=null)
+                this.getAgendaEvents().fireActivationCreated( agendaItem );
         }
 
         // retract support
@@ -855,7 +860,6 @@ class LeapsWorkingMemory extends AbstractWorkingMemory implements EventSupport,
 
         public Object get( Object key ) {
             return this.map.get( key );
-
         }
 
         public Object remove( Object key ) {

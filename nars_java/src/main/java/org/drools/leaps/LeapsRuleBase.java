@@ -47,7 +47,7 @@ import org.drools.spi.PropagationContext;
 public class LeapsRuleBase extends AbstractRuleBase {
     private static final long serialVersionUID = 1487738104393155409L;
 
-    private Map               leapsRules;
+    private final Map<Rule,Object>               leapsRules;
 
     /**
      * Construct.
@@ -80,6 +80,10 @@ public class LeapsRuleBase extends AbstractRuleBase {
         super( config,
                factHandleFactory );
         this.leapsRules = new HashMap();
+    }
+
+    public Map<Rule, Object> getRules() {
+        return leapsRules;
     }
 
     /**

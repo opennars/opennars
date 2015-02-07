@@ -131,7 +131,8 @@ public class ReteooWorkingMemory extends AbstractWorkingMemory {
                                         propagationContext,
                                         this );
 
-            this.workingMemoryEventSupport.fireObjectModified( propagationContext,
+            if (this.workingEvents!=null)
+                this.workingEvents.fireObjectModified( propagationContext,
                                                                factHandle,
                                                                originalObject,
                                                                object );

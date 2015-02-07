@@ -146,7 +146,8 @@ final class TerminalNode extends BaseNode
             agenda.scheduleItem( item );
             tuple.setActivation( item );
             item.setActivated( true );
-            workingMemory.getAgendaEventSupport().fireActivationCreated( item );
+            if (workingMemory.getAgendaEvents()!=null)
+                workingMemory.getAgendaEvents().fireActivationCreated( item );
         } else {
             // -----------------
             // Lazy instantiation and addition to the Agenda of AgendGroup
@@ -201,8 +202,8 @@ final class TerminalNode extends BaseNode
             item.setActivated( true );
 
             // We only want to fire an event on a truly new Activation and not on an Activation as a result of a modify
-            if ( fireActivationCreated ) {
-                workingMemory.getAgendaEventSupport().fireActivationCreated( item );
+            if (( fireActivationCreated ) && (workingMemory.getAgendaEvents()!=null)) {
+                workingMemory.getAgendaEvents().fireActivationCreated( item );
             }
         }
     }
@@ -216,7 +217,8 @@ final class TerminalNode extends BaseNode
         if( activation != null ) {
             if ( activation.isActivated() ) {
                 activation.remove();
-                workingMemory.getAgendaEventSupport().fireActivationCancelled( activation );
+                if (workingMemory.getAgendaEvents()!=null)
+                    workingMemory.getAgendaEvents().fireActivationCancelled( activation );
             }
 
             workingMemory.getTruthMaintenanceSystem().removeLogicalDependencies( activation,
@@ -282,7 +284,8 @@ final class TerminalNode extends BaseNode
 
                 if ( activation.isActivated() ) {
                     activation.remove();
-                    workingMemory.getAgendaEventSupport().fireActivationCancelled( activation );
+                    if (workingMemory.getAgendaEvents()!=null)
+                        workingMemory.getAgendaEvents().fireActivationCancelled( activation );
                 }
 
                 final PropagationContext propagationContext = new PropagationContextImpl( workingMemory.getNextPropagationIdCounter(),

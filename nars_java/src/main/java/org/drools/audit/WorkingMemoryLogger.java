@@ -16,6 +16,7 @@ package org.drools.audit;
  * limitations under the License.
  */
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -267,5 +268,20 @@ public abstract class WorkingMemoryLogger
             }
         }
         return result.append(']').toString();
+    }
+
+    public static void out(WorkingMemory state) {
+        out(state, System.out);
+    }
+
+    public static void out(WorkingMemory state, PrintStream out) {
+        new WorkingMemoryLogger(state) {
+
+            @Override
+            public void logEventCreated(LogEvent logEvent) {
+                out.println(logEvent);
+            }
+        };
+
     }
 }

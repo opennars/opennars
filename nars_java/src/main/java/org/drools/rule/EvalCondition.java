@@ -33,10 +33,7 @@ public class EvalCondition extends ConditionalElement {
 
     private static final Declaration[] EMPTY_DECLARATIONS = new Declaration[0];
 
-    public EvalCondition(final Declaration[] requiredDeclarations) {
-        this( null,
-              requiredDeclarations );
-    }
+
 
     public EvalCondition(final EvalExpression eval,
                          final Declaration[] requiredDeclarations) {
@@ -49,6 +46,11 @@ public class EvalCondition extends ConditionalElement {
             this.requiredDeclarations = requiredDeclarations;
         }
     }
+
+    public EvalCondition(EvalExpression e) {
+        this(e, null);
+    }
+
 
     public EvalExpression getEvalExpression() {
         return this.expression;

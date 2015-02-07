@@ -86,12 +86,11 @@ public abstract class AbstractWorkingMemory
     /** Object-to-handle mapping. */
     protected final Map                       assertMap;
 
-    protected Map                             queryResults                                  = Collections.EMPTY_MAP;
+    //protected Map                             queryResults                                  = Collections.EMPTY_MAP;
 
     /** The eventSupport */
-    protected final WorkingMemoryEventSupport workingMemoryEventSupport                     = new WorkingMemoryEventSupport( this );
-
-    protected final AgendaEventSupport        agendaEventSupport                            = new AgendaEventSupport( this );
+    protected WorkingMemoryEventSupport workingEvents = null; //new WorkingMemoryEventSupport( this );
+    protected AgendaEventSupport agendaEvents = null; //new AgendaEventSupport( this );
 
     /** The <code>RuleBase</code> with which this memory is associated. */
     protected transient InternalRuleBase          ruleBase;
@@ -151,23 +150,39 @@ public abstract class AbstractWorkingMemory
     }
     
     public void addEventListener(final WorkingMemoryEventListener listener) {
-        this.workingMemoryEventSupport.addEventListener( listener );
+        ensureWorkingEvents();
+        this.workingEvents.addEventListener(listener);
+    }
+
+    private void ensureWorkingEvents() {
+        if (workingEvents == null)
+            workingEvents = new WorkingMemoryEventSupport( this );
+    }
+    private void ensureAgendaEvents() {
+        agendaEvents = new AgendaEventSupport( this );
     }
 
     public void removeEventListener(final WorkingMemoryEventListener listener) {
-        this.workingMemoryEventSupport.removeEventListener( listener );
+        if (workingEvents == null) return;
+        this.workingEvents.removeEventListener(listener);
     }
 
     public List getWorkingMemoryEventListeners() {
-        return this.workingMemoryEventSupport.getEventListeners();
+        if (this.workingEvents!=null)
+            return this.workingEvents.getEventListeners();
+        return Collections.EMPTY_LIST;
     }
 
     public void addEventListener(final AgendaEventListener listener) {
-        this.agendaEventSupport.addEventListener( listener );
+        ensureAgendaEvents();
+        this.agendaEvents.addEventListener(listener);
     }
 
+
+
     public void removeEventListener(final AgendaEventListener listener) {
-        this.agendaEventSupport.removeEventListener( listener );
+        if (agendaEvents == null) return;
+        this.agendaEvents.removeEventListener(listener);
     }
 
     public FactHandleFactory getFactHandleFactory() {
@@ -175,7 +190,9 @@ public abstract class AbstractWorkingMemory
     }
 
     public List getAgendaEventListeners() {
-        return this.agendaEventSupport.getEventListeners();
+        if (agendaEvents!=null)
+            return this.agendaEvents.getEventListeners();
+        return Collections.EMPTY_LIST;
     }
 
     /**
@@ -532,9 +549,10 @@ public abstract class AbstractWorkingMemory
                             object,
                             propagationContext );
 
-            this.workingMemoryEventSupport.fireObjectAsserted( propagationContext,
-                                                               handle,
-                                                               object );
+            if (this.workingEvents!=null)
+                this.workingEvents.fireObjectAsserted(propagationContext,
+                    handle,
+                    object);
 
             if ( !this.factQueue.isEmpty() ) {
                 propagateQueuedActions();
@@ -683,9 +701,10 @@ public abstract class AbstractWorkingMemory
 
             final Object object = handle.getObject();
 
-            this.workingMemoryEventSupport.fireObjectRetracted( propagationContext,
-                                                                handle,
-                                                                object );
+            if (this.workingEvents!=null)
+                this.workingEvents.fireObjectRetracted(propagationContext,
+                    handle,
+                    object);
 
             this.assertMap.remove( handle );
 
@@ -762,12 +781,12 @@ public abstract class AbstractWorkingMemory
         this.nodeMemories.remove( node.getId() );
     }
 
-    public WorkingMemoryEventSupport getWorkingMemoryEventSupport() {
-        return this.workingMemoryEventSupport;
+    public WorkingMemoryEventSupport getWorkingEvents() {
+        return this.workingEvents;
     }
 
-    public AgendaEventSupport getAgendaEventSupport() {
-        return this.agendaEventSupport;
+    public AgendaEventSupport getAgendaEvents() {
+        return this.agendaEvents;
     }
 
     /**

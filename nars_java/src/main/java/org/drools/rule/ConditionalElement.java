@@ -20,8 +20,8 @@ import java.io.Serializable;
 
 public abstract class ConditionalElement
     implements
-    Serializable,
-    Cloneable {
+        Serializable,
+        Cloneable {
 
     public abstract Object clone();
 

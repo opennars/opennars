@@ -154,11 +154,13 @@ class Builder {
      */
     final private static ColumnConstraints processColumn(final Column column) {
         BetaNodeBinder binder;
-        final List alphaConstraints = new ArrayList();
-        final List betaConstraints = new ArrayList();
+        final List alphaConstraints = new ArrayList(4);
+        final List betaConstraints = new ArrayList(4);
 
-        for ( final Iterator it = column.getConstraints().iterator(); it.hasNext(); ) {
-            final Object object = it.next();
+        final List cc = column.getConstraints();
+        int nc = cc.size();
+        for (int i = 0; i < nc; i++) {
+            final Object object = cc.get(i);
             if ( !(object instanceof FieldConstraint) ) {
                 continue;
             }

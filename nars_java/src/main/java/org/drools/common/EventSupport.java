@@ -25,5 +25,5 @@ public interface EventSupport {
 
     public List getWorkingMemoryEventListeners();
 
-    public AgendaEventSupport getAgendaEventSupport();
+    public AgendaEventSupport getAgendaEvents();
 }

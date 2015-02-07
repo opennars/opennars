@@ -50,7 +50,7 @@ public class ClassObjectType
     public static final ClassObjectType AnyObject = new ClassObjectType(Object.class) {
 
         @Override
-        public boolean matches(Object object) {
+        public final boolean matches(Object object) {
             //for fast evaluation
             return true;
         }

@@ -1,8 +1,17 @@
 package nars.core;
 
+import nars.logic.LogicRule;
+import nars.logic.RuleEngine;
+import nars.logic.rule.BasicRule;
+import nars.logic.rule.OrRule;
 import org.drools.AbstractConsequence;
+import org.drools.RuntimeDroolsException;
 import org.drools.WorkingMemory;
+import org.drools.audit.WorkingMemoryLogger;
+import org.drools.audit.event.LogEvent;
 import org.drools.rule.*;
+import org.drools.spi.EvalExpression;
+import org.drools.spi.Tuple;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,12 +33,14 @@ public class RuleTest {
 
         final Column c = new Column( 0 );
 
+
         c.addConstraint(new BooleanCondition<Integer>() {
             @Override
             public boolean test(Integer integer) {
                 return integer > 0;
             }
         });
+
 
         r.addPattern(c);
 
@@ -58,6 +69,159 @@ public class RuleTest {
 
 
     }
+
+    @Test public void testRuleEngineSimple() {
+
+        AtomicInteger hits = new AtomicInteger();
+
+
+        RuleEngine r = new RuleEngine();
+        r.add(new BasicRule<Integer>() {
+
+            @Override
+            public boolean test(Integer i) {
+                return i > 0;
+            }
+
+            @Override
+            public void accept(Integer integer) {
+                hits.incrementAndGet();
+            }
+
+        });
+
+        r.start();
+        //WorkingMemoryLogger.out(r.state);
+
+        r.fire(1);
+        assertEquals(1, hits.get());
+        r.fire(0);
+        assertEquals(1, hits.get());
+        r.fire(2);
+        assertEquals(2, hits.get());
+        r.fire("a");
+        assertEquals(2, hits.get());
+    }
+
+    @Test public void testRuleEngineOr() {
+
+        AtomicInteger hits = new AtomicInteger();
+
+        BooleanCondition<Integer> a = new BooleanCondition<Integer>() {
+            @Override public boolean test(Integer i) {
+                //System.out.println("a?" + i);
+                return i == 1;
+            }
+        };
+        BooleanCondition<Integer> b = new BooleanCondition<Integer>() {
+            @Override public boolean test(Integer i) {
+                //System.out.println("b?" + i);
+                return i == 2;
+            }
+        };
+
+        RuleEngine r = new RuleEngine();
+
+        r.add(new OrRule<Integer>() {
+
+
+            @Override
+            public Object[] conditions() {
+                return new Object[] { a, b };
+            }
+
+            @Override
+            public void accept(Integer integer) {
+                hits.incrementAndGet();
+            }
+
+        });
+
+        r.start();
+
+        //WorkingMemoryLogger.out(r.state);
+
+
+        r.fire(1);
+        assertEquals(1, hits.get());
+        r.fire(0);
+        assertEquals(1, hits.get());
+        r.fire(2);
+        assertEquals(2, hits.get());
+        r.fire(3);
+        assertEquals(2, hits.get());
+    }
+
+    @Test public void testRuleEngineSharedCondition() {
+
+        AtomicInteger hits = new AtomicInteger();
+        AtomicInteger aaCount = new AtomicInteger();
+        AtomicInteger aCount = new AtomicInteger();
+
+        BooleanCondition<Integer> aa = new BooleanCondition<Integer>() {
+            @Override public boolean test(Integer i) {
+                System.out.println("aa?" + i);
+                //new Exception().printStackTrace();
+                aaCount.incrementAndGet();
+                return i == 1;
+            }
+
+            @Override
+            public String toString() { return "aCond";            }
+        };
+//        EvalCondition a = new EvalCondition(new EvalExpression() {
+//
+//            @Override
+//            public boolean evaluate(Tuple tuple, Declaration[] requiredDeclarations, WorkingMemory workingMemory) {
+//                System.out.println("a? " + tuple);
+//                aCount.incrementAndGet();
+//                return true;
+//            }
+//        });
+
+
+        RuleEngine r = new RuleEngine();
+        r.start();
+
+        r.add(new OrRule<Integer>() {
+            @Override
+            public Object[] conditions() {
+                return new Object[] { aa };
+            }
+            @Override
+            public void accept(Integer integer) {
+                hits.incrementAndGet();
+            }
+        });
+        r.add(new BasicRule<Integer>() {
+
+            @Override
+            public boolean test(Integer integer) {
+                return false;
+            }
+
+            @Override
+            public void accept(Integer integer) {
+                hits.incrementAndGet();
+            }
+        });
+
+
+
+        WorkingMemoryLogger.out(r.state);
+
+        System.out.println(r.state);
+
+        System.out.println(hits + "; attepmts=" + aCount + " " + aaCount);
+        r.fire(1);
+        assertEquals(2, hits.get());
+        System.out.println(hits + "; attepmts=" + aCount + " " + aaCount);
+        r.fire(1);
+        System.out.println(hits + "; attepmts=" + aCount + " " + aaCount);
+
+
+    }
+
 
 //    /** Number of guests at the dinner (default: 16). */
 //    private final int       numGuests  = 16;
