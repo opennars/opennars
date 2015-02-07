@@ -12,6 +12,9 @@ import nars.core.Plugin;
 import nars.core.control.NAL;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.inference.TemporalRules;
+import static nars.inference.TemporalRules.ORDER_BACKWARD;
+import static nars.inference.TemporalRules.ORDER_FORWARD;
 import nars.language.Conjunction;
 import nars.language.Interval;
 import nars.language.Term;
@@ -33,19 +36,12 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     int cur_maxlen=10;
     
     public void perceive(NAL nal) { //implement Peis idea here now
-        for(int Len=1;Len<=cur_maxlen;Len++) {
+        for(int Len=2;Len<=cur_maxlen;Len++) {
             //ok, this is the length we have to collect, measured from the end of event buffer
-            Term[] relterms; //=new Term[2*Len-1]; //there is a interval term for every event
+            Term[] relterms=new Term[2*Len-1]; //there is a interval term for every event
             //measuring its distance to the next event, but for the last event this is obsolete
             //thus it are 2*Len-1] terms
-            
-            //but it is not that easy, because it can also happen, that tasks happen in parallel,
-            //in which a parallel conjunction has to be formed.
-            //such a parallel conjunction then forms just one term!
-            //so we have to determine how many of them exist at first,
-            //if all of them happen at the same time the entire statement should
-            //become an parallel conjunction..
-            
+
             int k=0;
             for(int i=0;i<Len;i++) {
                 int j=eventbuffer.size()-1-2*(Len-1)+i*2; //we count in 2-sized steps size amount of elements till to the end of the event buffer
@@ -56,8 +52,14 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                     Task next=eventbuffer.get(j+1);
                     relterms[k+1]=Interval.interval(next.sentence.getOccurenceTime()-current.sentence.getOccurenceTime(), nal.memory);
                 }
-                
+                k+=2;
             }
+            
+            //decide on the tense of &/ by looking if the first event happens parallel with the last one
+            //Todo refine in 1.6.3 if we want to allow input of difference occurence time
+            boolean after=eventbuffer.get(eventbuffer.size()-1).sentence.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence, nal.memory.param.duration.get());
+            
+            Conjunction C=(Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_BACKWARD);
             
         }
     }
