@@ -30,6 +30,7 @@ import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
 import nars.plugin.app.plan.TemporalParticlePlanner;
+import nars.plugin.input.PerceptionAccel;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
@@ -148,6 +149,8 @@ public class Default extends Build implements ConceptBuilder {
         n.addPlugin(new DefaultTextPerception());
         
         n.addPlugin(new RuntimeNARSettings());
+        
+        n.addPlugin(new PerceptionAccel());
         
         if(pluginPlanner!=null) {
             n.addPlugin(pluginPlanner);
