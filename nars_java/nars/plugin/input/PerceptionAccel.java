@@ -40,7 +40,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     }
     
     ArrayList<Task> eventbuffer=new ArrayList<>();
-    int cur_maxlen=10;
+    int cur_maxlen=0;
     
     public void perceive(NAL nal) { //implement Peis idea here now
         for(int Len=2;Len<=cur_maxlen;Len++) {
@@ -84,7 +84,8 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     }
     
     //keep track of how many conjunctions with related amount of component terms there are:
-    int[] sv=new int[1000]; //use static array, should suffice for now
+    int sz=100;
+    int[] sv=new int[sz]; //use static array, should suffice for now
     public void handleConjunctionSequence(Term t, boolean Add) {
         if(!(t instanceof Conjunction)) {
             return;
@@ -94,6 +95,14 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             sv[c.term.length]++;
         } else {
             sv[c.term.length]--;
+        }
+        //determine cur_maxlen 
+        //by finding the first complexity which exists
+        for(int i=sz-1;i>=0;i--) {
+            if(sv[i]>0) {
+                cur_maxlen=i+1;
+                break;
+            }
         }
     }
     
