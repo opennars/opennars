@@ -142,7 +142,7 @@ public class IntArrayList {
                 s += ",";
             }
         }
-        return s + "]";
+        return s + ']';
     }
 
     /**

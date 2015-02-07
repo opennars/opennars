@@ -368,7 +368,7 @@ public class PrologQueryOperator extends Operator {
             if (structTerm.getArity() == 0) {
                 String variableAsString = structTerm.getName();
 
-                return new Term("\"" + variableAsString + "\"");
+                return new Term('"' + variableAsString + '"');
             }
             else if (structTerm.getArity() == 2 && structTerm.getName().equals(".")) {
                 // convert the result array to a nars thingy

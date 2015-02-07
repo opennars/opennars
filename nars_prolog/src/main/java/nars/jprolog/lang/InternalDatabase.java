@@ -97,7 +97,7 @@ public class InternalDatabase implements Serializable {
     public void show() {
 	if (empty())
 	    System.out.println("{internal database is empty!}");
-	System.out.println("{reusable indices: " + reusableIndices.toString() + "}");
+	System.out.println("{reusable indices: " + reusableIndices.toString() + '}');
 	for (int i=0; i<=top; i++) {
 	    System.out.print("internal database[" + i + "]: ");
 	    System.out.println(buffer[i]);

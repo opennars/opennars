@@ -85,7 +85,7 @@ public class JavaIOManager extends IOFileOperations {
             fileIDE.setFileName(chooser.getSelectedFile().getName());
             if(!hasValidExtension(fileIDE,fileFilter))
             {
-                fileIDE.setFileName(fileIDE.getFileName()+"."+fileFilter.getDefaultExtension());
+                fileIDE.setFileName(fileIDE.getFileName()+ '.' +fileFilter.getDefaultExtension());
             }
             return save(fileIDE);
         } else

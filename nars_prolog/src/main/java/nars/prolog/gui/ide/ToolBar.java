@@ -390,7 +390,7 @@ public class ToolBar extends JPanel
             fileIDE=fileManager.saveFile(fileIDE);
             if (fileIDE.getFilePath() != null)
             {
-                setStatusMessage("Theory saved to " + fileIDE.getFileName() + ".");
+                setStatusMessage("Theory saved to " + fileIDE.getFileName() + '.');
                 ide.saveTheory();
             }
             else
@@ -412,7 +412,7 @@ public class ToolBar extends JPanel
             fileIDE = fileManager.saveFileAs(fileIDE);
             if (fileIDE.getFilePath() != null)
             {
-                setStatusMessage("Theory saved to " + fileIDE.getFileName() + ".");
+                setStatusMessage("Theory saved to " + fileIDE.getFileName() + '.');
                 ide.saveTheory();
             }
             else

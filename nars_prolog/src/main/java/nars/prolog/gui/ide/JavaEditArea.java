@@ -188,7 +188,7 @@ public class JavaEditArea extends JPanel implements TheoryEditArea, FileEditArea
                          * wasn't able to find it; I've tried to get the best possible result anyway
                          */
                         document.remove(breakPoint, document.getLength()-breakPoint);
-                        document.insertString(breakPoint, "\n"+padding+part2, null);
+                        document.insertString(breakPoint, '\n' +padding+part2, null);
                         inputTheory.setDocument(document);
                         inputTheory.setCaretPosition(breakPoint+padding.length()+1);
                     }

@@ -57,8 +57,8 @@ public class ExistenceException extends BuiltinException {
     public String toString() {
 	String s = "{EXISTENCE ERROR:";
 	if (argNo > 0)
-	    s += " " + goal.toString() + " - arg " + argNo + ":";
-	s += objType + " " + culprit.toString() + " does not exist";
+	    s += ' ' + goal.toString() + " - arg " + argNo + ':';
+	s += objType + ' ' + culprit.toString() + " does not exist";
 	s += "}";
 	return s;
     }

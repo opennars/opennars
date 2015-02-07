@@ -32,7 +32,7 @@ public class PRED_java_declared_method0_3 extends JavaPredicate {
     public int arity() { return 3; }
 
     public String toString() {
-	return "java_declared_method0(" + arg1 + "," + arg2 + "," + arg3 + ")";
+	return "java_declared_method0(" + arg1 + ',' + arg2 + ',' + arg3 + ')';
     }
 
     public Predicate exec(Prolog engine) {

@@ -31,7 +31,7 @@ public class PRED_hash_get_3 extends Predicate {
     public int arity() { return 3; }
 
     public String toString() {
-        return "hash_get(" + arg1 + "," + arg2 + "," + arg3 + ")";
+        return "hash_get(" + arg1 + ',' + arg2 + ',' + arg3 + ')';
     }
 
     public Predicate exec(Prolog engine) {

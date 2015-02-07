@@ -218,7 +218,7 @@ public abstract class Library implements Serializable, IPrimitives {
                             }
                             if (valid) {
                                 String rawName = name.substring(0,index);
-                                String key = rawName + "/" + arity;
+                                String key = rawName + '/' + arity;
                                 PrimitiveInfo prim = new PrimitiveInfo(type, key, this, mlist[i], arity);
                                 mapPrimitives.get(type).add(prim);
                                 //
@@ -229,7 +229,7 @@ public abstract class Library implements Serializable, IPrimitives {
                                     for (int j=0; j<opMappingCached.length; j++){
                                         String[] map = opMappingCached[j];
                                         if (map[2].equals(stringFormat[type]) && map[1].equals(rawName)){
-                                            key = map[0] + "/" + arity;
+                                            key = map[0] + '/' + arity;
                                             prim = new PrimitiveInfo(type, key, this, mlist[i], arity);
                                             mapPrimitives.get(type).add(prim);
                                         }

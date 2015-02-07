@@ -90,7 +90,7 @@ public class WAMToString {
             if (!second.isEmpty()) {
                 r += (add_comma ? "," : "") + second;
             }
-            return r + "]";
+            return r + ']';
         }
         return "none";
     }
@@ -125,11 +125,11 @@ public class WAMToString {
             case WAM.UNI_VAL:
                 return "unify_value X" + (argument - registerstart);
             case WAM.CALL:
-                return "call " + strings.get(program[c + 1]) + " " + argument;
+                return "call " + strings.get(program[c + 1]) + ' ' + argument;
             case WAM.CALL_VAR:
-                return "call X" + (program[c + 1] - registerstart) + " " + argument;
+                return "call X" + (program[c + 1] - registerstart) + ' ' + argument;
             case WAM.CALL_VAR_PERM:
-                return "call Y" + program[c + 1] + " " + argument;
+                return "call Y" + program[c + 1] + ' ' + argument;
             case WAM.EXECUTE:
                 return "execute " + strings.get(program[c + 1]);
             case WAM.EXECUTE_VAR:
@@ -205,7 +205,7 @@ public class WAMToString {
             case WAM.UNIFY_VOID:
                 return "unify_void " + argument;
             case WAM.PUT_VOID:
-                return "put_void A" + (argument - registerstart) + " " + program[c + 1];
+                return "put_void A" + (argument - registerstart) + ' ' + program[c + 1];
             case WAM.END_OF_QUERY:
                 return "end of query";
             case WAM.TRY:
@@ -215,9 +215,9 @@ public class WAMToString {
             case WAM.TRUST:
                 return "trust " + ((argument & 1) > 0 ? -(argument >>> 1) : (argument >>> 1));
             case WAM.D_TRY:
-                return "d_try " + ((argument & 1) > 0 ? -(argument >>> 1) : (argument >>> 1)) + " " + program[c + 1];
+                return "d_try " + ((argument & 1) > 0 ? -(argument >>> 1) : (argument >>> 1)) + ' ' + program[c + 1];
             case WAM.D_RETRY:
-                return "d_retry " + ((argument & 1) > 0 ? -(argument >>> 1) : (argument >>> 1)) + " " + program[c + 1];
+                return "d_retry " + ((argument & 1) > 0 ? -(argument >>> 1) : (argument >>> 1)) + ' ' + program[c + 1];
             case WAM.D_TRUST:
                 return "d_trust " + ((argument & 1) > 0 ? -(argument >>> 1) : (argument >>> 1));
             case WAM.DEEP_CUT:
@@ -413,7 +413,7 @@ public class WAMToString {
             if (source[i + 1 + c] != Integer.MIN_VALUE) {
                 int e = source[i + 1 + c];
                 do {
-                    r += "(" + (nums ? numToString(source[c + e + 2], strings, numbers) : strings.get(source[c + e + 2])) + "," + source[c + e + 3] + ")";
+                    r += '(' + (nums ? numToString(source[c + e + 2], strings, numbers) : strings.get(source[c + e + 2])) + ',' + source[c + e + 3] + ')';
                     e = source[c + e + 1];
                     collisions++;
                 } while (e != Integer.MIN_VALUE);
@@ -437,7 +437,7 @@ public class WAMToString {
             source[oldc + 1] = 0;
             source[oldc + 2] = 0;
         }
-        return r + "X";
+        return r + 'X';
     }
 
     public static int hashmapSpace(int[] source, int c, int entry_space) {
@@ -457,7 +457,7 @@ public class WAMToString {
     public static String oneLineHeap(int[] heap, int start, int end, Strings strings, Numbers nums) {
         String r = "";
         for (int i = start; i < end; i++) {
-            r += i + ":" + cellToString(heap, i, strings, nums) + " ";
+            r += i + ":" + cellToString(heap, i, strings, nums) + ' ';
         }
         return r;
     }
@@ -465,7 +465,7 @@ public class WAMToString {
     public static String registeredTerm(int[] heap, Token[] tokens, int address, Strings strings, Numbers nums) {
         int tag = WAM.cell_tag(heap[address]);
         int value = WAM.cell_value(heap[address]);
-        String regstr = (tokens[address].register1 != 0 || tokens[address].register2 != 0) ? "{R1:" + tokens[address].register1 + " R2:" + tokens[address].register2 + "}" : "";
+        String regstr = (tokens[address].register1 != 0 || tokens[address].register2 != 0) ? "{R1:" + tokens[address].register1 + " R2:" + tokens[address].register2 + '}' : "";
         if (tag == WAM.REF) {
             return regstr + (value == 0 ? "_" : "V" + value);
         } else if (tag == WAM.STR) {
@@ -504,7 +504,7 @@ public class WAMToString {
             if (!second.isEmpty()) {
                 r += (add_comma ? "," : "") + second;
             }
-            return regstr + r + "]";
+            return regstr + r + ']';
         }
         return "none";
     }
@@ -536,7 +536,7 @@ public class WAMToString {
                 r += "null";
                 break;
         }
-        return r + ">";
+        return r + '>';
     }
 
     public static int deref(int address, int[] storage) {

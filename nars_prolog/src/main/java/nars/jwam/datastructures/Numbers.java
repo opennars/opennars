@@ -108,6 +108,6 @@ public class Numbers {
     }
 
     public String numToString(int num) {
-        return "" + getDouble(num);
+        return String.valueOf(getDouble(num));
     }
 }

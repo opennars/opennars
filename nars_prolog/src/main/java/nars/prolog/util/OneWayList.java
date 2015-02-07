@@ -80,16 +80,16 @@ public class OneWayList<E> {
         String elem;
         if(head==null) elem = "null";
             else elem = head.toString();
-        if(tail==null) return "["+elem+"]";
-        return "["+tail.toString(elem)+"]";
+        if(tail==null) return '[' +elem+ ']';
+        return '[' +tail.toString(elem)+ ']';
     }
     
     private String toString(String elems){
         String elem;
         if(head==null) elem = "null";
             else elem = head.toString();
-        if(tail==null) return elems+","+elem;
-        return elems+","+tail.toString(elem);
+        if(tail==null) return elems+ ',' +elem;
+        return elems+ ',' +tail.toString(elem);
     }
     
 }

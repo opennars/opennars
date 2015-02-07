@@ -172,14 +172,14 @@ public class Convert {
             return o.toString();
         } else if (o instanceof Predicate) {
             Predicate<Object> p = (Predicate<Object>) o;
-            String r = p.get(0).toString() + "(";
+            String r = p.get(0).toString() + '(';
             for (int i = 1; i < p.size(); i++) {
                 r += javaConversionToString(p.get(i));
                 if (i < p.size() - 1) {
                     r += ",";
                 }
             }
-            return r + ")";
+            return r + ')';
         } else if (o instanceof List) {
             String r = "[";
             ArrayList<Object> p = (ArrayList) o;
@@ -189,7 +189,7 @@ public class Convert {
                     r += ",";
                 }
             }
-            return r + "]";
+            return r + ']';
         }
         return "error: type not recognized";
     }

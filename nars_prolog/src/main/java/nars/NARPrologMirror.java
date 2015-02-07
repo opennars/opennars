@@ -483,7 +483,7 @@ public class NARPrologMirror extends AbstractMirror {
             //unhandled type of compound term, store as an atomic string            
             //NOT ready yet
             if (allTerms) {
-                return new Struct("_" + pescape(term.name().toString()));
+                return new Struct('_' + pescape(term.name().toString()));
             }
         }
         
@@ -491,17 +491,17 @@ public class NARPrologMirror extends AbstractMirror {
     }
     private Term getVar(Var v) {
         //assume it is a dependent variable
-        return new Variable("#" + v.getName());
+        return new Variable('#' + v.getName());
     }
 
 
     private Var getVariable(Variable v) {
         if (v.hasVarIndep())
-            return new Var("I" + pescape(v.name().toString()));
+            return new Var('I' + pescape(v.name().toString()));
         if (v.hasVarQuery())
             return new Var("Q" + nextQueryID++);
         if (v.hasVarDep()) //check this
-            return new Var("D" + (variableContext) + "_" + pescape(v.name().toString()));
+            return new Var("D" + (variableContext) + '_' + pescape(v.name().toString()));
         return null;
     }
 

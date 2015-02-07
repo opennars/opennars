@@ -15,7 +15,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
 
 
     static final String incipit =
-        "tuProlog system - release " + Prolog.getVersion() + "\n";
+        "tuProlog system - release " + Prolog.getVersion() + '\n';
        
     public CUIConsole(String[] args){
 
@@ -60,7 +60,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
 
     public void goalRequest(){
         String goal="";
-        while (goal.equals("")){
+        while (goal.isEmpty()){
             System.out.print("\n?- ");
             try {
                 goal=stdin.readLine();
@@ -92,7 +92,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
             } else
                 if (!engine.hasOpenAlternatives()) {
                     String binds = info.toString();
-                    if (binds.equals("")) {
+                    if (binds.isEmpty()) {
                         System.out.println("yes.");
                     } else {
                         System.out.println(solveInfoToString(info) + "\nyes.");
@@ -113,7 +113,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
         try {
             for (Var v: result.getBindingVars()) {
                 if ( !v.isAnonymous() && v.isBound() && (!(v.getTerm() instanceof Var) || (!((Var) (v.getTerm())).getName().startsWith("_")))) {
-                    s += v.getName() + " / " + v.getTerm() + "\n";
+                    s += v.getName() + " / " + v.getTerm() + '\n';
                 }
             }
             /*Castagna 06/2011*/
@@ -130,7 +130,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
         try {
             while (true){
                 choice = stdin.readLine();
-                if (!choice.equals(";") && !choice.equals(""))
+                if (!choice.equals(";") && !choice.isEmpty())
                     System.out.println("\nAction ( ';' for more choices, otherwise <return> ) ");
                 else
                     break;

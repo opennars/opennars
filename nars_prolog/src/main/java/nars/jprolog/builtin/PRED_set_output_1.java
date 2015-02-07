@@ -29,7 +29,7 @@ public class PRED_set_output_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "set_output(" + arg1 + ")";
+        return "set_output(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

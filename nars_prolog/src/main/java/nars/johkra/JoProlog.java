@@ -46,7 +46,7 @@ public final class JoProlog {
             String line = in.readLine();
             while (line != null) {
                 line = line.replaceAll("#.*", "").replace(" is ", "*is*").replace(" ", "");
-                if (line.equals("")) {
+                if (line.isEmpty()) {
                     break;
                 }
                 char last = line.charAt(line.length() - 1);
@@ -93,7 +93,7 @@ public final class JoProlog {
 
     private static Boolean unify(Term src, HashMap<String, Term> srcEnv, Term dest, HashMap<String, Term> destEnv) throws ParseException {
         if (trace) {
-            System.out.println(indent + "Unify " + src + " " + srcEnv + " to " + dest + " " + destEnv);
+            System.out.println(indent + "Unify " + src + ' ' + srcEnv + " to " + dest + ' ' + destEnv);
         }
         indent += "  ";
         if (src.getPred().equals("_") || dest.getPred().equals("_")) {
@@ -133,7 +133,7 @@ public final class JoProlog {
     private static Boolean sts(Boolean ok, String why) {
         indent = indent.substring(2);
         if (trace) {
-            System.out.println(indent + (ok ? "Yes" : "No") + " " + why);
+            System.out.println(indent + (ok ? "Yes" : "No") + ' ' + why);
         }
         return ok;
     }

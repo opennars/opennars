@@ -29,7 +29,7 @@ public class PRED_$get_level_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "$get_level(" + arg1 + ")";
+        return "$get_level(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

@@ -30,7 +30,7 @@ public class PRED_$cut_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "$cut(" + arg1 + ")";
+        return "$cut(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

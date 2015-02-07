@@ -170,11 +170,11 @@ public class PrologError extends Throwable {
 			if(errorInformation[i] != -1)
 				if(firstSignificativeInformation)
 				{
-					descriptionError += " at " + nameInformation[i] + "#" + errorInformation[i];
+					descriptionError += " at " + nameInformation[i] + '#' + errorInformation[i];
 					firstSignificativeInformation = false;
 				}
 				else
-					descriptionError += ", " + nameInformation[i] + "#" + errorInformation[i];	
+					descriptionError += ", " + nameInformation[i] + '#' + errorInformation[i];
 		}
 		descriptionError += ": " + syntaxErrorDescription;
 

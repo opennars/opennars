@@ -31,7 +31,7 @@ class PRED_$hash_addz_3 extends Predicate {
     public int arity() { return 3; }
 
     public String toString() {
-        return "$hash_addz(" + arg1 + "," + arg2 + "," + arg3 + ")";
+        return "$hash_addz(" + arg1 + ',' + arg2 + ',' + arg3 + ')';
     }
 
     public Predicate exec(Prolog engine) {

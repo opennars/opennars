@@ -126,7 +126,7 @@ public class StructureTerm extends Term {
 
     public String toQuotedString() {
 	String delim = "";
-	String s = functor.toQuotedString() + "(";
+	String s = functor.toQuotedString() + '(';
 	for (int i=0; i<arity; i++) {
 	    s += delim + args[i].toQuotedString();
 	    delim = ",";
@@ -169,7 +169,7 @@ public class StructureTerm extends Term {
     /** Returns a string representation of this <code>StructureTerm</code>. */
     public String toString() {
 	String delim = "";
-	String s = functor.toString() + "(";
+	String s = functor.toString() + '(';
 	for (int i=0; i<arity; i++) {
 	    s += delim + args[i].toString();
 	    delim = ",";

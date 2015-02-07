@@ -44,6 +44,6 @@ public class V2d implements java.io.Serializable {
     }
 
     public String toString(){
-        return "V2d("+x+","+y+")";
+        return "V2d("+x+ ',' +y+ ')';
     }
 }

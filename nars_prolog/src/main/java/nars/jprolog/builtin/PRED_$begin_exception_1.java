@@ -25,7 +25,7 @@ class PRED_$begin_exception_1 extends BlockPredicate {
 
     public int arity() { return 1; }
 
-    public String toString() { return "$begin_exception(" + arg1 + ")"; }
+    public String toString() { return "$begin_exception(" + arg1 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

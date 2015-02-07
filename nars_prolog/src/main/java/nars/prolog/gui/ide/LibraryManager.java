@@ -97,7 +97,7 @@ public final class LibraryManager
      * @throws InvalidLibraryException if the library is not a valid tuProlog library.
      */
     public void addLibrary(String libraryClassname) throws ClassNotFoundException, InvalidLibraryException {
-        if (libraryClassname.equals(""))
+        if (libraryClassname.isEmpty())
             throw new ClassNotFoundException();
         /** 
          * check for classpath without uppercase at the first char of the last word
@@ -136,7 +136,7 @@ public final class LibraryManager
 	     * @throws InvalidLibraryException if the library is not a valid tuProlog library.
 	     */
 		public void addLibrary(String libraryClassname, File file) throws ClassNotFoundException, InvalidLibraryException {
-	        if (libraryClassname.equals(""))
+	        if (libraryClassname.isEmpty())
 	            throw new ClassNotFoundException();
 	        /** 
 	         * check for classpath without uppercase at the first char of the last word
@@ -216,7 +216,7 @@ public final class LibraryManager
         Object[] array = getLibraries();
         for (int i=0;i<array.length;i++)
         {
-            result=result+array[i]+"\n";
+            result=result+array[i]+ '\n';
         }
         return result;
     }

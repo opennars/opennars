@@ -29,7 +29,7 @@ public class PRED_hash_contains_key_2 extends Predicate {
     public int arity() { return 2; }
 
     public String toString() {
-        return "hash_contains_key(" + arg1 + "," + arg2 + ")";
+        return "hash_contains_key(" + arg1 + ',' + arg2 + ')';
     }
 
     public Predicate exec(Prolog engine) {

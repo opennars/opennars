@@ -30,7 +30,7 @@ class PRED_$get_stream_manager_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "$get_stream_manager(" + arg1 + ")";
+        return "$get_stream_manager(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

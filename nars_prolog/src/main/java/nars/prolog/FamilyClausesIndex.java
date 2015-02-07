@@ -1,6 +1,12 @@
 package nars.prolog;
 
-import java.util.LinkedList;
+
+import com.google.common.collect.*;
+import nars.util.data.CuckooMap;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <code>FamilyClausesIndex</code> enables family clauses indexing
@@ -9,35 +15,39 @@ import java.util.LinkedList;
  * @author Paolo Contessi
  * @since 2.2
  */
-class FamilyClausesIndex<K extends Comparable<? super K>>
-        extends RBTree<K, LinkedList<ClauseInfo>> {
+class FamilyClausesIndex<K extends Comparable<? super K>> {
+    private final ListMultimap<K, ClauseInfo> data;
 
-    private LinkedList<ClauseInfo> varsClauses;
+    final List<ClauseInfo> preShared = new ArrayList();
 
-    public FamilyClausesIndex(){
+    //extends RBTree<K, List<ClauseInfo>> {
+        //extends HashMap<K, List<ClauseInfo>> {
+
+
+        //TreeMultimap<K, ClauseInfo> = MultimapBuilder.
+
+    //private List<ClauseInfo> varsClauses;
+
+    public FamilyClausesIndex() {
         super();
-        varsClauses = new LinkedList<>();
+        data = MultimapBuilder.treeKeys().arrayListValues().build();
+
+        //varsClauses = new ArrayList<>();
     }
 
-    private Node<K,LinkedList<ClauseInfo>> createNewNode(K key, ClauseInfo clause, boolean first){
-        LinkedList<ClauseInfo> list = new LinkedList<>(varsClauses);
+//    private Node<K, List<ClauseInfo>> createNewNode(K key, ClauseInfo clause, boolean first) {
+//        List<ClauseInfo> list = new ArrayList<>(varsClauses);
+//
+//        if (first) {
+//            list.add(0, clause);
+//        } else {
+//            list.add(clause);
+//        }
+//
+//        return new Node<>(key, list, Color.RED, null, null);
+//    }
 
-        if(first){
-            list.addFirst(clause);
-        } else {
-            list.addLast(clause);
-        }
-        
-        return new Node<>(key, list, Color.RED, null, null);
-    }
 
-    /**
-     * @deprecated 
-     */
-    @Override
-    public void insert(K key, LinkedList<ClauseInfo> value){
-        super.insert(key, value);
-    }
 
     /*
      * Voglio memorizzare un riferimento alla clausola, rispettando l'ordine
@@ -46,36 +56,21 @@ class FamilyClausesIndex<K extends Comparable<? super K>>
      * Se l'indice non ha nodi?
      * Se aggiungo un nuovo nodo
      */
-    public void insertAsShared(ClauseInfo clause, boolean first){
-        if(first){
-            varsClauses.addFirst(clause);
-        } else {
-            varsClauses.addLast(clause);
-        }
+    public void insertAsShared(ClauseInfo clause, boolean first) {
 
-        //Aggiorna tutti i nodi che ci sono
-        if(root != null){
-            LinkedList<Node<K, LinkedList<ClauseInfo>>> buf = new LinkedList<>();
-            buf.add(root);
+        if (data.isEmpty())
+            preShared.add(clause);
 
-            while(buf.size() > 0){
-                Node<K, LinkedList<ClauseInfo>> n = buf.remove();
-                
-                if(first){
-                    n.value.addFirst(clause);
-                } else {
-                    n.value.addLast(clause);
-                }
-
-                if(n.left != null){
-                    buf.addLast(n.left);
-                }
-
-                if(n.right != null){
-                    buf.addLast(n.right);
-                }
+        List<ClauseInfo> varsClauses;
+        for (K k : data.keySet()) {
+            varsClauses = data.get(k);
+            if (first) {
+                varsClauses.add(0, clause);
+            } else {
+                varsClauses.add(clause);
             }
         }
+
     }
 
     /**
@@ -84,101 +79,64 @@ class FamilyClausesIndex<K extends Comparable<? super K>>
      * <code>first</code> parameter is used to decide if it is the first or
      * the last clause to be retrieved.
      *
-     * @param key       The key of the index
-     * @param clause    The value to be binded to the given key
-     * @param first     If the clause must be binded as first or last element
+     * @param key    The key of the index
+     * @param clause The value to be binded to the given key
+     * @param first  If the clause must be binded as first or last element
      */
-    public void insert(K key, ClauseInfo clause, boolean first){
-        Node<K, LinkedList<ClauseInfo>> insertedNode = null;
-        if (root == null) {
-            insertedNode = root = createNewNode(key, clause, first);
-        } else {
-            Node<K,LinkedList<ClauseInfo>> n = root;
-            while (true) {
-                int compResult = key.compareTo(n.key);
-                if (compResult == 0) {
-                    if(first){
-                        n.value.addFirst(clause);
-                    } else {
-                        n.value.addLast(clause);
-                    }
-                    return;
-                } else if (compResult < 0) {
-                    if (n.left == null) {
-                        insertedNode = n.left = createNewNode(key, clause,first);
-                        break;
-                    } else {
-                        n = n.left;
-                    }
-                } else {
-                    assert compResult > 0;
-                    if (n.right == null) {
-                        insertedNode = n.right = createNewNode(key, clause,first);
-                        break;
-                    } else {
-                        n = n.right;
-                    }
-                }
+    public void insert(K key, ClauseInfo clause, boolean first) {
+        if (data.containsKey(key)) {
+            List<ClauseInfo> l = data.get(key);
+            if (first) {
+                l.add(0, clause);
+            } else {
+                l.add(clause);
             }
-            
-            insertedNode.parent = n;
         }
-        insertCase1(insertedNode);
-        verifyProperties();
+        else {
+            data.put(key, clause);
+
+        }
+
+        if (!preShared.isEmpty()) {
+            for (ClauseInfo i : preShared)
+                insertAsShared(i, true); //to add prior to the one just added above
+            preShared.clear();
+        }
     }
 
     /**
      * Removes all clauses related to the given key
      *
-     * @param key   The key
+     * @param key The key
      */
-    public void remove(K key,ClauseInfo clause ){
-        super.delete(key,clause);
+    public void remove(K key, ClauseInfo clause) {
+        data.remove(key, clause);
     }
 
-    public void removeShared(ClauseInfo clause){
-        if(varsClauses.remove(clause)){
-            if(root != null){
-                if(root != null){
-            LinkedList<Node<K, LinkedList<ClauseInfo>>> buf = new LinkedList<>();
-            buf.add(root);
-
-            while(buf.size() > 0){
-                Node<K, LinkedList<ClauseInfo>> n = buf.remove();
-                
-                n.value.remove(clause);
-
-                if(n.left != null){
-                    buf.addLast(n.left);
-                }
-
-                if(n.right != null){
-                    buf.addLast(n.right);
-                }
+    public void removeShared(ClauseInfo clause) {
+        if (preShared.isEmpty()) {
+            for (K k : data.keySet()) {
+                data.get(k).remove(clause);
             }
         }
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid clause: not registered in this index");
+        else {
+            preShared.remove(clause);
         }
+
     }
 
     /**
      * Retrieves all the clauses related to the key
      *
-     * @param key   The key
-     * @return      The related clauses
+     * @param key The key
+     * @return The related clauses
      */
-    public LinkedList<ClauseInfo> get(K key){
-        LinkedList<ClauseInfo> res = null;
-        if(root != null){
-            res = super.lookup(key);
-        } 
+    public List<ClauseInfo> get(K key) {
+        List<ClauseInfo> n = data.get(key);
+        if (n != null && !n.isEmpty())
+            return n;
 
-        if(res == null){
-            return varsClauses;
-        }
 
-        return res;
+        return preShared;
     }
 }

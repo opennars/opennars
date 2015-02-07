@@ -27,7 +27,7 @@ class PRED_$print_stack_trace_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "$print_stack_trace(" + arg1 + ")";
+        return "$print_stack_trace(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

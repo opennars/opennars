@@ -806,7 +806,7 @@ public class Parser implements ParserConstants {
                     jj_consume_token(-1);
                     throw new ParseException();
             }
-            arguments.add(t.image + (t2 == null ? "" : ("/" + t2.image)));
+            arguments.add(t.image + (t2 == null ? "" : ('/' + t2.image)));
             t2 = null;
         }
         jj_consume_token(DOT);

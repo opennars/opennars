@@ -29,7 +29,7 @@ public class PRED_flush_output_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "flush_output(" + arg1 + ")";
+        return "flush_output(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

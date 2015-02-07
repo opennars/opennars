@@ -42,8 +42,8 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
 
     private static class IdentifiedTerm {
 
-        private int priority;
-        private Term result;
+        private final int priority;
+        private final Term result;
 
         public IdentifiedTerm(int priority, Term result) {
             this.priority = priority;
@@ -359,7 +359,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
                 Token t = tokenizer.readToken();
                 if (t.isNumber()) /*Michele Castagna 06/2011*/ //return new IdentifiedTerm(0, Parser.createNumber("-" + t.seq));
                 {
-                    return identifyTerm(0, Parser.createNumber("-" + t.seq), tokenStart);
+                    return identifyTerm(0, Parser.createNumber('-' + t.seq), tokenStart);
                 } /**/ else {
                     tokenizer.unreadToken(t);
                 }
@@ -429,6 +429,22 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
          */
         int tempStart = tokenizer.tokenStart();
 
+        //TODO use switch
+//        switch(t1.getType()) {
+//            case Tokenizer.INTEGER:
+//                break;
+//            case Tokenizer.FLOAT:
+//                break;
+//            case Tokenizer.VARIABLE:
+//                break;
+//            case Tokenizer.ATOM:
+//            case Tokenizer.SQ_SEQUENCE:
+//            case Tokenizer.DQ_SEQUENCE:
+//
+//
+//                break;
+//            }
+//        }
         if (t1.isType(Tokenizer.INTEGER)) {
             Term i = Parser.parseInteger(t1.seq);
             map(i, tokenizer.tokenStart());
@@ -539,7 +555,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
         }
         /*Castagna 06/2011*/
         //throw new InvalidTermException("The following token could not be identified: "+t1.seq);
-        throw new InvalidTermException("Unexpected token '" + t1.seq + "'",
+        throw new InvalidTermException("Unexpected token '" + t1.seq + '\'',
                 tokenizer.offsetToRowColumn(getCurrentOffset())[0],
                 tokenizer.offsetToRowColumn(getCurrentOffset())[1] - 1);
         /**/
@@ -572,17 +588,18 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     private LinkedList<Term> expr0_arglist() throws InvalidTermException, IOException {
         Term head = expr(true);
         Token t = tokenizer.readToken();
-        if (",".equals(t.seq)) {
-            LinkedList<Term> l = expr0_arglist();
-            l.addFirst(head);
-            return l;
+        switch (t.seq) {
+            case ",":
+                LinkedList<Term> l = expr0_arglist();
+                l.addFirst(head);
+                return l;
+            case ")":
+                tokenizer.unreadToken(t);
+                LinkedList<Term> x = new LinkedList<>();
+                x.add(head);
+                return x;
         }
-        if (")".equals(t.seq)) {
-            tokenizer.unreadToken(t);
-            LinkedList<Term> l = new LinkedList<>();
-            l.add(head);
-            return l;
-        }
+
         /*Castagna 06/2011*/
 		//throw new InvalidTermException("The argument: " + head + " is not followed by either a ',' or ')'.\nline: " + tokenizer.lineno());
 		/*Castagna 06/2011*/

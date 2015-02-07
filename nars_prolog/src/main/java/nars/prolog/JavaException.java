@@ -15,7 +15,7 @@ public class JavaException extends Throwable {
 
     @Override
     public String toString() {
-        return "JavaException[" + e + "]";
+        return "JavaException[" + e + ']';
     }
     
     

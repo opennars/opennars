@@ -1,10 +1,7 @@
 package nars.johkra;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: Johannes Krampf <johkra@gmail.com>
@@ -55,7 +52,7 @@ public final class Term {
         } else if (s.charAt(s.length() - 1) == ')') {
             List<String> flds = Util.split(s, "(", false);
             if (flds.size() != 2) {
-                throw new ParseException("Syntax error in term: '" + s + "'", -1);
+                throw new ParseException("Syntax error in term: '" + s + '\'', -1);
             }
             this.pred = flds.get(0);
             this.args = new ArrayList<>();
@@ -96,19 +93,19 @@ public final class Term {
             }
             Term nxt = this.getArgs().get(1);
             if (nxt.getPred().equals(".") && (nxt.getArgs().size() == 0)) {
-                return "[" + this.getArgs().get(0) + "]";
+                return "[" + this.getArgs().get(0) + ']';
             } else if (nxt.getPred().equals(".")) {
-                return "[" + this.getArgs().get(0) + "," + nxt.toString().substring(1, nxt.toString().length() - 1) + "]";
+                return "[" + this.getArgs().get(0) + ',' + nxt.toString().substring(1, nxt.toString().length() - 1) + ']';
             } else {
-                return "[" + this.getArgs().get(0) + "|" + nxt + "]";
+                return "[" + this.getArgs().get(0) + '|' + nxt + ']';
             }
         } else if (this.getArgs().size() > 0) {
             String argsString = "";
             if (args != null) {
-                argsString = Arrays.asList(args).toString();
+                argsString = Collections.singletonList(args).toString();
                 argsString = argsString.substring(1, argsString.length() - 1);
             }
-            return "<" + this.getPred() + "(" + argsString + ")>";
+            return '<' + this.getPred() + '(' + argsString + ")>";
         }
         return this.getPred();
     }

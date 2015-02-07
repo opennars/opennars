@@ -134,9 +134,9 @@ public class ClauseStore {
     
     
     public String toString() {
-        return "clauses: "+clauses+"\n"+
-        "goal: "+goal+"\n"+
-        "vars: "+vars+"\n";
+        return "clauses: "+clauses+ '\n' +
+        "goal: "+goal+ '\n' +
+        "vars: "+vars+ '\n';
     }
     
     

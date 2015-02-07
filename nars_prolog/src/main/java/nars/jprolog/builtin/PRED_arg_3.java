@@ -29,7 +29,7 @@ public class PRED_arg_3 extends Predicate {
 
     public int arity() { return 3 ; }
 
-    public String toString() { return "arg(" + arg1 + "," + arg2 + "," + arg3 + ")"; }
+    public String toString() { return "arg(" + arg1 + ',' + arg2 + ',' + arg3 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

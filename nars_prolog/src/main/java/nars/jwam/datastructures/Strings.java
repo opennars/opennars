@@ -108,6 +108,6 @@ public class Strings {
 
     @Override
     public String toString() {
-        return "" + intToString + " " + stringToInt;
+        return intToString + " " + stringToInt;
     }
 }

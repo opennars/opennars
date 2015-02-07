@@ -143,7 +143,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
         //------------------------------------------
         //log.debug("Identification "+t);    
         PrimitiveInfo prim = null;
-        String key = name + "/" + arity;
+        String key = name + '/' + arity;
         
         switch (typeOfPrimitive) {
         case PrimitiveInfo.DIRECTIVE :
@@ -165,7 +165,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
     
     Library getLibraryDirective(String name, int nArgs) {
         try {
-            return (Library) directiveHashMap.get(name + "/" + nArgs).getSource();
+            return (Library) directiveHashMap.get(name + '/' + nArgs).getSource();
         } catch(NullPointerException e) {
             return null;
         }
@@ -173,7 +173,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
     
     Library getLibraryPredicate(String name, int nArgs) {
         try {
-            return (Library) predicateHashMap.get(name + "/" + nArgs).getSource();
+            return (Library) predicateHashMap.get(name + '/' + nArgs).getSource();
         } catch(NullPointerException e) {
             return null;
         }
@@ -181,7 +181,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
     
     Library getLibraryFunctor(String name, int nArgs) {
         try {
-            return (Library) functorHashMap.get(name + "/" + nArgs).getSource();
+            return (Library) functorHashMap.get(name + '/' + nArgs).getSource();
         } catch(NullPointerException e) {
             return null;
         }
@@ -189,7 +189,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
     
     /*Castagna 06/2011*/
     public boolean containsTerm(String name, int nArgs) {
-		return (functorHashMap.containsKey(name + "/" + nArgs) || predicateHashMap.containsKey(name + "/" + nArgs));
+		return (functorHashMap.containsKey(name + '/' + nArgs) || predicateHashMap.containsKey(name + '/' + nArgs));
 	}
     /**/
 }

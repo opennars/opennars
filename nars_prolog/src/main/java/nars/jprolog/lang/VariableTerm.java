@@ -46,7 +46,7 @@ public class VariableTerm extends Term implements Undoable {
     public long timeStamp() { return timeStamp; }
 
     /** Returns a string representation of this object.*/
-    protected String name() { return "_" + Integer.toHexString(hashCode()).toUpperCase(); }
+    protected String name() { return '_' + Integer.toHexString(hashCode()).toUpperCase(); }
 
     /* Term */
     /** 

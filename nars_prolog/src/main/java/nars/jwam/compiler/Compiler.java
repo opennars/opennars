@@ -87,7 +87,7 @@ public class Compiler {
      */
     public int[] compile_query(String str) throws ParseException {
         String s = str.startsWith("?") ? str : ("? " + str);
-        s = s.endsWith(".") ? s : (s + ".");
+        s = s.endsWith(".") ? s : (s + '.');
         parser.reset(new StringReader(s));
         
         // Convert to heap

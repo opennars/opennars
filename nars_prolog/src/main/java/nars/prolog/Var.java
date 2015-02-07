@@ -60,7 +60,7 @@ public class Var extends Term {
         id = -1; //no execCtx owners
         if (n.equals(ANY)) {
             name = null;
-            completeName = new StringBuilder();
+            completeName = new StringBuilder(0);
         } else if (Character.isUpperCase(n.charAt(0))
                 || (n.startsWith(ANY))) {
             name = n;
@@ -77,7 +77,7 @@ public class Var extends Term {
      */
     public Var() {
         name = null;
-        completeName = new StringBuilder();
+        completeName = new StringBuilder(0);
         link = null;
         id = ORIGINAL;
         timestamp = 0;
@@ -93,7 +93,7 @@ public class Var extends Term {
      */
     private Var(String n, int id, int alias, long time) {
         name = n;
-        completeName = new StringBuilder();
+        completeName = new StringBuilder(0);
         timestamp = time;
         link = null;
         if (id < 0) {
@@ -125,7 +125,7 @@ public class Var extends Term {
         } else if (id == PROGRESSIVE) { //completeName = "_"+count;
             completeName = completeName
                     .delete(0, completeName.length())
-                    .append("_").append(count);
+                    .append('_').append(count);
         }
     }
 
@@ -518,7 +518,7 @@ public class Var extends Term {
             if (tt == this) {
                 return completeName.toString();
             } else {
-                return (completeName.toString() + " / " + tt.toString());
+                return (name + " / " + tt.toString());
             }
         } else {
             if (tt == this) {

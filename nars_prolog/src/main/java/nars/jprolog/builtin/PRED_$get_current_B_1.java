@@ -27,7 +27,7 @@ class PRED_$get_current_B_1 extends Predicate {
 
     public int arity() { return 1; }
 
-    public String toString() { return "$get_current_B(" + arg1 + ")"; }
+    public String toString() { return "$get_current_B(" + arg1 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

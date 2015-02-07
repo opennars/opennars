@@ -43,7 +43,7 @@ public class PrologMain {
         String goal;
         Class clazz;
         try {
-            System.err.println("\n" + VERSION);
+            System.err.println('\n' + VERSION);
             System.err.println(COPYRIGHT);
             if (argv.length != 1) {
                 usage();

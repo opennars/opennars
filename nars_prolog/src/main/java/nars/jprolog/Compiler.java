@@ -194,7 +194,7 @@ public class Compiler {
 
     public static void main(String argv[]) {
 	try {
-	    System.err.println("\n" + VERSION); 
+	    System.err.println('\n' + VERSION);
 	    System.err.println(COPYRIGHT);
 	    if (argv.length != 1) {
 		usage();

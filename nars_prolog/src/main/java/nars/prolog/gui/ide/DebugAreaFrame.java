@@ -192,7 +192,7 @@ public class DebugAreaFrame extends GenericFrame implements SpyListener, Warning
 
     public void onWarning(WarningEvent event)
     {
-        warningPane.setText(warningPane.getText()+event.getMsg()+"\n");
+        warningPane.setText(warningPane.getText()+event.getMsg()+ '\n');
         warningPane.setCaretPosition(warningPane.getDocument().getLength()-1);
     }
 

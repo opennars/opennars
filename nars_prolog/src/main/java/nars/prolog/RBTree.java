@@ -447,7 +447,7 @@ public class RBTree<K extends Comparable<? super K>,V>
         if (n.color == Color.BLACK)
             System.out.println(n.key);
         else
-            System.out.println("<" + n.key + ">");
+            System.out.println("<" + n.key + '>');
         if (n.left != null) {
             printHelper(n.left, indent + INDENT_STEP);
         }

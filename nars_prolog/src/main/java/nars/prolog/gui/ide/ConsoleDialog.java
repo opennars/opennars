@@ -303,14 +303,14 @@ public class ConsoleDialog
             {
                 model = tableSolve.getModel();
                 for(int i=0;i<tableSolve.getColumnCount();i++)
-                    fileContent += tableSolve.getColumnName(i) +"\t";
+                    fileContent += tableSolve.getColumnName(i) + '\t';
             }
 
             if (tp.getSelectedIndex() == ALL_BINDINGS_INDEX)
             {
                 model = tableSolveAll.getModel();
                 for(int i=0;i<tableSolveAll.getColumnCount();i++)
-                    fileContent += tableSolveAll.getColumnName(i) +"\t";
+                    fileContent += tableSolveAll.getColumnName(i) + '\t';
             }
             fileContent += "\n";
 
@@ -327,7 +327,7 @@ public class ConsoleDialog
                     fileIDE=fileManager.saveFile(fileIDE);
                 if (fileIDE.getFilePath() != null)
                 {
-                    setStatusMessage("Query solution saved to " + fileIDE.getFileName() + ".");
+                    setStatusMessage("Query solution saved to " + fileIDE.getFileName() + '.');
                 }
                 else
                     setStatusMessage("Ready.");
@@ -450,7 +450,7 @@ public class ConsoleDialog
         catch (Exception ex)
         {
             ex.printStackTrace();
-            setStatusMessage("Internal error. " + ex.getMessage() + " " + ex.getLocalizedMessage());
+            setStatusMessage("Internal error. " + ex.getMessage() + ' ' + ex.getLocalizedMessage());
         }
     }
     private void showAllSolutions(QueryEvent[] querySolutions,ArrayList<String> querySolutionsString)

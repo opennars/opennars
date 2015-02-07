@@ -32,7 +32,7 @@ public class PRED_skip_2 extends Predicate {
     public int arity() { return 2; }
 
     public String toString() {
-        return "skip(" + arg1 + "," + arg2 + ")";
+        return "skip(" + arg1 + ',' + arg2 + ')';
     }
 
     public Predicate exec(Prolog engine) {

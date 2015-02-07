@@ -90,6 +90,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
 
     //used in the double lookahead check that . following ints is a fraction marker or end marker (pushback() only works on one level)
     private PushBack pushBack2 = null;
+    final StringBuilder symbols = new StringBuilder();
 
     public Tokenizer(String text) {
         this(new StringReader(text));
@@ -383,7 +384,8 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
         	// the symbols are parsed individually by the super.nextToken(), so accumulate symbollist
         	// the symbols are parsed individually by the tokenConsume(), so accumulate symbollist
         	/**/
-            StringBuilder symbols = new StringBuilder();
+
+            symbols.setLength(0);
             int typeb = typea;
             // String svalb = null;
             while (Arrays.binarySearch(Tokenizer.GRAPHIC_CHARS, (char) typeb) >= 0) {
@@ -422,11 +424,11 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
                 // 1.a. complex integers
                 if (svala.startsWith("0")) {
                     if (svala.indexOf('b') == 1)
-                        return new Token("" + java.lang.Long.parseLong(svala.substring(2), 2), Tokenizer.INTEGER); // try binary
+                        return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 2)), Tokenizer.INTEGER); // try binary
                     if (svala.indexOf('o') == 1)
-                        return new Token("" + java.lang.Long.parseLong(svala.substring(2), 8), Tokenizer.INTEGER); // try octal
+                        return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 8)), Tokenizer.INTEGER); // try octal
                     if (svala.indexOf('x') == 1)
-                        return new Token("" + java.lang.Long.parseLong(svala.substring(2), 16), Tokenizer.INTEGER); // try hex
+                        return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 16)), Tokenizer.INTEGER); // try hex
                 }
 
                 // lookahead 1
@@ -442,7 +444,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
                 	//pushBack(); // lookahead 0
                 	tokenPushBack(); // lookahead 0
                 	/**/
-                    return new Token("" + java.lang.Long.parseLong(svala), Tokenizer.INTEGER);
+                    return new Token(String.valueOf(java.lang.Long.parseLong(svala)), Tokenizer.INTEGER);
                 }
 
                 // 1.c character code constant
@@ -454,7 +456,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
                     String svalc = sval;
                     int intVal;
                     if ((intVal = isCharacterCodeConstantToken(typec, svalc)) != -1)
-                        return new Token("" + intVal, Tokenizer.INTEGER);
+                        return new Token(String.valueOf(intVal), Tokenizer.INTEGER);
 
                     // this is an invalid character code constant int
                     /*Castagna 06/2011*/
@@ -491,9 +493,9 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
                 }
 
                 // 2.d checking for exponent
-                int exponent = svalc.indexOf("E");
+                int exponent = svalc.indexOf('E');
                 if (exponent == -1)
-                    exponent = svalc.indexOf("e");
+                    exponent = svalc.indexOf('e');
 
                 if (exponent >= 1) {                                  // the float must have a valid exponent
                     if (exponent == svalc.length() - 1) {             // the exponent must be signed exponent
@@ -511,14 +513,14 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
                                 // verify the remaining parts of the float and return
                                 java.lang.Long.parseLong(svalc.substring(0, exponent));
                                 java.lang.Integer.parseInt(svalc2);
-                                return new Token(svala + "." + svalc + (char) typeb2 + svalc2, Tokenizer.FLOAT);
+                                return new Token(svala + '.' + svalc + (char) typeb2 + svalc2, Tokenizer.FLOAT);
                             }
                         }
                     }
                 }
                 // 2.e verify lastly that ordinary floats and unsigned exponent floats are Java legal and return them
-                java.lang.Double.parseDouble(svala + "." + svalc);
-                return new Token(svala + "." + svalc, Tokenizer.FLOAT);
+                java.lang.Double.parseDouble(svala + '.' + svalc);
+                return new Token(svala + '.' + svalc, Tokenizer.FLOAT);
 
             } catch (NumberFormatException e) {
                 // TODO return more info on what was wrong with the number given
@@ -528,7 +530,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
             	/**/
             }
         }
-        throw new InvalidTermException("Unknown Unicode character: " + typea + "  (" + svala + ")");
+        throw new InvalidTermException("Unknown Unicode character: " + typea + "  (" + svala + ')');
     }
 
     /*Castagna 06/2011*/
@@ -642,7 +644,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
         return -1;
     }
 
-    private static boolean isWhite(int type) {
+    private static boolean isWhite(final int type) {
         return type == ' ' || type == '\r' || type == '\n' || type == '\t' || type == '\f';
     }
 
@@ -650,8 +652,8 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
      * used to implement lookahead for two tokens, super.pushBack() only handles one pushBack..
      */
     private static class PushBack {
-        int typea;
-        String svala;
+        final int typea;
+        final String svala;
 
         public PushBack(int i, String s) {
             typea = i;

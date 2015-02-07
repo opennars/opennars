@@ -28,7 +28,7 @@ public class PRED_atom_chars_2 extends Predicate {
 
     public int arity() { return 2 ; }
 
-    public String toString() { return "atom_chars(" + arg1 + "," + arg2 + ")"; }
+    public String toString() { return "atom_chars(" + arg1 + ',' + arg2 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

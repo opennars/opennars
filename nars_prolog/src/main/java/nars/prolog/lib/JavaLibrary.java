@@ -347,7 +347,7 @@ public class JavaLibrary extends Library {
                         "(creation of " + fullClassPath + ".java fail failed)");
                 throw new JavaException(ex);
             }
-            String cmd = "javac " + cp + " " + fullClassPath + ".java";
+            String cmd = "javac " + cp + ' ' + fullClassPath + ".java";
             // System.out.println("EXEC: "+cmd);
             try {
                 Process jc = Runtime.getRuntime().exec(cmd);
@@ -626,7 +626,7 @@ public class JavaLibrary extends Library {
 
                 for (URL url : urls) {
                     File file = new File(java.net.URLDecoder.decode(url.getFile(), "UTF-8"));
-                    stringURLs = stringURLs + "'" + file.getPath() + "',";
+                    stringURLs = stringURLs + '\'' + file.getPath() + "',";
                 }
 
                 stringURLs = stringURLs.substring(0, stringURLs.length() - 1);
@@ -1055,8 +1055,7 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [C")) {
-                Term value = new nars.prolog.Struct(""
-                        + Array.getChar(obj, index.intValue()));
+                Term value = new nars.prolog.Struct(String.valueOf(Array.getChar(obj, index.intValue())));
                 if (unify(what, value)) {
                     return true;
                 } else {
@@ -1317,7 +1316,7 @@ public class JavaLibrary extends Library {
                     } else {
                         castTo_name = "[L"
                                 + castTo_name.substring(0,
-                                        castTo_name.length() - 2) + ";";
+                                        castTo_name.length() - 2) + ';';
                     }
                 }
                 if (!castWhat_name.equals("null")) {

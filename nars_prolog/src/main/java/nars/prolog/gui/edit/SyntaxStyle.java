@@ -122,7 +122,7 @@ public class SyntaxStyle
     {
         return getClass().getName() + "[color=" + color +
             (italic ? ",italic" : "") +
-            (bold ? ",bold" : "") + "]";
+            (bold ? ",bold" : "") + ']';
     }
 
     // private members

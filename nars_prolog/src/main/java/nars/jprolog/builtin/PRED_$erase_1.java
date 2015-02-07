@@ -28,7 +28,7 @@ class PRED_$erase_1 extends Predicate {
 
     public int arity() { return 1; }
 
-    public String toString() { return "$erase(" + arg1 + ")"; }
+    public String toString() { return "$erase(" + arg1 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

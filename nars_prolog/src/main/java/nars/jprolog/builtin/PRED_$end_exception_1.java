@@ -25,7 +25,7 @@ class PRED_$end_exception_1 extends Predicate {
 
     public int arity() { return 1; }
 
-    public String toString() { return "$end_exception(" + arg1 + ")"; }
+    public String toString() { return "$end_exception(" + arg1 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

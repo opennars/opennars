@@ -22,6 +22,7 @@ import nars.prolog.interfaces.IProlog;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 //import alice.tuprologx.ide.ToolBar;
@@ -432,7 +433,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 *
 	 *  @return the list of the operators
 	 */
-	public java.util.List<Operator> getCurrentOperatorList() {	//no syn
+	public Collection<Operator> getCurrentOperatorList() {	//no syn
 		return opManager.getOperators();
 	}
 

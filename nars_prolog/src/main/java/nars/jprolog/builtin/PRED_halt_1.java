@@ -27,7 +27,7 @@ public class PRED_halt_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "halt(" + arg1 + ")";
+        return "halt(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

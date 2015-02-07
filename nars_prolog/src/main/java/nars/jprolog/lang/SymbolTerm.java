@@ -31,7 +31,7 @@ public class SymbolTerm extends Term {
 
     /** Returns a Prolog functor for the given name and arity. */
     public static SymbolTerm makeSymbol(String _name, int _arity) {
-	String key = _name + "/" + _arity;
+	String key = _name + '/' + _arity;
 	SymbolTerm sym;
 
 	synchronized (SYMBOL_TABLE) {

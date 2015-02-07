@@ -47,7 +47,7 @@ public class PRED_open_4 extends Predicate {
     public int arity() { return 4; }
 
     public String toString() {
-        return "open(" + arg1 + "," + arg2 + "," + arg3 + "," + arg4 + ")";
+        return "open(" + arg1 + ',' + arg2 + ',' + arg3 + ',' + arg4 + ')';
     }
 
     public Predicate exec(Prolog engine) {

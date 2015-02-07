@@ -59,7 +59,7 @@ public class Repl {
             String line = in.readLine();
             while (line != null) {
                 line = line.replaceAll("#.*", "").replace(" is ", "*is*").replace(" ", "");
-                if (line.equals("")) {
+                if (line.isEmpty()) {
                     break;
                 }
                 char last = line.charAt(line.length() - 1);

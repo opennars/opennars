@@ -264,7 +264,7 @@ public class ClauseInfo {
                sb.append(co.getArg(0).toStringAsArgX(op,prio));
                sb.append(",\n\t");
                sb.append(indentPredicatesAsArgY(co.getArg(1),op,prio));
-               if (prio >= p) sb.append(")");
+               if (prio >= p) sb.append(')');
 
                return sb.toString();
 
@@ -285,7 +285,7 @@ public class ClauseInfo {
                sb.append(co.getArg(0).toStringAsArgX(op,prio));
                sb.append(",\n\t");
                sb.append(indentPredicatesAsArgY(co.getArg(1),op,prio));
-               if (prio > p) sb.append(")");
+               if (prio > p) sb.append(')');
 
                return sb.toString();
             } else {

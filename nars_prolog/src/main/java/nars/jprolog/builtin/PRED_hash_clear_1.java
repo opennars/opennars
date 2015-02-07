@@ -27,7 +27,7 @@ public class PRED_hash_clear_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "hash_clear(" + arg1 + ")";
+        return "hash_clear(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

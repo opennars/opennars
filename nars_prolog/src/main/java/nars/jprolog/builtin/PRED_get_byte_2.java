@@ -33,7 +33,7 @@ public class PRED_get_byte_2 extends Predicate {
     public int arity() { return 2; }
 
     public String toString() {
-        return "get_byte(" + arg1 + "," + arg2 + ")";
+        return "get_byte(" + arg1 + ',' + arg2 + ')';
     }
 
     public Predicate exec(Prolog engine) {

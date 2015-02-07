@@ -24,16 +24,16 @@ class CPFEntry implements Serializable {
     }
 
     public String toString() {
-	String t = " time:" + timeStamp + "\n" ;
+	String t = " time:" + timeStamp + '\n';
 	t = t + "args:";
 	for (int i=0; i<args.length; i++) {
-	    t = t + args[i] + " ";
+	    t = t + args[i] + ' ';
 	}
-	t = t + "\n";
-	t = t + " cont:" + cont + "\n";
-	t = t + " bp:" + bp + "\n";
-	t = t + " tr:" + tr + "\n";
-	t = t + " b0:" + b0 + "\n";
+	t = t + '\n';
+	t = t + " cont:" + cont + '\n';
+	t = t + " bp:" + bp + '\n';
+	t = t + " tr:" + tr + '\n';
+	t = t + " b0:" + b0 + '\n';
 	return t;
     }
 }

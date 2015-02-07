@@ -109,7 +109,7 @@ public class WAMProlog {
 
         @Override
         public String toString() {
-            return "Q[" + query + "]";
+            return "Q[" + query + ']';
         }
 
         
@@ -138,7 +138,7 @@ public class WAMProlog {
 
         @Override
         public String toString() {
-            return "Answer[" + query + "|" + success + "|" + super.toString() + "]";
+            return "Answer[" + query + '|' + success + '|' + super.toString() + ']';
         }
 
         

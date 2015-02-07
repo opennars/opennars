@@ -14,7 +14,7 @@ import java.util.*;
         int nest = 0;
         int lsep = sep.length();
         ArrayList<String> returnValue = new ArrayList<>();
-        if (l.equals("")) {
+        if (l.isEmpty()) {
             return returnValue;
         }
         for (int i = 0; i <= l.length() - lsep; i++) {

@@ -29,7 +29,7 @@ public class PRED_$term_hash_2 extends Predicate {
 
     public int arity() { return 2;}
 
-    public String toString() { return "$term_hash(" + arg1 + ", " + arg2 + ")"; }
+    public String toString() { return "$term_hash(" + arg1 + ", " + arg2 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

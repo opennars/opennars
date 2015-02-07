@@ -31,7 +31,7 @@ class PRED_$read_token0_3 extends Predicate {
     public int arity() { return 3; }
 
     public String toString() {
-	return "$read_token0(" + arg1 + ", " + arg2 + "," + arg3 + ")";
+	return "$read_token0(" + arg1 + ", " + arg2 + ',' + arg3 + ')';
     }
 
     /* The a1 must be user, user_input, and 

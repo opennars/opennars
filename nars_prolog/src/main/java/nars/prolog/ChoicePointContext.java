@@ -36,9 +36,9 @@ public class ChoicePointContext {
     
     
     public String toString(){
-        return "     ChoicePointId: "+executionContext.getId()+":"+indexSubGoal+"\n"+
+        return "     ChoicePointId: "+executionContext.getId()+ ':' +indexSubGoal+ '\n' +
                //"varsToDeunify: "+getVarsToDeunify()+"\n"+
-               "     compGoals:     "+compatibleGoals+"\n";
+               "     compGoals:     "+compatibleGoals+ '\n';
     }
     
     /*

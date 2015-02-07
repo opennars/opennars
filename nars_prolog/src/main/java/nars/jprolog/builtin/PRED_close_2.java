@@ -36,7 +36,7 @@ public class PRED_close_2 extends Predicate {
     public int arity() { return 2; }
 
     public String toString() {
-        return "close(" + arg1 + "," + arg2 + ")";
+        return "close(" + arg1 + ',' + arg2 + ')';
     }
 
     public Predicate exec(Prolog engine) {

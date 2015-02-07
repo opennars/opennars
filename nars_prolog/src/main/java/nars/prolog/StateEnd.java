@@ -376,6 +376,7 @@ public class StateEnd extends State {
 	    	 */
 	    	
 	    	ArrayList<String> lSolVar=new ArrayList<>() ;
+            List<String> l_temp=new ArrayList<>();
 	    	//System.out.println("Le var del risultato sono BAG "+bag); 
 	    	/*NB lSolVar ha lunghezza multipla di lGoal var, se ho pi� soluzioni si ripete 
 	    	 * servirebbe esempio con 2 bag */
@@ -389,7 +390,8 @@ public class StateEnd extends State {
 	    				Struct t1 = ((Struct)t);
 	    				//System.out.println("RESVAR BAG LINK � STRUCT "+t1);
 	    				//uso lista temporanea per aggiustare ordine, dalla struct con findvar escono al contrario
-	    				List<String> l_temp=new ArrayList<>();
+
+                        l_temp.clear();
 	    				l_temp= findVar(t1,l_temp);
 	    				for(int w=l_temp.size()-1; w>=0;w--){
 	    					lSolVar.add(l_temp.get(w));
@@ -422,7 +424,7 @@ public class StateEnd extends State {
 	    	Term goalBOvalue = goalBO.getLink();
 	    	if(goalBOvalue instanceof Struct){
 	    		Struct t1 = ((Struct)goalBOvalue);
-	    		List<String> l_temp=new ArrayList<>();
+	    		l_temp.clear();
 	    		l_temp= findVar(t1,l_temp);
 	    		for(int w=l_temp.size()-1; w>=0;w--){
 	    			lgoalBOVar.add(l_temp.get(w));
@@ -551,14 +553,19 @@ public class StateEnd extends State {
 	    	String s="";
 	    	//System.out.println("LGOAL VAR "+lGoalVar);
 	    	for(int m=0; m<bagString.size(); m++){
-	    		String bagResString=bag.get(m).toString();
+                Term bm = bag.get(m);
+	    		String bagResString=bm.toString();
 	    		boolean var=false;
-	    		if(bag.get(m) instanceof Var && ((Var)bag.get(m)).getLink()!=null && (((Var)bag.get(m)).getLink() instanceof Struct) && !((Var)bag.get(m)).getLink().isAtomic())
-	    				var = true;
+	    		if(bm instanceof Var) {
+                    Var vbm = (Var)bm;
+                    if (vbm.getLink()!=null && (vbm.getLink() instanceof Struct) && !(vbm.getLink().isAtomic()))
+                        var = true;
+                }
 	    		//System.out.println("&&&&&& Var "+var);
-	    		if(var && bagResString.length()!=bagString.get(m).length()){
+                String bsm = bagString.get(m);
+	    		if(var && bagResString.length()!=bsm.length()){
 	    			//System.out.println("PROBLEMA STAMPA "+bagResString+" "+bagString.get(m));
-	    			StringTokenizer st = new StringTokenizer(bagString.get(m));
+	    			StringTokenizer st = new StringTokenizer(bsm);
 	    			StringTokenizer st1 = new StringTokenizer(bagResString);
 			        while (st.hasMoreTokens()) {
 			        	String t1 =st.nextToken(" / ( ) , ;");
@@ -567,7 +574,7 @@ public class StateEnd extends State {
 			        	//System.out.println("COMPARE "+t1+" "+t2);
 			        	if(t1.compareTo(t2)!=0 && !t2.contains("_")){
 			        		//System.out.println("DIVERSO TOKEN "+t1+" "+t2);
-			        		s=s+ lGoalVar.get(i) +"="+t2+" ";
+			        		s=s+ lGoalVar.get(i) + '=' +t2+ ' ';
 			        		//System.out.println(s);
 			        		c.getEngineMan().setSetOfSolution(s);
 			        		i++;

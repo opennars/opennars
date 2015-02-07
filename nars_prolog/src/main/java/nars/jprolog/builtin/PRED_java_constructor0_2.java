@@ -28,7 +28,7 @@ public class PRED_java_constructor0_2 extends JavaPredicate {
 
     public int arity() { return 2; }
 
-    public String toString() { return "java_constructor0(" + arg1 + "," + arg2 + ")"; }
+    public String toString() { return "java_constructor0(" + arg1 + ',' + arg2 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

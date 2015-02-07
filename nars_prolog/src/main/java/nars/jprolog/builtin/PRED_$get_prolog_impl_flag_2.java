@@ -44,7 +44,7 @@ class PRED_$get_prolog_impl_flag_2 extends Predicate {
     public int arity() { return 2; }
 
     public String toString() {
-        return "$get_prolog_impl_flag(" + arg1 + "," + arg2 + ")";
+        return "$get_prolog_impl_flag(" + arg1 + ',' + arg2 + ')';
     }
 
     public Predicate exec(Prolog engine) {

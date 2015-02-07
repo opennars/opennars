@@ -53,9 +53,9 @@ public class PredicateEncoder {
 	m.appendTail(sb);
 	x = sb.toString();
 	if (pkg.equals("user"))
-	    return "PRED_" + x + "_" + arity;
+	    return "PRED_" + x + '_' + arity;
 	else
-	    return pkg + ".PRED_" + x + "_" + arity;
+	    return pkg + ".PRED_" + x + '_' + arity;
     }
 
     /**
@@ -96,7 +96,7 @@ public class PredicateEncoder {
 	String p = argv[0];
 	String f = argv[1];
 	int n = Integer.valueOf(argv[2]);
-	System.out.println(p + ":" + f + "/" + n);
+	System.out.println(p + ':' + f + '/' + n);
 	System.out.println(PredicateEncoder.encode(p,f,n));
 	System.out.println(PredicateEncoder.defined(p,f,n));
     }

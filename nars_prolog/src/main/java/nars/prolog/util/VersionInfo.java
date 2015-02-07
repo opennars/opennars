@@ -35,6 +35,6 @@ public class VersionInfo
 	
 	public static String getCompleteVersion()
 	{
-		return getEngineVersion() + "." + getSpecificVersion();
+		return getEngineVersion() + '.' + getSpecificVersion();
 	}
 }

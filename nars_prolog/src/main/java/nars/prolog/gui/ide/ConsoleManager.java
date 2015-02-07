@@ -53,7 +53,7 @@ public class ConsoleManager
     	
     	resetInputStream();
         dialog.clearResults();
-        if (!getGoal().equals(""))
+        if (!getGoal().isEmpty())
         {
             if (!ide.isFeededTheory())
             {

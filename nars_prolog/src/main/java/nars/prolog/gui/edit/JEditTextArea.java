@@ -1079,7 +1079,7 @@ public class JEditTextArea extends JComponent
 		if(newStart < 0 || newEnd > getDocumentLength())
 		{
 			throw new IllegalArgumentException("Bounds out of"
-					+ " range: " + newStart + "," +
+					+ " range: " + newStart + ',' +
 					newEnd);
 		}
 

@@ -65,7 +65,7 @@ public class DetectBenefitsOfPrologMirroring implements Reaction {
 
         if (logOut!=null) {
             logOut.println(path);
-            logOut.println(input + "\n");
+            logOut.println(input + '\n');
             logOut.println("RUN NORMAL");
             new TextOutput(normal, logOut);
         }
@@ -101,7 +101,7 @@ public class DetectBenefitsOfPrologMirroring implements Reaction {
         if (normal.time() != prolog.time())
             System.out.println(normal + " " + normal.time() + " " + prolog + " " + prolog.time());
         */
-        String summary = "\"" + path + "\"," + controlScore + "," + prologScore;
+        String summary = '"' + path + "\"," + controlScore + ',' + prologScore;
         //if (controlScore != prologScore) {
             System.out.println(summary);
         //}

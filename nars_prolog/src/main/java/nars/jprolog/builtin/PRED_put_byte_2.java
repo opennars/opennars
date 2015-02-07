@@ -32,7 +32,7 @@ public class PRED_put_byte_2 extends Predicate {
     public int arity() { return 2; }
 
     public String toString() {
-        return "put_byte(" + arg1 + "," + arg2 + ")";
+        return "put_byte(" + arg1 + ',' + arg2 + ')';
     }
 
     public Predicate exec(Prolog engine) {

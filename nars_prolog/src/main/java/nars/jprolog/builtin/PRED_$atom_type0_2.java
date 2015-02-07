@@ -27,7 +27,7 @@ class PRED_$atom_type0_2 extends Predicate {
 
     public int arity() { return 2; }
 
-    public String toString() { return "$atom_type0(" + arg1 + ", " + arg2 + ")"; }
+    public String toString() { return "$atom_type0(" + arg1 + ", " + arg2 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

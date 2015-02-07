@@ -23,7 +23,7 @@ import java.util.*;
 @SuppressWarnings("serial")
 public class ISOIOLibrary extends Library{
     
-    protected final int files = 1000; //numero casuale abbastanza alto per evitare eccezioni sulle dimensioni delle hashtable
+    protected static final int files = 1000; //numero casuale abbastanza alto per evitare eccezioni sulle dimensioni delle hashtable
     protected Hashtable<InputStream, Hashtable<String, Term>> inputStreams = new Hashtable<>(files);
     protected Hashtable<OutputStream, Hashtable<String, Term>> outputStreams = new Hashtable<>(files);
     
@@ -1627,18 +1627,18 @@ public class ISOIOLibrary extends Library{
                 
                 if (output_name.equals("stdout")) {
                     if(quoted == true){ 
-                         getEngine().stdOutput((Tools.removeApices(out_term.toString())+" "));
+                         getEngine().stdOutput((Tools.removeApices(out_term.toString())+ ' '));
                     }
                     else{
-                         getEngine().stdOutput((out_term.toString()+" "));
+                         getEngine().stdOutput((out_term.toString()+ ' '));
                     }
                 } 
                  else {
                          if(quoted == true){
-                        output.write((Tools.removeApices(out_term.toString())+" ").getBytes());
+                        output.write((Tools.removeApices(out_term.toString())+ ' ').getBytes());
                     }
                     else{
-                        output.write((out_term.toString()+" ").getBytes());
+                        output.write((out_term.toString()+ ' ').getBytes());
                     } 
                 }
                
@@ -1658,7 +1658,7 @@ public class ISOIOLibrary extends Library{
                 getEngine().stdOutput(result);
             }
             else{
-                output.write((result+" ").getBytes());
+                output.write((result+ ' ').getBytes());
             }
             
         }
@@ -1675,28 +1675,32 @@ public class ISOIOLibrary extends Library{
         boolean ignore_ops = options.get("ignore_ops");
         
         String result = "";
-        String list = "";
+
         if(term.isList()){
-            list = print_list(term,options);
+            result = print_list(term,options);
             if(ignore_ops==false)
-                return "[" + list +"]";
+                return '[' + result + ']';
             else
-                return list;
+                return result;
         }
                 
-        List<Operator> operatorList = engine.getCurrentOperatorList();
+        Collection<Operator> operatorList = engine.getCurrentOperatorList();
         String operator = "";
         int flagOp = 0;
-        for(Operator op : operatorList){
-            if(op.name.equals(term.getName())){
-                operator = op.name;
-                flagOp = 1;
-                break;
+
+        //TODO use a map lookup this is sort of a hack
+        if (operatorList.contains(term.getName())) {
+            for (Operator op : operatorList) {
+                if (op.name.equals(term.getName())) {
+                    operator = op.name;
+                    flagOp = 1;
+                    break;
+                }
             }
         }
         
         if(flagOp == 0){
-            result+=term.getName()+"(";
+            result+=term.getName()+ '(';
         }
         
         int arity = term.getArity();
@@ -1732,8 +1736,8 @@ public class ISOIOLibrary extends Library{
                 //e' un numero da solo o un operando
                     if(ignore_ops == false){
                         result += arg.toString();
-                        if(i%2 == 0 && operator != ""){
-                            result +=" "+operator+" ";
+                        if(i%2 == 0 && !operator.isEmpty()){
+                            result += ' ' +operator+ ' ';
                         }
                         continue;
                     }
@@ -1747,8 +1751,8 @@ public class ISOIOLibrary extends Library{
             // stampo il toString della variabile
                 if(ignore_ops == false){
                     result+= arg.toString();
-                    if(i%2 == 0 && operator != ""){
-                        result +=" "+operator+" ";
+                    if(i%2 == 0 && !operator.isEmpty()){
+                        result += ' ' +operator+ ' ';
                     }
                     continue;
                 }
@@ -1760,8 +1764,8 @@ public class ISOIOLibrary extends Library{
             else if(arg.isCompound()){
                 if(ignore_ops == false){
                     result+= create_string(options,(Struct)arg);
-                    if(i%2 == 0 && operator != ""){
-                        result +=" "+operator+" ";
+                    if(i%2 == 0 && !operator.isEmpty()){
+                        result += ' ' +operator+ ' ';
                     }
                     continue;
                 }
@@ -1774,8 +1778,8 @@ public class ISOIOLibrary extends Library{
                 if(quoted == true){
                     if(ignore_ops == false){
                         result += arg.toString();
-                        if(i%2 == 0 && operator != ""){
-                            result +=" "+operator+" ";
+                        if(i%2 == 0 && !operator.isEmpty()){
+                            result += ' ' +operator+ ' ';
                         }
                         continue;
                     }
@@ -1787,8 +1791,8 @@ public class ISOIOLibrary extends Library{
                 else{
                     if(ignore_ops == false){
                         result += Tools.removeApices(arg.toString());
-                        if(i%2 == 0 && operator != ""){
-                            result +=" "+operator+" ";
+                        if(i%2 == 0 && !operator.isEmpty()){
+                            result += ' ' +operator+ ' ';
                         }
                         continue;
                     }
@@ -1815,7 +1819,7 @@ public class ISOIOLibrary extends Library{
         String result = "";
         
         if(ignore_ops == true){
-            result="'"+term.getName()+"'"+" (";
+            result= '\'' +term.getName()+ '\'' +" (";
             for(int i = 0; i<term.getArity(); i++){
                 if(i > 0){
                     result+=",";
@@ -1827,7 +1831,7 @@ public class ISOIOLibrary extends Library{
                     result += term.getArg(i);
                 }
             }
-            return result + ")";
+            return result + ')';
         }
         else{
             for(int i = 0; i<term.getArity(); i++){

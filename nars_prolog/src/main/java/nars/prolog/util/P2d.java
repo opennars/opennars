@@ -35,7 +35,7 @@ public class P2d implements java.io.Serializable {
     }
 
     public String toString(){
-        return "P2d("+x+","+y+")";
+        return "P2d("+x+ ',' +y+ ')';
     }
 
 }

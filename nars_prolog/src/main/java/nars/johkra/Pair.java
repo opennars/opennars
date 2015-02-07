@@ -56,7 +56,7 @@ public class Pair<A,B> implements Serializable {
     @Override
     public String toString() {
         if (nameCache == null) {
-            nameCache = "{" + a.toString() + "," + b.toString() + "}";
+            nameCache = '{' + a.toString() + ',' + b.toString() + '}';
         }
         return nameCache;
     }

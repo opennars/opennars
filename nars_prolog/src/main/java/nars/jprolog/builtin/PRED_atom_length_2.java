@@ -29,7 +29,7 @@ public class PRED_atom_length_2 extends Predicate {
     public int arity() { return 2; }
 
     public String toString() {
-        return "atom_length(" + arg1 + "," + arg2 + ")";
+        return "atom_length(" + arg1 + ',' + arg2 + ')';
     }
 
     public Predicate exec(Prolog engine) {

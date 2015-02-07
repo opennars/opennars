@@ -341,16 +341,16 @@ public class RuleHeap {
             ArrayList<int[]> heap = heaps.get(key);
             for (int i = 0; i < heap.size(); i++) {					// Show each of the entered heaps
                 int[] h = heap.get(i);
-                r += "\t" + WAMToString.termToString(h, h.length - 1, strings, nums, true) + "\r\n";
+                r += '\t' + WAMToString.termToString(h, h.length - 1, strings, nums, true) + "\r\n";
             }
-            r += "\t" + "Instructions:\r\n";
+            r += '\t' + "Instructions:\r\n";
             r += "\t\t" + WAMToString.programToString(instr, 0, instr.length, registerstart, strings, nums).replaceAll("\r\n", "\r\n\t\t") + "\r\n";
         }
         if (query_instructions != null) {
             String q = WAMToString.termToString(query_heap, query_heap.length - 1, strings, nums, true);
             q = q.substring(3, q.length() - 1);
             r += "Query: " + q + "\r\n";
-            r += "\t" + "Instructions:\r\n";
+            r += '\t' + "Instructions:\r\n";
             r += "\t\t" + WAMToString.programToString(query_instructions, 0, query_instructions.length, registerstart, strings, nums).replaceAll("\r\n", "\r\n\t\t") + "\r\n";
         }
         return r;

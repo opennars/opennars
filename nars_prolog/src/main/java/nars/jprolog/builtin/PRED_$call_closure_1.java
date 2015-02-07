@@ -29,7 +29,7 @@ class PRED_$call_closure_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-	return "$call_closure(" + arg1 + ")";
+	return "$call_closure(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

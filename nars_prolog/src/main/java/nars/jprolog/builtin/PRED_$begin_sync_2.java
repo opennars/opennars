@@ -25,7 +25,7 @@ class PRED_$begin_sync_2 extends BlockPredicate {
 
     public int arity() { return 2; }
 
-    public String toString() { return "$begin_sync(" + arg1 + "," + arg2 + ")"; }
+    public String toString() { return "$begin_sync(" + arg1 + ',' + arg2 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

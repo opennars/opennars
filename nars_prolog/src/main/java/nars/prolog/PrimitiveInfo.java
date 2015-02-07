@@ -38,15 +38,15 @@ public class PrimitiveInfo {
     /**
 	 * method to be call when evaluating the built-in
 	 */
-    private Method method;
+    final private Method method;
     /**
 	 * lib object where the builtin is defined
 	 */
-    private IPrimitives source;
+    final private IPrimitives source;
     /**
 	 * for optimization purposes
 	 */
-    private Object[] primitive_args;
+    final private Object[] primitive_args;
     private String primitive_key;
     
     

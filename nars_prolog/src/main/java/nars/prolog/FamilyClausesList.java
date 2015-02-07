@@ -268,15 +268,15 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 				listCompClausesList.remove(ci);
 			} else if(t.isAtomic()){
 				if(t instanceof Number){
-					numCompClausesIndex.delete((Number) t,ci);
+					numCompClausesIndex.remove((Number) t, ci);
 				} else if(t instanceof Struct){
-					constantCompClausesIndex.delete(((Struct) t).getName(),ci);
+					constantCompClausesIndex.remove(((Struct) t).getName(), ci);
 				}
 			} else if(t instanceof Struct){
 				if(t.isList()){
 					listCompClausesList.remove(ci);
 				} else {
-					structCompClausesIndex.delete(((Struct) t).getPredicateIndicator(),ci);
+					structCompClausesIndex.remove(((Struct) t).getPredicateIndicator(),ci);
 				}
 			}
 		}

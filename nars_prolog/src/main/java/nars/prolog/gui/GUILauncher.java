@@ -80,7 +80,7 @@ public class GUILauncher {
         String version = System.getProperty("java.version");
         int versionNumber = launcher.getVersionNumber(version);
         int subVersionNumber = launcher.getSubVersionNumber(version);
-        System.out.println("J2SE " + versionNumber + "." + subVersionNumber + ".x plaftorm");
+        System.out.println("J2SE " + versionNumber + '.' + subVersionNumber + ".x plaftorm");
 
         launcher.launchJavaGUI();
     }

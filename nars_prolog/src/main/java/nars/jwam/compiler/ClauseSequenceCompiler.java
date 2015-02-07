@@ -147,7 +147,7 @@ public class ClauseSequenceCompiler {
                     nums.get(key).add(c);
                     break;
                 case WAM.STR:
-                    System.out.println("blabla " + WAM.cell_value(h[WAM.cell_value(key)]) + " " + WAM.cell_tag(h[WAM.cell_value(key)]));
+                    System.out.println("blabla " + WAM.cell_value(h[WAM.cell_value(key)]) + ' ' + WAM.cell_tag(h[WAM.cell_value(key)]));
                     key = h[WAM.cell_value(key)]; 									// Get the PN cell
                     if (structures.get(key) == null) {
                         structures.put(key, new ArrayList<>());

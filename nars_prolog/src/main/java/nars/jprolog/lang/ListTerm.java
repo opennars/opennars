@@ -147,7 +147,7 @@ public class ListTerm extends Term {
 	    s += ",";
 	}
 	if (! x.isNil())
-	    s += "|" + x.toQuotedString();
+	    s += '|' + x.toQuotedString();
 	s += "]";
 	return s;
     }
@@ -190,7 +190,7 @@ public class ListTerm extends Term {
 	    s += ",";
 	}
 	if (! x.isNil())
-	    s += "|" + x.toString();
+	    s += '|' + x.toString();
 	s += "]";
 	return s;
     }

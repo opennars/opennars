@@ -28,7 +28,7 @@ public class PRED_number_codes_2 extends Predicate {
 
     public int arity() { return 2 ; }
 
-    public String toString() { return "number_codes(" + arg1 + "," + arg2 + ")"; }
+    public String toString() { return "number_codes(" + arg1 + ',' + arg2 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

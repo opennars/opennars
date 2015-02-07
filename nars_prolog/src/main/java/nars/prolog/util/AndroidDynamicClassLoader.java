@@ -36,7 +36,7 @@ public class AndroidDynamicClassLoader extends AbstractDynamicClassLoader
 			
 			for (int i=1; i<listURLs.size(); i++)
 			{
-				path = path.concat(":" + listURLs.get(i).getPath());
+				path = path.concat(':' + listURLs.get(i).getPath());
 			}
 		}
 		

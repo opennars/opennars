@@ -54,7 +54,7 @@ public class InvalidLibraryException extends PrologException {
     }
     
     public String toString() {
-        return "InvalidLibraryException: " + libraryName + " at " + line + ":" + pos;
+        return "InvalidLibraryException: " + libraryName + " at " + line + ':' + pos;
     }
     
 }

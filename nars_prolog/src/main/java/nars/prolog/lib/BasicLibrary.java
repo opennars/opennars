@@ -201,7 +201,7 @@ public class BasicLibrary extends Library {
         try {
             new Agent(Tools.removeApices(theory.toString()), goal
                     .toString()
-                    + ".").spawn();
+                    + '.').spawn();
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -789,8 +789,8 @@ public class BasicLibrary extends Library {
         arg1 = arg1.getTerm();
         /*System.out.println(arg0);
         System.out.println(arg1);*/
-        getEngine().stdOutput(arg0.toString() + 
-        "\n" + arg1.toString());
+        getEngine().stdOutput(arg0.toString() +
+                '\n' + arg1.toString());
         if (!arg0.isGround()) {
             return unify(arg0, new Struct(arg1.toString()));
         } else {

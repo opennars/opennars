@@ -31,7 +31,7 @@ class PRED_$call_2 extends Predicate {
 
     public int arity() { return 2; }
 
-    public String toString() { return "$call(" + arg1 + "," + arg2 + ")"; }
+    public String toString() { return "$call(" + arg1 + ',' + arg2 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

@@ -29,7 +29,7 @@ public class PRED_functor_3 extends Predicate {
     }
 
     public int arity() { return 3; }
-    public String toString() { return "functor(" + arg1 + "," + arg2 + "," + arg3 + ")"; }
+    public String toString() { return "functor(" + arg1 + ',' + arg2 + ',' + arg3 + ')'; }
 
     public Predicate exec(Prolog engine) {
         engine.setB0();

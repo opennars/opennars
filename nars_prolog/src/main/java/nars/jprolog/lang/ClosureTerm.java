@@ -53,7 +53,7 @@ public class ClosureTerm extends Term {
 
     /** Returns a string representation of this <code>ClosureTerm</code>. */
     public String toString() {
-	return "closure[" + code.toString() + "]";
+	return "closure[" + code.toString() + ']';
     }
 
     /* Comparable */

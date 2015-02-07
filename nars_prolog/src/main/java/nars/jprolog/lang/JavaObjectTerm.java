@@ -89,7 +89,7 @@ public class JavaObjectTerm extends Term {
 
     /** Returns a string representation of this <code>JavaObjectTerm</code>. */
     public String toString() {
-	return clazz.getName() + "(" + hashCode() + ")";
+	return clazz.getName() + '(' + hashCode() + ')';
     }
 
     /* Comparable */

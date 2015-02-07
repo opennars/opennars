@@ -116,13 +116,13 @@ public class Token implements Serializable {
 	case '.':		/* full stop or symbol */
 	    c1 = in.read();
 	    if (c1 == -1 || c1 <= ' ') {
-		s.append(".");
+		s.append('.');
 		return '.';
 	    }
 	    in.unread(c1);
 	    break;
 	case '%':		/* one line comment */
-	    s.append(" ");
+	    s.append(' ');
 	    while ((c1 = in.read()) != '\n') {
 		if (c1 == -1)
 		    return ' ';
@@ -130,7 +130,7 @@ public class Token implements Serializable {
 	    return ' ';
 	case '/':		/* start of comment or symbol */
 	    if ((c1 = in.read()) == '*') {
-		s.append(" ");
+		s.append(' ');
 		while (true) {
 		    while ((c1 = in.read()) != '*') {
 			if(c1 == -1) {
@@ -168,7 +168,7 @@ public class Token implements Serializable {
 		rc = 'A';
 	    return rc;
 	}
-	s.append(" ");
+	s.append(' ');
 	return ' ';
     }
 
@@ -378,7 +378,7 @@ public class Token implements Serializable {
 
 	ch = s.toCharArray();
 	if ((getStringType(s) == 3)){
-	    quoted.append("\'");
+	    quoted.append('\'');
 	    for (int i=0; i<ch.length; i++) {
 		if (ch[i] == '\'')
 		    quoted.append("\\\'");
@@ -405,7 +405,7 @@ public class Token implements Serializable {
 		else 
 		    quoted.append(ch[i]);
 	    }
-	    quoted.append("\'");
+	    quoted.append('\'');
 	    return quoted.toString();
 	} else {
 	    return s;
@@ -425,7 +425,7 @@ public class Token implements Serializable {
 
 	if (s.equals("[]") || s.equals("{}")) 
 	    return 0;
-	if (s.equals("")   || s.equals("."))
+	if (s.isEmpty() || s.equals("."))
 	    return 3;
 	if (s.equals("!")  || s.equals(";"))
 	    return 2;

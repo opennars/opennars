@@ -60,7 +60,7 @@ public class PermissionException extends BuiltinException {
     /** Returns a string representation of this <code>PermissionException</code>. */
     public String toString() {
 	String s = "{PERMISSION ERROR: " + goal.toString();
-	s += " - can not " + operation + " " + permissionType + " " + culprit.toString();
+	s += " - can not " + operation + ' ' + permissionType + ' ' + culprit.toString();
 	s += ": " + message;
 	s += "}";
 	return s;

@@ -143,6 +143,6 @@ public class Token
      */
     public String toString()
     {
-        return "[id=" + id + ",length=" + length + "]";
+        return "[id=" + id + ",length=" + length + ']';
     }
 }

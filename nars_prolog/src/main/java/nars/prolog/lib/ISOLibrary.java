@@ -116,7 +116,7 @@ public class ISOLibrary extends Library {
         } else if ((arg1 instanceof Int)
                 || (arg1 instanceof nars.prolog.Long)) {
             char c = (char) ((Number) arg1).intValue();
-            return unify(arg0, new Struct("" + c));
+            return unify(arg0, new Struct(String.valueOf(c)));
         } else
             throw PrologError.type_error(engine.getEngineManager(), 2,
                     "integer", arg1);

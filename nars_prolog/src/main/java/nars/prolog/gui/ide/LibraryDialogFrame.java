@@ -381,7 +381,7 @@ public class LibraryDialogFrame extends GenericFrame implements LibraryListener
         	if(System.getProperty("java.vm.name").equals("IKVM.NET"))
         	{
         		libName = "cli." + libraryClassname.substring(0, 
-        				libraryClassname.indexOf(",")).trim();
+        				libraryClassname.indexOf(',')).trim();
         	}
             if (libraryManager.contains(libName))
             {
@@ -600,7 +600,7 @@ public class LibraryDialogFrame extends GenericFrame implements LibraryListener
             fileIDE=fileManager.saveFile(fileIDE);
             if (fileIDE.getFilePath() != null)
             {
-                setStatusMessage("Preferences saved to " + fileIDE.getFileName() + ".");
+                setStatusMessage("Preferences saved to " + fileIDE.getFileName() + '.');
             }
             else
                 setStatusMessage("Ready.");

@@ -27,7 +27,7 @@ public class PRED_hash_is_empty_1 extends Predicate {
     public int arity() { return 1; }
 
     public String toString() {
-        return "hash_is_empty(" + arg1 + ")";
+        return "hash_is_empty(" + arg1 + ')';
     }
 
     public Predicate exec(Prolog engine) {

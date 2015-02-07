@@ -46,4 +46,22 @@ final public class Operator implements Serializable {
         type = type_;
         prio = prio_;
     }
+
+    //hashcode and equality consistent with String name
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj instanceof Operator) {
+            return ((Operator)obj).name.equals(name);
+        }
+        else if (obj instanceof String) {
+            return ((String)obj).equals(name);
+        }
+        return false;
+    }
 }

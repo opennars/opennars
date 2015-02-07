@@ -318,7 +318,7 @@ public class ClausePreprocessor {
         for (Integer var : occurrences.keySet()) {
             System.out.println("VAR " + var + " in " + WAMToString.termToString(heap, heap.length - 1, strings, numbers, true) + " heap: " + WAMToString.oneLineHeap(heap, 0, heap.length, strings, numbers));
             for (Token t : occurrences.get(var)) {
-                System.out.println("\t" + "Address=" + t.index + " Register 1=" + t.register1 + "  Register 2=" + t.register2 + " Is permanent=" + t.is_perm + " Is unsafe=" + t.is_unsafe + " Was made anonymous=" + (WAM.cell_value(heap[t.index]) == 0));
+                System.out.println('\t' + "Address=" + t.index + " Register 1=" + t.register1 + "  Register 2=" + t.register2 + " Is permanent=" + t.is_perm + " Is unsafe=" + t.is_unsafe + " Was made anonymous=" + (WAM.cell_value(heap[t.index]) == 0));
 
             }
         }
