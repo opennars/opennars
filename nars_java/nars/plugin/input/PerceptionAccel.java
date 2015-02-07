@@ -40,12 +40,12 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     }
     
     ArrayList<Task> eventbuffer=new ArrayList<>();
-    int cur_maxlen=0;
+    int cur_maxlen=1;
     
     public void perceive(NAL nal) { //implement Peis idea here now
         //we start with length 2 compounds, and search for patterns which are one longer than the longest observed one
+        
         for(int Len=2;Len<=cur_maxlen+1;Len++) {
-            //CRITICAL PART, NOT CHECKED FOR CORRECTNESS YET
             //ok, this is the length we have to collect, measured from the end of event buffer
             Term[] relterms=new Term[2*Len-1]; //there is a interval term for every event
             //measuring its distance to the next event, but for the last event this is obsolete
@@ -57,8 +57,11 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             
             int k=0;
             for(int i=0;i<Len;i++) {
-                int j=eventbuffer.size()-1-2*(Len-1)+i*2; //we count in 2-sized steps size amount of elements till to the end of the event buffer
-                //
+                int j=eventbuffer.size()-1-(Len-1)+i; //we count in 2-sized steps size amount of elements till to the end of the event buffer
+                if(j<0) { //event buffer is not filled up enough to support this one, happens at the beginning where event buffer has no elements
+                     //but the mechanism already looks for length 2 patterns on the occurence of the first event
+                    break;
+                }
                 Task current=eventbuffer.get(j);
                 st.getChain().add(current.sentence.term);
                 relterms[k]=current.sentence.term;
@@ -69,12 +72,21 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 }
                 k+=2;
             }
-            //END CRITICAL PART
-            
+
+            boolean eventBufferDidNotHaveSoMuchEvents=false;
+            for(int i=0;i<relterms.length;i++) {
+                if(relterms[i]==null) {
+                    eventBufferDidNotHaveSoMuchEvents=true;
+                }
+            }
+            if(eventBufferDidNotHaveSoMuchEvents) {
+                break;
+            }
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
             boolean after=newEvent.sentence.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence, nal.memory.param.duration.get());
             
+            //critical part: (not checked for correctness yet):
             //we now have to look at if the first half + the second half already exists as concept, before we add it
             Term[] firstHalf=new Term[Len]; //2*Len-1 in total
             Term[] secondHalf=new Term[Len-1];
@@ -149,7 +161,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
         if (event == Events.InduceSucceedingEvent.class) { //todo misleading event name, it is for a new incoming event
             Task newEvent = (Task)args[0];
             eventbuffer.add(newEvent);
-            while(eventbuffer.size()>cur_maxlen) {
+            while(eventbuffer.size()>cur_maxlen+1) {
                 eventbuffer.remove(0);
             }
             NAL nal= (NAL)args[1];
