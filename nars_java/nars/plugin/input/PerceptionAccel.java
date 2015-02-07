@@ -18,7 +18,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.TemporalRules;
-import static nars.inference.TemporalRules.ORDER_BACKWARD;
+import static nars.inference.TemporalRules.ORDER_CONCURRENT;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
@@ -118,8 +118,8 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                     h++;
                 }
             }
-            Term firstC=Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
-            Term secondC=Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
+            Term firstC=Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            Term secondC=Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             
             if(nal.memory.concept(firstC)==null || nal.memory.concept(secondC)==null) {
                 if(debugMechanism) {
@@ -128,7 +128,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 continue; //the components were not observed, so don't allow creating this compound
             }
             
-            Conjunction C=(Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_BACKWARD);
+            Conjunction C=(Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             
             Sentence S=new Sentence(C,Symbols.JUDGMENT_MARK,truth,st);
             Task T=new Task(S,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,truth));
