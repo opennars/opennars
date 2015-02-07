@@ -60,12 +60,10 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 int j=eventbuffer.size()-1-2*(Len-1)+i*2; //we count in 2-sized steps size amount of elements till to the end of the event buffer
                 //
                 Task current=eventbuffer.get(j);
-                if(j!=0) {
-                    truth=TruthFunctions.deduction(truth, current.sentence.truth);
-                }
                 st.getChain().add(current.sentence.term);
                 relterms[k]=current.sentence.term;
                 if(i!=Len-1) { //if its not the last one, then there is a next one for which we have to put an interval
+                    truth=TruthFunctions.deduction(truth, current.sentence.truth);
                     Task next=eventbuffer.get(j+1);
                     relterms[k+1]=Interval.interval(next.sentence.getOccurenceTime()-current.sentence.getOccurenceTime(), nal.memory);
                 }
