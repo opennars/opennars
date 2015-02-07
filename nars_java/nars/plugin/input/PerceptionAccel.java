@@ -91,6 +91,9 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             Conjunction secondC=(Conjunction) Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
             
             if(nal.memory.concept(firstC)==null || nal.memory.concept(secondC)==null) {
+                if(debugMechanism) {
+                    System.out.println("one didn't exist: "+firstC.term.toString()+" or "+secondC.term.toString());
+                }
                 continue; //the components were not observed, so don't allow creating this compound
             }
             
@@ -99,6 +102,10 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             Sentence S=new Sentence(C,Symbols.JUDGMENT_MARK,truth,st);
             Task T=new Task(S,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,truth));
             
+            if(debugMechanism) {
+                System.out.println("success: "+T.toString());
+            }
+            
             nal.derivedTask(T, false, false, newEvent, S); //lets make the new event the parent task, and derive it
         }
     }
@@ -106,11 +113,17 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     //keep track of how many conjunctions with related amount of component terms there are:
     int sz=100;
     int[] sv=new int[sz]; //use static array, should suffice for now
+    boolean debugMechanism=true;
     public void handleConjunctionSequence(Term t, boolean Add) {
         if(!(t instanceof Conjunction)) {
             return;
         }
         Conjunction c=(Conjunction) t;
+        
+        if(debugMechanism) {
+            System.out.println("handleConjunctionSequence with "+t.toString()+" "+String.valueOf(Add));
+        }
+        
         if(Add) { //manage concept counter
             sv[c.term.length]++; 
         } else {
@@ -124,6 +137,10 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 cur_maxlen=i; //dont using the index 0 in sv makes it easier here
                 break;
             }
+        }
+        
+        if(debugMechanism) {
+            System.out.println("determined max len is "+String.valueOf(cur_maxlen));
         }
     }
     
