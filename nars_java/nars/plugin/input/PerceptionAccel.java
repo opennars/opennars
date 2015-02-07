@@ -88,16 +88,35 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             
             //critical part: (not checked for correctness yet):
             //we now have to look at if the first half + the second half already exists as concept, before we add it
-            Term[] firstHalf=new Term[Len]; //2*Len-1 in total
-            Term[] secondHalf=new Term[Len-1];
-            int h=0; //make index mapping easier by counting, this way at this place nothing can go wrong, code here is correct
-            for(int i=0;i<Len;i++) {
-                firstHalf[i]=relterms[h];
-                h++;
-            }
-            for(int i=0;i<Len-1;i++) {
-                secondHalf[i]=relterms[h];
-                h++;
+            Term[] firstHalf;
+            Term[] secondHalf;
+            if(relterms[Len] instanceof Interval) {
+                //the middle can be a interval, for example in case of a,+1,b , in which case we dont use it
+                firstHalf=new Term[Len-1]; //so we skip the middle here
+                secondHalf=new Term[Len-1]; //as well as here
+                int h=0; //make index mapping easier by counting
+                for(int i=0;i<Len-1;i++) {
+                    firstHalf[i]=relterms[h];
+                    h++;
+                }
+                h+=2; //we have to overjump the middle element this is why
+                for(int i=0;i<Len;i++) {
+                    secondHalf[i]=relterms[h];
+                    h++;
+                }
+            } else { //it is a event so its fine
+                firstHalf=new Term[Len]; //2*Len-1 in total
+                secondHalf=new Term[Len]; //but the middle is also used in the second one
+                int h=0; //make index mapping easier by counting
+                for(int i=0;i<Len;i++) {
+                    firstHalf[i]=relterms[h];
+                    h++;
+                }
+                h--; //we have to use the middle twice this is why
+                for(int i=0;i<Len;i++) {
+                    secondHalf[i]=relterms[h];
+                    h++;
+                }
             }
             Conjunction firstC=(Conjunction) Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
             Conjunction secondC=(Conjunction) Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
