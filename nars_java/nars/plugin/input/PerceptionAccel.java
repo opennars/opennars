@@ -90,7 +90,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             //we now have to look at if the first half + the second half already exists as concept, before we add it
             Term[] firstHalf;
             Term[] secondHalf;
-            if(relterms[Len] instanceof Interval) {
+            if(relterms[Len-1] instanceof Interval) {
                 //the middle can be a interval, for example in case of a,+1,b , in which case we dont use it
                 firstHalf=new Term[Len-1]; //so we skip the middle here
                 secondHalf=new Term[Len-1]; //as well as here
@@ -99,8 +99,8 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                     firstHalf[i]=relterms[h];
                     h++;
                 }
-                h+=2; //we have to overjump the middle element this is why
-                for(int i=0;i<Len;i++) {
+                h+=1; //we have to overjump the middle element this is why
+                for(int i=0;i<Len-1;i++) {
                     secondHalf[i]=relterms[h];
                     h++;
                 }
@@ -118,12 +118,12 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                     h++;
                 }
             }
-            Conjunction firstC=(Conjunction) Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
-            Conjunction secondC=(Conjunction) Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
+            Term firstC=Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
+            Term secondC=Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_BACKWARD);
             
             if(nal.memory.concept(firstC)==null || nal.memory.concept(secondC)==null) {
                 if(debugMechanism) {
-                    System.out.println("one didn't exist: "+firstC.term.toString()+" or "+secondC.term.toString());
+                    System.out.println("one didn't exist: "+firstC.toString()+" or "+secondC.toString());
                 }
                 continue; //the components were not observed, so don't allow creating this compound
             }
