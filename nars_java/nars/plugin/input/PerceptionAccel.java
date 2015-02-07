@@ -17,7 +17,6 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_CONCURRENT;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
 import nars.inference.TruthFunctions;
@@ -35,7 +34,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
         //register listening to new events:
-        n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class);
+        n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.ConceptNew.class, Events.ConceptForget.class);
         return true;
     }
     
