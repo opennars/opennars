@@ -57,7 +57,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             
             int k=0;
             for(int i=0;i<Len;i++) {
-                int j=eventbuffer.size()-1-(Len-1)+i; //we count in 2-sized steps size amount of elements till to the end of the event buffer
+                int j=eventbuffer.size()-1-(Len-1)+i; //we go till to the end of the event buffer
                 if(j<0) { //event buffer is not filled up enough to support this one, happens at the beginning where event buffer has no elements
                      //but the mechanism already looks for length 2 patterns on the occurence of the first event
                     break;
@@ -144,7 +144,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     //keep track of how many conjunctions with related amount of component terms there are:
     int sz=100;
     int[] sv=new int[sz]; //use static array, should suffice for now
-    boolean debugMechanism=true;
+    boolean debugMechanism=false;
     public void handleConjunctionSequence(Term t, boolean Add) {
         if(!(t instanceof Conjunction)) {
             return;
