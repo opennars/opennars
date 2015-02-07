@@ -8,13 +8,20 @@ import java.util.ArrayList;
 import nars.core.EventEmitter;
 import nars.core.Events;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.core.control.NAL;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_BACKWARD;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
+import nars.inference.TruthFunctions;
+import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Interval;
 import nars.language.Term;
@@ -42,11 +49,19 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             //measuring its distance to the next event, but for the last event this is obsolete
             //thus it are 2*Len-1] terms
 
+            Task newEvent=eventbuffer.get(eventbuffer.size()-1);
+            TruthValue truth=newEvent.sentence.truth;
+            Stamp st=new Stamp(nal.memory);
+            
             int k=0;
             for(int i=0;i<Len;i++) {
                 int j=eventbuffer.size()-1-2*(Len-1)+i*2; //we count in 2-sized steps size amount of elements till to the end of the event buffer
                 //
                 Task current=eventbuffer.get(j);
+                if(j!=0) {
+                    truth=TruthFunctions.deduction(truth, current.sentence.truth);
+                }
+                st.getChain().add(current.sentence.term);
                 relterms[k]=current.sentence.term;
                 if(i!=Len-1) { //if its not the last one, then there is a next one for which we have to put an interval
                     Task next=eventbuffer.get(j+1);
@@ -57,10 +72,14 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
-            boolean after=eventbuffer.get(eventbuffer.size()-1).sentence.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence, nal.memory.param.duration.get());
+            boolean after=newEvent.sentence.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence, nal.memory.param.duration.get());
             
             Conjunction C=(Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_BACKWARD);
             
+            Sentence S=new Sentence(C,Symbols.JUDGMENT_MARK,truth,st);
+            Task T=new Task(S,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,truth));
+            
+            nal.derivedTask(T, false, false, newEvent, S); //lets make the new event the parent task, and derive it
         }
     }
     
