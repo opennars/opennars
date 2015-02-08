@@ -108,6 +108,8 @@ public class DefaultCore extends UniCore {
     }
 
     private FireConcept nextTaskLink(Concept concept) {
+        if (concept == null) return null;
+
         TaskLink taskLink = concept.taskLinks.PEEKNEXT();
         if (taskLink!=null)
             return newFireConcept(concept, taskLink);

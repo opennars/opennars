@@ -27,7 +27,7 @@ public class NALRuleEngine extends RuleEngine {
 
     }
 
-    public void add(FireConcept fireConcept, TaskLink tLink, TermLink bLink) {
+    public void add(FireConcept fireConcept) {
         base.fire(FireConcept.class, fireConcept);
     }
 

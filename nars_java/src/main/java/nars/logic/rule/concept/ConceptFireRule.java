@@ -19,7 +19,9 @@ abstract public class ConceptFireRule extends LogicRule<FireConcept> implements 
     @Override
     public void accept(Event<FireConcept> o) {
         FireConcept f = o.getData();
-        if (f==null) return;
+        if (f==null) {
+            return;
+        }
 
         boolean result = apply(f, f.getCurrentTaskLink(), f.getCurrentBeliefLink());
         if (!result) {

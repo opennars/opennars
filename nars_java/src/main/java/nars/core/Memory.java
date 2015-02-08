@@ -537,9 +537,6 @@ public class Memory implements Serializable {
         emit(Events.TaskAdd.class, t, reason);
         logic.TASK_ADD_NEW.hit();
 
-
-
-
         return true;
     }
 

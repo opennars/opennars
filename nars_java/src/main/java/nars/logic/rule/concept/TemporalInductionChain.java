@@ -18,12 +18,15 @@ public class TemporalInductionChain extends ConceptFireRule {
     @Override
     public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink) {
 
+        if (!f.nal(7)) return true;
+
         final Memory memory = f.memory;
         final Sentence belief = f.getCurrentBelief();
-        final Term beliefTerm = belief.getTerm();
-        Set<Object> alreadyInducted = null;
 
-        if ((belief != null) && (f.nal(7))) {
+        if (belief != null) {
+            final Term beliefTerm = belief.getTerm();
+            Set<Object> alreadyInducted = null;
+
             //this is a new attempt/experiment to make nars effectively track temporal coherences
             if (beliefTerm instanceof Implication &&
                     (beliefTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {

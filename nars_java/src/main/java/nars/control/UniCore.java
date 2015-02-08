@@ -67,7 +67,6 @@ abstract public class UniCore implements Core {
         }
         @Override
         public void beforeFinish() {
-
             float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
             bag.putBack(currentConcept, forgetCycles, memory);
         }

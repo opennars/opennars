@@ -180,7 +180,7 @@ abstract public class FireConcept extends NAL {
 
         Sentence belief = getCurrentBelief();
 
-        reasoner.add(this, tLink, bLink);
+        reasoner.add(this);
 
         if (belief!=null) {
             emit(Events.BeliefReason.class, belief, tLink.getTarget(), this);

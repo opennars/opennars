@@ -26,7 +26,7 @@ import java.util.List;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task> {
+public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
     public interface DerivationFilter extends Plugin {
         /**
@@ -61,9 +61,10 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
 
     /** @param nalLevel the NAL level to limit processing of this reasoning context. set to -1 to use Memory's default value */
     public NAL(Memory mem, int nalLevel, Task task) {
-        super((X)null);
+        super(null);
 
         setKey(getClass());
+        setData(this);
 
         memory = mem;
         reasoner = mem.rules;
