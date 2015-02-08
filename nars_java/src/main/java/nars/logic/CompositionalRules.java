@@ -1240,7 +1240,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             if (taskSentence.truth == null)
                 throw new RuntimeException("Task sentence truth must be non-null: " + taskSentence);
 
-            Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp, nal.getTime());
+            Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp, nal.time());
 
             dedSecondLayerVariableUnificationTerms(nal, task,
                     second_belief, ss, terms_dependent,
@@ -1273,10 +1273,10 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 if (budget.aboveThreshold()) {
 
-                    Stamp useEvidentalBase = new Stamp(taskSentence.stamp, second_belief.stamp, nal.getTime());
+                    Stamp useEvidentalBase = new Stamp(taskSentence.stamp, second_belief.stamp, nal.time());
 
                     Sentence newSentence = new Sentence(result, mark, truth,
-                            new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase));
+                            new Stamp(taskSentence.stamp, nal.time(), useEvidentalBase));
 
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
@@ -1340,7 +1340,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 if (budget.aboveThreshold()) {
 
                     if (sx == null)
-                        sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
+                        sx = new Stamp(taskSentence.stamp, nal.time(), s);
 
                     Sentence newSentence = new Sentence(result, mark, truth, sx);
 

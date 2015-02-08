@@ -5,7 +5,7 @@ import nars.io.Texts;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
-import nars.operator.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousFunctionOperator;
 import org.encog.ml.prg.EncogProgram;
 import org.encog.ml.prg.EncogProgramContext;
 import org.encog.ml.prg.ProgramNode;

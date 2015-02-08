@@ -99,6 +99,13 @@ public class Product extends CompoundTerm {
     }
 
 
+    @Override
+    public Object first() {
+        return term[0];
+    }
 
-    
+    @Override
+    public Object rest() {
+        return cdr();
+    }
 }

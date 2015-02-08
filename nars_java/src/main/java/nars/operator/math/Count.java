@@ -22,7 +22,7 @@ import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
-import nars.operator.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousFunctionOperator;
 import nars.operator.mental.Mental;
 
 /**

@@ -10,7 +10,7 @@ import nars.logic.entity.Term;
 import nars.logic.nal8.Operation;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
-import nars.operator.NullOperator;
+import nars.logic.nal8.NullOperator;
 import nars.operator.app.plan.TemporalParticlePlanner;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;

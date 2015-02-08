@@ -7,7 +7,7 @@ import nars.io.ChangedTextInput;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal8.Operation;
-import nars.operator.NullOperator;
+import nars.logic.nal8.NullOperator;
 import org.jbox2d.common.MathUtils;
 
 import java.util.List;

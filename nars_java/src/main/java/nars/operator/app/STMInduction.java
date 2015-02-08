@@ -94,7 +94,6 @@ public class STMInduction extends AbstractPlugin {
             }
         }
 
-        Collection<Task> results = new ArrayList();
 
         for (Task stmLast : stm) {
 
@@ -108,7 +107,7 @@ public class STMInduction extends AbstractPlugin {
             Sentence currentBelief = newEvent.sentence;
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            TemporalRules.temporalInduction(currentBelief, previousBelief, nal, results);
+            TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
         }
 
         ////for this heuristic, only use input events & task effects of operations

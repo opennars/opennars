@@ -27,8 +27,7 @@ import nars.logic.NALOperator;
 import nars.io.Texts;
 import nars.logic.Terms.Termable;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
+import nars.util.data.sexpression.IPair;
 import nars.util.data.sorted.SortedList;
 
 import java.util.Collections;
@@ -42,7 +41,8 @@ import java.util.TreeSet;
  * It is not linked in the Term, because a Concept may be forgot while the Term
  * exists. Multiple objects may represent the same Term.
  */
-public class Term implements AbstractTerm, Termable {
+public class Term implements AbstractTerm, Termable, IPair {
+
     private static final Map<CharSequence,Term> atoms = Parameters.newHashMap(8192);
 
     final public static Term SELF = Term.get("SELF");
@@ -58,7 +58,6 @@ public class Term implements AbstractTerm, Termable {
     public boolean isExecutable(final Memory mem) {
         return false;
     }
-
 
 
 
@@ -426,4 +425,24 @@ public class Term implements AbstractTerm, Termable {
     }
     
     @Override public Term getTerm() { return this; }
+
+    @Override
+    public Object setFirst(Object first) {
+        throw new RuntimeException(this + " not modifiable");
+    }
+
+    @Override
+    public Object setRest(Object rest) {
+        throw new RuntimeException(this + " not modifiable");
+    }
+
+    @Override
+    public Object first() {
+        return this;
+    }
+
+    @Override
+    public Object rest() {
+        return null;
+    }
 }

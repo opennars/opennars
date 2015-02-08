@@ -9,33 +9,44 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- *
  * @author me
  */
-public class Pair<A,B> implements Serializable {
-    
+public class Pair<A, B> implements Serializable {
+
     private A a;
     private B b;
-    
+
     transient private int hash = 0;
     transient private String nameCache = null;
-    
+
     public Pair(A a, B b) {
         setA(a);
         setB(b);
     }
-    
-    public A a() { return a; }
-    public B b() { return b; }
-    
-    protected void setA(A a) { this.a = a; invalidate(); }
-    protected void setB(B b) { this.b = b; invalidate(); }
+
+    public A a() {
+        return a;
+    }
+
+    public B b() {
+        return b;
+    }
+
+    protected void setA(A a) {
+        this.a = a;
+        invalidate();
+    }
+
+    protected void setB(B b) {
+        this.b = b;
+        invalidate();
+    }
 
     protected void invalidate() {
         hash = 0;
         nameCache = null;
     }
-    
+
     @Override
     public int hashCode() {
         if (hash == 0) {
@@ -47,9 +58,9 @@ public class Pair<A,B> implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        Pair p = (Pair)o;
-        
-        if (hash!=p.hash) return false;
+        Pair p = (Pair) o;
+
+        if (hash != p.hash) return false;
         return a.equals(p.a()) && b.equals(p.b());
     }
 
@@ -60,10 +71,6 @@ public class Pair<A,B> implements Serializable {
         }
         return nameCache;
     }
-    
-    
-    
-    
-    
-    
+
+
 }

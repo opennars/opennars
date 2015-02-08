@@ -4,6 +4,8 @@
  */
 package nars.io.nlp;
 
+import reactor.tuple.Tuple2;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,16 +15,23 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.Integer.compare;
+import static java.lang.System.in;
+import static java.lang.System.out;
+import static java.util.Arrays.asList;
+import static java.util.Collections.sort;
+import static java.util.regex.Pattern.compile;
+
 /**
  * CUSTOMIZED FROM:
  * https://github.com/brendano/ark-tweet-nlp/blob/master/src/cmu/arktweetnlp/Twokenize.java
- *
+ * <p/>
  * Twokenize -- a tokenizer designed for Twitter text in English and some other
  * European languages. This is the Java version. If you want the old Python
  * version, see: http://github.com/brendano/tweetmotif
- *
+ * <p/>
  * This tokenizer code has gone through a long history:
- *
+ * <p/>
  * (1) Brendan O'Connor wrote original version in Python,
  * http://github.com/brendano/tweetmotif TweetMotif: Exploratory Search and
  * Topic Summarization for Twitter. Brendan O'Connor, Michel Krieger, and David
@@ -33,21 +42,21 @@ import java.util.regex.Pattern;
  * Brendan bugfixed the Scala port and merged with POS-specific changes for the
  * CMU ARK Twitter POS Tagger (4) Tobi Owoputi ported it back to Java and added
  * many improvements (2012-06)
- *
+ * <p/>
  * Current home is http://github.com/brendano/ark-tweet-nlp and
  * http://www.ark.cs.cmu.edu/TweetNLP
- *
+ * <p/>
  * There have been at least 2 other Java ports, but they are not in the lineage
  * for the code here.
  */
 public class Twokenize {
 
-    static Pattern Contractions = Pattern.compile("(?i)(\\w+)(n['’′]t|['’′]ve|['’′]ll|['’′]d|['’′]re|['’′]s|['’′]m)$");
-    static Pattern Whitespace = Pattern.compile("[\\s\\p{Zs}]+");
+    static Pattern Contractions = compile("(?i)(\\w+)(n['’′]t|['’′]ve|['’′]ll|['’′]d|['’′]re|['’′]s|['’′]m)$");
+    static Pattern Whitespace = compile("[\\s\\p{Zs}]+");
 
     static String punctChars = "['\"“”‘’.?!…,:;]";
     //static String punctSeq   = punctChars+"+";	//'anthem'. => ' anthem '.
-    static String punctSeq = "['\"“”‘’]+|[.?!,…]+|[:;]+";	//'anthem'. => ' anthem ' .
+    static String punctSeq = "['\"“”‘’]+|[.?!,…]+|[:;]+";    //'anthem'. => ' anthem ' .
     static String entity = "&(?:amp|lt|gt|quot);";
     //  URLs
 
@@ -63,7 +72,7 @@ public class Twokenize {
             + "lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|"
             + "nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|"
             + "sl|sm|sn|so|sr|ss|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|"
-            + "va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw)";	//TODO: remove obscure country domains?
+            + "va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw)";    //TODO: remove obscure country domains?
     static String urlStart2 = "\\b(?:[A-Za-z\\d-])+(?:\\.[A-Za-z0-9]+){0,3}\\." + "(?:" + commonTLDs + "|" + ccTLDs + ")" + "(?:\\." + ccTLDs + ")?(?=\\W|$)";
     static String urlBody = "(?:[^\\.\\s<>][^\\s<>]*?)?";
     static String urlExtraCrapBeforeEnd = "(?:" + punctChars + "|" + entity + ")+?";
@@ -72,7 +81,7 @@ public class Twokenize {
 
     // Numeric
     static String timeLike = "\\d+(?::\\d+){1,2}";
-    static String numNum     = "\\d+[\\.\\d+]";
+    static String numNum = "\\d+[\\.\\d+]";
     static String numberWithCommas = "(?:(?<!\\d)\\d{1,3},)+?\\d{3}" + "(?=(?:[^,\\d]|$))";
     static String numComb = "\\p{Sc}?\\d+(?:\\.\\d+)+%?";
 
@@ -127,14 +136,14 @@ public class Twokenize {
     public static String emoticon = OR(
             // Standard version  :) :( :] :D :P
             "(?:>|&gt;)?" + OR(normalEyes, wink) + OR(noseArea, "[Oo]")
-            + OR(tongue + "(?=\\W|$|RT|rt|Rt)", otherMouths + "(?=\\W|$|RT|rt|Rt)", sadMouths, happyMouths),
+                    + OR(tongue + "(?=\\W|$|RT|rt|Rt)", otherMouths + "(?=\\W|$|RT|rt|Rt)", sadMouths, happyMouths),
             // reversed version (: D:  use positive lookbehind to remove "(word):"
             // because eyes on the right side is more ambiguous with the standard usage of : ;
             "(?<=(?: |^))" + OR(sadMouths, happyMouths, otherMouths) + noseArea + OR(normalEyes, wink) + "(?:<|&lt;)?",
             //inspired by http://en.wikipedia.org/wiki/User:Scapler/emoticons#East_Asian_style
             eastEmote.replaceFirst("2", "1"), basicface
-    // iOS 'emoji' characters (some smileys, some symbols) [\ue001-\uebbb]  
-    // TODO should try a big precompiled lexicon from Wikipedia, Dan Ramage told me (BTO) he does this
+            // iOS 'emoji' characters (some smileys, some symbols) [\ue001-\uebbb]
+            // TODO should try a big precompiled lexicon from Wikipedia, Dan Ramage told me (BTO) he does this
     );
 
     static String Hearts = "(?:<+/?3+)+"; //the other hearts are in decorations
@@ -161,9 +170,9 @@ public class Twokenize {
     public static String Email = "(?<=" + Bound + ")[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}(?=" + Bound + ")";
 
     public static String word = "[\\p{Alpha}]+";
-            
+
     static String embeddedApostrophe = word + "[''']" + word;
-    
+
     // We will be tokenizing using these regexps as delimiters
     // Additionally, these things are "protected", meaning they shouldn't be further split themselves.
     static Map<String, Pattern> patterns = new HashMap() {
@@ -172,25 +181,25 @@ public class Twokenize {
              OR(*/
 
             //lowest priority first
-            
-            put("word", Pattern.compile(word));
-            put("hearts", Pattern.compile(Hearts));
-            put("url", Pattern.compile(url));
-            put("email", Pattern.compile(Email));
-            put("temporal", Pattern.compile(timeLike));
-            put("num", Pattern.compile(numNum));
+
+            put("word", compile(word));
+            put("hearts", compile(Hearts));
+            put("url", compile(url));
+            put("email", compile(Email));
+            put("temporal", compile(timeLike));
+            put("num", compile(numNum));
             //put("numCommas", Pattern.compile(numberWithCommas));
-            put("num", Pattern.compile(numComb));
-            put("emoticon", Pattern.compile(emoticon));
-            put("arrows", Pattern.compile(Arrows));
-            put("entity", Pattern.compile(entity));
-            put("punct", Pattern.compile(punctSeq));
-            put("abbrev", Pattern.compile(arbitraryAbbrev));
-            put("separator", Pattern.compile(separators));
-            put("decoration", Pattern.compile(decorations));
-            put("wordApos", Pattern.compile(embeddedApostrophe));
-            put("hashtag", Pattern.compile(Hashtag));
-            put("mention", Pattern.compile(AtMention));
+            put("num", compile(numComb));
+            put("emoticon", compile(emoticon));
+            put("arrows", compile(Arrows));
+            put("entity", compile(entity));
+            put("punct", compile(punctSeq));
+            put("abbrev", compile(arbitraryAbbrev));
+            put("separator", compile(separators));
+            put("decoration", compile(decorations));
+            put("wordApos", compile(embeddedApostrophe));
+            put("hashtag", compile(Hashtag));
+            put("mention", compile(AtMention));
         }
     };
     /*));
@@ -209,8 +218,8 @@ public class Twokenize {
     static String edgePunct = "[" + edgePunctChars + "]";
     static String notEdgePunct = "[a-zA-Z0-9]"; // content characters
     static String offEdge = "(^|$|:|;|\\s|\\.|,)";  // colon here gets "(hello):" ==> "( hello ):"
-    static Pattern EdgePunctLeft = Pattern.compile(offEdge + "(" + edgePunct + "+)(" + notEdgePunct + ")");
-    static Pattern EdgePunctRight = Pattern.compile("(" + notEdgePunct + ")(" + edgePunct + "+)" + offEdge);
+    static Pattern EdgePunctLeft = compile(offEdge + "(" + edgePunct + "+)(" + notEdgePunct + ")");
+    static Pattern EdgePunctRight = compile("(" + notEdgePunct + ")(" + edgePunct + "+)" + offEdge);
 
     public static String splitEdgePunct(String input) {
         Matcher m1 = EdgePunctLeft.matcher(input);
@@ -253,19 +262,19 @@ public class Twokenize {
 
         @Override
         public int compareTo(Span t) {
-            return Integer.compare(start, t.start);
+            return compare(start, t.start);
         }
-        
+
         @Override
         public String toString() {
             return "(" + content + "," + pattern + ")";
-        }        
+        }
 
         private boolean contains(Span b) {
-            return (b.length<length) && (b.start>=start) && (b.stop<=stop);
+            return (b.length < length) && (b.start >= start) && (b.stop <= stop);
         }
     }
-    
+
     // The main work of tokenizing a tweet.
     private static List<Span> simpleTokenize(String text) {
 
@@ -280,9 +289,9 @@ public class Twokenize {
         // Find the matches for subsequences that should be protected,
         // e.g. URLs, 1.0, U.N.K.L.E., 12:53
         //Storing as List[List[String]] to make zip easier later on 
-        List<Span> spans = new ArrayList<>();	//linked list?
+        List<Span> spans = new ArrayList<>();    //linked list?
 
-        for (Entry<String,Pattern> p : patterns.entrySet()) {
+        for (Entry<String, Pattern> p : patterns.entrySet()) {
             Matcher matches = p.getValue().matcher(splitPunctText);
             while (matches.find()) {
 
@@ -371,10 +380,10 @@ public class Twokenize {
         Matcher m = Contractions.matcher(token);
         if (m.find()) {
             String[] contract = {m.group(1), m.group(2)};
-            return Arrays.asList(contract);
+            return asList(contract);
         }
         String[] contract = {token};
-        return Arrays.asList(contract);
+        return asList(contract);
     }
 
     /**
@@ -382,9 +391,9 @@ public class Twokenize {
      */
     public static List<Span> tokenize(String text) {
         List<Span> l = simpleTokenize(squeezeWhitespace(text));
-        
+
         Set<Span> hidden = new HashSet();
-        
+
         for (Span a : l) {
             if (hidden.contains(a)) continue;
             for (Span b : l) {
@@ -392,13 +401,13 @@ public class Twokenize {
                 if (a.contains(b))
                     hidden.add(b);
                 else if (b.contains(a)) {
-                    hidden.add(a);       
+                    hidden.add(a);
                     break;
                 }
-                
+
             }
         }
-        
+
         l.removeAll(hidden);
         return l;
     }
@@ -416,14 +425,14 @@ public class Twokenize {
     /**
      * This is intended for raw tweet text -- we do some HTML entity unescaping
      * before running the tagger.
-     *
+     * <p/>
      * This function normalizes the input text BEFORE calling the tokenizer. So
      * the tokens you get back may not exactly correspond to substrings of the
      * original text.
      */
     public static List<Span> tokenizeRawTweetText(String text) {
         List<Span> sp = tokenize(normalizeTextForTagger(text));
-        Collections.sort(sp);
+        sort(sp);
         return sp;
     }
 
@@ -432,8 +441,8 @@ public class Twokenize {
      * output. Input and output UTF-8.
      */
     public static void main(String[] args) throws IOException {
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
-        PrintStream output = new PrintStream(System.out, true, "UTF-8");
+        BufferedReader input = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        PrintStream output = new PrintStream(out, true, "UTF-8");
         String line;
         while ((line = input.readLine()) != null) {
             List<Span> toks = tokenizeRawTweetText(line);

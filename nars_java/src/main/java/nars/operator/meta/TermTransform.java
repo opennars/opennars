@@ -4,7 +4,7 @@
  */
 package nars.operator.meta;
 
-import nars.operator.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousFunctionOperator;
 
 /**
  *

@@ -11,7 +11,7 @@ import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Term;
 import nars.logic.nal8.Operator;
-import nars.operator.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousFunctionOperator;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;

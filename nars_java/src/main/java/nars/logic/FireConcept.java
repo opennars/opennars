@@ -8,17 +8,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.*;
-import nars.logic.nal1.Negation;
-import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
-import nars.logic.nal5.SyllogisticRules;
-import nars.logic.nal7.TemporalRules;
-import nars.logic.rule.concept.ConceptFireRule;
-import nars.util.bag.select.ForgetNext;
-
-import java.util.Set;
-
-import static nars.io.Symbols.VAR_INDEPENDENT;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 abstract public class FireConcept extends NAL {
@@ -27,13 +17,11 @@ abstract public class FireConcept extends NAL {
     protected final TaskLink currentTaskLink;
     protected final Concept currentConcept;
 
-    private Concept beliefConcept;
+    protected TermLink currentBeliefLink;
+    private Concept currentBeliefConcept;
     private int termLinkCount;
 
-//    public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
-//        this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
-//    }
-
+    protected NALRuleEngine reasoner;
 
     public FireConcept(Concept concept, TaskLink taskLink) {
         this(concept, taskLink, concept.memory.param.termLinkMaxReasoned.get());
@@ -46,6 +34,8 @@ abstract public class FireConcept extends NAL {
         this.currentTerm = concept.getTerm();
 
         this.termLinkCount = termLinkCount;
+
+        this.reasoner = concept.memory.rules;
     }
 
 
@@ -122,13 +112,13 @@ abstract public class FireConcept extends NAL {
                     continue;
                 
 
-                int numAddedTasksBefore = produced.size();
+                int numAddedTasksBefore = newTasksCount();
 
                 reason(currentTaskLink, beliefLink);
 
                 currentConcept.returnTermLink(beliefLink);
 
-                int numAddedTasksAfter = produced.size();
+                int numAddedTasksAfter = newTasksCount();
 
                 emit(Events.TermLinkSelected.class, beliefLink, getCurrentTaskLink(), getCurrentConcept(), this, numAddedTasksBefore, numAddedTasksAfter);
                 memory.logic.TERM_LINK_SELECT.hit();
@@ -186,33 +176,6 @@ abstract public class FireConcept extends NAL {
             emit(Events.BeliefReason.class, belief, tLink.getTarget(), this);
         }
 
-
-
-//        final Task task = tLink.getTarget(); //== getCurrentTask();
-//        final Sentence taskSentence = task.sentence;
-//
-//        final Term taskTerm = taskSentence.term;         // cloning for substitution
-//        final Term beliefTerm = bLink.target;       // cloning for substitution
-
-
-//        if (equalSubTermsInRespectToImageAndProduct(taskTerm, beliefTerm)) {
-//            throw new RuntimeException("shoulld have been suppressed by the new rule impl");
-//        }
-//
-//        if ((belief != null) && (LocalRules.match(task, belief, this))) {
-//            throw new RuntimeException("shoulld have been suppressed by the new rule impl");
-//        }
-
-
-
-
-//        //current belief and task may have changed, so set again:
-//        setCurrentBelief(belief);
-//        setCurrentTask(task);
-
-
-
-
     }
 
     /**
@@ -234,14 +197,15 @@ abstract public class FireConcept extends NAL {
 
         Term beliefTerm = currentBeliefLink.getTerm();
 
-        this.beliefConcept = memory.concept(beliefTerm);
+        this.currentBeliefConcept = memory.concept(beliefTerm);
 
-        this.currentBelief = (beliefConcept != null) ? beliefConcept.getBelief(this, getCurrentTask()) : null;
+        this.currentBelief = (currentBeliefConcept != null) ? currentBeliefConcept.getBelief(this, getCurrentTask()) : null;
     }
 
     public void reset() {
         this.currentBelief = null;
         this.currentBeliefLink = null;
+        this.currentBeliefConcept = null;
     }
 
 
@@ -264,8 +228,8 @@ abstract public class FireConcept extends NAL {
 
 
     /** the current belief concept */
-    public Concept getBeliefConcept() {
-        return beliefConcept;
+    public Concept getCurrentBeliefConcept() {
+        return currentBeliefConcept;
     }
 
 

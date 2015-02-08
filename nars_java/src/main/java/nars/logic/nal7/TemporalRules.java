@@ -268,10 +268,9 @@ public class TemporalRules {
     }*/
 
 
-    static final Variable var1 = new Variable("$0");
-    static final Variable var2 = var1;
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal, Collection<Task> success) {
+
+    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
         
         if ((s1.truth==null) || (s2.truth==null))
             return;
@@ -294,7 +293,8 @@ public class TemporalRules {
             Statement ss1 = (Statement) t1;
             Statement ss2 = (Statement) t2;
 
-
+            final Variable var1 = new Variable("$0");
+            final Variable var2 = new Variable("$1");
 
             if (ss1.getSubject().equals(ss2.getSubject())) {
                 t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
@@ -399,7 +399,7 @@ public class TemporalRules {
         Statement statement3 = Equivalence.make(t1, t2, order);
 
 
-        final int inductionLimit = nal.param.temporalRelationsMax.get();
+        final int inductionLimit = nal.memory.param.temporalRelationsMax.get();
 
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
@@ -408,38 +408,38 @@ public class TemporalRules {
             if(!tooMuchTemporalStatements(statement11,inductionLimit)) {
                 Task t=nal.doublePremiseTask(statement11, truth1, budget1,true);
                 if(t!=null) {
-                    success.add(t);
+                    //success.add(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement22,inductionLimit)) {
                Task t=nal.doublePremiseTask(statement22, truth2, budget2,true);
                 if(t!=null) {
-                    success.add(t);
+                    //success.add(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement33,inductionLimit)) {
                 Task t=nal.doublePremiseTask(statement33, truth3, budget3,true);
                 if(t!=null) {
-                    success.add(t);
+                    //success.add(t);
                 }
             }
         }
         if(!tooMuchTemporalStatements(statement1,inductionLimit)) {
             Task t=nal.doublePremiseTask(statement1, truth1, budget1,true);
             if(t!=null) {
-                    success.add(t);
+                    //success.add(t);
                 }
         }
         if(!tooMuchTemporalStatements(statement2,inductionLimit)) {
             Task t=nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
                  if(t!=null) {
-                    success.add(t);
+                    //success.add(t);
                 }
             }
         if(!tooMuchTemporalStatements(statement3,inductionLimit)) {
             Task t=nal.doublePremiseTask(statement3, truth3, budget3,true);
             if(t!=null) {
-                    success.add(t);
+                    //success.add(t);
                 }
         }
 

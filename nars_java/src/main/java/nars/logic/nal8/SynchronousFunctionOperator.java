@@ -1,4 +1,4 @@
-package nars.operator;
+package nars.logic.nal8;
 
 import com.google.common.collect.Lists;
 import nars.core.Memory;

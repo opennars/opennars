@@ -203,6 +203,7 @@
         </dependency>
 
         <dependency>
+            <!-- TODO replace with: reactor.io.codec.json -->
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.3.1</version>

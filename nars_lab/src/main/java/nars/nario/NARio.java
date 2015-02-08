@@ -13,7 +13,7 @@ import nars.logic.nal8.Operation;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
-import nars.operator.NullOperator;
+import nars.logic.nal8.NullOperator;
 import nars.operator.app.plan.TemporalParticlePlanner;
 
 import javax.swing.*;

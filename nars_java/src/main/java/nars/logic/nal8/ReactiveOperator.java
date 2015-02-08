@@ -1,9 +1,8 @@
-package nars.operator;
+package nars.logic.nal8;
 
 import nars.core.NAR;
 import nars.event.AbstractReaction;
 import nars.event.Reaction;
-import nars.logic.nal8.Operator;
 
 /**
  * ReactiveOperator combines Operator with a Reaction interface to

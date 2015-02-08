@@ -3,7 +3,7 @@ package nars.operator.software;
 import nars.core.Memory;
 import nars.io.Texts;
 import nars.logic.entity.Term;
-import nars.operator.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousFunctionOperator;
 import nars.operator.mental.Mental;
 
 import javax.script.Bindings;

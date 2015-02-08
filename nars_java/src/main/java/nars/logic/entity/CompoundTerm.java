@@ -30,6 +30,7 @@ import nars.logic.entity.tlink.TermLinkBuilder;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
+import nars.util.data.sexpression.Pair;
 
 import java.util.*;
 
@@ -1001,5 +1002,16 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return Iterators.forArray(term);
     }
 
-    
+    /** cdr or 'rest' function for s-expression interface when arity > 1 */
+    public Pair cdr() {
+        if (term.length <= 1) return null;
+        Pair p = null;
+        for (int i = term.length - 2; i >= 0; i--) {
+            if (p == null)
+                p = new Pair(i, i+1);
+            else
+                p = new Pair(i, p);
+        }
+        return p;
+    }
 }

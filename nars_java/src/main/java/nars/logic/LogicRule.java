@@ -54,6 +54,8 @@ public class LogicRule<X> implements Consumer<Event<X>> {
     public void accept(Event<X> e) {
         if (action!=null)
             action.accept(e);
+        else
+            throw new RuntimeException(this + " has no defined action");
     }
 
 

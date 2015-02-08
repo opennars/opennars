@@ -8,7 +8,7 @@ import nars.logic.entity.TermLink;
 import nars.logic.rule.TaskFireTerm;
 import reactor.event.Event;
 
-
+/** a rule involved in firing a concept */
 abstract public class ConceptFireRule extends LogicRule<FireConcept> implements TaskFireTerm {
 
     public ConceptFireRule() {

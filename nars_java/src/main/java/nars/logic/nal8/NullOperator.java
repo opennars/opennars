@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.operator;
+package nars.logic.nal8;
 
 import nars.core.Memory;
 import nars.core.Parameters;

@@ -16,7 +16,7 @@ import java.util.Deque;
 import java.util.List;
 
 /**
- * NAL Reasoner Process.  Includes all reasoning process state.
+ * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
  * <p>
  * https://code.google.com/p/open-nars/wiki/SingleStepTestingCases
  * according to derived Task: if it contains a mental operator it is NAL9, if it contains a operation it is NAL8, if it contains temporal information it is NAL7, if it contains in/dependent vars it is NAL6, if it contains higher order copulas like &&, ==> or negation it is NAL5
@@ -41,15 +41,17 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     }
 
     public final Memory memory;
+
     protected final Task currentTask;
-    protected TermLink currentBeliefLink;
-    protected TaskLink currentTaskLink;
     protected Sentence currentBelief;
+
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
-    protected NALRuleEngine reasoner;
 
-    public final Param param;
+    /**
+     * stores the tasks that this process generates, and adds to memory
+     */
+    public Deque<Task> newTasks = null;
 
 
 
@@ -63,20 +65,18 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     public NAL(Memory mem, int nalLevel, Task task) {
         super(null);
 
-        setKey(getClass());
+
+        //setKey(getClass());
         setData(this);
 
         memory = mem;
-        reasoner = mem.rules;
-        param = memory.param;
 
         if ((nalLevel!=-1) && (nalLevel!=mem.nal()))
             throw new RuntimeException("Different NAL level than Memory not supported yet");
 
         currentTask = task;
-        currentBeliefLink = null;
-        currentTaskLink = null;
         currentBelief = null;
+
         newStamp = null;
         newStampBuilder = null;
     }
@@ -98,6 +98,10 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
     protected abstract void reason();
 
+    protected int newTasksCount() {
+        if (newTasks == null) return 0;
+        return newTasks.size();
+    }
 
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
@@ -235,7 +239,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2, derivedCurrentTask);
         memory.logic.TASK_DERIVED.hit();
 
-        addTask(task, "Derived");
+        addNewTask(task, "Derived");
 
         return true;
     }
@@ -368,10 +372,10 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         }
         Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-            setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
+            setNextNewStamp(new Stamp(taskSentence.stamp, time()));
         } else {
             // to answer a question with negation in NAL-5 --- move to activated task?
-            setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
+            setNextNewStamp(new Stamp(getCurrentBelief().stamp, time()));
         }
 
         if (newContent.subjectOrPredicateIsIndependentVar()) {
@@ -394,27 +398,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         return deriveTask(newTask, false, true, null, null);
     }
 
-    //    protected void reset(Memory currentMemory) {
-    //        mem = currentMemory;
-    //        setCurrentTerm(null);
-    //        setCurrentBelief(null);
-    //        setCurrentConcept(null);
-    //        setCurrentTask(null);
-    //        setCurrentBeliefLink(null);
-    //        setCurrentTaskLink(null);
-    //        setNewStamp(null);
-    //    }
-    public long getTime() {
+
+    public long time() {
         return memory.time();
     }
 
-    //public Stamp getNewStamp() {
-//        return newStamp;
-  //  }
 
-    //public void setNewStamp(Stamp newStamp) {
-    //    this.newStamp = newStamp;
-    //}
 
     /**
      * @return the currentTask
@@ -454,7 +443,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     /**
      * @param newStamp the newStamp to set
      */
-    public Stamp setTheNewStamp(Stamp newStamp) {
+    public Stamp setNextNewStamp(Stamp newStamp) {
         this.newStamp = newStamp;
         this.newStampBuilder = null;
         return newStamp;
@@ -510,21 +499,21 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      * at the end of the processing they can be reviewed and filtered
      * then they need to be added to memory with inputTask(t)
      */
-    protected void addTask(Task t, String reason) {
+    protected void addNewTask(Task t, String reason) {
         t.setReason(reason);
-        produced.add(t);
+
+        if (newTasks==null)
+            newTasks = new ArrayDeque(4);
+
+        newTasks.add(t);
     }
 
-    /**
-     * stores the tasks that this process generates, and adds to memory
-     */
-    public final Deque<Task> produced = new ArrayDeque();
 
     /** called from consumers of the tasks that this context generates */
     @Override public Task get() {
-        if (produced.isEmpty())
+        if (newTasks == null || newTasks.isEmpty())
             return null;
-        return produced.removeFirst();
+        return newTasks.removeFirst();
     }
 
     /**
@@ -537,7 +526,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      *                        forward/backward correspondence
      */
     public void addSolution(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
-        addTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
+        addNewTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
                 "Activated");
     }
 
