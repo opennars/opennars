@@ -28,6 +28,7 @@ public abstract class AbstractReaction implements Reaction {
     public AbstractReaction(EventEmitter source, boolean active, Class... events) {
         this.source = source;
         this.events = events;
+
         setActive(active);
     }
 
@@ -40,10 +41,16 @@ public abstract class AbstractReaction implements Reaction {
             this.active.cancel();
             this.active = null;
         }
+
+    }
+
+    protected void emit(Class channel, Object... signal) {
+        source.emit(channel, signal);
     }
 
     public boolean isActive() {
         return active!=null;
     }
-    
+
+
 }

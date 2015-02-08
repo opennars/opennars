@@ -26,13 +26,10 @@ import nars.core.Events.TaskRemove;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.Symbols;
-import nars.logic.NALOperator;
+import nars.logic.*;
 import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
-import nars.logic.BudgetFunctions;
-import nars.logic.NALRuleEngine;
-import nars.logic.Terms;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
@@ -56,6 +53,7 @@ import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.util.bag.Bag;
+import reactor.function.Supplier;
 
 import java.io.Serializable;
 import java.util.*;
@@ -112,6 +110,18 @@ public class Memory implements Serializable {
     /** provides fast iteration to concepts with goals */
     public Set<Concept> getGoalConcepts() {
         return goalConcepts;
+    }
+
+    /** allows an external component to signal to the memory that data is available.
+     * default implementation now just absorbs all the data but different policies
+     * could be implemented (ex: round robin) which will be
+     * more important when heavier data flow occurrs
+     */
+    public void addNewTasks(Supplier<Task> source) {
+        Task next = null;
+        while ((next = source.get())!=null) {
+            addNewTask(next, next.getReason());
+        }
     }
 
     public static enum Forgetting {
@@ -523,16 +533,12 @@ public class Memory implements Serializable {
 
         concepts.addTask(t);
 
-        logic.TASK_ADD_NEW.hit();
 
         emit(Events.TaskAdd.class, t, reason);
+        logic.TASK_ADD_NEW.hit();
 
-        final float budget = t.budget.summary();
-        final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
 
-        if (budget >= noiseLevel) {  // only report significant derived Tasks
-            emit(Events.OUT.class, t);
-        }
+
 
         return true;
     }

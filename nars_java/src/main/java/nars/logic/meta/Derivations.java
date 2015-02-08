@@ -67,7 +67,8 @@ public class Derivations {
                     TaskLink tl = (TaskLink)args[0];
                     Concept c = (Concept)args[1];
                     NAL n = (NAL)args[2];
-                    record(c, tl, null, n.tasksAdded, n.getTime());
+                    //TODO i broke this
+                    //record(c, tl, null, n.produced, n.getTime());
                 }
 
                 else if (event == Events.TermLinkSelected.class) {
@@ -78,7 +79,8 @@ public class Derivations {
                     int taskStart = (int) args[4];
                     int taskEnd = (int) args[5];
 
-                    record(c, tasklink, termlink, n.tasksAdded.subList(taskStart, taskEnd), n.getTime());
+                    //TODO i broke this
+                    //record(c, tasklink, termlink, n.produced.subList(taskStart, taskEnd), n.getTime());
                 }
             }
         };

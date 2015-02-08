@@ -26,6 +26,7 @@ import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.Parameters;
 import nars.io.Symbols;
+import nars.logic.ImmediateProcess;
 import nars.logic.NALOperator;
 import nars.logic.NAL;
 import nars.logic.Terms.Termable;
@@ -211,7 +212,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return whether it was processed
      */
-    public boolean directProcess(final NAL nal, final Task task) {
+    public boolean directProcess(final ImmediateProcess nal, final Task task) {
         if (!task.aboveThreshold()) {
             //available credit to boost priority (maximum=1-priority)
             float credit = Math.min( taskBudgetBalance, 1.0f - budget.getPriority());
@@ -405,7 +406,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processGoal(final NAL nal, final Task task) {        
+    protected void processGoal(final ImmediateProcess nal, final Task task) {
         
         final Sentence goal = task.sentence, oldGoal;
 
@@ -464,7 +465,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param newTask The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processQuestion(final NAL nal, final Task newTask) {
+    protected void processQuestion(final ImmediateProcess nal, final Task newTask) {
 
         Sentence ques = newTask.sentence;
 

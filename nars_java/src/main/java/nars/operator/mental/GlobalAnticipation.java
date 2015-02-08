@@ -195,7 +195,7 @@ public class GlobalAnticipation implements Plugin, Reaction {
             }
         }
         for(Task t: derivetasks) {
-            if(nal.derivedTask(t, false, false, null, null)) {
+            if(nal.deriveTask(t, false, false, null, null)) {
                 boolean debug=true;
             }
         }

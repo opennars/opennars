@@ -1,5 +1,6 @@
 package nars.core;
 
+import nars.event.AbstractReaction;
 import nars.event.Reaction;
 import nars.logic.FireConcept;
 import nars.logic.ImmediateProcess;
@@ -10,6 +11,7 @@ import nars.logic.entity.Task;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /* NAR reasoner events */
 public class Events {
@@ -19,7 +21,38 @@ public class Events {
     public static interface IN  { }
 
     /** conversational (judgments, questions, etc...) output */
-    public static interface OUT  { }
+    public static class OUT extends AbstractPlugin {
+
+        AtomicInteger volume;
+        NAR nar;
+
+        @Override
+        public void event(Class event, Object[] args) {
+            Task t = (Task)args[0];
+            final float budget = t.budget.summary();
+            final float noiseLevel = 1.0f - (this.volume.get() / 100.0f);
+
+            if (budget >= noiseLevel) {  // only report significant derived Tasks
+                nar.emit(Events.OUT.class, t);
+            }
+        }
+
+        @Override
+        public Class[] getEvents() {
+            return new Class[] { TaskAdd.class };
+        }
+
+        @Override
+        public void onEnabled(NAR n) {
+            this.volume = n.memory.param.noiseLevel;
+            this.nar = n;
+        }
+
+        @Override
+        public void onDisabled(NAR n) {
+
+        }
+    }
 
     /** warnings, errors & exceptions */
     public static interface ERR { }

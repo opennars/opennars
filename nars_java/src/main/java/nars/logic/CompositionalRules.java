@@ -64,11 +64,11 @@ public final class CompositionalRules {
      * @param belief   The second premise
      * @param nal      Reference to the memory
      */
-    static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final NAL nal) {
+    public static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final NAL nal) {
         if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }
-        Set<Concept> memoryQuestionConcepts = nal.mem().getQuestionConcepts();
+        Set<Concept> memoryQuestionConcepts = nal.memory.getQuestionConcepts();
         if (memoryQuestionConcepts.isEmpty())
             return;
 
@@ -152,7 +152,7 @@ public final class CompositionalRules {
                 return;
             }*/
 
-                nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.hit();
+                nal.memory.logic.DED_CONJUNCTION_BY_QUESTION.hit();
 
                 TruthValue truthAnd = intersection(truthT, truthB);
                 BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
@@ -286,7 +286,7 @@ public final class CompositionalRules {
         if ((compound instanceof Statement) || (compound instanceof Image)) {
             return false;
         }
-        Term term2 = reduceComponents(compound, component, nal.mem());
+        Term term2 = reduceComponents(compound, component, nal.memory);
         if (term2 == null) {
             return false;
         }
@@ -386,7 +386,7 @@ public final class CompositionalRules {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
-        Term content = reduceComponents(compound, component, nal.mem());
+        Term content = reduceComponents(compound, component, nal.memory);
         if (content == null) {
             return false;
         }
@@ -397,7 +397,7 @@ public final class CompositionalRules {
             nal.doublePremiseTask(content, truth, budget, false);
             // special logic to answer conjunctive questions with query variables
             if (taskSentence.term.hasVarQuery()) {
-                Concept contentConcept = nal.mem().concept(content);
+                Concept contentConcept = nal.memory.concept(content);
                 if (contentConcept == null) {
                     return false;
                 }
@@ -1093,7 +1093,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
     http://code.google.com/p/open-nars/issues/detail?id=40&can=1
     */
 
-    static boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
+    public static boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
 
         final Sentence taskSentence = task.sentence;
 
@@ -1128,7 +1128,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
         Map<Term, Term> smap = null;
 
         for (int k = 0; k < maxUnificationAttempts; k++) {
-            Concept secondConcept = nal.mem().sampleNextConcept();
+            Concept secondConcept = nal.memory.sampleNextConcept();
             if (secondConcept == null) {
                 //no more concepts, stop
                 break;
@@ -1177,7 +1177,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                     CompoundTerm ctaskterm_subs = (CompoundTerm) first;
                     ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
-                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.mem());
+                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                         terms_dependent.add(taskterm_subs);
                     }
@@ -1189,7 +1189,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values2, smap)) {
                     CompoundTerm ctaskterm_subs = (CompoundTerm) first;
                     ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values2);
-                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.mem());
+                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
 
                         terms_independent.add(taskterm_subs);
@@ -1213,7 +1213,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
                             CompoundTerm ctaskterm_subs = (CompoundTerm) first;
                             ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values3);
-                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.mem());
+                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_dependent.add(taskterm_subs);
                             }
@@ -1226,7 +1226,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
                             CompoundTerm ctaskterm_subs = (CompoundTerm) first;
                             ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values4);
-                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.mem());
+                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_independent.add(taskterm_subs);
                             }
@@ -1282,9 +1282,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     nal.setCurrentBelief(taskSentence);
                     nal.setCurrentTask(dummy);
 
-                    if (nal.derivedTask(newTask, false, false, task, second_belief)) {
+                    if (nal.deriveTask(newTask, false, false, task, second_belief)) {
 
-                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
+                        nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
                         nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
                         unifiedAnything = true;
 
@@ -1351,9 +1351,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     nal.setCurrentBelief(taskSentence);
                     nal.setCurrentTask(dummy);
 
-                    if (nal.derivedTask(newTask, false, false, task, second_belief)) {
+                    if (nal.deriveTask(newTask, false, false, task, second_belief)) {
 
-                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
+                        nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 
                     }
                 }

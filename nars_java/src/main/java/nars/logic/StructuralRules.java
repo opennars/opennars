@@ -57,7 +57,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompose2(CompoundTerm compound, short index, Statement statement, short side, NAL nal) {
-        final Memory mem = nal.mem();
+        final Memory mem = nal.memory;
         
         if (compound.equals(statement.term[side])) {
             return;
@@ -357,7 +357,7 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     static void transformProductImage(Inheritance inh, CompoundTerm oldContent, short[] indices, NAL nal) {
-        final Memory memory = nal.mem();
+        final Memory memory = nal.memory;
         Term subject = inh.getSubject();
         Term predicate = inh.getPredicate();
         if (inh.equals(oldContent)) {
@@ -641,7 +641,7 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final NAL nal) {
-        Memory memory = nal.mem();
+        Memory memory = nal.memory;
         memory.logic.CONTRAPOSITION.hit();
 
         Term subj = statement.getSubject();

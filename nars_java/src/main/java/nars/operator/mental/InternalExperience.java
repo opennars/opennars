@@ -13,6 +13,7 @@ import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
+import reactor.function.Supplier;
 
 import java.util.Arrays;
 
@@ -25,7 +26,7 @@ import java.util.Arrays;
  * called from Concept
  * @param task The task processed
  */
-public class InternalExperience extends AbstractPlugin {
+public class InternalExperience extends AbstractPlugin  {
         
     public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.75f;
     
@@ -85,16 +86,14 @@ public class InternalExperience extends AbstractPlugin {
         String opName;
         switch (s.punctuation) {
             case Symbols.JUDGMENT:
-                opName = "^believe";
-                if(!AllowWantBelieve) {
+                if(!AllowWantBelieve)
                     return null;
-                }
+                opName = "^believe";
                 break;
             case Symbols.GOAL:
-                opName = "^want";
-                if(!AllowWantBelieve) {
+                if(!AllowWantBelieve)
                     return null;
-                }
+                opName = "^want";
                 break;
             case Symbols.QUESTION:
                 opName = "^wonder";
@@ -128,7 +127,8 @@ public class InternalExperience extends AbstractPlugin {
 
         if (event==Events.TaskImmediateProcessed.class) {
 
-            Task task = (Task)a[0];                
+            Task task = (Task)a[0];
+            //NAL nal = (NAL)a[1];
 
             if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return;
@@ -202,7 +202,7 @@ public class InternalExperience extends AbstractPlugin {
                     quality);
 
                 Task newTask = new Task(sentence, budget);       
-                nal.derivedTask(newTask, false, false, null, null);
+                nal.deriveTask(newTask, false, false, null, null);
             }
         }
 
@@ -248,11 +248,13 @@ public class InternalExperience extends AbstractPlugin {
                         quality);
 
                     Task newTask = new Task(sentence, budget);       
-                    nal.derivedTask(newTask, false, false, null, null);
+                    nal.deriveTask(newTask, false, false, null, null);
                 }
             }
         }
     }
+
+
 
     public static enum InternalExperienceMode {
         None, Minimal, Full

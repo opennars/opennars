@@ -15,6 +15,20 @@ import reactor.function.Consumer;
  */
 abstract public interface TaskFireTerm extends Consumer<Event<FireConcept>> {
 
+    @Override
+    default public void accept(Event<FireConcept> o) {
+        FireConcept f = o.getData();
+        if (f==null) return;
+
+        boolean result = apply(f, f.getCurrentTaskLink(), f.getCurrentBeliefLink());
+        if (!result) {
+            o.recycle();
+        }
+    }
+
+    abstract public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink);
+
+
 //    abstract public static class If implements Selector {
 //
 //        public If() {
@@ -69,16 +83,5 @@ abstract public interface TaskFireTerm extends Consumer<Event<FireConcept>> {
 
 //    abstract public static class Then implements Consumer<Event<FireConcept>> {
 
-        @Override
-        default public void accept(Event<FireConcept> o) {
-            FireConcept f = o.getData();
-
-            boolean result = apply(f, f.getCurrentTaskLink(), f.getCurrentBeliefLink());
-            if (!result) {
-                o.recycle();
-            }
-        }
-
-        abstract public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink);
 
 }

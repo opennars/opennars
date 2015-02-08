@@ -22,7 +22,6 @@ package nars.logic;
 
 import nars.core.Memory;
 import nars.logic.entity.*;
-import org.apache.commons.math3.util.FastMath;
 
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
@@ -340,7 +339,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());
-            final float targetActivation = nal.mem().getConceptActivation(bLink.target);
+            final float targetActivation = nal.memory.getConceptActivation(bLink.target);
             bLink.incPriority(or(quality, targetActivation));
             bLink.incDurability(quality);
         }

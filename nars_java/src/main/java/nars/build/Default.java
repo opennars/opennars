@@ -155,8 +155,9 @@ public class Default extends Build implements ConceptBuilder {
             n.memory.addOperator(o);
         for (Operator o : ExampleOperators.get())
             n.memory.addOperator(o);
-        
-                
+
+        n.addPlugin(new Events.OUT());
+
         n.addPlugin(new DefaultTextPerception());
         
         n.addPlugin(new RuntimeNARSettings());

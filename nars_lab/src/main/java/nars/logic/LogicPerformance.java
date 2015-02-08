@@ -148,8 +148,9 @@ public class LogicPerformance {
             addEdge(term, link, new UniqueEdge("tasklink"));
             addEdge(link, f, new UniqueEdge("fire"));
             at(f, t, "fire");
-            
-            explainGeneration(f, f.tasksAdded);
+
+            //TODO i broke this
+            //explainGeneration(f, f.produced);
         }
 
         
@@ -261,7 +262,8 @@ public class LogicPerformance {
         
         n.on(TaskImmediateProcessed.class, new TaskImmediateProcessed() {
             @Override public void onProcessed(Task t, NAL nal, Concept c) {
-                process.explain(t, analysisDepth, nal.tasksAdded);
+                //TODO i broke this
+                //process.explain(t, analysisDepth, nal.produced);
             }            
         });
          n.on(ConceptFired.class, new ConceptFired() {

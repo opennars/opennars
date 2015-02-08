@@ -368,8 +368,8 @@ public class TemporalRules {
         List<Interval> interval;
         
         if (!concurrent(time1, time2, durationCycles)) {
-            
-            interval = Interval.intervalSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
+
+            interval = Interval.intervalSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.memory);
             
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
@@ -494,7 +494,7 @@ public class TemporalRules {
             feedbackToLinks = true;
         }
         boolean judgmentTask = task.sentence.isJudgment();
-        final float quality = TemporalRules.solutionQuality(problem, solution, nal.mem());
+        final float quality = TemporalRules.solutionQuality(problem, solution, nal.memory);
         if (judgmentTask) {
             task.incPriority(quality);
         } else {

@@ -5,6 +5,8 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
 import nars.util.bag.select.ForgetNext;
+import reactor.function.Consumer;
+import reactor.function.Supplier;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.io.PrintStream;
@@ -19,7 +21,7 @@ import java.util.Set;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
+public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer<V>, Supplier<V> {
 
     protected final ForgetNext<K, V> forgetNext = new ForgetNext(this);
 
@@ -95,6 +97,16 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V> {
         return exist.equals(it);
     }
 
+
+    @Override
+    public void accept(V v) {
+        PUT(v);
+    }
+
+    @Override
+    public V get() {
+        return TAKENEXT();
+    }
 
     /**
      * if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected

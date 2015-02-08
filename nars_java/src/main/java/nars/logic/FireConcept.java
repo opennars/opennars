@@ -8,17 +8,16 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.*;
-import nars.logic.nal1.LocalRules;
 import nars.logic.nal1.Negation;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal5.SyllogisticRules;
 import nars.logic.nal7.TemporalRules;
+import nars.logic.rule.concept.ConceptFireRule;
 
 import java.util.Set;
 
 import static nars.io.Symbols.VAR_INDEPENDENT;
-import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 abstract public class FireConcept extends NAL {
@@ -70,7 +69,8 @@ abstract public class FireConcept extends NAL {
         System.err.println();
         */
 
-        inputTasksToMemory();
+
+        memory.addNewTasks(this);
     }
 
 
@@ -175,7 +175,7 @@ abstract public class FireConcept extends NAL {
                 
                 setCurrentBeliefLink(termLink);
 
-                int numAddedTasksBefore = tasksAdded.size();
+                int numAddedTasksBefore = produced.size();
 
 
 
@@ -188,7 +188,7 @@ abstract public class FireConcept extends NAL {
 
                 currentConcept.returnTermLink(termLink, true);
 
-                int numAddedTasksAfter = tasksAdded.size();
+                int numAddedTasksAfter = produced.size();
 
                 emit(Events.TermLinkSelected.class, termLink, getCurrentTaskLink(), getCurrentConcept(), this, numAddedTasksBefore, numAddedTasksAfter);
                 memory.logic.TERM_LINK_SELECT.hit();
@@ -235,216 +235,42 @@ abstract public class FireConcept extends NAL {
      */
     protected void reason(final TaskLink tLink, final TermLink bLink) {
 
-        rules.reason(this, tLink, bLink);
-
-        final Memory memory = mem();
-
-
-        final Task task = tLink.getTarget(); //== getCurrentTask();
-        final Sentence taskSentence = task.sentence;
-
-        final Term taskTerm = taskSentence.term;         // cloning for substitution
-
-
-        final Term beliefTerm = bLink.target;       // cloning for substitution
-
-        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm)) {
-            throw new RuntimeException("shoulld have been suppressed by the new rule impl");
-        }
-
-        //final Concept currentConcept = getCurrentConcept();
-        setBelief(beliefTerm);
+        setCurrentTask(tLink.getTarget());
+        setBelief(bLink.target);
         Sentence belief = getCurrentBelief();
 
-        if (belief != null) {
+        reasoner.add(this, tLink, bLink);
 
-
-            if (LocalRules.match(task, belief, this)) {
-                throw new RuntimeException("shoulld have been suppressed by the new rule impl");
-            }
-
-            if (nal(7)) {
-                //this is a new attempt/experiment to make nars effectively track temporal coherences
-                if (beliefTerm instanceof Implication &&
-                        (beliefTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
-
-                    final int chainSamples = Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
-
-                    //prevent duplicate inductions
-                    if (alreadyInducted == null)
-                        alreadyInducted = Parameters.newHashSet(chainSamples);
-                    else
-                        alreadyInducted.clear();
-
-                    for (int i = 0; i < chainSamples; i++) {
-
-                        Concept next = memory.concepts.sampleNextConcept();
-                        if (next == null) continue;
-
-                        Term t = next.getTerm();
-
-                        if ((t instanceof Implication) && (alreadyInducted.add(t))) {
-
-                            Implication implication = (Implication) t;
-
-                            if (!next.beliefs.isEmpty() && (implication.isForward() || implication.isConcurrent())) {
-
-                                Sentence s = next.beliefs.get(0);
-
-                                TemporalRules.temporalInductionChain(s, belief, this);
-                                TemporalRules.temporalInductionChain(belief, s, this);
-
-                            }
-                        }
-                    }
-                }
-            }
-
-            emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, this);
-
+        if (belief!=null) {
+            emit(Events.BeliefReason.class, belief, getCurrentBelief(), getCurrentTask().getTerm(), this);
         }
 
 
 
-        // to be invoked by the corresponding links
-        if (CompositionalRules.dedSecondLayerVariableUnification(task, this)) {
-            //unification ocurred, done reasoning in this cycle if it's judgment
-            if (taskSentence.isJudgment())
-                return;
-        }
+//        final Task task = tLink.getTarget(); //== getCurrentTask();
+//        final Sentence taskSentence = task.sentence;
+//
+//        final Term taskTerm = taskSentence.term;         // cloning for substitution
+//        final Term beliefTerm = bLink.target;       // cloning for substitution
 
 
-        //current belief and task may have changed, so set again:
-        setCurrentBelief(belief);
-        setCurrentTask(task);
+//        if (equalSubTermsInRespectToImageAndProduct(taskTerm, beliefTerm)) {
+//            throw new RuntimeException("shoulld have been suppressed by the new rule impl");
+//        }
+//
+//        if ((belief != null) && (LocalRules.match(task, belief, this))) {
+//            throw new RuntimeException("shoulld have been suppressed by the new rule impl");
+//        }
 
-        /*if ((memory.getNewTaskCount() > 0) && taskSentence.isJudgment()) {
-            return;
-        }*/
 
-        CompositionalRules.dedConjunctionByQuestion(taskSentence, belief, this);
 
-        final short tIndex = tLink.getIndex(0);
-        short bIndex = bLink.getIndex(0);
-        switch (tLink.type) {          // dispatch first by TaskLink type
-            case TermLink.SELF:
-                switch (bLink.type) {
-                    case TermLink.COMPONENT:
-                        RuleTables.compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, bIndex, this);
-                        break;
-                    case TermLink.COMPOUND:
-                        RuleTables.compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, bIndex, this);
-                        break;
-                    case TermLink.COMPONENT_STATEMENT:
-                        if (belief != null) {
-                            if (taskTerm instanceof Statement) {
-                                SyllogisticRules.detachment(taskSentence, belief, bIndex, this);
-                            }
-                        }
-                        break;
-                    case TermLink.COMPOUND_STATEMENT:
-                        if (belief != null) {
-                            SyllogisticRules.detachment(belief, taskSentence, bIndex, this);
-                        }
-                        break;
-                    case TermLink.COMPONENT_CONDITION:
-                        if ((belief != null) && (taskTerm instanceof Implication)) {
-                            bIndex = bLink.getIndex(1);
-                            SyllogisticRules.conditionalDedInd((Implication) taskTerm, bIndex, beliefTerm, tIndex, this);
-                        }
-                        break;
-                    case TermLink.COMPOUND_CONDITION:
-                        if ((belief != null) && (taskTerm instanceof Implication) && (beliefTerm instanceof Implication)) {
-                            bIndex = bLink.getIndex(1);
-                            SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, tIndex, this);
-                        }
-                        break;
-                }
-                break;
-            case TermLink.COMPOUND:
-                switch (bLink.type) {
-                    case TermLink.COMPOUND:
-                        RuleTables.compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, bIndex, this);
-                        break;
-                    case TermLink.COMPOUND_STATEMENT:
-                        RuleTables.compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, this);
-                        break;
-                    case TermLink.COMPOUND_CONDITION:
-                        if (belief != null) {
-                            if (beliefTerm instanceof Implication) {
-                                Term[] u = new Term[] { beliefTerm, taskTerm };
-                                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u)) {
-                                    Sentence newBelief = belief.clone(u[0]);
-                                    Sentence newTaskSentence = taskSentence.clone(u[1]);
-                                    RuleTables.detachmentWithVar(newBelief, newTaskSentence, bIndex, this);
-                                } else {
-                                    SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, -1, this);
-                                }
 
-                            } else if (beliefTerm instanceof Equivalence) {
-                                SyllogisticRules.conditionalAna((Equivalence) beliefTerm, bIndex, taskTerm, -1, this);
-                            }
-                        }
-                        break;
-                }
-                break;
-            case TermLink.COMPOUND_STATEMENT:
-                switch (bLink.type) {
-                    case TermLink.COMPONENT:
-                        if (taskTerm instanceof Statement) {
-                            RuleTables.componentAndStatement((CompoundTerm) getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, this);
-                        }
-                        break;
-                    case TermLink.COMPOUND:
-                        if (taskTerm instanceof Statement) {
-                            RuleTables.compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, this);
-                        }
-                        break;
-                    case TermLink.COMPOUND_STATEMENT:
-                        if (belief != null) {
-                            RuleTables.syllogisms(tLink, bLink, taskTerm, beliefTerm, this);
-                        }
-                        break;
-                    case TermLink.COMPOUND_CONDITION:
-                        if (belief != null) {
-                            bIndex = bLink.getIndex(1);
-                            if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
+//        //current belief and task may have changed, so set again:
+//        setCurrentBelief(belief);
+//        setCurrentTask(task);
 
-                                RuleTables.conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, this);
-                            }
-                        }
-                        break;
-                }
-                break;
-            case TermLink.COMPOUND_CONDITION:
-                switch (bLink.type) {
-                    case TermLink.COMPOUND:
-                        if (belief != null) {
-                            RuleTables.detachmentWithVar(taskSentence, belief, tIndex, this);
-                        }
-                        break;
 
-                    case TermLink.COMPOUND_STATEMENT:
-                        if (belief != null) {
-                            if (taskTerm instanceof Implication) // TODO maybe put instanceof test within conditionalDedIndWithVar()
-                            {
-                                Term subj = ((Statement) taskTerm).getSubject();
-                                if (subj instanceof Negation) {
-                                    if (taskSentence.isJudgment()) {
-                                        RuleTables.componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, this);
-                                    } else {
-                                        RuleTables.componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, this);
-                                    }
-                                } else {
-                                    RuleTables.conditionalDedIndWithVar((Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, this);
-                                }
-                            }
-                            break;
 
-                        }
-                        break;
-                }
-        }
 
     }
 
@@ -465,6 +291,7 @@ abstract public class FireConcept extends NAL {
         return beliefConcept;
     }
 
+    @Override
     public Sentence setCurrentBelief(Sentence currentBelief) {
         this.currentBelief = currentBelief;
 

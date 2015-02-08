@@ -9,8 +9,10 @@ import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal8.Operation;
 import reactor.event.Event;
+import reactor.function.Supplier;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -24,10 +26,7 @@ import java.util.List;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL<X> extends Event<X> implements Runnable {
-
-
-
+public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task> {
 
     public interface DerivationFilter extends Plugin {
         /**
@@ -39,7 +38,6 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
         public default boolean setEnabled(NAR n, boolean enabled) {
             return true;
         }
-
     }
 
     public final Memory memory;
@@ -51,14 +49,11 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
     protected Sentence currentBelief;
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
-    protected NALRuleEngine rules;
+    protected NALRuleEngine reasoner;
 
     public final Param param;
 
-    /**
-     * stores the tasks that this process generates, and adds to memory
-     */
-    public final List<Task> tasksAdded = new ArrayList();
+
 
     //TODO tasksDicarded
 
@@ -66,7 +61,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
     public NAL(Memory mem, int nalLevel) {
         super((X)null);
         memory = mem;
-        rules = mem.rules;
+        reasoner = mem.rules;
         param = memory.param;
 
         if ((nalLevel!=-1) && (nalLevel!=mem.nal()))
@@ -130,7 +125,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
      *
      * @param task the derived task
      */
-    public boolean derivedTask(final Task task, @Deprecated final boolean revised, final boolean single, Task parent, Sentence occurence2) {
+    public boolean deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Task parent, Sentence occurence2) {
 
         List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
 
@@ -286,7 +281,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
         final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
 
         if (newTask != null) {
-            boolean added = derivedTask(newTask, false, false, null, null);
+            boolean added = deriveTask(newTask, false, false, null, null);
             if (added)
                 derived = newTask;
         }
@@ -302,7 +297,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
             final Sentence newSentence2 = new Sentence(newTaskContent, getCurrentTask().sentence.punctuation, truthEt, st);
             final Task newTask2 = Task.make(newSentence2, newBudget, getCurrentTask(), getCurrentBelief());
             if (newTask2 != null) {
-                derivedTask(newTask2, false, false, null, null);
+                deriveTask(newTask2, false, false, null, null);
             }
         }
 
@@ -380,7 +375,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask != null) {
-            return derivedTask(newTask, false, true, null, null);
+            return deriveTask(newTask, false, true, null, null);
         }
         return false;
     }
@@ -390,7 +385,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
             return false;
         }*/
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        return derivedTask(newTask, false, true, null, null);
+        return deriveTask(newTask, false, true, null, null);
     }
 
     //    protected void reset(Memory currentMemory) {
@@ -567,28 +562,27 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
         return currentConcept;
     }
 
-    public Memory mem() {
-        return memory;
-    }
-
     /**
      * tasks added with this method will be buffered by this NAL instance;
      * at the end of the processing they can be reviewed and filtered
      * then they need to be added to memory with inputTask(t)
      */
-    public void addTask(Task t, String reason) {
+    protected void addTask(Task t, String reason) {
         t.setReason(reason);
-        tasksAdded.add(t);
+        produced.add(t);
     }
 
-    /** add all accumulated tasks to memory */
-    public void inputTasksToMemory() {
-        for (int i = 0; i < tasksAdded.size(); i++) {
-            Task t = tasksAdded.get(i);
-            memory.addNewTask(t, t.getReason());
-        }
-    }
+    /**
+     * stores the tasks that this process generates, and adds to memory
+     */
+    public final Deque<Task> produced = new ArrayDeque();
 
+    /** called from consumers of the tasks that this context generates */
+    @Override public Task get() {
+        if (produced.isEmpty())
+            return null;
+        return produced.removeFirst();
+    }
 
     /**
      * Activated task called in MatchingRules.trySolution and
@@ -599,7 +593,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable {
      * @param candidateBelief The belief to be used in future logic, for
      *                        forward/backward correspondence
      */
-    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
+    public void addSolution(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
         addTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
                 "Activated");
     }

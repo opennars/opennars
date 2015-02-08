@@ -121,8 +121,8 @@ public class LocalRules {
                     truth,
                     stamp);
             Task newTask = new Task(newSentence, budget, nal.getCurrentTask(), nal.getCurrentBelief());
-            if (nal.derivedTask(newTask, true, false, null, null)) {
-                nal.mem().logic.BELIEF_REVISION.hit();
+            if (nal.deriveTask(newTask, true, false, null, null)) {
+                nal.memory.logic.BELIEF_REVISION.hit();
                 return true;
             }
         }
@@ -140,7 +140,7 @@ public class LocalRules {
      */
     public static boolean trySolution(Sentence belief, final Task task, final NAL nal) {
         Sentence problem = task.sentence;
-        Memory memory = nal.mem();
+        Memory memory = nal.memory;
         
         if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
             //System.out.println("Unsolved: Temporal order not matching");
@@ -217,7 +217,7 @@ public class LocalRules {
                 memory.emit(Output.class, task, belief);            
             }*/
                         
-            nal.addTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
+            nal.addSolution(nal.getCurrentTask(), budget, belief, task.getParentBelief());
             return true;
         }
         else {

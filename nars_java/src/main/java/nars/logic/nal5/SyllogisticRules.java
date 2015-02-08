@@ -210,7 +210,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        nal.mem().logic.ANALOGY.hit();
+        nal.memory.logic.ANALOGY.hit();
         nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false);
     }
 
@@ -294,7 +294,7 @@ public final class SyllogisticRules {
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.getTime();
             }
-            long inc = order * nal.mem().param.duration.get();
+            long inc = order * nal.memory.param.duration.get();
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
             nal.getTheNewStamp().setOccurrenceTime(time);
         }
@@ -432,7 +432,7 @@ public final class SyllogisticRules {
         Term content;
         
         long delta = 0;
-        final Interval.AtomicDuration duration = nal.mem().param.duration;
+        final Interval.AtomicDuration duration = nal.memory.param.duration;
         
         if (newCondition != null) {
              if (newCondition instanceof Interval) {
@@ -628,11 +628,11 @@ public final class SyllogisticRules {
         Term term2 = null;
 //        if ((cond1 instanceof Conjunction) && !Variable.containVarDep(cond1.getName())) {
         if (cond1 instanceof Conjunction) {
-            term1 = reduceComponents((CompoundTerm) cond1, cond2, nal.mem());
+            term1 = reduceComponents((CompoundTerm) cond1, cond2, nal.memory);
         }
 //        if ((cond2 instanceof Conjunction) && !Variable.containVarDep(cond2.getName())) {
         if (cond2 instanceof Conjunction) {
-            term2 = reduceComponents((CompoundTerm) cond2, cond1, nal.mem());
+            term2 = reduceComponents((CompoundTerm) cond2, cond1, nal.memory);
         }
         if ((term1 == null) && (term2 == null)) {
             return false;
@@ -717,7 +717,7 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      */
     public static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, NAL nal) {
-        Term content = reduceComponents(compound, component, nal.mem());
+        Term content = reduceComponents(compound, component, nal.memory);
         if ((content == null) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;
         }

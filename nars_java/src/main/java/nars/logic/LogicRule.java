@@ -22,7 +22,7 @@ public class LogicRule<X> implements Consumer<Event<X>> {
     public LogicRule(Selector condition, Consumer<Event<X>> action) {
         super();
         this.condition = condition;
-        this.action = action != null ? action : this;
+        this.action = action;
     }
 
     public LogicRule(Predicate<Object> p, Consumer<Event<X>> action) {
@@ -32,13 +32,6 @@ public class LogicRule<X> implements Consumer<Event<X>> {
     public LogicRule(Class<? extends X> x, Consumer<Event<X>> action) {
         this(new ClassSelector(x), action);
     }
-
-
-    //TODO infer the generic argument type via reflection
-    @Deprecated public LogicRule(Class<? extends X> c) {
-        this(c, null);
-    }
-
 
     public LogicRule setAction(Consumer<Event<X>> action) {
         this.action = action;
@@ -59,7 +52,7 @@ public class LogicRule<X> implements Consumer<Event<X>> {
 
     @Override
     public void accept(Event<X> e) {
-        if ((action!=null) && (action!=this))
+        if (action!=null)
             action.accept(e);
     }
 

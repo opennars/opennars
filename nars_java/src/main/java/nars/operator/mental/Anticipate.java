@@ -25,22 +25,16 @@ package nars.operator.mental;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import nars.core.Events;
+import nars.core.*;
 import nars.core.Events.CycleEnd;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
 import nars.event.AbstractReaction;
 import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.entity.*;
-import nars.logic.nal4.Product;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.nal8.Operation;
-import nars.operator.ReactiveOperator;
 
 import java.util.*;
 
@@ -61,7 +55,7 @@ import java.util.*;
  * "if I predicted to observe it but I didnt observe it is evidence that I didn't observe it" makes sense, while the general assumption often taken in AI is not: "what I didn't observe didn't happen"
  *
  */
-public class Anticipate extends ReactiveOperator implements Mental {
+public class Anticipate extends AbstractPlugin implements Mental {
 
     final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -83,8 +77,11 @@ public class Anticipate extends ReactiveOperator implements Mental {
     private long nextUpdateTime = -1;
 
 
-    public Anticipate() {
+    /*public Anticipate() {
         super("^anticipate");
+    }*/
+    public Anticipate() {
+        super();
     }
 
     @Override
@@ -120,6 +117,8 @@ public class Anticipate extends ReactiveOperator implements Mental {
         anticipations.put(term, tt);
         updateNextRequiredTime(tt, now);
 
+        /*
+        Move this to a separate Operator class
         if (operatorEnabled) {
 
             Operation op = (Operation) Operation.make(Product.make(term), this);
@@ -142,6 +141,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
             );
             memory.addNewTask(newTask, "Perceived Anticipation");
         }
+        */
     }
 
     protected void deriveDidntHappen(Term prediction, TaskTime tt) {
@@ -166,7 +166,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
         if (debug)
             System.err.println("Anticipation Negated " + task);
 
-        nal.derivedTask(task, false, true, null, null);
+        nal.deriveTask(task, false, true, null, null);
 
         //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
         task.setParticipateInTemporalInduction(true);
@@ -253,12 +253,14 @@ public class Anticipate extends ReactiveOperator implements Mental {
     }
 
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
-        if (enabled) {
+    public void onEnabled(NAR n) {
             newTaskTerms.clear();
             anticipations.clear();
-        }
-        return true;
+    }
+
+    @Override
+    public void onDisabled(NAR n) {
+
     }
 
     @Override
@@ -286,12 +288,14 @@ public class Anticipate extends ReactiveOperator implements Mental {
     }
 
 
+    //TODO move this to a separate operator class
     //*
     // * To create a judgment with a given statement
     // * @param args Arguments, a Statement followed by an optional tense
     // * @param memory The memory in which the operation is executed
     // * @return Immediate results as Tasks
     //  *
+    /*
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         if (operation != null)
@@ -301,6 +305,7 @@ public class Anticipate extends ReactiveOperator implements Mental {
 
         return null;
     }
+    */
 
 
 

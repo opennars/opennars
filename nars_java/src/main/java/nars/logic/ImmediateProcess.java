@@ -46,14 +46,10 @@ public class ImmediateProcess extends NAL {
 
         c.link(currentTask);
 
-        memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         emit(Events.TaskImmediateProcessed.class, task, this, c);
+
+        memory.logic.TASK_IMMEDIATE_PROCESS.hit();
     }
 
-
-    @Override
-    protected void onFinished() {
-        inputTasksToMemory();
-    }
 
 }
