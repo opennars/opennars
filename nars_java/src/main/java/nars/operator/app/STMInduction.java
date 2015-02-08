@@ -4,6 +4,7 @@ import nars.core.AbstractPlugin;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.logic.ImmediateProcess;
 import nars.logic.NAL;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
@@ -47,7 +48,7 @@ public class STMInduction extends AbstractPlugin {
     public void event(Class event, Object[] args) {
         if (event == Events.TaskImmediateProcessed.class) {
             Task t = (Task) args[0];
-            NAL n = (NAL) args[1];
+            ImmediateProcess n = (ImmediateProcess) args[1];
             inductionOnSucceedingEvents(t, n);
         }
     }
@@ -56,7 +57,7 @@ public class STMInduction extends AbstractPlugin {
         return stmSize;
     }
 
-    boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
+    boolean inductionOnSucceedingEvents(final Task newEvent, ImmediateProcess nal) {
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 
@@ -99,10 +100,10 @@ public class STMInduction extends AbstractPlugin {
 
 
             nal.setNextNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, now);
-            nal.setCurrentTask(newEvent);
+            //nal.setCurrentTask(newEvent);
 
             Sentence previousBelief = stmLast.sentence;
-            nal.setCurrentBelief(previousBelief);
+            //nal.setCurrentBelief(previousBelief);
 
             Sentence currentBelief = newEvent.sentence;
 

@@ -89,7 +89,7 @@ public class DefaultCore extends UniCore {
 
         //1 concept
         /*if (memory.newTasks.isEmpty())*/ {
-            FireConcept f = nextConcept();
+            FireConcept f = nextTaskLink(nextConcept());
             if (f != null) {
                 f.run();
             }
@@ -105,6 +105,13 @@ public class DefaultCore extends UniCore {
         Core.run(run);
         run.clear();
 
+    }
+
+    private FireConcept nextTaskLink(Concept concept) {
+        TaskLink taskLink = concept.taskLinks.PEEKNEXT();
+        if (taskLink!=null)
+            return newFireConcept(concept, taskLink);
+        return null;
     }
 
     protected Runnable nextNewTask() {

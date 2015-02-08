@@ -7,10 +7,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.BudgetFunctions;
 import nars.logic.FireConcept;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.ConceptBuilder;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import nars.util.bag.Bag;
 import nars.util.bag.select.BagActivator;
 import nars.util.bag.impl.CacheBag;
@@ -64,8 +61,8 @@ abstract public class UniCore implements Core {
 
         private final Bag<Term, Concept> bag;
 
-        public DefaultFireConcept(Memory mem, Bag<Term, Concept> bag, Concept concept, int numTaskLinks) {
-            super(mem, concept, numTaskLinks);
+        public DefaultFireConcept(Memory mem, Bag<Term, Concept> bag, Concept concept, TaskLink taskLink) {
+            super(concept, taskLink);
             this.bag = bag;
         }
         @Override
@@ -76,16 +73,16 @@ abstract public class UniCore implements Core {
         }
     }
 
-    protected FireConcept newFireConcept(Concept c) {
-        return new DefaultFireConcept(memory, concepts, c, 1);
+    protected FireConcept newFireConcept(Concept c, TaskLink t) {
+        return new DefaultFireConcept(memory, concepts, c, t);
     }
 
-    protected FireConcept nextConcept() {
+    protected Concept nextConcept() {
         Concept currentConcept = concepts.TAKENEXT();
         if (currentConcept==null)
             return null;
 
-        return newFireConcept(currentConcept);
+        return currentConcept;
     }
 
     @Override

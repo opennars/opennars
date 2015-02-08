@@ -33,10 +33,14 @@ abstract public class FireConcept extends NAL {
 //    public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
 //        this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
 //    }
-    
-    public FireConcept(Memory mem, Concept concept, TaskLink taskLink, int termLinkCount) {
-        super(mem, taskLink.getTask());
-        setKey(FireConcept.class);
+
+
+    public FireConcept(Concept concept, TaskLink taskLink) {
+        this(concept, taskLink, concept.memory.param.termLinkMaxReasoned.get());
+    }
+
+    public FireConcept(Concept concept, TaskLink taskLink, int termLinkCount) {
+        super(concept.memory, taskLink.getTask());
         this.currentTaskLink = taskLink;
         this.currentConcept = concept;
         this.currentTerm = concept.getTerm();

@@ -252,11 +252,16 @@ public class AntCore extends ConceptWaveCore {
             int queueAfter = queue.size();
             return queueAfter - queueBefore;
         }
-        
+
+        protected void fireConcept(Concept c, List<Runnable> queue) {
+//            queue.add(new FireConcept(memory, t, 1) {
+//                @Override public void beforeFinish() {                }
+//            });
+
+        }
         void onConcept(Concept c, double progress, List<Runnable> queue) {
-            queue.add(new FireConcept(memory, c, 1) {                    
-                @Override public void beforeFinish() {                }
-            });
+            //TODO fire concept
+            //fireConcept(c, queue);
         }
         
         void onLink(TLink l, double progress, List<Runnable> queue) {
@@ -281,10 +286,8 @@ public class AntCore extends ConceptWaveCore {
                     }
                 }
                 
-                if (t!=null) {                    
-                    queue.add(new FireConcept(memory, t, 1) {                    
-                        @Override public void beforeFinish() {                }
-                    });        
+                if (t!=null) {
+                    fireConcept(t, queue);
                 }
 
             }

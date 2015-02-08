@@ -19,10 +19,7 @@ package nars.operator.mental;
 
 import nars.core.Memory;
 import nars.logic.FireConcept;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
@@ -53,12 +50,17 @@ public class Consider extends Operator implements Mental {
         Term term = args[0];
         
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
-        
-        new FireConcept(memory, concept, 1) {
 
-            @Override public void beforeFinish() {             }
+        TaskLink taskLink = concept.taskLinks.PEEKNEXT();
+        if (taskLink!=null) {
+            new FireConcept(concept, taskLink) {
 
-        }.run();
+                @Override
+                public void beforeFinish() {
+                }
+
+            }.run();
+        }
         
         return null;
     }

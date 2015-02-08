@@ -62,6 +62,9 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
     /** @param nalLevel the NAL level to limit processing of this reasoning context. set to -1 to use Memory's default value */
     public NAL(Memory mem, int nalLevel, Task task) {
         super((X)null);
+
+        setKey(getClass());
+
         memory = mem;
         reasoner = mem.rules;
         param = memory.param;
