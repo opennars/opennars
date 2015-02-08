@@ -8,6 +8,7 @@ import nars.core.*;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal8.Operation;
+import reactor.event.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL implements Runnable {
+public abstract class NAL<X> extends Event<X> implements Runnable {
 
 
 
@@ -50,6 +51,7 @@ public abstract class NAL implements Runnable {
     protected Sentence currentBelief;
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
+    protected NALRuleEngine rules;
 
     public final Param param;
 
@@ -62,8 +64,9 @@ public abstract class NAL implements Runnable {
 
     /** @param nalLevel the NAL level to limit processing of this reasoning context. set to -1 to use Memory's default value */
     public NAL(Memory mem, int nalLevel) {
-        super();
+        super((X)null);
         memory = mem;
+        rules = mem.rules;
         param = memory.param;
 
         if ((nalLevel!=-1) && (nalLevel!=mem.nal()))

@@ -31,6 +31,7 @@ import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
 import nars.logic.BudgetFunctions;
+import nars.logic.NALRuleEngine;
 import nars.logic.Terms;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
@@ -86,6 +87,7 @@ public class Memory implements Serializable {
     private long timeSimulation;
     private int level;
     private TaskSource inputs;
+    public NALRuleEngine rules;
 
     public void setLevel(int nalLevel) {
         if ((nalLevel < 1) || (nalLevel > 8))
@@ -201,6 +203,7 @@ public class Memory implements Serializable {
 
         this.param = param;
 
+        this.rules = new NALRuleEngine(this);
 
         this.concepts = concepts;
         this.concepts.init(this);

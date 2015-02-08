@@ -106,6 +106,12 @@ public class EventEmitter<E>  {
     public void notify(Object channel) {
         r.notify(channel);
     }
+    public void fire(Object event) {
+        r.notify(Event.wrap(event));
+    }
+    public void fire(Object channel, Event event) {
+        r.notify(channel, event);
+    }
 
 
     public final boolean isActive(final Class event) {

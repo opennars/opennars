@@ -24,12 +24,16 @@ import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 abstract public class FireConcept extends NAL {
 
 
+    private Concept beliefConcept;
+
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
     }
     
     public FireConcept(Memory mem, Concept concept, int numTaskLinks, int termLinkCount) {
         super(mem);
+        setKey(FireConcept.class);
+
         this.termLinkCount = termLinkCount;
         this.currentConcept = concept;
         this.currentTaskLink = null;
@@ -126,12 +130,12 @@ abstract public class FireConcept extends NAL {
         final Task task = currentTaskLink.getTarget();
         setCurrentTerm(currentConcept.term);
         setCurrentTaskLink(currentTaskLink);
+        setCurrentBelief(null);
         setCurrentBeliefLink(null);
         setCurrentTask(task); // one of the two places where this variable is set
         
         if (currentTaskLink.type == TermLink.TRANSFORM) {
-            setCurrentBelief(null);
-            
+
             RuleTables.transformTask(currentTaskLink, this); // to turn this into structural logic as below?
 
             emit(Events.TermLinkTransform.class, currentTaskLink, currentConcept, this);
@@ -141,6 +145,7 @@ abstract public class FireConcept extends NAL {
 
 
             reason(currentTaskLink);
+
 
 //            //EXPERIMENTAL:
 //            //if termlinks is less than novelty horizon, it can suppress any from being selected for up to novelty horizon cycles
@@ -172,7 +177,14 @@ abstract public class FireConcept extends NAL {
 
                 int numAddedTasksBefore = tasksAdded.size();
 
+
+
                 reason(currentTaskLink, termLink);
+                //afterReason
+                {
+                    setCurrentBelief(null);
+                }
+
 
                 currentConcept.returnTermLink(termLink, true);
 
@@ -223,6 +235,7 @@ abstract public class FireConcept extends NAL {
      */
     protected void reason(final TaskLink tLink, final TermLink bLink) {
 
+        rules.reason(this, tLink, bLink);
 
         final Memory memory = mem();
 
@@ -235,20 +248,19 @@ abstract public class FireConcept extends NAL {
 
         final Term beliefTerm = bLink.target;       // cloning for substitution
 
-        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
-            return;
+        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm)) {
+            throw new RuntimeException("shoulld have been suppressed by the new rule impl");
+        }
 
         //final Concept currentConcept = getCurrentConcept();
-        final Concept beliefConcept = memory.concept(beliefTerm);
-
-        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(this, task) : null;
-
-        setCurrentBelief( belief );  // may be null
+        setBelief(beliefTerm);
+        Sentence belief = getCurrentBelief();
 
         if (belief != null) {
 
+
             if (LocalRules.match(task, belief, this)) {
-                return;
+                throw new RuntimeException("shoulld have been suppressed by the new rule impl");
             }
 
             if (nal(7)) {
@@ -436,6 +448,32 @@ abstract public class FireConcept extends NAL {
 
     }
 
+    protected Concept setBelief(Term beliefTerm) {
+        final Concept beliefConcept = memory.concept(beliefTerm);
+
+        this.beliefConcept = beliefConcept;
+
+        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(this, getCurrentTask()) : null;
+
+        setCurrentBelief( belief );  // may be null
+
+        return beliefConcept;
+    }
+
+    /** the current belief concept */
+    public Concept getBeliefConcept() {
+        return beliefConcept;
+    }
+
+    public Sentence setCurrentBelief(Sentence currentBelief) {
+        this.currentBelief = currentBelief;
+
+        //reset beliefConcept since it doesnt correlate with the currentBelief
+        /*if (beliefConcept!=null && !this.currentBelief.getTerm().equals(beliefConcept.getTerm()))
+            beliefConcept = null;*/
+
+        return currentBelief;
+    }
 
 
     @Override
