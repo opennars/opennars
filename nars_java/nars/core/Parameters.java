@@ -29,7 +29,7 @@ public class Parameters {
     
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     /** for thorough bag debugging (slow) */
     public static boolean DEBUG_BAG = false;
@@ -181,7 +181,7 @@ public class Parameters {
     
     public static int STM_SIZE = 1;
     
-    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=false; //this should be true to restore 1.6.1 strategy
+    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
     
     public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
     
