@@ -102,32 +102,36 @@ public class LocalRules {
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
 
+        final Task currentTask = nal.getCurrentTask();
+
         TruthValue newBeliefTruth = newBelief.truth;
         TruthValue oldBeliefTruth = oldBelief.truth;
         TruthValue truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
-        BudgetValue budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, feedbackToLinks, nal);
+        BudgetValue budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
-        if (budget.aboveThreshold()) {
-
-
-            Stamp stamp = nal.getTheNewStampForRevision();
-            if (stamp == null) {
-                //overlapping evidence on revision
-                return false;
-            }
-
-            Sentence newSentence = new Sentence(newBelief.term,
-                    nal.getCurrentTask().sentence.punctuation,
-                    truth,
-                    stamp);
-            Task newTask = new Task(newSentence, budget, nal.getCurrentTask(), nal.getCurrentBelief());
-            if (nal.deriveTask(newTask, true, false, null, null)) {
-                nal.memory.logic.BELIEF_REVISION.hit();
-                return true;
-            }
+        if (!budget.aboveThreshold()) {
+            return false;
         }
-        
-       return false;
+
+
+        Stamp stamp = nal.getTheNewStampForRevision();
+        if (stamp == null) {
+            //overlapping evidence on revision
+            return false;
+        }
+
+        Sentence newSentence = new Sentence(newBelief.term,
+                currentTask.sentence.punctuation,
+                truth,
+                stamp);
+        Task newTask = new Task(newSentence, budget, currentTask, newBelief);
+
+        if (nal.deriveTask(newTask, true, false, null, null)) {
+            nal.memory.logic.BELIEF_REVISION.hit();
+            return true;
+        }
+
+        return false;
     }
 
 

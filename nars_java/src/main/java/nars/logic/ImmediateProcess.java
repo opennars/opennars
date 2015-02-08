@@ -14,31 +14,29 @@ import nars.logic.entity.Task;
  * one concept only
  */
 public class ImmediateProcess extends NAL {
-    final Task task;
+
 
     public ImmediateProcess(Memory mem) {
         this(mem, null);
     }
 
     public ImmediateProcess(Memory mem, Task task) {
-        super(mem);
+        super(mem, task);
 
-        setCurrentTask(this.task = task);
     }
     
     
 
     @Override
     public String toString() {
-        return "ImmediateProcess[" + task.toString() + "]";
+        return "ImmediateProcess[" + getCurrentTask().toString() + "]";
     }
 
 
 
     @Override
     public void reason() {
-        Concept c;
-        setCurrentConcept(c = memory.conceptualize(currentTask.budget, task.getTerm()));
+        Concept c = memory.conceptualize(currentTask.budget, getCurrentTask().getTerm());
         if (c == null) return;
 
         boolean processed = c.directProcess(this, currentTask);
@@ -46,7 +44,7 @@ public class ImmediateProcess extends NAL {
 
         c.link(currentTask);
 
-        emit(Events.TaskImmediateProcessed.class, task, this, c);
+        emit(Events.TaskImmediateProcessed.class, getCurrentTask(), this, c);
 
         memory.logic.TASK_IMMEDIATE_PROCESS.hit();
     }

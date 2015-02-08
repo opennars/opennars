@@ -68,20 +68,24 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion of revision
      * @return The budget for the new task
      */
-    public static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final boolean feedbackToLinks, final NAL nal) {
+    public static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final NAL nal) {
         final float difT = truth.getExpDifAbs(tTruth);
         final Task task = nal.getCurrentTask();
         task.decPriority(1f - difT);
         task.decDurability(1f - difT);
+
+        boolean feedbackToLinks = (nal instanceof FireConcept);
         if (feedbackToLinks) {
-            TaskLink tLink = nal.getCurrentTaskLink();
+            FireConcept fc = (FireConcept)nal;
+            TaskLink tLink = fc.getCurrentTaskLink();
             tLink.decPriority(1f - difT);
             tLink.decDurability(1f - difT);
-            TermLink bLink = nal.getCurrentBeliefLink();
+            TermLink bLink = fc.getCurrentBeliefLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.decPriority(1f - difB);
             bLink.decDurability(1f - difB);
         }
+
         float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
         
         //TODO determine if this is correct
@@ -301,7 +305,6 @@ public final class BudgetFunctions extends UtilityFunctions {
      * Backward logic with CompoundTerm conclusion, stronger case
      *
      * @param content The content of the conclusion
-     * @param memory Reference to the memory
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundBackward(final Term content, final NAL nal) {
@@ -328,14 +331,17 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget of the conclusion task
      */
     private static BudgetValue budgetInference(final float qual, final int complexity, final NAL nal) {
-        Item t = nal.getCurrentTaskLink();
+        Item t =   nal.getCurrentTask();
+                //nal.getCurrentTaskLink();
+
+        TermLink bLink = nal instanceof FireConcept ? ((FireConcept)nal).getCurrentBeliefLink() : null;
+
         if (t == null) {
             t = nal.getCurrentTask();
         }
         float priority = t.getPriority();
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
-        final TermLink bLink = nal.getCurrentBeliefLink();
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());

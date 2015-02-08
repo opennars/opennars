@@ -163,10 +163,9 @@ public class InternalExperience extends AbstractPlugin  {
         else if (event == Events.BeliefReason.class) {
             //belief, beliefTerm, taskTerm, nal
             Sentence belief = (Sentence)a[0];
-            Term beliefTerm = (Term)a[1];
-            Term taskTerm = (Term)a[2];
-            NAL nal = (NAL)a[3];
-            beliefReason(belief, beliefTerm, taskTerm, nal);
+            Term taskTerm = (Term)a[1];
+            NAL nal = (NAL)a[2];
+            beliefReason(belief, belief.getTerm(), taskTerm, nal);
         }
     }
 

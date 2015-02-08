@@ -87,7 +87,7 @@ public class BufferCore extends UniCore {
                 setCurrentTask(t);
 
                 if (c == null) {
-                    setCurrentConcept(c = memory.conceptualize(currentTask.budget, currentTask.getTerm()));
+                    c = memory.conceptualize(currentTask.budget, currentTask.getTerm());
                     if (c == null) return;
                 }
                 else {

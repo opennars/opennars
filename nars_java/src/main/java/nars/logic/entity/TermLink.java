@@ -206,13 +206,13 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
 
     @Override
     public Term getTarget() {
-        return target;
+        return getTerm();
     }
 
 
     @Override
     public Term getTerm() {
-        return getTarget();
+        return target;
     }
 
 

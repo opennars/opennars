@@ -290,7 +290,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processJudgment(final NAL nal, final Task task) {
+    protected void processJudgment(final ImmediateProcess nal, final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief;
         synchronized(beliefs) {
@@ -308,7 +308,7 @@ public class Concept extends Item<Term> implements Termable {
                 return;
             } else if (revisible(judg, oldBelief)) {
                 final long now = memory.time();
-                nal.setTheNewStamp(newStamp, oldStamp, now);
+                nal.setNextNewStamp(newStamp, oldStamp, now);
                 
 //                if (nal.setTheNewStamp( //temporarily removed
 //                /*
@@ -329,7 +329,7 @@ public class Concept extends Item<Term> implements Termable {
                     if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
                     }
-                    nal.setCurrentBelief(projectedBelief);
+                    //nal.setCurrentBelief(projectedBelief);
                     revision(judg, projectedBelief, false, nal);
                 }
 
@@ -421,7 +421,7 @@ public class Concept extends Item<Term> implements Termable {
             if (newStamp.equals(oldStamp,false,false,true,true)) {
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
-                nal.setTheNewStamp(newStamp, oldStamp, memory.time());
+                nal.setNextNewStamp(newStamp, oldStamp, memory.time());
                 boolean revisionSucceeded = revision(goal, oldGoal, false, nal);
                 if(revisionSucceeded) { // it is revised, so there is a new task for which this function will be called
                     return; // with higher/lower desire
@@ -870,7 +870,7 @@ public class Concept extends Item<Term> implements Termable {
             Sentence belief = beliefs.get(i);
             nal.emit(BeliefSelect.class, belief);
 
-            nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
+            nal.setNextNewStamp(taskStamp, belief.stamp, currentTime);
             
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
@@ -990,7 +990,7 @@ public class Concept extends Item<Term> implements Termable {
         return null;
     }
 
-    public void returnTermLink(TermLink termLink, boolean used) {
+    public void returnTermLink(TermLink termLink) {
         termLinks.putBack(termLink);
     }
 

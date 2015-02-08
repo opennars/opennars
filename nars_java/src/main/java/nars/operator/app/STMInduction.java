@@ -98,7 +98,7 @@ public class STMInduction extends AbstractPlugin {
         for (Task stmLast : stm) {
 
 
-            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, now);
+            nal.setNextNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, now);
             nal.setCurrentTask(newEvent);
 
             Sentence previousBelief = stmLast.sentence;

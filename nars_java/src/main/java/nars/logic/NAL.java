@@ -41,9 +41,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
     }
 
     public final Memory memory;
-    protected Term currentTerm;
-    protected Concept currentConcept;
-    protected Task currentTask;
+    protected final Task currentTask;
     protected TermLink currentBeliefLink;
     protected TaskLink currentTaskLink;
     protected Sentence currentBelief;
@@ -57,8 +55,12 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
 
     //TODO tasksDicarded
 
+    public NAL(Memory mem, Task task) {
+        this(mem, -1, task);
+    }
+
     /** @param nalLevel the NAL level to limit processing of this reasoning context. set to -1 to use Memory's default value */
-    public NAL(Memory mem, int nalLevel) {
+    public NAL(Memory mem, int nalLevel, Task task) {
         super((X)null);
         memory = mem;
         reasoner = mem.rules;
@@ -67,9 +69,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
         if ((nalLevel!=-1) && (nalLevel!=mem.nal()))
             throw new RuntimeException("Different NAL level than Memory not supported yet");
 
-        currentTerm = null;
-        currentConcept = null;
-        currentTask = null;
+        currentTask = task;
         currentBeliefLink = null;
         currentTaskLink = null;
         currentBelief = null;
@@ -95,13 +95,6 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
     protected abstract void reason();
 
 
-
-
-
-    public NAL(Memory mem) {
-        this(mem, -1);
-    }
-
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }
@@ -120,12 +113,17 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
 
 
 
+    public boolean deriveTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
+        return deriveTask(task, revised, single, parent, occurence2, getCurrentBelief(), getCurrentTask());
+    }
+
     /**
      * iived task comes from the logic rules.
      *
      * @param task the derived task
      */
-    public boolean deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Task parent, Sentence occurence2) {
+    public boolean deriveTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2,
+                              Sentence derivedCurrentBelief, Task derivedCurrentTask) {
 
         List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
 
@@ -178,9 +176,9 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
             memory.logic.DERIVATION_LATENCY.set((double) stamp.latency);
         }
 
-        final Term currentTaskContent = getCurrentTask().getTerm();
-        if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
-            final Term currentBeliefContent = getCurrentBelief().term;
+        final Term currentTaskContent = derivedCurrentTask.getTerm();
+        if (derivedCurrentBelief != null && derivedCurrentBelief.isJudgment()) {
+            final Term currentBeliefContent = derivedCurrentBelief.term;
             stamp.chainReplace(currentBeliefContent, currentBeliefContent);
         }
         //workaround for single premise task issue:
@@ -230,7 +228,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
 
         task.setParticipateInTemporalInduction(false);
 
-        memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2, getCurrentTask());
+        memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2, derivedCurrentTask);
         memory.logic.TASK_DERIVED.hit();
 
         addTask(task, "Derived");
@@ -257,6 +255,10 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
     }
 
     public Task doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+        return doublePremiseTask(newTaskContent, newTruth, newBudget, temporalAdd, getCurrentBelief(), getCurrentTask());
+    }
+
+    public Task doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd, Sentence subbedBelief, Task subbedTask) {
         if (!newBudget.aboveThreshold()) {
             return null;
         }
@@ -271,14 +273,14 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
         final Sentence newSentence;
 
         try {
-            newSentence = new Sentence(newTaskContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+            newSentence = new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, getTheNewStamp());
         }
         catch (CompoundTerm.UnableToCloneException e) {
             System.err.println(e.toString());
             return null;
         }
 
-        final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+        final Task newTask = Task.make(newSentence, newBudget, subbedTask, subbedBelief);
 
         if (newTask != null) {
             boolean added = deriveTask(newTask, false, false, null, null);
@@ -294,8 +296,8 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
             TruthValue truthEt = TruthFunctions.eternalize(newTruth);
             Stamp st = getTheNewStamp().clone();
             st.setEternal();
-            final Sentence newSentence2 = new Sentence(newTaskContent, getCurrentTask().sentence.punctuation, truthEt, st);
-            final Task newTask2 = Task.make(newSentence2, newBudget, getCurrentTask(), getCurrentBelief());
+            final Sentence newSentence2 = new Sentence(newTaskContent, subbedTask.sentence.punctuation, truthEt, st);
+            final Task newTask2 = Task.make(newSentence2, newBudget, subbedTask, subbedBelief);
             if (newTask2 != null) {
                 deriveTask(newTask2, false, false, null, null);
             }
@@ -417,18 +419,9 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
         return currentTask;
     }
 
-    /**
-     * @param currentTask the currentTask to set
-     */
-    public void setCurrentTask(Task currentTask) {
-        this.currentTask = currentTask;
-    }
 
 
-    public void setCurrentConcept(Concept currentConcept) {
-        this.currentConcept = currentConcept;
-        setCurrentTerm(currentConcept.term);
-    }
+
 
     /**
      * @return the newStamp
@@ -493,7 +486,7 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
     /**
      * creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked
      */
-    public void setTheNewStamp(final Stamp first, final Stamp second, final long time) {
+    public void setNextNewStamp(final Stamp first, final Stamp second, final long time) {
         newStamp = null;
         newStampBuilder = new NewStampBuilder(first, second, time);
     }
@@ -505,62 +498,8 @@ public abstract class NAL<X> extends Event<X> implements Runnable, Supplier<Task
         return currentBelief;
     }
 
-    /**
-     * @param currentBelief the currentBelief to set
-     */
-    public Sentence setCurrentBelief(Sentence currentBelief) {
-        this.currentBelief = currentBelief;
-        return currentBelief;
-    }
 
-    /**
-     * @return the currentBeliefLink
-     */
-    public TermLink getCurrentBeliefLink() {
-        return currentBeliefLink;
-    }
 
-    /**
-     * @param currentBeliefLink the currentBeliefLink to set
-     */
-    public void setCurrentBeliefLink(TermLink currentBeliefLink) {
-        this.currentBeliefLink = currentBeliefLink;
-    }
-
-    /**
-     * @return the currentTaskLink
-     */
-    public TaskLink getCurrentTaskLink() {
-        return currentTaskLink;
-    }
-
-    /**
-     * @param currentTaskLink the currentTaskLink to set
-     */
-    public void setCurrentTaskLink(TaskLink currentTaskLink) {
-        this.currentTaskLink = currentTaskLink;
-    }
-
-    /**
-     * @return the currentTerm
-     */
-    public Term getCurrentTerm() {
-        return currentTerm;
-    }
-
-    /**
-     * @param currentTerm the currentTerm to set
-     */
-    public void setCurrentTerm(Term currentTerm) {
-        this.currentTerm = currentTerm;
-    }
-
-    /**
-     * @return the currentConcept
-     */
-    public Concept getCurrentConcept() {
-        return currentConcept;
-    }
 
     /**
      * tasks added with this method will be buffered by this NAL instance;

@@ -212,8 +212,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
     * @return The linked Task
     */
     @Override public Task getTarget() {
-        return targetTask;
+        return getTask();
     }
+
+    public Task getTask() { return targetTask; }
 
     @Override
     public void end() {

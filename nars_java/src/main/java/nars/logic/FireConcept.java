@@ -14,6 +14,7 @@ import nars.logic.nal5.Implication;
 import nars.logic.nal5.SyllogisticRules;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.rule.concept.ConceptFireRule;
+import nars.util.bag.select.ForgetNext;
 
 import java.util.Set;
 
@@ -22,27 +23,35 @@ import static nars.io.Symbols.VAR_INDEPENDENT;
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 abstract public class FireConcept extends NAL {
 
+    protected final Term currentTerm;
+    protected final TaskLink currentTaskLink;
+    protected final Concept currentConcept;
 
     private Concept beliefConcept;
-
-    public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
-        this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
-    }
-    
-    public FireConcept(Memory mem, Concept concept, int numTaskLinks, int termLinkCount) {
-        super(mem);
-        setKey(FireConcept.class);
-
-        this.termLinkCount = termLinkCount;
-        this.currentConcept = concept;
-        this.currentTaskLink = null;
-        this.numTaskLinks = numTaskLinks;
-    }
-
-    private int numTaskLinks;
     private int termLinkCount;
 
-    transient private Set alreadyInducted;
+//    public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
+//        this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
+//    }
+    
+    public FireConcept(Memory mem, Concept concept, TaskLink taskLink, int termLinkCount) {
+        super(mem, taskLink.getTask());
+        setKey(FireConcept.class);
+        this.currentTaskLink = taskLink;
+        this.currentConcept = concept;
+        this.currentTerm = concept.getTerm();
+
+        this.termLinkCount = termLinkCount;
+    }
+
+
+
+    /**
+     * @return the currentConcept
+     */
+    public Concept getCurrentConcept() {
+        return currentConcept;
+    }
 
 
     abstract protected void beforeFinish();
@@ -77,63 +86,8 @@ abstract public class FireConcept extends NAL {
     @Override
     protected void reason() {
 
+        reset();
 
-        if (currentTaskLink != null) {
-
-            //TODO move this case to a separate implementation of FireConcept which takes 1 or more specific concepts to fire as constructor arg
-            fireTaskLink(termLinkCount);
-            returnTaskLink(currentTaskLink);
-
-        } else {
-
-            if (currentConcept.taskLinks.size() == 0)
-                return;
-
-            for (int i = 0; i < numTaskLinks; i++) {
-
-                currentTaskLink = currentConcept.taskLinks.TAKENEXT();
-                if (currentTaskLink == null)
-                    return;
-
-                try {
-
-                    //if (currentTaskLink.budget.aboveThreshold()) {
-                        fireTaskLink(termLinkCount);
-                    //}
-
-                    returnTaskLink(currentTaskLink);
-                }
-                catch (Exception e) {
-
-                    returnTaskLink(currentTaskLink);
-
-                    if (Parameters.DEBUG) {
-                        e.printStackTrace();
-                    }
-                    throw e;
-                }
-
-            }
-        }
-
-
-    }
-    
-    protected void returnTaskLink(TaskLink t) {
-        currentConcept.taskLinks.putBack(t, 
-                memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
-        
-    }
-
-    protected void fireTaskLink(int termLinkSelectionAttempts) {
-
-        final Task task = currentTaskLink.getTarget();
-        setCurrentTerm(currentConcept.term);
-        setCurrentTaskLink(currentTaskLink);
-        setCurrentBelief(null);
-        setCurrentBeliefLink(null);
-        setCurrentTask(task); // one of the two places where this variable is set
-        
         if (currentTaskLink.type == TermLink.TRANSFORM) {
 
             RuleTables.transformTask(currentTaskLink, this); // to turn this into structural logic as below?
@@ -143,54 +97,36 @@ abstract public class FireConcept extends NAL {
 
         } else {
 
-
             reason(currentTaskLink);
 
-
-//            //EXPERIMENTAL:
-//            //if termlinks is less than novelty horizon, it can suppress any from being selected for up to novelty horizon cycles
-//            int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
-//                        1+currentConcept.termLinks.size()/termLinkSelectionAttempts);
-//            termLinkSelectionAttempts = Math.min(termLinkSelectionAttempts, currentConcept.termLinks.size());
-//            //------
-
-            //if termlinks is less than novelty horizon, it can suppress any from being selected for up to novelty horizon cycles
-            /*int noveltyHorizon = Math.min(Parameters.NOVELTY_HORIZON,
-                    currentConcept.termLinks.size() - 1);*/
             int noveltyHorizon = Parameters.NOVELTY_HORIZON;
 
-            //int numTermLinks = getCurrentConcept().termLinks.size();
+            int termLinkSelectionAttempts = termLinkCount;
+
             //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
+            //int numTermLinks = getCurrentConcept().termLinks.size();
 
             while (termLinkSelectionAttempts > 0)  {
 
 
-                final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+                final TermLink beliefLink = currentConcept.selectTermLink(currentTaskLink, memory.time(), noveltyHorizon);
 
                 termLinkSelectionAttempts--;
 
                 //try again, because it may have selected a non-novel tlink
-                if (termLink == null)
+                if (beliefLink == null)
                     continue;
                 
-                setCurrentBeliefLink(termLink);
 
                 int numAddedTasksBefore = produced.size();
 
+                reason(currentTaskLink, beliefLink);
 
-
-                reason(currentTaskLink, termLink);
-                //afterReason
-                {
-                    setCurrentBelief(null);
-                }
-
-
-                currentConcept.returnTermLink(termLink, true);
+                currentConcept.returnTermLink(beliefLink);
 
                 int numAddedTasksAfter = produced.size();
 
-                emit(Events.TermLinkSelected.class, termLink, getCurrentTaskLink(), getCurrentConcept(), this, numAddedTasksBefore, numAddedTasksAfter);
+                emit(Events.TermLinkSelected.class, beliefLink, getCurrentTaskLink(), getCurrentConcept(), this, numAddedTasksBefore, numAddedTasksAfter);
                 memory.logic.TERM_LINK_SELECT.hit();
 
 
@@ -235,14 +171,15 @@ abstract public class FireConcept extends NAL {
      */
     protected void reason(final TaskLink tLink, final TermLink bLink) {
 
-        setCurrentTask(tLink.getTarget());
-        setBelief(bLink.target);
+        reset();
+        setCurrentBeliefLink(bLink);
+
         Sentence belief = getCurrentBelief();
 
         reasoner.add(this, tLink, bLink);
 
         if (belief!=null) {
-            emit(Events.BeliefReason.class, belief, getCurrentBelief(), getCurrentTask().getTerm(), this);
+            emit(Events.BeliefReason.class, belief, tLink.getTarget(), this);
         }
 
 
@@ -274,33 +211,59 @@ abstract public class FireConcept extends NAL {
 
     }
 
-    protected Concept setBelief(Term beliefTerm) {
-        final Concept beliefConcept = memory.concept(beliefTerm);
-
-        this.beliefConcept = beliefConcept;
-
-        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(this, getCurrentTask()) : null;
-
-        setCurrentBelief( belief );  // may be null
-
-        return beliefConcept;
+    /**
+     * @return the currentBeliefLink
+     */
+    public TermLink getCurrentBeliefLink() {
+        return currentBeliefLink;
     }
+
+    /**
+     * @param currentBeliefLink the currentBeliefLink to set
+     */
+    public void setCurrentBeliefLink(TermLink currentBeliefLink) {
+
+        if (this.currentBeliefLink == currentBeliefLink)
+            throw new RuntimeException("Setting the same current belief link");
+
+        this.currentBeliefLink = currentBeliefLink;
+
+        Term beliefTerm = currentBeliefLink.getTerm();
+
+        this.beliefConcept = memory.concept(beliefTerm);
+
+        this.currentBelief = (beliefConcept != null) ? beliefConcept.getBelief(this, getCurrentTask()) : null;
+    }
+
+    public void reset() {
+        this.currentBelief = null;
+        this.currentBeliefLink = null;
+    }
+
+
+    /**
+     * @return the currentTerm
+     */
+    public Term getCurrentTerm() {
+        return currentTerm;
+    }
+
+    /**
+     * @return the currentTaskLink
+     */
+    public TaskLink getCurrentTaskLink() {
+        return currentTaskLink;
+    }
+
+
+
+
 
     /** the current belief concept */
     public Concept getBeliefConcept() {
         return beliefConcept;
     }
 
-    @Override
-    public Sentence setCurrentBelief(Sentence currentBelief) {
-        this.currentBelief = currentBelief;
-
-        //reset beliefConcept since it doesnt correlate with the currentBelief
-        /*if (beliefConcept!=null && !this.currentBelief.getTerm().equals(beliefConcept.getTerm()))
-            beliefConcept = null;*/
-
-        return currentBelief;
-    }
 
 
     @Override
@@ -309,8 +272,4 @@ abstract public class FireConcept extends NAL {
     }
 
 
-    @Override
-    public void setCurrentConcept(Concept currentConcept) {
-        throw new RuntimeException("FireConcept involves one specific concept");
-    }
 }

@@ -406,11 +406,13 @@ public final class CompositionalRules {
                     return false;
                 }
                 Task contentTask = new Task(contentBelief, task.budget);
-                nal.setCurrentTask(contentTask);
-                Term conj = Conjunction.make(component, content);
-                truth = intersection(contentBelief.truth, belief.truth);
-                budget = BudgetFunctions.compoundForward(truth, conj, nal);
-                nal.doublePremiseTask(conj, truth, budget, false);
+                //nal.setCurrentTask(contentTask);
+                CompoundTerm conj = Sentence.termOrNull( Conjunction.make(component, content) );
+                if (conj != null) {
+                    truth = intersection(contentBelief.truth, belief.truth);
+                    budget = BudgetFunctions.compoundForward(truth, conj, nal);
+                    nal.doublePremiseTask(conj, truth, budget, false, nal.getCurrentBelief(), contentTask);
+                }
             }
         } else {
             TruthValue v1, v2;
@@ -1279,10 +1281,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
 
-                    nal.setCurrentBelief(taskSentence);
-                    nal.setCurrentTask(dummy);
-
-                    if (nal.deriveTask(newTask, false, false, task, second_belief)) {
+                    if (nal.deriveTask(newTask, false, false, task, second_belief, taskSentence, dummy)) {
 
                         nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
                         nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
@@ -1348,10 +1347,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
 
-                    nal.setCurrentBelief(taskSentence);
-                    nal.setCurrentTask(dummy);
-
-                    if (nal.deriveTask(newTask, false, false, task, second_belief)) {
+                    if (nal.deriveTask(newTask, false, false, task, second_belief, taskSentence, dummy)) {
 
                         nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 

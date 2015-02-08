@@ -489,10 +489,10 @@ public class TemporalRules {
     public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final NAL nal) {
         BudgetValue budget = null;
         boolean feedbackToLinks = false;
-        if (task == null) {
+        /*if (task == null) {
             task = nal.getCurrentTask();
             feedbackToLinks = true;
-        }
+        }*/
         boolean judgmentTask = task.sentence.isJudgment();
         final float quality = TemporalRules.solutionQuality(problem, solution, nal.memory);
         if (judgmentTask) {
@@ -502,12 +502,13 @@ public class TemporalRules {
             budget = new BudgetValue(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));
             task.setPriority(Math.min(1 - quality, taskPriority));
         }
+        /*
         if (feedbackToLinks) {
             TaskLink tLink = nal.getCurrentTaskLink();
             tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
             TermLink bLink = nal.getCurrentBeliefLink();
             bLink.incPriority(quality);
-        }
+        }*/
         return budget;
     }
 
