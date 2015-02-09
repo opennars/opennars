@@ -125,8 +125,17 @@ public class RuleTables {
                     if (next == null) continue;
 
                     Term t = next.getTerm();
+                    
+                    Sentence s=null;
+                    if(task.sentence.punctuation==Symbols.JUDGMENT_MARK) {
+                        s=next.beliefs.get(0);
+                    }
+                    if(task.sentence.punctuation==Symbols.GOAL_MARK) {
+                        s=next.desires.get(0);
+                    }
 
-                    if (!alreadyInducted.contains(t) && (t instanceof Conjunction)) {
+                    if (s!=null && !alreadyInducted.contains(t) && (t instanceof Conjunction)) {
+                        alreadyInducted.add(t);
                         Conjunction conj2=(Conjunction) t; //ok check if it is a right conjunction
                         if(conj.getTemporalOrder()==conj2.getTemporalOrder()) {
                             //conj2 conjunction has to be a minor of conj
@@ -148,6 +157,8 @@ public class RuleTables {
                                     Term C=Conjunction.make(residue,conj.getTemporalOrder());
                                     Implication resImp=Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
                                     //todo add
+                                    TruthValue truth=TruthFunctions.deduction(s.truth, task.sentence.truth);
+                                    Sentence S=new Sentence(resImp,s.punctuation,t,)
                                 }
                             }
                         }
