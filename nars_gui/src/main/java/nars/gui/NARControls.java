@@ -479,7 +479,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
         String filePath = directoryName + fileName;
 
         try {
-            nar.addInput(new TextInput(new File(filePath)));
+            nar.addInput( new File(filePath) );
         } catch (Exception ex) {
             ex.printStackTrace();
         }

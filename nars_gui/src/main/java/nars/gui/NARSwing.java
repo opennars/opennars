@@ -127,7 +127,7 @@ public class NARSwing extends Video {
                 && CommandLineNARBuilder.isReallyFile(args[0])) {
 
             try {
-                nar.addInput(new TextInput(new File(args[0])));
+                nar.addInput( new File(args[0] ) );
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
