@@ -23,6 +23,7 @@ package nars.logic.entity;
 import com.google.common.base.Strings;
 import nars.core.Parameters;
 import nars.logic.Terms.Termable;
+import nars.logic.nal8.ImmediateOperation;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -35,10 +36,10 @@ import java.util.Set;
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
  */
-public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> implements Termable,BudgetValue.Budgetable {
+public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements Termable,BudgetValue.Budgetable {
 
-    /** placeholder for a forgotten task */
-    public static final Task Forgotten = new Task();
+//    /** placeholder for a forgotten task */
+//    public static final Task Forgotten = new Task();
 
     
 
@@ -131,6 +132,8 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
         this(s, b, parentTask == null ? null : new WeakReference(parentTask), parentBelief, solution);
     }
+
+
 
     public Task(NewTask<T> t) {
         this(t.getSentence(), t.getBudget(), t.getParentTask(), t.getParentBelief(), t.getSolution());

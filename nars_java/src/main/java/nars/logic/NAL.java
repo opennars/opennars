@@ -9,7 +9,9 @@ import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal8.Operation;
 import reactor.event.Event;
+import reactor.filter.Filter;
 import reactor.function.Supplier;
+import reactor.rx.action.FilterAction;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -29,6 +31,8 @@ import java.util.List;
 public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
     public interface DerivationFilter extends Plugin {
+
+
         /**
          * returns null if allowed to derive, or a String containing a short rejection reason for logging
          */

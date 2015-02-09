@@ -13,7 +13,7 @@ import reactor.function.Consumer;
  * time something is fired.
  * when possible, use the boolean predicate expression forms which can be unified.
  */
-abstract public interface TaskFireTerm extends Consumer<Event<FireConcept>> {
+abstract public interface TaskFireTerm extends Consumer<Event<FireConcept>>, AbstractTaskFireTerm {
 
     @Override
     default public void accept(Event<FireConcept> o) {
@@ -26,7 +26,6 @@ abstract public interface TaskFireTerm extends Consumer<Event<FireConcept>> {
         }
     }
 
-    abstract public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink);
 
 
 //    abstract public static class If implements Selector {

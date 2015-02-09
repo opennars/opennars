@@ -4,7 +4,7 @@ import nars.control.DefaultCore;
 import nars.core.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
-import nars.io.DefaultTextPerception;
+import nars.io.TextPerception;
 import nars.io.TextInput;
 import nars.logic.entity.*;
 import nars.logic.nal8.Operator;
@@ -157,8 +157,6 @@ public class Default extends NewNAR implements ConceptBuilder {
             n.memory.addOperator(o);
 
         n.addPlugin(new Events.OUT());
-
-        n.addPlugin(new DefaultTextPerception());
         
         n.addPlugin(new RuntimeNARSettings());
 
@@ -340,7 +338,7 @@ public class Default extends NewNAR implements ConceptBuilder {
             
             for (String x : filesToLoad) {
                 try {
-                    n.addInput( new TextInput(new File(x) ) );
+                    n.addInput( new File(x) );
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

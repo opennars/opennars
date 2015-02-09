@@ -42,8 +42,9 @@ public class Inheritance extends Statement {
      */
     protected Inheritance(final Term[] arg) {
         super(arg);  
-        
-        init(arg);
+
+        if (arg!=null)
+            init(arg);
     }
     
     protected Inheritance(final Term subj, final Term pred) {

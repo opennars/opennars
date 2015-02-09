@@ -99,13 +99,9 @@ public class Twenglish {
         this.memory = memory;
     }
 
-    protected List<AbstractTask> parseSentence(List<Span> s, Narsese narsese, boolean modifyVocabulary) {
-        List<AbstractTask> l = new ArrayList();
-        
-        l.addAll( spansToSentenceTerms(s) );
-        
-        return l;
-    }    
+    protected Collection<Task> parseSentence(List<Span> s, Narsese narsese, boolean modifyVocabulary) {
+        return spansToSentenceTerms(s);
+    }
     
     public Collection<Task> spansToSentenceTerms(Collection<Span> s) {
         
@@ -185,10 +181,10 @@ public class Twenglish {
     
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<AbstractTask> parse(String s, Narsese narsese, boolean modifyVocabulary) throws InvalidInputException {
+    public List<Task> parse(String s, Narsese narsese, boolean modifyVocabulary) throws InvalidInputException {
 
         
-        List<AbstractTask> results = new ArrayList();
+        List<Task> results = new ArrayList();
 
         List<Span> tokens = Twokenize.tokenizeRawTweetText(s);
         

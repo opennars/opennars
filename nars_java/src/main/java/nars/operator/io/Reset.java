@@ -1,21 +1,27 @@
 package nars.operator.io;
 
-import nars.logic.entity.AbstractTask;
+import nars.core.Memory;
+import nars.logic.nal8.ImmediateOperation;
 
 /**
  * Resets memory, @see memory.reset()
  */
-public class Reset extends AbstractTask<CharSequence> {
+public class Reset extends ImmediateOperation {
 
-    public String input;
-    public Reset(String input) {     
+    private final boolean hard;
+
+    public Reset(boolean hard) {
         super();
-        this.input=input;
+        this.hard = hard;
     }
 
     @Override
     public CharSequence name() {
-        return "Reset";
+        return "Reset[" + (hard ? "hard" : "soft") + ']';
     }
-    
+
+    @Override
+    public void execute(Memory m) {
+        m.reset(hard);
+    }
 }

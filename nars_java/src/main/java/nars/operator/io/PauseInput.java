@@ -1,12 +1,13 @@
 package nars.operator.io;
 
-import nars.logic.entity.AbstractTask;
+import nars.core.Memory;
+import nars.logic.nal8.ImmediateOperation;
 
 /**
  * Input perception command to queue 'stepLater' cycles in Memory
  * TODO wrap as Operator
  */
-public class PauseInput extends AbstractTask<CharSequence> {
+public class PauseInput extends ImmediateOperation {
     public final int cycles;
 
     public PauseInput(int cycles) {        
@@ -18,7 +19,10 @@ public class PauseInput extends AbstractTask<CharSequence> {
     public CharSequence name() {
         return "PauseInput(" + cycles + ')';
     }
-    
-    
-    
+
+
+    @Override
+    public void execute(Memory m) {
+        m.stepLater(cycles);
+    }
 }

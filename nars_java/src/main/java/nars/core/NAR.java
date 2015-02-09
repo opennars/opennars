@@ -1,35 +1,23 @@
 package nars.core;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
-import nars.core.Events.Perceive;
-import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.*;
-import nars.io.buffer.Buffer;
-import nars.io.buffer.FIFO;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.NAL.DerivationFilter;
 import nars.logic.entity.*;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
-import nars.operator.io.Echo;
 import reactor.event.registry.Registration;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import static com.google.common.collect.Iterators.singletonIterator;
 
 
 /**
@@ -42,7 +30,7 @@ import static com.google.common.collect.Iterators.singletonIterator;
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR implements Runnable, TaskSource {
+public class NAR implements Runnable {
 
     /**
      * The information about the version and date of the project.
@@ -72,13 +60,9 @@ public class NAR implements Runnable, TaskSource {
     public final Memory memory;
     public final Param param;
     
-    
-    /** The addInput channels of the reasoner     */
-    protected final List<InPort<Object,AbstractTask>> inputChannels;
-    
-    /** pending input and output channels to add on the next cycle. */
-    private final List<InPort<Object,AbstractTask>> newInputChannels;
+
     public final Narsese narsese;
+    public TextPerception textPerception;
 
     public int nal() {
         return memory.nal();
@@ -122,13 +106,8 @@ public class NAR implements Runnable, TaskSource {
     /** used by stop() to signal that a running loop should be interrupted */
     private boolean stopped = false;
     
-    
-    private boolean inputting = true;
     private boolean threadYield;
-    
-    private int inputSelected = 0; //counter for the current selected input channel
-    private boolean ioChanged;
-    
+
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
     
@@ -136,11 +115,9 @@ public class NAR implements Runnable, TaskSource {
         this.memory = m;        
         this.param = m.param;
         
-        //needs to be concurrent in case we change this while running
-        inputChannels = new ArrayList();
-        newInputChannels = new ArrayList();
 
-        narsese = new Narsese(this);
+        this.narsese = new Narsese(this);
+        this.textPerception = new TextPerception(this, narsese);
 
         m.event.on(Events.ResetStart.class, resetReaction);
     }
@@ -151,24 +128,7 @@ public class NAR implements Runnable, TaskSource {
      * reactivated, a signal for them to empty their state (if necessary).
      */
     public void reset() {
-        ioReset();
-        memory.reset();        
-    }
-
-    /** resets I/O channels, stopping all input */
-    protected void ioReset() {
-
-        int numInputs = inputChannels.size();
-        for (int i = 0; i < numInputs; i++) {
-            InPort port = inputChannels.get(i);
-            port.input.finished(true);
-        }
-
-        inputChannels.clear();
-        newInputChannels.clear();
-
-        ioChanged = false;
-
+        memory.reset(true);
     }
 
     final Reaction resetReaction = new Reaction() {
@@ -199,16 +159,21 @@ public class NAR implements Runnable, TaskSource {
         
         return addInput(text, text.contains("\n") ? -1 : time());
     }
-    
-    /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
+
+    public SensorPort addInput(final File input) throws FileNotFoundException {
+        return addInput( new TextInput(textPerception, input) );
+    }
+    public SensorPort addInput(final InputStream input) {
+        return addInput( new TextInput(textPerception,
+                new BufferedReader(new InputStreamReader( input ) ) ) );
+    }
+
+        /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
     public TextInput addInput(final String text, long creationTime) {
-        final TextInput i = new TextInput(text);
-        
-        ObjectTaskInPort ip = addInput(i);
-        
-        if (creationTime!=-1)
-            ip.setCreationTimeOverride(creationTime);
-        
+        final TextInput i = new TextInput(textPerception, text);
+
+        addInput(i, creationTime);
+
         return i;
     }
     
@@ -342,8 +307,9 @@ public class NAR implements Runnable, TaskSource {
     public void setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
     }
-    
-    static final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
+
+    /*
+    static final class ObjectTaskInPort extends InPort<Object,Task> {
         private final Memory memory;
         private long creationTime = -1;
 
@@ -375,8 +341,8 @@ public class NAR implements Runnable, TaskSource {
             }
         }
 
-        /** sets the 'creationTime' override for new Tasks.  sets the stamp to a particular
-         * value upon its exit from the queue.          */
+        * sets the 'creationTime' override for new Tasks.  sets the stamp to a particular
+         * value upon its exit from the queue.
         public void setCreationTimeOverride(final long creationTime) {
             this.creationTime = creationTime;
         }
@@ -400,23 +366,23 @@ public class NAR implements Runnable, TaskSource {
             }
         }
     }
-    
-    /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
-    public synchronized ObjectTaskInPort addInput(final Input channel) {
-        ObjectTaskInPort i = new ObjectTaskInPort(memory, channel, new FIFO(), 1.0f);
-               
-        try {
-            i.update();
-            newInputChannels.add(i);
-        } catch (IOException ex) {
-            emit(Events.ERR.class, ex);
-            throw new RuntimeException(ex);
-        }
-        
-        ioChanged = true;
-        
-        if (!running)
-            updateIO();
+    */
+
+    /** Adds an input channel for input from an external sense / sensor.
+     *  Will remain added until it closes or it is explicitly removed. */
+    public SensorPort addInput(final Input channel) {
+        return addInput(channel, -1);
+    }
+
+    /** provides a specific creationTime that the input's generated tasks will be overriden with */
+    public SensorPort addInput(final Input channel, long creationTime) {
+
+        SensorPort i = new SensorPort(memory, channel, 1.0f);
+
+        if (creationTime!=-1)
+            i.setCreationTimeOverride(creationTime);
+
+        memory.perception.accept(i);
 
         return i;
     }
@@ -479,12 +445,6 @@ public class NAR implements Runnable, TaskSource {
         start(minCyclePeriodMS, getCyclesPerFrame());
     }
 
-
-    /** Can be used to pause/resume input */
-    public void setInputting(boolean inputEnabled) {
-        this.inputting = inputEnabled;
-    }
-
     
     public EventEmitter event() { return memory.event; }
     
@@ -530,8 +490,6 @@ public class NAR implements Runnable, TaskSource {
         running = true;
         stopped = false;
 
-        updateIO();
-
         long cycleStart = time();
         do {
             step(1);
@@ -543,7 +501,7 @@ public class NAR implements Runnable, TaskSource {
             if (elapsed < minCycles)
                 running = !stopped;
             else
-                running = (!inputChannels.isEmpty()) && (!stopped) &&
+                running = (!memory.perception.isEmpty()) && (!stopped) &&
                     (elapsed < maxCycles);
         }
         while (running);
@@ -560,15 +518,13 @@ public class NAR implements Runnable, TaskSource {
         running = true;
         stopped = false;
 
-        updateIO();
-
         //clear existing input
         
         long cycleStart = time();
         do {
             step(1);           
         }
-        while ((!inputChannels.isEmpty()) && (!stopped));
+        while ((!memory.perception.isEmpty()) && (!stopped));
                    
         long cyclesCompleted = time() - cycleStart;
         
@@ -634,74 +590,56 @@ public class NAR implements Runnable, TaskSource {
         //}
     }
 
-    protected void resetPorts() {
-        for (InPort<Object, AbstractTask> i : getInPorts()) {
-            i.reset();
-        }
-    }
+
     
-    protected void updateIO() {
-        if (!ioChanged) {
-            return;
-        }
-        
-        ioChanged = false;        
-        
-        if (!newInputChannels.isEmpty()) {
-            inputChannels.addAll(newInputChannels);
-            newInputChannels.clear();
-        }
-
-    }
-    
-    /**     
-     * Processes the next input from each input channel.  Removes channels that have finished.
-     * @return whether to finish the reasoner afterward, which is true if any input exists.
-     */
-    @Override
-    public AbstractTask nextInputTask() {
-        if ((!inputting) || (inputChannels.isEmpty()))
-           return null;        
-        
-        int remainingChannels = inputChannels.size(); //remaining # of channels to poll
-
-        while ((remainingChannels > 0) && (inputChannels.size() > 0)) {
-            inputSelected %= inputChannels.size();
-
-            final InPort<Object,AbstractTask> i = inputChannels.get(inputSelected++);
-            remainingChannels--;
-            
-            if (i.finished()) {
-                inputChannels.remove(i);
-                continue;
-            }
-
-            try {
-                i.update();
-            } catch (IOException ex) {                    
-                emit(Events.ERR.class, ex);
-            }                
-
-            if (i.hasNext()) {
-                AbstractTask task = i.next();
-                if (task!=null) {
-                    return task;
-                }
-            }
-
-        }
-            
-        /** no available inputs */
-        return null;
-    }
-
-    /** count of how many items are buffered */
-    @Override public int numBuffered() {
-        int total = 0;
-        for (final InPort i : inputChannels)
-            total += i.getItemsBuffered();
-        return total;
-    }
+//    /**
+//     * Processes the next input from each input channel.  Removes channels that have finished.
+//     * @return whether to finish the reasoner afterward, which is true if any input exists.
+//     */
+//    @Override
+//    public AbstractTask nextInputTask() {
+//        if ((!inputting) || (inputChannels.isEmpty()))
+//           return null;
+//
+//        int remainingChannels = inputChannels.size(); //remaining # of channels to poll
+//
+//        while ((remainingChannels > 0) && (inputChannels.size() > 0)) {
+//            inputSelected %= inputChannels.size();
+//
+//            final InPort<Object,AbstractTask> i = inputChannels.get(inputSelected++);
+//            remainingChannels--;
+//
+//            if (i.finished()) {
+//                inputChannels.remove(i);
+//                continue;
+//            }
+//
+//            try {
+//                i.update();
+//            } catch (IOException ex) {
+//                emit(Events.ERR.class, ex);
+//            }
+//
+//            if (i.hasNext()) {
+//                AbstractTask task = i.next();
+//                if (task!=null) {
+//                    return task;
+//                }
+//            }
+//
+//        }
+//
+//        /** no available inputs */
+//        return null;
+//    }
+//
+//    /** count of how many items are buffered */
+//    @Override public int numBuffered() {
+//        int total = 0;
+//        for (final InPort i : inputChannels)
+//            total += i.getItemsBuffered();
+//        return total;
+//    }
 
     
     public void emit(final Class c, final Object... o) {
@@ -722,11 +660,9 @@ public class NAR implements Runnable, TaskSource {
 
         emit(FrameStart.class);
 
-        updateIO();
-
         try {
             for (int i = 0; i < cycles; i++)
-                memory.cycle(this);
+                memory.cycle();
         }
         catch (Throwable e) {
             if (Parameters.DEBUG) {
@@ -790,36 +726,33 @@ public class NAR implements Runnable, TaskSource {
         this.threadYield = b;
     }
 
-    /** stops ad empties all input channels into a receiver. this
-        results in no pending input. 
-        @return total number of items flushed
-        */
-    public int flushInput(Output receiver) {
-        int total = 0;
-        for (InPort c : inputChannels) {
-            total += flushInput(c, receiver);
-        }
-        return total;
-    }
-    
-    /** stops and empties an input channel into a receiver. 
-     * this results in no pending input from this channel. */
-    public static int flushInput(InPort i, Reaction receiver) {
-        int total = 0;
-        i.finish();
+//    /** stops ad empties all input channels into a receiver. this
+//        results in no pending input.
+//        @return total number of items flushed
+//        */
+//    public int flushInput(Output receiver) {
+//        int total = 0;
+//        for (InPort c : inputChannels) {
+//            total += flushInput(c, receiver);
+//        }
+//        return total;
+//    }
+//
+//    /** stops and empties an input channel into a receiver.
+//     * this results in no pending input from this channel. */
+//    public static int flushInput(InPort i, Reaction receiver) {
+//        int total = 0;
+//        i.finish();
+//
+//        //TODO re=use constructed array if possible, assuming recipient knows to save the value and not the array
+//        while (i.hasNext()) {
+//            receiver.event(Events.IN.class, new Object[] { i.next() });
+//            total++;
+//        }
+//
+//        return total;
+//    }
 
-        //TODO re=use constructed array if possible, assuming recipient knows to save the value and not the array
-        while (i.hasNext()) {
-            receiver.event(Events.IN.class, new Object[] { i.next() });
-            total++;
-        }        
-        
-        return total;
-    }
-
-    public List<InPort<Object, AbstractTask>> getInPorts() {
-        return inputChannels;
-    }
 
 
     /** create a NAR given the class of a Build.  its default constructor will be used */

@@ -20,7 +20,7 @@ public class TestMultistepEdited {
         Parameters.DEBUG = true;
 
         NAR n = new NAR(new Default());
-        n.addInput(ExampleFileInput.get("Examples/Example-MultiStep-edited"));
+        n.addInput( ExampleFileInput.get(n, "Examples/Example-MultiStep-edited") );
         
         //new TextOutput(n, System.out);
         /*InferenceLogger logger = new InferenceLogger(System.out);

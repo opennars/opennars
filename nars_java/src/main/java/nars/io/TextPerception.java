@@ -2,14 +2,12 @@ package nars.io;
 
 import com.google.common.collect.Iterators;
 import nars.core.*;
-import nars.core.Events.IN;
-import nars.core.Events.Perceive;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;
-import nars.logic.entity.AbstractTask;
+import nars.logic.entity.Task;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.operator.io.*;
@@ -24,13 +22,14 @@ import static com.google.common.collect.Iterators.singletonIterator;
 
 /**
  *  Default handlers for text perception.
- *  Parses input text into sequences of AbstractTask's which input into 
+ *  Parses input text into sequences of Task's which input into 
  *      Memory via NAR input channel & buffer port.
  *  
  *  TODO break into separate subclasses for each text mode
  */
-public class DefaultTextPerception extends AbstractPlugin {
-    
+public class TextPerception {
+
+    private final NAR nar;
     private Memory memory;
     
     public List<TextReaction> parsers;
@@ -42,49 +41,26 @@ public class DefaultTextPerception extends AbstractPlugin {
     
     private boolean enableNarsese = true;
 
-    private boolean enableNaturalLanguage = true; //the NLP mode we should strive for
+    private boolean enableNaturalLanguage = false; //the NLP mode we should strive for
     private boolean enableEnglisch = false;
     
     private boolean enableTwenglish = false; //the events should be introduced event-wise
     //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal logic
 
 
-
-    @Override
-    public Class[] getEvents() {
-        return new Class[] { Events.Perceive.class };
-    }
-
-    @Override
-    public void onEnabled(NAR n) {
+    public TextPerception(NAR n, Narsese narsese) {
+        this.nar = n;
         this.memory = n.memory;
-        this.narsese = new Narsese(memory);
+        this.narsese = narsese;
         this.englisch = new Englisch();
         this.twenglish = new Twenglish(memory);
         this.parsers = getParsers();
-    }
-
-    @Override
-    public void onDisabled(NAR n) {
 
     }
 
-    @Override
-    public void event(Class event, Object[] arguments) {
-        if (event == Perceive.class) {            
-            Object o = arguments[1];
-            InPort i = (InPort)arguments[0];
-            
-            Iterator<AbstractTask> it = i.postprocess( perceive(o) ); 
-            if (it!=null)
-                while (it.hasNext())
-                    i.queue(it.next());
-        }
-    }
-    
 
     /* Perceive an input object by calling an appropriate perception system according to the object type. */
-    public Iterator<? extends AbstractTask> perceive(final Object o) {
+    public Iterator<Task> perceive(final Object o) {
                 
         Exception error;
         try {
@@ -105,7 +81,7 @@ public class DefaultTextPerception extends AbstractPlugin {
             error = e;
         }
         
-        return singletonIterator(new Echo(Events.ERR.class, error) );
+        return singletonIterator( new Echo(Events.ERR.class, error).newTask() );
     }
     
     public List<TextReaction> getParsers() {
@@ -148,7 +124,7 @@ public class DefaultTextPerception extends AbstractPlugin {
             @Override public Object react(String input) {                
                 if (input.equals(Symbols.RESET_COMMAND) || (input.startsWith("*") && !input.startsWith("*start")
                     && !input.startsWith("*stop") && !input.startsWith("*volume"))) //TODO!
-                    return new Reset(input);
+                    return new Reset(false);
                 return null;
             }
         });
@@ -157,15 +133,13 @@ public class DefaultTextPerception extends AbstractPlugin {
             @Override public Object react(String input) {                
                 if (input.equals(Symbols.REBOOT_COMMAND)) {
                     //immediately reset the memory
-                    memory.emit(IN.class, "reboot");
-                    memory.reset();
-                    return new Reboot();
+                    return new Reset(true);
                 }
                 return null;
             }
         });
 
-//      TODO implement these with AbstractTask's        
+//      TODO implement these with Task's        
 //        //stop
 //        parsers.add(new TextReaction() {
 //            @Override
@@ -254,7 +228,7 @@ public class DefaultTextPerception extends AbstractPlugin {
                     char c = input.charAt(0);
                     if (c != Symbols.COMMENT_MARK) {
                         try {
-                            AbstractTask task = narsese.parseNarsese(new StringBuilder(input));
+                            Task task = narsese.parseNarsese(new StringBuilder(input));
                             if (task != null) {
                                 return task;
                             }
@@ -274,7 +248,7 @@ public class DefaultTextPerception extends AbstractPlugin {
                 
                 if (enableEnglisch) {
                     /*if (!possiblyNarsese(line))*/ {                    
-                        List<AbstractTask> l;
+                        List<Task> l;
                         try {
                             l = englisch.parse(line, narsese, true);
                             if ((l == null) || (l.isEmpty())) 
@@ -296,7 +270,7 @@ public class DefaultTextPerception extends AbstractPlugin {
                 
                 if (enableTwenglish) {
                     /*if (!possiblyNarsese(line))*/ {                    
-                        List<AbstractTask> l;
+                        List<Task> l;
                         try {
                             l = twenglish.parse(line, narsese, true);
                             if ((l == null) || (l.isEmpty())) 
@@ -318,7 +292,7 @@ public class DefaultTextPerception extends AbstractPlugin {
                 
                 if (enableNaturalLanguage) {
                     /*if (!possiblyNarsese(line))*/ {                    
-                        List<AbstractTask> l = NaturalLanguagePerception.parseLine(line, narsese, "word");
+                        List<Task> l = NaturalLanguagePerception.parseLine(line, narsese, "word");
                         if ((l == null) || (l.isEmpty())) 
                             return null;
                         return l;
@@ -331,7 +305,7 @@ public class DefaultTextPerception extends AbstractPlugin {
         return parsers;           
     }
     
-    protected Iterator<AbstractTask> perceive(final String line) {
+    protected Iterator<Task> perceive(final String line) {
 
         Exception lastException = null;
         
@@ -341,13 +315,13 @@ public class DefaultTextPerception extends AbstractPlugin {
             
             if (result!=null) {
                 if (result instanceof Iterator) {
-                    return (Iterator<AbstractTask>)result;
+                    return (Iterator<Task>)result;
                 }
                 if (result instanceof Collection) {
-                    return ((Collection<AbstractTask>)result).iterator();
+                    return ((Collection<Task>)result).iterator();
                 }
-                if (result instanceof AbstractTask) {
-                    return singletonIterator((AbstractTask)result);
+                if (result instanceof Task) {
+                    return singletonIterator((Task)result);
                 }
                 else if (result.equals(Boolean.TRUE)) {
                     return null;

@@ -6,6 +6,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
 import nars.event.EventEmitter;
+import nars.logic.nal8.ImmediateOperation;
 import nars.operator.io.Echo;
 import nars.operator.io.Say;
 
@@ -15,7 +16,17 @@ import nars.operator.io.Say;
 public abstract class Output extends AbstractReaction {
 
 
-    public static final Class[] DefaultOutputEvents = new Class[] { Events.IN.class, Events.EXE.class, Events.OUT.class, Events.ERR.class, Echo.class, Say.class, Answer.class, Events.PluginsChange.class };
+    public static final Class[] DefaultOutputEvents = new Class[] {
+            Events.IN.class,
+            Events.EXE.class,
+            Events.OUT.class,
+            Events.ERR.class,
+            ImmediateOperation.class,
+            Echo.class,
+            Say.class,
+            Answer.class,
+            Events.PluginsChange.class
+    };
             
     public Output(EventEmitter source, boolean active) {
         super(source, active, DefaultOutputEvents );

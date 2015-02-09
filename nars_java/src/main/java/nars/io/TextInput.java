@@ -20,16 +20,21 @@
  */
 package nars.io;
 
+import com.google.common.collect.Iterators;
+import nars.core.Events;
+import nars.logic.entity.Task;
+import nars.operator.io.Echo;
+
 import java.io.*;
 import java.net.URL;
+import java.util.Iterator;
 
 /**
  * To read and write experience as Task streams
  */
-public class TextInput extends Symbols implements Input {
+public class TextInput extends Input.BufferedInput {
 
-
-    
+    private final TextPerception perception;
     /**
      * Input experience from a file
      */
@@ -37,25 +42,26 @@ public class TextInput extends Symbols implements Input {
     
     private boolean finished = false;
     
-    public TextInput(String input) {
-        this(new BufferedReader(new StringReader(input)));
+    public TextInput(TextPerception p, String input) {
+        this(p, new BufferedReader(new StringReader(input)));
     }
     
-    public TextInput(File input) throws FileNotFoundException {
-        this(new BufferedReader(new FileReader(input)));
+    public TextInput(TextPerception p, File input) throws FileNotFoundException {
+        this(p, new BufferedReader(new FileReader(input)));
     }
     
-    public TextInput(URL u) throws IOException {
-        this(new BufferedReader(new InputStreamReader(u.openStream())));
+    public TextInput(TextPerception p, URL u) throws IOException {
+        this(p, new BufferedReader(new InputStreamReader(u.openStream())));
     }
     
-    public TextInput(BufferedReader input) {        
-        this();
+    public TextInput(TextPerception p, BufferedReader input) {
+        this(p);
+
         setInput(input);
     }
     
-    public TextInput() {
-        
+    public TextInput(TextPerception p) {
+        this.perception = p;
     }
     
     protected void setInput(BufferedReader input) {
@@ -64,22 +70,19 @@ public class TextInput extends Symbols implements Input {
 
 
     @Override
-    public boolean finished(boolean forceStop) {
-        if (forceStop) {
-            if (input!=null) {
-                try {
-                    input.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+    public void stop() {
+        if (input!=null) {
+            try {
+                input.close();
+                input = null;
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
-            finished = true;
         }
-        return finished;
     }
 
     @Override
-    public Object next() throws IOException {
+    public Iterator<Task> nextBuffer() {
         String line = null;
         
         if (input==null) {
@@ -88,7 +91,12 @@ public class TextInput extends Symbols implements Input {
         }
                 
         while (!finished) {
-            line = input.readLine();
+            try {
+                line = input.readLine();
+            } catch (IOException e) {
+                finished = true;
+                return Iterators.singletonIterator( new Echo(Events.IN.class, e.toString()).newTask() );
+            }
             if (line == null) {
                 finished = true;
             }
@@ -108,7 +116,7 @@ public class TextInput extends Symbols implements Input {
         }
 
         if (line!=null)
-            return process(line);
+            return perception.perceive( process(line) );
         return null;
     }
 
@@ -119,5 +127,4 @@ public class TextInput extends Symbols implements Input {
     }
 
 
-    
 }

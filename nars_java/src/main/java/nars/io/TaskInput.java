@@ -22,7 +22,7 @@ public class TaskInput implements Input {
     
     
     @Override
-    public Object next() throws IOException {
+    public Task get()  {
         if (!finished) {
             finished = true;
             return task;        
@@ -30,13 +30,4 @@ public class TaskInput implements Input {
         return null;
     }
 
-    @Override
-    public boolean finished(boolean stop) {
-        if (stop) finished = true;
-        return finished;
-    }
-    
-    
-    
-    
 }

@@ -19,25 +19,59 @@
 
 package nars.io;
 
-import java.io.IOException;
+import nars.logic.entity.Task;
+import reactor.function.Supplier;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 
 /**
  * 
  * Provides input for the next moment from an input channel that delivers input asynchronously
  */
-public interface Input<X> {
-   
-    /** returns next input if available, null if none */
-    public X next() throws IOException;
-    
+public interface Input extends Supplier<Task> {
+
+    @Override
+    abstract public Task get();
+
     /**
-     * 
-     * @param stop - if true, this Input should terminate (ex: close connections) because 
-     * it has been removed from NAR.
-     * @return whether this input is finished
+     *
+     * called when a NAR forcibly removes the inputs, allowing
+     * this input to close any connections or free resources
      */
-    //public boolean finished(boolean stop);        
-    default public boolean finished(boolean stop) {
-        return false;
+    default public void stop() {
+
+    }
+
+    /** an input that generates tasks in batches, which are stored in a buffer */
+    abstract public static class BufferedInput implements Input {
+
+        final Deque<Task> queue = new ArrayDeque();
+
+        abstract public Iterator<Task> nextBuffer();
+
+        protected int queue(Iterator<Task> tasks) {
+            if (tasks == null) return 0;
+            int count = 0;
+            while (tasks.hasNext()) {
+                queue.add(tasks.next());
+                count++;
+            }
+            return count;
+        }
+
+        @Override
+        public Task get() {
+            if (!queue.isEmpty()) {
+                return queue.removeFirst();
+            }
+            else {
+                int q = queue(nextBuffer());
+                if (q == 0) return null;
+                return queue.removeFirst();
+            }
+        }
+
     }
 }

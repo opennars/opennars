@@ -63,7 +63,7 @@ public class LogicMeter {
     public final ValueMeter PLAN_TASK_PLANNED = new ValueMeter("plan.task.planned");
     public final ValueMeter PLAN_TASK_EXECUTABLE = new ValueMeter("plan.task.executable");
 
-    public final ValueMeter TASK_INPUT = new ValueMeter("task.input");
+    //public final ValueMeter TASK_INPUT = new ValueMeter("task.input");
 
     //private double conceptVariance;
     //private double[] conceptHistogram;

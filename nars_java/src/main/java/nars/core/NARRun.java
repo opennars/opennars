@@ -30,7 +30,6 @@ import java.io.*;
  * Run Reasoner
  * <p>
  Runs a NAR with addInput. useful for command line or batch functionality; 
- TODO check duplicated code with {@link nars.main.NARS}
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
@@ -78,20 +77,20 @@ public class NARRun {
         
         if (args.length > 0) {
             try {
-                nar.addInput(new TextInput(new File(args[0])));
+                nar.addInput(  new File(args[0]) );
             } catch (FileNotFoundException ex) {
                 System.err.println("NARRun.init: " + ex);
             }
         }
         else {            
-            nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
+            nar.addInput( System.in );
         }
         
                while (true) {
             if (logging)
                 log("NARSBatch.run():"
-                        + " step " + nar.time()
-                        + " " + nar.inputChannels.size());
+                        + " step " + nar.time());
+
             
 
             nar.step(1);
@@ -99,11 +98,10 @@ public class NARRun {
             
             if (logging)
                 log("NARSBatch.run(): after tick"
-                        + " step " + nar.time()
-                        + " " + nar.inputChannels.size());
-            
+                        + " step " + nar.time());
+
             if (maxTime > 0) {
-                if ((nar.inputChannels.isEmpty()) || nar.time() == maxTime) {
+                if ((nar.memory.perception.isEmpty()) || nar.time() == maxTime) {
                     break;
                 }
             }

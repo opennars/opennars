@@ -1,6 +1,7 @@
 package nars.util.data;
 
 import nars.io.TextInput;
+import nars.io.TextPerception;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,21 +21,14 @@ public class PrintWriterInput extends TextInput {
     public final PipedWriter out;
     boolean outClosed = false;
 
-    public PrintWriterInput() throws IOException {
-        super();
+    public PrintWriterInput(TextPerception t) throws IOException {
+        super(t);
 
         out = new PipedWriter();
         setInput(new BufferedReader(new PipedReader(out)));
 
     }
 
-    @Override
-    public boolean finished(boolean forceStop) {
-        if (outClosed) {
-            return true;
-        }
-        return super.finished(forceStop);
-    }
 
     public void append(CharSequence c) {
         try {

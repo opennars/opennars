@@ -55,6 +55,9 @@ public class Operation extends Inheritance {
     protected Operation(Term[] t) {
         super(t);
     }
+    protected Operation() {
+        super(null);
+    }
 
     
     /**

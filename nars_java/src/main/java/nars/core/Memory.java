@@ -45,8 +45,10 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal7.Tense;
+import nars.logic.nal8.ImmediateOperation;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
+import nars.logic.rule.Perception;
 import nars.operator.app.plan.MultipleExecutionManager;
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
@@ -84,7 +86,7 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     private int level;
-    private TaskSource inputs;
+
     public NALRuleEngine rules;
 
     public void setLevel(int nalLevel) {
@@ -149,12 +151,7 @@ public class Memory implements Serializable {
 
     Timing timing;
 
-    public static interface TaskSource {
 
-        public AbstractTask nextInputTask();
-
-        public int numBuffered();
-    }
 
     private static long defaultRandomSeed = 1;
     public static final Random randomNumber = new Random(defaultRandomSeed);
@@ -168,6 +165,7 @@ public class Memory implements Serializable {
 
     private final Deque<Runnable> otherTasks = new ConcurrentLinkedDeque();
 
+    public final Perception perception;
     public final Core concepts;
     private final Set<Concept> questionConcepts = Parameters.newHashSet(16);
     private final Set<Concept> goalConcepts = Parameters.newHashSet(16);
@@ -213,6 +211,8 @@ public class Memory implements Serializable {
 
         this.param = param;
 
+        this.perception = new Perception();
+
         this.rules = new NALRuleEngine(this);
 
         this.concepts = concepts;
@@ -231,7 +231,7 @@ public class Memory implements Serializable {
 
         //after this line begins actual logic, now that the essential data strucures are allocated
         //------------------------------------ 
-        reset();
+        reset(false);
 
         this.event.set(conceptIndices, true, Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class, Events.ConceptRemember.class, Events.ConceptForget.class, Events.ConceptNew.class );
     }
@@ -274,7 +274,10 @@ public class Memory implements Serializable {
         }
     };
 
-    public void reset() {
+    public void reset(boolean resetInputs) {
+
+        if (resetInputs)
+            perception.reset();
 
         event.emit(ResetStart.class);
 
@@ -549,44 +552,34 @@ public class Memory implements Serializable {
      * Input tasks with low priority are ignored, and the others are put into
      * task buffer.
      *
-     * @param t The addInput task
+     * @param task The addInput task
      * @return how many tasks were queued to newTasks
      */
-    public int inputTask(final AbstractTask t) {
+    public int inputTask(final Task task) {
 
-        if (t instanceof Task) {
-            Task task = (Task) t;
-            Stamp s = task.sentence.stamp;
-            if (s.getCreationTime() == -1) {
-                s.setCreationTime(time(), param.duration.get());
-            }
-
-            emit(Events.IN.class, task);
-
-            if (task.budget.aboveThreshold()) {
-
-                if (addNewTask(task, "Perceived"))
-                    return 1;
-
-            } else {
-                removeTask(task, "Neglected");
-            }
-        } else if (t instanceof PauseInput) {
-            stepLater(((PauseInput) t).cycles);
-            emit(Events.IN.class, t);
-        } else if (t instanceof Reset) {
-            reset();
-            emit(Events.OUT.class,((Reset) t).input);
-            emit(Events.IN.class, t);
-        } else if (t instanceof Echo) {
-            Echo e = (Echo) t;
-            emit(e.channel, e.signal);
-        } else if (t instanceof SetVolume) {
-            param.noiseLevel.set(((SetVolume) t).volume);
-            emit(Events.IN.class, t);
-        } else {
-            emit(Events.IN.class, "Unrecognized Input Task: " + t);
+        if (task.getTerm() instanceof ImmediateOperation) {
+            ImmediateOperation i = (ImmediateOperation)task.getTerm();
+            i.execute(this);
+            emit(ImmediateOperation.class, i);
+            return 0;
         }
+
+        Stamp s = task.sentence.stamp;
+        if (s.getCreationTime() == -1) {
+            s.setCreationTime(time(), param.duration.get());
+        }
+
+        emit(Events.IN.class, task);
+
+        if (task.budget.aboveThreshold()) {
+
+            if (addNewTask(task, "Perceived"))
+                return 1;
+
+        } else {
+            removeTask(task, "Neglected");
+        }
+
         return 0;
     }
 
@@ -635,10 +628,6 @@ public class Memory implements Serializable {
     }
 
 
-    /** whether perceptual tasks are available to perceive */
-    public boolean hasPercepts() {
-        return isProcessingInput() && inputs.numBuffered() > 0;
-    }
 
     /** attempts to perceive the next input from perception, and
      *  handle it by immediately acting on it, or
@@ -647,12 +636,13 @@ public class Memory implements Serializable {
     public int nextPercept() {
         if (!isProcessingInput()) return -1;
 
-        AbstractTask t = inputs.nextInputTask();
-        if (t != null) {
+        Task t = perception.get();
+        if (t != null)
             return inputTask(t);
-        }
+
         return -1;
     }
+
     /** attempts to perceive at most N perceptual tasks.
      *  this allows Attention to regulate input relative to other kinds of mental activity
      *  if N == -1, continue perceives until perception buffer is emptied
@@ -675,15 +665,13 @@ public class Memory implements Serializable {
         return perceived;
     }
 
-    public /*synchronized*/ void cycle(final TaskSource inputs) {
+    public /*synchronized*/ void cycle() {
 
-        this.inputs = inputs;
-        
         if (!isEnabled()) {
             return;
         }
 
-        logic.TASK_INPUT.set((double) inputs.numBuffered());
+        //logic.TASK_INPUT.set((double) inputs.numBuffered());
 
         event.emit(Events.CycleStart.class);
 

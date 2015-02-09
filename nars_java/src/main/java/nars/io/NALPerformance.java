@@ -44,7 +44,7 @@ public class NALPerformance  {
             
 
             
-            nar.addInput(new TextInput(input));
+            nar.addInput( input );
 
             if (minCycles == -1)
                 nar.run(maxCycles);

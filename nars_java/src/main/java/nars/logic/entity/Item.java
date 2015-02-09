@@ -46,6 +46,8 @@ public abstract class Item<K> implements Budgetable {
         }        
         
     }
+
+    public static final Comparator<Item> priorityComparator = new ItemPriorityComparator<>();
     
     /** The budget of the Item, consisting of 3 numbers */
     public final BudgetValue budget;

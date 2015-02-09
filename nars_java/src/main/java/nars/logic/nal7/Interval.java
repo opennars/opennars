@@ -37,7 +37,7 @@ public class Interval extends Term {
 
     public static class AtomicDuration extends AtomicInteger {
         
-        /** this represents the amount of time in proportion to a duration in which
+        /** this represents the amount of time (ex: cycles) in proportion to a duration in which
          *  Interval resolution calculates.  originally, NARS had a hardcoded duration of 5
          *  and an equivalent Interval scaling factor of ~1/2 (since ln(E) ~= 1/2 * 5).
          *  Since duration is now adjustable, this factor approximates the same result

@@ -22,7 +22,7 @@ public class AnalyzeAntAttention {
 
         NAR nar = new NAR(new Neuromorphic(1));
 
-        nar.addInput(new TextInput(new File("nal/test/nal7.15.nal")));
+        nar.addInput( new File("nal/test/nal7.15.nal" ));
             
                 
 //        new NALTestSome("nal/test/nal7.15.nal", showOutput) {

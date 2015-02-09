@@ -2,7 +2,7 @@ package nars.io.nlp;
 
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
-import nars.logic.entity.AbstractTask;
+import nars.logic.entity.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,19 +23,25 @@ public class NaturalLanguagePerception {
         }
     }
     
-    static public List<AbstractTask> parseLine(String input, Narsese narsese, String prefix) {
+    static public List<Task> parseLine(String input, Narsese narsese, String prefix) {
 
         List<String> statements = new ArrayList();
 
         parseLineInternal(input, statements, prefix);
         
-        List<AbstractTask> results = new ArrayList();
+        List<Task> results = new ArrayList();
         for (String i : statements) {
             try {
-                AbstractTask t = narsese.parseNarsese(new StringBuilder(i));
-                if (t != null) {
-                    results.add(t);
-                }
+                //try {
+                    Task t = narsese.parseNarsese(new StringBuilder(i));
+                    if (t != null) {
+                        results.add(t);
+                    }
+//                }
+//                catch (Exception e) {
+//                    System.err.println("CAN NOT PARSE LINE: " + i);
+//                }
+
             }
             catch (InvalidInputException e) {
                 throw new RuntimeException(e);

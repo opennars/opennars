@@ -98,9 +98,7 @@ public class Events {
             return "Concept Created: " + object;
         }        
     }
-    
-    public static class Perceive {    }
-    
+
     //when remembered a previously forgotten concept
     public static class ConceptRemember {    }
     
@@ -262,7 +260,5 @@ public class Events {
         
         
     }
-
-
 
 }

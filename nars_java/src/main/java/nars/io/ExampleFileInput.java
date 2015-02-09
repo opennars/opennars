@@ -51,18 +51,18 @@ public class ExampleFileInput extends TextInput {
     /** narsese source code, one instruction per line */
     private final String source;
 
-    protected ExampleFileInput(String input)  {
-        super(input);
+    protected ExampleFileInput(TextPerception t, String input)  {
+        super(t, input);
         this.source = input;
     }
     
-    public static ExampleFileInput get(String id) throws Exception {
+    public static ExampleFileInput get(NAR n, String id) throws Exception {
         if (!id.endsWith(".nal"))
             id = id + ".nal";
 
         String path = getExamplePath(id);
                 
-        return new ExampleFileInput(load(path));
+        return new ExampleFileInput(n.textPerception, load(path));
     }
 
     final static String cwd;
