@@ -35,6 +35,8 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
+import static nars.inference.TemporalRules.ORDER_CONCURRENT;
+import static nars.inference.TemporalRules.ORDER_FORWARD;
 import nars.io.Symbols;
 import static nars.io.Symbols.VAR_DEPENDENT;
 import static nars.io.Symbols.VAR_INDEPENDENT;
@@ -98,14 +100,35 @@ public class RuleTables {
         
         nal.setCurrentBelief( belief );  // may be null
         
-        
-        for(int i=0;i<PerceptionAccel.PERCEPTION_DECISION_ACCEL_SAMPLES;i++) {
+        //only if the premise task is a =/> 
+        if(task.sentence.term instanceof Implication &&
+                (((Implication)task.sentence.term).getTemporalOrder()==ORDER_FORWARD ||
+                ((Implication)task.sentence.term).getTemporalOrder()==ORDER_CONCURRENT)) {
+            Implication imp=(Implication)task.sentence.term;
+            if(imp.getSubject() instanceof Conjunction &&
+                    ((((Conjunction)imp.getSubject()).getTemporalOrder()==ORDER_FORWARD) ||
+                    (((Conjunction)imp.getSubject()).getTemporalOrder()==ORDER_CONCURRENT))) {
+                Conjunction conj=(Conjunction)imp.getSubject();
+                for(int i=0;i<PerceptionAccel.PERCEPTION_DECISION_ACCEL_SAMPLES;i++) {
 
-            //prevent duplicate inductions
-            Set<Term> alreadyInducted = new HashSet();
-            
-            Concept next=nal.memory.concepts.sampleNextConcept();
-            
+                    //prevent duplicate derivations
+                    Set<Term> alreadyInducted = new HashSet();
+
+                    Concept next=nal.memory.concepts.sampleNextConcept();
+
+                    if (next == null) continue;
+
+                    Term t = next.getTerm();
+
+                    if (!alreadyInducted.contains(t) && (t instanceof Conjunction)) {
+                        Conjunction conj2=(Conjunction) t; //ok check if it is a right conjunction
+                        if(conj.getTemporalOrder()==conj2.getTemporalOrder()) {
+                            //conj2 conjunction has to be a minor of conj
+                            //the case where its equal is already handled by other inference rule
+                        }
+                    }
+                }
+            }
         }
         
         for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
