@@ -53,6 +53,7 @@ import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variables;
+import nars.plugin.input.PerceptionAccel;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -97,6 +98,15 @@ public class RuleTables {
         
         nal.setCurrentBelief( belief );  // may be null
         
+        
+        for(int i=0;i<PerceptionAccel.PERCEPTION_DECISION_ACCEL_SAMPLES;i++) {
+
+            //prevent duplicate inductions
+            Set<Term> alreadyInducted = new HashSet();
+            
+            Concept next=nal.memory.concepts.sampleNextConcept();
+            
+        }
         
         for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
 
