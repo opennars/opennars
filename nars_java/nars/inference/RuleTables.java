@@ -101,6 +101,12 @@ public class RuleTables {
         nal.setCurrentBelief( belief );  // may be null
         
         //only if the premise task is a =/> 
+        
+        //the following code is for:
+        //<(&/,<a --> b>,<b --> c>,<x --> y>,pick(a)) =/> <goal --> reached>>.
+        //(&/,<a --> b>,<b --> c>,<x --> y>). :|:
+       // |-
+        //<pick(a) =/> <goal --> reached>>. :|:
         if(task.sentence.term instanceof Implication &&
                 (((Implication)task.sentence.term).getTemporalOrder()==ORDER_FORWARD ||
                 ((Implication)task.sentence.term).getTemporalOrder()==ORDER_CONCURRENT)) {
@@ -125,12 +131,32 @@ public class RuleTables {
                         if(conj.getTemporalOrder()==conj2.getTemporalOrder()) {
                             //conj2 conjunction has to be a minor of conj
                             //the case where its equal is already handled by other inference rule
+                            if(conj2.term.length<conj.term.length) {
+                                boolean equal=true;
+                                for(int j=0;j<conj2.term.length;j++) //ok now check if it is really a minor
+                                {
+                                    if(!conj.term[j].equals(conj2.term[j])) {
+                                        equal=false;
+                                    }
+                                }
+                                if(equal) {
+                                    //ok its a minor, we have to construct the residue implication now
+                                    Term[] residue=new Term[conj.term.length-conj2.term.length];
+                                    for(int k=0;k<residue.length;k++) {
+                                        residue[k]=conj.term[conj2.term.length+k];
+                                    }
+                                    Term C=Conjunction.make(residue,conj.getTemporalOrder());
+                                    Implication resImp=Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
+                                    //todo add
+                                }
+                            }
                         }
                     }
                 }
             }
         }
         
+        //usual temporal induction between two events
         for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
 
             //prevent duplicate inductions
