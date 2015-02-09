@@ -49,9 +49,9 @@ public class SchemeContext extends SchemeUtils {
             Object varList = other.vars, valList = other.vals;
             // See if the symbol is bound locally
             while (varList != null) {
-                if (other.first(varList) == symbol) {
+                if (other.first(varList).equals(symbol)) {
                     return other.first(valList);
-                } else if (varList == symbol) {
+                } else if (varList.equals(symbol)) {
                     return valList;
                 } else {
                     varList = other.rest(varList);
@@ -61,7 +61,9 @@ public class SchemeContext extends SchemeUtils {
             // If not, try to look for the parent
             if (other.parent != null) {
                 other = other.parent;
-            } else return other.error("Unbound variable: " + symbol);
+            }
+            else
+                return other.error("Unbound variable: " + symbol);
         }
     }
 

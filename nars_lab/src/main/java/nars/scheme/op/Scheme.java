@@ -35,7 +35,10 @@ public class Scheme extends SynchronousFunctionOperator {
         Term code = x[0];
         if (code instanceof Product) {
             //evaluate as an s-expression
-            return schemeToNars(eval((Product) code));
+            System.out.println( ((Product) code).first() );
+            System.out.println( ((Product) code).rest() );
+
+            return schemeToNars(eval( ((Product) code)  ));
         }
         //Set = evaluate as a cond?
         else {

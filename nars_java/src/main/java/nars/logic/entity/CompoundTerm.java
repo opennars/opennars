@@ -30,6 +30,7 @@ import nars.logic.entity.tlink.TermLinkBuilder;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
+import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
 import java.util.*;
@@ -38,7 +39,7 @@ import static nars.logic.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.logic.NALOperator.COMPOUND_TERM_OPENER;
 
 
-public abstract class CompoundTerm extends Term implements Iterable<Term> {
+public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair {
     
     /**
      * list of (direct) term
@@ -1002,16 +1003,40 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return Iterators.forArray(term);
     }
 
+    @Override
+    public Object first() {
+        return term[0];
+    }
+
     /** cdr or 'rest' function for s-expression interface when arity > 1 */
-    public Pair cdr() {
-        if (term.length <= 1) return null;
+    @Override
+    public Object rest() {
+        if (term.length == 1) throw new RuntimeException("Pair fault");
+        if (term.length == 2) return term[1];
+        if (term.length == 3) return new Pair(term[1], term[2]);
+        if (term.length == 4) return new Pair(term[1], new Pair(term[2], term[3]));
+
+        //this may need tested better:
         Pair p = null;
         for (int i = term.length - 2; i >= 0; i--) {
             if (p == null)
-                p = new Pair(i, i+1);
+                p = new Pair(term[i], term[i+1]);
             else
-                p = new Pair(i, p);
+                p = new Pair(term[i], p);
         }
         return p;
     }
+
+    @Override
+    public Object setFirst(Object first) {
+        throw new RuntimeException(this + " not modifiable");
+    }
+
+    @Override
+    public Object setRest(Object rest) {
+        throw new RuntimeException(this + " not modifiable");
+    }
+
+
+
 }

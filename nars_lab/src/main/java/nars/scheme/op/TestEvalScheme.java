@@ -3,11 +3,14 @@ package nars.scheme.op;
 
 import nars.build.Default;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.TextOutput;
 
 public class TestEvalScheme {
 
     public static void main(String[] args) {
+
+        Parameters.DEBUG = true;
 
         NAR n = new NAR(new Default());
 

@@ -3,6 +3,7 @@ package nars.scheme;
 /**  @author Peter Norvig, peter@norvig.com http://www.norvig.com 
  * Copyright 1998 Peter Norvig, see http://www.norvig.com/license.html **/
 
+import nars.logic.entity.Term;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
@@ -142,7 +143,23 @@ public abstract class SchemeUtils  {
      * Like Common Lisp first; car of a Pair, or null for anything else. *
      */
     public static Object first(Object x) {
-        return (x instanceof IPair) ? ((IPair) x).first() : null;
+        return (x instanceof IPair) ? forScheme(((IPair) x).first()) : x;
+    }
+
+    /**
+     * Like Common Lisp rest; car of a Pair, or null for anything else. *
+     */
+    public static Object rest(Object x) {
+        return (x instanceof IPair) ? forScheme(((IPair) x).rest()) : null;
+    }
+
+    protected static Object forScheme(Object o) {
+        if (o instanceof Term) {
+            if (((Term) o).getComplexity()==1)
+                return Primitive.stringToLiteralOrNumber(((Term) o).name().toString());
+            return o;
+        }
+        return o;
     }
 
 
@@ -168,12 +185,7 @@ public abstract class SchemeUtils  {
         return y;
     }
 
-    /**
-     * Like Common Lisp rest; car of a Pair, or null for anything else. *
-     */
-    public static Object rest(Object x) {
-        return (x instanceof IPair) ? ((IPair) x).rest() : null;
-    }
+
     /**
      * Creates a two element list. *
      */

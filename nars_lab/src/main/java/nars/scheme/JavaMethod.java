@@ -54,6 +54,7 @@ public class JavaMethod extends Procedure {
         if (arg instanceof Class) return (Class) arg;
         arg = stringify(arg, false);
 
+        //TODO use switch
         if (arg.equals("void")) return Void.TYPE;
         else if (arg.equals("boolean")) return Boolean.TYPE;
         else if (arg.equals("char")) return Character.TYPE;

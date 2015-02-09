@@ -1,5 +1,6 @@
 package nars.scheme;
 
+import nars.logic.entity.Term;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
@@ -106,6 +107,7 @@ public class Scheme extends SchemeUtils {
         // and loop, rather than doing "return eval(...)".
         while (true) {
 
+            x = forScheme(x);
 
             if (x instanceof String) {         // VARIABLE
                 return env.lookup((String) x);
@@ -114,6 +116,7 @@ public class Scheme extends SchemeUtils {
             } else {
                 Object fn = first(x);
                 Object args = rest(x);
+
                 if (fn == "quote") {             // QUOTE
                     return first(args);
                 } else if (fn == "begin") {      // BEGIN
@@ -191,6 +194,7 @@ public class Scheme extends SchemeUtils {
                 else return cons("begin", rest(clause));
         }
     }
+
 
 }
 

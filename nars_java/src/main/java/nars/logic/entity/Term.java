@@ -41,7 +41,7 @@ import java.util.TreeSet;
  * It is not linked in the Term, because a Concept may be forgot while the Term
  * exists. Multiple objects may represent the same Term.
  */
-public class Term implements AbstractTerm, Termable, IPair {
+public class Term implements AbstractTerm, Termable {
 
     private static final Map<CharSequence,Term> atoms = Parameters.newHashMap(8192);
 
@@ -426,23 +426,4 @@ public class Term implements AbstractTerm, Termable, IPair {
     
     @Override public Term getTerm() { return this; }
 
-    @Override
-    public Object setFirst(Object first) {
-        throw new RuntimeException(this + " not modifiable");
-    }
-
-    @Override
-    public Object setRest(Object rest) {
-        throw new RuntimeException(this + " not modifiable");
-    }
-
-    @Override
-    public Object first() {
-        return this;
-    }
-
-    @Override
-    public Object rest() {
-        return null;
-    }
 }

@@ -853,6 +853,22 @@ public class Primitive extends Procedure {
         }
     }
 
+    static Object stringToLiteralOrNumber(String x) {
+        return stringToLiteralOrNumber(x, 10);
+    }
+    static Object stringToLiteralOrNumber(String x, Object y) {
+        int base = (y instanceof Number) ? (int) num(y) : 10;
+        try {
+            return (base == 10)
+                    ? Double.valueOf(stringify(x, false))
+                    : num(Long.parseLong(stringify(x, false), base));
+        } catch (NumberFormatException e) {
+
+        }
+        return ( x );
+    }
+    public static IPair quote(Object x) { return list("quote", x); }
+
     static Object gcd(Object args) {
         long gcd = 0;
         while (args instanceof IPair) {

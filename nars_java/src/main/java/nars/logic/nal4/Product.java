@@ -104,8 +104,5 @@ public class Product extends CompoundTerm {
         return term[0];
     }
 
-    @Override
-    public Object rest() {
-        return cdr();
-    }
+
 }
