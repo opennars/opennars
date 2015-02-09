@@ -127,10 +127,10 @@ public class RuleTables {
                     Term t = next.getTerm();
                     
                     Sentence s=null;
-                    if(task.sentence.punctuation==Symbols.JUDGMENT_MARK) {
+                    if(task.sentence.punctuation==Symbols.JUDGMENT_MARK && !next.beliefs.isEmpty()) {
                         s=next.beliefs.get(0);
                     }
-                    if(task.sentence.punctuation==Symbols.GOAL_MARK) {
+                    if(task.sentence.punctuation==Symbols.GOAL_MARK && !next.desires.isEmpty()) {
                         s=next.desires.get(0);
                     }
 
