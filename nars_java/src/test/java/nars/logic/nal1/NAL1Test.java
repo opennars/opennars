@@ -2,10 +2,8 @@ package nars.logic.nal1;
 
 import nars.build.Curve;
 import nars.build.Default;
-import nars.build.Neuromorphic;
-import nars.core.Build;
+import nars.core.NewNAR;
 import nars.core.Parameters;
-import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.AbstractNALTest;
 import org.junit.Test;
@@ -17,7 +15,7 @@ import java.util.Collection;
 
 public class NAL1Test extends AbstractNALTest {
 
-    public NAL1Test(Build b) { super(b); }
+    public NAL1Test(NewNAR b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {

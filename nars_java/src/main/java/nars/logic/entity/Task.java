@@ -132,6 +132,10 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
         this(s, b, parentTask == null ? null : new WeakReference(parentTask), parentBelief, solution);
     }
 
+    public Task(NewTask<T> t) {
+        this(t.getSentence(), t.getBudget(), t.getParentTask(), t.getParentBelief(), t.getSolution());
+    }
+
     public Task clone() {
         return new Task(sentence, budget, parentTask, parentBelief, bestSolution);
     }
@@ -452,4 +456,6 @@ public class Task<T extends CompoundTerm> extends AbstractTask<Sentence<T>> impl
     public char getPunctuation() {
         return sentence.punctuation;
     }
+
+
 }

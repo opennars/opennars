@@ -5,7 +5,7 @@
 package nars.logic;
 
 import nars.event.AbstractReaction;
-import nars.core.Build;
+import nars.core.NewNAR;
 import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.build.Default;
@@ -70,7 +70,7 @@ public class TuneTuffy {
     }
     
     public static void main(String[] args) throws FileNotFoundException, InvalidInputException {
-        Build b = new Default().
+        NewNAR b = new Default().
                 setInternalExperience(null);
                 
         

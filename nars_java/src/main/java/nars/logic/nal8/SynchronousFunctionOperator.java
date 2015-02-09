@@ -13,6 +13,8 @@ import nars.logic.nal8.Operator;
 
 import java.util.ArrayList;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 
 /** 
  * Superclass of functions that execute synchronously (blocking, in thread) and take
@@ -90,12 +92,20 @@ public abstract class SynchronousFunctionOperator extends Operator {
                 Sentence.termOrNull(Implication.make(opart, actual_part, TemporalRules.ORDER_FORWARD));
         if (actual == null) return null;
 
-        return Lists.newArrayList(
-                m.newTask(actual, Symbols.JUDGMENT,
-                        1f, 0.99f,
-                        Parameters.DEFAULT_JUDGMENT_PRIORITY,
-                        Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
-                ));
+//        return newArrayList(
+//                m.newTask(actual, Symbols.JUDGMENT,
+//                        1f, 0.99f,
+//                        Parameters.DEFAULT_JUDGMENT_PRIORITY,
+//                        Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
+//                ));
+        return newArrayList(
+                m.newTask(actual).judgment()
+                        .budget(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+                        .truth(1f, 0.99f).now().parent( operation.getTask() )
+                                        .get()
+
+
+                        );
 
         //if (variable) {
         //}

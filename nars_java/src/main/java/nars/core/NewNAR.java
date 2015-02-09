@@ -10,7 +10,7 @@ import nars.util.bag.Bag;
  * These do not change after initialization.
  * For runtime parameters, @see Param
  */
-abstract public class Build extends Parameters  {
+abstract public class NewNAR extends Parameters  {
 
     public final Param param = new Param();
     protected int level;
@@ -18,7 +18,7 @@ abstract public class Build extends Parameters  {
     abstract public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag();
     abstract public Core newCore();
 
-    public Build() {
+    public NewNAR() {
     }
             
     

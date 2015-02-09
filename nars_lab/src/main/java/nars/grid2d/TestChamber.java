@@ -1,6 +1,6 @@
 package nars.grid2d;
 
-import nars.core.Build;
+import nars.core.NewNAR;
 import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.NAR;
@@ -39,7 +39,7 @@ public class TestChamber {
 
     
     public static void main(String[] args) {
-        Build builder = new Default();
+        NewNAR builder = new Default();
         
         //set NAR architecture parameters:
         //builder...

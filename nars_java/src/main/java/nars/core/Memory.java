@@ -831,6 +831,10 @@ public class Memory implements Serializable {
         return t;
     }
 
+    public <T extends CompoundTerm> NewTask<T> newTask(T t) {
+        return new NewTask(this, t);
+    }
+
     public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability) {
         return newTask(content, sentenceType, freq, conf, priority, durability, (Task) null);
     }

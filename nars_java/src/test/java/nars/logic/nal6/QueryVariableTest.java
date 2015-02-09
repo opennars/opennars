@@ -3,7 +3,7 @@ package nars.logic.nal6;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.build.Neuromorphic;
-import nars.core.Build;
+import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.AbstractNALTest;
 import nars.logic.TestNAR;
@@ -13,12 +13,10 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static nars.logic.nal7.Tense.Eternal;
-
 
 public class QueryVariableTest extends AbstractNALTest {
 
-    public QueryVariableTest(Build b) { super(b); }
+    public QueryVariableTest(NewNAR b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {

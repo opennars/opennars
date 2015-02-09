@@ -1,10 +1,7 @@
 package nars.logic.nal9;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import nars.build.Default;
-import nars.build.Neuromorphic;
-import nars.core.Build;
-import nars.io.TextOutput;
+import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.AbstractNALTest;
 import nars.logic.nal7.Tense;
@@ -19,7 +16,7 @@ import java.util.Collection;
  */
 public class AnticipationTest extends AbstractNALTest {
 
-    public AnticipationTest(Build b) { super(b); }
+    public AnticipationTest(NewNAR b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {

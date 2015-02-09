@@ -29,7 +29,7 @@ import static nars.operator.mental.InternalExperience.InternalExperienceMode.Min
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class Default extends Build implements ConceptBuilder {
+public class Default extends NewNAR implements ConceptBuilder {
 
     
 
@@ -63,7 +63,7 @@ public class Default extends Build implements ConceptBuilder {
     transient TemporalParticlePlanner pluginPlanner = null;
 
 
-    public Build level(int nalLevel) {
+    public NewNAR level(int nalLevel) {
         this.level = nalLevel;
         return this;
     }

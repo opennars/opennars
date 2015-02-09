@@ -1,7 +1,7 @@
 package nars.logic;
 
 import junit.framework.TestCase;
-import nars.core.Build;
+import nars.core.NewNAR;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.meta.Derivations;
@@ -28,7 +28,7 @@ public class AbstractNALTest extends TestCase {
     public TestNAR n;
 
 
-    public AbstractNALTest(Build b) {
+    public AbstractNALTest(NewNAR b) {
 
         this.n = new TestNAR(b);
 

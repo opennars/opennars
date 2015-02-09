@@ -823,7 +823,7 @@ public class NAR implements Runnable, TaskSource {
 
 
     /** create a NAR given the class of a Build.  its default constructor will be used */
-    public static NAR build(Class<? extends Build> g) {
+    public static NAR build(Class<? extends NewNAR> g) {
         try {
             return new NAR(g.newInstance());
         } catch (Exception ex) {
@@ -833,7 +833,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
     /** normal way to construct a NAR, using a particular Build instance */
-    public NAR(Build b) {
+    public NAR(NewNAR b) {
         this(b.newMemory(b.param));
         b.init(this);
     }

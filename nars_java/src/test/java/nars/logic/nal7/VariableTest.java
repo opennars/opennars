@@ -8,12 +8,10 @@ import junit.framework.TestCase;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.build.DefaultBuffered;
-import nars.build.Neuromorphic;
-import nars.core.Build;
+import nars.core.NewNAR;
 import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
-import nars.io.TextOutput;
 import nars.io.condition.OutputContainsCondition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +30,7 @@ public class VariableTest extends TestCase {
 
     private final NAR n;
 
-    public VariableTest(Build b) {
+    public VariableTest(NewNAR b) {
         super();
         this.n = new NAR(b);
     }

@@ -40,7 +40,7 @@ public class TestParamJSON {
     @Test 
     public void testReserializeGenome() {
         
-        Build p = new Default();
+        NewNAR p = new Default();
 
         String j = p.toString();
         

@@ -2,7 +2,7 @@ package nars.logic;
 
 import junit.framework.TestCase;
 import nars.build.Default;
-import nars.core.Build;
+import nars.core.NewNAR;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -33,12 +33,12 @@ public class NALTest extends TestCase {
         Parameters.THREADS = 1;
     }
 
-    static final Build[] builds = new Build[] {
+    static final NewNAR[] builds = new NewNAR[] {
             new Default()
             //new Neuromorphic(4).setMaxInputsPerCycle(1)
     };
 
-    private final Build build;
+    private final NewNAR build;
 
     int minCycles = 1250; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public long randomSeed = 1;
@@ -68,7 +68,7 @@ public class NALTest extends TestCase {
 
         Collection<Object[]> params = new ArrayList(t.size() * builds.length);
         for (String script : t) {
-            for (Build b : builds) {
+            for (NewNAR b : builds) {
                 params.add(new Object[] { b, script });
             }
         }
@@ -189,7 +189,7 @@ public class NALTest extends TestCase {
     transient final String scriptPath;
 
     
-    public NALTest(Build b, String scriptPath) {
+    public NALTest(NewNAR b, String scriptPath) {
         this.scriptPath = scriptPath;
         this.build = b;
     }

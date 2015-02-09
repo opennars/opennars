@@ -30,7 +30,7 @@ public class TestNAR extends NAR {
     private Exception error;
 
 
-    public TestNAR(Build b) {
+    public TestNAR(NewNAR b) {
         super(b);
     }
 
