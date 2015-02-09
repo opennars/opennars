@@ -970,29 +970,30 @@ public class Concept extends Item<Term> implements Termable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
+    public TermLink selectNovelTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
 
         int toMatch = memory.param.termLinkMaxMatched.get();
+
+        //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
+        if (termLinks.size() == 1) toMatch = 1;
 
         termLinkNovel.set(taskLink, time, noveltyHorizon);
 
         for (int i = 0; (i < toMatch); i++) {
 
-            final TermLink termLink = termLinks.TAKENEXT(termLinkNovel);
+            final TermLink termLink = termLinks.PEEKNEXT();
+            if (termLink == null)
+                return null;
 
-
-            if (termLink!=null) {
-                //return it, to be re-inserted in caller method when finished processing it
+            if (termLinkNovel.apply(termLink)) {
                 return termLink;
             }
+
         }
 
         return null;
     }
 
-    public void returnTermLink(TermLink termLink) {
-        termLinks.putBack(termLink);
-    }
 
     /**
      * Return the questions, called in ComposionalRules in

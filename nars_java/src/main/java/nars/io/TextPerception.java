@@ -55,7 +55,7 @@ public class TextPerception {
         this.narsese = narsese;
         this.englisch = new Englisch();
         this.twenglish = new Twenglish(memory);
-        parsers = new ArrayList();
+        this.parsers = new ArrayList();
 
         //integer, # of cycles to step
         parsers.add(new TextReaction() {

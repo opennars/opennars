@@ -103,23 +103,22 @@ abstract public class FireConcept extends NAL {
             while (termLinkSelectionAttempts > 0)  {
 
 
-                final TermLink beliefLink = currentConcept.selectTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+                final TermLink beliefLink = currentConcept.selectNovelTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+
+                if (beliefLink == null) {
+                    //no novel termlinks available
+                    break;
+                }
 
                 termLinkSelectionAttempts--;
-
-                //try again, because it may have selected a non-novel tlink
-                if (beliefLink == null)
-                    continue;
-                
 
                 int numAddedTasksBefore = newTasksCount();
 
                 reason(currentTaskLink, beliefLink);
 
-                currentConcept.returnTermLink(beliefLink);
-
                 int numAddedTasksAfter = newTasksCount();
 
+                //TODO redudant to send both 'this' and currentTaskLink, etc.., so remove them
                 emit(Events.TermLinkSelected.class, beliefLink, getCurrentTaskLink(), getCurrentConcept(), this, numAddedTasksBefore, numAddedTasksAfter);
                 memory.logic.TERM_LINK_SELECT.hit();
 

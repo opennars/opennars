@@ -3,6 +3,7 @@ package nars.util.bag;
 import com.google.common.base.Predicate;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
 import nars.util.bag.select.ForgetNext;
 import reactor.function.Consumer;
@@ -295,6 +296,8 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
         int i = (int) Math.floor((x + 0.5f / bins) * bins);
         return i;
     }
+
+
 
 //    /**
 //     * for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible

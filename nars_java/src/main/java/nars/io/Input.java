@@ -28,7 +28,8 @@ import java.util.Iterator;
 
 /**
  * 
- * Provides input for the next moment from an input channel that delivers input asynchronously
+ * Provides a stream of input tasks
+ *
  */
 public interface Input extends Supplier<Task> {
 
@@ -73,5 +74,9 @@ public interface Input extends Supplier<Task> {
             }
         }
 
+        @Override
+        public void stop() {
+            queue.clear();
+        }
     }
 }
