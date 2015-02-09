@@ -158,7 +158,11 @@ public class RuleTables {
                                     Implication resImp=Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
                                     //todo add
                                     TruthValue truth=TruthFunctions.deduction(s.truth, task.sentence.truth);
-                                    Sentence S=new Sentence(resImp,s.punctuation,t,)
+                                    Stamp st=new Stamp(task.sentence.stamp,nal.memory.time());
+                                    st.getChain().add(t);
+                                    Sentence S=new Sentence(resImp,s.punctuation,truth,st);
+                                    Task Tas=new Task(S,new BudgetValue(BudgetFunctions.forward(truth, nal)));
+                                    nal.derivedTask(task, false, false, task, null);
                                 }
                             }
                         }
