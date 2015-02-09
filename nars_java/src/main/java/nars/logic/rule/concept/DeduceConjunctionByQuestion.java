@@ -8,12 +8,13 @@ import nars.logic.entity.TermLink;
 /**
 * Created by me on 2/7/15.
 */
-public class DeduceConjunctionByQuestion extends ConceptFireRule {
+public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
 
     @Override
     public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink) {
-        CompositionalRules.dedConjunctionByQuestion(
-                taskLink.getSentence(), f.getCurrentBelief(), f);
+        if (f.getCurrentBelief()!=null)
+            CompositionalRules.dedConjunctionByQuestion(
+                    taskLink.getSentence(), f.getCurrentBelief(), f);
         return true;
     }
 }

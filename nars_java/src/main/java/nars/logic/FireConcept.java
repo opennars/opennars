@@ -80,7 +80,7 @@ abstract public class FireConcept extends NAL {
     @Override
     protected void reason() {
 
-        reset();
+        setCurrentBeliefLink(null);
 
         if (currentTaskLink.type == TermLink.TRANSFORM) {
 
@@ -136,7 +136,7 @@ abstract public class FireConcept extends NAL {
 
         final Sentence taskSentence = taskLink.getSentence();
 
-        final Term taskTerm = taskSentence.term;         // cloning for substitution
+        final Term taskTerm = taskSentence.term;
 
         if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
             //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
@@ -164,12 +164,11 @@ abstract public class FireConcept extends NAL {
      */
     protected void reason(final TaskLink tLink, final TermLink bLink) {
 
-        reset();
         setCurrentBeliefLink(bLink);
 
         Sentence belief = getCurrentBelief();
 
-        reasoner.add(this);
+        reasoner.fire(this);
 
         if (belief!=null) {
             emit(Events.BeliefReason.class, belief, tLink.getTarget(), this);
@@ -192,6 +191,13 @@ abstract public class FireConcept extends NAL {
         if (this.currentBeliefLink == currentBeliefLink)
             throw new RuntimeException("Setting the same current belief link");
 
+        if (currentBeliefLink == null) {
+            this.currentBelief = null;
+            this.currentBeliefLink = null;
+            this.currentBeliefConcept = null;
+            return;
+        }
+
         this.currentBeliefLink = currentBeliefLink;
 
         Term beliefTerm = currentBeliefLink.getTerm();
@@ -200,13 +206,6 @@ abstract public class FireConcept extends NAL {
 
         this.currentBelief = (currentBeliefConcept != null) ? currentBeliefConcept.getBelief(this, getCurrentTask()) : null;
     }
-
-    public void reset() {
-        this.currentBelief = null;
-        this.currentBeliefLink = null;
-        this.currentBeliefConcept = null;
-    }
-
 
     /**
      * @return the currentTerm

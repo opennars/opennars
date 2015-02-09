@@ -27,7 +27,7 @@ public class NALRuleEngine extends RuleEngine {
 
     }
 
-    public void add(FireConcept fireConcept) {
+    public void fire(FireConcept fireConcept) {
         base.fire(FireConcept.class, fireConcept);
     }
 

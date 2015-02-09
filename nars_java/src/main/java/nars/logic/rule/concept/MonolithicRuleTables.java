@@ -14,7 +14,7 @@ import static nars.io.Symbols.VAR_INDEPENDENT;
 /**
 * Created by me on 2/7/15.
 */
-@Deprecated public class MonolithicRuleTables extends ConceptFireRule {
+@Deprecated public class MonolithicRuleTables extends ConceptFireTaskTerm {
 
     @Override
     public boolean apply(FireConcept f, TaskLink tLink, TermLink bLink) {

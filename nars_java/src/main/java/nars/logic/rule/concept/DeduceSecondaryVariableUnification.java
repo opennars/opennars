@@ -10,7 +10,9 @@ import nars.logic.entity.TermLink;
 /**
 * Created by me on 2/7/15.
 */
-public class DeduceSecondaryVariableUnification extends ConceptFireRule {
+public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
+
+    //TODO decide if f.currentBelief needs to be checked for null like it was originally
 
     @Override
     public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink) {
