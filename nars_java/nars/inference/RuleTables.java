@@ -162,7 +162,7 @@ public class RuleTables {
                                     st.getChain().add(t);
                                     Sentence S=new Sentence(resImp,s.punctuation,truth,st);
                                     Task Tas=new Task(S,new BudgetValue(BudgetFunctions.forward(truth, nal)));
-                                    nal.derivedTask(task, false, false, task, null);
+                                    nal.derivedTask(Tas, false, false, task, null);
                                 }
                             }
                         }
