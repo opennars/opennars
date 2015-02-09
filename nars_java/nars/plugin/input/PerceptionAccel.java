@@ -193,5 +193,8 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             Concept newC=(Concept) args[0];
             handleConjunctionSequence(newC.term,true);
         }
-    }
+    } 
+    
+    public static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1; //new inference rule accelerating decision making: https://groups.google.com/forum/#!topic/open-nars/B8veE-WDd8Q
+    //mostly only makes sense if perception plugin is loaded
 }
