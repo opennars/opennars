@@ -17,9 +17,11 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.inference.BudgetFunctions;
 import static nars.inference.TemporalRules.ORDER_CONCURRENT;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
 import nars.inference.TruthFunctions;
+import nars.inference.UtilityFunctions;
 import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Interval;
@@ -119,8 +121,10 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             }
             Term firstC=Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             Term secondC=Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            Concept C1=nal.memory.concept(firstC);
+            Concept C2=nal.memory.concept(secondC);
             
-            if(nal.memory.concept(firstC)==null || nal.memory.concept(secondC)==null) {
+            if(C1==null || C2==null) {
                 if(debugMechanism) {
                     System.out.println("one didn't exist: "+firstC.toString()+" or "+secondC.toString());
                 }
@@ -130,7 +134,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             Conjunction C=(Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             
             Sentence S=new Sentence(C,Symbols.JUDGMENT_MARK,truth,st);
-            Task T=new Task(S,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,truth));
+            Task T=new Task(S,new BudgetValue(BudgetFunctions.aveAri(C1.getPriority(), C2.getPriority()),Parameters.DEFAULT_JUDGMENT_DURABILITY,truth));
             
             if(debugMechanism) {
                 System.out.println("success: "+T.toString());
