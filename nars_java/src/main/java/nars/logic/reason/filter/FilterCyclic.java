@@ -9,7 +9,7 @@ import nars.logic.nal1.Negation;
 
 /** applies updates to stamp, and rejects derivations determined to be cyclic */
 public class FilterCyclic implements NAL.DerivationFilter {
-    @Override public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence occurence2) {
+    @Override public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence occurence2, Sentence derivedCurrentBelief, Task derivedCurrentTask) {
 
         final Sentence occurence = parent != null ? parent.sentence : null;
         final Stamp stamp = task.sentence.stamp;
@@ -22,9 +22,6 @@ public class FilterCyclic implements NAL.DerivationFilter {
             stamp.setOccurrenceTime(occurence2.getOccurenceTime());
         }
 
-        //TEMPORARY: seeing if we need the parameters originally passed to deriveTask to override belief, task... and if they should be applied just here or everywhere in this method
-        final Sentence derivedCurrentBelief = currentBelief;
-        final Task derivedCurrentTask = task;
 
         final Term currentTaskContent = derivedCurrentTask.getTerm();
         if (derivedCurrentBelief != null && derivedCurrentBelief.isJudgment()) {

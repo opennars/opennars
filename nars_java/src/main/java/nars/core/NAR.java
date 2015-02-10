@@ -399,9 +399,6 @@ public class NAR implements Runnable {
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
         }
-        if (p instanceof DerivationFilter) {
-            param.defaultDerivationFilters.add((DerivationFilter)p);
-        }
         PluginState ps = new PluginState(p);
         plugins.add(ps);
         emit(Events.PluginsChange.class, p, null);
@@ -412,9 +409,6 @@ public class NAR implements Runnable {
             Plugin p = ps.plugin;
             if (p instanceof Operator) {
                 memory.removeOperator((Operator)p);
-            }
-            if (p instanceof DerivationFilter) {
-                param.defaultDerivationFilters.remove(p);
             }
             ps.setEnabled(false);
             emit(Events.PluginsChange.class, null, p);

@@ -9,7 +9,7 @@ import nars.logic.entity.Task;
 */
 public class FilterBelowConfidence implements NAL.DerivationFilter {
 
-    @Override public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief) {
+    @Override public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief, Sentence derivedCurrentBelief, Task derivedCurrentTask) {
         if (task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();
             if (conf < nal.memory.param.confidenceThreshold.get()) {

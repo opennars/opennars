@@ -36,7 +36,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         /**
          * returns null if allowed to derive, or a String containing a short rejection reason for logging
          */
-        public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief);
+        public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief, Sentence derivedCurrentBelief, Task derivedCurrentTask);
 
         @Override
         public default boolean setEnabled(NAR n, boolean enabled) {
@@ -145,7 +145,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         if (derivationFilters != null) {
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);
-                String rejectionReason = d.reject(this, task, revised, single, parent, occurence2);
+                String rejectionReason = d.reject(this, task, revised, single, parent, occurence2, derivedCurrentBelief, derivedCurrentTask);
                 if (rejectionReason != null) {
                     memory.removeTask(task, rejectionReason);
                     return false;

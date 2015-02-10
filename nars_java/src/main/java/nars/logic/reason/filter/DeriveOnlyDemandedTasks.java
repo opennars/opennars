@@ -20,7 +20,7 @@ import nars.logic.nal8.Operation;
 public class DeriveOnlyDemandedTasks implements DerivationFilter {
 
     @Override
-    public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief) {
+    public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief, Sentence derivedCurrentBelief, Task derivedCurrentTask) {
         
         Sentence s = task.sentence;
         
