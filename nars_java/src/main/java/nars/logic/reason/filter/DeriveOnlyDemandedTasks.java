@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.operator.filter;
+package nars.logic.reason.filter;
 
 import nars.io.Symbols;
 import nars.logic.NAL;

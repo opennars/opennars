@@ -11,10 +11,8 @@ import nars.logic.nal5.SyllogisticRules;
 
 import static nars.io.Symbols.VAR_INDEPENDENT;
 
-/**
-* Created by me on 2/7/15.
-*/
-@Deprecated public class MonolithicRuleTables extends ConceptFireTaskTerm {
+
+public class TableDerivations extends ConceptFireTaskTerm {
 
     @Override
     public boolean apply(ConceptFire f, TaskLink tLink, TermLink bLink) {

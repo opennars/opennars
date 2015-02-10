@@ -43,8 +43,7 @@ public class Param implements Serializable {
 
     Timing timing;
     Forgetting forgetting;
-    final List<DerivationFilter> defaultDerivationFilters = new ArrayList();
-    
+
     public static Param fromJSON(String json) {
         return Param.json.fromJson(json, Param.class);
     }
@@ -135,10 +134,7 @@ public class Param implements Serializable {
         this.forgetting = forgetMode;
     }
 
-    public final List<DerivationFilter> getDerivationFilters() {
-        return defaultDerivationFilters;
-    }
-    
+
     
     @Override
     public String toString() {

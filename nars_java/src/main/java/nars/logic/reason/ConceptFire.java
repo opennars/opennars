@@ -21,7 +21,6 @@ abstract public class ConceptFire extends NAL {
     private Concept currentBeliefConcept;
     private int termLinkCount;
 
-    protected NALRuleEngine reasoner;
 
     public ConceptFire(Concept concept, TaskLink taskLink) {
         this(concept, taskLink, concept.memory.param.termLinkMaxReasoned.get());
@@ -34,8 +33,6 @@ abstract public class ConceptFire extends NAL {
         this.currentTerm = concept.getTerm();
 
         this.termLinkCount = termLinkCount;
-
-        this.reasoner = concept.memory.rules;
     }
 
 

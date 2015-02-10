@@ -52,6 +52,8 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
 
+    protected final NALRuleEngine reasoner;
+
     /**
      * stores the tasks that this process generates, and adds to memory
      */
@@ -74,6 +76,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         setData(this);
 
         memory = mem;
+        reasoner = memory.rules;
 
         if ((nalLevel!=-1) && (nalLevel!=mem.nal()))
             throw new RuntimeException("Different NAL level than Memory not supported yet");
@@ -137,7 +140,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     public boolean deriveTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2,
                               Sentence derivedCurrentBelief, Task derivedCurrentTask) {
 
-        List<DerivationFilter> derivationFilters = memory.param.getDerivationFilters();
+        List<DerivationFilter> derivationFilters = reasoner.getDerivationFilters();
 
         if (derivationFilters != null) {
             for (int i = 0; i < derivationFilters.size(); i++) {
@@ -150,96 +153,18 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
             }
         }
 
-        final Sentence occurence = parent != null ? parent.sentence : null;
 
-
-        if (!task.budget.aboveThreshold()) {
-            memory.removeTask(task, "Insufficient Budget");
-            return false;
-        }
-
-        if (task.sentence != null && task.sentence.truth != null) {
-            float conf = task.sentence.truth.getConfidence();
-            if (conf < memory.param.confidenceThreshold.get()) {
-                //no confidence - we can delete the wrongs out that way.
-                memory.removeTask(task, "Insufficient confidence");
-                return false;
-            }
-        }
-
-
-        if (task.sentence.term instanceof Operation) {
-            Operation op = (Operation) task.sentence.term;
-            if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
-                memory.removeTask(task, "Operation with variable as subject or predicate");
-                return false;
-            }
-        }
-
-
-        final Stamp stamp = task.sentence.stamp;
-        if (occurence != null && !occurence.isEternal()) {
-            stamp.setOccurrenceTime(occurence.getOccurenceTime());
-        }
-        if (occurence2 != null && !occurence2.isEternal()) {
-            stamp.setOccurrenceTime(occurence2.getOccurenceTime());
-        }
-        if (stamp.latency > 0) {
-            memory.logic.DERIVATION_LATENCY.set((double) stamp.latency);
-        }
-
-        final Term currentTaskContent = derivedCurrentTask.getTerm();
-        if (derivedCurrentBelief != null && derivedCurrentBelief.isJudgment()) {
-            final Term currentBeliefContent = derivedCurrentBelief.term;
-            stamp.chainReplace(currentBeliefContent, currentBeliefContent);
-        }
-        //workaround for single premise task issue:
-        if (currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
-            stamp.chainReplace(currentTaskContent, currentTaskContent);
-        }
-        //end workaround
-        if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
-            stamp.chainReplace(currentTaskContent,currentTaskContent);
-        }
-        //its a logic reason, so we have to do the derivation chain check to hamper cycles
-        if (!revised) {
-            Term taskTerm = task.getTerm();
-
-            if (task.sentence.isJudgment()) {
-
-                if (stamp.getChain().contains(taskTerm)) {
-                    Term parentTaskTerm = task.getParentTask() != null ? task.getParentTask().getTerm() : null;
-                    if ((parentTaskTerm == null) || (!Negation.areMutuallyInverse(taskTerm, parentTaskTerm))) {
-                        memory.removeTask(task, "Cyclic Reasoning");
-                        return false;
-                    }
-                }
-            }
-
-        }
-//        else {
-//            //its revision, of course its cyclic, apply evidental base policy
-//            final int stampLength = stamp.baseLength;
-//            for (int i = 0; i < stampLength; i++) {
-//                final long baseI = stamp.evidentialBase[i];
-//                for (int j = 0; j < stampLength; j++) {
-//                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
-//                        throw new RuntimeException("Overlapping Revision Evidence: Should have been discovered earlier: " + Arrays.toString(stamp.evidentialBase));
-//
-//                        //memory.removeTask(task, "Overlapping Revision Evidence");
-//                        //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
-//                        //return false;
-//                    }
-//                }
-//            }
-//        }
 
         if (task.sentence.getOccurenceTime() > memory.time()) {
             memory.event.emit(Events.TaskDeriveFuture.class, task, this);
         }
+        if (task.sentence.stamp.latency > 0) {
+            memory.logic.DERIVATION_LATENCY.set((double) task.sentence.stamp.latency);
+        }
 
         task.setParticipateInTemporalInduction(false);
 
+        final Sentence occurence = parent != null ? parent.sentence : null;
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2, derivedCurrentTask);
         memory.logic.TASK_DERIVED.hit();
 

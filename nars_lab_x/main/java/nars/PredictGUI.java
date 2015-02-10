@@ -26,7 +26,7 @@ import nars.logic.entity.Task;
 import nars.logic.language.Interval;
 import nars.logic.language.Tense;
 import nars.logic.language.Term;
-import nars.operator.filter.LimitDerivationPriority;
+import nars.logic.reason.filter.LimitDerivationPriority;
 
 import javax.swing.*;
 import java.awt.*;

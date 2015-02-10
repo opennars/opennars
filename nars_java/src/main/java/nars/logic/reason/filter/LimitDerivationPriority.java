@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.operator.filter;
+package nars.logic.reason.filter;
 
 import nars.logic.NAL;
 import nars.logic.entity.BudgetValue;
