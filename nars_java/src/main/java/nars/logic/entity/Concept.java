@@ -26,6 +26,7 @@ import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.Parameters;
 import nars.io.Symbols;
+import nars.logic.nal7.TemporalRules;
 import nars.logic.reason.ImmediateProcess;
 import nars.logic.NALOperator;
 import nars.logic.NAL;
@@ -615,13 +616,12 @@ public class Concept extends Item<Term> implements Termable {
 
             if (!eternal && !existingSentence.isEternal()  && existingSentence.getOccurenceTime() < now) {
                 //discount existingSentence by delta-time
-                rank2 /= (1.0 + Math.abs( now - existingSentence.getOccurenceTime() ) / memory.getDuration());
-                //rank2 *= TruthFunctions.temporalProjection(now, existingSentence.getOccurenceTime(), now); //DOESNT WORK
+                rank2 *= TemporalRules.getBeliefRankFactor(now, existingSentence.getOccurenceTime(), memory.getDuration());
             }
             else if (!eternal && existingSentence.isEternal()) {
                 //allow an eternal belief to be replaced by a newer non-eternal belief if its creation time is old
                 //this divisor may need to be reduced to make age cost much less than how occurrence time is calculated above
-                rank2 /= (1.0 + Math.abs( now - existingSentence.getCreationTime() ) / memory.getDuration());
+                rank2 *= TemporalRules.getBeliefRankFactor(now, existingSentence.getCreationTime(), memory.getDuration());
             }
 
             if (rank1 >= rank2) {
@@ -934,6 +934,24 @@ public class Concept extends Item<Term> implements Termable {
             }
         }
         return buffer.toString();
+    }
+
+    /** returns the best belief of the specified types */
+    public Sentence getBestBelief(boolean eternal, boolean nonEternal) {
+        return getBestSentence(beliefs, eternal, nonEternal);
+    }
+
+    public Sentence getBestGoal(boolean eternal, boolean nonEternal) {
+        return getBestSentence(goals, eternal, nonEternal);
+    }
+
+    protected static Sentence getBestSentence(List<Sentence> table, boolean eternal, boolean nonEternal) {
+        for (Sentence s : table) {
+            boolean e = s.isEternal();
+            if (e && eternal) return s;
+            if (!e && nonEternal) return s;
+        }
+        return null;
     }
 
     static final class TermLinkNovel implements Predicate<TermLink>    {

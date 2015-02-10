@@ -52,7 +52,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
                     if (!next.beliefs.isEmpty() && (implication.isForward() || implication.isConcurrent())) {
 
-                        Sentence s = next.beliefs.get(0);
+                        Sentence s = next.getBestBelief(true, false);
 
                         TemporalRules.temporalInductionChain(s, belief, f);
                         TemporalRules.temporalInductionChain(belief, s, f);

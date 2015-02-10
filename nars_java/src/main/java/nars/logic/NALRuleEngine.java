@@ -29,18 +29,25 @@ public class NALRuleEngine extends RuleEngine {
     void initConceptFireRules() {
 
         //concept fire tasklink derivation
-        add(new TransformTask());
-        add(new Contraposition());
+        {
+            add(new TransformTask());
+            add(new Contraposition());
+        }
 
         //concept fire tasklink termlink (pre-filter)
-        add(new FilterEqualSubtermsInRespectToImageAndProduct());
-        add(new FilterMatchingTaskAndBelief());
+        {
+            add(new FilterEqualSubtermsInRespectToImageAndProduct());
+            add(new FilterMatchingTaskAndBelief());
+        }
 
         //concept fire tasklink termlink derivation
-        add(new TemporalInductionChain());
-        add(new DeduceSecondaryVariableUnification());
-        add(new DeduceConjunctionByQuestion());
-        add(new TableDerivations());
+        {
+            add(new ForwardImplicationProceed());
+            add(new TemporalInductionChain2()); //add(new TemporalInductionChain());
+            add(new DeduceSecondaryVariableUnification());
+            add(new DeduceConjunctionByQuestion());
+            add(new TableDerivations());
+        }
     }
 
     void initDerivationFilters() {

@@ -30,8 +30,11 @@ import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal8.Operation;
+import nars.operator.mental.Mental;
 
 import java.util.*;
+
+import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
  *
@@ -142,7 +145,45 @@ public class TemporalRules {
     public final static boolean tooMuchTemporalStatements(final Term t, int maxTemporalRelations) {
         return (t == null) || (t.containedTemporalRelations() > maxTemporalRelations);
     }
-      
+
+    //is input or by the system triggered operation
+    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
+        if (newEvent.isInput()) return true;
+        if (containsMentalOperator(newEvent)) return true;
+        if (newEvent.getCause()!=null) return true;
+        return false;
+    }
+
+
+    public static boolean containsMentalOperator(final Task t) {
+        if(!(t.sentence.term instanceof Operation))
+            return false;
+
+        Operation o= (Operation)t.sentence.term;
+        return (o.getOperator() instanceof Mental);
+    }
+
+    public static boolean temporalInductionProceed(final Sentence currentBelief, final Sentence prevBelief, Task controllerTask, NAL nal) {
+        if(!controllerTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+            return false;
+        }
+
+        if (currentBelief.isEternal() || !isInputOrTriggeredOperation(controllerTask, nal.memory)) {
+            return false;
+        }
+
+        if (equalSubTermsInRespectToImageAndProduct(currentBelief.term, prevBelief.term)) {
+            return false;
+        }
+
+
+        nal.setNextNewStamp(currentBelief.stamp, prevBelief.stamp, nal.time());
+
+        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
+        TemporalRules.temporalInduction(currentBelief, prevBelief, nal, prevBelief, controllerTask);
+        return false;
+    }
+
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
@@ -211,12 +252,12 @@ public class TemporalRules {
 
             //check if term has a element which is equal to C
             for(Term t : term) {
-                if(Terms.equalSubTermsInRespectToImageAndProduct(t, C)) {
+                if(equalSubTermsInRespectToImageAndProduct(t, C)) {
                     return false;
                 }
                 for(Term u : term) {
                     if(u!=t) { //important: checking reference here is as it should be!
-                        if(Terms.equalSubTermsInRespectToImageAndProduct(t, u)) {
+                        if(equalSubTermsInRespectToImageAndProduct(t, u)) {
                             return false;
                         }
                     }
@@ -269,8 +310,11 @@ public class TemporalRules {
 
 
 
-
     public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
+        temporalInduction(s1, s2 ,nal, nal.getCurrentBelief(), nal.getCurrentTask());
+    }
+
+    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal, Sentence subbedBelief, Task subbedTask) {
         
         if ((s1.truth==null) || (s2.truth==null))
             return;
@@ -406,38 +450,38 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11,inductionLimit)) {
-                Task t=nal.doublePremiseTask(statement11, truth1, budget1,true);
+                Task t=nal.doublePremiseTask(statement11, truth1, budget1,true, subbedBelief, subbedTask);
                 if(t!=null) {
                     //success.add(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement22,inductionLimit)) {
-               Task t=nal.doublePremiseTask(statement22, truth2, budget2,true);
+               Task t=nal.doublePremiseTask(statement22, truth2, budget2,true, subbedBelief, subbedTask);
                 if(t!=null) {
                     //success.add(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement33,inductionLimit)) {
-                Task t=nal.doublePremiseTask(statement33, truth3, budget3,true);
+                Task t=nal.doublePremiseTask(statement33, truth3, budget3,true, subbedBelief, subbedTask);
                 if(t!=null) {
                     //success.add(t);
                 }
             }
         }
         if(!tooMuchTemporalStatements(statement1,inductionLimit)) {
-            Task t=nal.doublePremiseTask(statement1, truth1, budget1,true);
+            Task t=nal.doublePremiseTask(statement1, truth1, budget1,true, subbedBelief, subbedTask);
             if(t!=null) {
                     //success.add(t);
                 }
         }
         if(!tooMuchTemporalStatements(statement2,inductionLimit)) {
-            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
+            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true, subbedBelief, subbedTask); //=/> only to  keep graph simple for now
                  if(t!=null) {
                     //success.add(t);
                 }
             }
         if(!tooMuchTemporalStatements(statement3,inductionLimit)) {
-            Task t=nal.doublePremiseTask(statement3, truth3, budget3,true);
+            Task t=nal.doublePremiseTask(statement3, truth3, budget3,true, subbedBelief, subbedTask);
             if(t!=null) {
                     //success.add(t);
                 }
@@ -554,5 +598,8 @@ public class TemporalRules {
             return order(a, b, durationCycles) == ORDER_CONCURRENT;
         }
     }
-    
+
+    public static float getBeliefRankFactor(long now, long occurenceTime, int duration) {
+        return (float) (1.0 / (1.0 + Math.abs( now - occurenceTime ) / duration));
+    }
 }
