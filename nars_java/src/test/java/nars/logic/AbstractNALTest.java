@@ -4,8 +4,10 @@ import junit.framework.TestCase;
 import nars.analyze.meter.CountDerivationCondition;
 import nars.analyze.meter.CountOutputEvents;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.NewNAR;
 import nars.core.Parameters;
+import nars.io.ExampleFileInput;
 import nars.io.condition.OutputCondition;
 import nars.io.meter.Metrics;
 import nars.io.meter.event.DoubleMeter;
@@ -29,12 +31,13 @@ abstract public class AbstractNALTest extends TestCase {
 
     public static final long randomSeed = 1;
 
+    private static final int similarsToSave = 3;
 
     static final ObjectMeter<Boolean> testSuccess;
     static final DoubleMeter testScore, testTime;
     static final HitMeter testConcepts;
     static final ObjectMeter<String> testBuild;
-    private static OutputStream csvOut = null;
+    public static OutputStream csvOut = null;
     PrintStream log = System.out;
 
 //    static {
@@ -78,7 +81,7 @@ abstract public class AbstractNALTest extends TestCase {
 
 
     /** called before test runs */
-    public void initAnalysis(OutputStream csvStream) {
+    public static void startAnalysis(NAR nar) {
 
         /*
         if (this.derivations != null) {
@@ -91,6 +94,42 @@ abstract public class AbstractNALTest extends TestCase {
 
     }
 
+    public static void endAnalysis(String label, TestNAR nar, NewNAR build, long nanos, boolean success) {
+
+        testBuild.set(build.toString());
+        testSuccess.set(success);
+        testScore.set( success ? 1.0 / (1.0 + OutputCondition.cost(nar.musts)) : 0 );
+        testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
+        testConcepts.hit(nar.memory.concepts.size());
+
+        results.update(label);
+
+
+        /*if (derivations!=null)
+            derivations.print(log);*/
+
+
+        eventCounter.reset();
+        eventCounter.cancel();
+        deriveMethodCounter.cancel();
+
+        nar.reset(); //to help GC
+
+    }
+
+    public static void runScript(TestNAR nar, String path, int maxCycles, long rngSeed) {
+
+        Memory.resetStatic(rngSeed);
+        Parameters.DEBUG = true;
+
+        String script = ExampleFileInput.getExample(path);
+        nar.musts.addAll(OutputCondition.getConditions(nar, script, similarsToSave));
+
+        nar.addInput(script);
+
+        nar.run(maxCycles);
+
+    }
 
 
     //Default test procedure
@@ -132,37 +171,12 @@ abstract public class AbstractNALTest extends TestCase {
 
 
     public void finish(Description test, String status, long nanos) {
-        //String label = test.toString();
-        /*log.println(label + " " + status + " " +
-                ( (double)nanos)*1E6 + "ms" );*/
-
 
         boolean success = status.equals("fail") ? false : true;
 
-
-        /*
-        Path pp = Paths.get(path);
-        String label = pp.getName(pp.getNameCount()-1) + "/" + build.toString();
-        */
         String label = test.getDisplayName();
 
-        testBuild.set(build.toString());
-        testSuccess.set(success);
-        testScore.set( success ? 1.0 / (1.0 + OutputCondition.cost(conditions)) : 0 );
-        testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
-        testConcepts.hit(nar.memory.concepts.size());
-
-        results.update(label);
-
-        eventCounter.reset();
-        eventCounter.cancel();
-        deriveMethodCounter.cancel();
-
-        nar.reset(); //to help GC
-
-
-        /*if (derivations!=null)
-            derivations.print(log);*/
+        endAnalysis(label, nar, build, nanos, success);
 
     }
 

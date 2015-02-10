@@ -34,7 +34,6 @@ abstract public class ScriptNALTest extends AbstractNALTest {
     private final long rngSeed;
 
 
-    private final int similarsToSave = 1;
     private final String path;
 
     public ScriptNALTest(NewNAR b, String path) {
@@ -49,23 +48,22 @@ abstract public class ScriptNALTest extends AbstractNALTest {
 
     }
 
+
+
     abstract public int getMaxCycles();
 
     @Test
     public void theTest() {
 
-        Memory.resetStatic(rngSeed);
-        Parameters.DEBUG = true;
-
-        String script = ExampleFileInput.getExample(path);
-        this.conditions.addAll(OutputCondition.getConditions(nar, script, similarsToSave));
-
-        nar.addInput(script);
-
-        nar.run(getMaxCycles());
+        runScript(nar, path, getMaxCycles(), rngSeed);
 
     }
 
+    public static Collection<String> getPaths(String... directories) {
+        Map<String, String> et = ExampleFileInput.getUnitTests(directories);
+        Collection<String> t = et.values();
+        return t;
+    }
 
     public static Collection getParams(String directories, NewNAR... builds) {
         return getParams(new String[] { directories }, builds);
@@ -73,8 +71,7 @@ abstract public class ScriptNALTest extends AbstractNALTest {
 
     //@Parameterized.Parameters(name="{1} {0}")
     public static Collection getParams(String[] directories, NewNAR... builds) {
-        Map<String, String> et = ExampleFileInput.getUnitTests(directories);
-        Collection<String> t = et.values();
+        Collection<String> t = getPaths(directories);
 
         Collection<Object[]> params = new ArrayList(t.size() * builds.length);
         for (String script : t) {
