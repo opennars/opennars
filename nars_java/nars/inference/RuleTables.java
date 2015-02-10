@@ -150,6 +150,15 @@ public class RuleTables {
                                 }
                                 if(equal) {
                                     //ok its a minor, we have to construct the residue implication now
+
+                                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
+                                    Stamp SVSTamp=nal.getNewStamp();
+                                    Sentence SVBelief=nal.getCurrentBelief();
+                                    NAL.StampBuilder SVstampBuilder=nal.newStampBuilder; 
+                                    //now set the current context:
+                                    nal.setCurrentBelief(s);
+                                    //END
+                                    
                                     Term[] residue=new Term[conj.term.length-conj2.term.length];
                                     for(int k=0;k<residue.length;k++) {
                                         residue[k]=conj.term[conj2.term.length+k];
@@ -163,6 +172,11 @@ public class RuleTables {
                                     Sentence S=new Sentence(resImp,s.punctuation,truth,st);
                                     Task Tas=new Task(S,new BudgetValue(BudgetFunctions.forward(truth, nal)));
                                     nal.derivedTask(Tas, false, false, task, null);
+                                    
+                                    //RESTORE CONTEXT
+                                    nal.setNewStamp(SVSTamp);
+                                    nal.setCurrentBelief(SVBelief);
+                                    nal.newStampBuilder=SVstampBuilder; //also restore this one
                                 }
                             }
                         }
@@ -190,9 +204,10 @@ public class RuleTables {
 
                     ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
                     Stamp SVSTamp=nal.getNewStamp();
-                    Task SVTask=nal.getCurrentTask();
                     Sentence SVBelief=nal.getCurrentBelief();
                     NAL.StampBuilder SVstampBuilder=nal.newStampBuilder; 
+                    //now set the current context:
+                    nal.setCurrentBelief(s);
                     
                     if(!taskSentence.isEternal() && !s.isEternal()) {
                         if(s.after(taskSentence, memory.param.duration.get())) {
@@ -204,9 +219,9 @@ public class RuleTables {
                     
                     //RESTORE OF SPECIAL REASONING CONTEXT
                     nal.setNewStamp(SVSTamp);
-                    nal.setCurrentTask(SVTask);
                     nal.setCurrentBelief(SVBelief);
                     nal.newStampBuilder=SVstampBuilder; //also restore this one
+                    //END
                     
                     alreadyInducted.add(t);
 
@@ -240,11 +255,30 @@ public class RuleTables {
                         
                         if (!next.beliefs.isEmpty() && (implication.isForward() || implication.isConcurrent())) {
                         
+                            ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
+                            Stamp SVSTamp=nal.getNewStamp();
+                            Task SVTask=nal.getCurrentTask();
+                            NAL.StampBuilder SVstampBuilder=nal.newStampBuilder; 
+                            //END
+                            //now set the current context:
+                            
                             Sentence s=next.beliefs.get(0);
+                            
+                            //this one needs an dummy task..
+                            Task dummycur=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s.truth));
+                            nal.setCurrentTask(dummycur);
+                            //its priority isnt needed at all, this just is for stamp completeness..
+                            
                             TemporalRules.temporalInductionChain(s, belief, nal);
                             TemporalRules.temporalInductionChain(belief, s, nal);
+                            
                             alreadyInducted.add(t);
                             
+                            //RESTORE CONTEXT
+                            nal.setNewStamp(SVSTamp);
+                            nal.setCurrentTask(SVTask);
+                            nal.newStampBuilder=SVstampBuilder; //also restore this one
+                            //END
                         }
                     }
                }
