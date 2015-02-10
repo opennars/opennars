@@ -395,13 +395,14 @@ public class NAR implements Runnable {
 //    }
 
 
-    public void addPlugin(Plugin p) {
+    public PluginState addPlugin(Plugin p) {
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
         }
         PluginState ps = new PluginState(p);
         plugins.add(ps);
         emit(Events.PluginsChange.class, p, null);
+        return ps;
     }
     
     public void removePlugin(PluginState ps) {

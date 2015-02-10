@@ -14,7 +14,7 @@ import nars.event.Reaction;
 import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
 import nars.io.meter.event.HitMeter;
-import nars.io.meter.event.ValueMeter;
+import nars.io.meter.event.DoubleMeter;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.meta.NARMetrics;
@@ -42,7 +42,7 @@ public class DetectBenefitsOfPrologMirroring implements Reaction {
     static String outputFile = null;// "/tmp/h.csv";
     static String logFile = null; //"/tmp/h.log";
 
-    private ValueMeter prologEternalBeliefs;
+    private DoubleMeter prologEternalBeliefs;
     private HitMeter prologEternalAnswers;
 
     private NARPrologMirror prologMirror;
@@ -82,7 +82,7 @@ public class DetectBenefitsOfPrologMirroring implements Reaction {
         NALPerformance pp = new NALPerformance(prolog, input);
 
         trace = new NARMetrics(prolog, 128);
-        trace.addMeter(prologEternalBeliefs = new ValueMeter("prolog.eternal.beliefs"));
+        trace.addMeter(prologEternalBeliefs = new DoubleMeter("prolog.eternal.beliefs"));
         trace.addMeter(prologEternalAnswers = new HitMeter("prolog.eternal.answers"));
 
         if (logOut!=null) {

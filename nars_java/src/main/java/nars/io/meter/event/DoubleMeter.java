@@ -10,7 +10,7 @@ import reactor.jarjar.jsr166e.extra.AtomicDouble;
 /**
  * Stores the latest provided value for retrieval by a Metrics 
  */
-public class ValueMeter extends SourceFunctionMeter<Double> {
+public class DoubleMeter extends SourceFunctionMeter<Double> {
     
     boolean autoReset;
     final AtomicDouble val = new AtomicDouble();
@@ -18,19 +18,19 @@ public class ValueMeter extends SourceFunctionMeter<Double> {
     
     
     
-    public ValueMeter(String id, boolean autoReset) {
+    public DoubleMeter(String id, boolean autoReset) {
         super(id);
         this.name = id;
         this.autoReset = autoReset;
     }
     
     
-    public ValueMeter(String id) {
+    public DoubleMeter(String id) {
         this(id, false);
     }    
 
 
-    public ValueMeter reset() {
+    public DoubleMeter reset() {
         set(Double.NaN);
         return this;
     }

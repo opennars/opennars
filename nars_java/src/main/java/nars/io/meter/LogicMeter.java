@@ -2,7 +2,7 @@ package nars.io.meter;
 
 import nars.core.Memory;
 import nars.io.meter.event.HitMeter;
-import nars.io.meter.event.ValueMeter;
+import nars.io.meter.event.DoubleMeter;
 import nars.logic.entity.Concept;
 
 /**
@@ -20,9 +20,9 @@ public class LogicMeter {
 
     public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
 
-    public final ValueMeter CONCEPT_COUNT = new ValueMeter("concept.count");
-    public final ValueMeter CONCEPT_BELIEF_COUNT = new ValueMeter("concept.belief.count");
-    public final ValueMeter CONCEPT_QUESTION_COUNT = new ValueMeter("concept.question.count");
+    public final DoubleMeter CONCEPT_COUNT = new DoubleMeter("concept.count");
+    public final DoubleMeter CONCEPT_BELIEF_COUNT = new DoubleMeter("concept.belief.count");
+    public final DoubleMeter CONCEPT_QUESTION_COUNT = new DoubleMeter("concept.question.count");
     public final HitMeter TERM_LINK_SELECT = new HitMeter("concept.termlink.select");
     public final HitMeter TERM_LINK_TRANSFORM = new HitMeter("concept.termlink.transform");
 
@@ -52,16 +52,16 @@ public class LogicMeter {
     public final HitMeter ANALOGY = new HitMeter("reason.analogy");
 
 
-    public final ValueMeter DERIVATION_LATENCY = new ValueMeter("reason.derivation.latency");
-    public final ValueMeter SOLUTION_BEST = new ValueMeter("task.solution.best");
+    public final DoubleMeter DERIVATION_LATENCY = new DoubleMeter("reason.derivation.latency");
+    public final DoubleMeter SOLUTION_BEST = new DoubleMeter("task.solution.best");
 
-    public final ValueMeter PLAN_GRAPH_IN_DELAY_MAGNITUDE = new ValueMeter("plan.graph.add#delay_magnitude");
-    public final ValueMeter PLAN_GRAPH_IN_OPERATION = new ValueMeter("plan.graph.add#operation");
-    public final ValueMeter PLAN_GRAPH_IN_OTHER = new ValueMeter("plan.graph.add#other");
-    public final ValueMeter PLAN_GRAPH_EDGE = new ValueMeter("plan.graph.edge");
-    public final ValueMeter PLAN_GRAPH_VERTEX = new ValueMeter("plan.graph.vertex");
-    public final ValueMeter PLAN_TASK_PLANNED = new ValueMeter("plan.task.planned");
-    public final ValueMeter PLAN_TASK_EXECUTABLE = new ValueMeter("plan.task.executable");
+    public final DoubleMeter PLAN_GRAPH_IN_DELAY_MAGNITUDE = new DoubleMeter("plan.graph.add#delay_magnitude");
+    public final DoubleMeter PLAN_GRAPH_IN_OPERATION = new DoubleMeter("plan.graph.add#operation");
+    public final DoubleMeter PLAN_GRAPH_IN_OTHER = new DoubleMeter("plan.graph.add#other");
+    public final DoubleMeter PLAN_GRAPH_EDGE = new DoubleMeter("plan.graph.edge");
+    public final DoubleMeter PLAN_GRAPH_VERTEX = new DoubleMeter("plan.graph.vertex");
+    public final DoubleMeter PLAN_TASK_PLANNED = new DoubleMeter("plan.task.planned");
+    public final DoubleMeter PLAN_TASK_EXECUTABLE = new DoubleMeter("plan.task.executable");
 
     //public final ValueMeter TASK_INPUT = new ValueMeter("task.input");
 

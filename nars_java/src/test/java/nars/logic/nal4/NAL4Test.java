@@ -48,12 +48,12 @@ public class NAL4Test extends AbstractNALTest {
         long time = 1400;
 
         float minConf = 0.26f;
-        n.believe("<0 --> num>", 1.0f, 0.9f);
-        n.believe("<<$1 --> num> ==> <(*,$1) --> num>>", 1.0f, 0.9f);
-        n.ask("<(*,(*,(*,0))) --> num>");
-        n.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
-        n.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
-        n.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
+        nar.believe("<0 --> num>", 1.0f, 0.9f);
+        nar.believe("<<$1 --> num> ==> <(*,$1) --> num>>", 1.0f, 0.9f);
+        nar.ask("<(*,(*,(*,0))) --> num>");
+        nar.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
+        nar.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
+        nar.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
 
     }
     
@@ -74,7 +74,7 @@ public class NAL4Test extends AbstractNALTest {
         long time;
         float finalConf;
 
-        if (n.nal() <= 6) {
+        if (nar.nal() <= 6) {
             time = 20;
             finalConf = 0.73f;
         }
@@ -83,11 +83,11 @@ public class NAL4Test extends AbstractNALTest {
             finalConf = 0.29f;
         }
 
-        n.believe(" <0 --> n>", 1.0f, 0.9f);
-        n.believe("<<$1 --> n> ==> <(/,next,$1,_) --> n>>", 1.0f, 0.9f);
-        n.ask("<(/,next,(/,next,0,_),_) --> n>");
-        n.mustBelieve(time, "<(/,next,0,_) --> n>", 1.0f, 1.0f, 0.81f, 1.0f);
-        n.mustBelieve(time, "<(/,next,(/,next,0,_),_) --> n>", 1.0f, 1.0f, finalConf, 1.0f);
+        nar.believe(" <0 --> n>", 1.0f, 0.9f);
+        nar.believe("<<$1 --> n> ==> <(/,next,$1,_) --> n>>", 1.0f, 0.9f);
+        nar.ask("<(/,next,(/,next,0,_),_) --> n>");
+        nar.mustBelieve(time, "<(/,next,0,_) --> n>", 1.0f, 1.0f, 0.81f, 1.0f);
+        nar.mustBelieve(time, "<(/,next,(/,next,0,_),_) --> n>", 1.0f, 1.0f, finalConf, 1.0f);
     }
 
 }

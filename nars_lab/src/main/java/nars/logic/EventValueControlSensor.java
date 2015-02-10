@@ -1,12 +1,12 @@
 package nars.logic;
 
 import nars.core.NAR;
-import nars.io.meter.event.ValueMeter;
+import nars.io.meter.event.DoubleMeter;
 
 
 public class EventValueControlSensor extends ControlSensor {
 
-    ValueMeter e;
+    DoubleMeter e;
     final NAR nar;
     final String logicSensor;
     final double adaptContrast;
@@ -14,14 +14,14 @@ public class EventValueControlSensor extends ControlSensor {
     /*default value if not exist */
     public EventValueControlSensor(NAR n, String logicSensor, int quantization, int sampleWindow, double adaptContrast) {
         super(quantization);
-        e = new ValueMeter("_");
+        e = new DoubleMeter("_");
         this.nar = n;
         this.logicSensor = logicSensor;
         this.adaptContrast = adaptContrast;
     }
     public EventValueControlSensor(NAR n, String logicSensor, int min, int max, int quantization, int sampleWindow) {
         super(min, max, quantization);
-        e = new ValueMeter("_");
+        e = new DoubleMeter("_");
         this.nar = n;
         this.logicSensor = logicSensor;
         this.adaptContrast = 0;

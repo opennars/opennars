@@ -1,6 +1,7 @@
 package nars.perf;
 
 import nars.core.Memory;
+import nars.io.ExampleFileInput;
 import nars.logic.NALTest;
 import nars.core.NAR;
 import nars.build.Default;
@@ -67,7 +68,7 @@ public class NALTestPerformance {
 
         public void run() {
 
-            final String input = NALTest.getExample(example);
+            final String input = ExampleFileInput.getExample(example);
 
             Memory.resetStatic(1);
 

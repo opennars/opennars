@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -83,12 +84,14 @@ public class ExampleFileInput extends TextInput {
     public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
         return OutputCondition.getConditions(n, source, similarResultsToSave);
     }
-    
+
     public static Map<String,String> getUnitTests() {
+        return getUnitTests(new String[] { "test", "Examples/DecisionMaking", "Examples/ClassicalConditioning" });
+    }
+
+    public static Map<String,String> getUnitTests(String[] directories) {
         Map<String,String> l = new TreeMap();
-                
-        final String[] directories = new String[] { "test", "Examples/DecisionMaking", "Examples/ClassicalConditioning" };
-        
+
         for (String dir : directories ) {
 
             File folder = new File(getExamplePath(dir));
@@ -113,5 +116,21 @@ public class ExampleFileInput extends TextInput {
     public String getSource() {
         return source;
     }
-    
+
+    protected static Map<String, String> examples = new HashMap(); //path -> script data
+
+    public static String getExample(String path) {
+        try {
+            String existing = examples.get(path);
+            if (existing!=null)
+                return existing;
+
+            existing = ExampleFileInput.load(path);
+
+            examples.put(path, existing);
+            return existing;
+        } catch (Exception ex) {
+            throw new RuntimeException("Example file not found: " + path + ": " + ex.toString()  + ": ");
+        }
+    }
 }

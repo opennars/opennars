@@ -89,6 +89,10 @@ public class LocalRules {
     }
 
 
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+        return revision(newBelief, oldBelief, feedbackToLinks, nal, nal.getCurrentBelief());
+    }
+
     /**
      * Belief revision
      * <p>
@@ -99,7 +103,7 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
      * @param memory Reference to the memory
      */
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal, Sentence subbedBelief) {
 
         final Task currentTask = nal.getCurrentTask();
 
@@ -125,7 +129,7 @@ public class LocalRules {
                 stamp);
         Task newTask = new Task(newSentence, budget, currentTask, newBelief);
 
-        if (nal.deriveTask(newTask, true, false, null, null)) {
+        if (nal.deriveTask(newTask, true, false, null, null, subbedBelief, nal.getCurrentTask())) {
             nal.memory.logic.BELIEF_REVISION.hit();
             return true;
         }

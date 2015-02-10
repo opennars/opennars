@@ -1,9 +1,0 @@
-'********** translating property into inheritance
-
-'Ravens are black. 
-<raven --] black>.
-
-1
-
-'''expect.outEmpty
-''outputMustContain('<raven --> [black]>.')

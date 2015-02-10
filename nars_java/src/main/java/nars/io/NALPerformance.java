@@ -58,7 +58,6 @@ public class NALPerformance  {
             }
             error = true;
         }
-        score = Double.POSITIVE_INFINITY;
         success = expects.size() > 0 && (!error);
         if (success) {
             for (OutputCondition e : expects) {
@@ -68,20 +67,7 @@ public class NALPerformance  {
                 }
             }
         }
-        if (success) {
-            long lastSuccess = -1;
-            for (OutputCondition e : expects) {
-                if (e.getTrueTime() != -1) {
-                    if (lastSuccess < e.getTrueTime()) {
-                        lastSuccess = e.getTrueTime();
-                    }
-                }
-            }
-            if (lastSuccess != -1) {
-                //score = 1.0 + 1.0 / (1+lastSuccess);
-                score = lastSuccess;
-            }
-        }
+        score = OutputCondition.cost(expects);
     }
 
     public double getScore() {

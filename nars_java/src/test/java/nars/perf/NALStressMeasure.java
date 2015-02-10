@@ -1,5 +1,6 @@
 package nars.perf;
 
+import nars.io.ExampleFileInput;
 import nars.logic.NALTest;
 import nars.core.NAR;
 import nars.build.Curve;
@@ -19,7 +20,7 @@ public class NALStressMeasure  {
     
     public static double perfNAL(final NAR n, final String path, final int extraCycles, int repeats, int warmups, boolean gc) {
         
-        final String example = NALTest.getExample(path);
+        final String example = ExampleFileInput.getExample(path);
         
         Performance p = new Performance(path, repeats, warmups, gc) {
             long totalCycles;

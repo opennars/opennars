@@ -52,13 +52,13 @@ public class NAL2Test extends AbstractNALTest {
         long time = 160;
         //TextOutput.out(n);
 
-        n.believe("<Birdie <-> Tweety>", Eternal, 0.9f, 0.9f)
+        nar.believe("<Birdie <-> Tweety>", Eternal, 0.9f, 0.9f)
                 .en("Birdie is similar to Tweety.");
-        n.step(1);
-        n.ask("<{Birdie} <-> {Tweety}>")
+        nar.step(1);
+        nar.ask("<{Birdie} <-> {Tweety}>")
                 .en("Is Birdie similar to Tweety?");
 
-        n.mustBelieve(time, "<{Birdie} <-> {Tweety}>", 0.8f, 0.95f, 0.70f, 0.76f)
+        nar.mustBelieve(time, "<{Birdie} <-> {Tweety}>", 0.8f, 0.95f, 0.70f, 0.76f)
                 .en("Birdie is similar to Tweety.");
 
     }

@@ -1,6 +1,6 @@
 package nars.io.meter;
 
-import nars.io.meter.event.ValueMeter;
+import nars.io.meter.event.DoubleMeter;
 
 import java.io.Serializable;
 
@@ -12,8 +12,8 @@ public class EmotionMeter implements Serializable {
     /** average priority */
     private float busy;
 
-    public final ValueMeter happyMeter = new ValueMeter("happy");
-    public final ValueMeter busyMeter = new ValueMeter("busy");
+    public final DoubleMeter happyMeter = new DoubleMeter("happy");
+    public final DoubleMeter busyMeter = new DoubleMeter("busy");
     
     
     public EmotionMeter() {

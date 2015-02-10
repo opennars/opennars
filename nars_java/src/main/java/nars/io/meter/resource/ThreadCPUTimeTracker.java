@@ -14,7 +14,7 @@
  */
 package nars.io.meter.resource;
 
-import nars.io.meter.event.ValueMeter;
+import nars.io.meter.event.DoubleMeter;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -25,7 +25,7 @@ import java.lang.management.ThreadMXBean;
  *
  * @author The Stajistics Project
  */
-public class ThreadCPUTimeTracker extends ValueMeter {
+public class ThreadCPUTimeTracker extends DoubleMeter {
 
     //private long startCPUTime; // nanos
 

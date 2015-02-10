@@ -25,15 +25,16 @@ public class AbstractNALTest extends TestCase {
     //Derivations derivations = new Derivations(false, false);
     Derivations derivations = null;
 
-    public TestNAR n;
+    public TestNAR nar;
 
 
     public AbstractNALTest(NewNAR b) {
+        super();
 
-        this.n = new TestNAR(b);
+        this.nar = new TestNAR(b);
 
         if (this.derivations != null) {
-            derivations.record(n);
+            derivations.record(nar);
         }
 
     }
@@ -43,7 +44,7 @@ public class AbstractNALTest extends TestCase {
     public void test() {
         Memory.resetStatic(randomSeed);
         Parameters.DEBUG = true;
-        n.run();
+        nar.run();
     }
 
 

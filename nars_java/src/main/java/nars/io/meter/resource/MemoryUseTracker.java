@@ -1,6 +1,6 @@
 package nars.io.meter.resource;
 
-import nars.io.meter.event.ValueMeter;
+import nars.io.meter.event.DoubleMeter;
 
 /**
  * Relatively slow, use a setResolutionDivisor to sample every Nth cycle
@@ -8,7 +8,7 @@ import nars.io.meter.event.ValueMeter;
  * Uses Runtime methods to calculate changes in memory use, measured in KiloBytes (1024 bytes)
  * TODO also use https://github.com/dropwizard/metrics/blob/master/metrics-jvm/src/main/java/com/codahale/metrics/jvm/MemoryUsageGaugeSet.java
  */
-public class MemoryUseTracker extends ValueMeter {
+public class MemoryUseTracker extends DoubleMeter {
 
     //long lastUsedMemory = -1;
 

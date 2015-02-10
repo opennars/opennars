@@ -31,12 +31,12 @@ public class NAL8Test extends AbstractNALTest {
 
         String goal = "<a --> b>";
 
-        n.goal(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, goal, 1.0f, 0.9f);
+        nar.goal(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, goal, 1.0f, 0.9f);
 
-        n.run(50);
+        nar.run(50);
 
-        n.mustOutput(60, goal, '!', 1.0f, 0.9f);
-        n.quest(goal);
+        nar.mustOutput(60, goal, '!', 1.0f, 0.9f);
+        nar.quest(goal);
     }
     
 }

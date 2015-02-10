@@ -8,6 +8,7 @@ package nars.io.meter;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.gson.*;
+import nars.io.meter.event.ObjectMeter;
 
 import java.io.PrintStream;
 import java.lang.reflect.Type;
@@ -120,6 +121,12 @@ JsonSerializationContext context) {
         return new SignalData(this, s);
     }
 
+    public Metrics addMeters(Meter... c) {
+        for (Meter x : c)
+            addMeter(x);
+        return this;
+    }
+
     private static class firstColumnIterator implements Function<Object[], Object[]> {
         final Object[] next;
         final int thecolumn;
@@ -164,7 +171,7 @@ JsonSerializationContext context) {
     class RowKeyMeter extends FunctionMeter {
 
         public RowKeyMeter() {
-            super("time");
+            super("key");
         }
 
         @Override
@@ -188,6 +195,12 @@ JsonSerializationContext context) {
     /** capacity */
     int history;
 
+    /** unlimited size */
+    public Metrics() {
+        this(-1);
+    }
+
+    /** fixed size */
     public Metrics(int historySize) {
         super();
         this.history = historySize;
@@ -211,7 +224,7 @@ JsonSerializationContext context) {
         rows.clear();
     }
     
-    public void addMeter(Meter<? extends Cell> m) {
+    public <M extends Meter<C>, C extends Cell> M addMeter(M m) {
         for (Signal s : m.getSignals()) {
             if (getSignal(s.id)!=null)
                 throw new RuntimeException("Signal " + s.id + " already exists in "+ this);
@@ -222,6 +235,7 @@ JsonSerializationContext context) {
         
         signalList = null;
         signalIndex = null;
+        return m;
     }
     
     public void removeMeter(Meter<? extends Cell> m) {
@@ -308,10 +322,12 @@ JsonSerializationContext context) {
     
     protected void append(Object[] next, boolean[] invalidatedExtrema) {
         if (next==null) return;        
-        
-        while (rows.size() >= history) {
-            Object[] prev = rows.removeFirst();
-            invalidateExtrema(false, prev, invalidatedExtrema);
+
+        if (history > 0) {
+            while (rows.size() >= history) {
+                Object[] prev = rows.removeFirst();
+                invalidateExtrema(false, prev, invalidatedExtrema);
+            }
         }
         
         rows.addLast(next);     

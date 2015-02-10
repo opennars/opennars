@@ -53,7 +53,6 @@ public class NALTest extends TestCase {
     private static boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
       
 
-    protected static Map<String, String> examples = new HashMap(); //path -> script data
     public static Map<String, Boolean> tests = new HashMap();
     public static Map<String, Double> scores = new HashMap();
 
@@ -75,21 +74,7 @@ public class NALTest extends TestCase {
         return params;
     }
 
-    public static String getExample(String path) {
-        try {
-            String existing = examples.get(path);
-            if (existing!=null)
-                return existing;
-            
-            existing = ExampleFileInput.load(path);
-            
-            examples.put(path, existing);
-            return existing;
-        } catch (Exception ex) {
-            assertTrue(path + ": " + ex.toString()  + ": ", false);
-        }
-        return "";
-    }
+
     
     public NAR newNAR() {
         if (build == null) throw new RuntimeException("Unknown build");
@@ -214,7 +199,7 @@ public class NALTest extends TestCase {
         String input;
         NAR nar;
 
-        NALPerformance test = new NALPerformance(nar = newNAR(), input = getExample(path) );
+        NALPerformance test = new NALPerformance(nar = newNAR(), input = ExampleFileInput.getExample(path) );
 
 
         if (showOutput)

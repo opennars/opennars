@@ -330,8 +330,7 @@ public class Concept extends Item<Term> implements Termable {
                     if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
                     }
-                    //nal.setCurrentBelief(projectedBelief);
-                    revision(judg, projectedBelief, false, nal);
+                    revision(judg, projectedBelief, false, nal, projectedBelief);
                 }
 
             }
@@ -422,7 +421,8 @@ public class Concept extends Item<Term> implements Termable {
             } else if (revisible(goal, oldGoal)) {
                 nal.setNextNewStamp(newStamp, oldStamp, memory.time());
                 boolean revisionSucceeded = revision(goal, oldGoal, false, nal);
-                if(revisionSucceeded) { // it is revised, so there is a new task for which this function will be called
+                if(revisionSucceeded) {
+                    // it is revised, so there is a new task for which this function will be called
                     return; // with higher/lower desire
                 } 
             } 

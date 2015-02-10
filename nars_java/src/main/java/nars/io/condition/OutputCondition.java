@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Monitors an output stream for certain conditions. Used in testing and
+ * Monitors NAR behavior for certain conditions. Used in testing and
  * analysis.
  * 
  * Parameter O is the type of object which will be remembered that can make
@@ -155,6 +155,26 @@ public abstract class OutputCondition<O> extends AbstractReaction {
     public long getTrueTime() {
         return successAt;
     }
-    
-    
+
+
+    /** calculates the "cost" of an execution according to certain evaluated condtions
+     *  this is the soonest time at which all output conditions were successful.
+     *  if any conditions were not successful, the cost is infinity
+     * */
+    public static double cost(List<OutputCondition> conditions) {
+        long lastSuccess = -1;
+        for (OutputCondition e : conditions) {
+            if (e.getTrueTime() != -1) {
+                if (lastSuccess < e.getTrueTime()) {
+                    lastSuccess = e.getTrueTime();
+                }
+            }
+        }
+        if (lastSuccess != -1) {
+            //score = 1.0 + 1.0 / (1+lastSuccess);
+            return lastSuccess;
+        }
+
+        return Double.POSITIVE_INFINITY;
+    }
 }

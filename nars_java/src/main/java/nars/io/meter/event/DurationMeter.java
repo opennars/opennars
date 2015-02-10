@@ -8,7 +8,7 @@ package nars.io.meter.event;
 /**
  * Measures the period between start() and end() calls as a ValueMeter value.
  */
-public class DurationMeter extends ValueMeter {
+public class DurationMeter extends DoubleMeter {
     
     private double startTime = Double.NaN;
     private final boolean nanoSeconds;
