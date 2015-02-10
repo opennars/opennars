@@ -1,0 +1,86 @@
+********** revision
+<bird --> swimmer>.
+// Bird is a type of swimmer.
+<bird --> swimmer>. %0.10;0.60%
+// Bird is probably not a type of swimmer.
+1
+ OUT: <bird --> swimmer>. %0.87;0.91%
+// Bird is very likely to be a type of swimmer.
+
+********** deduction
+<bird --> animal>.
+// Bird is a type of animal.
+<robin --> bird>.
+// Robin is a type of bird.
+3
+ OUT: <robin --> animal>. %1.00;0.81%
+// Robin is a type of animal.
+
+********** abduction
+<sport --> competition>.
+// Sport is a type of competition.
+<chess --> competition>. %0.90%
+// Chess is a type of competition.
+3
+ OUT: <sport --> chess>. %1.00;0.42% 
+// I guess sport is a type of chess.
+ OUT: <chess --> sport>. %0.90;0.45% 
+// I guess chess is a type of sport.
+
+********* induction
+<swan --> swimmer>. %0.90%
+// Swan is a type of swimmer. 
+<swan --> bird>. 
+// Swan is a type of bird. 
+3
+ OUT: <bird --> swimmer>. %0.90;0.45%
+// I guess bird is a type of swimmer.
+ OUT: <swimmer --> bird>. %1.00;0.42%
+// I guess swimmer is a type of bird.
+
+********** exemplification
+<robin --> bird>.
+// Robin is a type of bird.
+<bird --> animal>.
+// A bird is a type of animal.
+3
+ OUT: <animal --> robin>. %1.00;0.45%
+// I guess animal is a type of robin. 
+
+********** conversion
+<bird --> swimmer>.
+// Bird is a type of swimmer. 
+<swimmer --> bird>? 
+// Is swimmer a type of bird?
+6
+ OUT: <swimmer --> bird>. %1.00;0.47% 
+// I guess swimmer is a type of bird.
+
+********** "y/n" question
+<bird --> swimmer>.
+// Bird is a type of swimmer.
+<bird --> swimmer>? 
+// Is bird a type of swimmer?
+1
+ OUT: <bird --> swimmer>. %1.00;0.90% 
+// Bird is a type of swimmer.
+
+********** "wh" question
+<bird --> swimmer>. %1.00;0.80%
+// Bird is a type of swimmer.
+<?x --> swimmer>?  
+// What is a type of swimmer?
+5
+ OUT: <bird --> swimmer>. %1.00;0.80%
+// Bird is a type of swimmer.
+
+********** backward inference
+<bird --> swimmer>. %1.00;0.80%
+// Bird is a type of swimmer.
+<?x --> swimmer>?  
+// What is a type of swimmer?
+5
+ OUT: <?1 --> bird>?
+// What is a type of bird?
+ OUT: <bird --> ?1>?
+// What is the type of bird?

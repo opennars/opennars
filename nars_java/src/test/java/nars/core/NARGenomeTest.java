@@ -4,7 +4,7 @@
  */
 package nars.core;
 
-import nars.perf.evolve.GeneticSearchEncog;
+import nars.analyze.evolve.GeneticSearchEncog;
 import org.encog.Encog;
 import org.encog.ml.ea.train.basic.TrainEA;
 import org.encog.ml.prg.EncogProgram;

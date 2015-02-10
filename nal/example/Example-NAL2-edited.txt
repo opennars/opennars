@@ -1,0 +1,166 @@
+********** revision
+<robin <-> swan>.  
+// Robin is similar to swan.
+<robin <-> swan>. %0.10;0.60% 
+// I think robin is not similar to swan.
+1
+ OUT: <robin <-> swan>. %0.87;0.91% 
+// Robin is probably similar to swan. 
+
+********** comparison
+<swan --> swimmer>. %0.90% 
+// Swan is a type of swimmer.
+<swan --> bird>.  
+// Swan is a type of bird. 
+3
+ OUT: <bird <-> swimmer>. %0.90;0.45% 
+// I guess that bird is similar to swimmer.
+
+********** comparison
+<sport --> competition>. 
+// Sport is a type of competition. 
+<chess --> competition>. %0.90% 
+// Chess is a type of competition. 
+3
+ OUT: <chess <-> sport>. %0.90;0.45% 
+// I guess chess is similar to sport.
+ 
+********** analogy
+<swan --> swimmer>. 
+// Swan is a type of swimmer. 
+<gull <-> swan>. 
+// Gull is similar to swan. 
+3
+ OUT: <gull --> swimmer>. %1.00;0.81% 
+// I think gull is a type of swimmer.
+
+********** analogy
+<gull --> swimmer>. 
+// Gull is a type of swimmer. 
+<gull <-> swan>.  
+// Gull is similar to a swan. 
+3
+ OUT: <swan --> swimmer>. %1.00;0.81% 
+// I believe a swan is a type of swimmer. 
+
+********** resemblance
+<robin <-> swan>. 
+// Robin is similar to swan. 
+<gull <-> swan>. 
+// Gull is similar to swan. 
+3
+ OUT: <gull <-> robin>. %1.00;0.81% 
+// Gull is similar to robin.
+
+********** conversions between inheritance and similarity
+<swan --> bird>. 
+// Swan is a type of bird. 
+<bird --> swan>. %0.10% 
+// Bird is not a type of swan. 
+1
+ OUT: <bird <-> swan>. %0.10;0.81% 
+// Bird is different from swan.  
+
+********** conversions between inheritance and similarity
+<swan --> bird>. 
+// Swan is a type of bird. 
+<bird <-> swan>. %0.10% 
+// Bird is different from swan. 
+1
+ OUT: <bird --> swan>. %0.10;0.73% 
+// Bird is probably not a type of swan. 
+
+********** conversions between inheritance and similarity
+<swan --> bird>. %0.90%  
+// Swan is a type of bird. 
+<bird <-> swan>?  
+// Is bird similar to swan?
+6
+ OUT: <bird <-> swan>. %0.90;0.47%
+// I guess that bird is similar to swan. 
+
+********** conversions between inheritance and similarity
+<bird <-> swan>. %0.90%  
+// a bird is similar to a swan. 
+<swan --> bird>?  
+// Is swan a type of bird?
+6
+ OUT: <swan --> bird>. %0.90;0.81%
+// A swan is a type of bird. 
+
+********** translating instance into inheritance
+<Tweety {-- bird>.
+// Tweety is a bird.
+  IN: <{Tweety} --> bird>. %1.00;0.90%
+// Tweety is a bird.
+
+********** translating property into inheritance
+<raven --] black>.
+// Ravens are black. 
+  IN: <raven --> [black]>. %1.00;0.90%
+// Ravens are black. 
+
+********** translating instance-property into inheritance
+<Tweety {-] yellow>.
+// Tweety is yellow.
+  IN: <{Tweety} --> [yellow]>. %1.00;0.90%
+// Tweety is yellow.
+
+********** set definition
+<{Tweety} --> {Birdie}>. 
+// Tweety is Birdie. 
+3
+ OUT: <{Birdie} <-> {Tweety}>. %1.00;0.90%
+// Birdie is similar to Tweety. 
+
+********** set definition
+<[smart] --> [bright]>. 
+// Smart thing is a type of bright thing. 
+1
+ OUT: <[bright] <-> [smart]>. %1.00;0.90%
+// Bright thing is similar to smart thing. 
+ 
+********** set definition
+<{Birdie} <-> {Tweety}>. 
+// Birdie is similar to Tweety. 
+1
+ OUT: <Birdie <-> Tweety>. %1.00;0.90%
+// Birdie is similar to Tweety. 
+ OUT: <{Tweety} --> {Birdie}>. %1.00;0.90%
+// Tweety is Birdie. 
+
+********** set definition
+<[bright] <-> [smart]>. 
+// Bright thing is similar to smart thing. 
+1
+ OUT: <bright <-> smart>. %1.00;0.90%
+// Bright is similar to smart. 
+ OUT: <[bright] --> [smart]>. %1.00;0.90%
+// Bright thing is a type of smart thing. 
+
+********** structure transformation
+<Birdie <-> Tweety>. %0.90%  
+// Birdie is similar to Tweety
+<{Birdie} <-> {Tweety}>?  
+// Is Birdie similar to Tweety?
+6
+ OUT: <{Birdie} <-> {Tweety}>. %0.90;0.90%
+// Birdie is similar to Tweety. 
+
+********** structure transformation
+<bright <-> smart>. %0.90% 
+// Bright is similar to smart. 
+<[bright] --> [smart]>?  
+// Is bright thing a type of smart thing?
+6
+ OUT: <[bright] --> [smart]>. %0.90;0.81%
+// Bright thing is a type of smart thing. 
+
+********** backward inference
+<bird --> swimmer>.  
+// Bird is a type of swimmer. 
+<{?x} --> swimmer>?   
+// What is a swimmer?
+5
+ OUT: <{?1} --> bird>?
+// What is a bird?

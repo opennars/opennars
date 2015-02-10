@@ -1,0 +1,143 @@
+********** compound composition, two premises
+<swan --> swimmer>. %0.90% 
+// Swan is a type of swimmer.
+<swan --> bird>. %0.80% 
+// Swan is a type of bird.
+3
+ OUT: <swan --> (|,bird,swimmer)>. %0.98;0.81% 
+// Swan is a type of bird or a type of swimmer. 
+ OUT: <swan --> (&,bird,swimmer)>. %0.72;0.81% 
+// Swan is a type of swimming bird. 
+
+********** compound composition, two premises
+<sport --> competition>. %0.90% 
+// Sport is a type of competition. 
+<chess --> competition>. %0.80%  
+// Chess is a type of competition. 
+3
+ OUT: <(|,chess,sport) --> competition>. %0.72;0.81% 
+// If something is either chess or sport, then it is a competition.
+ OUT: <(&,chess,sport) --> competition>. %0.98;0.81% 
+// If something is both chess and sport, then it is a competition.
+
+********** compound decomposition, two premises
+<robin --> (|,bird,swimmer)>.  
+// Robin is a type of bird or a type of swimmer. 
+<robin --> swimmer>. %0.00% 
+// Robin is not a type of swimmer. 
+10
+ OUT: <robin --> bird>. %1.00;0.81% 
+// Robin is a type of bird. 
+
+********** compound decomposition, two premises
+<robin --> swimmer>. %0.00%  
+// Robin is not a type of swimmer. 
+<robin --> (-,mammal,swimmer)>. %0.00%  
+// Robin is not a nonswimming mammal. 
+12
+ OUT: <robin --> mammal>. %0.00;0.81% 
+// Robin is not a type of mammal.
+
+********** set operations
+<planetX --> {Mars,Pluto,Venus}>. %0.90% 
+// PlanetX is Mars, Pluto, or Venus.  
+<planetX --> {Pluto,Saturn}>. %0.70% 
+// PlanetX is probably Pluto or Saturn.  
+10
+ OUT: <planetX --> {Mars,Pluto,Saturn,Venus}>. %0.97;0.81%
+// PlanetX is Mars, Pluto, Saturn, or Venus. 
+ OUT: <planetX --> {Pluto}>. %0.63;0.81% 
+// PlanetX is probably Pluto. 
+
+********** set operations
+  IN: <planetX --> {Mars,Pluto,Venus}>. %0.90% 
+// PlanetX is Mars, Pluto, or Venus.  
+  IN: <planetX --> {Pluto,Saturn}>. %0.10% 
+// PlanetX is probably neither Pluto nor Saturn.  
+10
+ OUT: <planetX --> {Mars,Pluto,Saturn,Venus}>. %0.91;0.81% 
+// PlanetX is Mars, Pluto, Saturn, or Venus. 
+ OUT: <planetX --> {Mars,Venus}>. %0.81;0.81% 
+// PlanetX is either Mars or Venus.
+
+********** composition on both sides of a statement
+<bird --> animal>. %0.90% 
+// Bird is a type of animal. 
+<(&,bird,swimmer) --> (&,animal,swimmer)>?  
+// Is a swimming bird a type of swimming animal?
+6
+ OUT: <(&,bird,swimmer) --> (&,animal,swimmer)>. %0.90;0.73% 
+// A swimming bird is probably a type of swimming animal.
+
+********** composition on both sides of a statement
+<bird --> animal>. %0.90% 
+// Bird is a type of animal. 
+<(-,swimmer,animal) --> (-,swimmer,bird)>?   
+// Is a nonanimal swimmer a type of a nonbird swimmer?
+6
+ OUT: <(-,swimmer,animal) --> (-,swimmer,bird)>. %0.90;0.73% 
+// A nonanimal swimmer is probably a type of nonbird swimmer.
+ 
+********** compound composition, one premise
+<swan --> bird>. %0.90%  
+// Swan is a type of bird. 
+<swan --> (|,bird,swimmer)>? 
+// Is a swan a type of bird or swimmer?
+7
+ OUT: <swan --> (|,bird,swimmer)>. %0.90;0.73% 
+// A swan is probably a type of bird or swimmer. 
+
+********** compound composition, one premise
+<swan --> bird>. %0.90% 
+// Swan is a type of bird. 
+<(&,swan,swimmer) --> bird>?
+// Is swimming swan a type of bird?
+6
+ OUT: <(&,swan,swimmer) --> bird>. %0.90;0.73% 
+// Swimming swan is a type of bird.
+
+********** compound composition, one premise
+<swan --> bird>. %0.90% 
+// Swan is a type of bird. 
+<swan --> (-,swimmer,bird)>?  
+// Is swan a type of nonbird swimmer?
+7
+ OUT: <swan --> (-,swimmer,bird)>. %0.10;0.73% 
+// A swan is not a type of nonbird swimmer.
+ 
+********** compound composition, one premise
+<swan --> bird>. %0.90% 
+// Swan is a type of bird. 
+<(~,swimmer, swan) --> bird>?  
+// Is being bird what differ swimmer from swan?
+6
+ OUT: <(~,swimmer, swan) --> bird>. %0.10;0.73% 
+// What differs swimmer from swan is not being bird.
+
+********** compound decomposition, one premise
+<robin --> (&,bird,swimmer)>. %0.90% 
+// Robin is a type of swimming bird.
+2
+ OUT: <robin --> bird>. %0.90;0.73% 
+// Robin is a type of bird. 
+
+********** compound decomposition, one premise
+<robin --> (-,bird,swimmer)>. %0.90% 
+// Robin is a type of nonswimming bird. 
+2
+ OUT: <robin --> bird>. %0.90;0.73% 
+// Robin is a type of bird. 
+
+********** compound decomposition, one premise
+<(|, boy, girl) --> youth>. %0.90% 
+// Boys and gials are youth.
+1
+ OUT: <boy --> youth>. %0.90;0.73%
+// Boys are youth.
+
+********** compound decomposition, one premise
+<(~, boy, girl) --> [strong]>. %0.90% 
+// What differs boys from gials are being strong.
+5
+ OUT: <boy --> [strong]>. %0.90;0.73%
+// Boys are strong.

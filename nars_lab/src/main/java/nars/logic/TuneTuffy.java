@@ -75,7 +75,7 @@ public class TuneTuffy {
                 
         
         NAR n = new NAR(b);
-        n.addInput(new TextInput(new File("nal/use_cases/tuffy.smokes.nal")));
+        n.addInput(new File("nal/use_cases/tuffy.smokes.nal"));
         
         //new TextOutput(n, System.out, 0.95f);                
         

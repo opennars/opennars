@@ -131,21 +131,26 @@ abstract public class AbstractNALScriptTests extends AbstractNALTest {
                 String className = e.getClassName();
                 String methodName = e.getMethodName();
 
-                if (!tracing && className.endsWith(".NAL") && methodName.equals("deriveTask")) {
-                    tracing = true;
-                }
+
                 if (tracing && className.contains(".ConceptFireTask") && methodName.equals("accept")) {
                     tracing = false;
                 }
 
                 if (tracing) {
-                    String sm = meterPrefix + className + '.' + methodName;
+                    int cli = className.lastIndexOf(".");
+                    if (cli!=-1)
+                        className = className.substring(cli, className.length()); //class's simpleName
+
+                    String sm = meterPrefix + className + '_' + methodName;
 
                     HitMeter m = (HitMeter) metrics.getMeter(sm);
                     if (m == null) {
                         metrics.addMeter(m = new HitMeter(sm));
                     }
                     m.hit();
+                }
+                else if (className.endsWith(".NAL") && methodName.equals("deriveTask")) {
+                    tracing = true; //begins with next stack element
                 }
             }
         }
@@ -279,7 +284,7 @@ abstract public class AbstractNALScriptTests extends AbstractNALTest {
 
         testBuild.set(build.toString());
         testSuccess.set(success);
-        testScore.set( OutputCondition.cost(conditions));
+        testScore.set( success ? 1.0 / (1.0 + OutputCondition.cost(conditions)) : 0 );
         testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
         testConcepts.hit(nar.memory.concepts.size());
 

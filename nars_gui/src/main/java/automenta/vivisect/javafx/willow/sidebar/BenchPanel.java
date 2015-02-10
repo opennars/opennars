@@ -50,7 +50,7 @@
 //                {"HTML 5 Test", "http://www.html5test.com", "HTML5_Badge_32.png"},
 //                {"Acid 3 Test", "http://acid3.acidtests.org/", "acid.png"},
 //                {getString("bench-panel.javascript-performance"), "", ""},
-//                {"WebKit SunSpider", "http://www.webkit.org/perf/sunspider-1.0.2/sunspider-1.0.2/driver.html", "webkit.png"},
+//                {"WebKit SunSpider", "http://www.webkit.org/analyze/sunspider-1.0.2/sunspider-1.0.2/driver.html", "webkit.png"},
 //                {"Google Octane", "http://octane-benchmark.googlecode.com/svn/latest/index.html", "google.png"},
 //// the kraken may not be unleashed - it hangs on the first ai-star test - maybe later...
 ////                {"Mozilla Kraken", "http://krakenbenchmark.mozilla.org", "firefox_32.png"},

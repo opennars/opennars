@@ -1,7 +1,7 @@
 package nars.util.bag;
 
 import nars.core.Memory;
-import nars.perf.BagPerf;
+import nars.analyze.BagPerf;
 import nars.util.bag.impl.CurveBag;
 import nars.util.data.sorted.SortedIndex;
 

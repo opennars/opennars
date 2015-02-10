@@ -1,0 +1,81 @@
+********** structural transformation
+<(*,acid,base) --> reaction>.  
+// An acid and a base can have a reaction.
+2
+ OUT: <acid --> (/,reaction,_,base)>. %1.00;0.90% 
+// Acid can react with base.
+ OUT: <base --> (/,reaction,acid,_)>. %1.00;0.90% 
+// A base is something that has a reaction with an acid. 
+
+********** structural transformation
+<acid --> (/,reaction,_,base)>. 
+// Acid can react with base.
+3
+ OUT: <(*,acid,base) --> reaction>. %1.00;0.90% 
+// An acid and a base can have a reaction.
+ OUT: <base --> (/,reaction,acid,_)>. %1.00;0.90% 
+// A base is something that has a reaction with an acid. 
+
+********** structural transformation
+<base --> (/,reaction,acid,_)>.
+// A base is something that has a reaction with an acid. 
+3
+ OUT: <acid --> (/,reaction,_,base)>. %1.00;0.90% 
+// Acid can react with base.
+ OUT: <(*,acid,base) --> reaction>. %1.00;0.90% 
+// An acid and a base can have a reaction.
+
+********** structural transformation
+<neutralization --> (*,acid,base)>.
+// Neutralization is a relation between an acid and a base. 
+3
+ OUT: <(\,neutralization,_,base) --> acid>. %1.00;0.90% 
+// Something that can neutralize a base is an acid.
+ OUT: <(\,neutralization,acid,_) --> base>. %1.00;0.90%
+// Something that can be neutralized by an acid is a base.
+
+********** structural transformation
+<(\,neutralization,_,base) --> acid>.
+// Something that can neutralize a base is an acid.
+2
+ OUT: <neutralization --> (*,acid,base)>. %1.00;0.90% 
+// Neutralization is a relation between an acid and a base. 
+ OUT: <(\,neutralization,acid,_) --> base>. %1.00;0.90%
+// Something that can be neutralized by an acid is a base.
+
+********** structural transformation
+<(\,neutralization,acid,_) --> base>.
+// Something that can be neutralized by an acid is a base.
+2
+ OUT: <(\,neutralization,_,base) --> acid>. %1.00;0.90%
+// Something that can neutralize a base is an acid.
+ OUT: <neutralization --> (*,acid,base)>. %1.00;0.90%
+// Neutralization is a relation between an acid and a base. 
+
+********** composition on both sides of a statement
+<bird --> animal>.  
+// Bird is a type of animal.
+<(*,bird,plant) --> ?x>?  
+// What is the relation between a bird and a plant?
+6
+ OUT: <(*,bird,plant) --> (*,animal,plant)>. %1.00;0.81% 
+// The relation between bird and plant is a type of relation between animal and plant.
+
+********** composition on both sides of a statement
+<neutralization --> reaction>.  
+// Neutralization is a type of reaction.
+<(\,neutralization,acid,_) --> ?x>?
+// What can be neutralized by acid?
+6
+ OUT: <(\,neutralization,acid,_) --> (\,reaction,acid,_)>. %1.00;0.81%
+// What can be neutralized by acid can react with acid. 
+
+********** composition on both sides of a statement
+<soda --> base>.
+// Soda is a type of base.
+<(/,neutralization,_,base) --> ?x>?  
+// What is something that can neutralize a base?
+6
+ OUT: <(/,neutralization,_,base) --> (/,neutralization,_,soda)>. %1.00;0.81%
+// What can neutraliz base can react with base. 
+

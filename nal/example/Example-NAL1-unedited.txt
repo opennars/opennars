@@ -1,0 +1,69 @@
+********** revision
+  IN: <bird --> swimmer>. %1.00;0.90% {0 : 1} 
+  IN: <bird --> swimmer>. %0.10;0.60% {0 : 2} 
+1
+ OUT: <bird --> swimmer>. %0.87;0.91% {1 : 2;1} 
+********** deduction
+  IN: <bird --> animal>. %1.00;0.90% {0 : 1} 
+  IN: <robin --> bird>. %1.00;0.90% {0 : 2} 
+3
+ OUT: <robin --> animal>. %1.00;0.81% {3 : 1;2} 
+ OUT: <animal --> robin>. %1.00;0.45% {3 : 1;2} 
+********** abduction
+  IN: <sport --> competition>. %1.00;0.90% {0 : 1} 
+  IN: <chess --> competition>. %0.90;0.90% {0 : 2} 
+3
+ OUT: <(&,chess,sport) --> competition>. %1.00;0.81% {3 : 1;2} 
+ OUT: <(|,chess,sport) --> competition>. %0.90;0.81% {3 : 1;2} 
+ OUT: <<sport --> $1> ==> <chess --> $1>>. %0.90;0.45% {3 : 1;2} 
+ OUT: <<chess --> $1> ==> <sport --> $1>>. %1.00;0.42% {3 : 1;2} 
+ OUT: <<chess --> $1> <=> <sport --> $1>>. %0.90;0.45% {3 : 1;2} 
+ OUT: (&&,<chess --> #1>,<sport --> #1>). %0.90;0.81% {3 : 1;2} 
+ OUT: <sport --> chess>. %1.00;0.42% {3 : 1;2} 
+ OUT: <chess --> sport>. %0.90;0.45% {3 : 1;2} 
+ OUT: <chess <-> sport>. %0.90;0.45% {3 : 1;2} 
+********* induction
+  IN: <swan --> swimmer>. %0.90;0.90% {0 : 1} 
+  IN: <swan --> bird>. %1.00;0.90% {0 : 2} 
+3
+ OUT: <swan --> (|,bird,swimmer)>. %1.00;0.81% {3 : 1;2} 
+ OUT: <swan --> (&,bird,swimmer)>. %0.90;0.81% {3 : 1;2} 
+ OUT: <<$1 --> swimmer> ==> <$1 --> bird>>. %1.00;0.42% {3 : 1;2} 
+ OUT: <<$1 --> bird> ==> <$1 --> swimmer>>. %0.90;0.45% {3 : 1;2} 
+ OUT: <<$1 --> bird> <=> <$1 --> swimmer>>. %0.90;0.45% {3 : 1;2} 
+ OUT: (&&,<#1 --> bird>,<#1 --> swimmer>). %0.90;0.81% {3 : 1;2} 
+ OUT: <bird --> swimmer>. %0.90;0.45% {3 : 1;2} 
+ OUT: <swimmer --> bird>. %1.00;0.42% {3 : 1;2} 
+ OUT: <bird <-> swimmer>. %0.90;0.45% {3 : 1;2} 
+********** exemplification
+  IN: <robin --> bird>. %1.00;0.90% {0 : 1} 
+  IN: <bird --> animal>. %1.00;0.90% {0 : 2} 
+3
+ OUT: <robin --> animal>. %1.00;0.81% {3 : 1;2} 
+ OUT: <animal --> robin>. %1.00;0.45% {3 : 1;2} 
+********** conversion
+  IN: <bird --> swimmer>. %1.00;0.90% {0 : 1} 
+  IN: <swimmer --> bird>?  {0 : 2} 
+6
+ OUT: <swimmer --> bird>. %1.00;0.47% {6 : 1} 
+********** "y/n" question
+  IN: <bird --> swimmer>. %1.00;0.90% {0 : 1} 
+  IN: <bird --> swimmer>?  {0 : 2} 
+1
+ OUT: <bird --> swimmer>. %1.00;0.90% {0 : 1} 
+********** "wh" question
+  IN: <bird --> swimmer>. %1.00;0.80% {0 : 1} 
+  IN: <?1 --> swimmer>?  {0 : 2} 
+5
+ OUT: <bird --> swimmer>. %1.00;0.80% {0 : 1} 
+ OUT: <?1 --> bird>?  {5 : 2;1} 
+ OUT: <bird --> ?1>?  {5 : 2;1} 
+ OUT: <?1 <-> bird>?  {5 : 2;1} 
+********** backward inference
+  IN: <bird --> swimmer>. %1.00;0.80% {0 : 1} 
+  IN: <?1 --> swimmer>?  {0 : 2} 
+5
+ OUT: <bird --> swimmer>. %1.00;0.80% {0 : 1} 
+ OUT: <?1 --> bird>?  {5 : 2;1} 
+ OUT: <bird --> ?1>?  {5 : 2;1} 
+ OUT: <?1 <-> bird>?  {5 : 2;1} 
