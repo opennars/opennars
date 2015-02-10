@@ -2,8 +2,8 @@ package nars.control;
 
 import nars.core.Core;
 import nars.core.Parameters;
-import nars.logic.FireConcept;
-import nars.logic.ImmediateProcess;
+import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ImmediateProcess;
 import nars.logic.NALOperator;
 import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
@@ -89,7 +89,7 @@ public class DefaultCore extends UniCore {
 
         //1 concept
         /*if (memory.newTasks.isEmpty())*/ {
-            FireConcept f = nextTaskLink(nextConcept());
+            ConceptFire f = nextTaskLink(nextConcept());
             if (f != null) {
                 f.run();
             }
@@ -107,7 +107,7 @@ public class DefaultCore extends UniCore {
 
     }
 
-    private FireConcept nextTaskLink(Concept concept) {
+    private ConceptFire nextTaskLink(Concept concept) {
         if (concept == null) return null;
 
         TaskLink taskLink = concept.taskLinks.PEEKNEXT();

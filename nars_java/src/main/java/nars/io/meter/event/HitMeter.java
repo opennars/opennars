@@ -35,6 +35,9 @@ public class HitMeter extends FunctionMeter<Long> {
     public long hit() {
         return hits.incrementAndGet();
     }
+    public long hit(int n) {
+        return hits.addAndGet(n);
+    }
     
     public long count() {
         return hits.get();

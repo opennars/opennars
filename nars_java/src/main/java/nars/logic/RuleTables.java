@@ -336,7 +336,7 @@ public class RuleTables {
 
     /* ----- conditional inferences ----- */
     /**
-     * The detachment rule, with variable unification
+     * The detachment reason, with variable unification
      *
      * @param originalMainSentence The premise that is an Implication or
      * Equivalence
@@ -345,15 +345,15 @@ public class RuleTables {
      * @param index The location of the second premise in the first
      * @param nal Reference to the memory
      */
-    public static void detachmentWithVar(Sentence originalMainSentence, Sentence subSentence, int index, NAL nal) {
-        if(originalMainSentence==null)  {
+    public static void detachmentWithVar(Sentence<Statement> originalMainSentence, Sentence subSentence, int index, NAL nal) {
+        if(originalMainSentence==null)
             return;
-        }
+
+//        if (!(originalMainSentence.term instanceof Statement))
+//            return;
+
         Sentence mainSentence = originalMainSentence;   // for substitution
-        
-        if (!(mainSentence.term instanceof Statement))
-            return;
-        
+
         Statement statement = (Statement) mainSentence.term;
         
         Term component = statement.term[index];
@@ -549,38 +549,6 @@ public class RuleTables {
         
     }
 
-    /* ----- logic with one TaskLink only ----- */
-    /**
-     * The TaskLink is of type TRANSFORM, and the conclusion is an equivalent
-     * transformation
-     *
-     * @param tLink The task tlink
-     * @param nal Reference to the memory
-     */
     public static void transformTask(TaskLink tLink, NAL nal) {
-        CompoundTerm content = nal.getCurrentTask().getTerm();
-        short[] indices = tLink.index;
-        Term inh = null;
-        if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
-            inh = content;
-        } else if (indices.length == 3) {   // <<(*, term, #) --> #> ==> #>
-            inh = content.term[indices[0]];
-        } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
-            Term component = content.term[indices[0]];
-            if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
-                
-                Term[] cterms = ((CompoundTerm) component).term;
-                if (indices[1] < cterms.length-1)
-                    inh = cterms[indices[1]];
-                else
-                    return;
-                
-            } else {
-                return;
-            }
-        }
-        if (inh instanceof Inheritance) {
-            StructuralRules.transformProductImage((Inheritance) inh, content, indices, nal);
-        }
     }
 }

@@ -14,7 +14,7 @@ class MJCellUI extends Frame {
 	public final MJCell mjc;
 	public MJOpen mjo;
 	public String sInitGame = "Generations"; // initial game
-	public String sInitRule = "Brian's Brain"; // initial rule
+	public String sInitRule = "Brian's Brain"; // initial reason
 	public String sInitPatt = ""; // optional initial pattern
 	public boolean bInitPanelLeft = true; // Left panel visible
 	public boolean bInitPanelBotm = true; // Bottom panel visible
@@ -390,7 +390,7 @@ class MJCellUI extends Frame {
 		PatDlg = new MJPatternsList(new Frame(""), this);
 		FavDlg = new MJFavourities(new Frame(""), this);
 
-		// initial rule
+		// initial reason
 		cmbGames.select(sInitGame);
 		InitRules();
 		cmbRules.select(sInitRule);
@@ -405,7 +405,7 @@ class MJCellUI extends Frame {
 					+ cmbRules.getSelectedItem() + "/" + sInitPatt);
 		}
 
-		// prepare the label for the rule definition
+		// prepare the label for the reason definition
 		int iLen = lblRule.getText().length();
 		if (iLen < 20) {
 			// a trick - I set a long text so that the label length
@@ -448,7 +448,7 @@ class MJCellUI extends Frame {
 			for (i = 0; i < mjr.Rules[iGame].size(); i++)
 				cmbRules.addItem(((CARule) mjr.Rules[iGame].elementAt(i)).name);
 		}
-		SendActiveRule(); // activate also the rule
+		SendActiveRule(); // activate also the reason
 	}
 
 	// ----------------------------------------------------------------
@@ -465,19 +465,19 @@ class MJCellUI extends Frame {
 	}
 
 	// ----------------------------------------------------------------
-	// Activate the given rule
+	// Activate the given reason
 	public void ActivateRule(String sRule) {
 		cmbRules.select(sRule);
 		SendActiveRule();
 	}
 
 	// ----------------------------------------------------------------
-	// Interprete the rule from the combo box and send it to the board
+	// Interprete the reason from the combo box and send it to the board
 	public void SendActiveRule() {
 		int i, iGame;
 		String sRuleName = cmbRules.getSelectedItem();
 		String sGameName = cmbGames.getSelectedItem();
-		String sRuleDef = "No rule";
+		String sRuleDef = "No reason";
 
 		mjb.stop();
 		iGame = mjr.GetGameIndex(sGameName);
@@ -488,12 +488,12 @@ class MJCellUI extends Frame {
 	}
 
 	// ----------------------------------------------------------------
-	// send the specified rule to the board
+	// send the specified reason to the board
 	public void SendRule(int iGame, String sRuleName, String sRuleDef) {
 		mjb.SetRule(iGame, sRuleName, sRuleDef);
 		if (sRuleDef.length() > 20)
 			sRuleDef = sRuleDef.substring(0, 17) + "...";
-		lblRule.setText(sRuleDef); // show rule definition
+		lblRule.setText(sRuleDef); // show reason definition
 		UpdateUI(); // update dynamic elements of the UI
 	}
 
@@ -796,23 +796,23 @@ class MJCellUI extends Frame {
 	// ----------------------------------------------------------------
 	// Allow to define custom rules
 	private void DefineUserRules() {
-		// input the user rule
+		// input the user reason
 		InputBox ib = new InputBox(new Frame(""), mjb.RuleDef, "User rules",
 				" Enter your own rules (refer to the rules lexicon for syntax):");
 		requestFocus();
 		if (ib.isAccepted) {
-			String sGameName = mjr.GetGameName(mjb.CrrGame); // correct the rule
+			String sGameName = mjr.GetGameName(mjb.CrrGame); // correct the reason
 			String sRuleDef = ib.txtFld.getText();
 			sRuleDef = mjr.CorrectRuleDef(sGameName, sRuleDef);
 
-			// if the rule is new, add it as a user rule
+			// if the reason is new, add it as a user reason
 			String sRuleName = mjr.GetRuleName(sGameName, sRuleDef);
-			if (sRuleName.length() == 0) // no such rule yet, add it
+			if (sRuleName.length() == 0) // no such reason yet, add it
 			{
-				cmbRules.select(MJRules.S_USERRULE); // activate "User rule"
+				cmbRules.select(MJRules.S_USERRULE); // activate "User reason"
 				// item
 				SendRule(mjb.CrrGame, MJRules.S_USERRULE, sRuleDef);
-				// store the user rule
+				// store the user reason
 				mjr.Rules[mjb.CrrGame].addElement(new CARule(
 						MJRules.S_USERRULE, sRuleDef));
 			} else // one of existing rules

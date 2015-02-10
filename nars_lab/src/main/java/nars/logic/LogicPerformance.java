@@ -18,6 +18,7 @@ import nars.io.condition.OutputCondition;
 import nars.io.condition.OutputContainsCondition;
 import nars.logic.entity.*;
 import nars.logic.nal8.Operation;
+import nars.logic.reason.ConceptFire;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.TimeNode;
 import nars.util.graph.NARGraph.UniqueEdge;
@@ -136,7 +137,7 @@ public class LogicPerformance {
             }
         }
         
-        public void explain(long t, FireConcept f) {
+        public void explain(long t, ConceptFire f) {
             //Concept conceptFired, TaskLink tlink, List<Task> generated) {
             Term term = f.getCurrentConcept().term;
             TaskLink link = f.getCurrentTaskLink();
@@ -269,7 +270,7 @@ public class LogicPerformance {
          n.on(ConceptFired.class, new ConceptFired() {
 
             @Override
-            public void onFire(FireConcept f) {                
+            public void onFire(ConceptFire f) {
                 
                 process.explain(n.time(), f);
             }            

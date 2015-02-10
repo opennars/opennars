@@ -26,7 +26,7 @@ import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.logic.ImmediateProcess;
+import nars.logic.reason.ImmediateProcess;
 import nars.logic.NALOperator;
 import nars.logic.NAL;
 import nars.logic.Terms.Termable;
@@ -230,17 +230,17 @@ public class Concept extends Item<Term> implements Termable {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT:
-                memory.logic.JUDGMENT_PROCESS.hit();
                 processJudgment(nal, task);
+                memory.logic.JUDGMENT_PROCESS.hit();
                 break;
             case Symbols.GOAL:
-                memory.logic.GOAL_PROCESS.hit();
                 processGoal(nal, task);
+                memory.logic.GOAL_PROCESS.hit();
                 break;
             case Symbols.QUESTION:
             case Symbols.QUEST:
-                memory.logic.QUESTION_PROCESS.hit();
                 processQuestion(nal, task);
+                memory.logic.QUESTION_PROCESS.hit();
                 break;
             default:
                 throw new RuntimeException("Invalid sentence type");
@@ -293,9 +293,9 @@ public class Concept extends Item<Term> implements Termable {
     protected void processJudgment(final ImmediateProcess nal, final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief;
-        synchronized(beliefs) {
-            oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
-        }
+
+        oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
+
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
@@ -341,9 +341,9 @@ public class Concept extends Item<Term> implements Termable {
                 trySolution(judg, questions.get(i), nal);
             }
 
-            synchronized (beliefs) {
-                addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
-            }
+
+            addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+
         }
     }
 
@@ -410,9 +410,7 @@ public class Concept extends Item<Term> implements Termable {
         
         final Sentence goal = task.sentence, oldGoal;
 
-        synchronized (goals) {
-            oldGoal = selectCandidate(goal, goals); // revise with the existing desire values
-        }
+        oldGoal = selectCandidate(goal, goals); // revise with the existing desire values
 
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
@@ -433,9 +431,9 @@ public class Concept extends Item<Term> implements Termable {
 
             final Sentence belief;
 
-            synchronized (beliefs) {
-                belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
-            }
+
+            belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+
 
             if (belief != null) {
                 trySolution(belief, task, nal); // check if the Goal is already satisfied
@@ -444,10 +442,7 @@ public class Concept extends Item<Term> implements Termable {
             // still worth pursuing?
             if (task.aboveThreshold()) {
 
-                synchronized (goals) {
-                    addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
-                }
-
+                addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
 
                 if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
                     if(!executeDecision(task)) {
@@ -476,41 +471,39 @@ public class Concept extends Item<Term> implements Termable {
                 throw new RuntimeException(newTask.sentence + " has non-null truth");
         }
 
-        synchronized (existing) {
 
-            boolean newQuestion = existing.isEmpty();
+        boolean newQuestion = existing.isEmpty();
 
-            for (final Task t : existing) {
+        for (final Task t : existing) {
 
-                //equality test only needs to considers parent
-                // (truth==null in all cases, and term will be equal)
+            //equality test only needs to considers parent
+            // (truth==null in all cases, and term will be equal)
 
-                if (Parameters.DEBUG) {
-                    if (!t.equalPunctuations(newTask))
-                        throw new RuntimeException("Sentence punctuation mismatch: " + t.sentence.punctuation + " != " + newTask.sentence.punctuation);
-                    if (t.sentence.truth!=null)
-                        throw new RuntimeException("Non-null truth value in existing tasks buffer");
-                    //Not necessary, and somewhat expensive:
-                    /*if (!t.sentence.equalTerms(newTask.sentence))
-                        throw new RuntimeException("Term mismatch");*/
-                }
-
-                if (t.equalParents(newTask)) {
-                    ques = t.sentence;
-                    newQuestion = false;
-                    break;
-                }
+            if (Parameters.DEBUG) {
+                if (!t.equalPunctuations(newTask))
+                    throw new RuntimeException("Sentence punctuation mismatch: " + t.sentence.punctuation + " != " + newTask.sentence.punctuation);
+                if (t.sentence.truth!=null)
+                    throw new RuntimeException("Non-null truth value in existing tasks buffer");
+                //Not necessary, and somewhat expensive:
+                /*if (!t.sentence.equalTerms(newTask.sentence))
+                    throw new RuntimeException("Term mismatch");*/
             }
 
-            if (newQuestion) {
-                if (existing.size() + 1 > memory.param.conceptQuestionsMax.get()) {
-                    Task removed = existing.remove(0);    // FIFO
-                    memory.event.emit(ConceptQuestionRemove.class, this, removed, newTask);
-                }
-
-                existing.add(newTask);
-                memory.event.emit(ConceptQuestionAdd.class, this, newTask);
+            if (t.equalParents(newTask)) {
+                ques = t.sentence;
+                newQuestion = false;
+                break;
             }
+        }
+
+        if (newQuestion) {
+            if (existing.size() + 1 > memory.param.conceptQuestionsMax.get()) {
+                Task removed = existing.remove(0);    // FIFO
+                memory.event.emit(ConceptQuestionRemove.class, this, removed, newTask);
+            }
+
+            existing.add(newTask);
+            memory.event.emit(ConceptQuestionAdd.class, this, newTask);
         }
 
         final Sentence newAnswer = (ques.isQuestion())
@@ -704,7 +697,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param taskBudget The BudgetValue of the task
      * @return whether any activity happened as a result of this invocation
      */
-    public /* synchronized */ boolean linkToTerms(final BudgetValue taskBudget) {
+    public boolean linkToTerms(final BudgetValue taskBudget) {
 
         if (termLinkBuilder.size() == 0)
             return false;

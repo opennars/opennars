@@ -22,6 +22,7 @@ package nars.logic;
 
 import nars.core.Memory;
 import nars.logic.entity.*;
+import nars.logic.reason.ConceptFire;
 
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
@@ -74,9 +75,9 @@ public final class BudgetFunctions extends UtilityFunctions {
         task.decPriority(1f - difT);
         task.decDurability(1f - difT);
 
-        boolean feedbackToLinks = (nal instanceof FireConcept);
+        boolean feedbackToLinks = (nal instanceof ConceptFire);
         if (feedbackToLinks) {
-            FireConcept fc = (FireConcept)nal;
+            ConceptFire fc = (ConceptFire)nal;
             TaskLink tLink = fc.getCurrentTaskLink();
             tLink.decPriority(1f - difT);
             tLink.decDurability(1f - difT);
@@ -334,7 +335,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         Item t =   nal.getCurrentTask();
                 //nal.getCurrentTaskLink();
 
-        TermLink bLink = nal instanceof FireConcept ? ((FireConcept)nal).getCurrentBeliefLink() : null;
+        TermLink bLink = nal instanceof ConceptFire ? ((ConceptFire)nal).getCurrentBeliefLink() : null;
 
         if (t == null) {
             t = nal.getCurrentTask();

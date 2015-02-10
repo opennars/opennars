@@ -26,7 +26,7 @@ public class RuleGene {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the rule string
+	// Parse the reason string
 	// Example: '345/2/4'
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
@@ -80,7 +80,7 @@ public class RuleGene {
 	}
 
 	// ----------------------------------------------------------------
-	// Create the rule string
+	// Create the reason string
 	// Example: '345/2/4'
 	public String GetAsString() {
 		String sBff = "";
@@ -117,7 +117,7 @@ public class RuleGene {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the rule
+	// Perform one pass of the reason
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		short bOldVal, bNewVal;

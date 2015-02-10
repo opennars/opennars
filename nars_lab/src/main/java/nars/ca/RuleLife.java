@@ -24,7 +24,7 @@ public class RuleLife {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the rule string
+	// Parse the reason string
 	// Example: '23/3'
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
@@ -75,7 +75,7 @@ public class RuleLife {
 	}
 
 	// ----------------------------------------------------------------
-	// Create the rule string
+	// Create the reason string
 	// Example: '23/3'
 	public String GetAsString() {
 		String sBff = "";
@@ -106,7 +106,7 @@ public class RuleLife {
     }
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the rule
+	// Perform one pass of the reason
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		short bOldVal, bNewVal;

@@ -27,12 +27,12 @@ public class RuleUser {
 	public void ResetToDefaults() {
 		isHist = true; // with history?
 		iClo = 16; // count of colors
-		RuleIdx = RIDX_HOD; // default rule
+		RuleIdx = RIDX_HOD; // default reason
 		Increment = 3; // increment
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the rule string
+	// Parse the reason string
 	// Example: RUG,C128,I1
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
@@ -111,7 +111,7 @@ public class RuleUser {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the rule
+	// Perform one pass of the reason
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][]) {
 		short bOldVal, bNewVal;

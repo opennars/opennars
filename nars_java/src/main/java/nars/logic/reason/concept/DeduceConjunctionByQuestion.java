@@ -1,7 +1,7 @@
-package nars.logic.rule.concept;
+package nars.logic.reason.concept;
 
 import nars.logic.CompositionalRules;
-import nars.logic.FireConcept;
+import nars.logic.reason.ConceptFire;
 import nars.logic.entity.TaskLink;
 import nars.logic.entity.TermLink;
 
@@ -11,7 +11,7 @@ import nars.logic.entity.TermLink;
 public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
 
     @Override
-    public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
         if (f.getCurrentBelief()!=null)
             CompositionalRules.dedConjunctionByQuestion(
                     taskLink.getSentence(), f.getCurrentBelief(), f);

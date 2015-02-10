@@ -45,7 +45,7 @@ public class Compiler {
     }
 
     /**
-     * Reset the compiler. Will remove all rule entries as well.
+     * Reset the compiler. Will remove all reason entries as well.
      */
 //    Compiler reset() {
 //        //for now, do nothing here. any reset will be triggered and managed by the WAM 

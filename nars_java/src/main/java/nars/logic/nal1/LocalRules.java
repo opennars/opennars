@@ -21,7 +21,6 @@
 package nars.logic.nal1;
 
 import nars.core.Events.Answer;
-import nars.core.Events.Unsolved;
 import nars.core.Memory;
 import nars.io.Output;
 import nars.io.Symbols;
@@ -148,7 +147,7 @@ public class LocalRules {
         
         if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
             //System.out.println("Unsolved: Temporal order not matching");
-            memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
+            //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return false;
         }
         
@@ -161,7 +160,7 @@ public class LocalRules {
                     memory.emotion.adjustHappy(oldQ, task.getPriority());
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
-                memory.emit(Unsolved.class, task, belief, "Lower quality");               
+                //memory.emit(Unsolved.class, task, belief, "Lower quality");
                 return false;
             }
         }
@@ -179,7 +178,6 @@ public class LocalRules {
             }
 
             belief = belief.clone(content);
-
             if (belief == null) {
                 //throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
                 return false;
@@ -225,7 +223,7 @@ public class LocalRules {
             return true;
         }
         else {
-            memory.emit(Unsolved.class, task, belief, "Insufficient budget");
+            //memory.emit(Unsolved.class, task, belief, "Insufficient budget");
         }
         return false;
     }

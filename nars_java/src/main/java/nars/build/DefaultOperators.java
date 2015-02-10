@@ -86,7 +86,7 @@ public class DefaultOperators {
          *
         
         
-         * do               // to turn a judgment into a goal (production rule) ??
+         * do               // to turn a judgment into a goal (production reason) ??
         
          *
          * count            // count the number of elements in a set

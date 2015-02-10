@@ -36,7 +36,7 @@ public class RuleWLife {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the rule string
+	// Parse the reason string
 	// Example: #RULE NW0,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE0,HI7,RS2,RB1,RB2,RB3
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
@@ -136,7 +136,7 @@ public class RuleWLife {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the rule
+	// Perform one pass of the reason
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		short bOldVal, bNewVal;

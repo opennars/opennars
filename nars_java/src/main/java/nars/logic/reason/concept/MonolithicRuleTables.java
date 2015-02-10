@@ -1,6 +1,6 @@
-package nars.logic.rule.concept;
+package nars.logic.reason.concept;
 
-import nars.logic.FireConcept;
+import nars.logic.reason.ConceptFire;
 import nars.logic.RuleTables;
 import nars.logic.Variables;
 import nars.logic.entity.*;
@@ -17,7 +17,7 @@ import static nars.io.Symbols.VAR_INDEPENDENT;
 @Deprecated public class MonolithicRuleTables extends ConceptFireTaskTerm {
 
     @Override
-    public boolean apply(FireConcept f, TaskLink tLink, TermLink bLink) {
+    public boolean apply(ConceptFire f, TaskLink tLink, TermLink bLink) {
 
         Sentence taskSentence = tLink.getSentence();
         final Term taskTerm = tLink.getTerm();
@@ -74,7 +74,7 @@ import static nars.io.Symbols.VAR_INDEPENDENT;
                             if (beliefTerm instanceof Implication) {
                                 Term[] u = new Term[] { beliefTerm, taskTerm };
                                 if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u)) {
-                                    Sentence newBelief = belief.clone(u[0]);
+                                    Sentence<Statement> newBelief = belief.clone(u[0], Statement.class);
                                     Sentence newTaskSentence = taskSentence.clone(u[1]);
                                     RuleTables.detachmentWithVar(newBelief, newTaskSentence, bIndex, f);
                                 } else {

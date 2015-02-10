@@ -6,7 +6,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.BudgetFunctions;
-import nars.logic.FireConcept;
+import nars.logic.reason.ConceptFire;
 import nars.logic.entity.*;
 import nars.util.bag.Bag;
 import nars.util.bag.select.BagActivator;
@@ -57,7 +57,7 @@ abstract public class UniCore implements Core {
             ((Memory.MemoryAware)concepts).setMemory(m);
     }
 
-    protected static class DefaultFireConcept extends FireConcept {
+    protected static class DefaultFireConcept extends ConceptFire {
 
         private final Bag<Term, Concept> bag;
 
@@ -72,7 +72,7 @@ abstract public class UniCore implements Core {
         }
     }
 
-    protected FireConcept newFireConcept(Concept c, TaskLink t) {
+    protected ConceptFire newFireConcept(Concept c, TaskLink t) {
         return new DefaultFireConcept(memory, concepts, c, t);
     }
 

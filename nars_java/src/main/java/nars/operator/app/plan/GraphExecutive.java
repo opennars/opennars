@@ -718,7 +718,7 @@ public class GraphExecutive {
                     }                    
                 }
                 else {
-                    //accumulate delay if the temporal rule involves time difference??
+                    //accumulate delay if the temporal reason involves time difference??
                     /*
                     if (nonIntervalAdded) { 
                         ////ignore prefix intervals                        

@@ -409,7 +409,7 @@ public class Parser implements ParserConstants {
         throw new Error("Missing return statement in function");
     }
 
-// Possible body parts of a rule.
+// Possible body parts of a reason.
     final public void Bodypart() throws ParseException {
         if (jj_2_4(2147483647)) {
             Infix();
@@ -672,7 +672,7 @@ public class Parser implements ParserConstants {
         toHeap.addVar(name.image);
     }
 
-// A rule. These are stored on the heap as :-(head,bodypt1,bodypt2...) if there is a body involved.
+// A reason. These are stored on the heap as :-(head,bodypt1,bodypt2...) if there is a body involved.
     final public void Rule() throws ParseException {
         toHeap.startRule();
         if (jj_2_8(2147483647)) {

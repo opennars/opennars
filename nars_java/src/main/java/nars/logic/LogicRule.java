@@ -1,7 +1,6 @@
 package nars.logic;
 
 
-import nars.logic.rule.TaskFireTerm;
 import reactor.event.Event;
 import reactor.event.registry.Registration;
 import reactor.event.selector.ClassSelector;
@@ -9,6 +8,7 @@ import reactor.event.selector.PredicateSelector;
 import reactor.event.selector.Selector;
 import reactor.function.Consumer;
 import reactor.function.Predicate;
+
 
 /**
  * Base class for NARS logical reasoner / inference rules

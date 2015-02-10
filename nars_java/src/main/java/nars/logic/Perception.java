@@ -1,4 +1,4 @@
-package nars.logic.rule;
+package nars.logic;
 
 import com.google.common.collect.Iterators;
 import nars.io.InPort;

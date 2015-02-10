@@ -1,9 +1,8 @@
 package nars.core;
 
-import nars.event.AbstractReaction;
 import nars.event.Reaction;
-import nars.logic.FireConcept;
-import nars.logic.ImmediateProcess;
+import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ImmediateProcess;
 import nars.logic.NAL;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
@@ -145,8 +144,7 @@ public class Events {
     */
     
     public static class Answer { }
-    public static class Unsolved { }
-    
+
     
     /** fired at the END of a ConceptFire task */
     abstract public static class ConceptFired implements Reaction {
@@ -156,10 +154,10 @@ public class Events {
          * Concept n.getCurrentConcept()
          * TaskLink n.getCurrentTaskLink()
          */
-        abstract public void onFire(FireConcept n);
+        abstract public void onFire(ConceptFire n);
         
         @Override public void event(Class event, Object[] args) {
-            onFire((FireConcept)args[0]);
+            onFire((ConceptFire)args[0]);
         }
         
     }

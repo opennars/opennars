@@ -30,7 +30,7 @@ public class RuleCyclic {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the rule string
+	// Parse the reason string
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
 		String sTok;
@@ -124,7 +124,7 @@ public class RuleCyclic {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the rule
+	// Perform one pass of the reason
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][]) {
 		short bOldVal, bNewVal;

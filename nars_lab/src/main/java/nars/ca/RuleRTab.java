@@ -33,7 +33,7 @@ public class RuleRTab {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the rule string
+	// Parse the reason string
 	public void InitFromString(String sStr) {
 		int i_Stt, i_Ngh, iNum, iTmp;
 		StringTokenizer st;
@@ -61,7 +61,7 @@ public class RuleRTab {
 					case 3: // all from bitplane 1 can fire
 						fAll1Fire = (iTmp == 1); // Rules table - all from bitplane 1 can fire
 						break;
-					default: // the rule follows
+					default: // the reason follows
 						if (iTmp < 0)
 							iTmp = 0;
 						if (iTmp > MJBoard.MAX_CLO)
@@ -138,7 +138,7 @@ public class RuleRTab {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the rule
+	// Perform one pass of the reason
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		short bOldVal, bNewVal;

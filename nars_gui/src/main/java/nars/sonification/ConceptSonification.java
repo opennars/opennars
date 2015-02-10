@@ -4,12 +4,11 @@ import automenta.vivisect.Audio;
 import automenta.vivisect.Video;
 import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.granular.Granulize;
-import automenta.vivisect.audio.sample.SampleLoader;
 import automenta.vivisect.audio.synth.SineWave;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
-import nars.logic.FireConcept;
+import nars.logic.reason.ConceptFire;
 import nars.logic.entity.Concept;
 
 import java.io.IOException;
@@ -108,7 +107,7 @@ public class ConceptSonification extends AbstractReaction {
         }
 
         else if (event == Events.ConceptFired.class) {
-            FireConcept f = (FireConcept)args[0];
+            ConceptFire f = (ConceptFire)args[0];
             update(f.getCurrentConcept());
         }
 

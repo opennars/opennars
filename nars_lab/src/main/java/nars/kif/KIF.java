@@ -414,16 +414,16 @@ public class KIF {
      * position in the statement. The key is of the form type-[num]-term, where
      * [num] is only present when the type is "arg", meaning a statement in
      * which the term is nested only within one pair of parentheses. The other
-     * possible types are "ant" for rule antecedent, "cons" for rule consequent,
+     * possible types are "ant" for reason antecedent, "cons" for reason consequent,
      * and "stmt" for cases where the term is nested inside multiple levels of
      * parentheses. An example key would be arg-0-instance for a appearance of
      * the term "instance" in a statement in the predicate position.
      *
      * @param sval - the token such as "instance", "Human" etc.
      * @param inAntecedent - whether the term appears in the antecedent of a
-     * rule.
+     * reason.
      * @param inConsequent - whether the term appears in the consequent of a
-     * rule.
+     * reason.
      * @param argumentNum - the argument position in which the term appears. The
      * predicate position is argument 0. The first argument is 1 etc.
      * @param parenLevel - if the paren level is > 1 then the term appears

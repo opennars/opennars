@@ -1,8 +1,8 @@
-package nars.logic.rule.concept;
+package nars.logic.reason.concept;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.FireConcept;
+import nars.logic.reason.ConceptFire;
 import nars.logic.entity.*;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
@@ -16,7 +16,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
 
     @Override
-    public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
 
         if (!f.nal(7)) return true;
         final Sentence belief = f.getCurrentBelief();

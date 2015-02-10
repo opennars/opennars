@@ -18,7 +18,7 @@
 package nars.operator.mental;
 
 import nars.core.Memory;
-import nars.logic.FireConcept;
+import nars.logic.reason.ConceptFire;
 import nars.logic.entity.*;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
@@ -53,7 +53,7 @@ public class Consider extends Operator implements Mental {
 
         TaskLink taskLink = concept.taskLinks.PEEKNEXT();
         if (taskLink!=null) {
-            new FireConcept(concept, taskLink) {
+            new ConceptFire(concept, taskLink) {
 
                 @Override
                 public void beforeFinish() {

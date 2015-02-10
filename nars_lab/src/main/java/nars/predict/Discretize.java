@@ -7,7 +7,7 @@ package nars.predict;
 import nars.core.NAR;
 import nars.io.Symbols;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.ImmediateProcess;
+import nars.logic.reason.ImmediateProcess;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;

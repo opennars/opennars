@@ -8,7 +8,7 @@ package nars.ca;// Mirek's Java Cellebration
 import java.util.*;
 
 public class MJRules {
-	public static final String S_USERRULE = "User rule";
+	public static final String S_USERRULE = "User reason";
 
 	public static final int GAME_LIFE = 0; // Standard Conway-like game
 	public static final int GAME_GENE = 1; // Generations
@@ -63,8 +63,8 @@ public class MJRules {
 	public static final String GAME_SPEC_Abbr = "SPEC"; // Special rules
 
 	// definitions of rules
-	public static final int NAM = 0; // rule name
-	public static final int RUL = 1; // rule definitioon
+	public static final int NAM = 0; // reason name
+	public static final int RUL = 1; // reason definitioon
 
 	public final Vector[] Rules = new Vector[GAME_LAST + 1]; // array of rules
 
@@ -96,7 +96,7 @@ public class MJRules {
 					if (sBff.startsWith("#")) // next family of rules
 					{
 						iGame = GetGameIndex(sBff.substring(1));
-					} else // next rule
+					} else // next reason
 					{
 						if (iGame >= 0) {
 							int whereSep = sBff.indexOf('|');
@@ -224,7 +224,7 @@ public class MJRules {
 	}
 
 	// ----------------------------------------------------------------
-	// Get the definition of the specified rule
+	// Get the definition of the specified reason
 	public String GetRuleDef(String sGameName, String sRuleName) {
 		String sRuleDef = "";
 		int i, iGame;
@@ -244,7 +244,7 @@ public class MJRules {
 	}
 
 	// ----------------------------------------------------------------
-	// Get the name of the specified rule definition
+	// Get the name of the specified reason definition
 	public String GetRuleName(String sGameName, String sRuleDef) {
 		String sRuleName = "";
 		int i, iGame = -1;
@@ -263,7 +263,7 @@ public class MJRules {
 	}
 
 	// ----------------------------------------------------------------
-	// Correct the definition of the given rule
+	// Correct the definition of the given reason
 	public String CorrectRuleDef(String sGameName, String sRuleDef) {
 		sRuleDef = sRuleDef.trim();
 		int iGame = GetGameIndex(sGameName);

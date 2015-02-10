@@ -2,16 +2,16 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.logic;
+package nars.logic.reason;
 
 import nars.core.Events;
-import nars.core.Memory;
 import nars.core.Parameters;
+import nars.logic.NAL;
+import nars.logic.NALRuleEngine;
 import nars.logic.entity.*;
-import nars.logic.nal5.Implication;
 
-/** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
-abstract public class FireConcept extends NAL {
+/** Firing a concept (reasoning event)  */
+abstract public class ConceptFire extends NAL {
 
     protected final Term currentTerm;
     protected final TaskLink currentTaskLink;
@@ -23,11 +23,11 @@ abstract public class FireConcept extends NAL {
 
     protected NALRuleEngine reasoner;
 
-    public FireConcept(Concept concept, TaskLink taskLink) {
+    public ConceptFire(Concept concept, TaskLink taskLink) {
         this(concept, taskLink, concept.memory.param.termLinkMaxReasoned.get());
     }
 
-    public FireConcept(Concept concept, TaskLink taskLink, int termLinkCount) {
+    public ConceptFire(Concept concept, TaskLink taskLink, int termLinkCount) {
         super(concept.memory, taskLink.getTask());
         this.currentTaskLink = taskLink;
         this.currentConcept = concept;
@@ -82,16 +82,9 @@ abstract public class FireConcept extends NAL {
 
         setCurrentBeliefLink(null);
 
-        if (currentTaskLink.type == TermLink.TRANSFORM) {
+        reasoner.fire(this);
 
-            RuleTables.transformTask(currentTaskLink, this); // to turn this into structural logic as below?
-
-            emit(Events.TermLinkTransform.class, currentTaskLink, currentConcept, this);
-            memory.logic.TERM_LINK_TRANSFORM.hit();
-
-        } else {
-
-            reason(currentTaskLink);
+        if (currentTaskLink.type != TermLink.TRANSFORM) {
 
             int noveltyHorizon = Parameters.NOVELTY_HORIZON;
 
@@ -131,29 +124,6 @@ abstract public class FireConcept extends NAL {
 
     }
 
-    /** reasoning processes involving only the task itself */
-    protected void reason(Sentence.Sentenceable taskLink) {
-
-        final Sentence taskSentence = taskLink.getSentence();
-
-        final Term taskTerm = taskSentence.term;
-
-        if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
-            //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
-
-            //Concept d=memory.concepts.sampleNextConcept();
-            //if(d!=null && d.term.equals(taskSentence.term)) {
-
-            double n=taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
-            double w=1.0/((n*(n-1))/2.0); //let's assume hierachical tuple (triangle numbers) amount for this
-            if(Memory.randomNumber.nextDouble() < w) { //so that NARS memory will not be spammed with contrapositions
-
-                StructuralRules.contraposition((Statement) taskTerm, taskSentence, this);
-                //}
-            }
-        }
-
-    }
 
 
     /**
@@ -188,8 +158,13 @@ abstract public class FireConcept extends NAL {
      */
     public void setCurrentBeliefLink(TermLink currentBeliefLink) {
 
-        if (this.currentBeliefLink == currentBeliefLink)
-            throw new RuntimeException("Setting the same current belief link");
+        if (this.currentBeliefLink == currentBeliefLink) {
+
+            if (currentBeliefLink != null)
+                throw new RuntimeException("Setting the same current belief link");
+
+            return;
+        }
 
         if (currentBeliefLink == null) {
             this.currentBelief = null;

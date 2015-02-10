@@ -8,14 +8,14 @@ import java.util.StringTokenizer;
 public class Rule1DBin {
 	public static final int MAX_RANGE = 4;
 
-	public final byte[] iAry = new byte[512]; // the rule
+	public final byte[] iAry = new byte[512]; // the reason
 	public String sHex; // Wolfram's code
 	public int iRng; // range, 1..4
 
 	// ----------------------------------------------------------------
 	public Rule1DBin() {
 		ResetToDefaults();
-		SetArray(); // prepare the rule array
+		SetArray(); // prepare the reason array
 	}
 
 	// ----------------------------------------------------------------
@@ -26,7 +26,7 @@ public class Rule1DBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the rule string
+	// Parse the reason string
 	// Example: "R2,W23AC2"
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
@@ -47,7 +47,7 @@ public class Rule1DBin {
 			}
 		}
 		// done
-		SetArray(); // prepare the rule array
+		SetArray(); // prepare the reason array
 	}
 
 	// ----------------------------------------------------------------
@@ -55,11 +55,11 @@ public class Rule1DBin {
 	public void InitFromPrm(int i_Rng, String sBinStr) {
 		iRng = i_Rng;
 		sHex = CvtBinStr2HexStr(sBinStr);
-		SetArray(); // prepare the rule array
+		SetArray(); // prepare the reason array
 	}
 
 	// ----------------------------------------------------------------
-	// Create the rule string
+	// Create the reason string
 	// Example: "R2,W23AC2"
 	public String GetAsString() {
 		String sBff;
@@ -70,7 +70,7 @@ public class Rule1DBin {
 		// range
 		sBff = "R" + String.valueOf(iRng);
 
-		// rule
+		// reason
 		sBff = sBff + ",R" + sHex;
 
 		return sBff;
@@ -91,7 +91,7 @@ public class Rule1DBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Prepare the rule array
+	// Prepare the reason array
 	private void SetArray() {
 		String sBinStr;
 		int i, iCnt;
@@ -106,7 +106,7 @@ public class Rule1DBin {
 			iCnt = iCnt * 2;
 		sBinStr = LPad(sBinStr, iCnt, '0');
 
-		// set the rule array
+		// set the reason array
 		for (i = 0; i < iCnt; i++) {
 			if (sBinStr.charAt(i) == '1')
 				iAry[iCnt - i - 1] = 1;
@@ -231,7 +231,7 @@ public class Rule1DBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the rule
+	// Perform one pass of the reason
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		short bOldVal, bNewVal;

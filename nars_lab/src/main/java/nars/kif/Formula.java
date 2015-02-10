@@ -1688,7 +1688,7 @@ public class Formula implements Comparable {
 
     /**
      * ***************************************************************
-     * Test whether this Formula is a rule
+     * Test whether this Formula is a reason
      */
     private boolean isRule() {
         boolean ans = false;

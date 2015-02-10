@@ -22,7 +22,7 @@ public class RuleVote {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the rule string
+	// Parse the reason string
 	// Example: '46789'
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
@@ -32,7 +32,7 @@ public class RuleVote {
 		int iCharVal;
 		ResetToDefaults();
 
-		// QQtodo: no tokens in Vote rule now
+		// QQtodo: no tokens in Vote reason now
 		st = new StringTokenizer(sStr, ",/", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken();
@@ -63,7 +63,7 @@ public class RuleVote {
 	}
 
 	// ----------------------------------------------------------------
-	// Create the rule string
+	// Create the reason string
 	// Example: '46789'
 	public String GetAsString() {
 		String sBff = "";
@@ -88,7 +88,7 @@ public class RuleVote {
     }
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the rule
+	// Perform one pass of the reason
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		short bOldVal, bNewVal;

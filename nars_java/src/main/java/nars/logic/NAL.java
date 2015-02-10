@@ -201,7 +201,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
             stamp.chainReplace(currentTaskContent,currentTaskContent);
         }
-        //its a logic rule, so we have to do the derivation chain check to hamper cycles
+        //its a logic reason, so we have to do the derivation chain check to hamper cycles
         if (!revised) {
             Term taskTerm = task.getTerm();
 

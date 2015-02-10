@@ -48,12 +48,8 @@ import nars.logic.nal7.Tense;
 import nars.logic.nal8.ImmediateOperation;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
-import nars.logic.rule.Perception;
+import nars.logic.Perception;
 import nars.operator.app.plan.MultipleExecutionManager;
-import nars.operator.io.Echo;
-import nars.operator.io.PauseInput;
-import nars.operator.io.Reset;
-import nars.operator.io.SetVolume;
 import nars.util.bag.Bag;
 import reactor.function.Supplier;
 

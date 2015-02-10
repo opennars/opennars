@@ -2,10 +2,11 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.logic;
+package nars.logic.reason;
 
 import nars.core.Events;
 import nars.core.Memory;
+import nars.logic.NAL;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 
@@ -39,14 +40,13 @@ public class ImmediateProcess extends NAL {
         Concept c = memory.conceptualize(currentTask.budget, getCurrentTask().getTerm());
         if (c == null) return;
 
-        boolean processed = c.directProcess(this, currentTask);
-        if (!processed) return;
+        if (c.directProcess(this, currentTask)) {
 
-        c.link(currentTask);
+            c.link(currentTask);
 
-        emit(Events.TaskImmediateProcessed.class, getCurrentTask(), this, c);
-
-        memory.logic.TASK_IMMEDIATE_PROCESS.hit();
+            emit(Events.TaskImmediateProcessed.class, getCurrentTask(), this, c);
+            memory.logic.TASK_IMMEDIATE_PROCESS.hit();
+        }
     }
 
 

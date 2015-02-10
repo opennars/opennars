@@ -93,7 +93,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     /**
      * Create a Sentence with the given fields
      *
-     * @param content The Term that forms the content of the sentence
+     * @param _content The Term that forms the content of the sentence
      * @param punctuation The punctuation indicating the type of the sentence
      * @param truth The truth value of the sentence, null for question
      * @param stamp The stamp of the sentence indicating its derivation time and
@@ -284,10 +284,10 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
     /** returns a valid sentence CompoundTerm, or returns null */
-    public static CompoundTerm termOrNull(Term t) {
+    public static <X extends CompoundTerm> X termOrNull(Term t) {
         if (invalidSentenceTerm(t))
             return null;
-        return ((CompoundTerm)t);
+        return (X)t;
     }
 
     
@@ -300,20 +300,47 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         return clon;
     }
 
-    /** Clone with a different Term */    
-    public final Sentence clone(final CompoundTerm t) {
-        return new Sentence(t, punctuation, 
-                truth!=null ? new TruthValue(truth) : null, 
+
+    public final <X extends CompoundTerm> Sentence<X> clone(Term t, Class<? extends X> necessaryTermType) {
+        X ct = termOrNull(t);
+        if (ct == null) return null;
+
+        if (!ct.getClass().isInstance(necessaryTermType))
+            return null;
+
+        if (ct.equals(term)) {
+            return (Sentence<X>) this;
+        }
+        return clone_(ct);
+
+    }
+
+    /** Clone with a different Term */
+    public <X extends CompoundTerm> Sentence<? extends X> clone(Term t) {
+        X ct = termOrNull(t);
+        if (ct == null) return null;
+
+        if (ct.equals(term)) {
+            //throw new RuntimeException("Clone with " + t + " would produces exact sentence");
+            return (Sentence<X>) this;
+        }
+
+        return clone_(ct);
+    }
+
+    protected <X extends CompoundTerm> Sentence<X> clone_(X t) {
+        return new Sentence<X>(t, punctuation,
+                truth!=null ? new TruthValue(truth) : null,
                 stamp.clone());
     }
 
-    public final Sentence clone(final Term t) {
-        //sentence content must be compoundterm
-        if (t instanceof CompoundTerm) {
-            return this.clone((CompoundTerm)t);
-        }
-        return null;
-    }
+//    public final Sentence clone(final CompoundTerm t) {
+//        //sentence content must be compoundterm
+//        if (t instanceof CompoundTerm) {
+//            return this.clone((CompoundTerm)t);
+//        }
+//        return null;
+//    }
 
 
     /**

@@ -4,7 +4,7 @@ import nars.jwam.datastructures.*;
 
 import java.util.*;
 
-// Editable rule base
+// Editable reason base
 public class RuleHeap {
 
     private HashMap<Integer, ArrayList<int[]>> heaps = null;		// f/n -> heap representations of entries
@@ -224,7 +224,7 @@ public class RuleHeap {
     }
 
     /**
-     * Add a heap to the rule base.
+     * Add a heap to the reason base.
      *
      * @param functor Functor it belongs to
      * @param heap The heap containing the new entry.
@@ -242,7 +242,7 @@ public class RuleHeap {
     }
 
     /**
-     * Add a heap to the rule base.
+     * Add a heap to the reason base.
      *
      * @param functor Functor it belongs to
      * @param heap The heap containing the new entry.

@@ -297,7 +297,7 @@ public class NarseseParser extends BaseParser<Object> {
         */
         return firstOf(
 
-                //TODO move to FunctionalOperationTerm() rule
+                //TODO move to FunctionalOperationTerm() reason
                 //Functional form of an Operation, ex: operator(p1,p2)
                 sequence(
                         Atom(),
@@ -386,7 +386,7 @@ public class NarseseParser extends BaseParser<Object> {
                 s(),
 
                 //special handling to allow (-- x) , without the comma
-                //TODO move the (-- x) case to a separate rule to prevent suggesting invalid completions like (-- x y)
+                //TODO move the (-- x) case to a separate reason to prevent suggesting invalid completions like (-- x y)
                 firstOf(
                     sequence( CompoundOperator(), s(), optional(Symbols.ARGUMENT_SEPARATOR)),
                     sequence(NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),

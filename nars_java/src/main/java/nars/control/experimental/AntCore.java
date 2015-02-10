@@ -7,8 +7,7 @@ package nars.control.experimental;
 import javolution.context.ConcurrentContext;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.FireConcept;
-import nars.logic.ImmediateProcess;
+import nars.logic.reason.ImmediateProcess;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
 

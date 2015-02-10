@@ -7,7 +7,7 @@ package nars;
 
 import nars.core.NAR;
 import nars.event.AbstractReaction;
-import nars.logic.ImmediateProcess;
+import nars.logic.reason.ImmediateProcess;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;

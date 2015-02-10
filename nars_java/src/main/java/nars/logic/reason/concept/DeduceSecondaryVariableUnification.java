@@ -1,7 +1,7 @@
-package nars.logic.rule.concept;
+package nars.logic.reason.concept;
 
 import nars.logic.CompositionalRules;
-import nars.logic.FireConcept;
+import nars.logic.reason.ConceptFire;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.entity.TaskLink;
@@ -15,7 +15,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
     //TODO decide if f.currentBelief needs to be checked for null like it was originally
 
     @Override
-    public boolean apply(FireConcept f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
         Task task = taskLink.getTarget();
         Sentence taskSentence = taskLink.getSentence();
 
