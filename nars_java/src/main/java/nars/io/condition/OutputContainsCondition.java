@@ -22,7 +22,7 @@ import java.util.TreeSet;
  * while collecting similar results (according to Levenshtein text distance).
  * 
  */
-public class OutputContainsCondition extends OutputCondition<Task> {
+public class OutputContainsCondition extends OutputCondition {
 
 
     public static class SimilarOutput implements Comparable<SimilarOutput> {

@@ -3,16 +3,25 @@ package nars.logic;
 import nars.core.*;
 import nars.io.ExampleFileInput;
 import nars.io.condition.OutputCondition;
+import nars.io.condition.OutputCount;
+import nars.io.meter.Meter;
 import nars.io.meter.Metrics;
+import nars.io.meter.Signal;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ObjectMeter;
+import nars.logic.entity.Task;
+import nars.util.data.CuckooMap;
 import org.junit.*;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -22,25 +31,134 @@ import java.util.*;
 abstract public class AbstractNALScriptTests extends AbstractNALTest {
 
 
-    public static final ObjectMeter<Boolean> testSuccess;
-    public static final DoubleMeter testScore, testTime, testConcepts;
+    static final ObjectMeter<Boolean> testSuccess;
+    static final DoubleMeter testScore, testTime;
+    static final HitMeter testConcepts;
+    static final ObjectMeter<String> testBuild;
+
+    private static OutputStream csvOut;
+
+    static {
+        try {
+            csvOut = new FileOutputStream("/tmp/out.csv");
+        } catch (FileNotFoundException e) {
+            csvOut = System.out;
+        }
+    }
 
     public static final Metrics<String,Object> results = new Metrics().addMeters(
+            testBuild = new ObjectMeter<String>("Build"),
             testSuccess = new ObjectMeter<Boolean>("Success"),
             testScore = new DoubleMeter("Score"),
-            testTime = new DoubleMeter("Time"),
-            testConcepts = new DoubleMeter("Concepts")
+            testTime = new DoubleMeter("uSecPerCycle"),
+            testConcepts = new HitMeter("Concepts")
     );
     private final NAR.PluginState eventCounterState;
+    private final NAR.PluginState deriveMethodCounterState;
 
-    public static class EventCounter extends AbstractPlugin {
+    public static class CountDerivationCondition extends AbstractPlugin {
+
+        //SM = success method
+        final static String meterPrefix = "SM";
+        private final Metrics metrics;
+        final Map<Task, StackTraceElement[]> stacks = new CuckooMap();
+        final List<OutputCondition> successesThisCycle = new ArrayList();
+
+        public CountDerivationCondition(Metrics m) {
+            super();
+            this.metrics = m;
+        }
+
+        @Override
+        public Class[] getEvents() {
+            return new Class[] { Events.TaskDerive.class, OutputCondition.class, Events.CycleEnd.class };
+        }
+
+        @Override public void onEnabled(NAR n) {       }
+
+        @Override public void onDisabled(NAR n) {        }
+
+        @Override
+        public void event(Class event, Object[] args) {
+
+            if (event == OutputCondition.class) {
+
+                OutputCondition o = (OutputCondition) args[0];
+
+                if (!o.succeeded) {
+                    throw new RuntimeException(o + " signaled when it has not succeeded");
+                }
+
+                //buffer to calculate at end of cycle when everything is collected
+                successesThisCycle.add(o);
+
+            }
+            else if (event == Events.TaskDerive.class) {
+                Task t = (Task)args[0];
+                stacks.put(t, Thread.currentThread().getStackTrace());
+            }
+            else if (event == Events.CycleEnd.class) {
+
+                /** usually true reason tasks should only be one, because
+                 * this event will be triggered only the first time it has
+                 * become successful. */
+                for (OutputCondition o : successesThisCycle) {
+                    for (Task tt : o.getTrueReasons())
+                        traceStack(tt);
+                }
+
+                //reset everything for next cycle
+                stacks.clear();
+                successesThisCycle.clear();
+            }
+        }
+
+        public void traceStack(Task t) {
+            StackTraceElement[] s = stacks.get(t);
+            if (s == null) {
+                //probably a non-derivation condition, ex: immediate reaction to an input event, etc.. or execution
+                //throw new RuntimeException("A stackTrace for successful output condition " + t + " was not recorded");
+                return;
+            }
+
+            int excludeSuffix = 1;
+            String startMethod = "reason";
+
+            boolean tracing = false;
+            for (int i = 0; i < s.length; i++) {
+                StackTraceElement e = s[i];
+
+                String className = e.getClassName();
+                String methodName = e.getMethodName();
+
+                if (!tracing && className.endsWith(".NAL") && methodName.equals("deriveTask")) {
+                    tracing = true;
+                }
+                if (tracing && className.contains(".ConceptFireTask") && methodName.equals("accept")) {
+                    tracing = false;
+                }
+
+                if (tracing) {
+                    String sm = meterPrefix + className + '.' + methodName;
+
+                    HitMeter m = (HitMeter) metrics.getMeter(sm);
+                    if (m == null) {
+                        metrics.addMeter(m = new HitMeter(sm));
+                    }
+                    m.hit();
+                }
+            }
+        }
+    }
+
+    public static class CountOutputEvents extends AbstractPlugin {
 
 //        public static final DoubleMeter numIn = new DoubleMeter("IN");
 //        public static final DoubleMeter numOut = new DoubleMeter("OUT");
 
         Map<Class, HitMeter> eventMeters = new HashMap();
 
-        public EventCounter(Metrics m) {
+        public CountOutputEvents(Metrics m) {
             super();
 
             for (Class c : getEvents()) {
@@ -84,9 +202,11 @@ abstract public class AbstractNALScriptTests extends AbstractNALTest {
                 h.reset();
         }
     }
-    public static final EventCounter eventCounter = new EventCounter(results);
 
-    private final int similarsToSave = 0;
+    public static final CountOutputEvents eventCounter = new CountOutputEvents(results);
+    public static final CountDerivationCondition deriveMethodCounter = new CountDerivationCondition(results);
+
+    private final int similarsToSave = 1;
     private final List<OutputCondition> conditions;
     private final String path;
     private final NewNAR build;
@@ -110,6 +230,7 @@ abstract public class AbstractNALScriptTests extends AbstractNALTest {
 
         nar.addInput(script);
         eventCounterState = nar.addPlugin(eventCounter);
+        deriveMethodCounterState = nar.addPlugin(deriveMethodCounter);
 
 
     }
@@ -131,7 +252,8 @@ abstract public class AbstractNALScriptTests extends AbstractNALTest {
 
     @AfterClass
     public static void report() {
-        results.printCSV(System.out);
+        if (csvOut!=null)
+            results.printCSV(new PrintStream(csvOut));
     }
 
 
@@ -155,9 +277,11 @@ abstract public class AbstractNALScriptTests extends AbstractNALTest {
         
         String label = pp.getName(pp.getNameCount()-1) + "/" + build.toString();
 
+        testBuild.set(build.toString());
         testSuccess.set(success);
         testScore.set( OutputCondition.cost(conditions));
-        testTime.set(nanos);
+        testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
+        testConcepts.hit(nar.memory.concepts.size());
 
         results.update(label);
 
@@ -165,10 +289,15 @@ abstract public class AbstractNALScriptTests extends AbstractNALTest {
 
 
         nar.removePlugin(eventCounterState);
+        nar.removePlugin(deriveMethodCounterState);
         nar.reset(); //to help GC
+
 
         /*if (derivations!=null)
             derivations.print(log);*/
+
+
+        assertTrue(success);
     }
 
 

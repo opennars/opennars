@@ -127,6 +127,12 @@ JsonSerializationContext context) {
         return this;
     }
 
+    public <M extends Meter<?>> M getMeter(String id) {
+        int i = indexOf(id);
+        if (i == -1) return null;
+        return (M) meters.get(i);
+    }
+
     private static class firstColumnIterator implements Function<Object[], Object[]> {
         final Object[] next;
         final int thecolumn;
@@ -184,7 +190,7 @@ JsonSerializationContext context) {
     private RowKey nextRowKey = null;
     
     /** the columns of the table */
-    private final List<Meter<?>> meters = new ArrayList<>();
+    private final List<Meter> meters = new ArrayList<>();
     private final ArrayDeque<Object[]> rows = new ArrayDeque<>();
     
     transient private List<Signal> signalList = new ArrayList<>();

@@ -1,0 +1,9 @@
+'********** set definition
+
+'Tweety is Birdie. 
+<{Tweety} --> {Birdie}>.
+3
+
+'Birdie is similar to Tweety. 
+''outputMustContain('<{Birdie} <-> {Tweety}>. %1.00;0.90%')
+

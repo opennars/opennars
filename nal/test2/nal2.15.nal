@@ -1,0 +1,9 @@
+'********** translating instance-property into inheritance
+
+'Tweety is yellow.
+<Tweety {-] yellow>.
+
+1
+
+'''expect.outEmpty
+''outputMustContain('<{Tweety} --> [yellow]>.')

@@ -290,9 +290,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
         return new TruthValue(0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin));
     }
 
-    public List getTrueReasons() {
+    @Override
+    public List<Task> getTrueReasons() {
         if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
-        return Lists.newArrayList("match at: " +
+        /*return Lists.newArrayList("match at: " +
 
                 Iterables.transform(trueAt, new Function<Task, String>() {
                     @Override
@@ -300,7 +301,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
                         return task.toString() + " @ " + task.sentence.getCreationTime();
                     }
                 }));
-
+                */
+        return trueAt;
     }
 
     @Override

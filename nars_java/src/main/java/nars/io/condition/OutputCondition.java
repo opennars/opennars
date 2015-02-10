@@ -22,7 +22,7 @@ import java.util.List;
  * Parameter O is the type of object which will be remembered that can make
  * the condition true
  */
-public abstract class OutputCondition<O> extends AbstractReaction {
+public abstract class OutputCondition extends AbstractReaction {
     public boolean succeeded = false;
     
     
@@ -60,10 +60,12 @@ public abstract class OutputCondition<O> extends AbstractReaction {
     protected boolean continueAfterSuccess() { return false; }
 
     protected void setTrue() {
+        succeeded = true;
+
         if (successAt == -1) {
             successAt = nar.time();
+            nar.emit(OutputCondition.class, this);
         }
-        succeeded = true;
     }
 
     public boolean isTrue() {
@@ -143,7 +145,7 @@ public abstract class OutputCondition<O> extends AbstractReaction {
         return getClass().getSimpleName() + " " + (succeeded ? "OK: " + getTrueReasons() : getFalseReason());
     }
 
-    public List<O> getTrueReasons() {
+    public List<Task> getTrueReasons() {
         if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
         return Collections.EMPTY_LIST;
     }

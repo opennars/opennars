@@ -16,6 +16,8 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
 
     void addTask(Task t);
 
+    int size();
+
 
     public interface CoreAware {
         public void setCore(Core a);

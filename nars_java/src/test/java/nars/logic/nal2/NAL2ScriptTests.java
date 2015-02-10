@@ -27,7 +27,8 @@ public class NAL2ScriptTests extends AbstractNALScriptTests {
 
     @Parameterized.Parameters(name= "{1} {0}")
     public static Collection configurations() {
-        return getParams("test2",
+        return getParams(
+                new String[] { "test2", "test3", "test4" },
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Curve() );

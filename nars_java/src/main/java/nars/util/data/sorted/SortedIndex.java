@@ -1,0 +1,33 @@
+package nars.util.data.sorted;
+
+import nars.logic.entity.Item;
+
+import java.util.Collection;
+import java.util.Iterator;
+
+/**
+ *
+ * @author me
+ */
+public interface SortedIndex<T> extends Collection<T> {
+ 
+    public T get(int i);
+    public T remove(int i);
+    public T getFirst();
+    public T getLast();
+    public Iterator<T> descendingIterator();
+    public void setCapacity(int capacity);
+    
+    default public void reportPriority() {
+        for (T t : this) {
+            String s;
+            if (t instanceof Item)
+                s = Float.toString(((Item)t).getPriority());
+            else
+                s = t.toString();
+            System.out.print(s + ",");
+        }
+        System.out.println();
+    }
+    
+}

@@ -72,6 +72,11 @@ abstract public class UniCore implements Core {
         }
     }
 
+    @Override
+    public int size() {
+        return concepts.size();
+    }
+
     protected ConceptFire newFireConcept(Concept c, TaskLink t) {
         return new DefaultFireConcept(memory, concepts, c, t);
     }

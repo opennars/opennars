@@ -1,0 +1,14 @@
+'********** conversions between inheritance and similarity
+
+'Swan is a type of bird. 
+<swan --> bird>. %0.90%
+
+
+'Is bird similar to swan?
+<bird <-> swan>?
+
+6
+ 
+'I guess that bird is similar to swan. 
+''outputMustContain('<bird <-> swan>. %0.90;0.47%')
+

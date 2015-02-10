@@ -59,6 +59,11 @@ abstract public class ConceptWaveCore implements Core {
     }
 
     @Override
+    public int size() {
+        return concepts.size();
+    }
+
+    @Override
     public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
         Concept c = concept(term);
         if (c!=null) {
