@@ -183,4 +183,17 @@ public abstract class OutputCondition extends AbstractReaction {
 
         return Double.POSITIVE_INFINITY;
     }
+
+    /** returns a function of the cost characterizing the optimality of the conditions
+     *  monotonically increasing from -1..+1 (-1 if there were errors,
+     *  0..1.0 if all successful.  limit 0 = takes forever, limit 1.0 = instantaneous
+     */
+    public static double score(List<OutputCondition> musts) {
+        double cost = cost(musts);
+        if (Double.isFinite(cost))
+            return 1.0 / (1.0 + cost);
+        else
+            return -1;
+
+    }
 }

@@ -33,7 +33,6 @@ abstract public class AbstractNALTest extends TestCase {
 
     private static final int similarsToSave = 3;
 
-    static final ObjectMeter<Boolean> testSuccess;
     static final DoubleMeter testScore, testTime;
     static final HitMeter testConcepts;
     static final ObjectMeter<String> testBuild;
@@ -50,7 +49,6 @@ abstract public class AbstractNALTest extends TestCase {
 
     public static final Metrics<String,Object> results = new Metrics().addMeters(
             testBuild = new ObjectMeter<String>("Build"),
-            testSuccess = new ObjectMeter<Boolean>("Success"),
             testScore = new DoubleMeter("Score"),
             testTime = new DoubleMeter("uSecPerCycle"),
             testConcepts = new HitMeter("Concepts")
@@ -97,8 +95,7 @@ abstract public class AbstractNALTest extends TestCase {
     public static void endAnalysis(String label, TestNAR nar, NewNAR build, long nanos, boolean success) {
 
         testBuild.set(build.toString());
-        testSuccess.set(success);
-        testScore.set( success ? 1.0 / (1.0 + OutputCondition.cost(nar.musts)) : 0 );
+        testScore.set( OutputCondition.score(nar.musts) );
         testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
         testConcepts.hit(nar.memory.concepts.size());
 
@@ -117,7 +114,7 @@ abstract public class AbstractNALTest extends TestCase {
 
     }
 
-    public static void runScript(TestNAR nar, String path, int maxCycles, long rngSeed) {
+    public static long runScript(TestNAR nar, String path, int maxCycles, long rngSeed) {
 
         Memory.resetStatic(rngSeed);
         Parameters.DEBUG = true;
@@ -127,8 +124,11 @@ abstract public class AbstractNALTest extends TestCase {
 
         nar.addInput(script);
 
+        long start = System.nanoTime();
+
         nar.run(maxCycles);
 
+        return System.nanoTime() - start;
     }
 
 
@@ -143,6 +143,7 @@ abstract public class AbstractNALTest extends TestCase {
 
 
         assertTrue("No cycles elapsed", nar.time() > 0);
+
 
         String report = "";
         boolean suc = true;

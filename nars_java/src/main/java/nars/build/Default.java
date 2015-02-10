@@ -65,6 +65,8 @@ public class Default extends NewNAR implements ConceptBuilder {
 
     public NewNAR level(int nalLevel) {
         this.level = nalLevel;
+        if (level < 8)
+            setInternalExperience(null);
         return this;
     }
 
