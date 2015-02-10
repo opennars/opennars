@@ -105,7 +105,7 @@ public class OutputContainsCondition extends OutputCondition {
     }
 
     public boolean cond(Class channel, Object signal) {
-        if ((channel == Events.OUT.class) || (channel == Events.EXE.class)) {
+        if ((channel == Events.OUT.class) || (channel == Events.EXE.class) || (channel == Events.Answer.class)) {
             String o;
             if (signal instanceof Task) {
                 //only compare for Sentence string, faster than TextOutput.getOutputString

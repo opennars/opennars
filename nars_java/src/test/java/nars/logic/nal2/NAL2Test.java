@@ -5,7 +5,7 @@ import nars.build.Curve;
 import nars.build.Default;
 import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.AbstractNALTest;
+import nars.logic.JavaNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import static nars.logic.nal7.Tense.Eternal;
 
-public class NAL2Test extends AbstractNALTest {
+public class NAL2Test extends JavaNALTest {
 
     public NAL2Test(NewNAR b) { super(b); }
 
@@ -60,7 +60,7 @@ public class NAL2Test extends AbstractNALTest {
 
         nar.mustBelieve(time, "<{Birdie} <-> {Tweety}>", 0.8f, 0.95f, 0.70f, 0.76f)
                 .en("Birdie is similar to Tweety.");
-
+        nar.run();
     }
 }
 

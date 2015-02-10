@@ -2,6 +2,7 @@ package nars.logic;
 
 import nars.core.*;
 import nars.io.TextOutput;
+import nars.io.condition.OutputCondition;
 import nars.io.condition.TaskCondition;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
@@ -25,7 +26,7 @@ public class TestNAR extends NAR {
 
 
     /** "must" requirement conditions specification */
-    public final List<TaskCondition> musts = new ArrayList();
+    public final List<OutputCondition> musts = new ArrayList();
     public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
 
@@ -146,9 +147,12 @@ public class TestNAR extends NAR {
     public void run() {
 
         long finalCycle = 0;
-        for (TaskCondition tc : musts) {
-            if (tc.cycleEnd > finalCycle)
-                finalCycle = tc.cycleEnd;
+        for (OutputCondition oc : musts) {
+            if (oc instanceof TaskCondition) {
+                TaskCondition tc = (TaskCondition) oc;
+                if (tc.cycleEnd > finalCycle)
+                    finalCycle = tc.cycleEnd;
+            }
         }
 
         error = null;
@@ -168,9 +172,12 @@ public class TestNAR extends NAR {
         int conditions = musts.size();
 
         int failures = 0;
-        for (TaskCondition tc : musts) {
-            if (!tc.isTrue()) {
-                failures++;
+        for (OutputCondition oc : musts) {
+            if (oc instanceof TaskCondition) {
+                TaskCondition tc = (TaskCondition) oc;
+                if (!tc.isTrue()) {
+                    failures++;
+                }
             }
         }
 
@@ -197,7 +204,7 @@ public class TestNAR extends NAR {
 
         if (showFail || showSuccess) {
 
-            for (TaskCondition tc : musts) {
+            for (OutputCondition tc : musts) {
                 if (!tc.isTrue()) {
                     if (showFail) {
                         out.println(tc.getFalseReason());

@@ -1,4 +1,4 @@
-package nars.analyze;
+package nars.analyze.experimental;
 
 import nars.logic.NALTest;
 import nars.core.NAR;
@@ -8,7 +8,7 @@ import nars.build.Default;
 
 import java.util.Collection;
 
-import static nars.analyze.NALStressMeasure.perfNAL;
+import static nars.analyze.experimental.NALStressMeasure.perfNAL;
 
 /**
  * Runs NALTestPerf continuously, for profiling

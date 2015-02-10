@@ -19,10 +19,7 @@ abstract public class AbstractPlugin implements Plugin, Reaction {
 
         }
         else  {
-            if (regist!=null) {
-                regist.cancel();
-                regist = null;
-            }
+            cancel();
 
             onDisabled(n);
         }
@@ -37,4 +34,14 @@ abstract public class AbstractPlugin implements Plugin, Reaction {
 
     /** called when plugin is disabled */
     abstract public void onDisabled(NAR n);
+
+    /** manually cancel this plugin by removing its event registration */
+    public boolean cancel() {
+        if (regist!=null) {
+            regist.cancel();
+            regist = null;
+            return true;
+        }
+        return false;
+    }
 }

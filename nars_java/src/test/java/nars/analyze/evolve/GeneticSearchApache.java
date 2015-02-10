@@ -7,7 +7,7 @@ package nars.analyze.evolve;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.build.Default;
-import nars.analyze.NALTestScore;
+import nars.analyze.experimental.NALTestScore;
 import nars.util.data.MultiOutputStream;
 import org.apache.commons.math3.genetics.*;
 import org.encog.ml.CalculateScore;

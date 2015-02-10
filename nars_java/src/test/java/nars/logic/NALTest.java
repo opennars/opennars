@@ -25,8 +25,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * the original script test system (being replaced)
+ */
 @RunWith(Parameterized.class)
-public class NALTest extends TestCase {
+@Deprecated public class NALTest extends TestCase {
 
     static {
         Parameters.DEBUG = true;

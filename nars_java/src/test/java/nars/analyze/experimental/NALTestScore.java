@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.analyze;
+package nars.analyze.experimental;
 
 import nars.core.*;
 import nars.event.Reaction;

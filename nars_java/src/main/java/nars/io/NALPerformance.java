@@ -14,11 +14,11 @@ import java.io.PrintStream;
 import java.util.List;
 
 /**
- *
+ * part of the original script test system, being replaced
  * @author me
  */
 @Ignore
-public class NALPerformance  {
+@Deprecated public class NALPerformance  {
     
     static public int similarsToSave = 6;
 

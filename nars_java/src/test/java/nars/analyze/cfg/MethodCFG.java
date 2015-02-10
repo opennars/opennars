@@ -2,6 +2,7 @@ package nars.analyze.cfg;
 
 import nars.analyze.cfg.method.CGMethod;
 import nars.analyze.cfg.method.MethodCallGraph;
+import nars.util.data.PackageUtility;
 import org.jgrapht.alg.KShortestPaths;
 
 /**
@@ -11,14 +12,15 @@ public class MethodCFG {
     public static void main(String[] args) throws ClassNotFoundException {
 
 
+
         MethodCallGraph g = new MethodCallGraph()
-                .addClass("nars.logic.FireConcept")
+                .addClasses("nars.logic", true)
+                .addClasses("nars.logic.reason", true)
+                .addClasses("nars.logic.reason.concept", true)
+                .addClass("nars.logic.reason.ConceptFire")
+                .addClass("nars.logic.reason.concept.ConceptFireTask")
+                .addClass("nars.logic.reason.concept.ConceptFireTaskTerm")
                 .addClass("nars.logic.NAL")
-                .addClass("nars.logic.StructuralRules")
-                .addClass("nars.logic.RuleTables")
-                .addClass("nars.logic.CompositionalRules")
-                .addClass("nars.logic.nal1.LocalRules")
-                .addClass("nars.logic.nal7.TemporalRules")
                 ;
 
         System.out.println(g.vertexSet().size() + " vert , "  + g.edgeSet().size() + " edge");
@@ -26,34 +28,36 @@ public class MethodCFG {
 
 
         System.out.println("Methods: ");
-        list(g.vertexSet());
+        list("\tMETHOD ", g.vertexSet());
 
         System.out.println("Entry methods: ");
-        list(g.getEntryPoints());
+        list("\tENTRYMETHOD ", g.getEntryPoints());
 
-        System.out.println(" Exit methods: ");
-        list(g.getExitPoints());
+        /*System.out.println(" Exit methods: ");
+        list("\tEXITMETHOD ", g.getExitPoints());*/
 
 
-        CGMethod fireConcept = g.method("nars.logic.FireConcept#run([])");
-        CGMethod derivedTask = g.method("nars.logic.NAL#derivedTask([nars.logic.entity.Task, boolean, boolean, nars.logic.entity.Task, nars.logic.entity.Sentence])");
-        CGMethod addTask = g.method("nars.logic.NAL#addTask([nars.logic.entity.Task, java.lang.String])");
+        CGMethod fireConcept = g.method("nars.logic.reason.ConceptFire#reason([])");
+        CGMethod derivedTask = g.method("nars.logic.NAL#deriveTask([nars.logic.entity.Task, boolean, boolean, nars.logic.entity.Task, nars.logic.entity.Sentence, nars.logic.entity.Sentence, nars.logic.entity.Task])");
+        //CGMethod addTask = g.method("nars.logic.NAL#addTask([nars.logic.entity.Task, java.lang.String])");
 
-        KShortestPaths fromFireConcept = new KShortestPaths(g, fireConcept, 100, 100);
+        KShortestPaths fromFireConcept = new KShortestPaths(g, fireConcept, 500, 500);
 
-        System.out.println("FireConcept to NAL.derivedTask:");
-        list(fromFireConcept.getPaths(derivedTask));
+        System.out.println(fireConcept + " to " + derivedTask);
+        list("  DERIVATION_EDGE ", fromFireConcept.getPaths(derivedTask));
 
-        System.out.println("FireConcept to NAL.addTask:");
-        list(fromFireConcept.getPaths(addTask));
+        //System.out.println("FireConcept to NAL.addTask:");
+        //list(fromFireConcept.getPaths(addTask));
 
         //new NWindow("methods", new JGraphXGraphPanel(g)).show(500,500,true);
+        System.out.println(g.vertexSet().size() + "V|" + g.edgeSet().size() + "E");
     }
 
-    public static void list(Iterable x) {
+    public static void list(String prefix, Iterable x) {
         if (x != null)
-            for (Object y : x)
-                System.out.println(y);
+            for (Object y : x) {
+                System.out.println(prefix + y);
+            }
         System.out.println();
     }
 }

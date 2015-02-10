@@ -1,4 +1,4 @@
-package nars.analyze;
+package nars.analyze.experimental;
 
 import nars.io.ExampleFileInput;
 import nars.logic.NALTest;

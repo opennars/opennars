@@ -21,8 +21,7 @@ public class PackageUtility {
         File directory = null;
         String pkgPath;
         try {
-            final ClassLoader cld = Thread.currentThread()
-                    .getContextClassLoader();
+            final ClassLoader cld = Thread.currentThread().getContextClassLoader();
             assert (cld != null);
             pkgPath = pkgName.replace('.', '/');
             final URL resource = cld.getResource(pkgPath);
@@ -51,8 +50,9 @@ public class PackageUtility {
                     classes.addAll(getClasses(pkgName + "." + file, innerClasses));   
                 }
             }
-            return classes;
-        } else {
+        }
+        //else {
+        if (!directory.exists()) {
             // first clean it up in case wer on *nix system
             String jarPath = directory.toString().replace("!/" + pkgPath, "")
                     .replace("file:", "");
@@ -60,7 +60,7 @@ public class PackageUtility {
             jarPath = jarPath.replace("!\\" + pkgPath.replace("/", "\\"), "")
                     .replace("file:", "");
             try {
-                return PackageUtility.getClasses(jarPath, pkgName);
+                classes.addAll( PackageUtility.getClasses(jarPath, pkgName) );
             } catch (final FileNotFoundException caughtException) {
                 throw new RuntimeException(
                         "Can not determine the location of the jar: "
@@ -70,6 +70,7 @@ public class PackageUtility {
                         + ' ' + pkgName, caughtException);
             }
         }
+        return classes;
     }
 
     public static List<Class> getClasses(final String jarName, final String packageName) throws IOException {

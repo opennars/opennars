@@ -5,7 +5,7 @@ import nars.build.Default;
 import nars.core.NewNAR;
 import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.AbstractNALTest;
+import nars.logic.JavaNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
-public class NAL1Test extends AbstractNALTest {
+public class NAL1Test extends JavaNALTest {
 
     public NAL1Test(NewNAR b) { super(b); }
 
@@ -37,7 +37,7 @@ public class NAL1Test extends AbstractNALTest {
                 .en("bird is a type of swimmer.");
         nar.believe("<bird --> swimmer>", 0.10f, 0.60f)
                 .en("bird is probably not a type of swimmer.");
-
+        nar.run();
     }
 
     @Test
@@ -50,6 +50,7 @@ public class NAL1Test extends AbstractNALTest {
                 .en("robin is a type of bird.");
         nar.mustBelieve(23, "<robin --> animal>", 0.81f)
                 .en("robin is a type of animal.");
+        nar.run();
     }
 
     @Test
@@ -78,6 +79,7 @@ public class NAL1Test extends AbstractNALTest {
                 .en("I guess bird is a type of swimmer.");
         nar.mustBelieve(23, "<swimmer --> bird>", 1f, 0.42f)
                 .en("I guess swimmer is a type of bird.");
+        nar.run();
     }
 
     @Test
@@ -86,6 +88,7 @@ public class NAL1Test extends AbstractNALTest {
         nar.believe("<bird --> animal>");
         nar.mustOutput(25, "<animal --> robin>. %1.00;0.45%")
                 .en("I guess animal is a type of robin.");
+        nar.run();
     }
 
 
@@ -97,6 +100,7 @@ public class NAL1Test extends AbstractNALTest {
         nar.ask("<swimmer --> bird>")
                 .en("Is swimmer a type of bird?");
         nar.mustOutput(time, "<swimmer --> bird>. %1.00;0.47%");
+        nar.run();
     }
 
     @Test
@@ -104,6 +108,7 @@ public class NAL1Test extends AbstractNALTest {
         nar.believe("<bird --> swimmer>");
         nar.ask("<bird --> swimmer>");
         nar.mustOutput(25, "<bird --> swimmer>. %1.00;0.90%");
+        nar.run();
     }
 
 
@@ -113,6 +118,7 @@ public class NAL1Test extends AbstractNALTest {
         nar.ask("<?x --> swimmer>")
                 .en("What is a type of swimmer?");
         nar.mustOutput(25, "<bird --> swimmer>. %1.00;0.80%");
+        nar.run();
     }
 
 
@@ -125,6 +131,7 @@ public class NAL1Test extends AbstractNALTest {
         nar.ask("<?1 --> swimmer>");
         nar.mustOutput(time, "<?1 --> bird>?").en("What is a type of bird?");
         nar.mustOutput(time, "<bird --> ?1>?").en("What is the type of bird?");
+        nar.run();
     }
 
 
@@ -144,6 +151,8 @@ public class NAL1Test extends AbstractNALTest {
         //but we know also 73% is the theoretical maximum it can reach
         if (nar.nal() == 1)
             nar.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
+
+        nar.run();
     }
 
 }

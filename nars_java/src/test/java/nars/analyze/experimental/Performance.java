@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.analyze;
+package nars.analyze.experimental;
 
 import java.text.DecimalFormat;
 

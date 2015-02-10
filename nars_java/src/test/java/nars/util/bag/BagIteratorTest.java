@@ -1,6 +1,6 @@
 package nars.util.bag;
 
-import nars.analyze.BagPerf.NullItem;
+import nars.analyze.experimental.BagPerf.NullItem;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.LevelBag;
 import org.junit.Test;

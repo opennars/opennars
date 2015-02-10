@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static nars.analyze.BagPerf.NullItem;
+import static nars.analyze.experimental.BagPerf.NullItem;
 import static org.junit.Assert.assertTrue;
 
 public class SolidBagTest extends AbstractBagTest {

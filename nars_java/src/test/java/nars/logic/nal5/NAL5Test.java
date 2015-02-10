@@ -5,7 +5,7 @@ import nars.build.Default;
 import nars.build.DefaultBuffered;
 import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.AbstractNALTest;
+import nars.logic.JavaNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -15,7 +15,7 @@ import java.util.Collection;
 import static nars.logic.nal7.Tense.Eternal;
 
 
-public class NAL5Test extends AbstractNALTest {
+public class NAL5Test extends JavaNALTest {
 
     public NAL5Test(NewNAR b) { super(b); }
 
@@ -64,8 +64,7 @@ public class NAL5Test extends AbstractNALTest {
         nar.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 0f, 0.81f, 0.81f)
                 .en("It is unlikely that if a robin is a type of bird then robin is a type of animal.");
 
-
-        System.out.println(nar.time());
+        nar.run();
 
     }
 
@@ -97,6 +96,7 @@ public class NAL5Test extends AbstractNALTest {
         nar.mustBelieve(time, "<robin --> [flying]>", 0.90f, 0.90f, 0.73f, 0.73f)
                 .en("robin can fly.")
                 .en("robin is one of the flying.");
+        nar.run();
 
     }
     

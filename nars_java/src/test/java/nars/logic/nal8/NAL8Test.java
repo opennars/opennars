@@ -5,7 +5,7 @@ import nars.build.Default;
 import nars.core.NewNAR;
 import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.AbstractNALTest;
+import nars.logic.JavaNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
-public class NAL8Test extends AbstractNALTest {
+public class NAL8Test extends JavaNALTest {
 
     public NAL8Test(NewNAR b) { super(b); }
 

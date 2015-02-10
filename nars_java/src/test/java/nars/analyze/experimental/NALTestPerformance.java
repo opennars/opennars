@@ -1,4 +1,4 @@
-package nars.analyze;
+package nars.analyze.experimental;
 
 import nars.core.Memory;
 import nars.io.ExampleFileInput;

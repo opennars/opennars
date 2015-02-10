@@ -5,7 +5,7 @@ import nars.core.NAR;
 import nars.core.Param;
 import nars.build.Default;
 import nars.logic.entity.Item;
-import nars.analyze.BagPerf.NullItem;
+import nars.analyze.experimental.BagPerf.NullItem;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.CurveBag.BagCurve;
 import nars.util.bag.impl.LevelBag;

@@ -1,4 +1,4 @@
-package nars.logic.nal2;
+package nars.analyze;
 
 
 import nars.build.Curve;
@@ -10,23 +10,32 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
-public class NAL2ScriptTests extends ScriptNALTest {
+@Ignore
+public class NALTestMetrics extends ScriptNALTest {
 
-    public NAL2ScriptTests(NewNAR b, String input) {
+    public NALTestMetrics(NewNAR b, String input) {
         super(b, input);
     }
 
     @Parameterized.Parameters(name= "{1} {0}")
     public static Collection configurations() {
-        return getParams(new String[] { "test2" /*, "test3", "test4"*/ },
+        return getParams(
+                new String[] { "test2", "test3", "test4" },
                 new Default(),
                 new Default().setInternalExperience(null),
-                new Default().setInternalExperience(null).level(2),
                 new Curve() );
     }
 
     public int getMaxCycles() { return 200; }
 
 
+    public static void main(String[] args) {
+
+    }
+
+//    @After
+//    public void test() {
+//        super.test();
+//    }
 }
 

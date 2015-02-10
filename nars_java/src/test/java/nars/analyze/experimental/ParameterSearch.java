@@ -1,4 +1,4 @@
-package nars.analyze;
+package nars.analyze.experimental;
 
 import nars.core.NAR;
 import nars.build.Default;

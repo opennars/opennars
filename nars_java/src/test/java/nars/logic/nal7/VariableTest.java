@@ -13,6 +13,7 @@ import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
 import nars.io.condition.OutputContainsCondition;
+import nars.logic.JavaNALTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -26,13 +27,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  TODO convert this to AbstractNALTest
  */
 @RunWith(Parameterized.class)
-public class VariableTest extends TestCase {
+public class VariableTest extends JavaNALTest {
 
-    private final NAR n;
 
     public VariableTest(NewNAR b) {
-        super();
-        this.n = new NAR(b);
+        super(b);
     }
 
     @Parameterized.Parameters(name= "{0}")
@@ -56,24 +55,23 @@ public class VariableTest extends TestCase {
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
             shouldn't happen because it should not unify #wat with 4 because its not a query variable      
         */        
-        new AbstractReaction(n, true, Answer.class) {
+        new AbstractReaction(nar, true, Answer.class) {
             @Override public void event(Class event, Object[] args) {
                 //nothing should cause this event
                 assertTrue(Arrays.toString(args), false);
             }
         };
         
-        OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", 5);
+        conditions.add( new OutputContainsCondition(nar, "=/> <a --> 4>>.", 5) );
 
 
-        n.addInput(
+        nar.addInput(
                 "<a --> 3>. :\\: \n" +
                 "<a --> 4>. :/: \n" +
                 "<(&/,<a --> 3>,?what) =/> <a --> #wat>>?");
 
-        n.run(32);
-  
-        assertTrue(e.isTrue());
+        nar.run(32);
+
     }
     
     @Test public void testQueryVariableUnification() {
@@ -88,26 +86,24 @@ public class VariableTest extends TestCase {
        */
 
         AtomicBoolean solutionFound = new AtomicBoolean(false);
-        new AbstractReaction(n, true, Answer.class) {
+        new AbstractReaction(nar, true, Answer.class) {
             @Override public void event(Class event, Object[] args) {
                 solutionFound.set(true);
-                n.stop();
+                nar.stop();
             }
         };
 
         //TextOutput.out(n);
 
-        n.addInput(
+        nar.addInput(
                 "<a --> 3>. :|:" + '\n' +
                 "<a --> 4>. :/:" + '\n' +
                 "<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
-        
-
 
         //158
         //1738
         //n.run(200); //sufficient for case without internal experience
-        n.run(1200);
+        nar.run(1200);
           
         assertTrue(solutionFound.get());
         

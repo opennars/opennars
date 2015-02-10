@@ -4,7 +4,7 @@ import nars.build.Curve;
 import nars.build.DefaultBuffered;
 import nars.core.NewNAR;
 import nars.build.Default;
-import nars.logic.AbstractNALTest;
+import nars.logic.JavaNALTest;
 import nars.io.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
-public class NAL4Test extends AbstractNALTest {
+public class NAL4Test extends JavaNALTest {
 
     public NAL4Test(NewNAR b) { super(b); }
 
@@ -54,6 +54,7 @@ public class NAL4Test extends AbstractNALTest {
         nar.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
         nar.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
         nar.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
+        nar.run();
 
     }
     
@@ -88,6 +89,7 @@ public class NAL4Test extends AbstractNALTest {
         nar.ask("<(/,next,(/,next,0,_),_) --> n>");
         nar.mustBelieve(time, "<(/,next,0,_) --> n>", 1.0f, 1.0f, 0.81f, 1.0f);
         nar.mustBelieve(time, "<(/,next,(/,next,0,_),_) --> n>", 1.0f, 1.0f, finalConf, 1.0f);
+        nar.run();
     }
 
 }

@@ -36,7 +36,7 @@ public abstract class OutputCondition extends AbstractReaction {
     }
 
     public OutputCondition(NAR nar) {
-        this(nar, Output.DefaultOutputEvents);
+        this(nar, new Class[] { Events.OUT.class, Events.EXE.class, Events.Answer.class });
     }
 
     /** whether this is an "inverse" condition */
@@ -49,11 +49,15 @@ public abstract class OutputCondition extends AbstractReaction {
         if ((succeeded) && (!isInverse() && (!continueAfterSuccess()))) {
             return;
         }
-        if ((channel == Events.OUT.class) || (channel == Events.EXE.class)) {
-            Object signal = args[0];
-            if (condition(channel, signal)) {
-                setTrue();
-            }
+
+        Object signal;
+        if (channel == Events.Answer.class)
+            signal = args[1]; //answer is 2nd arg, question is 1st. we are interested in comparing the answer
+        else
+            signal = args[0];
+
+        if (condition(channel, signal)) {
+            setTrue();
         }
     }
 

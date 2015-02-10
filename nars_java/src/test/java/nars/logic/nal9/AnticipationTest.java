@@ -3,7 +3,7 @@ package nars.logic.nal9;
 import nars.build.Default;
 import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.AbstractNALTest;
+import nars.logic.JavaNALTest;
 import nars.logic.nal7.Tense;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -14,7 +14,7 @@ import java.util.Collection;
 /**
  * Created by me on 1/20/15.
  */
-public class AnticipationTest extends AbstractNALTest {
+public class AnticipationTest extends JavaNALTest {
 
     public AnticipationTest(NewNAR b) { super(b); }
 
@@ -33,6 +33,7 @@ public class AnticipationTest extends AbstractNALTest {
     public void testOcurrenceTimeTesting()  throws InvalidInputException {
         nar.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
         nar.mustOutput(0, 50, "<a --> b>", '.', 0.00f, 1.00f, 0.0f, 1.0f, -55, 0);
+        nar.run();
     }
 
 
@@ -63,6 +64,7 @@ public class AnticipationTest extends AbstractNALTest {
         nar.mustOutput(0, time, rule, '.', 0.91f, 0.93f, 0.90f, 0.91f, -25, 0);
         nar.mustOutput(0, time, rule, '.', 0.00f, 1.00f, 0.0f, 1.0f, (int) (-1*time), 0); //match any
 
+        nar.run();
 
 
     }

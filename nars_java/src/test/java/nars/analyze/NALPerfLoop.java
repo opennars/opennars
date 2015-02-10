@@ -7,10 +7,11 @@ import nars.build.Default;
 
 import java.util.Collection;
 
-import static nars.analyze.NALStressMeasure.perfNAL;
+import static nars.analyze.experimental.NALStressMeasure.perfNAL;
 
 /**
  * Runs NALTestPerf continuously, for profiling
+ * TODO keep up to date with the new test script layout
  */
 public class NALPerfLoop {
     

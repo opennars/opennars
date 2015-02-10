@@ -5,7 +5,7 @@ import nars.build.Default;
 import nars.build.Neuromorphic;
 import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.AbstractNALTest;
+import nars.logic.JavaNALTest;
 import nars.logic.TestNAR;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
-public class QueryVariableTest extends AbstractNALTest {
+public class QueryVariableTest extends JavaNALTest {
 
     public QueryVariableTest(NewNAR b) { super(b); }
 
@@ -24,9 +24,9 @@ public class QueryVariableTest extends AbstractNALTest {
                 {new Default()},
                 {new Default().setInternalExperience(null)},
                 {new Default().level(5)},
-                {new Neuromorphic(4)},
+                {new Curve() },
                 {new Curve().setInternalExperience(null)}
-
+                //{new Neuromorphic(4)},
         });
     }
 
@@ -44,19 +44,17 @@ public class QueryVariableTest extends AbstractNALTest {
         int time2 = 115;
         int time3 = 55;
 
-        TestNAR n = new TestNAR(new Default().level(6));
-
         //TextOutput.out(n);
         //new TraceWriter(n, System.out);
 
-        n.step(time1);
-        n.believe("<a --> b>");
-        n.step(time2);
+        nar.step(time1);
+        nar.believe("<a --> b>");
+        nar.step(time2);
 
         //0.9f conf is expected
-        n.mustBelieve(time3, "<a --> b>", 1.0f, 1.0f, 0.85f, 0.95f);
-        n.ask("<?x --> b>");
+        nar.mustBelieve(time3, "<a --> b>", 1.0f, 1.0f, 0.85f, 0.95f);
+        nar.ask("<?x --> b>");
 
-        n.run();
+        nar.run();
     }
 }

@@ -7,6 +7,7 @@ package nars.analyze.cfg.method;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import nars.util.data.PackageUtility;
 import org.apache.bcel.Repository;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
@@ -27,21 +28,30 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
 
     private final Map<String, CGClass> cacheClass = new HashMap<>();
     private final Map<String, CGMethod> cacheMethod = new HashMap<>();
+    private final boolean includeMethodCalls;
 
     public MethodCallGraph() {
+        this(false);
+    }
+
+    public MethodCallGraph(boolean includeMethodCalls) {
         super(new EdgeFactory<CGMethod, Object>() {
             @Override
             public Object createEdge(CGMethod cgMethod, CGMethod v1) {
                 return null;
             }
         });
+        this.includeMethodCalls = includeMethodCalls;
     }
 
 
     public MethodCallGraph addClass(String rootClass) throws ClassNotFoundException  {
+
         JavaClass c = Repository.lookupClass(rootClass);
+
         ClassVisitor visitor = new ClassVisitor(this, c);
         visitor.start();
+
         return this;
     }
 
@@ -85,9 +95,12 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
         CGMethod targetMethodCall = new CGMethodCall( CGMethod.create(jc, mg, nn), nn);
         targetMethodCall = register(targetMethodCall);
 
-        addVertex(sourceMethodCall);
-        addVertex(targetMethodCall);
-        addEdge(sourceMethodCall,targetMethodCall,jc.getClassName()+pp+"pre"+nn);
+        if (includeMethodCalls) {
+            addVertex(sourceMethodCall);
+            addVertex(targetMethodCall);
+            addEdge(sourceMethodCall, targetMethodCall, jc.getClassName() + pp + "pre" + nn);
+        }
+
     }
 
     public void register(JavaClass jc, MethodGen mg, CGMethodCall methodCall, InvokeInstruction ii) {
@@ -104,12 +117,21 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
         targetMethod = register(targetMethod);
         targetClass.methods.add(targetMethod);
 
-        addVertex(methodCall);
-        addVertex(targetMethod);
-        addEdge(methodCall, targetMethod, ii.toString());
+        if (includeMethodCalls) {
+            addVertex(methodCall);
+            addVertex(targetMethod);
+            addEdge(methodCall, targetMethod, ii.toString());
 
-        addVertex(callingMethod);
-        addEdge(callingMethod, methodCall, callingMethod.key() + "@" + ii);
+            addVertex(callingMethod);
+            addEdge(callingMethod, methodCall, callingMethod.key() + "@" + ii);
+        }
+        else {
+            addVertex(callingMethod);
+            if (!callingMethod.equals(targetMethod)) {
+                addVertex(targetMethod);
+                addEdge(callingMethod, targetMethod, methodCall.key() + "@" + ii);
+            }
+        }
     }
 
     public void register(JavaClass jc, MethodGen mg, InvokeInstruction ii) {
@@ -129,10 +151,13 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
         targetClass.methods.add(targetMethod);
 
         addVertex(callerMethod);
-        addVertex(targetMethod);
 
-        //between methods directly
-        addEdge(callerMethod, targetMethod, ii);
+        if (!callerMethod.equals(targetMethod)) {
+            addVertex(targetMethod);
+
+            //between methods directly
+            addEdge(callerMethod, targetMethod, ii);
+        }
 
     }
 
@@ -172,6 +197,17 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
         return true;
     }
 
+    public MethodCallGraph addClasses(List<Class> classes) throws ClassNotFoundException {
+        for (Class c : classes) {
+            System.out.println("CLASS " + c);
+            addClass(c.getName());
+        }
+        return this;
+    }
+
+    public MethodCallGraph addClasses(String pkg, boolean inner) throws ClassNotFoundException {
+        return addClasses(PackageUtility.getClasses(pkg, inner));
+    }
 
 
     private class EntryMethodFilter implements Predicate<CGMethod> {
