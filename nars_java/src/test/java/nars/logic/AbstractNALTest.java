@@ -20,7 +20,6 @@ import org.junit.runner.Description;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,7 +35,7 @@ abstract public class AbstractNALTest extends TestCase {
     static final DoubleMeter testScore, testTime;
     static final HitMeter testConcepts;
     static final ObjectMeter<String> testBuild;
-    public static OutputStream csvOut = null;
+    public static OutputStream dataOut = null;
     PrintStream log = System.out;
 
 //    static {
@@ -110,6 +109,7 @@ abstract public class AbstractNALTest extends TestCase {
         eventCounter.cancel();
         deriveMethodCounter.cancel();
 
+
         nar.reset(); //to help GC
 
     }
@@ -163,8 +163,8 @@ abstract public class AbstractNALTest extends TestCase {
 
     @AfterClass
     public static void report() {
-        if (csvOut!=null)
-            results.printCSV(new PrintStream(csvOut));
+        if (dataOut !=null)
+            results.printARFF(new PrintStream(dataOut));
     }
 
 

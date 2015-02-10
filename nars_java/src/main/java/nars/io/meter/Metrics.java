@@ -8,6 +8,8 @@ package nars.io.meter;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.gson.*;
+import nars.io.meter.event.DoubleMeter;
+import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ObjectMeter;
 
 import java.io.PrintStream;
@@ -190,7 +192,7 @@ JsonSerializationContext context) {
     private RowKey nextRowKey = null;
     
     /** the columns of the table */
-    private final List<Meter> meters = new ArrayList<>();
+    private final List<Meter<?>> meters = new ArrayList<>();
     private final ArrayDeque<Object[]> rows = new ArrayDeque<>();
     
     transient private List<Signal> signalList = new ArrayList<>();
@@ -478,5 +480,56 @@ JsonSerializationContext context) {
         }
     }
 
+    public String name() {
+        return getClass().getSimpleName();
+    }
+
+    public void printARFF(PrintStream out) {
+        //http://www.cs.waikato.ac.nz/ml/weka/arff.html
+        out.println("@RELATION " + name());
+
+
+        int n = 0;
+        for (Meter<?> m : meters) {
+            for (Signal s : m.getSignals()) {
+                if (n == 0) {
+                    //key, for now we'll use string
+                    out.println("@ATTRIBUTE " + s.id + " STRING");
+                }
+                else if ((m instanceof DoubleMeter) || (m instanceof HitMeter)) {
+                    out.println("@ATTRIBUTE " + s.id + " NUMERIC");
+                }
+                else {
+                    out.println("@ATTRIBUTE " + s.id + " STRING");
+                    //TODO use nominal by finding the unique values
+                }
+                n++;
+            }
+        }
+
+        out.println("@DATA");
+        for (Object[] x : this) {
+            for (int i = 0; i < numColumns; i++) {
+                if (i < x.length) {
+                    Object y = x[i];
+                    if (y == null)
+                        out.print('?');
+                    else if (y instanceof Number)
+                        out.print((Number)y);
+                    else
+                        out.print('\"' + y.toString() + '\"');
+                }
+                else {
+                    //pad extra values with '?'
+                    out.print('?');
+                }
+                if (i!=numColumns-1)
+                    out.print(',');
+                else
+                    out.println();
+            }
+
+        }
+    }
 
 }

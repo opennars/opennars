@@ -126,8 +126,9 @@ public class NALysis extends AbstractNALTest {
                 new Curve().setInternalExperience(null) );
 
         //csvOut = System.out;
-        csvOut = new FileOutputStream("/tmp/out.csv");
+        //csvOut = new FileOutputStream("/tmp/out.csv");
 
+        dataOut = new FileOutputStream("/tmp/out.arff");
         report();
 
     }
