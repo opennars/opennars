@@ -18,7 +18,7 @@ public class Contraposition extends ConceptFireTask {
 
         final Term taskTerm = taskSentence.term;
 
-        if (((taskLink.type!= TermLink.TRANSFORM) && (taskTerm instanceof Implication) && taskSentence.isJudgment())) {
+        if (((taskLink.type!= TermLink.TRANSFORM) && (taskTerm instanceof Implication))) {
             //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
 
             //Concept d=memory.concepts.sampleNextConcept();

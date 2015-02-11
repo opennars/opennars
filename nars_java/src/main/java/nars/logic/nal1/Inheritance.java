@@ -63,7 +63,8 @@ public class Inheritance extends Statement {
 
     @Override public Inheritance clone(Term[] t) {
         if (t.length!=2)
-            throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
+            return null;
+            //throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
                 
         return make(t[0], t[1]);
     }

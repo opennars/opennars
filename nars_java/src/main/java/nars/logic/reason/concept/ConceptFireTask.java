@@ -24,7 +24,7 @@ abstract public class ConceptFireTask extends LogicRule<ConceptFire> implements 
         if (f!=null && f.getCurrentBeliefLink()==null) {
             boolean result = apply(f, f.getCurrentTaskLink());
             if (!result) {
-                o.recycle();
+                o.setData(null);
             }
         }
     }

@@ -64,7 +64,6 @@ public class TermLinkBuilder extends BagActivator<String,TermLink> {
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
 
-        //componentLinks.ensureCapacity(componentLinks.size() + t.complexity);
 
         for (short i = 0; i < t.term.length; ) {
             final Term ti = t.term[i];
@@ -90,6 +89,7 @@ public class TermLinkBuilder extends BagActivator<String,TermLink> {
                         TermLinkTemplate a;
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
+                                //WARNING: COVERAGE FOUND THIS CONDITION NEVER BEING CALLED
                                 a = new TermLinkTemplate(TermLink.TRANSFORM, tj, 0, i, j);
                             } else {
                                 a = new TermLinkTemplate(TermLink.TRANSFORM, tj, i, j);

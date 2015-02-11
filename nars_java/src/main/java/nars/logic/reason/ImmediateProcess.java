@@ -17,10 +17,6 @@ import nars.logic.entity.Task;
 public class ImmediateProcess extends NAL {
 
 
-    public ImmediateProcess(Memory mem) {
-        this(mem, null);
-    }
-
     public ImmediateProcess(Memory mem, Task task) {
         super(mem, task);
 

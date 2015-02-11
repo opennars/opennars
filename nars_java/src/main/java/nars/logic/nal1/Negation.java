@@ -115,6 +115,7 @@ public class Negation extends CompoundTerm {
         return (b.equals(Negation.make(a)) /* || tc.equals(Negation.make(ptc))*/ );
     }
 
+    /*
     static boolean areMutuallyInverseNOTWORKINGYET(Term a, Term b) {
         boolean aNeg = a instanceof Negation;
         boolean bNeg = b instanceof Negation;
@@ -127,8 +128,10 @@ public class Negation extends CompoundTerm {
             return false;
     }
 
+
     static boolean areMutuallyInverse(Negation a, Term b) {
         return (a.negated().equals(b));
     }
+    */
 
 }

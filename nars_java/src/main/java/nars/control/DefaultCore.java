@@ -133,17 +133,6 @@ public class DefaultCore extends UniCore {
         } else {
             //it is a judgment or goal which would create a new concept:
 
-            if (task.getTerm().operator() == NALOperator.NEGATION) {
-                //unwrap an outer negative negative
-                task = task.clone(
-                        new Sentence(
-                                ((Negation)task.getTerm()).negated(),
-                                task.sentence.punctuation,
-                                TruthFunctions.negation(task.sentence.getTruth()),
-                                task.sentence.stamp
-                        ));
-
-            }
 
             final Sentence s = task.sentence;
 
@@ -153,14 +142,14 @@ public class DefaultCore extends UniCore {
             if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
 
                 // new concept formation
-                Task displacedNovelTask = novelTasks.PUT(task);
+                Task overflow = novelTasks.PUT(task);
                 memory.logic.TASK_ADD_NOVEL.hit();
 
-                if (displacedNovelTask != null) {
-                    if (displacedNovelTask == task) {
+                if (overflow != null) {
+                    if (overflow == task) {
                         memory.removeTask(task, "Ignored");
                     } else {
-                        memory.removeTask(displacedNovelTask, "Displaced novel task");
+                        memory.removeTask(overflow, "Displaced novel task");
                     }
                 }
 
@@ -178,11 +167,7 @@ public class DefaultCore extends UniCore {
     protected Runnable nextNovelTask() {
         if (novelTasks.isEmpty()) return null;
 
-        // select a task from novelTasks
         final Task task = novelTasks.TAKENEXT();
-
-        if (task == null)
-            throw new RuntimeException("novelTasks bag output null item");
 
         return new ImmediateProcess(memory, task);
     }

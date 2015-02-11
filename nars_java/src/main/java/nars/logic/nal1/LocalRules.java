@@ -46,33 +46,6 @@ import nars.logic.nal7.TemporalRules;
  */
 public class LocalRules {
 
-    /* -------------------- same contents -------------------- */
-    /**
-     * The task and belief have the same content
-     * <p>
-     * called in RuleTables.reason
-     *
-     * @param task The task
-     * @param belief The belief
-     * @param memory Reference to the memory
-     */
-    public static boolean match(final Task task, final Sentence belief, final NAL nal) {
-        Sentence taskSentence = task.sentence;
-        
-        if (taskSentence.isJudgment()) {
-            if (revisible(taskSentence, belief)) {
-                return revision(taskSentence, belief, true, nal);
-            }
-        } else {
-            if (TemporalRules.matchingOrder(taskSentence, belief)) {
-                Term[] u = new Term[] { taskSentence.term, belief.term };
-                if (Variables.unify(Symbols.VAR_QUERY, u)) {
-                    return trySolution(belief, task, nal);
-                }
-            }
-        }
-        return false;
-    }
 
     /**
      * Check whether two sentences can be used in revision

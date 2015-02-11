@@ -37,7 +37,7 @@ public class NALRuleEngine extends RuleEngine {
         //concept fire tasklink termlink (pre-filter)
         {
             add(new FilterEqualSubtermsInRespectToImageAndProduct());
-            add(new FilterMatchingTaskAndBelief());
+            add(new MatchTaskBelief());
         }
 
         //concept fire tasklink termlink derivation

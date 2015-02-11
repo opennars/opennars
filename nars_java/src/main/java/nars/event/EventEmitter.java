@@ -42,15 +42,20 @@ public class EventEmitter<E>  {
                         r.getConsumerRegistry().select(x.getKey()).size());
             });
         }
-        r.on(T(Exception.class), t -> {
+        r.on(T(Throwable.class), t -> {
             Throwable e = (Throwable)t.getData();
-            if (Parameters.DEBUG) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-            else {
+            //if (Parameters.DEBUG) {
+                if (e.getCause()!=null)
+                    e.getCause().printStackTrace();
+                else
+                    e.printStackTrace();
+
+                //throw new RuntimeException(e);
+            //}
+            /*else {
                 System.err.println(e);
-            }
+            }*/
+
 
         });
 

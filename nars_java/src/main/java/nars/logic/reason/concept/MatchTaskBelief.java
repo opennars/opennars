@@ -1,0 +1,51 @@
+package nars.logic.reason.concept;
+
+import nars.io.Symbols;
+import nars.logic.NAL;
+import nars.logic.Variables;
+import nars.logic.entity.*;
+import nars.logic.nal7.TemporalRules;
+import nars.logic.reason.ConceptFire;
+import nars.logic.nal1.LocalRules;
+
+
+public class MatchTaskBelief extends ConceptFireTaskTerm {
+
+    @Override public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
+        Sentence currentBelief = f.getCurrentBelief();
+        if ((currentBelief!=null) && (match(taskLink.targetTask, currentBelief, f))) {
+            //Filter this from further processing
+            return false;
+        }
+        return true;
+    }
+
+
+    /* -------------------- same contents -------------------- */
+    /**
+     * The task and belief have the same content
+     * <p>
+     * called in RuleTables.reason
+     *
+     * @param task The task
+     * @param belief The belief
+     * @param memory Reference to the memory
+     */
+    public static boolean match(final Task task, final Sentence belief, final NAL nal) {
+        Sentence taskSentence = task.sentence;
+
+        if (taskSentence.isJudgment()) {
+            if (LocalRules.revisible(taskSentence, belief)) {
+                return LocalRules.revision(taskSentence, belief, true, nal);
+            }
+        } else {
+            if (TemporalRules.matchingOrder(taskSentence, belief)) {
+                Term[] u = new Term[] { taskSentence.term, belief.term };
+                if (Variables.unify(Symbols.VAR_QUERY, u)) {
+                    return LocalRules.trySolution(belief, task, nal);
+                }
+            }
+        }
+        return false;
+    }
+}

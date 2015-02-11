@@ -34,7 +34,6 @@ public class Product extends CompoundTerm {
     
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     public Product(final Term... arg) {
@@ -80,7 +79,6 @@ public class Product extends CompoundTerm {
      * @param image The existing Image
      * @param component The component to be added into the component list
      * @param index The index of the place-holder in the new Image -- optional parameter
-     * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final CompoundTerm image, final Term component, final int index) {
