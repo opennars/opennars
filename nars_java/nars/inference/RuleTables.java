@@ -169,9 +169,16 @@ public class RuleTables {
                                     TruthValue truth=TruthFunctions.deduction(s.truth, task.sentence.truth);
                                     Stamp st=new Stamp(task.sentence.stamp,nal.memory.time());
                                     boolean eternal1=nal.getCurrentBelief().isEternal();
-                                    boolean eternal2=st.isEternal();
-                                    if(!(eternal1 && eternal2)) //only eternal if both are eternal
-                                        st.setOccurrenceTime(nal.memory.time());
+                                    boolean eternal2=task.sentence.isEternal();
+                                    if(!(eternal1 && eternal2)) { //only eternal if both are eternal
+                                        if(!eternal1) {
+                                            st.setOccurrenceTime(nal.getCurrentBelief().getOccurenceTime());
+                                        } else {
+                                            st.setOccurrenceTime(task.sentence.getOccurenceTime());
+                                        }
+                                    } else { //it should be eternal else
+                                        st.setOccurrenceTime(Stamp.ETERNAL);
+                                    }
                                     st.getChain().add(t);
                                     Sentence S=new Sentence(resImp,s.punctuation,truth,st);
                                     Task Tas=new Task(S,new BudgetValue(BudgetFunctions.forward(truth, nal)));
