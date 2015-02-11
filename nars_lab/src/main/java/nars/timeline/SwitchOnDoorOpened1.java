@@ -16,16 +16,19 @@
  */
 package nars.timeline;
 
-import nars.core.NAR;
+import com.google.common.collect.Iterators;
 import nars.build.Default;
+import nars.core.NAR;
 import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.logic.entity.Task;
 import nars.logic.meta.NARTrace;
+import nars.operator.io.PauseInput;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Iterator;
 
 /**
  *
@@ -44,13 +47,16 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         new TextOutput(nar, System.out);
         new NARSwing(nar);
         
-        TextInput i = new TextInput(new File("nal/TestChamber/TestChamberIndependentExperience/switch_on_door_opened.nal")) {
+        TextInput i = new TextInput(nar.textPerception, new File("nal/TestChamber/TestChamberIndependentExperience/switch_on_door_opened.nal")) {
+
             int c = 0;
-            @Override public Object next() throws IOException {
+            public Iterator<Task> nextBuffer() {
+
                 if (c++ % 2 == 0)
-                    return super.next();
-                else
-                    return inputDelay+ "\n";
+                    return super.nextBuffer();
+                else {
+                    return Iterators.singletonIterator(new PauseInput(inputDelay).newTask());
+                }
             }
         };
         

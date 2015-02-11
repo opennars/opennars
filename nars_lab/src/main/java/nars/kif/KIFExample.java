@@ -36,7 +36,7 @@ public class KIFExample {
         
         (n.param).noiseLevel.set(40);
         
-        KIFInput k = new KIFInput("/home/me/sigma/KBs/Merge.kif");
+        KIFInput k = new KIFInput(n.textPerception, "/home/me/sigma/KBs/Merge.kif");
         k.setIncludeSubclass(true);
         k.setIncludeInstance(true);
         k.setIncludeSubrelation(true);

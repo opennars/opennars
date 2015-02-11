@@ -1,10 +1,9 @@
 package nars.logic;
 
 
+import nars.build.Discretinuous;
 import nars.core.NAR;
 import nars.core.Param;
-import nars.build.Discretinuous;
-import nars.io.TextInput;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -139,7 +138,7 @@ public class TestQController {
 
     public static void input(String example, NAR... n) {
         for (NAR x : n)
-            x.addInput(new TextInput(getExample(example)));             
+            x.addInput( getExample( example));
     }
     
     public static NAR newNAR() {

@@ -4,10 +4,9 @@
  */
 package nars.logic;
 
-import nars.core.NAR;
 import nars.build.Neuromorphic;
+import nars.core.NAR;
 import nars.gui.NARSwing;
-import nars.io.TextInput;
 
 import java.io.File;
 
@@ -28,7 +27,7 @@ public class NARSwingNeuromorphic {
         };
         n.param.conceptBeliefsMax.set(32);
         
-        n.addInput(new TextInput(new File("/tmp/h.nal")));
+        n.addInput( new File("/tmp/h.nal") );
         
         NARSwing.themeInvert();
         

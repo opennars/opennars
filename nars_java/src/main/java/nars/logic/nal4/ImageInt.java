@@ -70,7 +70,6 @@ public class ImageInt extends Image {
      * Try to make a new ImageExt. Called by StringParser.
      * @return the Term generated from the arguments
      * @param argList The list of term
-     * @param memory Reference to the memory
      */
     public static Term make(final Term[] argList) {
         if (argList.length < 2) {
@@ -96,7 +95,6 @@ public class ImageInt extends Image {
      * @param product The product
      * @param relation The relation
      * @param index The index of the place-holder
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Product product, final Term relation, final short index) {
@@ -121,7 +119,6 @@ public class ImageInt extends Image {
      * @param oldImage The existing Image
      * @param component The component to be added into the component list
      * @param index The index of the place-holder in the new Image
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final ImageInt oldImage, final Term component, final short index) {

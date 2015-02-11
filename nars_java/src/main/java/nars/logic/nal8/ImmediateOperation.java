@@ -4,9 +4,6 @@ package nars.logic.nal8;
 import nars.core.Memory;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-
-import java.util.List;
 
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */
@@ -37,7 +34,7 @@ abstract public class ImmediateOperation extends Operation {
     }
 
     /** create a new task that wraps this operation */
-    public Task newTask() {
+    public ImmediateTask newTask() {
         return new ImmediateTask(this);
     }
 }
