@@ -14,6 +14,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import nars.entity.Concept;
+import nars.entity.TaskLink;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Machine;
 import nars.grid2d.Cell.Material;
@@ -25,6 +27,7 @@ import nars.grid2d.LocalGridObject;
 import nars.grid2d.TestChamber;
 import nars.grid2d.object.Key;
 import nars.grid2d.object.Pizza;
+import nars.io.Symbols;
 import org.parboiled.common.FileUtils;
 import processing.core.PVector;
 
@@ -74,6 +77,26 @@ public class EditorPanel extends JPanel {
         
         DefaultMutableTreeNode mindSettings = new DefaultMutableTreeNode("Advanced Settings");
         root.add(mindSettings);
+        
+        mindSettings.add(new EditorMode("Delete all desires") {
+            @Override
+            public void run() {
+                for(Concept c : s.nar.memory.concepts) {
+                    if(c.desires!=null && !c.desires.isEmpty()) {
+                        c.desires.clear();
+                    }
+                    ArrayList<TaskLink> toDelete=new ArrayList<TaskLink>();
+                    for(TaskLink T : c.taskLinks) {
+                        if(T.targetTask.sentence.punctuation==Symbols.GOAL_MARK) {
+                            toDelete.add(T);
+                        }    
+                    }
+                    for(TaskLink T : toDelete) {
+                        c.taskLinks.take(T);
+                    }
+                }
+            }
+        });
         
         mindSettings.add(new EditorMode("Allow joy in action") {
             @Override
