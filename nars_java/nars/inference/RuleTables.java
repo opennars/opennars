@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import nars.core.Events;
@@ -184,13 +185,34 @@ public class RuleTables {
                                     if(!eternalBelieve && !eternalTask) { //project believe to task
                                         BelieveTruth=nal.getCurrentBelief().projectionTruth(task.sentence.getOccurenceTime(), memory.time());
                                     }
+                                    
+                                    //we also need to add one to stamp... time to think about redoing this for 1.6.3 in a more clever way..
+                                    ArrayList<Long> evBase=new ArrayList<Long>();
+                                    for(long l: st.evidentialBase) {
+                                        if(!evBase.contains(l)) {
+                                            evBase.add(l);
+                                        }
+                                    }
+                                    for(long l: nal.getCurrentBelief().stamp.evidentialBase) {
+                                        if(!evBase.contains(l)) {
+                                            evBase.add(l);
+                                        }
+                                    }
+                                    long[] evB=new long[evBase.size()];
+                                    int u=0;
+                                    for(long l : evBase) {
+                                        evB[i]=l;
+                                        u++;
+                                    }
 
+                                    st.evidentialBase=evB;
+                                    st.baseLength=evB.length;
                                     TruthValue truth=TruthFunctions.deduction(BelieveTruth, TaskTruth);
                                     
-                                    st.getChain().add(t);
+                                    
                                     Sentence S=new Sentence(resImp,s.punctuation,truth,st);
                                     Task Tas=new Task(S,new BudgetValue(BudgetFunctions.forward(truth, nal)));
-                                    nal.derivedTask(Tas, false, false, task, null);
+                                    nal.derivedTask(Tas, false, false, null, null);
                                     
                                     //RESTORE CONTEXT
                                     nal.setNewStamp(SVSTamp);

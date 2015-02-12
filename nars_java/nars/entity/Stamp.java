@@ -53,12 +53,12 @@ public class Stamp implements Cloneable {
     /**
      * serial numbers. not to be modified after Stamp constructor has initialized it
      */
-    public final long[] evidentialBase;
+    public long[] evidentialBase;
 
     /**
      * evidentialBase baseLength
      */
-    public final int baseLength;
+    public int baseLength;
 
     /**
      * creation time of the stamp
