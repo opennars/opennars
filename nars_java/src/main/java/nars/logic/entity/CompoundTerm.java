@@ -580,10 +580,19 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
          * @param t The other term
          * @return Whether the term are all in the compound
          */
+//    public boolean containsAllTermsOf_(final Term t) {
+//        if (t instanceof CompoundTerm) {
+//        //if (operator() == t.operator()) {
+//            //TODO make unit test for containsAll
+//            return Terms.containsAll(term, ((CompoundTerm) t).term );
+//        } else {
+//            return Terms.contains(term, t);
+//        }
+//    }
+
+    /** true if equal operator and all terms contained */
     public boolean containsAllTermsOf(final Term t) {
-        if (t instanceof CompoundTerm) {
-        //if (operator() == t.operator()) {
-            //TODO make unit test for containsAll
+        if (operator() == t.operator()) {
             return Terms.containsAll(term, ((CompoundTerm) t).term );
         } else {
             return Terms.contains(term, t);

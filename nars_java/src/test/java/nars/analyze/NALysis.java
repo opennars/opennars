@@ -119,6 +119,15 @@ public class NALysis extends AbstractNALTest {
         }
     }
 
+    public static void nal(String dirPath, String filter, NewNAR build, int maxCycles) {
+        Collection<String> paths = getPaths(dirPath);
+
+        for (String p : paths) {
+            if (p.contains(filter))
+                run(build, p, maxCycles, 1);
+        }
+    }
+
 
     /** runs the standard set of tests */
     public static void nal1(long seed) {

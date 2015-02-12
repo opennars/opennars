@@ -113,6 +113,7 @@ public class Conjunction extends Junction {
      * @param memory Reference to the memory
      */
     final public static Term make(final Term[] argList) {
+
         return make(argList, TemporalRules.ORDER_NONE);
     }
 
@@ -132,7 +133,8 @@ public class Conjunction extends Junction {
         }                         // special case: single component
         if (argList.length == 1) {
             return argList[0];
-        }                         // special case: single component
+        }
+
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             

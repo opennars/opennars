@@ -76,19 +76,6 @@ public final class CompositionalRules {
             return;
         }
 
-
-
-//        ///SETH HACK - if the term is not a judgment, see if a belief exists for the task's content which we can substitute
-//        //TODO extract a utility function: getMatchingBelief(Term x, boolean eternal, Memory m)
-//        if (taskContent.operator() != beliefContent.operator()) return;
-//        Concept currentTaskConcept = nal.memory.concept( nal.getCurrentTask().getTerm() );
-//        if (currentTaskConcept == null) return;
-//        boolean eternal = nal.getCurrentBelief().isEternal();
-//        Sentence taskBelief = currentTaskConcept.getBestBelief(eternal, !eternal);
-//        if (taskBelief == null) return;
-
-
-
         final Term componentT = taskContent.term[1 - index];
         final Term componentB = beliefContent.term[1 - index];
         final Term componentCommon = taskContent.term[index];
