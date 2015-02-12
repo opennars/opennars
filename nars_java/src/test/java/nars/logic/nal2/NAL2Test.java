@@ -22,7 +22,7 @@ public class NAL2Test extends JavaNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()}, //NAL8 + NAL9 didnt solve it
-                {new Default().level(3)}, //NAL2 didnt solve it as well as with 3
+                {new Default().level(3)}, //needs 3 for sets
                 {new Default().setInternalExperience(null)},
                 {new Curve().setInternalExperience(null)}
 

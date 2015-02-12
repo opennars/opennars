@@ -1,6 +1,7 @@
 package nars.logic.nal1;
 
 
+import nars.build.Curve;
 import nars.build.Default;
 import nars.core.NewNAR;
 import nars.logic.ScriptNALTest;
@@ -19,8 +20,8 @@ public class NAL1ScriptTests extends ScriptNALTest {
         return getParams(new String[]{"test1"},
                 new Default(),
                 new Default().setInternalExperience(null),
-                new Default().setInternalExperience(null).level(1)
-                //new Curve()
+                new Default().setInternalExperience(null).level(1),
+                new Curve()
         );
     }
 

@@ -6,7 +6,7 @@
 'What can be neutralized by acid?
 <(\,neutralization,acid,_) --> ?x>?
 
-6
-
 'What can be neutralized by acid can react with acid. 
 ''outputMustContain('<(\,neutralization,acid,_) --> (\,reaction,acid,_)>. %1.00;0.81%')
+
+6

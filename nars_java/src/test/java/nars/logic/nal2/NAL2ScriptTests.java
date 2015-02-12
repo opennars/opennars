@@ -5,7 +5,6 @@ import nars.build.Curve;
 import nars.build.Default;
 import nars.core.NewNAR;
 import nars.logic.ScriptNALTest;
-import org.junit.Ignore;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -21,7 +20,7 @@ public class NAL2ScriptTests extends ScriptNALTest {
         return getParams(new String[] { "test2"},
                 new Default(),
                 new Default().setInternalExperience(null),
-                new Default().setInternalExperience(null).level(2),
+                new Default().setInternalExperience(null).level(3), //needs 3 for sets
                 new Curve() );
     }
 
