@@ -72,7 +72,9 @@ public class Inheritance extends Statement {
     /** alternate version of Inheritance.make that allows equivalent subject and predicate
      * to be reduced to the common term.      */
     public static Term makeTerm(final Term subject, final Term predicate) {            
-        return make(subject, predicate);        
+        if (subject.equals(predicate))
+            return subject;
+        return make(subject, predicate);
     }
 
     /**

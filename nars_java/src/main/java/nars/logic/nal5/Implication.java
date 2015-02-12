@@ -68,7 +68,13 @@ public class Implication extends Statement {
         
         return make(t[0], t[1], temporalOrder);
     }
-    
+
+
+    public static Term makeTerm(final Term subject, final Term predicate) {
+        if (subject.equals(predicate))
+            return subject;
+        return make(subject, predicate, TemporalRules.ORDER_NONE);
+    }
 
     /**
      * Try to make a new compound from two term. Called by the logic rules.

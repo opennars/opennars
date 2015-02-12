@@ -2,9 +2,10 @@ package nars.logic;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.entity.*;
-import nars.logic.entity.tlink.TermLinkBuilder;
-import nars.logic.entity.tlink.TermLinkTemplate;
+import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Statement;
+import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
 import nars.logic.nal2.Similarity;
@@ -14,7 +15,6 @@ import nars.logic.nal4.Image;
 import nars.logic.nal4.ImageExt;
 import nars.logic.nal4.ImageInt;
 import nars.logic.nal4.Product;
-import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal5.Junction;
@@ -164,7 +164,7 @@ public class Terms {
      */
     public static Term reduceComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
         final Term[] list;
-        if (t1.operator() == t2.operator()) {
+        if (t1.operator() == t2.operator())  {
             list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, new Term[] { t2 });

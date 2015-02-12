@@ -4,8 +4,6 @@ import nars.control.DefaultCore;
 import nars.core.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
-import nars.io.TextPerception;
-import nars.io.TextInput;
 import nars.logic.entity.*;
 import nars.logic.nal8.Operator;
 import nars.operator.app.STMInduction;

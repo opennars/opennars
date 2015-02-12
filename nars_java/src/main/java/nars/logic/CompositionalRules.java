@@ -37,8 +37,9 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static nars.logic.Terms.*;
 import static nars.logic.TruthFunctions.*;
@@ -51,117 +52,6 @@ import static nars.logic.TruthFunctions.*;
  */
 public final class CompositionalRules {
 
-    /* --------------- questions which contain answers which are of no value for NARS but need to be answered --------------- */
-
-    /**
-     * {(&&,A,B,...)?, A,B} |- {(&&,A,B)} {(&&,A,_components_1_)?,
-     * (&&,_part_of_components_1_),A} |- {(&&,A,_part_of_components_1_,B)} and
-     * also the case where both are conjunctions, all components need to be
-     * subterm of the question-conjunction in order for the subterms of both
-     * conjunctions to be collected together.
-     *
-     * @param sentence The first premise
-     * @param belief   The second premise
-     * @param nal      Reference to the memory
-     */
-    public static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final NAL nal) {
-        if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
-            return;
-        }
-        Set<Concept> memoryQuestionConcepts = nal.memory.getQuestionConcepts();
-        if (memoryQuestionConcepts.isEmpty())
-            return;
-
-
-
-        final Term term1 = sentence.term;
-        final boolean term1ContainVar = term1.hasVar();
-        final boolean term1Conjunction = term1 instanceof Conjunction;
-
-        if ((term1Conjunction) && (term1ContainVar)) {
-            return;
-        }
-
-        final Term term2 = belief.term;
-        final boolean term2ContainVar = term2.hasVar();
-        final boolean term2Conjunction = term2 instanceof Conjunction;
-
-        if ((term2Conjunction) && (term2ContainVar)) {
-            return;
-        }
-
-
-        memoryQuestionConcepts.forEach(new Consumer<Concept>() {
-            @Override
-            public void accept(Concept concept) {
-
-                final Term pcontent = concept.term;
-
-                final List<Task> cQuestions = concept.questions;
-                if (cQuestions.isEmpty())
-                    throw new RuntimeException("Concept " + concept + " present in Concept Questions index, but has no questions");
-
-
-                if (!(pcontent instanceof Conjunction)) {
-                    return;
-                }
-
-                final Conjunction ctpcontent = (Conjunction) pcontent;
-                if (ctpcontent.hasVar()) {
-                    return;
-                }
-
-                if (!term1Conjunction && !term2Conjunction) {
-                    if (!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
-                        return;
-                    }
-                } else {
-                    if (term1Conjunction) {
-                        if (!term2Conjunction && !ctpcontent.containsTerm(term2)) {
-                            return;
-                        }
-                        if (!ctpcontent.containsAllTermsOf(term1)) {
-                            return;
-                        }
-                    }
-
-                    if (term2Conjunction) {
-                        if (!term1Conjunction && !ctpcontent.containsTerm(term1)) {
-                            return;
-                        }
-                        if (!ctpcontent.containsAllTermsOf(term2)) {
-                            return;
-                        }
-                    }
-                }
-
-                CompoundTerm conj = Sentence.termOrNull(Conjunction.make(term1, term2));
-                if (conj == null) return;
-
-            /*
-            since we already checked for term1 and term2 having a variable, the result
-            will not have a variable
-
-            if (Variables.containVarDepOrIndep(conj.name()))
-                continue;
-             */
-                TruthValue truthT = nal.getCurrentTask().sentence.truth;
-                TruthValue truthB = nal.getCurrentBelief().truth;
-            /*if(truthT==null || truthB==null) {
-                //continue; //<- should this be return and not continue?
-                return;
-            }*/
-
-                nal.memory.logic.DED_CONJUNCTION_BY_QUESTION.hit();
-
-                TruthValue truthAnd = intersection(truthT, truthB);
-                BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
-                nal.doublePremiseTask(conj, truthAnd, budget, false);
-
-            }
-        });
-
-    }
 
 
 
@@ -178,9 +68,27 @@ public final class CompositionalRules {
      * @param nal          Reference to the memory
      */
     static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final NAL nal) {
-        if ((!nal.getCurrentTask().sentence.isJudgment()) || (taskContent.operator() != beliefContent.operator())) {
+
+
+        final Sentence taskBelief = nal.getCurrentTask().sentence;
+
+        if ((!taskBelief.isJudgment()) || (taskContent.operator() != beliefContent.operator())) {
             return;
         }
+
+
+
+//        ///SETH HACK - if the term is not a judgment, see if a belief exists for the task's content which we can substitute
+//        //TODO extract a utility function: getMatchingBelief(Term x, boolean eternal, Memory m)
+//        if (taskContent.operator() != beliefContent.operator()) return;
+//        Concept currentTaskConcept = nal.memory.concept( nal.getCurrentTask().getTerm() );
+//        if (currentTaskConcept == null) return;
+//        boolean eternal = nal.getCurrentBelief().isEternal();
+//        Sentence taskBelief = currentTaskConcept.getBestBelief(eternal, !eternal);
+//        if (taskBelief == null) return;
+
+
+
         final Term componentT = taskContent.term[1 - index];
         final Term componentB = beliefContent.term[1 - index];
         final Term componentCommon = taskContent.term[index];
@@ -197,7 +105,7 @@ public final class CompositionalRules {
             decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, nal);
             return;
         }
-        final TruthValue truthT = nal.getCurrentTask().sentence.truth;
+        final TruthValue truthT = taskBelief.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
         final TruthValue truthOr = union(truthT, truthB);
         final TruthValue truthAnd = intersection(truthT, truthB);
@@ -548,7 +456,7 @@ public final class CompositionalRules {
         }
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
-        Term content = Implication.make(state1, state2);
+        Term content = Implication.makeTerm(state1, state2);
         if (content == null) {
             return;
         }
@@ -569,11 +477,11 @@ public final class CompositionalRules {
         TruthValue truth = induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false);
-        content = Implication.make(state2, state1);
+        content = Implication.makeTerm(state2, state1);
         truth = induction(truthB, truthT);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false);
-        content = Equivalence.make(state1, state2);
+        content = Equivalence.makeTerm(state1, state2);
         truth = comparison(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false);
@@ -667,7 +575,7 @@ public final class CompositionalRules {
             }
 
 
-            Term content = Implication.make(premise1, oldCompound);
+            Term content = Implication.makeTerm(premise1, oldCompound);
 
             if (content == null) {
                 return false;

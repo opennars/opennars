@@ -24,7 +24,6 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.util.bag.impl.LevelBag;
 import nars.util.data.CuckooMap;
 
 import java.util.Collection;
@@ -190,7 +189,7 @@ public class Parameters {
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
 
-    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.04f;
+    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.05f;
 
 
 

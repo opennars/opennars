@@ -473,13 +473,13 @@ public class Memory implements Serializable {
 
             //STATEMENTS --------------------------
             case INHERITANCE:
-                if (ensureTermLength(2, a)) return Inheritance.make(a[0], a[1]); break;
+                if (ensureTermLength(2, a)) return Inheritance.makeTerm(a[0], a[1]); break;
 
             case SIMILARITY:
-                if (ensureTermLength(2, a)) return Similarity.make(a[0], a[1]); break;
+                if (ensureTermLength(2, a)) return Similarity.makeTerm(a[0], a[1]); break;
 
             case IMPLICATION:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1]); break;
+                if (ensureTermLength(2, a)) return Implication.makeTerm(a[0], a[1]); break;
             case IMPLICATION_AFTER:
                 if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
             case IMPLICATION_BEFORE:
@@ -488,7 +488,7 @@ public class Memory implements Serializable {
                 if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
 
             case EQUIVALENCE:
-                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1]); break;
+                if (ensureTermLength(2, a)) return Equivalence.makeTerm(a[0], a[1]); break;
             case EQUIVALENCE_WHEN:
                 if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
             case EQUIVALENCE_AFTER:

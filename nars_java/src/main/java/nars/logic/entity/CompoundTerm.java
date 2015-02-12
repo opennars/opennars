@@ -26,9 +26,6 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.NALOperator;
 import nars.logic.Terms;
-import nars.logic.entity.tlink.TermLinkBuilder;
-import nars.logic.nal5.Equivalence;
-import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
@@ -625,8 +622,16 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
      * @return The new compound
      */
     public Term setComponent(final int index, final Term t) {
+
+
+        //if the subterm is alredy equivalent, just return this instance because it will be equivalent
+        if (t!=null && (operator() != t.operator()) && (term[index].equals(t)))
+            return this;
+
         List<Term> list = asTermList();//Deep();
+
         list.remove(index);
+
         if (t != null) {
             if (operator() != t.operator()) {
                 list.add(index, t);

@@ -71,7 +71,10 @@ public class Equivalence extends Statement {
         if (subject.equals(predicate))
             return subject;                
         return make(subject, predicate, temporalOrder);        
-    }    
+    }
+    public static Term makeTerm(Term subject, Term predicate) {
+        return makeTerm(subject, predicate, TemporalRules.ORDER_NONE);
+    }
 
 
     /**
@@ -88,6 +91,7 @@ public class Equivalence extends Statement {
     }
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
+
         if (invalidStatement(subject, predicate)) {
             return null;
         }

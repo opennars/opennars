@@ -549,7 +549,7 @@ public class NARPrologMirror extends AbstractMirror {
                         case "implication":
                             return Implication.make(a, b);
                         case "equivalence":
-                            return Equivalence.make(a, b);
+                            return Equivalence.makeTerm(a, b);
                         //TODO more types
                             
                     }

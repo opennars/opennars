@@ -79,7 +79,6 @@ public abstract class Statement extends CompoundTerm {
      * @param o The relation String
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return The Statement built
      */
     final public static Statement make(final NALOperator o, final Term subject, final Term predicate, boolean customOrder, int order) {
