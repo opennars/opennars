@@ -93,7 +93,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
             type = (short)(template.type - 1); //// point to component
         }
         index = template.index;
-        this.name = name;
+        this.name = newKeyPrefix().toString() + target.name() ;
     }
 
     public boolean toSelfOrTransform() {
@@ -159,7 +159,8 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
     
     @Override
     public String toString() {
-        return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
+        //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
+        return name;
     }
 
     protected CharSequence newKeyPrefix() {
@@ -178,7 +179,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
         if (index != null) {
             for (short i : index) {
                 //prefix.append('-').append( Integer.toString(i + 1, 16 /** hexadecimal */)  );
-                prefix.append('-').append( Integer.toString(i)  );
+                prefix.append('-').append( Integer.toString(i+1)  );
             }
         }
         prefix.append(at2);

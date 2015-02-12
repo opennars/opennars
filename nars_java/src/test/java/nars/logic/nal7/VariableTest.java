@@ -4,13 +4,12 @@
  */
 package nars.logic.nal7;
 
-import junit.framework.TestCase;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.build.DefaultBuffered;
-import nars.core.NewNAR;
 import nars.core.Events.Answer;
 import nars.core.NAR;
+import nars.core.NewNAR;
 import nars.event.AbstractReaction;
 import nars.io.condition.OutputContainsCondition;
 import nars.logic.JavaNALTest;
@@ -51,6 +50,9 @@ public class VariableTest extends JavaNALTest {
     @Test public void testDepQueryVariableDistinct() {
 
 
+        //HACK run the other test separately because it isnt using OutputCondition
+        testQueryVariableUnification(nar);
+
         /*
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
             shouldn't happen because it should not unify #wat with 4 because its not a query variable      
@@ -62,7 +64,7 @@ public class VariableTest extends JavaNALTest {
             }
         };
         
-        conditions.add( new OutputContainsCondition(nar, "=/> <a --> 4>>.", 5) );
+        conditions.add(new OutputContainsCondition(nar, "=/> <a --> 4>>.", 5));
 
 
         nar.addInput(
@@ -74,7 +76,7 @@ public class VariableTest extends JavaNALTest {
 
     }
     
-    @Test public void testQueryVariableUnification() {
+    public void testQueryVariableUnification(NAR n) {
         /*
         <a --> 3>. :|:
         <a --> 4>. :/:
@@ -106,6 +108,8 @@ public class VariableTest extends JavaNALTest {
         nar.run(1200);
           
         assertTrue(solutionFound.get());
+
+        n.reset();
         
     }
 }

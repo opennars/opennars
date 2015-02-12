@@ -21,7 +21,7 @@ public class NALysisSome extends NALysis {
     public static void main(String[] args) throws FileNotFoundException {
 
 
-        nal("test5", "5.18", new Default().setInternalExperience(null), 16);
+        nal("test5", "5.25", new Default().setInternalExperience(null), 256);
 
 
 

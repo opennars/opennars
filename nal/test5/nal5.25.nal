@@ -3,6 +3,8 @@
 'If robin is a bird and it's living, then robin is an animal
 <(&&,<robin --> bird>,<robin --> [living]>) ==> <robin --> animal>>.  
 
+1
+
 'If robin can fly, then robin is a bird
 <<robin --> [flying]> ==> <robin --> bird>>. 
 

@@ -184,6 +184,22 @@ public class TemporalRules {
         return false;
     }
 
+
+    public static void applyExpectationOffset(Memory memory, Term temporalStatement, Stamp stamp) {
+        if(temporalStatement!=null && temporalStatement instanceof Implication) {
+            Implication imp=(Implication) temporalStatement;
+            if(imp.getSubject() instanceof Conjunction && imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD)  {
+                Conjunction conj=(Conjunction) imp.getSubject();
+                if(conj.term[conj.term.length-1] instanceof Interval) {
+                    Interval intv=(Interval) conj.term[conj.term.length-1];
+                    long time_offset=intv.durationCycles(memory);
+                    stamp.setOccurrenceTime(stamp.getOccurrenceTime()+time_offset);
+                }
+            }
+        }
+    }
+
+
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4

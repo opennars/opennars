@@ -682,9 +682,8 @@ public class Concept extends Item<Term> implements Termable {
      * @return the tasklink which was selected or updated
      */
     protected TaskLink activateTaskLink(final TaskLinkBuilder taskLink) {
-
-        return taskLinks.UPDATE(taskLink);
-
+        TaskLink t = taskLinks.UPDATE(taskLink);
+        return t;
     }
 
 
@@ -993,6 +992,7 @@ public class Concept extends Item<Term> implements Termable {
         for (int i = 0; (i < toMatch); i++) {
 
             final TermLink termLink = termLinks.PEEKNEXT();
+
             if (termLink == null)
                 return null;
 

@@ -71,7 +71,6 @@ public class TermLinkBuilder extends BagActivator<String,TermLink> {
             if (!ti.hasVar()) {
                 addTemplate(new TermLinkTemplate(type, ti, i));
             }
-
             if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
 
                 prepareComponentLinks(TermLink.COMPOUND_CONDITION, (CompoundTerm) ti);

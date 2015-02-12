@@ -7,7 +7,6 @@ package nars.logic.reason;
 import nars.core.Events;
 import nars.core.Parameters;
 import nars.logic.NAL;
-import nars.logic.NALRuleEngine;
 import nars.logic.entity.*;
 
 /** Firing a concept (reasoning event)  */
@@ -94,6 +93,8 @@ abstract public class ConceptFire extends NAL {
 
 
                 final TermLink beliefLink = currentConcept.selectNovelTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+
+
 
                 if (beliefLink == null) {
                     //no novel termlinks available

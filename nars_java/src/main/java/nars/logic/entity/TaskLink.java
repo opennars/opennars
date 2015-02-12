@@ -128,7 +128,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
         if (obj == this) return true;
         if (obj instanceof TaskLink) {
             TaskLink t = (TaskLink)obj;
-            return t.name().equals(name());
+            //return t.name().equals(name());
+            return t.targetTask.equals(targetTask);
         }
         return false;
     }    

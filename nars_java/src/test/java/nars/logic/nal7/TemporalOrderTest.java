@@ -4,23 +4,17 @@
  */
 package nars.logic.nal7;
 
-import junit.framework.TestCase;
 import nars.build.Curve;
 import nars.build.Default;
-import nars.core.NAR;
 import nars.core.NewNAR;
-import nars.core.Parameters;
 import nars.io.TextOutput;
 import nars.io.condition.OutputContainsCondition;
 import nars.logic.JavaNALTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import static org.junit.Assert.assertTrue;
 
 
 public class TemporalOrderTest extends JavaNALTest {
@@ -43,15 +37,17 @@ public class TemporalOrderTest extends JavaNALTest {
     public void testFutureQuestion() {
 
 
+        TextOutput.out(nar);
+
         nar.addInput("<e --> f>. :/:");
         nar.addInput("<c --> d>. :|:");
         OutputContainsCondition futureQuestion = new OutputContainsCondition(nar, "<e --> f>. :/:", 5);
         assertTrue(!futureQuestion.isTrue());
-        nar.run(1);
+        nar.runUntil(1);
         
         assertTrue(futureQuestion.isTrue());
         
-        nar.run(10);
+        nar.runUntil(10);
 
         /*
         try {
@@ -62,12 +58,12 @@ public class TemporalOrderTest extends JavaNALTest {
             assertTrue(e.toString().contains("require eternal tense"));
         }
                 */
-        
-        nar.addInput("<c --> d>?");
 
         conditions.add(new OutputContainsCondition(nar, "<c --> d>. :\\:", 5));
+        nar.addInput("<c --> d>?");
 
-        nar.run(10);
+
+        nar.runUntil(20);
         
     }
 

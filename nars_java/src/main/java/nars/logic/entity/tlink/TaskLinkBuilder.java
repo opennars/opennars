@@ -47,4 +47,11 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
         return null;
     }
 
+    @Override
+    public String toString() {
+        if (template==null)
+            return task.toString();
+        else
+            return template + " " + task;
+    }
 }

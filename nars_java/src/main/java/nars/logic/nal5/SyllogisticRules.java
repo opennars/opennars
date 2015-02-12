@@ -497,7 +497,9 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        
+
+        TemporalRules.applyExpectationOffset(nal.memory, premise1, nal.getTheNewStamp());
+
         nal.doublePremiseTask(content, truth, budget,false);
     }
 

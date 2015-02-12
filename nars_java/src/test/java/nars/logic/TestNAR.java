@@ -158,10 +158,14 @@ public class TestNAR extends NAR {
             }
         }
 
-        run(finalCycle);
+        runUntil(finalCycle);
     }
 
-    public NAR run(long finalCycle) {
+    public NAR run(long cycles) {
+        return runUntil(time() + cycles);
+    }
+
+    public NAR runUntil(long finalCycle) {
 
         error = null;
 
