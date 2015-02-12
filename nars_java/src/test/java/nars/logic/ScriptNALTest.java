@@ -1,27 +1,15 @@
 package nars.logic;
 
-import nars.core.*;
+import nars.core.NewNAR;
 import nars.io.ExampleFileInput;
-import nars.io.condition.OutputCondition;
-import nars.io.meter.Metrics;
-import nars.io.meter.event.DoubleMeter;
-import nars.io.meter.event.HitMeter;
-import nars.io.meter.event.ObjectMeter;
-import nars.logic.entity.Task;
-import nars.util.data.CuckooMap;
-import org.junit.*;
-import org.junit.rules.Stopwatch;
-import org.junit.runner.Description;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * NAL tests implemented in a .nal script file

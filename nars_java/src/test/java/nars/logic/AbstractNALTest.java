@@ -144,11 +144,14 @@ abstract public class AbstractNALTest extends TestCase {
         }
 
 
+
+
+
         assertTrue("No cycles elapsed", nar.time() > 0);
 
 
         String report = "";
-        boolean suc = true;
+        boolean suc = nar.getError()==null;
         for (OutputCondition e : conditions) {
             if (!e.succeeded) {
                 report += e.getFalseReason().toString() + '\n';

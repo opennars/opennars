@@ -62,6 +62,10 @@ public class TestNAR extends NAR {
         return et;
     }
 
+    public Exception getError() {
+        return error;
+    }
+
     public ExplainableTask mustOutput(long withinCycles, String task) throws InvalidInputException {
         Task t = narsese.parseTask(task);
         //TODO avoid reparsing term from string
@@ -145,7 +149,6 @@ public class TestNAR extends NAR {
     }
 
     public void run() {
-
         long finalCycle = 0;
         for (OutputCondition oc : musts) {
             if (oc instanceof TaskCondition) {
@@ -155,23 +158,31 @@ public class TestNAR extends NAR {
             }
         }
 
+        run(finalCycle);
+    }
+
+    public NAR run(long finalCycle) {
+
         error = null;
 
         if (showOutput)
             TextOutput.out(this);
 
+        int failures = 0;
+
         try {
-            run(finalCycle - time());
+            super.run(finalCycle - time());
         }
         catch (Exception e) {
             error = e;
+            failures++;
         }
 
         //assertTrue("time exceeded", time() > finalCycle);
 
         int conditions = musts.size();
 
-        int failures = 0;
+
         for (OutputCondition oc : musts) {
             if (oc instanceof TaskCondition) {
                 TaskCondition tc = (TaskCondition) oc;
@@ -195,6 +206,7 @@ public class TestNAR extends NAR {
         }
 
 
+        return this;
     }
 
 
@@ -219,6 +231,7 @@ public class TestNAR extends NAR {
                     }
                 }
             }
+
         }
 
         if (error!=null) {

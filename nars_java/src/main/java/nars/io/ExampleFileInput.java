@@ -102,7 +102,7 @@ public class ExampleFileInput extends TextInput {
             }
 
             for (final File file : folder.listFiles()) {
-                if (file.getName().equals("README.txt") || file.getName().contains(".png"))
+                if (file.isDirectory() || file.getName().equals("README.txt") || file.getName().contains(".png"))
                     continue;
                 if(!("extra".equals(file.getName()))) {
                     l.put(file.getName(), file.getAbsolutePath() );

@@ -8,7 +8,6 @@ import nars.event.Reaction;
 import nars.io.*;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
-import nars.logic.NAL.DerivationFilter;
 import nars.logic.entity.*;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
@@ -667,7 +666,7 @@ public class NAR implements Runnable {
                 else
                     e.printStackTrace();
 
-                //throw new RuntimeException(e);
+                throw new RuntimeException(e);
             }
             else
                 memory.error(e);
