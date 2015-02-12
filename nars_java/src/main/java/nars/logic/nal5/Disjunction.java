@@ -47,12 +47,7 @@ public class Disjunction extends Junction {
         init(arg);
     }
 
-    
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    } //2?
-    
+
     /**
      * Clone an object
      * @return A new object
@@ -72,7 +67,6 @@ public class Disjunction extends Junction {
      * Try to make a new Disjunction from two term. Called by the logic rules.
      * @param term1 The first component
      * @param term2 The first component
-     * @param memory Reference to the memory
      * @return A Disjunction generated or a Term it reduced to
      */
     public static Term make(Term term1, Term term2) {
@@ -140,6 +134,6 @@ public class Disjunction extends Junction {
      */
     @Override
     public boolean isCommutative() {
-        return true; //?
+        return true;
     }
 }

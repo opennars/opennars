@@ -52,11 +52,6 @@ public class Product extends CompoundTerm {
     
 
     
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }    
-    
     /**
      * Clone a Product
      * @return A new object, to be casted into an ImageExt

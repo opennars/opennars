@@ -12,5 +12,13 @@ abstract public class Intersect extends CompoundTerm {
         super(arg);
     }
 
+    /**
+     * Check if the compound is communitative.
+     * @return true for communitative
+     */
+    @Override
+    public final boolean isCommutative() {
+        return true;
+    }
 
 }

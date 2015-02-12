@@ -101,7 +101,7 @@ public class Similarity extends Statement {
      * @return true for commutative
      */
     @Override
-    public boolean isCommutative() {
+    public final boolean isCommutative() {
         return true;
     }
 }

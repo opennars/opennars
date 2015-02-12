@@ -45,11 +45,6 @@ public class Negation extends CompoundTerm {
     }
 
 
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }
-    
     /**
      * Clone an object
      *

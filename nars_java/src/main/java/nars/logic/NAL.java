@@ -6,12 +6,8 @@ package nars.logic;
 
 import nars.core.*;
 import nars.logic.entity.*;
-import nars.logic.nal1.Negation;
-import nars.logic.nal8.Operation;
 import reactor.event.Event;
-import reactor.filter.Filter;
 import reactor.function.Supplier;
-import reactor.rx.action.FilterAction;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -207,17 +203,14 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         Task derived = null;
 
 
-        final Sentence newSentence;
 
-        try {
-            newSentence = new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, getTheNewStamp());
-        }
-        catch (CompoundTerm.UnableToCloneException e) {
-            System.err.println(e.toString());
-            return null;
-        }
 
-        final Task newTask = Task.make(newSentence, newBudget, subbedTask, subbedBelief);
+
+
+
+        final Task newTask = Task.make(
+                new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, getTheNewStamp()),
+                newBudget, subbedTask, subbedBelief);
 
         if (newTask != null) {
             boolean added = deriveTask(newTask, false, false, null, null);
@@ -233,8 +226,10 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
             TruthValue truthEt = TruthFunctions.eternalize(newTruth);
             Stamp st = getTheNewStamp().clone();
             st.setEternal();
-            final Sentence newSentence2 = new Sentence(newTaskContent, subbedTask.sentence.punctuation, truthEt, st);
-            final Task newTask2 = Task.make(newSentence2, newBudget, subbedTask, subbedBelief);
+
+            final Task newTask2 = Task.make(
+                    new Sentence(newTaskContent, subbedTask.sentence.punctuation, truthEt, st),
+                    newBudget, subbedTask, subbedBelief);
             if (newTask2 != null) {
                 deriveTask(newTask2, false, false, null, null);
             }

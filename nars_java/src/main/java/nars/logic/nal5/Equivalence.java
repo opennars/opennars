@@ -33,7 +33,7 @@ import java.util.Arrays;
  */
 public class Equivalence extends Statement {
 
-    private int temporalOrder = TemporalRules.ORDER_NONE;
+    private final int temporalOrder;
 
     /**
      * Constructor with partial values, called by make
@@ -83,7 +83,6 @@ public class Equivalence extends Statement {
      *
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return A compound generated or null
      */
     public static Equivalence make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction

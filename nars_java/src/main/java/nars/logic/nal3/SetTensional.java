@@ -55,19 +55,13 @@ abstract public class SetTensional extends CompoundTerm {
         return n.toString();
     }
 
-    
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }
-    
 
     /**
      * Check if the compound is communitative.
      * @return true for communitative
      */
     @Override
-    public boolean isCommutative() {
+    public final boolean isCommutative() {
         return true;
     }    
 }

@@ -1,13 +1,10 @@
 package nars.logic.nal4;
 
-import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.NALOperator;
 import nars.logic.entity.AbstractTerm;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
-
-import java.util.Objects;
 
 import static nars.logic.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.logic.NALOperator.COMPOUND_TERM_OPENER;
@@ -106,12 +103,6 @@ abstract public class Image extends CompoundTerm {
         return term[relationIndex];
     }
 
-
-    
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 2;
-    }
 
     /**
      * Get the other term in the Image

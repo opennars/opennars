@@ -157,6 +157,8 @@ public final class StructuralRules {
      * @return Whether the direction of inheritance should be revised
      */
     private static boolean switchOrder(CompoundTerm compound, short index) {
+        //TODO use Image base class for both comparisons
+
         return ((((compound instanceof DifferenceExt) || (compound instanceof DifferenceInt)) && (index == 1))
                 || ((compound instanceof ImageExt) && (index != ((ImageExt) compound).relationIndex))
                 || ((compound instanceof ImageInt) && (index != ((ImageInt) compound).relationIndex)));
@@ -226,9 +228,7 @@ public final class StructuralRules {
 //        if (!memory.getCurrentTask().sentence.isJudgment()) {
 //            return;
 //        }
-        if(index >= compound.term.length) {
-            return;
-        }
+
         Term component = compound.term[index];
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;

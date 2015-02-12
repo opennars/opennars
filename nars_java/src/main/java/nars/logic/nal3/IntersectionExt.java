@@ -138,14 +138,6 @@ public class IntersectionExt extends Intersect {
         return NALOperator.INTERSECTION_EXT;
     }
 
-    /**
-     * Check if the compound is communitative.
-     * @return true for communitative
-     */
-    @Override
-    public boolean isCommutative() {
-        return true;
-    }
 
 
 }

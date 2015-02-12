@@ -181,24 +181,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     }*/
 
 
-    
-    //TODO not used yet
-    private Term[] ensureValidComponents(final Term[] components) {
-        if (components.length < getMinimumRequiredComponents()) {
-            throw new RuntimeException(getClass().getSimpleName() + " requires >=" + getMinimumRequiredComponents() + " components, invalid argument:" + Arrays.toString(components));
-        }
-        
-        //return Collections.unmodifiableList( term );
-        return components;
-    }
 
-    /**
-     * default value, override in subclasses.
-     * may not be enforced yet.
-     */
-    public int getMinimumRequiredComponents() {
-        return 2;
-    }
 
    
  

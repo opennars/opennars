@@ -94,6 +94,7 @@ public class Variables {
             if (cTerm1.size() != cTerm2.size()) {
                 return false;
             }
+            //TODO simplify comparison with Image base class
             if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).relationIndex != ((ImageExt) cTerm2).relationIndex) || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).relationIndex != ((ImageInt) cTerm2).relationIndex)) {
                 return false;
             }

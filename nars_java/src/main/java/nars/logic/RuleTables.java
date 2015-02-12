@@ -549,6 +549,5 @@ public class RuleTables {
         
     }
 
-    public static void transformTask(TaskLink tLink, NAL nal) {
-    }
+
 }
