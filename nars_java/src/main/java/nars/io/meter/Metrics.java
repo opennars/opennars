@@ -6,11 +6,11 @@
 package nars.io.meter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.gson.*;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
-import nars.io.meter.event.ObjectMeter;
 
 import java.io.PrintStream;
 import java.lang.reflect.Type;
@@ -470,7 +470,8 @@ JsonSerializationContext context) {
         printJSONArray(out, getSignalIDs(),false );
     }
     public void printCSVLastLine(PrintStream out) {
-        printJSONArray(out, rowLast(), false);
+        if (rows.size() > 0)
+            printJSONArray(out, rowLast(), false);
     }
 
     public void printCSV(PrintStream out) {
@@ -484,7 +485,12 @@ JsonSerializationContext context) {
         return getClass().getSimpleName();
     }
 
+
     public void printARFF(PrintStream out) {
+        printARFF(out, null);
+    }
+
+    public void printARFF(PrintStream out, Predicate<Object[]> p) {
         //http://www.cs.waikato.ac.nz/ml/weka/arff.html
         out.println("@RELATION " + name());
 
@@ -507,8 +513,13 @@ JsonSerializationContext context) {
             }
         }
 
+        out.print('%'); //ARFF comment character
+        printCSVHeader(out);
+
         out.println("@DATA");
         for (Object[] x : this) {
+            if (p!=null)
+                if (!p.apply(x)) continue;
             for (int i = 0; i < numColumns; i++) {
                 if (i < x.length) {
                     Object y = x[i];

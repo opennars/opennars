@@ -21,8 +21,13 @@ public class ImmediateProcess extends NAL {
         super(mem, task);
 
     }
-    
-    
+
+    @Override
+    protected void onFinished() {
+
+        memory.addNewTasks(this);
+
+    }
 
     @Override
     public String toString() {

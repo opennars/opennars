@@ -66,6 +66,7 @@ public class NAL1Test extends JavaNALTest {
                 .es("es posible que sport es un tipo de chess.");
         nar.mustBelieve(23, "<chess --> sport>", 0.90f, 0.45f)
                 .en("I guess chess is a type of sport");
+        nar.run();
     }
 
     @Test

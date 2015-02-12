@@ -14,9 +14,8 @@ import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ObjectMeter;
 import nars.logic.meta.Derivations;
-import org.junit.*;
-import org.junit.rules.Stopwatch;
-import org.junit.runner.Description;
+import org.junit.After;
+import org.junit.Ignore;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -32,7 +31,7 @@ abstract public class AbstractNALTest extends TestCase {
 
     private static final int similarsToSave = 3;
 
-    static final DoubleMeter testScore, testTime;
+    static final DoubleMeter testScore, testTime, testSeed;
     static final HitMeter testConcepts;
     static final ObjectMeter<String> testBuild;
     public static OutputStream dataOut = null;
@@ -47,8 +46,9 @@ abstract public class AbstractNALTest extends TestCase {
 //    }
 
     public static final Metrics<String,Object> results = new Metrics().addMeters(
-            testBuild = new ObjectMeter<String>("Build"),
             testScore = new DoubleMeter("Score"),
+            testBuild = new ObjectMeter<String>("Build"),
+            testSeed = new DoubleMeter("Seed"),
             testTime = new DoubleMeter("uSecPerCycle"),
             testConcepts = new HitMeter("Concepts")
     );
@@ -91,10 +91,11 @@ abstract public class AbstractNALTest extends TestCase {
 
     }
 
-    public static void endAnalysis(String label, TestNAR nar, NewNAR build, long nanos, boolean success) {
+    public static void endAnalysis(String label, TestNAR nar, NewNAR build, long nanos, long seed, boolean success) {
 
         testBuild.set(build.toString());
         testScore.set( OutputCondition.score(nar.musts) );
+        testSeed.set(seed);
         testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
         testConcepts.hit(nar.memory.concepts.size());
 
@@ -139,6 +140,7 @@ abstract public class AbstractNALTest extends TestCase {
         if (conditions.isEmpty()) {
             System.err.println("WARNING: No Conditions Added");
             new Exception().printStackTrace();
+            assertTrue(false);
         }
 
 
@@ -161,49 +163,7 @@ abstract public class AbstractNALTest extends TestCase {
     }
 
 
-    @AfterClass
-    public static void report() {
-        if (dataOut !=null)
-            results.printARFF(new PrintStream(dataOut));
-    }
 
-
-
-
-
-    public void finish(Description test, String status, long nanos) {
-
-        boolean success = status.equals("fail") ? false : true;
-
-        String label = test.getDisplayName();
-
-        endAnalysis(label, nar, build, nanos, success);
-
-    }
-
-
-    @Rule
-    public final Stopwatch stopwatch = new Stopwatch() {
-        @Override
-        protected void succeeded(long nanos, Description description) {
-            finish(description, "success", nanos);
-        }
-
-        @Override
-        protected void failed(long nanos, Throwable e, Description description) {
-            finish(description, "fail", nanos);
-        }
-
-        @Override
-        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
-            finish(description, "skip", nanos);
-        }
-
-        @Override
-        protected void finished(long nanos, Description description) {
-            //finish(description, "finish", nanos);
-        }
-    };
 
 
 

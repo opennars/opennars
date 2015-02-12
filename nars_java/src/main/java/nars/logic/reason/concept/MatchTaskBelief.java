@@ -13,9 +13,11 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
 
     @Override public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
         Sentence currentBelief = f.getCurrentBelief();
-        if ((currentBelief!=null) && (match(taskLink.targetTask, currentBelief, f))) {
-            //Filter this from further processing
-            return false;
+        if (currentBelief!=null){
+            if (match(taskLink.targetTask, currentBelief, f)) {
+                //Filter this from further processing
+                return false;
+            }
         }
         return true;
     }
@@ -29,7 +31,6 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
      *
      * @param task The task
      * @param belief The belief
-     * @param memory Reference to the memory
      */
     public static boolean match(final Task task, final Sentence belief, final NAL nal) {
         Sentence taskSentence = task.sentence;

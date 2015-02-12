@@ -11,6 +11,7 @@ import org.junit.Ignore;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Collection;
 
 import static nars.logic.ScriptNALTest.getPaths;
@@ -64,11 +65,49 @@ public class NALysis extends AbstractNALTest {
             }
         }
 
-        endAnalysis(testName, n, build, nanos, suc);
+        String[] p = path.split("/");
+        endAnalysis(p[p.length-1], n, build, nanos, seed, suc);
 
         results.printCSVLastLine(System.out);
 
     }
+
+//    public void finish(Description test, String status, long nanos) {
+//
+//        boolean success = status.equals("fail") ? false : true;
+//
+//        String label = test.getDisplayName();
+//
+//        endAnalysis(label, nar, build, nanos, success);
+//
+//    }
+//
+//
+//    @Rule
+//    public final Stopwatch stopwatch = new Stopwatch() {
+//        @Override
+//        protected void succeeded(long nanos, Description description) {
+//            finish(description, "success", nanos);
+//        }
+//
+//        @Override
+//        protected void failed(long nanos, Throwable e, Description description) {
+//            finish(description, "fail", nanos);
+//        }
+//
+//        @Override
+//        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
+//            finish(description, "skip", nanos);
+//        }
+//
+//        @Override
+//        protected void finished(long nanos, Description description) {
+//            //finish(description, "finish", nanos);
+//        }
+//    };
+
+
+
 
     public static void runDir(String dirPath, int maxCycles, long seed, NewNAR... builds) {
         Collection<String> paths = getPaths(dirPath);
@@ -80,54 +119,70 @@ public class NALysis extends AbstractNALTest {
     }
 
 
-
-    public static void main(String[] args) throws FileNotFoundException {
-
-        runDir("test1", 100, 1,
+    /** runs the standard set of tests */
+    public static void nal1(long seed) {
+        runDir("test1", 100, seed,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(1),
                 new Curve(),
-                new Curve().setInternalExperience(null) );
-
+                new Curve().setInternalExperience(null));
+    }
+    public static void nal2() {
         runDir("test2", 150, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(2),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
-
+    }
+    public static void nal3() {
         runDir("test3", 200, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(3),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
-
+    }
+    public static void nal4() {
         runDir("test4", 500, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(4),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
-
+    }
+    public static void nal5() {
         runDir("test5", 600, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(5),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
-
+    }
+    public static void nal6() {
         runDir("test6", 800, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(6),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
 
         //csvOut = System.out;
         dataOut = new FileOutputStream("/tmp/out.arff");
-        report();
+
+        nal1(1);
+        nal2();
+        nal3();
+        nal4();
+        nal5();
+        nal6();
+
+        results.printARFF(new PrintStream(dataOut));
+
 
     }
 

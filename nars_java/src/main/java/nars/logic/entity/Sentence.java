@@ -428,9 +428,9 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         return revisible;
     }
 
-    public void setRevisible(final boolean b) {
+    /*public void setRevisible(final boolean b) {
         revisible = b;
-    }
+    }*/
 
     public int getTemporalOrder() {
         return term.getTemporalOrder();

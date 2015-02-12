@@ -1,10 +1,17 @@
-**** Revision
-S.
-S.
-S?
-1
-**** Choice : no result : normal : no common term
-S1. %0.50;0.90%
-S2. %0.9;0.70%
-S?
-100
+''**** Revision
+<X --> Y>.
+<X --> Y>.
+<X --> Y>?
+
+''outputMustContain('<X --> Y>.')
+
+3
+
+
+
+''**** Choice : no result : normal : no common term
+<A --> B>. %0.50;0.90%
+<C --> D>. %0.9;0.70%
+<E --> F>?
+
+''100

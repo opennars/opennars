@@ -48,7 +48,7 @@ public class TimelineVis implements Vis {
     public Graphics2D g2; //for direct Swing control
     private float chartMargin = 1;
 
-    SignalData timeAxis;
+    final SignalData timeAxis;
     
     public Object[] getTimeAxis() {
         Object[] r = timeAxis.getDataCached();
@@ -59,10 +59,10 @@ public class TimelineVis implements Vis {
         public float camX = 0f;
         public float camY = 0f;
         public float xScale = 100f;
-        public float yScale = 100f;   
+        public float yScale = 100f;
         public long lastUpdate = 0;
     }
-    
+
     public final Camera camera;
     
     long lastUpdate = System.nanoTime();
@@ -115,10 +115,11 @@ public class TimelineVis implements Vis {
     
     
     public void updateNext() {
+
         timeAxis.getData();
-            for (AxisPlot c : charts) {                
-                c.update(this);                
-            }            
+            for (AxisPlot c : charts) {
+                c.update(this);
+            }
         
     }
 

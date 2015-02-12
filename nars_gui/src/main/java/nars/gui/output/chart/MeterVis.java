@@ -79,7 +79,7 @@ public class MeterVis extends TimelineVis {
      * Chart.BAR_CENTERED
      */
     public MeterVis(EventEmitter nar, TemporalMetrics<Object> meters) {
-        super(meters.newSignalData("time"));
+        super(meters.newSignalData("key"));
 
         this.nar = nar;        
         this.meters = meters;

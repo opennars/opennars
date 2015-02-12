@@ -55,10 +55,16 @@ public class LocalRules {
      * @return If revision is possible between the two sentences
      */
     public static boolean revisible(final Sentence s1, final Sentence s2) {
-        //System.out.println(s1.isRevisible() + " " + s1.equalsContent(s2) + " " + TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) + "(" + s1.getTemporalOrder() + "," + s2.getTemporalOrder() + ")");
-        return (s1.isRevisible() &&
+        /*return (s1.isRevisible() &&
                 s1.equalTerms(s2) &&
-                TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
+                TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));*/
+
+        if (s1.isRevisible())
+            if (s1.equalTerms(s2))
+                if (TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()))
+                    return true;
+        return false;
+
     }
 
 
