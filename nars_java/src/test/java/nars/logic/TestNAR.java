@@ -1,6 +1,7 @@
 package nars.logic;
 
 import nars.core.*;
+import nars.event.AbstractReaction;
 import nars.io.TextOutput;
 import nars.io.condition.OutputCondition;
 import nars.io.condition.TaskCondition;
@@ -29,10 +30,44 @@ public class TestNAR extends NAR {
     public final List<OutputCondition> musts = new ArrayList();
     public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
+    private boolean exitOnAllSuccess = true;
 
 
     public TestNAR(NewNAR b) {
         super(b);
+
+        if (exitOnAllSuccess) {
+            new AbstractReaction(this, Events.CycleEnd.class) {
+
+                final int checkResolution = 16; //every # cycles to check for completion
+                int cycle = 0;
+
+                @Override
+                public void event(Class event, Object[] args) {
+                    cycle++;
+                    if (cycle % checkResolution == 0) {
+
+                        if (musts.isEmpty())
+                            return;
+
+                        boolean finished = true;
+
+                        for (OutputCondition oc : musts) {
+                            if (!oc.isTrue()) {
+                                finished = false;
+                                break;
+                            }
+                        }
+
+                        if (finished) {
+                            stop();
+                        }
+
+                    }
+                }
+            };
+        }
+
     }
 
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int minOccurrenceDelta, int maxOccurrenceDelta) throws InvalidInputException {
@@ -179,9 +214,6 @@ public class TestNAR extends NAR {
         catch (Exception e) {
             error = e;
         }
-
-        //assertTrue("time exceeded", time() > finalCycle);
-        report(System.out, showFail, showSuccess, showExplanations);
 
 
         return this;

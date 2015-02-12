@@ -37,6 +37,8 @@ public class NAL8Test extends JavaNALTest {
 
         nar.mustOutput(60, goal, '!', 1.0f, 0.9f);
         nar.quest(goal);
+
+        nar.run(10);
     }
     
 }

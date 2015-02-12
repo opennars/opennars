@@ -127,11 +127,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         long start = System.nanoTime();
 
-        try {
-            nar.runUntil(maxCycles);
-        } catch (Exception e) {
-
-        }
+        nar.runUntil(maxCycles);
 
         return System.nanoTime() - start;
     }

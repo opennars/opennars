@@ -101,7 +101,7 @@ public class MetricsTest {
             public void println(String x) {
                 String eq = null;
                 switch (line++) {
-                    case 0: eq = "\"key\",\"time.mean\",\"time.stdev\""; break;
+                    case 0: eq = "\"key\",\"key.mean\",\"key.stdev\""; break;
                     case 1: eq = "0,0,0"; break;
                     case 3: eq = "0.2,0.1,0.1"; break;
                 }

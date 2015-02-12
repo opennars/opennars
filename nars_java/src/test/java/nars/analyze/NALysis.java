@@ -45,7 +45,6 @@ public class NALysis extends AbstractNALTest {
     public static void run(NewNAR build, String path, int maxCycles, long seed) {
 
         String testName = path + "_" + build;
-        System.out.println("run: " + testName);
 
         TestNAR n = new TestNAR(build);
 
@@ -55,7 +54,7 @@ public class NALysis extends AbstractNALTest {
         long nanos = runScript(n, path, maxCycles, seed);
 
         //String report = "";
-        boolean suc = n.getError()!=null;
+        boolean suc = n.getError()==null;
         for (OutputCondition e : n.musts) {
             if (!e.succeeded) {
                 //report += e.getFalseReason().toString() + '\n';
@@ -69,7 +68,15 @@ public class NALysis extends AbstractNALTest {
         String[] p = path.split("/");
         endAnalysis(p[p.length-1], n, build, nanos, seed, suc);
 
-        results.printCSVLastLine(System.out);
+        //results.printCSVLastLine(System.out);
+
+        if (!suc) {
+            System.out.println("FAIL: " + testName);
+
+            //assertTrue("time exceeded", time() > finalCycle);
+            n.report(System.out, true, true, true);
+
+        }
 
     }
 
@@ -132,11 +139,12 @@ public class NALysis extends AbstractNALTest {
     /** runs the standard set of tests */
     public static void nal1(long seed) {
         runDir("test1", 100, seed,
-                new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(1),
                 new Curve(),
                 new Curve().setInternalExperience(null));
+        runDir("test1", 3000, seed,
+                new Default()); //HACK: nal1.8 with internal experience enabled takes forever
     }
     public static void nal2() {
         runDir("test2", 150, 1,
@@ -171,7 +179,7 @@ public class NALysis extends AbstractNALTest {
                 new Curve().setInternalExperience(null) );
     }
     public static void nal6() {
-        runDir("test6", 800, 1,
+        runDir("test6", 10000, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(6),
