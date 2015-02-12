@@ -187,7 +187,7 @@ public abstract class NAL implements Runnable {
             }
         }
         
-        if(task.sentence.getOccurenceTime()>memory.time()) {
+        if(task.sentence.getOccurenceTime()>memory.time() && (this.getCurrentTask().sentence.producedByTemporalInduction || this.getCurrentBelief().producedByTemporalInduction)) {
             ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(),task);
         }
         
@@ -237,7 +237,7 @@ public abstract class NAL implements Runnable {
             
             try {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-
+                newSentence.producedByTemporalInduction=temporalAdd;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 
                 if (newTask!=null) {
@@ -264,6 +264,7 @@ public abstract class NAL implements Runnable {
                 Stamp st=getTheNewStamp().clone();
                 st.setEternal();
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
+                newSentence.producedByTemporalInduction=temporalAdd;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null);
