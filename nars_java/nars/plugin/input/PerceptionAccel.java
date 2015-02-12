@@ -55,6 +55,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             Task newEvent=eventbuffer.get(eventbuffer.size()-1);
             TruthValue truth=newEvent.sentence.truth;
             Stamp st=new Stamp(nal.memory);
+            ArrayList<Long> evBase=new ArrayList<Long>();
             
             int k=0;
             for(int i=0;i<Len;i++) {
@@ -65,6 +66,10 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 }
                 Task current=eventbuffer.get(j);
                 st.getChain().add(current.sentence.term);
+                for(long l : current.sentence.stamp.evidentialBase) {
+                    evBase.add(l);
+                }
+                
                 relterms[k]=current.sentence.term;
                 if(i!=Len-1) { //if its not the last one, then there is a next one for which we have to put an interval
                     truth=TruthFunctions.deduction(truth, current.sentence.truth);
@@ -74,6 +79,15 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 k+=2;
             }
 
+            long[] evB=new long[evBase.size()];
+            int u=0;
+            for(long l : evBase) {
+                evB[u]=l;
+                u++;
+            }
+            st.baseLength=evB.length;
+            st.evidentialBase=evB;
+            
             boolean eventBufferDidNotHaveSoMuchEvents=false;
             for(int i=0;i<relterms.length;i++) {
                 if(relterms[i]==null) {
@@ -140,7 +154,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 System.out.println("success: "+T.toString());
             }
             
-            nal.derivedTask(T, false, false, newEvent, S); //lets make the new event the parent task, and derive it
+            nal.derivedTask(T, false, false, null, null); //lets make the new event the parent task, and derive it
         }
     }
     
