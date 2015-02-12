@@ -10,6 +10,7 @@ import nars.logic.entity.Task;
 import nars.util.data.CuckooMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -102,18 +103,26 @@ public class CountDerivationCondition extends AbstractPlugin {
 
         boolean tracing = false;
         String prevMethodID = null;
-        for (int i = 0; i < s.length; i++) {
+
+        StringBuffer path = new StringBuffer();
+        int i;
+        for (i = 0; i < s.length; i++) {
             StackTraceElement e = s[i];
 
             String className = e.getClassName();
             String methodName = e.getMethodName();
 
 
-            if (tracing && className.contains(".ConceptFireTask") && methodName.equals("accept")) {
-                tracing = false;
-            }
-
             if (tracing) {
+
+                //Filter conditions
+                if (className.contains("reactor."))
+                    continue;
+                if (className.contains("EventEmitter"))
+                    continue;
+                if ((className.equals("NAL") || className.equals("Memory")) && methodName.equals("emit"))
+                    continue;
+
                 int cli = className.lastIndexOf(".") + 1;
                 if (cli!=-1)
                     className = className.substring(cli, className.length()); //class's simpleName
@@ -121,21 +130,59 @@ public class CountDerivationCondition extends AbstractPlugin {
                 String methodID = className + '_' + methodName;
                 String sm = prefix + '_' + methodID;
 
-                HitMeter m = (HitMeter) metrics.getMeter(sm);
-                if (m == null) {
-                    metrics.addMeter(m = new HitMeter(sm));
-                }
-                m.hit();
+                traceMethod(sm);
 
-                if (prevMethodID!=null)
+
+
+                if (prevMethodID!=null) {
                     traceMethodCall(prevMethodID, methodID, success);
+                    path.append('\\');
+                }
+                path.append(sm);
 
                 prevMethodID = methodID;
+
+
+                //Termination conditions
+                if (className.contains("ConceptFireTask") && methodName.equals("accept"))
+                    break;
+                if (className.contains("ImmediateProcess") && methodName.equals("reason"))
+                    break;
+                if (className.contains("ConceptFire") && methodName.equals("reason"))
+                    break;
             }
             else if (className.endsWith(".NAL") && methodName.equals("deriveTask")) {
                 tracing = true; //begins with next stack element
             }
+
         }
+
+        String pathString = path.toString();
+        if (!pathString.isEmpty()) {
+            traceMethodPath(pathString);
+        }
+
+        if (i >= s.length - 1) {
+            System.out.println("Stack not clipped: " + Arrays.toString(s));
+        }
+
+
+    }
+
+    private void hit(String meter) {
+        HitMeter m = (HitMeter) metrics.getMeter(meter);
+        if (m == null) {
+            metrics.addMeter(m = new HitMeter(meter));
+        }
+        m.hit();
+    }
+
+    private void traceMethod(String sm) {
+        //hit(sm);
+    }
+
+    private void traceMethodPath(String pathString) {
+        hit(pathString);
     }
 
     protected void traceMethodCall(String prevMethodID, String methodID, boolean success) {

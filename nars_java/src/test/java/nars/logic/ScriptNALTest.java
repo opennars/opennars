@@ -45,6 +45,8 @@ abstract public class ScriptNALTest extends AbstractNALTest {
 
         runScript(nar, path, getMaxCycles(), rngSeed);
 
+        nar.evaluate();
+
     }
 
     public static Collection<String> getPaths(String... directories) {

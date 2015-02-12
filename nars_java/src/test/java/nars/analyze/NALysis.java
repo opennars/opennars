@@ -51,10 +51,11 @@ public class NALysis extends AbstractNALTest {
 
         startAnalysis(n);
 
+
         long nanos = runScript(n, path, maxCycles, seed);
 
         //String report = "";
-        boolean suc = true;
+        boolean suc = n.getError()!=null;
         for (OutputCondition e : n.musts) {
             if (!e.succeeded) {
                 //report += e.getFalseReason().toString() + '\n';
@@ -132,7 +133,7 @@ public class NALysis extends AbstractNALTest {
         runDir("test2", 150, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
-                new Default().level(2),
+                new Default().level(3), //2 needs sets in 3
                 new Curve(),
                 new Curve().setInternalExperience(null) );
     }

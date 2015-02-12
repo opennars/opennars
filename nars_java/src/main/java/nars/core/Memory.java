@@ -579,8 +579,9 @@ public class Memory implements Serializable {
         return 0;
     }
 
-    public void removeTask(final Task task, final String reason) {
-        emit(TaskRemove.class, task, reason);
+    public void removeTask(final Task task, final String removalReason) {
+        task.setReason( task.getReason() + " -> " + removalReason);
+        emit(TaskRemove.class, task, removalReason);
         task.end();
     }
 

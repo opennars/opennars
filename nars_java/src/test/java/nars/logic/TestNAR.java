@@ -12,7 +12,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static junit.framework.TestCase.assertTrue;
 
 /**
 * TODO use a countdown latch to provide early termination for successful tests
@@ -168,20 +168,25 @@ public class TestNAR extends NAR {
         if (showOutput)
             TextOutput.out(this);
 
-        int failures = 0;
 
         try {
             super.run(finalCycle - time());
         }
         catch (Exception e) {
             error = e;
-            failures++;
         }
 
         //assertTrue("time exceeded", time() > finalCycle);
+        report(System.out, showFail, showSuccess, showExplanations);
 
+
+        return this;
+    }
+
+
+    public void evaluate() {
         int conditions = musts.size();
-
+        int failures = getError()!=null ? 1 : 0;
 
         for (OutputCondition oc : musts) {
             if (oc instanceof TaskCondition) {
@@ -191,10 +196,6 @@ public class TestNAR extends NAR {
                 }
             }
         }
-
-        report(System.out, showFail, showSuccess, showExplanations);
-
-
 
         int successes = conditions - failures;
 
@@ -206,9 +207,7 @@ public class TestNAR extends NAR {
         }
 
 
-        return this;
     }
-
 
     public void report(PrintStream out, boolean showFail, boolean showSuccess, boolean showExplanations) {
 
