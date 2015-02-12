@@ -53,7 +53,7 @@ import nars.operator.Operator;
  */
 public class Sentence<T extends Term> implements Cloneable, Termable, Truthable {
 
-
+    public boolean producedByTemporalInduction=false;
 
     /**
      * The content of a Sentence is a Term
