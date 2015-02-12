@@ -34,7 +34,7 @@ public class TestEvalScheme extends JavaNALTest {
 
         //OUT: <(^scheme,(*,car,(*,quote,(*,2,3))),$1) =/> <$1 <-> 2>>. :|: %1.00;0.99% {0|0 : 1 : }
 
-        conditions.add(new OutputContainsCondition(nar, "<(^scheme,(*,car,(*,quote,(*,2,3))),$1) =/> <$1 <-> 2>>. :|:", 1));
+        nar.musts.add(new OutputContainsCondition(nar, "<(^scheme,(*,car,(*,quote,(*,2,3))),$1) =/> <$1 <-> 2>>. :|:", 1));
 
         nar.run(4);
 

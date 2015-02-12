@@ -19,7 +19,6 @@ import org.junit.Ignore;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.List;
 
 /**
  * Created by me on 2/10/15.
@@ -61,7 +60,7 @@ abstract public class AbstractNALTest extends TestCase {
 
     public final TestNAR nar;
     public final NewNAR build;
-    public final List<OutputCondition> conditions;
+
 
 
     public AbstractNALTest(NewNAR b) {
@@ -72,7 +71,6 @@ abstract public class AbstractNALTest extends TestCase {
 
         this.build = b;
         this.nar = new TestNAR(b);
-        conditions = nar.musts;
 
     }
 
@@ -139,7 +137,7 @@ abstract public class AbstractNALTest extends TestCase {
 
 
         //assertTrue("No conditions to test", !conditions.isEmpty());
-        if (conditions.isEmpty()) {
+        if (nar.musts.isEmpty()) {
             System.err.println("WARNING: No Conditions Added");
             new Exception().printStackTrace();
             assertTrue(false);
@@ -154,7 +152,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         String report = "";
         boolean suc = nar.getError()==null;
-        for (OutputCondition e : conditions) {
+        for (OutputCondition e : nar.musts) {
             if (!e.succeeded) {
                 report += e.getFalseReason().toString() + '\n';
                 suc = false;

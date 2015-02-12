@@ -8,7 +8,6 @@ import nars.build.Curve;
 import nars.build.Default;
 import nars.build.DefaultBuffered;
 import nars.core.Events.Answer;
-import nars.core.NAR;
 import nars.core.NewNAR;
 import nars.event.AbstractReaction;
 import nars.io.condition.OutputContainsCondition;
@@ -19,7 +18,6 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -50,8 +48,6 @@ public class VariableTest extends JavaNALTest {
     @Test public void testDepQueryVariableDistinct() {
 
 
-        //HACK run the other test separately because it isnt using OutputCondition
-        testQueryVariableUnification(nar);
 
         /*
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
@@ -64,7 +60,7 @@ public class VariableTest extends JavaNALTest {
             }
         };
         
-        conditions.add(new OutputContainsCondition(nar, "=/> <a --> 4>>.", 5));
+        nar.musts.add(new OutputContainsCondition(nar, "=/> <a --> 4>>.", 5));
 
 
         nar.addInput(
@@ -76,7 +72,7 @@ public class VariableTest extends JavaNALTest {
 
     }
     
-    public void testQueryVariableUnification(NAR n) {
+    @Test public void testQueryVariableUnification() {
         /*
         <a --> 3>. :|:
         <a --> 4>. :/:
@@ -87,29 +83,32 @@ public class VariableTest extends JavaNALTest {
         because ?wat can be unified with 4 since ?wat is a query variable
        */
 
-        AtomicBoolean solutionFound = new AtomicBoolean(false);
-        new AbstractReaction(nar, true, Answer.class) {
-            @Override public void event(Class event, Object[] args) {
-                solutionFound.set(true);
-                nar.stop();
-            }
-        };
+//        AtomicBoolean solutionFound = new AtomicBoolean(false);
+//        new AbstractReaction(nar, true, Answer.class) {
+//            @Override public void event(Class event, Object[] args) {
+//                System.out.println(args[0]);
+//                solutionFound.set(true);
+//                nar.stop();
+//            }
+//        };
 
-        //TextOutput.out(n);
+//        TextOutput.out(nar);
 
         nar.addInput(
                 "<a --> 3>. :|:" + '\n' +
                 "<a --> 4>. :/:" + '\n' +
                 "<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
 
+        nar.musts.add(new OutputContainsCondition(nar, "<(&/,<a --> 3>,+3) =/> <a --> 4>>.", 1));
+
         //158
         //1738
         //n.run(200); //sufficient for case without internal experience
         nar.run(1200);
           
-        assertTrue(solutionFound.get());
+        //assertTrue(solutionFound.get());
 
-        n.reset();
-        
+
     }
+
 }

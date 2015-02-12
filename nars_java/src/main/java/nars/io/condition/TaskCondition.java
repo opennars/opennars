@@ -1,8 +1,5 @@
 package nars.io.condition;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import nars.core.Events;
@@ -17,7 +14,9 @@ import nars.logic.nal7.Tense;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 
@@ -49,7 +48,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public int ocMin = -1,ocMax= -1;
 
     public final List<Task> trueAt = new ArrayList();
-    public final List<Task> removals = new ArrayList();
+    public final Deque<Task> removals = new ArrayDeque();
+
+    final int maxRemovals = 4;
 
     Task closest = null;
     double closestDistance = Double.POSITIVE_INFINITY;
@@ -181,7 +182,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
             //String reason = (String)args[1];
 
             if (matches(task)) {
-                removals.add(task);
+                removals.addLast(task);
+                if (removals.size() > maxRemovals)
+                    removals.removeFirst();
             }
         }
 

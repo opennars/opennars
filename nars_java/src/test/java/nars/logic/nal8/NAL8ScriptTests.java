@@ -1,7 +1,6 @@
-package nars.logic.nal6;
+package nars.logic.nal8;
 
 
-import nars.build.Curve;
 import nars.build.Default;
 import nars.core.NewNAR;
 import nars.logic.ScriptNALTest;
@@ -9,19 +8,17 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
-public class NAL6ScriptTests extends ScriptNALTest {
+public class NAL8ScriptTests extends ScriptNALTest {
 
-    public NAL6ScriptTests(NewNAR b, String input) {
+    public NAL8ScriptTests(NewNAR b, String input) {
         super(b, input);
     }
 
     @Parameterized.Parameters(name= "{1} {0}")
     public static Collection configurations() {
-        return getParams(new String[]{"test6"},
+        return getParams(new String[]{"test8"},
                 new Default(),
-                new Default().setInternalExperience(null),
-                new Default().setInternalExperience(null).level(6),
-                new Curve());
+                new Default().setInternalExperience(null));
     }
 
     public int getMaxCycles() { return 3000; }

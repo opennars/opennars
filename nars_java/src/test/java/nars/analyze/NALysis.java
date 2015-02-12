@@ -179,12 +179,23 @@ public class NALysis extends AbstractNALTest {
                 new Curve().setInternalExperience(null) );
     }
     public static void nal6() {
-        runDir("test6", 10000, 1,
+        runDir("test6", 5000, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(6),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
+    }
+    public static void nal7() {
+        runDir("test7", 5000, 1,
+                new Default(),
+                new Default().setInternalExperience(null),
+                new Default().level(7));
+    }
+    public static void nal8() {
+        runDir("test8", 5000, 1,
+                new Default(),
+                new Default().setInternalExperience(null));
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -198,6 +209,8 @@ public class NALysis extends AbstractNALTest {
         nal4();
         nal5();
         nal6();
+        nal7();
+        nal8();
 
         results.printARFF(new PrintStream(dataOut));
 

@@ -59,7 +59,7 @@ public class TemporalOrderTest extends JavaNALTest {
         }
                 */
 
-        conditions.add(new OutputContainsCondition(nar, "<c --> d>. :\\:", 5));
+        nar.musts.add(new OutputContainsCondition(nar, "<c --> d>. :\\:", 5));
         nar.addInput("<c --> d>?");
 
 

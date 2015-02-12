@@ -98,7 +98,7 @@ public class Default extends NewNAR implements ConceptBuilder {
 
         param.duration.set(5);
 
-        param.confidenceThreshold.set(0.0075);
+        param.confidenceThreshold.set(0.0095);
 
         param.shortTermMemoryHistory.set(1);
         param.temporalRelationsMax.set(10);
@@ -110,7 +110,7 @@ public class Default extends NewNAR implements ConceptBuilder {
 
         //param.budgetThreshold.set(0.01f);
 
-        param.conceptBeliefsMax.set(7);
+        param.conceptBeliefsMax.set(11);
         param.conceptGoalsMax.set(7);
         param.conceptQuestionsMax.set(5);
 
@@ -118,8 +118,8 @@ public class Default extends NewNAR implements ConceptBuilder {
         param.conceptsFiredPerCycle.set(1);
         
         param.termLinkMaxReasoned.set(5);
-        param.termLinkMaxMatched.set(10);
-        param.termLinkRecordLength.set(10);
+        param.termLinkMaxMatched.set(11);
+        param.termLinkRecordLength.set(9);
         
         param.setForgetting(Forgetting.Periodic);
         param.setTiming(Timing.Iterative);
