@@ -3,7 +3,6 @@ package nars.logic.reason.concept;
 
 import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
-import nars.logic.Terms;
 import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
 import nars.logic.nal5.Conjunction;
@@ -77,10 +76,10 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
                 Sentence s = null;
                 if (task.sentence.punctuation == Symbols.JUDGMENT) {
-                    s = next.getBestBelief(true, false);
+                    s = next.getBestBelief(false);
                 }
                 else if (task.sentence.punctuation == Symbols.GOAL) {
-                    s = next.getBestGoal(true, false);
+                    s = next.getBestGoal(false, true);
                 }
                 if (s == null) continue;
 

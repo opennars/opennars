@@ -74,7 +74,8 @@ public class DefaultGrapher implements NARGraph.Grapher {
     public void onTask(Task t) {
     }
 
-    public void onBelief(Sentence kb) {
+    public Sentence onBelief(Sentence kb) {
+        return kb;
     }
 
     public void onQuestion(Task q) {
@@ -105,19 +106,11 @@ public class DefaultGrapher implements NARGraph.Grapher {
             g.addEdge(c, c.term, new NARGraph.TermContent());
         }
         if (includeBeliefs) {
-            for (final Sentence belief : c.beliefs) {
-                onBelief(belief);
-                sentenceTerms.put(belief, c);
-                //g.addVertex(c);
-                //g.addVertex(belief);
-                //g.addEdge(belief, c, new SentenceContent());
-                //TODO extract to onBelief
-                //TODO check if kb.getContent() is never distinct from c.getTerm()
-                /*if (c.term.equals(belief.content)) {
-                continue;
-                }
-                addTerm(g, belief.content);
-                g.addEdge(term, belief.content, new TermBelief());*/
+            for (final Sentence belief : c.beliefsEternal) {
+                sentenceTerms.put(onBelief(belief), c);
+            }
+            for (final Sentence belief : c.beliefsTemporal) {
+                sentenceTerms.put(onBelief(belief), c);
             }
         }
         if (includeQuestions) {

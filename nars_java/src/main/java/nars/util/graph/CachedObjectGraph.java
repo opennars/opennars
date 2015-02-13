@@ -63,9 +63,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
             /*if (includeConceptTermLinks)*/ {
                 for (TermLink t : c.termLinks.values()) {
                     Term target = t.target;
-                    if (!containsVertex(target)) {
-                        addVertex(target);
-                    }
+                    addVertex(target);
                     addEdge(source, target, t);
                 }
             }
@@ -73,19 +71,20 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
             /*if (includeConceptTaskLinks)*/ {
                 for (TaskLink t : c.taskLinks.values()) {
                     Task target = t.targetTask;
-                    if (!containsVertex(target)) {
-                        addVertex(target);
-                    }
+                    addVertex(target);
                     addEdge(source, target, t);
                 }
             }
 
             /*if (includeConceptBeliefs)*/ {
-                for (Sentence s : c.beliefs) {
+                for (Sentence s : c.beliefsEternal) {
                     Term target = s.term;
-                    if (!containsVertex(target)) {
-                        addVertex(target);
-                    }
+                    addVertex(target);
+                    addEdge(source, target, s);
+                }
+                for (Sentence s : c.beliefsTemporal) {
+                    Term target = s.term;
+                    addVertex(target);
                     addEdge(source, target, s);
                 }
             }

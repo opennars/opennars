@@ -47,13 +47,13 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                 //TODO create and use a sampleNextConcept(NALOperator.Implication) method
 
                 Concept next = memory.concepts.sampleNextConcept();
-                if (next == null || next.beliefs.isEmpty() || next.equals(concept)) continue;
+                if (next == null || next.beliefsTemporal.isEmpty() || next.equals(concept)) continue;
 
                 Term t = next.getTerm();
 
                 if ((t instanceof Implication) && (alreadyInducted.add(t))) {
 
-                    Sentence otherBelief = next.getBestBelief(true, false);
+                    Sentence otherBelief = next.getBestBelief(false);
                     if (otherBelief!=null) {
                         Sentence current, prev;
 

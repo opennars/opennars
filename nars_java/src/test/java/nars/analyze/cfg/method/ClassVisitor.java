@@ -27,6 +27,7 @@
  */
 package nars.analyze.cfg.method;
 
+
 import org.apache.bcel.classfile.EmptyVisitor;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;

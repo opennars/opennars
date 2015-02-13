@@ -71,10 +71,10 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
             rad = (2 + 6 * co.budget.summary());
             
             
-            if (!co.beliefs.isEmpty()) {
+            /*if (!co.beliefs.isEmpty()) {
                 float confidence = co.beliefs.get(0).truth.getConfidence();
                 alpha = 0.5f + 0.5f * confidence;
-            }
+            }*/
             
             //v.stroke = 5;
         } else if (o instanceof Term) {

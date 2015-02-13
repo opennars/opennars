@@ -180,20 +180,31 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
 
         public void update(long time) {
 
-            if (!concept.beliefs.isEmpty()) {
-                List<Sentence> bb = concept.getBeliefs();
+            String st = "";
+            if (!concept.beliefsEternal.isEmpty()) {
+                List<Sentence> bb = concept.beliefsEternal;
                 beliefChart.update(time, bb);
-                subtitle.setText("truth: " + bb.get(0).truth.toString());
-                
+                st += (bb.get(0).truth.toString()) + ' ';
+
+            }
+            if (!concept.beliefsTemporal.isEmpty()) {
+                List<Sentence> bb = concept.beliefsTemporal;
+                beliefChart.update(time, bb);
+
+                st += ("@" + bb.get(0).truth.toString());
+
                 beliefTime.setVisible(
                         beliefTime.update(time, bb));
             }
+            subtitle.setText(st);
+
+            /*
             else {
                 subtitle.setText("");
                 if (!concept.questions.isEmpty())
                     subtitle.setText("?(question)");
                 beliefTime.setVisible(false);
-            }
+            }*/
 
             if (!concept.questions.isEmpty())
                 questionChart.update( unmodifiableList( concept.questions ) );

@@ -352,13 +352,13 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
       */    
     public Sentence projection(final long targetTime, final long currentTime) {
             
-        TruthValue newTruth = projectionTruth(targetTime, currentTime);
+        final TruthValue newTruth = projectionTruth(targetTime, currentTime);
         
-        boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
-                
-        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
-        
-        return new Sentence(term, punctuation, newTruth, newStamp, false);
+        final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
+
+        return new Sentence(term, punctuation, newTruth,
+                stamp.cloneWithNewOccurrenceTime(eternalizing? Stamp.ETERNAL : targetTime),
+                false);
     }
 
     

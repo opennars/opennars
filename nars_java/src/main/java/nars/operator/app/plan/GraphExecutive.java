@@ -436,7 +436,7 @@ public class GraphExecutive {
     public static double getActualPriority(final Memory memory, final Term t) {
         double p;
         Concept c = memory.concept(t);
-        if ((c!=null) && (!c.beliefs.isEmpty())) {
+        if ((c!=null) /*&& (!c.beliefs.isEmpty())*/) {
             //Sentence bestBelief = c.beliefs.get(0);
             //if (bestBelief!=null)
             //    return c.getPriority() * bestBelief.truth.getExpectation();            
@@ -454,8 +454,8 @@ public class GraphExecutive {
         double p;
         
         Concept c = memory.concept(t);
-        if ((c!=null) && (!c.beliefs.isEmpty())) {
-            Sentence bestBelief = c.beliefs.get(0);
+        if ((c!=null) && (!c.beliefsTemporal.isEmpty())) {
+            Sentence bestBelief = c.beliefsTemporal.get(0);
             if (bestBelief!=null)
                 return bestBelief.truth.getExpectation();                   
         }

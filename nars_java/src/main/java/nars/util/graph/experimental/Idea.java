@@ -144,7 +144,8 @@ public class Idea implements Iterable<Concept> {
                 for (Concept c : concepts) {
                     switch (punc) {
                         case Symbols.JUDGMENT:
-                            sentences.addAll(c.beliefs);
+                            sentences.addAll(c.beliefsEternal);
+                            sentences.addAll(c.beliefsTemporal);
                             break;
                         case Symbols.QUESTION:
                             sentences.addAll(Task.getSentences(c.questions));
@@ -163,16 +164,16 @@ public class Idea implements Iterable<Concept> {
                 
     }
     
-    public Collection<Sentence> getSentences(SentenceType o) {
-        List<Sentence> s = new ArrayList();
-        for (Concept c : this) {
-            if (c.term.operator() == o.op) {
-                s.addAll(c.getSentences(o.punc));
-            }
-        }
-        return s;
-    }
-    
+//    public Collection<Sentence> getSentences(SentenceType o) {
+//        List<Sentence> s = new ArrayList();
+//        for (Concept c : this) {
+//            if (c.term.operator() == o.op) {
+//                s.addAll(c.getSentences(o.punc));
+//            }
+//        }
+//        return s;
+//    }
+//
     /** returns the set of all operator+punctuation concatenations */
     public Set<SentenceType> getSentenceTypes() {
         return feature;
@@ -204,7 +205,7 @@ public class Idea implements Iterable<Concept> {
             NALOperator o = c.operator();
             operators.add(o);
             
-            if (!c.beliefs.isEmpty())
+            if (!c.beliefsEternal.isEmpty() || !c.beliefsTemporal.isEmpty())
                 feature.add(new SentenceType(o, Symbols.JUDGMENT));
             if (!c.questions.isEmpty())
                 feature.add(new SentenceType(o, Symbols.QUESTION));

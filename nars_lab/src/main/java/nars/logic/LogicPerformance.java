@@ -250,7 +250,7 @@ public class LogicPerformance {
         int analysisDepth = 5;
         NAR n = new NAR(new Default());
         
-        ExampleFileInput example = ExampleFileInput.get("test/nal7.5");
+        ExampleFileInput example = ExampleFileInput.get(n, "test/nal7.5");
                 
         List<OutputCondition> conditions = example.enableConditions(n, 5);
 

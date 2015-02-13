@@ -1,8 +1,9 @@
 package nars.xml;
 
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.NAR;
 import nars.io.TextOutput;
+import nars.io.TextPerception;
 import nars.util.data.PrintWriterInput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,16 +47,16 @@ public class XMLInput extends PrintWriterInput {
         n.start(0);
 
         //new XMLInput(n, "/home/me/Downloads/schemaorg.owl","");
-        n.addInput(new XMLInput("/home/me/Downloads/Semantic_Web.rdf", ""));
+        n.addInput(new XMLInput(n.textPerception, "/home/me/Downloads/Semantic_Web.rdf", ""));
 
     }
 
-    public XMLInput(String filename, String nodePrefix) throws IOException, ParserConfigurationException, SAXException {
-        this(new File(filename), nodePrefix);
+    public XMLInput(TextPerception t, String filename, String nodePrefix) throws IOException, ParserConfigurationException, SAXException {
+        this(t, new File(filename), nodePrefix);
     }
 
-    public XMLInput(File f, String nodePrefix) throws IOException, ParserConfigurationException, SAXException {
-        super();
+    public XMLInput(TextPerception t, File f, String nodePrefix) throws IOException, ParserConfigurationException, SAXException {
+        super(t);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(f);

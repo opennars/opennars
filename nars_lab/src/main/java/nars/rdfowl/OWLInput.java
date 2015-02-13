@@ -3,6 +3,7 @@ package nars.rdfowl;
 import nars.core.NAR;
 import nars.build.Default;
 import nars.io.TextOutput;
+import nars.io.TextPerception;
 import nars.util.data.PrintWriterInput;
 
 import javax.xml.namespace.QName;
@@ -33,8 +34,8 @@ public class OWLInput extends PrintWriterInput {
 
     private final Map<String, Entity> entities = new HashMap();
 
-    public OWLInput(String owlFileLocation) throws Exception {
-        super();
+    public OWLInput(TextPerception t, String owlFileLocation) throws Exception {
+        super(t);
 
         parseAndLoadData(new File(owlFileLocation));
     }
@@ -384,9 +385,6 @@ public class OWLInput extends PrintWriterInput {
      * Saves the relation into the database. Both entities must exist if the
      * relation is to be saved. Takes care of updating relation_types as well.
      *
-     * @param sourceEntityName the name of the source entity.
-     * @param targetEntityName the name of the target entity.
-     * @param relationName the name of the relation.
      */
     private void saveRelation(final String subject, final String object, final String predicate) {
 
@@ -437,7 +435,6 @@ public class OWLInput extends PrintWriterInput {
      * Looks up the database to get the entity id given the name of the entity.
      * If the entity is not found, it returns -1.
      *
-     * @param entityName the name of the entity.
      * @return the entity id, or -1 of the entity.
      */
     private Entity getEntity(String name) {
@@ -489,7 +486,7 @@ public class OWLInput extends PrintWriterInput {
         new TextOutput(n, System.out);
 
         //new NARSwing(n);
-        n.addInput(new OWLInput("/home/me/Downloads/schemaorg.owl"));
+        n.addInput(new OWLInput(n.textPerception, "/home/me/Downloads/schemaorg.owl"));
 
     }
 }

@@ -42,9 +42,11 @@ public abstract class Answered implements Reaction {
         Concept c = nar.memory.concept( question.getTerm() );
         if (c == null) return;        
         
-        for (Sentence s : c.beliefs) {
+        for (Sentence s : c.beliefsEternal)
             onSolution(s);
-        }
+        for (Sentence s : c.beliefsTemporal)
+            onSolution(s);
+
     }
     
     @Override

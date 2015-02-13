@@ -24,14 +24,14 @@ package nars.tictactoe;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.NARPrologMirror;
-import nars.build.Neuromorphic;
+import nars.build.Default;
 import nars.core.Events.FrameEnd;
+import nars.core.Events.OUT;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.Reaction;
 import nars.gui.NARSwing;
-import nars.core.Events.OUT;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.BudgetValue;
@@ -85,13 +85,13 @@ public class TicTacToeWithProlog extends JPanel {
     public TicTacToeWithProlog() {
         super(new BorderLayout());
 
-        nar = new NAR(new Neuromorphic(16).
+        nar = new NAR(new Default().
                 setConceptBagSize(1000).
                 setSubconceptBagSize(10000).
                 setInternalExperience(null).
                 simulationTime());
         
-        new NARPrologMirror(nar, 0.95f, true, true, true);
+        new NARPrologMirror(nar, 0.9f, true, true, true);
 
 
         nar.memory.addOperator(new AddO("^addO"));        
