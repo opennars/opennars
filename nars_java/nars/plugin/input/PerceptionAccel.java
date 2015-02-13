@@ -40,6 +40,15 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
         return true;
     }
     
+    double partConceptsPrioThreshold=0.6;
+    public void setPartConceptsPrioThreshold(double value) {
+        partConceptsPrioThreshold=value;
+    }
+    
+    public double getPartConceptsPrioThreshold() {
+        return partConceptsPrioThreshold;
+    }
+    
     ArrayList<Task> eventbuffer=new ArrayList<>();
     int cur_maxlen=1;
     
@@ -143,6 +152,10 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                     System.out.println("one didn't exist: "+firstC.toString()+" or "+secondC.toString());
                 }
                 continue; //the components were not observed, so don't allow creating this compound
+            }
+            
+            if(C1.getPriority()<partConceptsPrioThreshold || C2.getPriority()<partConceptsPrioThreshold) {
+                continue; //too less priority
             }
             
             Conjunction C=(Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
