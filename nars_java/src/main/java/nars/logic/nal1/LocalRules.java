@@ -55,21 +55,17 @@ public class LocalRules {
      * @return If revision is possible between the two sentences
      */
     public static boolean revisible(final Sentence s1, final Sentence s2) {
-        /*return (s1.isRevisible() &&
-                s1.equalTerms(s2) &&
-                TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));*/
-
         if (s1.isRevisible())
             if (s1.equalTerms(s2))
                 if (TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()))
                     return true;
-        return false;
 
+        return false;
     }
 
 
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, Stamp stamp, final boolean feedbackToLinks, final NAL nal) {
-        return revision(newBelief, oldBelief, stamp, feedbackToLinks, nal, nal.getCurrentBelief());
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+        return revision(newBelief, oldBelief, feedbackToLinks, nal, nal.getCurrentBelief());
     }
 
     /**
@@ -82,7 +78,9 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
      * @param memory Reference to the memory
      */
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, Stamp stamp, final boolean feedbackToLinks, final NAL nal, Sentence subbedBelief) {
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal, Sentence subbedBelief) {
+        Stamp stamp = nal.newStampIfNotOverlapping(newBelief.stamp, oldBelief.stamp);
+        if (stamp == null) return false;
 
         final Task currentTask = nal.getCurrentTask();
 
@@ -115,6 +113,8 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean trySolution(Sentence belief, final Task task, final NAL nal) {
+        if (belief == null) return false;
+
         Sentence problem = task.sentence;
         Memory memory = nal.memory;
         

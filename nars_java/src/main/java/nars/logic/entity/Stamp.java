@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
+import nars.logic.NAL;
 import nars.logic.Terms;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal7.Tense;
@@ -36,7 +37,7 @@ import static nars.logic.nal7.TemporalRules.*;
 import static nars.logic.nal7.Tense.*;
 
 
-public class Stamp implements Cloneable {
+public class Stamp implements Cloneable, NAL.StampBuilder {
 
 
     /**
@@ -232,6 +233,7 @@ public class Stamp implements Cloneable {
     }
 
 
+
     /** used for when the ocrrence time will be set later; so should not be called from externally but through another Stamp constructor */
     public Stamp(final Tense tense, final long serial) {
         this.baseLength = 1;
@@ -401,6 +403,11 @@ public class Stamp implements Cloneable {
         
         this.derivationChain = derivationBuilder.build();
         this.derivationBuilder = null;
+    }
+
+    @Override
+    public Stamp build() {
+        return this;
     }
 
     /*

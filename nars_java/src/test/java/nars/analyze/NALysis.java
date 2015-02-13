@@ -4,6 +4,7 @@ package nars.analyze;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.core.NewNAR;
+import nars.io.TextOutput;
 import nars.io.condition.OutputCondition;
 import nars.logic.AbstractNALTest;
 import nars.logic.TestNAR;
@@ -47,6 +48,8 @@ public class NALysis extends AbstractNALTest {
         String testName = path + "_" + build;
 
         TestNAR n = new TestNAR(build);
+
+        TextOutput.out(n);
 
         startAnalysis(n);
 

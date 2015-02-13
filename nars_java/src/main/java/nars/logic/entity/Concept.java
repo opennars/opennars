@@ -334,13 +334,12 @@ public class Concept extends Item<Term> implements Termable {
 
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), now);
                 if (projectedBelief!=null) {
-                    Stamp stamp = new Stamp(newStamp, oldStamp, now);
 
                     if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
                     }
 
-                    revision(judg, projectedBelief, stamp, false, nal, projectedBelief);
+                    revision(judg, projectedBelief, false, nal, projectedBelief);
                 }
 
             }
@@ -430,10 +429,7 @@ public class Concept extends Item<Term> implements Termable {
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
 
-                //TODO lazy instantiate with StampBuilder
-                Stamp stamp = new Stamp(newStamp, oldStamp, memory.time());
-
-                boolean revisionSucceeded = revision(goal, oldGoal, stamp, false, nal);
+                boolean revisionSucceeded = revision(goal, oldGoal, false, nal);
                 if(revisionSucceeded) {
                     // it is revised, so there is a new task for which this function will be called
                     return; // with higher/lower desire
@@ -520,12 +516,13 @@ public class Concept extends Item<Term> implements Termable {
             memory.event.emit(ConceptQuestionAdd.class, this, newTask);
         }
 
-        final Sentence newAnswer = (ques.isQuestion())
-                ? selectCandidate(ques, beliefsEternal, beliefsTemporal)
-                : selectCandidate(ques, goals);
 
-        if (newAnswer != null) {
-            trySolution(newAnswer, newTask, nal);
+        if (ques.isQuest()) {
+            trySolution(selectCandidate(ques, goals), newTask, nal);
+        }
+        else {
+            if (!trySolution(selectCandidate(ques, beliefsTemporal), newTask, nal))
+                trySolution(selectCandidate(ques, beliefsEternal), newTask, nal);
         }
     }
 

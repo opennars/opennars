@@ -176,16 +176,14 @@ public class DefaultGrapher implements NARGraph.Grapher {
             }
         }
         if (includeDerivations && includeBeliefs) {
-            for (final Map.Entry<Sentence, Concept> s : sentenceTerms.entrySet()) {
-                final Sentence derivedSentence = s.getKey();
+            for (final Sentence derivedSentence : sentenceTerms.keySet()) {
+                Concept derived = sentenceTerms.get(derivedSentence);
                 final Collection<Term> schain = derivedSentence.stamp.getChain();
-                final Concept derived = s.getValue();
-                for (final Map.Entry<Sentence, Concept> t : sentenceTerms.entrySet()) {
-                    if (s == t) {
+                for (final Sentence deriverSentence : sentenceTerms.keySet()) {
+                    if (derivedSentence == deriverSentence) {
                         continue;
                     }
-                    final Sentence deriverSentence = t.getKey();
-                    final Concept deriver = t.getValue();
+                    final Concept deriver = sentenceTerms.get(deriverSentence);
                     if (derived == deriver) {
                         continue;
                     }

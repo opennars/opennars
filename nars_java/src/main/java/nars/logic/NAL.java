@@ -27,6 +27,7 @@ import java.util.List;
 public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
 
+
     public interface DerivationFilter extends Plugin {
 
 
@@ -51,7 +52,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     /**
      * stores the tasks that this process generates, and adds to memory
      */
-    public Deque<Task> newTasks = null;
+    Deque<Task> newTasks = null; //lazily instantiated
 
 
 
@@ -359,32 +360,35 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 //        newStampBuilder = new NewStampBuilder(first, second, time);
 //    }
 
-    interface StampBuilder {
-        Stamp build();
-        public Stamp getFirst();
-        public Stamp getSecond();
+//    interface StampBuilder {
+//
+//        public Stamp build();
+//
+//        default public Stamp getFirst() { return null; }
+//        default public Stamp getSecond(){ return null; }
+//
+//        default public boolean overlapping() {
+//            /*final int stampLength = stamp.baseLength;
+//            for (int i = 0; i < stampLength; i++) {
+//                final long baseI = stamp.evidentialBase[i];
+//                for (int j = 0; j < stampLength; j++) {
+//                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
+//                        throw new RuntimeException("Overlapping Revision Evidence: Should have been discovered earlier: " + Arrays.toString(stamp.evidentialBase));
+//                    }
+//                }
+//            }*/
+//
+//            long[] a = getFirst().toSet();
+//            long[] b = getSecond().toSet();
+//            for (long ae : a) {
+//                for (long be : b) {
+//                    if (ae == be) return true;
+//                }
+//            }
+//            return false;
+//        }
+//    }
 
-        default public boolean overlapping() {
-            /*final int stampLength = stamp.baseLength;
-            for (int i = 0; i < stampLength; i++) {
-                final long baseI = stamp.evidentialBase[i];
-                for (int j = 0; j < stampLength; j++) {
-                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
-                        throw new RuntimeException("Overlapping Revision Evidence: Should have been discovered earlier: " + Arrays.toString(stamp.evidentialBase));
-                    }
-                }
-            }*/
-
-            long[] a = getFirst().toSet();
-            long[] b = getSecond().toSet();
-            for (long ae : a) {
-                for (long be : b) {
-                    if (ae == be) return true;
-                }
-            }
-            return false;
-        }
-    }
 
 
     /**
@@ -434,6 +438,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     }
 
 
+    public interface StampBuilder {
+        public Stamp build();
+        default public Stamp getFirst() { return null; }
+        default public Stamp getSecond() { return null; }
+    }
+
     /**
      * for lazily constructing a stamp, in case it will not actually be necessary to completely construct a stamp
      */
@@ -466,6 +476,16 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     }
     public Stamp newStamp(Stamp a, Stamp b) {
         return new Stamp(a, b, time());
+    }
+    public Stamp newStampIfNotOverlapping(Stamp A, Stamp B) {
+        long[] a = A.toSet();
+        long[] b = B.toSet();
+        for (long ae : a) {
+            for (long be : b) {
+                if (ae == be) return null;
+            }
+        }
+        return newStamp(A, B);
     }
 
 
