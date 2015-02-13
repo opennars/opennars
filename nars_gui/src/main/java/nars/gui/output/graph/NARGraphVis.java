@@ -40,7 +40,7 @@ abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> imple
     public final NAR nar;
     
     private final GraphDisplays displays;
-    private NARGraphDisplay style;
+    private GraphDisplay style;
     private GraphDisplay layout;
     private JPanel modePanelHolder;
 
@@ -135,7 +135,7 @@ abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> imple
 
     public class TaskGraphMode implements GraphMode {
 
-        private final TaskGraph taskGraph;
+        public final TaskGraph taskGraph;
 
         public TaskGraphMode() {
             taskGraph = new TaskGraph(nar);
@@ -209,19 +209,20 @@ abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> imple
         this(n, new NARGraphDisplay(), new FastOrganicLayout());
     }
 
-    public NARGraphVis(NAR n, NARGraphDisplay style, GraphDisplay layout) {
+    public NARGraphVis(NAR n, GraphDisplay style, GraphDisplay layout) {
         super(null, new GraphDisplays());
         this.nar = n;
         this.displays = (GraphDisplays)getDisplay();
 
         this.mode = getInitialMode();
 
-        update(style, layout);
+        if (style != null)
+            update(style, layout);
     }
 
     abstract public GraphMode getInitialMode();
 
-    public void update(NARGraphDisplay style, GraphDisplay layout) {
+    public void update(GraphDisplay style, GraphDisplay layout) {
         this.style = style;
         this.layout = layout;
         displays.sequence.clear();
@@ -390,7 +391,8 @@ abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> imple
     
     public JPanel newStylePanel() {
         JPanel j = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        j.add(style.getControls());
+        if (style instanceof NARGraphDisplay)
+            j.add( ((NARGraphDisplay)style).getControls());
         return j;
     }
 

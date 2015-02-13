@@ -4,14 +4,15 @@ import nars.core.NAR;
 import nars.logic.MemoryObserver;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
+import nars.util.data.CuckooMap;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
+import java.util.Map;
 
-/**
- * Created by me on 2/12/15.
- */
+
 public class TaskGraph  {
 
     private final MemoryObserver reaction;
@@ -19,9 +20,10 @@ public class TaskGraph  {
 
 
     final Deque<Task> log = new ArrayDeque();
+    public final Map<Task, Float> y = new CuckooMap<>();
 
-    int maxItems = 8;
-    int edgeSerial = 0;
+    int maxItems = 32;
+    private float earliestCreationTime = -1;
 
     public TaskGraph(NAR n) {
 
@@ -49,9 +51,7 @@ public class TaskGraph  {
 
             @Override
             public void onTaskAdd(Task task) {
-                System.out.println("task add: " + task);
                 next(task);
-                System.out.println(this);
             }
 
             @Override
@@ -66,11 +66,23 @@ public class TaskGraph  {
 
     public void next(Task o) {
 
+        if (!log.isEmpty())
+            if (log.getLast().equals(o))
+                return; //duplicate at the same time
+
         while (1 + log.size() >= maxItems) {
             log.removeFirst();
         }
 
         log.addLast(o);
+
+
+        //TODO check all elements, in case they are out of order
+        earliestCreationTime = log.getFirst().getCreationTime();
+    }
+
+    public float getEarliestCreationTime() {
+        return earliestCreationTime;
     }
 
     public static class TaskSequenceEdge extends DefaultEdge {
@@ -99,15 +111,28 @@ public class TaskGraph  {
         NARGraph g = new NARGraph();
         Task previous = null;
 
-        for (Task o : log) {
+        y.clear();
+        float cy = 0;
+
+        //iterate in reverse to display the newest copy of a task and not an older one
+        Iterator<Task> ii = log.descendingIterator();
+        while (ii.hasNext()) {
+
+            Task o = ii.next();
+
+            if (y.containsKey(o))
+                continue;
 
             g.addVertex(o);
+            y.put(o, cy);
 
-            if (previous!=null) {
+            if ((previous!=null) && (!previous.equals(o))) {
                 g.addEdge(previous, o, new TaskSequenceEdge(previous, o));
             }
 
             previous = o;
+
+            cy++;
         }
 
         return g;
