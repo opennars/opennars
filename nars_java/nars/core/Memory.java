@@ -648,7 +648,6 @@ public class Memory implements Serializable {
         }
         else if (t instanceof Echo) {
             Echo e = (Echo)t;
-            emit(OUT.class,((Echo) t).signal);
             emit(e.channel, e.signal);
         }
         else if (t instanceof SetVolume) {            
