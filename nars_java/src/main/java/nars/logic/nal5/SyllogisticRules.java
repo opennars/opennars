@@ -87,9 +87,10 @@ public final class SyllogisticRules {
         
         if ((content1 == null) || (content2 == null))
             return;
-        
-        nal.doublePremiseTask(content1, truth1, budget1,false);
-        nal.doublePremiseTask(content2, truth2, budget2,false);
+
+        final Stamp stamp = nal.newStamp(sentence, belief);
+        nal.doublePremiseTask(content1, truth1, budget1, stamp, false);
+        nal.doublePremiseTask(content2, truth2, budget2, stamp,false);
     }
 
     /**
@@ -144,16 +145,18 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.forward(truth2, nal);
             budget3 = BudgetFunctions.forward(truth3, nal);
         }
-                
+
+        final Stamp stamp = nal.newStamp(sentence1, sentence2);
+
         nal.doublePremiseTask(
                 Statement.make(taskContent, term1, term2, order), 
-                    truth1, budget1,false);
+                    truth1, budget1, stamp, false);
         nal.doublePremiseTask(
                 Statement.make(taskContent, term2, term1, reverseOrder(order)), 
-                    truth2, budget2,false);
+                    truth2, budget2, stamp, false);
         nal.doublePremiseTask(
                 Terms.makeSymStatement(taskContent, term1, term2, order),
-                    truth3, budget3,false);
+                    truth3, budget3, stamp, false);
         
     }
 
@@ -210,8 +213,10 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
+        nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,
+                nal.newStamp(asym, sym), false);
+
         nal.memory.logic.ANALOGY.hit();
-        nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false);
     }
 
     /**
@@ -248,7 +253,9 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false );
+        nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,
+                nal.newStamp(belief, sentence),
+                false );
     }
 
     /* --------------- rules used only in conditional logic --------------- */
@@ -287,7 +294,8 @@ public final class SyllogisticRules {
         
         if (beliefSentence == null)
             return;
-        
+
+        long occurTime = nal.time();
         int order = statement.getTemporalOrder();
         if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
             long baseTime = subSentence.getOccurenceTime();
@@ -295,8 +303,7 @@ public final class SyllogisticRules {
                 baseTime = nal.time();
             }
             long inc = order * nal.memory.param.duration.get();
-            long time = (side == 0) ? baseTime+inc : baseTime-inc;
-            nal.getTheNewStamp().setOccurrenceTime(time);
+            occurTime = (side == 0) ? baseTime+inc : baseTime-inc;
         }
 
         
@@ -342,7 +349,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.doublePremiseTask(content, truth, budget,false);
+            nal.doublePremiseTask(content, truth, budget, nal.newStamp(mainSentence, subSentence, occurTime), false);
         }
     }
 
@@ -361,8 +368,8 @@ public final class SyllogisticRules {
      */
     public static void conditionalDedInd(Implication premise1, short index, Term premise2, int side, NAL nal) {
         Task task = nal.getCurrentTask();
-        Sentence taskSentence = task.sentence;
-        Sentence belief = nal.getCurrentBelief();
+        final Sentence taskSentence = task.sentence;
+        final Sentence belief = nal.getCurrentBelief();
         boolean deduction = (side != 0);
         boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
         Term commonComponent;
@@ -453,7 +460,9 @@ public final class SyllogisticRules {
         
         if (content == null)
             return;        
-        
+
+        long occurTime = nal.time();
+
         if (delta != 0) {
             long baseTime = (belief.term instanceof Implication) ?
                 taskSentence.getOccurenceTime() : belief.getOccurenceTime();
@@ -468,7 +477,7 @@ public final class SyllogisticRules {
 
             baseTime += delta;
 
-            nal.getTheNewStamp().setOccurrenceTime(baseTime);
+            occurTime = baseTime;
         }
         
         TruthValue truth1 = taskSentence.truth;
@@ -498,9 +507,10 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        TemporalRules.applyExpectationOffset(nal.memory, premise1, nal.getTheNewStamp());
+        Stamp stamp = nal.newStamp(taskSentence, belief, occurTime);
+        TemporalRules.applyExpectationOffset(nal.memory, premise1, stamp);
 
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget, stamp, false);
     }
 
     /**
@@ -515,10 +525,10 @@ public final class SyllogisticRules {
      * for predicate, -1 for the whole term
      * @param nal Reference to the memory
      */
-    public static void conditionalAna(Equivalence premise1, short index, Term premise2, int side, NAL nal) {
+    public static boolean conditionalAna(Equivalence premise1, short index, Term premise2, int side, NAL nal) {
         Task task = nal.getCurrentTask();
-        Sentence taskSentence = task.sentence;
-        Sentence belief = nal.getCurrentBelief();
+        final Sentence taskSentence = task.sentence;
+        final Sentence belief = nal.getCurrentBelief();
         boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
         Term commonComponent;
         Term newComponent = null;
@@ -534,7 +544,7 @@ public final class SyllogisticRules {
 
         Term tm = premise1.getSubject();
         if (!(tm instanceof Conjunction)) {
-            return;
+            return false;
         }
         Conjunction oldCondition = (Conjunction) tm;
 
@@ -548,18 +558,18 @@ public final class SyllogisticRules {
             premise1 = (Equivalence) u[0]; premise2 = u[1];
         }
         if (!match) {
-            return;
+            return false;
         }
         int conjunctionOrder = oldCondition.getTemporalOrder();
         if (conjunctionOrder == ORDER_FORWARD) {
             if (index > 0) {
-                return;
+                return false;
             }
             if ((side == 0) && (premise2.getTemporalOrder() == ORDER_FORWARD)) {
-                return;
+                return false;
             }
             if ((side == 1) && (premise2.getTemporalOrder() == ORDER_BACKWARD)) {
-                return;
+                return false;
             }
         }
         Term newCondition;
@@ -568,16 +578,17 @@ public final class SyllogisticRules {
         } else {
             newCondition = oldCondition.setComponent(index, newComponent);
         }
-        Term content;
+        CompoundTerm content;
         if (newCondition != null) {
             content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
         } else {
-            content = premise1.getPredicate();
+            Term p = premise1.getPredicate();
+            if (p instanceof CompoundTerm)
+                content = (CompoundTerm)p;
+            else
+                return false;
         }
-        
-        if (content == null)
-            return;
-        
+
         TruthValue truth1 = taskSentence.truth;
         TruthValue truth2 = belief.truth;
         TruthValue truth = null;
@@ -601,7 +612,10 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        nal.doublePremiseTask(content, truth, budget,false);
+
+        nal.doublePremiseTask(content, truth, budget, nal.newStamp(taskSentence, belief), false);
+
+        return true;
     }
 
     /**
@@ -609,7 +623,6 @@ public final class SyllogisticRules {
      *
      * @param cond1 The condition of the first premise
      * @param cond2 The condition of the second premise
-     * @param taskContent The first premise
      * @param st2 The second premise
      * @param nal Reference to the memory
      * @return Whether there are derived tasks
@@ -640,8 +653,8 @@ public final class SyllogisticRules {
             return false;
         }
         Task task = nal.getCurrentTask();
-        Sentence sentence = task.sentence;
-        Sentence belief = nal.getCurrentBelief();
+        final Sentence sentence = task.sentence;
+        final Sentence belief = nal.getCurrentBelief();
         TruthValue value1 = sentence.truth;
         TruthValue value2 = belief.truth;
         Term content;
@@ -663,21 +676,25 @@ public final class SyllogisticRules {
                     return false;
                 }
             }
-            if (sentence.isQuestion() || sentence.isQuest()) {
-                budget = BudgetFunctions.backwardWeak(value2, nal);
-            } else {
-                if (sentence.isGoal()) {
-                    if (keepOrder) {
-                        truth = TruthFunctions.desireDed(value1, value2);
-                    } else {
-                        truth = TruthFunctions.desireInd(value1, value2);
+            if (content instanceof CompoundTerm) {
+
+                if (sentence.isQuestion() || sentence.isQuest()) {
+                    budget = BudgetFunctions.backwardWeak(value2, nal);
+                } else {
+                    if (sentence.isGoal()) {
+                        if (keepOrder) {
+                            truth = TruthFunctions.desireDed(value1, value2);
+                        } else {
+                            truth = TruthFunctions.desireInd(value1, value2);
+                        }
+                    } else { // isJudgment
+                        truth = TruthFunctions.abduction(value2, value1);
                     }
-                } else { // isJudgment
-                    truth = TruthFunctions.abduction(value2, value1);
+                    budget = BudgetFunctions.forward(truth, nal);
                 }
-                budget = BudgetFunctions.forward(truth, nal);
+
+                nal.doublePremiseTask((CompoundTerm) content, truth, budget, nal.newStamp(sentence, belief), false);
             }
-            nal.doublePremiseTask(content, truth, budget,false);
         }
         
         if (term2 != null) {
@@ -689,22 +706,24 @@ public final class SyllogisticRules {
                     return false;
                 }
             }
-            if (sentence.isQuestion() || sentence.isQuest()) {
+            if (content instanceof CompoundTerm) {
+                if (sentence.isQuestion() || sentence.isQuest()) {
 
-                budget = BudgetFunctions.backwardWeak(value2, nal);
-            } else {
-                if (sentence.isGoal()) {
-                    if (keepOrder) {
-                        truth = TruthFunctions.desireDed(value1, value2);
-                    } else {
-                        truth = TruthFunctions.desireInd(value1, value2);
+                    budget = BudgetFunctions.backwardWeak(value2, nal);
+                } else {
+                    if (sentence.isGoal()) {
+                        if (keepOrder) {
+                            truth = TruthFunctions.desireDed(value1, value2);
+                        } else {
+                            truth = TruthFunctions.desireInd(value1, value2);
+                        }
+                    } else { // isJudgment
+                        truth = TruthFunctions.abduction(value1, value2);
                     }
-                } else { // isJudgment
-                    truth = TruthFunctions.abduction(value1, value2);
+                    budget = BudgetFunctions.forward(truth, nal);
                 }
-                budget = BudgetFunctions.forward(truth, nal);
+                nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(sentence, belief), false);
             }
-            nal.doublePremiseTask(content, truth, budget,false);
         }
         
         return true;
@@ -720,12 +739,14 @@ public final class SyllogisticRules {
      */
     public static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, NAL nal) {
         Term content = reduceComponents(compound, component, nal.memory);
-        if ((content == null) || ((content instanceof Statement) && ((Statement) content).invalid())) {
+        if ((content == null) || (!(content instanceof CompoundTerm)) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;
         }
         Task task = nal.getCurrentTask();
-        Sentence sentence = task.sentence;
-        Sentence belief = nal.getCurrentBelief();
+
+        final Sentence sentence = task.sentence;
+        final Sentence belief = nal.getCurrentBelief();
+
         TruthValue v1 = sentence.truth;
         TruthValue v2 = belief.truth;
         TruthValue truth = null;
@@ -740,6 +761,6 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(sentence, belief), false);
     }
 }

@@ -23,10 +23,8 @@ package nars.logic.entity;
 import com.google.common.base.Strings;
 import nars.core.Parameters;
 import nars.logic.Terms.Termable;
-import nars.logic.nal8.ImmediateOperation;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -184,25 +182,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
             return parent.hashCode();
         return 0;
     }
-    
-    public static boolean isValidTerm(Term t) {
-        return t instanceof CompoundTerm;
-    }
-    
-    public static Task make(Sentence s, BudgetValue b, Task parent) {
-        return make(s, b, parent, null);
-    }
-    
-    public static Task make(Sentence s, BudgetValue b, Task parent, Sentence belief) {
-        Term t = s.term;
-        if (isValidTerm(t)) {
-            return new Task(s, b, parent, belief);
-        }
-        return null;
-    }
-    
 
-    
 
     /**
      * Directly get the creation time of the sentence

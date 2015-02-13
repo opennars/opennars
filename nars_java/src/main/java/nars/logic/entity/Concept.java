@@ -318,8 +318,7 @@ public class Concept extends Item<Term> implements Termable {
                 return;
             } else if (revisible(judg, oldBelief)) {
                 final long now = memory.time();
-                nal.setNextNewStamp(newStamp, oldStamp, now);
-                
+
 //                if (nal.setTheNewStamp( //temporarily removed
 //                /*
 //                if (equalBases(first.getBase(), second.getBase())) {
@@ -332,14 +331,16 @@ public class Concept extends Item<Term> implements Termable {
 //                //            return new Stamp(second, first, time);
 //                //        }
 //                ) != null) {
-                    
-                
+
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), now);
                 if (projectedBelief!=null) {
+                    Stamp stamp = new Stamp(newStamp, oldStamp, now);
+
                     if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
                     }
-                    revision(judg, projectedBelief, false, nal, projectedBelief);
+
+                    revision(judg, projectedBelief, stamp, false, nal, projectedBelief);
                 }
 
             }
@@ -428,8 +429,11 @@ public class Concept extends Item<Term> implements Termable {
             if (newStamp.equals(oldStamp,false,false,true,true)) {
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
-                nal.setNextNewStamp(newStamp, oldStamp, memory.time());
-                boolean revisionSucceeded = revision(goal, oldGoal, false, nal);
+
+                //TODO lazy instantiate with StampBuilder
+                Stamp stamp = new Stamp(newStamp, oldStamp, memory.time());
+
+                boolean revisionSucceeded = revision(goal, oldGoal, stamp, false, nal);
                 if(revisionSucceeded) {
                     // it is revised, so there is a new task for which this function will be called
                     return; // with higher/lower desire

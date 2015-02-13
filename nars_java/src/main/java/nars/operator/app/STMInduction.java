@@ -4,12 +4,15 @@ import nars.core.AbstractPlugin;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.logic.reason.ImmediateProcess;
 import nars.logic.entity.Sentence;
+import nars.logic.entity.Stamp;
 import nars.logic.entity.Task;
 import nars.logic.nal7.TemporalRules;
+import nars.logic.reason.ImmediateProcess;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
@@ -97,7 +100,8 @@ public class STMInduction extends AbstractPlugin {
         for (Task stmLast : stm) {
 
 
-            nal.setNextNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, now);
+
+
             //nal.setCurrentTask(newEvent);
 
             Sentence previousBelief = stmLast.sentence;
@@ -106,7 +110,9 @@ public class STMInduction extends AbstractPlugin {
             Sentence currentBelief = newEvent.sentence;
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
+            TemporalRules.temporalInduction(currentBelief, previousBelief,
+                    new Stamp(newEvent.sentence.stamp, stmLast.sentence.stamp, now),
+                    nal);
         }
 
         ////for this heuristic, only use input events & task effects of operations

@@ -26,6 +26,7 @@ import java.util.List;
  */
 public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
+
     public interface DerivationFilter extends Plugin {
 
 
@@ -44,9 +45,6 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
     protected final Task currentTask;
     protected Sentence currentBelief;
-
-    protected Stamp newStamp;
-    protected StampBuilder newStampBuilder;
 
     protected final NALRuleEngine reasoner;
 
@@ -80,8 +78,6 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         currentTask = task;
         currentBelief = null;
 
-        newStamp = null;
-        newStampBuilder = null;
     }
 
 
@@ -180,59 +176,43 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      * @param newBudget      The budget value in task
      */
     @Deprecated
-    public Task doublePremiseTask(final Term newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+    public boolean doublePremiseTask(final Term newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, Stamp newStamp, boolean temporalAdd) {
         CompoundTerm newContent = Sentence.termOrNull(newTaskContent);
         if (newContent == null)
-            return null;
-        return doublePremiseTask(newContent, newTruth, newBudget, temporalAdd);
+            return false;
+        return doublePremiseTask(newContent, newTruth, newBudget, newStamp, temporalAdd);
     }
 
-    public Task doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
-        return doublePremiseTask(newTaskContent, newTruth, newBudget, temporalAdd, getCurrentBelief(), getCurrentTask());
+    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, Stamp newStamp, boolean temporalAdd) {
+        return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentBelief(), getCurrentTask());
     }
 
-    public Task doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd, Sentence subbedBelief, Task subbedTask) {
+    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, Stamp newStamp, final boolean temporalAdd, Sentence subbedBelief, Task subbedTask) {
         if (!newBudget.aboveThreshold()) {
-            return null;
+            return false;
         }
 
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
-            return null;
+            return false;
 
-        Task derived = null;
-
-
-
-
+        boolean derived = deriveTask(new Task(
+                new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
+                newBudget, subbedTask, subbedBelief), false, false, null, null);
 
 
-
-        final Task newTask = Task.make(
-                new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, getTheNewStamp()),
-                newBudget, subbedTask, subbedBelief);
-
-        if (newTask != null) {
-            boolean added = deriveTask(newTask, false, false, null, null);
-            if (added)
-                derived = newTask;
-        }
-
-        temporalAdd = temporalAdd && nal(7);
 
         //"Since in principle it is always valid to eternalize a tensed belief"
-        if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
-
-            TruthValue truthEt = TruthFunctions.eternalize(newTruth);
-            Stamp st = getTheNewStamp().clone();
-            st.setEternal();
-
-            final Task newTask2 = Task.make(
-                    new Sentence(newTaskContent, subbedTask.sentence.punctuation, truthEt, st),
-                    newBudget, subbedTask, subbedBelief);
-            if (newTask2 != null) {
-                deriveTask(newTask2, false, false, null, null);
-            }
+        if (temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
+        //temporal induction generated ones get eternalized directly
+            derived |= deriveTask(
+                    new Task(
+                        new Sentence(newTaskContent,
+                            subbedTask.sentence.punctuation,
+                            TruthFunctions.eternalize(newTruth),
+                            newStamp.cloneEternal()),
+                        newBudget, subbedTask, subbedBelief),
+                false, false, null, null);
         }
 
         return derived;
@@ -294,24 +274,22 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
                 return false;
             }
         }
+
         Sentence taskSentence = getCurrentTask().sentence;
+
+        final Stamp stamp;
         if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-            setNextNewStamp(new Stamp(taskSentence.stamp, time()));
+            stamp = new Stamp(taskSentence.stamp, time());
         } else {
             // to answer a question with negation in NAL-5 --- move to activated task?
-            setNextNewStamp(new Stamp(getCurrentBelief().stamp, time()));
+            stamp = new Stamp(getCurrentBelief().stamp, time());
         }
 
         if (newContent.subjectOrPredicateIsIndependentVar()) {
             return false;
         }
 
-        Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
-        Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
-        if (newTask != null) {
-            return deriveTask(newTask, false, true, null, null);
-        }
-        return false;
+        return deriveTask(new Task(new Sentence(newContent, punctuation, newTruth, stamp), newBudget, getCurrentTask(), null), false, true, null, null);
     }
 
     public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
@@ -339,39 +317,47 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
 
 
-
-    /**
-     * @return the newStamp
-     */
-    public Stamp getTheNewStamp() {
-        if (newStamp == null) {
-            //if newStamp==null then newStampBuilder must be available. cache it's return value as newStamp
-            newStamp = newStampBuilder.build();
-            newStampBuilder = null;
-        }
-        return newStamp;
-    }
-    public Stamp getTheNewStampForRevision() {
-        if (newStamp == null) {
-            if (newStampBuilder.overlapping()) {
-                newStamp = null;
-            }
-            else {
-                newStamp = newStampBuilder.build();
-            }
-            newStampBuilder = null;
-        }
-        return newStamp;
-    }
-
-    /**
-     * @param newStamp the newStamp to set
-     */
-    public Stamp setNextNewStamp(Stamp newStamp) {
-        this.newStamp = newStamp;
-        this.newStampBuilder = null;
-        return newStamp;
-    }
+//
+//    /**
+//     * @return the newStamp
+//     */
+//    public Stamp getTheNewStamp() {
+//        if (newStamp == null) {
+//            //if newStamp==null then newStampBuilder must be available. cache it's return value as newStamp
+//            newStamp = newStampBuilder.build();
+//            newStampBuilder = null;
+//        }
+//        return newStamp;
+//    }
+//    public Stamp getTheNewStampForRevision() {
+//        if (newStamp == null) {
+//            if (newStampBuilder.overlapping()) {
+//                newStamp = null;
+//            }
+//            else {
+//                newStamp = newStampBuilder.build();
+//            }
+//            newStampBuilder = null;
+//        }
+//        return newStamp;
+//    }
+//
+//    /**
+//     * @param newStamp the newStamp to set
+//     */
+//    public Stamp setNextNewStamp(Stamp newStamp) {
+//        this.newStamp = newStamp;
+//        this.newStampBuilder = null;
+//        return newStamp;
+//    }
+//
+//    /**
+//     * creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked
+//     */
+//    public void setNextNewStamp(final Stamp first, final Stamp second, final long time) {
+//        newStamp = null;
+//        newStampBuilder = new NewStampBuilder(first, second, time);
+//    }
 
     interface StampBuilder {
         Stamp build();
@@ -400,13 +386,6 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         }
     }
 
-    /**
-     * creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked
-     */
-    public void setNextNewStamp(final Stamp first, final Stamp second, final long time) {
-        newStamp = null;
-        newStampBuilder = new NewStampBuilder(first, second, time);
-    }
 
     /**
      * @return the currentBelief
@@ -477,4 +456,17 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
             return new Stamp(first, second, time);
         }
     }
+
+    public Stamp newStamp(Sentence a, Sentence b, long at) {
+        return new Stamp(a.stamp, b.stamp, at);
+    }
+
+    public Stamp newStamp(Sentence a, Sentence b) {
+        return newStamp(a.stamp, b.stamp);
+    }
+    public Stamp newStamp(Stamp a, Stamp b) {
+        return new Stamp(a, b, time());
+    }
+
+
 }

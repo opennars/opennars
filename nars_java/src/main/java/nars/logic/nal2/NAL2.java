@@ -23,16 +23,15 @@ public class NAL2 {
         Statement s1 = (Statement) judgment1.term;
         Term t1 = s1.getSubject();
         Term t2 = s1.getPredicate();
-        Term content;
+        CompoundTerm content;
         if (s1 instanceof Inheritance) {
             content = Similarity.make(t1, t2);
         } else {
             content = Equivalence.make(t1, t2, s1.getTemporalOrder());
         }
-        TruthValue value1 = judgment1.truth;
-        TruthValue value2 = judgment2.truth;
-        TruthValue truth = TruthFunctions.intersection(value1, value2);
+        TruthValue truth = TruthFunctions.intersection(judgment1.truth, judgment2.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget,
+                new Stamp(judgment1.stamp, judgment2.stamp, nal.time()), false);
     }
 }

@@ -68,8 +68,8 @@ public class LocalRules {
     }
 
 
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
-        return revision(newBelief, oldBelief, feedbackToLinks, nal, nal.getCurrentBelief());
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, Stamp stamp, final boolean feedbackToLinks, final NAL nal) {
+        return revision(newBelief, oldBelief, stamp, feedbackToLinks, nal, nal.getCurrentBelief());
     }
 
     /**
@@ -82,7 +82,7 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
      * @param memory Reference to the memory
      */
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal, Sentence subbedBelief) {
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, Stamp stamp, final boolean feedbackToLinks, final NAL nal, Sentence subbedBelief) {
 
         final Task currentTask = nal.getCurrentTask();
 
@@ -95,20 +95,10 @@ public class LocalRules {
             return false;
         }
 
-
-        Stamp stamp = nal.getTheNewStampForRevision();
-        if (stamp == null) {
-            //overlapping evidence on revision
-            return false;
-        }
-
-        Sentence newSentence = new Sentence(newBelief.term,
+        if (nal.deriveTask(new Task(new Sentence(newBelief.term,
                 currentTask.sentence.punctuation,
                 truth,
-                stamp);
-        Task newTask = new Task(newSentence, budget, currentTask, newBelief);
-
-        if (nal.deriveTask(newTask, true, false, null, null, subbedBelief, nal.getCurrentTask())) {
+                stamp), budget, currentTask, newBelief), true, false, null, null, subbedBelief, nal.getCurrentTask())) {
             nal.memory.logic.BELIEF_REVISION.hit();
             return true;
         }
@@ -267,7 +257,9 @@ public class LocalRules {
         
         TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget,
+                new Stamp(asym.stamp, sym.stamp, nal.time()),
+                false);
     }
 
     /* -------------------- one-premise logic rules -------------------- */

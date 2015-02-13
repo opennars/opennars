@@ -257,9 +257,10 @@ public class ClassicalConditioningHelper implements Plugin {
                 Stamp stamp=new Stamp(nar.memory);
                 stamp.setOccurrenceTime(Stamp.ETERNAL);
                 Sentence s=new Sentence(res,Symbols.JUDGMENT,Truth,stamp);
-                Task TT=Task.make(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,
-                
-                BudgetFunctions.truthToQuality(Truth)), lastElems.get(lastElems.size()-1));
+
+                Task TT= new Task(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY,
+
+                        BudgetFunctions.truthToQuality(Truth)), lastElems.get(lastElems.size() - 1), null);
                 nar.addInput(TT);
 
                 break;

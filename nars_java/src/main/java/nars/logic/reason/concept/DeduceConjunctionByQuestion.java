@@ -127,7 +127,9 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
 
                 TruthValue truthAnd = intersection(truthT, truthB);
                 BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
-                nal.doublePremiseTask(conj, truthAnd, budget, false);
+                nal.doublePremiseTask(conj, truthAnd, budget,
+                        new Stamp(sentence.stamp, belief.stamp, nal.time()),
+                        false);
 
             }
         });

@@ -176,11 +176,10 @@ public class TemporalRules {
             return false;
         }
 
-
-        nal.setNextNewStamp(currentBelief.stamp, prevBelief.stamp, nal.time());
-
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        TemporalRules.temporalInduction(currentBelief, prevBelief, nal, prevBelief, controllerTask);
+        TemporalRules.temporalInduction(currentBelief, prevBelief,
+                new Stamp(currentBelief.stamp, prevBelief.stamp, nal.time()),
+                nal, prevBelief, controllerTask);
         return false;
     }
 
@@ -288,7 +287,9 @@ public class TemporalRules {
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
                 
-                return nal.doublePremiseTask(whole, truth, budget, true)!=null;
+                return nal.doublePremiseTask(whole, truth, budget,
+                        new Stamp(s1.stamp, s2.stamp, nal.time() ),
+                        true);
             }
         }
         return false;
@@ -326,11 +327,11 @@ public class TemporalRules {
 
 
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
-        temporalInduction(s1, s2 ,nal, nal.getCurrentBelief(), nal.getCurrentTask());
+    public static void temporalInduction(final Sentence s1, final Sentence s2, Stamp stamp, final NAL nal) {
+        temporalInduction(s1, s2, stamp, nal, nal.getCurrentBelief(), nal.getCurrentTask());
     }
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal, Sentence subbedBelief, Task subbedTask) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, Stamp stamp, final NAL nal, Sentence subbedBelief, Task subbedTask) {
         
         if ((s1.truth==null) || (s2.truth==null))
             return;
@@ -466,41 +467,23 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11,inductionLimit)) {
-                Task t=nal.doublePremiseTask(statement11, truth1, budget1,true, subbedBelief, subbedTask);
-                if(t!=null) {
-                    //success.add(t);
-                }
+                boolean t=nal.doublePremiseTask(statement11, truth1, budget1, stamp, true, subbedBelief, subbedTask);
             }
             if(!tooMuchTemporalStatements(statement22,inductionLimit)) {
-               Task t=nal.doublePremiseTask(statement22, truth2, budget2,true, subbedBelief, subbedTask);
-                if(t!=null) {
-                    //success.add(t);
-                }
+               boolean t=nal.doublePremiseTask(statement22, truth2, budget2, stamp, true, subbedBelief, subbedTask);
             }
             if(!tooMuchTemporalStatements(statement33,inductionLimit)) {
-                Task t=nal.doublePremiseTask(statement33, truth3, budget3,true, subbedBelief, subbedTask);
-                if(t!=null) {
-                    //success.add(t);
-                }
+               boolean t = nal.doublePremiseTask(statement33, truth3, budget3, stamp, true, subbedBelief, subbedTask);
             }
         }
         if(!tooMuchTemporalStatements(statement1,inductionLimit)) {
-            Task t=nal.doublePremiseTask(statement1, truth1, budget1,true, subbedBelief, subbedTask);
-            if(t!=null) {
-                    //success.add(t);
-                }
+            boolean t = nal.doublePremiseTask(statement1, truth1, budget1, stamp, true, subbedBelief, subbedTask);
         }
         if(!tooMuchTemporalStatements(statement2,inductionLimit)) {
-            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true, subbedBelief, subbedTask); //=/> only to  keep graph simple for now
-                 if(t!=null) {
-                    //success.add(t);
-                }
-            }
+            boolean t = nal.doublePremiseTask(statement2, truth2, budget2, stamp, true, subbedBelief, subbedTask); //=/> only to  keep graph simple for now
+        }
         if(!tooMuchTemporalStatements(statement3,inductionLimit)) {
-            Task t=nal.doublePremiseTask(statement3, truth3, budget3,true, subbedBelief, subbedTask);
-            if(t!=null) {
-                    //success.add(t);
-                }
+            boolean t = nal.doublePremiseTask(statement3, truth3, budget3, stamp, true, subbedBelief, subbedTask);
         }
 
     }
