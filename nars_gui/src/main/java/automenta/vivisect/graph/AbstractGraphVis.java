@@ -11,7 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static processing.core.PConstants.MITER;
 import static processing.core.PConstants.SQUARE;
@@ -21,9 +20,13 @@ import static processing.core.PConstants.SQUARE;
  */
 abstract public class AbstractGraphVis<V, E> implements Vis {
 
+    int maxNodesWithLabels = 5000;
+    final int maxNodes = 5000;
+    int maxEdgesWithArrows = 10000;
+    final int maxEdges = 10000;
 
-    Map<V, VertexVis<V, E>> vertices = new LinkedHashMap();
-    Map<E, EdgeVis<V, E>> edges = new LinkedHashMap();
+    Map<V, VertexVis<V, E>> vertices = new LinkedHashMap(maxNodes);
+    Map<E, EdgeVis<V, E>> edges = new LinkedHashMap(maxEdges);
     Set<V> deadVertices = new LinkedHashSet();
     Set<E> deadEdges = new LinkedHashSet();
 
@@ -37,10 +40,7 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
     private GraphDisplay<V, E> display;
 
 
-    int maxNodesWithLabels = 5000;
-    int maxNodes = 5000;
-    int maxEdgesWithArrows = 10000;
-    int maxEdges = 10000;
+
 
     float nodeSpeed = 0.1f;
 

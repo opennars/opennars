@@ -62,7 +62,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
         } else if (o instanceof Task) {
             Task ta = (Task) o;
             rad = 2.0f + ta.getPriority() * 2.0f;
-            alpha = ta.getDurability();                
+            alpha = ta.budget.summary() * 0.5f + 0.5f;
             v.shape = Shape.Rectangle;
         } else if (o instanceof Concept) {
             Concept co = (Concept) o;
@@ -91,7 +91,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
 
         
         float brightness = 0.85f;
-        float saturation = 0.85f;
+        float saturation = 0.75f;
         
         v.color = Video.colorHSB( hue, saturation, brightness, alpha );
 
@@ -132,9 +132,10 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
         }
         if (edge instanceof NARGraph.TaskLinkEdge) {
             TaskLink t = ((NARGraph.TaskLinkEdge)edge).getObject();
-            float p = t.targetTask.getPriority();            
-            thickness = (1 + p) * lineWidth;
-            color = Video.color(125f, 255f * (0.5f + p*0.5f), 125f, 255f * (0.5f + p*0.5f) );
+            float tp = t.targetTask.getPriority(); //task priority
+            float lp = t.getPriority();  //link priority
+            thickness = (1 + (tp+lp)/2f) * lineWidth;
+            color = Video.color(55f, 255f * (0.5f + tp*0.5f), 255f * (0.5f + lp*0.5f), 255f * (0.5f + lp*0.5f) );
         }
     
         e.color = color;

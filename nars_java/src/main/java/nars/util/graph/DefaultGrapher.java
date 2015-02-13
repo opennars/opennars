@@ -1,9 +1,11 @@
 package nars.util.graph;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import nars.logic.entity.*;
+import nars.util.data.CuckooMap;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -14,10 +16,11 @@ public class DefaultGrapher implements NARGraph.Grapher {
     private final boolean includeQuestions;
     private final boolean includeTermLinks;
     private final boolean includeTaskLinks;
-    public final Map<TermLink, Concept> termLinks = new HashMap();
-    public final Map<TaskLink, Concept> taskLinks = new HashMap();
-    public final Map<Term, Concept> terms = new HashMap();
-    public final Map<Sentence, Concept> sentenceTerms = new HashMap();
+    public final Map<TermLink, Concept> termLinks = new CuckooMap();
+    public final Multimap<TaskLink, Concept> taskLinks = ArrayListMultimap.create();
+
+    public final Map<Term, Concept> terms = new CuckooMap();
+    public final Map<Sentence, Concept> sentenceTerms = new CuckooMap();
     private final boolean includeTermContent;
     private final boolean includeDerivations;
     
@@ -208,9 +211,8 @@ public class DefaultGrapher implements NARGraph.Grapher {
             }
         }
         if (includeTermLinks) {
-            for (Map.Entry<TermLink, Concept> et : termLinks.entrySet()) {
-                TermLink t = et.getKey();
-                Concept from = et.getValue();
+            for (TermLink t : termLinks.keySet()) {
+                Concept from = termLinks.get(t);
                 Concept to = terms.get(t.target);
                 if (to != null) {
                     g.addEdge(from, to, new NARGraph.TermLinkEdge(t));
@@ -218,25 +220,28 @@ public class DefaultGrapher implements NARGraph.Grapher {
             }
         }
         if (includeTaskLinks) {
-            for (Map.Entry<TaskLink, Concept> et : taskLinks.entrySet()) {
+            for (Map.Entry<TaskLink, Concept> et : taskLinks.entries()) {
+
                 TaskLink t = et.getKey();
                 Concept from = et.getValue();
                 if (t.targetTask != null) {
                     Task theTask = t.targetTask;
                     if (!g.containsVertex(theTask)) {
                         g.addVertex(theTask);
-                        Term term = theTask.getTerm();
-                        if (term != null) {
-                            Concept c = terms.get(term);
-                            if (c != null) {
-                                if (!g.containsVertex(c)) {
-                                    g.addVertex(c);
-                                    g.addEdge(c, theTask, new NARGraph.TermContent());
-                                }
-                            }
-                        }
-                        onTask(theTask);
                     }
+
+                    Term term = theTask.getTerm();
+                    if (term != null) {
+                        Concept c = terms.get(term);
+                        if (c != null) {
+                            if (!g.containsVertex(c)) {
+                                g.addVertex(c);
+                            }
+                            g.addEdge(c, theTask, new NARGraph.TermContent());
+                        }
+                    }
+                    onTask(theTask);
+
                     g.addEdge(from, t.targetTask, new NARGraph.TaskLinkEdge(t));
                 }
             }

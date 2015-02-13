@@ -82,14 +82,14 @@ public class Default extends NewNAR implements ConceptBuilder {
         setSubconceptBagSize(1024);
         setConceptBagLevels(32);
         
-        setTaskLinkBagSize(32);
-        setTaskLinkBagLevels(8);
+        setTaskLinkBagSize(24);
+        setTaskLinkBagLevels(12);
 
         setTermLinkBagSize(128);
-        setTermLinkBagLevels(8); //was 100, but lower value performs much better with no apparent degradation of results
+        setTermLinkBagLevels(12);
         
         setNovelTaskBagSize(64);
-        setNovelTaskBagLevels(8);
+        setNovelTaskBagLevels(24);
 
 
 
