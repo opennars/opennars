@@ -311,7 +311,8 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         
         boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
                 
-        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
+        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : 
+                                        stamp.cloneWithNewOccurrenceTime(currentTime);
         
         return new Sentence(term, punctuation, newTruth, newStamp, false);
     }
