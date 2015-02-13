@@ -414,6 +414,7 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E> {
                         //setEdgeStyleEnabled(edge[k], false);
                     }
 
+
                     V source = graph.getEdgeSource(e);
                     V target = graph.getEdgeTarget(e);
                     if (source!=v)  cells.add(source);

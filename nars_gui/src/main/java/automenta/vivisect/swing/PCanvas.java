@@ -12,7 +12,6 @@ import processing.core.PGraphics;
 import processing.event.MouseEvent;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 
@@ -227,7 +226,10 @@ public class PCanvas extends PApplet implements HierarchyListener {
     public void draw() {
 
         if (predrawing && b!=null && b.width == getWidth() && b.height==getHeight())  {
-            this.background(b);
+            try {
+                this.background(b);
+            }
+            catch (NullPointerException e) { }
             predrawing = false;
         }
     }

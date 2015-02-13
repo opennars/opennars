@@ -2,21 +2,14 @@ package nars.logic.meta;
 
 import nars.core.Events;
 import nars.core.Events.ConceptNew;
-import nars.core.Events.CycleEnd;
 import nars.core.Events.InferenceEvent;
 import nars.core.NAR;
-import nars.event.Reaction;
-import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
 import nars.logic.MemoryObserver;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
-import nars.logic.entity.Term;
 
-import java.awt.*;
 import java.io.PrintStream;
 import java.util.*;
-import java.util.List;
 
 
 /**
@@ -136,11 +129,12 @@ public class NARTrace extends MemoryObserver {
         time.clear();
         concept.clear();
     }
-    
+
+    //TODO use MemoryObserver's event dispatcher
     @Override
-    public void event(final Class event, final Object[] arguments) {
+    @Deprecated public void event(final Class event, final Object[] arguments) {
         if (event == Events.TaskAdd.class) {
-            onTaskAdd((Task)arguments[0], (String)arguments[1]);
+            onTaskAdd((Task)arguments[0]);
         }
         else if (event == Events.TaskRemove.class) {
             onTaskRemove((Task)arguments[0], (String)arguments[1]);
@@ -173,8 +167,8 @@ public class NARTrace extends MemoryObserver {
     }
 
     @Override
-    public void onTaskAdd(Task task, String reason) {
-        TaskEvent ta = new TaskEvent(task, t, AddOrRemove.Add, reason);
+    public void onTaskAdd(Task task) {
+        TaskEvent ta = new TaskEvent(task, t, AddOrRemove.Add, task.getReason());
         addEvent(ta);
     }
 

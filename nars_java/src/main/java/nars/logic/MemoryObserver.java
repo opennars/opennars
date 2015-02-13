@@ -59,6 +59,8 @@ public abstract class MemoryObserver extends AbstractReaction {
             onCycleStart(memory.time());
         } else if (event == CycleEnd.class) {
             onCycleEnd(memory.time());
+        } else if (event == Events.TaskAdd.class) {
+            onTaskAdd((Task)arguments[0]);
         } else {
             output(event, arguments);
         }
@@ -71,8 +73,6 @@ public abstract class MemoryObserver extends AbstractReaction {
 
     /**
      * Add new text to display
-     *
-     * @param s The line to be displayed
      */
     abstract public void output(Class channel, Object... args);
 
@@ -98,7 +98,7 @@ public abstract class MemoryObserver extends AbstractReaction {
     /**
      * Added task
      */
-    abstract public void onTaskAdd(Task task, String reason);
+    abstract public void onTaskAdd(Task task);
 
     /**
      * Neglected task

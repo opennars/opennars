@@ -109,8 +109,8 @@ public class TraceWriter extends MemoryObserver {
     }
 
     @Override
-    public void onTaskAdd(Task task, String reason) {
-        output(TaskAdd.class, reason, task);
+    public void onTaskAdd(Task task) {
+        output(TaskAdd.class, task.getReason(), task);
     }
 
     @Override

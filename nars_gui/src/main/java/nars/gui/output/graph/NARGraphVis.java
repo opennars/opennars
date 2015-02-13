@@ -15,14 +15,12 @@ import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.GraphDisplays;
 import automenta.vivisect.swing.NSlider;
-import nars.event.Reaction;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.Restart;
 import nars.core.NAR;
+import nars.event.Reaction;
 import nars.gui.output.graph.layout.HashPriorityPolarLayout;
-import nars.util.graph.DefaultGrapher;
-import nars.util.graph.InheritanceGraph;
-import nars.util.graph.NARGraph;
+import nars.util.graph.*;
 import org.jgrapht.Graph;
 
 import javax.swing.*;
@@ -132,14 +130,44 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
         }
         
     }
-    public class InheritanceGraphMode extends MinPriorityGraphMode implements GraphMode {
-        private InheritanceGraph ig;
+
+    public class TaskGraphMode implements GraphMode {
+
+        private final TaskGraph taskGraph;
+
+        public TaskGraphMode() {
+            taskGraph = new TaskGraph(nar);
+        }
+
+        @Override
+        public Graph nextGraph() {
+            return taskGraph.get();
+
+        }
+
+        @Override
+        public JPanel newControlPanel() {
+            JPanel j = new JPanel();
+            return j;
+        }
+
+        @Override
+        public void stop() {
+            taskGraph.stop();
+        }
+    }
+
+    abstract public class StatementGraphMode extends MinPriorityGraphMode implements GraphMode {
+        private StatementGraph ig;
+
+        abstract StatementGraph newGraph(NAR nar);
 
         @Override
         public Graph nextGraph() {
             if (this.ig==null) {
-                this.ig = new InheritanceGraph(nar, true, true);
-                ig.start();
+                this.ig = newGraph(nar);
+                if (ig!=null)
+                    ig.start();
             }
             
             return ig;
@@ -155,8 +183,23 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
         
     }
 
+    public class InheritanceGraphMode extends StatementGraphMode {
+
+        @Override
+        StatementGraph newGraph(NAR nar) {
+            return new InheritanceGraph(nar, true, true);
+        }
+    }
+    public class ImplicationGraphMode extends StatementGraphMode {
+
+        @Override
+        StatementGraph newGraph(NAR nar) {
+            return new ImplicationGraph2(nar);
+        }
+    }
+
     
-    public GraphMode mode = new ConceptGraphMode();
+    public GraphMode mode;
     
     boolean updateNextGraph = false;
             
@@ -164,7 +207,9 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
         super(null, new GraphDisplays());
         this.nar = n;
         this.displays = (GraphDisplays)getDisplay();
-        
+
+        mode = new TaskGraphMode();
+
         update(new NARGraphDisplay(), new FastOrganicLayout());
     }
     
@@ -293,19 +338,27 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
     public JPanel newGraphPanel() {
         JPanel j = new JPanel(new FlowLayout(FlowLayout.LEFT));
         final JComboBox modeSel = new JComboBox();
+        modeSel.addItem("Tasks");
         modeSel.addItem("Concepts");
-        modeSel.addItem("Inheritance");       
+        modeSel.addItem("Inheritance");
+        modeSel.addItem("Implication");
+
         //modeSelect.setSelectedIndex(cg.mode);
         modeSel.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 switch (modeSel.getSelectedIndex()) {
                     case 0:
-                        setMode(new ConceptGraphMode());
+                        setMode(new TaskGraphMode());
                         break;
                     case 1:
+                        setMode(new ConceptGraphMode());
+                        break;
+                    case 2:
                         setMode(new InheritanceGraphMode());
                         break;
-
+                    case 3:
+                        setMode(new ImplicationGraphMode());
+                        break;
                 }
                 setUpdateNext();
             }

@@ -29,7 +29,14 @@ public class HashPriorityPolarLayout implements GraphDisplay<Item, Object> {
 
     @Override
     public void vertex(AbstractGraphVis<Item, Object> g, VertexVis<Item, Object> v) {
-        Item vertex = v.getVertex();
+        Object vv = v.getVertex();
+        Item vertex;
+        if (vv instanceof Item) {
+            vertex = (Item)vv;
+        }
+        else {
+            return;
+        }
 
         float priority = vertex.getPriority();
         double radius = (1.0 - priority) * spacing + 8;

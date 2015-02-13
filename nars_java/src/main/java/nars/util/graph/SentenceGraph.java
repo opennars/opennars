@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 
-
+//TODO extends a new abstract ReactionGraph
 abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
     public final Memory memory;
     private final AbstractReaction reaction;
