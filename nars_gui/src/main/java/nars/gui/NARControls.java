@@ -187,7 +187,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new NWindow("graphvis", new NARGraphPanel( nar) ).show(800, 800, false);
+                    new NWindow("graphvis", new NARGraphPanel( nar, -1) ).show(800, 800, false);
                 }
             });
             m.add(mv);

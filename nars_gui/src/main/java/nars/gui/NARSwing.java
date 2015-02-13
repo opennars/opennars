@@ -20,14 +20,12 @@
  */
 package nars.gui;
 
-import nars.sonification.ConceptSonification;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import nars.core.NAR;
 import nars.build.Default.CommandLineNARBuilder;
 import nars.control.experimental.AntCore;
-import nars.gui.output.audio.SoundEngineTestPanel;
-import nars.io.TextInput;
+import nars.core.NAR;
+import nars.gui.output.graph.TaskGraphVis;
 import nars.io.TextOutput;
 
 import javax.management.MBeanServer;
@@ -93,7 +91,9 @@ public class NARSwing extends Video {
             new TextOutput(nar, System.out);
             //new Log4JOutput(nar, false);            
         }
-        
+
+
+        new TaskGraphVis(nar).newWindow().show(900,700,true);
                 
 //        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
 //        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);

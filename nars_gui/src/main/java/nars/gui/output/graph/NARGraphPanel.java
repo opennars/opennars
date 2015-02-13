@@ -4,10 +4,10 @@
  */
 package nars.gui.output.graph;
 
+import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.PCanvas;
-import nars.core.Events;
 import nars.core.NAR;
 import nars.gui.WrapLayout;
 
@@ -19,65 +19,90 @@ import java.awt.*;
  * @author me
  */
 public class NARGraphPanel extends NPanel {
-    private final NARGraphVis vis;
-    private final PCanvas canvas;
-    private final JPanel visControl, layoutControl, canvasControl;
-    private final JComponent menu;
-    private final JPanel graphControl;
+    private final NAR nar;
+    private AnimatingGraphVis vis;
+    private PCanvas canvas;
+    private JPanel visControl, layoutControl, canvasControl;
+    private JComponent menu;
+    private JPanel graphControl;
 
     float paintFPS = 25f;
 
-    public NARGraphPanel(NAR n) {
-        super(new BorderLayout());
-        
-
-
-
-        vis = new NARGraphVis(n) {
-            @Override public void setMode(NARGraphVis.GraphMode g) {
+    public NARGraphPanel(NAR n, int temporaryForDefaultLayout) {
+        this(n);
+        NARGraphVis vis = new NARGraphVis(n) {
+            @Override
+            public void setMode(NARGraphVis.GraphMode g) {
                 super.setMode(g);
-                doLayout();
-                updateUI();
+                //doLayout();
+                //updateUI();
             }
-
-        };
-        canvas = new PCanvas(vis) {
-
-
-
 
             @Override
-            public void draw() {
-                //MULTITHREADED RENDERING LOOP:
-                if (!isPredrawing())
-                    n.memory.addLaterTask(super::predraw);
-
-                super.draw();
-
+            public GraphMode getInitialMode() {
+                GraphMode g = new ConceptGraphMode();
+                return g;
             }
         };
-        canvas.setFrameRate(paintFPS);
-        canvas.loop();
-        canvas.renderEveryFrame(true);
 
         visControl = vis.newStylePanel();
         canvasControl = newCanvasPanel();
         layoutControl = vis.newLayoutPanel();
         graphControl = vis.newGraphPanel();
-        
-        
-        menu = new JPanel(new WrapLayout(FlowLayout.LEFT));
-        menu.setOpaque(false);
-        menu.add(graphControl);
-        menu.add(visControl);
-        menu.add(canvasControl);
-        menu.add(layoutControl);
-        
-        add(canvas, BorderLayout.CENTER);
-        add(menu, BorderLayout.NORTH);
-        
+
+
+
+
+        init(vis);
     }
 
+
+    public NARGraphPanel(NAR n) {
+        super(new BorderLayout());
+
+        this.nar = n;
+    }
+
+    public NARGraphPanel(NAR n, AnimatingGraphVis vis) {
+        this(n);
+        init(vis);
+    }
+
+
+    protected void init(AnimatingGraphVis vis) {
+        this.vis = vis;
+
+        //vis = ;
+        canvas = new PCanvas(vis) {
+
+            @Override
+            public void draw() {
+                //MULTITHREADED RENDERING LOOP:
+                if (!isPredrawing())
+                    nar.memory.addLaterTask(super::predraw);
+
+                super.draw();
+
+            }
+        };
+
+        menu = new JPanel(new WrapLayout(FlowLayout.LEFT));
+        menu.setOpaque(false);
+        if (graphControl!=null) {
+            menu.add(graphControl);
+            menu.add(visControl);
+            menu.add(canvasControl);
+            menu.add(layoutControl);
+        }
+
+        add(canvas, BorderLayout.CENTER);
+        add(menu, BorderLayout.NORTH);
+
+        canvas.setFrameRate(paintFPS);
+        canvas.loop();
+        canvas.renderEveryFrame(true);
+
+    }
 
 
     @Override  protected void onShowing(boolean showing) {

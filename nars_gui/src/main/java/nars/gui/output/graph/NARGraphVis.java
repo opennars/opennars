@@ -18,6 +18,7 @@ import automenta.vivisect.swing.NSlider;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.Restart;
 import nars.core.NAR;
+import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.gui.output.graph.layout.HashPriorityPolarLayout;
 import nars.util.graph.*;
@@ -32,11 +33,11 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  *
  */
-public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Reaction {
+abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Reaction {
         
     
     final AtomicReference<Graph> displayedGraph = new AtomicReference();
-    private final NAR nar;
+    public final NAR nar;
     
     private final GraphDisplays displays;
     private NARGraphDisplay style;
@@ -45,6 +46,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
 
     float updateCycleMS = 70;
     long lastUpdateMS = -1;
+    private EventEmitter.Registrations reg = null;
 
 
     public static interface GraphMode {
@@ -202,17 +204,23 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
     public GraphMode mode;
     
     boolean updateNextGraph = false;
-            
+
     public NARGraphVis(NAR n) {
+        this(n, new NARGraphDisplay(), new FastOrganicLayout());
+    }
+
+    public NARGraphVis(NAR n, NARGraphDisplay style, GraphDisplay layout) {
         super(null, new GraphDisplays());
         this.nar = n;
         this.displays = (GraphDisplays)getDisplay();
 
-        mode = new TaskGraphMode();
+        this.mode = getInitialMode();
 
-        update(new NARGraphDisplay(), new FastOrganicLayout());
+        update(style, layout);
     }
-    
+
+    abstract public GraphMode getInitialMode();
+
     public void update(NARGraphDisplay style, GraphDisplay layout) {
         this.style = style;
         this.layout = layout;
@@ -223,10 +231,17 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Rea
     }
 
     @Override
-    public void onVisible(boolean showing) {  
-        nar.memory.event.set(this, showing, FrameEnd.class, Restart.class);
-        if (!showing) {
-            mode.stop();
+    public void onVisible(boolean showing) {
+        if (showing) {
+            if (reg == null)
+                reg = nar.memory.event.on(this, FrameEnd.class, Restart.class);
+        }
+        else {
+            if (reg != null) {
+                reg.cancel();
+                mode.stop();
+                reg = null;
+            }
         }
     }
 
