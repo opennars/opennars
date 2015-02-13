@@ -203,7 +203,7 @@ public final class CompositionalRules {
             v2 = sentence.truth;
         }
         TruthValue truth = null;
-        Term content;
+        CompoundTerm content;
         if (index == 0) {
             content = Statement.make(oldContent, term1, term2, order);
             if (content == null) {
@@ -285,7 +285,7 @@ public final class CompositionalRules {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
-        Term content = reduceComponents(compound, component, nal.memory);
+        CompoundTerm content = Terms.compoundOrNull(reduceComponents(compound, component, nal.memory));
         if (content == null) {
             return false;
         }
@@ -450,7 +450,7 @@ public final class CompositionalRules {
         }
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
-        Term content = Implication.makeTerm(state1, state2);
+        CompoundTerm content = Terms.compoundOrNull( Implication.makeTerm(state1, state2) );
         if (content == null) {
             return;
         }
@@ -473,14 +473,24 @@ public final class CompositionalRules {
         TruthValue truth = induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, stamp, false);
-        content = Implication.makeTerm(state2, state1);
-        truth = induction(truthB, truthT);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, stamp, false);
-        content = Equivalence.makeTerm(state1, state2);
-        truth = comparison(truthT, truthB);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, stamp, false);
+
+        {
+            CompoundTerm ct = Terms.compoundOrNull(Implication.makeTerm(state2, state1));
+            if (ct!=null) {
+                truth = induction(truthB, truthT);
+                budget = BudgetFunctions.compoundForward(truth, ct, nal);
+                nal.doublePremiseTask(ct, truth, budget, stamp, false);
+            }
+        }
+
+        {
+            CompoundTerm ct = Terms.compoundOrNull( Equivalence.makeTerm(state1, state2) );
+            if (ct!=null) {
+                truth = comparison(truthT, truthB);
+                budget = BudgetFunctions.compoundForward(truth, ct, nal);
+                nal.doublePremiseTask(ct, truth, budget, stamp, false);
+            }
+        }
 
         Variable varDep = new Variable("#varDep");
         if (index == 0) {
@@ -494,10 +504,12 @@ public final class CompositionalRules {
         if ((state1 == null) || (state2 == null))
             return;
 
-        content = Conjunction.make(state1, state2);
-        truth = intersection(truthT, truthB);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, stamp, false);
+        CompoundTerm ct = Terms.compoundOrNull( Conjunction.make(state1, state2) );
+        if (ct!=null) {
+            truth = intersection(truthT, truthB);
+            budget = BudgetFunctions.compoundForward(truth, ct, nal);
+            nal.doublePremiseTask(ct, truth, budget, stamp, false);
+        }
     }
 
     /**
@@ -546,19 +558,19 @@ public final class CompositionalRules {
             Variable varDep2 = new Variable("#varDep2");
 
 
-            Term content = Conjunction.make(premise1, oldCompound);
+            Term content = Terms.compoundOrNull(Conjunction.make(premise1, oldCompound));
+            if (content != null) {
 
-            if (!(content instanceof CompoundTerm))
-                return false;
+                substitute.put(commonTerm1, varDep2);
 
-            substitute.put(commonTerm1, varDep2);
+                CompoundTerm ct = Terms.compoundOrNull(((CompoundTerm) content).applySubstitute(substitute));
+                if (ct != null) {
+                    TruthValue truth = intersection(taskSentence.truth, belief.truth);
+                    BudgetValue budget = BudgetFunctions.forward(truth, nal);
 
-            content = ((CompoundTerm) content).applySubstitute(substitute);
-
-            TruthValue truth = intersection(taskSentence.truth, belief.truth);
-            BudgetValue budget = BudgetFunctions.forward(truth, nal);
-
-            b = nal.doublePremiseTask(content, truth, budget, stamp, false);
+                    b = nal.doublePremiseTask(ct, truth, budget, stamp, false);
+                }
+            }
         }
 
         substitute.clear();
@@ -574,25 +586,23 @@ public final class CompositionalRules {
             }
 
 
-            Term content = Implication.makeTerm(premise1, oldCompound);
+            CompoundTerm content = Terms.compoundOrNull(Implication.makeTerm(premise1, oldCompound));
+            if (content != null) {
 
-            if (content == null) {
-                return false;
+                CompoundTerm ct = Terms.compoundOrNull(((CompoundTerm) content).applySubstituteToCompound(substitute));
+
+                TruthValue truth;
+
+                if (premise1.equals(taskSentence.term)) {
+                    truth = induction(belief.truth, taskSentence.truth);
+                } else {
+                    truth = induction(taskSentence.truth, belief.truth);
+                }
+
+                BudgetValue budget = BudgetFunctions.forward(truth, nal);
+
+                b |= nal.doublePremiseTask(ct, truth, budget, stamp, false);
             }
-
-            content = ((CompoundTerm) content).applySubstituteToCompound(substitute);
-
-            TruthValue truth;
-
-            if (premise1.equals(taskSentence.term)) {
-                truth = induction(belief.truth, taskSentence.truth);
-            } else {
-                truth = induction(taskSentence.truth, belief.truth);
-            }
-
-            BudgetValue budget = BudgetFunctions.forward(truth, nal);
-
-            b |= nal.doublePremiseTask(content, truth, budget, stamp, false);
         }
 
         return b;
@@ -688,7 +698,7 @@ OUT: <lock1 --> lock>.
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, stamp, false);
+                                nal.doublePremiseTask((CompoundTerm)s2, truth, budget, stamp, false);
                             }
                         }
                     }
@@ -714,7 +724,7 @@ OUT: <lock1 --> lock>.
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, stamp, false);
+                                nal.doublePremiseTask((CompoundTerm)s2, truth, budget, stamp, false);
                             }
                         }
                     }
@@ -759,7 +769,7 @@ OUT: <lock1 --> lock>.
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, stamp, false);
+                                nal.doublePremiseTask((CompoundTerm)s2, truth, budget, stamp, false);
                             }
                         }
                     }
@@ -785,7 +795,7 @@ OUT: <lock1 --> lock>.
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, stamp, false);
+                                nal.doublePremiseTask((CompoundTerm)s2, truth, budget, stamp, false);
                             }
                         }
                     }
@@ -831,7 +841,7 @@ OUT: <lock1 --> lock>.
                             if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, stamp, false);
+                                nal.doublePremiseTask((CompoundTerm)s2, truth, budget, stamp, false);
                             }
                         }
                     }
@@ -858,7 +868,7 @@ OUT: <lock1 --> lock>.
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, stamp, false);
+                                nal.doublePremiseTask((CompoundTerm)s2, truth, budget, stamp, false);
                             }
                         }
                     }
@@ -903,7 +913,7 @@ OUT: <lock1 --> lock>.
                             if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, stamp, false);
+                                nal.doublePremiseTask((CompoundTerm)s2, truth, budget, stamp, false);
                             }
                         }
                     }
@@ -930,7 +940,7 @@ OUT: <lock1 --> lock>.
                             if (s2 != null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, stamp, false);
+                                nal.doublePremiseTask((CompoundTerm)s2, truth, budget, stamp, false);
                             }
                         }
                     }
@@ -1149,15 +1159,15 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             if (taskSentence.truth == null)
                 throw new RuntimeException("Task sentence truth must be non-null: " + taskSentence);
 
-            Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp, nal.time());
+            final Stamp stamp = nal.newStamp(taskSentence, second_belief);
 
             dedSecondLayerVariableUnificationTerms(nal, task,
-                    second_belief, ss, terms_dependent,
+                    second_belief, stamp, terms_dependent,
                     anonymousAnalogy(taskSentence.truth, truthSecond),
                     taskSentence.truth, truthSecond, false);
 
             dedSecondLayerVariableUnificationTerms(nal, task,
-                    second_belief, ss, terms_independent,
+                    second_belief, stamp, terms_independent,
                     deduction(taskSentence.truth, truthSecond),
                     taskSentence.truth, truthSecond, true);
 
@@ -1182,10 +1192,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 if (budget.aboveThreshold()) {
 
-                    Stamp useEvidentalBase = new Stamp(taskSentence.stamp, second_belief.stamp, nal.time());
-
                     Sentence newSentence = new Sentence(result, mark, truth,
-                            new Stamp(taskSentence.stamp, nal.time(), useEvidentalBase));
+                            new Stamp(taskSentence.stamp, nal.time(), stamp));
 
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);

@@ -176,19 +176,11 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    @Deprecated
-    public boolean doublePremiseTask(final Term newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, Stamp newStamp, boolean temporalAdd) {
-        CompoundTerm newContent = Sentence.termOrNull(newTaskContent);
-        if (newContent == null)
-            return false;
-        return doublePremiseTask(newContent, newTruth, newBudget, newStamp, temporalAdd);
-    }
-
-    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, Stamp newStamp, boolean temporalAdd) {
+    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder newStamp, boolean temporalAdd) {
         return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentBelief(), getCurrentTask());
     }
 
-    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, Stamp newStamp, final boolean temporalAdd, Sentence subbedBelief, Task subbedTask) {
+    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder stamp, final boolean temporalAdd, Sentence subbedBelief, Task subbedTask) {
         if (!newBudget.aboveThreshold()) {
             return false;
         }
@@ -197,11 +189,11 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         if (newTaskContent == null)
             return false;
 
+        final Stamp newStamp = stamp.build();
+
         boolean derived = deriveTask(new Task(
                 new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
                 newBudget, subbedTask, subbedBelief), false, false, null, null);
-
-
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
@@ -440,32 +432,32 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
     public interface StampBuilder {
         public Stamp build();
-        default public Stamp getFirst() { return null; }
-        default public Stamp getSecond() { return null; }
+//        default public Stamp getFirst() { return null; }
+//        default public Stamp getSecond() { return null; }
     }
 
-    /**
-     * for lazily constructing a stamp, in case it will not actually be necessary to completely construct a stamp
-     */
-    private static class NewStampBuilder implements StampBuilder {
-        private final Stamp first;
-        private final Stamp second;
-        private final long time;
-
-        public NewStampBuilder(Stamp first, Stamp second, long time) {
-            this.first = first;
-            this.second = second;
-            this.time = time;
-        }
-
-        @Override public Stamp getFirst() { return first; }
-        @Override public Stamp getSecond() { return second; }
-
-        @Override
-        public Stamp build() {
-            return new Stamp(first, second, time);
-        }
-    }
+//    /**
+//     * for lazily constructing a stamp, in case it will not actually be necessary to completely construct a stamp
+//     */
+//    private static class NewStampBuilder implements StampBuilder {
+//        private final Stamp first;
+//        private final Stamp second;
+//        private final long time;
+//
+//        public NewStampBuilder(Stamp first, Stamp second, long time) {
+//            this.first = first;
+//            this.second = second;
+//            this.time = time;
+//        }
+//
+//        @Override public Stamp getFirst() { return first; }
+//        @Override public Stamp getSecond() { return second; }
+//
+//        @Override
+//        public Stamp build() {
+//            return new Stamp(first, second, time);
+//        }
+//    }
 
     public Stamp newStamp(Sentence a, Sentence b, long at) {
         return new Stamp(a.stamp, b.stamp, at);
@@ -477,6 +469,8 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     public Stamp newStamp(Stamp a, Stamp b) {
         return new Stamp(a, b, time());
     }
+
+    /** returns a new stamp if A and B do not have overlapping evidence; null otherwise */
     public Stamp newStampIfNotOverlapping(Stamp A, Stamp B) {
         long[] a = A.toSet();
         long[] b = B.toSet();

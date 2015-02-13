@@ -5,7 +5,6 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.logic.entity.Sentence;
-import nars.logic.entity.Stamp;
 import nars.logic.entity.Task;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.reason.ImmediateProcess;
@@ -111,7 +110,7 @@ public class STMInduction extends AbstractPlugin {
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
             TemporalRules.temporalInduction(currentBelief, previousBelief,
-                    new Stamp(newEvent.sentence.stamp, stmLast.sentence.stamp, now),
+                    nal.newStamp(newEvent.sentence, stmLast.sentence),
                     nal);
         }
 

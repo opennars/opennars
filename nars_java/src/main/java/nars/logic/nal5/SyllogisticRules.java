@@ -276,19 +276,19 @@ public final class SyllogisticRules {
         }
         Term subject = statement.getSubject();
         Term predicate = statement.getPredicate();
-        Term content;
         Term term = subSentence.term;
+
+        final CompoundTerm content;
         if ((side == 0) && term.equals(subject)) {
-            content = predicate;
+            content = Terms.compoundOrNull(predicate);
         } else if ((side == 1) && term.equals(predicate)) {
-            content = subject;
-        } else {
+            content = Terms.compoundOrNull(subject);
+        } else
             return;
-        }
-        if ((content instanceof Statement) && ((Statement) content).invalid()) {
+
+        if (content == null || (content instanceof Statement) && ((Statement) content).invalid())
             return;
-        }
-        
+
         Sentence taskSentence = nal.getCurrentTask().sentence;
         Sentence beliefSentence = nal.getCurrentBelief();
         
@@ -349,7 +349,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.doublePremiseTask(content, truth, budget, nal.newStamp(mainSentence, subSentence, occurTime), false);
+            nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(mainSentence, subSentence, occurTime), false);
         }
     }
 
@@ -436,7 +436,7 @@ public final class SyllogisticRules {
         } else {
             newCondition = oldCondition.setComponent(index, newComponent);
         }
-        Term content;
+        final Term content;
         
         long delta = 0;
         final Interval.AtomicDuration duration = nal.memory.param.duration;
@@ -458,7 +458,7 @@ public final class SyllogisticRules {
             content = premise1.getPredicate();
         }
         
-        if (content == null)
+        if ((content == null) || (!(content instanceof CompoundTerm)))
             return;        
 
         long occurTime = nal.time();
@@ -510,7 +510,7 @@ public final class SyllogisticRules {
         Stamp stamp = nal.newStamp(taskSentence, belief, occurTime);
         TemporalRules.applyExpectationOffset(nal.memory, premise1, stamp);
 
-        nal.doublePremiseTask(content, truth, budget, stamp, false);
+        nal.doublePremiseTask((CompoundTerm)content, truth, budget, stamp, false);
     }
 
     /**

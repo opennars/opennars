@@ -32,6 +32,6 @@ public class NAL2 {
         TruthValue truth = TruthFunctions.intersection(judgment1.truth, judgment2.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,
-                new Stamp(judgment1.stamp, judgment2.stamp, nal.time()), false);
+                nal.newStamp(judgment1, judgment2), false);
     }
 }

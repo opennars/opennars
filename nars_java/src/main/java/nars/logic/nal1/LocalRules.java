@@ -258,7 +258,7 @@ public class LocalRules {
         TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,
-                new Stamp(asym.stamp, sym.stamp, nal.time()),
+                nal.newStamp(asym, sym),
                 false);
     }
 

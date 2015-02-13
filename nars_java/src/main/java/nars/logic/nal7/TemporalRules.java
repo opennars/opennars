@@ -288,7 +288,7 @@ public class TemporalRules {
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
                 
                 return nal.doublePremiseTask(whole, truth, budget,
-                        new Stamp(s1.stamp, s2.stamp, nal.time() ),
+                        nal.newStamp(s1, s2),
                         true);
             }
         }
@@ -467,10 +467,10 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11,inductionLimit)) {
-                boolean t=nal.doublePremiseTask(statement11, truth1, budget1, stamp, true, subbedBelief, subbedTask);
+                boolean t = nal.doublePremiseTask(statement11, truth1, budget1, stamp, true, subbedBelief, subbedTask);
             }
             if(!tooMuchTemporalStatements(statement22,inductionLimit)) {
-               boolean t=nal.doublePremiseTask(statement22, truth2, budget2, stamp, true, subbedBelief, subbedTask);
+               boolean t = nal.doublePremiseTask(statement22, truth2, budget2, stamp, true, subbedBelief, subbedTask);
             }
             if(!tooMuchTemporalStatements(statement33,inductionLimit)) {
                boolean t = nal.doublePremiseTask(statement33, truth3, budget3, stamp, true, subbedBelief, subbedTask);

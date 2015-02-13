@@ -514,6 +514,11 @@ public class Terms {
         return null;
     }
 
+    public static CompoundTerm compoundOrNull(Term t) {
+        if (t instanceof CompoundTerm) return (CompoundTerm)t;
+        return null;
+    }
+
 
     /** has, or is associated with a specific term */
     public static interface Termable<TT extends Term> {
