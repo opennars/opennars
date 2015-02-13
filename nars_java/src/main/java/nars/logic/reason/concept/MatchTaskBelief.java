@@ -33,11 +33,11 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
      * @param belief The belief
      */
     public static boolean match(final Task task, final Sentence belief, final NAL nal) {
-        Sentence taskSentence = task.sentence;
+        final Sentence taskSentence = task.sentence;
 
         if (taskSentence.isJudgment()) {
             if (LocalRules.revisible(taskSentence, belief)) {
-                return LocalRules.revision(taskSentence, belief, true, nal);
+                return LocalRules.revision(taskSentence, belief, nal.newStamp(taskSentence, belief), true, nal);
             }
         } else {
             if (TemporalRules.matchingOrder(taskSentence, belief)) {
