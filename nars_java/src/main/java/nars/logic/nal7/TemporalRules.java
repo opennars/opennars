@@ -184,7 +184,7 @@ public class TemporalRules {
     }
 
 
-    public static void applyExpectationOffset(Memory memory, Term temporalStatement, Stamp stamp) {
+    public static long applyExpectationOffset(Memory memory, Term temporalStatement, long occurrenceTime) {
         if(temporalStatement!=null && temporalStatement instanceof Implication) {
             Implication imp=(Implication) temporalStatement;
             if(imp.getSubject() instanceof Conjunction && imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD)  {
@@ -192,10 +192,11 @@ public class TemporalRules {
                 if(conj.term[conj.term.length-1] instanceof Interval) {
                     Interval intv=(Interval) conj.term[conj.term.length-1];
                     long time_offset=intv.durationCycles(memory);
-                    stamp.setOccurrenceTime(stamp.getOccurrenceTime()+time_offset);
+                    return (occurrenceTime+time_offset);
                 }
             }
         }
+        return occurrenceTime;
     }
 
 
@@ -327,11 +328,11 @@ public class TemporalRules {
 
 
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, Stamp stamp, final NAL nal) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, NAL.StampBuilder stamp, final NAL nal) {
         temporalInduction(s1, s2, stamp, nal, nal.getCurrentBelief(), nal.getCurrentTask());
     }
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, Stamp stamp, final NAL nal, Sentence subbedBelief, Task subbedTask) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, NAL.StampBuilder stamp, final NAL nal, Sentence subbedBelief, Task subbedTask) {
         
         if ((s1.truth==null) || (s2.truth==null))
             return;

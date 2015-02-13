@@ -24,6 +24,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.logic.NAL;
 import nars.logic.Terms.Termable;
 import nars.logic.TruthFunctions;
 import nars.logic.TruthFunctions.EternalizedTruthValue;
@@ -82,11 +83,11 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     transient private int hash;
 
 
-    public Sentence(Term invalidTerm, char punctuation, TruthValue newTruth, Stamp newStamp) {
+    public Sentence(Term invalidTerm, char punctuation, TruthValue newTruth, NAL.StampBuilder newStamp) {
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
-    public Sentence(T term, char punctuation, TruthValue newTruth, Stamp newStamp) {
+    public Sentence(T term, char punctuation, TruthValue newTruth, NAL.StampBuilder newStamp) {
         this(term, punctuation, newTruth, newStamp, true);
     }
     
@@ -99,7 +100,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    private Sentence(final T _content, final char punctuation, final TruthValue truth, final Stamp stamp, boolean normalize) {
+    private Sentence(final T _content, final char punctuation, final TruthValue truth, final NAL.StampBuilder stamp, boolean normalize) {
         
         this.punctuation = punctuation;
 
@@ -117,14 +118,15 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
                 throw ntc;
             }
         }
-        
-        if ((isQuestion() || isQuest()) && !stamp.isEternal()) {
-            stamp.setEternal();
+
+        this.stamp = stamp.build();
+
+        if ((isQuestion() || isQuest()) && !this.stamp.isEternal()) {
+            this.stamp.setEternal();
             //throw new RuntimeException("Questions and Quests require eternal tense");
         }
         
         this.truth = truth;
-        this.stamp = stamp;
         this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
             
         

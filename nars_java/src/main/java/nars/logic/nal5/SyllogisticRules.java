@@ -88,7 +88,7 @@ public final class SyllogisticRules {
         if ((content1 == null) || (content2 == null))
             return;
 
-        final Stamp stamp = nal.newStamp(sentence, belief);
+        final NAL.StampBuilder stamp = nal.newStamp(sentence, belief);
         nal.doublePremiseTask(content1, truth1, budget1, stamp, false);
         nal.doublePremiseTask(content2, truth2, budget2, stamp,false);
     }
@@ -146,7 +146,7 @@ public final class SyllogisticRules {
             budget3 = BudgetFunctions.forward(truth3, nal);
         }
 
-        final Stamp stamp = nal.newStamp(sentence1, sentence2);
+        final NAL.StampBuilder stamp = nal.newStamp(sentence1, sentence2);
 
         nal.doublePremiseTask(
                 Statement.make(taskContent, term1, term2, order), 
@@ -366,7 +366,7 @@ public final class SyllogisticRules {
      * for predicate, -1 for the whole term
      * @param nal Reference to the memory
      */
-    public static void conditionalDedInd(Implication premise1, short index, Term premise2, int side, NAL nal) {
+    public static boolean conditionalDedInd(Implication premise1, short index, Term premise2, int side, NAL nal) {
         Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
@@ -387,7 +387,7 @@ public final class SyllogisticRules {
         Term subj = premise1.getSubject();
 
         if (!(subj instanceof Conjunction)) {
-            return;
+            return false;
         }
         Conjunction oldCondition = (Conjunction) subj;
 
@@ -415,19 +415,19 @@ public final class SyllogisticRules {
                 
             }
             if (!match) {
-                return;
+                return false;
             }
         }
         int conjunctionOrder = subj.getTemporalOrder();
         if (conjunctionOrder == ORDER_FORWARD) {
             if (index > 0) {
-                return;
+                return false;
             }
             if ((side == 0) && (premise2.getTemporalOrder() == ORDER_FORWARD)) {
-                return;
+                return false;
             }
             if ((side == 1) && (premise2.getTemporalOrder() == ORDER_BACKWARD)) {
-                return;
+                return false;
             }
         }
         Term newCondition;
@@ -459,7 +459,7 @@ public final class SyllogisticRules {
         }
         
         if ((content == null) || (!(content instanceof CompoundTerm)))
-            return;        
+            return false;
 
         long occurTime = nal.time();
 
@@ -472,7 +472,7 @@ public final class SyllogisticRules {
 
             if(premise1.getTemporalOrder()== TemporalRules.ORDER_CONCURRENT) {
                 //https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M - Interval Simplification
-                return;
+                return false;
             }
 
             baseTime += delta;
@@ -507,10 +507,10 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        Stamp stamp = nal.newStamp(taskSentence, belief, occurTime);
-        TemporalRules.applyExpectationOffset(nal.memory, premise1, stamp);
 
-        nal.doublePremiseTask((CompoundTerm)content, truth, budget, stamp, false);
+        return nal.doublePremiseTask((CompoundTerm)content, truth, budget,
+                nal.newStamp(taskSentence, belief, TemporalRules.applyExpectationOffset(nal.memory, premise1, occurTime)),
+                false);
     }
 
     /**

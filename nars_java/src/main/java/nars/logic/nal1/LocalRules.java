@@ -79,7 +79,7 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal, Sentence subbedBelief) {
-        Stamp stamp = nal.newStampIfNotOverlapping(newBelief.stamp, oldBelief.stamp);
+        NAL.StampBuilder stamp = nal.newStampIfNotOverlapping(newBelief.stamp, oldBelief.stamp);
         if (stamp == null) return false;
 
         final Task currentTask = nal.getCurrentTask();

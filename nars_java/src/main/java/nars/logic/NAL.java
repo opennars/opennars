@@ -459,19 +459,39 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 //        }
 //    }
 
-    public Stamp newStamp(Sentence a, Sentence b, long at) {
-        return new Stamp(a.stamp, b.stamp, at);
+    public static class LazyStampBuilder implements StampBuilder {
+
+        public final Stamp a, b;
+        public final long time;
+        protected Stamp stamp = null;
+
+        public LazyStampBuilder(Stamp a, Stamp b, long time) {
+            this.a = a;
+            this.b = b;
+            this.time = time;
+        }
+
+        @Override
+        public Stamp build() {
+            if (stamp == null)
+                stamp = new Stamp(a, b, time);
+            return stamp;
+        }
     }
 
-    public Stamp newStamp(Sentence a, Sentence b) {
+    public StampBuilder newStamp(Sentence a, Sentence b, long at) {
+        return new LazyStampBuilder(a.stamp, b.stamp, at);
+    }
+
+    public StampBuilder newStamp(Sentence a, Sentence b) {
         return newStamp(a.stamp, b.stamp);
     }
-    public Stamp newStamp(Stamp a, Stamp b) {
-        return new Stamp(a, b, time());
+    public StampBuilder newStamp(Stamp a, Stamp b) {
+        return new LazyStampBuilder(a, b, time());
     }
 
     /** returns a new stamp if A and B do not have overlapping evidence; null otherwise */
-    public Stamp newStampIfNotOverlapping(Stamp A, Stamp B) {
+    public StampBuilder newStampIfNotOverlapping(Stamp A, Stamp B) {
         long[] a = A.toSet();
         long[] b = B.toSet();
         for (long ae : a) {

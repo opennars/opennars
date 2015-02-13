@@ -292,7 +292,7 @@ public final class CompositionalRules {
         TruthValue truth = null;
         BudgetValue budget;
 
-        Stamp stamp = nal.newStamp(taskSentence, belief);
+        NAL.StampBuilder stamp = nal.newStamp(taskSentence, belief);
 
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
@@ -468,7 +468,7 @@ public final class CompositionalRules {
             return;
         }
 
-        Stamp stamp = nal.newStamp(nal.getCurrentTask().sentence, nal.getCurrentBelief());
+        NAL.StampBuilder stamp = nal.newStamp(nal.getCurrentTask().sentence, nal.getCurrentBelief());
 
         TruthValue truth = induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
@@ -548,9 +548,9 @@ public final class CompositionalRules {
         }
 
         final Sentence belief = nal.getCurrentBelief();
-        HashMap<Term, Term> substitute = new HashMap<>();
+        Map<Term, Term> substitute = Parameters.newHashMap();
 
-        Stamp stamp = nal.newStamp(taskSentence, belief);
+        NAL.StampBuilder stamp = nal.newStamp(taskSentence, belief);
 
         boolean b = false;
 
@@ -659,7 +659,7 @@ OUT: <lock1 --> lock>.
         Map<Term, Term> res1 = Parameters.newHashMap();
         Map<Term, Term> res2 = Parameters.newHashMap();
 
-        Stamp stamp = nal.newStamp(sentence, belief);
+        NAL.StampBuilder stamp = nal.newStamp(sentence, belief);
 
         if (figure == 21) {
             res1.clear();
@@ -1159,7 +1159,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             if (taskSentence.truth == null)
                 throw new RuntimeException("Task sentence truth must be non-null: " + taskSentence);
 
-            final Stamp stamp = nal.newStamp(taskSentence, second_belief);
+            final NAL.StampBuilder stamp = nal.newStamp(taskSentence, second_belief);
+
+            Stamp st = new Stamp(taskSentence.stamp, nal.time(), stamp.build());
 
             dedSecondLayerVariableUnificationTerms(nal, task,
                     second_belief, stamp, terms_dependent,
@@ -1193,7 +1195,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 if (budget.aboveThreshold()) {
 
                     Sentence newSentence = new Sentence(result, mark, truth,
-                            new Stamp(taskSentence.stamp, nal.time(), stamp));
+                            st);
 
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
@@ -1219,7 +1221,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
         return unifiedAnything;
     }
 
-    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, final Stamp s, ArrayList<Term> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, final NAL.StampBuilder s, ArrayList<Term> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
 
         Stamp sx = null;
 
@@ -1257,7 +1259,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 if (budget.aboveThreshold()) {
 
                     if (sx == null)
-                        sx = new Stamp(taskSentence.stamp, nal.time(), s);
+                        sx = new Stamp(taskSentence.stamp, nal.time(), s.build());
 
                     Sentence newSentence = new Sentence(result, mark, truth, sx);
 
