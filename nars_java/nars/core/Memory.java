@@ -22,6 +22,7 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
@@ -618,8 +619,25 @@ public class Memory implements Serializable {
      *
      * @param t The addInput task
      */
+    
+    boolean checked=false;
+    boolean isjUnit=false;
+    public static boolean isJUnitTest() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        List<StackTraceElement> list = Arrays.asList(stackTrace);
+        for (StackTraceElement element : list) {
+            if (element.getClassName().startsWith("org.junit.")) {
+                return true;
+            }           
+        }
+        return false;
+    }
+    
     public void inputTask(final AbstractTask t) {
-        
+        if(!checked) {
+            checked=true;
+            isjUnit=isJUnitTest();
+        }
         if (t instanceof Task) {
             Task task = (Task)t;
             Stamp s = task.sentence.stamp;                        
@@ -648,6 +666,9 @@ public class Memory implements Serializable {
         }
         else if (t instanceof Echo) {
             Echo e = (Echo)t;
+            if(!isjUnit) {
+                emit(OUT.class,((Echo) t).signal);
+            }
             emit(e.channel, e.signal);
         }
         else if (t instanceof SetVolume) {            
