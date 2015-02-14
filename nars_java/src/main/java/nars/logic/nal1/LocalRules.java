@@ -96,7 +96,8 @@ public class LocalRules {
         if (nal.deriveTask(new Task(new Sentence(newBelief.term,
                 currentTask.sentence.punctuation,
                 truth,
-                stamp), budget, currentTask, newBelief), true, false, null, null, subbedBelief, nal.getCurrentTask())) {
+                stamp), budget, currentTask, newBelief),
+                true, false, null, null, subbedBelief, nal.getCurrentTask())) {
             nal.memory.logic.BELIEF_REVISION.hit();
             return true;
         }

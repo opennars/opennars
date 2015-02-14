@@ -6,10 +6,10 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
+import nars.logic.entity.Stamp;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.entity.TruthValue;
-import nars.logic.nal7.Tense;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -24,8 +24,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final Term term;
     @Expose
     public final char punc;
-    @Expose
-    public Tense tense;
+
     @Expose
     public final float freqMin;
     @Expose
@@ -38,18 +37,19 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final long cycleStart; //-1 for not compared
     @Expose
     public final long cycleEnd;  //-1 for not compared
+    private final long creationTime;
 
     /** min and max occurrenceTime range (relative to current time which the task is output); not checked if tense==ETERNAL, checked otherwise */
     @Expose
-    public int ocMin = -1,ocMax= -1;
+    public long ocMin = -1,ocMax= -1;
 
     public final List<Task> trueAt = new ArrayList();
     public final Deque<Task> removals = new ArrayDeque();
 
-    final int maxClose = 5;
+    final int maxClose = 7;
     public final TreeMap<Double,Task> close = new TreeMap();
 
-    final int maxRemovals = 4;
+    final int maxRemovals = 2;
 
 
     public TaskCondition(NAR n, Class channel, Task t)  {
@@ -58,7 +58,19 @@ public class TaskCondition extends OutputCondition implements Serializable {
         //TODO verify that channel is included in the listened events
 
         this.channel = channel;
-        this.tense = Tense.Eternal;
+
+
+        this.creationTime = t.getCreationTime();
+        if (t.sentence.isEternal()) {
+            setEternal();
+        }
+        else {
+            long oc = t.getOcurrenceTime();
+            long dur = n.memory.getDuration();
+            setOccurrenceTime(oc - dur/2, oc + dur/2);
+        }
+
+
         this.cycleStart = this.cycleEnd = -1;
         if (t.sentence.truth!=null) {
             float f = t.sentence.truth.getFrequency();
@@ -83,10 +95,11 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
         if (cycleEnd - cycleStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
 
+        this.creationTime = n.time();
         this.channel = channel;
-        this.tense = Tense.Eternal;
         this.cycleStart = cycleStart;
         this.cycleEnd = cycleEnd;
+        setEternal();
         this.freqMax = Math.min(1.0f, freqMax);
         this.freqMin = Math.max(0f, freqMin);
         this.confMax = Math.min(1.0f, confMax);
@@ -136,11 +149,14 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     /** relative to the current time when processing */
-    public void setOccurrenceTime(int min, int max) {
+    public void setOccurrenceTime(long min, long max) {
         this.ocMin = min;
         this.ocMax = max;
-        this.tense = Tense.Present; //any tense will work here as long as it's not Eternal, so Present uesd here can still refer to past or future
     }
+
+
+    public void setEternal() { this.ocMin = this.ocMax = Stamp.ETERNAL; }
+    public boolean isEternal() { return this.ocMin == Stamp.ETERNAL; }
 
     public boolean matches(Task task) {
         if (task.sentence.punctuation != punc)
@@ -206,7 +222,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                 float tenseCost = 0.5f;
 
                 //require right kind of tense
-                if (tense==Tense.Eternal) {
+                if (isEternal()) {
                     if (!task.sentence.isEternal()) {
                         distance += tenseCost;
                         match = false;
@@ -329,5 +345,13 @@ public class TaskCondition extends OutputCondition implements Serializable {
     @Override
     public String toString() {
         return succeeded  +": "  +j.toJson(this);
+    }
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+    public long getMeanOccurrenceTime() {
+        if (isEternal()) return Stamp.ETERNAL;
+        return (ocMin + ocMax) / 2L;
     }
 }

@@ -25,7 +25,7 @@ public class ExplainableTask extends Task {
     }
 
     public ExplainableTask(TaskCondition tc) {
-        this(new Sentence(tc.term, tc.punc, tc.getTruthMean(), new Stamp(tc.nar.memory, tc.tense)));
+        this(new Sentence(tc.term, tc.punc, tc.getTruthMean(), new Stamp(tc.nar.memory).setCreationTime(tc.getCreationTime()).setOccurrenceTime(tc.getMeanOccurrenceTime())));
     }
 
     public ExplainableTask(Task t) {

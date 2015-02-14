@@ -10,7 +10,9 @@ public enum NALOperator {
     INTERSECTION_INT("|", 3, false, true),
     DIFFERENCE_EXT("-", 3, false, true),
     DIFFERENCE_INT("~", 3, false, true),
+
     PRODUCT("*", 4, false, true),
+
     IMAGE_EXT("/", 4, false, true),
     IMAGE_INT("\\", 4, false, true),
 
@@ -18,6 +20,7 @@ public enum NALOperator {
     NEGATION("--", 5, false, true),
     DISJUNCTION("||", 5, false, true),
     CONJUNCTION("&&", 5, false, true),
+
     SEQUENCE("&/", 7, false, true),
     PARALLEL("&|", 7, false, true),
 

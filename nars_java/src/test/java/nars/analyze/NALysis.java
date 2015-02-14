@@ -5,6 +5,7 @@ import nars.build.Curve;
 import nars.build.Default;
 import nars.core.Memory;
 import nars.core.NewNAR;
+import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
 import nars.io.condition.OutputCondition;
@@ -12,9 +13,6 @@ import nars.logic.AbstractNALTest;
 import nars.logic.TestNAR;
 import org.junit.Ignore;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.Collection;
 
 import static nars.logic.ScriptNALTest.getPaths;
@@ -83,9 +81,12 @@ public class NALysis extends AbstractNALTest {
         //results.printCSVLastLine(System.out);
 
         if (!suc) {
+            System.out.println("-------------------------------------------");
+
             System.out.println("FAIL: " + testName);
 
-            //assertTrue("time exceeded", time() > finalCycle);
+            System.out.println(ExampleFileInput.getExample(path).trim());
+
             n.report(System.out, true, true, true);
 
         }
@@ -148,86 +149,98 @@ public class NALysis extends AbstractNALTest {
     }
 
 
+    public static void nal1Default(long seed) {
+        runDir("test1", 3000, seed,
+                new Default().setInternalExperience(null)); //HACK: nal1.8 with internal experience enabled takes forever
+    }
+
     /** runs the standard set of tests */
     public static void nal1(long seed) {
+        nal1Default(seed);
         runDir("test1", 100, seed,
-                new Default().setInternalExperience(null),
+                new Default(),
                 new Default().level(1),
                 new Curve(),
                 new Curve().setInternalExperience(null));
-        runDir("test1", 3000, seed,
-                new Default()); //HACK: nal1.8 with internal experience enabled takes forever
+    }
+
+    public static void nal2Default() {
+        runDir("test2", 150, 1, new Default().setInternalExperience(null));
     }
     public static void nal2() {
+        nal2Default();
         runDir("test2", 150, 1,
                 new Default(),
-                new Default().setInternalExperience(null),
                 new Default().level(3), //2 needs sets in 3
                 new Curve(),
                 new Curve().setInternalExperience(null) );
     }
+    public static void nal3Default() {
+        runDir("test3", 200, 1, new Default().setInternalExperience(null));
+    }
     public static void nal3() {
+        nal3Default();
         runDir("test3", 200, 1,
                 new Default(),
-                new Default().setInternalExperience(null),
                 new Default().level(3),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
     }
+
+
+    public static void nal4Default() {
+        runDir("test4", 900, 1, new Default().setInternalExperience(null));
+    }
     public static void nal4() {
+        nal4Default();
         runDir("test4", 900, 1,
                 new Default(),
-                new Default().setInternalExperience(null),
                 new Default().level(4),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
     }
+
+    public static void nal5Default() {
+        runDir("test5", 1000, 1, new Default().setInternalExperience(null));
+    }
     public static void nal5() {
+        nal5Default();
         runDir("test5", 1000, 1,
                 new Default(),
-                new Default().setInternalExperience(null),
                 new Default().level(5),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
     }
+    public static void nal6Default() {
+        runDir("test6", 5000, 1, new Default().setInternalExperience(null));
+    }
     public static void nal6() {
+        nal6Default();
         runDir("test6", 5000, 1,
                 new Default(),
-                new Default().setInternalExperience(null),
                 new Default().level(6),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
     }
+    public static void nal7Default() {
+        runDir("test7", 5000, 1, new Default().setInternalExperience(null));
+    }
     public static void nal7() {
+        nal7Default();
         runDir("test7", 5000, 1,
                 new Default(),
-                new Default().setInternalExperience(null),
                 new Default().level(7));
     }
+    public static void nal8Default() {
+        runDir("test8", 5000, 1, new Default().setInternalExperience(null));
+    }
     public static void nal8() {
+        nal8Default();
         runDir("test8", 5000, 1,
-                new Default(),
-                new Default().setInternalExperience(null));
+                new Default());
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
 
-        //csvOut = System.out;
-        dataOut = new FileOutputStream("/tmp/out.arff");
-
-        nal1(1);
-        nal2();
-        nal3();
-        nal4();
-        nal5();
-        nal6();
-        nal7();
-        nal8();
-
-        results.printARFF(new PrintStream(dataOut));
-
-
-    }
 
 //    @After
 //    public void test() {

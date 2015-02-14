@@ -131,14 +131,14 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      * @param task the derived task
      */
     public boolean deriveTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2,
-                              Sentence derivedCurrentBelief, Task derivedCurrentTask) {
+                              Sentence subbedCurrentBelief, Task subbedCurrentTask) {
 
         List<DerivationFilter> derivationFilters = reasoner.getDerivationFilters();
 
         if (derivationFilters != null) {
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);
-                String rejectionReason = d.reject(this, task, revised, single, parent, occurence2, derivedCurrentBelief, derivedCurrentTask);
+                String rejectionReason = d.reject(this, task, revised, single, parent, occurence2, subbedCurrentBelief, subbedCurrentTask);
                 if (rejectionReason != null) {
                     memory.removeTask(task, rejectionReason);
                     return false;
@@ -171,7 +171,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
         task.setParticipateInTemporalInduction(false);
 
-        memory.event.emit(Events.TaskDerive.class, task, revised, single, derivedCurrentTask);
+        memory.event.emit(Events.TaskDerive.class, task, revised, single, subbedCurrentTask);
         memory.logic.TASK_DERIVED.hit();
 
         addNewTask(task, "Derived");
