@@ -144,8 +144,7 @@ public class Idea implements Iterable<Concept> {
                 for (Concept c : concepts) {
                     switch (punc) {
                         case Symbols.JUDGMENT:
-                            sentences.addAll(c.beliefsEternal);
-                            sentences.addAll(c.beliefsTemporal);
+                            sentences.addAll(c.beliefs);
                             break;
                         case Symbols.QUESTION:
                             sentences.addAll(Task.getSentences(c.questions));
@@ -205,7 +204,7 @@ public class Idea implements Iterable<Concept> {
             NALOperator o = c.operator();
             operators.add(o);
             
-            if (!c.beliefsEternal.isEmpty() || !c.beliefsTemporal.isEmpty())
+            if (!c.beliefs.isEmpty())
                 feature.add(new SentenceType(o, Symbols.JUDGMENT));
             if (!c.questions.isEmpty())
                 feature.add(new SentenceType(o, Symbols.QUESTION));

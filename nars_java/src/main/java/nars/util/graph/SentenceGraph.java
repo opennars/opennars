@@ -75,11 +75,8 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
             
             //create a clone of the list for thread safety
 
-            for (Sentence b : c.beliefsEternal)
+            for (Sentence b : c.beliefs)
                 remove(b);
-            for (Sentence b : c.beliefsTemporal)
-                remove(b);
-
         }
         else if (event == Events.ConceptBeliefAdd.class) {
             Concept c = (Concept)a[0];
@@ -151,11 +148,8 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
         needInitialConcepts = false;
 
         memory.concepts.forEach(c -> {
-            for (final Sentence s : c.beliefsEternal)
+            for (final Sentence s : c.beliefs)
                 add(s, c);
-            for (final Sentence s : c.beliefsTemporal)
-                add(s, c);
-
         });
 
     }

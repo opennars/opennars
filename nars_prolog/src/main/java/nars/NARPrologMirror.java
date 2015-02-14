@@ -203,7 +203,7 @@ public class NARPrologMirror extends AbstractMirror {
 
     /** remove belief unless there are other similar beliefs remaining in 'c' */
     private void remove(Concept c, Sentence forgotten) {
-        for (Sentence x : c.getBeliefs(forgotten.isEternal())) {
+        for (Sentence x : c.beliefs) {
             if (x.equals(forgotten)) continue;
             if (believable(x.truth) && similarTruth(x.truth, forgotten.truth) && similarTense(x, forgotten)) {
                 //there still remains evidence for this belief in the concept

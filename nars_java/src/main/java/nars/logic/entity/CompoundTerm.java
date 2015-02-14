@@ -83,6 +83,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     public CompoundTerm(final Term[] components) {
         super();
 
+        this.complexity = -1;
         this.term = components;            
                 
     }

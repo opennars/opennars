@@ -3,8 +3,8 @@ package nars.analyze;
 
 import nars.build.Curve;
 import nars.build.Default;
+import nars.core.Memory;
 import nars.core.NewNAR;
-import nars.io.TextOutput;
 import nars.io.condition.OutputCondition;
 import nars.logic.AbstractNALTest;
 import nars.logic.TestNAR;
@@ -47,14 +47,13 @@ public class NALysis extends AbstractNALTest {
 
         String testName = path + "_" + build;
 
-        TestNAR n = new TestNAR(build);
+        Memory.resetStatic(seed);
 
-        TextOutput.out(n);
+        TestNAR n = new TestNAR(build);
 
         startAnalysis(n);
 
-
-        long nanos = runScript(n, path, maxCycles, seed);
+        long nanos = runScript(n, path, maxCycles);
 
         //String report = "";
         boolean suc = n.getError()==null;

@@ -200,102 +200,7 @@ public class TemporalRules {
     }
 
 
-    // { A =/> B, B =/> C } |- (&/,A,B) =/> C
-    // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
-    //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static boolean temporalInductionChain(final Sentence s1, final Sentence s2, final NAL nal) {
-        
-        //prevent trying question sentences, causes NPE
-        if ((s1.truth == null) || (s2.truth == null))
-            return false;
-        
-        //try if B1 unifies with B2, if yes, create new judgement
-        Implication S1=(Implication) s1.term;
-        Implication S2=(Implication) s2.term;
-        Term A=S1.getSubject();
-        Term B1=S1.getPredicate();
-        Term B2=S2.getSubject();
-        Term C=S2.getPredicate();
-        ArrayList<Term> args=null;
-        
-        int beginoffset=0;
-        if(B2 instanceof Conjunction) {
-            Conjunction CB2=((Conjunction)B2);
-            if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {       
-                if(A instanceof Conjunction && A.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                    Conjunction ConjA=(Conjunction) A;
-                    args=new ArrayList(CB2.term.length+ConjA.term.length);
-                    beginoffset=ConjA.size();
 
-                    Collections.addAll(args, ConjA.term);
-                } else {
-                    args = new ArrayList(CB2.term.length + 1);
-                    args.add(A);
-                    beginoffset=1;
-                }
-                Collections.addAll(args, CB2.term);
-            }
-        }
-        else {
-            args=Lists.newArrayList(A, B1);
-        }
-        
-        if(args==null)
-            return false;
-                
-        //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
-        Term[] term = args.toArray(new Term[args.size()]);
-        Term realB2 = term[beginoffset];
-
-        Map<Term, Term> res1 = Parameters.newHashMap();
-        Map<Term, Term> res2 = Parameters.newHashMap();
-
-        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1,res2)) {
-            //ok it unifies, so lets create a &/ term
-            for(int i=0;i<term.length;i++) {
-                final Term ti = term[i];
-                if (ti instanceof CompoundTerm) {
-                    Term ts = ((CompoundTerm)ti).applySubstitute(res1);
-                    if(ts!=null)
-                        term[i] = ts;
-                }
-                else {
-                    term[i] = res1.getOrDefault(ti,ti);
-                }
-            }
-            int order1=s1.getTemporalOrder();
-            int order2=s2.getTemporalOrder();
-
-            //check if term has a element which is equal to C
-            for(Term t : term) {
-                if(equalSubTermsInRespectToImageAndProduct(t, C)) {
-                    return false;
-                }
-                for(Term u : term) {
-                    if(u!=t) { //important: checking reference here is as it should be!
-                        if(equalSubTermsInRespectToImageAndProduct(t, u)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            Term S = Conjunction.make(term,order1);
-            Implication whole=Implication.make(S, C,order2);
-            
-            if(whole!=null) {
-                TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
-                BudgetValue budget = BudgetFunctions.forward(truth, nal);
-                budget.setPriority((float) Math.min(0.99, budget.getPriority()));
-                
-                return nal.doublePremiseTask(whole, truth, budget,
-                        nal.newStamp(s1, s2),
-                        true);
-            }
-        }
-        return false;
-    }
-    
     /** whether a term can be used in temoralInduction(,,) */
     protected static boolean termForTemporalInduction(final Term t) {
         /*
@@ -497,24 +402,25 @@ public class TemporalRules {
      * @return The quality of the judgment as the solution
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
-        
-        if (!matchingOrder(problem, solution)) {
-            return 0.0F;
-        }
-        
-        long ptime = problem.getOccurenceTime();
 
-        TruthValue truth;
-        if (ptime!=solution.getOccurenceTime())
-            truth = solution.projectionTruth(ptime, memory.time());
-        else
-            truth = solution.truth;
-        
-        if (problem.hasQueryVar()) {
-            return truth.getExpectation() / solution.term.getComplexity();
-        } else {
-            return truth.getConfidence();
-        }
+        return solution.projectionTruthQuality(problem.getOccurenceTime(), memory.time(), problem.hasQueryVar());
+
+//        if (!matchingOrder(problem, solution)) {
+//            return 0.0F;
+//        }
+
+//        TruthValue truth;
+//        if (ptime!=solution.getOccurenceTime())
+//            truth = solution.projectionTruth(ptime, memory.time());
+//        else
+//            truth = solution.truth;
+//
+//        if (problem.hasQueryVar()) {
+//            return truth.getExpectation() / solution.term.getComplexity();
+//        } else {
+//            return truth.getConfidence();
+//        }
+
     }
 
 

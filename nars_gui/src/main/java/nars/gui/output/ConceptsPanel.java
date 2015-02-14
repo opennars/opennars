@@ -6,6 +6,7 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
+import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
@@ -34,6 +35,7 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
 
     private final NAR nar;
     private final LinkedHashMap<Concept, ConceptPanel> concept;
+    private EventEmitter.Registrations reg;
 
     public ConceptsPanel(NAR n, Concept... c) {
         super();
@@ -74,15 +76,22 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
 
     @Override
     protected void onShowing(boolean showing) {
-
-        nar.memory.event.set(this, showing,
-                Events.FrameEnd.class,
-                Events.ConceptBeliefAdd.class,
-                Events.ConceptBeliefRemove.class,
-                Events.ConceptQuestionAdd.class,
-                Events.ConceptQuestionRemove.class,
-                Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class);
+        if (showing) {
+            reg = nar.memory.event.on(this,
+                    Events.FrameEnd.class,
+                    Events.ConceptBeliefAdd.class,
+                    Events.ConceptBeliefRemove.class,
+                    Events.ConceptQuestionAdd.class,
+                    Events.ConceptQuestionRemove.class,
+                    Events.ConceptGoalAdd.class,
+                    Events.ConceptGoalRemove.class);
+        }
+        else {
+            if (reg!=null) {
+                reg.cancel();
+                reg = null;
+            }
+        }
     }
 
     @Override
@@ -181,17 +190,10 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
         public void update(long time) {
 
             String st = "";
-            if (!concept.beliefsEternal.isEmpty()) {
-                List<Sentence> bb = concept.beliefsEternal;
+            if (!concept.beliefs.isEmpty()) {
+                List<Sentence> bb = concept.beliefs;
                 beliefChart.update(time, bb);
                 st += (bb.get(0).truth.toString()) + ' ';
-
-            }
-            if (!concept.beliefsTemporal.isEmpty()) {
-                List<Sentence> bb = concept.beliefsTemporal;
-                beliefChart.update(time, bb);
-
-                st += ("@" + bb.get(0).truth.toString());
 
                 beliefTime.setVisible(
                         beliefTime.update(time, bb));

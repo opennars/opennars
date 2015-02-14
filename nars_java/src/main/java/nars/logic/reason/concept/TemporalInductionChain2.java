@@ -27,7 +27,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
         Task task = f.getCurrentTask();
         Sentence taskSentence = task.sentence;
-        if (!taskSentence.isEternal())
+        if (taskSentence.isEternal())
             return true;
 
         final Memory memory = f.memory;
@@ -47,26 +47,20 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                 //TODO create and use a sampleNextConcept(NALOperator.Implication) method
 
                 Concept next = memory.concepts.sampleNextConcept();
-                if (next == null || next.beliefsTemporal.isEmpty() || next.equals(concept)) continue;
+                if (next == null || next.equals(concept)) continue;
 
                 Term t = next.getTerm();
 
                 if ((t instanceof Implication) && (alreadyInducted.add(t))) {
 
-                    Sentence otherBelief = next.getBestBelief(false);
-                    if (otherBelief!=null) {
-                        Sentence current, prev;
-
-                        if(otherBelief.after(taskSentence, memory.getDuration())) {
-                            current = otherBelief;
-                            prev = task.sentence;
-                        } else {
-                            current = task.sentence;
-                            prev = otherBelief;
-                        }
-
-                        TemporalRules.temporalInductionProceed(current, prev, task, f);
+                    Sentence temporalBelief = next.getBestBelief();
+                    if (temporalBelief!=null) {
+                        induct(f, task, taskSentence, memory, temporalBelief);
                     }
+                    /*Sentence eternalBelief = next.getBestBelief(true);
+                    if (eternalBelief!=null) {
+                        induct(f, task, taskSentence, memory, eternalBelief);
+                    }*/
 
                 }
             }
@@ -74,5 +68,19 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
         return true;
 
+    }
+
+    private void induct(ConceptFire f, Task task, Sentence taskSentence, Memory memory, Sentence otherBelief) {
+        Sentence current, prev;
+
+        if(otherBelief.after(taskSentence, memory.getDuration())) {
+            current = otherBelief;
+            prev = task.sentence;
+        } else {
+            current = task.sentence;
+            prev = otherBelief;
+        }
+
+        TemporalRules.temporalInductionProceed(current, prev, task, f);
     }
 }

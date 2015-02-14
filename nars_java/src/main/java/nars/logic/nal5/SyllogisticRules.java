@@ -90,7 +90,7 @@ public final class SyllogisticRules {
 
         final NAL.StampBuilder stamp = nal.newStamp(sentence, belief);
         nal.doublePremiseTask(content1, truth1, budget1, stamp, false);
-        nal.doublePremiseTask(content2, truth2, budget2, stamp,false);
+        nal.doublePremiseTask(content2, truth2, budget2, stamp, false);
     }
 
     /**
@@ -389,7 +389,7 @@ public final class SyllogisticRules {
         if (!(subj instanceof Conjunction)) {
             return false;
         }
-        Conjunction oldCondition = (Conjunction) subj;
+        final Conjunction oldCondition = (Conjunction) subj;
 
         
         int index2 = Terms.indexOf(oldCondition.term,commonComponent);

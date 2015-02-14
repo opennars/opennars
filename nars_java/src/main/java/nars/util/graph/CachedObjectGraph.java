@@ -77,12 +77,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
             }
 
             /*if (includeConceptBeliefs)*/ {
-                for (Sentence s : c.beliefsEternal) {
-                    Term target = s.term;
-                    addVertex(target);
-                    addEdge(source, target, s);
-                }
-                for (Sentence s : c.beliefsTemporal) {
+                for (Sentence s : c.beliefs) {
                     Term target = s.term;
                     addVertex(target);
                     addEdge(source, target, s);

@@ -190,7 +190,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
         
         
         //keep recordedLinks queue a maximum finite size
-        while (records.size() + 1 >= recordLength) records.removeFirst();
+        while (!records.isEmpty() && records.size() + 1 >= recordLength) records.removeFirst();
         
         // add knowledge reference to recordedLinks
         records.addLast(new Recording(termLink, currentTime));

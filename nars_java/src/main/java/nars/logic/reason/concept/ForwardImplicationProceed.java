@@ -63,66 +63,62 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
         for (int i = 0; i < PERCEPTION_DECISION_ACCEL_SAMPLES; i++) {
 
-            //prevent duplicate derivations
-            alreadyInducted.clear();
 
             Concept next = f.memory.concepts.sampleNextConcept();
 
             if ((next == null) || (next.equals(concept))) continue;
 
-            Term t = next.getTerm();
+            final Term t = next.getTerm();
+            if (!(t instanceof Conjunction)) continue;
 
-            if (alreadyInducted.add(t) && (t instanceof Conjunction)) {
+            final Conjunction conj2 = (Conjunction) t;
+
+            if (conj.getTemporalOrder() == conj2.getTemporalOrder() && alreadyInducted.add(t)) {
 
                 Sentence s = null;
                 if (task.sentence.punctuation == Symbols.JUDGMENT) {
-                    s = next.getBestBelief(false);
+                    s = next.getBestBelief();
                 }
                 else if (task.sentence.punctuation == Symbols.GOAL) {
-                    s = next.getBestGoal(false, true);
+                    s = next.getBestGoal(true, true);
                 }
                 if (s == null) continue;
 
-                Conjunction conj2 = (Conjunction) t;
 
-                //ok check if it is a right conjunction
-                if (conj.getTemporalOrder() == conj2.getTemporalOrder()) {
+                //conj2 conjunction has to be a minor of conj
+                //the case where its equal is already handled by other inference rule
+                if (conj2.term.length < conj.term.length) {
 
-                    //conj2 conjunction has to be a minor of conj
-                    //the case where its equal is already handled by other inference rule
-                    if (conj2.term.length < conj.term.length) {
+                    boolean equal = true;
 
-                        boolean equal = true;
-
-                        //ok now check if it is really a minor (subsequence)
-                        for (int j = 0; j < conj2.term.length; j++) {
-                            if (!conj.term[j].equals(conj2.term[j])) {
-                                equal = false;
-                            }
+                    //ok now check if it is really a minor (subsequence)
+                    for (int j = 0; j < conj2.term.length; j++) {
+                        if (!conj.term[j].equals(conj2.term[j])) {
+                            equal = false;
                         }
-                        if (!equal) continue;
-
-                        //ok its a minor, we have to construct the residue implication now
-                        Term[] residue = new Term[conj.term.length - conj2.term.length];
-                        for (int k = 0; k < residue.length; k++) {
-                            residue[k] = conj.term[conj2.term.length + k];
-                        }
-
-                        Term C = Conjunction.make(residue, conj.getTemporalOrder());
-                        Implication resImp = Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
-
-                        //todo add
-                        TruthValue truth = TruthFunctions.deduction(s.truth, task.sentence.truth);
-
-                        Stamp st = new Stamp(task.sentence.stamp, f.memory.time());
-                        st.getChain().add(t);
-
-                        Sentence newSentence = new Sentence(resImp, s.punctuation, truth, st);
-
-                        Task newTask = new Task(newSentence, new BudgetValue(BudgetFunctions.forward(truth, f)));
-                        f.deriveTask(newTask, false, false, task, null);
-
                     }
+                    if (!equal) continue;
+
+                    //ok its a minor, we have to construct the residue implication now
+                    Term[] residue = new Term[conj.term.length - conj2.term.length];
+                    for (int k = 0; k < residue.length; k++) {
+                        residue[k] = conj.term[conj2.term.length + k];
+                    }
+
+                    Term C = Conjunction.make(residue, conj.getTemporalOrder());
+                    Implication resImp = Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
+
+                    //todo add
+                    TruthValue truth = TruthFunctions.deduction(s.truth, task.sentence.truth);
+
+                    Stamp st = new Stamp(task.sentence.stamp, f.memory.time());
+                    st.getChain().add(t);
+
+                    Sentence newSentence = new Sentence(resImp, s.punctuation, truth, st);
+
+                    Task newTask = new Task(newSentence, new BudgetValue(BudgetFunctions.forward(truth, f)));
+                    f.deriveTask(newTask, false, false, task, null);
+
                 }
             }
         }

@@ -162,6 +162,10 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The expectation value
      */
     public float getExpectation() {
+        return expectation(frequency, confidence);
+    }
+
+    public static final float expectation(final float frequency, final float confidence) {
         return (confidence * (frequency - 0.5f) + 0.5f);
     }
 

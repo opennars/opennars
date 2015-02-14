@@ -106,10 +106,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
             g.addEdge(c, c.term, new NARGraph.TermContent());
         }
         if (includeBeliefs) {
-            for (final Sentence belief : c.beliefsEternal) {
-                sentenceTerms.put(onBelief(belief), c);
-            }
-            for (final Sentence belief : c.beliefsTemporal) {
+            for (final Sentence belief : c.beliefs) {
                 sentenceTerms.put(onBelief(belief), c);
             }
         }

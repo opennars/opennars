@@ -109,13 +109,12 @@ abstract public class AbstractNALTest extends TestCase {
         deriveMethodCounter.cancel();
 
 
-        nar.reset(); //to help GC
+        //nar.reset(); //to help GC
 
     }
 
-    public static long runScript(TestNAR nar, String path, int maxCycles, long rngSeed) {
+    public static long runScript(TestNAR nar, String path, int maxCycles) {
 
-        Memory.resetStatic(rngSeed);
         Parameters.DEBUG = true;
 
         String script = ExampleFileInput.getExample(path);
@@ -125,7 +124,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         long start = System.nanoTime();
 
-        nar.runUntil(maxCycles);
+        nar.run(maxCycles);
 
         return System.nanoTime() - start;
     }

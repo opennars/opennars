@@ -19,20 +19,14 @@ import java.util.Map;
 abstract public class ScriptNALTest extends AbstractNALTest {
 
 
-    private final long rngSeed;
 
 
     private final String path;
 
     public ScriptNALTest(NewNAR b, String path) {
-        this(b, path, 1);
-    }
-
-    public ScriptNALTest(NewNAR b, String path, long rngSeed) {
         super(b);
 
         this.path = path;
-        this.rngSeed = rngSeed;
 
     }
 
@@ -43,7 +37,7 @@ abstract public class ScriptNALTest extends AbstractNALTest {
     @Test
     public void theTest() {
 
-        runScript(nar, path, getMaxCycles(), rngSeed);
+        runScript(nar, path, getMaxCycles());
 
         nar.evaluate();
 

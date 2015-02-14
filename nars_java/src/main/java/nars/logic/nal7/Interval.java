@@ -146,7 +146,9 @@ public class Interval extends Term {
         return Math.round(time((double) magnitude, duration));
     }
     
-    /** Calculates the average of the -0.5, +0.5 interval surrounding the integer magnitude */
+    /** Calculates the average of the -0.5, +0.5 interval surrounding the integer magnitude
+     *  EXPERIMENTAL
+     * */
     public static long cyclesAdjusted(final int magnitude, final AtomicDuration duration) {
         //TODO cache this result because it will be equal for all similar integer magnitudes
         double magMin = magnitude - 0.5;

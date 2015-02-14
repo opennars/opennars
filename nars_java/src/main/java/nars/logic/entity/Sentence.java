@@ -363,11 +363,12 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
                 false);
     }
 
-    
-    public TruthValue projectionTruth(final long targetTime, final long currentTime) {
+
+
+    @Deprecated public TruthValue projectionTruth(final long targetTime, final long currentTime) {
         TruthValue newTruth = null;
                         
-        if (!stamp.isEternal()) {
+        if (!isEternal()) {
             newTruth = TruthFunctions.eternalize(truth);
             if (targetTime != Stamp.ETERNAL) {
                 long occurrenceTime = stamp.getOccurrenceTime();
@@ -383,6 +384,31 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         
         return newTruth;
     }
+
+    /** calculates projection truth quality without creating new TruthValue instances */
+    public float projectionTruthQuality(long targetTime, long currentTime, boolean problemHasQueryVar) {
+        float freq = truth.getFrequency();
+        float conf = truth.getConfidence();
+
+        if (!isEternal() && (targetTime != getOccurenceTime())) {
+            conf = TruthFunctions.eternalizedConfidence(conf);
+            if (targetTime != Stamp.ETERNAL) {
+                long occurrenceTime = stamp.getOccurrenceTime();
+                float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+                float projectedConfidence = factor * truth.getConfidence();
+                if (projectedConfidence > conf) {
+                    conf = projectedConfidence;
+                }
+            }
+        }
+
+        if (problemHasQueryVar) {
+            return TruthValue.expectation(freq, conf) / term.getComplexity();
+        } else {
+            return conf;
+        }
+    }
+
 
 
 //    /**

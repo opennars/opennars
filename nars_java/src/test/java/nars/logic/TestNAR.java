@@ -189,7 +189,7 @@ public class TestNAR extends NAR {
             if (oc instanceof TaskCondition) {
                 TaskCondition tc = (TaskCondition) oc;
                 if (tc.cycleEnd > finalCycle)
-                    finalCycle = tc.cycleEnd;
+                    finalCycle = tc.cycleEnd+1;
             }
         }
 

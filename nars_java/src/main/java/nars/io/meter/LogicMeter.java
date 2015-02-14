@@ -80,7 +80,7 @@ public class LogicMeter {
         for (final Concept c : m.concepts) {
             double p = c.getPriority();
             totalQuestions += c.questions.size();
-            totalBeliefs += c.beliefsEternal.size() + c.beliefsTemporal.size();
+            totalBeliefs += c.beliefs.size();
             //TODO totalGoals...
             //TODO totalQuests...
 

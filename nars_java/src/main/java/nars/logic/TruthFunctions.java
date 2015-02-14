@@ -393,10 +393,10 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static final EternalizedTruthValue eternalize(final TruthValue v1) {
-        final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c = w2c(c1);
-        return new EternalizedTruthValue(f1, c);
+        return new EternalizedTruthValue(v1.getFrequency(), eternalizedConfidence(v1.getConfidence()));
+    }
+    public static final float eternalizedConfidence(float conf) {
+        return w2c(conf);
     }
     
     public static final float temporalProjection(final long sourceTime, final long targetTime, final long currentTime) {

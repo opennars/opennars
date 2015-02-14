@@ -33,7 +33,6 @@ import nars.logic.Terms.Termable;
 import nars.logic.entity.tlink.TaskLinkBuilder;
 import nars.logic.entity.tlink.TermLinkBuilder;
 import nars.logic.entity.tlink.TermLinkTemplate;
-import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.logic.reason.ImmediateProcess;
@@ -86,9 +85,8 @@ public class Concept extends Item<Term> implements Termable {
      * Judgments directly made about the term Use ArrayList because of access
      * and insertion in the middle
      */
-    //public final List<Sentence> beliefs;
-    public final List<Sentence> beliefsTemporal;
-    public final List<Sentence> beliefsEternal;
+    public final List<Sentence> beliefs;
+
 
 
     /**
@@ -132,8 +130,7 @@ public class Concept extends Item<Term> implements Termable {
         this.memory = memory;
 
         this.questions = Parameters.newArrayList();
-        this.beliefsEternal = Parameters.newArrayList();
-        this.beliefsTemporal = Parameters.newArrayList();
+        this.beliefs = Parameters.newArrayList();
         this.quests = Parameters.newArrayList();
         this.goals = Parameters.newArrayList();
 
@@ -287,9 +284,6 @@ public class Concept extends Item<Term> implements Termable {
         }
     }
 
-    protected List<Sentence> getBeliefTableFor(Sentence s) {
-        return (s.isEternal() ?  beliefsEternal : beliefsTemporal);
-    }
 
     /**
      * To accept a new judgment as belief, and check for revisions and solutions
@@ -301,8 +295,6 @@ public class Concept extends Item<Term> implements Termable {
     protected void processJudgment(final ImmediateProcess nal, final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief;
-
-        List<Sentence> beliefs = getBeliefTableFor(judg);
 
         oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
 
@@ -439,15 +431,11 @@ public class Concept extends Item<Term> implements Termable {
         
         /*if (task.aboveThreshold())*/ {
 
-            final Sentence belief;
 
 
-            belief = selectCandidate(goal, beliefsEternal, beliefsTemporal); // check if the Goal is already satisfied
 
-
-            if (belief != null) {
-                trySolution(belief, task, nal); // check if the Goal is already satisfied
-            }
+            // check if the Goal is already satisfied
+            trySolution(selectCandidate(goal, beliefs), task, nal);
 
             // still worth pursuing?
             if (task.aboveThreshold()) {
@@ -521,8 +509,7 @@ public class Concept extends Item<Term> implements Termable {
             trySolution(selectCandidate(ques, goals), newTask, nal);
         }
         else {
-            if (!trySolution(selectCandidate(ques, beliefsTemporal), newTask, nal))
-                trySolution(selectCandidate(ques, beliefsEternal), newTask, nal);
+            trySolution(selectCandidate(ques, beliefs), newTask, nal);
         }
     }
 
@@ -612,27 +599,27 @@ public class Concept extends Item<Term> implements Termable {
 
         boolean eternal = newSentence.isEternal();
         long now = memory.time();
-        if (!eternal && newSentence.getOccurenceTime() < now) {
-            //discount newSentence by its delta-time
-            rank1 /= (1.0 + Math.abs(now - newSentence.getOccurenceTime()) / memory.getDuration());
-            //rank1 *= TruthFunctions.temporalProjection(now, newSentence.getOccurenceTime(), now); //DOESNT WORK
-        }
+//        if (!eternal && newSentence.getOccurenceTime() < now) {
+//            //discount newSentence by its delta-time
+//            rank1 /= (1.0 + Math.abs(now - newSentence.getOccurenceTime()) / memory.getDuration());
+//            //rank1 *= TruthFunctions.temporalProjection(now, newSentence.getOccurenceTime(), now); //DOESNT WORK
+//        }
 
         //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top
         for (i = 0; i < table.size(); i++) {
             Sentence existingSentence = table.get(i);
 
             rank2 = rankBelief(existingSentence);
-
-            if (!eternal && !existingSentence.isEternal()  && existingSentence.getOccurenceTime() < now) {
-                //discount existingSentence by delta-time
-                rank2 *= TemporalRules.getBeliefRankFactor(now, existingSentence.getOccurenceTime(), memory.getDuration());
-            }
-            else if (!eternal && existingSentence.isEternal()) {
-                //allow an eternal belief to be replaced by a newer non-eternal belief if its creation time is old
-                //this divisor may need to be reduced to make age cost much less than how occurrence time is calculated above
-                rank2 *= TemporalRules.getBeliefRankFactor(now, existingSentence.getCreationTime(), memory.getDuration());
-            }
+//
+//            if (!eternal && !existingSentence.isEternal()  && existingSentence.getOccurenceTime() < now) {
+//                //discount existingSentence by delta-time
+//                rank2 *= TemporalRules.getBeliefRankFactor(now, existingSentence.getOccurenceTime(), memory.getDuration());
+//            }
+//            else if (!eternal && existingSentence.isEternal()) {
+//                //allow an eternal belief to be replaced by a newer non-eternal belief if its creation time is old
+//                //this divisor may need to be reduced to make age cost much less than how occurrence time is calculated above
+//                rank2 *= TemporalRules.getBeliefRankFactor(now, existingSentence.getCreationTime(), memory.getDuration());
+//            }
 
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(existingSentence, false, true, true)) {
@@ -810,8 +797,7 @@ public class Concept extends Item<Term> implements Termable {
                 toStringExternal() + " " + term.name()
                 + toStringIfNotNull(termLinks.size(), "termLinks")
                 + toStringIfNotNull(taskLinks.size(), "taskLinks")
-                + toStringIfNotNull(beliefsEternal.size(), "beliefsEternal")
-                + toStringIfNotNull(beliefsTemporal.size(), "beliefstemporal")
+                + toStringIfNotNull(beliefs.size(), "beliefs")
                 + toStringIfNotNull(goals.size(), "goals")
                 + toStringIfNotNull(questions.size(), "questions")
                 + toStringIfNotNull(quests.size(), "quests");
@@ -870,9 +856,6 @@ public class Concept extends Item<Term> implements Termable {
         final long currentTime = memory.time();
         long occurrenceTime = taskStamp.getOccurrenceTime();
 
-        //get either eternal or temporal depending on the task
-        List<Sentence> beliefs = getBeliefTableFor(task.sentence);
-
         final int b = beliefs.size();
         for (int i = 0; i < b; i++) {
             Sentence belief = beliefs.get(i);
@@ -922,8 +905,7 @@ public class Concept extends Item<Term> implements Termable {
         //evidentalDiscountBases.clear();
         termLinks.clear();
         taskLinks.clear();        
-        beliefsEternal.clear();
-        beliefsTemporal.clear();
+        beliefs.clear();
 
         if (termLinkBuilder != null)
             termLinkBuilder.clear();
@@ -958,9 +940,10 @@ public class Concept extends Item<Term> implements Termable {
 //    }
 
     /** returns the best belief of the specified types */
-    public Sentence getBestBelief(boolean eternal) {
-        return getBestSentence(eternal ? beliefsEternal : beliefsTemporal);
+    public Sentence getBestBelief(boolean eternal, boolean nonEternal) {
+        return getBestSentence(beliefs, eternal, nonEternal);
     }
+
 
     public Sentence getBestGoal(boolean eternal, boolean nonEternal) {
         return getBestSentence(goals, eternal, nonEternal);
@@ -978,6 +961,10 @@ public class Concept extends Item<Term> implements Termable {
     protected static Sentence getBestSentence(List<Sentence> table) {
         if (table.isEmpty()) return null;
         return table.get(0);
+    }
+
+    public Sentence getBestBelief() {
+        return getBestBelief(true, true);
     }
 
     static final class TermLinkNovel implements Predicate<TermLink>    {
@@ -1043,9 +1030,7 @@ public class Concept extends Item<Term> implements Termable {
 
     public void discountConfidence(final boolean onBeliefs) {
         if (onBeliefs) {
-            for (final Sentence s : beliefsEternal)
-                s.discountConfidence();
-            for (final Sentence s : beliefsTemporal)
+            for (final Sentence s : beliefs)
                 s.discountConfidence();
         } else {
             for (final Sentence s : goals) {
@@ -1056,7 +1041,6 @@ public class Concept extends Item<Term> implements Termable {
 
     /** get a random belief, weighted by their sentences confidences */
     public Sentence getBeliefRandomByConfidence(boolean eternal) {
-        List<Sentence> beliefs = eternal ? beliefsEternal : beliefsTemporal;
 
         if (beliefs.isEmpty()) return null;
         
@@ -1101,10 +1085,6 @@ public class Concept extends Item<Term> implements Termable {
         return term;
     }
 
-    /** returns unmodifidable collection wrapping beliefs */
-    public List<Sentence> getBeliefs(boolean eternal) {
-        if (eternal) return beliefsEternal;  else return beliefsTemporal;
-    }
 
 //
 //    public Collection<Sentence> getSentences(char punc) {
