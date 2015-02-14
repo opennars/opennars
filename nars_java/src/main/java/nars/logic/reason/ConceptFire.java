@@ -82,7 +82,7 @@ abstract public class ConceptFire extends NAL {
 
         if (currentTaskLink.type != TermLink.TRANSFORM) {
 
-            int noveltyHorizon = Parameters.NOVELTY_HORIZON;
+            int noveltyHorizon = memory.param.noveltyHorizon.get();
 
             int termLinkSelectionAttempts = termLinkCount;
 

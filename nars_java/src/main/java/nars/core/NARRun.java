@@ -19,10 +19,12 @@
 package nars.core;
 
 import nars.build.Default.CommandLineNARBuilder;
-import nars.io.TextInput;
 import nars.io.TextOutput;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
 
 
@@ -86,12 +88,10 @@ public class NARRun {
             nar.addInput( System.in );
         }
         
-               while (true) {
+        while (true) {
             if (logging)
                 log("NARSBatch.run():"
                         + " step " + nar.time());
-
-            
 
             nar.step(1);
             

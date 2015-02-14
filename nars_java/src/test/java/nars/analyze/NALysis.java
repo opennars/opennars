@@ -6,6 +6,7 @@ import nars.build.Default;
 import nars.core.Memory;
 import nars.core.NewNAR;
 import nars.io.TextOutput;
+import nars.io.TraceWriter;
 import nars.io.condition.OutputCondition;
 import nars.logic.AbstractNALTest;
 import nars.logic.TestNAR;
@@ -25,6 +26,7 @@ import static nars.logic.ScriptNALTest.getPaths;
 public class NALysis extends AbstractNALTest {
 
     static boolean showOutput = false;
+    static boolean showTrace = false;
 
     public NALysis(NewNAR b) {
         super(b);
@@ -56,6 +58,8 @@ public class NALysis extends AbstractNALTest {
 
         if (showOutput)
             TextOutput.out(n);
+        if (showTrace)
+            new TraceWriter(n, System.out);
 
         startAnalysis(n);
 
@@ -171,7 +175,7 @@ public class NALysis extends AbstractNALTest {
                 new Curve().setInternalExperience(null) );
     }
     public static void nal4() {
-        runDir("test4", 500, 1,
+        runDir("test4", 900, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(4),
@@ -179,7 +183,7 @@ public class NALysis extends AbstractNALTest {
                 new Curve().setInternalExperience(null) );
     }
     public static void nal5() {
-        runDir("test5", 600, 1,
+        runDir("test5", 1000, 1,
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(5),

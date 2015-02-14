@@ -1,16 +1,13 @@
 package nars.core;
 
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import com.google.gson.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
-import nars.logic.NAL.DerivationFilter;
 import nars.logic.nal7.Interval.AtomicDuration;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -109,7 +106,12 @@ public class Param implements Serializable {
 
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptGoalsMax = new AtomicInteger();
-    
+
+    /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle
+     * prevents a termlinks from redundantly repeated firing */
+    public AtomicInteger noveltyHorizon = new AtomicInteger();
+
+
     /** Reliance factor, the empirical confidence of analytical truth.
         the same as default confidence  */        
     public final AtomicDouble reliance = new AtomicDouble();
