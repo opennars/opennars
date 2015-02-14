@@ -193,7 +193,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
         boolean derived = deriveTask(new Task(
                 new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
-                newBudget, subbedTask, subbedBelief), false, false, null, subbedTask.sentence);
+                newBudget, subbedTask, subbedBelief), false, false, subbedTask, subbedBelief);
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
