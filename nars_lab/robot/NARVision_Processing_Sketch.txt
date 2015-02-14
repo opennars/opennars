@@ -18,7 +18,14 @@ void setup() {
 }
 
 int k=0;
+int lastcheckedX=0;
+int lastcheckedY=0;
 void draw() {
+  int vsz=10; //segments NARS will know where the change happens and color
+  int[][] vote = new int[vsz][vsz];
+  int[][] colorArR = new int[vsz][vsz];
+  int[][] colorArG = new int[vsz][vsz];
+  int[][] colorArB = new int[vsz][vsz];
   if (video.available())
   {
     k++;
@@ -27,8 +34,34 @@ void draw() {
     
     int movementSum = 0; // Amount of movement in the frame
     PImage still=createImage(640, 480, ARGB);
+    int x=0;
+    int y=0;
     for (int i = 0; i < numPixels; i++)
     { // For each pixel in the video frame...
+      
+      int vx=0;
+      int vy=0;
+      int u=0;
+      for(int cx=0;cx<width;cx+=width/vsz)
+      {
+         if(cx>x)
+         {
+           vx=u;
+           break;
+         }
+         u++;
+      }
+      u=0;
+      for(int cy=0;cy<height;cy+=height/vsz)
+      {
+         if(cy>y)
+         {
+           vy=u;
+           break;
+         }
+         u++;
+      }
+    
       color currColor = video.pixels[i];
       color prevColor = previousFrame[i];
       // Extract the red, green, and blue components from current pixel
@@ -44,8 +77,21 @@ void draw() {
       int diffR = abs(currR - prevR);
       int diffG = abs(currG - prevG);
       int diffB = abs(currB - prevB);
-      if(!(diffR<30 && diffG<30 && diffB<30))
+      int voteThreshold=0;
+      int voteAbsThreshold=30;
+      if(!(diffR<voteThreshold && diffG<voteThreshold && diffB<voteThreshold))
       {
+        if(!(currR<voteAbsThreshold && currG<voteAbsThreshold && currB<voteAbsThreshold))
+        {
+          colorArR[vx][vy]+=currR;
+          colorArG[vx][vy]+=currG;
+          colorArB[vx][vy]+=currB;
+        }
+      }
+      int diffThreshold=30;
+      if(!(diffR<diffThreshold && diffG<diffThreshold && diffB<diffThreshold))
+      {
+        vote[vx][vy]++;
         diffR=currR;
         diffG=currG;
         diffB=currB;
@@ -65,18 +111,66 @@ void draw() {
         int colnow = 0xff000000 | (currR << 16) | (currG << 8) | currB;
         previousFrame[i] = colnow; //dont update in every step
       }
+      x++;
+      if(x>=width)
+      {
+        x=0;
+        y++;
+      }
+     
     }
     // To prevent flicker from frames that are all black (no movement),
     if (movementSum > 0) {
       updatePixels();
-      println(movementSum); // Print the total amount of movement to the console
+      //println(movementSum); // Print the total amount of movement to the console
     }
-    int s=50; //8
-    //still.resize(s,s);
+    int s=30; //8
+    still.resize(s,s);
     pushMatrix();
-    //scale(640/s,480/s);
+    scale(width/s,height/s);
     image(still, 0, 0);
     popMatrix();
     
+    //get the best voted change cell:
+    int maxX=0;
+    int maxY=0;
+    int maxVal=0;
+    for(int i=0;i<vsz;i++)
+    {
+      for(int j=0;j<vsz;j++)
+      {
+        if(vote[i][j]>maxVal)
+        {
+          maxVal=vote[i][j];
+          maxX=i;
+          maxY=j;
+        }
+      }
+    }
+    //get the biggest color in this area:
+    int bigR=colorArR[maxX][maxY];
+    int bigG=colorArG[maxX][maxY];
+    int bigB=colorArB[maxX][maxY];
+    int acceptThreshold=2000;
+    //println(vote[maxX][maxY]);
+    int NARVisionUpdateRate=10;
+    if(k%NARVisionUpdateRate==0 && vote[maxX][maxY]>acceptThreshold)
+    {
+      String col="red";
+      if(bigG>bigB && bigG>bigR)
+        col="green";
+      if(bigB>bigG && bigB>bigR)
+        col="blue";
+      println("<(*,"+col+","+maxX+","+maxY+") --> colorseg>. :|:");
+      if(col=="blue")
+        fill(0,0,255);
+      if(col=="red")
+        fill(255,0,0);
+      if(col=="green")
+        fill(0,255,0);
+      lastcheckedX=width/vsz*maxX;
+      lastcheckedY=height/vsz*maxY;
+    }
+    rect(lastcheckedX,lastcheckedY,10,10);
   }
 }
