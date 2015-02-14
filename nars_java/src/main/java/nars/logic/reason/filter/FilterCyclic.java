@@ -11,17 +11,9 @@ import nars.logic.nal1.Negation;
 public class FilterCyclic implements NAL.DerivationFilter {
     @Override public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence occurence2, Sentence derivedCurrentBelief, Task derivedCurrentTask) {
 
-        final Sentence occurence = parent != null ? parent.sentence : null;
         final Stamp stamp = task.sentence.stamp;
+
         Sentence currentBelief = nal.getCurrentBelief();
-
-        if (occurence != null && !occurence.isEternal()) {
-            stamp.setOccurrenceTime(occurence.getOccurenceTime());
-        }
-        if (occurence2 != null && !occurence2.isEternal()) {
-            stamp.setOccurrenceTime(occurence2.getOccurenceTime());
-        }
-
 
         final Term currentTaskContent = derivedCurrentTask.getTerm();
         if (derivedCurrentBelief != null && derivedCurrentBelief.isJudgment()) {

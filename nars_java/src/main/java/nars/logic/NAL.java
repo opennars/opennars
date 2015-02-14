@@ -147,6 +147,15 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         }
 
 
+        final Sentence occurence = parent != null ? parent.sentence : null;
+        long ocurrence = Stamp.ETERNAL;
+        if (occurence != null && !occurence.isEternal()) {
+            ocurrence = occurence.getOccurenceTime();
+        }
+        if (occurence2 != null && !occurence2.isEternal()) {
+            ocurrence = occurence2.getOccurenceTime();
+        }
+        task.sentence.setOccurrenceTime(ocurrence);
 
         if (task.sentence.getOccurenceTime() > memory.time()) {
             memory.event.emit(Events.TaskDeriveFuture.class, task, this);
@@ -157,8 +166,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
         task.setParticipateInTemporalInduction(false);
 
-        final Sentence occurence = parent != null ? parent.sentence : null;
-        memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2, derivedCurrentTask);
+        memory.event.emit(Events.TaskDerive.class, task, revised, single, derivedCurrentTask);
         memory.logic.TASK_DERIVED.hit();
 
         addNewTask(task, "Derived");

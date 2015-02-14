@@ -22,7 +22,9 @@ public class NALysisSome extends NALysis {
 
 
 
-        nal("test6", "6.24", new Default()/*.setInternalExperience(null)*/, 16);
+        showOutput = true;
+
+        nal("test5", "5.10", new Default()/*.setInternalExperience(null)*/, 16);
 
 
 

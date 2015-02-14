@@ -46,6 +46,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
 
 
+
     public static interface Sentenceable<T2 extends CompoundTerm> extends Termable {
         public Sentence<T2> getSentence();
     }
@@ -189,6 +190,10 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
     }
 
+    public void setOccurrenceTime(long ocurrence) {
+        stamp.setOccurrenceTime(ocurrence);
+        key = null; //invalidate name
+    }
     
 
     final protected boolean isUniqueByOcurrenceTime() {

@@ -108,6 +108,9 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                     Term C = Conjunction.make(residue, conj.getTemporalOrder());
                     Implication resImp = Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
 
+                    if (resImp == null)
+                        continue;
+
                     //todo add
                     TruthValue truth = TruthFunctions.deduction(s.truth, task.sentence.truth);
 

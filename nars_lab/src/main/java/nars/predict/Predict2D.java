@@ -14,7 +14,6 @@ import nars.logic.nal1.Inheritance;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -68,6 +67,7 @@ public class Predict2D extends JPanel {
         private final NAR nar;
         Discretize discretize;
         private String current, prev;
+        int lastI = -1;
 
         public DiscretizedInput(NAR n, String term, int levels, float min, float max) {
 
@@ -88,19 +88,24 @@ public class Predict2D extends JPanel {
         }
         
         protected void setValue(int i) {
+            if (lastI == i) return; //prevent duplicate repeats
+
             current = "<" + term + " --> n" + i + ">";
 
             String input = current + ". :|: \n";
 
             if (prev!=null) {
-                if (!prev.equals(current))
+                if (!prev.equals(current)) {
                     input += ("<" + prev + " =/> " + current + ">. :|: \n");
+                    input += (prev + ". %0.00;0.90% :/: \n");
+                }
                 input += ("<" + current+ " =/> ?>?\n");
             }
 
             nar.addInput(input);
 
             prev = current;
+            lastI = i;
         }
 
     }
@@ -110,6 +115,7 @@ public class Predict2D extends JPanel {
         private final String term;
         private final String prefix, suffix;
         private final NAR nar;
+        private final Discretize disc;
         float v = 0;
 
         float expect[];
@@ -122,6 +128,7 @@ public class Predict2D extends JPanel {
             this.prefix = "<" + term + " --> ";
             this.suffix = ">";
             this.expect = new float[levels];
+            this.disc = new Discretize(n, levels);
         }
 
         @Override
@@ -154,17 +161,56 @@ public class Predict2D extends JPanel {
 
         protected void updateBelief(Concept c, int level) {
 
+            //TODO examine all the beliefs of all the concepts each cycle
+            //to calculate a smoothed believe according to the current time
+            //and the occurrence time, not just when it is updated
+
             expect[level] = 0;
             for (Sentence s : c.beliefs) {
                 if (s.isEternal()) continue;
                 long o = s.getOccurenceTime();
                 if (o <= nar.time()) continue;
 
+
+
                 //future belief:
-                expect[level] = s.truth.getExpectation();
-                System.out.println("PREDICT: " + Arrays.toString(expect));
+                float futureFactor = 1.0f / ( o - nar.time());
+                expect[level] += Math.max(expect[level], s.truth.getExpectation()) * futureFactor;
+
+
+                //System.out.println("PREDICT: " + Arrays.toString(expect));
             }
-            //System.out.println(nar.time() + " " + c.beliefs);
+
+
+            //System.out.println(c.beliefs);
+
+            //winner take all
+            /*
+            float best = 0;
+            int b = -1;
+            for (int i = 0; i < expect.length; i++) {
+                if (expect[i] > best) {
+                    best = expect[i];
+                    b = i;
+                }
+            }*/
+            float b = 0;
+            float total = 0;
+            for (int i = 0; i < expect.length; i++) {
+                b += expect[i] * i;
+                total += expect[i];
+            }
+            if (total!=0) {
+                b /= total;
+
+
+                v = 0;
+            /*if (b!=-1)*/
+                {
+                    v = ((float) disc.continuous(b) - 0.5f) * 2f;
+                    //System.out.println(term + " " + b + " " + " " + v);
+                }
+            }
 
 
         }
@@ -176,7 +222,10 @@ public class Predict2D extends JPanel {
 
     public static void main(String[] args) throws InterruptedException {
 
+        Parameters.IMMEDIATE_ETERNALIZATION = false;
+
         NAR n = new NAR(new Default().setInternalExperience(null).simulationTime());
+        n.param.shortTermMemoryHistory.set(4);
 
         Predict2D p = new Predict2D();
         new NWindow("Predicting", p).show(400,400,true);
@@ -185,7 +234,7 @@ public class Predict2D extends JPanel {
 
         Parameters.DEBUG = true;
 
-        int levels = 8;
+        int levels = 15;
         DiscretizedInput ix = new DiscretizedInput(n, "x", levels, -1f, 1f);
         DiscretizedInput iy = new DiscretizedInput(n, "y", levels, -1f, 1f);
 
@@ -215,14 +264,15 @@ public class Predict2D extends JPanel {
             ix.setValue(target.x);
             iy.setValue(target.y);
 
+
             p.update(t);
 
-            n.memory.addSimulationTime(10);
-            n.step(100);
+            n.memory.addSimulationTime(1);
+            n.step(50);
 
-            t += 100;
+            t += 1;
 
-            Thread.sleep(100);
+            Thread.sleep(5);
         }
 
     }

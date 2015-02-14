@@ -5,6 +5,7 @@ import nars.build.Curve;
 import nars.build.Default;
 import nars.core.Memory;
 import nars.core.NewNAR;
+import nars.io.TextOutput;
 import nars.io.condition.OutputCondition;
 import nars.logic.AbstractNALTest;
 import nars.logic.TestNAR;
@@ -22,6 +23,8 @@ import static nars.logic.ScriptNALTest.getPaths;
  */
 @Ignore
 public class NALysis extends AbstractNALTest {
+
+    static boolean showOutput = false;
 
     public NALysis(NewNAR b) {
         super(b);
@@ -50,6 +53,9 @@ public class NALysis extends AbstractNALTest {
         Memory.resetStatic(seed);
 
         TestNAR n = new TestNAR(build);
+
+        if (showOutput)
+            TextOutput.out(n);
 
         startAnalysis(n);
 
