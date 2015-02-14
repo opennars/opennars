@@ -14,7 +14,7 @@ Serial port;
 
 boolean vision2D=false; //switch between the way color segments are represented: 1D: <(*,red,X) --> colorseg>  or 2D: <(*,red,X,Y) --> colorseg>
 //what the knowledge and motivations of the robot are  //example: follow the red ball!
-String knowledge="<<(*,red,1) --> colorseg> =|> go-to(r)>!\n<<(*,red,9) --> colorseg> =|> go-to(l)>!\n<<(*,red,8) --> colorseg> =|> go-to(l)>!\n<<(*,red,0) --> colorseg> =|> go-to(l)>!\n";
+String knowledge="<<(*,red,1) --> colorseg> =|> go-to(r)>!\n<<(*,red,9) --> colorseg> =|> go-to(l)>!\n<<(*,red,8) --> colorseg> =|> go-to(l)>!\n<<(*,red,0) --> colorseg> =|> go-to(r)>!\n";
 
 private class InputThread extends Thread
 {
