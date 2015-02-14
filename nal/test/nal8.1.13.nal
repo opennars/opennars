@@ -1,5 +1,5 @@
 ********** [23 + 06 -> 24]
   IN: (&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>). :|: 
   IN: <(&|,<(*,$1,$2) --> on>,<(*,SELF,$2) --> at>) =|> <(*,SELF,$1) --> reachable>>.
-230
-''outputMustContain('<{t002} --> (/,reachable,SELF,_)>. :\: %1.00;0.81%')
+10
+''outputMustContain('<(*,SELF,{t002}) --> reachable>. :\: %1.00;0.81%')

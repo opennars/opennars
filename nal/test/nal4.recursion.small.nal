@@ -9,4 +9,4 @@
 ''outputMustContain('<(*,0) --> num>.')
 ''outputMustContain('<(*,(*,0)) --> num>.')
 ''outputMustContain('<(*,(*,(*,0))) --> num>.')
-''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.26%')
+''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.22%')
