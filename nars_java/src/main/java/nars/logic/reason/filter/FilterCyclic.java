@@ -9,15 +9,13 @@ import nars.logic.nal1.Negation;
 
 /** applies updates to stamp, and rejects derivations determined to be cyclic */
 public class FilterCyclic implements NAL.DerivationFilter {
-    @Override public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence occurence2, Sentence derivedCurrentBelief, Task derivedCurrentTask) {
+    @Override public String reject(NAL nal, Task task, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
         final Stamp stamp = task.sentence.stamp;
 
-        Sentence currentBelief = nal.getCurrentBelief();
-
-        final Term currentTaskContent = derivedCurrentTask.getTerm();
-        if (derivedCurrentBelief != null && derivedCurrentBelief.isJudgment()) {
-            final Term currentBeliefContent = derivedCurrentBelief.term;
+        final Term currentTaskContent = currentTask.getTerm();
+        if (currentBelief != null && currentBelief.isJudgment()) {
+            final Term currentBeliefContent = currentBelief.term;
             stamp.chainReplace(currentBeliefContent, currentBeliefContent);
         }
         //workaround for single premise task issue:

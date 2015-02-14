@@ -562,7 +562,7 @@ public class Memory implements Serializable {
 
         Stamp s = task.sentence.stamp;
         if (s.getCreationTime() == -1) {
-            s.setCreationTime(time(), param.duration.get());
+            s.setCreationTime(time());
         }
 
         emit(Events.IN.class, task);

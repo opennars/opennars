@@ -120,12 +120,15 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
             }
         }
 
-        this.stamp = stamp.build();
+        Stamp st = stamp.build();
 
-        if ((isQuestion() || isQuest()) && !this.stamp.isEternal()) {
-            this.stamp.setEternal();
+        if ((isQuestion() || isQuest()) && !st.isEternal()) {
+            st = st.cloneEternal(); //need to clone in case this stamp is shared by others which are not to eternalize it
             //throw new RuntimeException("Questions and Quests require eternal tense");
         }
+
+        this.stamp = st;
+
         
         this.truth = truth;
         this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
@@ -190,13 +193,6 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
     }
 
-    public void setOccurrenceTime(long ocurrence) {
-        if (ocurrence!=stamp.getOccurrenceTime()) {
-            stamp.setOccurrenceTime(ocurrence);
-            key = null; //invalidate name
-        }
-    }
-    
 
     final protected boolean isUniqueByOcurrenceTime() {
         return true;

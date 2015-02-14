@@ -156,9 +156,7 @@ public class Anticipate extends AbstractPlugin implements Mental {
                 new Sentence<>(prediction,
                         Symbols.JUDGMENT,
                         expiredTruth,
-                        new Stamp(nal.memory).
-                                setOccurrenceTime(
-                                        expectedOccurenceTime /*- nal.memory.param.duration.get()*/ )),
+                        new Stamp(nal.memory, expectedOccurenceTime /*- nal.memory.param.duration.get()*/ )),
                 //expiredBudget
                 tt.getBudget().clone()
         );

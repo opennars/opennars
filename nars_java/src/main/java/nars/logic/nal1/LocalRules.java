@@ -82,7 +82,7 @@ public class LocalRules {
         NAL.StampBuilder stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
         if (stamp == null) return false;
 
-        final Task currentTask = nal.getCurrentTask();
+        final Task t = nal.getCurrentTask();
 
         TruthValue newBeliefTruth = newBelief.truth;
         TruthValue oldBeliefTruth = oldBelief.truth;
@@ -94,12 +94,14 @@ public class LocalRules {
         }
 
         if (nal.deriveTask(new Task(new Sentence(newBelief.term,
-                currentTask.sentence.punctuation,
+                t.sentence.punctuation,
                 truth,
-                stamp), budget, currentTask, newBelief),
-                true, false, null, null, subbedBelief, nal.getCurrentTask())) {
+                stamp), budget, t, subbedBelief),
+                true, false, subbedBelief, t)) {
+
             nal.memory.logic.BELIEF_REVISION.hit();
             return true;
+
         }
 
         return false;

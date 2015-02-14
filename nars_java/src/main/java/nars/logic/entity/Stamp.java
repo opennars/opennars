@@ -77,9 +77,6 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         stores the unique Long's in-order for efficiency
      */    
     private long[] evidentialSet = null;
-
-    
-    private Tense tense;
     
     
     /** caches  */
@@ -234,28 +231,32 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
 
 
-    /** used for when the ocrrence time will be set later; so should not be called from externally but through another Stamp constructor */
-    public Stamp(final Tense tense, final long serial) {
-        this.baseLength = 1;
-        this.evidentialBase = new long[baseLength];
-        this.evidentialBase[0] = serial;
-        this.tense = tense;
-        this.latency = 0;
-        this.creationTime = -1;
-        this.derivationBuilder = null;
-        this.derivationChain = EmptyDerivationChain; // new LinkedHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
-        if (tense == Tense.Eternal)
-            this.occurrenceTime = -1;
-    }
     
     /**
      * Generate a new stamp, with a new serial number, for a new Task
      *
-     * @param time Creation time of the stamp
+     * @param creationTime Creation time of the stamp
      */
-    public Stamp(final long time, final Tense tense, final long serial, final int duration) {    
-        this(tense, serial);    
-        setCreationTime(time, duration);        
+    @Deprecated public Stamp(final long serial, final long creationTime, final Tense tense, final int duration) {
+        super();
+        this.baseLength = 1;
+        this.evidentialBase = new long[baseLength];
+        this.evidentialBase[0] = serial;
+        this.latency = 0;
+        this.creationTime = creationTime;
+        this.derivationBuilder = null;
+        this.derivationChain = EmptyDerivationChain; // new LinkedHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+
+
+        if (tense == null) {
+            occurrenceTime = ETERNAL;
+        } else if (tense == Past) {
+            occurrenceTime = creationTime - duration;
+        } else if (tense == Future) {
+            occurrenceTime = creationTime + duration;
+        } else if (tense == Present) {
+            occurrenceTime = creationTime;
+        }
     }
 
     /**
@@ -280,12 +281,21 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         this(old, creationTime, old);
     }
 
-    public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase) {        
+    public Stamp(final Stamp old, final long creationTime, final long occurenceTime) {
+        this(old, creationTime, occurenceTime, old);
+    }
+
+    public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase) {
+        this(old, creationTime, old.getOccurrenceTime(), useEvidentialBase);
+    }
+
+    public Stamp(final Stamp old, final long creationTime, final long occurenceTime, final Stamp useEvidentialBase) {
+
         this.evidentialBase = useEvidentialBase.evidentialBase;
         this.baseLength = useEvidentialBase.baseLength;
         this.creationTime = creationTime;
 
-        this.occurrenceTime = old.getOccurrenceTime();
+        this.occurrenceTime = occurenceTime;
         this.derivationChain = old.getChain();
         this.latency = this.creationTime - old.latency;
         
@@ -294,7 +304,12 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         else
             this.derivationBuilder = null;
     }
-    
+
+    public Stamp(final Stamp first, final Stamp second, final long creationTime) {
+        this(first, second, creationTime,
+                first.getOccurrenceTime() /* use the creation time of the first task */ );
+    }
+
     /**
      * Generate a new stamp for derived sentence by merging the two from parents
      * the first one is no shorter than the second
@@ -302,7 +317,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
      * @param first The first Stamp
      * @param second The second Stamp
      */
-    public Stamp(final Stamp first, final Stamp second, final long time) {
+    public Stamp(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
         //TODO use iterators instead of repeated first and second .get's?
         
         int i1, i2, j;
@@ -315,12 +330,11 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         int firstLength = firstBase.length;
         int secondLength = secondBase.length;
 
-        creationTime = time;
-        
-        occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
+        this.creationTime = creationTime;
+        this.occurrenceTime = occurenceTime;
         
         //calculate latency as the time difference between now and the last created of the 2 input stamps
-        this.latency = time - Math.max(first.creationTime, second.creationTime);
+        this.latency = creationTime - Math.max(first.creationTime, second.creationTime);
         
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
         while (i2 < secondLength && j < baseLength) {
@@ -334,8 +348,8 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
     }
 
-    public Stamp(final Memory memory, final Tense tense, long when) {
-        this(when, tense, memory.newStampSerial(), memory.param.duration.get());
+    public Stamp(final Memory memory, final Tense tense, long creationTime) {
+        this(memory.newStampSerial(), creationTime, tense, memory.param.duration.get());
     }
 
     /** create stamp at current memory time */
@@ -344,21 +358,24 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
 
     /** creates a stamp with default Present tense */
-    public Stamp(final Memory memory) {
+    @Deprecated public Stamp(final Memory memory) {
         this(memory, Tense.Present);
+    }
+
+    public Stamp(final Memory memory, long creationTime, long occurenceTime) {
+        this(memory);
+        this.creationTime = creationTime;
+        setOccurrenceTime(occurenceTime);
+    }
+
+    public Stamp(final Memory memory, long occurenceTime) {
+        this(memory);
+        setOccurrenceTime(occurenceTime);
     }
 
     
     public boolean isEternal() {
-        boolean eternalOccurrence = occurrenceTime == ETERNAL;
-        
-        if (Parameters.DEBUG) {
-            if (eternalOccurrence && tense!=Tense.Eternal) {
-                throw new RuntimeException("Stamp has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
-            }
-        }
-        
-        return eternalOccurrence;
+        return occurrenceTime == ETERNAL;
     }
 
     /** sets the creationTime to a non-value so that it will be set at a later point, ex: after traversing the input queue */
@@ -366,25 +383,15 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         creationTime = -1;
     }
 
-    public Stamp setCreationTime(long time) {
-        this.creationTime = time;
-        return this;
-    }
-
     /** sets the creation time; used to set input tasks with the actual time they enter Memory */
-    public void setCreationTime(long time, int duration) {
-        setCreationTime(time);
+    public void setCreationTime(long creationTime) {
+        long originalCreationTime = this.creationTime;
+        this.creationTime = creationTime;
 
-        if (tense == null) {
-            occurrenceTime = ETERNAL;
-        } else if (tense == Past) {
-            occurrenceTime = time - duration;
-        } else if (tense == Future) {
-            occurrenceTime = time + duration;
-        } else if (tense == Present) {
-            occurrenceTime = time;
+        //shift occurence time relative to the new creation time
+        if (occurrenceTime != Stamp.ETERNAL) {
+            occurrenceTime = occurrenceTime + (creationTime - originalCreationTime);
         }
-        
     }
     
     protected boolean chainIsNullOrEmpty() {
@@ -565,7 +572,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     /**
      * Check if two stamps contains the same types of content
      *
-     * @param that The Stamp to be compared
+     * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
     public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase, final boolean derivationChain) {
@@ -620,10 +627,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         return new Stamp(this, newCreationTime);
     }
     public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime) {
-        Stamp s = clone();
-        if (newOcurrenceTime == ETERNAL)
-            s.tense = Tense.Eternal;
-        s.setOccurrenceTime(newOcurrenceTime);
+        Stamp s = new Stamp(this, newOcurrenceTime);
         return s;
     }
     public Stamp cloneEternal() {
@@ -683,14 +687,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
 
     /** returns this stamp, modified */
-    public Stamp setOccurrenceTime(final long time) {
+    protected Stamp setOccurrenceTime(final long time) {
         if (occurrenceTime!=time) {
             occurrenceTime = time;
-            
-            if (time == ETERNAL)
-                tense = Tense.Eternal;
-                        
-            name = null;
+            name = null; //invalidate name so it will be re-generated
         }
         return this;
     }

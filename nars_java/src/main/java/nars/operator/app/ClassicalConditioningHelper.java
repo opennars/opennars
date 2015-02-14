@@ -254,8 +254,7 @@ public class ClassicalConditioningHelper implements Plugin {
                // }
                 Conjunction con=(Conjunction) Conjunction.make(wuh, TemporalRules.ORDER_FORWARD);
                 Implication res=Implication.make(con, pred,TemporalRules.ORDER_FORWARD);
-                Stamp stamp=new Stamp(nar.memory);
-                stamp.setOccurrenceTime(Stamp.ETERNAL);
+                Stamp stamp=new Stamp(nar.memory, Stamp.ETERNAL);
                 Sentence s=new Sentence(res,Symbols.JUDGMENT,Truth,stamp);
 
                 Task TT= new Task(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY,

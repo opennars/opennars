@@ -36,13 +36,14 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
         Concept concept = f.getCurrentBeliefConcept();
         if (concept == null) return true;
 
-        Task task = taskLink.getTask();
+        Task taskLinkTask = taskLink.getTask();
+        f.getCurrentTask();
 
-        if (!(task.sentence.isJudgment() || task.sentence.isGoal())) return true;
+        if (!(taskLinkTask.sentence.isJudgment() || taskLinkTask.sentence.isGoal())) return true;
 
-        Term taskTerm = task.sentence.term;
+        Term taskTerm = taskLinkTask.sentence.term;
         if (!(taskTerm instanceof Implication)) return true;
-        Implication imp = (Implication) task.sentence.term;
+        Implication imp = (Implication) taskLinkTask.sentence.term;
 
         if (!((imp.getTemporalOrder() == ORDER_FORWARD || (imp.getTemporalOrder() == ORDER_CONCURRENT))))
             return true;
@@ -76,10 +77,10 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
             if (conj.getTemporalOrder() == conj2.getTemporalOrder() && alreadyInducted.add(t)) {
 
                 Sentence s = null;
-                if (task.sentence.punctuation == Symbols.JUDGMENT) {
+                if (taskLinkTask.sentence.punctuation == Symbols.JUDGMENT) {
                     s = next.getBestBelief();
                 }
-                else if (task.sentence.punctuation == Symbols.GOAL) {
+                else if (taskLinkTask.sentence.punctuation == Symbols.GOAL) {
                     s = next.getBestGoal(true, true);
                 }
                 if (s == null) continue;
@@ -112,15 +113,15 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                         continue;
 
                     //todo add
-                    TruthValue truth = TruthFunctions.deduction(s.truth, task.sentence.truth);
+                    TruthValue truth = TruthFunctions.deduction(s.truth, taskLinkTask.sentence.truth);
 
-                    Stamp st = new Stamp(task.sentence.stamp, f.memory.time());
+                    Stamp st = new Stamp(taskLinkTask.sentence.stamp, f.memory.time());
                     st.getChain().add(t);
 
                     Sentence newSentence = new Sentence(resImp, s.punctuation, truth, st);
 
                     Task newTask = new Task(newSentence, new BudgetValue(BudgetFunctions.forward(truth, f)));
-                    f.deriveTask(newTask, false, false, task, null);
+                    f.deriveTask(newTask, false, false, null, taskLinkTask);
 
                 }
             }

@@ -15,54 +15,37 @@ import java.util.List;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
- * <p>
+ * <p/>
  * https://code.google.com/p/open-nars/wiki/SingleStepTestingCases
  * according to derived Task: if it contains a mental operator it is NAL9, if it contains a operation it is NAL8, if it contains temporal information it is NAL7, if it contains in/dependent vars it is NAL6, if it contains higher order copulas like &&, ==> or negation it is NAL5
- * <p>
+ * <p/>
  * if it contains product or image it is NAL4, if it contains sets or set operations like &, -, | it is NAL3
- * <p>
+ * <p/>
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
 public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
 
-
-    public interface DerivationFilter extends Plugin {
-
-
-        /**
-         * returns null if allowed to derive, or a String containing a short rejection reason for logging
-         */
-        public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief, Sentence derivedCurrentBelief, Task derivedCurrentTask);
-
-        @Override
-        public default boolean setEnabled(NAR n, boolean enabled) {
-            return true;
-        }
-    }
-
     public final Memory memory;
-
     protected final Task currentTask;
-    protected Sentence currentBelief;
-
     protected final NALRuleEngine reasoner;
-
+    protected Sentence currentBelief;
     /**
      * stores the tasks that this process generates, and adds to memory
      */
     Deque<Task> newTasks = null; //lazily instantiated
 
-
-
-    //TODO tasksDicarded
-
     public NAL(Memory mem, Task task) {
         this(mem, -1, task);
     }
 
-    /** @param nalLevel the NAL level to limit processing of this reasoning context. set to -1 to use Memory's default value */
+
+    //TODO tasksDicarded
+
+    /**
+     * @param nalLevel the NAL level to limit processing of this reasoning context. set to -1 to use Memory's default value
+     */
     public NAL(Memory mem, int nalLevel, Task task) {
         super(null);
 
@@ -73,7 +56,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         memory = mem;
         reasoner = memory.rules;
 
-        if ((nalLevel!=-1) && (nalLevel!=mem.nal()))
+        if ((nalLevel != -1) && (nalLevel != mem.nal()))
             throw new RuntimeException("Different NAL level than Memory not supported yet");
 
         currentTask = task;
@@ -92,6 +75,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     protected void onStart() {
         /** implement if necessary in subclasses */
     }
+
     protected void onFinished() {
         /** implement if necessary in subclasses */
     }
@@ -119,10 +103,8 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     }
 
 
-
-
-    public boolean deriveTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2) {
-        return deriveTask(task, revised, single, parent, occurence2, getCurrentBelief(), getCurrentTask());
+    public boolean deriveTask(final Task task, final boolean revised, final boolean single) {
+        return deriveTask(task, revised, single, null, null);
     }
 
     /**
@@ -130,15 +112,20 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      *
      * @param task the derived task
      */
-    public boolean deriveTask(final Task task, final boolean revised, final boolean single, Task parent, Sentence occurence2,
-                              Sentence subbedCurrentBelief, Task subbedCurrentTask) {
+    public boolean deriveTask(final Task task, final boolean revised, final boolean single, Sentence currentBelief, Task currentTask) {
+
+        //use this NAL's instance defaults for the values because specific values were not substituted:
+        if (currentBelief == null)
+            currentBelief = getCurrentBelief();
+        if (currentTask == null)
+            currentTask = getCurrentTask();
 
         List<DerivationFilter> derivationFilters = reasoner.getDerivationFilters();
 
         if (derivationFilters != null) {
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);
-                String rejectionReason = d.reject(this, task, revised, single, parent, occurence2, subbedCurrentBelief, subbedCurrentTask);
+                String rejectionReason = d.reject(this, task, revised, single, currentBelief, currentTask);
                 if (rejectionReason != null) {
                     memory.removeTask(task, rejectionReason);
                     return false;
@@ -146,32 +133,13 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
             }
         }
 
-
-        if (nal(7)) {
-            final Sentence parentOccurrence = parent != null ? parent.sentence : null;
-            long ocurrence = task.sentence.getOccurenceTime();
-            if (parentOccurrence != null && !parentOccurrence.isEternal()) {
-                ocurrence = parentOccurrence.getOccurenceTime();
-            }
-            if (occurence2 != null && !occurence2.isEternal()) {
-                ocurrence = occurence2.getOccurenceTime();
-            }
-            task.sentence.setOccurrenceTime(ocurrence);
-
-        }
-        else {
-            task.sentence.setOccurrenceTime(Stamp.ETERNAL);
-        }
-
-
-
         if (task.sentence.stamp.latency > 0) {
             memory.logic.DERIVATION_LATENCY.set((double) task.sentence.stamp.latency);
         }
 
         task.setParticipateInTemporalInduction(false);
 
-        memory.event.emit(Events.TaskDerive.class, task, revised, single, subbedCurrentTask);
+        memory.event.emit(Events.TaskDerive.class, task, revised, single, currentTask);
         memory.logic.TASK_DERIVED.hit();
 
         addNewTask(task, "Derived");
@@ -212,19 +180,19 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
         boolean derived = deriveTask(new Task(
                 new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
-                newBudget, subbedTask, subbedBelief), false, false, subbedTask, subbedBelief);
+                newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask);
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
-        //temporal induction generated ones get eternalized directly
+            //temporal induction generated ones get eternalized directly
             derived |= deriveTask(
                     new Task(
-                        new Sentence(newTaskContent,
-                            subbedTask.sentence.punctuation,
-                            TruthFunctions.eternalize(newTruth),
-                            newStamp.cloneEternal()),
-                        newBudget, subbedTask, subbedBelief),
-                false, false, null, null);
+                            new Sentence(newTaskContent,
+                                    subbedTask.sentence.punctuation,
+                                    TruthFunctions.eternalize(newTruth),
+                                    newStamp.cloneEternal()),
+                            newBudget, subbedTask, subbedBelief),
+                    false, false, subbedBelief, subbedTask);
         }
 
         return derived;
@@ -318,15 +286,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     }
 
 
-
     /**
      * @return the currentTask
      */
     public Task getCurrentTask() {
         return currentTask;
     }
-
-
 
 
 //
@@ -401,15 +366,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 //    }
 
 
-
     /**
      * @return the currentBelief
      */
     public Sentence getCurrentBelief() {
         return currentBelief;
     }
-
-
 
 
     /**
@@ -420,15 +382,18 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     protected void addNewTask(Task t, String reason) {
         t.setReason(reason);
 
-        if (newTasks==null)
+        if (newTasks == null)
             newTasks = new ArrayDeque(4);
 
         newTasks.add(t);
     }
 
 
-    /** called from consumers of the tasks that this context generates */
-    @Override public Task get() {
+    /**
+     * called from consumers of the tasks that this context generates
+     */
+    @Override
+    public Task get() {
         if (newTasks == null || newTasks.isEmpty())
             return null;
         return newTasks.removeFirst();
@@ -448,6 +413,58 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
                 "Activated");
     }
 
+    /**
+     * create a new stamp builder for a specific occurenceTime
+     */
+    public StampBuilder newStamp(Sentence a, Sentence b, long occurrenceTime) {
+        return new LazyStampBuilder(a.stamp, b.stamp, time(), occurrenceTime);
+    }
+
+    /**
+     * create a new stamp builder with an occurenceTime determined by the parent sentence tenses.
+     *
+     * @param t generally the task's sentence
+     * @param b generally the belief's sentence
+     */
+    public StampBuilder newStamp(Sentence t, Sentence b) {
+
+        final long oc;
+        if (nal(7)) {
+            oc = inferOccurenceTime(t, b);
+        } else {
+            oc = Stamp.ETERNAL;
+        }
+
+        return new LazyStampBuilder(t.stamp, b.stamp, time(), oc);
+    }
+
+    /**
+     * returns a new stamp if A and B do not have overlapping evidence; null otherwise
+     */
+    public StampBuilder newStampIfNotOverlapping(Sentence A, Sentence B) {
+        long[] a = A.stamp.toSet();
+        long[] b = B.stamp.toSet();
+        for (long ae : a) {
+            for (long be : b) {
+                if (ae == be) return null;
+            }
+        }
+        return newStamp(A, B);
+    }
+
+    public interface DerivationFilter extends Plugin {
+
+
+        /**
+         * returns null if allowed to derive, or a String containing a short rejection reason for logging
+         */
+        public String reject(NAL nal, Task task, boolean revised, boolean single, Sentence currentBelief, Task currentTask);
+
+        @Override
+        public default boolean setEnabled(NAR n, boolean enabled) {
+            return true;
+        }
+    }
 
     public interface StampBuilder {
         public Stamp build();
@@ -469,31 +486,69 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         @Override
         public Stamp build() {
             if (stamp == null)
-                stamp = new Stamp(a, b, creationTime).setOccurrenceTime(occurrenceTime);
+                stamp = new Stamp(a, b, creationTime, occurrenceTime);
             return stamp;
         }
     }
 
-    public StampBuilder newStamp(Sentence a, Sentence b, long at) {
-        return new LazyStampBuilder(a.stamp, b.stamp, time(), at);
-    }
+    public static long inferOccurenceTime(Sentence t, Sentence b) {
+        final long oc;
 
-    public StampBuilder newStamp(Sentence a, Sentence b) {
-        /** eternal by default, it may be changed later */
-        return newStamp(a, b, Stamp.ETERNAL);
-    }
 
-    /** returns a new stamp if A and B do not have overlapping evidence; null otherwise */
-    public StampBuilder newStampIfNotOverlapping(Sentence A, Sentence B) {
-        long[] a = A.stamp.toSet();
-        long[] b = B.stamp.toSet();
-        for (long ae : a) {
-            for (long be : b) {
-                if (ae == be) return null;
-            }
+        final long tOc = t.getOccurenceTime();
+        final boolean tEternal = (tOc == Stamp.ETERNAL);
+        final long bOc = b.getOccurenceTime();
+        final boolean bEternal = (bOc == Stamp.ETERNAL);
+
+        /* see: https://groups.google.com/forum/#!searchin/open-nars/eternal$20belief/open-nars/8KnAbKzjp4E/rBc-6V5pem8J) */
+
+        if (tEternal && bEternal) {
+            /* eternal belief, eternal task => eternal conclusion */
+            oc = Stamp.ETERNAL;
+        } else if (tEternal && !bEternal) {
+            /*
+            The task is eternal, while the belief is tensed.
+            In this case, the conclusion will be eternal, by generalizing the belief
+            on a moment to the general situation.
+            According to the semantics of NARS, each truth-value provides a piece of
+            evidence for the general statement, so this inference can be taken as a
+            special case of abduction from the belief B<f,c> and G==>B<1,1> to G<f,c/(c+k)>
+            where G is the eternal form of B."
+            */
+            oc = Stamp.ETERNAL;
+        } else if (bEternal && !tEternal) {
+            /*
+            The belief is eternal, while the task is tensed.
+            In this case, the conclusion will get the occurrenceTime of the task,
+            because an eternal belief applies to every moment
+            */
+            oc = tOc;
+        } else {
+            /*
+            Both premises are tensed.
+            In this case, the truth-value of the belief B<f,c> will be "projected" from
+            its previous OccurrenceTime t1 to the time of the task t2 to become B<f,d*c>,
+            using the discount factor d = 1 - |t1-t2| / (|t0-t1| + |t0-t2|), where t0 is
+            the current time.
+            This formula is cited in https://code.google.com/p/open-nars/wiki/OpenNarsOneDotSix.
+            Here the idea is that if a tensed belief is projected to a different time
+            */
+            oc = tOc;
         }
-        return newStamp(A, B);
-    }
 
+
+        /*
+        //OLD occurence code:
+        if (currentTaskSentence != null && !currentTaskSentence.isEternal()) {
+            ocurrence = currentTaskSentence.getOccurenceTime();
+        }
+        if (currentBelief != null && !currentBelief.isEternal()) {
+            ocurrence = currentBelief.getOccurenceTime();
+        }
+        task.sentence.setOccurrenceTime(ocurrence);
+        */
+
+        return oc;
+    }
 
 }

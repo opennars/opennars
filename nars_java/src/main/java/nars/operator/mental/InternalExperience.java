@@ -142,8 +142,7 @@ public class InternalExperience extends AbstractPlugin  {
             Sentence sentence = task.sentence;
             TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
 
-            Stamp stamp = task.sentence.stamp.clone();
-            stamp.setOccurrenceTime(memory.time());
+            Stamp stamp = task.sentence.stamp.cloneWithNewOccurrenceTime(memory.time());
 
             Term ret=toTerm(sentence, memory);
             if(ret==null) {

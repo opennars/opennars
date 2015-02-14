@@ -32,7 +32,7 @@ public class SensorPort extends InPort<Task> {
         Task t = input.get();
         if (t!=null) {
             if (creationTimeOverride != -1) {
-                t.sentence.stamp.setCreationTime(creationTimeOverride, memory.getDuration());
+                t.sentence.stamp.setCreationTime(creationTimeOverride);
             }
         }
         return t;

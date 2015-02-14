@@ -1,14 +1,14 @@
 package nars.analyze;
 
 import nars.core.NewNAR;
+import org.junit.Ignore;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-/**
- * Created by me on 2/14/15.
- */
+
+@Ignore
 public class NALysisAll extends NALysis {
 
     public NALysisAll(NewNAR b) {        super(b);    }
