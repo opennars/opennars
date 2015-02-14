@@ -172,7 +172,7 @@ public class TemporalRules {
                 }
             }
         }
-        return occurrenceTime;
+        return Stamp.ETERNAL;
     }
 
 

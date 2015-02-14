@@ -147,19 +147,24 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         }
 
 
-        final Sentence occurence = parent != null ? parent.sentence : null;
-        long ocurrence = Stamp.ETERNAL;
-        if (occurence != null && !occurence.isEternal()) {
-            ocurrence = occurence.getOccurenceTime();
-        }
-        if (occurence2 != null && !occurence2.isEternal()) {
-            ocurrence = occurence2.getOccurenceTime();
-        }
-        task.sentence.setOccurrenceTime(ocurrence);
+        if (nal(7)) {
+            final Sentence parentOccurrence = parent != null ? parent.sentence : null;
+            long ocurrence = task.sentence.getOccurenceTime();
+            if (parentOccurrence != null && !parentOccurrence.isEternal()) {
+                ocurrence = parentOccurrence.getOccurenceTime();
+            }
+            if (occurence2 != null && !occurence2.isEternal()) {
+                ocurrence = occurence2.getOccurenceTime();
+            }
+            task.sentence.setOccurrenceTime(ocurrence);
 
-        if (task.sentence.getOccurenceTime() > memory.time()) {
-            memory.event.emit(Events.TaskDeriveFuture.class, task, this);
         }
+        else {
+            task.sentence.setOccurrenceTime(Stamp.ETERNAL);
+        }
+
+
+
         if (task.sentence.stamp.latency > 0) {
             memory.logic.DERIVATION_LATENCY.set((double) task.sentence.stamp.latency);
         }
@@ -170,6 +175,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         memory.logic.TASK_DERIVED.hit();
 
         addNewTask(task, "Derived");
+
+        if (nal(7)) {
+            if (task.sentence.getOccurenceTime() > memory.time()) {
+                memory.event.emit(Events.TaskDeriveFuture.class, task, this);
+            }
+        }
 
         return true;
     }

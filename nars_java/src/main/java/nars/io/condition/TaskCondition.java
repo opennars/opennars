@@ -5,7 +5,6 @@ import com.google.gson.annotations.Expose;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -14,10 +13,7 @@ import nars.logic.nal7.Tense;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 
 public class TaskCondition extends OutputCondition implements Serializable {
@@ -50,10 +46,11 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final List<Task> trueAt = new ArrayList();
     public final Deque<Task> removals = new ArrayDeque();
 
+    final int maxClose = 5;
+    public final TreeMap<Double,Task> close = new TreeMap();
+
     final int maxRemovals = 4;
 
-    Task closest = null;
-    double closestDistance = Double.POSITIVE_INFINITY;
 
     public TaskCondition(NAR n, Class channel, Task t)  {
         super(n, Events.OUT.class, Events.TaskRemove.class);
@@ -153,17 +150,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
             return false;
 
 
-        //require right kind of tense
-        if (tense==Tense.Eternal) {
-            if (!task.sentence.isEternal())  return false;
-        }
-        else {
-            if (task.sentence.isEternal()) return false;
-
-            long oc = task.getOcurrenceTime() - now; //relative time
-            if ((oc < ocMin) || (oc > ocMax)) return false;
-        }
-
         Term tterm = task.getTerm();
 
         //require exact term
@@ -217,6 +203,29 @@ public class TaskCondition extends OutputCondition implements Serializable {
                 }
 
 
+                float tenseCost = 0.5f;
+
+                //require right kind of tense
+                if (tense==Tense.Eternal) {
+                    if (!task.sentence.isEternal()) {
+                        distance += tenseCost;
+                        match = false;
+                    }
+                }
+                else {
+                    if (task.sentence.isEternal()) {
+                        distance += tenseCost - 0.01;
+                        match = false;
+                    }
+
+                    long oc = task.getOcurrenceTime() - now; //relative time
+                    if ((oc < ocMin) || (oc > ocMax)) {
+                        distance += rangeError(oc, ocMin, ocMax, true) * tenseCost;
+                        match = false;
+                    }
+                }
+
+
                 //TODO use range of acceptable occurrenceTime's for non-eternal tests
 
 
@@ -238,9 +247,11 @@ public class TaskCondition extends OutputCondition implements Serializable {
                     trueAt.add(task);
                 }
 
-                if (distance < closestDistance) {
-                    closest = task;
-                    closestDistance = distance;
+                if (distance > 0) {
+                    close.put(distance, task);
+                    if (close.size() > maxClose) {
+                        close.remove( close.lastEntry().getKey() );
+                    }
                 }
 
                 return match;
@@ -278,11 +289,18 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public String getFalseReason() {
-        String x = "Unmatched: " + (closest==null ? "" :
-                "  closest=" + closest + " dist=" + Texts.n4((float) closestDistance)) + " " + toString();
+        String x = "Unmatched; ";
 
+        if (!close.isEmpty()) {
+            x += "Similar:\n";
+            for (Map.Entry<Double,Task> et : close.entrySet())
+                x += et.getKey() + " (" + et.getValue() + ")\n";
+        }
+        else {
+            x += "No similar\n";
+        }
         if (!removals.isEmpty()) {
-            x += "\n  Matching removals:\n";
+            x += "Matching removals:\n";
             for (Task t : removals)
                 x += t.toString() + " (" + t.getReason() + ")\n";
         }

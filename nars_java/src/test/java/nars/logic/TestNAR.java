@@ -27,7 +27,7 @@ public class TestNAR extends NAR {
 
 
     /** "must" requirement conditions specification */
-    public final List<OutputCondition> musts = new ArrayList();
+    public final List<OutputCondition> requires = new ArrayList();
     public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
     private boolean exitOnAllSuccess = true;
@@ -47,12 +47,12 @@ public class TestNAR extends NAR {
                     cycle++;
                     if (cycle % checkResolution == 0) {
 
-                        if (musts.isEmpty())
+                        if (requires.isEmpty())
                             return;
 
                         boolean finished = true;
 
-                        for (OutputCondition oc : musts) {
+                        for (OutputCondition oc : requires) {
                             if (!oc.isTrue()) {
                                 finished = false;
                                 break;
@@ -75,7 +75,7 @@ public class TestNAR extends NAR {
 
         TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         tc.setOccurrenceTime(minOccurrenceDelta, maxOccurrenceDelta);
-        musts.add(tc);
+        requires.add(tc);
 
 
         ExplainableTask et = new ExplainableTask(tc);
@@ -88,7 +88,7 @@ public class TestNAR extends NAR {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
         TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
-        musts.add(tc);
+        requires.add(tc);
 
         ExplainableTask et = new ExplainableTask(tc);
         if (showExplanations) {
@@ -185,7 +185,7 @@ public class TestNAR extends NAR {
 
     public void run() {
         long finalCycle = 0;
-        for (OutputCondition oc : musts) {
+        for (OutputCondition oc : requires) {
             if (oc instanceof TaskCondition) {
                 TaskCondition tc = (TaskCondition) oc;
                 if (tc.cycleEnd > finalCycle)
@@ -221,10 +221,10 @@ public class TestNAR extends NAR {
 
 
     public void evaluate() {
-        int conditions = musts.size();
+        int conditions = requires.size();
         int failures = getError()!=null ? 1 : 0;
 
-        for (OutputCondition oc : musts) {
+        for (OutputCondition oc : requires) {
             if (oc instanceof TaskCondition) {
                 TaskCondition tc = (TaskCondition) oc;
                 if (!tc.isTrue()) {
@@ -235,13 +235,16 @@ public class TestNAR extends NAR {
 
         int successes = conditions - failures;
 
+        String result = "";
         if (error!=null) {
-            assertTrue(error.toString(), false);
+            result += error.toString() + " ";
         }
         if (failures > 0) {
-            assertTrue(successes + "/ " + conditions + " conditions passed", false);
+            result += successes + "/ " + conditions + " conditions passed";
         }
-
+        if (error!=null || failures > 0) {
+            assertTrue(result, false);
+        }
 
     }
 
@@ -249,9 +252,14 @@ public class TestNAR extends NAR {
 
         boolean output = false;
 
+
+
         if (showFail || showSuccess) {
 
-            for (OutputCondition tc : musts) {
+            for (OutputCondition tc : requires) {
+
+                out.println(tc.toString());
+
                 if (!tc.isTrue()) {
                     if (showFail) {
                         out.println(tc.getFalseReason());
@@ -259,8 +267,6 @@ public class TestNAR extends NAR {
                     }
                 } else {
                     if (showSuccess) {
-                        out.println(tc.toString());
-                        out.print('\t');
                         out.println(tc.getTrueReasons());
                         output = true;
                     }

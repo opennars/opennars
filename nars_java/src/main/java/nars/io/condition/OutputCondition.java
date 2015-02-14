@@ -7,7 +7,6 @@ package nars.io.condition;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
-import nars.io.Output;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 
@@ -102,7 +101,7 @@ public abstract class OutputCondition extends AbstractReaction {
                 try {
                     Task t = n.narsese.parseTask(match);
                     if (t!=null) {
-                        if (t.sentence.isEternal()) {
+                        /*if (t.sentence.isEternal())*/ {
 
                             conditions.add(new TaskCondition(n, Events.OUT.class, t));
                             added = true;
@@ -110,7 +109,7 @@ public abstract class OutputCondition extends AbstractReaction {
                     }
 
                 } catch (InvalidInputException e1) {
-                    //System.err.println("NOT A TASK: " + match);
+                    System.err.println("NOT A TASK: " + match);
                     //...
                 }
 

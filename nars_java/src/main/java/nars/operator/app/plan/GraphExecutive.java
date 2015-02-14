@@ -455,9 +455,11 @@ public class GraphExecutive {
         
         Concept c = memory.concept(t);
         if (c!=null) {
-            Sentence bestBelief = c.beliefs.get(0);
-            if (bestBelief!=null)
-                return bestBelief.truth.getExpectation();                   
+            if (!c.beliefs.isEmpty()) {
+                Sentence bestBelief = c.beliefs.get(0);
+                if (bestBelief != null)
+                    return bestBelief.truth.getExpectation();
+            }
         }
         
         //System.err.println("No Concept confidence available for " + t);

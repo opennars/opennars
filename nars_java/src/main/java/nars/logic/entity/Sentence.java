@@ -191,8 +191,10 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
     public void setOccurrenceTime(long ocurrence) {
-        stamp.setOccurrenceTime(ocurrence);
-        key = null; //invalidate name
+        if (ocurrence!=stamp.getOccurrenceTime()) {
+            stamp.setOccurrenceTime(ocurrence);
+            key = null; //invalidate name
+        }
     }
     
 

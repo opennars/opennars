@@ -92,7 +92,7 @@ abstract public class AbstractNALTest extends TestCase {
     public static void endAnalysis(String label, TestNAR nar, NewNAR build, long nanos, long seed, boolean success) {
 
         testBuild.set(build.toString());
-        testScore.set( OutputCondition.score(nar.musts) );
+        testScore.set( OutputCondition.score(nar.requires) );
         testSeed.set(seed);
         testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
         testConcepts.hit(nar.memory.concepts.size());
@@ -118,7 +118,7 @@ abstract public class AbstractNALTest extends TestCase {
         Parameters.DEBUG = true;
 
         String script = ExampleFileInput.getExample(path);
-        nar.musts.addAll(OutputCondition.getConditions(nar, script, similarsToSave));
+        nar.requires.addAll(OutputCondition.getConditions(nar, script, similarsToSave));
 
         nar.addInput(script);
 
@@ -136,7 +136,7 @@ abstract public class AbstractNALTest extends TestCase {
 
 
         //assertTrue("No conditions to test", !conditions.isEmpty());
-        if (nar.musts.isEmpty()) {
+        if (nar.requires.isEmpty()) {
             System.err.println("WARNING: No Conditions Added");
             new Exception().printStackTrace();
             assertTrue(false);
@@ -151,7 +151,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         String report = "";
         boolean suc = nar.getError()==null;
-        for (OutputCondition e : nar.musts) {
+        for (OutputCondition e : nar.requires) {
             if (!e.succeeded) {
                 report += e.getFalseReason().toString() + '\n';
                 suc = false;

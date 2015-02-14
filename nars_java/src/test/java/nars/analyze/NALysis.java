@@ -67,7 +67,7 @@ public class NALysis extends AbstractNALTest {
 
         //String report = "";
         boolean suc = n.getError()==null;
-        for (OutputCondition e : n.musts) {
+        for (OutputCondition e : n.requires) {
             if (!e.succeeded) {
                 //report += e.getFalseReason().toString() + '\n';
                 suc = false;
