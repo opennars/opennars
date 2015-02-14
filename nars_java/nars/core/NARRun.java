@@ -21,6 +21,7 @@ package nars.core;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -71,6 +72,33 @@ public class NARRun {
         this.nar = n;
     }
 
+    private class InputThread extends Thread
+    {
+      private BufferedReader bufIn;
+      NAR nar;
+      InputThread(InputStream in, NAR nar)
+      {
+        this.bufIn = new BufferedReader(new InputStreamReader(in));
+        this.nar=nar;
+      }
+      public void run()
+      {
+        while(true)
+        {
+          try
+          {
+            String line=bufIn.readLine();
+            if(line!=null)
+                nar.addInput(line);
+          }catch(Exception ex){}
+          try
+          {
+            Thread.sleep(1);
+          }catch(Exception ex){}
+        }
+      }
+    }
+    
     /**
      * non-static equivalent to {@link #main(String[])} : finish to completion from
  an addInput file
@@ -79,6 +107,7 @@ public class NARRun {
         TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
         output.setErrors(true);
         output.setErrorStackTrace(true);
+        InputThread it;
         
         if (args.length > 0) {
             try {
@@ -87,8 +116,10 @@ public class NARRun {
                 System.err.println("NARRun.init: " + ex);
             }
         }
-        else {            
-            nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
+        else {     
+            it=new InputThread(System.in,nar);
+            it.start();
+            //nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
         }
         
                while (true) {
