@@ -1194,8 +1194,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 if (budget.aboveThreshold()) {
 
-                    Sentence newSentence = new Sentence(result, mark, truth,
-                            st);
+                    Sentence newSentence = new Sentence(result, mark, truth, st);
 
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);

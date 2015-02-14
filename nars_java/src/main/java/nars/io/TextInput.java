@@ -22,6 +22,7 @@ package nars.io;
 
 import com.google.common.collect.Iterators;
 import nars.core.Events;
+import nars.core.Parameters;
 import nars.logic.entity.Task;
 import nars.operator.io.Echo;
 
@@ -81,24 +82,39 @@ public class TextInput extends Input.BufferedInput {
         }
     }
 
+    protected String nextLine() throws IOException {
+        return input.readLine();
+    }
+
+    protected boolean finished() {
+        return (input == null);
+    }
+
+    protected int inputsPerBuffer() {
+        return 1;
+    }
+
     @Override
     public Iterator<Task> nextBuffer() {
         String line = null;
-        
-        if (input==null) {
-            finished = true;
-            return null;
-        }
-                
-        while (!finished) {
+
+
+        while (!finished()) {
             try {
-                line = input.readLine();
+                line = nextLine();
             } catch (IOException e) {
-                finished = true;
+                if (input!=null) {
+                    try {
+                        input.close();
+                    } catch (IOException ex1) { }
+                }
+                if (Parameters.DEBUG) {
+                    e.printStackTrace();
+                }
                 return Iterators.singletonIterator( new Echo(Events.IN.class, e.toString()).newTask() );
             }
             if (line == null) {
-                finished = true;
+                break;
             }
             else {
                 line = line.trim();
@@ -107,16 +123,9 @@ public class TextInput extends Input.BufferedInput {
             }
         }
         
-        if (finished) {
-            try {
-                input.close();
-            } catch (IOException ex1) {
-                throw new RuntimeException(ex1);
-            }
-        }
-
         if (line!=null)
             return perception.perceive( process(line) );
+
         return null;
     }
 

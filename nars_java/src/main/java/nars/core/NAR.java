@@ -184,6 +184,14 @@ public class NAR implements Runnable {
         return narsese.parseTerm(t);
     }
 
+    public Concept concept(Term term) {
+        return memory.concept(term);
+    }
+    /** gets a concept if it exists, or returns null if it does not */
+    public Concept concept(String concept) throws InvalidInputException {
+        return concept(new Narsese(this).parseTerm(concept));
+    }
+
 
     public Task goal(float pri, float dur, String termString, float freq, float conf) throws InvalidInputException {
         Task t = memory.newTask(narsese.parseCompoundTerm(termString),
@@ -213,11 +221,7 @@ public class NAR implements Runnable {
     }
 
     
-   /** gets a concept if it exists, or returns null if it does not */
-    public Concept concept(String concept) throws InvalidInputException {
-        return memory.concept(new Narsese(this).parseTerm(concept));
-    }
-    
+
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
         return ask(termString, null);

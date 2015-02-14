@@ -349,7 +349,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(mainSentence, subSentence, occurTime), false);
+            nal.doublePremiseTask(content, truth, budget, nal.newStamp(mainSentence, subSentence, occurTime), false);
         }
     }
 

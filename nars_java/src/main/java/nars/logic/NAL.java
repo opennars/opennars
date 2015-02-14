@@ -193,7 +193,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
         boolean derived = deriveTask(new Task(
                 new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
-                newBudget, subbedTask, subbedBelief), false, false, null, null);
+                newBudget, subbedTask, subbedBelief), false, false, null, subbedTask.sentence);
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
@@ -432,68 +432,42 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
     public interface StampBuilder {
         public Stamp build();
-//        default public Stamp getFirst() { return null; }
-//        default public Stamp getSecond() { return null; }
     }
-
-//    /**
-//     * for lazily constructing a stamp, in case it will not actually be necessary to completely construct a stamp
-//     */
-//    private static class NewStampBuilder implements StampBuilder {
-//        private final Stamp first;
-//        private final Stamp second;
-//        private final long time;
-//
-//        public NewStampBuilder(Stamp first, Stamp second, long time) {
-//            this.first = first;
-//            this.second = second;
-//            this.time = time;
-//        }
-//
-//        @Override public Stamp getFirst() { return first; }
-//        @Override public Stamp getSecond() { return second; }
-//
-//        @Override
-//        public Stamp build() {
-//            return new Stamp(first, second, time);
-//        }
-//    }
 
     public static class LazyStampBuilder implements StampBuilder {
 
         public final Stamp a, b;
-        public final long time;
+        public final long creationTime, occurrenceTime;
         protected Stamp stamp = null;
 
-        public LazyStampBuilder(Stamp a, Stamp b, long time) {
+        public LazyStampBuilder(Stamp a, Stamp b, long creationTime, long occurrenceTime) {
             this.a = a;
             this.b = b;
-            this.time = time;
+            this.creationTime = creationTime;
+            this.occurrenceTime = occurrenceTime;
         }
 
         @Override
         public Stamp build() {
             if (stamp == null)
-                stamp = new Stamp(a, b, time);
+                stamp = new Stamp(a, b, creationTime).setOccurrenceTime(occurrenceTime);
             return stamp;
         }
     }
 
     public StampBuilder newStamp(Sentence a, Sentence b, long at) {
-        return new LazyStampBuilder(a.stamp, b.stamp, at);
+        return new LazyStampBuilder(a.stamp, b.stamp, time(), at);
     }
 
     public StampBuilder newStamp(Sentence a, Sentence b) {
-        return newStamp(a.stamp, b.stamp);
-    }
-    public StampBuilder newStamp(Stamp a, Stamp b) {
-        return new LazyStampBuilder(a, b, time());
+        /** eternal by default, it may be changed later */
+        return newStamp(a, b, Stamp.ETERNAL);
     }
 
     /** returns a new stamp if A and B do not have overlapping evidence; null otherwise */
-    public StampBuilder newStampIfNotOverlapping(Stamp A, Stamp B) {
-        long[] a = A.toSet();
-        long[] b = B.toSet();
+    public StampBuilder newStampIfNotOverlapping(Sentence A, Sentence B) {
+        long[] a = A.stamp.toSet();
+        long[] b = B.stamp.toSet();
         for (long ae : a) {
             for (long be : b) {
                 if (ae == be) return null;

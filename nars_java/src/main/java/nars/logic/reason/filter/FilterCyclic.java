@@ -53,6 +53,10 @@ public class FilterCyclic implements NAL.DerivationFilter {
 
         }
 
+        return null;
+    }
+}
+
 //        else {
 //            //its revision, of course its cyclic, apply evidental base policy
 //            final int stampLength = stamp.baseLength;
@@ -69,7 +73,3 @@ public class FilterCyclic implements NAL.DerivationFilter {
 //                }
 //            }
 //        }
-
-        return null;
-    }
-}

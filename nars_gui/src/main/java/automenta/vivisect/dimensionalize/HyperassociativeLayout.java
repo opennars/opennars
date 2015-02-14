@@ -14,20 +14,32 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- *
  * @author me
  */
 public class HyperassociativeLayout implements GraphDisplay {
 
     HyperassociativeMap h = null;
-    float spcing = 200.0f;
-    
+    float scale = 200.0f, eqDistance = 1f;
+    boolean normalizing = true;
+
     private AtomicBoolean newNode = new AtomicBoolean(false);
-    
+
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
+
+    public void setEdgeDistance(float eqDistance) {
+        this.eqDistance = eqDistance;
+    }
+
+    public void setNormalize(boolean normalizing) {
+        this.normalizing = normalizing;
+    }
+
     @Override
     public boolean preUpdate(AbstractGraphVis g) {
-        
-        
+
+
         if (h == null)
             h = new HyperassociativeMap(g.getGraph(), HyperassociativeMap.Euclidean, 2) {
                 @Override
@@ -36,57 +48,68 @@ public class HyperassociativeLayout implements GraphDisplay {
                     return super.newNodeCoordinates(node);
                 }
 
-            @Override
-            public double getEdgeWeight(Object e) {
-                if (e instanceof Budgetable) {                   
-                    return 1.0 + ((Budgetable)e).getBudget().getPriority() * 1.0;                }
-                return 1;
-            }
+                @Override
+                public double getEdgeWeight(Object e) {
+                    if (e instanceof Budgetable) {
+                        return 1.0 + ((Budgetable) e).getBudget().getPriority() * 1.0;
+                    }
+                    return 1;
+                }
 
-                
-            
-                
-            @Override
-            public double getRadius(Object n) {
-                if (n instanceof Budgetable) {
-                    return 1.0 + ((Budgetable)n).getBudget().getPriority() * 1.0;                }
-                return 1;
-            }
+                @Override
+                public boolean normalize() {
+                    return normalizing;
+                }
 
-                
-            };    
+
+                @Override
+                public double getRadius(Object n) {
+                    if (n instanceof Budgetable) {
+                        return 1.0 + ((Budgetable) n).getBudget().getPriority() * 1.0;
+                    }
+                    return 1;
+                }
+
+
+            };
         else {
             if (newNode.get()) {
                 h.resetLearning();
                 newNode.set(false);
             }
-            
+
             h.setGraph(g.getGraph());
         }
-        
+        h.setEquilibriumDistance(eqDistance);
         h.align();
         return true;
     }
-    
-    
+
+
     @Override
     public void vertex(AbstractGraphVis g, VertexVis v) {
         if (h == null) return;
         if (v == null) return;
-        if (v.vertex == null) return;                
-        
-        ArrayRealVector c = h.getPosition(v.vertex); 
-        if (c==null) return;
-        
-        
-        double[] cc = c.getDataRef();
-        v.tx = (float)cc[0] * spcing;
-        v.ty = (float)cc[1] * spcing;
-        
+        if (v.vertex == null) return;
+
+        ArrayRealVector c = h.getPosition(v.vertex);
+        if (c == null) return;
+
+
+        if (canChangePosition(v.vertex)) {
+            double[] cc = c.getDataRef();
+            v.tx = (float) cc[0] * scale;
+            v.ty = (float) cc[1] * scale;
+        }
+
+    }
+
+    public boolean canChangePosition(Object vertex) {
+        return true;
     }
 
     @Override
     public void edge(AbstractGraphVis g, EdgeVis e) {
     }
-    
+
 }

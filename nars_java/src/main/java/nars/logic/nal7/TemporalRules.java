@@ -17,10 +17,8 @@
 package nars.logic.nal7;
 
 
-import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.io.Symbols;
 import nars.logic.*;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
@@ -32,9 +30,7 @@ import nars.logic.nal5.Implication;
 import nars.logic.nal8.Operation;
 import nars.operator.mental.Mental;
 
-import java.util.*;
-
-import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
+import java.util.List;
 
 /**
  *
@@ -161,26 +157,6 @@ public class TemporalRules {
 
         Operation o= (Operation)t.sentence.term;
         return (o.getOperator() instanceof Mental);
-    }
-
-    public static boolean temporalInductionProceed(final Sentence currentBelief, final Sentence prevBelief, Task controllerTask, NAL nal) {
-        if(!controllerTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
-            return false;
-        }
-
-        if (currentBelief.isEternal() || !isInputOrTriggeredOperation(controllerTask, nal.memory)) {
-            return false;
-        }
-
-        if (equalSubTermsInRespectToImageAndProduct(currentBelief.term, prevBelief.term)) {
-            return false;
-        }
-
-        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        TemporalRules.temporalInduction(currentBelief, prevBelief,
-                new Stamp(currentBelief.stamp, prevBelief.stamp, nal.time()),
-                nal, prevBelief, controllerTask);
-        return false;
     }
 
 
@@ -505,7 +481,5 @@ public class TemporalRules {
         }
     }
 
-    public static float getBeliefRankFactor(long now, long occurenceTime, int duration) {
-        return (float) (1.0 / (1.0 + Math.abs( now - occurenceTime ) / duration));
-    }
+
 }

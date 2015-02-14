@@ -2,12 +2,15 @@ package nars.logic.reason.concept;
 
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.logic.NAL;
 import nars.logic.entity.*;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.reason.ConceptFire;
 
 import java.util.Set;
+
+import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
 * Patrick's new version which 'restores the special reasoning context'
@@ -81,6 +84,28 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
             prev = otherBelief;
         }
 
-        TemporalRules.temporalInductionProceed(current, prev, task, f);
+        temporalInductionProceed(current, prev, task, f);
     }
+
+    public static boolean temporalInductionProceed(final Sentence currentBelief, final Sentence prevBelief, Task controllerTask, NAL nal) {
+        if(!controllerTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+            return false;
+        }
+
+        if (currentBelief.isEternal() || !TemporalRules.isInputOrTriggeredOperation(controllerTask, nal.memory)) {
+            return false;
+        }
+
+        if (equalSubTermsInRespectToImageAndProduct(currentBelief.term, prevBelief.term)) {
+            return false;
+        }
+
+        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
+        TemporalRules.temporalInduction(currentBelief, prevBelief,
+                nal.newStamp(currentBelief, prevBelief),
+                nal, prevBelief, controllerTask);
+        return false;
+    }
+
+
 }

@@ -365,7 +365,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
 
 
-    @Deprecated public TruthValue projectionTruth(final long targetTime, final long currentTime) {
+    public TruthValue projectionTruth(final long targetTime, final long currentTime) {
         TruthValue newTruth = null;
                         
         if (!isEternal()) {

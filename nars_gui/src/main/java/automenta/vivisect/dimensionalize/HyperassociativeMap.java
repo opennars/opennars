@@ -256,13 +256,16 @@ public class HyperassociativeMap<N, E> {
 
         //LOGGER.debug("maxMove: " + maxMovement + ", Average Move: " + getAverageMovement());
 
-		// divide each coordinate of the sum of all the points by the number of
-        // nodes in order to calculate the average point, or center of all the
-        // points
-        int numVertices = graph.vertexSet().size();
-        center.mapDivideToSelf(numVertices);
+        if (normalize()) {
 
-        recenterNodes(center);
+            // divide each coordinate of the sum of all the points by the number of
+            // nodes in order to calculate the average point, or center of all the
+            // points
+            int numVertices = graph.vertexSet().size();
+            center.mapDivideToSelf(numVertices);
+
+            recenterNodes(center);
+        }
     }
 
     public int getDimensions() {
@@ -486,6 +489,10 @@ public class HyperassociativeMap<N, E> {
         totalMovement += moveDistance;
 
         return position;
+    }
+
+    public boolean normalize() {
+        return true;
     }
 
     /**

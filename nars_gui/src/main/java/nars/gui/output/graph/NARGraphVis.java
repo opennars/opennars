@@ -222,12 +222,19 @@ abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> imple
 
     abstract public GraphMode getInitialMode();
 
-    public void update(GraphDisplay style, GraphDisplay layout) {
+    @Deprecated public void update(GraphDisplay style, GraphDisplay layout) {
         this.style = style;
         this.layout = layout;
         displays.sequence.clear();
         displays.sequence.add(style);
         displays.sequence.add(layout);
+        setUpdateNext();
+    }
+    public void update(GraphDisplay... d) {
+        displays.sequence.clear();
+
+        for (GraphDisplay gd : d)
+            displays.sequence.add(gd);
         setUpdateNext();
     }
 

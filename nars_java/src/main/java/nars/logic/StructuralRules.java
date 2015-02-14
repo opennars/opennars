@@ -53,7 +53,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompose2(CompoundTerm compound, short index, Statement statement, short side, NAL nal) {
-        final Memory mem = nal.memory;
+        //final Memory mem = nal.memory;
         
         if (compound.equals(statement.term[side])) {
             return;

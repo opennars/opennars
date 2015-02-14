@@ -16,17 +16,20 @@ import java.util.Map;
 public class TaskGraph  {
 
     private final MemoryObserver reaction;
+    private final NAR nar;
     private boolean started;
 
 
     final Deque<Task> log = new ArrayDeque();
     public final Map<Task, Float> y = new CuckooMap<>();
+    final DefaultGrapher extraGrapher = new DefaultGrapher(true, true, true, false, 1, true, true);
 
     int maxItems = 32;
     private float earliestCreationTime = -1;
 
     public TaskGraph(NAR n) {
 
+        this.nar = n;
         reaction = new MemoryObserver(n.memory, false) {
 
             @Override
@@ -85,6 +88,11 @@ public class TaskGraph  {
         return earliestCreationTime;
     }
 
+    public boolean contains(Object t) {
+        if ((t instanceof Task) && (y.containsKey(t))) return true;
+        return false;
+    }
+
     public static class TaskSequenceEdge extends DefaultEdge {
 
         private final Task from;
@@ -97,12 +105,34 @@ public class TaskGraph  {
         }
 
         @Override
-        protected Object getSource() {
+        protected Task getSource() {
             return from;
         }
 
         @Override
-        protected Object getTarget() {
+        protected Task getTarget() {
+            return to;
+        }
+    }
+
+    public static class TaskConceptEdge extends DefaultEdge {
+
+        private final Task from;
+        private final Concept to;
+
+        public TaskConceptEdge(Task from, Concept to) {
+            super();
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected Task getSource() {
+            return from;
+        }
+
+        @Override
+        protected Concept getTarget() {
             return to;
         }
     }
@@ -130,10 +160,18 @@ public class TaskGraph  {
                 g.addEdge(previous, o, new TaskSequenceEdge(previous, o));
             }
 
+            Concept c = nar.concept(o.getTerm());
+            if (c!=null) {
+                extraGrapher.onConcept(g, c);
+                g.addEdge(o, c, new TaskConceptEdge(o, c));
+            }
+
             previous = o;
 
             cy++;
         }
+
+
 
         return g;
     }
