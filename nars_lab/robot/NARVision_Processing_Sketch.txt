@@ -1,13 +1,105 @@
 //processing sketch, copy into a new Processing sketch and press Run (needs a webcam)
-//will become the robot vision
 
 import processing.video.*;
+import java.io.*;
+import processing.serial.*;
+
+boolean use_nars=false;
+boolean use_serial=false;
 
 int numPixels;
 int[] previousFrame;
 Capture video;
+Serial port;
 
-void setup() {
+boolean vision2D=false; //switch between the way color segments are represented: 1D: <(*,red,X) --> colorseg>  or 2D: <(*,red,X,Y) --> colorseg>
+//what the knowledge and motivations of the robot are  //example: follow the red ball!
+String knowledge="<<(*,red,1) --> colorseg> =|> go-to(r)>!\n<<(*,red,9) --> colorseg> =|> go-to(l)>!\n<<(*,red,8) --> colorseg> =|> go-to(l)>!\n<<(*,red,0) --> colorseg> =|> go-to(l)>!\n";
+
+private class InputThread extends Thread
+{
+  private BufferedReader bufIn;
+  InputThread(InputStream in)
+  {
+    bufIn = new BufferedReader(new InputStreamReader(in));
+  }
+  public void run()
+  {
+    while(true)
+    {
+      try
+      {
+        String line=bufIn.readLine();
+        println(line);
+        if(use_serial)
+        {
+          //all the commands the firmware supports:
+          if(line.contains("^go-to([f, SELF])=null"))
+            port.write('f');
+          if(line.contains("^go-to([b, SELF])=null"))
+            port.write('b');
+          if(line.contains("^go-to([l, SELF])=null"))
+            port.write('l');
+          if(line.contains("^go-to([r, SELF])=null"))
+            port.write('r');
+          if(line.contains("^go-to([1, SELF])=null"))
+            port.write('1');
+          if(line.contains("^go-to([2, SELF])=null"))
+            port.write('2');
+          if(line.contains("^go-to([3, SELF])=null"))
+            port.write('3');
+          if(line.contains("^go-to([4, SELF])=null"))
+            port.write('4');
+        }
+        
+      }catch(Exception ex){println(ex.toString());}
+      try
+      {
+        Thread.sleep(1);
+      }catch(Exception ex){}
+    }
+  }
+}
+
+boolean UNIX=false;
+InputThread thr;
+public class NARSComm extends Thread
+{
+  public void run()
+  {
+    Process cmd=null;
+    try
+    {
+      if(!UNIX)
+        cmd = Runtime.getRuntime().exec("cmd /c "+"java -cp C:/Users/patrick.hammer/Documents/Processing/NARVISION/OpenNARS_GUI.jar nars.core.NARRun");//java -cp OpenNARS_GUI.jar nars.core.NARRun");
+      thr=new InputThread(cmd.getInputStream());
+      thr.start();
+      OutputStream outs = cmd.getOutputStream();
+      PrintWriter printOut;
+      printOut = new PrintWriter(outs);
+      printOut.println("*volume=0");
+      printOut.print(knowledge);
+      while(true)
+      {
+        if(toNAR!=null)
+        {
+          printOut.println(toNAR);
+          printOut.flush();
+          toNAR=null;
+        }
+        try
+        {
+        Thread.sleep(1);
+        }catch(Exception ex){}
+      }
+    }catch(Exception ex){}
+  }
+}
+
+String toNAR=null;
+NARSComm nars;
+void setup()
+{
   size(640, 480);
   video = new Capture(this, width, height);
   video.start(); 
@@ -15,12 +107,20 @@ void setup() {
   previousFrame = new int[numPixels];
   loadPixels();
   smooth(0);
+  if(use_serial)
+    port = new Serial(this,Serial.list()[0], 9600);
+  if(use_nars)
+  {
+    nars = new NARSComm();
+    nars.start();
+  }
 }
 
 int k=0;
 int lastcheckedX=0;
 int lastcheckedY=0;
-void draw() {
+void draw()
+{
   int vsz=10; //segments NARS will know where the change happens and color
   int[][] vote = new int[vsz][vsz];
   int[][] colorArR = new int[vsz][vsz];
@@ -78,7 +178,7 @@ void draw() {
       int diffG = abs(currG - prevG);
       int diffB = abs(currB - prevB);
       int voteThreshold=0;
-      int voteAbsThreshold=30;
+      int voteAbsThreshold=0;
       if(!(diffR<voteThreshold && diffG<voteThreshold && diffB<voteThreshold))
       {
         if(!(currR<voteAbsThreshold && currG<voteAbsThreshold && currB<voteAbsThreshold))
@@ -91,7 +191,7 @@ void draw() {
       int diffThreshold=30;
       if(!(diffR<diffThreshold && diffG<diffThreshold && diffB<diffThreshold))
       {
-        vote[vx][vy]++;
+        vote[vx][vy]+=1;//diffR+diffG+diffB;
         diffR=currR;
         diffG=currG;
         diffB=currB;
@@ -151,17 +251,25 @@ void draw() {
     int bigR=colorArR[maxX][maxY];
     int bigG=colorArG[maxX][maxY];
     int bigB=colorArB[maxX][maxY];
-    int acceptThreshold=2000;
+    int acceptThreshold=2600; //may depent on lighting, tune it
     //println(vote[maxX][maxY]);
     int NARVisionUpdateRate=10;
-    if(k%NARVisionUpdateRate==0 && vote[maxX][maxY]>acceptThreshold)
+    if(k>50 && k%NARVisionUpdateRate==0 && vote[maxX][maxY]>acceptThreshold)
     {
+      println("accepted vision: "+vote[maxX][maxY]);
       String col="red";
       if(bigG>bigB && bigG>bigR)
         col="green";
       if(bigB>bigG && bigB>bigR)
         col="blue";
-      println("<(*,"+col+","+maxX+","+maxY+") --> colorseg>. :|:");
+      if(toNAR==null)
+      {
+        if(vision2D)
+          toNAR="<(*,"+col+","+maxX+","+maxY+") --> colorseg>. :|:";
+        else
+          toNAR="<(*,"+col+","+maxX+") --> colorseg>. :|:";
+      }
+      println("send to NARS: "+toNAR);
       if(col=="blue")
         fill(0,0,255);
       if(col=="red")
@@ -174,3 +282,9 @@ void draw() {
     rect(lastcheckedX,lastcheckedY,10,10);
   }
 }
+
+void stop()
+{
+  nars.stop();
+  thr.stop();
+} 
