@@ -519,7 +519,7 @@ public class Rover extends PhysicsModel {
     public static float rotationSpeed = 100f;
     public static float linearSpeed = 5000f;
                 
-    public static boolean allow_imitate=false;
+    public static boolean allow_imitate=true; //allow rover to desire user way
     
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
