@@ -519,6 +519,12 @@ public class Terms {
         return null;
     }
 
+    /*
+    public static Term[] reverse(Term[] arg) {
+      TODO
+    }
+    */
+
 
     /** has, or is associated with a specific term */
     public static interface Termable<TT extends Term> {

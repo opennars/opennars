@@ -48,10 +48,17 @@ public class Conjunction extends Junction {
 
         if (order == TemporalRules.ORDER_BACKWARD) {
             throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(arg));
-            //although, we could reverse the arg terms..
+            /*
+            //reverse the arg terms..
+            arg = Terms.reverse(arg);
+            temporalOrder = TemporalRules.ORDER_FORWARD;
+            */
+        }
+        else {
+            temporalOrder = order;
         }
 
-        temporalOrder = order;
+
         
         init(arg);
 

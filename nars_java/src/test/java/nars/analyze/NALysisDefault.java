@@ -21,11 +21,11 @@ public class NALysisDefault extends NALysis {
         nal1Default(1);
         nal2Default();
         nal3Default();
-        nal4Default();
+        //nal4Default();
         nal5Default();
-        nal6Default();
+        //nal6Default();
         nal7Default();
-        nal8Default();
+        //nal8Default();
 
         results.printARFF(new PrintStream(dataOut));
 

@@ -239,45 +239,28 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      */
     public boolean singlePremiseTask(final CompoundTerm newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
 
-        if (!newBudget.aboveThreshold())
-            return false;
-
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
-            if (parentTask.getTerm() == null) {
+            if (parentTask.getTerm() == null)
                 return false;
-            }
-            if (newContent == null) {
+            if (newContent.equals(parentTask.getTerm()))
                 return false;
-            }
-            if (newContent.equals(parentTask.getTerm())) {
-                return false;
-            }
-        }
-
-        Sentence taskSentence = getCurrentTask().sentence;
-
-        final Stamp stamp;
-        if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-            stamp = new Stamp(taskSentence.stamp, time());
-        } else {
-            // to answer a question with negation in NAL-5 --- move to activated task?
-            stamp = new Stamp(getCurrentBelief().stamp, time());
         }
 
         if (newContent.subjectOrPredicateIsIndependentVar()) {
             return false;
         }
 
-        return deriveTask(new Task(new Sentence(newContent, punctuation, newTruth, stamp), newBudget, getCurrentTask(), null), false, true, null, null);
+        return singlePremiseTask(
+                new Sentence(newContent, punctuation, newTruth,
+                    newStamp(getCurrentTask().sentence,
+                            getCurrentBelief())),
+                newBudget);
     }
 
     public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
-        /*if (!newBudget.aboveThreshold()) {
-            return false;
-        }*/
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        return deriveTask(newTask, false, true, null, null);
+        return deriveTask(newTask, false, true);
     }
 
 
@@ -435,7 +418,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
             oc = Stamp.ETERNAL;
         }
 
-        return new LazyStampBuilder(t.stamp, b.stamp, time(), oc);
+        return new LazyStampBuilder(t!=null ? t.stamp : null,  b!=null ? b.stamp : null, time(), oc);
     }
 
     /**
@@ -485,14 +468,29 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
         @Override
         public Stamp build() {
-            if (stamp == null)
-                stamp = new Stamp(a, b, creationTime, occurrenceTime);
+            if (stamp == null) {
+                if (a == null)
+                    stamp = new Stamp(b, creationTime, occurrenceTime);
+                else if (b == null)
+                    stamp = new Stamp(a, creationTime, occurrenceTime);
+                else
+                    stamp = new Stamp(a, b, creationTime, occurrenceTime);
+            }
             return stamp;
         }
     }
 
+
     public static long inferOccurenceTime(Sentence t, Sentence b) {
         final long oc;
+
+        if ((t == null) && (b==null))
+            throw new RuntimeException("Both sentence parameters null");
+        if (t == null)
+            return b.getOccurenceTime();
+        else if (b == null)
+            return t.getOccurenceTime();
+
 
 
         final long tOc = t.getOccurenceTime();

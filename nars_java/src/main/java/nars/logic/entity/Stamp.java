@@ -243,10 +243,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         this.evidentialBase = new long[baseLength];
         this.evidentialBase[0] = serial;
         this.latency = 0;
-        this.creationTime = creationTime;
         this.derivationBuilder = null;
         this.derivationChain = EmptyDerivationChain; // new LinkedHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
 
+        this.creationTime = creationTime;
 
         if (tense == null) {
             occurrenceTime = ETERNAL;
@@ -365,12 +365,12 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     public Stamp(final Memory memory, long creationTime, long occurenceTime) {
         this(memory);
         this.creationTime = creationTime;
-        setOccurrenceTime(occurenceTime);
+        this.occurrenceTime = occurenceTime;
     }
 
     public Stamp(final Memory memory, long occurenceTime) {
         this(memory);
-        setOccurrenceTime(occurenceTime);
+        this.occurrenceTime = occurenceTime;
     }
 
     
@@ -686,14 +686,6 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         }        
     }
 
-    /** returns this stamp, modified */
-    protected Stamp setOccurrenceTime(final long time) {
-        if (occurrenceTime!=time) {
-            occurrenceTime = time;
-            name = null; //invalidate name so it will be re-generated
-        }
-        return this;
-    }
 
 
     public CharSequence name() {

@@ -289,13 +289,13 @@ public final class SyllogisticRules {
         if (content == null || (content instanceof Statement) && ((Statement) content).invalid())
             return;
 
-        Sentence taskSentence = nal.getCurrentTask().sentence;
-        Sentence beliefSentence = nal.getCurrentBelief();
+        final Sentence taskSentence = nal.getCurrentTask().sentence;
+        final Sentence beliefSentence = nal.getCurrentBelief();
         
         if (beliefSentence == null)
             return;
 
-        long occurTime = nal.time();
+        long occurTime = Stamp.ETERNAL;
         int order = statement.getTemporalOrder();
         if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
             long baseTime = subSentence.getOccurenceTime();
@@ -349,7 +349,9 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.doublePremiseTask(content, truth, budget, nal.newStamp(mainSentence, subSentence, occurTime), false);
+            nal.doublePremiseTask(content, truth, budget,
+                    nal.newStamp(mainSentence, subSentence, occurTime),
+                    false);
         }
     }
 
