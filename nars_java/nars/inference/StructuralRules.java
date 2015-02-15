@@ -606,7 +606,7 @@ public final class StructuralRules {
         } else {  // need to redefine the cases
             if (sentence.isJudgment() && (compoundTask && (compound instanceof Conjunction || compound instanceof Disjunction))) {
                 truth = TruthFunctions.deduction(truth, reliance);
-            } else if (sentence.isGoal() == (compoundTask && (compound instanceof Conjunction || compound instanceof Disjunction))) {
+            } else if (sentence.isGoal() && (compoundTask && (compound instanceof Conjunction || compound instanceof Disjunction))) {
                 truth = TruthFunctions.deduction(truth, reliance);
             }else {
                 TruthValue v1, v2;
