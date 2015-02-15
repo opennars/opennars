@@ -109,19 +109,17 @@ public class Conjunction extends Junction {
             return args;
         }
 
-        Term[] ret=new Term[sz];
+        final Term[] ret=new Term[sz];
         int k=0;
         for(int i=0;i<args.length;i++) {
             Term a=args[i];
             Conjunction c = isConjunction(a, order);
             if (c!=null) {
                 for(Term t: c.term) {
-                    ret[k]=t;
-                    k++;
+                    ret[k++]=t;
                 }
             } else {
-                ret[k]=a;
-                k++;
+                ret[k++]=a;
             }
         }
         return ret;

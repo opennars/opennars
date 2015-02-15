@@ -4,7 +4,9 @@
 
 27
 
-''outputMustContain('<(/,successor,0,_) --> number>.')
-''outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>.')
+''these two conditions need confidence values, otherwise they are assumed to represent 1.00;0.90 which isnt the case
+''//outputMustContain('<(/,successor,0,_) --> number>.')
+''//outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>.')
+
 ''outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>. %1.00;0.73%')
 

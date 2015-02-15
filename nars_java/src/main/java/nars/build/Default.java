@@ -345,7 +345,7 @@ public class Default extends NewNAR implements ConceptBuilder {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                n.run(1);
+                //n.run(1);
             }
             
         }
