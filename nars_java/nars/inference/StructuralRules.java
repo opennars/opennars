@@ -604,9 +604,9 @@ public final class StructuralRules {
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
         } else {  // need to redefine the cases
-            if (sentence.isJudgment() && (compoundTask && (compound instanceof Conjunction || compound instanceof Disjunction))) {
+            if (sentence.isJudgment() && (compound instanceof Conjunction || compound instanceof Disjunction)) {
                 truth = TruthFunctions.deduction(truth, reliance);
-            } else if (sentence.isGoal() && (compoundTask && (compound instanceof Conjunction || compound instanceof Disjunction))) {
+            } else if (sentence.isGoal() && (compound instanceof Conjunction || compound instanceof Disjunction)) {
                 truth = TruthFunctions.deduction(truth, reliance);
             }else {
                 TruthValue v1, v2;
