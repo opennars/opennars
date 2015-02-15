@@ -116,7 +116,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag/*.IndexedBag*/<K,E> imple
         else {
             //find a solution to make a concurrent analog of the LinkedHashMap, if cyclical balance of iteration order (reinsertion appends to end) is necessary
             this.nameTable = new ConcurrentHashMap(capacity);
-            this.pending = new ConcurrentLinkedDeque<E>();            
+            this.pending = new ConcurrentLinkedDeque();
         }
         
         this.targetActivations = targetPendingBufferSize;
@@ -333,8 +333,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag/*.IndexedBag*/<K,E> imple
             return TAKE(n.name());
         }
         else {
-            if ((s!= 0) && (Parameters.THREADS == 1))
-                throw new RuntimeException("Bag did not find an item although it is not empty; " + pending.size() + " " + s );
+            if (Parameters.THREADS == 1)
+                throw new RuntimeException("Bag did not find an item although it is not empty; " + pending.size() + ' ' + s );
             return null;
         }
     }
@@ -359,9 +359,9 @@ public class DelayBag<E extends Item<K>,K> extends Bag/*.IndexedBag*/<K,E> imple
 
 
     protected E addItem(E x, boolean index) {
-        E previous = null;
+
         if (index) {
-            previous = nameTable.put(x.name(), x);
+            nameTable.put(x.name(), x);
         }
         
         if (x.budget.getLastForgetTime() == -1)
@@ -436,7 +436,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag/*.IndexedBag*/<K,E> imple
 
     @Override
     public String toString() {
-        return super.toString() + "[" + size() + "|" + pending.size() + "|" + this.forgetThreshold + ".." + this.activityThreshold + "]";
+        return super.toString() + '[' + size() + '|' + pending.size() + '|' + this.forgetThreshold + ".." + this.activityThreshold + ']';
     }
 
     public void setTargetActivated(float proportion) {

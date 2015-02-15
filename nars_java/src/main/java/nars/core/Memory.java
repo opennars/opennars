@@ -116,7 +116,7 @@ public class Memory implements Serializable {
      * more important when heavier data flow occurrs
      */
     public void addNewTasks(Supplier<Task> source) {
-        Task next = null;
+        Task next;
         while ((next = source.get())!=null) {
             addNewTask(next, next.getReason());
         }
@@ -495,7 +495,7 @@ public class Memory implements Serializable {
                 if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
 
             default:
-                throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
+                throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ')');
         }
 
         return null;

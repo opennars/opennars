@@ -162,10 +162,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public boolean matches(Task task) {
         if (task.sentence.punctuation != punc)
             return false;
-        long now = nar.time();
-        if (task.sentence.punctuation != punc)
-            return false;
-
+        //long now = nar.time();
 
         Term tterm = task.getTerm();
 

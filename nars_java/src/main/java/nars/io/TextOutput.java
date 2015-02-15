@@ -266,7 +266,7 @@ public class TextOutput extends Output {
 
             /*if (showStackTrace)*/ 
             {
-                buffer.append(" ").append(Arrays.asList(e.getStackTrace()));
+                buffer.append(' ').append(Arrays.asList(e.getStackTrace()));
             }
         }
         else if (signal instanceof Task) {
@@ -398,8 +398,8 @@ public class TextOutput extends Output {
         String pct = ((int)(Math.round(value * 100.0))) + "%";
         //final String background = "rgba(255,255,255,0.15)";
         String foreground  = value < 0.5 ? 
-                "rgba(" + (int)(255*(0.5 - value)*2) + ",0,0," + (0.5 - value)*2 + ")" : 
-                "rgba(0," + (int)(255*(value - 0.5)*2) + ",0," + (value-0.5)*2 + ")";
+                "rgba(" + (int)(255*(0.5 - value)*2) + ",0,0," + (0.5 - value)*2 + ')' :
+                "rgba(0," + (int)(255*(value - 0.5)*2) + ",0," + (value-0.5)*2 + ')';
                 
         return "<div style='float:left;width: " + width + ";padding:2px;'>" +
           "<div style='width:100%;background-color:" + foreground + ";text-align:center;'>" +
@@ -475,7 +475,7 @@ public class TextOutput extends Output {
     public static CharSequence summarize( Iterable<? extends Concept> concepts) {
         StringBuilder s = new StringBuilder();        
         for (Concept c : concepts) {
-            s.append(c.toString()).append("\n");
+            s.append(c.toString()).append('\n');
         }
         return s;
     }

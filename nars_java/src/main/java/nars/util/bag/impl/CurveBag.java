@@ -74,7 +74,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
     public static <E extends Item> SortedIndex<E> getIndex(int capacity) {
         //if (capacity < 50)            
-        return new ArraySortedIndex<E>(capacity);
+        return new ArraySortedIndex(capacity);
         /*else
             return new FractalSortedItemList<E>();        */
     }
@@ -496,7 +496,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
     @Override
     public String toString() {
-        return super.toString() + "{" + items.getClass().getSimpleName() + "}";
+        return super.toString() + '{' + items.getClass().getSimpleName() + '}';
     }
 
     @Override

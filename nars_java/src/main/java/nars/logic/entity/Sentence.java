@@ -334,7 +334,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
     protected <X extends CompoundTerm> Sentence<X> clone_(X t) {
-        return new Sentence<X>(t, punctuation,
+        return new Sentence(t, punctuation,
                 truth!=null ? new TruthValue(truth) : null,
                 stamp.clone());
     }

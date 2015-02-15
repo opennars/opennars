@@ -37,7 +37,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
         final Memory memory = f.memory;
 
         final Term beliefTerm = belief.getTerm();
-        Set<Object> alreadyInducted = null;
+
 
         //this is a new attempt/experiment to make nars effectively track temporal coherences
         if (beliefTerm instanceof Implication &&
@@ -46,10 +46,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
             final int chainSamples = Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
 
             //prevent duplicate inductions
-            if (alreadyInducted == null)
-                alreadyInducted = Parameters.newHashSet(chainSamples);
-            else
-                alreadyInducted.clear();
+            Set<Object> alreadyInducted = Parameters.newHashSet(chainSamples);
 
             for (int i = 0; i < chainSamples; i++) {
 

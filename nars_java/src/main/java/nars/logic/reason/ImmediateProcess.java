@@ -31,7 +31,7 @@ public class ImmediateProcess extends NAL {
 
     @Override
     public String toString() {
-        return "ImmediateProcess[" + getCurrentTask().toString() + "]";
+        return "ImmediateProcess[" + getCurrentTask().toString() + ']';
     }
 
 

@@ -14,7 +14,7 @@ public class DDNodePool<E> extends DequePool<DD<E>> {
 
     @Override
     public DD<E> create() {
-        return new DD<E>();
+        return new DD();
     }
 
     @Override

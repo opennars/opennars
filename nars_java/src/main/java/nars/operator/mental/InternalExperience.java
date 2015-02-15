@@ -185,7 +185,7 @@ public class InternalExperience extends AbstractPlugin  {
             
             Product prod=new Product(belief.term);
             
-            if(op!=null && prod!=null) {
+            if(op!=null) {
                 
                 Term new_term=Inheritance.make(prod, op);
                 Sentence sentence = new Sentence(

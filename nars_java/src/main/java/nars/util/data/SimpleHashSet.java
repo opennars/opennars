@@ -120,7 +120,7 @@ public class SimpleHashSet<T> extends AbstractSet<T> implements Set<T>, Cloneabl
         if (key == null) {
             if (mEntryForNull == null) {
                 mSize++;
-                mEntryForNull = new SimpleHashSetEntry<T>(0, null);
+                mEntryForNull = new SimpleHashSetEntry(0, null);
                 return true;
             }
             return false;
@@ -140,7 +140,7 @@ public class SimpleHashSet<T> extends AbstractSet<T> implements Set<T>, Cloneabl
             tab = doubleCapacity();
             index = hash & (tab.length - 1);
         }
-        tab[index] = new SimpleHashSetEntry<T>(hash, key);
+        tab[index] = new SimpleHashSetEntry<>(hash, key);
         return true;
     }
 

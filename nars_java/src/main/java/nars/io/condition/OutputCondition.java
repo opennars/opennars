@@ -34,7 +34,7 @@ public abstract class OutputCondition extends AbstractReaction {
     }
 
     public OutputCondition(NAR nar) {
-        this(nar, new Class[] { Events.OUT.class, Events.EXE.class, Events.Answer.class });
+        this(nar, Events.OUT.class, Events.EXE.class, Events.Answer.class );
     }
 
     /** whether this is an "inverse" condition */

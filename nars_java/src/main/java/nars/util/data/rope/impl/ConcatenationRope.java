@@ -180,7 +180,7 @@ public class ConcatenationRope extends AbstractRope {
     @Override
     public Rope subSequence(final int start, final int end) {
         if (start < 0 || end > this.length()) {
-            throw new IllegalArgumentException("Illegal subsequence (" + start + "," + end + ")");
+            throw new IllegalArgumentException("Illegal subsequence (" + start + ',' + end + ')');
         }
         if (start == 0 && end == this.length()) {
             return this;

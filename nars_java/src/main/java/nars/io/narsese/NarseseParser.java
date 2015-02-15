@@ -6,10 +6,13 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.logic.NALOperator;
 import nars.logic.entity.*;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
-import org.parboiled.*;
+import org.parboiled.BaseParser;
+import org.parboiled.Parboiled;
+import org.parboiled.Rule;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
@@ -17,13 +20,11 @@ import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
 import org.parboiled.support.Var;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-import nars.logic.NALOperator;
 import static nars.logic.NALOperator.*;
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
@@ -520,7 +521,7 @@ public class NarseseParser extends BaseParser<Object> {
            if (x instanceof Task)
                c.accept((Task)x);
             else {
-               throw new RuntimeException("Unknown parse result: " + x + " (" + x.getClass() + ")");
+               throw new RuntimeException("Unknown parse result: " + x + " (" + x.getClass() + ')');
            }
         });
     }
@@ -574,7 +575,7 @@ public class NarseseParser extends BaseParser<Object> {
             ParsingResult r = rpr.run(input);
 
             System.out.println("valid? " + (r.matched && (r.parseErrors.isEmpty())) );
-            r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + " " + x));
+            r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + ' ' + x));
 
             for (Object e : r.parseErrors) {
                 if (e instanceof InvalidInputError) {

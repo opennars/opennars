@@ -127,8 +127,8 @@ public abstract class Operator extends Term implements Plugin {
             Term[] args = operation.getArguments().term;
             Operator operator = operation.getOperator();
             
-            return ((b != null) ? (b.toStringExternal() + " ") : "") + 
-                        operator + "(" + Arrays.toString(args) + ")=" + feedback;
+            return ((b != null) ? (b.toStringExternal() + ' ') : "") +
+                        operator + '(' + Arrays.toString(args) + ")=" + feedback;
         }
         
         

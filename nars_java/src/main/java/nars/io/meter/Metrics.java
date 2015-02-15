@@ -266,7 +266,7 @@ JsonSerializationContext context) {
             int vl = v.length;
 
             if (c + vl > nextRow.length) 
-                throw new RuntimeException("column overflow: " + m + " " + c + "+" + vl + ">" + nextRow.length);
+                throw new RuntimeException("column overflow: " + m + ' ' + c + '+' + vl + '>' + nextRow.length);
 
             if (vl == 1) {
                 nextRow[c++] = v[0];
@@ -344,7 +344,7 @@ JsonSerializationContext context) {
     
     public List<Signal> getSignals() {
         if (signalList == null) {
-            signalList = new ArrayList<Signal>(numColumns);
+            signalList = new ArrayList(numColumns);
             for (Meter<?> m : meters)
                 signalList.addAll(m.getSignals());
         }

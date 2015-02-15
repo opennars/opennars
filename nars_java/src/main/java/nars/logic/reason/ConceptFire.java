@@ -207,7 +207,7 @@ abstract public class ConceptFire extends NAL {
 
     @Override
     public String toString() {
-        return "FireConcept[" + currentConcept + "," + currentTaskLink + "]";
+        return "FireConcept[" + currentConcept + ',' + currentTaskLink + ']';
     }
 
 

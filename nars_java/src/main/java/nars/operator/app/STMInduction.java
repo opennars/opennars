@@ -73,7 +73,7 @@ public class STMInduction extends AbstractPlugin {
             return false;
         }
 
-        final long now = nal.memory.time();
+        //final long now = nal.memory.time();
 
 
         Iterator<Task> ss = stm.iterator();

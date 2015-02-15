@@ -136,9 +136,9 @@ public class Default extends NewNAR implements ConceptBuilder {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"[" + level +
+        return getClass().getSimpleName()+ '[' + level +
                 ((internalExperience== InternalExperience.InternalExperienceMode.None) || (internalExperience==null) ? "" : "+")
-                + "]";
+                + ']';
     }
 
 

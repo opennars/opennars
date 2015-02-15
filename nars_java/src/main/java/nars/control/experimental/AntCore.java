@@ -405,7 +405,7 @@ public class AntCore extends ConceptWaveCore {
             return "   {" + 
                     (link!=null ? ((Item)link).name() : null)  + " <<< " + 
                     (concept!=null ? concept.name() : null) +
-                    " | " + eta + " " + (inConcept() ? "concept" : (inLink() ? "tlink" : "")) + "}";
+                    " | " + eta + ' ' + (inConcept() ? "concept" : (inLink() ? "tlink" : "")) + '}';
         }
 
                 

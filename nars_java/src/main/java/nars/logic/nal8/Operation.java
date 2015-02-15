@@ -162,7 +162,7 @@ public class Operation extends Inheritance {
 
         Operator o = m.getOperator(operator);
         if (o == null)
-            throw new RuntimeException("Unknown operator: " + o); //TODO use a 'UnknownOperatorException' so this case can be detected by callers
+            throw new RuntimeException("Unknown operator: " + operator); //TODO use a 'UnknownOperatorException' so this case can be detected by callers
 
         return make(o, args, true);
     }

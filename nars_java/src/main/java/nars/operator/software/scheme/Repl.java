@@ -47,7 +47,7 @@ public class Repl {
         do {
             String l = bufferedReader.readLine();
             if (l == null) return null;
-            line += l + "\n";
+            line += l + '\n';
         } while (bufferedReader.ready());
         return line;
     }

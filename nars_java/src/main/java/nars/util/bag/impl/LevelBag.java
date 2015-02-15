@@ -598,7 +598,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     protected final Level ensureLevelExists(final int l) {
         final Level existing = this.level[l];
         if (existing == null) {
-            return (this.level[l] = new Level<K,E>(levelEmpty, nodePool, l));
+            return (this.level[l] = new Level(levelEmpty, nodePool, l));
         }
         return existing;
     }
@@ -666,7 +666,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     public String toStringLong(int minLevel) {
         StringBuilder buf = new StringBuilder(32)
                 .append(" BAG ").append(getClass().getSimpleName())
-                .append(" ").append(showSizes());
+                .append(' ').append(showSizes());
 
         for (int i = levels; i >= minLevel; i--) {
             if (!levelEmpty[i - 1]) {

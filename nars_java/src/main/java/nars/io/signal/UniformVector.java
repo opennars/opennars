@@ -49,7 +49,7 @@ public class UniformVector  {
                 if (v < 0.0) v = 0.0;
                 float truth = (float)v;
                 float conf = 0.99f;
-                s.append("$").append(n2(priority)).append("$ <").append(prefix).append("_").append(i).append(" --> ").append(prefix).append(">. :|: %").append(n2(truth)).append(";").append(n2(conf)).append("%\n");
+                s.append('$').append(n2(priority)).append("$ <").append(prefix).append('_').append(i).append(" --> ").append(prefix).append(">. :|: %").append(n2(truth)).append(';').append(n2(conf)).append("%\n");
             }
         }
         

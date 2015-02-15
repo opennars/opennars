@@ -42,7 +42,7 @@ public class FirstOrderDifference extends DependsOnColumn {
         double currentValue = values.get(0);
         double prevValue = values.get(1);
         
-        return new Double(currentValue - prevValue);
+        return currentValue - prevValue;
     }
 
     

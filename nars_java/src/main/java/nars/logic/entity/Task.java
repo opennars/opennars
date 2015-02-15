@@ -339,19 +339,19 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
 
     public String getExplanation() {
         //TODO StringBuilder
-        String x = toString() + "\n";
+        String x = toString() + '\n';
         if (cause!=null)
-            x += "  cause=" + cause + "\n";
+            x += "  cause=" + cause + '\n';
         if (bestSolution!=null) {
             if (!getTerm().equals(bestSolution.term))
-                x += "  solution=" + bestSolution + "\n";
+                x += "  solution=" + bestSolution + '\n';
         }
         if (parentBelief!=null)
-            x += "  parentBelief=" + parentBelief + " @ " + parentBelief.getCreationTime() + "\n";
+            x += "  parentBelief=" + parentBelief + " @ " + parentBelief.getCreationTime() + '\n';
         
         Task pt = getParentTask();
         if (pt!=null) {
-            x += "  parentTask=" + pt + " @ " + pt.getCreationTime() + "\n";
+            x += "  parentTask=" + pt + " @ " + pt.getCreationTime() + '\n';
         
             int indentLevel = 1;
             Task p=getParentTask();

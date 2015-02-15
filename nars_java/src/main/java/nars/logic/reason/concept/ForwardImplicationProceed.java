@@ -102,9 +102,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
                     //ok its a minor, we have to construct the residue implication now
                     Term[] residue = new Term[conj.term.length - conj2.term.length];
-                    for (int k = 0; k < residue.length; k++) {
-                        residue[k] = conj.term[conj2.term.length + k];
-                    }
+                    System.arraycopy(conj.term, conj2.term.length + 0, residue, 0, residue.length);
 
                     Term C = Conjunction.make(residue, conj.getTemporalOrder());
                     Implication resImp = Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
