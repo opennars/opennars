@@ -269,6 +269,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
         return new String(this.sequence);
     }
 
+    @Override
     public String toString(final int offset, final int length) {
         return new String(this.sequence, offset, length);
     }

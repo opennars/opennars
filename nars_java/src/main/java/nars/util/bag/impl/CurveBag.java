@@ -294,6 +294,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
         return nameTable.get(key);
     }
 
+    @Override
     public E TAKE(final K key) {
         return nameTable.remove(key);
     }

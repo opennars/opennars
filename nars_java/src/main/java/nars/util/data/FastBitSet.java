@@ -55,6 +55,7 @@ public class FastBitSet {
         this.bits = bits;        
     }
     
+    @Override
     public FastBitSet clone() {
         return new FastBitSet(bits, _length);
     }

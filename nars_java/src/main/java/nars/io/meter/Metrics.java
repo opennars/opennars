@@ -28,7 +28,8 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     final static int PRECISION = 4;
     public final static Gson json = new GsonBuilder()
              .registerTypeAdapter(Double.class, new JsonSerializer<Double>()  { 
-                        public JsonElement serialize(Double value, Type theType, 
+                        @Override
+                        public JsonElement serialize(Double value, Type theType,
 JsonSerializationContext context) { 
                                 if (value.isNaN()) { 
                                         return new JsonPrimitive("NaN");

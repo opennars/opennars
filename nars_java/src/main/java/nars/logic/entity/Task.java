@@ -137,6 +137,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         this(t.getSentence(), t.getBudget(), t.getParentTask(), t.getParentBelief(), t.getSolution());
     }
 
+    @Override
     public Task clone() {
         return new Task(sentence, budget, parentTask, parentBelief, bestSolution);
     }

@@ -65,6 +65,7 @@ public class NARTrace extends MemoryObserver {
                     (signal.length > 1 ? Arrays.toString(signal) : signal[0]);
         }
         
+        @Override
         public Class getType() {
             return channel;
         }

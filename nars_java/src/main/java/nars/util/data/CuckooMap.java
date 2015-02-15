@@ -93,6 +93,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         size = map.size;
     }
 
+    @Override
     public int size() {
         return size;
     }
@@ -110,6 +111,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
 
     /** Returns the old value associated with the specified key, or null. */
+    @Override
     public V put (K key, V value) {
         if (key == null) throw new IllegalArgumentException("key cannot be null.");
         return put_internal(key, value);
@@ -312,6 +314,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         size++;
     }
 
+    @Override
     public V get (Object key) {
         int hashCode = key.hashCode();
         int index = hashCode & mask;
@@ -355,6 +358,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     //TODO faster remove(key,value) when value already known
 
+    @Override
     public V remove (Object key) {
         int hashCode = key.hashCode();
         int index = hashCode & mask;
@@ -432,6 +436,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         resize(maximumCapacity);
     }
 
+    @Override
     public void clear () {
         K[] keyTable = this.keyTable;
         V[] valueTable = this.valueTable;
@@ -471,6 +476,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         return false;
     }
 
+    @Override
     public boolean containsKey (Object key) {
         int hashCode = key.hashCode();
         int index = hashCode & mask;
@@ -667,6 +673,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         }
 
         /** Note the same entry instance is returned each time this method is called. */
+        @Override
         public Entry<K, V> next () {
             if (!hasNext) throw new NoSuchElementException();
             K[] keyTable = map.keyTable;
@@ -677,10 +684,12 @@ public class CuckooMap<K, V> implements Map<K,V> {
             return entry;
         }
 
+        @Override
         public boolean hasNext () {
             return hasNext;
         }
 
+        @Override
         public Iterator<Entry<K, V>> iterator () {
             return this;
         }
@@ -691,10 +700,12 @@ public class CuckooMap<K, V> implements Map<K,V> {
             super((CuckooMap<Object, V>)map);
         }
 
+        @Override
         public boolean hasNext () {
             return hasNext;
         }
 
+        @Override
         public V next () {
             if (!hasNext) throw new NoSuchElementException();
             V value = map.valueTable[nextIndex];
@@ -703,6 +714,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
             return value;
         }
 
+        @Override
         public Iterator<V> iterator () {
             return this;
         }
@@ -728,10 +740,12 @@ public class CuckooMap<K, V> implements Map<K,V> {
             super((CuckooMap<K, Object>)map);
         }
 
+        @Override
         public boolean hasNext () {
             return hasNext;
         }
 
+        @Override
         public K next () {
             if (!hasNext) throw new NoSuchElementException();
             K key = map.keyTable[nextIndex];
@@ -740,6 +754,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
             return key;
         }
 
+        @Override
         public Iterator<K> iterator () {
             return this;
         }

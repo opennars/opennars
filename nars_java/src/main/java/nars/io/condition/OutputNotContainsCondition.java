@@ -35,6 +35,7 @@ public class OutputNotContainsCondition extends OutputContainsCondition {
         return true;
     }
 
+    @Override
     public boolean isInverse() {
         return true;
     }

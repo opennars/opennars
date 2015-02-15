@@ -231,6 +231,7 @@ public abstract class Operator extends Term implements Plugin {
 //        }
 //    }
 
+    @Override
     public boolean isExecutable(final Memory mem) {
         return true;
     }

@@ -78,6 +78,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * 
    * @return the value as a Double
    */
+  @Override
   public Object getValue() {
     return new Double(this.value);
   }
@@ -102,6 +103,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @throws ClassCastException
    *           if the type is not a {@link Number}
    */
+  @Override
   public void setValue(Object value) {
     setValue(((Number) value).doubleValue());
   }
@@ -114,6 +116,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @return the numeric value represented by this object after conversion to
    *         type int.
    */
+  @Override
   public int intValue() {
     return (int) value;
   }
@@ -124,6 +127,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @return the numeric value represented by this object after conversion to
    *         type long.
    */
+  @Override
   public long longValue() {
     return (long) value;
   }
@@ -134,6 +138,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @return the numeric value represented by this object after conversion to
    *         type float.
    */
+  @Override
   public float floatValue() {
     return (float) value;
   }
@@ -144,6 +149,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @return the numeric value represented by this object after conversion to
    *         type double.
    */
+  @Override
   public double doubleValue() {
     return value;
   }
@@ -311,6 +317,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @throws ClassCastException
    *           if the argument is not a MutableDouble
    */
+  @Override
   public int compareTo(Object obj) {
     MutableDouble other = (MutableDouble) obj;    
     return Double.compare(value, other.value);

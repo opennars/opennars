@@ -28,10 +28,12 @@ public class ReversibleRecyclableArrayIterator<T> implements Iterator<T> {
         this.reverse = reverse;
     }
 
+    @Override
     public boolean hasNext() {
         return (current < count);
     }
 
+    @Override
     public T next() {
         if (!hasNext()) throw new NoSuchElementException();
 
@@ -41,6 +43,7 @@ public class ReversibleRecyclableArrayIterator<T> implements Iterator<T> {
         return a[i];
     }
 
+    @Override
     public void remove() throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }

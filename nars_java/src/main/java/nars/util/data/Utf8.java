@@ -223,6 +223,7 @@ class Utf8_apache implements Comparable<Utf8>, CharSequence {
     private static final Utf8Converter UTF8_CONVERTER
             = System.getProperty("java.version").startsWith("1.6.")
                     ? new Utf8Converter() {                       // optimized for Java 6
+                @Override
                 public String fromUtf8(byte[] bytes, int length) {
                     try {
                         return new String(bytes, 0, length, "UTF-8");
@@ -231,6 +232,7 @@ class Utf8_apache implements Comparable<Utf8>, CharSequence {
                     }
                 }
 
+                @Override
                 public byte[] toUtf8(String str) {
                     try {
                         return str.getBytes("UTF-8");
@@ -240,10 +242,12 @@ class Utf8_apache implements Comparable<Utf8>, CharSequence {
                 }
             }
             : new Utf8Converter() {                       // faster in Java 7 & 8
+                @Override
                 public String fromUtf8(byte[] bytes, int length) {
                     return new String(bytes, 0, length, UTF8);
                 }
 
+                @Override
                 public byte[] toUtf8(String str) {
                     return str.getBytes(UTF8);
                 }

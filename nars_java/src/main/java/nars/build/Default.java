@@ -211,6 +211,7 @@ public class Default extends NewNAR implements ConceptBuilder {
         return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
     }
     
+    @Override
     public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag() {
         return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
     }

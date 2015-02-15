@@ -143,6 +143,7 @@ public class DDList<E> implements Iterable<E> {
         return i.item;
     }
 
+    @Override
     public DDListIterator<E> iterator() {
         DDListIterator dd = new DDListIterator();
         dd.init(this);

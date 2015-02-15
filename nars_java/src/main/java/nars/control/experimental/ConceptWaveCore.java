@@ -45,6 +45,7 @@ abstract public class ConceptWaveCore implements Core {
         //this.subcon = subcon
     }    
 
+    @Override
     abstract public void cycle();
 
 

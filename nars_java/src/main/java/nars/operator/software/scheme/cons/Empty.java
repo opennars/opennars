@@ -23,27 +23,33 @@ class Empty extends Cons<Object> {
         return Spliterators.emptySpliterator();
     }
 
+    @Override
     public Object car() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Cons<Object> cdr() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setCar(Object car) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setCdr(Cons<Object> cdr) {
         throw new UnsupportedOperationException();
 
     }
 
+    @Override
     public boolean isEmpty() {
         return true;
     }
 
+    @Override
     public void append(Cons<Object> tail) {
         throw new UnsupportedOperationException();
     }

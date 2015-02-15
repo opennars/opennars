@@ -22,6 +22,7 @@ public class OutputEmptyCondition extends OutputCondition {
         succeeded = true;
     }
 
+    @Override
     public String getFalseReason() {
         return "FAIL: output exists but should not: " + output;
     }

@@ -21,6 +21,7 @@ public class DDListIterator<E> implements Iterator<E> {
         index = 0;
         size = d.size;
     }
+    @Override
     public boolean hasNext() {
         return index < size;
     }
@@ -37,6 +38,7 @@ public class DDListIterator<E> implements Iterator<E> {
         return index;
     }
 
+    @Override
     public E next() {
         if (!hasNext()) throw new NoSuchElementException();
         //lastAccessed = current;

@@ -144,6 +144,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          * @param obj The object whose hash code should be evaluated.
          * @return Its hash code.
          */
+        @Override
         public int hash(T obj) {
             /* If the object is null, just evaluate to zero. */
             if (obj == null) return 0;
@@ -175,6 +176,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          *
          * @param numBuckets The number of buckets to use.
          */
+        @Override
         public HashFunction<T> randomHashFunction(int numBuckets) {
             /* Compute the base-2 logarithm of the number of buckets.  This
              * value is the number of bits required to hold the number of
@@ -646,6 +648,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
              *
              * @return Whether there are more elements to visit.
              */
+            @Override
             public boolean hasNext() {
                 /* We have a next element as long as the next location to visit
                  * isn't past the end of the arrays.
@@ -660,6 +663,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
              * @return The next element in the sequence.
              * @throws NoSuchElementException If there are no more elements.
              */
+            @Override
             public Entry<K, V> next() {
                 if (!hasNext())
                     throw new NoSuchElementException("Out of elements.");
@@ -687,6 +691,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
              *
              * @throws IllegalStateException If there is no element to remove.
              */
+            @Override
             public void remove() {
                 /* Check if something is staged for removal and fail if there
                  * isn't.
@@ -726,6 +731,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          *
          * @return An iterator that can traverse the elements of the EntrySet.
          */
+        @Override
         public Iterator<Entry<K, V>> iterator() {
             return new MapIterator();
         }

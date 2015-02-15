@@ -96,6 +96,7 @@ public final class ReverseRope extends AbstractRope {
         return this.rope;
     }
 
+    @Override
     public Iterator<Character> reverseIterator(final int start) {
         if (start < 0 || start > this.length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);

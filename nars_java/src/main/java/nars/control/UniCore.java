@@ -132,6 +132,7 @@ abstract public class UniCore implements Core {
         private boolean createIfMissing;
         private long now;
 
+        @Override
         public Concept updateItem(Concept c) {
 
             long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();

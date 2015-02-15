@@ -12,6 +12,7 @@ public class DDNodePool<E> extends DequePool<DD<E>> {
         super(preallocate);
     }
 
+    @Override
     public DD<E> create() {
         return new DD<E>();
     }

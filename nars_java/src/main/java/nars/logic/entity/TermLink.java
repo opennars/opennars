@@ -191,6 +191,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
      * @param i The index level
      * @return The index value
      */
+    @Override
     public final short getIndex(final int i) {
         if ((i < 0) || ( i >= index.length))
             throw new RuntimeException(this + " index fault: " + i);

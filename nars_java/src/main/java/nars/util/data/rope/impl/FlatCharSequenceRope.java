@@ -158,6 +158,7 @@ public class FlatCharSequenceRope extends AbstractRope implements FlatRope {
         return this.sequence.toString();
     }
 
+    @Override
     public String toString(final int offset, final int length) {
         return this.sequence.subSequence(offset, offset + length).toString();
     }
