@@ -196,7 +196,7 @@ public class NARio extends Run {
         //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
 
         
-        scene = level = new LevelScene(graphicsConfiguration, this, 4,1, LevelGenerator.TYPE_OVERGROUND) {
+        scene = level = new LevelScene(graphicsConfiguration, this, 17,1, LevelGenerator.TYPE_CASTLE) {
             @Override
             protected Mario newMario(LevelScene level) {
                 return new Mario(level) {
