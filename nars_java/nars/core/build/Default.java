@@ -152,6 +152,8 @@ public class Default extends Build implements ConceptBuilder {
         
         n.addPlugin(new PerceptionAccel());
         
+       // n.addPlugin(new TemporalParticlePlanner());
+        
         if(pluginPlanner!=null) {
             n.addPlugin(pluginPlanner);
         }

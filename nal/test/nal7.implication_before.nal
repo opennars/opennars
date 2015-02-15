@@ -3,6 +3,5 @@
 <stefan --> good>!
 10
 <stefan --> good>. :|:
- 
-''outputMustContain('<<stefan --> good> =\> (&/,(^pick,stefan),+3)>. :|: %1.00;0.47%')
-'adjusted +2 to +3
+20
+''outputMustContain('<<stefan --> good> =\> (&/,<SELF --> (/,^pick,stefan,_)>,+3)>. :\: %1.00;0.29%')
