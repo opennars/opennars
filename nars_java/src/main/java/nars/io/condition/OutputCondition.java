@@ -82,12 +82,17 @@ public abstract class OutputCondition extends AbstractReaction {
     public static List<OutputCondition> getConditions(NAR n, String example, int similarResultsToSave)  {
         List<OutputCondition> conditions = new ArrayList();
         String[] lines = example.split("\n");
-        
+
+        int cycle = 0;
+        final String expectOutNotContains2 = "''outputMustNotContain('";
+        final String expectOutContains2 = "''outputMustContain('";
+        final String expectOutEmpty = "''expect.outEmpty";
+
         for (String s : lines) {
             s = s.trim();
+            if (s.length() == 0) continue;
             
             
-            final String expectOutContains2 = "''outputMustContain('";
 
             if (s.indexOf(expectOutContains2)==0) {
 
@@ -95,14 +100,13 @@ public abstract class OutputCondition extends AbstractReaction {
                 String match = s.substring(expectOutContains2.length(), s.length()-2);
                 
 
-                //TEMPORARY: try to create TaskCondition which evaluate much faster than the string processing of OutputContainsCondition
                 boolean added = false;
                 //try {
                     Task t = n.narsese.parseTask(match);
                     if (t!=null) {
                         /*if (t.sentence.isEternal())*/ {
 
-                            conditions.add(new TaskCondition(n, Events.OUT.class, t));
+                            conditions.add(new TaskCondition(n, Events.OUT.class, t, cycle));
                             added = true;
                         }
                     }
@@ -120,9 +124,8 @@ public abstract class OutputCondition extends AbstractReaction {
 
             }     
             
-            final String expectOutNotContains2 = "''outputMustNotContain('";
 
-            if (s.indexOf(expectOutNotContains2)==0) {
+            else if (s.indexOf(expectOutNotContains2)==0) {
 
                 //remove ') suffix:
                 String e = s.substring(expectOutNotContains2.length(), s.length()-2);                 
@@ -130,11 +133,19 @@ public abstract class OutputCondition extends AbstractReaction {
 
             }   
             
-            final String expectOutEmpty = "''expect.outEmpty";
-            if (s.indexOf(expectOutEmpty)==0) {                                
+            else if (s.indexOf(expectOutEmpty)==0) {
                 conditions.add(new OutputEmptyCondition(n));
             }                
-            
+            else {
+                //parse sleep cycles to advance the correlated 'cycle' time
+                try {
+                    int sleepCycles = Integer.parseInt(s);
+                    cycle += sleepCycles;
+                }
+                catch (NumberFormatException e) {
+                    cycle++; //non-sleep #, line usually ordinary input
+                }
+            }
 
         }
         

@@ -302,9 +302,13 @@ public class TemporalRules {
         long time1 = s1.getOccurenceTime();
         long time2 = s2.getOccurenceTime();
         
-        long timeDiff = time2 - time1;
+        final long timeDiff;
+        if ((time1 ==Stamp.ETERNAL) || (time2 == Stamp.ETERNAL))
+            timeDiff = 0;
+        else
+            timeDiff = time2 - time1;
 
-        if (!concurrent(time1, time2, durationCycles)) {
+        if (timeDiff != 0 && !concurrent(time1, time2, durationCycles)) {
 
             List<Interval> interval = Interval.intervalSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.memory);
 
@@ -320,6 +324,7 @@ public class TemporalRules {
                 }
             }
         }
+
 
         int order = order(timeDiff, durationCycles);
 

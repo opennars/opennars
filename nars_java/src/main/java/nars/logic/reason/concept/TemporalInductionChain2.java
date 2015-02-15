@@ -56,14 +56,10 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 if ((t instanceof Implication) && (alreadyInducted.add(t))) {
 
-                    Sentence temporalBelief = next.getBestBelief();
+                    Sentence temporalBelief = next.getBestBelief(false, true);
                     if (temporalBelief!=null) {
                         induct(f, task, taskSentence, memory, temporalBelief);
                     }
-                    /*Sentence eternalBelief = next.getBestBelief(true);
-                    if (eternalBelief!=null) {
-                        induct(f, task, taskSentence, memory, eternalBelief);
-                    }*/
 
                 }
             }
@@ -73,6 +69,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
     }
 
+    /** should only take non-eternalized beliefs? */
     private void induct(ConceptFire f, Task task, Sentence taskSentence, Memory memory, Sentence otherBelief) {
         Sentence current, prev;
 

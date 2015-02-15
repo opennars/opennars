@@ -52,7 +52,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     final int maxRemovals = 2;
 
 
-    public TaskCondition(NAR n, Class channel, Task t)  {
+    public TaskCondition(NAR n, Class channel, Task t, long occurenceTimeOffset)  {
         super(n, Events.OUT.class, Events.TaskRemove.class);
 
         //TODO verify that channel is included in the listened events
@@ -60,15 +60,32 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.channel = channel;
 
 
-        this.creationTime = t.getCreationTime();
+        this.creationTime = occurenceTimeOffset;
 
         if (t.sentence.isEternal()) {
             setEternal();
         }
         else {
-            long oc = t.getOcurrenceTime() - creationTime;
+            //prcise:
+            long oc = t.getOcurrenceTime() + occurenceTimeOffset;
             long dur = n.memory.getDuration();
-            setOccurrenceTime(oc - dur/2, oc + dur/2);
+            setOccurrenceTime(oc - dur, oc + dur);
+
+
+            //open interval NOT CORRECT YET:
+            /*
+            long oc = t.getOcurrenceTime() + t.getCreationTime();
+            if (oc > 0) {
+                setOccurrenceTime(Integer.MIN_VALUE, occurenceTimeOffset);
+            }
+            else if (oc < 0) {
+                setOccurrenceTime(occurenceTimeOffset, Integer.MAX_VALUE);
+            }
+            else {
+                long dur = n.memory.getDuration();
+                setOccurrenceTime(occurenceTimeOffset-dur/2, occurenceTimeOffset + dur/2);
+            }*/
+
         }
 
 
@@ -231,11 +248,12 @@ public class TaskCondition extends OutputCondition implements Serializable {
                         distance += tenseCost - 0.01;
                         match = false;
                     }
-
-                    long oc = task.getOcurrenceTime() - task.getCreationTime(); //relative time
-                    if ((oc < ocMin) || (oc > ocMax)) {
-                        distance += rangeError(oc, ocMin, ocMax, true) * tenseCost;
-                        match = false;
+                    else {
+                        long oc = task.getOcurrenceTime() - task.getCreationTime(); //relative time
+                        if ((oc < ocMin) || (oc > ocMax)) {
+                            distance += rangeError(oc, ocMin, ocMax, true) * tenseCost;
+                            match = false;
+                        }
                     }
                 }
 

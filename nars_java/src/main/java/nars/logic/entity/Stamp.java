@@ -444,7 +444,6 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
             derivationChain = new LinkedHashSet();
             return;
         }
-        
             
         if (this.derivationChain != null) return;
         
@@ -527,16 +526,18 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         if (t == null)
             throw new RuntimeException("Chain must contain non-null items");
             
-        ensureChain();        
-        
-        if (derivationChain.size()+1 > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
-            //remove first element
-            Term first = derivationChain.iterator().next();
-            derivationChain.remove(first); 
-        }
+        ensureChain();
 
-        derivationChain.add(t);
-        name = null;
+        if (derivationChain.add(t)) {
+
+            if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
+                //remove first element
+                Term first = derivationChain.iterator().next();
+                derivationChain.remove(first);
+            }
+
+            name = null;
+        }
     }
     public void chainRemove(final Term t) {
         if (t == null)
@@ -547,14 +548,14 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         
         ensureChain();
 
-        derivationChain.remove(t);
-        name = null;
+        if (derivationChain.remove(t)) {
+            name = null;
+        }
     }
+
     public void chainReplace(final Term remove, final Term add) {
-        ensureChain();
-        derivationChain.remove(remove);
-        derivationChain.add(add);
-        name = null;
+        chainRemove(remove);
+        chainAdd(add);
     }
     
     public static long[] toSetArray(final long[] x) {

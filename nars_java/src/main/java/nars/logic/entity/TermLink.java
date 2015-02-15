@@ -164,7 +164,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return prefix;
+        return getPrefix() + ":" + getTarget();
     }
 
     public String getPrefix() { return prefix; }

@@ -169,7 +169,7 @@ public class NALysis extends AbstractNALTest {
     }
     public static void nal2() {
         nal2Default();
-        runDir("test2", 150, 1,
+        runDir("test2", 1000, 1,
                 new Default(),
                 new Default().level(3), //2 needs sets in 3
                 new Curve(),
@@ -180,7 +180,7 @@ public class NALysis extends AbstractNALTest {
     }
     public static void nal3() {
         nal3Default();
-        runDir("test3", 200, 1,
+        runDir("test3", 1000, 1,
                 new Default(),
                 new Default().level(3),
                 new Curve(),
@@ -189,11 +189,11 @@ public class NALysis extends AbstractNALTest {
 
 
     public static void nal4Default() {
-        runDir("test4", 900, 1, new Default().setInternalExperience(null));
+        runDir("test4", 1000, 1, new Default().setInternalExperience(null));
     }
     public static void nal4() {
         nal4Default();
-        runDir("test4", 900, 1,
+        runDir("test4", 1000, 1,
                 new Default(),
                 new Default().level(4),
                 new Curve(),
@@ -201,11 +201,11 @@ public class NALysis extends AbstractNALTest {
     }
 
     public static void nal5Default() {
-        runDir("test5", 1000, 1, new Default().setInternalExperience(null));
+        runDir("test5", 2000, 1, new Default().setInternalExperience(null));
     }
     public static void nal5() {
         nal5Default();
-        runDir("test5", 1000, 1,
+        runDir("test5", 2000, 1,
                 new Default(),
                 new Default().level(5),
                 new Curve(),

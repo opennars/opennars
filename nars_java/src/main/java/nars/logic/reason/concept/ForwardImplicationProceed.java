@@ -114,12 +114,13 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                     TruthValue truth = TruthFunctions.deduction(s.truth, taskLinkTask.sentence.truth);
 
                     Stamp st = new Stamp(taskLinkTask.sentence.stamp, f.memory.time());
-                    st.getChain().add(t);
+                    st.chainAdd(t);
 
-                    Sentence newSentence = new Sentence(resImp, s.punctuation, truth, st);
+                    Task newTask = new Task(
+                            new Sentence(resImp, s.punctuation, truth, st),
+                            new BudgetValue(BudgetFunctions.forward(truth, f)));
 
-                    Task newTask = new Task(newSentence, new BudgetValue(BudgetFunctions.forward(truth, f)));
-                    f.deriveTask(newTask, false, false, null, taskLinkTask);
+                    f.deriveTask(newTask, false, false, s, taskLinkTask);
 
                 }
             }

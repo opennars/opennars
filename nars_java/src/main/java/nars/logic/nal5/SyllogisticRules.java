@@ -509,7 +509,6 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-
         return nal.doublePremiseTask((CompoundTerm)content, truth, budget,
                 nal.newStamp(taskSentence, belief, TemporalRules.applyExpectationOffset(nal.memory, premise1, occurTime)),
                 false);
