@@ -5,6 +5,7 @@ import nars.core.Core;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.logic.entity.*;
+import nars.logic.entity.tlink.TermLinkKey;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.experimental.DelayBag;
 import nars.util.bag.impl.experimental.FairDelayBag;
@@ -59,10 +60,10 @@ public class Neuromorphic extends Curve {
     public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
 
         if (fairdelaybag) {
-            DelayBag<TaskLink, Sentence> taskLinks = new FairDelayBag(
+            DelayBag<Sentence, TaskLink> taskLinks = new FairDelayBag(
                     param.taskLinkForgetDurations, getConceptTaskLinks());
             taskLinks.setMemory(m);
-            DelayBag<TermLink, String> termLinks = new FairDelayBag(
+            DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(
                     param.termLinkForgetDurations, getConceptTermLinks());
             termLinks.setMemory(m);
             return new Concept(b, t, taskLinks, termLinks, m);

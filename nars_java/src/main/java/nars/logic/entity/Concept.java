@@ -32,6 +32,7 @@ import nars.logic.NALOperator;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.tlink.TaskLinkBuilder;
 import nars.logic.entity.tlink.TermLinkBuilder;
+import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.entity.tlink.TermLinkTemplate;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
@@ -63,7 +64,7 @@ public class Concept extends Item<Term> implements Termable {
     /**
      * Term links between the term and its components and compounds; beliefs
      */
-    public final Bag<String, TermLink> termLinks;
+    public final Bag<TermLinkKey, TermLink> termLinks;
 
 
 
@@ -123,7 +124,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final BudgetValue b, final Term term, Bag<Sentence, TaskLink> taskLinks, Bag<String, TermLink> termLinks, final Memory memory) {
+    public Concept(final BudgetValue b, final Term term, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(b);        
         
         this.term = term;

@@ -12,10 +12,8 @@ import nars.util.bag.select.BagActivator;
 
 import java.util.List;
 
-/**
-* Created by me on 2/5/15.
-*/
-public class TermLinkBuilder extends BagActivator<String,TermLink> {
+
+public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
 
     public final Concept concept;
 
@@ -172,14 +170,21 @@ public class TermLinkBuilder extends BagActivator<String,TermLink> {
         return 0;
     }*/
 
-    @Override public String name() {
+    @Override public TermLinkKey name() {
+        return this;
+    }
+
+    public String getPrefix() {
         return currentTemplate.name( !this.from.equals(concept.term) );
+    }
+    public Term getTarget() {
+        return concept.getTerm();
     }
 
 
     @Override
     public TermLink newItem() {
-        return new TermLink(incoming, concept.getTerm(), currentTemplate, name(), getBudget());
+        return new TermLink(incoming, getTarget(), currentTemplate, getPrefix(), getBudget());
     }
 
     public int size() {

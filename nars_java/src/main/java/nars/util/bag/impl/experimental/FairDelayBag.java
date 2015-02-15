@@ -12,7 +12,7 @@ import nars.util.math.Distributor;
  * TODO add a strict probability mode which excludes low priority items from exceeding
  * their proportion in a resulting reload() pending queue
  */
-public class FairDelayBag<E extends Item<K>, K> extends DelayBag<E,K> {
+public class FairDelayBag<E extends Item<K>, K> extends DelayBag<K, E> {
 
     /** # of levels should be "fairly" low, reducing the complete cycle length of the distributor */
     final static int levels = 10;

@@ -30,7 +30,7 @@ import java.util.List;
 abstract public class ConceptWaveCore implements Core {
     
 
-    public DelayBag<Concept,Term> concepts;
+    public DelayBag<Term, Concept> concepts;
     //public final CacheBag<Term, Concept> subcon;
     
     private final ConceptBuilder conceptBuilder;

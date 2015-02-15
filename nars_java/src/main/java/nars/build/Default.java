@@ -5,6 +5,7 @@ import nars.core.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.logic.entity.*;
+import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.nal8.Operator;
 import nars.operator.app.STMInduction;
 import nars.operator.app.plan.TemporalParticlePlanner;
@@ -191,7 +192,7 @@ public class Default extends NewNAR implements ConceptBuilder {
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {        
         Bag<Sentence, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
-        Bag<String, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }

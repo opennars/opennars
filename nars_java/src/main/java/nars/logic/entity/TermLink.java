@@ -23,7 +23,10 @@ package nars.logic.entity;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.logic.Terms.Termable;
+import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.entity.tlink.TermLinkTemplate;
+
+import java.util.Objects;
 
 /**
  * A tlink between a compound term and a component term
@@ -37,7 +40,9 @@ import nars.logic.entity.tlink.TermLinkTemplate;
  * <p>
  * This class is mainly used in logic.RuleTable to dispatch premises to logic rules
  */
-public class TermLink extends Item<String> implements TLink<Term>, Termable {
+public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable, TermLinkKey {
+
+
 
     /** At C, point to C; TaskLink only */
     public static final short SELF = 0;
@@ -70,8 +75,9 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
 
-    private final String name;
+    private final String prefix;
 
+    transient final int hash;
 
     /**
      * Constructor to make actual TermLink from a template
@@ -93,8 +99,15 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
             this.target = template.target;
             type = (short)(template.type - 1); //// point to component
         }
+
         index = template.index;
-        this.name = makeName().toString();
+
+        if (name!=null)
+            this.prefix = name;
+        else
+            this.prefix = newPrefix().toString();
+
+        this.hash = Objects.hash(prefix, target);
     }
 
     public boolean toSelfOrTransform() {
@@ -110,24 +123,25 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
     }
 
     @Override
-    public String name() {
-        return name;
+    public TermLink name() {
+        return this;
     }
 
     @Override
     public int hashCode() {
-        return name().hashCode();
+        return hash;
     }
 
 
     @Override
     public boolean equals(final Object obj) {
+        if (obj == null) return false;
         if (obj == this) return true;
 
-        if (obj instanceof TermLink) {
+        /*if (obj instanceof TermLink)*/ {
 
             TermLink t = (TermLink)obj;
-            return t.name().equals(name());
+            return prefix.equals(t.prefix) && target.equals(t.target);
 //
 //            short[] ti = t.index;
 //            final int il = index.length;
@@ -154,17 +168,19 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
 //            //compare target
 //            return (target.equals(t.target));
         }
-        return false;
+        //return false;
     }
 
     
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return name;
+        return prefix;
     }
 
-    protected CharSequence makeName() {
+    public String getPrefix() { return prefix; }
+
+    protected CharSequence newPrefix() {
 
         final String at1, at2;
         if ((type % 2) == 1) {  // to component
@@ -179,7 +195,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
 
         final CharSequence targetName = target.name();
 
-        final int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1) + targetName.length();
+        final int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1);// + targetName.length();
 
         final StringBuilder n = new StringBuilder(estimatedLength);
         n.append(at1).append('T').append(type);
@@ -197,7 +213,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
             }
 
         }
-        return n.append(at2).append(targetName);
+        return n.append(at2);//.append(targetName);
     }
     
     /**

@@ -24,18 +24,22 @@ public class Predict2D extends JPanel {
 
     private float time;
 
-    public static class Point {
-        public final Color color;
-        public float x, y;
+    abstract public class Point {
 
-        public Point(Color c) {
-            this.color = c;
-        }
-
-        public void update(float t) {
+        public Point() {
 
         }
 
+        abstract public void update(float t, Graphics g);
+
+        public void draw(Graphics g, float x, float y, Color c) {
+            int w = (int)(getWidth()/20f);
+            int h = (int)(getHeight()/20f);
+            int px = (int)((x*0.9f + 1f) * getWidth()/2f);
+            int py = (int)((y*0.9f + 1f) * getHeight()/2f);
+            g.setColor(c);
+            g.fillOval(px, py, w, h);
+        }
     }
 
     public List<Point> points = new ArrayList();
@@ -43,14 +47,9 @@ public class Predict2D extends JPanel {
     @Override public void paint(Graphics g) {
 
         g.clearRect(0,0,getWidth(), getHeight());
-        int w = (int)(getWidth()/20f);
-        int h = (int)(getHeight()/20f);
+
         for (Point p : points) {
-            p.update(time);
-            int x = (int)((p.x*0.9f + 1f) * getWidth()/2f);
-            int y = (int)((p.y*0.9f + 1f) * getHeight()/2f);
-            g.setColor(p.color);
-            g.fillOval(x, y, w, h);
+            p.update(time, g);
         }
     }
 
@@ -220,8 +219,9 @@ public class Predict2D extends JPanel {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    float tx, ty;
 
+    public Predict2D() throws InterruptedException {
         Parameters.IMMEDIATE_ETERNALIZATION = false;
 
         NAR n = new NAR(new Default().setInternalExperience(null).simulationTime());
@@ -241,18 +241,22 @@ public class Predict2D extends JPanel {
         ValuePrediction px = new ValuePrediction(n, "x", levels);
         ValuePrediction py = new ValuePrediction(n, "y", levels);
 
-        p.points.add(target = new Point(Color.RED) {
+        p.points.add(target = new Point() {
             @Override
-            public void update(float ms) {
-                this.x = (float)Math.sin(ms / 1000f);
-                this.y = (float)Math.cos(ms / 1000f);
+            public void update(float ms, Graphics g) {
+                tx = (float)Math.sin(ms / 1000f);
+                ty = (float)Math.cos(ms / 1000f);
+                draw(g, tx, ty, Color.RED);
             }
         });
-        p.points.add(belief = new Point(Color.BLUE) {
+
+        p.points.add(belief = new Point() {
+
             @Override
-            public void update(float ms) {
-                this.x = px.value();
-                this.y = py.value();
+            public void update(float ms, Graphics g) {
+                float x = (float)Math.sin(ms / 1000f);
+                float y = (float)Math.cos(ms / 1000f);
+                draw(g, x, y, Color.RED);
             }
         });
 
@@ -261,8 +265,8 @@ public class Predict2D extends JPanel {
         float t = 0;
         while (true) {
 
-            ix.setValue(target.x);
-            iy.setValue(target.y);
+            ix.setValue(tx);
+            iy.setValue(ty);
 
 
             p.update(t);
@@ -275,5 +279,9 @@ public class Predict2D extends JPanel {
             Thread.sleep(5);
         }
 
+
+    }
+    public static void main(String[] args) throws InterruptedException {
+        new Predict2D();
     }
 }

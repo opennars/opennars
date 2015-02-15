@@ -3,6 +3,7 @@ package nars.build;
 import nars.core.Core;
 import nars.core.Memory;
 import nars.logic.entity.*;
+import nars.logic.entity.tlink.TermLinkKey;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.CurveBag.FairPriorityProbabilityCurve;
@@ -51,7 +52,7 @@ public class Curve extends Default {
     public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
         
         Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(getConceptTaskLinks(), curve, randomRemoval);
-        Bag<String, TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), curve, randomRemoval);
+        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), curve, randomRemoval);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }

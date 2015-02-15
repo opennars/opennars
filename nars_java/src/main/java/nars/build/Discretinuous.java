@@ -2,6 +2,7 @@ package nars.build;
 
 import nars.core.Memory;
 import nars.logic.entity.*;
+import nars.logic.entity.tlink.TermLinkKey;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.LevelBag;
@@ -39,7 +40,7 @@ public class Discretinuous extends Default {
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
         
         Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(getConceptTaskLinks(), randomRemoval);
-        Bag<String, TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), randomRemoval);
+        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), randomRemoval);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }
