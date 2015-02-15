@@ -25,15 +25,15 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
-import nars.util.bag.*;
+import nars.util.bag.Bag;
+import nars.util.bag.BagSelector;
+import nars.util.data.CuckooMap;
 import nars.util.data.ReversibleRecyclableArrayIterator;
 import nars.util.data.linkedlist.DD;
-import nars.util.data.CuckooMap;
 import nars.util.data.linkedlist.DDList;
 import nars.util.data.linkedlist.DDNodePool;
 import nars.util.math.Distributor;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -98,7 +98,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     /**
      * array of lists of items, for items on different level
      */
-    public final Level<K,E>[] level;
+    public final Level[] level;
 
     public static enum NextNonEmptyLevelMode {
         Default, Fast
@@ -114,7 +114,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     /**
      * thresholdLevel = 0 disables "fire level completely" threshold effect
      */
-    public LevelBag(int levels, int capacity, int thresholdLevel) {
+    public LevelBag(final int levels, final int capacity, final int thresholdLevel) {
         this.levels = levels;
 
         this.fireCompleteLevelThreshold = thresholdLevel;
@@ -127,13 +127,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
                 new CuckooMap(capacity * 2) :
                 new ConcurrentHashMap<>(capacity * 2);
 
-        levelEmpty = new boolean[this.levels];
+        levelEmpty = new boolean[levels];
 
-        level = (Level<K, E>[]) Array.newInstance(Level.class, this.levels);
+        level = new Level[levels];
 
+        //TODO use inverted condition to avoid needing to always setting this to true here
         Arrays.fill(levelEmpty, true);
 
-        DISTRIBUTOR = Distributor.get(this.levels).order;
+        DISTRIBUTOR = Distributor.get(levels).order;
 
         clear();
     }
@@ -185,6 +186,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
     }
 
+    public final Level<K,E> level(int l) {
+        return (Level<K,E>)level[l];
+    }
+
     @Override
     public final void clear() {
 
@@ -228,9 +233,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
      */
     protected int sizeItems() {
         int t = 0;
-        for (Level l : level) {
-            if (l != null)
-                t += l.size();
+        for (int i = 0; i < levels; i++) {
+            if (level[i] != null)
+                t += level[i].size();
         }
         return t;
     }
@@ -426,7 +431,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
         if (Parameters.DEBUG) {
-            if (levelEmpty[currentLevel] || (level[currentLevel] == null) || (level[currentLevel].isEmpty())) {
+            if (levelEmpty[currentLevel] || (level[currentLevel] == null) || (level(currentLevel).isEmpty())) {
                 if (Parameters.THREADS == 1) {
                     throw new RuntimeException("Empty setLevel selected for takeNext");
                 } else {
@@ -464,9 +469,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
     private /*synchronized*/ E TAKE(int outLevel) {
 
-        Level l = level[outLevel];
-        if (l == null)
+        if (level[outLevel] == null)
             throw new RuntimeException("Attempted TAKE from empty (null) level " + outLevel);
+
+        Level l = level[outLevel];
         if (l.isEmpty())
             throw new RuntimeException("Attempted TAKE from empty level " + outLevel);
 
@@ -479,8 +485,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
 
-    public final int getNonEmptyLevelSize(final int level) {
-        return this.level[level].size();
+    public final int getNonEmptyLevelSize(final int l) {
+        return this.level[l].size();
     }
 
     public final int getLevelSize(final int l) {
@@ -596,7 +602,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     protected final Level ensureLevelExists(final int l) {
-        final Level existing = this.level[l];
+        final Level existing = this.level(l);
         if (existing == null) {
             return (this.level[l] = new Level(levelEmpty, nodePool, l));
         }
@@ -671,8 +677,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         for (int i = levels; i >= minLevel; i--) {
             if (!levelEmpty[i - 1]) {
                 buf.append("\n --- LEVEL ").append(i).append(":\n ");
-                for (final E e : level[i - 1]) {
-                    buf.append(e.toStringLong()).append('\n');
+                for (final Object e : level[i - 1]) {
+                    buf.append(e).append('\n');
                 }
 
             }
@@ -687,8 +693,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     public String showSizes() {
         StringBuilder buf = new StringBuilder(" ");
         int l = 0;
-        for (Level items : level) {
-            int s = items.size();
+        for (Object items : level) {
+            int s = ((Level)items).size();
             if (s > 0) {
                 l++;
                 buf.append(s).append(' ');

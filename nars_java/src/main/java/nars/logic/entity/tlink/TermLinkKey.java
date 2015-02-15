@@ -2,8 +2,6 @@ package nars.logic.entity.tlink;
 
 import nars.logic.entity.Term;
 
-import java.util.Objects;
-
 
 public interface TermLinkKey {
     public Term getTarget();
@@ -11,7 +9,7 @@ public interface TermLinkKey {
     public String getPrefix();
 
     default public int termLinkHashCode() {
-        return Objects.hash(getPrefix(), getTarget());
+        return 31 * ((31 * getPrefix().hashCode()) + getTarget().hashCode());
     }
 
     default public boolean termLinkEquals(Object obj) {
