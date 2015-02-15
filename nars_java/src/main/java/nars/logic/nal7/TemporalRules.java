@@ -227,10 +227,6 @@ public class TemporalRules {
         Term t11=null;
         Term t22=null;
         
-
-        //since induction shouldnt miss something trivial random is not good here
-            ///ex: *Memory.randomNumber.nextDouble()>0.5 &&*/
-        
         if (termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
             
             Statement ss1 = (Statement) t1;

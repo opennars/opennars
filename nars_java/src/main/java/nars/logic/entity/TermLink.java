@@ -169,7 +169,8 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
 
     public String getPrefix() { return prefix; }
 
-    protected CharSequence newPrefix() {
+    /** the original prefix code, verbose. see TermLinkTemplate.prefix(..) */
+    @Deprecated protected CharSequence newPrefix() {
 
         final String at1, at2;
         if ((type % 2) == 1) {  // to component

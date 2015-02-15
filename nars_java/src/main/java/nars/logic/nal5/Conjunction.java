@@ -43,8 +43,8 @@ public class Conjunction extends Junction {
      *
      * @param arg The component list of the term
      */
-    protected Conjunction(final Term[] arg, final int order) {
-        super(arg);
+    protected Conjunction(Term[] arg, final int order) {
+        super(arg = flatten(arg, order));
 
         if (order == TemporalRules.ORDER_BACKWARD) {
             throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(arg));
@@ -78,8 +78,57 @@ public class Conjunction extends Junction {
     public Conjunction clone() {
         return new Conjunction(term, temporalOrder);
     }
-    
-    
+
+
+
+    /** returns null if not conjunction with same order */
+    public static Conjunction isConjunction(Term t, int order) {
+        if(t instanceof Conjunction) {
+            Conjunction c=(Conjunction) t;
+            if(c.getTemporalOrder()==order) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /** flatten a embedded conjunction subterms if they are of a specific order */
+    public static Term[] flatten(Term[] args, int order) {
+        //determine how many there are with same order
+        int sz=0;
+        for(int i=0;i<args.length;i++) {
+            Term a=args[i];
+            Conjunction c = isConjunction(a, order);
+            if (c != null)
+                sz+=c.size();
+            else
+                sz+=1;
+        }
+        if (sz==args.length) {
+            //no change
+            return args;
+        }
+
+        Term[] ret=new Term[sz];
+        int k=0;
+        for(int i=0;i<args.length;i++) {
+            Term a=args[i];
+            Conjunction c = isConjunction(a, order);
+            if (c!=null) {
+                for(Term t: c.term) {
+                    ret[k]=t;
+                    k++;
+                }
+            } else {
+                ret[k]=a;
+                k++;
+            }
+        }
+        return ret;
+    }
+
+
+
     /**
      * Get the operator of the term.
      *
