@@ -1,12 +1,11 @@
 package nars.core;
 
 import nars.event.Reaction;
-import nars.logic.reason.ConceptFire;
-import nars.logic.reason.ImmediateProcess;
-import nars.logic.NAL;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
+import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ImmediateProcess;
 
 import java.util.Arrays;
 import java.util.List;
@@ -165,7 +164,7 @@ public class Events {
     /** fired at the end of an ImmediateProcess task */
     abstract public static class TaskImmediateProcessed implements Reaction {
 
-        abstract public void onProcessed(Task t, NAL n, Concept c);
+        abstract public void onProcessed(Task t, ImmediateProcess n, Concept c);
         
         @Override public void event(Class event, Object[] args) {
             onProcessed((Task)args[0], (ImmediateProcess)args[1], (Concept)args[2] );

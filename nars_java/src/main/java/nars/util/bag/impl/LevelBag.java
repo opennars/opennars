@@ -129,7 +129,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         levelEmpty = new boolean[this.levels];
 
-        level = (Level[]) Array.newInstance(Level.class, this.levels);
+        level = (Level<K, E>[]) Array.newInstance(Level.class, this.levels);
 
         Arrays.fill(levelEmpty, true);
 

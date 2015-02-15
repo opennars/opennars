@@ -4,8 +4,6 @@ import nars.core.NewNAR;
 import org.junit.Ignore;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 
 
 @Ignore
@@ -16,7 +14,7 @@ public class NALysisDefault extends NALysis {
     public static void main(String[] args) throws FileNotFoundException {
 
         //csvOut = System.out;
-        dataOut = new FileOutputStream("/tmp/out.arff");
+        //dataOut = new FileOutputStream("/tmp/out.arff");
 
         nal1Default(1);
         nal2Default();
@@ -24,13 +22,13 @@ public class NALysisDefault extends NALysis {
         nal5Default();
 
         //multistep issues:
-        //nal4Default();
-        //nal6Default();
+        nal4Default();
+        nal6Default();
 
-        //nal7Default();
-        //nal8Default();
+        nal7Default();
+        nal8Default();
 
-        results.printARFF(new PrintStream(dataOut));
+        //results.printARFF(new PrintStream(dataOut));
 
 
     }

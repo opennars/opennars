@@ -642,12 +642,12 @@ public final class SyllogisticRules {
             return false;
         }
         Term term1 = null;
-        Term term2 = null;
-//        if ((cond1 instanceof Conjunction) && !Variable.containVarDep(cond1.getName())) {
+        //        if ((cond1 instanceof Conjunction) && !Variable.containVarDep(cond1.getName())) {
         if (cond1 instanceof Conjunction) {
             term1 = reduceComponents((CompoundTerm) cond1, cond2, nal.memory);
         }
 //        if ((cond2 instanceof Conjunction) && !Variable.containVarDep(cond2.getName())) {
+        Term term2 = null;
         if (cond2 instanceof Conjunction) {
             term2 = reduceComponents((CompoundTerm) cond2, cond1, nal.memory);
         }

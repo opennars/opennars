@@ -5,7 +5,6 @@ import nars.core.NewNAR;
 import org.junit.Ignore;
 
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 
 /**
  * report filtered by failures
@@ -25,13 +24,13 @@ public class NALysisSome extends NALysis {
         showOutput = true;
         showTrace = false;
 
-        //nal("test7", "7.8", new Default().setInternalExperience(null), 256);
-        nal("test5", "5.18", new Default().setInternalExperience(null), 256);
+        nal("test7", "7.2", new Default().setInternalExperience(null), 32);
+        //nal("test5", "5.18", new Default().setInternalExperience(null), 256);
 
 
 
         //results.printARFF(new PrintStream(dataOut));
-        results.printCSV(new PrintStream(System.out));
+        //results.printCSV(new PrintStream(System.out));
 
     }
 

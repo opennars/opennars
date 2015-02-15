@@ -15,6 +15,8 @@ public class NALysisAll extends NALysis {
 
     public static void main(String[] args) throws FileNotFoundException {
 
+        analyzeStack = true;
+
         //csvOut = System.out;
         dataOut = new FileOutputStream("/tmp/out.arff");
 

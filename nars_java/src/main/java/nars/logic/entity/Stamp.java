@@ -322,8 +322,8 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     public Stamp(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
         //TODO use iterators instead of repeated first and second .get's?
         
-        int i1, i2, j;
-        i1 = i2 = j = 0;
+        int i2, j;
+        int i1 = i2 = j = 0;
         this.baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
         this.evidentialBase = new long[baseLength];
 

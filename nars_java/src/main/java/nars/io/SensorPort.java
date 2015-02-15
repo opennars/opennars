@@ -1,6 +1,5 @@
 package nars.io;
 
-import nars.core.Memory;
 import nars.logic.entity.Task;
 import reactor.function.Supplier;
 
@@ -8,13 +7,11 @@ import reactor.function.Supplier;
 public class SensorPort extends InPort<Task> {
 
     private final Supplier<Task> input;
-    private final Memory memory;
     private long creationTimeOverride = -1;
 
-    public SensorPort(Memory memory, Supplier<Task> input, float priority) {
+    public SensorPort(Supplier<Task> input, float priority) {
         super(priority);
         this.input = input;
-        this.memory = memory;
     }
 
     public void setCreationTimeOverride(long creationTime) {

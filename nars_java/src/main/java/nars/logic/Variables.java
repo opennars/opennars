@@ -8,8 +8,7 @@ import nars.logic.entity.Term;
 import nars.logic.entity.Variable;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Similarity;
-import nars.logic.nal4.ImageExt;
-import nars.logic.nal4.ImageInt;
+import nars.logic.nal4.Image;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -95,7 +94,7 @@ public class Variables {
                 return false;
             }
             //TODO simplify comparison with Image base class
-            if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).relationIndex != ((ImageExt) cTerm2).relationIndex) || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).relationIndex != ((ImageInt) cTerm2).relationIndex)) {
+            if ((cTerm1 instanceof Image) && (((Image) cTerm1).relationIndex != ((Image) cTerm2).relationIndex)) {
                 return false;
             }
             Term[] list = cTerm1.cloneTerms();

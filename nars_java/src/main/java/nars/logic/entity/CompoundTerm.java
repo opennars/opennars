@@ -415,11 +415,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         //TODO apply preventUnnecessaryDeepCopy to more cases
         
         final Term[] arr = new Term[L];
-        
-        int i;
+
         int j = 0;
         Term[] srcArray = original;
-        for (i = 0; i < L; i++) {            
+        for (int i = 0; i < L; i++) {
             if (i == original.length) {
                 srcArray = additional;
                 j = 0;

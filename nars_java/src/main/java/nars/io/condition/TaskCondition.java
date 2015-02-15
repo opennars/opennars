@@ -235,7 +235,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                         match = false;
                     }
 
-                    long oc = task.getOcurrenceTime() - now; //relative time
+                    long oc = task.getOcurrenceTime() - task.getCreationTime(); //relative time
                     if ((oc < ocMin) || (oc > ocMax)) {
                         distance += rangeError(oc, ocMin, ocMax, true) * tenseCost;
                         match = false;

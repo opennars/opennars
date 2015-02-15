@@ -1,15 +1,11 @@
 package nars.logic.nal8;
 
-import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
 
 import java.util.ArrayList;
 
@@ -64,11 +60,10 @@ public abstract class SynchronousFunctionOperator extends Operator {
         int numParam = numArgs-1;
         Term[] x = new Term[numParam];
         System.arraycopy(args, 0, x, 0, numParam);
-        
-        Term y;
+
         //try {
-            y = function(m, x);
-            if (y == null) {
+        Term y = function(m, x);
+        if (y == null) {
                 return null;
             }
             //m.emit(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);

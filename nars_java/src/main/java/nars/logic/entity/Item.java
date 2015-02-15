@@ -233,11 +233,6 @@ public abstract class Item<K> implements Budgetable {
         
         public StringKeyItem(final BudgetValue budget) { super(budget);         }
 
-                
-        @Override
-        public int hashCode() {
-            return name().hashCode();
-        }
 
         @Override
         public boolean equals(final Object obj) {

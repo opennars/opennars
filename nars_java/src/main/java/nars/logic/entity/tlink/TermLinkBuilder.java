@@ -145,10 +145,6 @@ public class TermLinkBuilder extends BagActivator<String,TermLink> {
     }
 
 
-    @Override public BudgetValue getBudget() {
-        return budget;
-    }
-
     /** configures this selector's current budget for the next bag operation */
     public BudgetValue set(float subBudget, float durability, float quality) {
         budget.setPriority(subBudget);

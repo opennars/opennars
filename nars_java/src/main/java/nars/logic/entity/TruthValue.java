@@ -97,13 +97,14 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     }
 
     public TruthValue(char punctuation) {
-        float f = 1, c;
+        float c;
         switch(punctuation) {
             case Symbols.JUDGMENT: c = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;  break;
             case Symbols.GOAL: c = Parameters.DEFAULT_GOAL_CONFIDENCE;  break;
             default:
                 throw new RuntimeException("Invalid punctuation " + punctuation + " for a TruthValue");
         }
+        float f = 1;
         setFrequency(f);
         setConfidence(c);
     }

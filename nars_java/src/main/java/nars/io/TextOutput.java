@@ -43,7 +43,7 @@ public class TextOutput extends Output {
     private LineOutput outExp2;
     private PrintWriter outExp;
     private boolean showErrors = true;
-    private boolean showStackTrace = false;
+    //privte boolean showStackTrace = false;
     private boolean showStamp = true;
     private boolean showInput = true;
     private float minPriority = 0;
@@ -112,8 +112,6 @@ public class TextOutput extends Output {
 
     /**
      * Process the next chunk of output data
-     *
-     * @param lines The text to be displayed
      */
     @Override
     public void event(final Class channel, final Object... oo) {
@@ -163,11 +161,11 @@ public class TextOutput extends Output {
     }
     
     
-    
-    public TextOutput setErrorStackTrace(boolean b) {
-        this.showStackTrace = true;
-        return this;
-    }
+//
+//    public TextOutput setErrorStackTrace(boolean b) {
+//        this.showStackTrace = true;
+//        return this;
+//    }
 
     public TextOutput setLinePrefix(String prefix) {
         this.prefix = prefix;
@@ -425,10 +423,9 @@ public class TextOutput extends Output {
         // true if last char was blank
         boolean lastWasBlankChar = false;
         int len = string.length();
-        char c;
 
         for (int i = 0; i < len; i++) {
-            c = string.charAt(i);
+            char c = string.charAt(i);
             if (c == ' ') {
             // blank gets extra work,
                 // this solves the problem you get if you replace all

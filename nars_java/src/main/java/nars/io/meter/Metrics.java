@@ -99,9 +99,8 @@ JsonSerializationContext context) {
         
         Signal s = getSignal(signal);
         s.resetBounds();
-        double min, max;
-        min = Double.POSITIVE_INFINITY;
-        max = Double.NEGATIVE_INFINITY;
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
 
 
         Iterator<Object[]> ii = iterator(); //signal);
@@ -353,8 +352,8 @@ JsonSerializationContext context) {
     
     public Map<String,Integer> getSignalIndex() {
         if (signalIndex == null) {
-            int i = 0;
             signalIndex = new HashMap(numColumns);
+            int i = 0;
             for (Signal s : getSignals()) {
                 signalIndex.put(s.id, i++);
             }

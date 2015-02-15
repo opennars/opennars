@@ -19,6 +19,7 @@ import nars.io.condition.OutputContainsCondition;
 import nars.logic.entity.*;
 import nars.logic.nal8.Operation;
 import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ImmediateProcess;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.TimeNode;
 import nars.util.graph.NARGraph.UniqueEdge;
@@ -262,7 +263,7 @@ public class LogicPerformance {
         
         
         n.on(TaskImmediateProcessed.class, new TaskImmediateProcessed() {
-            @Override public void onProcessed(Task t, NAL nal, Concept c) {
+            @Override public void onProcessed(Task t, ImmediateProcess nal, Concept c) {
                 //TODO i broke this
                 //process.explain(t, analysisDepth, nal.produced);
             }            

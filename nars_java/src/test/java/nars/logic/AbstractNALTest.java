@@ -35,6 +35,7 @@ abstract public class AbstractNALTest extends TestCase {
     static final ObjectMeter<String> testBuild;
     public static OutputStream dataOut = null;
     PrintStream log = System.out;
+    public static boolean analyzeStack = false;
 
 //    static {
 //        try {
@@ -83,8 +84,10 @@ abstract public class AbstractNALTest extends TestCase {
             derivations.record(nar);
         }
         */
-        nar.addPlugin(eventCounter);
-        nar.addPlugin(deriveMethodCounter);
+        if (analyzeStack) {
+            nar.addPlugin(eventCounter);
+            nar.addPlugin(deriveMethodCounter);
+        }
 
 
     }
@@ -104,9 +107,11 @@ abstract public class AbstractNALTest extends TestCase {
             derivations.print(log);*/
 
 
-        eventCounter.reset();
-        eventCounter.cancel();
-        deriveMethodCounter.cancel();
+        if (analyzeStack) {
+            eventCounter.reset();
+            eventCounter.cancel();
+            deriveMethodCounter.cancel();
+        }
 
 
         //nar.reset(); //to help GC

@@ -380,7 +380,7 @@ public class NAR implements Runnable {
     /** provides a specific creationTime that the input's generated tasks will be overriden with */
     public SensorPort addInput(final Input channel, long creationTime) {
 
-        SensorPort i = new SensorPort(memory, channel, 1.0f);
+        SensorPort i = new SensorPort(channel, 1.0f);
 
         if (creationTime!=-1)
             i.setCreationTimeOverride(creationTime);

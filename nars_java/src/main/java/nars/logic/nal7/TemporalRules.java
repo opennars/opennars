@@ -307,13 +307,11 @@ public class TemporalRules {
         long time2 = s2.getOccurenceTime();
         
         long timeDiff = time2 - time1;
-        
-        List<Interval> interval;
-        
+
         if (!concurrent(time1, time2, durationCycles)) {
 
-            interval = Interval.intervalSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.memory);
-            
+            List<Interval> interval = Interval.intervalSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.memory);
+
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
                 if(t11!=null) {

@@ -25,8 +25,7 @@ import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal3.*;
-import nars.logic.nal4.ImageExt;
-import nars.logic.nal4.ImageInt;
+import nars.logic.nal4.Image;
 import nars.logic.nal4.Product;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Disjunction;
@@ -158,11 +157,8 @@ public final class StructuralRules {
      * @return Whether the direction of inheritance should be revised
      */
     private static boolean switchOrder(CompoundTerm compound, short index) {
-        //TODO use Image base class for both comparisons
-
-        return ((((compound instanceof DifferenceExt) || (compound instanceof DifferenceInt)) && (index == 1))
-                || ((compound instanceof ImageExt) && (index != ((ImageExt) compound).relationIndex))
-                || ((compound instanceof ImageInt) && (index != ((ImageInt) compound).relationIndex)));
+        return (((compound instanceof Difference)) && (index == 1))
+                || ((compound instanceof Image) && (index != ((Image) compound).relationIndex));
     }
 
     /**
@@ -391,9 +387,8 @@ public final class StructuralRules {
 
                 truth = TruthFunctions.deduction(truth, reliance);
             } else {
-                TruthValue v1, v2;
-                v1 = TruthFunctions.negation(truth);
-                v2 = TruthFunctions.deduction(v1, reliance);
+                TruthValue v1 = TruthFunctions.negation(truth);
+                TruthValue v2 = TruthFunctions.deduction(v1, reliance);
                 truth = TruthFunctions.negation(v2);
             }
 

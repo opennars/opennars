@@ -1,17 +1,22 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
-import nars.core.*;
+import nars.core.Events;
+import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;
-import nars.logic.entity.Task;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.nal8.ImmediateOperation;
-import nars.operator.io.*;
+import nars.operator.io.Echo;
+import nars.operator.io.PauseInput;
+import nars.operator.io.Reset;
+import nars.operator.io.SetVolume;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +35,6 @@ import static com.google.common.collect.Iterators.singletonIterator;
  */
 public class TextPerception {
 
-    private final NAR nar;
     private Memory memory;
     
     public List<TextReaction> parsers;
@@ -50,7 +54,6 @@ public class TextPerception {
 
 
     public TextPerception(NAR n, Narsese narsese) {
-        this.nar = n;
         this.memory = n.memory;
         this.narsese = narsese;
         this.englisch = new Englisch();
@@ -214,9 +217,8 @@ public class TextPerception {
 
                 if (enableEnglisch) {
                     /*if (!possiblyNarsese(line))*/ {
-                        List<Task> l;
                         try {
-                            l = englisch.parse(line, narsese, true);
+                            List<Task> l = englisch.parse(line, narsese, true);
                             if ((l == null) || (l.isEmpty()))
                                 return null;
                             return l;
@@ -236,9 +238,8 @@ public class TextPerception {
 
                 if (enableTwenglish) {
                     /*if (!possiblyNarsese(line))*/ {
-                        List<Task> l;
                         try {
-                            l = twenglish.parse(line, narsese, true);
+                            List<Task> l = twenglish.parse(line, narsese, true);
                             if ((l == null) || (l.isEmpty()))
                                 return null;
                             return l;

@@ -648,12 +648,12 @@ public class Memory implements Serializable {
     public int nextPercept(int maxPercepts) {
         if (!isProcessingInput()) return 0;
 
-        int perceived = 0;
         boolean inputEverything;
 
         if (maxPercepts == -1) { inputEverything = true; maxPercepts = 1; }
         else inputEverything = false;
 
+        int perceived = 0;
         while (perceived < maxPercepts) {
             int p = nextPercept();
             if (p == -1) break;

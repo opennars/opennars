@@ -23,11 +23,10 @@ package nars.logic.entity;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.logic.NALOperator;
 import nars.io.Texts;
+import nars.logic.NALOperator;
 import nars.logic.Terms.Termable;
 import nars.logic.nal7.TemporalRules;
-import nars.util.data.sexpression.IPair;
 import nars.util.data.sorted.SortedList;
 
 import java.util.Collections;
@@ -95,7 +94,7 @@ public class Term implements AbstractTerm, Termable {
 
     public final static Term get(Object o) {
         if (o instanceof Term) return (Term)o;
-        if (o instanceof String) return get((String)o);
+        if (o instanceof CharSequence) return get((CharSequence)o);
         return null;
     }
 
