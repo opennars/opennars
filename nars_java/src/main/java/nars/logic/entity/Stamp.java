@@ -244,7 +244,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         this.evidentialBase[0] = serial;
         this.latency = 0;
         this.derivationBuilder = null;
-        this.derivationChain = EmptyDerivationChain; // new LinkedHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+        this.derivationChain = EmptyDerivationChain;
 
         this.creationTime = creationTime;
 

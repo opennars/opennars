@@ -29,7 +29,7 @@ import nars.logic.nal4.ImageExt;
 import nars.logic.nal4.ImageInt;
 import nars.logic.nal4.Product;
 import nars.logic.nal5.Conjunction;
-import nars.logic.nal5.Junction;
+import nars.logic.nal5.Disjunction;
 import nars.logic.nal7.TemporalRules;
 
 import java.util.List;
@@ -374,18 +374,32 @@ public final class StructuralRules {
         BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
-        } else {  // need to redefine the cases
-            //if (sentence.isJudgment() && (compoundTask == (compound instanceof Conjunction))) {
-            if ((sentence.isJudgment() || sentence.isGoal()) && (compound instanceof Junction)) {
+        } else /* if (sentence.isJudgment() || sentence.isGoal()) */ {
+
+            if ((!compoundTask && compound instanceof Disjunction) ||
+                            (compoundTask && compound instanceof Conjunction)) {
+                /*
+                <a --> b>.     (||,<a --> b>,<x --> y>)?
+                        compound-task=false, but since its a disjunction it should be answered
+                <a --> b>.     (||,<a --> b>,<x --> y>).
+                        compound-task=true, and since its a disjunction, it is not valid to derive <x --> y> since its not know if both or just <a --> b> is true
+                <a --> b>.     (&&,<a --> b>,<x --> y>)?
+                        compound-task=false, but since its a conjunction it can not be answered as long as <x --> y> is not known to be true
+                <a --> b>.     (&&,<a --> b>,<x --> y>).
+                       compound-task=true, and since its a conjunction, it is valid to derive <x --> y>
+                */
+
                 truth = TruthFunctions.deduction(truth, reliance);
-            }else {
+            } else {
                 TruthValue v1, v2;
                 v1 = TruthFunctions.negation(truth);
                 v2 = TruthFunctions.deduction(v1, reliance);
                 truth = TruthFunctions.negation(v2);
             }
+
             budget = BudgetFunctions.forward(truth, nal);
         }
+
         if (content instanceof CompoundTerm)
             return nal.singlePremiseTask((CompoundTerm)content, truth, budget);
         else

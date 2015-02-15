@@ -1,0 +1,6 @@
+<a --> b>.
+(||,<a --> b>,<x --> y>).
+''outputMustNotContain('<x --> y>.')
+
+16
+

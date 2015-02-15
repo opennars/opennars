@@ -27,7 +27,7 @@ public class NALysisDefault extends NALysis {
         //nal4Default();
         //nal6Default();
 
-        nal7Default();
+        //nal7Default();
         //nal8Default();
 
         results.printARFF(new PrintStream(dataOut));

@@ -1,0 +1,6 @@
+<a --> b>.
+(&&,<a --> b>,<x --> y>)?
+''outputMustNotContain('(&&,<a --> b>,<x --> y>).')
+
+16
+
