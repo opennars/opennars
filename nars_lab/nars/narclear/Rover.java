@@ -304,7 +304,7 @@ public class Rover extends PhysicsModel {
             if(Rover.cnt>=do_sth_importance) {
                 Rover.cnt=0;
                 Rover.do_sth_importance+=decrease_of_importance_step; //increase
-                
+                System.out.println("choosing random "+String.valueOf(Math.random()));
                 ArrayList<String> candids=new ArrayList<>();
                 candids.add("(^motor,left)! :|:");
                 candids.add("(^motor,right)! :|:");
@@ -625,7 +625,7 @@ public class Rover extends PhysicsModel {
         NAR nar = new Default().simulationTime().
                 build();
 
-        nar.addPlugin(new TemporalParticlePlanner());
+        //nar.addPlugin(new TemporalParticlePlanner());
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    
         (nar.param).noiseLevel.set(0);

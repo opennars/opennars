@@ -64,7 +64,7 @@ public class NARio extends Run {
         NAR nar = new Default().simulationTime().setConceptBagSize(500).
                 /*temporalPlanner(12,64,16).*/build();
         
-        nar.addPlugin(new TemporalParticlePlanner());
+        //nar.addPlugin(new TemporalParticlePlanner());
 
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
         /*nar.param().termLinkRecordLength.set(4);
@@ -86,7 +86,7 @@ public class NARio extends Run {
         (nar.param).noiseLevel.set(0);
         (nar.param).decisionThreshold.set(0);
         
-        float fps = 20f;
+        float fps = 50f;
         gameRate = 1.0f / fps;
 
         
@@ -143,7 +143,7 @@ public class NARio extends Run {
     protected void setKey(int k, boolean pressed) {
         if (keyInput[k] == null && pressed)
             keyInput[k] = new ChangedTextInput(nar);
-        nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
+        nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + ")! :|:");
     }
     
     @Override protected void toggleKey(int keyCode, boolean isPressed)
@@ -263,6 +263,7 @@ public class NARio extends Run {
             }
             
             int tt=0;
+            int do_sth_importance=0;
             @Override
             public void event(Class event, Object... arguments) {
 
@@ -287,9 +288,11 @@ public class NARio extends Run {
                         scene.toggleKey(i, false);
                     }
                 }
-                if(Memory.randomNumber.nextDouble()<1.0/10.0 && tt<200) {
+                if(Memory.randomNumber.nextDouble()<1.0/10.0 && tt>do_sth_importance) {
                     
-                    
+                    tt=0;
+                    do_sth_importance+=30;
+                    System.out.println("choosing random "+String.valueOf(Math.random()));
                     
 //                    boolean isPressed=true; //Memory.randomNumber.nextBoolean();
                     boolean isPressed = offKeys ? Memory.randomNumber.nextBoolean() : true;
