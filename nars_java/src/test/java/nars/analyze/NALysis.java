@@ -212,31 +212,31 @@ public class NALysis extends AbstractNALTest {
                 new Curve().setInternalExperience(null) );
     }
     public static void nal6Default() {
-        runDir("test6", 5000, 1, new Default().setInternalExperience(null));
+        runDir("test6", 3000, 1, new Default().setInternalExperience(null));
     }
     public static void nal6() {
         nal6Default();
-        runDir("test6", 5000, 1,
+        runDir("test6", 3000, 1,
                 new Default(),
                 new Default().level(6),
                 new Curve(),
                 new Curve().setInternalExperience(null) );
     }
     public static void nal7Default() {
-        runDir("test7", 5000, 1, new Default().setInternalExperience(null));
+        runDir("test7", 3000, 1, new Default().setInternalExperience(null));
     }
     public static void nal7() {
         nal7Default();
-        runDir("test7", 5000, 1,
+        runDir("test7", 3000, 1,
                 new Default(),
                 new Default().level(7));
     }
     public static void nal8Default() {
-        runDir("test8", 5000, 1, new Default().setInternalExperience(null));
+        runDir("test8", 3000, 1, new Default().setInternalExperience(null));
     }
     public static void nal8() {
         nal8Default();
-        runDir("test8", 5000, 1,
+        runDir("test8", 3000, 1,
                 new Default());
     }
 

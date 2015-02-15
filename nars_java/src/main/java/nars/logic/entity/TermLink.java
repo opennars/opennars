@@ -21,6 +21,7 @@
 package nars.logic.entity;
 
 import nars.io.Symbols;
+import nars.io.Texts;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.tlink.TermLinkTemplate;
 
@@ -93,7 +94,7 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
             type = (short)(template.type - 1); //// point to component
         }
         index = template.index;
-        this.name = newKeyPrefix().toString() + target.name() ;
+        this.name = makeName().toString();
     }
 
     public boolean toSelfOrTransform() {
@@ -163,7 +164,8 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
         return name;
     }
 
-    protected CharSequence newKeyPrefix() {
+    protected CharSequence makeName() {
+
         final String at1, at2;
         if ((type % 2) == 1) {  // to component
             at1 = Symbols.TO_COMPONENT_1;
@@ -172,18 +174,30 @@ public class TermLink extends Item<String> implements TLink<Term>, Termable {
             at1 = Symbols.TO_COMPOUND_1;
             at2 = Symbols.TO_COMPOUND_2;
         }
+
         final int MAX_INDEX_DIGITS = 2;
-        int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1);
-        final StringBuilder prefix = new StringBuilder(estimatedLength);
-        prefix.append(at1).append('T').append(type);
+
+        final CharSequence targetName = target.name();
+
+        final int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1) + targetName.length();
+
+        final StringBuilder n = new StringBuilder(estimatedLength);
+        n.append(at1).append('T').append(type);
         if (index != null) {
-            for (short i : index) {
+            for (final short i : index) {
                 //prefix.append('-').append( Integer.toString(i + 1, 16 /** hexadecimal */)  );
-                prefix.append('-').append( Integer.toString(i+1)  );
+
+                n.append('-');
+
+                final char ii = (char)(i + 1);
+                if (ii < 10)
+                    n.append((char)(ii+'0') );
+                else
+                    n.append( Texts.n2(ii) );
             }
+
         }
-        prefix.append(at2);
-        return prefix;
+        return n.append(at2).append(targetName);
     }
     
     /**
