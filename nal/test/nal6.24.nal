@@ -1,5 +1,5 @@
 '***** second level variable unification
-
+<b --> c>.
 'all locks are opened by some key
 <<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>. %1.00;0.90% 
 

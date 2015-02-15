@@ -32,6 +32,7 @@ import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;
 import nars.language.DifferenceInt;
+import nars.language.Disjunction;
 import nars.language.Equivalence;
 import nars.language.ImageExt;
 import nars.language.ImageInt;
@@ -603,9 +604,9 @@ public final class StructuralRules {
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
         } else {  // need to redefine the cases
-            if (sentence.isJudgment() && (compoundTask && (compound instanceof Conjunction))) {
+            if (sentence.isJudgment() && (compoundTask && (compound instanceof Conjunction || compound instanceof Disjunction))) {
                 truth = TruthFunctions.deduction(truth, reliance);
-            } else if (sentence.isGoal() && (compoundTask && (compound instanceof Conjunction))) {
+            } else if (sentence.isGoal() == (compoundTask && (compound instanceof Conjunction || compound instanceof Disjunction))) {
                 truth = TruthFunctions.deduction(truth, reliance);
             }else {
                 TruthValue v1, v2;

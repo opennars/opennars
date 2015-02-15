@@ -4,9 +4,6 @@
 
 <(*,(*,(*,0))) --> num>?  {0 : 3} 
 
-1200
+200
 
-''outputMustContain('<(*,0) --> num>.')
-''outputMustContain('<(*,(*,0)) --> num>.')
-''outputMustContain('<(*,(*,(*,0))) --> num>.')
 ''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.22%')
