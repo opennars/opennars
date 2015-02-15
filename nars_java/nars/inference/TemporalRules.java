@@ -262,17 +262,6 @@ public class TemporalRules {
         Term t11=null;
         Term t22=null;
         
-        //if(t1 instanceof Operation && t2 instanceof Operation) {
-        //   return; //maybe too restrictive
-        //}
-        /*if(((t1 instanceof Implication || t1 instanceof Equivalence) && t1.getTemporalOrder()!=TemporalRules.ORDER_NONE) ||
-           ((t2 instanceof Implication || t2 instanceof Equivalence) && t2.getTemporalOrder()!=TemporalRules.ORDER_NONE)) {
-            return; //better, if this is fullfilled, there would be more than one temporal operator in the statement, return
-        }*/
-        
-        //since induction shouldnt miss something trivial random is not good here
-            ///ex: *Memory.randomNumber.nextDouble()>0.5 &&*/
-        
         if (termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
             
             Statement ss1 = (Statement) t1;
@@ -355,8 +344,6 @@ public class TemporalRules {
         if (!concurrent(time1, time2, durationCycles)) {
             
             interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
-            //long st=interval.get(0).getTime(nal.memory);
-            
             
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);

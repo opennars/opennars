@@ -40,13 +40,15 @@ public class Conjunction extends CompoundTerm {
      * Constructor with partial values, called by make
      *
      * @param arg The component list of the term
+     * @param order
+     * @param normalized
      */
-    protected Conjunction(final Term[] arg, final int order, boolean normalized) {
-        super(arg);
+    protected Conjunction(Term[] arg, final int order, boolean normalized) {
+        super(flatten(arg,order));
         
         temporalOrder = order;
         
-        init(arg);
+        init(flatten(arg,order));
         
         /*if (normalized)
             setNormalized(true);*/
@@ -111,6 +113,46 @@ public class Conjunction extends CompoundTerm {
         return make(argList, TemporalRules.ORDER_NONE);
     }
 
+    public static boolean isConjunctionAndHasSameOrder(Term t, int order) {
+        if(t instanceof Conjunction) {
+            Conjunction c=(Conjunction) t;
+            if(c.getTemporalOrder()==order) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static Term[] flatten(Term[] args, int order) { //flatten only same order!
+        //determine how many there are with same order
+        int sz=0;
+        for(int i=0;i<args.length;i++) {
+            Term a=args[i];
+            if(isConjunctionAndHasSameOrder(a, order)) {
+                sz+=((Conjunction)a).term.length;
+            } else {
+                sz+=1;
+            }
+        }
+        Term[] ret=new Term[sz];
+        int k=0;
+        for(int i=0;i<args.length;i++) {
+            Term a=args[i];
+            if(isConjunctionAndHasSameOrder(a, order)) {
+                Conjunction c=((Conjunction)a);
+                for(Term t: c.term) {
+                    ret[k]=t;
+                    k++;
+                }
+            } else {
+                ret[k]=a;
+                k++;
+            }
+        }
+        return ret;
+    }
+    
+    
     /**
      * Try to make a new compound from a list of term. Called by StringParser.
      *
