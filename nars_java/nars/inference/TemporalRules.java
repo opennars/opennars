@@ -378,7 +378,7 @@ public class TemporalRules {
             //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
             Statement st=statement2;
             if(st.getPredicate() instanceof Inheritance && (st.getSubject() instanceof Conjunction || st.getSubject() instanceof Operation)) {
-                Conjunction precon=(Conjunction) st.getSubject();
+                Term precon=(Term) st.getSubject();
                 Inheritance consequence=(Inheritance) st.getPredicate();
                 Term pred=consequence.getPredicate();
                 Term sub=consequence.getSubject();
