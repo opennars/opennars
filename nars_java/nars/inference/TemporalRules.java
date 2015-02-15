@@ -373,11 +373,11 @@ public class TemporalRules {
         //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
         //TODO: rethink this for 1.6.3
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-        if(t11==null && t22==null && statement2!=null) { //there is no general form
+        if(statement2!=null) { //there is no general form
             //ok then it may be the (&/ =/> case which 
             //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
             Statement st=statement2;
-            if(st.getPredicate() instanceof Inheritance && st.getSubject() instanceof Conjunction) {
+            if(st.getPredicate() instanceof Inheritance && (st.getSubject() instanceof Conjunction || st.getSubject() instanceof Operation)) {
                 Conjunction precon=(Conjunction) st.getSubject();
                 Inheritance consequence=(Inheritance) st.getPredicate();
                 Term pred=consequence.getPredicate();
@@ -395,8 +395,8 @@ public class TemporalRules {
                         app.put(pred,v2);
                     Term res=((CompoundTerm) statement2).applySubstitute(app);
                     if(res!=null) { //ok we applied it, all we have to do now is to use it
-                        t11=((Statement)res).getSubject();
-                        t22=((Statement)res).getPredicate();
+                        t22=((Statement)res).getSubject();
+                        t11=((Statement)res).getPredicate();
                     }
                 }
              }
