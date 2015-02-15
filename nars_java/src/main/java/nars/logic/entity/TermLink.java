@@ -26,8 +26,6 @@ import nars.logic.Terms.Termable;
 import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.entity.tlink.TermLinkTemplate;
 
-import java.util.Objects;
-
 /**
  * A tlink between a compound term and a component term
  * <p>
@@ -102,12 +100,9 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
 
         index = template.index;
 
-        if (name!=null)
-            this.prefix = name;
-        else
-            this.prefix = newPrefix().toString();
+        this.prefix = name;
 
-        this.hash = Objects.hash(prefix, target);
+        this.hash = termLinkHashCode();
     }
 
     public boolean toSelfOrTransform() {
@@ -135,13 +130,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null) return false;
-        if (obj == this) return true;
-
-        /*if (obj instanceof TermLink)*/ {
-
-            TermLink t = (TermLink)obj;
-            return prefix.equals(t.prefix) && target.equals(t.target);
+        return termLinkEquals(obj);
 //
 //            short[] ti = t.index;
 //            final int il = index.length;
@@ -167,7 +156,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
 //
 //            //compare target
 //            return (target.equals(t.target));
-        }
+
         //return false;
     }
 

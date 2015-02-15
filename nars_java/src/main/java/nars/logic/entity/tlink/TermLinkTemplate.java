@@ -76,19 +76,19 @@ public class TermLinkTemplate {
      *
      * determined by the current template ('temp')
      */
-    public String name(boolean incoming, Term other) {
-        short t = this.type;
+    public static String prefix(short type, short[] index, boolean incoming) {
+        short t = type;
         if (!incoming) {
             t--; //point to component
         }
 
-        StringBuilder sb = new StringBuilder(64);
+        //CharSequence otherName = other.name();
+        StringBuilder sb = new StringBuilder(16);
         //use compact 1-char representation for type and each index component
         sb.append((char)('A' + t));
         for (short s : index) {
             sb.append((char)('a' + s));
         }
-        sb.append(other.name());
         return sb.toString();
     }
 
@@ -101,16 +101,16 @@ public class TermLinkTemplate {
         }
     }
 
-    public String name(boolean in) {
+    public String prefix(boolean in) {
         setConcept(concept);
         if (in) {
             if (incoming == null)
-                incoming = name(true, concept);
+                incoming = prefix(type, index, true);
             return incoming;
         }
         else {
             if (outgoing == null)
-                outgoing = name(false, target);
+                outgoing = prefix(type, index, false);
             return outgoing;
         }
     }
@@ -118,6 +118,6 @@ public class TermLinkTemplate {
 
     @Override
     public String toString() {
-        return name(true) + "|" + name(false);
+        return prefix(true) + "|" + prefix(false) + "|" + concept.getTerm();
     }
 }

@@ -175,12 +175,22 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     public String getPrefix() {
-        return currentTemplate.name( !this.from.equals(concept.term) );
+        return currentTemplate.prefix(incoming);
     }
     public Term getTarget() {
         return concept.getTerm();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return termLinkEquals(obj);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return termLinkHashCode();
+    }
 
     @Override
     public TermLink newItem() {
