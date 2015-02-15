@@ -370,6 +370,39 @@ public class TemporalRules {
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
         
+        //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
+        //TODO: rethink this for 1.6.3
+        //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+        if(t11==null && t22==null) { //there is no general form
+            //ok then it may be the (&/ =/> case which 
+            //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+            Statement st=statement2;
+            if(st.getPredicate() instanceof Inheritance && st.getSubject() instanceof Conjunction) {
+                Conjunction precon=(Conjunction) st.getSubject();
+                Inheritance consequence=(Inheritance) st.getPredicate();
+                Term pred=consequence.getPredicate();
+                Term sub=consequence.getSubject();
+                //look if subject is contained in precon:
+                boolean SubsSub=precon.containsTermRecursively(sub);
+                boolean SubsPred=precon.containsTermRecursively(pred);
+                Variable v1=new Variable("$91");
+                Variable v2=new Variable("$92");
+                HashMap<Term,Term> app=new HashMap<Term,Term>();
+                if(SubsSub || SubsPred) {
+                    if(SubsSub)
+                        app.put(sub, v1);
+                    if(SubsPred)
+                        app.put(pred,v2);
+                    Term res=((CompoundTerm) statement2).applySubstitute(app);
+                    if(res!=null) { //ok we applied it, all we have to do now is to use it
+                        t11=((Statement)res).getSubject();
+                        t22=((Statement)res).getPredicate();
+                    }
+                }
+             }
+        } 
+        
+       
         List<Task> success=new ArrayList<Task>();
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
@@ -401,7 +434,7 @@ public class TemporalRules {
                 }
         }
         if(!tooMuchTemporalStatements(statement2)) {
-            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
+            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true);
                  if(t!=null) {
                     success.add(t);
                 }
