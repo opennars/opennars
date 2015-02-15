@@ -166,6 +166,9 @@ public class RuleTables {
                                     }
                                     Term C=Conjunction.make(residue,conj.getTemporalOrder());
                                     Implication resImp=Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
+                                    if(resImp==null) {
+                                        continue;
+                                    }
                                     //todo add
                                     Stamp st=new Stamp(task.sentence.stamp,nal.memory.time());
                                     boolean eternalBelieve=nal.getCurrentBelief().isEternal(); //https://groups.google.com/forum/#!searchin/open-nars/projection/open-nars/8KnAbKzjp4E/rBc-6V5pem8J
