@@ -432,7 +432,7 @@ public class RuleTables {
      * @param nal Reference to the memory
      */
      public static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
-        if ((compound instanceof Conjunction) || (compound instanceof Disjunction)) {
+        if (compound instanceof Junction) {
             if (nal.getCurrentBelief() != null) {
                 CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
             } else if (compound.containsTerm(component)) {

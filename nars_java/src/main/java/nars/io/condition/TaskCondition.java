@@ -61,11 +61,12 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
 
         this.creationTime = t.getCreationTime();
+
         if (t.sentence.isEternal()) {
             setEternal();
         }
         else {
-            long oc = t.getOcurrenceTime();
+            long oc = t.getOcurrenceTime() - creationTime;
             long dur = n.memory.getDuration();
             setOccurrenceTime(oc - dur/2, oc + dur/2);
         }

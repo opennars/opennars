@@ -257,6 +257,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         } else if (tense == Present) {
             occurrenceTime = creationTime;
         }
+
     }
 
     /**
@@ -303,6 +304,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
             this.derivationBuilder = new InheritDerivationBuilder(old);        
         else
             this.derivationBuilder = null;
+
     }
 
     public Stamp(final Stamp first, final Stamp second, final long creationTime) {
@@ -627,7 +629,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         return new Stamp(this, newCreationTime);
     }
     public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime) {
-        Stamp s = new Stamp(this, newOcurrenceTime);
+        Stamp s = new Stamp(this, getCreationTime(), newOcurrenceTime);
         return s;
     }
     public Stamp cloneEternal() {

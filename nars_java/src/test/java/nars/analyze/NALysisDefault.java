@@ -21,9 +21,12 @@ public class NALysisDefault extends NALysis {
         nal1Default(1);
         nal2Default();
         nal3Default();
-        //nal4Default();
         nal5Default();
+
+        //multistep issues:
+        //nal4Default();
         //nal6Default();
+
         nal7Default();
         //nal8Default();
 
