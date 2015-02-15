@@ -1,5 +1,6 @@
 package nars.analyze;
 
+import nars.io.ExampleFileInput;
 import nars.logic.NALTest;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -33,6 +34,8 @@ public class NALPerfLoop {
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         
         Collection c = NALTest.params();
+        c.addAll((ExampleFileInput.getUnitTests("test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8")).values());
+
         while (true) {
             for (Object o : c) {
                 String examplePath = (String)((Object[])o)[1];

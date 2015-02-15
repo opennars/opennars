@@ -124,7 +124,7 @@ public class Implication extends Statement {
             final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder);
             return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder);
         } else {
-            return new Implication(new Term[] { subject, predicate }, temporalOrder);
+            return new Implication(subject, predicate, temporalOrder);
         }
     }
 

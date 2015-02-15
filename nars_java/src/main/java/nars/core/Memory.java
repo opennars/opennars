@@ -580,7 +580,8 @@ public class Memory implements Serializable {
     }
 
     public void removeTask(final Task task, final String removalReason) {
-        task.setReason( task.getReason() + " -> " + removalReason);
+        if (Parameters.DEBUG)
+            task.setReason( task.getReason() + " -> " + removalReason);
         emit(TaskRemove.class, task, removalReason);
         task.end();
     }

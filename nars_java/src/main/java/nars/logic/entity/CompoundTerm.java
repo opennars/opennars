@@ -111,12 +111,13 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     
     public void invalidateName() {        
         this.name = null; //invalidate name so it will be (re-)created lazily        
-        for (Term t : term) {
-            if (t.hasVar())
-                if (t instanceof CompoundTerm)
-                    ((CompoundTerm)t).invalidateName();
-        }     
         setNormalized(false);
+        if (hasVar()) {
+            for (final Term t : term) {
+                if ((t instanceof CompoundTerm) && (t.hasVar()))
+                    ((CompoundTerm) t).invalidateName();
+            }
+        }
     }
 
     /** Must be Term return type because the type of Term may change with different arguments */

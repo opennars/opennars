@@ -184,9 +184,10 @@ public class Conjunction extends Junction {
 
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            
             return new Conjunction(argList, temporalOrder);
-            
+        }
+        else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
+            return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
         } else {
             Term[] a = Term.toSortedSetArray(argList);
             if (a.length == 1) return a[0];
@@ -235,12 +236,11 @@ public class Conjunction extends Junction {
 
     final public static Term make(final Term term1, final Term term2, int temporalOrder) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-
             return makeForward(term1, term2);
-
+        }
+        else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
+            return makeForward(term2, term1);
         } else {
-            
-
             if (term1 instanceof Conjunction) {
                 CompoundTerm ct1 = ((CompoundTerm) term1);
                 final List<Term> set = Parameters.newArrayList(ct1.size() + 1);

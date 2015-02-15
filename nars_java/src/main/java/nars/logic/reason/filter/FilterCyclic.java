@@ -19,12 +19,12 @@ public class FilterCyclic implements NAL.DerivationFilter {
             stamp.chainReplace(currentBeliefContent, currentBeliefContent);
         }
         //workaround for single premise task issue:
-        if (currentBelief == null && single && task != null && task.sentence.isJudgment()) {
+        if (
+                (currentBelief == null && single && task != null && task.sentence.isJudgment())
+                         ||
+                (task != null && !single && task.sentence.isJudgment())
+           )        {
             stamp.chainReplace(currentTaskContent, currentTaskContent);
-        }
-        //end workaround
-        if (task != null && !single && task.sentence.isJudgment()) {
-            stamp.chainReplace(currentTaskContent,currentTaskContent);
         }
 
         //its a logic reason, so we have to do the derivation chain check to hamper cycles

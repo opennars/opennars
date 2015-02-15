@@ -26,12 +26,12 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.NAL;
-import nars.logic.Terms;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal7.Tense;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static nars.logic.nal7.TemporalRules.*;
 import static nars.logic.nal7.Tense.*;
@@ -119,9 +119,55 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
     
     public interface DerivationBuilder {
-        LinkedHashSet<Term> build();
+        Collection<Term> build();
     }
-    
+
+    /** array list with an internal set for fast contains() method */
+    public static class FixedArrayListWithSet<T> extends ArrayList<T> {
+
+        final Set<T> index;
+
+        public FixedArrayListWithSet(int size) {
+            super(size);
+            index = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+        }
+
+        @Override
+        public boolean add(T t) {
+            if (index.add(t)) {
+                super.add(t);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return index.contains(o);
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            if (index.remove(o)) {
+                super.remove(o);
+                return true;
+            }
+            return false;
+        }
+
+        @Override public T remove(int index) { throw new RuntimeException("not supported");        }
+
+        @Override public boolean removeAll(Collection<?> c) { throw new RuntimeException("not supported");        }
+
+        @Override public boolean removeIf(Predicate<? super T> filter) { throw new RuntimeException("not supported");        }
+
+        @Override public void add(int index, T element) { throw new RuntimeException("not supported");        }
+
+        @Override public boolean addAll(Collection<? extends T> c) { throw new RuntimeException("not supported");        }
+
+        @Override public boolean addAll(int index, Collection<? extends T> c) { throw new RuntimeException("not supported");        }
+    }
+
     /** creates a Derivation Chain by collating / zipping 2 Stamps Derivation Chains */
     public static class ZipperDerivationBuilder implements DerivationBuilder {
         private final WeakReference<Stamp> first;
@@ -132,7 +178,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
             this.second = new WeakReference(second);
         }
             
-        @Override public LinkedHashSet<Term> build()  {
+        @Override public Collection<Term> build()  {
             Stamp ff = first.get();
             Stamp ss = second.get();
             
@@ -162,10 +208,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
             int i2 = chain2.size() - 1;
 
             //TODO verify this is pre-sized large enough
-            Set<Term> added = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+            //Set<Term> added = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
 
             //set here is for fast contains() checking
-            List<Term> sequence = new ArrayList<>(Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);      
+            FixedArrayListWithSet<Term> sequence = new FixedArrayListWithSet(Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
 
             //take as long till the chain is full or all elements were taken out of chain1 and chain2:
             int j = 0;
@@ -173,10 +219,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
                 if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                     if (i1 >= 0) {
                         final Term c1i1 = iter1.next();
-                        if (!added.add(c1i1)) {
-                            sequence.add(c1i1);                        
-                        }
-                        else {
+                        if (!sequence.add(c1i1)) {
                             j--; //was double, so we can add one more now
                         }
                         i1--;
@@ -184,10 +227,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
                 } else {
                     if (i2 >= 0) {
                         final Term c2i2 = iter2.next();
-                        if (!added.add(c2i2)) {
-                            sequence.add(c2i2);
-                        }
-                        else {
+                        if (!sequence.add(c2i2)) {
                             j--; //was double, so we can add one more now
                         }
                         i2--;
@@ -196,13 +236,15 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
                 j++;
             } 
 
+            /*
             if (Parameters.DEBUG) {
-                Terms.verifyNonNull(added);
+                Terms.verifyNonNull(sequence);
             }
+            */
 
             Collections.reverse(sequence);
 
-            return new LinkedHashSet<>(sequence);
+            return sequence;
         }                            
     }
     
@@ -214,17 +256,14 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
             this.parent = new WeakReference(parent);            
         }
         
-        @Override public LinkedHashSet<Term> build() {
+        @Override public Collection<Term> build() {
             if (parent.get() == null) {
                 //parent doesnt exist anymore (garbage collected)
                 return new LinkedHashSet();
             }
             
             Collection<Term> p = parent.get().getChain();
-            if (p instanceof LinkedHashSet)
-                return (LinkedHashSet)p;
-            else
-                return new LinkedHashSet(p);
+            return new LinkedHashSet(p);
         }
         
     }
@@ -297,13 +336,11 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         this.creationTime = creationTime;
 
         this.occurrenceTime = occurenceTime;
-        this.derivationChain = old.getChain();
+        this.derivationChain = null;
         this.latency = this.creationTime - old.latency;
         
-        if (derivationChain == null)
-            this.derivationBuilder = new InheritDerivationBuilder(old);        
-        else
-            this.derivationBuilder = null;
+        this.derivationBuilder = new InheritDerivationBuilder(old);
+
 
     }
 

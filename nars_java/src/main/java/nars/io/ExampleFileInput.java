@@ -89,7 +89,7 @@ public class ExampleFileInput extends TextInput {
         return getUnitTests(new String[] { "test", "Examples/DecisionMaking", "Examples/ClassicalConditioning" });
     }
 
-    public static Map<String,String> getUnitTests(String[] directories) {
+    public static Map<String,String> getUnitTests(String... directories) {
         Map<String,String> l = new TreeMap();
 
         for (String dir : directories ) {

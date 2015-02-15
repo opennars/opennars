@@ -519,11 +519,16 @@ public class Terms {
         return null;
     }
 
-    /*
+
     public static Term[] reverse(Term[] arg) {
-      TODO
+        int l = arg.length;
+        Term[] r = new Term[l];
+        for (int i = 0; i < l; i++) {
+            r[i] = arg[l - i - 1];
+        }
+        return r;
     }
-    */
+
 
 
     /** has, or is associated with a specific term */

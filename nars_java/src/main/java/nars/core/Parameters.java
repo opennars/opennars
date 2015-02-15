@@ -243,8 +243,8 @@ public class Parameters {
     }
 
     public static <X> Set<X> newHashSet(int capacity) {
-        return new UnifiedSet<>(capacity);
-        //return new SimpleHashSet<>(capacity);
+        return new UnifiedSet(capacity);
+        //return new SimpleHashSet(capacity);
         //return new HashSet(capacity);
     }
 
