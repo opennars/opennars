@@ -1,5 +1,6 @@
 package nars.logic.entity.tlink;
 
+import nars.logic.entity.Concept;
 import nars.logic.entity.Term;
 import nars.logic.entity.TermLink;
 
@@ -31,8 +32,9 @@ public class TermLinkTemplate {
      * @param type Link type
      * @param indices Component indices in compound, may be 1 to 4
      */
-    public TermLinkTemplate(final Term target, final short type, final short... indices) {
+    public TermLinkTemplate(final Concept host, final Term target, final short type, final short... indices) {
         super();
+        this.concept = host.getTerm();
         this.target = target;
         this.type = type;
         if (type % 2 != 0)
@@ -53,20 +55,20 @@ public class TermLinkTemplate {
     }
 
 
-    public TermLinkTemplate(final short type, final Term target, final int i0) {
-        this(target, type, (short)i0);
+    public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0) {
+        this(host, target, type, (short)i0);
     }
 
-    public TermLinkTemplate(final short type, final Term target, final int i0, final int i1) {
-        this(target, type, (short)i0, (short)i1);
+    public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0, final int i1) {
+        this(host, target, type, (short)i0, (short)i1);
     }
 
-    public TermLinkTemplate(final short type, final Term target, final int i0, final int i1, final int i2) {
-        this(target, type, (short)i0, (short)i1, (short)i2);
+    public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0, final int i1, final int i2) {
+        this(host, target, type, (short)i0, (short)i1, (short)i2);
     }
 
-    public TermLinkTemplate(final short type, final Term target, final int i0, final int i1, final int i2, final int i3) {
-        this(target, type, (short)i0, (short)i1, (short)i2, (short)i3);
+    public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0, final int i1, final int i2, final int i3) {
+        this(host, target, type, (short)i0, (short)i1, (short)i2, (short)i3);
     }
 
     /** creates a new TermLink key consisting of:
@@ -93,16 +95,8 @@ public class TermLinkTemplate {
     }
 
 
-    protected void setConcept(Term conceptTerm) {
-        if (this.concept == null || !this.concept.equals( conceptTerm) ) {
-            //reset, concept has changed (if this instance is ever used with a different concept)
-            this.concept = conceptTerm;
-            incoming = outgoing = null;
-        }
-    }
 
     public String prefix(boolean in) {
-        setConcept(concept);
         if (in) {
             if (incoming == null)
                 incoming = prefix(type, index, true);

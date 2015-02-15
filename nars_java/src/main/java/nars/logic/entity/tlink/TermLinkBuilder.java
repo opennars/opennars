@@ -67,7 +67,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             final Term ti = t.term[i];
 
             if (!ti.hasVar()) {
-                addTemplate(new TermLinkTemplate(type, ti, i));
+                addTemplate(new TermLinkTemplate(concept, type, ti, i));
             }
             if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
 
@@ -87,12 +87,12 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
                                 //WARNING: COVERAGE FOUND THIS CONDITION NEVER BEING CALLED
-                                a = new TermLinkTemplate(TermLink.TRANSFORM, tj, 0, i, j);
+                                a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, 0, i, j);
                             } else {
-                                a = new TermLinkTemplate(TermLink.TRANSFORM, tj, i, j);
+                                a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, i, j);
                             }
                         } else {
-                            a = new TermLinkTemplate(type, tj, i, j);
+                            a = new TermLinkTemplate(concept, type, tj, i, j);
                         }
                         addTemplate(a);
                     }
@@ -107,9 +107,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                             if (!tk.hasVar()) {
                                 TermLinkTemplate b;
                                 if (type == TermLink.COMPOUND_CONDITION) {
-                                    b = new TermLinkTemplate(TermLink.TRANSFORM, tk, 0, i, j, k);
+                                    b = new TermLinkTemplate(concept, TermLink.TRANSFORM, tk, 0, i, j, k);
                                 } else {
-                                    b = new TermLinkTemplate(TermLink.TRANSFORM, tk, i, j, k);
+                                    b = new TermLinkTemplate(concept, TermLink.TRANSFORM, tk, i, j, k);
                                 }
                                 addTemplate(b);
                             }
@@ -135,8 +135,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     public void addTemplate(TermLinkTemplate tl) {
         template.add(tl);
-
-        tl.setConcept(host);
 
         if (tl.type!= TermLink.TRANSFORM)
             nonTransforms++;
