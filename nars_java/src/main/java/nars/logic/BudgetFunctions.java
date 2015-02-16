@@ -156,22 +156,44 @@ public final class BudgetFunctions extends UtilityFunctions {
     /**
      * Activate a concept by an incoming TaskLink
      *
+     *
+     * @param factor linear interpolation factor; 1.0: values are applied fully,  0: values are not applied at all
      * @param receiver The budget receiving the activation
      * @param amount The budget for the new item
      */
-    public static void activate(final BudgetValue receiver, final BudgetValue amount, Activating mode) {        
+    public static void activate(final BudgetValue receiver, final BudgetValue amount, Activating mode, final float factor) {
         switch (mode) {
             case Max:
                 BudgetFunctions.merge(receiver, amount);
                 break;
-            case TaskLink:                
-                final float oldPri = receiver.getPriority();
-                receiver.setPriority( or(oldPri, amount.getPriority()) );
-                receiver.setDurability( aveAri(receiver.getDurability(), amount.getDurability()) );
-                receiver.setQuality( receiver.getQuality() );
+
+            case TaskLink:
+
+                final float currentPriority = receiver.getPriority();
+                final float targetPriority = lerp(amount.getPriority(), currentPriority, factor);
+                receiver.setPriority( or(currentPriority, targetPriority) );
+
+                final float currentDurability = receiver.getDurability();
+                final float targetDurability = lerp(amount.getDurability(), currentDurability, factor);
+                receiver.setDurability( aveAri(currentDurability, targetDurability) );
+
+                //doesnt really change it:
+                //receiver.setQuality( receiver.getQuality() );
+
                 break;
         }
         
+    }
+
+    /** linear interpolate between target & current, factor is between 0 and 1.0 */
+    public static float lerp(float target, float current, float factor) {
+        return target * factor + current * (1f - factor);
+    }
+
+    /**
+     */
+    public static void activate(final BudgetValue receiver, final BudgetValue amount, Activating mode) {
+        activate(receiver, amount, mode, 1f);
     }
 
     /* ---------------- Bag functions, on all Items ------------------- */

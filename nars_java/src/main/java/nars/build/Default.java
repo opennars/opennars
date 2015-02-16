@@ -104,6 +104,9 @@ public class Default extends NewNAR implements ConceptBuilder {
         param.shortTermMemoryHistory.set(1);
         param.temporalRelationsMax.set(10);
 
+        param.conceptActivationFactor.set(1.0);
+        param.conceptFireThreshold.set(0.0);
+
         param.conceptForgetDurations.set(2.0);
         param.taskLinkForgetDurations.set(4.0);
         param.termLinkForgetDurations.set(10.0);

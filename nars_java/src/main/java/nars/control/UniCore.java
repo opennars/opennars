@@ -86,6 +86,9 @@ abstract public class UniCore implements Core {
         if (currentConcept==null)
             return null;
 
+        if (currentConcept.getPriority() < memory.param.conceptFireThreshold.get())
+            return null;
+
         return currentConcept;
     }
 
@@ -140,7 +143,9 @@ abstract public class UniCore implements Core {
 
             if (budget!=null) {
                 BudgetValue cb = c.budget;
-                BudgetFunctions.activate(cb, getBudget(), BudgetFunctions.Activating.TaskLink);
+
+                final float activationFactor = memory.param.conceptActivationFactor.floatValue();
+                BudgetFunctions.activate(cb, getBudget(), BudgetFunctions.Activating.TaskLink, activationFactor );
             }
 
             return c;

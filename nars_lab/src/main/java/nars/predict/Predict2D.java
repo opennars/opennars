@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by me on 2/13/15.
@@ -91,14 +93,14 @@ public class Predict2D extends JPanel {
 
             current = "<" + term + " --> n" + i + ">";
 
-            String input = current + ". :|: \n";
+            String input = current + ". :|: %1.00;0.95%\n";
 
             if (prev!=null) {
                 if (!prev.equals(current)) {
-                    input += ("<" + prev + " =/> " + current + ">. :|: \n");
-                    input += (prev + ". %0.00;0.90% :/: \n");
+                    //input += ("<" + prev + " =/> " + current + ">. :|: \n");
+                    //input += (prev + ". %0.00;0.90% :/: \n");
                 }
-                input += ("<" + current+ " =/> ?>?\n");
+                //input += ("<" + current+ " =/> ?>?\n");
             }
 
             nar.addInput(input);
@@ -115,18 +117,19 @@ public class Predict2D extends JPanel {
         private final String prefix, suffix;
         private final NAR nar;
         private final Discretize disc;
-        float v = 0;
+        private final int levels;
 
-        float expect[];
+        Map<Concept, Integer> level = new ConcurrentHashMap();
+
 
 
         public ValuePrediction(NAR n, String term, int levels) {
             super(n, Events.ConceptBeliefAdd.class);
             this.nar = n;
             this.term = term;
+            this.levels = levels;
             this.prefix = "<" + term + " --> ";
             this.suffix = ">";
-            this.expect = new float[levels];
             this.disc = new Discretize(n, levels);
         }
 
@@ -142,6 +145,9 @@ public class Predict2D extends JPanel {
         }
 
         protected int match(Concept c) {
+            Integer e = level.get(c);
+            if (e!=null) return e.intValue();
+
             Term t = c.getTerm();
             if (t instanceof Inheritance) {
                 Inheritance i = (Inheritance)t;
@@ -158,105 +164,145 @@ public class Predict2D extends JPanel {
             return -1;
         }
 
-        protected void updateBelief(Concept c, int level) {
+        protected void updateBelief(Concept c, int l) {
+
+            level.put(c, l);
+        }
+
+
+        /** v[0] = scalar value, v[1] = confidence */
+        public float[] predictBest(long when, float[] v) {
+
+            v[0] = v[1] = 0;
 
             //TODO examine all the beliefs of all the concepts each cycle
             //to calculate a smoothed believe according to the current time
             //and the occurrence time, not just when it is updated
 
-            expect[level] = 0;
-            for (Sentence s : c.beliefs) {
-                if (s.isEternal()) continue;
-                long o = s.getOccurenceTime();
-                if (o <= nar.time()) continue;
+            float expect[] = new float[levels];
 
+            for (Map.Entry<Concept,Integer> e : level.entrySet()) {
+                Concept c = e.getKey();
+                int level = e.getValue();
 
+                if (!c.beliefs.isEmpty()) {
+                    for (Sentence s : c.beliefs) {
+                        if (s == null) {
+                            throw new RuntimeException(c.beliefs.toString());
+                        }
 
-                //future belief:
-                float futureFactor = 1.0f / ( o - nar.time());
-                expect[level] += Math.max(expect[level], s.truth.getExpectation()) * futureFactor;
+                        if (s.isEternal()) continue;
+                        long o = s.getOccurenceTime();
+                        if (o <= nar.time()) continue;
+                        if (o < when) continue;
 
+                        float futureFactor = 1.0f / (1.0f + Math.abs(o - when));
+                        expect[level] += s.truth.getFrequency() * s.truth.getConfidence() * futureFactor;
+                    }
+                }
 
-                //System.out.println("PREDICT: " + Arrays.toString(expect));
             }
 
-
-            //System.out.println(c.beliefs);
-
             //winner take all
-            /*
+
             float best = 0;
             int b = -1;
+            float total = 0;
             for (int i = 0; i < expect.length; i++) {
                 if (expect[i] > best) {
                     best = expect[i];
                     b = i;
                 }
-            }*/
-            float b = 0;
-            float total = 0;
-            for (int i = 0; i < expect.length; i++) {
-                b += expect[i] * i;
                 total += expect[i];
             }
-            if (total!=0) {
-                b /= total;
+            float avg = total / expect.length;
 
-
-                v = 0;
-            /*if (b!=-1)*/
-                {
-                    v = ((float) disc.continuous(b) - 0.5f) * 2f;
-                    //System.out.println(term + " " + b + " " + " " + v);
-                }
-            }
-
-
-        }
-
-        float value() {
+            if (b!=-1)
+                v[0] = ((float) disc.continuous(b) - 0.5f) * 2f;
+            else
+                v[0] = 0;
+            v[1] = avg; //temporary
             return v;
+
+//            float b = 0;
+//            float total = 0;
+//            for (int i = 0; i < expect.length; i++) {
+//                b += expect[i] * i;
+//                total += expect[i];
+//            }
+//            if (total!=0) {
+//                b /= total;
+//
+//
+//                v = 0;
+
+
+
+
         }
     }
 
     float tx, ty;
 
     public Predict2D() throws InterruptedException {
+        super();
         Parameters.IMMEDIATE_ETERNALIZATION = false;
 
         NAR n = new NAR(new Default().setInternalExperience(null).simulationTime());
-        n.param.shortTermMemoryHistory.set(4);
+        n.param.shortTermMemoryHistory.set(2);
+        n.param.duration.set(5);
+        n.param.duration.setLinear(16f);
+        n.param.conceptBeliefsMax.set(32);
 
-        Predict2D p = new Predict2D();
-        new NWindow("Predicting", p).show(400,400,true);
+        int levels = 3;
+
+        float freq = 2f;
+
+        new NWindow("Predicting", this).show(400,400,true);
 
         Point target, belief;
 
         Parameters.DEBUG = true;
 
-        int levels = 15;
         DiscretizedInput ix = new DiscretizedInput(n, "x", levels, -1f, 1f);
         DiscretizedInput iy = new DiscretizedInput(n, "y", levels, -1f, 1f);
 
         ValuePrediction px = new ValuePrediction(n, "x", levels);
         ValuePrediction py = new ValuePrediction(n, "y", levels);
 
-        p.points.add(target = new Point() {
+        points.add(target = new Point() {
             @Override
             public void update(float ms, Graphics g) {
-                tx = (float)Math.sin(ms / 1000f);
-                ty = (float)Math.cos(ms / 1000f);
+                tx = (float)Math.sin(ms / 1000f * freq);
+                ty = (float)Math.cos(ms / 1000f * freq);
                 draw(g, tx, ty, Color.RED);
             }
         });
 
-        p.points.add(belief = new Point() {
+        points.add(belief = new Point() {
+
+            float v[] = new float[2];
 
             @Override
             public void update(float ms, Graphics g) {
-                float x = (float)Math.sin(ms / 1000f);
-                float y = (float)Math.cos(ms / 1000f);
-                draw(g, x, y, Color.RED);
+
+                try {
+                    for (int j = 0; j < 5; j += 100) {
+                        float x, y, c;
+
+                        px.predictBest(n.time() + j, v);
+                        x = v[0];
+                        c = v[1];
+
+                        py.predictBest(n.time() + j, v);
+                        y = v[0];
+                        c += v[1];
+                        c /= 2f;
+
+                        draw(g, x, y, new Color(j / 256f, j / 256.0f, c));
+                    }
+                }
+                catch (Exception e) { System.out.println(e); } //TODO use correct threading
             }
         });
 
@@ -269,14 +315,14 @@ public class Predict2D extends JPanel {
             iy.setValue(ty);
 
 
-            p.update(t);
+            update(t);
 
             n.memory.addSimulationTime(1);
-            n.step(50);
+            n.step(10);
 
             t += 1;
 
-            Thread.sleep(5);
+            Thread.sleep(1);
         }
 
 

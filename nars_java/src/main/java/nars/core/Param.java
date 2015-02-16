@@ -55,6 +55,21 @@ public class Param implements Serializable {
         return duration.floatValue() * durations;
     }
 
+    /**
+     * How much a concept is activated.
+     * 1.0 means all activation is applied,
+     * 0.0 means none is.
+     */
+    public AtomicDouble conceptActivationFactor = new AtomicDouble(1.0);
+
+    /**
+     * Minimum required priority for a concept
+     * to be fired if it is activated, otherwise
+     * it just accumulates the priority in its budget.
+     */
+    public AtomicDouble conceptFireThreshold = new AtomicDouble(0.0);
+
+
     /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE 
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.

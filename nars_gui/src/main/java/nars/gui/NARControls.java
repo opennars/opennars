@@ -838,6 +838,9 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
 
         c.ipady = 4;
 
+        p.add(new NSlider(memory.param.conceptActivationFactor, "Concept Activation Factor", 0.0f, 1.0f), c);
+        p.add(new NSlider(memory.param.conceptFireThreshold, "Concept Fire Threshold", 0.0f, 1.0f), c);
+
         p.add(new NSlider(memory.param.decisionThreshold, "Decision Threshold", 0.0f, 1.0f), c);
         p.add(new NSlider(memory.param.taskLinkForgetDurations, "TaskLink Durations", 0.5f, 20), c);
         p.add(new NSlider(memory.param.termLinkForgetDurations, "TermLink Durations", 0.5f, 20), c);
