@@ -25,14 +25,13 @@ import automenta.vivisect.swing.NWindow;
 import nars.build.Default.CommandLineNARBuilder;
 import nars.control.experimental.AntCore;
 import nars.core.NAR;
+import nars.gui.output.TaskTree;
 import nars.io.TextOutput;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 /**
@@ -72,6 +71,8 @@ public class NARSwing extends Video {
             e.printStackTrace();
         }*/
 
+        //TEMPORARY
+        new NWindow("Tasks", new TaskTree(nar)).show(300, 400);
 
 
         //TEMPORARY
@@ -123,15 +124,15 @@ public class NARSwing extends Video {
 
         
         
-        if (args.length > 0
-                && CommandLineNARBuilder.isReallyFile(args[0])) {
-
-            try {
-                nar.addInput( new File(args[0] ) );
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+//        if (args.length > 0
+//                && CommandLineNARBuilder.isReallyFile(args[0])) {
+//
+//            try {
+//                nar.addInput( new File(args[0] ) );
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//        }
         
         /*
         if (args.length > 1)

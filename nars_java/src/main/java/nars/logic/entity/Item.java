@@ -198,10 +198,15 @@ public abstract class Item<K> implements Budgetable {
     }
     
     /** similar to toStringExternal but includes budget afterward */
-    public String toStringExternal2() {
+    public String toStringExternal2(boolean includeBudget) {
         final String briefBudget = budget.toStringExternal();
         String n = name().toString();
-        return new StringBuilder(briefBudget.length()+n.length()+1).append(n).append(' ').append(briefBudget).toString();
+        StringBuilder sb = new StringBuilder( (includeBudget ? briefBudget.length() : 0) +n.length()+1).append(n);
+
+        if (includeBudget)
+            sb.append(' ').append(briefBudget);
+
+        return sb.toString();
     }
     
     public String toStringLong() {

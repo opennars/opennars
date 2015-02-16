@@ -57,7 +57,7 @@ public class Believe extends Operator implements Mental {
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
         
-        return Lists.newArrayList( new Task(sentence, budget) );        
+        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
 
     }
 

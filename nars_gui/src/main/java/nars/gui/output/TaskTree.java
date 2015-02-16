@@ -1,18 +1,20 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import automenta.vivisect.swing.NPanel;
-import nars.event.Reaction;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskRemove;
 import nars.core.NAR;
+import nars.event.Reaction;
+import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.TruthValue;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -31,14 +33,13 @@ import static java.awt.BorderLayout.NORTH;
  *
  * @author me
  */
-public class TaskTree extends NPanel implements Reaction, Runnable {
+public class TaskTree extends ReactionPanel implements Reaction, Runnable {
 
     long updatePeriodMS = 250;
-    DefaultMutableTreeNode root = new DefaultMutableTreeNode("Tasks");
+    DefaultMutableTreeNode root;
     private DefaultTreeModel model;
     Map<Task, DefaultMutableTreeNode> nodes = new ConcurrentHashMap();
     private final JTree tree;
-    private final NAR nar;
     final WeakHashMap<Task, TaskLabel> components = new WeakHashMap<>();
     float priorityThreshold = 0.01f;
     final Set<TreeNode> needRefresh = Collections.synchronizedSet(new HashSet());
@@ -50,18 +51,19 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
     boolean showingJudgments = false;
     boolean showingQuestions = true;
     boolean showingGoals = true;
-    
+
     public TaskTree(NAR nar) {
-        super(new BorderLayout());
+        super(nar, new BorderLayout());
 
         tree = new JTree();
-        model = new DefaultTreeModel(root);
+
+
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
-        tree.setModel(model);
+
+
         tree.setCellRenderer(new CustomDefaultRenderer());
 
-        this.nar = nar;        
 
         JPanel menu = new JPanel(new WrapLayout(FlowLayout.LEFT));
         
@@ -100,23 +102,29 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
     }
     
     protected void reset() {
+
         components.clear();
         nodes.clear();
         toAdd.clear();
-        toRemove.clear();
-        root.removeAllChildren();
         lastUpdateTime = 0;
-        
-        needsRestart = true;                
+
+        root = new DefaultMutableTreeNode("Tasks");
+        model = new DefaultTreeModel(root);
+        tree.setModel(model);
+
+        needsRestart = true;
+        update();
     }
 
+
+
     @Override
-    public void onShowing(boolean b) {
-        nar.memory.event.set(this, b, TaskAdd.class, FrameEnd.class /*, TaskRemove.class*/);
+    public Class[] getEvents() {
+        return new Class[] { TaskAdd.class, TaskRemove.class, FrameEnd.class /*, TaskRemove.class*/ };
     }
 
     public void add(Task t) {
-        if (isActive(t))
+        if (isVisible(t))
             toAdd.add(t);        
     }
 
@@ -136,7 +144,7 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
         return d;
     }
 
-    protected boolean isActive(final Task t) {
+    protected boolean isVisible(final Task t) {
         if ((t.sentence.isJudgment()) && (!showingJudgments)) return false;
         if ((t.sentence.isQuestion()) && (!showingQuestions)) return false;
         if ((t.sentence.isGoal()) && (!showingGoals)) return false;
@@ -148,12 +156,13 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
         if (needsRestart) {
             Set<Task> tasks = nar.memory.getTasks(true, false, false);
             for (Task t : tasks)
-                add(t);
+                if (isVisible(t))
+                    add(t);
         }
         
         //remove dead tasks
         for (Task t : nodes.keySet()) {
-            if (!isActive(t))
+            if (!isVisible(t))
                 toRemove.add(t);            
         }
 
@@ -165,14 +174,13 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
 
     @Override public void run() {
         for (Task t : toRemove) {
-            DefaultMutableTreeNode node = nodes.get(t);
+            DefaultMutableTreeNode node = nodes.remove(t);
             if (node!=null) {
                 TreeNode p = node.getParent();
                 node.removeFromParent();                
                 needRefresh.add(p);
                 needRefresh.remove(node);
             }
-            nodes.remove(t);
             components.remove(t);
             toAdd.remove(t);
         }
@@ -236,7 +244,8 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
         public TaskLabel(Task t) {
             this.task = t;
 
-            setOpaque(false);
+            //setOpaque(false);
+            setOpaque(true);
             setFont(Video.monofont);
             
             updateTask();
@@ -267,25 +276,37 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
             }
             setBorder(new MatteBorder(0,15,0,0,iColor));
             
-           
-            setForeground(Color.WHITE);
+
+            float meanPri = (conPri + taskPri) / 2f;
+            final float mpi = 0.5f + 0.5f * meanPri;
+            setForeground(new Color(mpi, mpi, mpi));
             
-            setOpaque(true);
-            final float hue = 0.3f + 0.5f * conPri;            
+            final float hue = 0.3f + 0.5f * conPri;
             Color c = Color.getHSBColor(hue, 0.4f, conPri * 0.2f);
             //setBackground(new Color(1f-taskPri/4f,1f,1f-taskPri/4f));
             setBackground(c);
             
             setFont(Video.monofont.deriveFont(14f + taskPri * 4f));
-            setText(t.toStringExternal2());
+            setText(t.toStringExternal2(false));
             
+        }
+
+        public void setSelected(boolean selected) {
+            final int bt = 1;
+            if (!selected) {
+                setBorder(new EmptyBorder(bt,bt,bt,bt));
+            }
+            else {
+                setBorder(new LineBorder(Color.GRAY, bt));
+            }
+
         }
     }
     
-    protected void updateComponent(Task t, JLabel c) {
-        if (c instanceof TaskLabel)
-            ((TaskLabel)c).updateTask();
-    }
+//    protected void updateComponent(Task t, JLabel c) {
+//        if (c instanceof TaskLabel)
+//            ((TaskLabel)c).updateTask();
+//    }
     
     protected class CustomDefaultRenderer
             extends DefaultTreeCellRenderer {
@@ -303,15 +324,21 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
                     tree, value, selected,
                     expanded, leaf, row,
                     hasFocus);*/
-            
-         
-            
+
             
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
             Object v = node.getUserObject();
-            if (v instanceof Task) {                
-                TaskLabel c = new TaskLabel((Task)v);
-                components.put((Task)v, c);
+            if (v instanceof Task) {
+                Task tv = (Task)v;
+                TaskLabel c = components.get(tv);
+                if (c == null) {
+                    c = new TaskLabel(tv);
+                    components.put(tv, c);
+                }
+                else {
+                    c.updateTask();
+                }
+                c.setSelected(hasFocus);
                 return c;
             }
             
@@ -324,18 +351,13 @@ public class TaskTree extends NPanel implements Reaction, Runnable {
     }
 
     @Override
-    public void event(Class channel, Object[] arguments) {        
-//        if (channel == OUT.class) {
-//            Object o = arguments[0];
-//            if (o instanceof Task) {
-//                add((Task) o);
-//            }
-//        }
+    public void event(Class channel, Object[] arguments) {
+
         if (channel == TaskAdd.class) {
             add((Task)arguments[0]);
         }
         else if (channel == TaskRemove.class) {
-            //..
+            toRemove.add((Task)arguments[0]);
         }
         else if (channel == FrameEnd.class) {
             update();
