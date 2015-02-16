@@ -170,12 +170,21 @@ public final class BudgetFunctions extends UtilityFunctions {
             case TaskLink:
 
                 final float currentPriority = receiver.getPriority();
-                final float targetPriority = lerp(amount.getPriority(), currentPriority, factor);
-                receiver.setPriority( or(currentPriority, targetPriority) );
+                final float targetPriority = amount.getPriority();
+                /*receiver.setPriority(
+                        lerp(or(currentPriority, targetPriority),
+                                currentPriority,
+                                factor) );*/
+                float op = or(currentPriority, targetPriority);
+                if (op > currentPriority) op = lerp(op, currentPriority, factor);
+                receiver.setPriority( op );
 
                 final float currentDurability = receiver.getDurability();
-                final float targetDurability = lerp(amount.getDurability(), currentDurability, factor);
-                receiver.setDurability( aveAri(currentDurability, targetDurability) );
+                final float targetDurability = amount.getDurability();
+                receiver.setDurability(
+                        lerp(aveAri(currentDurability, targetDurability),
+                                currentDurability,
+                                factor) );
 
                 //doesnt really change it:
                 //receiver.setQuality( receiver.getQuality() );
