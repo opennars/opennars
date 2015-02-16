@@ -38,13 +38,18 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
     private EventEmitter.Registrations reg;
 
     public ConceptsPanel(NAR n, Concept... c) {
+        this(n, true, c);
+    }
+
+    public ConceptsPanel(NAR n, boolean label, Concept... c) {
         super();
 
         this.nar = n;
             this.concept = new LinkedHashMap();
 
         if (c.length == 1) {
-            ConceptPanel v = new ConceptPanel(c[0], nar.time()); 
+            ConceptPanel v = new ConceptPanel(c[0], label);
+            v.update(nar.time());
             setLayout(new BorderLayout());
             add(v, CENTER);
             concept.put(c[0], v);
@@ -64,7 +69,8 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
             for (Concept x : c) {
                 if (x==null) continue;
 
-                ConceptPanel p = new ConceptPanel(x, nar.time());
+                ConceptPanel p = new ConceptPanel(x, label);
+                p.update(nar.time());
                 v.addPanel(i++, p);
                 concept.put(x, p);
             }
@@ -124,8 +130,8 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
         private final TruthChart beliefChart;
         private final TruthChart desireChart;
         private final PriorityColumn questionChart;
-        private final JTextArea title;
-        private final JLabel subtitle;
+        private JTextArea title;
+        private JLabel subtitle;
 
         final int chartWidth = 64;
         final int chartHeight = 64;
@@ -133,13 +139,9 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
         final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
        // private final PCanvas syntaxPanel;
-        
-        public ConceptPanel(Concept c, long time) {
-            this(c);
-            update(time);
-        }
 
-        public ConceptPanel(Concept c) {
+
+        public ConceptPanel(Concept c, boolean label) {
             super(new BorderLayout());
             this.concept = c;
 
@@ -156,15 +158,17 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
 
             JPanel titlePanel = new JPanel(new BorderLayout());
             titlePanel.setOpaque(false);
+
+            if (label) {
+                titlePanel.add(this.title = new JTextArea(concept.term.toString()), CENTER);
+                title.setEditable(false);
+                title.setOpaque(false);
+                title.setFont(Video.monofont.deriveFont(titleSize));
+                titlePanel.add(this.subtitle = new JLabel(), SOUTH);
+
+                details.add(titlePanel);
+            }
             
-            titlePanel.add(this.title = new JTextArea(concept.term.toString()), CENTER);
-            title.setEditable(false);
-            title.setOpaque(false);
-            titlePanel.add(this.subtitle = new JLabel(), SOUTH);
-            
-            details.add(titlePanel);
-            
-            title.setFont(Video.monofont.deriveFont(titleSize ));
 
             overlay.add(details, CENTER);
             overlay.add(this.beliefTime = new BeliefTimeline(chartWidth*3, chartHeight/2), SOUTH);
@@ -198,7 +202,8 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
                 beliefTime.setVisible(
                         beliefTime.update(time, bb));
             }
-            subtitle.setText(st);
+            if (subtitle!=null)
+                subtitle.setText(st);
 
             /*
             else {
@@ -212,9 +217,11 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
                 questionChart.update( unmodifiableList( concept.questions ) );
             
             if (!concept.goals.isEmpty()) {
-                String s=subtitle.getText();
-                subtitle.setText(s+(s.equals("") ? "" : " ")+"desire: "+concept.goals.get(0).truth.toString());
-                desireChart.update( time, unmodifiableList( concept.goals));
+                if (subtitle!=null) {
+                    String s = subtitle.getText();
+                    subtitle.setText(s + (s.equals("") ? "" : " ") + "desire: " + concept.goals.get(0).truth.toString());
+                }
+                desireChart.update(time, unmodifiableList(concept.goals));
             }
 
             updateUI();

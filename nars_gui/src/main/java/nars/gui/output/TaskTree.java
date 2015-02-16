@@ -2,6 +2,7 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NSlider;
+import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskRemove;
@@ -38,10 +39,10 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
     final ConcurrentLinkedDeque<Task> toAdd = new ConcurrentLinkedDeque<>();
     final ConcurrentLinkedDeque<Task> toRemove = new ConcurrentLinkedDeque<>();
     private final JTree tree = new JTree();
-    long updatePeriodMS = 250;
+    long updatePeriodMS = 100;
     DefaultMutableTreeNode root;
     Map<Task, DefaultMutableTreeNode> nodes = new ConcurrentHashMap();
-    float priorityThreshold = 0.01f;
+    float priorityThreshold = 0.00f;
     long lastUpdateTime = 0;
     boolean needsRestart = false;
 
@@ -123,7 +124,8 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
 
     @Override
     public Class[] getEvents() {
-        return new Class[]{TaskAdd.class, TaskRemove.class, FrameEnd.class /*, TaskRemove.class*/};
+
+        return new Class[]{TaskAdd.class, TaskRemove.class, FrameEnd.class, Events.Restart.class /*, TaskRemove.class*/};
     }
 
     public void add(Task t) {
@@ -251,7 +253,10 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
             toRemove.add((Task) arguments[0]);
         } else if (channel == FrameEnd.class) {
             update();
+        } else if (channel == Events.Restart.class) {
+            update();
         }
+
     }
 
     public interface TaskComponent {
@@ -263,6 +268,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
     public class TaskEdit extends JPanel implements TaskComponent {
         private final Task task;
         private final TaskLabel label;
+        private final NSlider priSlider;
 
         public TaskEdit(Task t) {
             super(new BorderLayout());
@@ -270,14 +276,39 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
 
             label = new TaskLabel(task);
             add(label, BorderLayout.NORTH);
+            JPanel controls = new JPanel(new WrapLayout(WrapLayout.LEFT));
 
-            NSlider n = new NSlider(0.5f, 0, 1f);
-            add(n, BorderLayout.CENTER);
+            {
+                priSlider = new NSlider(0.5f, 0, 1f) {
+                    @Override
+                    public void onChange(float v) {
+                        t.setPriority(v);
+                    }
+                };
+                priSlider.setPrefix("Priority");
+
+                Dimension dim = new Dimension(150, 25);
+                priSlider.setMaximumSize(dim);
+                priSlider.setPreferredSize(dim);
+
+                controls.add(priSlider);
+            }
+            {
+                Concept c = nar.concept(task.getTerm());
+                if (c!=null) {
+                    ConceptsPanel p = new ConceptsPanel(nar, false, c);
+                    controls.add(p);
+                }
+            }
+
+
+            add(controls, BorderLayout.CENTER);
         }
 
         @Override
         public void updateTask() {
             label.updateTask();
+            priSlider.setValue(task.getPriority());
         }
 
         @Override
@@ -364,12 +395,6 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
                 boolean leaf,
                 int row,
                 boolean hasFocus) {
-            // Allow the original renderer to set up the label
-            /*Component c = super.getTreeCellRendererComponent(
-                    tree, value, selected,
-                    expanded, leaf, row,
-                    hasFocus);*/
-
 
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
             Object v = node.getUserObject();
