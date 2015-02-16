@@ -304,7 +304,7 @@ public class Rover extends PhysicsModel {
             if(Rover.cnt>=do_sth_importance) {
                 Rover.cnt=0;
                 Rover.do_sth_importance+=decrease_of_importance_step; //increase
-                System.out.println("choosing random "+String.valueOf(Math.random()));
+                //System.out.println("choosing random "+String.valueOf(Math.random()));
                 ArrayList<String> candids=new ArrayList<>();
                 candids.add("(^motor,left)! :|:");
                 candids.add("(^motor,right)! :|:");
