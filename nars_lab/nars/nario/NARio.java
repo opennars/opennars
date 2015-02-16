@@ -196,7 +196,7 @@ public class NARio extends Run {
         //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
 
         
-        scene = level = new LevelScene(graphicsConfiguration, this, 17,1, LevelGenerator.TYPE_CASTLE) {
+        scene = level = new LevelScene(graphicsConfiguration, this, 57,1, LevelGenerator.TYPE_CASTLE) {
             @Override
             protected Mario newMario(LevelScene level) {
                 return new Mario(level) {
@@ -292,7 +292,7 @@ public class NARio extends Run {
                     
                     tt=0;
                     do_sth_importance+=30;
-                    System.out.println("choosing random "+String.valueOf(Math.random()));
+                    //System.out.println("choosing random "+String.valueOf(Math.random()));
                     
 //                    boolean isPressed=true; //Memory.randomNumber.nextBoolean();
                     boolean isPressed = offKeys ? Memory.randomNumber.nextBoolean() : true;
