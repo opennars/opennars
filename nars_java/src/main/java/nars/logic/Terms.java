@@ -19,10 +19,7 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal5.Junction;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Static utility class for static methods related to Terms
@@ -346,9 +343,6 @@ public class Terms {
      * are equivalent.
      */ 
     public static <T> boolean containsAll(final T[] container, final T[] content) {
-        if (container.length < content.length) {
-            return false;
-        }
         for (final T x : content) {
             if (!contains(container, x))
                 return false;

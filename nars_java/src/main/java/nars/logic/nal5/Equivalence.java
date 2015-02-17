@@ -38,14 +38,21 @@ public class Equivalence extends Statement {
     /**
      * Constructor with partial values, called by make
      *
-     * @param components The component list of the term
+     * @param arg The component list of the term
      */
-    private Equivalence(Term[] components, int order) {
-        super(components);
-        
+    private Equivalence(Term[] arg, int order) {
+        super(arg);
+
+        if ((order == TemporalRules.ORDER_BACKWARD) ||
+                (order == TemporalRules.ORDER_INVALID)) {
+            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(arg));
+        }
+
         temporalOrder = order;
+
+
         
-        init(components);
+        init(arg);
     }
 
     /**

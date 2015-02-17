@@ -20,10 +20,13 @@ public class NALysisAll extends NALysis {
         //csvOut = System.out;
         dataOut = new FileOutputStream("/tmp/out.arff");
 
-        nal1(1);
-        nal2();
-        nal3();
-        nal4();
+
+        for (int seed : new int[] { 1, 2, 3, 4 } ) {
+            nal1(seed);
+            nal2(seed);
+            nal3(seed);
+            nal4(seed);
+        }
         nal5();
         nal6();
         nal7();

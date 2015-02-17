@@ -9,10 +9,7 @@ import nars.io.meter.event.HitMeter;
 import nars.logic.entity.Task;
 import nars.util.data.CuckooMap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
 * Created by me on 2/10/15.
@@ -24,6 +21,8 @@ public class CountDerivationCondition extends AbstractPlugin {
     final static String methodInvolvedInDerivation_Prefix = "d";
 
     boolean includeNonSuccessDerivations = true;
+
+    boolean concatenatePath = false; //whether to store the traced path as an entire sequence, or its individual parts
 
     private final Metrics metrics;
     final Map<Task, StackTraceElement[]> derived = new CuckooMap();
@@ -104,7 +103,7 @@ public class CountDerivationCondition extends AbstractPlugin {
         boolean tracing = false;
         String prevMethodID = null;
 
-        StringBuffer path = new StringBuffer();
+        List<String> path = new ArrayList();
         int i;
         for (i = 0; i < s.length; i++) {
             StackTraceElement e = s[i];
@@ -136,9 +135,8 @@ public class CountDerivationCondition extends AbstractPlugin {
 
                 if (prevMethodID!=null) {
                     traceMethodCall(prevMethodID, methodID, success);
-                    path.append('\\');
                 }
-                path.append(sm);
+                path.add(sm);
 
                 prevMethodID = methodID;
 
@@ -157,9 +155,8 @@ public class CountDerivationCondition extends AbstractPlugin {
 
         }
 
-        String pathString = path.toString();
-        if (!pathString.isEmpty()) {
-            traceMethodPath(pathString);
+        if (!path.isEmpty()) {
+            traceMethodPath(path);
         }
 
         if (i >= s.length - 1) {
@@ -169,19 +166,28 @@ public class CountDerivationCondition extends AbstractPlugin {
 
     }
 
-    private void hit(String meter) {
+    void hit(String meter) {
         HitMeter m = (HitMeter) metrics.getMeter(meter);
         if (m == null) {
             metrics.addMeter(m = new HitMeter(meter));
         }
         m.hit();
     }
+    private void hit(Collection<String> meter) {
+        if (concatenatePath) {
+            hit(meter.toString());
+        }
+        else {
+            for (String s : meter)
+                hit(s);
+        }
+    }
 
     private void traceMethod(String sm) {
         //hit(sm);
     }
 
-    private void traceMethodPath(String pathString) {
+    private void traceMethodPath(Collection<String> pathString) {
         hit(pathString);
     }
 

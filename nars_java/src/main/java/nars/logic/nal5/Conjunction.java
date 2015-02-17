@@ -46,19 +46,13 @@ public class Conjunction extends Junction {
     protected Conjunction(Term[] arg, final int order) {
         super(arg = flatten(arg, order));
 
-        if (order == TemporalRules.ORDER_BACKWARD) {
-            throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(arg));
-            /*
-            //reverse the arg terms..
-            arg = Terms.reverse(arg);
-            temporalOrder = TemporalRules.ORDER_FORWARD;
-            */
+        if ((order == TemporalRules.ORDER_BACKWARD) ||
+        (order == TemporalRules.ORDER_INVALID)) {
+            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(arg));
         }
         else {
             temporalOrder = order;
         }
-
-
         
         init(arg);
 
@@ -173,6 +167,7 @@ public class Conjunction extends Junction {
      * @return the Term generated from the arguments, or null if not possible
      */
     final public static Term make(final Term[] argList, final int temporalOrder) {
+
         if (Parameters.DEBUG) {  Terms.verifyNonNull(argList);}
         
         if (argList.length == 0) {
@@ -187,8 +182,9 @@ public class Conjunction extends Junction {
             return new Conjunction(argList, temporalOrder);
         }
         else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
-            //   return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
-            return null;
+            throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(argList));
+            //return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
+            //return null;
         } else {
             Term[] a = Term.toSortedSetArray(argList);
             if (a.length == 1) return a[0];
@@ -240,8 +236,9 @@ public class Conjunction extends Junction {
             return makeForward(term1, term2);
         }
         else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
+            throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
             //return makeForward(term2, term1);
-            return null;
+            //return null;
         } else {
             if (term1 instanceof Conjunction) {
                 CompoundTerm ct1 = ((CompoundTerm) term1);

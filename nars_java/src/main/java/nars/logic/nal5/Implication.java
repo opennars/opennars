@@ -32,7 +32,8 @@ import java.util.Arrays;
  * A Statement about an Inheritance copula.
  */
 public class Implication extends Statement {
-    private int temporalOrder = TemporalRules.ORDER_NONE;
+
+    private final int temporalOrder;
 
     /**
      * Constructor with partial values, called by make
@@ -40,7 +41,11 @@ public class Implication extends Statement {
      */
     public Implication(Term[] arg, int order) {
         super(arg);
-                
+
+        if (order == TemporalRules.ORDER_INVALID) {
+            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(arg));
+        }
+
         temporalOrder = order;
         
         init(arg);
@@ -80,7 +85,6 @@ public class Implication extends Statement {
      * Try to make a new compound from two term. Called by the logic rules.
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Implication make(final Term subject, final Term predicate) {

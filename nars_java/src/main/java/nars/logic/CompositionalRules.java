@@ -179,7 +179,7 @@ public final class CompositionalRules {
      * @param nal             Reference to the memory
      * @return whether a double premise decomposition was derived
      */
-    private static boolean decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
+    private static boolean decomposeCompound(final CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
 
         if ((compound instanceof Statement) || (compound instanceof Image)) {
             return false;

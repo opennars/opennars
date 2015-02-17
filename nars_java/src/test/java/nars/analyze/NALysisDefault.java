@@ -17,12 +17,12 @@ public class NALysisDefault extends NALysis {
         //dataOut = new FileOutputStream("/tmp/out.arff");
 
         nal1Default(1);
-        nal2Default();
-        nal3Default();
+        nal2Default(1);
+        nal3Default(1);
         nal5Default();
 
         //multistep issues:
-        nal4Default();
+        nal4Default(1);
         nal6Default();
 
         nal7Default();

@@ -45,7 +45,7 @@ public class NAL4Test extends JavaNALTest {
         ''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.26%')
         */
 
-        long time = 1400;
+        long time = 1000;
 
         float minConf = 0.26f;
         nar.believe("<0 --> num>", 1.0f, 0.9f);

@@ -150,37 +150,37 @@ public class NALysis extends AbstractNALTest {
 
 
     public static void nal1Default(long seed) {
-        runDir("test1", 3000, seed,
+        runDir("test1", 5000, seed,
                 new Default().setInternalExperience(null)); //HACK: nal1.8 with internal experience enabled takes forever
     }
 
     /** runs the standard set of tests */
     public static void nal1(long seed) {
         nal1Default(seed);
-        runDir("test1", 100, seed,
+        runDir("test1", 1000, seed,
                 new Default(),
                 new Default().level(1),
                 new Curve(),
                 new Curve().setInternalExperience(null));
     }
 
-    public static void nal2Default() {
-        runDir("test2", 300, 1, new Default().setInternalExperience(null));
+    public static void nal2Default(long seed) {
+        runDir("test2", 1000, seed, new Default().setInternalExperience(null));
     }
-    public static void nal2() {
-        nal2Default();
-        runDir("test2", 1500, 1,
+    public static void nal2(long seed) {
+        nal2Default(seed);
+        runDir("test2", 1200, seed,
                 new Default(),
                 new Default().level(3), //2 needs sets in 3
                 new Curve(),
                 new Curve().setInternalExperience(null) );
     }
-    public static void nal3Default() {
-        runDir("test3", 200, 1, new Default().setInternalExperience(null));
+    public static void nal3Default(long seed) {
+        runDir("test3", 1500, seed, new Default().setInternalExperience(null));
     }
-    public static void nal3() {
-        nal3Default();
-        runDir("test3", 1000, 1,
+    public static void nal3(long seed) {
+        nal3Default(seed);
+        runDir("test3", 1500, seed,
                 new Default(),
                 new Default().level(3),
                 new Curve(),
@@ -188,12 +188,12 @@ public class NALysis extends AbstractNALTest {
     }
 
 
-    public static void nal4Default() {
-        runDir("test4", 1000, 1, new Default().setInternalExperience(null));
+    public static void nal4Default(long seed) {
+        runDir("test4", 1000, seed, new Default().setInternalExperience(null));
     }
-    public static void nal4() {
-        nal4Default();
-        runDir("test4", 1000, 1,
+    public static void nal4(long seed) {
+        nal4Default(seed);
+        runDir("test4", 1000, seed,
                 new Default(),
                 new Default().level(4),
                 new Curve(),
