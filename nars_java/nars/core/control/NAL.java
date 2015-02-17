@@ -220,6 +220,8 @@ public abstract class NAL implements Runnable {
      * @param newContent The content of the sentence in task
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
+     * @param fromTemporalInductionOrChain
+     * @param directlyObservable cyclic inference sometimes desired: https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
     public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean fromTemporalInductionOrChain, boolean directlyObservable) {
         
