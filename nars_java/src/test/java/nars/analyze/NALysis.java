@@ -165,11 +165,11 @@ public class NALysis extends AbstractNALTest {
     }
 
     public static void nal2Default() {
-        runDir("test2", 150, 1, new Default().setInternalExperience(null));
+        runDir("test2", 300, 1, new Default().setInternalExperience(null));
     }
     public static void nal2() {
         nal2Default();
-        runDir("test2", 1000, 1,
+        runDir("test2", 1500, 1,
                 new Default(),
                 new Default().level(3), //2 needs sets in 3
                 new Curve(),

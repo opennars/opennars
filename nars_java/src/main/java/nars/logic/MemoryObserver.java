@@ -31,7 +31,6 @@ public abstract class MemoryObserver extends AbstractReaction {
                 Events.ConceptQuestionAdd.class,
                 Events.ConceptQuestionRemove.class,
                 Events.ConceptUnification.class,
-                Events.BeliefSelect.class,
                 Events.PluginsChange.class,
                 Events.TaskAdd.class,
                 Events.TaskRemove.class,

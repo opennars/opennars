@@ -114,6 +114,11 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      */
     public boolean deriveTask(final Task task, final boolean revised, final boolean single, Sentence currentBelief, Task currentTask) {
 
+
+        if (!nal(7) && !task.sentence.isEternal()) {
+            throw new RuntimeException("Temporal task derived with non-temporal reasoning");
+        }
+
         //use this NAL's instance defaults for the values because specific values were not substituted:
         if (currentBelief == null)
             currentBelief = getCurrentBelief();

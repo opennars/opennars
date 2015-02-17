@@ -24,7 +24,7 @@ public class NAL2ScriptTests extends ScriptNALTest {
                 new Curve() );
     }
 
-    public int getMaxCycles() { return 200; }
+    public int getMaxCycles() { return 500; }
 
 
 }

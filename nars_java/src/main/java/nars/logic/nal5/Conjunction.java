@@ -187,7 +187,8 @@ public class Conjunction extends Junction {
             return new Conjunction(argList, temporalOrder);
         }
         else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
-            return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
+            //   return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
+            return null;
         } else {
             Term[] a = Term.toSortedSetArray(argList);
             if (a.length == 1) return a[0];
@@ -239,7 +240,8 @@ public class Conjunction extends Junction {
             return makeForward(term1, term2);
         }
         else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
-            return makeForward(term2, term1);
+            //return makeForward(term2, term1);
+            return null;
         } else {
             if (term1 instanceof Conjunction) {
                 CompoundTerm ct1 = ((CompoundTerm) term1);

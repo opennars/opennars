@@ -860,13 +860,9 @@ public class Concept extends Item<Term> implements Termable {
         final int b = beliefs.size();
         for (int i = 0; i < b; i++) {
             Sentence belief = beliefs.get(i);
-            nal.emit(BeliefSelect.class, belief);
 
-            //nal.setNextNewStamp(taskStamp, belief.stamp, currentTime);
-            
-////            if (memory.newStamp != null) {
-            //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
-////            }
+            //if (task.sentence.isEternal() && belief.isEternal()) return belief;
+
 
             Sentence projectedBelief = belief.projection(occurrenceTime, currentTime);
             if (projectedBelief.getOccurenceTime()!=belief.getOccurenceTime()) {

@@ -1,6 +1,5 @@
 package nars.control;
 
-import com.nurkiewicz.typeof.TypeOf;
 import nars.core.Core;
 import nars.core.Events;
 import nars.core.Memory;
@@ -243,9 +242,8 @@ abstract public class UniCore implements Core {
     @Override
     public void forEach(Consumer<? super Concept> action) {
         //use experimental consumer for levelbag to avoid allocating so many iterators within iterators
-        TypeOf.whenTypeOf(concepts).is(LevelBag.class).then(l -> {
-            l.forEach(action);
-        });
+        if (concepts instanceof LevelBag)
+            ((LevelBag)concepts).forEach(action);
 
         //use default iterator
         //iterator().forEachRemaining(action);
