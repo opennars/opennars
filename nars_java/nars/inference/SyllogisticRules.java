@@ -106,8 +106,8 @@ public final class SyllogisticRules {
         if ((content1 == null) || (content2 == null))
             return;
         
-        nal.doublePremiseTask(content1, truth1, budget1,false);
-        nal.doublePremiseTask(content2, truth2, budget2,false);
+        nal.doublePremiseTask(content1, truth1, budget1,false,false);
+        nal.doublePremiseTask(content2, truth2, budget2,false,false);
     }
 
     /**
@@ -165,13 +165,13 @@ public final class SyllogisticRules {
                 
         nal.doublePremiseTask(
                 Statement.make(taskContent, term1, term2, order), 
-                    truth1, budget1,false);
+                    truth1, budget1,false,false);
         nal.doublePremiseTask(
                 Statement.make(taskContent, term2, term1, reverseOrder(order)), 
-                    truth2, budget2,false);
+                    truth2, budget2,false,false);
         nal.doublePremiseTask(
                 Statement.makeSym(taskContent, term1, term2, order), 
-                    truth3, budget3,false);
+                    truth3, budget3,false,false);
         
     }
 
@@ -229,7 +229,7 @@ public final class SyllogisticRules {
         }
         
         nal.mem().logic.ANALOGY.commit();
-        nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false);
+        nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false,false);
     }
 
     /**
@@ -266,7 +266,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false );
+        nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget, false, false);
     }
 
     /* --------------- rules used only in conditional inference --------------- */
@@ -360,7 +360,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.doublePremiseTask(content, truth, budget,false);
+            nal.doublePremiseTask(content, truth, budget, false, false);
         }
     }
 
@@ -512,7 +512,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget,false,false);
     }
 
     /**
@@ -613,7 +613,7 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget,false,false);
     }
 
     /**
@@ -689,7 +689,7 @@ public final class SyllogisticRules {
                 }
                 budget = BudgetFunctions.forward(truth, nal);
             }
-            nal.doublePremiseTask(content, truth, budget,false);
+            nal.doublePremiseTask(content, truth, budget,false,false);
         }
         
         if (term2 != null) {
@@ -716,7 +716,7 @@ public final class SyllogisticRules {
                 }
                 budget = BudgetFunctions.forward(truth, nal);
             }
-            nal.doublePremiseTask(content, truth, budget,false);
+            nal.doublePremiseTask(content, truth, budget,false,false);
         }
         
         return true;
@@ -752,6 +752,6 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget,false,false);
     }
 }
