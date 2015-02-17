@@ -197,7 +197,7 @@ public class InternalExperience implements Plugin, EventObserver {
                     quality);
 
                 Task newTask = new Task(sentence, budget);       
-                nal.derivedTask(newTask, false, false, null, null,false);
+                nal.derivedTask(newTask, false, false, null, null);
             }
         }
 
@@ -243,7 +243,7 @@ public class InternalExperience implements Plugin, EventObserver {
                         quality);
 
                     Task newTask = new Task(sentence, budget);       
-                    nal.derivedTask(newTask, false, false, null, null,false);
+                    nal.derivedTask(newTask, false, false, null, null);
                 }
             }
         }
