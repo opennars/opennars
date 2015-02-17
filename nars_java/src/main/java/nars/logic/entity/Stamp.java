@@ -29,7 +29,7 @@ import nars.logic.NAL;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal7.Tense;
 
-import java.lang.ref.WeakReference;
+import java.lang.ref.Reference;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -170,12 +170,12 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
     /** creates a Derivation Chain by collating / zipping 2 Stamps Derivation Chains */
     public static class ZipperDerivationBuilder implements DerivationBuilder {
-        private final WeakReference<Stamp> first;
-        private final WeakReference<Stamp> second;
+        private final Reference<Stamp> first;
+        private final Reference<Stamp> second;
 
         public ZipperDerivationBuilder(Stamp first, Stamp second) {
-            this.first = new WeakReference(first);
-            this.second = new WeakReference(second);
+            this.first = Parameters.reference(first);
+            this.second = Parameters.reference(second);
         }
             
         @Override public Collection<Term> build()  {
@@ -250,10 +250,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     
     /** lazily inherit the derivation from a parent, causing it to cache the derivation also (in case other children get it */
     public static class InheritDerivationBuilder implements DerivationBuilder {
-        private final WeakReference<Stamp> parent;
+        private final Reference<Stamp> parent;
 
         public InheritDerivationBuilder(Stamp parent) {
-            this.parent = new WeakReference(parent);            
+            this.parent = Parameters.reference(parent);
         }
         
         @Override public Collection<Term> build() {

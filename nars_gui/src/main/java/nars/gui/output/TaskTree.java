@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -201,6 +202,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
             toAdd.remove(t);
         }
 
+        List<Task> remaining = new ArrayList<>();
 
         for (Task t : toAdd) {
 
@@ -244,7 +246,8 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
                     }
 
                 } else {
-                    throw new RuntimeException(t + " unknown parent: " + t.getParentTask() );
+                    //throw new RuntimeException(t + " unknown parent: " + t.getParentTask() );
+                    remaining.add(t);
                 }
 
             }
@@ -260,6 +263,8 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
         needRefresh.clear();
         toAdd.clear();
         toRemove.clear();
+
+        toAdd.addAll(remaining);
 
         repaint();
         lastUpdateTime = System.currentTimeMillis();

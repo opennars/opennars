@@ -9,11 +9,11 @@ import nars.logic.nal8.Operator;
 
 import java.util.List;
 
-/** sets the current SELF term */
-public class Self extends Operator {
+/** sets the memory's current SELF term; warning: can cause mental disturbance */
+public class Schizo extends Operator {
 
-    public Self() {
-        super("^self");
+    public Schizo() {
+        super("^schizo");
     }
 
     @Override

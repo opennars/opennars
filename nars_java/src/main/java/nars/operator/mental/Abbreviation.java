@@ -111,8 +111,7 @@ public class Abbreviation extends AbstractPlugin {
         if (canAbbreviate(task)) {
 
             Operation operation = Operation.make(
-                    abbreviate, termArray(task.sentence.term ),
-                    false);
+                    abbreviate, termArray(task.sentence.term ));
 
             operation.setTask(task);
 

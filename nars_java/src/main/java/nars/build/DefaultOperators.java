@@ -2,7 +2,7 @@ package nars.build;
 
 import nars.logic.nal8.Operator;
 import nars.operator.io.Say;
-import nars.operator.io.Self;
+import nars.operator.io.Schizo;
 import nars.operator.math.Add;
 import nars.operator.math.Count;
 import nars.operator.math.MathExpression;
@@ -25,7 +25,6 @@ public class DefaultOperators {
         
         return new Operator[] {
 
-            new Self(),     //set SELF term
 
             //new Wait(),            
             new Believe(),  // accept a statement with a default truth-value
@@ -66,7 +65,9 @@ public class DefaultOperators {
             
             //io operations
             new Say(),
-                
+
+            new Schizo(),     //change Memory's SELF term (default: SELF)
+
          /* 
 +         *          I/O operations under consideration
 +         * observe          // get the most active input (Channel ID: optional?)

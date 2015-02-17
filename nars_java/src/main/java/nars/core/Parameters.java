@@ -24,8 +24,12 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
+import nars.logic.entity.Stamp;
+import nars.logic.entity.Task;
 import nars.util.data.CuckooMap;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -261,6 +265,15 @@ public class Parameters {
 
     public static <K,V> Map<K, V> newCuckoHashMap(int capacity) {
         return new CuckooMap<K,V>(capacity, 0.6f);
+    }
+
+    public static Reference<Task> reference(Task t) {
+        return new SoftReference(t);
+        //return new WeakReference(t);
+    }
+
+    public static Reference<Stamp> reference(Stamp s) {
+        return new SoftReference(s);
     }
 }
 

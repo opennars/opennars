@@ -32,14 +32,12 @@ import static nars.logic.nal8.Operation.make;
 public class Narsese {
     
     public final Memory memory;
+    private Term self;
 
-
-    public Narsese(Memory memory) {
-        this.memory = memory;
-    }
 
     public Narsese(NAR n) {
-        this(n.memory);
+
+        this.memory = n.memory;
     }
     
 
@@ -383,7 +381,7 @@ public class Narsese {
                     a = Term.EmptyTermArray;
                 }                                                            
                 
-                Operation o = Operation.make(operator, a, true);
+                Operation o = Operation.make(operator, a, self);
                 return o;                
             }
         }
@@ -499,7 +497,7 @@ public class Narsese {
             t = Memory.term(oNative, argA);
         }
         else if (oRegistered!=null) {
-            t = Operation.make(oRegistered, argA, true);
+            t = Operation.make(oRegistered, argA, self);
         }
         else {
             throw new InvalidInputException("Invalid compound term");
@@ -623,6 +621,9 @@ public class Narsese {
     public static boolean possiblyNarsese(String s) {
         return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
     }
-            
-    
+
+
+    public void setSelf(Term arg) {
+        this.self = arg;
+    }
 }

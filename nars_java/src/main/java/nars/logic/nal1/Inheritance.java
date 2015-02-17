@@ -91,7 +91,7 @@ public class Inheritance extends Statement {
         
         
         if (subjectProduct && predicateOperator) {
-            return Operation.make((Operator)predicate, ((CompoundTerm)subject).term, true);
+            return Operation.make((Operator) predicate, ((CompoundTerm) subject).term);
         } else {            
             return new Inheritance(subject, predicate);
         }

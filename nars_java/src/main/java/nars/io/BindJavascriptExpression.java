@@ -37,7 +37,7 @@ public class BindJavascriptExpression implements TextReaction {
     public BindJavascriptExpression(NAR nar) {
         super();
         this.nar = nar;
-        this.narsese = new Narsese(nar.memory);
+        this.narsese = new Narsese(nar);
     }
 
 

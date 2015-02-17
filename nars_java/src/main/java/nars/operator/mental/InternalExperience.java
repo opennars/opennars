@@ -105,7 +105,7 @@ public class InternalExperience extends AbstractPlugin  {
                 return null;
         }
         
-        Term opTerm = mem.getOperator(opName);
+        Operator opTerm = mem.getOperator(opName);
         Term[] arg = new Term[ s.truth==null ? 1 : 2 ];
         arg[0]=s.getTerm();
         if (s.truth != null) {
@@ -113,7 +113,7 @@ public class InternalExperience extends AbstractPlugin  {
         }
         
         //Operation.make ?
-        Term operation = Inheritance.make(new Product(arg), opTerm);
+        Operation operation = Operation.make(opTerm, arg);
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }

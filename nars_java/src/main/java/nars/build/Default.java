@@ -9,6 +9,7 @@ import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.nal8.Operator;
 import nars.operator.app.STMInduction;
 import nars.operator.app.plan.TemporalParticlePlanner;
+import nars.operator.io.Author;
 import nars.operator.mental.*;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.CacheBag;
@@ -184,9 +185,13 @@ public class Default extends NewNAR implements ConceptBuilder {
             }
         }
 
+
         n.addPlugin(new Events.OUT());
 
         n.addPlugin(new RuntimeNARSettings());
+
+        n.addPlugin(new Author(n.narsese));
+
     }
 
 

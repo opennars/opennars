@@ -73,16 +73,20 @@ public class Operation extends Inheritance {
      * Try to make a new compound from two components. Called by the logic
      * rules.
      *
-     * @param addSelf include SELF term at end of product terms
+     * @param self specify a SELF, or null to use memory's current self
      * @return A compound generated or null
      */
-    public static Operation make(final Operator oper, Term[] arg, boolean addSelf) {
+    public static Operation make(final Operator oper, Term[] arg, Term self) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
-        Term self = oper.getMemory().getSelf();
-        if(addSelf && ((arg.length == 0) || ( !arg[arg.length-1].equals(self)) )) {
+
+        if (self == null) {
+            self = oper.getMemory().getSelf();
+        }
+
+        if((arg.length == 0) || ( !arg[arg.length-1].equals(self)) ) {
             Term[] arg2=new Term[arg.length+1];
             System.arraycopy(arg, 0, arg2, 0, arg.length);
             arg2[arg.length] = self;
@@ -162,7 +166,7 @@ public class Operation extends Inheritance {
         if (o == null)
             throw new RuntimeException("Unknown operator: " + operator); //TODO use a 'UnknownOperatorException' so this case can be detected by callers
 
-        return make(o, args, true);
+        return make(o, args, null);
     }
 
     public Term getArgument(int i) {
@@ -174,5 +178,10 @@ public class Operation extends Inheritance {
         //don't allow ^want and ^believe to be active/have an effect,
         //which means its only used as monitor
         return getOperator().isExecutable(mem);
+    }
+
+
+    public static Operation make(Operator opTerm, Term[] arg) {
+        return make(opTerm, arg, null);
     }
 }
