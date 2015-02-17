@@ -232,10 +232,7 @@ public class Stamp implements Cloneable {
             }
             
             Collection<Term> p = parent.get().getChain();
-            if (p instanceof LinkedHashSet)
-                return (LinkedHashSet)p;
-            else
-                return new LinkedHashSet(p);
+            return new LinkedHashSet(p);
         }
         
     }
