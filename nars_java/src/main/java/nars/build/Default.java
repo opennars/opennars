@@ -161,15 +161,14 @@ public class Default extends NewNAR implements ConceptBuilder {
         for (Operator o : ExampleOperators.get())
             n.addPlugin(o);
 
-        n.addPlugin(new Events.OUT());
-        
-        n.addPlugin(new RuntimeNARSettings());
+
 
         if (level >= 7) {
+            n.addPlugin(new STMInduction());
+
             if (pluginPlanner != null) {
                 n.addPlugin(pluginPlanner);
             }
-            n.addPlugin(new STMInduction());
         }
 
         if (level >= 8) {
@@ -184,7 +183,10 @@ public class Default extends NewNAR implements ConceptBuilder {
                 n.addPlugin(new Counting());
             }
         }
-        
+
+        n.addPlugin(new Events.OUT());
+
+        n.addPlugin(new RuntimeNARSettings());
     }
 
 

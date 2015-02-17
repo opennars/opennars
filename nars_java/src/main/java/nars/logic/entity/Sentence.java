@@ -91,7 +91,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     public Sentence(T term, char punctuation, TruthValue newTruth, NAL.StampBuilder newStamp) {
         this(term, punctuation, newTruth, newStamp, true);
     }
-    
+
     /**
      * Create a Sentence with the given fields
      *
@@ -459,9 +459,10 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         return revisible;
     }
 
-    /*public void setRevisible(final boolean b) {
+    public Sentence setRevisible(final boolean b) {
         revisible = b;
-    }*/
+        return this;
+    }
 
     public int getTemporalOrder() {
         return term.getTemporalOrder();

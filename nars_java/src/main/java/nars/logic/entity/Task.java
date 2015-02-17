@@ -124,9 +124,12 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
             if (this.equals(getParentTask())) {
                 throw new RuntimeException(this + " has parentTask equal to itself");
             }
+            /*
+            //IS THERE SOME WAY TO MERGE EQUIVALENT BELIEFS HERE?
             if (this.sentence.equals(parentBelief)) {
-                throw new RuntimeException(this + " has parentBelife equal to its sentence");
+                throw new RuntimeException(this + " has parentBelief equal to its sentence");
             }
+            */
         }
 
 

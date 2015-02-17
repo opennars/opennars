@@ -246,8 +246,6 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
-            if (parentTask.getTerm() == null)
-                return false;
             if (newContent.equals(parentTask.getTerm()))
                 return false;
         }
@@ -257,9 +255,11 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         }
 
         return singlePremiseTask(
-                new Sentence(newContent, punctuation, newTruth,
-                    newStamp(getCurrentTask().sentence,
-                            getCurrentBelief())),
+                new Sentence(newContent,
+                        punctuation,
+                        newTruth,
+                        newStamp(getCurrentTask().sentence,
+                        getCurrentBelief())).setRevisible(getCurrentTask().sentence.isRevisible()),
                 newBudget);
     }
 

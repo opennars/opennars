@@ -28,7 +28,7 @@ public class TemporalParticlePlannerTest {
 //            input += "100\n";
 //            input += "<goal --> reached>!\n";
 //        }
-        String exp = "<(&/,(^pick,X),+3,(^pick,Y),+3,(^pick,Z)) =/> <goal --> reached>>!";
+        String exp = "<(&/,(^pick,X,SELF),+3,(^pick,Y,SELF),+3,(^pick,Z,SELF)) =/> <goal --> reached>>!";
         
         testGraphPlan(input, exp, true, true, 44);
         testGraphPlan(input, exp, false, false, 1000);

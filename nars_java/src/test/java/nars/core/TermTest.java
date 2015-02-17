@@ -291,7 +291,7 @@ public class TermTest {
         try {
             Term x = p.parseTerm("wonder(a,b)");
             assertEquals(Operation.class, x.getClass());
-            assertEquals("(^wonder,a,b)", x.toString());
+            assertEquals("(^wonder,a,b,SELF)", x.toString());
             
         } catch (InvalidInputException ex) {
             ex.printStackTrace();
