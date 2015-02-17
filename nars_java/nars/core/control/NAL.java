@@ -164,11 +164,11 @@ public abstract class NAL implements Runnable {
                     (task.getParentTask() == null) || (!Negation.areMutuallyInverse(tc, ptc))
                    ) {
                 
-                    final Collection<Term> chain = stamp.getChain();
+                    /*final Collection<Term> chain = stamp.getChain();
                     if (chain.contains(tc)) {
                         memory.removeTask(task, "Cyclic Reasoning");
                         return false;
-                    }
+                    }*/
                 }
             }
             
