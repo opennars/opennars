@@ -15,8 +15,6 @@ import nars.logic.entity.Task;
 import nars.logic.entity.TruthValue;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.tree.*;
 import java.awt.*;
@@ -42,7 +40,11 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
     long updatePeriodMS = 100;
     DefaultMutableTreeNode root;
     Map<Task, DefaultMutableTreeNode> nodes = new ConcurrentHashMap();
-    float priorityThreshold = 0.00f;
+
+    ConceptPanelBuilder cpBuilder;
+
+    float priorityThreshold = 0.00f; //TODO add an exclusion condition if the task is input
+
     long lastUpdateTime = 0;
     boolean needsRestart = false;
 
@@ -54,6 +56,8 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
 
     public TaskTree(NAR nar) {
         super(nar, new BorderLayout());
+
+        cpBuilder = new ConceptPanelBuilder(nar);
 
         tree.setEditable(true);
 
@@ -69,7 +73,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
 
         JPanel menu = new JPanel(new WrapLayout(FlowLayout.LEFT));
 
-        JCheckBox showJudgments = new JCheckBox("Judgments");
+        JToggleButton showJudgments = new JToggleButton("Judgments");
         showJudgments.setSelected(showingJudgments);
         showJudgments.addActionListener(new ActionListener() {
             @Override
@@ -79,7 +83,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
             }
         });
         menu.add(showJudgments);
-        JCheckBox showQuestions = new JCheckBox("Questions");
+        JToggleButton showQuestions = new JToggleButton("Questions");
         showQuestions.setSelected(showingQuestions);
         showQuestions.addActionListener(new ActionListener() {
             @Override
@@ -89,7 +93,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
             }
         });
         menu.add(showQuestions);
-        JCheckBox showGoals = new JCheckBox("Goals");
+        JToggleButton showGoals = new JToggleButton("Goals");
         showGoals.setSelected(showingGoals);
         showGoals.addActionListener(new ActionListener() {
             @Override
@@ -245,6 +249,15 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
     }
 
     @Override
+    protected void onShowing(boolean showing) {
+        super.onShowing(showing);
+        cpBuilder.setActive(showing);
+        if (!showing) {
+            reset();
+        }
+    }
+
+    @Override
     public void event(Class channel, Object[] arguments) {
 
         if (channel == TaskAdd.class) {
@@ -271,12 +284,8 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
         private final NSlider priSlider;
 
         public TaskEdit(Task t) {
-            super(new BorderLayout());
+            super( new FlowLayout(WrapLayout.LEFT,4,1));
             this.task = t;
-
-            label = new TaskLabel(task);
-            add(label, BorderLayout.NORTH);
-            JPanel controls = new JPanel(new WrapLayout(WrapLayout.LEFT));
 
             {
                 priSlider = new NSlider(0.5f, 0, 1f) {
@@ -285,35 +294,44 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
                         t.setPriority(v);
                     }
                 };
-                priSlider.setPrefix("Priority");
+                priSlider.setPrefix("Pri");
 
-                Dimension dim = new Dimension(150, 25);
+                Dimension dim = new Dimension(75, 25);
                 priSlider.setMaximumSize(dim);
                 priSlider.setPreferredSize(dim);
 
-                controls.add(priSlider);
+                add(priSlider);
             }
+
             {
                 Concept c = nar.concept(task.getTerm());
                 if (c!=null) {
-                    ConceptsPanel p = new ConceptsPanel(nar, false, c);
-                    controls.add(p);
+                    ConceptPanelBuilder.ConceptPanel p = cpBuilder.newPanel(c, false, 32);
+                    add(p);
                 }
             }
 
 
-            add(controls, BorderLayout.CENTER);
+            label = new TaskLabel(task);
+            add(label);
+
+
         }
 
         @Override
         public void updateTask() {
             label.updateTask();
             priSlider.setValue(task.getPriority());
+            setBackground(label.getBackground());
         }
 
         @Override
         public void setSelected(boolean selected) {
+
             label.setSelected(selected);
+
+            //setBorder(label.getBorder());
+
         }
     }
 
@@ -374,12 +392,12 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
         }
 
         public void setSelected(boolean selected) {
-            final int bt = 1;
+            /*final int bt = 1;
             if (!selected) {
                 setBorder(new EmptyBorder(bt, bt, bt, bt));
             } else {
                 setBorder(new LineBorder(Color.GRAY, bt));
-            }
+            }*/
 
         }
     }

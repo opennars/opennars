@@ -4,7 +4,6 @@
  */
 package nars.gui.output;
 
-import automenta.vivisect.swing.NWindow;
 import nars.core.NAR;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Term;
@@ -42,15 +41,15 @@ public class ConceptButton extends JButton implements ActionListener {
             //concept doesnt exist (yet)
             return;
         }
-        popup(nar, concept);
+        //popup(nar, concept);
     }
-
-    public static void popup(NAR nar, Concept concept) {
-        ConceptsPanel cp;
-        NWindow w = new NWindow(concept.term.toString(), new JScrollPane(cp = new ConceptsPanel(nar, concept)));
-        cp.onShowing(true);
-        w.pack();
-        w.setVisible(true);
-    }
-    
+//
+//    public static void popup(NAR nar, Concept concept) {
+//        ConceptPanelBuilder cp;
+//        NWindow w = new NWindow(concept.term.toString(), new JScrollPane(cp = new ConceptPanelBuilder(nar, concept)));
+//        cp.onShowing(true);
+//        w.pack();
+//        w.setVisible(true);
+//    }
+//
 }

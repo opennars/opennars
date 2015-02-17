@@ -6,12 +6,12 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
-import nars.event.EventEmitter;
-import nars.event.Reaction;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
-import nars.gui.WrapLayout;
+import nars.event.AbstractReaction;
 import nars.logic.entity.BudgetValue.Budgetable;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
@@ -22,82 +22,43 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import static java.awt.BorderLayout.*;
-import static java.util.Collections.unmodifiableList;
 
 /**
- * Views one or more Concepts
+ * Manages a set of ConceptPanels by receiving events and dispatching update commands
  */
-public class ConceptsPanel extends NPanel implements Reaction, Runnable {
+public class ConceptPanelBuilder extends AbstractReaction {
 
     private final NAR nar;
-    private final LinkedHashMap<Concept, ConceptPanel> concept;
-    private EventEmitter.Registrations reg;
+    private final Multimap<Concept, ConceptPanel> concept = HashMultimap.create();
 
-    public ConceptsPanel(NAR n, Concept... c) {
-        this(n, true, c);
-    }
-
-    public ConceptsPanel(NAR n, boolean label, Concept... c) {
-        super();
+    public ConceptPanelBuilder(NAR n, Concept... c) {
+        super(n, Events.FrameEnd.class,
+                Events.ConceptBeliefAdd.class,
+                Events.ConceptBeliefRemove.class,
+                Events.ConceptQuestionAdd.class,
+                Events.ConceptQuestionRemove.class,
+                Events.ConceptGoalAdd.class,
+                Events.ConceptGoalRemove.class);
 
         this.nar = n;
-            this.concept = new LinkedHashMap();
-
-        if (c.length == 1) {
-            ConceptPanel v = new ConceptPanel(c[0], label);
-            v.update(nar.time());
-            setLayout(new BorderLayout());
-            add(v, CENTER);
-            concept.put(c[0], v);
-        }
-        else {
-            VerticalPanel v = new VerticalPanel() {
-
-                @Override
-                protected void onShowing(boolean showing) {
-                    ConceptsPanel.this.onShowing(showing);
-                }
-                
-            };
-            add(v, CENTER);
-            
-            int i = 0;
-            for (Concept x : c) {
-                if (x==null) continue;
-
-                ConceptPanel p = new ConceptPanel(x, label);
-                p.update(nar.time());
-                v.addPanel(i++, p);
-                concept.put(x, p);
-            }
-        }
-
-        updateUI();
 
     }
 
-    @Override
-    protected void onShowing(boolean showing) {
-        if (showing) {
-            reg = nar.memory.event.on(this,
-                    Events.FrameEnd.class,
-                    Events.ConceptBeliefAdd.class,
-                    Events.ConceptBeliefRemove.class,
-                    Events.ConceptQuestionAdd.class,
-                    Events.ConceptQuestionRemove.class,
-                    Events.ConceptGoalAdd.class,
-                    Events.ConceptGoalRemove.class);
-        }
-        else {
-            if (reg!=null) {
-                reg.cancel();
-                reg = null;
+    public ConceptPanel newPanel(Concept c, boolean label, int chartSize) {
+        return new ConceptPanel(c, label, chartSize) {
+            @Override
+            protected void onShowing(boolean showing) {
+                if (showing) {
+                    concept.put(c, this);
+                }
+                else {
+                    concept.remove(c, this);
+                }
             }
-        }
+        }.update(nar.time());
     }
 
     @Override
@@ -105,26 +66,23 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
 
         if (event == FrameEnd.class) {
             //SwingUtilities.invokeLater(this);
-            run();
+            updateAll();
         }
-        /*
-        if (!(args.length > 0) && (args[0] instanceof Concept)) {
-            return;
-        }
-        Concept c = (Concept) args[0];
-        ConceptPanel cp = concept.get(c);
-        if (cp != null) {
-            SwingUtilities.invokeLater(this);
-        }*/
     }
     
-    @Override public void run() {  
+    public void updateAll() {
         //TODO only update the necessary concepts
-        for (ConceptPanel cp : concept.values())
-            cp.update(nar.time()); 
+        long t = nar.time();
+        for (final ConceptPanel cp : concept.values())
+            cp.update(t);
     }
 
-    public static class ConceptPanel extends JPanel {
+    public void off() {
+        super.off();
+        concept.clear();
+    }
+
+    public static class ConceptPanel extends NPanel {
 
         private final Concept concept;
         private final TruthChart beliefChart;
@@ -133,25 +91,34 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
         private JTextArea title;
         private JLabel subtitle;
 
-        final int chartWidth = 64;
-        final int chartHeight = 64;
+        int chartWidth = 64;
+        int chartHeight = 64;
         final float titleSize = 24f;
-        final float subfontSize = 16f;
+        //final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
        // private final PCanvas syntaxPanel;
 
 
         public ConceptPanel(Concept c, boolean label) {
+            this(c, label, 64);
+        }
+
+        public ConceptPanel(Concept c, boolean label, int chartSize) {
             super(new BorderLayout());
             this.concept = c;
 
-            JPanel overlay = new JPanel(new BorderLayout());
-            
-            JPanel details = new JPanel(new WrapLayout(FlowLayout.LEFT));
+            this.chartWidth = this.chartHeight = chartSize;
+            setOpaque(false);
+
+
+            JPanel details = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
             details.setOpaque(false);
 
+            details.add(this.beliefTime = new BeliefTimeline(chartWidth/2, chartHeight));
             details.add(this.beliefChart = new TruthChart(chartWidth, chartHeight));
+
             details.add(this.questionChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight));
+
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
             //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
             
@@ -166,13 +133,12 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
                 title.setFont(Video.monofont.deriveFont(titleSize));
                 titlePanel.add(this.subtitle = new JLabel(), SOUTH);
 
-                details.add(titlePanel);
+                add(titlePanel, NORTH);
             }
             
 
-            overlay.add(details, CENTER);
-            overlay.add(this.beliefTime = new BeliefTimeline(chartWidth*3, chartHeight/2), SOUTH);
-            
+            add(details, CENTER);
+
            /* TermSyntaxVis tt = new TermSyntaxVis(c.term);
             syntaxPanel = new PCanvas(tt);
             syntaxPanel.setZoom(10f);
@@ -184,16 +150,17 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
                         
 
             add(syntaxPanel);*/
-            add(overlay, NORTH);  
             //setComponentZOrder(overlay, 1);
             //syntaxPanel.setBounds(0,0,400,400);
             
             
         }
 
-        public void update(long time) {
+        public ConceptPanel update(long time) {
 
             String st = "";
+
+            beliefChart.setVisible(true);
             if (!concept.beliefs.isEmpty()) {
                 List<Sentence> bb = concept.beliefs;
                 beliefChart.update(time, bb);
@@ -202,6 +169,7 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
                 beliefTime.setVisible(
                         beliefTime.update(time, bb));
             }
+
             if (subtitle!=null)
                 subtitle.setText(st);
 
@@ -213,18 +181,34 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
                 beliefTime.setVisible(false);
             }*/
 
-            if (!concept.questions.isEmpty())
-                questionChart.update( unmodifiableList( concept.questions ) );
+            if (!concept.questions.isEmpty()) {
+                questionChart.setVisible(true);
+                questionChart.update(concept.questions);
+            }
+            else {
+                questionChart.setVisible(false);
+            }
             
             if (!concept.goals.isEmpty()) {
                 if (subtitle!=null) {
                     String s = subtitle.getText();
                     subtitle.setText(s + (s.equals("") ? "" : " ") + "desire: " + concept.goals.get(0).truth.toString());
                 }
-                desireChart.update(time, unmodifiableList(concept.goals));
+                desireChart.update(time, concept.goals);
+                desireChart.setVisible(true);
+            }
+            else {
+                desireChart.setVisible(false);
             }
 
             updateUI();
+
+            return this;
+        }
+
+        @Override
+        protected void onShowing(boolean showing) {
+
         }
     }
 
@@ -302,7 +286,7 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
             super(width, height);
         }
 
-        public int getX(long when) {
+        public int getT(long when) {
             return Math.round((when - minTime) / timeFactor);
         }
         
@@ -336,24 +320,25 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
                 if (s.isEternal()) continue;
                 long when = s.getOccurenceTime();
                 
-                int x = getX(when);
+                int yy = getT(when);
                 
                 
                 float freq = s.getTruth().getFrequency();
                 float conf = s.getTruth().getConfidence();
 
-                int y = (int)((1.0f - freq) * (this.h - thick));
+                int xx = (int)((1.0f - freq) * (this.w - thick));
                         
                 
                 g.setColor(getColor(freq, conf, 1.0f));
                 
-                g.fillRect(x, y, thick, thick);
+                g.fillRect(xx, yy, thick, thick);
 
             }
             
             // "now" axis            
-            g.setColor(Color.WHITE);
-            g.fillRect(getX(time), 0, 1, getHeight());
+            g.setColor(Color.GRAY);
+            int tt = getT(time);
+            g.fillRect(0, tt-1, getWidth(), 3);
             
             g.dispose();        
             return true;
@@ -393,8 +378,8 @@ public class ConceptsPanel extends NPanel implements Reaction, Runnable {
                 }
                 g.setColor(getColor(freq, conf, factor));
 
-                int w = 8;
-                int h = 8;
+                int w = 6;
+                int h = 6;
                 float dw = getWidth() - w;
                 float dh = getHeight() - h;
                 g.fillRect((int) (freq * dw), (int) ((1.0 - conf) * dh), w, h);

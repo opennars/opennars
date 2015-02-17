@@ -1,9 +1,10 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
+import automenta.vivisect.swing.NWindow;
 import nars.core.Events;
-import nars.core.NAR;
 import nars.core.Events.OUT;
+import nars.core.NAR;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
@@ -18,6 +19,7 @@ import java.util.Deque;
 
 public class SwingLogText extends SwingText  {
     private final NAR nar;
+    private final ConceptPanelBuilder cpBuilder;
     public boolean showStamp = false;
     final Deque<LogLine> pendingDisplay = new ArrayDeque(); //new ConcurrentLinkedDeque<>();
     private JScrollPane scroller;
@@ -34,14 +36,16 @@ public class SwingLogText extends SwingText  {
         }
         
     }
-    
+
+
     
 
     public SwingLogText(NAR n) {        
         super();
         
         this.nar = n;
-        
+     
+        this.cpBuilder = new ConceptPanelBuilder(n);
     }
 
 //    @Override
@@ -245,7 +249,12 @@ public class SwingLogText extends SwingText  {
         
         @Override
         public void actionPerformed(ActionEvent e) {            
-            ConceptButton.popup(nar, concept);
+            NWindow w = new NWindow(concept.term.toString(),
+                    cpBuilder.newPanel(concept, true, 64));
+            
+            w.pack();
+            w.setVisible(true);
+
         }
         
     }

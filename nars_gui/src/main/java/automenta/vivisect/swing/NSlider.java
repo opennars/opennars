@@ -43,7 +43,9 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     protected boolean dragging;
     protected NumberFormat nf = NumberFormat.getInstance();
     protected String prefix = "";
-    
+
+    final static Font defaultLabelFont = Video.monofont.deriveFont(11f);
+
     public NSlider() {
         this(0,0,0);
     }
@@ -54,7 +56,8 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
 
     public NSlider(AtomicDouble value, String prefix, float min, float max) {
         this(value, min, max);
-        this.prefix = prefix;        
+        this.prefix = prefix;
+        setToolTipText(prefix);
     }
     
     public NSlider(AtomicDouble value, float min, float max) {
@@ -66,12 +69,12 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         this.value = value;        
         this.min = min;
         this.max = max;
-        setBorder(new LineBorder(Color.WHITE));
+        setBorder(new LineBorder(Color.GRAY));
         
         addMouseListener(this);
         addMouseMotionListener(this);
         
-        setFont(Video.monofont.deriveFont(13f));
+        setFont(defaultLabelFont);
         
     }
 

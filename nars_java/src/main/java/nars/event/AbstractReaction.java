@@ -44,6 +44,8 @@ public abstract class AbstractReaction implements Reaction {
 
     }
 
+    public void off() { setActive(false); }
+
     protected void emit(Class channel, Object... signal) {
         source.emit(channel, signal);
     }
