@@ -403,9 +403,6 @@ public class Terms {
      * are equivalent.
      */ 
     public static <T> boolean containsAll(final T[] a, final T[] b) {
-        if (a.length != b.length) {
-            return false;
-        }
         for (final T ax : a) {
             if (!contains(b, ax))
                 return false;
