@@ -74,7 +74,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                     break;
                 }
                 Task current=eventbuffer.get(j);
-                st.getChain().add(current.sentence.term);
+                //st.getChain().add(current.sentence.term); <- no, cyclic inference desired here https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
                 for(long l : current.sentence.stamp.evidentialBase) {
                     evBase.add(l);
                 }
