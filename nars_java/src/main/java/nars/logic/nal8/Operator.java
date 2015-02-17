@@ -36,12 +36,16 @@ import java.util.List;
  * inside NARS or outside it, in another system or device.
  * <p>
  * This is the only file to modify when registering a new operator into NARS.
+ *
+ * An instance of an Operator must not be shared by multiple Memory
+ * since it will be associated with a particular one.  Create a separate one for each
  */
 public abstract class Operator extends Term implements Plugin {
 
+    protected NAR nar;
     public static final float executionConfidence = Parameters.MAX_CONFIDENCE; // 0.9999f;
     
-    protected Operator() {   super();    }
+    //protected Operator() {   super();    }
     
     protected Operator(String name) {
         super(name);
@@ -49,12 +53,19 @@ public abstract class Operator extends Term implements Plugin {
             throw new RuntimeException("Operator name needs ^ prefix");
     }
 
-    @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
+
+    @Override public boolean setEnabled(NAR n, boolean enabled) {
+        if (enabled)
+            this.nar = n;
+        else
+            this.nar = null;
         return true;
-    }        
-    
-    
+    }
+
+    public Memory getMemory() {
+        return nar.memory;
+    }
+
     /**
      * Required method for every operator, specifying the corresponding
      * operation
@@ -151,13 +162,21 @@ public abstract class Operator extends Term implements Plugin {
         try {
             List<Task> feedback = execute(op, args, memory);
 
-            memory.executedTask(op, new TruthValue(1f,executionConfidence));
+            if (!isImmediate()) {
+                memory.executedTask(op, new TruthValue(1f, executionConfidence));
 
-            reportExecution(op, args, feedback, memory);
+                reportExecution(op, args, feedback, memory);
+            }
+            else {
+                memory.emit(EXE.class, op, feedback);
+            }
 
 
+            //should we allow immediate tasks to create feedback?
             if (feedback!=null) {
                 for (final Task t : feedback) {
+                    t.setCause(op);
+                    t.setReason("Feedback");
                     memory.inputTask(t);
                 }
             }
@@ -237,5 +256,7 @@ public abstract class Operator extends Term implements Plugin {
     }
 
 
+    /** Immediate operators are processed immediately and do not enter the reasoner's memory */
+    public boolean isImmediate() { return false; }
 }
 

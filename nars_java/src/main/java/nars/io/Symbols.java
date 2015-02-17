@@ -23,6 +23,7 @@ package nars.io;
 
 import nars.core.Events;
 import nars.logic.NALOperator;
+import nars.logic.entity.Term;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -110,6 +111,7 @@ public class Symbols {
     protected static final Map<Character,NALOperator> charToOperator
             = Collections.unmodifiableMap(_charToOperator);
 
+    public static final Term DEFAULT_SELF = Term.get("SELF");
 
 
     public static NALOperator getOperator(final char c) {

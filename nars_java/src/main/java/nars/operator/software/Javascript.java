@@ -3,7 +3,7 @@ package nars.operator.software;
 import nars.core.Memory;
 import nars.io.Texts;
 import nars.logic.entity.Term;
-import nars.logic.nal8.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousTermFunction;
 import nars.operator.mental.Mental;
 
 import javax.script.Bindings;
@@ -14,7 +14,7 @@ import javax.script.SimpleBindings;
 /**
  * Executes a Javascript expression
  */
-public class Javascript extends SynchronousFunctionOperator implements Mental {
+public class Javascript extends SynchronousTermFunction implements Mental {
     
     ScriptEngine js = null;      
 

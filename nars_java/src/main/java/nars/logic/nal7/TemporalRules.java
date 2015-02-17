@@ -152,11 +152,28 @@ public class TemporalRules {
 
 
     public static boolean containsMentalOperator(final Task t) {
+        return containsMentalOperator(t.getTerm(), true);
+        /*
         if(!(t.sentence.term instanceof Operation))
             return false;
 
         Operation o= (Operation)t.sentence.term;
         return (o.getOperator() instanceof Mental);
+        */
+    }
+
+    public static boolean containsMentalOperator(Term t, boolean recurse) {
+        if (t instanceof Operation) {
+            Operation o= (Operation)t;
+            if (o.getOperator() instanceof Mental) return true;
+        }
+        if ((recurse) && (t instanceof CompoundTerm)) {
+            for (Term s : ((CompoundTerm)t)) {
+                if (containsMentalOperator(s, true)) return true;
+            }
+        }
+
+        return false;
     }
 
 

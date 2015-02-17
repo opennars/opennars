@@ -2,16 +2,14 @@ package nars.control;
 
 import nars.core.Core;
 import nars.core.Parameters;
+import nars.logic.entity.*;
 import nars.logic.reason.ConceptFire;
 import nars.logic.reason.ImmediateProcess;
-import nars.logic.NALOperator;
-import nars.logic.TruthFunctions;
-import nars.logic.entity.*;
-import nars.logic.nal1.Negation;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.CacheBag;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -125,7 +123,10 @@ public class DefaultCore extends UniCore {
 
         memory.emotion.adjustBusy(task.getPriority(), task.getDurability());
 
-        if (task.isInput() || task.sentence.isQuest() || task.sentence.isGoal() || task.sentence.isQuestion() || concept(task.sentence.term) != null) {
+        if (task.isInput() || task.sentence.isQuest() || task.sentence.isGoal()
+                || task.sentence.isQuestion()
+                || (concept(task.sentence.term) != null)
+                ) {
             //it is a question/quest or a judgment for a concept which exists:
 
             return new ImmediateProcess(memory, task);

@@ -40,13 +40,11 @@ public class Operation extends Inheritance {
     private Task task;
     
     
-    public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
+    //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
 
     /**
      * Constructor with partial values, called by make
      *
-     * @param n The name of the term
-     * @param arg The component list of the term
      */
     protected Operation(Term argProduct, Term operator) {
         super(argProduct, operator);
@@ -75,7 +73,6 @@ public class Operation extends Inheritance {
      * Try to make a new compound from two components. Called by the logic
      * rules.
      *
-     * @param memory Reference to the memory
      * @param addSelf include SELF term at end of product terms
      * @return A compound generated or null
      */
@@ -84,10 +81,11 @@ public class Operation extends Inheritance {
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
-        if(addSelf && !Term.isSelf(arg[arg.length-1])) {
+        Term self = oper.getMemory().getSelf();
+        if(addSelf && ((arg.length == 0) || ( !arg[arg.length-1].equals(self)) )) {
             Term[] arg2=new Term[arg.length+1];
             System.arraycopy(arg, 0, arg2, 0, arg.length);
-            arg2[arg.length] = Term.SELF;
+            arg2[arg.length] = self;
             arg=arg2;
         }
         
@@ -112,9 +110,9 @@ public class Operation extends Inheritance {
         
         int n=0;
         for (final Term t : arg) {
-            if(n==arg.length-1) {
+            /*if(n==arg.length-1) {
                 break;
-            }
+            }*/
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             nameBuilder.append(t.name());
             n++;

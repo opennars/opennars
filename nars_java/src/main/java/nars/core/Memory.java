@@ -84,6 +84,7 @@ public class Memory implements Serializable {
     private int level;
 
     public NALRuleEngine rules;
+    private Term self;
 
     public void setLevel(int nalLevel) {
         if ((nalLevel < 1) || (nalLevel > 8))
@@ -120,6 +121,14 @@ public class Memory implements Serializable {
         while ((next = source.get())!=null) {
             addNewTask(next, next.getReason());
         }
+    }
+
+    public Term getSelf() {
+        return self;
+    }
+
+    public void setSelf(Term t) {
+        this.self = t;
     }
 
     public static enum Forgetting {
@@ -214,6 +223,7 @@ public class Memory implements Serializable {
         this.concepts = concepts;
         this.concepts.init(this);
 
+        this.self = Symbols.DEFAULT_SELF; //default value
 
         this.operators = new HashMap<>();
 
@@ -553,11 +563,23 @@ public class Memory implements Serializable {
      */
     public int inputTask(final Task task) {
 
-        if (task.getTerm() instanceof ImmediateOperation) {
-            ImmediateOperation i = (ImmediateOperation)task.getTerm();
-            i.execute(this);
-            emit(ImmediateOperation.class, i);
-            return 0;
+
+        final Term taskTerm = task.getTerm();
+        if (taskTerm instanceof Operation) {
+            Operation o = (Operation) taskTerm;
+            o.setTask(task);
+
+            if (o instanceof ImmediateOperation) {
+                ImmediateOperation i = (ImmediateOperation) task.getTerm();
+                i.execute(this);
+                emit(ImmediateOperation.class, i);
+                return 0;
+            }
+            else if (o.getOperator().isImmediate()) {
+                o.getOperator().call(o, this);
+                return 0;
+            }
+
         }
 
         Stamp s = task.sentence.stamp;
@@ -732,7 +754,7 @@ public class Memory implements Serializable {
         return operators.get(op);
     }
 
-    public Operator addOperator(final Operator op) {
+    Operator addOperator(final Operator op) {
         operators.put(op.name(), op);
         return op;
     }
@@ -819,6 +841,9 @@ public class Memory implements Serializable {
 
     public <T extends CompoundTerm> NewTask<T> newTask(T t) {
         return new NewTask(this, t);
+    }
+    public <T extends CompoundTerm> NewTask<T> newTask(Sentence<T> s) {
+        return new NewTask(this, s);
     }
 
     public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability) {

@@ -53,6 +53,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
     boolean showingGoals = true;
 
     private DefaultTreeModel model;
+    private DefaultMutableTreeNode amnesia = null;
 
     public TaskTree(NAR nar) {
         super(nar, new BorderLayout());
@@ -137,6 +138,11 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
             toAdd.add(t);
     }
 
+    public void remove(Task t) {
+        toRemove.add(t);
+        toAdd.remove(t);
+    }
+
     public DefaultMutableTreeNode getNode(final Task t) {
         return nodes.get(t);
     }
@@ -195,11 +201,13 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
             toAdd.remove(t);
         }
 
+
         for (Task t : toAdd) {
+
             Task parent = t.getParentTask();
+
             if (parent != null && parent.equals(t)) {
-                //System.err.println(t + " has parentTask equal to itself");
-                parent = null;
+                throw new RuntimeException(t + " has parentTask equal to itself");
             }
 
             DefaultMutableTreeNode tnode = getNode(t);
@@ -207,27 +215,36 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
                 continue;
             }
 
-            tnode = newNode(t);
+            if (t.isInput()) {
 
-            if (parent == null) {
                 //System.out.println(tnode + " add to root");
-                root.add(tnode);
+                root.add(newNode(t));
                 needRefresh.add(root);
             } else {
-                DefaultMutableTreeNode pnode = getNode(parent);
+                DefaultMutableTreeNode pnode;
+                if (t.isAmnesiac()) {
+                    pnode = getAmnesiaNode();
+                }
+                else {
+                    pnode = getNode(parent);
+                }
+
 
                 if (pnode != null) {
-                    //System.out.println(tnode + "Adding to: " + pnode);
-                    if (tnode.getParent() != null) { //pnode.isNodeAncestor(tnode)) {
-                        tnode.removeFromParent();
+                    tnode = newNode(t);
+                    TreeNode parentNode = tnode.getParent();
+                    if ((parentNode != null) && (parentNode.equals(pnode))) {
+                        //just refresh, same location
+                        needRefresh.add(pnode);
                     }
-                    pnode.add(tnode);
-                    needRefresh.add(pnode);
+                    else {
+                        tnode.removeFromParent();
+                        pnode.add(tnode);
+                        needRefresh.add(pnode);
+                    }
+
                 } else {
-                    //missing parent, reparent to root?
-                    //System.out.println(tnode + " add to root by default");
-                    root.add(tnode);
-                    needRefresh.add(root);
+                    throw new RuntimeException(t + " unknown parent: " + t.getParentTask() );
                 }
 
             }
@@ -248,6 +265,14 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
         lastUpdateTime = System.currentTimeMillis();
     }
 
+    private DefaultMutableTreeNode getAmnesiaNode() {
+        if (amnesia == null) {
+            amnesia = new DefaultMutableTreeNode("(Amnesia)");
+            root.add(amnesia);
+        }
+        return amnesia;
+    }
+
     @Override
     protected void onShowing(boolean showing) {
         super.onShowing(showing);
@@ -263,7 +288,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
         if (channel == TaskAdd.class) {
             add((Task) arguments[0]);
         } else if (channel == TaskRemove.class) {
-            toRemove.add((Task) arguments[0]);
+            remove((Task) arguments[0]);
         } else if (channel == FrameEnd.class) {
             update();
         } else if (channel == Events.Restart.class) {

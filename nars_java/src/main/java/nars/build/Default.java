@@ -157,9 +157,9 @@ public class Default extends NewNAR implements ConceptBuilder {
         n.memory.setLevel(level);
 
         for (Operator o : DefaultOperators.get())
-            n.memory.addOperator(o);
+            n.addPlugin(o);
         for (Operator o : ExampleOperators.get())
-            n.memory.addOperator(o);
+            n.addPlugin(o);
 
         n.addPlugin(new Events.OUT());
         

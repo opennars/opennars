@@ -4,127 +4,187 @@
  */
 package nars.io;
 
+import nars.core.Events;
 import nars.core.Events.ERR;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
+import nars.logic.entity.Sentence;
 import nars.logic.entity.Term;
+import nars.logic.nal8.ImmediateOperation;
 import nars.logic.nal8.Operator;
-import nars.logic.nal8.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousSentenceFunction;
+import nars.logic.nal8.SynchronousTermFunction;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
- *
  * @author me
  */
 public class BindJavascriptExpression implements TextReaction {
-    
-    ScriptEngine js;
-    
-    public static final String BINDING_SYMBOL = ":=";
-    private final Memory memory;
-    private final Narsese narsese;
 
-    public BindJavascriptExpression(Memory memory) {
+    public static final String BINDING_SYMBOL = ":=";
+    private final Narsese narsese;
+    private final NAR nar;
+    ScriptEngine js;
+
+    public BindJavascriptExpression(NAR nar) {
         super();
-        this.memory = memory;
-        this.narsese = new Narsese(memory);
+        this.nar = nar;
+        this.narsese = new Narsese(nar.memory);
     }
-    
-    
+
+
     @Override
     public Object react(String input) {
         if (input.contains(BINDING_SYMBOL)) {
             String[] p = input.split(BINDING_SYMBOL);
-            if (p.length!=2) {
+            if (p.length != 2) {
                 throw new RuntimeException("Invalid syntax for expression binding");
             }
-            
+
             String newOp = Operator.addPrefixIfMissing(p[0].trim());
-            Operator existing = memory.getOperator(newOp);
-            if (existing!=null) {
+            Operator existing = nar.memory.getOperator(newOp);
+            if (existing != null) {
                 throw new RuntimeException("Unable to bind new expression to existing Operator: " + existing);
             }
-            
+
             String proc = p[1].trim();
             if (!proc.startsWith("js{")) {
                 throw new RuntimeException("Unrecognized expression format: " + proc);
             }
-            if (!proc.endsWith("}")) {
+            if (!proc.endsWith("}") && !proc.endsWith("}sentence")) {
                 throw new RuntimeException("Expression must end with '}'");
             }
-            proc = proc.substring(3, proc.length()-1).trim();
-            
-            
+
+            boolean sentence = proc.trim().endsWith("}sentence");
+            if (sentence) {
+                proc = proc.replaceAll("}sentence", "}");
+            }
+            proc = proc.substring(3, proc.length() - 1).trim();
+
+
             if (js == null) {
                 ScriptEngineManager factory = new ScriptEngineManager();
                 js = factory.getEngineByName("JavaScript");
             }
 
-
-            
             final String o = newOp.substring(1);
-            try {
-                
-                String jsFunc = "function " + o + "($1, $2, $3, $4, $5, $6) { " + proc + "; }";
-                
-                js.eval(jsFunc);
-                js.put("memory", memory);
-                
-                memory.addOperator(new SynchronousFunctionOperator(newOp) {
-                    
+            String jsFunc = "function " + o + "($1, $2, $3, $4, $5, $6) { " + proc + "; }";
 
-                    @Override
-                    protected Term function(Memory memory, Term[] args) {
-                       StringBuilder argsToParameters = new StringBuilder();
-                        for (int i = 0; i < args.length; i++) {
-                            argsToParameters.append("'").append(args[i].toString()).append("'");
-                            if (args.length-1 != i) 
-                                argsToParameters.append(",");
-                        }
-                        
-                        
-                        Object result = null;
-                        try {
-                            result = js.eval(o + "(" + argsToParameters + ")");
-                        } catch (ScriptException ex) {
-                            throw new RuntimeException("Exception in executing " + this + ": " + ex.toString(), ex);
-                        }
-                        
-                        
-                        try {
-                            return narsese.parseTerm(result.toString());
-                        } catch (InvalidInputException ex) {
-                            memory.emit(ERR.class, ex.toString());
-                            if (Parameters.DEBUG)
-                                ex.printStackTrace();
-                        }
-                        
-                        return null;                        
-                     }
 
-                    @Override
-                    protected Term getRange() {
-                        return null;
+            return new ImmediateOperation() {
+
+                @Override
+                public void execute(Memory m) {
+                    try {
+
+
+
+
+                        js.eval(jsFunc);
+                        js.put("memory", nar.memory);
+
+                        if (sentence) {
+
+                            nar.addPlugin(new SynchronousSentenceFunction(newOp) {
+
+
+                                @Override
+                                protected Collection<Sentence> function(Memory memory, Term[] args) {
+
+
+
+                                    Object result = evalJS(o, args, memory);
+
+
+                                    //TODO handle result being an array or collection
+
+                                    try {
+                                        return Collections.singleton(narsese.parseSentence(new StringBuilder(result.toString())));
+                                    } catch (InvalidInputException ex) {
+                                        memory.emit(ERR.class, ex.toString());
+                                        if (Parameters.DEBUG)
+                                            ex.printStackTrace();
+                                    }
+
+                                    return null;
+                                }
+
+                            });
+
+
+                        } else {
+
+                            nar.addPlugin(new SynchronousTermFunction(newOp) {
+
+
+                                @Override
+                                protected Term function(Memory memory, Term[] args) {
+                                    Object result = evalJS(o, args, memory);
+
+                                    try {
+                                        return narsese.parseTerm(result.toString());
+                                    } catch (InvalidInputException ex) {
+                                        memory.emit(ERR.class, ex.toString());
+                                        if (Parameters.DEBUG)
+                                            ex.printStackTrace();
+                                    }
+
+                                    return null;
+                                }
+
+                                @Override
+                                protected Term getRange() {
+                                    return null;
+                                }
+                            });
+
+
+                        }
+
+                        nar.memory.emit(Events.OUT.class, "Bound: " + jsFunc);
+
+                    } catch (ScriptException ex) {
+                        throw new RuntimeException(ex.toString(), ex);
                     }
-                });
-                
-                //memory.emit(OUT.class, "Bound: "+ jsFunc);
-            } catch (ScriptException ex) {
-                throw new RuntimeException(ex.toString(), ex);
-            }
-            
-        
-        
-            return true;
-            
-            
+
+                }
+            };
+
         }
         return null;
     }
-    
+
+    protected <X> X evalJS(String o, Term[] args, final Memory memory) {
+
+
+        StringBuilder argsToParameters = new StringBuilder();
+        for (int i = 0; i < args.length; i++) {
+            argsToParameters.append("'").append(args[i].toString()).append("'");
+            if (args.length - 1 != i)
+                argsToParameters.append(",");
+        }
+
+
+        Object result = null;
+        try {
+
+            //bind dynamic variables with values as they are at the time the operation is invoked
+            js.put("$SELF", memory.getSelf());
+
+            result = js.eval(o + "(" + argsToParameters + ")");
+
+        } catch (ScriptException ex) {
+            throw new RuntimeException("Exception in executing " + this + ": " + ex.toString(), ex);
+        }
+        return (X) result;
+    }
+
 }

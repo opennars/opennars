@@ -24,6 +24,7 @@ import com.google.common.base.Strings;
 import nars.core.Parameters;
 import nars.logic.Terms.Termable;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +34,9 @@ import java.util.Set;
  * A task references its parent and an optional causal factor (usually an Operation instance).  These are implemented as WeakReference to allow forgetting via the
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
+ *
+ * TODO decide if the Sentence fields need to be Reference<> also
+ * TODO make Parameters.weakTaskRef to choose between Reference<> and WeakReference<> creation
  */
 public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements Termable,BudgetValue.Budgetable {
 
@@ -48,7 +52,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     /**
      * Task from which the Task is derived, or null if input
      */
-    final WeakReference<Task> parentTask;
+    final Reference<Task> parentTask;
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
@@ -67,8 +71,9 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     private Sentence bestSolution;
     
     /** causal factor; usually an instance of Operation */
-    private WeakReference<Term> cause;
+    private Reference<Term> cause;
     private String reason = null;
+    private boolean temporalInducted=true;
 
 
     /**
@@ -89,8 +94,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         this(null, null);
     }
     
-    private boolean temporalInducted=true;
-    
+
     /**
      * Constructor for a derived task
      *
@@ -103,10 +107,11 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         this(s, b, parentTask == null ? null : new WeakReference(parentTask), parentBelief, null);
     }
 
-    public Task(final Sentence<T> s, final BudgetValue b, final WeakReference<Task> parentTask, final Sentence parentBelief, Sentence solution) {    
+    public Task(final Sentence<T> s, final BudgetValue b, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {
         super(b);
         this.sentence = s;
         this.parentTask = parentTask;
+
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
 
@@ -115,7 +120,17 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         if (Parameters.DEBUG) {
             if ((parentTask!=null && parentTask.get() == null))
                 throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
+
+            if (this.equals(getParentTask())) {
+                throw new RuntimeException(this + " has parentTask equal to itself");
+            }
+            if (this.sentence.equals(parentBelief)) {
+                throw new RuntimeException(this + " has parentBelife equal to its sentence");
+            }
         }
+
+
+
     }
 
     /**
@@ -134,7 +149,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
 
 
     public Task(NewTask<T> t) {
-        this(t.getSentence(), t.getBudget(), t.getParentTask(), t.getParentBelief(), t.getSolution());
+        this(t.getSentence(), t.getBudget(), t.getParentTask(), t.getParentBelief(), null);
     }
 
     @Override
@@ -442,4 +457,8 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     }
 
 
+    /** a task is considered amnesiac (origin not rememebered) if its parent task has been forgotten (garbage collected via a weakref) */
+    public boolean isAmnesiac() {
+        return !isInput() && getParentTask() == null;
+    }
 }

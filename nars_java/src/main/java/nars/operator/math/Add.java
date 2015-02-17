@@ -18,13 +18,13 @@ package nars.operator.math;
 
 import nars.core.Memory;
 import nars.logic.entity.Term;
-import nars.logic.nal8.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousTermFunction;
 import nars.operator.mental.Mental;
 
 /**
  * Count the number of elements in a set
  */
-public class Add extends SynchronousFunctionOperator implements Mental {
+public class Add extends SynchronousTermFunction implements Mental {
 
     public Add() {
         super("^add");

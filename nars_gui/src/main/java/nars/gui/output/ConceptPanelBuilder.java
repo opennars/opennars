@@ -99,10 +99,6 @@ public class ConceptPanelBuilder extends AbstractReaction {
        // private final PCanvas syntaxPanel;
 
 
-        public ConceptPanel(Concept c, boolean label) {
-            this(c, label, 64);
-        }
-
         public ConceptPanel(Concept c, boolean label, int chartSize) {
             super(new BorderLayout());
             this.concept = c;
@@ -190,25 +186,25 @@ public class ConceptPanelBuilder extends AbstractReaction {
             }
             
             if (!concept.goals.isEmpty()) {
+                desireChart.setVisible(true);
                 if (subtitle!=null) {
                     String s = subtitle.getText();
                     subtitle.setText(s + (s.equals("") ? "" : " ") + "desire: " + concept.goals.get(0).truth.toString());
                 }
                 desireChart.update(time, concept.goals);
-                desireChart.setVisible(true);
             }
             else {
                 desireChart.setVisible(false);
             }
 
-            updateUI();
+            validate();
 
             return this;
         }
 
         @Override
         protected void onShowing(boolean showing) {
-
+            validate();
         }
     }
 
@@ -223,8 +219,9 @@ public class ConceptPanelBuilder extends AbstractReaction {
             this.w = width;
             this.h = height;
             setSize(width, height);
-            setMinimumSize(new Dimension(width, height));
-            setPreferredSize(new Dimension(width, height));
+            Dimension minimumSize = new Dimension(width, height);
+            setMinimumSize(minimumSize);
+            setPreferredSize(minimumSize);
         }
 
         public Graphics g() {

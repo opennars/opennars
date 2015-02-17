@@ -4,13 +4,13 @@
  */
 package nars.operator.meta;
 
-import nars.logic.nal8.SynchronousFunctionOperator;
+import nars.logic.nal8.SynchronousTermFunction;
 
 /**
  *
  * @author me
  */
-abstract public class TermTransform extends SynchronousFunctionOperator {
+abstract public class TermTransform extends SynchronousTermFunction {
     
     protected TermTransform(String name) {
         super(name);

@@ -121,14 +121,25 @@ public class Narsese {
      */    
     public Task parseTask(String s) throws InvalidInputException {
         StringBuilder buffer = new StringBuilder(Texts.escape(s));
-        
+
         String budgetString = getBudgetString(buffer);
+
+
+        Sentence sentence = parseSentence(buffer);
+
+        BudgetValue budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);
+        Task task = new Task(sentence, budget);
+        return task;
+
+    }
+
+    public Sentence parseSentence(StringBuilder buffer) {
         String truthString = getTruthString(buffer);
         Tense tense = parseTense(buffer);
         String str = buffer.toString().trim();
         int last = str.length() - 1;
         char punc = str.charAt(last);
-        
+
         Stamp stamp = new Stamp(memory.newStampSerial(), -1 /* if -1, will be set right before the Task is input */,
                 tense, memory.param.duration.get());
 
@@ -136,14 +147,11 @@ public class Narsese {
         Term content = parseTerm(str.substring(0, last));
         if (content == null) throw new InvalidInputException("Content term missing");
         if (!(content instanceof CompoundTerm)) throw new InvalidInputException("Content term is not compound");
-            
-        Sentence sentence = new Sentence((CompoundTerm)content, punc, truth, stamp);
+
+        return new Sentence((CompoundTerm)content, punc, truth, stamp);
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);
         //}
-        BudgetValue budget = parseBudget(budgetString, punc, truth);
-        Task task = new Task(sentence, budget);
-        return task;
 
     }
 
@@ -372,7 +380,7 @@ public class Narsese {
                 }
                 else {
                     //void "()" arguments, default to (SELF)
-                    a = Operation.SELF_TERM_ARRAY;
+                    a = Term.EmptyTermArray;
                 }                                                            
                 
                 Operation o = Operation.make(operator, a, true);
@@ -491,7 +499,7 @@ public class Narsese {
             t = Memory.term(oNative, argA);
         }
         else if (oRegistered!=null) {
-            t = make(oRegistered, argA, true);
+            t = Operation.make(oRegistered, argA, true);
         }
         else {
             throw new InvalidInputException("Invalid compound term");

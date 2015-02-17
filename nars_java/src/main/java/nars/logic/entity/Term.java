@@ -44,11 +44,6 @@ public class Term implements AbstractTerm, Termable {
 
     private static final Map<CharSequence,Term> atoms = Parameters.newHashMap(8192);
 
-    final public static Term SELF = Term.get("SELF");
-
-    final public static boolean isSelf(final Term t) {
-        return SELF.equals(t);
-    }
 
     public NALOperator operator() {
         return NALOperator.ATOM;

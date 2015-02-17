@@ -19,6 +19,7 @@ public class NewTask<T extends CompoundTerm> {
     private Stamp stamp = null;
     private TruthValue truth;
     private Task parent;
+    private BudgetValue budget;
 
 
     public NewTask<T> truth(float freq, float conf) {
@@ -44,6 +45,7 @@ public class NewTask<T extends CompoundTerm> {
     public NewTask<T> Stamp(Stamp s) { this.stamp = s; return this;}
 
     public NewTask<T> budget(float p, float d) {
+        budget = null;
         this.pri = p;
         this.dur = d;
         return this;
@@ -52,6 +54,13 @@ public class NewTask<T extends CompoundTerm> {
     public NewTask(Memory memory, T t) {
         this.memory = memory;
         this.term = t;
+    }
+    public NewTask(Memory memory, Sentence<T> t) {
+        this(memory, t.getTerm());
+        this.punc = t.punctuation;
+        this.truth = t.truth;
+        this.stamp = t.stamp;
+        this.budget = new BudgetValue(t.punctuation, t.truth);
     }
 
 
@@ -67,7 +76,10 @@ public class NewTask<T extends CompoundTerm> {
     }
 
     public BudgetValue getBudget() {
-        return new BudgetValue(pri, dur, truth);
+        if (budget == null)
+            return new BudgetValue(pri, dur, truth);
+        else
+            return budget;
     }
 
     public Task getParentTask() {
@@ -78,9 +90,6 @@ public class NewTask<T extends CompoundTerm> {
         return null;
     }
 
-    public Sentence getSolution() {
-        return null;
-    }
 
 
 }

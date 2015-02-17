@@ -17,14 +17,18 @@ import static com.google.common.collect.Lists.newArrayList;
  * N input parameters and one variable argument (as the final argument), generating a new task
  * with the result of the function substituted in the variable's place.
  */
-public abstract class SynchronousFunctionOperator extends Operator {
+public abstract class SynchronousTermFunction extends Operator {
 
 
     static final Variable var=new Variable("$1");
 
-    protected SynchronousFunctionOperator(String name) {
+    protected SynchronousTermFunction(String name) {
         super(name);
     }
+//    protected SynchronousFunctionOperator(String name, boolean requireVariable) {
+//
+//    }
+
 
     /** y = function(x) 
      * @return y, or null if unsuccessful
@@ -42,7 +46,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
         int numArgs = args.length;
-        if (args[args.length-1].equals(Term.SELF))
+        if (args[args.length-1].equals(m.getSelf()))
             numArgs--;
         
         if (numArgs < 2) {

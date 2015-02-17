@@ -20,9 +20,9 @@ package nars.operator.mental;
 import nars.core.Memory;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
+import nars.logic.nal8.NullOperator;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
-import nars.logic.nal8.NullOperator;
 
 import java.util.ArrayList;
 
@@ -35,6 +35,7 @@ public class Register extends Operator implements Mental {
         super("^register");
     }
 
+
     /**
      * To register a new operator
      * @param args Arguments, a Statement followed by an optional tense
@@ -44,7 +45,7 @@ public class Register extends Operator implements Mental {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Operator op=new NullOperator(args[0].toString());
-        memory.addOperator(op);  // add error checking
+        nar.addPlugin(op);  // add error checking
         return null;
     }
     

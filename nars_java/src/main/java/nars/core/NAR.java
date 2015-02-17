@@ -398,16 +398,17 @@ public class NAR implements Runnable {
 //    }
 
 
+    /** add and enable a plugin or operator */
     public PluginState addPlugin(Plugin p) {
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
         }
         PluginState ps = new PluginState(p);
         plugins.add(ps);
-        emit(Events.PluginsChange.class, p, null);
         return ps;
     }
-    
+
+    /** disable and remove a plugin or operator */
     public void removePlugin(PluginState ps) {
         if (plugins.remove(ps)) {
             Plugin p = ps.plugin;
@@ -415,7 +416,6 @@ public class NAR implements Runnable {
                 memory.removeOperator((Operator)p);
             }
             ps.setEnabled(false);
-            emit(Events.PluginsChange.class, null, p);
         }
     }
     

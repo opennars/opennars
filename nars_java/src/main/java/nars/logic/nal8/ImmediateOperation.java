@@ -37,4 +37,7 @@ abstract public class ImmediateOperation extends Operation {
     public ImmediateTask newTask() {
         return new ImmediateTask(this);
     }
+
+    @Override
+    public CharSequence name() { return getClass().getSimpleName(); }
 }

@@ -19,10 +19,7 @@ import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static com.google.common.collect.Iterators.singletonIterator;
 
@@ -187,7 +184,7 @@ public class TextPerception {
             }
         });
 
-        parsers.add(new BindJavascriptExpression(memory));
+        parsers.add(new BindJavascriptExpression(n));
         //narsese
         parsers.add(new TextReaction() {
             @Override
@@ -321,7 +318,7 @@ public class TextPerception {
                     return singletonIterator((Task)result);
                 }
                 else if (result.equals(Boolean.TRUE)) {
-                    return null;
+                    return Iterators.emptyIterator();
                 }
                 else if (result instanceof Exception) {
                     lastException = (Exception)result;

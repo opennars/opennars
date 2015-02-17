@@ -2,6 +2,7 @@ package nars.build;
 
 import nars.logic.nal8.Operator;
 import nars.operator.io.Say;
+import nars.operator.io.Self;
 import nars.operator.math.Add;
 import nars.operator.math.Count;
 import nars.operator.math.MathExpression;
@@ -9,6 +10,7 @@ import nars.operator.mental.*;
 import nars.operator.meta.Reflect;
 import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
+import nars.operator.software.scheme.op.Scheme;
 
 
 public class DefaultOperators {
@@ -22,7 +24,9 @@ public class DefaultOperators {
     public static Operator[] get() {
         
         return new Operator[] {
-            //new Wait(),            
+
+            new Self(),     //set SELF term
+
             //new Wait(),            
             new Believe(),  // accept a statement with a default truth-value
             new Want(),     // accept a statement with a default desire-value
@@ -54,8 +58,10 @@ public class DefaultOperators {
             new MathExpression(),
                         
 
-            new Javascript(),      // javascript evaluation
-            
+            new Javascript(),  // javascript evaluation
+            new Scheme(),      // scheme evaluation
+
+
             new NumericCertainty(),
             
             //io operations

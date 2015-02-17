@@ -152,9 +152,9 @@ public class InternalExperience extends AbstractPlugin  {
             BudgetValue newbudget=new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                    BudgetFunctions.truthToQuality(truth));
+                    truth);
 
-            Task newTask = new Task(j, newbudget, isFull() ? null : task);
+            Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
 
             memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
 
