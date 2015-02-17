@@ -236,7 +236,7 @@ public class TemporalRules {
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
                 
-                return nal.doublePremiseTask(whole, truth, budget, true, false)!=null;
+                return nal.doublePremiseTask(whole, truth, budget, true)!=null;
             }
         }
         return false;
@@ -409,38 +409,38 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11)) {
-                Task t=nal.doublePremiseTask(statement11, truth1, budget1,true,true);
+                Task t=nal.doublePremiseTask(statement11, truth1, budget1,true);
                 if(t!=null) {
                     success.add(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement22)) {
-               Task t=nal.doublePremiseTask(statement22, truth2, budget2,true,true);
+               Task t=nal.doublePremiseTask(statement22, truth2, budget2,true);
                 if(t!=null) {
                     success.add(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement33)) {
-                Task t=nal.doublePremiseTask(statement33, truth3, budget3,true,true);
+                Task t=nal.doublePremiseTask(statement33, truth3, budget3,true);
                 if(t!=null) {
                     success.add(t);
                 }
             }
         }
         if(!tooMuchTemporalStatements(statement1)) {
-            Task t=nal.doublePremiseTask(statement1, truth1, budget1,true,true);
+            Task t=nal.doublePremiseTask(statement1, truth1, budget1,true);
             if(t!=null) {
                     success.add(t);
                 }
         }
         if(!tooMuchTemporalStatements(statement2)) {
-            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true,true);
+            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true);
                  if(t!=null) {
                     success.add(t);
                 }
             }
         if(!tooMuchTemporalStatements(statement3)) {
-            Task t=nal.doublePremiseTask(statement3, truth3, budget3,true,true);
+            Task t=nal.doublePremiseTask(statement3, truth3, budget3,true);
             if(t!=null) {
                     success.add(t);
                 }

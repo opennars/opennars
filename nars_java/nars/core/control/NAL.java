@@ -83,7 +83,7 @@ public abstract class NAL implements Runnable {
      *
      * @param task the derived task
      */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2, boolean directlyObservable) {                        
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2) {                        
 
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {
@@ -137,18 +137,18 @@ public abstract class NAL implements Runnable {
         }
         
         final Term currentTaskContent = getCurrentTask().getTerm();
-        if (!directlyObservable && getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
+        if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
             final Term currentBeliefContent = getCurrentBelief().term;
             stamp.chainRemove(currentBeliefContent);
             stamp.chainAdd(currentBeliefContent);
         }
         //workaround for single premise task issue:
-        if (!directlyObservable && currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
+        if (currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
             stamp.chainRemove(currentTaskContent);
             stamp.chainAdd(currentTaskContent);
         }
         //end workaround
-        if (!directlyObservable && currentTask != null && !single && currentTask.sentence.isJudgment()) {
+        if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
             stamp.chainRemove(currentTaskContent);
             stamp.chainAdd(currentTaskContent);
         }
@@ -210,7 +210,7 @@ public abstract class NAL implements Runnable {
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-        return derivedTask(newTask, true, false, null, null, false);
+        return derivedTask(newTask, true, false, null, null);
     }
 
     /**
@@ -221,7 +221,7 @@ public abstract class NAL implements Runnable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean fromTemporalInductionOrChain, boolean directlyObservable) {
+    public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
         
         if (!newBudget.aboveThreshold()) {
             return null;
@@ -237,12 +237,12 @@ public abstract class NAL implements Runnable {
             
             try {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-                newSentence.producedByTemporalInduction=fromTemporalInductionOrChain;
+                newSentence.producedByTemporalInduction=temporalAdd;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 
                 if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null, directlyObservable);
-                    if (added && fromTemporalInductionOrChain) {
+                    boolean added = derivedTask(newTask, false, false, null, null);
+                    if (added && temporalAdd) {
                         memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
                     if(added) {
@@ -256,7 +256,7 @@ public abstract class NAL implements Runnable {
             
             
             //"Since in principle it is always valid to eternalize a tensed belief"
-            if(fromTemporalInductionOrChain && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
+            if(temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
                 
                 try {
 
@@ -264,11 +264,11 @@ public abstract class NAL implements Runnable {
                 Stamp st=getTheNewStamp().clone();
                 st.setEternal();
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
-                newSentence.producedByTemporalInduction=fromTemporalInductionOrChain;
+                newSentence.producedByTemporalInduction=temporalAdd;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null, directlyObservable);
-                    if (added && fromTemporalInductionOrChain) {
+                    boolean added = derivedTask(newTask, false, false, null, null);
+                    if (added && temporalAdd) {
                         memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
                 }
@@ -354,7 +354,7 @@ public abstract class NAL implements Runnable {
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
-            return derivedTask(newTask, false, true, null, null, false);
+            return derivedTask(newTask, false, true, null, null);
         }
         return false;
     }
@@ -364,7 +364,7 @@ public abstract class NAL implements Runnable {
             return false;
         }
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        return derivedTask(newTask, false, true, null, null, false);
+        return derivedTask(newTask, false, true, null, null);
     }
 
     //    protected void reset(Memory currentMemory) {
