@@ -7,6 +7,7 @@ import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
@@ -576,9 +577,9 @@ public class GraphExecutive {
             Stamp stamp = new Stamp(goal.sentence.stamp, currentEdge.getStamp(), memory.time());
 
             //add all terms to derivation chain
-            for(Term T : sequence) {
-                stamp.chainAdd(T); //todo: if too long kick out the first n terms
-            }
+//            for(Term T : sequence) {
+//                stamp.chainAdd(T); //todo: if too long kick out the first n terms
+//            }
             //todo: evidental base hm
 
             //memory.setTheNewStamp(stamp);

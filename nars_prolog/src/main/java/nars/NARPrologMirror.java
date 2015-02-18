@@ -13,6 +13,7 @@ import nars.core.Events.OUT;
 import nars.io.Texts;
 import nars.logic.entity.*;
 import nars.logic.entity.Term;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
 import nars.logic.nal2.Similarity;

@@ -4,6 +4,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.logic.NALOperator;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal1.Negation;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;

@@ -24,7 +24,7 @@ public class NALysisSome extends NALysis {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        showOutput = true;
+        showOutput = false;
         showTrace = false;
 
         TestNAR n = analyze(
@@ -39,7 +39,12 @@ public class NALysisSome extends NALysis {
                 System.out.println("Derived: " + t);
             }
         });
-
+        n.on(Events.TaskRemove.class, new Reaction() {
+            @Override public void event(Class event, Object[] args) {
+                Task t = (Task)args[0];
+                System.out.println("Remove: " + t + " " + t.getReason());
+            }
+        });
         n.run();
 
         //nal("test5", "5.18", new Default().setInternalExperience(null), 256);

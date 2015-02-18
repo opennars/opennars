@@ -7,6 +7,7 @@ import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.impl.FastConcatenationRope;
 import nars.util.data.rope.impl.PrePostCharRope;

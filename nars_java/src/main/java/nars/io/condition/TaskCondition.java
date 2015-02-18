@@ -6,7 +6,7 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.Stamp;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.entity.TruthValue;

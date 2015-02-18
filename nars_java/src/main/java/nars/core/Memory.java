@@ -31,6 +31,7 @@ import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
 import nars.logic.*;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
 import nars.logic.nal2.Similarity;

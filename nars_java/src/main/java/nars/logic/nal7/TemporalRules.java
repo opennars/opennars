@@ -21,6 +21,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.*;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal4.Product;

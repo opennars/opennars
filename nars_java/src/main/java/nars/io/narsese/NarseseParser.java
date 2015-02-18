@@ -8,6 +8,7 @@ import nars.io.Symbols;
 import nars.io.Texts;
 import nars.logic.NALOperator;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import org.parboiled.BaseParser;

@@ -145,13 +145,10 @@ public class LocalRules {
         if (content.hasVarIndep()) {
             Term u[] = new Term[] { content, problem.term };
             
-            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u);            
-            content = u[0];
+            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u);
+            if (!unified) return false;
 
-            if ((!unified) || (content == null)) {
-                //throw new RuntimeException("Unification invalid: " + Arrays.toString(u));
-                return false;
-            }
+            content = u[0];
 
             belief = belief.clone(content);
             if (belief == null) {
@@ -159,8 +156,7 @@ public class LocalRules {
                 return false;
             }
 
-            Stamp st = new Stamp(belief.stamp, memory.time());
-            st.chainAdd(belief.term);
+
         }
 
         task.setBestSolution(belief);
@@ -172,36 +168,37 @@ public class LocalRules {
         }
         
         BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, nal);
-        if ((budget != null) && budget.aboveThreshold()) {                       
+        if (!budget.aboveThreshold()) {
+            memory.removeTask(task, "Insufficient budget");
+            return false;
+        }
+
             
-            //Solution Activated
-            if(task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST) {
-                if(task.isInput()) { //only show input tasks as solutions
-                    memory.emit(Answer.class, task, belief); 
-                } else {
-                    memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed   
-                }
+        //Solution Activated
+        if(task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST) {
+            if(task.isInput()) { //only show input tasks as solutions
+                memory.emit(Answer.class, task, belief);
             } else {
-                memory.emit(Output.class, task, belief);   //goal things only show silence related 
+                memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed
             }
-            
-            
-            /*memory.output(task);
-                        
-            //only questions and quests get here because else output is spammed
-            if(task.sentence.isQuestion() || task.sentence.isQuest()) {
-                memory.emit(Solved.class, task, belief);          
-            } else {
-                memory.emit(Output.class, task, belief);            
-            }*/
-                        
-            nal.addSolution(nal.getCurrentTask(), budget, belief, task.getParentBelief());
-            return true;
+        } else {
+            memory.emit(Output.class, task, belief);   //goal things only show silence related
         }
-        else {
-            //memory.emit(Unsolved.class, task, belief, "Insufficient budget");
-        }
-        return false;
+
+
+        /*memory.output(task);
+
+        //only questions and quests get here because else output is spammed
+        if(task.sentence.isQuestion() || task.sentence.isQuest()) {
+            memory.emit(Solved.class, task, belief);
+        } else {
+            memory.emit(Output.class, task, belief);
+        }*/
+
+        nal.addSolution(nal.getCurrentTask(), budget, belief, task.getParentBelief());
+        return true;
+
+
     }
 
 

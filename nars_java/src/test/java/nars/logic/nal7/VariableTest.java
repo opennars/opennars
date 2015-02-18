@@ -111,4 +111,18 @@ public class VariableTest extends JavaNALTest {
 
     }
 
+    @Test public void testNormalizeSomeVars() {
+        //< ==> >>.
+        //should not become
+        //<<(*,bird,animal,$1,$2) --> AndShortcut> ==> <$1 --> $3>>>.
+
+        String left = "<(*,bird,animal,$1,$2) --> AndShortcut>";
+        String right = "<$1 --> $2>";
+
+        nar.addInput("<" + left + " ==> " + right + ">.");
+        nar.mustOutput(1, "<" + left + " ==> " + right + ">.");
+
+        nar.run(5);
+    }
+
 }

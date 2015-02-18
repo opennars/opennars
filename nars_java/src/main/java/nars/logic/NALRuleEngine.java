@@ -5,7 +5,6 @@ import nars.logic.reason.ConceptFire;
 import nars.logic.reason.concept.*;
 import nars.logic.reason.filter.FilterBelowBudget;
 import nars.logic.reason.filter.FilterBelowConfidence;
-import nars.logic.reason.filter.FilterCyclic;
 import nars.logic.reason.filter.FilterOperationWithSubjOrPredVariable;
 
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class NALRuleEngine extends RuleEngine {
         derivationFilters.add(new FilterBelowBudget());
         derivationFilters.add(new FilterBelowConfidence());
         derivationFilters.add(new FilterOperationWithSubjOrPredVariable());
-        derivationFilters.add(new FilterCyclic());
+        //derivationFilters.add(new FilterCyclic());
     }
 
 

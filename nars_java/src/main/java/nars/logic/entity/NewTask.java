@@ -2,6 +2,7 @@ package nars.logic.entity;
 
 import nars.core.Memory;
 import nars.io.Symbols;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal7.Tense;
 
 /** utility method for creating new tasks following a fluent builder pattern

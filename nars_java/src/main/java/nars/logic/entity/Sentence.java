@@ -29,6 +29,7 @@ import nars.logic.Terms.Termable;
 import nars.logic.TruthFunctions;
 import nars.logic.TruthFunctions.EternalizedTruthValue;
 import nars.logic.entity.TruthValue.Truthable;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
@@ -45,7 +46,7 @@ import java.util.*;
 public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Truthable {
 
 
-    public Stamp<Sentence<?>> getStamp() {
+    public Stamp getStamp() {
         return stamp;
     }
 
@@ -73,7 +74,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     /**
      * Partial record of the derivation path
      */
-    public final Stamp<Sentence<?>> stamp;
+    public final Stamp stamp;
 
     /**
      * Whether the sentence can be revised
@@ -268,7 +269,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
             if (!this.truth.equals(that.truth)) return false;
         }
         if (stamp) {
-            if (!this.stamp.equals(that.stamp, true, true, true, false)) return false;
+            if (!this.stamp.equals(that.stamp, true, true, true)) return false;
         }
         return true;
     }

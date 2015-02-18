@@ -7,6 +7,7 @@ import nars.core.Plugin;
 import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal4.Product;

@@ -15,6 +15,7 @@ import nars.io.Symbols;
 import nars.logic.NAL;
 import nars.logic.Variables;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;

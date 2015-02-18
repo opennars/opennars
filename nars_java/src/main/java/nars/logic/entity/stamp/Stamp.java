@@ -18,10 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.logic.entity;
+package nars.logic.entity.stamp;
 
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
@@ -29,15 +27,14 @@ import nars.logic.NAL;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal7.Tense;
 
-import java.lang.ref.Reference;
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static nars.logic.nal7.TemporalRules.*;
 import static nars.logic.nal7.Tense.*;
 
 
-public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
+public class Stamp implements Cloneable, NAL.StampBuilder {
 
 
     /**
@@ -45,10 +42,6 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
      */
     public final long[] evidentialBase;
 
-    /**
-     * evidentialBase baseLength
-     */
-    public final int baseLength;
 
     /**
      * creation time of the stamp
@@ -78,26 +71,8 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
      */    
     private long[] evidentialSet = null;
     
-    
-    /** caches  */
-    transient CharSequence name = null;
-    
-    /* used for lazily calculating derivationChain on-demand */
-    private DerivationBuilder derivationBuilder = null;
-    
-    
-    final static Collection EmptyDerivationChain = Collections.EMPTY_LIST;
-    
-    /**
-     * derivation chain containing the used premises and conclusions which made
-     * deriving the conclusion c possible
-     * Uses LinkedHashSet for optimal contains/indexOf performance.
-     * TODO use thread-safety for this
-     */
-    private Collection<C> derivationChain;
-    
-    /** analytics metric */
-    transient public final long latency;
+
+
     
     /** cache of hashcode of evidential base */
     transient private int evidentialHash;
@@ -118,187 +93,24 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
         return 1.0f / (evidentialBase.length + 1);
     }
 
-    @Override
-    public Iterator<C> iterator() {
-        return derivationChain.iterator();
-    }
 
-    public interface DerivationBuilder<C> {
-        Collection<C> build();
-    }
 
-    /** array list with an internal set for fast contains() method */
-    public static class FixedArrayListWithSet<T> extends ArrayList<T> {
-
-        final Set<T> index;
-
-        public FixedArrayListWithSet(int size) {
-            super(size);
-            index = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
-        }
-
-        public FixedArrayListWithSet(final Collection<T> p) {
-            super(p.size());
-            index = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
-            for (final T t : p)
-                add(t);
-        }
-
-        @Override
-        public boolean add(T t) {
-            if (index.add(t)) {
-                return super.add(t);
-            }
-            return false;
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return index.contains(o);
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            if (index.remove(o)) {
-                return super.remove(o);
-            }
-            return false;
-        }
-
-        @Override public T remove(int index) { throw new RuntimeException("not supported");        }
-
-        @Override public boolean removeAll(Collection<?> c) { throw new RuntimeException("not supported");        }
-
-        @Override public boolean removeIf(Predicate<? super T> filter) { throw new RuntimeException("not supported");        }
-
-        @Override public void add(int index, T element) { throw new RuntimeException("not supported");        }
-
-        @Override public boolean addAll(Collection<? extends T> c) { throw new RuntimeException("not supported");        }
-
-        @Override public boolean addAll(int index, Collection<? extends T> c) { throw new RuntimeException("not supported");        }
-    }
-
-    /** creates a Derivation Chain by collating / zipping 2 Stamps Derivation Chains */
-    public static class ZipperDerivationBuilder<C> implements DerivationBuilder<C> {
-        private final Reference<Stamp<C>> first;
-        private final Reference<Stamp<C>> second;
-
-        public ZipperDerivationBuilder(Stamp<C> first, Stamp<C> second) {
-            this.first = Parameters.reference(first);
-            this.second = Parameters.reference(second);
-        }
-            
-        @Override public Collection<C> build()  {
-            Stamp ff = first.get();
-            Stamp ss = second.get();
-            
-            //check if the parent stamps still exist, because they may have been garbage collected
-            if ((ff == null) && (ss == null)) {                
-                return new LinkedHashSet();
-            }
-            else {
-                //TODO decide if it can use the parent chains directly?
-                if (ff == null) {
-                    //ss!=null
-                    return new LinkedHashSet(ss.getChain());
-                }
-                else if (ss == null) {
-                    //ff!=null                    
-                    return new LinkedHashSet(ff.getChain());
-                }
-            }
-                    
-            final Collection<C> chain1 = ff.getChain();
-            final Collection<C> chain2 = ss.getChain();
-            
-            final Iterator<C> iter1 = chain1.iterator();
-            int i1 = chain1.size() - 1;
-            
-            final Iterator<C> iter2 = chain2.iterator();
-            int i2 = chain2.size() - 1;
-
-            //TODO verify this is pre-sized large enough
-            //Set<Term> added = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
-
-            //set here is for fast contains() checking
-            FixedArrayListWithSet<C> sequence = new FixedArrayListWithSet(Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
-
-            //take as long till the chain is full or all elements were taken out of chain1 and chain2:
-            int j = 0;
-            while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
-                if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
-                    if (i1 >= 0) {
-                        final C c1i1 = iter1.next();
-                        if (!sequence.add(c1i1)) {
-                            j--; //was double, so we can add one more now
-                        }
-                        i1--;
-                    }
-                } else {
-                    if (i2 >= 0) {
-                        final C c2i2 = iter2.next();
-                        if (!sequence.add(c2i2)) {
-                            j--; //was double, so we can add one more now
-                        }
-                        i2--;
-                    }
-                }
-                j++;
-            } 
-
-            /*
-            if (Parameters.DEBUG) {
-                Terms.verifyNonNull(sequence);
-            }
-            */
-
-            Collections.reverse(sequence);
-
-            return sequence;
-        }                            
-    }
-    
-    /** lazily inherit the derivation from a parent, causing it to cache the derivation also (in case other children get it */
-    public static class InheritDerivationBuilder<C> implements DerivationBuilder<C> {
-        private final Reference<Stamp<C>> parent;
-
-        public InheritDerivationBuilder(Stamp<C> parent) {
-            this.parent = Parameters.reference(parent);
-        }
-        
-        @Override public Collection<C> build() {
-            if (parent.get() == null) {
-                //parent doesnt exist anymore (garbage collected)
-                return new LinkedHashSet();
-            }
-            
-            Collection<C> p = parent.get().getChain();
-            return new FixedArrayListWithSet(p);
-        }
-        
+    public interface DerivationBuilder {
+        Collection build();
     }
 
 
 
-    private static long nextSerial = 0;
-    public static synchronized long newSerial() {
-        return nextSerial++;
-    }
-
-    
     /**
      * Generate a new stamp, with a new serial number, for a new Task
      *
      * @param creationTime Creation time of the stamp
      */
-    @Deprecated public Stamp(@Deprecated final long serial, final long creationTime, final Tense tense, final int duration) {
+    public Stamp(final long serial, final long creationTime, final Tense tense, final int duration) {
         super();
-        this.baseLength = 1;
-        this.evidentialBase = new long[baseLength];
-        this.evidentialBase[0] = newSerial();
-        this.latency = 0;
-        this.derivationBuilder = null;
-        this.derivationChain = EmptyDerivationChain;
+
+        this.evidentialBase = new long[1];
+        this.evidentialBase[0] = serial;
 
         this.creationTime = creationTime;
 
@@ -347,15 +159,9 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
     public Stamp(final Stamp old, final long creationTime, final long occurenceTime, final Stamp useEvidentialBase) {
 
         this.evidentialBase = useEvidentialBase.evidentialBase;
-        this.baseLength = useEvidentialBase.baseLength;
+
         this.creationTime = creationTime;
-
         this.occurrenceTime = occurenceTime;
-        this.derivationChain = null;
-        this.latency = this.creationTime - old.latency;
-        
-        this.derivationBuilder = new InheritDerivationBuilder(old);
-
 
     }
 
@@ -376,20 +182,20 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
         
         int i2, j;
         int i1 = i2 = j = 0;
-        this.baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
-        this.evidentialBase = new long[baseLength];
 
         final long[] firstBase = first.evidentialBase;
-        final long[] secondBase = second.evidentialBase;     
+        final long[] secondBase = second.evidentialBase;
+
+        final int baseLength = Math.min(firstBase.length + secondBase.length, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
+        this.evidentialBase = new long[baseLength];
+
         int firstLength = firstBase.length;
         int secondLength = secondBase.length;
 
         this.creationTime = creationTime;
         this.occurrenceTime = occurenceTime;
         
-        //calculate latency as the time difference between now and the last created of the 2 input stamps
-        this.latency = creationTime - Math.max(first.creationTime, second.creationTime);
-        
+
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
         while (i2 < secondLength && j < baseLength) {
             evidentialBase[j++] = secondBase[i2++];
@@ -397,8 +203,6 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
         while (i1 < firstLength && j < baseLength) {
             evidentialBase[j++] = firstBase[i1++];
         }
-        
-        this.derivationBuilder = new ZipperDerivationBuilder(first, second);
 
     }
 
@@ -448,27 +252,6 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
         }
     }
     
-    protected boolean chainIsNullOrEmpty() {
-        return derivationChain == null || derivationChain.isEmpty();
-    }
-    
-    /** for creating the chain lazily */
-    protected /* synchronized */ void ensureChain() {
-        
-        if (derivationChain == EmptyDerivationChain) {
-            derivationChain = new LinkedHashSet();
-            return;
-        }
-            
-        if (this.derivationChain != null) return;
-        
-        //create chain
-        if (derivationBuilder==null)
-            throw new RuntimeException("Null derivationChain and derivationBuilder");
-        
-        this.derivationChain = derivationBuilder.build();
-        this.derivationBuilder = null;
-    }
 
     @Override
     public Stamp build() {
@@ -516,63 +299,6 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
     }
 
 
-    /**
-     * Get the derivationChain, called from derivedTask in Memory
-     * Provides a snapshot copy if in multi-threaded mode.
-     * @return The evidentialBase of numbers
-     */
-    public Collection<C> getChain() {
-        ensureChain();
-        
-        if (Parameters.THREADS == 1)
-            return derivationChain;
-        else {
-            //modifiable list copy
-            return Lists.newArrayList(derivationChain);
-        }
-    }
-
-    /**
-     * Add element to the chain.
-     *
-     * @return The evidentialBase of numbers
-     */
-    public void chainAdd(final C t) {
-        if (t == null)
-            throw new RuntimeException("Chain must contain non-null items");
-            
-        ensureChain();
-
-        if (derivationChain.add(t)) {
-
-            if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
-                //remove first element
-                C first = derivationChain.iterator().next();
-                derivationChain.remove(first);
-            }
-
-            name = null;
-        }
-    }
-    public void chainRemove(final C t) {
-        if (t == null)
-            throw new RuntimeException("Chain must contain non-null items");
-
-        if (chainIsNullOrEmpty())
-            return;
-        
-        ensureChain();
-
-        if (derivationChain.remove(t)) {
-            name = null;
-        }
-    }
-
-    public void chainReplace(final C remove, final C add) {
-        chainRemove(remove);
-        chainAdd(add);
-    }
-    
     public static long[] toSetArray(final long[] x) {
         long[] set = x.clone();
         
@@ -630,7 +356,7 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
      * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    public boolean equals(Stamp<C> s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase, final boolean derivationChain) {
+    public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase) {
         if (this == s) return true;
 
         if (creationTime)
@@ -648,24 +374,11 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
                 if (a[i]!=b[i]) return false;
         }
         
-        //two beliefs can have two different derivation chains altough they share same evidental bas
-        //in this case it shouldnt return true
-        if (derivationChain)
-            if (!chainEquals(getChain(), s.getChain())) return false;
-        
+
         return true;        
     }
             
 
-    /** necessary because LinkedHashSet.equals does not compare order, only set content */
-    public static <C> boolean chainEquals(final Collection<C> a, final Collection<C> b) {
-        if (a == b) return true;
-        
-        //if ((a instanceof LinkedHashSet) && (b instanceof LinkedHashSet))
-            return Iterators.elementsEqual(a.iterator(), b.iterator());        
-        /*else
-            return a.equals(b);*/
-    }
     
     /**
      * The hash code of Stamp
@@ -744,10 +457,9 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
 
 
     public CharSequence name() {
-        if (name == null) {
-            ensureChain();
-            
-            final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
+
+            final int baseLength = evidentialBase.length;
+            final int estimatedInitialSize = 10 * (baseLength * 3);
 
             final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
             buffer.append(Symbols.STAMP_OPENER).append(getCreationTime());
@@ -759,27 +471,17 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
                 buffer.append(Long.toString(evidentialBase[i]));
                 if (i < (baseLength - 1)) {
                     buffer.append(Symbols.STAMP_SEPARATOR);
-                } else {
-                    if (derivationChain.isEmpty()) {
-                        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
-                    }
                 }
             }
-            int i = 0;
-            for (C t : derivationChain) {
-                buffer.append(t);
-                if (i < (derivationChain.size() - 1)) {
-                    buffer.append(Symbols.STAMP_SEPARATOR);
-                }
-                i++;
-            }
+
             buffer.append(Symbols.STAMP_CLOSER).append(' ');
 
             //this is for estimating an initial size of the stringbuffer
             //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
-            name = buffer;
-        }
-        return name;
+
+            return buffer;
+
+
     }
 
     @Override

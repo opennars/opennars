@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import nars.logic.entity.*;
 import nars.util.data.CuckooMap;
 
-import java.util.Collection;
 import java.util.Map;
 
 
@@ -172,32 +171,36 @@ public class DefaultGrapher implements NARGraph.Grapher {
                 }
             }
         }
-        if (includeDerivations && includeBeliefs) {
-            for (final Sentence derivedSentence : sentenceTerms.keySet()) {
-                Concept derived = sentenceTerms.get(derivedSentence);
-                final Collection<Term> schain = derivedSentence.stamp.getChain();
-                for (final Sentence deriverSentence : sentenceTerms.keySet()) {
-                    if (derivedSentence == deriverSentence) {
-                        continue;
-                    }
-                    final Concept deriver = sentenceTerms.get(deriverSentence);
-                    if (derived == deriver) {
-                        continue;
-                    }
-                    final Collection<Term> tchain = deriverSentence.stamp.getChain();
-                    if (schain.contains(deriverSentence.term)) {
-                        g.addVertex(derived);
-                        g.addVertex(deriver);
-                        g.addEdge(deriver, derived, new NARGraph.TermDerivation());
-                    }
-                    if (tchain.contains(derivedSentence.term)) {
-                        g.addVertex(derived);
-                        g.addVertex(deriver);
-                        g.addEdge(derived, deriver, new NARGraph.TermDerivation());
-                    }
-                }
-            }
-        }
+
+        ///TODO do this some other way
+
+//        if (includeDerivations && includeBeliefs) {
+//            for (final Sentence derivedSentence : sentenceTerms.keySet()) {
+//                Concept derived = sentenceTerms.get(derivedSentence);
+//                final Collection<Term> schain = derivedSentence.stamp.getChain();
+//                for (final Sentence deriverSentence : sentenceTerms.keySet()) {
+//                    if (derivedSentence == deriverSentence) {
+//                        continue;
+//                    }
+//                    final Concept deriver = sentenceTerms.get(deriverSentence);
+//                    if (derived == deriver) {
+//                        continue;
+//                    }
+//                    final Collection<Term> tchain = deriverSentence.stamp.getChain();
+//                    if (schain.contains(deriverSentence.term)) {
+//                        g.addVertex(derived);
+//                        g.addVertex(deriver);
+//                        g.addEdge(deriver, derived, new NARGraph.TermDerivation());
+//                    }
+//                    if (tchain.contains(derivedSentence.term)) {
+//                        g.addVertex(derived);
+//                        g.addVertex(deriver);
+//                        g.addEdge(derived, deriver, new NARGraph.TermDerivation());
+//                    }
+//                }
+//            }
+//        }
+
         if (includeTermLinks) {
             for (TermLink t : termLinks.keySet()) {
                 Concept from = termLinks.get(t);

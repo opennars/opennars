@@ -26,6 +26,7 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 

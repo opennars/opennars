@@ -22,6 +22,7 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;

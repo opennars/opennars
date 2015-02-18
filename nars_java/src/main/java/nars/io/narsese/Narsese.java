@@ -7,6 +7,7 @@ import nars.io.Symbols;
 import nars.io.Texts;
 import nars.logic.NALOperator;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
 import nars.logic.nal7.Interval;

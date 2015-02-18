@@ -24,7 +24,7 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.logic.entity.Stamp;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.entity.Task;
 import nars.util.data.CuckooMap;
 
@@ -272,7 +272,7 @@ public class Parameters {
         //return new WeakReference(t);
     }
 
-    public static <C> Reference<Stamp<C>> reference(Stamp<C> s) {
+    public static <C> Reference<Stamp> reference(Stamp s) {
         return new SoftReference(s);
     }
 }

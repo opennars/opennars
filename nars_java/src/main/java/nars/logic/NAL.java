@@ -6,6 +6,7 @@ package nars.logic;
 
 import nars.core.*;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import reactor.event.Event;
 import reactor.function.Supplier;
 
@@ -138,9 +139,6 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
             }
         }
 
-        if (task.sentence.stamp.latency > 0) {
-            memory.logic.DERIVATION_LATENCY.set((double) task.sentence.stamp.latency);
-        }
 
         task.setParticipateInTemporalInduction(false);
 
@@ -407,6 +405,9 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     public StampBuilder newStamp(Sentence a, Sentence b, long occurrenceTime) {
         return new LazyStampBuilder(a.stamp, b.stamp, time(), occurrenceTime);
     }
+    public StampBuilder newStamp(Sentence a, long occurrenceTime) {
+        return new LazyStampBuilder(a.stamp, null, time(), occurrenceTime);
+    }
 
     /**
      * create a new stamp builder with an occurenceTime determined by the parent sentence tenses.
@@ -455,16 +456,16 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     }
 
     public interface StampBuilder<C> {
-        public Stamp<C> build();
+        public Stamp build();
     }
 
     public static class LazyStampBuilder<C> implements StampBuilder<C> {
 
-        public final Stamp<C> a, b;
+        public final Stamp a, b;
         public final long creationTime, occurrenceTime;
-        protected Stamp<C> stamp = null;
+        protected Stamp stamp = null;
 
-        public LazyStampBuilder(Stamp<C> a, Stamp<C> b, long creationTime, long occurrenceTime) {
+        public LazyStampBuilder(Stamp a, Stamp b, long creationTime, long occurrenceTime) {
             this.a = a;
             this.b = b;
             this.creationTime = creationTime;

@@ -52,7 +52,7 @@ public class LogicMeter {
     public final HitMeter ANALOGY = new HitMeter("reason.analogy");
 
 
-    public final DoubleMeter DERIVATION_LATENCY = new DoubleMeter("reason.derivation.latency");
+    //public final DoubleMeter DERIVATION_LATENCY = new DoubleMeter("reason.derivation.latency");
     public final DoubleMeter SOLUTION_BEST = new DoubleMeter("task.solution.best");
 
     public final DoubleMeter PLAN_GRAPH_IN_DELAY_MAGNITUDE = new DoubleMeter("plan.graph.add#delay_magnitude");

@@ -32,6 +32,7 @@ import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;

@@ -9,6 +9,7 @@ import nars.io.*;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.*;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
 import reactor.event.registry.Registration;
@@ -247,7 +248,7 @@ public class NAR implements Runnable {
                                 narsese.parseCompoundTerm(termString),
                                 questionOrQuest,
                                 null, 
-                                new Stamp(memory, Tense.Eternal)), 
+                                new Stamp(memory, Tense.Eternal)),
                         new BudgetValue(
                                 Parameters.DEFAULT_QUESTION_PRIORITY, 
                                 Parameters.DEFAULT_QUESTION_DURABILITY, 
@@ -703,7 +704,7 @@ public class NAR implements Runnable {
     }
 
      /**
-     * Get the current time from the clock Called in {@link nars.logic.entity.Stamp}
+     * Get the current time from the clock Called in {@link nars.logic.entity.stamp.Stamp}
      *
      * @return The current time
      */
