@@ -41,7 +41,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     /** min and max occurrenceTime range (relative to current time which the task is output); not checked if tense==ETERNAL, checked otherwise */
     @Expose
-    public long ocMin = -1,ocMax= -1;
+    public long ocMinRel = -1, ocMaxRel = -1;
 
     public final List<Task> trueAt = new ArrayList();
     public final Deque<Task> removals = new ArrayDeque();
@@ -50,6 +50,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final TreeMap<Double,Task> close = new TreeMap();
 
     final int maxRemovals = 2;
+    private long ocOffset;
 
 
     public TaskCondition(NAR n, Class channel, Task t, long occurenceTimeOffset)  {
@@ -66,26 +67,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
             setEternal();
         }
         else {
-            //prcise:
-            long oc = t.getOcurrenceTime() + occurenceTimeOffset;
-            long dur = n.memory.getDuration();
-            setOccurrenceTime(oc - dur, oc + dur);
-
-
-            //open interval NOT CORRECT YET:
-            /*
             long oc = t.getOcurrenceTime() + t.getCreationTime();
-            if (oc > 0) {
-                setOccurrenceTime(Integer.MIN_VALUE, occurenceTimeOffset);
-            }
-            else if (oc < 0) {
-                setOccurrenceTime(occurenceTimeOffset, Integer.MAX_VALUE);
-            }
-            else {
-                long dur = n.memory.getDuration();
-                setOccurrenceTime(occurenceTimeOffset-dur/2, occurenceTimeOffset + dur/2);
-            }*/
-
+            int dur = n.memory.getDuration();
+            setOccurrenceTime(occurenceTimeOffset, oc, dur);
         }
 
 
@@ -166,15 +150,18 @@ public class TaskCondition extends OutputCondition implements Serializable {
         //we could also calculate geometric/cartesian vector distance
     }
 
-    /** relative to the current time when processing */
-    public void setOccurrenceTime(long min, long max) {
-        this.ocMin = min;
-        this.ocMax = max;
+    /** task's tense is compared by its occurence time delta to the current time when processing */
+    public void setOccurrenceTime(long afterOccurenceTime, long oc, int duration) {
+        this.ocOffset = afterOccurenceTime - duration/2; //allow some padding for the task to occur within half a duration earlier than expected
+
+        //may be more accurate if duration/2
+        this.ocMinRel = oc - duration;
+        this.ocMaxRel = oc + duration;
     }
 
 
-    public void setEternal() { this.ocMin = this.ocMax = Stamp.ETERNAL; }
-    public boolean isEternal() { return this.ocMin == Stamp.ETERNAL; }
+    public void setEternal() { this.ocMinRel = this.ocMaxRel = Stamp.ETERNAL; }
+    public boolean isEternal() { return this.ocMinRel == Stamp.ETERNAL; }
 
     public boolean matches(Task task) {
         if (task.sentence.punctuation != punc)
@@ -234,7 +221,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
                 }
 
 
-                float tenseCost = 0.5f;
+                float tenseCost = 0.6f;
+                float timingCost = 0.4f;
 
                 //require right kind of tense
                 if (isEternal()) {
@@ -249,9 +237,13 @@ public class TaskCondition extends OutputCondition implements Serializable {
                         match = false;
                     }
                     else {
-                        long oc = task.getOcurrenceTime() - task.getCreationTime(); //relative time
-                        if ((oc < ocMin) || (oc > ocMax)) {
-                            distance += rangeError(oc, ocMin, ocMax, true) * tenseCost;
+                        long oc = task.getOcurrenceTime() - nar.time();
+                        if (oc < ocOffset) {
+                            distance += rangeError(oc, 0, ocOffset, true) * timingCost;
+                            match = false;
+                        }
+                        if ((oc < ocMinRel) || (oc > ocMaxRel)) {
+                            distance += rangeError(oc, ocMinRel, ocMaxRel, true) * tenseCost;
                             match = false;
                         }
                     }
@@ -368,6 +360,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
     public long getMeanOccurrenceTime() {
         if (isEternal()) return Stamp.ETERNAL;
-        return (ocMin + ocMax) / 2L;
+        return (ocMinRel + ocMaxRel) / 2L;
     }
 }

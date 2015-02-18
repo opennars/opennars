@@ -70,11 +70,11 @@ public class TestNAR extends NAR {
 
     }
 
-    public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int minOccurrenceDelta, int maxOccurrenceDelta) throws InvalidInputException {
+    public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
         TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
-        tc.setOccurrenceTime(minOccurrenceDelta, maxOccurrenceDelta);
+        tc.setOccurrenceTime(cycleStart, ocRelative, memory.getDuration());
         requires.add(tc);
 
 
@@ -134,6 +134,10 @@ public class TestNAR extends NAR {
         return mustBelieve(withinCycles, term, 1.0f, confidence);
     }
 
+    public ExplainableTask mustDesire(long withinCycles, String goalTerm, float freq, float conf) {
+        return mustOutput(withinCycles, goalTerm, '!', freq, conf);
+    }
+
     public ExplainableTask explain(ExplainableTask t) {
         explanations.add(t);
         return t;
@@ -153,10 +157,10 @@ public class TestNAR extends NAR {
     }
 
     @Override
-    public ExplainableTask believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
+    public ExplainableTask believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
-        Task t = super.believe(pri, dur, termString, tense, freq, conf);
+        Task t = super.believe(pri, dur, beliefTerm, tense, freq, conf);
         t.sentence.stamp.setNotYetPerceived();
 
         return explainable(t);
@@ -290,6 +294,7 @@ public class TestNAR extends NAR {
         if (output)
             out.println();
     }
+
 
 
 }

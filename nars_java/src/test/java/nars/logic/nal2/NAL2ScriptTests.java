@@ -3,6 +3,7 @@ package nars.logic.nal2;
 
 import nars.build.Curve;
 import nars.build.Default;
+import nars.build.Discretinuous;
 import nars.core.NewNAR;
 import nars.logic.ScriptNALTest;
 import org.junit.runners.Parameterized;
@@ -22,7 +23,9 @@ public class NAL2ScriptTests extends ScriptNALTest {
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(3), //needs 3 for sets
                 new Curve(),
-                new Default.DefaultMicro() );
+                new Default.DefaultMicro(),
+                new Discretinuous()
+        );
     }
 
     public int getMaxCycles() { return 2500; }

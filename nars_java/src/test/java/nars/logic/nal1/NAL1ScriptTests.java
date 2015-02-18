@@ -3,6 +3,7 @@ package nars.logic.nal1;
 
 import nars.build.Curve;
 import nars.build.Default;
+import nars.build.Discretinuous;
 import nars.core.NewNAR;
 import nars.logic.ScriptNALTest;
 import org.junit.runners.Parameterized;
@@ -22,7 +23,8 @@ public class NAL1ScriptTests extends ScriptNALTest {
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(1),
                 new Curve(),
-                new Default.DefaultMicro()
+                new Default.DefaultMicro(),
+                new Discretinuous()
         );
     }
 

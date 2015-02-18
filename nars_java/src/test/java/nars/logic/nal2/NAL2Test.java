@@ -3,6 +3,7 @@ package nars.logic.nal2;
 
 import nars.build.Curve;
 import nars.build.Default;
+import nars.build.Discretinuous;
 import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.JavaNALTest;
@@ -25,7 +26,8 @@ public class NAL2Test extends JavaNALTest {
                 {new Default().level(3)}, //needs 3 for sets
                 {new Default().setInternalExperience(null)},
                 {new Curve().setInternalExperience(null)},
-                {new Default.DefaultMicro() }
+                {new Default.DefaultMicro() },
+                {new Discretinuous()}
 
                 //{new Neuromorphic(4)},
         });

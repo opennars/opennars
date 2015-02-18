@@ -46,51 +46,62 @@ public class NALysis extends AbstractNALTest {
 
 //    public int getMaxCycles() { return 200; }
 
-    public static void run(NewNAR build, String path, int maxCycles, long seed) {
+
+    /** run the test using the returned TestNAR's .run() method */
+    public static TestNAR analyze(NewNAR build, String path, int maxCycles, long seed) {
 
         String testName = path + "_" + build;
 
         Memory.resetStatic(seed);
 
-        TestNAR n = new TestNAR(build);
+        TestNAR n = new TestNAR(build) {
+
+            @Override
+            public void run() {
+                long nanos = runScript(this, path, maxCycles);
+
+                //String report = "";
+                boolean suc = getError()==null;
+                for (OutputCondition e : requires) {
+                    if (!e.succeeded) {
+                        //report += e.getFalseReason().toString() + '\n';
+                        suc = false;
+                    }
+                    else {
+                        //report += e.getTrueReasons().toString() + '\n';
+                    }
+                }
+
+                String[] p = path.split("/");
+                endAnalysis(p[p.length-1], this, build, nanos, seed, suc);
+
+                //results.printCSVLastLine(System.out);
+
+                if (!suc) {
+                    System.out.println("-------------------------------------------");
+
+                    System.out.println("FAIL: " + testName);
+
+                    System.out.println(ExampleFileInput.getExample(path).trim());
+
+                    report(System.out, true, true, true);
+
+                }
+
+            }
+
+
+        };
 
         if (showOutput)
             TextOutput.out(n);
         if (showTrace)
             new TraceWriter(n, System.out);
 
-        startAnalysis(n);
+        initAnalysis(n);
 
-        long nanos = runScript(n, path, maxCycles);
 
-        //String report = "";
-        boolean suc = n.getError()==null;
-        for (OutputCondition e : n.requires) {
-            if (!e.succeeded) {
-                //report += e.getFalseReason().toString() + '\n';
-                suc = false;
-            }
-            else {
-                //report += e.getTrueReasons().toString() + '\n';
-            }
-        }
-
-        String[] p = path.split("/");
-        endAnalysis(p[p.length-1], n, build, nanos, seed, suc);
-
-        //results.printCSVLastLine(System.out);
-
-        if (!suc) {
-            System.out.println("-------------------------------------------");
-
-            System.out.println("FAIL: " + testName);
-
-            System.out.println(ExampleFileInput.getExample(path).trim());
-
-            n.report(System.out, true, true, true);
-
-        }
-
+        return n;
     }
 
 //    public void finish(Description test, String status, long nanos) {
@@ -135,7 +146,7 @@ public class NALysis extends AbstractNALTest {
 
         for (String p : paths) {
             for (NewNAR b : builds)
-                run(b, p, maxCycles, seed);
+                analyze(b, p, maxCycles, seed).run();
         }
     }
 
@@ -144,7 +155,7 @@ public class NALysis extends AbstractNALTest {
 
         for (String p : paths) {
             if (p.contains(filter))
-                run(build, p, maxCycles, 1);
+                analyze(build, p, maxCycles, 1).run();
         }
     }
 

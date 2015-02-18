@@ -2,9 +2,9 @@ package nars.logic.nal1;
 
 import nars.build.Curve;
 import nars.build.Default;
+import nars.build.Discretinuous;
 import nars.core.NewNAR;
 import nars.core.Parameters;
-import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.JavaNALTest;
 import org.junit.Test;
@@ -25,7 +25,8 @@ public class NAL1Test extends JavaNALTest {
                 {new Default().setInternalExperience(null)},
                 {new Default().level(1)},
                 {new Curve().setInternalExperience(null)},
-                {new Default.DefaultMicro() }
+                {new Default.DefaultMicro() },
+                {new Discretinuous()}
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });
     }
@@ -142,7 +143,7 @@ public class NAL1Test extends JavaNALTest {
     public void multistep() throws InvalidInputException {
         long time = 1550;
 
-        TextOutput.out(nar);
+        //TextOutput.out(nar);
         nar.believe("<a --> b>", 1.0f, 0.9f);
         nar.believe("<b --> c>", 1.0f, 0.9f);
         nar.believe("<c --> d>", 1.0f, 0.9f);

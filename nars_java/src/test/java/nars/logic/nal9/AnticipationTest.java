@@ -32,7 +32,7 @@ public class AnticipationTest extends JavaNALTest {
     @Test //test the occurrence time feature of TaskCondition
     public void testOcurrenceTimeTesting()  throws InvalidInputException {
         nar.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
-        nar.mustOutput(0, 50, "<a --> b>", '.', 0.00f, 1.00f, 0.0f, 1.0f, -55, 0);
+        nar.mustOutput(0, 50, "<a --> b>", '.', 0.00f, 1.00f, 0.0f, 1.0f, -55);
         nar.run();
     }
 
@@ -57,12 +57,12 @@ public class AnticipationTest extends JavaNALTest {
         nar.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
 
         //The actual output from Anticipate: <b --> c>. :\: %0.00;0.90%
-        nar.mustOutput(0, time, "<b --> c>", '.', 0f, 0f, 0.9f, 0.9f, (int) (-1*time), 0);
+        nar.mustOutput(0, time, "<b --> c>", '.', 0f, 0f, 0.9f, 0.9f, (int) (-1*time));
 
         //The induced result
-        nar.mustOutput(0, time, rule, '.', 0.00f, 0.00f, 0.40f, 0.50f, -25, 0);
-        nar.mustOutput(0, time, rule, '.', 0.91f, 0.93f, 0.90f, 0.91f, -25, 0);
-        nar.mustOutput(0, time, rule, '.', 0.00f, 1.00f, 0.0f, 1.0f, (int) (-1*time), 0); //match any
+        nar.mustOutput(0, time, rule, '.', 0.00f, 0.00f, 0.40f, 0.50f, -25);
+        nar.mustOutput(0, time, rule, '.', 0.91f, 0.93f, 0.90f, 0.91f, -25);
+        nar.mustOutput(0, time, rule, '.', 0.00f, 1.00f, 0.0f, 1.0f, (int) (-1*time)); //match any
 
         nar.run();
 

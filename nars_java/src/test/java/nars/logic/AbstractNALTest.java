@@ -34,6 +34,7 @@ abstract public class AbstractNALTest extends TestCase {
     static final HitMeter testConcepts;
     static final ObjectMeter<String> testBuild;
     public static OutputStream dataOut = null;
+    private static String script;
     PrintStream log = System.out;
     public static boolean analyzeStack = false;
 
@@ -77,7 +78,7 @@ abstract public class AbstractNALTest extends TestCase {
 
 
     /** called before test runs */
-    public static void startAnalysis(NAR nar) {
+    public static void initAnalysis(NAR nar) {
 
         /*
         if (this.derivations != null) {
@@ -122,7 +123,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         Parameters.DEBUG = true;
 
-        String script = ExampleFileInput.getExample(path);
+        script = ExampleFileInput.getExample(path);
         nar.requires.addAll(OutputCondition.getConditions(nar, script, similarsToSave));
 
         nar.addInput(script);
@@ -154,16 +155,20 @@ abstract public class AbstractNALTest extends TestCase {
         assertTrue("No cycles elapsed", nar.time() > 0);
 
 
-        String report = "";
+        String report = '@' + nar.time() + ": ";
         boolean suc = nar.getError()==null;
         for (OutputCondition e : nar.requires) {
             if (!e.succeeded) {
+                report += e.toString() + '\n';
                 report += e.getFalseReason().toString() + '\n';
                 suc = false;
             }
             else {
                 report += e.getTrueReasons().toString() + '\n';
             }
+        }
+        if (!suc && script!=null) {
+            report = "\n\n\n"  + script + '\n' + report;
         }
 
         assertTrue(report, suc);

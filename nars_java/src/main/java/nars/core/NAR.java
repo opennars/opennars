@@ -193,15 +193,18 @@ public class NAR implements Runnable {
     }
 
 
-    public Task goal(float pri, float dur, String termString, float freq, float conf) throws InvalidInputException {
-        Task t = memory.newTask(narsese.parseCompoundTerm(termString),
+    public Task goal(String goalTerm, float freq, float conf) {
+        return goal(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, goalTerm, freq, conf);
+    }
+    public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
+        Task t = memory.newTask(narsese.parseCompoundTerm(goalTerm),
                 Symbols.GOAL, freq, conf, pri, dur, Tense.Eternal);
         addInput(t);
         return t;
     }
 
-    public Task believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        Task t = memory.newTask(narsese.parseCompoundTerm(termString),
+    public Task believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+        Task t = memory.newTask(narsese.parseCompoundTerm(beliefTerm),
                 Symbols.JUDGMENT, freq, conf, pri, dur, tense);
         addInput(t);
         return t;
