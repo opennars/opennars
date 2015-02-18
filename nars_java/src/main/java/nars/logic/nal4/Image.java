@@ -28,10 +28,10 @@ abstract public class Image extends CompoundTerm {
     }
 
 
-    @Override
-    public boolean equals2(final CompoundTerm other) {
-        return relationIndex == ((Image)other).relationIndex;           
-    }
+//    @Override
+//    public boolean equals2(final CompoundTerm other) {
+//        return relationIndex == ((Image)other).relationIndex;
+//    }
     
     @Override
     public int compareTo(final AbstractTerm that) {

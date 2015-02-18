@@ -150,7 +150,13 @@ public class Term implements AbstractTerm, Termable {
     public boolean equals(final Object that) {
         if (this == that) return true;
         if (!(that instanceof Term)) return false;
-        return name().equals(((Term)that).name());
+        final Term t = (Term)that;
+        if ((name == null) || (t.name == null)) {
+            //check operator first because name() may to avoid potential construction of name()
+            if (operator()!=t.operator() || getComplexity() != t.getComplexity() )
+                return false;
+        }
+        return name().equals(t.name());
     }
 
     /**

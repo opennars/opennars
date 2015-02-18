@@ -97,7 +97,7 @@ abstract public class UniCore implements Core {
     @Override
     public void reset() {
         concepts.clear();
-
+        subcon.clear();
     }
 
 

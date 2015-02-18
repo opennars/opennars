@@ -272,7 +272,7 @@ public class TermTest {
             
             assertEquals(t, forced.toString());
             
-            CompoundTerm cloned = forced.clone();
+            Term cloned = forced.clone();
             assertEquals(null, cloned);
             
             

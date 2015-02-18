@@ -82,7 +82,7 @@ public class Inheritance extends Statement {
      */
     public static Inheritance make(final Term subject, final Term predicate) {
                 
-        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {            
+        if (invalidStatement(subject, predicate)) {
             return null;
         }
         

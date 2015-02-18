@@ -63,7 +63,7 @@ public abstract class Statement extends CompoundTerm {
         if (t[1]==null)
             throw new RuntimeException("Null predicate: " + this);        
         if (Parameters.DEBUG) {                
-            if (isCommutative()) {
+            if (t.length > 1 && isCommutative()) {
                 if (t[0].compareTo(t[1])==1) {
                     throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
                 }

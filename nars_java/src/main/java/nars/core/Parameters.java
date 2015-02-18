@@ -51,7 +51,7 @@ public class Parameters {
 
     /** for thorough bag debugging (slow) */
     public static boolean DEBUG_BAG = false;
-    public static boolean DEBUG_INVALID_SENTENCES = true;
+    public static boolean DEBUG_INVALID_SENTENCES = false;
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //

@@ -27,6 +27,12 @@ public class CacheBag<K, I extends Item<K>> implements RemovalListener<K,I> {
     }
 
 
+    /** empty contents */
+    public void clear() {
+        data.invalidateAll();
+        data.cleanUp();
+    }
+
 
     public I get(K key) {
         return data.getIfPresent(key);

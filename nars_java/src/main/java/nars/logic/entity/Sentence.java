@@ -98,99 +98,51 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     /**
      * Create a Sentence with the given fields
      *
-     * @param _content The Term that forms the content of the sentence
+     * @param seedTerm The Term that forms the content of the sentence
      * @param punctuation The punctuation indicating the type of the sentence
      * @param truth The truth value of the sentence, null for question
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    private Sentence(final T _content, final char punctuation, final TruthValue truth, final NAL.StampBuilder stamp, boolean normalize) {
+    private Sentence(final T seedTerm, final char punctuation, final TruthValue truth, final NAL.StampBuilder stamp, boolean normalize) {
         
-        this.punctuation = punctuation;
 
-        if (invalidSentenceTerm(_content))
-            throw new RuntimeException("Invalid sentence content term: " + _content);
+        if (Parameters.DEBUG) {
+            if (invalidSentenceTerm(seedTerm))
+                throw new RuntimeException("Invalid sentence content term: " + seedTerm);
+        }
+
+        this.punctuation = punctuation;
 
         if ( (truth == null) && (!isQuestion() && !isQuest()) ) {
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
 
         if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
-            if (!Term.valid(_content)) {
-                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
+            if (!Term.valid(seedTerm)) {
+                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + seedTerm);
                 ntc.printStackTrace();
                 throw ntc;
             }
         }
 
-        Stamp st = stamp.build();
 
+
+        Stamp st = stamp.build();
         if ((isQuestion() || isQuest()) && !st.isEternal()) {
-            st = st.cloneEternal(); //need to clone in case this stamp is shared by others which are not to eternalize it
-            //throw new RuntimeException("Questions and Quests require eternal tense");
+            //need to clone in case this stamp is shared by others which are not to eternalize it
+            st = st.cloneEternal();
+            if (Parameters.DEBUG)
+                throw new RuntimeException("Questions and Quests require eternal tense");
         }
 
         this.stamp = st;
-
         
         this.truth = truth;
-        this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
-            
-        
-        //Variable name normalization
-        //TODO move this to Concept method, like cloneNormalized()
-        if (normalize && _content.hasVar() && (!_content.isNormalized() ) ) {
-            
-            this.term = (T) _content.cloneDeepVariables();
-            
-            final CompoundTerm c = term;
-            
-            List<Variable> vars = Parameters.newArrayList(); //may contain duplicates, list for efficiency
-            
-            c.recurseSubtermsContainingVariables(new SubTermVarCollector(vars));
-            
-            Map<CharSequence,CharSequence> rename = Parameters.newHashMap();
-            boolean renamed = false;
-            
-            for (final Variable v : vars) {
-                
-                CharSequence vname = v.name();
-                if (!v.hasVarIndep())
-                    vname = vname + " " + v.getScope().name();                                
-                
-                CharSequence n = rename.get(vname);                
-                
-                if (n==null) {                            
-                    //type + id
-                    rename.put(vname, n = Variable.getName(v.getType(), rename.size() + 1));
-                    if (!n.equals(vname))
-                        renamed = true;
-                }    
 
-                v.setScope(c, n);                
-            }
-            
-            if (renamed) {
-                c.invalidateName();
+        this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
 
-                if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
-                    if (!Term.valid(c)) {
-                        CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
-                        ntc.printStackTrace();
-                        throw ntc;
-                    }
-                }
-                
-            }
-            
-            c.setNormalized(true);            
-            
-            
-        }
-        else {
-            this.term = _content;
-        }
-        
+        this.term = normalize ? seedTerm.cloneNormalized() : seedTerm;
 
         this.hash = 0;
 
@@ -650,12 +602,13 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         if (t instanceof Statement) {
             Statement st = (Statement) t;
 
-            if (Statement.invalidStatement(st.getSubject(), st.getPredicate()))
-                return true;
-
             /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
             if (t.subjectOrPredicateIsIndependentVar())
                 return true;
+
+            if (Statement.invalidStatement(st.getSubject(), st.getPredicate()))
+                return true;
+
         }
 
 
@@ -674,7 +627,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
 
-    private static class SubTermVarCollector implements Term.TermVisitor {
+    public static class SubTermVarCollector implements Term.TermVisitor {
         private final List<Variable> vars;
 
         public SubTermVarCollector(List<Variable> vars) {
