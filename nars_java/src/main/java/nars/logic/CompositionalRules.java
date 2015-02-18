@@ -394,15 +394,15 @@ public final class CompositionalRules {
             term22 = beliefContent.getPredicate();
             if (term12 instanceof ImageExt) {
 
-                if ((/*(ImageExt)*/term12).containsTerm(term22)) {
+                if ((/*(ImageExt)*/term12).containsTermRecursivelyOrEquals((term22))) {
                     commonTerm = term22;
                 }
 
                 if (commonTerm == null/* && term12 instanceof ImageExt*/) {
                     commonTerm = ((ImageExt) term12).getTheOtherComponent();
-                    if (term22 instanceof ImageExt && ((commonTerm == null) || !(/*(ImageExt)*/term22).containsTerm(commonTerm))) {
+                    if (term22 instanceof ImageExt && ((commonTerm == null) || !(/*(ImageExt)*/term22).containsTermRecursivelyOrEquals(commonTerm))) {
                         commonTerm = ((ImageExt) term22).getTheOtherComponent();
-                        if ((commonTerm == null) || !(/*(ImageExt)*/term12).containsTerm(commonTerm)) {
+                        if ((commonTerm == null) || !(/*(ImageExt)*/term12).containsTermRecursivelyOrEquals((commonTerm))) {
                             commonTerm = null;
                         }
                     }
@@ -425,15 +425,15 @@ public final class CompositionalRules {
             term22 = varInd1;
             if (term21 instanceof ImageInt) {
 
-                if ((/*(ImageInt)*/term21).containsTerm(term11)) {
+                if ((/*(ImageInt)*/term21).containsTermRecursivelyOrEquals((term11))) {
                     commonTerm = term11;
                 }
 
                 if (term11 instanceof ImageInt && commonTerm == null/* && term21 instanceof ImageInt*/) {
                     commonTerm = ((ImageInt) term11).getTheOtherComponent();
-                    if ((commonTerm == null) || !(/*(ImageInt)*/term21).containsTerm(commonTerm)) {
+                    if ((commonTerm == null) || !(/*(ImageInt)*/term21).containsTermRecursivelyOrEquals((commonTerm))) {
                         commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                        if ((commonTerm == null) || !(/*(ImageInt)*/term11).containsTerm(commonTerm)) {
+                        if ((commonTerm == null) || !(/*(ImageInt)*/term11).containsTermRecursivelyOrEquals((commonTerm))) {
                             commonTerm = null;
                         }
                     }
@@ -623,18 +623,18 @@ public final class CompositionalRules {
         if (index == 0) {
             if ((term1 instanceof ImageExt) && (term2 instanceof ImageExt)) {
                 commonTerm = ((ImageExt) term1).getTheOtherComponent();
-                if ((commonTerm == null) || !term2.containsTerm(commonTerm)) {
+                if ((commonTerm == null) || !term2.containsTermRecursivelyOrEquals(commonTerm)) {
                     commonTerm = ((ImageExt) term2).getTheOtherComponent();
-                    if ((commonTerm == null) || !term1.containsTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term1.containsTermRecursivelyOrEquals(commonTerm)) {
                         commonTerm = null;
                     }
                 }
             }
         } else if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
             commonTerm = ((ImageInt) term1).getTheOtherComponent();
-            if ((commonTerm == null) || !term2.containsTerm(commonTerm)) {
+            if ((commonTerm == null) || !term2.containsTermRecursivelyOrEquals(commonTerm)) {
                 commonTerm = ((ImageInt) term2).getTheOtherComponent();
-                if ((commonTerm == null) || !term1.containsTerm(commonTerm)) {
+                if ((commonTerm == null) || !term1.containsTermRecursivelyOrEquals(commonTerm)) {
                     commonTerm = null;
                 }
             }

@@ -16,7 +16,7 @@ import nars.logic.entity.Task;
 public class LimitDerivationPriority implements NAL.DerivationFilter {
 
     @Override
-    public String reject(NAL nal, Task task, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
         BudgetValue currentTaskBudget = nal.getCurrentTask().getBudget();
         task.budget.andPriority(currentTaskBudget.getPriority());

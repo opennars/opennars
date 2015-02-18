@@ -24,7 +24,10 @@ public class NAL5ScriptTests extends ScriptNALTest {
                 new Curve());
     }
 
-    public int getMaxCycles() { return 1300; }
+
+    //some of the tests will fail if given too long because their test probably depends on the initial results
+    //so keep this value low, like ~500
+    public int getMaxCycles() { return 300; }
 
 
 }

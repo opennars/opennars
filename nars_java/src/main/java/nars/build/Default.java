@@ -84,13 +84,13 @@ public class Default extends NewNAR implements ConceptBuilder {
         setSubconceptBagSize(1024);
         setConceptBagLevels(32);
         
-        setTaskLinkBagSize(24);
+        setTaskLinkBagSize(48);
         setTaskLinkBagLevels(12);
 
         setTermLinkBagSize(128);
         setTermLinkBagLevels(12);
         
-        setNovelTaskBagSize(64);
+        setNovelTaskBagSize(96);
         setNovelTaskBagLevels(24);
 
 
@@ -100,7 +100,7 @@ public class Default extends NewNAR implements ConceptBuilder {
 
         param.duration.set(5);
 
-        param.confidenceThreshold.set(0.0);
+        param.confidenceThreshold.set(0.01);
 
         param.shortTermMemoryHistory.set(1);
         param.temporalRelationsMax.set(4);

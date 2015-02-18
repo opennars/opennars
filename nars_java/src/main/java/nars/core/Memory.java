@@ -530,7 +530,7 @@ public class Memory implements Serializable {
 
     /* ---------- new task entries ---------- */
     /**
-     * add new task that waits to be processed in the next cycleMemory
+     * add new task that waits to be processed next
      */
     public boolean addNewTask(final Task t, final String reason) {
         /*if (!Term.valid(t.getContent()))

@@ -528,9 +528,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     //^^ ???
 
     /**
-     * Recursively check if a compound contains a term
-     * This method does not check the equality of this term itself.
-     * Although that is how Term.containsTerm operates
+     * Check the subterms (first level only) for a target term
      *
      * @param t The term to be searched
      * @return Whether the target is in the current term
@@ -549,11 +547,25 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
      * @return Whether the target is in the current term
      */
     @Override
-    public boolean equalsOrContainsTermRecursively(final Term target) {
+    public boolean containsTermRecursivelyOrEquals(final Term target) {
         if (this.equals(target)) return true;
-        return containsTerm(target);
+        return containsTermRecursively(target);
     }
 
+    /** searches for a subterm
+     *  TODO parameter for max (int) level to scan down
+     * */
+    public boolean containsTermRecursively(final Term target) {
+        for (Term x : term) {
+            if (x.equals(target)) return true;
+            if (x instanceof CompoundTerm) {
+                if (((CompoundTerm)x).containsTermRecursively(target)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
         /**

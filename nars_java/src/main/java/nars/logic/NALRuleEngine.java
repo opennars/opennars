@@ -1,6 +1,8 @@
 package nars.logic;
 
 import nars.core.Memory;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
 import nars.logic.reason.ConceptFire;
 import nars.logic.reason.concept.*;
 import nars.logic.reason.filter.FilterBelowBudget;
@@ -66,4 +68,19 @@ public class NALRuleEngine extends RuleEngine {
         return derivationFilters;
     }
 
+    public String isRejected(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+
+        List<NAL.DerivationFilter> derivationFilters = getDerivationFilters();
+
+        if (derivationFilters != null) {
+            for (int i = 0; i < derivationFilters.size(); i++) {
+                NAL.DerivationFilter d = derivationFilters.get(i);
+                String rejectionReason = d.reject(nal, task, solution, revised, single, currentBelief, currentTask);
+                if (rejectionReason != null) {
+                    return rejectionReason;
+                }
+            }
+        }
+        return null;
+    }
 }

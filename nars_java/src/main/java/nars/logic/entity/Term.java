@@ -273,7 +273,7 @@ public class Term implements AbstractTerm, Termable {
      * @param target The term to be searched
      * @return Whether the two have the same content
      */
-    public boolean equalsOrContainsTermRecursively(final Term target) {
+    public boolean containsTermRecursivelyOrEquals(final Term target) {
         return equals(target);
     }
 

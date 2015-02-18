@@ -12,6 +12,8 @@ import nars.core.NAR;
  */
 public class OutputNotContainsCondition extends OutputContainsCondition {
 
+    String failureReason = null;
+
     public OutputNotContainsCondition(NAR nar, String containing) {
         super(nar, containing, -1);
         succeeded = true;
@@ -19,7 +21,7 @@ public class OutputNotContainsCondition extends OutputContainsCondition {
 
     @Override
     public String getFalseReason() {
-        return "incorrect output: " + containing;
+        return "Output should not have contained: " + containing + ", in: " + failureReason;
     }
 
     @Override
@@ -29,6 +31,7 @@ public class OutputNotContainsCondition extends OutputContainsCondition {
         }
         if (cond(channel, signal)) {
             onFailure(channel, signal);
+            failureReason = channel + ": " + signal;
             succeeded = false;
             return false;
         }
