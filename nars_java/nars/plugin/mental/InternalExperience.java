@@ -33,7 +33,7 @@ import nars.operator.Operator;
  */
 public class InternalExperience implements Plugin, EventObserver {
         
-    public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.75f;
+    public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
