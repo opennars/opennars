@@ -158,12 +158,13 @@ public class Variables {
         
         final boolean hasSubs = findSubstitute(type, t1, t2, map);
         if (hasSubs) {
-            compound[0] = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
-            if (compound[0] == null) return false;
-            
-            compound[1] = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
-            if (compound[1] == null) return false;
-            
+            final Term a = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
+            if (a == null) return false;
+            final Term b = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
+            if (b == null) return false;
+            //only set the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
+            compound[0] = a;
+            compound[1] = b;
             return true;
         }
         return false;
