@@ -25,7 +25,8 @@ public class ImmediateProcess extends NAL {
     @Override
     protected void onFinished() {
 
-        memory.addNewTasks(this);
+        if (newTasks!=null && !newTasks.isEmpty())
+            memory.addNewTasks(this);
 
     }
 

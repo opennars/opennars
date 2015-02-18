@@ -35,7 +35,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     /**
      * stores the tasks that this process generates, and adds to memory
      */
-    Deque<Task> newTasks = null; //lazily instantiated
+    protected Deque<Task> newTasks = null; //lazily instantiated
 
     public NAL(Memory mem, Task task) {
         this(mem, -1, task);
@@ -371,7 +371,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         if (newTasks == null)
             newTasks = new ArrayDeque(4);
 
-        newTasks.add(t);
+        newTasks.addLast(t);
     }
 
 

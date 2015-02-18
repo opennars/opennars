@@ -69,7 +69,8 @@ abstract public class ConceptFire extends NAL {
         */
 
 
-        memory.addNewTasks(this);
+        if (newTasks!=null && !newTasks.isEmpty())
+            memory.addNewTasks(this);
     }
 
 

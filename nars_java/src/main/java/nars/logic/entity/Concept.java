@@ -299,7 +299,7 @@ public class Concept extends Item<Term> implements Termable {
 
         oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
 
-        if (oldBelief != null) {
+        if ((oldBelief != null) && (oldBelief!=judg)) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
             if (newStamp.equals(oldStamp, false, false, true)) {
@@ -337,6 +337,7 @@ public class Concept extends Item<Term> implements Termable {
 
             }
         }
+
         /*if (task.aboveThreshold())*/ {
             int nnq = questions.size();       
             for (int i = 0; i < nnq; i++) {                

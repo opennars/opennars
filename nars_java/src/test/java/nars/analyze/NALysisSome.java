@@ -27,10 +27,15 @@ public class NALysisSome extends NALysis {
         showOutput = false;
         showTrace = false;
 
+        //String test = "./nal/test6/nal6.22.nal";
+        String test = "./nal/test5/nal5.18.nal";
+        //String test = "./nal/test5/nal5.18.1.nal";
+        //String test = "./nal/test5/nal5.17.nal";
+
         TestNAR n = analyze(
-                new Default().setInternalExperience(null).level(6),
-                "./nal/test6/nal6.22.nal",
-                256,
+                new Default().setInternalExperience(null).level(5),
+                test,
+                512,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {
@@ -45,9 +50,9 @@ public class NALysisSome extends NALysis {
                 System.out.println("Remove: " + t + " " + t.getReason());
             }
         });
+
         n.run();
 
-        //nal("test5", "5.18", new Default().setInternalExperience(null), 256);
 
         //results.printARFF(new PrintStream(dataOut));
         //results.printCSV(new PrintStream(System.out));

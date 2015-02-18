@@ -6,8 +6,10 @@
 'Can robin fly or swim?
 (||,<robin --> [flying]>,<robin --> swimmer>)?  
 
+'Robin can fly or swim.
+''outputMustContain('(||,<robin --> [flying]>,<robin --> swimmer>). %1.00;0.81%')
+
+
 7
 ''//+1 from original
 
-'Robin can fly or swim.
-''outputMustContain('(||,<robin --> [flying]>,<robin --> swimmer>). %1.00;0.81%')

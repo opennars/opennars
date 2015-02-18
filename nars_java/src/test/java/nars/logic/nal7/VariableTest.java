@@ -111,18 +111,30 @@ public class VariableTest extends JavaNALTest {
 
     }
 
-    @Test public void testNormalizeSomeVars() {
-        //< ==> >>.
-        //should not become
-        //<<(*,bird,animal,$1,$2) --> AndShortcut> ==> <$1 --> $3>>>.
-
-        String left = "<(*,bird,animal,$1,$2) --> AndShortcut>";
-        String right = "<$1 --> $2>";
+    void testNormalize(String left, String right) {
 
         nar.addInput("<" + left + " ==> " + right + ">.");
         nar.mustOutput(1, "<" + left + " ==> " + right + ">.");
 
         nar.run(5);
+    }
+
+    /*
+        //should not become
+        //<<(*,bird,animal,$1,$2) --> AndShortcut> ==> <$1 --> $3>>>.
+    */
+    final String normA = "<(*,bird,animal,$1,$2) --> AndShortcut>";
+    final String normB = "<$1 --> $2>";
+    final String normC = "<(*,bird,$1,$abc,$2) --> AndShortcut>";
+
+    @Test public void testNormalizeSomeVars1ab() {
+        testNormalize(normA, normB);
+    }
+    @Test public void testNormalizeSomeVars1ba() {
+        testNormalize(normB, normA);
+    }
+    @Test public void testNormalizeSomeVars1ac() {
+        testNormalize(normA, normC);
     }
 
 }

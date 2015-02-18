@@ -55,7 +55,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     /** Whether contains a variable */
     transient private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
     
-    transient int containedTemporalRelations = -1;
+    transient private int containedTemporalRelations = -1;
     private boolean normalized;
     
 
@@ -192,9 +192,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     @Override
     public int containedTemporalRelations() {
         if (containedTemporalRelations == -1) {
-            
-            containedTemporalRelations = 0;
-            
+
             /*if ((this instanceof Equivalence) || (this instanceof Implication))*/ {
                 int temporalOrder = this.getTemporalOrder();
                 switch (temporalOrder) {
@@ -205,6 +203,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
                         break;
                     default:
                         containedTemporalRelations = 0;
+                        break;
                 }                
             }
             
