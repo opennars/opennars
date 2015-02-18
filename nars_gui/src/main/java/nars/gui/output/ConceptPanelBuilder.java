@@ -292,7 +292,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             minTime = maxTime = time;
             for (Sentence s : i) {
                 if (s.isEternal()) continue;
-                long when = s.getOccurenceTime();
+                long when = s.getOccurrenceTime();
                                 
                 if (minTime > when)
                     minTime = when;                
@@ -315,7 +315,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             g.fillRect(0, 0, getWidth(), getHeight());
             for (Sentence s : i) {
                 if (s.isEternal()) continue;
-                long when = s.getOccurenceTime();
+                long when = s.getOccurrenceTime();
                 
                 int yy = getT(when);
                 
@@ -370,7 +370,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
                     Sentence ss = (Sentence)s;
                     if (!ss.isEternal()) {
                         //float factor = TruthFunctions.temporalProjection(now, ss.getOccurenceTime(), now);
-                        factor = 1.0f / (1f + Math.abs(ss.getOccurenceTime() - now)  );                        
+                        factor = 1.0f / (1f + Math.abs(ss.getOccurrenceTime() - now)  );
                     }
                 }
                 g.setColor(getColor(freq, conf, factor));

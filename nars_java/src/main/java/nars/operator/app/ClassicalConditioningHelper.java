@@ -105,7 +105,7 @@ public class ClassicalConditioningHelper implements Plugin {
         Task lastt=null;
         for(Task t: lastElems) {
             st.add(t);
-            if(lastt!=null && Math.abs(t.sentence.getOccurenceTime()-lastt.sentence.getOccurenceTime())>nar.param.duration.get()*100) {
+            if(lastt!=null && Math.abs(t.sentence.getOccurrenceTime()-lastt.sentence.getOccurrenceTime())>nar.param.duration.get()*100) {
                 st.add(null); //pause
             }
             lastt=t;

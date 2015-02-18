@@ -24,6 +24,7 @@ import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal2.Similarity;
+import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
@@ -51,10 +52,10 @@ public class Name extends Operator implements Mental {
         Similarity content = Similarity.make(compound, atomic);
         
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(memory));
+        Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(operation, memory, Tense.Present));
         
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         
-        return Lists.newArrayList( new Task(sentence, budget) );        
+        return Lists.newArrayList( operation.newSubTask(sentence, budget) );
     }
 }

@@ -148,7 +148,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         addNewTask(task, "Derived");
 
         if (nal(7)) {
-            if (task.sentence.getOccurenceTime() > memory.time()) {
+            if (task.sentence.getOccurrenceTime() > memory.time()) {
                 memory.event.emit(Events.TaskDeriveFuture.class, task, this);
             }
         }
@@ -403,10 +403,18 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      * create a new stamp builder for a specific occurenceTime
      */
     public StampBuilder newStamp(Sentence a, Sentence b, long occurrenceTime) {
-        return new LazyStampBuilder(a.stamp, b.stamp, time(), occurrenceTime);
+        return newStamp(a.stamp, b.stamp, occurrenceTime);
+    }
+    public StampBuilder newStamp(Stamp a, Stamp b, long occurrenceTime) {
+        return new LazyStampBuilder(a, b, time(), occurrenceTime);
     }
     public StampBuilder newStamp(Sentence a, long occurrenceTime) {
-        return new LazyStampBuilder(a.stamp, null, time(), occurrenceTime);
+        return newStamp(a.stamp, null, occurrenceTime);
+    }
+
+    public StampBuilder newStamp(Sentence t, Sentence b) {
+        return newStamp(t != null ? t.stamp : null,
+                        b != null ? b.stamp : null);
     }
 
     /**
@@ -415,7 +423,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      * @param t generally the task's sentence
      * @param b generally the belief's sentence
      */
-    public StampBuilder newStamp(Sentence t, Sentence b) {
+    public StampBuilder newStamp(Stamp t, Stamp b) {
 
         final long oc;
         if (nal(7)) {
@@ -424,7 +432,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
             oc = Stamp.ETERNAL;
         }
 
-        return new LazyStampBuilder(t!=null ? t.stamp : null,  b!=null ? b.stamp : null, time(), oc);
+        return new LazyStampBuilder(t, b, time(), oc);
     }
 
     /**
@@ -487,21 +495,22 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
     }
 
 
-    public static long inferOccurenceTime(Sentence t, Sentence b) {
+    public static long inferOccurenceTime(Stamp t, Stamp b) {
         final long oc;
+
 
         if ((t == null) && (b==null))
             throw new RuntimeException("Both sentence parameters null");
         if (t == null)
-            return b.getOccurenceTime();
+            return b.getOccurrenceTime();
         else if (b == null)
-            return t.getOccurenceTime();
+            return t.getOccurrenceTime();
 
 
 
-        final long tOc = t.getOccurenceTime();
+        final long tOc = t.getOccurrenceTime();
         final boolean tEternal = (tOc == Stamp.ETERNAL);
-        final long bOc = b.getOccurenceTime();
+        final long bOc = b.getOccurrenceTime();
         final boolean bEternal = (bOc == Stamp.ETERNAL);
 
         /* see: https://groups.google.com/forum/#!searchin/open-nars/eternal$20belief/open-nars/8KnAbKzjp4E/rBc-6V5pem8J) */

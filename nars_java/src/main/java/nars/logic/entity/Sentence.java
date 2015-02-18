@@ -396,7 +396,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         float freq = truth.getFrequency();
         float conf = truth.getConfidence();
 
-        if (!isEternal() && (targetTime != getOccurenceTime())) {
+        if (!isEternal() && (targetTime != getOccurrenceTime())) {
             conf = TruthFunctions.eternalizedConfidence(conf);
             if (targetTime != Stamp.ETERNAL) {
                 long occurrenceTime = stamp.getOccurrenceTime();
@@ -504,7 +504,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         if (key == null) {
             final CharSequence contentName = term.name();
             
-            final boolean showOcurrenceTime = ((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
+            final boolean showOcurrenceTime = true; //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
             //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
             
             //final CharSequence truthString = truth != null ? truth.name() : null;
@@ -603,7 +603,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
     public long getCreationTime() { return stamp.getCreationTime();    }
-    public long getOccurenceTime() {
+    public long getOccurrenceTime() {
         return stamp.getOccurrenceTime();
     }
 

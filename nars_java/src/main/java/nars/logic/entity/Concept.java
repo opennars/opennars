@@ -328,7 +328,7 @@ public class Concept extends Item<Term> implements Termable {
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), now);
                 if (projectedBelief!=null) {
 
-                    if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
+                    if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
                     }
 
@@ -865,7 +865,7 @@ public class Concept extends Item<Term> implements Termable {
 
 
             Sentence projectedBelief = belief.projection(occurrenceTime, currentTime);
-            if (projectedBelief.getOccurenceTime()!=belief.getOccurenceTime()) {
+            if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
                 nal.singlePremiseTask(projectedBelief, task.budget);
             }
             

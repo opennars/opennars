@@ -23,6 +23,7 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
+import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
@@ -47,10 +48,10 @@ public class Evaluate extends Operator implements Mental {
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         CompoundTerm content = Sentence.termOrException(args[0]);
 
-        Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamp(memory));
+        Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamp(operation, memory, Tense.Present));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUEST_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         
-        return Lists.newArrayList( new Task(sentence, budget) );        
+        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
 
     }
         

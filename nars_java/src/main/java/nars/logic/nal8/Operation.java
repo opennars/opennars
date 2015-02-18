@@ -23,6 +23,8 @@ package nars.logic.nal8;
 import nars.core.Memory;
 import nars.io.Symbols;
 import nars.logic.NALOperator;
+import nars.logic.entity.BudgetValue;
+import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
@@ -183,5 +185,9 @@ public class Operation extends Inheritance {
 
     public static Operation make(Operator opTerm, Term[] arg) {
         return make(opTerm, arg, null);
+    }
+
+    public Task newSubTask(Sentence sentence, BudgetValue budget) {
+        return new Task(sentence, budget, getTask());
     }
 }

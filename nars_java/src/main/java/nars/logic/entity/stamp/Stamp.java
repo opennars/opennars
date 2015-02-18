@@ -26,6 +26,7 @@ import nars.io.Symbols;
 import nars.logic.NAL;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal7.Tense;
+import nars.logic.nal8.Operation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,7 +78,8 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     /** cache of hashcode of evidential base */
     transient private int evidentialHash;
 
-    
+
+
     public boolean before(Stamp s, int duration) {
         if (isEternal() || s.isEternal())
             return false;
@@ -100,13 +102,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
 
 
-
-    /**
-     * Generate a new stamp, with a new serial number, for a new Task
-     *
-     * @param creationTime Creation time of the stamp
-     */
-    public Stamp(final long serial, final long creationTime, final Tense tense, final int duration) {
+    protected Stamp(final long serial, long creationTime) {
         super();
 
         this.evidentialBase = new long[1];
@@ -114,6 +110,22 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
         this.creationTime = creationTime;
 
+    }
+
+
+    /**
+     * Generate a new stamp, with a new serial number, for a new Task
+     *
+     * @param creationTime Creation time of the stamp
+     */
+    protected Stamp(final long serial, final long creationTime, final Tense tense, final int duration) {
+        this(serial, creationTime);
+
+        setOccurenceTime(tense, duration);
+
+    }
+
+    protected void setOccurenceTime(Tense tense, int duration) {
         if (tense == null) {
             occurrenceTime = ETERNAL;
         } else if (tense == Past) {
@@ -123,16 +135,15 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         } else if (tense == Present) {
             occurrenceTime = creationTime;
         }
-
     }
 
     /**
      * Generate a new stamp identical with a given one
      *
-     * @param old The stamp to be cloned
+     * @param parent The stamp to be cloned
      */
-    private Stamp(final Stamp old) {
-        this(old, old.creationTime);
+    private Stamp(final Stamp parent) {
+        this(parent, parent.creationTime);
     }
 
     /**
@@ -141,27 +152,32 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
      * <p>
      * For single-premise rules
      *
-     * @param old The stamp of the single premise
-     * @param creationTime The current time
+     * @param parent The stamp of the single premise
      */
-    public Stamp(final Stamp old, final long creationTime) {
-        this(old, creationTime, old);
+
+
+    public Stamp(final Stamp parent, final Memory memory, final Tense tense) {
+        this(parent, memory.time() );
+
+        setOccurenceTime(tense, memory.getDuration());
     }
 
-    public Stamp(final Stamp old, final long creationTime, final long occurenceTime) {
-        this(old, creationTime, occurenceTime, old);
+    public Stamp(Operation operation, Memory memory, Tense tense) {
+        this(operation.getTask().sentence.getStamp(), memory, tense);
     }
 
-    public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase) {
-        this(old, creationTime, old.getOccurrenceTime(), useEvidentialBase);
+
+    public Stamp(final Stamp parent, final long creationTime, final long occurenceTime) {
+        this(parent, creationTime);
+        this.occurrenceTime = occurenceTime;
+
     }
+    public Stamp(final Stamp parent, final long creationTime) {
 
-    public Stamp(final Stamp old, final long creationTime, final long occurenceTime, final Stamp useEvidentialBase) {
-
-        this.evidentialBase = useEvidentialBase.evidentialBase;
+        this.evidentialBase = parent.evidentialBase;
 
         this.creationTime = creationTime;
-        this.occurrenceTime = occurenceTime;
+        this.occurrenceTime = parent.getOccurrenceTime();
 
     }
 
@@ -215,20 +231,14 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         this(memory, tense, memory.time());
     }
 
-    /** creates a stamp with default Present tense */
-    @Deprecated public Stamp(final Memory memory) {
-        this(memory, Tense.Present);
-    }
 
     public Stamp(final Memory memory, long creationTime, long occurenceTime) {
-        this(memory);
-        this.creationTime = creationTime;
+        this(memory.newStampSerial(), creationTime);
         this.occurrenceTime = occurenceTime;
     }
 
     public Stamp(final Memory memory, long occurenceTime) {
-        this(memory);
-        this.occurrenceTime = occurenceTime;
+        this(memory, memory.time(), occurenceTime);
     }
 
     
@@ -459,7 +469,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     public CharSequence name() {
 
             final int baseLength = evidentialBase.length;
-            final int estimatedInitialSize = 10 * (baseLength * 3);
+            final int estimatedInitialSize = 8 + (baseLength * 3);
 
             final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
             buffer.append(Symbols.STAMP_OPENER).append(getCreationTime());

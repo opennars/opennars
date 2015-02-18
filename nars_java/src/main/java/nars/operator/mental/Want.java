@@ -23,6 +23,7 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
+import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
@@ -49,11 +50,11 @@ public class Want extends Operator implements Mental {
         Term content = args[0];                
         
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(memory));
+        Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(operation, memory, Tense.Present));
         
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
 
-        return Lists.newArrayList( new Task(sentence, budget) );        
+        return Lists.newArrayList( operation.newSubTask(sentence, budget) );
     }
 
     @Override

@@ -69,12 +69,16 @@ public class LogicPerformance {
             
             Sentence s = t.sentence;
             if (!s.isEternal()) {
-                at(t, s.getOccurenceTime(), "o");
+                at(t, s.getOccurrenceTime(), "o");
             }
+
+            //TODO use evidential base somehow
+            /*
             for (Sentence term : t.sentence.getStamp()) {
                 addVertex(term);
                 addEdge(term, t, new UniqueEdge("s"));
             }
+            */
             
             if ((cause!=null) && (cause instanceof Operation)) {
                 //x += "  cause=" + cause + "\n";

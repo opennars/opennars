@@ -12,6 +12,7 @@ import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
+import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
@@ -191,7 +192,7 @@ public class InternalExperience extends AbstractPlugin  {
                 Sentence sentence = new Sentence(
                     new_term, Symbols.GOAL,
                     new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                    new Stamp(memory));
+                    new Stamp(memory, Tense.Present));
                 
                 float quality = BudgetFunctions.truthToQuality(sentence.truth);
                 BudgetValue budget = new BudgetValue(
@@ -237,7 +238,7 @@ public class InternalExperience extends AbstractPlugin  {
                     Sentence sentence = new Sentence(
                         new_term, Symbols.GOAL,
                         new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                        new Stamp(memory));
+                        new Stamp(memory, Tense.Present));
 
                     float quality = BudgetFunctions.truthToQuality(sentence.truth);
                     BudgetValue budget = new BudgetValue(

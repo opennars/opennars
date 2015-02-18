@@ -119,7 +119,7 @@ public class NARPrologMirror extends AbstractMirror {
     }
     
     boolean validTemporal(Sentence s) {        
-        long e = s.getOccurenceTime();
+        long e = s.getOccurrenceTime();
         
         if (eternalJudgments && (e == Stamp.ETERNAL))
             return true;
@@ -429,7 +429,7 @@ public class NARPrologMirror extends AbstractMirror {
         else if (ae && !be) return false;
         else if (!ae && be) return false;
         else {
-            return (TemporalRules.concurrent(a.getOccurenceTime(), b.getOccurenceTime(), nar.memory.getDuration()));
+            return (TemporalRules.concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), nar.memory.getDuration()));
         }
     }
 

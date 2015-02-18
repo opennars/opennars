@@ -20,6 +20,7 @@ import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
+import nars.logic.nal7.Tense;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class GlobalAnticipation implements Plugin, Reaction {
             int i=0;
             boolean matched=true;
             int off=0;
-            long expected_time=lastEvents.get(0).sentence.getOccurenceTime();
+            long expected_time=lastEvents.get(0).sentence.getOccurrenceTime();
             
             for(i=0;i<args.length;i++) {
                 //handling of intervals:
@@ -150,7 +151,7 @@ public class GlobalAnticipation implements Plugin, Reaction {
                         break;
                     }
 
-                    long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
+                    long occurence=lastEvents.get(i-off).sentence.getOccurrenceTime();
                     boolean right_in_time=Math.abs(occurence-expected_time) < ((double)duration)/TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                     if(!right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
                         matched=false;
@@ -174,17 +175,17 @@ public class GlobalAnticipation implements Plugin, Reaction {
 
             //ok it matched, is the consequence also right?
             if(matched && lastEvents.size()>args.length-off) { 
-                long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
+                long occurence=lastEvents.get(args.length-off).sentence.getOccurrenceTime();
                 boolean right_in_time=Math.abs(occurence-expected_time)<((double)duration)/TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                  
                 if(right_in_time && Variables.hasSubstitute(Symbols.VAR_INDEPENDENT,imp.getPredicate(),lastEvents.get(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
                     //c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
-                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory));
+                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory, Tense.Present));
                     Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
                     derivetasks.add(t);
                 } else { //it matched and other consequence, so negative evidence
                    // c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
-                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory));
+                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory, Tense.Present));
                     Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
                     derivetasks.add(t);
                 } //todo use derived task with revision instead

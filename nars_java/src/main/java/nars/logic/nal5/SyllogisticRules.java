@@ -299,7 +299,7 @@ public final class SyllogisticRules {
         long occurTime = Stamp.ETERNAL;
         int order = statement.getTemporalOrder();
         if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
-            long baseTime = subSentence.getOccurenceTime();
+            long baseTime = subSentence.getOccurrenceTime();
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.time();
             }
@@ -468,7 +468,7 @@ public final class SyllogisticRules {
 
         if (delta != 0) {
             long baseTime = (belief.term instanceof Implication) ?
-                taskSentence.getOccurenceTime() : belief.getOccurenceTime();
+                taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.time();
             }

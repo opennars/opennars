@@ -8,6 +8,7 @@ import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
+import nars.logic.nal7.Tense;
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.impl.FastConcatenationRope;
 import nars.util.data.rope.impl.PrePostCharRope;
@@ -89,7 +90,7 @@ public class TextsTest {
         
         //visualize(tr, System.out);
         
-        Sentence s = new Sentence(term1, '.', new TruthValue(1,1), new Stamp(n.memory));
+        Sentence s = new Sentence(term1, '.', new TruthValue(1,1), new Stamp(n.memory, Tense.Eternal));
         
     }
     

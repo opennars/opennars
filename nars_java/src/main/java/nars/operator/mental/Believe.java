@@ -27,6 +27,7 @@ import nars.io.Symbols;
 import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
+import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
@@ -54,11 +55,11 @@ public class Believe extends Operator implements Mental {
         CompoundTerm content = Sentence.termOrException(args[0]);
 
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(memory));
+        Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(operation, memory, Tense.Present));
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
-        
-        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
+
+        return Lists.newArrayList( operation.newSubTask(sentence, budget) );
 
     }
 

@@ -149,7 +149,7 @@ public class Derivations {
     public static String genericString(Sentence s, Map<Term,Integer> unique, long now) {
         String t = genericString(s.term, unique);
         if (s.isEternal()) return t;
-        return t + Tense.tenseRelative(s.getOccurenceTime(), now);
+        return t + Tense.tenseRelative(s.getOccurrenceTime(), now);
     }
 
     public static String genericString(Term t, Map<Term,Integer> _unique) {

@@ -192,7 +192,7 @@ public class Predict2D extends JPanel {
                         }
 
                         if (s.isEternal()) continue;
-                        long o = s.getOccurenceTime();
+                        long o = s.getOccurrenceTime();
                         if (o <= nar.time()) continue;
                         if (o < when) continue;
 

@@ -11,6 +11,7 @@ import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal2.Similarity;
+import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
@@ -73,7 +74,7 @@ public class Abbreviation extends AbstractPlugin {
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT,
                     new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                    new Stamp(memory));
+                    new Stamp(operation, memory, Tense.Present));
             
             float quality = BudgetFunctions.truthToQuality(sentence.truth);
             
@@ -82,7 +83,7 @@ public class Abbreviation extends AbstractPlugin {
                     Parameters.DEFAULT_JUDGMENT_DURABILITY, 
                     quality);
 
-            return Lists.newArrayList( new Task(sentence, budget) );        
+            return Lists.newArrayList( operation.newSubTask(sentence, budget) );
 
         }
 

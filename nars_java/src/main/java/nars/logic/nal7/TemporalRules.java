@@ -317,8 +317,8 @@ public class TemporalRules {
         final Interval.AtomicDuration duration = nal.memory.param.duration;
         int durationCycles = duration.get();
         
-        long time1 = s1.getOccurenceTime();
-        long time2 = s2.getOccurenceTime();
+        long time1 = s1.getOccurrenceTime();
+        long time2 = s2.getOccurrenceTime();
         
         final long timeDiff;
         if ((time1 ==Stamp.ETERNAL) || (time2 == Stamp.ETERNAL))
@@ -396,7 +396,7 @@ public class TemporalRules {
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
 
-        return solution.projectionTruthQuality(problem.getOccurenceTime(), memory.time(), problem.hasQueryVar());
+        return solution.projectionTruthQuality(problem.getOccurrenceTime(), memory.time(), problem.hasQueryVar());
 
 //        if (!matchingOrder(problem, solution)) {
 //            return 0.0F;
@@ -477,7 +477,7 @@ public class TemporalRules {
     }
 
     public static boolean concurrent(Sentence a, Sentence b, final int durationCycles) {
-        return concurrent(a.getOccurenceTime(), b.getOccurenceTime(), durationCycles);
+        return concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), durationCycles);
     }
 
     /** whether two times are concurrent with respect ao a specific duration ("present moment") # of cycles */
