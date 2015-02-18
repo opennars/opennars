@@ -312,9 +312,10 @@ public class RuleTables {
                             Task dummycur=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s.truth));
                             nal.setCurrentTask(dummycur);
                             //its priority isnt needed at all, this just is for stamp completeness..
-                            
-                            TemporalRules.temporalInductionChain(s, belief, nal);
-                            TemporalRules.temporalInductionChain(belief, s, nal);
+                            if(s.punctuation==belief.punctuation) {
+                                TemporalRules.temporalInductionChain(s, belief, nal);
+                                TemporalRules.temporalInductionChain(belief, s, nal);
+                            }
                             
                             alreadyInducted.add(t);
                             

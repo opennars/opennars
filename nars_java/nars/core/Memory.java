@@ -1052,7 +1052,10 @@ public class Memory implements Serializable {
         if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
             return false;
         }
-
+        
+        if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
+            return false; //temporal inductions for judgements only
+        
         nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, time());
         nal.setCurrentTask(controllerTask);
 
