@@ -1,9 +1,9 @@
 package nars.logic.reason.concept;
 
-import nars.logic.reason.ConceptFire;
 import nars.logic.Terms;
 import nars.logic.entity.TaskLink;
 import nars.logic.entity.TermLink;
+import nars.logic.reason.ConceptFire;
 
 public class FilterEqualSubtermsInRespectToImageAndProduct extends ConceptFireTaskTerm {
 

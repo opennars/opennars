@@ -1,9 +1,9 @@
 package nars.logic.reason.concept;
 
-import nars.logic.reason.ConceptFire;
 import nars.logic.LogicRule;
 import nars.logic.entity.TaskLink;
 import nars.logic.entity.TermLink;
+import nars.logic.reason.ConceptFire;
 import reactor.event.Event;
 import reactor.function.Consumer;
 
@@ -12,7 +12,6 @@ abstract public class ConceptFireTaskTerm extends LogicRule<ConceptFire> impleme
 
     public ConceptFireTaskTerm() {
         super(ConceptFire.class, null);
-        setAction(this);
     }
 
     abstract public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink);

@@ -2,12 +2,6 @@ package nars.util.graph;
 
 import nars.build.Default;
 import nars.core.NAR;
-import nars.logic.NALOperator;
-import nars.logic.entity.Concept;
-import nars.logic.entity.TermLink;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 
 public class TermGraphTest {

@@ -1,12 +1,12 @@
 package nars.util;
 
-import nars.event.Reaction;
+import nars.build.Default;
 import nars.core.Events.CycleStart;
 import nars.core.NAR;
-import nars.build.Default;
-import nars.util.math.DenoisingAutoencoder;
+import nars.event.Reaction;
 import nars.io.signal.UniformVector;
 import nars.io.signal.VectorMap;
+import nars.util.math.DenoisingAutoencoder;
 import org.junit.Test;
 
 /**

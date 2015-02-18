@@ -1,7 +1,7 @@
 package nars.util.graph;
 
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.NAR;
 import org.junit.Test;
 
 import static nars.util.graph.NARGraph.IncludeEverything;

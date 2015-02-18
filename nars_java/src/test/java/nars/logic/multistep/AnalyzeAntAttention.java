@@ -4,9 +4,8 @@
  */
 package nars.logic.multistep;
 
-import nars.core.NAR;
 import nars.build.Neuromorphic;
-import nars.io.TextInput;
+import nars.core.NAR;
 
 import java.io.File;
 

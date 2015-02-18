@@ -24,7 +24,6 @@ import nars.core.Events;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.entity.*;
-import nars.logic.entity.CompoundTerm.UnableToCloneException;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal3.*;
@@ -664,7 +663,7 @@ OUT: <lock1 --> lock>.
         if (figure == 21) {
             res1.clear();
             res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the reason works if it unifies
             if (T1 == null) {
                 return;
@@ -735,7 +734,7 @@ OUT: <lock1 --> lock>.
         if (figure == 12) {
             res1.clear();
             res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the reason works if it unifies
             if (T1 == null) {
                 return;
@@ -806,7 +805,7 @@ OUT: <lock1 --> lock>.
         if (figure == 11) {
             res1.clear();
             res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the reason works if it unifies
             if (T1 == null) {
                 return;
@@ -1229,15 +1228,11 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
         final int tds = terms_dependent.size();
         for (int i = 0; i < tds; i++) {
-            final Term result = terms_dependent.get(i);
 
-            if (Sentence.invalidSentenceTerm(result)) {
+            final Term result = Sentence.termOrNull(terms_dependent.get(i));
+            if (result == null) {
                 //changed this from return to continue, 
                 //to allow processing terms_dependent when it has > 1 items
-                continue;
-            }
-
-            if (result.subjectOrPredicateIsIndependentVar()) {
                 continue;
             }
 
@@ -1252,7 +1247,6 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             }
 
 
-            try {
 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, result, nal);
 
@@ -1272,9 +1266,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                     }
                 }
-            } catch (UnableToCloneException u) {
-                return;
-            }
+
 
         }
     }

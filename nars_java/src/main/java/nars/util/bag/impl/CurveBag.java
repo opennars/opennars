@@ -4,7 +4,6 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
 import nars.util.bag.Bag;
-import nars.util.bag.BagSelector;
 import nars.util.data.sorted.ArraySortedIndex;
 import nars.util.data.sorted.SortedIndex;
 

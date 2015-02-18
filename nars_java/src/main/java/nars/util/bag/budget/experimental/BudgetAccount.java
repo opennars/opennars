@@ -1,8 +1,8 @@
 package nars.util.bag.budget.experimental;
 
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.core.Parameters;
 import nars.logic.entity.BudgetValue;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 /**
  * Manages a quantity of priority funds, its inflow and outflow, and analytics

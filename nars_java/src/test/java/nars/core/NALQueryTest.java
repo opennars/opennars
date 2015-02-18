@@ -6,7 +6,6 @@ package nars.core;
 
 import nars.build.Default;
 import nars.io.Answered;
-import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;

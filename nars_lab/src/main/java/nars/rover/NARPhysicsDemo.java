@@ -54,7 +54,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         });
         
         arm = getModel();
-        n.memory.addOperator(new NullOperator("^joint") {
+        nar.addPlugin(new NullOperator("^joint") {
             @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
 
                 if ((autonomous) || (operation.getTask().isInput())) {

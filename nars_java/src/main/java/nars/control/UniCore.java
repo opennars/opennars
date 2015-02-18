@@ -5,12 +5,12 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.BudgetFunctions;
-import nars.logic.reason.ConceptFire;
 import nars.logic.entity.*;
+import nars.logic.reason.ConceptFire;
 import nars.util.bag.Bag;
-import nars.util.bag.select.BagActivator;
 import nars.util.bag.impl.CacheBag;
 import nars.util.bag.impl.LevelBag;
+import nars.util.bag.select.BagActivator;
 
 import java.util.ArrayList;
 import java.util.Iterator;

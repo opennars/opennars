@@ -94,7 +94,7 @@ public class TicTacToeWithProlog extends JPanel {
         new NARPrologMirror(nar, 0.9f, true, true, true);
 
 
-        nar.memory.addOperator(new AddO("^addO"));        
+        nar.addPlugin(new AddO("^addO"));
         nar.param.duration.set(5);
         nar.param.noiseLevel.set(0);
         nar.param.shortTermMemoryHistory.set(8);

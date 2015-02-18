@@ -11,7 +11,6 @@ import nars.io.narsese.Narsese;
 import nars.logic.entity.*;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
-import nars.operator.io.Author;
 import reactor.event.registry.Registration;
 
 import java.io.*;

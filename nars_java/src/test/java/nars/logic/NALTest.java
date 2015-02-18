@@ -2,9 +2,9 @@ package nars.logic;
 
 import junit.framework.TestCase;
 import nars.build.Default;
-import nars.core.NewNAR;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.NewNAR;
 import nars.core.Parameters;
 import nars.io.ExampleFileInput;
 import nars.io.NALPerformance;

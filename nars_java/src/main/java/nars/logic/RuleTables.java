@@ -27,6 +27,7 @@ import nars.logic.nal1.Negation;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
+import nars.logic.nal3.SetTensional;
 import nars.logic.nal5.*;
 
 import java.util.Arrays;
@@ -527,14 +528,15 @@ public class RuleTables {
     public static void componentAndStatement(CompoundTerm compound, short index, Statement statement, short side, NAL nal) {
         if (statement instanceof Inheritance) {
             StructuralRules.structuralDecompose1(compound, index, statement, nal);
-            if (!(compound instanceof SetExt) && !(compound instanceof SetInt)) {
-                StructuralRules.structuralDecompose2(statement, index, nal);    // {(C-B) --> (C-A), A @ (C-A)} |- A --> B
-            } else {
+            if (compound instanceof SetTensional) {
                 StructuralRules.transformSetRelation(compound, statement, side, nal);
+            }
+            else {
+                StructuralRules.structuralDecompose2(statement, index, nal);    // {(C-B) --> (C-A), A @ (C-A)} |- A --> B
             }
         } else if (statement instanceof Similarity) {
             StructuralRules.structuralDecompose2(statement, index, nal);        // {(C-B) --> (C-A), A @ (C-A)} |- A --> B
-            if ((compound instanceof SetExt) || (compound instanceof SetInt)) {
+            if (compound instanceof SetTensional) {
                 StructuralRules.transformSetRelation(compound, statement, side, nal);
             }            
         } 

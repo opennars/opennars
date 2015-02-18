@@ -26,6 +26,8 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         final Sentence belief = f.getCurrentBelief();
         if (belief == null) return true;
 
+        if (!belief.isJudgment()) return true;
+
         final Concept concept = f.getCurrentConcept();
 
         Task task = f.getCurrentTask();
@@ -56,7 +58,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 if ((t instanceof Implication) && (alreadyInducted.add(t))) {
 
-                    Sentence temporalBelief = next.getBestBelief(false, true);
+                    Sentence temporalBelief = next.getBestBelief(true, true);
                     if (temporalBelief!=null) {
                         induct(f, task, taskSentence, memory, temporalBelief);
                     }
@@ -92,6 +94,10 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         if (currentBelief.isEternal() || !TemporalRules.isInputOrTriggeredOperation(controllerTask, nal.memory)) {
             return false;
         }
+
+        //temporal inductions for judgments only. this should always be the case
+        /*if(!currentBelief.isJudgment() || !prevBelief.isJudgment())
+            return false;*/
 
         if (equalSubTermsInRespectToImageAndProduct(currentBelief.term, prevBelief.term)) {
             return false;

@@ -1,8 +1,5 @@
 package nars.util.bag;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 /**
  * tests the 'Level' inner class of LevelBag
  */

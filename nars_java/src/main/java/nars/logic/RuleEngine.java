@@ -29,9 +29,9 @@ public class RuleEngine<X> {
         return true;
     }
 
-    public void fire(X x) {
+    /*public void fire(X x) {
         base.notify(x);
-    }
+    }*/
 
     //void remove(LogicRule l) { ..
 

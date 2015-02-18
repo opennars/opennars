@@ -1,20 +1,9 @@
 package nars.logic;
 
-import junit.framework.TestCase;
 import nars.core.NewNAR;
-import nars.core.Memory;
-import nars.core.Parameters;
-import nars.logic.meta.Derivations;
-import org.junit.After;
-import org.junit.AssumptionViolatedException;
 import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.rules.Stopwatch;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.io.PrintStream;
 
 /**
  * NAL tests implemented in Java

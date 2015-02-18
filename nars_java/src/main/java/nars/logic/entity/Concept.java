@@ -24,7 +24,6 @@ import com.google.common.base.Predicate;
 import nars.core.Events.*;
 import nars.core.Memory;
 import nars.core.Memory.MemoryAware;
-import nars.core.NARRun;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.logic.NAL;
@@ -443,11 +442,11 @@ public class Concept extends Item<Term> implements Termable {
 
                 addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
 
-                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
+                //if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) { see: https://github.com/opennars/opennars/commit/9f9581aa677e74c0fb85aae67495d55d02803af1
                     if(!executeDecision(task)) {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
-                }
+                //}
                 
             }
         }

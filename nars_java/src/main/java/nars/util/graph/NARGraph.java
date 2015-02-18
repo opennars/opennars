@@ -8,12 +8,7 @@ import nars.logic.entity.BudgetValue.Budgetable;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
-import org.xml.sax.SAXException;
 
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

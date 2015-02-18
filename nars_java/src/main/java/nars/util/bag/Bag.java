@@ -3,7 +3,6 @@ package nars.util.bag;
 import com.google.common.base.Predicate;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
 import nars.util.bag.select.ForgetNext;
 import reactor.function.Consumer;
@@ -11,7 +10,6 @@ import reactor.function.Supplier;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.io.PrintStream;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 

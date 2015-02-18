@@ -103,7 +103,7 @@ public class Default extends NewNAR implements ConceptBuilder {
         param.confidenceThreshold.set(0.0095);
 
         param.shortTermMemoryHistory.set(1);
-        param.temporalRelationsMax.set(10);
+        param.temporalRelationsMax.set(5);
 
         param.conceptActivationFactor.set(1.0);
         param.conceptFireThreshold.set(0.0);
@@ -402,4 +402,60 @@ public class Default extends NewNAR implements ConceptBuilder {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
       }
+
+    public static class DefaultMicro extends Default {
+
+        public DefaultMicro() {
+            super();
+
+            setInternalExperience(null);
+
+            setConceptBagSize(128);
+            setSubconceptBagSize(16);
+            setConceptBagLevels(8);
+
+            setTaskLinkBagSize(16);
+            setTaskLinkBagLevels(4);
+
+            setTermLinkBagSize(16);
+            setTermLinkBagLevels(4);
+
+            setNovelTaskBagSize(16);
+            setNovelTaskBagLevels(4);
+
+
+
+
+            //Runtime Initial Values
+
+            param.confidenceThreshold.set(0.02);
+
+            param.temporalRelationsMax.set(4);
+
+
+            param.conceptBeliefsMax.set(5);
+            param.conceptGoalsMax.set(3);
+            param.conceptQuestionsMax.set(2);
+
+
+
+            param.termLinkMaxReasoned.set(2);
+            param.termLinkMaxMatched.set(3);
+            param.termLinkRecordLength.set(1);
+            param.noveltyHorizon.set(1);
+
+            param.setForgetting(Forgetting.Periodic);
+            param.setTiming(Timing.Iterative);
+            param.noiseLevel.set(100);
+
+            param.reliance.set(0.9f);
+
+            param.decisionThreshold.set(0.30);
+
+            //add derivation filters here:
+            //param.getDefaultDerivationFilters().add(new BeRational());
+
+        }
+
+    }
 }

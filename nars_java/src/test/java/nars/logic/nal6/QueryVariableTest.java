@@ -2,11 +2,9 @@ package nars.logic.nal6;
 
 import nars.build.Curve;
 import nars.build.Default;
-import nars.build.Neuromorphic;
 import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.JavaNALTest;
-import nars.logic.TestNAR;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

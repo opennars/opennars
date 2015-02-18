@@ -18,10 +18,10 @@
 package nars.operator.mental;
 
 import nars.core.Memory;
-import nars.logic.reason.ConceptFire;
 import nars.logic.entity.*;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
+import nars.logic.reason.ConceptFire;
 
 import java.util.ArrayList;
 

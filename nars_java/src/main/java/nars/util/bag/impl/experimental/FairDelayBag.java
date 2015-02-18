@@ -4,9 +4,9 @@
  */
 package nars.util.bag.impl.experimental;
 
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.logic.entity.Item;
 import nars.util.math.Distributor;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 /**
  * TODO add a strict probability mode which excludes low priority items from exceeding

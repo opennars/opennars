@@ -1,7 +1,7 @@
 package nars.analyze.experimental;
 
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.NAR;
 import org.encog.ml.data.MLDataPair;
 
 import java.util.*;

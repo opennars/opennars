@@ -6,7 +6,6 @@ package nars.io;
 
 import nars.logic.entity.Task;
 
-import java.io.IOException;
 
 /**
  * Wraps a pre-created Task as an Input

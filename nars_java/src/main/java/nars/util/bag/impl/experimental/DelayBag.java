@@ -1,7 +1,6 @@
 
 package nars.util.bag.impl.experimental;
 
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.core.Core;
 import nars.core.Core.CoreAware;
 import nars.core.Memory;
@@ -11,6 +10,7 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
 import nars.util.bag.Bag;
 import nars.util.data.sorted.ArraySortedIndex;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

@@ -42,9 +42,9 @@ class play extends javax.swing.JFrame {
      */
     private static NAR nar;
     public play() {
-        
-        
-        nar.memory.addOperator(new AddO("^addO"));
+
+
+        nar.addPlugin(new AddO("^addO"));
         (nar.param).noiseLevel.set(0);
         
         initComponents();

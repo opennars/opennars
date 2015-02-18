@@ -432,7 +432,7 @@ public class NARio extends Run {
                     for (final int k : keys) {
                         String ko = "^keyboard" + k;
                         if (nar.memory.getOperator(ko) == null) {
-                            nar.memory.addOperator(new NullOperator("^" + "keyboard" + k) {
+                            nar.addPlugin(new NullOperator("^" + "keyboard" + k) {
 
                                 @Override
                                 protected List<Task> execute(Operation operation, Term[] args, Memory memory) {                                  

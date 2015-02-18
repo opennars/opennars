@@ -20,7 +20,6 @@
  */
 package nars.logic.entity;
 
-import nars.core.Parameters;
 
 import static nars.io.Symbols.*;
 

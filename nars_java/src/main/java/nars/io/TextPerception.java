@@ -19,7 +19,10 @@ import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import static com.google.common.collect.Iterators.singletonIterator;
 

@@ -1,10 +1,10 @@
 package nars.analyze.experimental;
 
-import nars.logic.NALTest;
-import nars.core.NAR;
-import nars.core.Parameters;
 import nars.build.Curve;
 import nars.build.Default;
+import nars.core.NAR;
+import nars.core.Parameters;
+import nars.logic.NALTest;
 
 import java.util.Collection;
 

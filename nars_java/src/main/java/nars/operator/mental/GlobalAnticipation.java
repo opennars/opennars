@@ -5,9 +5,6 @@
 
 package nars.operator.mental;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NAR.PluginState;
@@ -17,17 +14,15 @@ import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.logic.NAL;
 import nars.logic.Variables;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Stamp;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.entity.TruthValue;
+import nars.logic.entity.*;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

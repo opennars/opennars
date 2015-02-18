@@ -465,7 +465,10 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
     public int getTemporalOrder() {
-        return term.getTemporalOrder();
+        int t = term.getTemporalOrder();
+        if (t == TemporalRules.ORDER_INVALID)
+            throw new RuntimeException(this + " has INVALID temporal order");
+        return t;
     }
     
 

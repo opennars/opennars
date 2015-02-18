@@ -6,12 +6,12 @@ package nars.control.experimental;
 
 import nars.core.Core;
 import nars.core.Memory;
+import nars.core.Memory.MemoryAware;
 import nars.logic.BudgetFunctions;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
 import nars.logic.entity.ConceptBuilder;
 import nars.logic.entity.Term;
-import nars.core.Memory.MemoryAware;
 import nars.util.bag.impl.experimental.DelayBag;
 import nars.util.bag.impl.experimental.FairDelayBag;
 

@@ -4,7 +4,10 @@
  */
 package nars.analyze.experimental;
 
-import nars.core.*;
+import nars.core.Events;
+import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.event.Reaction;
 import nars.logic.NALTest;
 import org.junit.Ignore;

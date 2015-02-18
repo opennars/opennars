@@ -4,7 +4,6 @@
  */
 package nars.io.nlp;
 
-import reactor.tuple.Tuple2;
 
 import java.io.BufferedReader;
 import java.io.IOException;

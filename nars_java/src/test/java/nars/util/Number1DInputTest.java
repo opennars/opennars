@@ -17,10 +17,10 @@
 
 package nars.util;
 
-import nars.core.Memory;
-import nars.core.NAR;
 import nars.build.Curve;
 import nars.build.Default;
+import nars.core.Memory;
+import nars.core.NAR;
 import nars.io.TextOutput;
 import nars.io.signal.Number1DInput;
 import org.junit.Assert;

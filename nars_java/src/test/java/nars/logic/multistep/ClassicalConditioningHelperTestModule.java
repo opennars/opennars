@@ -5,8 +5,8 @@
 
 package nars.logic.multistep;
 
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.NAR;
 import nars.operator.app.ClassicalConditioningHelper;
 
 /**

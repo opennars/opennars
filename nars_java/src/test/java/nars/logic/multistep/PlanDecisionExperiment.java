@@ -1,8 +1,8 @@
 package nars.logic.multistep;
 
+import nars.build.Default;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.build.Default;
 import nars.io.Output;
 import nars.io.Texts;
 import nars.logic.entity.Sentence;

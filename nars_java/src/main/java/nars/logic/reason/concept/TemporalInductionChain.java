@@ -8,11 +8,11 @@ import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.TruthFunctions;
 import nars.logic.Variables;
-import nars.logic.nal5.Conjunction;
-import nars.logic.reason.ConceptFire;
 import nars.logic.entity.*;
+import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
+import nars.logic.reason.ConceptFire;
 
 import java.util.ArrayList;
 import java.util.Collections;

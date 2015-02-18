@@ -24,7 +24,8 @@ public class NAL2Test extends JavaNALTest {
                 {new Default()}, //NAL8 + NAL9 didnt solve it
                 {new Default().level(3)}, //needs 3 for sets
                 {new Default().setInternalExperience(null)},
-                {new Curve().setInternalExperience(null)}
+                {new Curve().setInternalExperience(null)},
+                {new Default.DefaultMicro() }
 
                 //{new Neuromorphic(4)},
         });

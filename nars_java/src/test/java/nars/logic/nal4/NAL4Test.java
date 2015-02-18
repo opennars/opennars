@@ -1,11 +1,11 @@
 package nars.logic.nal4;
 
 import nars.build.Curve;
+import nars.build.Default;
 import nars.build.DefaultBuffered;
 import nars.core.NewNAR;
-import nars.build.Default;
-import nars.logic.JavaNALTest;
 import nars.io.narsese.InvalidInputException;
+import nars.logic.JavaNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

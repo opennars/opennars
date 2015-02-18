@@ -4,12 +4,12 @@
  */
 package nars.analyze.evolve;
 
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.analyze.experimental.NALTestScore;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.build.Neuromorphic;
-import nars.analyze.experimental.NALTestScore;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.util.data.MultiOutputStream;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLEncodable;

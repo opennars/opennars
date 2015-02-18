@@ -26,10 +26,10 @@ import nars.core.Events.TaskRemove;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.Symbols;
-import nars.logic.*;
 import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
+import nars.logic.*;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
@@ -48,7 +48,6 @@ import nars.logic.nal7.Tense;
 import nars.logic.nal8.ImmediateOperation;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
-import nars.logic.Perception;
 import nars.operator.app.plan.MultipleExecutionManager;
 import nars.util.bag.Bag;
 import reactor.function.Supplier;
@@ -131,8 +130,9 @@ public class Memory implements Serializable {
         this.self = t;
     }
 
-    public static enum Forgetting {
-        Iterative, Periodic
+    @Deprecated public static enum Forgetting {
+        @Deprecated Iterative,
+        Periodic
     }
 
     public enum Timing {

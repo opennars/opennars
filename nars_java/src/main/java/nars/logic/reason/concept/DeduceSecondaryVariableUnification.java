@@ -1,11 +1,11 @@
 package nars.logic.reason.concept;
 
 import nars.logic.CompositionalRules;
-import nars.logic.reason.ConceptFire;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.entity.TaskLink;
 import nars.logic.entity.TermLink;
+import nars.logic.reason.ConceptFire;
 
 /**
 * Created by me on 2/7/15.

@@ -13,7 +13,6 @@ import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
-import reactor.function.Supplier;
 
 import java.util.Arrays;
 

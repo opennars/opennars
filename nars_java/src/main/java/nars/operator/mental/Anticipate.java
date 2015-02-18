@@ -36,7 +36,10 @@ import nars.logic.nal5.Conjunction;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Operator that creates a judgment with a given statement

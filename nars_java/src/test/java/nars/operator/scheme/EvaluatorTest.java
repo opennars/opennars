@@ -1,6 +1,8 @@
 package nars.operator.scheme;
 
-import nars.operator.software.scheme.*;
+import nars.operator.software.scheme.DefaultEnvironment;
+import nars.operator.software.scheme.Environment;
+import nars.operator.software.scheme.Evaluator;
 import nars.operator.software.scheme.expressions.*;
 import org.junit.Test;
 

@@ -2,7 +2,9 @@ package nars.logic.reason.concept;
 
 import nars.core.Memory;
 import nars.io.Symbols;
-import nars.logic.*;
+import nars.logic.BudgetFunctions;
+import nars.logic.NAL;
+import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal5.Implication;

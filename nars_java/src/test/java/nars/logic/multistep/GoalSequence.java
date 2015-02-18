@@ -1,7 +1,7 @@
 package nars.logic.multistep;
 
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.NAR;
 import nars.io.condition.OutputContainsCondition;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.nal7.Tense;

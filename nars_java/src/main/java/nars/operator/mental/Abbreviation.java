@@ -1,7 +1,6 @@
 package nars.operator.mental;
 
 import com.google.common.collect.Lists;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import nars.core.AbstractPlugin;
 import nars.core.Events.TaskDerive;
 import nars.core.Memory;
@@ -13,6 +12,7 @@ import nars.logic.entity.*;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;

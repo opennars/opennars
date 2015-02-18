@@ -2,7 +2,8 @@ package nars.logic.reason.concept;
 
 import nars.core.Events;
 import nars.core.Memory;
-import nars.logic.*;
+import nars.logic.BudgetFunctions;
+import nars.logic.NAL;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.ImageExt;

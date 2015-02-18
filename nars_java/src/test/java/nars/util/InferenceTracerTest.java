@@ -1,7 +1,7 @@
 package nars.util;
 
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.NAR;
 import nars.logic.meta.NARTrace;
 import org.junit.Test;
 

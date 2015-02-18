@@ -1,10 +1,10 @@
 package nars.analyze;
 
-import nars.io.ExampleFileInput;
-import nars.logic.NALTest;
+import nars.build.Default;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.build.Default;
+import nars.io.ExampleFileInput;
+import nars.logic.NALTest;
 
 import java.util.Collection;
 

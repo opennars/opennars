@@ -4,9 +4,9 @@ import nars.io.Symbols;
 import nars.logic.NAL;
 import nars.logic.Variables;
 import nars.logic.entity.*;
+import nars.logic.nal1.LocalRules;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.reason.ConceptFire;
-import nars.logic.nal1.LocalRules;
 
 
 public class MatchTaskBelief extends ConceptFireTaskTerm {

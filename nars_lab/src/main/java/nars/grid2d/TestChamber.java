@@ -380,13 +380,13 @@ public class TestChamber {
             }
         };
         Goto wu = new Goto(this, "^go-to");
-        nar.memory.addOperator(wu);
+        nar.addPlugin(wu);
         Pick wa = new Pick(this, "^pick");
-        nar.memory.addOperator(wa);
+        nar.addPlugin(wa);
         Activate waa = new Activate(this, "^activate");
-        nar.memory.addOperator(waa);
+        nar.addPlugin(waa);
         Deactivate waaa = new Deactivate(this, "^deactivate");
-        nar.memory.addOperator(waaa);
+        nar.addPlugin(waaa);
         space.add(a);
 
     }

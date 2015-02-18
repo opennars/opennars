@@ -1,6 +1,5 @@
 package nars.logic.reason.concept;
 
-import nars.logic.reason.ConceptFire;
 import nars.logic.RuleTables;
 import nars.logic.Variables;
 import nars.logic.entity.*;
@@ -8,6 +7,7 @@ import nars.logic.nal1.Negation;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal5.SyllogisticRules;
+import nars.logic.reason.ConceptFire;
 
 import static nars.io.Symbols.VAR_INDEPENDENT;
 

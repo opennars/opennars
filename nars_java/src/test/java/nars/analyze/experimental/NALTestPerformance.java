@@ -1,11 +1,11 @@
 package nars.analyze.experimental;
 
-import nars.core.Memory;
-import nars.io.ExampleFileInput;
-import nars.logic.NALTest;
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.Memory;
+import nars.core.NAR;
+import nars.io.ExampleFileInput;
 import nars.io.condition.OutputCondition;
+import nars.logic.NALTest;
 import nars.util.data.XORShiftRandom;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;

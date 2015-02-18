@@ -18,17 +18,17 @@
 package nars.analyze.experimental;
 
 import com.google.common.collect.Lists;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import nars.build.Default;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.build.Default;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Item;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.LevelBag;
 import nars.util.data.sorted.ArraySortedIndex;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.io.PrintStream;
 import java.util.*;

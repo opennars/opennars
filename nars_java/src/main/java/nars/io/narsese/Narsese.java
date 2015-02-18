@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import static nars.io.Symbols.*;
-import static nars.logic.NALOperator.*;
 import static nars.logic.BudgetFunctions.truthToQuality;
+import static nars.logic.NALOperator.*;
 import static nars.logic.Variables.containVar;
 import static nars.logic.nal8.Operation.make;
 

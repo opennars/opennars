@@ -5,7 +5,6 @@
  */
 package nars.io.meter.event;
 
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 /**
  * Stores the latest provided value of an object instance

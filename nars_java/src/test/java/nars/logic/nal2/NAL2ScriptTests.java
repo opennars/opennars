@@ -21,7 +21,8 @@ public class NAL2ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(3), //needs 3 for sets
-                new Curve() );
+                new Curve(),
+                new Default.DefaultMicro() );
     }
 
     public int getMaxCycles() { return 2500; }
