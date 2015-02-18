@@ -38,7 +38,8 @@ public class NALPerfLoop {
 
         while (true) {
             for (Object o : c) {
-                String examplePath = (String)((Object[])o)[1];
+                Object x = o;
+                String examplePath = (x instanceof Object[]) ? (String)(((Object[])x)[1]) : (String)x;
                 Parameters.DEBUG = false;
 
                 

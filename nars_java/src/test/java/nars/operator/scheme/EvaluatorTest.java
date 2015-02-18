@@ -106,7 +106,7 @@ public class EvaluatorTest {
 
     @Test
     public void lambda_expression() {
-        ListExpression exp = list(symbol("lambda"), list((Expression)null), list((Expression)null));
+        ListExpression exp = list(symbol("lambda"), list(), list());
 
         Expression result = Evaluator.evaluate(exp, emptyEnvironment());
 

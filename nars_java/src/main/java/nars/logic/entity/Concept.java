@@ -301,7 +301,7 @@ public class Concept extends Item<Term> implements Termable {
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp,false,false,true,true)) {
+            if (newStamp.equals(oldStamp,false,false,true,false)) {
                 if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     //task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
@@ -417,7 +417,7 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
-            if (newStamp.equals(oldStamp,false,false,true,true)) {
+            if (newStamp.equals(oldStamp,false,false,true,false)) {
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
 

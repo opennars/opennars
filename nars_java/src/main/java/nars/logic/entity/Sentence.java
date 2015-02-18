@@ -268,7 +268,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
             if (!this.truth.equals(that.truth)) return false;
         }
         if (stamp) {
-            if (!this.stamp.equals(that.stamp, true, true, true, true)) return false;
+            if (!this.stamp.equals(that.stamp, true, true, true, false)) return false;
         }
         return true;
     }

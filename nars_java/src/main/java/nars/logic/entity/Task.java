@@ -119,9 +119,10 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
             if ((parentTask!=null && parentTask.get() == null))
                 throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
 
-            /*if (this.equals(getParentTask())) {
+            ///*if (this.equals(getParentTask())) {
+            if (this == getParentTask()) {
                 throw new RuntimeException(this + " has parentTask equal to itself");
-            }*/
+            }
             /*
             //IS THERE SOME WAY TO MERGE EQUIVALENT BELIEFS HERE?
             if (this.sentence.equals(parentBelief)) {

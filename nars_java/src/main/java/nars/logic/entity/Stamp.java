@@ -137,11 +137,17 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
             index = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
         }
 
+        public FixedArrayListWithSet(final Collection<T> p) {
+            super(p.size());
+            index = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+            for (final T t : p)
+                add(t);
+        }
+
         @Override
         public boolean add(T t) {
             if (index.add(t)) {
-                super.add(t);
-                return true;
+                return super.add(t);
             }
             return false;
         }
@@ -154,8 +160,7 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
         @Override
         public boolean remove(Object o) {
             if (index.remove(o)) {
-                super.remove(o);
-                return true;
+                return super.remove(o);
             }
             return false;
         }
@@ -268,7 +273,7 @@ public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
             }
             
             Collection<C> p = parent.get().getChain();
-            return new LinkedHashSet(p);
+            return new FixedArrayListWithSet(p);
         }
         
     }
