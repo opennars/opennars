@@ -209,12 +209,14 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     public void event(Class event, Object[] args) {
         if (event == Events.InduceSucceedingEvent.class) { //todo misleading event name, it is for a new incoming event
             Task newEvent = (Task)args[0];
-            eventbuffer.add(newEvent);
-            while(eventbuffer.size()>cur_maxlen+1) {
-                eventbuffer.remove(0);
+            if(newEvent.sentence.punctuation==Symbols.JUDGMENT_MARK) {
+                eventbuffer.add(newEvent);
+                while(eventbuffer.size()>cur_maxlen+1) {
+                    eventbuffer.remove(0);
+                }
+                NAL nal= (NAL)args[1];
+                perceive(nal);
             }
-            NAL nal= (NAL)args[1];
-            perceive(nal);
         }
         if(event == Events.ConceptForget.class) {
             Concept forgot=(Concept) args[0];
