@@ -11,12 +11,12 @@ import nars.logic.nal1.Negation;
 public class FilterCyclic implements NAL.DerivationFilter {
     @Override public String reject(NAL nal, Task task, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
-        final Stamp stamp = task.sentence.stamp;
+        final Stamp<Sentence> stamp = task.sentence.stamp;
 
         final Term currentTaskContent = currentTask.getTerm();
         if (currentBelief != null && currentBelief.isJudgment()) {
-            final Term currentBeliefContent = currentBelief.term;
-            stamp.chainReplace(currentBeliefContent, currentBeliefContent);
+            //final Term currentBeliefContent = currentBelief.term;
+            stamp.chainReplace(currentBelief, currentBelief);
         }
         //workaround for single premise task issue:
         if (
@@ -24,7 +24,7 @@ public class FilterCyclic implements NAL.DerivationFilter {
                          ||
                 (task != null && !single && task.sentence.isJudgment())
            )        {
-            stamp.chainReplace(currentTaskContent, currentTaskContent);
+            stamp.chainReplace(currentTask.sentence, currentTask.sentence);
         }
 
         //its a logic reason, so we have to do the derivation chain check to hamper cycles
@@ -33,7 +33,7 @@ public class FilterCyclic implements NAL.DerivationFilter {
 
             if (task.sentence.isJudgment()) {
 
-                if (stamp.getChain().contains(taskTerm)) {
+                if (stamp.getChain().contains(task.sentence)) {
                     Term parentTaskTerm = task.getParentTask() != null ? task.getParentTask().getTerm() : null;
                     if ((parentTaskTerm == null) || (!Negation.areMutuallyInverse(taskTerm, parentTaskTerm))) {
                         return "Cyclic Reasoning";

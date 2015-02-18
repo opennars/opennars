@@ -57,7 +57,7 @@ public class LogicPerformance {
             explain(t, maxLevels, Collections.EMPTY_LIST);
         }
 
-        public void explain(Task t, int maxLevels, List<Task> generated) {
+        public <T extends CompoundTerm> void explain(Task<T> t, int maxLevels, List<Task> generated) {
             //String x = toString() + "\n";
             Term cause = t.getCause();
             Sentence bestSolution = t.getBestSolution();            
@@ -71,7 +71,7 @@ public class LogicPerformance {
             if (!s.isEternal()) {
                 at(t, s.getOccurenceTime(), "o");
             }
-            for (Term term : t.sentence.stamp.getChain()) {
+            for (Sentence term : t.sentence.getStamp()) {
                 addVertex(term);
                 addEdge(term, t, new UniqueEdge("s"));
             }

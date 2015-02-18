@@ -272,7 +272,7 @@ public class Parameters {
         //return new WeakReference(t);
     }
 
-    public static Reference<Stamp> reference(Stamp s) {
+    public static <C> Reference<Stamp<C>> reference(Stamp<C> s) {
         return new SoftReference(s);
     }
 }

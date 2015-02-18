@@ -37,7 +37,7 @@ import static nars.logic.nal7.TemporalRules.*;
 import static nars.logic.nal7.Tense.*;
 
 
-public class Stamp implements Cloneable, NAL.StampBuilder {
+public class Stamp<C> implements Cloneable, NAL.StampBuilder<C>, Iterable<C> {
 
 
     /**
@@ -86,7 +86,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     private DerivationBuilder derivationBuilder = null;
     
     
-    final static Collection<Term> EmptyDerivationChain = Collections.EMPTY_LIST;
+    final static Collection EmptyDerivationChain = Collections.EMPTY_LIST;
     
     /**
      * derivation chain containing the used premises and conclusions which made
@@ -94,7 +94,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
      * Uses LinkedHashSet for optimal contains/indexOf performance.
      * TODO use thread-safety for this
      */
-    private Collection<Term> derivationChain;
+    private Collection<C> derivationChain;
     
     /** analytics metric */
     transient public final long latency;
@@ -117,9 +117,14 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     public float getOriginality() {
         return 1.0f / (evidentialBase.length + 1);
     }
-    
-    public interface DerivationBuilder {
-        Collection<Term> build();
+
+    @Override
+    public Iterator<C> iterator() {
+        return derivationChain.iterator();
+    }
+
+    public interface DerivationBuilder<C> {
+        Collection<C> build();
     }
 
     /** array list with an internal set for fast contains() method */
@@ -169,16 +174,16 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
 
     /** creates a Derivation Chain by collating / zipping 2 Stamps Derivation Chains */
-    public static class ZipperDerivationBuilder implements DerivationBuilder {
-        private final Reference<Stamp> first;
-        private final Reference<Stamp> second;
+    public static class ZipperDerivationBuilder<C> implements DerivationBuilder<C> {
+        private final Reference<Stamp<C>> first;
+        private final Reference<Stamp<C>> second;
 
-        public ZipperDerivationBuilder(Stamp first, Stamp second) {
+        public ZipperDerivationBuilder(Stamp<C> first, Stamp<C> second) {
             this.first = Parameters.reference(first);
             this.second = Parameters.reference(second);
         }
             
-        @Override public Collection<Term> build()  {
+        @Override public Collection<C> build()  {
             Stamp ff = first.get();
             Stamp ss = second.get();
             
@@ -198,27 +203,27 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
                 }
             }
                     
-            final Collection<Term> chain1 = ff.getChain();
-            final Collection<Term> chain2 = ss.getChain();
+            final Collection<C> chain1 = ff.getChain();
+            final Collection<C> chain2 = ss.getChain();
             
-            final Iterator<Term> iter1 = chain1.iterator();
+            final Iterator<C> iter1 = chain1.iterator();
             int i1 = chain1.size() - 1;
             
-            final Iterator<Term> iter2 = chain2.iterator();
+            final Iterator<C> iter2 = chain2.iterator();
             int i2 = chain2.size() - 1;
 
             //TODO verify this is pre-sized large enough
             //Set<Term> added = Parameters.newHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
 
             //set here is for fast contains() checking
-            FixedArrayListWithSet<Term> sequence = new FixedArrayListWithSet(Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
+            FixedArrayListWithSet<C> sequence = new FixedArrayListWithSet(Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
 
             //take as long till the chain is full or all elements were taken out of chain1 and chain2:
             int j = 0;
             while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
                 if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                     if (i1 >= 0) {
-                        final Term c1i1 = iter1.next();
+                        final C c1i1 = iter1.next();
                         if (!sequence.add(c1i1)) {
                             j--; //was double, so we can add one more now
                         }
@@ -226,7 +231,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
                     }
                 } else {
                     if (i2 >= 0) {
-                        final Term c2i2 = iter2.next();
+                        final C c2i2 = iter2.next();
                         if (!sequence.add(c2i2)) {
                             j--; //was double, so we can add one more now
                         }
@@ -249,20 +254,20 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
     
     /** lazily inherit the derivation from a parent, causing it to cache the derivation also (in case other children get it */
-    public static class InheritDerivationBuilder implements DerivationBuilder {
-        private final Reference<Stamp> parent;
+    public static class InheritDerivationBuilder<C> implements DerivationBuilder<C> {
+        private final Reference<Stamp<C>> parent;
 
-        public InheritDerivationBuilder(Stamp parent) {
+        public InheritDerivationBuilder(Stamp<C> parent) {
             this.parent = Parameters.reference(parent);
         }
         
-        @Override public Collection<Term> build() {
+        @Override public Collection<C> build() {
             if (parent.get() == null) {
                 //parent doesnt exist anymore (garbage collected)
                 return new LinkedHashSet();
             }
             
-            Collection<Term> p = parent.get().getChain();
+            Collection<C> p = parent.get().getChain();
             return new LinkedHashSet(p);
         }
         
@@ -270,17 +275,22 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
 
 
+    private static long nextSerial = 0;
+    public static synchronized long newSerial() {
+        return nextSerial++;
+    }
+
     
     /**
      * Generate a new stamp, with a new serial number, for a new Task
      *
      * @param creationTime Creation time of the stamp
      */
-    @Deprecated public Stamp(final long serial, final long creationTime, final Tense tense, final int duration) {
+    @Deprecated public Stamp(@Deprecated final long serial, final long creationTime, final Tense tense, final int duration) {
         super();
         this.baseLength = 1;
         this.evidentialBase = new long[baseLength];
-        this.evidentialBase[0] = serial;
+        this.evidentialBase[0] = newSerial();
         this.latency = 0;
         this.derivationBuilder = null;
         this.derivationChain = EmptyDerivationChain;
@@ -506,7 +516,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
      * Provides a snapshot copy if in multi-threaded mode.
      * @return The evidentialBase of numbers
      */
-    public Collection<Term> getChain() {
+    public Collection<C> getChain() {
         ensureChain();
         
         if (Parameters.THREADS == 1)
@@ -522,7 +532,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
      *
      * @return The evidentialBase of numbers
      */
-    public void chainAdd(final Term t) {
+    public void chainAdd(final C t) {
         if (t == null)
             throw new RuntimeException("Chain must contain non-null items");
             
@@ -532,14 +542,14 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
             if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
                 //remove first element
-                Term first = derivationChain.iterator().next();
+                C first = derivationChain.iterator().next();
                 derivationChain.remove(first);
             }
 
             name = null;
         }
     }
-    public void chainRemove(final Term t) {
+    public void chainRemove(final C t) {
         if (t == null)
             throw new RuntimeException("Chain must contain non-null items");
 
@@ -553,7 +563,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         }
     }
 
-    public void chainReplace(final Term remove, final Term add) {
+    public void chainReplace(final C remove, final C add) {
         chainRemove(remove);
         chainAdd(add);
     }
@@ -615,7 +625,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
      * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase, final boolean derivationChain) {
+    public boolean equals(Stamp<C> s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase, final boolean derivationChain) {
         if (this == s) return true;
 
         if (creationTime)
@@ -643,13 +653,13 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
             
 
     /** necessary because LinkedHashSet.equals does not compare order, only set content */
-    public static boolean chainEquals(final Collection<Term> a, final Collection<Term> b) {
+    public static <C> boolean chainEquals(final Collection<C> a, final Collection<C> b) {
         if (a == b) return true;
         
-        if ((a instanceof LinkedHashSet) && (b instanceof LinkedHashSet))
+        //if ((a instanceof LinkedHashSet) && (b instanceof LinkedHashSet))
             return Iterators.elementsEqual(a.iterator(), b.iterator());        
-        else
-            return a.equals(b);
+        /*else
+            return a.equals(b);*/
     }
     
     /**
@@ -751,7 +761,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
                 }
             }
             int i = 0;
-            for (Term t : derivationChain) {
+            for (C t : derivationChain) {
                 buffer.append(t);
                 if (i < (derivationChain.size() - 1)) {
                     buffer.append(Symbols.STAMP_SEPARATOR);

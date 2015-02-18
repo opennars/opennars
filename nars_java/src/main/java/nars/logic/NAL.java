@@ -454,17 +454,17 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         }
     }
 
-    public interface StampBuilder {
-        public Stamp build();
+    public interface StampBuilder<C> {
+        public Stamp<C> build();
     }
 
-    public static class LazyStampBuilder implements StampBuilder {
+    public static class LazyStampBuilder<C> implements StampBuilder<C> {
 
-        public final Stamp a, b;
+        public final Stamp<C> a, b;
         public final long creationTime, occurrenceTime;
-        protected Stamp stamp = null;
+        protected Stamp<C> stamp = null;
 
-        public LazyStampBuilder(Stamp a, Stamp b, long creationTime, long occurrenceTime) {
+        public LazyStampBuilder(Stamp<C> a, Stamp<C> b, long creationTime, long occurrenceTime) {
             this.a = a;
             this.b = b;
             this.creationTime = creationTime;

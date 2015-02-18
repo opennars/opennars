@@ -118,7 +118,7 @@ public class Cons<T> implements Iterable<T> {
         return stream().collect(Collectors.toList());
     }
 
-    public static <T> Collector<T, Cons<T>, Cons<T>> collector() {
+    public static <T> Collector<T, Cons, Cons/*, Cons<T>, Cons<T>*/> collector() {
         return Collector.of(
                 () -> cons(null, empty()),
                 (accumulator, e) -> {

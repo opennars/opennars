@@ -45,7 +45,9 @@ import java.util.*;
 public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Truthable {
 
 
-
+    public Stamp<Sentence<?>> getStamp() {
+        return stamp;
+    }
 
     public static interface Sentenceable<T2 extends CompoundTerm> extends Termable {
         public Sentence<T2> getSentence();
@@ -71,7 +73,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     /**
      * Partial record of the derivation path
      */
-    public final Stamp stamp;
+    public final Stamp<Sentence<?>> stamp;
 
     /**
      * Whether the sentence can be revised
