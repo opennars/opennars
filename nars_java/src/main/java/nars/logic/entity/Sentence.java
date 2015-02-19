@@ -149,7 +149,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
 
-    final protected boolean isUniqueByOcurrenceTime() {
+    @Deprecated final protected boolean isUniqueByOcurrenceTime() {
         return true;
         //return ((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
     }

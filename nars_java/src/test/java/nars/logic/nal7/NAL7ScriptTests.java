@@ -21,7 +21,7 @@ public class NAL7ScriptTests extends ScriptNALTest {
                 new Default().setInternalExperience(null));
     }
 
-    public int getMaxCycles() { return 3000; }
+    public int getMaxCycles() { return 1500; }
 
 
 }
