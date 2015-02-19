@@ -514,15 +514,18 @@ public final class CompositionalRules {
                     commonTerm = term22;
                 }
                 
-                /*if(commonTerm == null && term12 instanceof ImageExt) {
+                if(commonTerm == null && term12 instanceof ImageExt) {
                     commonTerm = ((ImageExt) term12).getTheOtherComponent();
+                    if(!(term22.containsTermRecursively(commonTerm))) {
+                        commonTerm=null;
+                    }
                     if (term22 instanceof ImageExt && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
                         commonTerm = ((ImageExt) term22).getTheOtherComponent();
                         if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
                             commonTerm = null;
                         }
                     }
-                }*/
+                }
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -534,21 +537,24 @@ public final class CompositionalRules {
                     }
                 }
             }
-            if (term22 instanceof ImageExt) {
+            if (commonTerm==null && term22 instanceof ImageExt) {
                 
                 if ((/*(ImageExt)*/term22).containsTermRecursively(term12)) {
                     commonTerm = term12;
                 }
                 
-                /*if(commonTerm == null && term22 instanceof ImageExt) {
+                if(commonTerm == null && term22 instanceof ImageExt) {
                     commonTerm = ((ImageExt) term22).getTheOtherComponent();
+                    if(!(term12.containsTermRecursively(commonTerm))) {
+                        commonTerm=null;
+                    }
                     if (term12 instanceof ImageExt && ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm))) {
                         commonTerm = ((ImageExt) term12).getTheOtherComponent();
                         if ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm)) {
                             commonTerm = null;
                         }
                     }
-                }*/
+                }
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -573,15 +579,18 @@ public final class CompositionalRules {
                     commonTerm = term11;
                 }
                 
-               /* if(term11 instanceof ImageInt && commonTerm == null && term21 instanceof ImageInt) {
+                if(term11 instanceof ImageInt && commonTerm == null && term21 instanceof ImageInt) {
                     commonTerm = ((ImageInt) term11).getTheOtherComponent();
-                    if ((commonTerm == null) || !(/term21).containsTermRecursively(commonTerm)) {
+                    if(!(term21.containsTermRecursively(commonTerm))) {
+                        commonTerm=null;
+                    }
+                    if ((commonTerm == null) || !(term21).containsTermRecursively(commonTerm)) {
                         commonTerm = ((ImageInt) term21).getTheOtherComponent();
                         if ((commonTerm == null) || !(term11).containsTermRecursively(commonTerm)) {
                             commonTerm = null;
                         }
                     }
-                }*/
+                }
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -593,21 +602,24 @@ public final class CompositionalRules {
                     }
                 }
             }
-            if (term11 instanceof ImageInt) {
+            if (commonTerm==null && term11 instanceof ImageInt) {
                 
                 if ((/*(ImageInt)*/term11).containsTermRecursively(term21)) {
                     commonTerm = term21;
                 }
                 
-               /* if(term21 instanceof ImageInt && commonTerm == null && term11 instanceof ImageInt) {
+                if(term21 instanceof ImageInt && commonTerm == null && term11 instanceof ImageInt) {
                     commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                    if ((commonTerm == null) || !(/term11).containsTermRecursively(commonTerm)) {
+                    if(!(term11.containsTermRecursively(commonTerm))) {
+                        commonTerm=null;
+                    }
+                    if ((commonTerm == null) || !(term11).containsTermRecursively(commonTerm)) {
                         commonTerm = ((ImageInt) term11).getTheOtherComponent();
                         if ((commonTerm == null) || !(term21).containsTermRecursively(commonTerm)) {
                             commonTerm = null;
                         }
                     }
-                }*/
+                }
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
