@@ -28,6 +28,7 @@ public class PrologContext {
         nar.addPlugin(new PrologQueryOperator(this));
         nar.addPlugin(new PrologTheoryFileOperator(this));
         nar.addPlugin(new PrologFact(this));
+        nar.addPlugin(new PrologFactual(this));
 
     }
     

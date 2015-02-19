@@ -24,6 +24,7 @@ import nars.logic.NALOperator;
 import nars.logic.entity.Term;
 
 import java.util.Collection;
+import java.util.Set;
 
 import static nars.logic.NALOperator.SET_EXT_CLOSER;
 import static nars.logic.NALOperator.SET_EXT_OPENER;
@@ -67,7 +68,7 @@ public class SetExt extends SetTensional {
     public static SetExt make(Collection<Term> l) {
         return make(l.toArray(new Term[l.size()]));
     }
-    
+
     /**
      * Get the operator of the term.
      * @return the operator of the term
