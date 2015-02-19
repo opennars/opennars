@@ -72,12 +72,12 @@ public class PrologQueryOperator extends Operator {
         
         
         // try to retrive the prolog interpreter instance by the name of it
-        if (!context.prologInterpreters.containsKey(args[1])) {
+        if (!context.prologs.containsKey(args[1])) {
             // TODO< report error >
             return null;
         }
         
-        Prolog prologInterpreter = context.prologInterpreters.get(args[1]);
+        Prolog prologInterpreter = context.prologs.get(args[1]);
         
         
         

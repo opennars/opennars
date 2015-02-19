@@ -20,9 +20,9 @@ public class PrologTheoryUtility {
     static public Prolog getOrCreatePrologContext(Term prologInterpreterKey, PrologContext context) {
         Prolog prologInterpreter;
         
-        boolean prologInterpreterKnown = context.prologInterpreters.containsKey(prologInterpreterKey);
+        boolean prologInterpreterKnown = context.prologs.containsKey(prologInterpreterKey);
         if (prologInterpreterKnown) {
-            prologInterpreter = context.prologInterpreters.get(prologInterpreterKey);
+            prologInterpreter = context.prologs.get(prologInterpreterKey);
         }
         else {
             prologInterpreter = new Prolog();
@@ -34,7 +34,7 @@ public class PrologTheoryUtility {
                 throw new LibraryLoadingFailedException();
             }
             
-            context.prologInterpreters.put(prologInterpreterKey, prologInterpreter);
+            context.prologs.put(prologInterpreterKey, prologInterpreter);
         }
         
         return prologInterpreter;

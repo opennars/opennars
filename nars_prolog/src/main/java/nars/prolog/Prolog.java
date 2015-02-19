@@ -453,8 +453,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 		
 		SolveInfo sinfo = engineManager.solve(g, maxTimeSeconds);
 		
-		QueryEvent ev = new QueryEvent(this,sinfo);
-		notifyNewQueryResultAvailable(ev);
+		notifyNewQueryResultAvailable(new QueryEvent(this,sinfo));
 
 		return sinfo;
 

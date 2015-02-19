@@ -180,11 +180,10 @@ public class Term implements AbstractTerm, Termable {
      * 
      * @return A Term is constant by default
      */
-    @Override
-    public boolean isConstant() {        
+    public boolean isConstant() {
         return true;
     }
-    
+
     public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
     }   
@@ -310,7 +309,7 @@ public class Term implements AbstractTerm, Termable {
      *
      * @return Whether the name contains a variable
      */
-    @Override public boolean hasVar() {
+    public boolean hasVar() {
         return false;
     }
     

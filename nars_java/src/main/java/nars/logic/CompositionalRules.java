@@ -35,7 +35,6 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static nars.logic.Terms.reduceComponents;
@@ -54,8 +53,12 @@ public final class CompositionalRules {
 
     /* -------------------- intersections and differences -------------------- */
 
-    public static final Variable depIndVar1 = new Variable("#depIndVar1");
-    public static final Variable depIndVar2 = new Variable("#depIndVar2");
+    public static final Variable depIndVar1 = new Variable("#di1");
+    public static final Variable depIndVar2 = new Variable("#di2");
+    final static Variable varInd1 = new Variable("$i1");
+    final static Variable varInd2 = new Variable("$i2");
+    final static Variable varDep = new Variable("#d1");
+    final static Variable varDep2 = new Variable("#d2");
 
     /**
      * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==>
@@ -364,9 +367,7 @@ public final class CompositionalRules {
         return true;
     }
 
-    final static Variable varInd1 = new Variable("$varInd1");
-    final static Variable varInd2 = new Variable("$varInd2");
-    final static Variable varDep = new Variable("#varDep");
+
 
     /**
      * Introduce a dependent variable in an outer-layer conjunction {<S --> P1>,
@@ -385,8 +386,11 @@ public final class CompositionalRules {
         }
 
 
-        Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;        Term term11, term12, term21, term22, commonTerm = null;
-        HashMap<Term, Term> subs = new HashMap<>();
+        Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;
+        Term term11, term12, term21, term22, commonTerm = null;
+        Map<Term, Term> subs = Parameters.newHashMap();
+
+        //TODO convert the following two large if statement blocks into a unified function because they are nearly identical
         if (index == 0) {
             term11 = varInd1;
             term21 = varInd1;
@@ -527,6 +531,8 @@ public final class CompositionalRules {
                 }
             }
         }
+
+
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
         CompoundTerm content = Terms.compoundOrNull(Implication.makeTerm(state1, state2));
@@ -633,7 +639,6 @@ public final class CompositionalRules {
         boolean b = false;
 
         {
-            Variable varDep2 = new Variable("#varDep2");
 
 
             Term content = Terms.compoundOrNull(Conjunction.make(premise1, oldCompound));
@@ -654,8 +659,7 @@ public final class CompositionalRules {
         substitute.clear();
 
         {
-            Variable varInd1 = new Variable("$varInd1");
-            Variable varInd2 = new Variable("$varInd2");
+
 
             substitute.put(commonTerm1, varInd1);
 

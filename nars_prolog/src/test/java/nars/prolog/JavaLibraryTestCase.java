@@ -37,7 +37,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.solve(new Struct("demo", t));
 		assertEquals(1, counter.getValue());
 		// check unregistering behaviour
-		lib.unregister(t);
+		assertEquals(true, lib.unregister(t));
 		SolveInfo goal = engine.solve(new Struct("demo", t));
 		assertFalse(goal.isSuccess());
 	}
@@ -57,22 +57,23 @@ public class JavaLibraryTestCase extends TestCase {
 	}
 
 	
-	public void test_java_object() throws PrologException, IOException
-	{
-		// Testing URLClassLoader with a paths' array
-		setPath(true);
-		theory = "demo(C) :- \n" +
-				"set_classpath([" + paths + "]), \n" +
-				"java_object('Counter', [], Obj), \n" +
-				"Obj <- inc, \n" +
-				"Obj <- inc, \n" +
-				"Obj <- getValue returns C.";
-		engine.setTheory(new Theory(theory));
-		info = engine.solve("demo(Value).");
-		assertEquals(true, info.isSuccess());
-		nars.prolog.Number result2 = (nars.prolog.Number) info.getVarValue("Value");
-		assertEquals(2, result2.intValue());
+	public void test_java_object() throws PrologException, IOException {
+        // Testing URLClassLoader with a paths' array
+        setPath(true);
+        theory = "demo(C) :- \n" +
+                "set_classpath([" + paths + "]), \n" +
+                "java_object('Counter', [], Obj), \n" +
+                "Obj <- inc, \n" +
+                "Obj <- inc, \n" +
+                "Obj <- getValue returns C.";
+        engine.setTheory(new Theory(theory));
+        info = engine.solve("demo(Value).");
+        assertEquals(true, info.isSuccess());
+        nars.prolog.Number result2 = (nars.prolog.Number) info.getVarValue("Value");
+        assertEquals(2, result2.intValue());
+    }
 
+    public void test_java_object_absolute() throws PrologException, IOException {
 		// Testing URLClassLoader with java.lang.String class
 		theory = 	"demo_string(S) :- \n" +
 				"java_object('java.lang.String', ['MyString'], Obj_str), \n" +
@@ -187,7 +188,8 @@ public class JavaLibraryTestCase extends TestCase {
 	{
 		//Testing java_array_length using URLClassLoader 
 		setPath(true);
-		
+
+
 		theory =  "demo(Size) :- set_classpath([" + paths + "]), \n "
 				+ "java_object('Counter', [], MyCounter), \n"
 				+ "java_object('Counter[]', [10], ArrayCounters), \n"

@@ -104,7 +104,7 @@ public class JavaDynamicClassLoaderTestCase {
 		File file = new File(".");
 		String tempPath = file.getCanonicalPath()
 			+ File.separator + "test"
-			+ File.separator + "unit" 
+			+ File.separator + "unit"
 			+ File.separator + "TestURLClassLoaderNestedPackage.jar";
 		URL[] urls = getURLsFromStringArray(new String[]{tempPath});
 		loader = new JavaDynamicClassLoader(urls, this.getClass().getClassLoader());

@@ -17,8 +17,6 @@
  */
 package nars.prolog.lib;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import nars.prolog.*;
 import nars.prolog.Number;
 import nars.prolog.util.*;
@@ -55,9 +53,14 @@ public class JavaLibrary extends Library {
     /**
      * java objects referenced by prolog terms (keys)
      */
-    private BiMap<Struct, Object> currentObjects = HashBiMap.create();
+    private HashMap<String, Object> currentObjects = new HashMap<>();
+    /**
+     * inverse map useful for implementation issue
+     */
+    private IdentityHashMap<Object, Struct> currentObjects_inverse = new IdentityHashMap<>();
 
-    private BiMap<Struct,Object> staticObjects = HashBiMap.create();
+    private HashMap<String, Object> staticObjects = new HashMap<>();
+    private IdentityHashMap<Object, Struct> staticObjects_inverse = new IdentityHashMap<>();
 
     /**
      * progressive conter used to identify registered objects
@@ -87,49 +90,53 @@ public class JavaLibrary extends Library {
                 // operators defined by the JavaLibrary theory
                 //
                 ":- op(800,xfx,'<-').\n"
-                + ":- op(850,xfx,'returns').\n"
-                + ":- op(200,xfx,'as').\n"
-                + ":- op(600,xfx,'.'). \n"
-                + //
-                // flags defined by the JavaLibrary theory
-                //
-                // ":- flag(java_object_backtrackable,[true,false],false,true).\n"
-                // +
-                //
-                //
-                // "java_object(ClassName,Args,Id):- current_prolog_flag(java_object_backtrackable,false),!,java_object_nb(ClassName,Args,Id).\n"
-                // +
-                // "java_object(ClassName,Args,Id):- !,java_object_bt(ClassName,Args,Id).\n"
-                // +
-                "java_object_bt(ClassName,Args,Id):- java_object(ClassName,Args,Id).\n"
-                + "java_object_bt(ClassName,Args,Id):- destroy_object(Id).\n"
-                //+ "class(Path,Class) <- What :- !, java_call(Path, Class, What, Res), Res \\== false.\n"
-                //+ "class(Path,Class) <- What returns Res :- !,  java_call(Path, Class, What, Res).\n"
-                + "Obj <- What :- java_call(Obj,What,Res), Res \\== false.\n"
-                + "Obj <- What returns Res :- java_call(Obj,What,Res).\n"
-                + "java_array_set(Array,Index,Object):- class('java.lang.reflect.Array') <- set(Array as 'java.lang.Object',Index,Object as 'java.lang.Object'), !.\n"
-                + "java_array_set(Array,Index,Object):- java_array_set_primitive(Array,Index,Object).\n"
-                + "java_array_get(Array,Index,Object):- class('java.lang.reflect.Array') <- get(Array as 'java.lang.Object',Index) returns Object,!.\n"
-                + "java_array_get(Array,Index,Object):- java_array_get_primitive(Array,Index,Object).\n"
-                + "java_array_length(Array,Length):- class('java.lang.reflect.Array') <- getLength(Array as 'java.lang.Object') returns Length.\n"
-                + "java_object_string(Object,String):- Object <- toString returns String.    \n"
-                + // java_catch/3
-                "java_catch(JavaGoal, List, Finally) :- call(JavaGoal), call(Finally).\n";
+                        + ":- op(850,xfx,'returns').\n"
+                        + ":- op(200,xfx,'as').\n"
+                        + ":- op(600,xfx,'.'). \n"
+                        + //
+                        // flags defined by the JavaLibrary theory
+                        //
+                        // ":- flag(java_object_backtrackable,[true,false],false,true).\n"
+                        // +
+                        //
+                        //
+                        // "java_object(ClassName,Args,Id):- current_prolog_flag(java_object_backtrackable,false),!,java_object_nb(ClassName,Args,Id).\n"
+                        // +
+                        // "java_object(ClassName,Args,Id):- !,java_object_bt(ClassName,Args,Id).\n"
+                        // +
+                        "java_object_bt(ClassName,Args,Id):- java_object(ClassName,Args,Id).\n"
+                        + "java_object_bt(ClassName,Args,Id):- destroy_object(Id).\n"
+                        //+ "class(Path,Class) <- What :- !, java_call(Path, Class, What, Res), Res \\== false.\n"
+                        //+ "class(Path,Class) <- What returns Res :- !,  java_call(Path, Class, What, Res).\n"
+                        + "Obj <- What :- java_call(Obj,What,Res), Res \\== false.\n"
+                        + "Obj <- What returns Res :- java_call(Obj,What,Res).\n"
+                        + "java_array_set(Array,Index,Object):- class('java.lang.reflect.Array') <- set(Array as 'java.lang.Object',Index,Object as 'java.lang.Object'), !.\n"
+                        + "java_array_set(Array,Index,Object):- java_array_set_primitive(Array,Index,Object).\n"
+                        + "java_array_get(Array,Index,Object):- class('java.lang.reflect.Array') <- get(Array as 'java.lang.Object',Index) returns Object,!.\n"
+                        + "java_array_get(Array,Index,Object):- java_array_get_primitive(Array,Index,Object).\n"
+                        + "java_array_length(Array,Length):- class('java.lang.reflect.Array') <- getLength(Array as 'java.lang.Object') returns Length.\n"
+                        + "java_object_string(Object,String):- Object <- toString returns String.    \n"
+                        + // java_catch/3
+                        "java_catch(JavaGoal, List, Finally) :- call(JavaGoal), call(Finally).\n";
     }
 
     public void dismiss() {
         currentObjects.clear();
+        currentObjects_inverse.clear();
     }
 
     public void dismissAll() {
         currentObjects.clear();
+        currentObjects_inverse.clear();
         staticObjects.clear();
+        staticObjects_inverse.clear();
     }
 
     public void onSolveBegin(Term goal) {
         // id = 0;
         currentObjects.clear();
-        Iterator<Map.Entry<Object, Struct>> it = staticObjects.inverse().entrySet().iterator();
+        currentObjects_inverse.clear();
+        Iterator<Map.Entry<Object, Struct>> it = staticObjects_inverse.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<Object, Struct> en = it.next();
             bindDynamicObject(en.getValue(), en.getKey());
@@ -224,7 +231,7 @@ public class JavaLibrary extends Library {
             } catch (InstantiationException ex) {
                 getEngine().warn(
                         "Objects of class " + clName
-                        + " cannot be instantiated");
+                                + " cannot be instantiated");
                 throw new JavaException(ex);
             } catch (IllegalArgumentException ex) {
                 getEngine().warn("Illegal constructor arguments  " + args);
@@ -302,7 +309,7 @@ public class JavaLibrary extends Library {
      * @throws JavaException
      */
     public boolean java_class_4(Term clSource, Term clName, Term clPathes,
-            Term id) throws JavaException {
+                                Term id) throws JavaException {
         Struct classSource = (Struct) clSource.getTerm();
         Struct className = (Struct) clName.getTerm();
         Struct classPathes = (Struct) clPathes.getTerm();
@@ -340,7 +347,7 @@ public class JavaLibrary extends Library {
                         "(creation of " + fullClassPath + ".java fail failed)");
                 throw new JavaException(ex);
             }
-            String cmd = "javac " + cp + ' ' + fullClassPath + ".java";
+            String cmd = "javac " + cp + " " + fullClassPath + ".java";
             // System.out.println("EXEC: "+cmd);
             try {
                 Process jc = Runtime.getRuntime().exec(cmd);
@@ -379,7 +386,7 @@ public class JavaLibrary extends Library {
                 getEngine().warn("Compilation of java sources failed");
                 getEngine().warn(
                         "(Java Class compiled, but not created: "
-                        + fullClassName + " )");
+                                + fullClassName + " )");
                 throw new JavaException(ex);
             }
         } catch (Exception ex) {
@@ -405,7 +412,7 @@ public class JavaLibrary extends Library {
         String methodName = null;
         try {
             methodName = method.getName();
-			// check for accessing field Obj.Field <- set/get(X)
+            // check for accessing field Obj.Field <- set/get(X)
             // in that case: objId is '.'(Obj, Field)
 
             if (!objId.isAtom()) {
@@ -441,16 +448,16 @@ public class JavaLibrary extends Library {
 
             if (obj != null) {
                 Class<?> cl = obj.getClass();
-				//
+                //
                 //
                 Object[] args_values = args.getValues();
                 Method m = lookupMethod(cl, methodName, args.getTypes(),
                         args_values);
-				//
+                //
                 //
                 if (m != null) {
                     try {
-						// works only with JDK 1.2, NOT in Sun Application
+                        // works only with JDK 1.2, NOT in Sun Application
                         // Server!
                         // m.setAccessible(true);
 
@@ -459,17 +466,17 @@ public class JavaLibrary extends Library {
                     } catch (IllegalAccessException ex) {
                         getEngine().warn(
                                 "Method invocation failed: " + methodName
-                                + "( signature: " + args + " )");
+                                        + "( signature: " + args + " )");
                         // ex.printStackTrace();
                         throw new JavaException(ex);
                     }
                 } else {
                     getEngine().warn(
                             "Method not found: " + methodName + "( signature: "
-                            + args + " )");
+                                    + args + " )");
                     throw new JavaException(new NoSuchMethodException(
                             "Method not found: " + methodName + "( signature: "
-                            + args + " )"));
+                                    + args + " )"));
                 }
             } else {
                 if (objId.isCompound()) {
@@ -486,7 +493,7 @@ public class JavaLibrary extends Library {
                             m.setAccessible(true);
                             res = m.invoke(null, args.getValues());
                         } catch (ClassNotFoundException ex) {
-							// if not found even as a class id -> consider as a
+                            // if not found even as a class id -> consider as a
                             // String object value
                             getEngine().warn("Unknown class.");
                             // ex.printStackTrace();
@@ -546,21 +553,21 @@ public class JavaLibrary extends Library {
         } catch (InvocationTargetException ex) {
             getEngine().warn(
                     "Method failed: " + methodName + " - ( signature: " + args
-                    + " ) - Original Exception: "
-                    + ex.getTargetException());
+                            + " ) - Original Exception: "
+                            + ex.getTargetException());
             // ex.printStackTrace();
             throw new JavaException(new IllegalArgumentException());
         } catch (NoSuchMethodException ex) {
             // ex.printStackTrace();
             getEngine().warn(
                     "Method not found: " + methodName + " - ( signature: "
-                    + args + " )");
+                            + args + " )");
             throw new JavaException(ex);
         } catch (IllegalArgumentException ex) {
             // ex.printStackTrace();
             getEngine().warn(
                     "Invalid arguments " + args + " - ( method: " + methodName
-                    + " )");
+                            + " )");
             // ex.printStackTrace();
             throw new JavaException(ex);
         } catch (Exception ex) {
@@ -619,7 +626,7 @@ public class JavaLibrary extends Library {
 
                 for (URL url : urls) {
                     File file = new File(java.net.URLDecoder.decode(url.getFile(), "UTF-8"));
-                    stringURLs = stringURLs + '\'' + file.getPath() + "',";
+                    stringURLs = stringURLs + "'" + file.getPath() + "',";
                 }
 
                 stringURLs = stringURLs.substring(0, stringURLs.length() - 1);
@@ -721,11 +728,11 @@ public class JavaLibrary extends Library {
                     } catch (Exception ex) {
                         getEngine().warn(
                                 "Static field "
-                                + fieldName
-                                + " not found in class "
-                                + Tools
-                                .removeApices(((Struct) objId)
-                                        .getArg(0).toString()));
+                                        + fieldName
+                                        + " not found in class "
+                                        + Tools
+                                        .removeApices(((Struct) objId)
+                                                .getArg(0).toString()));
                         return false;
                     }
                     /*
@@ -737,7 +744,9 @@ public class JavaLibrary extends Library {
                      */
                 }
             } else {
-                obj = currentObjects.get(objId);
+                String objName = Tools
+                        .removeApices(objId.toString());
+                obj = currentObjects.get(objName);
                 if (obj != null) {
                     cl = obj.getClass();
                 } else {
@@ -761,12 +770,14 @@ public class JavaLibrary extends Library {
                     return false;
                 }
             } else {
-                Object obj2 = currentObjects.get(what);
+                String what_name = Tools.removeApices(what
+                        .toString());
+                Object obj2 = currentObjects.get(what_name);
                 if (obj2 != null) {
                     field.set(obj, obj2);
                 } else {
                     // consider value as a simple string
-                    field.set(obj, what);
+                    field.set(obj, what_name);
                 }
             }
             return true;
@@ -824,11 +835,11 @@ public class JavaLibrary extends Library {
                     } catch (Exception ex) {
                         getEngine().warn(
                                 "Static field "
-                                + fieldName
-                                + " not found in class "
-                                + Tools
-                                .removeApices(((Struct) objId)
-                                        .getArg(0).toString()));
+                                        + fieldName
+                                        + " not found in class "
+                                        + Tools
+                                        .removeApices(((Struct) objId)
+                                                .getArg(0).toString()));
                         return false;
                     }
                     /*
@@ -840,7 +851,9 @@ public class JavaLibrary extends Library {
                      */
                 }
             } else {
-                obj = currentObjects.get(objId);
+                String objName = Tools
+                        .removeApices(objId.toString());
+                obj = currentObjects.get(objName);
                 if (obj == null) {
                     return false;
                 }
@@ -899,7 +912,8 @@ public class JavaLibrary extends Library {
         }
         try {
             Class<?> cl = null;
-            obj = currentObjects.get(objId);
+            String objName = Tools.removeApices(objId.toString());
+            obj = currentObjects.get(objName);
             if (obj != null) {
                 cl = obj.getClass();
             } else {
@@ -990,7 +1004,8 @@ public class JavaLibrary extends Library {
         }
         try {
             Class<?> cl = null;
-            obj = currentObjects.get(objId);
+            String objName = Tools.removeApices(objId.toString());
+            obj = currentObjects.get(objName);
             if (obj != null) {
                 cl = obj.getClass();
             } else {
@@ -1040,7 +1055,8 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [C")) {
-                Term value = new nars.prolog.Struct(String.valueOf(Array.getChar(obj, index.intValue())));
+                Term value = new nars.prolog.Struct(""
+                        + Array.getChar(obj, index.intValue()));
                 if (unify(what, value)) {
                     return true;
                 } else {
@@ -1263,7 +1279,7 @@ public class JavaLibrary extends Library {
      *
      */
     private boolean parse_as(Object[] values, Class<?>[] types, int i,
-            Term castWhat, Term castTo) {
+                             Term castWhat, Term castTo) {
         try {
             if (!(castWhat instanceof Number)) {
                 String castTo_name = Tools
@@ -1301,7 +1317,7 @@ public class JavaLibrary extends Library {
                     } else {
                         castTo_name = "[L"
                                 + castTo_name.substring(0,
-                                        castTo_name.length() - 2) + ';';
+                                castTo_name.length() - 2) + ";";
                     }
                 }
                 if (!castWhat_name.equals("null")) {
@@ -1464,13 +1480,16 @@ public class JavaLibrary extends Library {
         }
         // already registered object?
         synchronized (staticObjects) {
-            Struct aKey = staticObjects.inverse().get(obj);
+            Object aKey = staticObjects_inverse.get(obj);
 
             if (aKey != null) {
                 // object already referenced
                 return false;
             } else {
-                staticObjects.put(id, obj);
+                String raw_name = Tools.removeApices(id.getTerm()
+                        .toString());
+                staticObjects.put(raw_name, obj);
+                staticObjects_inverse.put(obj, id);
                 return true;
             }
         }
@@ -1532,7 +1551,7 @@ public class JavaLibrary extends Library {
 
         // already registered object?
         synchronized (staticObjects) {
-            Object aKey = staticObjects.inverse().get(obj);
+            Object aKey = staticObjects_inverse.get(obj);
             if (aKey != null) {
                 // object already referenced -> unifying terms
                 // referencing the object
@@ -1540,7 +1559,8 @@ public class JavaLibrary extends Library {
                 return (Struct) aKey;
             } else {
                 Struct id = generateFreshId();
-                staticObjects.put(id, obj);
+                staticObjects.put(id.getName(), obj);
+                staticObjects_inverse.put(obj, id);
                 return id;
             }
         }
@@ -1559,7 +1579,8 @@ public class JavaLibrary extends Library {
             throw new InvalidObjectIdException();
         }
         synchronized (staticObjects) {
-            return staticObjects.get(id);
+            return staticObjects.get(Tools.removeApices(id
+                    .toString()));
         }
     }
 
@@ -1577,8 +1598,14 @@ public class JavaLibrary extends Library {
             throw new InvalidObjectIdException();
         }
         synchronized (staticObjects) {
-            Object removed = staticObjects.remove(id);
-            return removed!=null;
+            String raw_name = Tools.removeApices(id.toString());
+            Object obj = staticObjects.remove(raw_name);
+            if (obj != null) {
+                staticObjects_inverse.remove(obj);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -1590,7 +1617,9 @@ public class JavaLibrary extends Library {
      */
     public void registerDynamic(Struct id, Object obj) {
         synchronized (currentObjects) {
-            currentObjects.put(id, obj);
+            String raw_name = Tools.removeApices(id.toString());
+            currentObjects.put(raw_name, obj);
+            currentObjects_inverse.put(obj, id);
         }
     }
 
@@ -1608,7 +1637,7 @@ public class JavaLibrary extends Library {
 
         // already registered object?
         synchronized (currentObjects) {
-            Object aKey = currentObjects.inverse().get(obj);
+            Object aKey = currentObjects_inverse.get(obj);
             if (aKey != null) {
                 // object already referenced -> unifying terms
                 // referencing the object
@@ -1616,7 +1645,8 @@ public class JavaLibrary extends Library {
                 return (Struct) aKey;
             } else {
                 Struct id = generateFreshId();
-                currentObjects.put(id, obj);
+                currentObjects.put(id.getName(), obj);
+                currentObjects_inverse.put(obj, id);
                 return id;
             }
         }
@@ -1631,7 +1661,8 @@ public class JavaLibrary extends Library {
             throw new InvalidObjectIdException();
         }
         synchronized (currentObjects) {
-            return currentObjects.get(id);
+            return currentObjects.get(Tools.removeApices(id
+                    .toString()));
         }
     }
 
@@ -1642,11 +1673,16 @@ public class JavaLibrary extends Library {
      * @return true if the operation is successful
      */
     public boolean unregisterDynamic(Struct id) {
-        Object removed;
         synchronized (currentObjects) {
-            removed = currentObjects.remove(id);
+            String raw_name = Tools.removeApices(id.toString());
+            Object obj = currentObjects.remove(raw_name);
+            if (obj != null) {
+                currentObjects_inverse.remove(obj);
+                return true;
+            } else {
+                return false;
+            }
         }
-        return removed!=null;
     }
 
     /**
@@ -1661,7 +1697,7 @@ public class JavaLibrary extends Library {
         }
         // already registered object?
         synchronized (currentObjects) {
-            Object aKey = currentObjects.inverse().get(obj);
+            Object aKey = currentObjects_inverse.get(obj);
             if (aKey != null) {
                 // object already referenced -> unifying terms
                 // referencing the object
@@ -1678,7 +1714,9 @@ public class JavaLibrary extends Library {
                     return true;
                 } else {
                     // verify of the id is already used
-                    Object linkedobj = currentObjects.get(id.getTerm());
+                    String raw_name = Tools.removeApices(id
+                            .getTerm().toString());
+                    Object linkedobj = currentObjects.get(raw_name);
                     if (linkedobj == null) {
                         registerDynamic((Struct) (id.getTerm()), obj);
                         // log("ground id for a new obj: "+id+" as ref for "+obj);
@@ -1707,16 +1745,19 @@ public class JavaLibrary extends Library {
      * serializable, 'nullyfing' eventually objects registered in maps
      */
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-        BiMap<Struct, Object> bak00 = currentObjects;
-
+        HashMap<String, Object> bak00 = currentObjects;
+        IdentityHashMap<Object, Struct> bak01 = currentObjects_inverse;
         try {
             currentObjects = null;
+            currentObjects_inverse = null;
             out.defaultWriteObject();
         } catch (IOException ex) {
             currentObjects = bak00;
+            currentObjects_inverse = bak01;
             throw new IOException();
         }
         currentObjects = bak00;
+        currentObjects_inverse = bak01;
     }
 
     /**
@@ -1726,13 +1767,14 @@ public class JavaLibrary extends Library {
     private void readObject(java.io.ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
-        currentObjects = HashBiMap.create();
+        currentObjects = new HashMap<>();
+        currentObjects_inverse = new IdentityHashMap<>();
         preregisterObjects();
     }
 
     // --------------------------------------------------
     private static Method lookupMethod(Class<?> target, String name,
-            Class<?>[] argClasses, Object[] argValues)
+                                       Class<?>[] argClasses, Object[] argValues)
             throws NoSuchMethodException {
         // first try for exact match
         try {
@@ -1756,7 +1798,7 @@ public class JavaLibrary extends Library {
         }
         switch (goodMethods.size()) {
             case 0:
-            // no methods have been found checking for assignability
+                // no methods have been found checking for assignability
                 // and (int -> long) conversion. One last chance:
                 // looking for compatible methods considering also
                 // type conversions:
@@ -1769,7 +1811,7 @@ public class JavaLibrary extends Library {
                         Class<?>[] types = methods[i].getParameterTypes();
                         Object[] val = matchClasses(types, argClasses, argValues);
                         if (val != null) {
-                        // found a method compatible
+                            // found a method compatible
                             // after type conversions
                             for (int j = 0; j < types.length; j++) {
                                 argClasses[j] = types[j];
@@ -1789,7 +1831,7 @@ public class JavaLibrary extends Library {
     }
 
     private static Constructor<?> lookupConstructor(Class<?> target,
-            Class<?>[] argClasses, Object[] argValues)
+                                                    Class<?>[] argClasses, Object[] argValues)
             throws NoSuchMethodException {
         // first try for exact match
         try {
@@ -1811,7 +1853,7 @@ public class JavaLibrary extends Library {
         }
         switch (goodConstructors.size()) {
             case 0:
-            // no constructors have been found checking for assignability
+                // no constructors have been found checking for assignability
                 // and (int -> long) conversion. One last chance:
                 // looking for compatible methods considering also
                 // type conversions:
@@ -1823,7 +1865,7 @@ public class JavaLibrary extends Library {
                     Class<?>[] types = constructors[i].getParameterTypes();
                     Object[] val = matchClasses(types, argClasses, argValues);
                     if (val != null) {
-                    // found a method compatible
+                        // found a method compatible
                         // after type conversions
                         for (int j = 0; j < types.length; j++) {
                             argClasses[j] = types[j];
@@ -1955,7 +1997,7 @@ public class JavaLibrary extends Library {
     // required a long, provided a double => NOT CONSIDERED
     //
     private static Object[] matchClasses(Class<?>[] mclasses, Class<?>[] pclasses,
-            Object[] values) {
+                                         Object[] values) {
         if (mclasses.length == pclasses.length) {
             Object[] newvalues = new Object[mclasses.length];
 

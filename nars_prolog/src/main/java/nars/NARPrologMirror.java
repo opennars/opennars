@@ -1,15 +1,9 @@
 package nars;
 
 import nars.core.Events;
-import nars.core.Events.Answer;
-import nars.core.Events.ConceptBeliefAdd;
-import nars.core.Events.ConceptBeliefRemove;
-import nars.core.Memory;
+import nars.core.Events.*;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.Events.ERR;
-import nars.core.Events.IN;
-import nars.core.Events.OUT;
 import nars.io.Texts;
 import nars.logic.entity.*;
 import nars.logic.entity.Term;
@@ -63,7 +57,7 @@ public class NARPrologMirror extends AbstractMirror {
     private long lastFlush;
     private int durationCycles;
     
-    boolean allTerms = false;    
+    static boolean allTerms = false;
     
     /** in seconds */
     float maxSolveTime;
@@ -84,8 +78,8 @@ public class NARPrologMirror extends AbstractMirror {
     private InputMode inputMode = InputMode.InputTask;
 
     //serial #'s
-    long nextQueryID = 0;
-    long variableContext = 0;
+    static long nextQueryID = 0;
+    static long variableContext = 0;
 
     public NARPrologMirror(NAR nar, float minConfidence, boolean telepathic, boolean eternalJudgments, boolean presentJudgments) {
         super(nar, true, telepathic ? telepathicEvents : inputOutputEvents );
@@ -370,7 +364,7 @@ public class NARPrologMirror extends AbstractMirror {
     }
     
     /** creates a theory from a judgment Statement */
-    Struct newJudgmentTheory(final Sentence judgment) throws InvalidTheoryException {
+    public static Struct newJudgmentTheory(final Sentence judgment) throws InvalidTheoryException {
         
         nars.prolog.Term s;
         /*if (judgment.truth!=null) {            
@@ -407,14 +401,14 @@ public class NARPrologMirror extends AbstractMirror {
         return new Struct("infer", lt);
     }
     
-    public Struct negation(nars.prolog.Term t) {
+    public static Struct negation(nars.prolog.Term t) {
         return new Struct("negation", t);
     }
 
-    public String pescape(String p) {
+    public static String pescape(String p) {
         return Texts.escapeLiteral(p).toString();
     }
-    public String unpescape(String p) {
+    public static String unpescape(String p) {
         return Texts.unescapeLiteral(p).toString();
     }
 
@@ -449,7 +443,7 @@ public class NARPrologMirror extends AbstractMirror {
     }
     
     //NARS term -> Prolog term
-    public nars.prolog.Term pterm(final Term term) {
+    public static nars.prolog.Term pterm(final Term term) {
         
         //CharSequence s = termString(term);
         if (term instanceof Statement) {
@@ -490,13 +484,13 @@ public class NARPrologMirror extends AbstractMirror {
         
         return null;        
     }
-    private Term getVar(Var v) {
+    private static Term getVar(Var v) {
         //assume it is a dependent variable
         return new Variable('#' + v.getName());
     }
 
 
-    private Var getVariable(Variable v) {
+    private static Var getVariable(Variable v) {
         if (v.hasVarIndep())
             return new Var('I' + pescape(v.name().toString()));
         if (v.hasVarQuery())
@@ -507,9 +501,8 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     /** Prolog term --> NARS statement */
-    public Term nterm(final nars.prolog.Term term) {
-        Memory mem = nar.memory;
-        
+    public static Term nterm(final nars.prolog.Term term) {
+
         if (term instanceof Struct) {
             Struct s = (Struct)term;
             int arity = s.getArity();
@@ -671,7 +664,7 @@ public class NARPrologMirror extends AbstractMirror {
     protected void onQuestion(Sentence s) {
     }
 
-    protected nars.prolog.Term[] pterms(Term[] term) {
+    public static nars.prolog.Term[] pterms(Term[] term) {
         nars.prolog.Term[] tt = new nars.prolog.Term[term.length];
         int i = 0;
         for (Term x : term) {
@@ -680,7 +673,7 @@ public class NARPrologMirror extends AbstractMirror {
         return tt;
     }
 
-    public Term[] nterm(final nars.prolog.Term[] term) {
+    public static Term[] nterm(final nars.prolog.Term[] term) {
         Term[] tt = new Term[term.length];
         int i = 0;
         for (nars.prolog.Term x : term) {

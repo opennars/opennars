@@ -24,9 +24,7 @@ public class NARPrologMirrorTest {
     
     boolean prologAnswered = false;
     
-    public static void main(String[] args) throws Exception {
-        new NARPrologMirrorTest().testMultistep();
-    }
+
     
     @Test
     public void testMultistep() throws Exception {
@@ -41,7 +39,7 @@ public class NARPrologMirrorTest {
             @Override
             protected void onQuestion(Sentence s) {
                 super.onQuestion(s);
-                System.err.println("QUESTION: " + s);
+                //System.err.println("QUESTION: " + s);
             }
             
             
@@ -63,7 +61,7 @@ public class NARPrologMirrorTest {
         
         
         //nal1.multistep.nal
-        NALPerformance nts = new NALPerformance(nar, ExampleFileInput.get(nar, "../nal/test/nars_multistep_1.nal").getSource()) {
+        NALPerformance nts = new NALPerformance(nar, ExampleFileInput.get(nar, "test/nars_multistep_1.nal").getSource()) {
 //            
 //            
 //            @Override

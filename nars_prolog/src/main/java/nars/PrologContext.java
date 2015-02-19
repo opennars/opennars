@@ -10,13 +10,11 @@ import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- *
- * @author me
+ maps a NARS term to the coresponding prolog interpreter instance
  */
 public class PrologContext {
     
-    /** maps a NARS term to the coresponding prolog interpreter istance */
-    public final Map<Term, Prolog> prologInterpreters = new WeakHashMap();
+    public final Map<Term, Prolog> prologs = new WeakHashMap();
     
     // cache for all theories
     public final Map<String, CachedTheory> theoryCache = new HashMap();
@@ -29,7 +27,8 @@ public class PrologContext {
         nar.addPlugin(new PrologTheoryStringOperator(this));
         nar.addPlugin(new PrologQueryOperator(this));
         nar.addPlugin(new PrologTheoryFileOperator(this));
-        
+        nar.addPlugin(new PrologFact(this));
+
     }
     
     // theoryInCache is a reference which gets the result, is the theory allready in the cache?
@@ -40,5 +39,14 @@ public class PrologContext {
         }
         
         return null;
+    }
+
+    /** creates a prolog if it doesnt exist */
+    public Prolog getProlog(Term o) {
+        Prolog exist = prologs.get(o);
+        if (exist!=null) return exist;
+        exist = new Prolog();
+        prologs.put(o, exist);
+        return exist;
     }
 }
