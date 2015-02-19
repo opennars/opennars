@@ -5,5 +5,5 @@
 41
 IN: <(*,SELF,{t001}) --> at>? :\:
 140
-''outputMustContain('<(*,SELF,{t001}) --> at>. :\: %1.00;0.22%)
+''outputMustContain('<(*,SELF,{t001}) --> at>. :\: %1.00;0.81%')
 

@@ -82,8 +82,9 @@ public abstract class NAL implements Runnable {
      * Derived task comes from the inference rules.
      *
      * @param task the derived task
+     * @param overlapAllowed //https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2) {                        
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2, boolean overlapAllowed) {                        
 
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {
@@ -153,7 +154,7 @@ public abstract class NAL implements Runnable {
             stamp.chainAdd(currentTaskContent);
         }
         //its a inference rule, so we have to do the derivation chain check to hamper cycles
-        if (!revised) {
+        /*if (!revised) {
             Term tc = task.getTerm();            
             
             if (task.sentence.isJudgment()) { 
@@ -164,22 +165,23 @@ public abstract class NAL implements Runnable {
                     (task.getParentTask() == null) || (!Negation.areMutuallyInverse(tc, ptc))
                    ) {
                 
-                    /*final Collection<Term> chain = stamp.getChain();
+                    final Collection<Term> chain = stamp.getChain();
                     if (chain.contains(tc)) {
                         memory.removeTask(task, "Cyclic Reasoning");
                         return false;
-                    }*/
+                    }
                 }
             }
             
-        } else {
+        } else {*/
             //its revision, of course its cyclic, apply evidental base policy
+        if(revised || !overlapAllowed) { //TODO cleanup for 1.6.3, revised variable wont be needed anymore I guess.
             final int stampLength = stamp.baseLength;
             for (int i = 0; i < stampLength; i++) {
                 final long baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
                     if ((i != j) && (baseI == stamp.evidentialBase[j])) {
-                        memory.removeTask(task, "Overlapping Revision Evidence");
+                        memory.removeTask(task, "Overlapping Evidenctal Base");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                         return false;
                     }
@@ -210,7 +212,7 @@ public abstract class NAL implements Runnable {
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-        return derivedTask(newTask, true, false, null, null);
+        return derivedTask(newTask, true, false, null, null, false);
     }
 
     /**
@@ -220,8 +222,10 @@ public abstract class NAL implements Runnable {
      * @param newContent The content of the sentence in task
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
+     * @param temporalInduction
+     * @param overlapAllowed // https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
-    public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+    public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
         
         if (!newBudget.aboveThreshold()) {
             return null;
@@ -237,12 +241,12 @@ public abstract class NAL implements Runnable {
             
             try {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-                newSentence.producedByTemporalInduction=temporalAdd;
+                newSentence.producedByTemporalInduction=temporalInduction;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 
                 if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added && temporalAdd) {
+                    boolean added = derivedTask(newTask, false, false, null, null, overlapAllowed);
+                    if (added && temporalInduction) {
                         memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
                     if(added) {
@@ -256,7 +260,7 @@ public abstract class NAL implements Runnable {
             
             
             //"Since in principle it is always valid to eternalize a tensed belief"
-            if(temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
+            if(temporalInduction && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
                 
                 try {
 
@@ -264,11 +268,11 @@ public abstract class NAL implements Runnable {
                 Stamp st=getTheNewStamp().clone();
                 st.setEternal();
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
-                newSentence.producedByTemporalInduction=temporalAdd;
+                newSentence.producedByTemporalInduction=temporalInduction;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added && temporalAdd) {
+                    boolean added = derivedTask(newTask, false, false, null, null, overlapAllowed);
+                    if (added && temporalInduction) {
                         memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
                 }
@@ -354,7 +358,7 @@ public abstract class NAL implements Runnable {
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
-            return derivedTask(newTask, false, true, null, null);
+            return derivedTask(newTask, false, true, null, null, false);
         }
         return false;
     }
@@ -364,7 +368,7 @@ public abstract class NAL implements Runnable {
             return false;
         }
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        return derivedTask(newTask, false, true, null, null);
+        return derivedTask(newTask, false, true, null, null, false);
     }
 
     //    protected void reset(Memory currentMemory) {
