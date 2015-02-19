@@ -688,13 +688,15 @@ public class Stamp implements Cloneable {
                 }
             }
             int i = 0;
-            for (Term t : derivationChain) {
-                buffer.append(t);
-                if (i < (derivationChain.size() - 1)) {
-                    buffer.append(Symbols.STAMP_SEPARATOR);
+            try{
+                for (Term t : derivationChain) {
+                    buffer.append(t);
+                    if (i < (derivationChain.size() - 1)) {
+                        buffer.append(Symbols.STAMP_SEPARATOR);
+                    }
+                    i++;
                 }
-                i++;
-            }
+            } catch(Exception ex) {}
             buffer.append(Symbols.STAMP_CLOSER).append(' ');
 
             //this is for estimating an initial size of the stringbuffer
