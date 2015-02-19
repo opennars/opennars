@@ -82,26 +82,30 @@ public abstract class SynchronousFunctionOperator extends Operator {
         //it if we don't want to use the "resultof"-relation.
         Variable var=new Variable("$1");
         Term actual_part = Similarity.make(var, y);
+        Variable vardep=new Variable("#1");
+        Term actual_dep_part = Similarity.make(vardep, y);
         operation=(Operation) operation.setComponent(0, 
                 ((CompoundTerm)operation.getSubject()).setComponent(
                         numArgs-1, var, m), m); 
         
         Term actual=Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
+        float confidence = 0.99f;
         if (variable) {
             return Lists.newArrayList( 
                     m.newTask(actual, Symbols.JUDGMENT_MARK, 
-                            1f, 0.99f, 
+                            1f, confidence, 
+                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
+                            Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
+            ),
+                    m.newTask(actual_dep_part, Symbols.JUDGMENT_MARK, 
+                            1f, confidence, 
                             Parameters.DEFAULT_JUDGMENT_PRIORITY, 
                             Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
             ));    
         }
         else {
             /*float equal = equals(lastTerm, y);
-            
-            
-            
-            float confidence = 0.99f;
             ArrayList<Task> rt = Lists.newArrayList( 
                     m.newTask(actual, Symbols.JUDGMENT_MARK, 
                             1.0f, confidence, 
