@@ -1,8 +1,8 @@
-<0 --> number>. %1.0000;0.9000%  {0 : 1<0 --> number>}
-<<$1 --> number> ==> <(/,successor,$1,_) --> number>>. %1.0000;0.9000%  {0 : 2 : }
-<(/,successor,(/,successor,0,_),_) --> number>?  {0 : 3 : }
+<<$1 --> number> ==> <(/,successor,$1,_) --> number>>.
+<0 --> number>.
+<(/,successor,(/,successor,0,_),_) --> number>?
 
-27
+100
 
 ''outputMustContain('<(/,successor,0,_) --> number>.')
 ''outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>.')
