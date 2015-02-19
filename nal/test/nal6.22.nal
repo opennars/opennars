@@ -12,9 +12,8 @@
 500
 
 
-1500
+7000
 
 'I guess 3 is a number
 ''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.66%')                     
 
-550

@@ -196,7 +196,7 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
             }
         }
         for(Task t: derivetasks) {
-            if(nal.derivedTask(t, false, false, null, null)) {
+            if(nal.derivedTask(t, false, false, null, null, false)) {
                 boolean debug=true;
             }
         }

@@ -215,7 +215,7 @@ public class RuleTables {
                                     
                                     Sentence S=new Sentence(resImp,s.punctuation,truth,st);
                                     Task Tas=new Task(S,new BudgetValue(BudgetFunctions.forward(truth, nal)));
-                                    nal.derivedTask(Tas, false, false, null, null);
+                                    nal.derivedTask(Tas, false, false, null, null, true);
                                     
                                     //RESTORE CONTEXT
                                     nal.setNewStamp(SVSTamp);
