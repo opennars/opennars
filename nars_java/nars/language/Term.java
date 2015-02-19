@@ -292,6 +292,9 @@ public class Term implements AbstractTerm, Termable {
      * @return Whether the two have the same content
      */
     public boolean containsTermRecursively(final Term target) {
+        if(target==null) {
+            return false;
+        }
         return equals(target);
     }
 
