@@ -108,15 +108,7 @@ public abstract class Number extends Term  {
         return this;
     }
 
-    @Override
-    public boolean isConstant() {
-        return true;
-    }
 
-    @Override
-    public boolean hasVar() {
-        return false;
-    }
     
     
     

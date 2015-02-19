@@ -15,11 +15,11 @@ public class ClauseStore {
     
     
     private OneWayList<ClauseInfo> clauses;
-    private Term goal;
-    private List<Var> vars;
+    protected Term goal;
+    protected List<Var> vars;
     private boolean haveAlternatives;
     
-    private ClauseStore(Term goal, List<Var> vars) {
+    protected ClauseStore(Term goal, List<Var> vars) {
         this.goal = goal;
         this.vars = vars;
         clauses = null;

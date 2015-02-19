@@ -559,16 +559,6 @@ public class Var extends Term {
     /**/
 
     @Override
-    public boolean hasVar() {
-        return true;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return false;
-    }
-
-    @Override
     public CharSequence name() {
         return completeName;
     }

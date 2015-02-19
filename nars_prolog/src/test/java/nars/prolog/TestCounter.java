@@ -5,7 +5,7 @@ public class TestCounter {
 	private int value = 0;
 	
 	public void update() {
-		value++;
+		inc();
 	}
         
         public void inc() {

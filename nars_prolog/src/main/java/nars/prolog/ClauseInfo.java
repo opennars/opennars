@@ -32,7 +32,7 @@ public class ClauseInfo {
     /**
 	 * referring clause
 	 */
-    private Struct clause;
+    protected Struct clause;
     
     /**
 	 * head of clause
@@ -58,7 +58,7 @@ public class ClauseInfo {
     /**
      * building a valid clause with a time stamp = original time stamp + NumVar in clause
      */
-    ClauseInfo(Struct clause_, String lib) {
+    public ClauseInfo(Struct clause_, String lib) {
         clause = clause_;
         head = extractHead(clause);
         body = extractBody(clause.getArg(1));

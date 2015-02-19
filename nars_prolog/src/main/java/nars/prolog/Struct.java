@@ -479,8 +479,7 @@ public class Struct extends Term {
         if (resolved) {
             return count;
         } else {
-            List<Var> vars = new ArrayList<>();
-            return resolveTerm(vars,count);
+            return resolveTerm(new HashMap(),count);
         }
     }
     
@@ -491,38 +490,29 @@ public class Struct extends Term {
      * @param count start timestamp for variables of this term
      * @return next timestamp for other terms
      */
-    public long resolveTerm(List<Var> vl, long count) {
+    public long resolveTerm(Map<String,Var> vl, long count) {
         long newcount=count;
-        for (int c = 0;c < arity;c++) {
-            Term term=arg[c];
-            if (term!=null) {
-                //--------------------------------
-                // we want to resolve only not linked variables:
-                // so linked variables must get the linked term
-                term=term.getTerm();
-                //--------------------------------
-                if (term instanceof Var) {
-                    Var t = (Var) term;
-                    t.setTimestamp(newcount++);
-                    if (!t.isAnonymous()) {
-                        // searching a variable with the same name in the list
-                        String name= t.getName();
-                        Var found = null;
-                        for (int d = 0; d < vl.size(); d++) {
-                            Var vn = vl.get(d);
-                            if (name.equals(vn.getName())) {
-                                found=vn;
-                                break;
-                            }
+        /*if (hasVar())*/ {
+            for (int c = 0; c < arity; c++) {
+                Term term = arg[c];
+                if (term != null) {
+                    //--------------------------------
+                    // we want to resolve only not linked variables:
+                    // so linked variables must get the linked term
+                    term = term.getTerm();
+                    //--------------------------------
+                    if (term instanceof Var) {
+                        Var t = (Var) term;
+                        t.setTimestamp(newcount++);
+                        if (!t.isAnonymous()) {
+                            // searching a variable with the same name
+                            Var found = vl.putIfAbsent(t.getName(), t);
+                            if (found != null)
+                                arg[c] = found;
                         }
-                        if (found != null) {
-                            arg[c] = found;
-                        } else {
-                            vl.add(t);
-                        }
+                    } else if (term instanceof Struct) {
+                        newcount = ((Struct) term).resolveTerm(vl, newcount);
                     }
-                } else if (term instanceof Struct) {
-                    newcount = ( (Struct) term ).resolveTerm(vl,newcount);
                 }
             }
         }
@@ -939,16 +929,6 @@ public class Struct extends Term {
 		tv.visit(this);
 	}
     /**/
-
-    @Override
-    public boolean hasVar() {
-        return !this.isGround();
-    }
-
-    @Override
-    public boolean isConstant() {
-        return this.isGround();
-    }
 
     @Override
     public CharSequence name() {

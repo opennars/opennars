@@ -29,9 +29,11 @@ public class JavaLibraryTestCase extends TestCase {
 		JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.prolog.lib.JavaLibrary");
 		String theory = "demo(X) :- X <- update. \n";
 		engine.setTheory(new Theory(theory));
+
 		TestCounter counter = new TestCounter();
 		// check registering behaviour
 		Struct t = lib.register(counter);
+
 		engine.solve(new Struct("demo", t));
 		assertEquals(1, counter.getValue());
 		// check unregistering behaviour

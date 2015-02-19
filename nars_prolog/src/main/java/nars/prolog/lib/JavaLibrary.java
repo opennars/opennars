@@ -17,6 +17,8 @@
  */
 package nars.prolog.lib;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import nars.prolog.*;
 import nars.prolog.Number;
 import nars.prolog.util.*;
@@ -53,14 +55,9 @@ public class JavaLibrary extends Library {
     /**
      * java objects referenced by prolog terms (keys)
      */
-    private HashMap<String, Object> currentObjects = new HashMap<>();
-    /**
-     * inverse map useful for implementation issue
-     */
-    private IdentityHashMap<Object, Struct> currentObjects_inverse = new IdentityHashMap<>();
+    private BiMap<Struct, Object> currentObjects = HashBiMap.create();
 
-    private HashMap<String, Object> staticObjects = new HashMap<>();
-    private IdentityHashMap<Object, Struct> staticObjects_inverse = new IdentityHashMap<>();
+    private BiMap<Struct,Object> staticObjects = HashBiMap.create();
 
     /**
      * progressive conter used to identify registered objects
@@ -122,21 +119,17 @@ public class JavaLibrary extends Library {
 
     public void dismiss() {
         currentObjects.clear();
-        currentObjects_inverse.clear();
     }
 
     public void dismissAll() {
         currentObjects.clear();
-        currentObjects_inverse.clear();
         staticObjects.clear();
-        staticObjects_inverse.clear();
     }
 
     public void onSolveBegin(Term goal) {
         // id = 0;
         currentObjects.clear();
-        currentObjects_inverse.clear();
-        Iterator<Map.Entry<Object, Struct>> it = staticObjects_inverse.entrySet().iterator();
+        Iterator<Map.Entry<Object, Struct>> it = staticObjects.inverse().entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<Object, Struct> en = it.next();
             bindDynamicObject(en.getValue(), en.getKey());
@@ -744,9 +737,7 @@ public class JavaLibrary extends Library {
                      */
                 }
             } else {
-                String objName = Tools
-                        .removeApices(objId.toString());
-                obj = currentObjects.get(objName);
+                obj = currentObjects.get(objId);
                 if (obj != null) {
                     cl = obj.getClass();
                 } else {
@@ -770,14 +761,12 @@ public class JavaLibrary extends Library {
                     return false;
                 }
             } else {
-                String what_name = Tools.removeApices(what
-                        .toString());
-                Object obj2 = currentObjects.get(what_name);
+                Object obj2 = currentObjects.get(what);
                 if (obj2 != null) {
                     field.set(obj, obj2);
                 } else {
                     // consider value as a simple string
-                    field.set(obj, what_name);
+                    field.set(obj, what);
                 }
             }
             return true;
@@ -851,9 +840,7 @@ public class JavaLibrary extends Library {
                      */
                 }
             } else {
-                String objName = Tools
-                        .removeApices(objId.toString());
-                obj = currentObjects.get(objName);
+                obj = currentObjects.get(objId);
                 if (obj == null) {
                     return false;
                 }
@@ -912,8 +899,7 @@ public class JavaLibrary extends Library {
         }
         try {
             Class<?> cl = null;
-            String objName = Tools.removeApices(objId.toString());
-            obj = currentObjects.get(objName);
+            obj = currentObjects.get(objId);
             if (obj != null) {
                 cl = obj.getClass();
             } else {
@@ -1004,8 +990,7 @@ public class JavaLibrary extends Library {
         }
         try {
             Class<?> cl = null;
-            String objName = Tools.removeApices(objId.toString());
-            obj = currentObjects.get(objName);
+            obj = currentObjects.get(objId);
             if (obj != null) {
                 cl = obj.getClass();
             } else {
@@ -1479,16 +1464,13 @@ public class JavaLibrary extends Library {
         }
         // already registered object?
         synchronized (staticObjects) {
-            Object aKey = staticObjects_inverse.get(obj);
+            Struct aKey = staticObjects.inverse().get(obj);
 
             if (aKey != null) {
                 // object already referenced
                 return false;
             } else {
-                String raw_name = Tools.removeApices(id.getTerm()
-                        .toString());
-                staticObjects.put(raw_name, obj);
-                staticObjects_inverse.put(obj, id);
+                staticObjects.put(id, obj);
                 return true;
             }
         }
@@ -1550,7 +1532,7 @@ public class JavaLibrary extends Library {
 
         // already registered object?
         synchronized (staticObjects) {
-            Object aKey = staticObjects_inverse.get(obj);
+            Object aKey = staticObjects.inverse().get(obj);
             if (aKey != null) {
                 // object already referenced -> unifying terms
                 // referencing the object
@@ -1558,8 +1540,7 @@ public class JavaLibrary extends Library {
                 return (Struct) aKey;
             } else {
                 Struct id = generateFreshId();
-                staticObjects.put(id.getName(), obj);
-                staticObjects_inverse.put(obj, id);
+                staticObjects.put(id, obj);
                 return id;
             }
         }
@@ -1578,8 +1559,7 @@ public class JavaLibrary extends Library {
             throw new InvalidObjectIdException();
         }
         synchronized (staticObjects) {
-            return staticObjects.get(Tools.removeApices(id
-                    .toString()));
+            return staticObjects.get(id);
         }
     }
 
@@ -1597,14 +1577,8 @@ public class JavaLibrary extends Library {
             throw new InvalidObjectIdException();
         }
         synchronized (staticObjects) {
-            String raw_name = Tools.removeApices(id.toString());
-            Object obj = staticObjects.remove(raw_name);
-            if (obj != null) {
-                staticObjects_inverse.remove(obj);
-                return true;
-            } else {
-                return false;
-            }
+            Object removed = staticObjects.remove(id);
+            return removed!=null;
         }
     }
 
@@ -1616,9 +1590,7 @@ public class JavaLibrary extends Library {
      */
     public void registerDynamic(Struct id, Object obj) {
         synchronized (currentObjects) {
-            String raw_name = Tools.removeApices(id.toString());
-            currentObjects.put(raw_name, obj);
-            currentObjects_inverse.put(obj, id);
+            currentObjects.put(id, obj);
         }
     }
 
@@ -1636,7 +1608,7 @@ public class JavaLibrary extends Library {
 
         // already registered object?
         synchronized (currentObjects) {
-            Object aKey = currentObjects_inverse.get(obj);
+            Object aKey = currentObjects.inverse().get(obj);
             if (aKey != null) {
                 // object already referenced -> unifying terms
                 // referencing the object
@@ -1644,8 +1616,7 @@ public class JavaLibrary extends Library {
                 return (Struct) aKey;
             } else {
                 Struct id = generateFreshId();
-                currentObjects.put(id.getName(), obj);
-                currentObjects_inverse.put(obj, id);
+                currentObjects.put(id, obj);
                 return id;
             }
         }
@@ -1660,8 +1631,7 @@ public class JavaLibrary extends Library {
             throw new InvalidObjectIdException();
         }
         synchronized (currentObjects) {
-            return currentObjects.get(Tools.removeApices(id
-                    .toString()));
+            return currentObjects.get(id);
         }
     }
 
@@ -1672,16 +1642,11 @@ public class JavaLibrary extends Library {
      * @return true if the operation is successful
      */
     public boolean unregisterDynamic(Struct id) {
+        Object removed;
         synchronized (currentObjects) {
-            String raw_name = Tools.removeApices(id.toString());
-            Object obj = currentObjects.remove(raw_name);
-            if (obj != null) {
-                currentObjects_inverse.remove(obj);
-                return true;
-            } else {
-                return false;
-            }
+            removed = currentObjects.remove(id);
         }
+        return removed!=null;
     }
 
     /**
@@ -1696,7 +1661,7 @@ public class JavaLibrary extends Library {
         }
         // already registered object?
         synchronized (currentObjects) {
-            Object aKey = currentObjects_inverse.get(obj);
+            Object aKey = currentObjects.inverse().get(obj);
             if (aKey != null) {
                 // object already referenced -> unifying terms
                 // referencing the object
@@ -1713,9 +1678,7 @@ public class JavaLibrary extends Library {
                     return true;
                 } else {
                     // verify of the id is already used
-                    String raw_name = Tools.removeApices(id
-                            .getTerm().toString());
-                    Object linkedobj = currentObjects.get(raw_name);
+                    Object linkedobj = currentObjects.get(id.getTerm());
                     if (linkedobj == null) {
                         registerDynamic((Struct) (id.getTerm()), obj);
                         // log("ground id for a new obj: "+id+" as ref for "+obj);
@@ -1744,19 +1707,16 @@ public class JavaLibrary extends Library {
      * serializable, 'nullyfing' eventually objects registered in maps
      */
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-        HashMap<String, Object> bak00 = currentObjects;
-        IdentityHashMap<Object, Struct> bak01 = currentObjects_inverse;
+        BiMap<Struct, Object> bak00 = currentObjects;
+
         try {
             currentObjects = null;
-            currentObjects_inverse = null;
             out.defaultWriteObject();
         } catch (IOException ex) {
             currentObjects = bak00;
-            currentObjects_inverse = bak01;
             throw new IOException();
         }
         currentObjects = bak00;
-        currentObjects_inverse = bak01;
     }
 
     /**
@@ -1766,8 +1726,7 @@ public class JavaLibrary extends Library {
     private void readObject(java.io.ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
-        currentObjects = new HashMap<>();
-        currentObjects_inverse = new IdentityHashMap<>();
+        currentObjects = HashBiMap.create();
         preregisterObjects();
     }
 

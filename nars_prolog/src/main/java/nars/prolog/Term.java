@@ -147,15 +147,7 @@ public abstract class Term implements AbstractTerm, Serializable {
         return copy(originals,new IdentityHashMap<>());
     }
 
-    @Override
-    public boolean isConstant() {
-        return isGround();
-    }
 
-    @Override
-    public boolean hasVar() {
-        return !isGround();
-    }
 
     @Override
     public int compareTo(AbstractTerm o) {
