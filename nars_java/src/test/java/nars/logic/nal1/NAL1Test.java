@@ -128,7 +128,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void backwardInference() throws InvalidInputException {
-        long time = 246;
+        long time = 1200;
 
         //TextOutput.out(n);
         nar.believe("<bird --> swimmer>", 1.0f, 0.8f);

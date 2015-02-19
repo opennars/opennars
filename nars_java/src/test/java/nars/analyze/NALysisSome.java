@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 public class NALysisSome extends NALysis {
 
 
+
     public NALysisSome(NewNAR b) {
         super(b);
     }
@@ -24,16 +25,20 @@ public class NALysisSome extends NALysis {
 
     public static void main(String[] args) throws FileNotFoundException {
 
+        showInput = true;
         showOutput = false;
         showTrace = false;
 
         //String test = "./nal/test6/nal6.22.nal";
-        String test = "./nal/test5/nal5.18.nal";
+        String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.17.nal";
 
+        //NewNAR build = new Default().setInternalExperience(null).level(5);
+        NewNAR build = new Default();
+
         TestNAR n = analyze(
-                new Default().setInternalExperience(null).level(5),
+                build,
                 test,
                 512,
                 1
@@ -42,6 +47,9 @@ public class NALysisSome extends NALysis {
             @Override public void event(Class event, Object[] args) {
                 Task t = (Task)args[0];
                 System.out.println("Derived: " + t);
+                if (t.toString().contains("<a --> b>. %1.00;0.90%")) {
+                    System.err.println(t);
+                }
             }
         });
         n.on(Events.TaskRemove.class, new Reaction() {

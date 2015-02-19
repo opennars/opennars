@@ -1,6 +1,7 @@
 package nars.logic;
 
 import junit.framework.TestCase;
+import nars.analyze.NALysis;
 import nars.analyze.meter.CountDerivationCondition;
 import nars.analyze.meter.CountOutputEvents;
 import nars.core.Memory;
@@ -124,6 +125,10 @@ abstract public class AbstractNALTest extends TestCase {
         Parameters.DEBUG = true;
 
         script = ExampleFileInput.getExample(path);
+
+        if (NALysis.showInput)
+            System.out.println(script);
+
         nar.requires.addAll(OutputCondition.getConditions(nar, script, similarsToSave));
 
         nar.addInput(script);

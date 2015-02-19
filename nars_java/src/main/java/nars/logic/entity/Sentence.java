@@ -316,9 +316,9 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         
         final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
 
-        return new Sentence(term, punctuation, newTruth,
-                stamp.cloneWithNewOccurrenceTime(eternalizing? Stamp.ETERNAL : targetTime),
-                false);
+        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
+
+        return new Sentence(term, punctuation, newTruth, newStamp, false);
     }
 
 

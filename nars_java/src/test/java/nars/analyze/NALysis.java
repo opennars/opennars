@@ -23,6 +23,7 @@ import static nars.logic.ScriptNALTest.getPaths;
 @Ignore
 public class NALysis extends AbstractNALTest {
 
+    public static boolean showInput = false;
     static boolean showOutput = false;
     static boolean showTrace = false;
 

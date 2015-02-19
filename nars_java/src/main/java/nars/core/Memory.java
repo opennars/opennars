@@ -44,6 +44,7 @@ import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Disjunction;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
+import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.ImmediateOperation;
@@ -387,13 +388,15 @@ public class Memory implements Serializable {
      * @return an existing Concept, or a new one, or null
      */
     public Concept conceptualize(final BudgetValue budget, final Term term) {
-        boolean createIfMissing = true;
+
+        if ((term instanceof Variable) || (term instanceof Interval))
+            return null;
 
         /*Concept c = concept(term);
          if (c!=null)
          System.out.print(c.budget + "   ");
          System.out.println(term + " conceptualize: " + budget);*/
-        return concepts.conceptualize(budget, term, createIfMissing);
+        return concepts.conceptualize(budget, term, true);
     }
 
     /**
