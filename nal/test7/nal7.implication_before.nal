@@ -1,8 +1,11 @@
-********** 
 <(^pick,stefan) =/> <stefan --> good>>.
+
 <stefan --> good>!
+
 10
+
 <stefan --> good>. :|:
  
-''outputMustContain('<<stefan --> good> =\> (&/,(^pick,stefan),+3)>. :|: %1.00;0.47%')
-'adjusted +2 to +3
+''outputMustContain('<<stefan --> good> =\> (&/,(^pick,stefan,SELF),+4)>. :|: %1.00;0.47%')
+
+400

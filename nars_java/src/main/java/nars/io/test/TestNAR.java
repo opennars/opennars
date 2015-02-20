@@ -73,7 +73,10 @@ public class TestNAR extends NAR {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
         TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
+
+        /** occurence time measured relative to the beginning */
         tc.setOccurrenceTime(cycleStart, ocRelative, memory.getDuration());
+
         requires.add(tc);
 
 

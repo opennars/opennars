@@ -158,9 +158,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
     /** task's tense is compared by its occurence time delta to the current time when processing */
     public void setOccurrenceTime(long ocRelative, int duration) {
         //may be more accurate if duration/2
-        if (ocRelative == 0) tense = Tense.Present;
-        if (ocRelative > 0) tense = Tense.Future;
-        if (ocRelative < 0) tense = Tense.Past;
+
+        if (ocRelative > duration/2) tense = Tense.Future;
+        if (ocRelative < -duration/2) tense = Tense.Past;
+        else tense = Tense.Present;
     }
     public void setOccurrenceTime(long creationTime, int ocRelative, int duration) {
         this.creationTime = creationTime;

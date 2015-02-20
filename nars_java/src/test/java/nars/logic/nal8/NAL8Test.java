@@ -7,6 +7,7 @@ import nars.core.Events;
 import nars.core.NewNAR;
 import nars.core.Parameters;
 import nars.event.Reaction;
+import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.JavaNALTest;
 import nars.logic.entity.Task;
@@ -48,14 +49,14 @@ public class NAL8Test extends JavaNALTest {
     }
 
     protected void testGoalExecute(String condition, String action) {
-        //TextOutput.out(nar);
+        TextOutput.out(nar);
 
         nar.believe(condition, Tense.Present, 1.0f, 0.9f);
         nar.goal("(&/,"+ condition + ',' + action + ")", 1.0f, 0.9f);
 
         nar.mustDesire(100, action, 1.0f, 0.43f);
 
-        nar.mustOutput(0, 100, action, '.', 1f, 1f, 0.99f, 0.99f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
+        nar.mustOutput(4, 10, action, '.', 1f, 1f, 0.99f, 0.99f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
 
 
         nar.run(100);
@@ -107,6 +108,7 @@ public class NAL8Test extends JavaNALTest {
                 System.out.println("Remove: " + t + " " + t.getReason());
             }
         });
+        nar.mustBelieve(100, "(^pick,c,SELF)", 1f, 1f, 0.47f, 0.47f);//this is checking for the eternalized result, but there are non-eternalized results that occur before that
         nar.run(100);
 
     }
