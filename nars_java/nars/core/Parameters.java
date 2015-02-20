@@ -27,6 +27,8 @@ package nars.core;
  */
 public class Parameters {
     
+    public static int DURATION = 5;
+    
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;

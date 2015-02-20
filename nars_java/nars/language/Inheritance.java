@@ -21,6 +21,7 @@
 package nars.language;
 
 import java.util.Arrays;
+import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -83,6 +84,11 @@ public class Inheritance extends Statement {
         boolean subjectProduct = subject instanceof Product;
         boolean predicateOperator = predicate instanceof Operator;
         
+        if (Parameters.DEBUG) {
+            if (!predicateOperator && predicate.toString().startsWith("^")) {
+                throw new RuntimeException("operator term detected but is not an operator: " + predicate);
+            }
+        }
         
         if (subjectProduct && predicateOperator) {
             //name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term);

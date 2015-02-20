@@ -31,6 +31,7 @@ import java.util.Objects;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.TruthValue.Truthable;
+import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.inference.TruthFunctions.EternalizedTruthValue;
 import nars.io.Symbols;
@@ -38,6 +39,7 @@ import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Interval;
+import nars.language.Interval.AtomicDuration;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Terms.Termable;
@@ -101,7 +103,26 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    private Sentence(final T _content, final char punctuation, final TruthValue truth, final Stamp stamp, boolean normalize) {
+    private Sentence(T _content, final char punctuation, final TruthValue truth, final Stamp stamp, boolean normalize) {
+        
+        //cut interval at end for sentence in serial conjunction, and inbetween for parallel
+        if(_content instanceof Conjunction) {
+            Conjunction c=(Conjunction)_content;
+            if(c.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                if(c.term[c.term.length-1] instanceof Interval) {
+                    Term[] term2=new Term[c.term.length-1];
+                    for(int i=0;i<c.term.length-1;i++) {
+                        term2[i]=c.term[i];
+                    }
+                    _content=(T) Conjunction.make(term2, c.getTemporalOrder());
+                    //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
+                    //accordingly
+                    long time=Interval.magnitudeToTime(((Interval)c.term[c.term.length-1]).magnitude,new AtomicDuration(Parameters.DURATION));
+                    if(stamp!=null)
+                        stamp.setOccurrenceTime(stamp.getOccurrenceTime()-time);
+                }
+            }
+        }
         
         this.punctuation = punctuation;
         

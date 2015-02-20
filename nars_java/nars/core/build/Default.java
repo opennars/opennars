@@ -14,6 +14,7 @@ import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
 import nars.core.Param;
+import nars.core.Parameters;
 import static nars.core.build.Default.InternalExperienceMode.Full;
 import static nars.core.build.Default.InternalExperienceMode.Minimal;
 import nars.core.control.DefaultAttention;
@@ -102,7 +103,7 @@ public class Default extends Build implements ConceptBuilder {
         setNovelTaskBagLevels(100);
 
         
-        param.duration.set(5);
+        param.duration.set(Parameters.DURATION);
         param.conceptForgetDurations.set(2.0);
         param.taskLinkForgetDurations.set(4.0);
         param.termLinkForgetDurations.set(10.0);
