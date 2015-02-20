@@ -125,14 +125,18 @@ public abstract class OutputCondition extends AbstractReaction {
             else if (s.indexOf(expectOutEmpty)==0) {
                 conditions.add(new OutputEmptyCondition(n));
             }                
-            else {
-                //parse sleep cycles to advance the correlated 'cycle' time
+            else if (!s.startsWith("'")) {
+                //skip comment lines
+
+
                 try {
+                    //parse sleep cycles to advance the correlated 'cycle' time
                     int sleepCycles = Integer.parseInt(s);
                     cycle += sleepCycles;
                 }
                 catch (NumberFormatException e) {
-                    cycle++; //non-sleep #, line usually ordinary input
+                    //non-sleep #, assume it is ordinary input that consumes 1 cycle to input
+                    cycle++;
                 }
             }
 

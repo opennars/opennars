@@ -231,6 +231,8 @@ public class TemporalRules {
         temporalInduction(s1, s2, stamp, nal, nal.getCurrentBelief(), nal.getCurrentTask());
     }
 
+    final static Variable var1 = new Variable("$0");
+
     public static void temporalInduction(final Sentence s1, final Sentence s2, NAL.StampBuilder stamp, final NAL nal, Sentence subbedBelief, Task subbedTask) {
         
         if ((s1.truth==null) || (s2.truth==null))
@@ -250,8 +252,8 @@ public class TemporalRules {
             Statement ss1 = (Statement) t1;
             Statement ss2 = (Statement) t2;
 
-            final Variable var1 = new Variable("$0");
-            final Variable var2 = new Variable("$1");
+
+            final Variable var2 = var1;
 
             if (ss1.getSubject().equals(ss2.getSubject())) {
                 t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());

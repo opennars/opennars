@@ -3,14 +3,11 @@ package nars.logic.nal8;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.build.Discretinuous;
-import nars.core.Events;
 import nars.core.NewNAR;
 import nars.core.Parameters;
-import nars.event.Reaction;
 import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.JavaNALTest;
-import nars.logic.entity.Task;
 import nars.logic.nal7.Tense;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -94,7 +91,7 @@ public class NAL8Test extends JavaNALTest {
         nar.run(6);
         nar.addInput("<a --> b>. :|:");
         nar.addInput("<a --> b>!");
-        nar.on(Events.TaskDerive.class, new Reaction() {
+        /*nar.on(Events.TaskDerive.class, new Reaction() {
             @Override
             public void event(Class event, Object[] args) {
                 Task t = (Task) args[0];
@@ -107,7 +104,7 @@ public class NAL8Test extends JavaNALTest {
                 Task t = (Task) args[0];
                 System.out.println("Remove: " + t + " " + t.getReason());
             }
-        });
+        });*/
         nar.mustBelieve(100, "(^pick,c,SELF)", 1f, 1f, 0.47f, 0.47f);//this is checking for the eternalized result, but there are non-eternalized results that occur before that
         nar.run(100);
 
