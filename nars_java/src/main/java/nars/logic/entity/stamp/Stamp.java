@@ -29,7 +29,6 @@ import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import static nars.logic.nal7.TemporalRules.*;
 import static nars.logic.nal7.Tense.*;
@@ -95,12 +94,9 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         return 1.0f / (evidentialBase.length + 1);
     }
 
-
-
-    public interface DerivationBuilder {
-        Collection build();
+    public void setOccurrenceTime(long l) {
+        this.occurrenceTime = l;
     }
-
 
     protected Stamp(final long serial, long creationTime) {
         super();

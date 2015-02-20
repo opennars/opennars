@@ -1,5 +1,6 @@
 package nars.logic;
 
+import junit.framework.TestCase;
 import nars.core.NewNAR;
 import nars.io.ExampleFileInput;
 import org.junit.Ignore;
@@ -39,7 +40,10 @@ abstract public class ScriptNALTest extends AbstractNALTest {
 
         runScript(nar, path, getMaxCycles());
 
-        nar.evaluate();
+        String result = nar.evaluate();
+        if (result!=null) {
+            TestCase.assertTrue(result, false);
+        }
 
     }
 

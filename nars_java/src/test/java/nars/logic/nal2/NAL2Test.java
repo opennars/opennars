@@ -52,7 +52,7 @@ public class NAL2Test extends JavaNALTest {
 
             @1750        */
 
-        long time = 160;
+        long time = 320;
         //TextOutput.out(n);
 
         nar.believe("<Birdie <-> Tweety>", Eternal, 0.9f, 0.9f)

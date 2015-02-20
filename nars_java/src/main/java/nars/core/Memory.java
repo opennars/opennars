@@ -539,10 +539,16 @@ public class Memory implements Serializable {
         /*if (!Term.valid(t.getContent()))
          throw new RuntimeException("Invalid term: " + t);*/
 
+        if (!t.budget.aboveThreshold()) {
+            removeTask(t, "Insufficient budget");
+            return false;
+        }
+
         if (!Terms.levelValid(t.sentence, nal())) {
             removeTask(t, "Insufficient NAL level");
             return false;
         }
+
 
         concepts.addTask(t);
 

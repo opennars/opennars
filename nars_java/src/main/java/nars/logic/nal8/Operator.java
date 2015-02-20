@@ -175,6 +175,7 @@ public abstract class Operator extends Term implements Plugin {
             //should we allow immediate tasks to create feedback?
             if (feedback!=null) {
                 for (final Task t : feedback) {
+                    if (t == null) continue;
                     t.setCause(op);
                     t.setReason("Feedback");
                     memory.inputTask(t);

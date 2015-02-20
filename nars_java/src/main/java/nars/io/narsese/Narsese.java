@@ -406,9 +406,9 @@ public class Narsese {
      * parsed into a Term
      * @return the Term generated from the String
      */
-    private static Term parseAtomicTerm(String s0) throws InvalidInputException {
+    private Term parseAtomicTerm(String s0) throws InvalidInputException {
         String s = s0.trim();
-        if (s.length() == 0) {
+        if (s.isEmpty()) {
             throw new InvalidInputException("missing term");
         }
         
@@ -421,6 +421,9 @@ public class Narsese {
         char c = s.charAt(0);
         if (c == Symbols.INTERVAL_PREFIX) {
             return Interval.interval(s);
+        }
+        else if (c == '^') {
+            return memory.getOperator(s);
         }
  
         if (containVar(s)) {

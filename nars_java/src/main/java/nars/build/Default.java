@@ -174,7 +174,7 @@ public class Default extends NewNAR implements ConceptBuilder {
 
         if (level >= 8) {
 
-            n.addPlugin(new Anticipate());      // expect an event
+            //n.addPlugin(new Anticipate());      // expect an event
 
             if (internalExperience == Minimal) {
                 n.addPlugin(new InternalExperience());

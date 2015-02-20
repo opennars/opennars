@@ -251,11 +251,7 @@ public class Variables {
 //    }    
     
     /**
-     * Check whether a string represent a name of a term that contains an
-     * independent variable
-     *
-     * @param n The string name to be checked
-     * @return Whether the name contains an independent variable
+     * test the invalidity of a term which may be using independent variables
      */
     public static boolean indepVarUsedInvalid(Term T) {
         if(!(T instanceof Inheritance) && !(T instanceof Similarity)) {

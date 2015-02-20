@@ -50,10 +50,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final TreeMap<Double,Task> close = new TreeMap();
 
     final int maxRemovals = 2;
-    private long ocOffset;
+    private long crOffset;
 
 
-    public TaskCondition(NAR n, Class channel, Task t, long occurenceTimeOffset)  {
+    public TaskCondition(NAR n, Class channel, Task t, long creationTimeOffset)  {
         super(n, Events.OUT.class, Events.TaskRemove.class);
 
         //TODO verify that channel is included in the listened events
@@ -61,7 +61,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.channel = channel;
 
 
-        this.creationTime = occurenceTimeOffset;
+        this.creationTime = creationTimeOffset;
 
         if (t.sentence.isEternal()) {
             setEternal();
@@ -69,7 +69,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         else {
             long oc = t.getOcurrenceTime() + t.getCreationTime();
             int dur = n.memory.getDuration();
-            setOccurrenceTime(occurenceTimeOffset, oc, dur);
+            setOccurrenceTime(creationTimeOffset, oc, dur);
         }
 
 
@@ -151,8 +151,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     /** task's tense is compared by its occurence time delta to the current time when processing */
-    public void setOccurrenceTime(long afterOccurenceTime, long oc, int duration) {
-        this.ocOffset = afterOccurenceTime - duration/2; //allow some padding for the task to occur within half a duration earlier than expected
+    public void setOccurrenceTime(long creationTime, long oc, int duration) {
+        this.crOffset = creationTime - duration/2; //allow some padding for the task to occur within half a duration earlier than expected
 
         //may be more accurate if duration/2
         this.ocMinRel = oc - duration;
@@ -237,16 +237,21 @@ public class TaskCondition extends OutputCondition implements Serializable {
                         match = false;
                     }
                     else {
-                        long oc = task.getOcurrenceTime() - nar.time();
-                        if (oc < ocOffset) {
-                            distance += rangeError(oc, 0, ocOffset, true) * timingCost;
+                        if (now > crOffset) {
+                            //too late
+                            distance += rangeError(now, 0, crOffset, true) * timingCost;
                             match = false;
                         }
-                        if ((oc < ocMinRel) || (oc > ocMaxRel)) {
-                            distance += rangeError(oc, ocMinRel, ocMaxRel, true) * tenseCost;
-                            match = false;
+                        else {
+                            long oc = task.getCreationTime() - now; //normalize time to relative
+                            if ((oc < ocMinRel) || (oc > ocMaxRel)) {
+                                //beyond tense boundaries
+                                distance += rangeError(oc, ocMinRel, ocMaxRel, true) * tenseCost;
+                                match = false;
+                            }
                         }
                     }
+
                 }
 
 

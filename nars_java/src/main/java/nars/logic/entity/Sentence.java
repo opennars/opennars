@@ -31,6 +31,7 @@ import nars.logic.TruthFunctions.EternalizedTruthValue;
 import nars.logic.entity.TruthValue.Truthable;
 import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal5.Conjunction;
+import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
@@ -104,26 +105,14 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    private Sentence(final T seedTerm, final char punctuation, final TruthValue truth, final NAL.StampBuilder stamp, boolean normalize) {
+    private Sentence(T seedTerm, final char punctuation, final TruthValue truth, final NAL.StampBuilder stamp, boolean normalize) {
         
 
-        if (Parameters.DEBUG) {
-            if (invalidSentenceTerm(seedTerm))
-                throw new RuntimeException("Invalid sentence content term: " + seedTerm);
-        }
 
         this.punctuation = punctuation;
 
         if ( (truth == null) && (!isQuestion() && !isQuest()) ) {
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
-        }
-
-        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
-            if (!Term.valid(seedTerm)) {
-                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + seedTerm);
-                ntc.printStackTrace();
-                throw ntc;
-            }
         }
 
 
@@ -136,8 +125,33 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
                 throw new RuntimeException("Questions and Quests require eternal tense");
         }
 
+        //temporary: clone the stamp in case it's modified in getTerm; shouldnt be necessary when terms are rerranged
+        st = st.clone();
+        T newSeedTerm = getTerm(seedTerm, st);
+        if (newSeedTerm!=seedTerm) {
+            normalize = true;
+            seedTerm = newSeedTerm;
+        }
+
+
+        if (Parameters.DEBUG) {
+            if (invalidSentenceTerm(seedTerm))
+                throw new RuntimeException("Invalid sentence content term: " + seedTerm);
+        }
+
+
         this.stamp = st;
-        
+
+        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+            if (!Term.valid(seedTerm)) {
+                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + seedTerm);
+                ntc.printStackTrace();
+                throw ntc;
+            }
+        }
+
+
+
         this.truth = truth;
 
         this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
@@ -146,6 +160,43 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
         this.hash = 0;
 
+    }
+
+    /** pre-processes a term for sentence's use; in most cases just returns the term itself */
+    protected T getTerm(T t, Stamp st) {
+        if (t instanceof Conjunction) {
+
+            //cut interval at end for sentence in serial conjunction, and inbetween for parallel
+            //TODO this can be extended to remove N suffix intervals, if we ever use the multiple interval thing
+            Conjunction c=(Conjunction)t;
+            if(c.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                if(c.term[c.term.length-1] instanceof Interval) {
+                    Term[] term2=new Term[c.term.length-1];
+                    //TODO use System.arraycopy
+                    for(int i=0;i<c.term.length-1;i++) {
+                        term2[i]=c.term[i];
+                    }
+                    T u = (T) Conjunction.make(term2, c.getTemporalOrder());
+
+                    //if the resulting term is valid for a sentence, adjust the stamp and return the new term
+                    if ((u = termOrNull(u)) != null) {
+
+                        //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
+                        //accordingly
+                        //TODO make this interval not hardcoded
+                        final int HARDCODED_DURATION = 5;
+                        long time = Interval.cycles(((Interval) c.term[c.term.length - 1]).magnitude, new Interval.AtomicDuration(HARDCODED_DURATION));
+                        st.setOccurrenceTime(st.getOccurrenceTime() - time);
+                        return u;
+                    }
+                    else {
+                        //the result would not be valid, so just return the original input
+                    }
+                }
+            }
+
+        }
+        return t;
     }
 
 
@@ -562,6 +613,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     public boolean after(Sentence s, int duration) {
         return stamp.after(s.stamp, duration);
     }
+
     public boolean before(Sentence s, int duration) {
         return stamp.before(s.stamp, duration);
     }

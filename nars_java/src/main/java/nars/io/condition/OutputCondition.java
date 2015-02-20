@@ -101,22 +101,11 @@ public abstract class OutputCondition extends AbstractReaction {
                 
 
                 boolean added = false;
-                //try {
-                    Task t = n.narsese.parseTask(match);
-                    if (t!=null) {
-                        /*if (t.sentence.isEternal())*/ {
-
-                            conditions.add(new TaskCondition(n, Events.OUT.class, t, cycle));
-                            added = true;
-                        }
-                    }
-
-                //allow exception to propagate
-                /*} catch (InvalidInputException e1) {
-                    System.err.println("NOT A TASK: " + match);
-                    //...
-                }*/
-
+                Task t = n.narsese.parseTask(match);
+                if (t!=null) {
+                    conditions.add(new TaskCondition(n, Events.OUT.class, t, cycle));
+                    added = true;
+                }
 
                 if (!added)
                     conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));

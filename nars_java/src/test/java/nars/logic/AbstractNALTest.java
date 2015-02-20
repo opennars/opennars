@@ -14,6 +14,7 @@ import nars.io.meter.Metrics;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
 import nars.io.meter.event.ObjectMeter;
+import nars.io.test.TestNAR;
 import nars.logic.meta.Derivations;
 import org.junit.After;
 import org.junit.Ignore;

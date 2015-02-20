@@ -212,7 +212,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      */
     public void processNext(final float forgetCycles, float accuracy, final Memory m) {
         int conceptsToForget = Math.max(1, (int) Math.round(size() * accuracy));
-        synchronized (forgetNext) {
+        /*synchronized (forgetNext)*/ {
             forgetNext.set(forgetCycles, m);
             for (int i = 0; i < conceptsToForget; i++) {
                 UPDATE(forgetNext);

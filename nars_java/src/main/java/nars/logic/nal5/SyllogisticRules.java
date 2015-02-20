@@ -270,8 +270,8 @@ public final class SyllogisticRules {
      * @param side The location of s2 in s1
      * @param nal Reference to the memory
      */
-    public static void detachment(Sentence mainSentence, Sentence subSentence, int side, NAL nal) {
-        Statement statement = (Statement) mainSentence.term;
+    public static void detachment(Sentence<Statement> mainSentence, Sentence subSentence, int side, NAL nal) {
+        Statement statement = mainSentence.term;
         if (!(statement instanceof Implication) && !(statement instanceof Equivalence)) {
             return;
         }

@@ -1,4 +1,4 @@
-package nars.core;
+package nars.io.test;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

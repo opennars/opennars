@@ -41,7 +41,7 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
     protected boolean forgetWillChangeBudget() {
         BudgetValue v = this.currentItem.budget;
         return (v.getLastForgetTime() != memory.time()) && //there is >0 time across which forgetting would be applied
-                (v.getPriority() > Parameters.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
+                (v.getPriority() > v.getQuality() * Parameters.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
     }
 
     public void set(float forgetCycles, Memory memory) {
@@ -51,8 +51,10 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
 
     @Override
     public V updateItem(V v) {
-        if (!Float.isFinite(forgetCycles))
-            throw new RuntimeException("Invalid forgetCycles parameter; set() method was probably not called prior");
+        if (Parameters.DEBUG) {
+            if (!Float.isFinite(forgetCycles))
+                throw new RuntimeException("Invalid forgetCycles parameter; set() method was probably not called prior");
+        }
 
         memory.forget(currentItem, forgetCycles, Parameters.FORGET_QUALITY_RELATIVE);
         return currentItem;
@@ -65,7 +67,10 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
 
     @Override
     public BudgetValue getBudget() {
-        return currentItem.budget;
+        //this returns null to avoid the default budget merging;
+        // budget manipulation happens entirely in this class's updateItem method
+        return null;
+
     }
 
     public V getItem() {

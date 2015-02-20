@@ -3,10 +3,13 @@ package nars.logic.nal8;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.build.Discretinuous;
+import nars.core.Events;
 import nars.core.NewNAR;
 import nars.core.Parameters;
+import nars.event.Reaction;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.JavaNALTest;
+import nars.logic.entity.Task;
 import nars.logic.nal7.Tense;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -82,6 +85,30 @@ public class NAL8Test extends JavaNALTest {
 
 
         testGoalExecute("<a --> b>", "(^pick,<c --> d>,SELF)");
+    }
+
+
+    @Test public void testOperationInheritance() {
+        nar.addInput("pick(c). :|:");
+        nar.run(6);
+        nar.addInput("<a --> b>. :|:");
+        nar.addInput("<a --> b>!");
+        nar.on(Events.TaskDerive.class, new Reaction() {
+            @Override
+            public void event(Class event, Object[] args) {
+                Task t = (Task) args[0];
+                System.out.println("Derived: " + t);
+            }
+        });
+        nar.on(Events.TaskRemove.class, new Reaction() {
+            @Override
+            public void event(Class event, Object[] args) {
+                Task t = (Task) args[0];
+                System.out.println("Remove: " + t + " " + t.getReason());
+            }
+        });
+        nar.run(100);
+
     }
 
 }

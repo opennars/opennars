@@ -25,11 +25,10 @@ import java.util.Arrays;
  * To rememberAction an internal action as an operation
  * <p>
  * called from Concept
- * @param task The task processed
  */
 public class InternalExperience extends AbstractPlugin  {
         
-    public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.75f;
+    public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;

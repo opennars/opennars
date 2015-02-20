@@ -217,6 +217,8 @@ public class Concept extends Item<Term> implements Termable {
     public boolean directProcess(final ImmediateProcess nal, final Task task) {
         if (!task.aboveThreshold()) {
             //available credit to boost priority (maximum=1-priority)
+            //NOT WORKING YET
+            /*
             float credit = Math.min( taskBudgetBalance, 1.0f - budget.getPriority());
             if (task.aboveThreshold(credit)) {
                 //spend credit
@@ -227,6 +229,8 @@ public class Concept extends Item<Term> implements Termable {
                 this.taskBudgetBalance += task.getPriority();
                 return false;
             }
+            */
+            return false;
         }
 
         char type = task.sentence.punctuation;
@@ -410,7 +414,7 @@ public class Concept extends Item<Term> implements Termable {
      * @return Whether to continue the processing of the task
      */
     protected void processGoal(final ImmediateProcess nal, final Task task) {
-        
+
         final Sentence goal = task.sentence, oldGoal;
 
         oldGoal = selectCandidate(goal, goals); // revise with the existing desire values
@@ -545,8 +549,10 @@ public class Concept extends Item<Term> implements Termable {
         //TODO parameter to use linear division, conserving total budget
         //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
         final int numTemplates = templates.size();
-        //final int numTemplates = (int) Math.sqrt(templates.size());
-        float linkSubBudgetDivisor = (float)numTemplates;
+
+
+        //float linkSubBudgetDivisor = (float)numTemplates;
+        float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
         taskLinkBuilder.setBudget(subBudget);
@@ -719,9 +725,9 @@ public class Concept extends Item<Term> implements Termable {
         //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
 
         //half of each subBudget is spent on this concept and the other concept's termlink
-        float linkSubBudgetDivisor = (float) recipients;
-        subBudget = taskBudget.getPriority() / (2 * linkSubBudgetDivisor);
-        //subBudget = taskBudget.getPriority() / (int)(Math.sqrt(linkSubBudgetDivisor));
+        //subBudget = taskBudget.getPriority() * (1f / (2* * recipients));
+
+        subBudget = taskBudget.getPriority() * (1f / (float)Math.sqrt(recipients));
 
         if (!termLinkBuilder.set(subBudget, taskBudget.getDurability(), taskBudget.getQuality()).aboveThreshold()) {
             //account for unused priority

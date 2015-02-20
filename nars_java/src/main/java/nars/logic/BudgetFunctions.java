@@ -219,13 +219,13 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param relativeThreshold The relative threshold of the bag
      */
     @Deprecated public static float forgetIterative(final BudgetValue budget, final float forgetCycles, final float relativeThreshold) {
-        float quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
-        final float p = budget.getPriority() - quality;                     // priority above quality
-        if (p > 0) {
-            quality += p * pow(budget.getDurability(), 1.0 / (forgetCycles * p));
+        float newPri = budget.getQuality() * relativeThreshold;      // re-scaled quality
+        final float dp = budget.getPriority() - newPri;                     // priority above quality
+        if (dp > 0) {
+            newPri += dp * pow(budget.getDurability(), 1.0 / (forgetCycles * dp));
         }    // priority Durability
-        budget.setPriority(quality);
-        return quality;
+        budget.setPriority(newPri);
+        return newPri;
     }
 
     /** forgetting calculation for real-time timing */
@@ -246,7 +246,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         float forgetProportion = forgetDelta / forgetTime;
         if (forgetProportion <= 0) return currentPriority;
 
-        //more durability = slower forgetting
+        //more durability = slower forgetting; durability near 1.0 means forgetting will happen slowly, near 0.0 means will happen at a max rate
         forgetProportion *= (1.0 - budget.getDurability());
 
         float newPriority;
@@ -363,17 +363,18 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget of the conclusion task
      */
     private static BudgetValue budgetInference(final float qual, final int complexity, final NAL nal) {
-        Item t =   nal.getCurrentTask();
-                //nal.getCurrentTaskLink();
-
-        TermLink bLink = nal instanceof ConceptFire ? ((ConceptFire)nal).getCurrentBeliefLink() : null;
-
-        if (t == null) {
-            t = nal.getCurrentTask();
+        Item t = null;
+        if (nal instanceof ConceptFire) {
+            t =((ConceptFire)nal).getCurrentTaskLink();
         }
+        if (t == null)
+            t = nal.getCurrentTask();
+
         float priority = t.getPriority();
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
+
+        TermLink bLink = nal instanceof ConceptFire ? ((ConceptFire)nal).getCurrentBeliefLink() : null;
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());
@@ -381,6 +382,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             bLink.incPriority(or(quality, targetActivation));
             bLink.incDurability(quality);
         }
+
         return new BudgetValue(priority, durability, quality);
     }
 

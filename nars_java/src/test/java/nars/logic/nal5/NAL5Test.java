@@ -84,7 +84,7 @@ public class NAL5Test extends JavaNALTest {
 
         */
 
-        long time = 525;
+        long time = 500;
 
 
         nar.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", Eternal, 0.9f, 0.9f)

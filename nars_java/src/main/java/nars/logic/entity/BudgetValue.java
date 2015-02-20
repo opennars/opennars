@@ -87,18 +87,9 @@ public class BudgetValue implements Cloneable {
      * @param q Initial quality
      */
     public BudgetValue(final float p, final float d, final float q) {
-        priority = p;
-        durability = d;
+        setPriority(p);
+        setDurability(d);
         quality = q;
-        
-        if(d>=1.0) {
-            durability=(float) (1.0-TRUTH_EPSILON);
-            //throw new RuntimeException("durability value above or equal 1");
-        }
-        if(p>1.0) {
-            priority=1.0f;
-            //throw new RuntimeException("priority value above 1");
-        }
     }
 
     /**
@@ -130,8 +121,13 @@ public class BudgetValue implements Cloneable {
      * @param v The new priority
      * @return whether the operation had any effect
      */
-    public final boolean setPriority(final float v) {
+    public final boolean setPriority(float v) {
         if (Parameters.DEBUG) ensureBetweenZeroAndOne(v);
+
+        if(v>1.0) {
+            v=1.0f;
+            //throw new RuntimeException("priority value above 1");
+        }
 
         if (priority==v)
             return false;
@@ -182,9 +178,13 @@ public class BudgetValue implements Cloneable {
      * Change durability value
      * @param d The new durability
      */
-    public boolean setDurability(final float d) {
+    public boolean setDurability(float d) {
         if (Parameters.DEBUG) ensureBetweenZeroAndOne(d);
 
+        if(d>=1.0) {
+            d = (float) (1.0-TRUTH_EPSILON);
+            //throw new RuntimeException("durability value above or equal 1");
+        }
         if (durability!=d) {
             durability = d;
             return true;
@@ -197,11 +197,7 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incDurability(final float v) {
-        float durability2 = or(durability, v);
-        if(durability2>=1.0f) {
-            durability2=1.0f-TRUTH_EPSILON; //put into allowed range
-        }
-        durability=durability2;
+        setDurability(or(durability, v));
     }
 
     /**
@@ -209,7 +205,7 @@ public class BudgetValue implements Cloneable {
      * @param v The decreasing percent
      */
     public void decDurability(final float v) {
-        durability = and(durability, v);
+        setDurability(and(durability, v));
     }
 
     /**
@@ -259,17 +255,18 @@ public class BudgetValue implements Cloneable {
         return BudgetFunctions.merge(this, that);
     }
     
-    /**
-     * returns true if this budget is greater in all quantities than another budget,
-     * used to prevent a merge that would have no consequence
-     * @param other
-     * @return 
-     */
-    public boolean greaterThan(final BudgetValue other) {
-        return (getPriority() - other.getPriority() > Parameters.BUDGET_THRESHOLD) &&
-                (getDurability()- other.getDurability()> Parameters.BUDGET_THRESHOLD) &&
-                (getQuality() - other.getQuality() > Parameters.BUDGET_THRESHOLD);
-    }
+//    /**
+//     * returns true if this budget is greater in all quantities than another budget,
+//     * used to prevent a merge that would have no consequence
+//     * NOT TESTED
+//     * @param other
+//     * @return
+//     */
+//    public boolean greaterThan(final BudgetValue other) {
+//        return (getPriority() - other.getPriority() > Parameters.BUDGET_THRESHOLD) &&
+//                (getDurability()- other.getDurability()> Parameters.BUDGET_THRESHOLD) &&
+//                (getQuality() - other.getQuality() > Parameters.BUDGET_THRESHOLD);
+//    }
 
     
     /**

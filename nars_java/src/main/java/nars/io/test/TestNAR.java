@@ -1,4 +1,4 @@
-package nars.logic;
+package nars.io.test;
 
 import nars.core.*;
 import nars.event.AbstractReaction;
@@ -13,7 +13,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertTrue;
 
 /**
 * TODO use a countdown latch to provide early termination for successful tests
@@ -224,7 +223,8 @@ public class TestNAR extends NAR {
     }
 
 
-    public void evaluate() {
+    /** returns null if there is no error, or a non-null String containing report if error */
+    public String evaluate() {
         int conditions = requires.size();
         int failures = getError()!=null ? 1 : 0;
 
@@ -239,16 +239,19 @@ public class TestNAR extends NAR {
 
         int successes = conditions - failures;
 
-        String result = "";
-        if (error!=null) {
-            result += error.toString() + " ";
-        }
-        if (failures > 0) {
-            result += successes + "/ " + conditions + " conditions passed";
-        }
+
         if (error!=null || failures > 0) {
-            assertTrue(result, false);
+            String result = "";
+            if (error!=null) {
+                result += error.toString() + " ";
+            }
+            if (failures > 0) {
+                result += successes + "/ " + conditions + " conditions passed";
+            }
+            return result;
         }
+
+        return null;
 
     }
 

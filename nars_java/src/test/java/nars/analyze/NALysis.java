@@ -10,7 +10,7 @@ import nars.io.TextOutput;
 import nars.io.TraceWriter;
 import nars.io.condition.OutputCondition;
 import nars.logic.AbstractNALTest;
-import nars.logic.TestNAR;
+import nars.io.test.TestNAR;
 import org.junit.Ignore;
 
 import java.util.Collection;

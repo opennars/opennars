@@ -86,25 +86,36 @@ public abstract class SynchronousTermFunction extends Operator {
         Operation opart =(Operation) operation.setComponent(0,
                 ((CompoundTerm)operation.getSubject()).setComponent(
                         numArgs-1, var));
-        
+
+
+        CompoundTerm actual_dep_part = variable ? Similarity.make((Variable) lastTerm, y) : null;
+
+
         CompoundTerm actual =
                 Sentence.termOrNull(Implication.make(opart, actual_part, TemporalRules.ORDER_FORWARD));
         if (actual == null) return null;
 
-//        return newArrayList(
-//                m.newTask(actual, Symbols.JUDGMENT,
-//                        1f, 0.99f,
-//                        Parameters.DEFAULT_JUDGMENT_PRIORITY,
-//                        Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
-//                ));
+
+        float confidence = 0.99f;
+
         return newArrayList(
+
                 m.newTask(actual).judgment()
                         .budget(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-                        .truth(1f, 0.99f).now().parent( operation.getTask() )
-                                        .get()
+                        .truth(1f, confidence)
+                        .now()
+                        .parent(operation.getTask())
+                        .get(),
 
+                actual_dep_part!=null?
+                        m.newTask(actual_dep_part).judgment()
+                        .budget(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+                        .truth(1f, confidence)
+                        .now()
+                        .parent(operation.getTask())
+                        .get() : null
 
-                        );
+        );
 
         //if (variable) {
         //}

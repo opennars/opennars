@@ -32,7 +32,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
         this.concept = c;
 
-        setBudget(new BudgetValue(0,0,0));
+        setBudget(new BudgetValue(0,0.5f,0.5f));
 
         host = (CompoundTerm)c.getTerm();
 

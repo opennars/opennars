@@ -20,6 +20,7 @@
  */
 package nars.logic.nal1;
 
+import nars.core.Parameters;
 import nars.logic.NALOperator;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Statement;
@@ -89,7 +90,12 @@ public class Inheritance extends Statement {
         boolean subjectProduct = subject instanceof Product;
         boolean predicateOperator = predicate instanceof Operator;
         
-        
+        if (Parameters.DEBUG) {
+            if (!predicateOperator && predicate.toString().startsWith("^")) {
+                throw new RuntimeException("operator term detected but is not an operator: " + predicate);
+            }
+        }
+
         if (subjectProduct && predicateOperator) {
             return Operation.make((Operator) predicate, ((CompoundTerm) subject).term);
         } else {            
