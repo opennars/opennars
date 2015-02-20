@@ -134,6 +134,8 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         }
         
         if(_content.subjectOrPredicateIsIndependentVar()) {
+            truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
+            if(Parameters.DEBUG)
                 throw new RuntimeException("A statement sentence is not allowed to have a independent variable as subj or pred");
         }
         
