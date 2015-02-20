@@ -6,10 +6,10 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.stamp.Stamp;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.entity.TruthValue;
+import nars.logic.nal7.Tense;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -37,11 +37,13 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final long cycleStart; //-1 for not compared
     @Expose
     public final long cycleEnd;  //-1 for not compared
+
+    @Expose
     private final long creationTime;
 
-    /** min and max occurrenceTime range (relative to current time which the task is output); not checked if tense==ETERNAL, checked otherwise */
+
     @Expose
-    public long ocMinRel = -1, ocMaxRel = -1;
+    public Tense tense = Tense.Eternal;
 
     public final List<Task> trueAt = new ArrayList();
     public final Deque<Task> removals = new ArrayDeque();
@@ -67,9 +69,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
             setEternal();
         }
         else {
-            long oc = t.getOcurrenceTime() + t.getCreationTime();
-            int dur = n.memory.getDuration();
-            setOccurrenceTime(creationTimeOffset, oc, dur);
+            long oc = t.getOcurrenceTime() - t.getCreationTime();
+            setOccurrenceTime(creationTimeOffset, oc, n.memory.getDuration());
         }
 
 
@@ -155,13 +156,14 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.crOffset = creationTime - duration/2; //allow some padding for the task to occur within half a duration earlier than expected
 
         //may be more accurate if duration/2
-        this.ocMinRel = oc - duration;
-        this.ocMaxRel = oc + duration;
+        if (oc == 0) tense = Tense.Present;
+        if (oc > 0) tense = Tense.Future;
+        if (oc < 0) tense = Tense.Past;
     }
 
 
-    public void setEternal() { this.ocMinRel = this.ocMaxRel = Stamp.ETERNAL; }
-    public boolean isEternal() { return this.ocMinRel == Stamp.ETERNAL; }
+    public void setEternal() { this.tense = Tense.Eternal; }
+    public boolean isEternal() { return this.tense == Tense.Eternal; }
 
     public boolean matches(Task task) {
         if (task.sentence.punctuation != punc)
@@ -212,7 +214,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                 long now = nar.time();
 
 
-                boolean match = false;
+                boolean match = true;
 
                 if ( ((cycleStart!=-1) && (now < cycleStart)) ||
                         ((cycleEnd!=-1) && (now > cycleEnd)))  {
@@ -237,17 +239,30 @@ public class TaskCondition extends OutputCondition implements Serializable {
                         match = false;
                     }
                     else {
-                        if (now > crOffset) {
+                        /*if (now > crOffset) {
                             //too late
                             distance += rangeError(now, 0, crOffset, true) * timingCost;
                             match = false;
                         }
-                        else {
-                            long oc = task.getCreationTime() - now; //normalize time to relative
-                            if ((oc < ocMinRel) || (oc > ocMaxRel)) {
+                        else */{
+                            long oc = task.getOcurrenceTime() - now; //normalize time to relative
+                            int halfDur = task.sentence.getStamp().getDuration()/2;
+                            final boolean tmatch;
+                            switch (tense) {
+                                case Past: tmatch = oc <= -halfDur; break;
+                                case Present: tmatch = oc > -halfDur && oc < +halfDur; break;
+                                case Future: tmatch = oc >= +halfDur; break;
+                                default:
+                                    throw new RuntimeException("Invalid tense for non-etrenal TaskConditoin: " + this);
+                            }
+                            if (!tmatch) {
                                 //beyond tense boundaries
-                                distance += rangeError(oc, ocMinRel, ocMaxRel, true) * tenseCost;
+                                //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
+                                distance += tenseCost;
                                 match = false;
+                            }
+                            else {
+                                //System.out.println("matched time");
                             }
                         }
                     }
@@ -363,8 +378,5 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public long getCreationTime() {
         return creationTime;
     }
-    public long getMeanOccurrenceTime() {
-        if (isEternal()) return Stamp.ETERNAL;
-        return (ocMinRel + ocMaxRel) / 2L;
-    }
+
 }

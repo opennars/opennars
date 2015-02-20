@@ -41,7 +41,7 @@ public class NALysisSome extends NALysis {
         TestNAR n = analyze(
                 build,
                 test,
-                3500,
+                120,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {
@@ -58,7 +58,6 @@ public class NALysisSome extends NALysis {
         });
 
         n.run();
-        n.report(System.out, true, true, true);
 
 
         //results.printARFF(new PrintStream(dataOut));

@@ -512,7 +512,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         if (key == null) {
             final CharSequence contentName = term.name();
             
-            final boolean showOcurrenceTime = true; //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
+            final boolean showOcurrenceTime = !isEternal(); //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
             //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
             
             //final CharSequence truthString = truth != null ? truth.name() : null;
@@ -530,8 +530,9 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
                 truth.appendString(suffix, false);
             }
             if ((showOcurrenceTime) && (stamp!=null)) {
-                suffix.append(' ');
+                suffix.append(" {"); //space + stamp opener
                 stamp.appendOcurrenceTime(suffix);
+                suffix.append('}'); //stamp closer
             }
 
             key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 

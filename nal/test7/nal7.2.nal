@@ -4,7 +4,8 @@
 
   IN: <(*,John,key_101) --> hold>. :|:
   
+''outputMustContain('<(*,John,room_101) --> enter>. :/: %1.00;0.81%')
+
 20
 
-''outputMustContain('<(*,John,room_101) --> enter>. :/: %1.00;0.81%')
 

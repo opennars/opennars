@@ -424,25 +424,31 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     
     public StringBuilder appendOcurrenceTime(final StringBuilder sb) {
         if (occurrenceTime != ETERNAL) {
-            int estTimeLength = 8; /* # digits */
-            sb.ensureCapacity(estTimeLength + 1 + 1);
-            sb.append('[').append(occurrenceTime).append(']');
+            int estTimeLength = 10; /* # digits */
+            sb.ensureCapacity(estTimeLength);
+            sb.append(creationTime);
+
+            int relOc = (int)(occurrenceTime - creationTime);
+            if (relOc >= 0) sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
+            sb.append(relOc);
+
+
         }
         return sb;
     }
-            
-    /**
-     * Get the occurrenceTime of the truth-value
-     *
-     * @return The occurrence time
-     */
-    public String getOccurrenceTimeString() {
-        if (isEternal()) {
-            return "";
-        } else {
-            return appendOcurrenceTime(new StringBuilder()).toString();
-        }
-    }
+//
+//    /**
+//     * Get the occurrenceTime of the truth-value
+//     *
+//     * @return The occurrence time
+//     */
+//    public String getOccurrenceTimeString() {
+//        if (isEternal()) {
+//            return "";
+//        } else {
+//            return appendOcurrenceTime(new StringBuilder()).toString();
+//        }
+//    }
 
     public String getTense(final long currentTime, final int duration) {
         
@@ -468,13 +474,16 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
             final int estimatedInitialSize = 8 + (baseLength * 3);
 
             final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
-            buffer.append(Symbols.STAMP_OPENER).append(getCreationTime());
+            buffer.append(Symbols.STAMP_OPENER);
             if (!isEternal()) {
-                buffer.append('|').append(occurrenceTime);
+                appendOcurrenceTime(buffer);
             }
-            buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+            else {
+                buffer.append(getCreationTime());
+            }
+            buffer.append(Symbols.STAMP_STARTER).append(' ');
             for (int i = 0; i < baseLength; i++) {
-                buffer.append(Long.toString(evidentialBase[i]));
+                buffer.append(Long.toString(evidentialBase[i], 16));
                 if (i < (baseLength - 1)) {
                     buffer.append(Symbols.STAMP_SEPARATOR);
                 }
