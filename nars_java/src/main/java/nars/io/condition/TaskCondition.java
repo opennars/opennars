@@ -39,7 +39,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final long cycleEnd;  //-1 for not compared
 
     @Expose
-    private final long creationTime;
+    private long creationTime;
 
 
     @Expose
@@ -52,7 +52,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final TreeMap<Double,Task> close = new TreeMap();
 
     final int maxRemovals = 2;
-    private long crOffset;
 
 
     public TaskCondition(NAR n, Class channel, Task t, long creationTimeOffset)  {
@@ -69,8 +68,13 @@ public class TaskCondition extends OutputCondition implements Serializable {
             setEternal();
         }
         else {
-            long oc = t.getOcurrenceTime() - t.getCreationTime();
-            setOccurrenceTime(creationTimeOffset, oc, n.memory.getDuration());
+            /* a TaskCondition created for a Task with a tense (non-eternal)
+                will refer to a time interval relative to creationTimeOffset
+                which refers to a specific time during execution.
+                Ex: if the task is past, it will reference any time before creationTime-duration/2
+             */
+            long oc = t.getOcurrenceTime() - t.getCreationTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
+            setOccurrenceTime(oc, n.memory.getDuration());
         }
 
 
@@ -152,15 +156,16 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     /** task's tense is compared by its occurence time delta to the current time when processing */
-    public void setOccurrenceTime(long creationTime, long oc, int duration) {
-        this.crOffset = creationTime - duration/2; //allow some padding for the task to occur within half a duration earlier than expected
-
+    public void setOccurrenceTime(long ocRelative, int duration) {
         //may be more accurate if duration/2
-        if (oc == 0) tense = Tense.Present;
-        if (oc > 0) tense = Tense.Future;
-        if (oc < 0) tense = Tense.Past;
+        if (ocRelative == 0) tense = Tense.Present;
+        if (ocRelative > 0) tense = Tense.Future;
+        if (ocRelative < 0) tense = Tense.Past;
     }
-
+    public void setOccurrenceTime(long creationTime, int ocRelative, int duration) {
+        this.creationTime = creationTime;
+        setOccurrenceTime(ocRelative, duration);
+    }
 
     public void setEternal() { this.tense = Tense.Eternal; }
     public boolean isEternal() { return this.tense == Tense.Eternal; }
@@ -239,19 +244,14 @@ public class TaskCondition extends OutputCondition implements Serializable {
                         match = false;
                     }
                     else {
-                        /*if (now > crOffset) {
-                            //too late
-                            distance += rangeError(now, 0, crOffset, true) * timingCost;
-                            match = false;
-                        }
-                        else */{
-                            long oc = task.getOcurrenceTime() - now; //normalize time to relative
-                            int halfDur = task.sentence.getStamp().getDuration()/2;
+
+                            final long oc = task.getOcurrenceTime();
+                            final int halfDur = task.sentence.getStamp().getDuration()/2;
                             final boolean tmatch;
                             switch (tense) {
-                                case Past: tmatch = oc <= -halfDur; break;
-                                case Present: tmatch = oc > -halfDur && oc < +halfDur; break;
-                                case Future: tmatch = oc >= +halfDur; break;
+                                case Past: tmatch = oc < (-halfDur + creationTime); break;
+                                case Present: tmatch = oc >= (-halfDur + creationTime) && (oc <= +halfDur + creationTime); break;
+                                case Future: tmatch = oc > (+halfDur + creationTime); break;
                                 default:
                                     throw new RuntimeException("Invalid tense for non-etrenal TaskConditoin: " + this);
                             }
@@ -264,7 +264,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                             else {
                                 //System.out.println("matched time");
                             }
-                        }
+
                     }
 
                 }
@@ -378,5 +378,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public long getCreationTime() {
         return creationTime;
     }
+
 
 }
