@@ -54,6 +54,9 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
      */
     private long occurrenceTime;
 
+    /** duration (in cycles) which any contained intervals are measured by */
+    private final int duration;
+
     /**
      * default for atemporal events
      * means "always" in Judgment/Question, but "current" in Goal/Quest     
@@ -98,9 +101,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         this.occurrenceTime = l;
     }
 
-    protected Stamp(final long serial, long creationTime) {
+    protected Stamp(final long serial, long creationTime, final int duration) {
         super();
 
+        this.duration = duration;
         this.evidentialBase = new long[1];
         this.evidentialBase[0] = serial;
 
@@ -109,17 +113,6 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
 
 
-    /**
-     * Generate a new stamp, with a new serial number, for a new Task
-     *
-     * @param creationTime Creation time of the stamp
-     */
-    protected Stamp(final long serial, final long creationTime, final Tense tense, final int duration) {
-        this(serial, creationTime);
-
-        setOccurenceTime(tense, duration);
-
-    }
 
     protected void setOccurenceTime(Tense tense, int duration) {
         if (tense == null) {
@@ -165,11 +158,13 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
     public Stamp(final Stamp parent, final long creationTime, final long occurenceTime) {
         this(parent, creationTime);
+
         this.occurrenceTime = occurenceTime;
 
     }
     public Stamp(final Stamp parent, final long creationTime) {
 
+        this.duration = parent.duration;
         this.evidentialBase = parent.evidentialBase;
 
         this.creationTime = creationTime;
@@ -178,8 +173,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
 
     public Stamp(final Stamp first, final Stamp second, final long creationTime) {
-        this(first, second, creationTime,
-                first.getOccurrenceTime() /* use the creation time of the first task */ );
+        this(first, second, creationTime,  first.getOccurrenceTime() /* use the creation time of the first task */ );
     }
 
     /**
@@ -197,6 +191,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
         final long[] firstBase = first.evidentialBase;
         final long[] secondBase = second.evidentialBase;
+
+        this.duration = first.duration;
+        if (second.duration!=first.duration)
+            throw new RuntimeException("Stamp can not be created from parents with different durations: " + first + ", " + second);
 
         final int baseLength = Math.min(firstBase.length + secondBase.length, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
         this.evidentialBase = new long[baseLength];
@@ -219,7 +217,9 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
     }
 
     public Stamp(final Memory memory, final Tense tense, long creationTime) {
-        this(memory.newStampSerial(), creationTime, tense, memory.param.duration.get());
+        this(memory.newStampSerial(), creationTime, memory.getDuration());
+
+        setOccurenceTime(tense, duration);
     }
 
     /** create stamp at current memory time */
@@ -229,7 +229,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
 
     public Stamp(final Memory memory, long creationTime, long occurenceTime) {
-        this(memory.newStampSerial(), creationTime);
+        this(memory.newStampSerial(), creationTime, memory.getDuration());
         this.occurrenceTime = occurenceTime;
     }
 
@@ -503,9 +503,9 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         return creationTime;
     }
 
-
-
-
+    public int getDuration() {
+        return duration;
+    }
 
 
     //String toStringCache = null; //holds pre-allocated symbol for toString()

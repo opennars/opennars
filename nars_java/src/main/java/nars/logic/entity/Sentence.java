@@ -125,12 +125,17 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
                 throw new RuntimeException("Questions and Quests require eternal tense");
         }
 
-        //temporary: clone the stamp in case it's modified in getTerm; shouldnt be necessary when terms are rerranged
-        st = st.clone();
-        T newSeedTerm = getTerm(seedTerm, st);
-        if (newSeedTerm!=seedTerm) {
-            normalize = true;
-            seedTerm = newSeedTerm;
+        this.truth = truth;
+
+
+        //HACK special handling for conjunctions which may have a trailing interval
+        if ((seedTerm instanceof Conjunction) && (seedTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            st = st.clone(); //temporary: clone the stamp in case it's modified in getTerm; shouldnt be necessary when terms are rerranged
+            T newSeedTerm = getTerm(seedTerm, st);
+            if (newSeedTerm != seedTerm) {
+                normalize = true;
+                seedTerm = newSeedTerm;
+            }
         }
 
 
@@ -152,7 +157,6 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
 
 
 
-        this.truth = truth;
 
         this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
 
@@ -184,13 +188,14 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
                         //accordingly
                         //TODO make this interval not hardcoded
-                        final int HARDCODED_DURATION = 5;
-                        long time = Interval.cycles(((Interval) c.term[c.term.length - 1]).magnitude, new Interval.AtomicDuration(HARDCODED_DURATION));
+                        long time = Interval.cycles(((Interval) c.term[c.term.length - 1]).magnitude, new Interval.AtomicDuration(st.getDuration()));
                         st.setOccurrenceTime(st.getOccurrenceTime() - time);
                         return u;
                     }
                     else {
                         //the result would not be valid, so just return the original input
+                        //this sentence should not be created but in the meantime, this will prevent it from having any effect
+                        truth.setConfidence(0);
                     }
                 }
             }
