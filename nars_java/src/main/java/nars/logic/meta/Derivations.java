@@ -11,6 +11,7 @@ import nars.logic.entity.*;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
+import org.jgrapht.graph.DirectedMultigraph;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -34,26 +35,65 @@ import java.util.Map;
  * terms are stored with their names normalized to generic values, ex;
  * <(*,<A --> B>,(--,C)) --> D>
  */
-public class Derivations {
+public class Derivations extends DirectedMultigraph {
 
-    public final Multimap<String, String> data;
+
+    public final Multimap<Premise, String> premiseResult;
+
     private final boolean includeDerivedBudget;
     private final boolean includeDerivedTruth;
 
+    StringBuilder tempResultString = new StringBuilder(128);
+
     public Derivations(boolean includeDerivedBudget, boolean includeDerivedTruth) {
-        data = MultimapBuilder.treeKeys().treeSetValues().build();
+        super((Class)null);
+
+        premiseResult = MultimapBuilder.treeKeys().treeSetValues().build();
         this.includeDerivedBudget = includeDerivedBudget;
         this.includeDerivedTruth = includeDerivedTruth;
     }
 
-    public String getCase(Term concept, TaskLink tasklink, TermLink termlink, Map<Term,Integer> unique, long now) {
-        return new StringBuilder()
-                .append(concept == null ? '_' : genericString(concept.getTerm(), unique))
-                .append("  ")
-                .append(tasklink == null ? '_' : genericString(tasklink.getSentence(), unique, now))
-                .append("  ")
-                .append(termlink == null ? '_' : genericString(termlink.getTerm(), unique)).toString();
 
+    public static class Premise implements Comparable<Premise> {
+
+        private final String conceptKey;
+        private final String taskLinkKey;
+        private final String termLinkKey;
+        public final String key;
+
+        public Premise(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now, boolean truth, boolean budget) {
+            this.conceptKey = genericString(concept.getTerm(), unique);
+            this.taskLinkKey = genericString(tasklink.getTask(), unique, now, truth, budget);
+            this.termLinkKey = termlink == null ? "" : genericString(termlink.getTerm(), unique);
+            this.key = (conceptKey + ' ' + taskLinkKey + ' ' + termLinkKey).trim();
+        }
+
+        @Override
+        public String toString() {
+            return key;
+        }
+
+        @Override
+        public int hashCode() {
+            return key.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Premise) {
+                return key.equals(((Premise)obj).key);
+            }
+            return false;
+        }
+
+        @Override
+        public int compareTo(Premise o) {
+            return key.compareTo(o.key);
+        }
+    }
+
+    public Premise newPremise(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now) {
+        return new Premise(concept, tasklink, termlink, unique, now, includeDerivedTruth, includeDerivedBudget);
     }
 
     public AbstractReaction record(NAR n) {
@@ -67,8 +107,7 @@ public class Derivations {
                     TaskLink tl = (TaskLink)args[0];
                     Concept c = (Concept)args[1];
                     NAL n = (NAL)args[2];
-                    //TODO i broke this
-                    //record(c, tl, null, n.produced, n.getTime());
+                    record(c, tl, null, n.getNewTasks(), n.time());
                 }
 
                 else if (event == Events.TermLinkSelected.class) {
@@ -79,9 +118,7 @@ public class Derivations {
                     int taskStart = (int) args[4];
                     int taskEnd = (int) args[5];
 
-                    //TODO i broke this
-                    Iterable<Task> theTasks = Iterables.limit(Iterables.skip(n.getNewTasks(), taskStart), taskEnd - taskStart);
-                    record(c, tasklink, termlink, theTasks, n.time());
+                    record(c, tasklink, termlink, getTasks(n, taskStart, taskEnd), n.time());
                 }
 
                 else if (event == Events.TaskDerive.class) {
@@ -91,41 +128,39 @@ public class Derivations {
         };
     }
 
+    static Iterable<Task> getTasks(NAL n, int taskStart, int taskEnd) {
+        return Iterables.limit(Iterables.skip(n.getNewTasks(), taskStart), taskEnd - taskStart);    }
 
 
-    StringBuilder resultString = new StringBuilder(128);
-    StringBuilder sb = new StringBuilder(128);
 
-    public synchronized String genericString(Task t, Map<Term,Integer> unique, long now) {
-        String s = genericString(t.sentence, unique, now);
 
-        sb.setLength(0);
+    public static String genericString(Task t, Map<Term,Integer> unique, long now, boolean includeDerivedTruth, boolean includeDerivedBudget) {
+        StringBuilder tempTaskString = new StringBuilder(128);
 
-        //TODO tense
+        String s = genericString(t.sentence, unique, now, includeDerivedTruth);
 
         if (includeDerivedBudget)
-            sb.append(t.budget.toStringExternal1(false));
-        sb.append(s);
-        if (includeDerivedTruth)
-            sb.append(t.sentence.truth.toStringExternal1());
+            tempTaskString.append(t.budget.toStringExternal1(false));
 
-        return sb.toString();
+        tempTaskString.append(s);
+
+        return tempTaskString.toString();
     }
 
     public synchronized void record(Concept c, TaskLink tasklink, TermLink termlink, Iterable<Task> result, long now) {
-        resultString.setLength(0);
+        tempResultString.setLength(0);
 
         Map<Term,Integer> unique = new HashMap();
-        String ca = getCase(c.getTerm(), tasklink, termlink, unique, now);
+        Premise derivationClass = newPremise(c.getTerm(), tasklink, termlink, unique, now);
 
         for (Task t : result) {
-            resultString.append(genericString(t, unique, now)).append("  ");
+            tempResultString.append(genericString(t, unique, now, includeDerivedTruth, includeDerivedBudget)).append("  ");
 
         }
 
-        String r = resultString.toString();
+        String r = tempResultString.toString();
 
-        data.put(ca, r);
+        premiseResult.put(derivationClass, r);
     }
 
     public static String genericLiteral(Term c, Map<Term, Integer> unique) {
@@ -152,11 +187,17 @@ public class Derivations {
 
     }
 
-    public static String genericString(Sentence s, Map<Term,Integer> unique, long now) {
+    public static String genericString(Sentence s, Map<Term,Integer> unique, long now, boolean includeTruth) {
         String t = genericString(s.term, unique);
         t += s.punctuation;
-        if (s.isEternal()) return t;
-        return t + Tense.tenseRelative(s.getOccurrenceTime(), now);
+
+        if (!s.isEternal())
+            t += Tense.tenseRelative(s.getOccurrenceTime(), now);
+
+        if (includeTruth)
+            t += (s.truth.toStringExternal1());
+
+        return t;
     }
 
     public static String genericString(Term t, Map<Term,Integer> _unique) {
@@ -188,12 +229,12 @@ public class Derivations {
 
     @Override
     public String toString() {
-        return data.toString();
+        return premiseResult.toString();
     }
 
     public void print(PrintStream p) {
-        for (String k : data.keySet()) {
-            Collection<String> l = data.get(k);
+        for (Premise k : premiseResult.keySet()) {
+            Collection<String> l = premiseResult.get(k);
             p.println();
             p.print(k);
             p.print(": ");

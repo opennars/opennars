@@ -4,16 +4,9 @@ import nars.build.Default;
 import nars.core.NAR;
 import nars.io.ExampleFileInput;
 import nars.io.test.TestNAR;
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.graph.DirectedMultigraph;
 
-public class Derivations1 extends DirectedMultigraph {
+public class Derivations1  {
 
-
-    public Derivations1() {
-
-        super((EdgeFactory)null);
-    }
 
 
     public static void main(String[] args) {
