@@ -21,7 +21,7 @@
 package nars.logic.entity;
 
 import nars.logic.Terms.Termable;
-import nars.logic.entity.Sentence.Sentenceable;
+import nars.logic.entity.Sentence.Sentenced;
 import nars.logic.entity.tlink.TermLinkTemplate;
 
 import java.util.ArrayDeque;
@@ -36,7 +36,7 @@ import java.util.Iterator;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, Sentenceable {
+public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, Sentenced {
 
     /**
      * The Task linked

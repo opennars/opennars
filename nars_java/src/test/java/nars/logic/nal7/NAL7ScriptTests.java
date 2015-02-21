@@ -8,6 +8,8 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
+import static nars.io.ExampleFileInput.getParams;
+
 public class NAL7ScriptTests extends ScriptNALTest {
 
     public NAL7ScriptTests(NewNAR b, String input) {
@@ -21,7 +23,7 @@ public class NAL7ScriptTests extends ScriptNALTest {
                 new Default().setInternalExperience(null));
     }
 
-    public int getMaxCycles() { return 1500; }
+    public int getMaxCycles() { return 500; }
 
 
 }

@@ -33,9 +33,7 @@ import java.util.Arrays;
 import static nars.logic.nal7.TemporalRules.*;
 import static nars.logic.nal7.Tense.*;
 
-
-public class Stamp implements Cloneable, NAL.StampBuilder {
-
+public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
 
     /**
      * serial numbers. not to be modified after Stamp constructor has initialized it
@@ -110,7 +108,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
         this.creationTime = creationTime;
 
-    }
+     }
 
 
 
@@ -150,7 +148,11 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
         setOccurenceTime(tense, memory.getDuration());
     }
+    public Stamp(final Stamp parent, final Memory memory, long occurrenceTime) {
+        this(parent, memory.time() );
 
+        this.occurrenceTime = occurrenceTime;
+    }
     public Stamp(Operation operation, Memory memory, Tense tense) {
         this(operation.getTask().sentence.getStamp(), memory, tense);
     }
@@ -163,6 +165,8 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
     }
     public Stamp(final Stamp parent, final long creationTime) {
+
+
 
         this.duration = parent.duration;
         this.evidentialBase = parent.evidentialBase;
@@ -193,6 +197,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         final long[] secondBase = second.evidentialBase;
 
         this.duration = first.duration;
+        //this may not be a problem, but let's deal with that when we use different durations in the same system(s):
         if (second.duration!=first.duration)
             throw new RuntimeException("Stamp can not be created from parents with different durations: " + first + ", " + second);
 
@@ -213,7 +218,6 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
         while (i1 < firstLength && j < baseLength) {
             evidentialBase[j++] = firstBase[i1++];
         }
-
     }
 
     public Stamp(final Memory memory, final Tense tense, long creationTime) {
@@ -249,11 +253,12 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
 
     /** sets the creation time; used to set input tasks with the actual time they enter Memory */
     public void setCreationTime(long creationTime) {
+
         long originalCreationTime = this.creationTime;
         this.creationTime = creationTime;
 
         //shift occurence time relative to the new creation time
-        if (occurrenceTime != Stamp.ETERNAL) {
+        if (!isEternal()) {
             occurrenceTime = occurrenceTime + (creationTime - originalCreationTime);
         }
     }
@@ -428,7 +433,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
             sb.ensureCapacity(estTimeLength);
             sb.append(creationTime);
 
-            int relOc = (int)(occurrenceTime - creationTime);
+            long relOc = (occurrenceTime - creationTime);
             if (relOc >= 0) sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
             sb.append(relOc);
 
@@ -552,5 +557,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder {
      return toStringCache;
      }
      */
+
+    @Override
+    public Stamp getStamp() {
+        return this;
+    }
 
 }

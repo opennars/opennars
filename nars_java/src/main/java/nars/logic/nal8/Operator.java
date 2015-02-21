@@ -21,12 +21,19 @@
 
 package nars.logic.nal8;
 
+import com.google.common.collect.Lists;
 import nars.core.Events.EXE;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.logic.entity.*;
+import nars.logic.entity.BudgetValue;
+import nars.logic.entity.Task;
+import nars.logic.entity.Term;
+import nars.logic.entity.TruthValue;
+import nars.logic.entity.stamp.Stamp;
+import nars.logic.nal7.Tense;
+import nars.operator.io.Echo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,18 +85,11 @@ public abstract class Operator extends Term implements Plugin {
     protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory);
 
 
-
-    public static String operationExecutionString(final Statement operation) {
-        Term operator = operation.getPredicate();
-        Term arguments = operation.getSubject();
-        String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
-        return operator + "(" + argList;        
-    }
-
     @Override
     public Operator clone() {
         //do not clone operators, just use as-is since it's effectively immutable
-        return this;
+        //return this;
+        throw new RuntimeException("Operators should not be cloned");
     }
 
 //    /**
@@ -99,17 +99,11 @@ public abstract class Operator extends Term implements Plugin {
 //     * @param operation The content of the operation to be executed
 //     */
     public static void reportExecution(final Operation operation, final Term[] args, Object feedback, final Memory memory) {
-        
-        final Term opT = operation.getPredicate();
-        if(!(opT instanceof Operator)) {
-            return;
-        }
 
         if (memory.emitting(EXE.class)) {
-            //final Operator operator = (Operator) opT;
 
-            if (feedback instanceof Exception)
-                feedback = feedback.getClass().getSimpleName() + ": " + ((Throwable)feedback).getMessage();
+            /*if (feedback instanceof Exception)
+                feedback = feedback.getClass().getSimpleName() + ": " + ((Throwable)feedback).getMessage();*/
             
             memory.emit(EXE.class, 
                     new ExecutionResult(operation, feedback));
@@ -154,36 +148,42 @@ public abstract class Operator extends Term implements Plugin {
      * @return true if successful, false if an error occurred
      */
     public final boolean call(final Operation op, final Memory memory) {
+
         if(!op.isExecutable(memory)) {
             return false;
         }
-        Term[] args = op.getArguments().term;
 
+        final Term[] args = op.getArguments().term;
+
+        List<Task> feedback;
         try {
-            List<Task> feedback = execute(op, args, memory);
-
-            if (!isImmediate()) {
-                memory.executedTask(op, new TruthValue(1f, executionConfidence));
-
-                reportExecution(op, args, feedback, memory);
-            }
-            else {
-                memory.emit(EXE.class, op, feedback);
-            }
-
-
-            //should we allow immediate tasks to create feedback?
-            if (feedback!=null) {
-                for (final Task t : feedback) {
-                    if (t == null) continue;
-                    t.setCause(op);
-                    t.setReason("Feedback");
-                    memory.inputTask(t);
-                }
-            }
-
-            return true;
+            feedback = execute(op, args, memory);
         }
+        catch (Exception e) {
+            feedback = Lists.newArrayList(new Echo(getClass(), e.toString()).newTask());
+        }
+
+        reportExecution(op, args, feedback, memory);
+
+
+        //internal notice of the execution
+        if (!isImmediate()) {
+            executedTask(op, new TruthValue(1f, executionConfidence), memory);
+        }
+
+        //feedback tasks as input
+        //should we allow immediate tasks to create feedback?
+        if (feedback!=null) {
+            for (final Task t : feedback) {
+                if (t == null) continue;
+                t.setCause(op);
+                t.setReason("Feedback");
+                memory.inputTask(t);
+            }
+        }
+
+        return true;
+
 //        catch (NegativeFeedback n) {
 //
 //            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
@@ -207,13 +207,31 @@ public abstract class Operator extends Term implements Plugin {
 //                reportExecution(operation, args, n, memory);
 //            }
 //        }
-        catch (Exception e) {
-            reportExecution(op, args, e, memory);
-        }
-        return false;
+
 
     }
-    
+
+
+    /**
+     * ExecutedTask called in Operator.call
+     *
+     * @param operation The operation just executed
+     */
+    public void executedTask(final Operation operation, TruthValue truth, final Memory memory) {
+        final Task opTask = operation.getTask();
+        memory.logic.TASK_EXECUTED.hit();
+
+        memory.addNewTask(
+                memory.newTask(operation).
+                        judgment().
+                        truth(truth).
+                        budget(opTask.budget).
+                        stamp(new Stamp(opTask.getStamp(), memory, Tense.Present)).
+                        parent(opTask).
+                        get().
+                        setCause(operation),
+                "Executed");
+    }
 
     public static String addPrefixIfMissing(String opName) {
         if (!opName.startsWith("^"))

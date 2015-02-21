@@ -618,23 +618,6 @@ public class Memory implements Serializable {
         task.end();
     }
 
-    /**
-     * ExecutedTask called in Operator.call
-     *
-     * @param operation The operation just executed
-     */
-    public void executedTask(final Operation operation, TruthValue truth) {
-        Task opTask = operation.getTask();
-        logic.TASK_EXECUTED.hit(); //(opTask.budget.getPriority());
-
-        Stamp stamp = new Stamp(this, Tense.Present);
-        Sentence sentence = new Sentence(operation, Symbols.JUDGMENT, truth, stamp);
-
-        Task task = new Task(sentence, opTask.budget, operation.getTask());
-        task.setCause(operation);
-
-        addNewTask(task, "Executed");
-    }
 
     final public void emit(final Class c, final Object... signal) {
         event.emit(c, signal);

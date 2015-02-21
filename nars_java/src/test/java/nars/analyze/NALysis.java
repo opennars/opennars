@@ -9,13 +9,13 @@ import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
 import nars.io.condition.OutputCondition;
-import nars.logic.AbstractNALTest;
 import nars.io.test.TestNAR;
+import nars.logic.AbstractNALTest;
 import org.junit.Ignore;
 
 import java.util.Collection;
 
-import static nars.logic.ScriptNALTest.getPaths;
+import static nars.io.ExampleFileInput.getPaths;
 
 /**
  * Collects detailed telemetry for a test suite

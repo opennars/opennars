@@ -2,15 +2,10 @@ package nars.logic;
 
 import junit.framework.TestCase;
 import nars.core.NewNAR;
-import nars.io.ExampleFileInput;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * NAL tests implemented in a .nal script file
@@ -47,27 +42,6 @@ abstract public class ScriptNALTest extends AbstractNALTest {
 
     }
 
-    public static Collection<String> getPaths(String... directories) {
-        Map<String, String> et = ExampleFileInput.getUnitTests(directories);
-        Collection<String> t = et.values();
-        return t;
-    }
 
-    public static Collection getParams(String directories, NewNAR... builds) {
-        return getParams(new String[] { directories }, builds);
-    }
-
-    //@Parameterized.Parameters(name="{1} {0}")
-    public static Collection getParams(String[] directories, NewNAR... builds) {
-        Collection<String> t = getPaths(directories);
-
-        Collection<Object[]> params = new ArrayList(t.size() * builds.length);
-        for (String script : t) {
-            for (NewNAR b : builds) {
-                params.add(new Object[] { b, script });
-            }
-        }
-        return params;
-    }
 
 }

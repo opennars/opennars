@@ -53,6 +53,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     final int maxRemovals = 2;
 
+    //enable true for more precise temporality constraints; this may be necessary or not
+    private boolean strictDurationWindow = false;
+
 
     public TaskCondition(NAR n, Class channel, Task t, long creationTimeOffset)  {
         super(n, Events.OUT.class, Events.TaskRemove.class);
@@ -229,37 +232,43 @@ public class TaskCondition extends OutputCondition implements Serializable {
                 }
 
 
-                float tenseCost = 0.6f;
-                float timingCost = 0.4f;
+                float tenseCost = 0.35f;
+                float temporalityCost = 0.75f;
 
                 //require right kind of tense
                 if (isEternal()) {
                     if (!task.sentence.isEternal()) {
-                        distance += tenseCost;
+                        distance += temporalityCost;
                         match = false;
                     }
                 }
                 else {
                     if (task.sentence.isEternal()) {
-                        distance += tenseCost - 0.01;
+                        distance += temporalityCost - 0.01;
                         match = false;
                     }
                     else {
 
                             final long oc = task.getOcurrenceTime();
-                            final int halfDur = task.sentence.getStamp().getDuration()/2;
+
+                            final int durationWindow = task.sentence.getStamp().getDuration();
+
+                            final int durationWindowNear = durationWindow / 2;
+                            final int durationWindowFar = strictDurationWindow ? durationWindowNear : durationWindow;
+
+
                             final boolean tmatch;
                             switch (tense) {
-                                case Past: tmatch = oc < (-halfDur + creationTime); break;
-                                case Present: tmatch = oc >= (-halfDur + creationTime) && (oc <= +halfDur + creationTime); break;
-                                case Future: tmatch = oc > (+halfDur + creationTime); break;
+                                case Past: tmatch = oc < (-durationWindowNear + creationTime); break;
+                                case Present: tmatch = oc >= (-durationWindowFar + creationTime) && (oc <= +durationWindowFar + creationTime); break;
+                                case Future: tmatch = oc > (+durationWindowNear + creationTime); break;
                                 default:
-                                    throw new RuntimeException("Invalid tense for non-etrenal TaskConditoin: " + this);
+                                    throw new RuntimeException("Invalid tense for non-eternal TaskCondition: " + this);
                             }
                             if (!tmatch) {
                                 //beyond tense boundaries
                                 //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
-                                distance += tenseCost;
+                                distance += tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
                                 match = false;
                             }
                             else {

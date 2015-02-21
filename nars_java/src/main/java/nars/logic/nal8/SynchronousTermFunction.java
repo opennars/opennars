@@ -103,7 +103,7 @@ public abstract class SynchronousTermFunction extends Operator {
                 m.newTask(actual).judgment()
                         .budget(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
                         .truth(1f, confidence)
-                        .now()
+                        .present()
                         .parent(operation.getTask())
                         .get(),
 
@@ -111,7 +111,7 @@ public abstract class SynchronousTermFunction extends Operator {
                         m.newTask(actual_dep_part).judgment()
                         .budget(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
                         .truth(1f, confidence)
-                        .now()
+                        .present()
                         .parent(operation.getTask())
                         .get() : null
 

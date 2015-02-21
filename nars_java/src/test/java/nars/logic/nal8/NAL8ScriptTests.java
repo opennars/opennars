@@ -8,6 +8,8 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
+import static nars.io.ExampleFileInput.getParams;
+
 public class NAL8ScriptTests extends ScriptNALTest {
 
     public NAL8ScriptTests(NewNAR b, String input) {

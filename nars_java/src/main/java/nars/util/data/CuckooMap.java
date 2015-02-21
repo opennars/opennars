@@ -316,6 +316,8 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     @Override
     public V get (Object key) {
+        if (key == null) return null;
+
         int hashCode = key.hashCode();
         int index = hashCode & mask;
         if (!key.equals(keyTable[index])) {

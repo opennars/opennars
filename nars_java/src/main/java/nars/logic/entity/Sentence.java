@@ -30,6 +30,7 @@ import nars.logic.TruthFunctions;
 import nars.logic.TruthFunctions.EternalizedTruthValue;
 import nars.logic.entity.TruthValue.Truthable;
 import nars.logic.entity.stamp.Stamp;
+import nars.logic.entity.stamp.Stamped;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
@@ -44,14 +45,11 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Truthable {
+public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Truthable, Stamped {
 
 
-    public Stamp getStamp() {
-        return stamp;
-    }
 
-    public static interface Sentenceable<T2 extends CompoundTerm> extends Termable {
+    public static interface Sentenced<T2 extends CompoundTerm> extends Termable {
         public Sentence<T2> getSentence();
     }
 
@@ -699,4 +697,9 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
             }
         }
     }
+
+    public Stamp getStamp() {
+        return stamp;
+    }
+
 }

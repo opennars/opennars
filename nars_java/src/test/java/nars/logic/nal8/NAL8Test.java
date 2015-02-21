@@ -5,7 +5,6 @@ import nars.build.Default;
 import nars.build.Discretinuous;
 import nars.core.NewNAR;
 import nars.core.Parameters;
-import nars.io.TextOutput;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.JavaNALTest;
 import nars.logic.nal7.Tense;
@@ -46,7 +45,7 @@ public class NAL8Test extends JavaNALTest {
     }
 
     protected void testGoalExecute(String condition, String action) {
-        TextOutput.out(nar);
+        //TextOutput.out(nar);
 
         nar.believe(condition, Tense.Present, 1.0f, 0.9f);
         nar.goal("(&/,"+ condition + ',' + action + ")", 1.0f, 0.9f);

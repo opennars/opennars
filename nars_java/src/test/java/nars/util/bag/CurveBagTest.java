@@ -5,6 +5,7 @@ import nars.build.Default;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Param;
+import nars.core.Parameters;
 import nars.logic.entity.Item;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.CurveBag.BagCurve;
@@ -13,15 +14,18 @@ import nars.util.data.sorted.ArraySortedIndex;
 import nars.util.data.sorted.SortedIndex;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author me
  */
 public class CurveBagTest extends AbstractBagTest {
-    
+
+    static {
+        Parameters.DEBUG = true;
+    }
+
     Param p = new NAR(new Default()).param;
     final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
@@ -220,5 +224,37 @@ public class CurveBagTest extends AbstractBagTest {
 //        
 //    }
 
+
+    @Test public void testEqualBudgetedItems() {
+        int capacity = 4;
+
+        CurveBag<NullItem,CharSequence> c = new CurveBag(capacity, curve, true);
+
+        NullItem a, b;
+        c.PUT(a = new NullItem(0.5f));
+        c.PUT(b = new NullItem(0.5f));
+
+        assertEquals(2, c.size());
+
+        NullItem aRemoved = c.TAKE(a.name());
+
+        assertEquals(aRemoved, a);
+        assertNotEquals(aRemoved, b);
+        assertEquals(1, c.size());
+
+        c.PUT(a);
+        assertEquals(2, c.size());
+
+        NullItem x = c.PEEKNEXT();
+        assertNotNull(x);
+
+        assertEquals(2, c.size());
+
+        x = c.TAKENEXT();
+
+        assertTrue(x.equals(a) || x.equals(b));
+        assertEquals(1, c.size());
+
+    }
 
 }

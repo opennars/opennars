@@ -1,5 +1,6 @@
 package nars.logic.meta;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import nars.core.Events;
@@ -14,7 +15,6 @@ import nars.logic.nal8.Operator;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,7 +58,7 @@ public class Derivations {
 
     public AbstractReaction record(NAR n) {
         return new AbstractReaction(n, Events.TermLinkTransform.class,
-                Events.ConceptFired.class, Events.TermLinkSelected.class) {
+                Events.ConceptFired.class, Events.TermLinkSelected.class, Events.TaskDerive.class) {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -80,7 +80,12 @@ public class Derivations {
                     int taskEnd = (int) args[5];
 
                     //TODO i broke this
-                    //record(c, tasklink, termlink, n.produced.subList(taskStart, taskEnd), n.getTime());
+                    Iterable<Task> theTasks = Iterables.limit(Iterables.skip(n.getNewTasks(), taskStart), taskEnd - taskStart);
+                    record(c, tasklink, termlink, theTasks, n.time());
+                }
+
+                else if (event == Events.TaskDerive.class) {
+                    //System.out.println(args[0]);
                 }
             }
         };
@@ -91,8 +96,8 @@ public class Derivations {
     StringBuilder resultString = new StringBuilder(128);
     StringBuilder sb = new StringBuilder(128);
 
-    public synchronized String genericString(Task t, Map<Term,Integer> unique) {
-        String s = genericString(t.getTerm(), unique);
+    public synchronized String genericString(Task t, Map<Term,Integer> unique, long now) {
+        String s = genericString(t.sentence, unique, now);
 
         sb.setLength(0);
 
@@ -107,14 +112,15 @@ public class Derivations {
         return sb.toString();
     }
 
-    public synchronized void record(Concept c, TaskLink tasklink, TermLink termlink, List<Task> result, long now) {
+    public synchronized void record(Concept c, TaskLink tasklink, TermLink termlink, Iterable<Task> result, long now) {
         resultString.setLength(0);
 
         Map<Term,Integer> unique = new HashMap();
         String ca = getCase(c.getTerm(), tasklink, termlink, unique, now);
 
         for (Task t : result) {
-            resultString.append(genericString(t, unique)).append("  ");
+            resultString.append(genericString(t, unique, now)).append("  ");
+
         }
 
         String r = resultString.toString();
@@ -148,6 +154,7 @@ public class Derivations {
 
     public static String genericString(Sentence s, Map<Term,Integer> unique, long now) {
         String t = genericString(s.term, unique);
+        t += s.punctuation;
         if (s.isEternal()) return t;
         return t + Tense.tenseRelative(s.getOccurrenceTime(), now);
     }

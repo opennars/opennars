@@ -44,6 +44,8 @@ public class Contraposition extends ConceptFireTask {
      * @param statement The premise
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final NAL nal) {
+        //TODO this method can end earlier if it detects an input implication with freq=1, because the resulting confidence should be 0 which is useless
+
         Memory memory = nal.memory;
         memory.logic.CONTRAPOSITION.hit();
 

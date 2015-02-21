@@ -74,8 +74,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
     public static <E extends Item> SortedIndex<E> getIndex(int capacity) {
         //if (capacity < 50)            
         return new ArraySortedIndex(capacity);
-        /*else
-            return new FractalSortedItemList<E>();        */
+        //else
+        //    return new FractalSortedItemList<E>();
     }
 
     public CurveBag(int capacity, boolean randomRemoval) {
@@ -403,7 +403,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
                 i.budget.merge(oldItem.budget);
             }
 
-            if (nameTable.size() >= capacity) {
+            else if (nameTable.size() >= capacity) {
                 // the bag is full
 
                 // this item is below the bag's already minimum item

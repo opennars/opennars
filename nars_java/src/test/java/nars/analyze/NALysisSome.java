@@ -26,11 +26,12 @@ public class NALysisSome extends NALysis {
     public static void main(String[] args) throws FileNotFoundException {
 
         showInput = true;
-        showOutput = false;
+        showOutput = true;
         showTrace = false;
 
         //String test = "./nal/test6/nal6.22.nal";
-        String test = "./nal/test7/nal7.6.nal";
+        //String test = "./nal/test7/nal7.6.nal";
+        String test = "./nal/test8/nal8.1.5.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.17.nal";
@@ -41,7 +42,7 @@ public class NALysisSome extends NALysis {
         TestNAR n = analyze(
                 build,
                 test,
-                120,
+                800,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {

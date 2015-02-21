@@ -23,6 +23,16 @@ public class NewTask<T extends CompoundTerm> {
     private BudgetValue budget;
 
 
+    public NewTask<T> truth(TruthValue tv) {
+        this.truth = tv;
+        return this;
+    }
+    public NewTask<T> budget(BudgetValue bv) {
+        this.budget = bv;
+        return this;
+    }
+
+
     public NewTask<T> truth(float freq, float conf) {
         this.truth = new TruthValue(freq, conf);
         return this;
@@ -34,7 +44,7 @@ public class NewTask<T extends CompoundTerm> {
     public NewTask<T> goal() { this.punc = Symbols.GOAL; return this;}
 
     public NewTask<T> eternal() { this.tense = Tense.Eternal; return this;}
-    public NewTask<T> now() { this.tense = Tense.Present; return this;}
+    public NewTask<T> present() { this.tense = Tense.Present; return this;}
     public NewTask<T> past() { this.tense = Tense.Past; return this;}
     public NewTask<T> future() { this.tense = Tense.Future; return this;}
 
@@ -43,7 +53,7 @@ public class NewTask<T extends CompoundTerm> {
         return this;
     }
 
-    public NewTask<T> Stamp(Stamp s) { this.stamp = s; return this;}
+    public NewTask<T> stamp(Stamp s) { this.stamp = s; return this;}
 
     public NewTask<T> budget(float p, float d) {
         budget = null;
@@ -90,7 +100,6 @@ public class NewTask<T extends CompoundTerm> {
     public Sentence getParentBelief() {
         return null;
     }
-
 
 
 }

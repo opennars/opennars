@@ -5,6 +5,7 @@
 package nars.io;
 
 import nars.core.NAR;
+import nars.core.NewNAR;
 import nars.io.condition.OutputCondition;
 
 import java.io.BufferedReader;
@@ -13,10 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Access to library of examples/unit tests
@@ -132,5 +130,28 @@ public class ExampleFileInput extends TextInput {
         } catch (Exception ex) {
             throw new RuntimeException("Example file not found: " + path + ": " + ex.toString()  + ": ");
         }
+    }
+
+    public static Collection<String> getPaths(String... directories) {
+        Map<String, String> et = ExampleFileInput.getUnitTests(directories);
+        Collection<String> t = et.values();
+        return t;
+    }
+
+    public static Collection getParams(String directories, NewNAR... builds) {
+        return getParams(new String[] { directories }, builds);
+    }
+
+    //@Parameterized.Parameters(name="{1} {0}")
+    public static Collection getParams(String[] directories, NewNAR... builds) {
+        Collection<String> t = getPaths(directories);
+
+        Collection<Object[]> params = new ArrayList(t.size() * builds.length);
+        for (String script : t) {
+            for (NewNAR b : builds) {
+                params.add(new Object[] { b, script });
+            }
+        }
+        return params;
     }
 }

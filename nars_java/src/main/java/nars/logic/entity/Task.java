@@ -23,6 +23,8 @@ package nars.logic.entity;
 import com.google.common.base.Strings;
 import nars.core.Parameters;
 import nars.logic.Terms.Termable;
+import nars.logic.entity.stamp.Stamp;
+import nars.logic.entity.stamp.Stamped;
 
 import java.lang.ref.Reference;
 import java.util.HashSet;
@@ -36,7 +38,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements Termable,BudgetValue.Budgetable {
+public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements Termable,BudgetValue.Budgetable, Stamped {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -344,8 +346,9 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     }
 
     /** generally, op will be an Operation instance */
-    public void setCause(final Term op) {
+    public Task setCause(final Term op) {
         this.cause = op;
+        return this;
     }
 
     /** the causing Operation, or null if not applicable. */
@@ -461,5 +464,10 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     /** a task is considered amnesiac (origin not rememebered) if its parent task has been forgotten (garbage collected via a soft/weakref) */
     public boolean isAmnesiac() {
         return !isInput() && getParentTask() == null;
+    }
+
+    @Override
+    public Stamp getStamp() {
+        return sentence.stamp;
     }
 }

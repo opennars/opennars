@@ -56,8 +56,7 @@ abstract public class AbstractNALTest extends TestCase {
             testConcepts = new HitMeter("Concepts")
     );
 
-    //Derivations derivations = new Derivations(false, false);
-    Derivations derivations = null;
+
     public static final CountOutputEvents eventCounter = new CountOutputEvents(results);
     public static final CountDerivationCondition deriveMethodCounter = new CountDerivationCondition(results);
 

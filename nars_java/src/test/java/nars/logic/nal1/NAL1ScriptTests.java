@@ -10,6 +10,8 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
+import static nars.io.ExampleFileInput.getParams;
+
 public class NAL1ScriptTests extends ScriptNALTest {
 
     public NAL1ScriptTests(NewNAR b, String input) {

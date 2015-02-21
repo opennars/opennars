@@ -367,11 +367,11 @@ public class TextOutput extends Output {
             buffer.append(signal.toString());
         }
         else if (channel == Events.EXE.class) {
-            if (signal instanceof Statement)
+            /*if (signal instanceof Statement)
                 buffer.append(Operator.operationExecutionString((Statement)signal));
-            else {
+            else {*/
                 buffer.append(signal.toString());
-            }
+            //}
         }
         else {
             buffer.append(signal.toString());
