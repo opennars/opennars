@@ -168,7 +168,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 System.out.println("success: "+T.toString());
             }
             
-            if(!longest_result_derived_already) {
+            if(longest_result_derived_already) {
                 T.setParticipateInTemporalInductionOnSucceedingEvents(false);
             }
             
