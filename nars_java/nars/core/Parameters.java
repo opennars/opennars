@@ -126,6 +126,10 @@ public class Parameters {
 
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
     public static final int NOVELTY_HORIZON = 10;
+    
+    public static int NOVEL_TASKS_TRACK_SIZE=1000; //inference rules like temporal induction
+    //work a bit differently, in order for it not to bypass the novelty strategy (because it doesn't use a termlink
+    //for inference, we track the tasks extra for now
 
     /**
      * The rate of confidence decrease in mental operations Doubt and Hesitate
@@ -183,7 +187,7 @@ public class Parameters {
     
     public static int STM_SIZE = 1;
     
-    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=false; //this should be true to restore 1.6.1 strategy
+    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
     
     public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
     

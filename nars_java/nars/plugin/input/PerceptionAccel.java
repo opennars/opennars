@@ -55,7 +55,8 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     public void perceive(NAL nal) { //implement Peis idea here now
         //we start with length 2 compounds, and search for patterns which are one longer than the longest observed one
         
-        for(int Len=2;Len<=cur_maxlen+1;Len++) {
+        boolean longest_result_derived_already=false;
+        for(int Len=cur_maxlen+1;Len>=2;Len--) {
             //ok, this is the length we have to collect, measured from the end of event buffer
             Term[] relterms=new Term[2*Len-1]; //there is a interval term for every event
             //measuring its distance to the next event, but for the last event this is obsolete
@@ -104,7 +105,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 }
             }
             if(eventBufferDidNotHaveSoMuchEvents) {
-                break;
+                continue;
             }
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
@@ -166,6 +167,12 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             if(debugMechanism) {
                 System.out.println("success: "+T.toString());
             }
+            
+            if(!longest_result_derived_already) {
+                T.setParticipateInTemporalInductionOnSucceedingEvents(false);
+            }
+            
+            longest_result_derived_already=true;
             
             nal.derivedTask(T, false, false, null, null, false); //lets make the new event the parent task, and derive it
         }
