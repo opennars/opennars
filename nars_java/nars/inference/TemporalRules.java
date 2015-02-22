@@ -367,6 +367,7 @@ public class TemporalRules {
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         
+        //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
         if(!SucceedingEventsInduction) { //reduce priority according to temporal distance
             //it was not "semantically" connected by temporal succession
             int tt1=(int) s1.getOccurenceTime();
