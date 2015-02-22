@@ -2,4 +2,4 @@
   IN: <(&/,<(*, $x, key_101) --> hold>,+1) =/> <(*, $x, room_101) --> enter>>.
   IN: <(*,John,room_101) --> enter>. :|:
 15
-''outputMustContain('<(*,John,key_101) --> hold>. :\: %1.00;0.40%')
+''outputMustContain('<(*,John,key_101) --> hold>. :\: %1.00;0.45%')

@@ -3,6 +3,6 @@
 <c --> d>. %1.00;0.90%
 <a --> d>?
 
-450
+11000
 
-''outputMustContain('<a --> d>. %1.00;0.29%')
+''outputMustContain('<a --> d>. %1.00;0.13%')
