@@ -5,4 +5,4 @@
 
 11000
 
-''outputMustContain('<a --> d>. %1.00;0.13%')
+''outputMustContain('<a --> d>. %1.00;0.17%')
