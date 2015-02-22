@@ -233,7 +233,7 @@ public class TemporalRules {
             
             if(whole!=null) {
                 TruthValue truth = TruthFunctions.induction(s1.truth, s2.truth);
-                BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth,whole, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
                 
                 return nal.doublePremiseTask(whole, truth, budget, true, false)!=null;
@@ -247,8 +247,7 @@ public class TemporalRules {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
-        
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal, boolean SucceedingEventsInduction) {
         
         if ((s1.truth==null) || (s2.truth==null))
             return Collections.EMPTY_LIST;
@@ -360,12 +359,27 @@ public class TemporalRules {
         int order = order(timeDiff, durationCycles);
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
+     //   TruthFunctions.
         TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
         TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
+        
+        if(!SucceedingEventsInduction) { //reduce priority according to temporal distance
+            //it was not "semantically" connected by temporal succession
+            int tt1=(int) s1.getOccurenceTime();
+            int tt2=(int) s1.getOccurenceTime();
+            int d=Math.abs(tt1-tt2)/nal.memory.param.duration.get();
+            if(d!=0) {
+                double mul=1.0/((double)d);
+                budget1.setPriority((float) (budget1.getPriority()*mul));
+                budget2.setPriority((float) (budget2.getPriority()*mul));
+                budget3.setPriority((float) (budget3.getPriority()*mul));
+            }
+        }
+        
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);

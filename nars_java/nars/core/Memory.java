@@ -1147,7 +1147,7 @@ public class Memory implements Serializable {
         Sentence currentBelief = newEvent;
 
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
+        TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction);
         return false;
     }
     
