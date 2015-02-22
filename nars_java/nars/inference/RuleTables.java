@@ -64,7 +64,7 @@ import nars.plugin.input.PerceptionAccel;
  * to the relevant inference rules.
  */
 public class RuleTables {
-
+    
     
     /**
      * Entry point of the inference engine
@@ -85,7 +85,7 @@ public class RuleTables {
         
         //CONTRAPOSITION //TODO: put into rule table
         if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
-            Concept d=memory.concepts.sampleNextConcept();
+            Concept d=memory.sampleNextConceptNovel(task.sentence);
             if(d!=null && d.term.equals(taskSentence.term)) {
                 StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
             }
@@ -121,7 +121,7 @@ public class RuleTables {
                     //prevent duplicate derivations
                     Set<Term> alreadyInducted = new HashSet();
 
-                    Concept next=nal.memory.concepts.sampleNextConcept();
+                    Concept next=nal.memory.sampleNextConceptNovel(task.sentence);
 
                     if (next == null) continue;
 
@@ -235,7 +235,7 @@ public class RuleTables {
             //prevent duplicate inductions
             Set<Term> alreadyInducted = new HashSet();
             
-            Concept next=nal.memory.concepts.sampleNextConcept();
+            Concept next=nal.memory.sampleNextConceptNovel(task.sentence);
             if (next == null) continue;
 
             Term t = next.getTerm();
@@ -307,16 +307,17 @@ public class RuleTables {
                             //now set the current context:
                             
                             Sentence s=next.beliefs.get(0);
-                            
-                            //this one needs an dummy task..
-                            Task dummycur=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s.truth));
-                            nal.setCurrentTask(dummycur);
-                            //its priority isnt needed at all, this just is for stamp completeness..
-                            if(s.punctuation==belief.punctuation) {
-                                TemporalRules.temporalInductionChain(s, belief, nal);
-                                TemporalRules.temporalInductionChain(belief, s, nal);
+                            if(nal.memory.isNovelInRegardTo(s,belief.term)) {
+                                nal.memory.setNotNovelAnymore(s,belief.term);
+                                //this one needs an dummy task..
+                                Task dummycur=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s.truth));
+                                nal.setCurrentTask(dummycur);
+                                //its priority isnt needed at all, this just is for stamp completeness..
+                                if(s.punctuation==belief.punctuation) {
+                                    TemporalRules.temporalInductionChain(s, belief, nal);
+                                    TemporalRules.temporalInductionChain(belief, s, nal);
+                                }
                             }
-                            
                             alreadyInducted.add(t);
                             
                             //RESTORE CONTEXT

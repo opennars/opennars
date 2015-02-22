@@ -1175,10 +1175,10 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
         HashMap<Term, Term> smap = null;
 
         for (int k = 0; k < maxUnificationAttempts; k++) {
-            Concept secondConcept = nal.mem().sampleNextConcept();
+            Concept secondConcept = nal.mem().sampleNextConceptNovel(task.sentence);
             if (secondConcept == null) {
                 //no more concepts, stop
-                break;
+                continue;
             }
 
             //prevent unification with itself
