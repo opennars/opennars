@@ -19,4 +19,4 @@
 <?how =/> <goal --> reached>>?
 1500
 //it is like SequenceGoalSimple but asks for an explaination instead of wanting it to go-to(a)
-''outputMustContain('<(&/,(^go-to,a),+2,(^pick,b),+2) =/> <goal --> reached>>. %1.00;0.12%')
+''outputMustContain('<(&/,(^go-to,a),+2,(^pick,b),+2) =/> <goal --> reached>>. %1.00;0.30%')
