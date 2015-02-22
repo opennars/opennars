@@ -1122,8 +1122,8 @@ public class Memory implements Serializable {
     public final ArrayDeque<Task> stm = new ArrayDeque();
     //public Task stmLast = null;
     
-    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, NAL nal) {
-        if(!controllerTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, NAL nal, boolean SucceedingEventsInduction) {
+        if(SucceedingEventsInduction && !controllerTask.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
             return false;
         }
        
@@ -1153,7 +1153,7 @@ public class Memory implements Serializable {
     
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
-        if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+        if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
             return false;
         }
 
@@ -1166,7 +1166,7 @@ public class Memory implements Serializable {
 
         if(Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
             for (Task stmLast : stm) {
-                proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal);
+                proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
             }
         }
         
