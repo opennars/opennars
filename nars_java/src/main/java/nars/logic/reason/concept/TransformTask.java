@@ -56,7 +56,7 @@ public class TransformTask extends ConceptFireTask {
             }
 
 
-            f.emit(Events.TermLinkTransform.class, t, f.getCurrentConcept(), this);
+            f.emit(Events.TermLinkTransformed.class, t, f.getCurrentConcept(), this);
             f.memory.logic.TERM_LINK_TRANSFORM.hit();
         }
 

@@ -18,7 +18,7 @@ public class Derivations1  {
             NAR n = new TestNAR(new Default().setInternalExperience(null).level(3));
             d.record(n);
             n.addInput(ExampleFileInput.getExample(s));
-            n.run(400);
+            n.run(100);
         }
 
         d.print(System.out);

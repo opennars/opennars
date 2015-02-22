@@ -11,12 +11,12 @@ import nars.logic.entity.*;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
+import org.jgrapht.ext.*;
 import org.jgrapht.graph.DirectedMultigraph;
 
+import java.io.FileWriter;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * table for holding derivation results for online & offline
@@ -34,27 +34,57 @@ import java.util.Map;
  *
  * terms are stored with their names normalized to generic values, ex;
  * <(*,<A --> B>,(--,C)) --> D>
+ *
+ * TODO add all removed tasks and their reasons as extra metadata
  */
 public class Derivations extends DirectedMultigraph {
 
 
-    public final Multimap<Premise, String> premiseResult;
+    public final Multimap<Premise, Set<TaskResult>> premiseResult;
 
     private final boolean includeDerivedBudget;
     private final boolean includeDerivedTruth;
 
-    StringBuilder tempResultString = new StringBuilder(128);
+
 
     public Derivations(boolean includeDerivedBudget, boolean includeDerivedTruth) {
         super((Class)null);
 
-        premiseResult = MultimapBuilder.treeKeys().treeSetValues().build();
+        premiseResult = MultimapBuilder.treeKeys().hashSetValues().build();
         this.includeDerivedBudget = includeDerivedBudget;
         this.includeDerivedTruth = includeDerivedTruth;
     }
 
+    abstract public static class Keyed implements Comparable<Keyed> {
 
-    public static class Premise implements Comparable<Premise> {
+        abstract public String name();
+
+        @Override
+        public String toString() {
+            return name();
+        }
+
+        @Override
+        public int hashCode() {
+            return name().hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Keyed) {
+                return name().equals(((Keyed) obj).name());
+            }
+            return false;
+        }
+
+        @Override
+        public int compareTo(Keyed o) {
+            return name().compareTo(o.name());
+        }
+
+    }
+
+    public static class Premise extends Keyed  {
 
         private final String conceptKey;
         private final String taskLinkKey;
@@ -65,31 +95,59 @@ public class Derivations extends DirectedMultigraph {
             this.conceptKey = genericString(concept.getTerm(), unique);
             this.taskLinkKey = genericString(tasklink.getTask(), unique, now, truth, budget);
             this.termLinkKey = termlink == null ? "" : genericString(termlink.getTerm(), unique);
-            this.key = (conceptKey + ' ' + taskLinkKey + ' ' + termLinkKey).trim();
+            this.key = "premise<" + (conceptKey + ' ' + taskLinkKey + ' ' + termLinkKey).trim() + '>';
+        }
+
+        public String name() { return key; }
+
+
+    }
+
+
+    public static class TaskResult extends Keyed {
+
+        public final String key;
+
+        public TaskResult(Task t, Map<Term, Integer> unique, long now, boolean includeDerivedTruth, boolean includeDerivedBudget) {
+            key = "task<" + genericString(t, unique, now, includeDerivedTruth, includeDerivedBudget) + '>';
         }
 
         @Override
-        public String toString() {
+        public String name() {
             return key;
         }
 
-        @Override
-        public int hashCode() {
-            return key.hashCode();
+    }
+
+
+    public static class TermPattern extends Keyed {
+
+        public final String key;
+
+        public TermPattern(Term t, Map<Term, Integer> unique) {
+            key = genericString(t, unique);
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof Premise) {
-                return key.equals(((Premise)obj).key);
-            }
-            return false;
+        public String name() {
+            return key;
+        }
+
+    }
+
+    public static class SentencePattern extends Keyed {
+
+        public final String key;
+
+        public SentencePattern(Sentence s, Map<Term, Integer> unique, long now, boolean includeDerivedTruth) {
+            key = genericString(s, unique, now, includeDerivedTruth);
         }
 
         @Override
-        public int compareTo(Premise o) {
-            return key.compareTo(o.key);
+        public String name() {
+            return key;
         }
+
     }
 
     public Premise newPremise(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now) {
@@ -97,17 +155,17 @@ public class Derivations extends DirectedMultigraph {
     }
 
     public AbstractReaction record(NAR n) {
-        return new AbstractReaction(n, Events.TermLinkTransform.class,
+        return new AbstractReaction(n, Events.TermLinkTransformed.class,
                 Events.ConceptFired.class, Events.TermLinkSelected.class, Events.TaskDerive.class) {
 
             @Override
             public void event(Class event, Object[] args) {
 
-                if (event == Events.TermLinkTransform.class) {
+                if (event == Events.TermLinkTransformed.class) {
                     TaskLink tl = (TaskLink)args[0];
                     Concept c = (Concept)args[1];
                     NAL n = (NAL)args[2];
-                    record(c, tl, null, n.getNewTasks(), n.time());
+                    result(c, tl, null, n.getNewTasks(), n.time());
                 }
 
                 else if (event == Events.TermLinkSelected.class) {
@@ -118,7 +176,7 @@ public class Derivations extends DirectedMultigraph {
                     int taskStart = (int) args[4];
                     int taskEnd = (int) args[5];
 
-                    record(c, tasklink, termlink, getTasks(n, taskStart, taskEnd), n.time());
+                    result(c, tasklink, termlink, getTasks(n, taskStart, taskEnd), n.time());
                 }
 
                 else if (event == Events.TaskDerive.class) {
@@ -147,20 +205,64 @@ public class Derivations extends DirectedMultigraph {
         return tempTaskString.toString();
     }
 
-    public synchronized void record(Concept c, TaskLink tasklink, TermLink termlink, Iterable<Task> result, long now) {
-        tempResultString.setLength(0);
+    public Object newEdge(Keyed a, Keyed b) {
+        Object edge = a.name() + "||" + b.name();
+        addEdge(a, b, edge);
+        return edge;
+    }
+
+    public void result(Concept c, TaskLink tasklink, TermLink termlink, Iterable<Task> result, long now) {
 
         Map<Term,Integer> unique = new HashMap();
-        Premise derivationClass = newPremise(c.getTerm(), tasklink, termlink, unique, now);
+
+        Premise premise = newPremise(c.getTerm(), tasklink, termlink, unique, now);
+        addVertex(premise);
+
+        TermPattern conceptTerm = addTermPattern(c.getTerm(), unique);
+        newEdge(conceptTerm, premise);
+
+        TermPattern taskLinkTerm = addTermPattern(tasklink.getTerm(), unique);
+        SentencePattern taskLinkSentence = addSentencePattern(tasklink.getSentence(), unique, now);
+        newEdge(taskLinkTerm, taskLinkSentence);
+        newEdge(taskLinkSentence, premise);
+
+        if (termlink!=null) {
+            TermPattern termLinkTerm = addTermPattern(termlink.getTerm(), unique);
+            newEdge(termLinkTerm, premise);
+        }
+
+
+        Set<TaskResult> resultSet = new TreeSet(); //order
 
         for (Task t : result) {
-            tempResultString.append(genericString(t, unique, now, includeDerivedTruth, includeDerivedBudget)).append("  ");
+
+            TaskResult tr = new TaskResult(t, unique, now, includeDerivedTruth, includeDerivedBudget);
+            addVertex(tr);
+
+            //SentencePattern sp = addSentencePattern(t.sentence, unique, now);
+            TermPattern tp = addTermPattern(t.getTerm(), unique);
+
+            newEdge(premise, tp);
+            /*newEdge(tr, sp);
+            newEdge(sp, tp);*/
+
+            resultSet.add(tr);
 
         }
 
-        String r = tempResultString.toString();
+        premiseResult.put(premise, resultSet);
 
-        premiseResult.put(derivationClass, r);
+    }
+
+    SentencePattern addSentencePattern(Sentence sentence, Map<Term, Integer> unique, long now) {
+        SentencePattern s = new SentencePattern(sentence, unique, now, includeDerivedTruth);
+        addVertex(s);
+        return s;
+    }
+    TermPattern addTermPattern(Term term, Map<Term, Integer> unique) {
+        TermPattern s = new TermPattern(term, unique);
+        addVertex(s);
+        return s;
     }
 
     public static String genericLiteral(Term c, Map<Term, Integer> unique) {
@@ -233,24 +335,35 @@ public class Derivations extends DirectedMultigraph {
     }
 
     public void print(PrintStream p) {
+
         for (Premise k : premiseResult.keySet()) {
-            Collection<String> l = premiseResult.get(k);
+            Collection<Set<TaskResult>> l = premiseResult.get(k);
             p.println();
             p.print(k);
             p.print(": ");
             if (l.isEmpty())
                 p.println("null");
             else {
-                p.println();
-                for (String t : l) {
+                p.println(l);
+                /*
+                for (TaskResult t : l) {
                     p.print('\t');
-                    t = t.trim();
                     if (t.isEmpty())
                         p.println("null");
                     else
                         p.println(t);
-                }
+                }*/
             }
+        }
+
+        p.println(vertexSet().size() + " " + edgeSet().size());
+
+        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
+        gme.setPrintLabels(GmlExporter.PRINT_EDGE_VERTEX_LABELS);
+        try {
+            gme.export(new FileWriter("/tmp/g.gml"), this);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

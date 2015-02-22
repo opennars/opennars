@@ -172,7 +172,7 @@ public class Events {
         
     }
 
-    public static class TermLinkTransform {    }
+    public static class TermLinkTransformed {    }
 
     /** emitted after a TermLink has been selected and reasoned */
     public static class TermLinkSelected { }

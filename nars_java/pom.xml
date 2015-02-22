@@ -165,6 +165,17 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>org.javabits.jgrapht</groupId>
+            <artifactId>jgrapht-ext</artifactId>
+            <version>0.9.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.tinyjee.jgraphx</groupId>
+                    <artifactId>jgraphx</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 
 

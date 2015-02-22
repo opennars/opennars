@@ -37,7 +37,7 @@ public abstract class MemoryObserver extends AbstractReaction {
                 Events.TaskDerive.class,
                 Events.TaskImmediateProcessed.class,
                 Events.TermLinkSelected.class,
-                Events.TermLinkTransform.class,
+                Events.TermLinkTransformed.class,
                 //Events.UnExecutedGoal.class,
 
                 //Output.OUT.class, 
