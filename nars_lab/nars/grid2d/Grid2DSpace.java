@@ -396,8 +396,8 @@ public class Grid2DSpace extends PApplet {
         private float savepy = 0;
         private int selID = 0;
         private float zoom = 43.0f;
-        private float difx = 0;
-        private float dify = 0;
+        private float difx = -750;
+        private float dify = -1300;
         private int lastscr = 0;
         private boolean EnableZooming = true;
         private float scrollcamspeed = 1.1f;

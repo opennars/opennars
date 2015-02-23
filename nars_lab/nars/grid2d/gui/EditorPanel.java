@@ -225,6 +225,9 @@ public class EditorPanel extends JPanel {
                                                 //s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
+                                    } else {
+                                        s.cells.readCells[i][j].machine=null;
+                                        s.cells.writeCells[i][j].machine=null;
                                     }
                                     
                                     s.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
