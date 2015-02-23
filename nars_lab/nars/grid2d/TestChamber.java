@@ -48,13 +48,13 @@ public class TestChamber {
         NAR nar = builder.build();
         //set NAR runtime parmeters:  
 
-        for(NAR.PluginState pluginstate : nar.getPlugins()) {
+        /*for(NAR.PluginState pluginstate : nar.getPlugins()) {
             if(pluginstate.plugin instanceof InternalExperience || pluginstate.plugin instanceof FullInternalExperience) {
                 nar.removePlugin(pluginstate);
             }
-        }
+        }*/
   
-        nar.addPlugin(new TemporalParticlePlanner());
+        //nar.addPlugin(new TemporalParticlePlanner());
         
         //(nar.param).duration.set(10);
         (nar.param).noiseLevel.set(0); 
