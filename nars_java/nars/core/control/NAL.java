@@ -231,7 +231,7 @@ public abstract class NAL implements Runnable {
             return null;
         }
         
-        if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable)) && (!Sentence.invalidSentenceTerm(newContent))) {
+        if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable))) {
             
             if(newContent.subjectOrPredicateIsIndependentVar()) {
                 return null;
