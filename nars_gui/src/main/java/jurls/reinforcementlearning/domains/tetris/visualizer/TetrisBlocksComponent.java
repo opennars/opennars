@@ -1,0 +1,107 @@
+/*
+ Copyright 2007 Brian Tanner
+ http://rl-library.googlecode.com/
+ brian@tannerpages.com
+ http://brian.tannerpages.com
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+package jurls.reinforcementlearning.domains.tetris.visualizer;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+
+public class TetrisBlocksComponent {
+
+    private TetrisVisualizer tetVis = null;
+    private int lastUpdateTimeStep = -1;
+
+    public TetrisBlocksComponent(TetrisVisualizer ev) {
+        // TODO Write Constructor
+        this.tetVis = ev;
+    }
+
+    public void render(Graphics2D g) {
+
+        Rectangle2D agentRect;
+        int numCols = tetVis.getWorldWidth();
+        int numRows = tetVis.getWorldHeight();
+        double[] tempWorld = tetVis.getWorld();
+
+        //Desired abstract block size
+        int DABS = 30;
+        int scaleFactorX = numCols * DABS;
+        int scaleFactorY = numRows * DABS;
+
+        int w = DABS;
+        int h = DABS;
+        int x = 0;
+        int y = 0;
+
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                x = j * DABS;
+                y = i * DABS;
+                int in = i * numCols + j;
+                
+
+                double bc = tempWorld[in];
+                Color c = null;
+                if ((bc < 1.0) && (bc > 0)) {
+                    c = (Color.WHITE);
+                }
+                else if (bc > 0) {
+                    int thisBlockColor = (int)bc;
+                    if (thisBlockColor != 0) {
+                        switch (thisBlockColor) {
+                            case 1:
+                                c = (Color.PINK);
+                                break;
+                            case 2:
+                                c = (Color.RED);
+                                break;
+                            case 3:
+                                c = (Color.GREEN);
+                                break;
+                            case 4:
+                                c = (Color.YELLOW);
+                                break;
+                            case 5:
+                                c = (Color.LIGHT_GRAY);
+                                break;
+                            case 6:
+                                c = (Color.ORANGE);
+                                break;
+                            case 7:
+                                c = (Color.MAGENTA);
+                                break;
+                        }
+                    }
+                    g.setColor(c);
+                    g.fillRect(x, y, w, h);
+                }
+                 else {
+                    g.setColor(Color.BLACK);
+                    
+                    g.fillRect(x, y, w, h);
+                }
+            }
+        }
+        //g.setColor(Color.GRAY);
+        //g.drawRect(0, 0, DABS * numCols, DABS * numRows);
+        //g.setTransform(saveAT);
+    }
+
+}
