@@ -162,7 +162,7 @@ public class Hauto {
     
     String doorname="";
     public static Integer entityID=0;
-    public static boolean allow_imitating=false;
+    public static boolean allow_imitating=true;
     public void clicked(int x,int y, Grid2DSpace space)
     {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
