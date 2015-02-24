@@ -85,6 +85,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     public void setApplication(Application application) {
         application.addApplicationListener(this);
         application.setEnabledPreferencesMenu(false);
+        /*
         BufferedImage icon = new BufferedImage(256,256,BufferedImage.TYPE_INT_ARGB);
         try {
             icon = ImageIO.read(getClass().getClassLoader().getResource("ca/nengo/ui/nengologo256.png"));
@@ -93,6 +94,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             e.printStackTrace();
         }
         application.setApplicationIconImage(icon);
+        */
     }
 
 

@@ -5,8 +5,10 @@
  */
 package jurls.examples.approximation;
 
-import java.awt.Color;
 import jurls.core.approximation.ParameterizedFunction;
+import org.apache.commons.math3.linear.ArrayRealVector;
+
+import java.awt.*;
 
 /**
  *
@@ -34,6 +36,56 @@ public class RenderParameterizedFunction implements RenderFunction {
     public double compute(double x) {
         xs[0] = x;
         return parameterizedFunction.value(xs);
+    }
+
+    @Override
+    public double value(double... xs) {
+        return 0;
+    }
+
+    @Override
+    public ArrayRealVector parameterGradient(ArrayRealVector result, double... xs) {
+        return null;
+    }
+
+    @Override
+    public void addToParameters(ArrayRealVector deltas) {
+
+    }
+
+    @Override
+    public void learn(double[] xs, double y) {
+
+    }
+
+    @Override
+    public int numberOfParameters() {
+        return 1;
+    }
+
+    @Override
+    public int numberOfInputs() {
+        return 0;
+    }
+
+    @Override
+    public double minOutputDebug() {
+        return 0;
+    }
+
+    @Override
+    public double maxOutputDebug() {
+        return 0;
+    }
+
+    @Override
+    public double getParameter(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setParameter(int i, double v) {
+
     }
 
     @Override

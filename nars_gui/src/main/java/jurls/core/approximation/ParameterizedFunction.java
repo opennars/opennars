@@ -7,13 +7,15 @@ package jurls.core.approximation;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 
+import java.awt.*;
+
 /**
  *
  * @author thorsten
  */
 public interface ParameterizedFunction {
 
-    public double value(double[] xs);
+    public double value(double... xs);
     
     /** result is a vector for the method to store a result in, allowing re-use
      *  and avoiding allocation of arrays. if null or of incorrect size, 
@@ -47,4 +49,9 @@ public interface ParameterizedFunction {
     }
     
     public void setParameter(int i, double v);
+
+
+    default public Color getColor() {
+        return Color.WHITE;
+    }
 }

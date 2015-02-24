@@ -626,7 +626,8 @@ public class NetworkArrayImpl extends NetworkImpl {
 		private int myDimensions;
 
 		public ArraySource(NetworkArrayImpl parent, String name, Source[] sources) {
-			myParent = parent;
+			super(parent, name);
+            myParent = parent;
 			myName = name;
 			mySources = sources;
 			myDimensions = 0;
@@ -800,6 +801,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		private final int myDimensions;
 
 		public ArraySummedSource(NetworkArrayImpl parent, String name, Source[] sources) {
+            super(parent, name);
 			myParent = parent;
 			myName = name;
 			mySources = sources;

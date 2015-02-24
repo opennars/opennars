@@ -44,8 +44,8 @@ public abstract class AbstractNode implements Node {
 
 	private String myName;
 	private SimulationMode myMode;
-	private final Map<String, Source> myOrigins;
-	private final Map<String, Target> myTerminations;
+	private Map<String, Source> mySources;
+	private Map<String, Target> myTargets;
 	private String myDocumentation;
 	private transient List<VisiblyMutable.Listener> myListeners;
 
@@ -58,16 +58,30 @@ public abstract class AbstractNode implements Node {
 		myName = name;
 		myMode = SimulationMode.DEFAULT;
 
-		myOrigins = new LinkedHashMap<String, Source>(10);
+		mySources = new LinkedHashMap<String, Source>(10);
 		for (Source o : sources) {
-			myOrigins.put(o.getName(), o);
+			mySources.put(o.getName(), o);
 		}
 
-		myTerminations = new LinkedHashMap<String, Target>(10);
+		myTargets = new LinkedHashMap<String, Target>(10);
 		for (Target t : targets) {
-			myTerminations.put(t.getName(), t);
+			myTargets.put(t.getName(), t);
 		}
 	}
+
+    public void setSources(Source... s) {
+        mySources = new LinkedHashMap<String, Source>(10);
+        for (Source o : s) {
+            mySources.put(o.getName(), o);
+        }
+    }
+
+    public void setTargets(Target... s) {
+        myTargets = new LinkedHashMap<String, Target>(10);
+        for (Target o : s) {
+            myTargets.put(o.getName(), o);
+        }
+    }
 
     public AbstractNode(String name) {
         this(name, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
@@ -99,14 +113,14 @@ public abstract class AbstractNode implements Node {
 	 * @see ca.nengo.model.Node#getOrigin(java.lang.String)
 	 */
 	public Source getOrigin(String name) throws StructuralException {
-		return myOrigins.get(name);
+		return mySources.get(name);
 	}
 
 	/**
 	 * @see ca.nengo.model.Node#getOrigins()
 	 */
 	public Source[] getOrigins() {
-        java.util.Collection<Source> var = myOrigins.values();
+        java.util.Collection<Source> var = mySources.values();
         return var.toArray(new Source[var.size()]);
 	}
 
@@ -114,14 +128,14 @@ public abstract class AbstractNode implements Node {
 	 * @see ca.nengo.model.Node#getTermination(java.lang.String)
 	 */
 	public Target getTermination(String name) throws StructuralException {
-		return myTerminations.get(name);
+		return myTargets.get(name);
 	}
 
 	/**
 	 * @see ca.nengo.model.Node#getTerminations()
 	 */
 	public Target[] getTerminations() {
-        java.util.Collection<Target> var = myTerminations.values();
+        java.util.Collection<Target> var = myTargets.values();
         return var.toArray(new Target[var.size()]);
 	}
 

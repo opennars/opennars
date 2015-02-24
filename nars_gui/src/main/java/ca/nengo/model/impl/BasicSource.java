@@ -58,13 +58,11 @@ public class BasicSource implements Source, Noise.Noisy, Resettable, Configurabl
 	private transient ConfigurationImpl myConfiguration;
 	private boolean myRequiredOnCPU;
 
-	/**
-	 * Dummy default, necessary for object "ArrayOrigin" in jython code
-	 * TODO: Still necessary?
-	 */
-	public BasicSource(){
-	}
 
+
+    public BasicSource(Node node, String name) {
+        this(node, name, 0, Units.UNK);
+    }
 	/**
 	 * @param node The parent Node
 	 * @param name Name of origin

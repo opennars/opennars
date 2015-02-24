@@ -5,13 +5,15 @@
  */
 package jurls.examples.approximation;
 
+import jurls.core.approximation.ParameterizedFunction;
+
 import java.awt.Color;
 
 /**
  *
  * @author thorsten
  */
-public interface RenderFunction {
+@Deprecated public interface RenderFunction extends ParameterizedFunction {
 
     public double compute(double x);
 

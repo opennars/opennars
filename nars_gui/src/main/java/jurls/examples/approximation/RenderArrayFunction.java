@@ -5,6 +5,8 @@
  */
 package jurls.examples.approximation;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+
 import java.awt.Color;
 
 /**
@@ -30,6 +32,56 @@ public class RenderArrayFunction implements RenderFunction {
             return 0;
         }
         return ys[i];
+    }
+
+    @Override
+    public double value(double... xs) {
+        return compute(xs[0]);
+    }
+
+    @Override
+    public ArrayRealVector parameterGradient(ArrayRealVector result, double... xs) {
+        return null;
+    }
+
+    @Override
+    public void addToParameters(ArrayRealVector deltas) {
+
+    }
+
+    @Override
+    public void learn(double[] xs, double y) {
+
+    }
+
+    @Override
+    public int numberOfParameters() {
+        return 0;
+    }
+
+    @Override
+    public int numberOfInputs() {
+        return 0;
+    }
+
+    @Override
+    public double minOutputDebug() {
+        return 0;
+    }
+
+    @Override
+    public double maxOutputDebug() {
+        return 0;
+    }
+
+    @Override
+    public double getParameter(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setParameter(int i, double v) {
+
     }
 
     @Override
