@@ -587,4 +587,8 @@ public class WebBrowser extends Application {
         underlayLayer.setCenter(logoutput);*/
     }
 
+    public static void main(String... args) {
+        Application.launch(WebBrowser.class);
+    }
+
 }

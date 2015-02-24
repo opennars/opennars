@@ -132,6 +132,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
 
     @Override
     public void mouseMoved() {
+
     }
 
     @Override

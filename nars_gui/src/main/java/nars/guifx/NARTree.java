@@ -1,10 +1,8 @@
 package nars.guifx;
 
 import javafx.scene.control.CheckBoxTreeItem;
-import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.cell.CheckBoxTreeCell;
-import javafx.util.Callback;
 import nars.core.NAR;
 
 /** displays a tree representation of NARS components, including:
@@ -27,6 +25,7 @@ public class NARTree extends TreeView {
         this.nar = n;
         CheckBoxTreeItem<String> rootItem =
                 new CheckBoxTreeItem<String>("View Source Files");
+
         rootItem.setExpanded(true);
 
         setRoot(rootItem);
@@ -38,8 +37,9 @@ public class NARTree extends TreeView {
 
 
         for (int i = 0; i < 8; i++) {
-            final CheckBoxTreeItem<String> checkBoxTreeItem =
-                    new CheckBoxTreeItem<String>("Sample" + (i+1));
+            final TreeItem<String> checkBoxTreeItem =
+                    new TreeItem<String>("Sample" + (i+1));
+
             rootItem.getChildren().add(checkBoxTreeItem);
         }
 

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=1.3
+Name=Nengo
+Comment=Large-scale neural simulator
+Exec=nengo
+Icon=nengologo256
+Terminal=false
+Categories=Education;Science;Java

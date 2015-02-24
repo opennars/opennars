@@ -1,20 +1,13 @@
 package nars.guifx;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
-
-import automenta.vivisect.javafx.WebBrowser;
-import com.sun.javafx.tk.Toolkit;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import nars.build.Default;
 import nars.core.NAR;
 import nars.gui.NARSwing;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -63,6 +56,7 @@ public class NARfx extends Application {
         NARWindow w = NARfx.window(new NAR(new Default()));
         w.show();
 
+        //JFX.popup(new NodeControlPane());
 
         /*
         WebBrowser w = new WebBrowser();

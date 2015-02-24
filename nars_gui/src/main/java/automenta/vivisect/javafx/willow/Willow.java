@@ -20,7 +20,7 @@
  */
 
 package automenta.vivisect.javafx.willow;
-//    
+//
 //    public static final String APPLICATION_ICON =
 //            "WillowTreeIcon.png";
 //    public static final String DEFAULT_HOME_LOCATION =
