@@ -145,9 +145,9 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
         return sentence.hashCode();
     }
     
-    public static boolean isValidTerm(Term t) {
-        return t instanceof CompoundTerm;
-    }
+    //public static boolean isValidTerm(Term t) {
+   //     return t instanceof CompoundTerm;
+   // }
     
     public static Task make(Sentence s, BudgetValue b, Task parent) {
         return make(s, b, parent, null);
@@ -155,10 +155,10 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
     
     public static Task make(Sentence s, BudgetValue b, Task parent, Sentence belief) {
         Term t = s.term;
-        if (isValidTerm(t)) {
+        //if (isValidTerm(t)) { sentence wouldnt exist if it wouldnt be valid..
             return new Task(s, b, parent, belief);
-        }
-        return null;
+        //}
+        //return null;
     }
     
 
