@@ -27,7 +27,7 @@ import processing.core.PVector;
 
 public class TestChamber {
 
-    public static boolean staticInformation=true;
+    public static boolean staticInformation=false;
     //TIMING
     static int narUpdatePeriod = 20; /*milliseconds */
     int gridUpdatePeriod = 2;
