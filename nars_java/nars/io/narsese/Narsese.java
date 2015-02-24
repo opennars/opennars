@@ -248,6 +248,9 @@ public class Narsese {
         }
         float frequency = 1.0f;
         float confidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
+        if(type==GOAL_MARK) {
+            confidence = Parameters.DEFAULT_GOAL_CONFIDENCE;
+        }
         if (s != null) {
             int i = s.indexOf(VALUE_SEPARATOR);
             if (i < 0) {
