@@ -1043,8 +1043,11 @@ public class Memory implements Serializable {
     }
     
     public Concept sampleNextConceptNovel(Sentence t) {
+        if(t==null) {
+            return null;
+        }
         Concept c = concepts.sampleNextConcept();
-        if(isNovelInRegardTo(t, c.term)) { //it is novel
+        if(c!=null && isNovelInRegardTo(t, c.term)) { //it is novel
             setNotNovelAnymore(t, c.term); //so remember it that it won't be novel again that fastly and return the concept
             return c;
         }
