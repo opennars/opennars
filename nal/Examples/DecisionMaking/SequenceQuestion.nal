@@ -16,5 +16,4 @@
 10
 <?how =/> <goal --> reached>>?
 400
-//we expect it to be anticipated:
 ''outputMustContain('<(&/,<x --> y>,+2) =/> <goal --> reached>>. %1.00;0.31%')
