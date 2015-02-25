@@ -2,11 +2,10 @@ package ca.nengo.ui.test;
 
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
-import ca.nengo.model.Units;
 import ca.nengo.model.impl.AbstractNode;
-import ca.nengo.model.impl.BasicSource;
-import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.model.impl.NetworkImpl;
+import ca.nengo.model.impl.ObjectSource;
+import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.models.UIBuilder;
@@ -28,20 +27,21 @@ public class TestFunctionPlot extends Nengrow {
 
     long time = 0;
 
-    ParameterizedFunction parameterizedFunction;
-    RenderArrayFunction input;
 
     public class Approximator extends AbstractNode  {
 
-        private final BasicSource out;
-        private final ObjectTarget in;
+        private final ObjectSource<ParameterizedFunction[]> out;
+        private final ObjectTarget<UnaryDoubleFunction> in;
         private final DiffableFunctionGenerator dfg;
 
+        ParameterizedFunction approximation;
+        RenderArrayFunction input;
 
         public Approximator(String name) {
             super(name);
-            setOutputs(out = new BasicSource(this, "Approximation", 1, Units.UNK));
-            setInputs(in = new ObjectTarget(this, "Signal", 1));
+            out = new ObjectSource(this, "Approximation");
+            setOutputs(out);
+            setInputs(in = new ObjectTarget(this, "Signal"));
 
             double[] ys = new double[10];
             for (int i = 0; i < ys.length; ++i) {
@@ -50,10 +50,11 @@ public class TestFunctionPlot extends Nengrow {
             input = new RenderArrayFunction(1.0, Color.blue, ys);
 
 
+
             int numFeatures = 7;
             dfg = Generator.generateFourierBasis();
 
-            parameterizedFunction = new OutputNormalizer(
+            approximation = new OutputNormalizer(
                     new InputNormalizer(
                             new GradientFitter(
                                     new ApproxParameters(0.01, 0.1),
@@ -61,6 +62,8 @@ public class TestFunctionPlot extends Nengrow {
                             )
                     )
             );
+
+            out.accept(new ParameterizedFunction[] { input, approximation});
         }
 
         @Override
@@ -69,7 +72,7 @@ public class TestFunctionPlot extends Nengrow {
             final int numIterationsPerLoop = (int)((endTime - startTime)*1000f);
             for (int i = 0; i < numIterationsPerLoop; ++i) {
                 double x = Math.random() * 1.0;
-                parameterizedFunction.learn(new double[]{x}, input.compute(x));
+                approximation.learn(new double[]{x}, input.compute(x));
             }
         }
 
@@ -92,12 +95,12 @@ public class TestFunctionPlot extends Nengrow {
 
     public class FunctionPlot extends AbstractNode implements UIBuilder {
 
-        private final ObjectTarget in;
+        private final ObjectTarget<ParameterizedFunction[]> in;
 
         public FunctionPlot(String name) {
             super(name);
 
-            setInputs(in = new ObjectTarget(this, "Signal", 1));
+            setInputs(in = new ObjectTarget(this, "Signal"));
 
 
         }
@@ -126,16 +129,21 @@ public class TestFunctionPlot extends Nengrow {
             public void paint(PaintContext paintContext) {
                 super.paint(paintContext);
 
-                Graphics2D g = paintContext.getGraphics();
 
-                int w = (int)(getBounds().getWidth());
-                int h = (int)(getBounds().getHeight());
+                ParameterizedFunction[] funcs = in.get();
+                if (funcs!=null) {
 
-                g.setColor(Color.black);
-                g.fillRect(0, 0, w, h);
+                    Graphics2D g = paintContext.getGraphics();
 
-                paintFunction(g, 0, input);
-                paintFunction(g, 1, parameterizedFunction);
+                    int w = (int)(getBounds().getWidth());
+                    int h = (int)(getBounds().getHeight());
+
+                    g.setColor(Color.black);
+                    g.fillRect(0, 0, w, h);
+
+                    for (int i = 0; i < funcs.length; i++)
+                        paintFunction(g, i, funcs[i]);
+                }
 
             }
 

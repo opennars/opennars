@@ -21,11 +21,16 @@ public class ObjectTarget<V> implements Target<V> {
      * @param name Termination name
      * @param dimension Dimensionality of input
      */
+    public ObjectTarget(Node node, String name) {
+        this(node, name, 1);
+    }
+
     public ObjectTarget(Node node, String name, int dimension) {
         myNode = node;
         myName = name;
-        myDimension = dimension;
+        myDimension = 1;
     }
+
 
     /**
      * @param node Parent node
@@ -56,6 +61,7 @@ public class ObjectTarget<V> implements Target<V> {
         myDimension = transform[0].length;
         myTransform = transform;
     }
+
 
     public int getDimensions() {
         return myDimension;
