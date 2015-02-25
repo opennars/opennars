@@ -23,6 +23,7 @@ package nars.inference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.HashMap;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -108,6 +109,11 @@ public class RuleTables {
         //(&/,<a --> b>,<b --> c>,<x --> y>). :|:
        // |-
         //<pick(a) =/> <goal --> reached>>. :|:
+        //https://groups.google.com/forum/#!topic/open-nars/8VVscfLQ034
+        //<(&/,<a --> b>,<$1 --> c>,<x --> y>,pick(a)) =/> <$1 --> reached>>.
+        //(&/,<a --> b>,<goal --> c>,<x --> y>). :|:
+        //|-
+        //<pick(a) =/> <goal --> reached>>.
         if(task.sentence.term instanceof Implication &&
                 (((Implication)task.sentence.term).getTemporalOrder()==ORDER_FORWARD ||
                 ((Implication)task.sentence.term).getTemporalOrder()==ORDER_CONCURRENT)) {
@@ -143,9 +149,11 @@ public class RuleTables {
                             //the case where its equal is already handled by other inference rule
                             if(conj2.term.length<conj.term.length) {
                                 boolean equal=true;
+                                HashMap<Term,Term> map=new HashMap<Term,Term>();
+                                HashMap<Term,Term> map2=new HashMap<Term,Term>();
                                 for(int j=0;j<conj2.term.length;j++) //ok now check if it is really a minor
                                 {
-                                    if(!conj.term[j].equals(conj2.term[j])) {
+                                    if(!Variables.findSubstitute(VAR_INDEPENDENT, conj.term[j], conj2.term[j], map, map2)) {
                                         equal=false;
                                     }
                                 }
@@ -169,6 +177,7 @@ public class RuleTables {
                                     if(resImp==null) {
                                         continue;
                                     }
+                                    resImp=(Implication) resImp.applySubstitute(map);
                                     //todo add
                                     Stamp st=new Stamp(task.sentence.stamp,nal.memory.time());
                                     boolean eternalBelieve=nal.getCurrentBelief().isEternal(); //https://groups.google.com/forum/#!searchin/open-nars/projection/open-nars/8KnAbKzjp4E/rBc-6V5pem8J
