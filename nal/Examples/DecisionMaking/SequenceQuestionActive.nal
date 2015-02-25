@@ -18,6 +18,6 @@
 50
 <goal --> reached>!
 <goal --> reached>!
-5000
+60000
 ''outputMustContain('^go-to([a, SELF])=null')
 ''outputMustContain('^pick([b, SELF])=null')
