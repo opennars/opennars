@@ -253,7 +253,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
 
                 originUI.connectTo(termUI, false);
                 if (!isFirstUpdate) {
-                    termUI.showPopupMessage("NEW Projection to " + termUI.getName() + '.'
+                    termUI.showPopupMessage("Connected to " + termUI.getName() + '.'
                             + getName());
                 }
             } else {

@@ -85,7 +85,7 @@ public class DirectNode implements Node {
 		myName = name;
 		myDimension = dimension;
 		myTerminations = new HashMap(10);
-		myTerminations.put(TERMINATION, new ObjectTarget(this, TERMINATION, dimension));
+		myTerminations.put(TERMINATION, new ObjectTarget(this, TERMINATION, dimension,InstantaneousOutput.class));
 		myOrigin = new BasicSource(this, ORIGIN, dimension, Units.UNK);
 		reset(false);
 	}

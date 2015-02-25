@@ -2,6 +2,12 @@ package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
 import ca.nengo.util.MU;
+import com.google.common.reflect.TypeToken;
+import sun.net.www.content.text.Generic;
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * Termination that receives input unaltered.
@@ -16,20 +22,41 @@ public class ObjectTarget<V> implements Target<V> {
     private float[][] myTransform;
     private V myValues;
 
+    public final Class<? extends V> requiredType;
+
     /**
      * @param node Parent node
      * @param name Termination name
      * @param dimension Dimensionality of input
      */
-    public ObjectTarget(Node node, String name) {
-        this(node, name, 1);
+    public ObjectTarget(Node node, String name, Class<? extends V> receivesClass) {
+        this(node, name, 1, receivesClass);
     }
 
-    public ObjectTarget(Node node, String name, int dimension) {
+    public ObjectTarget(Node node, String name, int dimension, Class<? extends V> type) {
         myNode = node;
         myName = name;
         myDimension = 1;
+        this.requiredType = type;
+
+//        requiredType = (Class<V>)
+//                ((ParameterizedType)(getClass().getGenericSuperclass()))
+//                        .getActualTypeArguments()[0];
+//
+//        try {
+//            Method method = null;
+//            method = getClass().getMethod("apply", Object.class);
+//            Type[] params = method.getGenericParameterTypes();
+//            TypeVariableImpl firstParam = (TypeVariableImpl) params[0];
+//            Type[] paramsOfFirstGeneric = firstParam.getBounds();
+//            requiredType = (Class<V>) paramsOfFirstGeneric[0];
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//            System.exit(1);
+//        }
+
     }
+
 
 
     /**
@@ -39,12 +66,11 @@ public class ObjectTarget<V> implements Target<V> {
      * @param transform Transformation matrix
      */
     public ObjectTarget(Node node, String name, int dimension, float[][] transform) {
+        this(node, name, dimension, (Class<? extends V>) Object.class);
+
         assert MU.isMatrix(transform);
         assert dimension == transform.length;
 
-        myNode = node;
-        myName = name;
-        myDimension = transform[0].length;
         myTransform = transform;
     }
 
@@ -54,12 +80,15 @@ public class ObjectTarget<V> implements Target<V> {
      * @param transform Transformation matrix
      */
     public ObjectTarget(Node node, String name, float[][] transform) {
+        this(node, name, transform[0].length, (Class<? extends V>) Object.class);
         assert MU.isMatrix(transform);
 
         myNode = node;
         myName = name;
         myDimension = transform[0].length;
         myTransform = transform;
+
+
     }
 
 
@@ -72,14 +101,18 @@ public class ObjectTarget<V> implements Target<V> {
     }
 
     @Override public boolean applies(V value) {
+        if (!this.requiredType.isAssignableFrom(value.getClass()))
+            return false;
+
         if (value instanceof InstantaneousOutput)
             return (((InstantaneousOutput)value).getDimension() == myDimension);
+
         return true;
     }
 
     public void apply(V values) throws SimulationException {
         if (!applies(values)) {
-            throw new SimulationException("Input is wrong type"); //(expected " + myDimension + " got " + v.getDimension() + ')');
+            throw new SimulationException(values.getClass() + " is not " + requiredType); //(expected " + myDimension + " got " + v.getDimension() + ')');
         }
 
         if ((myTransform != null) && (values instanceof InstantaneousOutput)) {

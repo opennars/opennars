@@ -113,14 +113,23 @@ public abstract class UITermination<T extends Target> extends Widget<T> implemen
 			try {
 				if (getNodeParent().getNetworkParent() == null) {
 					throw new StructuralException(
-							"Can't create projection because termination is not within the scope of a Network");
+							"Can't connectbecause termination is not within the scope of a Network");
 				}
 
-				getNodeParent().getNetworkParent().getModel().addProjection(source.getModel(),
-						getModel());
-				getNodeParent().showPopupMessage(
-						"NEW Projection to " + getNodeParent().getName() + '.' + getName());
-				successful = true;
+
+                T target = getModel();
+                if (!target.applies(source.getModel().get())) {
+                    getNodeParent().showPopupMessage("Invalid connection"); //TODO show reason
+                    successful = false;
+                }
+                else {
+
+                    getNodeParent().getNetworkParent().getModel().addProjection(source.getModel(),
+                            getModel());
+                    getNodeParent().showPopupMessage(
+                            "Connected to " + getNodeParent().getName() + '.' + getName());
+                    successful = true;
+                }
 			} catch (StructuralException e) {
 				disconnect();
 				UserMessages.showWarning("Could not connect: " + e.getMessage());

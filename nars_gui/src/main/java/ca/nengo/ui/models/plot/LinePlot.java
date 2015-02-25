@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class LinePlot extends AbstractNode implements UIBuilder {
 
-    final Target<InstantaneousOutput> input = new ObjectTarget(this, "input");
+    final Target<InstantaneousOutput> input = new ObjectTarget(this, "input",InstantaneousOutput.class);
     private String label = "?";
 
     Deque<Float> history = new ConcurrentLinkedDeque<>(); //TODO use seomthing more efficient

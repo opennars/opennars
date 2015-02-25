@@ -6,6 +6,7 @@ import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.ObjectSource;
 import ca.nengo.model.impl.ObjectTarget;
+import ca.nengo.model.neuron.impl.SpikingNeuron;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.models.UIBuilder;
@@ -41,7 +42,7 @@ public class TestFunctionPlot extends Nengrow {
             super(name);
             out = new ObjectSource(this, "Approximation");
             setOutputs(out);
-            setInputs(in = new ObjectTarget(this, "Signal"));
+            setInputs(in = new ObjectTarget(this, "Signal", ParameterizedFunction[].class));
 
             double[] ys = new double[10];
             for (int i = 0; i < ys.length; ++i) {
@@ -100,7 +101,7 @@ public class TestFunctionPlot extends Nengrow {
         public FunctionPlot(String name) {
             super(name);
 
-            setInputs(in = new ObjectTarget(this, "Signal"));
+            setInputs(in = new ObjectTarget(this, "Signal",ParameterizedFunction[].class));
 
 
         }
@@ -218,6 +219,7 @@ public class TestFunctionPlot extends Nengrow {
         NetworkImpl network = new NetworkImpl();
         network.addNode(new Approximator("Approximator"));
         network.addNode(new FunctionPlot("plot1"));
+            network.addNode( new SpikingNeuron(null, null, 1, 0.5f, "B"));
 
 
         UINetwork networkUI = (UINetwork) addNodeModel(network);
