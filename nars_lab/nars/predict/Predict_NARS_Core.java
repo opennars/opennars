@@ -38,7 +38,7 @@ public class Predict_NARS_Core {
     
     public static void main(String[] args) throws Narsese.InvalidInputException, InterruptedException {
 
-        Parameters.DEBUG = true;
+        Parameters.DEBUG = false;
         int duration = 8;
         float freq = 1.0f / duration * 0.1f;        
         int thinkInterval = 50;

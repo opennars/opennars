@@ -143,7 +143,10 @@ public class TreeMLData implements MLData {
 
     @Override
     public double getData(int t) {
-        Double f = values.get(t);
+        Double f=null;
+        try{
+             f = values.get(t);
+        }catch(Exception ex){}
         if (f == null) {
             return defaultValue;
         }
