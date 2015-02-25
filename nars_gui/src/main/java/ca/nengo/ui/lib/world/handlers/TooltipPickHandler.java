@@ -1,7 +1,7 @@
 package ca.nengo.ui.lib.world.handlers;
 
 import ca.nengo.ui.lib.AppFrame;
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.WorldLayer;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;

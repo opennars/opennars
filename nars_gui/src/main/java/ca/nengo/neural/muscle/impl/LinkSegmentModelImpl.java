@@ -142,16 +142,16 @@ public class LinkSegmentModelImpl implements LinkSegmentModel {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigin(java.lang.String)
+	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getOrigin(String name) throws StructuralException {
+	public Source getSource(String name) throws StructuralException {
 		throw new StructuralException("A LinkSegmentModel itself has no Origins (neural output arises from component SkeletalMuscles)");
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigins()
+	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getOrigins() {
+	public Source[] getSources() {
 		return new Source[0];
 	}
 

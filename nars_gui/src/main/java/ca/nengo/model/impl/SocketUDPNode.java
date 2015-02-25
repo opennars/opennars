@@ -282,9 +282,9 @@ public class SocketUDPNode implements Node, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigin(java.lang.String)
+	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getOrigin(String name) throws StructuralException {
+	public Source getSource(String name) throws StructuralException {
 		if (myOrigin != null && myOrigin.getName().equals(name)) {
 			return myOrigin;
 		} else {
@@ -293,9 +293,9 @@ public class SocketUDPNode implements Node, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigins()
+	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getOrigins() {
+	public Source[] getSources() {
 		if (myOrigin != null)
 			return new Source[]{myOrigin};
 		else

@@ -75,12 +75,18 @@ public abstract class AbstractNode implements Node {
             mySources.put(o.getName(), o);
         }
     }
+    public void setOutputs(List<Source> t) {
+        setOutputs(t.toArray(new Source[t.size()]));
+    }
 
     public void setInputs(Target... s) {
         myTargets = new LinkedHashMap<String, Target>(10);
         for (Target o : s) {
             myTargets.put(o.getName(), o);
         }
+    }
+    public void setInputs(List<Target> t) {
+        setInputs(t.toArray(new Target[t.size()]));
     }
 
     public AbstractNode(String name) {
@@ -110,16 +116,16 @@ public abstract class AbstractNode implements Node {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigin(java.lang.String)
+	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getOrigin(String name) throws StructuralException {
+	public Source getSource(String name) throws StructuralException {
 		return mySources.get(name);
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigins()
+	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getOrigins() {
+	public Source[] getSources() {
         java.util.Collection<Source> var = mySources.values();
         return var.toArray(new Source[var.size()]);
 	}

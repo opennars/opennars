@@ -12,8 +12,8 @@ import ca.nengo.neural.neuron.impl.LinearSynapticIntegrator;
 import ca.nengo.neural.neuron.impl.SpikingNeuron;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.models.nodes.UINetwork;
-import ca.nengo.ui.models.plot.LinePlot;
+import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.model.plot.LinePlot;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -76,26 +76,6 @@ public class TestPlotNode extends Nengrow {
             //x.run(time, time+1);
         }
     }
-//    default void run(float start, float stop) {
-//        System.out.println(this + " " + getClass());
-//        //if (getWorld()!=null)
-//        for (WorldObject x : getChildren()) {
-//            System.out.println(x + " " + x.getClass());
-//            x.run(start, stop);
-//            if (x instanceof ModelObject) {
-//                ModelObject o = ((ModelObject) x);
-//                Object mo = o.getModel();
-//                if (mo instanceof Node) {
-//                    try {
-//                        ((Node)mo).run(start, stop);
-//                    } catch (SimulationException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
 
     public static void main(String[] args) {
         new TestPlotNode();

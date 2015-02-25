@@ -473,7 +473,7 @@ public class DecodedSource implements Source<InstantaneousOutput>, Resettable, S
 		} else {
 			for (int i = 0; i < myNodes.length; i++) {
 				try {
-					Object o = myNodes[i].getOrigin(myNodeOrigin).get();
+					Object o = myNodes[i].getSource(myNodeOrigin).get();
 
 					float val = 0;
 					if (o instanceof SpikeOutput) {

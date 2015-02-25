@@ -128,16 +128,16 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	}
 
 	/**
-	 * @see ca.nengo.neural.neuron.Neuron#getOrigins()
+	 * @see ca.nengo.neural.neuron.Neuron#getSources()
 	 */
-	public Source<InstantaneousOutput>[] getOrigins() {
+	public Source<InstantaneousOutput>[] getSources() {
 		return new Source[]{mySpikeOrigin, myCurrentOrigin};
 	}
 
 	/**
-	 * @see ca.nengo.neural.neuron.Neuron#getOrigin(java.lang.String)
+	 * @see ca.nengo.neural.neuron.Neuron#getSource(java.lang.String)
 	 */
-	public Source getOrigin(String name) throws StructuralException {
+	public Source getSource(String name) throws StructuralException {
 //		assert (name.equals(Neuron.AXON) || name.equals(CURRENT)); //this is going to be called a lot, so let's skip the exception
 		//Shu: I added the exception back in because the UI needs it for reflection.
         switch (name) {

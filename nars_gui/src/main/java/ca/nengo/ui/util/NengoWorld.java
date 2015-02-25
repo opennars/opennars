@@ -3,8 +3,8 @@ package ca.nengo.ui.util;
 import ca.nengo.model.Node;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;
-import ca.nengo.ui.models.NodeContainer;
-import ca.nengo.ui.models.UINeoNode;
+import ca.nengo.ui.model.NodeContainer;
+import ca.nengo.ui.model.UINeoNode;
 
 import java.awt.geom.Point2D;
 

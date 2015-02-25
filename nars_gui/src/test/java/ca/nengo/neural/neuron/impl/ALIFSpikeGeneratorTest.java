@@ -141,7 +141,7 @@ public class ALIFSpikeGeneratorTest extends TestCase {
 		FunctionInput input = new FunctionInput("input", new Function[]{f}, Units.UNK);
 		network.addNode(input);
 
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), t);
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), t);
 
 //		Probe rate = network.getSimulator().addProbe("neuron", "rate", true);
 //		Probe N = network.getSimulator().addProbe("neuron", "N", true);
@@ -185,10 +185,10 @@ public class ALIFSpikeGeneratorTest extends TestCase {
 			neuron.setMode(SimulationMode.CONSTANT_RATE);
 			neuron.setRadialInput(-1);
 			neuron.run(0, 0);
-			RealOutput low = (RealOutput) neuron.getOrigin(Neuron.AXON).get();
+			RealOutput low = (RealOutput) neuron.getSource(Neuron.AXON).get();
 			neuron.setRadialInput(1);
 			neuron.run(0, 0);
-			RealOutput high = (RealOutput) neuron.getOrigin(Neuron.AXON).get();
+			RealOutput high = (RealOutput) neuron.getSource(Neuron.AXON).get();
 			slope = (high.getValues()[0] - low.getValues()[0]) / 2f;
 			System.out.println("high: " + high.getValues()[0] + " low: " + low.getValues()[0] + " slope: " + slope);
 			neuron.setMode(mode);
@@ -245,7 +245,7 @@ public class ALIFSpikeGeneratorTest extends TestCase {
             FunctionInput input = new FunctionInput("input", new Function[]{new PiecewiseConstantFunction(new float[]{0.2f}, new float[]{0, 0.5f})}, Units.UNK);
             network.addNode(input);
 
-            network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), ensemble.getTarget("input"));
+            network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), ensemble.getTarget("input"));
 
 //          Probe vProbe = network.getSimulator().addProbe("ensemble", 0, "V", true);
 //          Probe nProbe = network.getSimulator().addProbe("ensemble", 0, "N", true);

@@ -26,14 +26,14 @@ package ca.nengo.ui;
 
 //import java.awt.Color;
 
-import ca.nengo.ui.actions.GeneratePythonScriptAction;
-import ca.nengo.ui.actions.RunSimulatorAction;
-import ca.nengo.ui.actions.SaveNodeAction;
-import ca.nengo.ui.lib.actions.ActionException;
-import ca.nengo.ui.lib.actions.StandardAction;
+import ca.nengo.ui.action.GeneratePythonScriptAction;
+import ca.nengo.ui.action.RunSimulatorAction;
+import ca.nengo.ui.action.SaveNodeAction;
+import ca.nengo.ui.lib.action.ActionException;
+import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.handlers.SelectionHandler;
-import ca.nengo.ui.models.nodes.UINetwork;
+import ca.nengo.ui.model.node.UINetwork;
 
 /**
  * Top level instance of the NeoGraphics application

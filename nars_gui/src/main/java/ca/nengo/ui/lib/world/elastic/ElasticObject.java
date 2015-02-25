@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world.elastic;
 
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.Destroyable;
 import ca.nengo.ui.lib.world.WorldLayer;
 import ca.nengo.ui.lib.world.WorldObject.Listener;

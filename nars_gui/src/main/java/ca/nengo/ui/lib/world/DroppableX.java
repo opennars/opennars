@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world;
 
-import ca.nengo.ui.lib.actions.UserCancelledException;
+import ca.nengo.ui.lib.action.UserCancelledException;
 
 import java.util.Collection;
 

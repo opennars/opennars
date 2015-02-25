@@ -130,9 +130,9 @@ public class DirectNode implements Node {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigin(java.lang.String)
+	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getOrigin(String name) throws StructuralException {
+	public Source getSource(String name) throws StructuralException {
 		if (ORIGIN.equals(name)) {
 			return myOrigin;
 		} else {
@@ -141,9 +141,9 @@ public class DirectNode implements Node {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigins()
+	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getOrigins() {
+	public Source[] getSources() {
 		return new Source[]{myOrigin};
 	}
 

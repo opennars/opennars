@@ -216,12 +216,12 @@ public class GroupSource implements Source<InstantaneousOutput> {
 			if (node instanceof Group) {
 				Group group = (Group)node;
 				for (int i = 0; i < myNodeSources.length; i++)
-					sources[i] = group.getNodes()[i].getOrigin(myNodeSources[i].getName());
+					sources[i] = group.getNodes()[i].getSource(myNodeSources[i].getName());
 			}
 			if (node instanceof Network) {
 				Network network = (Network)node;
 				for (int i = 0; i < myNodeSources.length; i++)
-					sources[i] = network.getNodes()[i].getOrigin(myNodeSources[i].getName());
+					sources[i] = network.getNodes()[i].getSource(myNodeSources[i].getName());
 			}
 			result.myNodeSources = sources;
 			return result;

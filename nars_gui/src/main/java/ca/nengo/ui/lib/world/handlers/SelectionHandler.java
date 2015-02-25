@@ -29,8 +29,8 @@
  */
 package ca.nengo.ui.lib.world.handlers;
 
-import ca.nengo.ui.lib.actions.DragAction;
-import ca.nengo.ui.lib.objects.models.ModelObject;
+import ca.nengo.ui.lib.action.DragAction;
+import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticGround;
@@ -41,9 +41,9 @@ import ca.nengo.ui.lib.world.piccolo.WorldSkyImpl;
 import ca.nengo.ui.lib.world.piccolo.objects.SelectionBorder;
 import ca.nengo.ui.lib.world.piccolo.objects.Window;
 import ca.nengo.ui.lib.world.piccolo.primitives.PiccoloNodeInWorld;
-import ca.nengo.ui.models.nodes.UINetwork;
-import ca.nengo.ui.models.nodes.UINodeViewable;
-import ca.nengo.ui.models.viewers.NodeViewer;
+import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.model.node.UINodeViewable;
+import ca.nengo.ui.model.viewer.NodeViewer;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.PNode;
 import org.piccolo2d.event.PDragSequenceEventHandler;

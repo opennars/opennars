@@ -206,7 +206,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 		myDecodingApproximators.clear();
 
 		// update the decoders for any existing origins
-		Source[] sources = getOrigins();
+		Source[] sources = getSources();
 		for (Source source2 : sources) {
 			if (source2 instanceof DecodedSource) {
 				DecodedSource origin=((DecodedSource) source2);
@@ -351,7 +351,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 
 				node.run(0f, 0f);
 
-				RealOutput output = (RealOutput) node.getOrigin(origin).get();
+				RealOutput output = (RealOutput) node.getSource(origin).get();
 				result[i] = output.getValues()[0];
 			}
 
@@ -437,7 +437,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 	
 					node.run(times[t], times[t]+dt);
 	
-					RealOutput output = (RealOutput) node.getOrigin(origin).get();
+					RealOutput output = (RealOutput) node.getSource(origin).get();
 					result[i][t] = output.getValues()[0];
 				}
 			}
@@ -552,7 +552,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 		BiasSource result = new BiasSource(this, name, getNodes(), o.getNodeOrigin(),
 				getConstantOutputs(myEvalPoints, o.getNodeOrigin()), numInterneurons, excitatory);
 		result.setMode(getMode());
-		if (getOrigin(name)!=null) {
+		if (getSource(name)!=null) {
 			removeDecodedOrigin(name);
 		}
 
@@ -936,7 +936,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 						state = dynamicsOutput.getValues()[dynamicsOutput.getValues().length-1];
 					}
 
-					Source[] sources = getOrigins();
+					Source[] sources = getSources();
 					for (Source source : sources) {
 						if (source instanceof DecodedSource) {
 							((DecodedSource) source).run(state, startTime, endTime);
@@ -996,7 +996,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 		
 		super.setMode(mode);
 
-		Source[] sources = getOrigins();
+		Source[] sources = getSources();
 		for (Source source : sources) {
 			if (source instanceof DecodedSource) {
 				((DecodedSource) source).setMode(mode);
@@ -1091,7 +1091,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 		myDecodingApproximators.clear();
 
 		// update the decoders for any existing origins
-		Source[] sources = getOrigins();
+		Source[] sources = getSources();
 		for (Source source2 : sources) {
 			if (source2 instanceof DecodedSource) {
 				DecodedSource origin=((DecodedSource) source2);
@@ -1115,7 +1115,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 	public Properties listStates() {
 		Properties p = super.listStates();
 
-		for (Source o : getOrigins()) {
+		for (Source o : getSources()) {
 			if (o instanceof DecodedSource) {
 				p.setProperty(o.getName() + ":STP", "Decoder scaling due to short-term plasticity");
 			}
@@ -1235,7 +1235,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 		SpikingNeuron neuron = neurons[0];
 		SpikeGeneratorSource origin;
 		try {
-			origin = (SpikeGeneratorSource) neuron.getOrigin(Neuron.AXON);
+			origin = (SpikeGeneratorSource) neuron.getSource(Neuron.AXON);
 		} catch (StructuralException e) {
 			e.printStackTrace();
 			return null;

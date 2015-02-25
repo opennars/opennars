@@ -251,7 +251,7 @@ public class NEFGPUInterface {
 			{
 				networkArraySources = ((NEFGroupImpl) workingArray).getDecodedOrigins();
 			}else{
-				networkArraySources = workingArray.getOrigins();
+				networkArraySources = workingArray.getSources();
 			}
 			networkArrayData.numOrigins = networkArraySources.length;
 			
@@ -464,7 +464,7 @@ public class NEFGPUInterface {
 			{
 				networkArraySources = ((NEFGroupImpl) myGPUNetworkArrays[i]).getDecodedOrigins();
 			}else{
-				networkArraySources = myGPUNetworkArrays[i].getOrigins();
+				networkArraySources = myGPUNetworkArrays[i].getSources();
 			}
 
 			representedOutputValues[i] = new float[networkArraySources.length][];
@@ -535,7 +535,7 @@ public class NEFGPUInterface {
 					{
 						sources = ((NEFGroupImpl) myGPUNetworkArrays[i]).getDecodedOrigins();
 					}else{
-						sources = myGPUNetworkArrays[i].getOrigins();
+						sources = myGPUNetworkArrays[i].getSources();
 					}
 					
 					count = sources.length;

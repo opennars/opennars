@@ -29,7 +29,7 @@ public class DirectNodeTest extends TestCase {
 		node1.getTarget(DirectNode.TERMINATION).apply(
                 new SpikeOutputImpl(new boolean[]{true, false}, Units.UNK, 0));
 		node1.run(0, .01f);
-		SpikeOutput out1 = (SpikeOutput) node1.getOrigin(DirectNode.ORIGIN).get();
+		SpikeOutput out1 = (SpikeOutput) node1.getSource(DirectNode.ORIGIN).get();
 		assertEquals(true, out1.getValues()[0]);
 		assertEquals(false, out1.getValues()[1]);
 		
@@ -40,7 +40,7 @@ public class DirectNodeTest extends TestCase {
 		node2.getTarget("a").apply(new RealOutputImpl(new float[]{10, 5}, Units.UNK, 0));
 		node2.getTarget("b").apply(new RealOutputImpl(new float[]{1, 0}, Units.UNK, 0));
 		node2.run(0, .01f);
-		RealOutput out2 = (RealOutput) node2.getOrigin(DirectNode.ORIGIN).get();
+		RealOutput out2 = (RealOutput) node2.getSource(DirectNode.ORIGIN).get();
 		TestUtil.assertClose(11, out2.getValues()[0], .001f);
 		TestUtil.assertClose(5, out2.getValues()[1], .001f);
 		
@@ -49,7 +49,7 @@ public class DirectNodeTest extends TestCase {
 		DirectNode node3 = new DirectNode("test3", 1, terminations3);
 		node3.getTarget("a").apply(new RealOutputImpl(new float[]{10, 3}, Units.UNK, 0));
 		node3.run(0, .01f);
-		RealOutput out3 = (RealOutput) node3.getOrigin(DirectNode.ORIGIN).get();
+		RealOutput out3 = (RealOutput) node3.getSource(DirectNode.ORIGIN).get();
 		TestUtil.assertClose(7, out3.getValues()[0], .001f);
 	}
 

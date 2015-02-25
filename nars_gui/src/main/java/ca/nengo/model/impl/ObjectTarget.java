@@ -78,8 +78,9 @@ public class ObjectTarget<V> implements Target<V> {
      * @param node Parent node
      * @param name Termination name
      * @param transform Transformation matrix
+     * //TODO move to a numeric specific class, this isnt useful for non-numeric data
      */
-    public ObjectTarget(Node node, String name, float[][] transform) {
+    @Deprecated public ObjectTarget(Node node, String name, float[][] transform) {
         this(node, name, transform[0].length, (Class<? extends V>) Object.class);
         assert MU.isMatrix(transform);
 

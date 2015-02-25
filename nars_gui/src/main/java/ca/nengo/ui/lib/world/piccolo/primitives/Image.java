@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world.piccolo.primitives;
 
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 
 import java.net.URL;

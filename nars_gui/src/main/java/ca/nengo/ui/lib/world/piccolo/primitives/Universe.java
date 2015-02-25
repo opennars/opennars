@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world.piccolo.primitives;
 
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Destroyable;
@@ -12,7 +12,6 @@ import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.lib.world.piccolo.objects.Window;
-import org.piccolo2d.PCanvas;
 import org.piccolo2d.PLayer;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;

@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world.piccolo;
 
-import ca.nengo.ui.lib.objects.activities.TransientMessage;
+import ca.nengo.ui.lib.object.activity.TransientMessage;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Destroyable;
 import ca.nengo.ui.lib.world.PaintContext;
@@ -126,6 +126,16 @@ public class WorldObjectImpl implements WorldObject {
         init(name);
     }
 
+//    @Override
+//    public int hashCode() {
+//        return getName().hashCode();
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//        return (obj == this);
+//    }
+
     /**
      * Creates an unnamed WorldObject
      */
@@ -148,11 +158,12 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     private Collection<WorldObject> getChildrenInternal() {
-        ArrayList<WorldObject> objects = new ArrayList(getPiccolo().getChildrenCount());
+        List piccoloChildren = getPiccolo().getChildrenReference();
+        int numChildren = piccoloChildren.size();
+        List<WorldObject> objects = new ArrayList(numChildren);
 
-        Iterator<?> it = getPiccolo().getChildrenIterator();
-        while (it.hasNext()) {
-            Object next = it.next();
+        for (int i = 0; i < numChildren; i++) {
+            Object next = piccoloChildren.get(i);
             if (next instanceof PiccoloNodeInWorld) {
                 WorldObject wo = ((PiccoloNodeInWorld) next).getWorldObject();
 
@@ -284,6 +295,7 @@ public class WorldObjectImpl implements WorldObject {
                 duration);
     }
 
+
     public void animateToPositionScaleRotation(double x, double y, double scale, double theta,
             long duration) {
         myPNode.animateToPositionScaleRotation(x, y, scale, theta, duration);
@@ -359,20 +371,28 @@ public class WorldObjectImpl implements WorldObject {
         }
     }
 
-    public Collection<WorldObject> findIntersectingNodes(Rectangle2D fullBounds) {
-        ArrayList<PNode> interesectingNodes = new ArrayList<PNode>();
-        myPNode.findIntersectingNodes(fullBounds, interesectingNodes);
+    public Collection<WorldObject> findIntersectingNodes(Rectangle2D fullBounds, List<WorldObject> intersectingObjectsBuffer) {
+        ArrayList<PNode> intersectingNodes = new ArrayList<PNode>();
+        myPNode.findIntersectingNodes(fullBounds, intersectingNodes);
 
-        Collection<WorldObject> interesectingObjects = new ArrayList<WorldObject>(
-                interesectingNodes.size());
+        if (intersectingObjectsBuffer == null) {
+            intersectingObjectsBuffer = new ArrayList<WorldObject>(
+                    intersectingNodes.size());
+        }
+        else {
+            intersectingObjectsBuffer.clear();
+        }
 
-        for (PNode node : interesectingNodes) {
+        for (int i = 0; i < intersectingNodes.size(); i++) {
+            PNode node = intersectingNodes.get(i);
             if (node instanceof PiccoloNodeInWorld && node.getVisible()) {
-                interesectingObjects.add(((PiccoloNodeInWorld) node).getWorldObject());
+                WorldObject wo = ((PiccoloNodeInWorld) node).getWorldObject();
+                if (wo != null)
+                    intersectingObjectsBuffer.add(wo);
             }
 
         }
-        return interesectingObjects;
+        return intersectingObjectsBuffer;
     }
 
     public PBounds getBounds() {
@@ -384,6 +404,7 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public int getChildrenCount() {
+        //TODO this is inefficient to construct the array for this
         return getChildrenInternal().size();
     }
 

@@ -58,7 +58,7 @@ public class NEFGroupImplTest extends TestCase {
 		network.addNode(dest);
 
 		source.addDecodedTermination("input", MU.I(1), .005f, false); //OK
-		BiasSource bo = source.addBiasOrigin(source.getOrigin(NEFGroup.X), 200, "interneurons", true); //should have -ve bias decoders
+		BiasSource bo = source.addBiasOrigin(source.getSource(NEFGroup.X), 200, "interneurons", true); //should have -ve bias decoders
 		network.addNode(bo.getInterneurons()); //should be backwards response functions
 //**		bo.getInterneurons().addDecodedTermination("source", MU.I(1), .005f, false);
 		
@@ -80,8 +80,8 @@ public class NEFGroupImplTest extends TestCase {
 		
 //		Plotter.plot(bt[0].getBiasEncoders(), "bias decoders");
 		
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), source.getTarget("input"));
-		network.addProjection(source.getOrigin(NEFGroup.X), dest.getTarget("source"));
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), source.getTarget("input"));
+		network.addProjection(source.getSource(NEFGroup.X), dest.getTarget("source"));
 //*		network.addProjection(bo, bo.getInterneurons().getTermination("source"));
 //*		network.addProjection(bo, bt[0]);
 //*		network.addProjection(bo.getInterneurons().getOrigin(NEFEnsemble.X), bt[1]);
@@ -123,8 +123,8 @@ public class NEFGroupImplTest extends TestCase {
 //		DecodedTermination baseTermination = (DecodedTermination) post.addDecodedTermination("pre", MU.I(1), tauPSC, false);
 		network.addNode(post);
 		
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), pre.getTarget("input"));
-		Projection projection = network.addProjection(pre.getOrigin(NEFGroup.X), post.getTarget("pre"));
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), pre.getTarget("input"));
+		Projection projection = network.addProjection(pre.getSource(NEFGroup.X), post.getTarget("pre"));
 		
 		Probe pPost = network.getSimulator().addProbe("post", NEFGroup.X, true);
 		network.run(0, 2);
@@ -314,7 +314,7 @@ public class NEFGroupImplTest extends TestCase {
 		//test the per-dimension eval signals
 		evalSignals[0] = new TimeSeriesImpl(new float[]{0,1}, vals, new Units[]{Units.UNK});
 		ensemble.addDecodedSignalOrigin("test1", targetSignal, evalSignals, "AXON");
-		if(ensemble.getOrigin("test1") == null)
+		if(ensemble.getSource("test1") == null)
 			fail("Error creating per-dimension signal origin");
 		
 		//test the per-node eval signals
@@ -322,7 +322,7 @@ public class NEFGroupImplTest extends TestCase {
 		vals[1] = new float[]{1, 1, 1, 1, 1};
 		evalSignals[0] = new TimeSeriesImpl(new float[]{0,1}, vals, new Units[]{Units.UNK,Units.UNK,Units.UNK,Units.UNK,Units.UNK});
 		ensemble.addDecodedSignalOrigin("test2", targetSignal, evalSignals, "AXON");
-		if(ensemble.getOrigin("test2") == null)
+		if(ensemble.getSource("test2") == null)
 			fail("Error creating per-node signal origin");
 	}
 

@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.util;
 
-import ca.nengo.ui.lib.actions.ActionException;
+import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.primitives.PiccoloNodeInWorld;

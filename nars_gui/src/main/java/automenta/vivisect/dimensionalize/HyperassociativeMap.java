@@ -78,6 +78,7 @@ public class HyperassociativeMap<N, E> {
     private double maxMovement = DEFAULT_MAX_MOVEMENT;
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
     private double acceptableMaxDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
+    private double speedFactor = 1.0;
     private EdgeWeightToDistanceFunction edgeWeightToDistance = EdgeWeightToDistanceFunction.OneDivSum;
     
     private DistanceMetric distanceFunction;
@@ -317,7 +318,7 @@ public class HyperassociativeMap<N, E> {
     
     /** speed scaling factor for a node; should be <= 1.0 */
     public double getSpeedFactor(N n) {
-        return 1.0;
+        return getSpeedFactor();
     }
     
     /** edge "weight" which can be mapped in certain ways (via EdgeWeightToDistanceFunction) to distance */
@@ -379,8 +380,12 @@ public class HyperassociativeMap<N, E> {
 
         
     }
-    
-    
+
+
+    public double getSpeedFactor() {
+        return speedFactor;
+    }
+
     public double magnitude(ArrayRealVector x) {
         return distanceFunction.getDistance(zero, x.getDataRef());
     }

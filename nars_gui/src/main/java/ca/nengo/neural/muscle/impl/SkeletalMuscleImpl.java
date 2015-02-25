@@ -140,17 +140,17 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigin(java.lang.String)
+	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getOrigin(String name) throws StructuralException {
+	public Source getSource(String name) throws StructuralException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigins()
+	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getOrigins() {
+	public Source[] getSources() {
 		// TODO Auto-generated method stub
 		return null;
 	}

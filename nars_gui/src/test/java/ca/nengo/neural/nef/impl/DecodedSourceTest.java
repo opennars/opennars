@@ -33,7 +33,7 @@ public class DecodedSourceTest extends TestCase {
 		
 		NEFGroupFactoryImpl ef = new NEFGroupFactoryImpl();
 		NEFGroup ensemble = ef.make("test", 100, 1);
-		myOrigin = (DecodedSource) ensemble.getOrigin(NEFGroup.X);
+		myOrigin = (DecodedSource) ensemble.getSource(NEFGroup.X);
 //		Plotter.plot(ensemble, NEFEnsemble.X);
 	}
 

@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world.piccolo.objects.icons;
 
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 

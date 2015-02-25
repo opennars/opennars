@@ -127,7 +127,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 	public void createEnsembleOrigin(String name) throws StructuralException {
 		Source[] sources = new Source[myNumNodes];
 		for (int i = 0; i < myNumNodes; i++) {
-			sources[i] = myNodes[i].getOrigin(name);
+			sources[i] = myNodes[i].getSource(name);
 		}
 		createEnsembleOrigin(name, sources);
 	}
@@ -163,7 +163,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 			origins[i] = (DecodedSource) myNodes[i].addDecodedOrigin(name,  functions,  nodeOrigin);
 		}
 		this.createEnsembleOrigin(name, origins);
-		return this.getOrigin(name);
+		return this.getSource(name);
 	}
 	
 	/**
@@ -197,7 +197,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 			origins[i] = (DecodedSource) myNodes[i].addDecodedOrigin(name,  oFuncs,  nodeOrigin);
 		}
 		this.createEnsembleOrigin(name, origins);
-		return this.getOrigin(name);
+		return this.getSource(name);
 	}
 	
 	
@@ -479,7 +479,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 	 */
 	public void exposeAxons() throws StructuralException {
 		for(int i=0; i < myNumNodes; i++)
-			exposeOrigin(myNodes[i].getOrigin("AXON"), "AXON_"+i);
+			exposeOrigin(myNodes[i].getSource("AXON"), "AXON_"+i);
 	}
 
 	/**
@@ -595,7 +595,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 			}
 			
 			// Clone array origins and ensemble terminations
-			for (Source exposedSource : getOrigins()) {
+			for (Source exposedSource : getSources()) {
 				Source clonedSource = ((SourceWrapper) exposedSource).getBaseOrigin().clone(result);
 				result.exposeOrigin(clonedSource, exposedSource.getName());
 			}
@@ -767,7 +767,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 				
 				DecodedSource[] origins = new DecodedSource[mySources.length];
 				for (int i = 0; i < mySources.length; i++)
-					origins[i] = (DecodedSource) ((NetworkArrayImpl) node).getNodes()[i].getOrigin(mySources[i].getName());
+					origins[i] = (DecodedSource) ((NetworkArrayImpl) node).getNodes()[i].getSource(mySources[i].getName());
 				result.mySources = origins;
 				
 				return result;
@@ -881,7 +881,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 				
 				DecodedSource[] origins = new DecodedSource[mySources.length];
 				for (int i = 0; i < mySources.length; i++)
-					origins[i] = (DecodedSource) ((NetworkArrayImpl) node).getNodes()[i].getOrigin(mySources[i].getName());
+					origins[i] = (DecodedSource) ((NetworkArrayImpl) node).getNodes()[i].getSource(mySources[i].getName());
 				result.mySources = origins;
 				
 				return result;

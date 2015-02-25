@@ -132,7 +132,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 			}
 			FunctionInput fi = new FunctionInput("DECODING SIMULATION INPUT", f, Units.UNK);
 			environment.addNode(fi);
-			environment.addProjection(fi.getOrigin(FunctionInput.ORIGIN_NAME), target);
+			environment.addProjection(fi.getSource(FunctionInput.ORIGIN_NAME), target);
 			probe.reset();
 			environment.run(0, transientTime);
 			TimeSeries result = probe.getData();
@@ -370,12 +370,12 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigin(java.lang.String)
+	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
 	@Override
-    public Source getOrigin(String name) throws StructuralException {
+    public Source getSource(String name) throws StructuralException {
 		return myDecodedOrigins.containsKey(name) ?
-		        myDecodedOrigins.get(name) : super.getOrigin(name);
+		        myDecodedOrigins.get(name) : super.getSource(name);
 	}
 
     /**
@@ -388,12 +388,12 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
     }
 
 	/**
-	 * @see ca.nengo.model.Group#getOrigins()
+	 * @see ca.nengo.model.Group#getSources()
 	 */
 	@Override
-    public Source[] getOrigins() {
+    public Source[] getSources() {
         ArrayList<Source> result = new ArrayList<Source>(10);
-        Source[] composites = super.getOrigins();
+        Source[] composites = super.getSources();
         Collections.addAll(result, composites);
 
         // getOrigins is called by NEFEnsembleImpl in the constructor
@@ -495,7 +495,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
     	} else if (t == null && stateName.endsWith(":STP")) {
                 String originName = stateName.substring(0,stateName.length()-4);
                 try {
-                    DecodedSource o = (DecodedSource) getOrigin(originName);
+                    DecodedSource o = (DecodedSource) getSource(originName);
                     result = o.getSTPHistory();
                 } catch (StructuralException e) {
                     throw new SimulationException(e);

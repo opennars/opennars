@@ -1,10 +1,9 @@
 package ca.nengo.ui.lib;
 
 import ca.nengo.plot.Plotter;
-import ca.nengo.ui.lib.actions.*;
-import ca.nengo.ui.lib.misc.ShortcutKey;
+import ca.nengo.ui.lib.action.*;
 import ca.nengo.ui.lib.util.UIEnvironment;
-import ca.nengo.ui.lib.util.menus.MenuBuilder;
+import ca.nengo.ui.lib.menu.MenuBuilder;
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;

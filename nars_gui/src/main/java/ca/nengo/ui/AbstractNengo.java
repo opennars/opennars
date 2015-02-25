@@ -5,29 +5,29 @@ import ca.nengo.model.Network;
 import ca.nengo.model.Node;
 import ca.nengo.model.Source;
 import ca.nengo.model.Target;
-import ca.nengo.ui.actions.*;
+import ca.nengo.ui.action.*;
 import ca.nengo.ui.data.DataListView;
 import ca.nengo.ui.lib.AppFrame;
 import ca.nengo.ui.lib.AuxillarySplitPane;
-import ca.nengo.ui.lib.actions.*;
-import ca.nengo.ui.lib.misc.ShortcutKey;
-import ca.nengo.ui.lib.objects.models.ModelObject;
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.action.*;
+import ca.nengo.ui.lib.ShortcutKey;
+import ca.nengo.ui.lib.object.model.ModelObject;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.Util;
-import ca.nengo.ui.lib.util.menus.MenuBuilder;
+import ca.nengo.ui.lib.menu.MenuBuilder;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.handlers.MouseHandler;
 import ca.nengo.ui.lib.world.handlers.SelectionHandler;
 import ca.nengo.ui.lib.world.piccolo.primitives.Universe;
-import ca.nengo.ui.models.NodeContainer;
-import ca.nengo.ui.models.UINeoNode;
-import ca.nengo.ui.models.constructors.CNetwork;
-import ca.nengo.ui.models.nodes.UINetwork;
-import ca.nengo.ui.models.nodes.widgets.UIProbe;
-import ca.nengo.ui.models.nodes.widgets.UIProjection;
-import ca.nengo.ui.models.nodes.widgets.Widget;
+import ca.nengo.ui.model.NodeContainer;
+import ca.nengo.ui.model.UINeoNode;
+import ca.nengo.ui.model.build.CNetwork;
+import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.model.widget.UIProbe;
+import ca.nengo.ui.model.widget.UIProjection;
+import ca.nengo.ui.model.widget.Widget;
 import ca.nengo.ui.util.*;
 import ca.nengo.util.Environment;
 import org.simplericity.macify.eawt.Application;
@@ -342,7 +342,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     }
 
     /**
-     * @see ca.nengo.ui.models.NodeContainer#addNodeModel(ca.nengo.model.Node)
+     * @see ca.nengo.ui.model.NodeContainer#addNodeModel(ca.nengo.model.Node)
      */
     //public <U extends UINeoNode> U addNodeModel(Node node) throws ContainerException {
     public UINeoNode addNodeModel(Node node) throws ContainerException {

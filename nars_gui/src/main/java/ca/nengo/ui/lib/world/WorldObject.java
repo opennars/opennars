@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
+import java.util.*;
 
 
 public interface WorldObject extends NamedObject, Destroyable {
@@ -41,6 +41,10 @@ public interface WorldObject extends NamedObject, Destroyable {
             double width, double height, long duration);
 
     public void animateToPosition(double x, double y, long duration);
+
+    default public void animateToPosition(double x, double y, double durationSec) {
+        animateToPosition(x, y, (long)(1000*durationSec));
+    }
 
     /**
      * Animate this node's transform from its current location when the activity
@@ -109,7 +113,7 @@ public interface WorldObject extends NamedObject, Destroyable {
      */
     public void dragOffset(double dx, double dy);
 
-    public Collection<WorldObject> findIntersectingNodes(Rectangle2D fullBounds);
+    public Collection<WorldObject> findIntersectingNodes(Rectangle2D fullBounds, java.util.List<WorldObject> intersectingObjectsBuffer);
 
     /**
      * Return a copy of this node's bounds. These bounds are stored in the local

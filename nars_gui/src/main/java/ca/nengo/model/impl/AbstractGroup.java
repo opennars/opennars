@@ -195,7 +195,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 
 			if (myCollectSpikesFlag && (myCollectSpikesRatio == 1 || i % myCollectSpikesRatio == 0)) {
 				try {
-					Object output = myNodes[i].getOrigin(Neuron.AXON).get();
+					Object output = myNodes[i].getSource(Neuron.AXON).get();
 					if (output instanceof PreciseSpikeOutput) {
 						PreciseSpikeOutput precise=((PreciseSpikeOutput) output);
 						if (precise.getValues()[0]) {
@@ -229,9 +229,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	}
 
 	/**
-	 * @see ca.nengo.model.Group#getOrigin(java.lang.String)
+	 * @see ca.nengo.model.Group#getSource(java.lang.String)
 	 */
-    public Source getOrigin(String name) throws StructuralException {
+    public Source getSource(String name) throws StructuralException {
 		return myOrigins.get(name);
 	}
 
@@ -276,9 +276,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
     }
 
 	/**
-	 * @see ca.nengo.model.Node#getOrigins()
+	 * @see ca.nengo.model.Node#getSources()
 	 */
-    public Source[] getOrigins() {
+    public Source[] getSources() {
         ArrayList<Source> result = new ArrayList<Source>(10);
         for (Source o : myOrigins.values()) {
             result.add(o);
@@ -438,7 +438,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 		Map<String, List<Source>> groups = new LinkedHashMap<String, List<Source>>(10);
 
 		for (Node node : nodes) {
-			Source[] sources = node.getOrigins();
+			Source[] sources = node.getSources();
 			for (Source source : sources) {
 				if (source.getDimensions() == 1) {
 					List<Source> group = groups.get(source.getName());
@@ -470,7 +470,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 
 	private static List<String> get1DOriginNames(Node node) {
 		List<String> result = new ArrayList<String>(10);
-		Source[] sources = node.getOrigins();
+		Source[] sources = node.getSources();
 		for (Source source : sources) {
 			if (source.getDimensions() == 1) {
                 result.add(source.getName());

@@ -26,15 +26,15 @@ package ca.nengo.ui.data;
 
 import ca.nengo.io.DelimitedFileExporter;
 import ca.nengo.model.Network;
-import ca.nengo.ui.actions.ConfigureAction;
-import ca.nengo.ui.lib.style.NengoStyle;
-import ca.nengo.ui.lib.actions.ActionException;
-import ca.nengo.ui.lib.actions.ReversableAction;
-import ca.nengo.ui.lib.actions.StandardAction;
-import ca.nengo.ui.lib.actions.UserCancelledException;
+import ca.nengo.ui.action.ConfigureAction;
+import ca.nengo.ui.lib.NengoStyle;
+import ca.nengo.ui.lib.action.ActionException;
+import ca.nengo.ui.lib.action.ReversableAction;
+import ca.nengo.ui.lib.action.StandardAction;
+import ca.nengo.ui.lib.action.UserCancelledException;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.UserMessages;
-import ca.nengo.ui.lib.util.menus.PopupMenuBuilder;
+import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.util.FileExtensionFilter;
 
 import javax.swing.*;

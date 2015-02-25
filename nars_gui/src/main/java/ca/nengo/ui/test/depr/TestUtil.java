@@ -50,10 +50,10 @@ public class TestUtil {
 		// UITermination uiFbterm =
 		// uiIntegrator.showTermination(fbterm.getName());
 
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME),
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME),
 				interm);
 		Thread.sleep(500);
-		network.addProjection(integrator.getOrigin(NEFGroup.X), fbterm);
+		network.addProjection(integrator.getSource(NEFGroup.X), fbterm);
 		Thread.sleep(500);
 
 		/*

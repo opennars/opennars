@@ -2,17 +2,17 @@ package ca.nengo.ui.lib.world.handlers;
 
 
 import ca.nengo.ui.AbstractNengo;
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.objects.SelectionBorder;
 import ca.nengo.ui.lib.world.piccolo.primitives.PiccoloNodeInWorld;
-import ca.nengo.ui.models.NodeContainer;
-import ca.nengo.ui.models.nodes.UINetwork;
-import ca.nengo.ui.models.viewers.NetworkViewer;
-import ca.nengo.ui.models.viewers.NodeViewer;
+import ca.nengo.ui.model.NodeContainer;
+import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.model.viewer.NetworkViewer;
+import ca.nengo.ui.model.viewer.NodeViewer;
 import org.piccolo2d.PNode;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;

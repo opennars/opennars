@@ -311,7 +311,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		Node[] nodes = getNodes();
         ArrayList<Source> nodeSources = new ArrayList<Source>(nodes.length);
 		for (Node node : nodes) {
-			Source[] origs = node.getOrigins();
+			Source[] origs = node.getSources();
             Collections.addAll(nodeSources, origs);
 		}
 
@@ -412,7 +412,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			else if(node instanceof DecodableGroupImpl)
 			{
 				NEFGroupImpl pop = (NEFGroupImpl)node;
-				Source[] sources = pop.getOrigins();
+				Source[] sources = pop.getSources();
 				for (Source source : sources) {
 					String exposedName = getExposedOriginName(source);
 					if(exposedName != null) {
@@ -707,9 +707,9 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#getOrigin(java.lang.String)
+	 * @see ca.nengo.model.Network#getSource(java.lang.String)
 	 */
-	public Source getOrigin(String name) throws StructuralException {
+	public Source getSource(String name) throws StructuralException {
 		if ( !myExposedOrigins.containsKey(name) ) {
 			throw new StructuralException("There is no exposed Origin named " + name);
 		}
@@ -717,9 +717,9 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#getOrigins()
+	 * @see ca.nengo.model.Network#getSources()
 	 */
-	public Source[] getOrigins() {
+	public Source[] getSources() {
 		if (myExposedOrigins.values().size() == 0) {
             Collection<Source> var = myExposedOrigins.values();
             return var.toArray(new Source[var.size()]);
@@ -1172,7 +1172,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		for (Projection oldProjection : getProjections()) {
 			try {
 				Source newSource = result.getNode(oldProjection.getOrigin().getNode().getName())
-					.getOrigin(oldProjection.getOrigin().getName());
+					.getSource(oldProjection.getOrigin().getName());
 				Target newTarget = result.getNode(oldProjection.getTermination().getNode().getName())
 					.getTarget(oldProjection.getTermination().getName());
 				Projection newProjection = new ProjectionImpl(newSource, newTarget, result);
@@ -1185,13 +1185,13 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		result.myExposedOrigins = new HashMap<String, Source>(10);
 		result.myExposedOriginNames = new HashMap<Source, String>(10);
 		result.orderedExposedSources = new LinkedList <Source> ();
-		for (Source exposed : getOrigins()) {
+		for (Source exposed : getSources()) {
 			String name = exposed.getName();
 			Source wrapped = ((SourceWrapper) exposed).getWrappedOrigin();
 			try {
 				// Check to see if referenced node is the network itself. If it is, handle the origin differently.
 				if (wrapped.getNode().getName() != myName ) {
-					Source toExpose = result.getNode(wrapped.getNode().getName()).getOrigin(wrapped.getName());
+					Source toExpose = result.getNode(wrapped.getNode().getName()).getSource(wrapped.getName());
 					result.exposeOrigin(toExpose, name);
 				}
 			} catch (StructuralException e) {

@@ -25,8 +25,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.data;
 
 import ca.nengo.plot.Plotter;
-import ca.nengo.ui.lib.actions.ActionException;
-import ca.nengo.ui.lib.actions.StandardAction;
+import ca.nengo.ui.lib.action.ActionException;
+import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.util.DataUtils;
 import ca.nengo.util.SpikePattern;
 import ca.nengo.util.TimeSeries;

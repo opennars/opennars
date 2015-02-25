@@ -39,7 +39,7 @@ import ca.nengo.neural.nef.NEFGroupFactory;
 import ca.nengo.neural.nef.impl.NEFGroupFactoryImpl;
 import ca.nengo.ui.AbstractNengo;
 import ca.nengo.ui.lib.util.Util;
-import ca.nengo.ui.models.nodes.UINetwork;
+import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.util.Probe;
 
 import javax.swing.*;
@@ -112,9 +112,9 @@ public class IntegratorExample {
 		// UITermination uiFbterm =
 		// uiIntegrator.showTermination(fbterm.getName());
 
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), interm);
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), interm);
 		Thread.sleep(500);
-		network.addProjection(integrator.getOrigin(NEFGroup.X), fbterm);
+		network.addProjection(integrator.getSource(NEFGroup.X), fbterm);
 		Thread.sleep(500);
 
 		/*
@@ -124,7 +124,7 @@ public class IntegratorExample {
 		network.removeProjection(interm);
 		Thread.sleep(500);
 		// add the projection back
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), interm);
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), interm);
 		Thread.sleep(500);
 		/*
 		 * Add probes

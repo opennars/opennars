@@ -28,7 +28,7 @@ package ca.nengo.ui.test.depr;
 
 import ca.nengo.model.Network;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.ui.models.nodes.UINetwork;
+import ca.nengo.ui.model.node.UINetwork;
 
 /**
  * In this example, an Integrator network is constructed

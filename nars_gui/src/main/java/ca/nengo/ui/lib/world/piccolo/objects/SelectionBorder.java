@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world.piccolo.objects;
 
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.WorldObject.Listener;

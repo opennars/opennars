@@ -29,8 +29,8 @@ package ca.nengo.ui.test.depr;
 
 import ca.nengo.model.Network;
 import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.lib.objects.activities.TrackedStatusMsg;
-import ca.nengo.ui.models.nodes.UINetwork;
+import ca.nengo.ui.lib.object.activity.TrackedStatusMsg;
+import ca.nengo.ui.model.node.UINetwork;
 
 import javax.swing.*;
 

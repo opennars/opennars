@@ -7,12 +7,12 @@ import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.piccolo.objects.BoundsHandle;
-import ca.nengo.ui.models.UIBuilder;
-import ca.nengo.ui.models.UINeoNode;
-import ca.nengo.ui.models.icons.EmptyIcon;
-import ca.nengo.ui.models.math.JuRLsFunctionApproximator;
-import ca.nengo.ui.models.nodes.UINetwork;
-import ca.nengo.ui.models.plot.FunctionPlot;
+import ca.nengo.ui.model.UIBuilder;
+import ca.nengo.ui.model.UINeoNode;
+import ca.nengo.ui.model.icon.EmptyIcon;
+import ca.nengo.ui.model.math.JuRLsFunctionApproximator;
+import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.model.plot.FunctionPlot;
 import ca.nengo.util.ScriptGenException;
 import org.piccolo2d.extras.pswing.PSwing;
 

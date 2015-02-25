@@ -131,7 +131,7 @@ public class DataUtilsTest extends TestCase {
 		ensemble.collectSpikes(true);
 		network.addNode(ensemble);
 		
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), ensemble.getTarget("input"));
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), ensemble.getTarget("input"));
 		network.run(0, 2);
 		
 		SpikePattern unsorted = ensemble.getSpikePattern();

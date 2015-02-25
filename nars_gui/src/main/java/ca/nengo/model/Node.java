@@ -35,7 +35,7 @@ import java.util.HashMap;
 
 /**
  * A part of a Network that can be run independently (eg a Neuron). Normally
- * a source of Origins and/or Terminations.
+ * a source of Sources and/or Targets.
  *
  * @author Bryan Tripp
  */
@@ -68,14 +68,14 @@ public interface Node extends Serializable, Resettable, SimulationMode.ModeConfi
 	/**
 	 * @return Sets of ouput channels (eg spiking outputs, gap junctional outputs, etc.)
 	 */
-	public Source[] getOrigins();
+	public Source[] getSources();
 
 	/**
 	 * @param name Name of an Origin on this Node
 	 * @return The named Origin if it exists
 	 * @throws StructuralException if the named Origin does not exist
 	 */
-	public Source getOrigin(String name) throws StructuralException;
+	public Source getSource(String name) throws StructuralException;
 
 	/**
 	 * @return Sets of input channels (these have the same dimension as corresponding Origins

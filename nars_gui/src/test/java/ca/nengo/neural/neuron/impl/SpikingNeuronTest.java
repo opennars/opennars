@@ -55,8 +55,8 @@ public class SpikingNeuronTest extends TestCase {
 	 * Test method for 'ca.bpt.cn.model.impl.SpikingNeuron.getOrigins()'
 	 */
 	public void testGetOrigins() {
-		assertEquals(2, myNeuron.getOrigins().length);
-		assertTrue(myNeuron.getOrigins()[0] instanceof SpikeGeneratorSource);
+		assertEquals(2, myNeuron.getSources().length);
+		assertTrue(myNeuron.getSources()[0] instanceof SpikeGeneratorSource);
 	}
 
 	/*
@@ -80,17 +80,17 @@ public class SpikingNeuronTest extends TestCase {
 		myIntegrator.getTerminations()[0].apply(new RealOutputImpl(new float[]{5}, Units.SPIKES_PER_S, 0));
 		
 		myNeuron.run(0, .005f);
-		InstantaneousOutput output = myNeuron.getOrigins()[0].get();
+		InstantaneousOutput output = myNeuron.getSources()[0].get();
 		assertTrue(output instanceof SpikeOutput);
 		assertTrue(((SpikeOutput) output).getValues()[0] == false);
 		
 		myNeuron.run(0, .005f);
-		output = myNeuron.getOrigins()[0].get();
+		output = myNeuron.getSources()[0].get();
 		assertTrue(((SpikeOutput) output).getValues()[0] == true);
 		
 		myNeuron.setMode(SimulationMode.CONSTANT_RATE);
 		myNeuron.run(0, .01f);
-		output = myNeuron.getOrigins()[0].get();
+		output = myNeuron.getSources()[0].get();
 		assertTrue(output instanceof RealOutput);
 		assertTrue(((RealOutput) output).getValues()[0] > 100);
 		ourLogger.info(((RealOutput) output).getValues()[0]);

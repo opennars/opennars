@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world.piccolo.primitives;
 
-import ca.nengo.ui.lib.style.NengoStyle;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Destroyable;
 import ca.nengo.ui.lib.world.WorldObject;

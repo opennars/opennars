@@ -92,7 +92,7 @@ public class PoissonSpikeGeneratorTest extends TestCase {
             network.addNode(ensemble);
             FunctionInput input = new FunctionInput("input", new Function[]{new SineFunction(3)}, Units.UNK);
             network.addNode(input);
-            network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), ensemble.getTarget("input"));
+            network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), ensemble.getTarget("input"));
 
             network.setMode(SimulationMode.RATE);
             Probe rates = network.getSimulator().addProbe("test", "rate", true);

@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.util;
 
-import ca.nengo.ui.lib.exceptions.UIException;
+import ca.nengo.ui.lib.UIException;
 
 import javax.swing.*;
 import java.awt.*;

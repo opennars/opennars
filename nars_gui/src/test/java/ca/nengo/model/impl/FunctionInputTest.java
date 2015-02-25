@@ -24,10 +24,10 @@ public class FunctionInputTest extends TestCase {
 	 */
 	public void testGetDimensions() throws StructuralException {
 		FunctionInput input = new FunctionInput("test", new Function[]{new ConstantFunction(1, 1f)}, Units.UNK);
-		assertEquals(1, input.getOrigin(FunctionInput.ORIGIN_NAME).getDimensions());
+		assertEquals(1, input.getSource(FunctionInput.ORIGIN_NAME).getDimensions());
 
 		input = new FunctionInput("test", new Function[]{new ConstantFunction(1, 1f), new ConstantFunction(1, 1f)}, Units.UNK);
-		assertEquals(2, input.getOrigin(FunctionInput.ORIGIN_NAME).getDimensions());		
+		assertEquals(2, input.getSource(FunctionInput.ORIGIN_NAME).getDimensions());
 		
 		try {
 			input = new FunctionInput("test", new Function[]{new ConstantFunction(2, 1f)}, Units.UNK);
@@ -40,7 +40,7 @@ public class FunctionInputTest extends TestCase {
 	 */
 	public void testGetValues() throws StructuralException, SimulationException {
 		FunctionInput input = new FunctionInput("test", new Function[]{new ConstantFunction(1, 1f), new ConstantFunction(1, 2f)}, Units.UNK);
-		Source<InstantaneousOutput> source = input.getOrigin(FunctionInput.ORIGIN_NAME);
+		Source<InstantaneousOutput> source = input.getSource(FunctionInput.ORIGIN_NAME);
 		assertEquals(2, source.get().getDimension());
 		assertEquals(2, ((RealOutput) source.get()).getValues().length);
 		

@@ -2,7 +2,7 @@ package ca.nengo.ui.test;
 
 import ca.nengo.model.SimulationException;
 import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.models.nodes.UINetwork;
+import ca.nengo.ui.model.node.UINetwork;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

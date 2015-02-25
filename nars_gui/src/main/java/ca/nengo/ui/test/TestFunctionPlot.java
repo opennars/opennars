@@ -4,9 +4,9 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.models.math.JuRLsFunctionApproximator;
-import ca.nengo.ui.models.nodes.UINetwork;
-import ca.nengo.ui.models.plot.FunctionPlot;
+import ca.nengo.ui.model.math.JuRLsFunctionApproximator;
+import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.model.plot.FunctionPlot;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

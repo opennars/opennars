@@ -108,13 +108,13 @@ public class FuzzyLogicExample {
 		D.addDecodedTermination("in", new float[][] { new float[] { 0f, 0f, 0f,
 				1f } }, .005f, false);
 
-		net.addProjection(in.getOrigin(FunctionInput.ORIGIN_NAME), A
+		net.addProjection(in.getSource(FunctionInput.ORIGIN_NAME), A
 				.getTarget("in"));
-		net.addProjection(in.getOrigin(FunctionInput.ORIGIN_NAME), B
+		net.addProjection(in.getSource(FunctionInput.ORIGIN_NAME), B
 				.getTarget("in"));
-		net.addProjection(in.getOrigin(FunctionInput.ORIGIN_NAME), C
+		net.addProjection(in.getSource(FunctionInput.ORIGIN_NAME), C
 				.getTarget("in"));
-		net.addProjection(in.getOrigin(FunctionInput.ORIGIN_NAME), D
+		net.addProjection(in.getSource(FunctionInput.ORIGIN_NAME), D
 				.getTarget("in"));
 
 		rule1a.addDecodedTermination("B", new float[][] { new float[] { 1f },
@@ -128,16 +128,16 @@ public class FuzzyLogicExample {
 		rule2.addDecodedTermination("D", new float[][] { new float[] { 1f } },
 				.005f, false);
 
-		net.addProjection(B.getOrigin(NEFGroup.X), rule1a
+		net.addProjection(B.getSource(NEFGroup.X), rule1a
 				.getTarget("B"));
-		net.addProjection(C.getOrigin(NEFGroup.X), rule1a
+		net.addProjection(C.getSource(NEFGroup.X), rule1a
 				.getTarget("C"));
-		net.addProjection(A.getOrigin(NEFGroup.X), rule1b
+		net.addProjection(A.getSource(NEFGroup.X), rule1b
 				.getTarget("A"));
-		net.addProjection(rule1a.getOrigin("OR"), rule1b
+		net.addProjection(rule1a.getSource("OR"), rule1b
 				.getTarget("B or C"));
 		net
-				.addProjection(D.getOrigin(NEFGroup.X), rule2
+				.addProjection(D.getSource(NEFGroup.X), rule2
 						.getTarget("D"));
 
 		output.addDecodedTermination("rule1", new float[][] {
@@ -147,9 +147,9 @@ public class FuzzyLogicExample {
 				new float[] { 0f }, new float[] { .1f }, new float[] { .2f },
 				new float[] { .3f }, new float[] { .4f } }, .005f, false);
 
-		net.addProjection(rule1b.getOrigin("AND"), output
+		net.addProjection(rule1b.getSource("AND"), output
 				.getTarget("rule1"));
-		net.addProjection(rule2.getOrigin(NEFGroup.X), output
+		net.addProjection(rule2.getSource(NEFGroup.X), output
 				.getTarget("rule2"));
 
 		float neg = -.3f;
@@ -166,7 +166,7 @@ public class FuzzyLogicExample {
 				new Clip(5, 3, 0f, 1f), new Clip(5, 4, 0f, 1f) };
 		output.addDecodedOrigin("recurrent", clipped, Neuron.AXON);
 
-		net.addProjection(output.getOrigin("recurrent"), output
+		net.addProjection(output.getSource("recurrent"), output
 				.getTarget("recurrent"));
 
 		/*

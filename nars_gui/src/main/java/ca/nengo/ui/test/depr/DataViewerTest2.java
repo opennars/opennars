@@ -29,8 +29,8 @@ package ca.nengo.ui.test.depr;
 import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
 import ca.nengo.ui.AbstractNengo;
-import ca.nengo.ui.actions.RunSimulatorAction;
-import ca.nengo.ui.models.nodes.UINetwork;
+import ca.nengo.ui.action.RunSimulatorAction;
+import ca.nengo.ui.model.node.UINetwork;
 
 /**
  * Creates a Fuzzy Network, and runs it for 1 second

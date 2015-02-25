@@ -89,7 +89,7 @@ public class IzhikevichSpikeGeneratorTest extends TestCase {
 		Network network = new NetworkImpl();
 		network.addNode(input);
 		network.addNode(neuron);
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), t);
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), t);
 		
 		Probe v = network.getSimulator().addProbe("neuron", IzhikevichSpikeGenerator.V, true);
 		Probe u = network.getSimulator().addProbe("neuron", IzhikevichSpikeGenerator.U, true);

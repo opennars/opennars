@@ -154,7 +154,7 @@ public class ProjectionImpl implements Projection {
 
 		myNetwork.addProjection(myBiasOrigin, myDirectBT);
 		myNetwork.addProjection(myBiasOrigin, myInterneuronTermination);
-		myNetwork.addProjection(myInterneurons.getOrigin(NEFGroup.X), myIndirectBT);
+		myNetwork.addProjection(myInterneurons.getSource(NEFGroup.X), myIndirectBT);
 
 		if (optimize) {
 			float[][] baseWeights = MU.prod(post.getEncoders(), MU.prod(baseTermination.getTransform(), MU.transpose(baseOrigin.getDecoders())));
@@ -329,7 +329,7 @@ public class ProjectionImpl implements Projection {
 		    	Node node = tempSource.getNode().getChildren()[0];
 		    	
 		    	try{
-		    		dOrigin = (DecodedSource) node.getOrigin(tempSource.getName());
+		    		dOrigin = (DecodedSource) node.getSource(tempSource.getName());
 		    	}catch(StructuralException e){
 		    		dOrigin = null;
 		    	}

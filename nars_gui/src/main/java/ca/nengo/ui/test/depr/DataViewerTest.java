@@ -30,8 +30,8 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.AbstractNengo;
-import ca.nengo.ui.actions.RunSimulatorAction;
-import ca.nengo.ui.models.nodes.UINetwork;
+import ca.nengo.ui.action.RunSimulatorAction;
+import ca.nengo.ui.model.node.UINetwork;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;

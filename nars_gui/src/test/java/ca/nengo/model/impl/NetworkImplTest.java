@@ -222,9 +222,9 @@ public class NetworkImplTest extends TestCase {
 		b.addNode(c);
 		b.getSimulator().addProbe("c", "X", true);
 		
-		b.exposeOrigin(c.getOrigin("X"), "exposed");
+		b.exposeOrigin(c.getSource("X"), "exposed");
 		
-		if(!b.getExposedOriginName(c.getOrigin("X")).equals("exposed"))
+		if(!b.getExposedOriginName(c.getSource("X")).equals("exposed"))
 			fail("Origin not exposed correctly");
 		
 		if(myNetwork.getNode("b") == null)
@@ -253,7 +253,7 @@ public class NetworkImplTest extends TestCase {
 		if(b.getSimulator().getProbes().length != 0)
 			fail("Probes not removed correctly");
 		
-		if(b.getExposedOriginName(c.getOrigin("X")) != null)
+		if(b.getExposedOriginName(c.getSource("X")) != null)
 			fail("Origin not unexposed correctly");
 	}
 	
@@ -264,18 +264,18 @@ public class NetworkImplTest extends TestCase {
 		
 		myNetwork.addNode(a);
 		
-		myNetwork.exposeOrigin(a.getOrigin("X"), "test");
+		myNetwork.exposeOrigin(a.getSource("X"), "test");
 		
 		try
 		{
-			myNetwork.getOrigin("test");
+			myNetwork.getSource("test");
 		}
 		catch(StructuralException se)
 		{
 			fail("Origin not exposed");
 		}
 		
-		if(myNetwork.getExposedOriginName(a.getOrigin("X")) != "test")
+		if(myNetwork.getExposedOriginName(a.getSource("X")) != "test")
 			fail("Origin not exposed with correct name");
 		
 		myNetwork.removeNode("a");
@@ -288,16 +288,16 @@ public class NetworkImplTest extends TestCase {
 		
 		myNetwork.addNode(a);
 		
-		myNetwork.exposeOrigin(a.getOrigin("X"), "test");
+		myNetwork.exposeOrigin(a.getSource("X"), "test");
 		
 		myNetwork.hideOrigin("test");
 		
-		if(myNetwork.getExposedOriginName(a.getOrigin("X")) != null)
+		if(myNetwork.getExposedOriginName(a.getSource("X")) != null)
 			fail("Origin name not removed");
 		
 		try
 		{
-			myNetwork.getOrigin("test");
+			myNetwork.getSource("test");
 			fail("Origin not removed");
 		}
 		catch(StructuralException se)
@@ -383,7 +383,7 @@ public class NetworkImplTest extends TestCase {
 		
 		net.addNode(a);
 		
-		if(net.getNodeOrigins().size() != a.getOrigins().length)
+		if(net.getNodeOrigins().size() != a.getSources().length)
 			fail("Network hasn't found node origin");
 		
 	}
@@ -401,7 +401,7 @@ public class NetworkImplTest extends TestCase {
 		FunctionInput fin = new FunctionInput("fin", new Function[]{new ConstantFunction(1,0)}, Units.UNK);
 		net.addNode(fin);
 		
-		net.addProjection(fin.getOrigin("origin"), a.getTarget("input"));
+		net.addProjection(fin.getSource("origin"), a.getTarget("input"));
 		
 		Probe p = net.getSimulator().addProbe("a", "rate", true);
 		
@@ -442,8 +442,8 @@ public class NetworkImplTest extends TestCase {
 	    FunctionInput fin = new FunctionInput("fin", new Function[]{new ConstantFunction(1,0.5f)}, Units.UNK);
 	    top.addNode(fin);
 	    
-	    top.addProjection(fin.getOrigin("origin"), test1.getTarget("in"));
-	    top.addProjection(fin.getOrigin("origin"), test2.getTarget("in"));
+	    top.addProjection(fin.getSource("origin"), test1.getTarget("in"));
+	    top.addProjection(fin.getSource("origin"), test2.getTarget("in"));
 	    
 	    if(test1.getTarget("in") == test2.getTarget("in"))
 	    	fail("Exposed terminations did not clone correctly");
@@ -483,7 +483,7 @@ public class NetworkImplTest extends TestCase {
 //			throw new RuntimeException("not implemented");
 //		}
 
-		public Source[] getOrigins() {
+		public Source[] getSources() {
 			throw new RuntimeException("not implemented");
 		}
 
@@ -508,7 +508,7 @@ public class NetworkImplTest extends TestCase {
 			throw new RuntimeException("not implemented");
 		}
 
-		public Source getOrigin(String name) throws StructuralException {
+		public Source getSource(String name) throws StructuralException {
 			throw new RuntimeException("not implemented");
 		}
 

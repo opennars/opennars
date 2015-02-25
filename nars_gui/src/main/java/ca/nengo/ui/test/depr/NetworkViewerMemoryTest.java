@@ -38,7 +38,7 @@ import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.NEFGroupFactory;
 import ca.nengo.neural.nef.impl.NEFGroupFactoryImpl;
 import ca.nengo.ui.AbstractNengo;
-import ca.nengo.ui.models.nodes.UINetwork;
+import ca.nengo.ui.model.node.UINetwork;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
@@ -80,11 +80,11 @@ public class NetworkViewerMemoryTest {
 				new float[][] { new float[] { tau } }, tau, false);
 		// Termination interm = integrator.addDecodedTermination("input", new
 		// float[][]{new float[]{1f}}, tau);
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), interm);
+		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), interm);
 
 		Target fbterm = integrator.addDecodedTermination("feedback",
 				new float[][] { new float[] { 1f } }, tau, false);
-		network.addProjection(integrator.getOrigin(NEFGroup.X), fbterm);
+		network.addProjection(integrator.getSource(NEFGroup.X), fbterm);
 
 		// System.out.println("Network creation: " + (System.currentTimeMillis()
 		// - start));

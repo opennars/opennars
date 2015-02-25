@@ -302,7 +302,7 @@ public class PyramidalNetwork extends NetworkImpl
      * @throws StructuralException if origin doesn't exist
      */
     public Source getOrigin() throws StructuralException {
-        return this.getOrigin("X");
+        return this.getSource("X");
     }
 
 
@@ -599,8 +599,8 @@ public class PyramidalNetwork extends NetworkImpl
         while(i<this.size)
         {
 
-            this.addProjection(this.Dendrites[i].getOrigin(this.myConnectedOrigin), this.soma.getTarget("d" + i));
-            this.addProjection(this.transfer.getOrigin("X"),this.Dendrites[i].getTarget("dinput" + i));
+            this.addProjection(this.Dendrites[i].getSource(this.myConnectedOrigin), this.soma.getTarget("d" + i));
+            this.addProjection(this.transfer.getSource("X"),this.Dendrites[i].getTarget("dinput" + i));
             i = i +1;
         }
     }
@@ -627,7 +627,7 @@ public class PyramidalNetwork extends NetworkImpl
 
 
 
-        this.exposeOrigin(this.soma.getOrigin("X"),"X");
+        this.exposeOrigin(this.soma.getSource("X"),"X");
     }
 
     /**
