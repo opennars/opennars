@@ -5,6 +5,9 @@
 <goal --> reached>. :|:
 50
 <x --> y>. :|:
-100
+2000
 <?how =/> <goal --> reached>>?
-''outputMustContain('<(&/,<x --> y>,+2) =/> <goal --> reached>>. %0.00;0.47%')
+'after anticipation this hypothesis gets the lead
+''outputMustContain('<(&/,<a --> b>,+2,<x --> y>,+2) =/> <goal --> reached>>. %1.00;0.30%')
+'but then preferring the simpler answer:
+''outputMustContain('<(&/,<a --> b>,+3) =/> <goal --> reached>>. %1.00;0.31%')

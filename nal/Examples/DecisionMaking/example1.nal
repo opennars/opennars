@@ -14,10 +14,10 @@
 6
 <{place4} --> [at]>. :|: %1.00;0.90%
 50
-<{door5} --> opened>!
-<{door5} --> opened>!
-<{door5} --> opened>!
+<{door5} --> [opened]>!
+<{door5} --> [opened]>!
+<{door5} --> [opened]>!
 
-30000
+6000
 ''outputMustContain('^go-to([{switch0}, SELF])=null')
 ''outputMustContain('^activate([{switch0}, SELF])=null')
