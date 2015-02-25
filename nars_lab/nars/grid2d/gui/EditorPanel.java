@@ -127,6 +127,23 @@ public class EditorPanel extends JPanel {
         });
         
         
+        mindSettings.add(new EditorMode("Use complex feedback") {
+            @Override
+            public void run() {
+                TestChamber.ComplexFeedback=true;
+            }
+        });
+        
+        mindSettings.add(new EditorMode("Don't use complex feedback") {
+            @Override
+            public void run() {
+                TestChamber.ComplexFeedback=false;
+            }
+        });
+        
+        //ComplexFeedback
+        
+        
         DefaultMutableTreeNode load = new DefaultMutableTreeNode("Load Scenario");
         root.add(load);
         DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
