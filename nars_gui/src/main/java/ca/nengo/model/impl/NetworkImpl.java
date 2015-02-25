@@ -89,16 +89,18 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
     private transient Collection<StepListener> myStepListeners;
 
 	private transient Map<String, Object> myMetadata;
-	
-    
+
+    public NetworkImpl() {
+        this(DEFAULT_NAME);
+    }
 
 	/**
 	 * Sets up a network's data structures
 	 */
-	public NetworkImpl() {
+	public NetworkImpl(String name) {
 		myNodeMap = new HashMap<String, Node>(20);
 		myProjectionMap	= new HashMap<Target, Projection>(50);
-		myName = DEFAULT_NAME;
+		myName = name;
 		myStepSize = .001f;
 		myProbeables = new HashMap<String, Probeable>(30);
 		myProbeableStates = new HashMap<String, String>(30);

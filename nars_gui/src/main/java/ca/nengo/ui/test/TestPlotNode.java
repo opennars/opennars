@@ -1,7 +1,9 @@
 package ca.nengo.ui.test;
 
-import ca.nengo.math.impl.PoissonPDF;
+import ca.nengo.math.impl.GaussianPDF;
+import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
+import ca.nengo.model.StructuralException;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.NoiseFactory;
@@ -23,23 +25,28 @@ public class TestPlotNode extends Nengrow {
 
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
 
-    @Override
-    public void init() throws Exception {
+    public static Node newPlotNodeDemo() throws StructuralException {
         NetworkImpl network = new NetworkImpl();
 
         SpikingNeuron sn = new SpikingNeuron(
-                new LinearSynapticIntegrator(RESOLUTION_SEC, Units.ACU),
-                new  LIFSpikeGenerator(.001f, .02f, .002f), 1, 0.9f, "A");
+                new LinearSynapticIntegrator(RESOLUTION_SEC/100f, Units.ACU),
+                new  LIFSpikeGenerator(.001f, .02f, .002f), 1, 0.1f, "A");
 
-        network.addNode(sn.setNoise(NoiseFactory.makeRandomNoise(100f, new PoissonPDF(100f))));
+        network.addNode(sn.setNoise(NoiseFactory.makeRandomNoise(15000f, new GaussianPDF())));
 
-        network.addNode(new LinePlot("plot1"));
+        network.addNode(new LinePlot("Activity"));
+
+        return network;
+    }
 
 
-        UINetwork networkUI = (UINetwork) addNodeModel(network);
+    @Override
+    public void init() throws Exception {
 
+
+
+        UINetwork networkUI = (UINetwork) addNodeModel(newPlotNodeDemo());
         networkUI.doubleClicked();
-
 
         new Timer(25, new ActionListener() {
 
@@ -47,7 +54,7 @@ public class TestPlotNode extends Nengrow {
             public void actionPerformed(ActionEvent e) {
                 try {
                     float dt = getSimulationDT();
-                    network.run(time, time+dt);
+                    networkUI.getModel().run(time, time + dt);
                     time += dt;
                 } catch (SimulationException e1) {
                     e1.printStackTrace();
@@ -93,4 +100,6 @@ public class TestPlotNode extends Nengrow {
     public static void main(String[] args) {
         new TestPlotNode();
     }
+
+
 }

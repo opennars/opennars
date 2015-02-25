@@ -1,8 +1,8 @@
 package ca.nengo.ui.test;
 
 import ca.nengo.model.SimulationException;
+import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.neural.neuron.impl.SpikingNeuron;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.models.math.JuRLsFunctionApproximator;
 import ca.nengo.ui.models.nodes.UINetwork;
@@ -20,10 +20,7 @@ public class TestFunctionPlot extends Nengrow {
 
     @Override
     public void init() throws Exception {
-        NetworkImpl network = new NetworkImpl();
-        network.addNode(new JuRLsFunctionApproximator("Approximator"));
-        network.addNode(new FunctionPlot("plot1"));
-        network.addNode( new SpikingNeuron(null, null, 1, 0.5f, "B"));
+        NetworkImpl network = newFunctionApproximationDemo();
 
 
         UINetwork networkUI = (UINetwork) addNodeModel(network);
@@ -48,6 +45,15 @@ public class TestFunctionPlot extends Nengrow {
             }
         }).start();
 
+    }
+
+    public static NetworkImpl newFunctionApproximationDemo() throws StructuralException {
+        NetworkImpl network = new NetworkImpl("Function Approximation");
+
+        network.addNode( new TestSliderNode.SliderNode("Detail Level", 8f, 3, 24f));
+        network.addNode(new JuRLsFunctionApproximator("Fourier Approximator Test"));
+        network.addNode(new FunctionPlot("Function Plot"));
+        return network;
     }
 
 

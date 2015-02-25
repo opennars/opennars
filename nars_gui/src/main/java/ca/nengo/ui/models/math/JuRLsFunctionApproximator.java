@@ -5,9 +5,11 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.ObjectSource;
 import ca.nengo.model.impl.ObjectTarget;
+import ca.nengo.ui.test.TestSliderNode;
 import ca.nengo.util.ScriptGenException;
 import jurls.core.approximation.*;
 import jurls.examples.approximation.RenderArrayFunction;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -19,17 +21,30 @@ public class JuRLsFunctionApproximator extends AbstractNode {
 
     private final ObjectSource<ParameterizedFunction[]> out;
     private final ObjectTarget<UnaryDoubleFunction> in;
-    private final DiffableFunctionGenerator dfg;
-    private final ApproxParameters approx;
+    private DiffableFunctionGenerator dfg;
+    private ApproxParameters approx;
+
+    final AtomicDouble detailLevel;
+    int currentDetail;
+
+    private final ObjectTarget detailLevelIn;
 
     ParameterizedFunction approximation;
     RenderArrayFunction input;
 
     public JuRLsFunctionApproximator(String name) {
         super(name);
+
+        currentDetail = -1;
+        detailLevel = new AtomicDouble(8);
+
         out = new ObjectSource(this, "Approximation");
+
         setOutputs(out);
-        setInputs(in = new ObjectTarget(this, "Signal", ParameterizedFunction[].class));
+
+        setInputs(
+                detailLevelIn = new TestSliderNode.AtomicDoubleTarget(this, "Detail", detailLevel),
+                in = new ObjectTarget(this, "Signal", ParameterizedFunction[].class));
 
         int pieceWiseFeatures = 16;
         double[] ys = new double[pieceWiseFeatures];
@@ -40,25 +55,35 @@ public class JuRLsFunctionApproximator extends AbstractNode {
 
 
 
-        int numFeatures = 15;
-        dfg = Generator.generateFourierBasis();
 
-        approximation = new OutputNormalizer(
-                new InputNormalizer(
-                        new GradientFitter(
-                                approx = new ApproxParameters(0.005, 0.1),
-                                new DiffableFunctionMarshaller(dfg, 1, numFeatures)
-                        )
-                )
-        );
-
-        out.accept(new ParameterizedFunction[] { input, approximation});
     }
+
 
     @Override
     public void run(float startTime, float endTime) throws SimulationException {
 
 
+        int nextDetailLevel = (int)Math.round(detailLevel.get());
+        if (currentDetail!=nextDetailLevel) {
+            currentDetail = nextDetailLevel;
+
+            if (currentDetail < 3) currentDetail = 3;
+            if (currentDetail > 24) currentDetail = 24;
+
+            int numFeatures = currentDetail;
+            dfg = Generator.generateFourierBasis();
+
+            approximation = new OutputNormalizer(
+                    new InputNormalizer(
+                            new GradientFitter(
+                                    approx = new ApproxParameters(0.005, 0.1),
+                                    new DiffableFunctionMarshaller(dfg, 1, numFeatures)
+                            )
+                    )
+            );
+
+            out.accept(new ParameterizedFunction[] { input, approximation });
+        }
 
         input.mutate((endTime - startTime)*10f, 0.0002f);
 

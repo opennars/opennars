@@ -15,7 +15,6 @@ import ca.nengo.ui.models.nodes.widgets.UITermination;
 import ca.nengo.util.ScriptGenException;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,17 +22,18 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class LinePlot extends AbstractNode implements UIBuilder {
 
-    public static final ColorArray grayScale = new ColorArray(16, Color.GRAY, Color.WHITE);
+    //public static final ColorArray grayScale = new ColorArray(16, Color.GRAY, Color.WHITE);
+    public static final ColorArray grayScale = new ColorArray(16, Color.GREEN, Color.RED);
 
     final Target<InstantaneousOutput> input = new ObjectTarget(this, "input",InstantaneousOutput.class);
     private String label = "?";
 
     Deque<Double> history = new ConcurrentLinkedDeque<>(); //TODO use seomthing more efficient
-    final int maxHistory = 256;
+    final int maxHistory = 128;
     double[] hv = new double[maxHistory]; //values are cached here for fast access
 
     private LinePlotUI ui;
-    private boolean changed = false;
+    private boolean changed = true;
 
     public class LinePlotUI extends UINeoNode<LinePlot> {
 
@@ -68,6 +68,7 @@ public class LinePlot extends AbstractNode implements UIBuilder {
             super.paint(paintContext);
 
             if (changed) {
+                changed = false;
                 min = Float.POSITIVE_INFINITY;
                 max = Float.NEGATIVE_INFINITY;
                 int i = 0;
@@ -78,7 +79,6 @@ public class LinePlot extends AbstractNode implements UIBuilder {
                     if (v > max) max = v;
                     hv[i++] = v;
                 }
-                changed = false;
             }
 
 
@@ -104,7 +104,7 @@ public class LinePlot extends AbstractNode implements UIBuilder {
                     g.setColor(grayScale.get(py));
                     g.fillRect(prevX, ih / 2 - iy / 2, (int) Math.ceil(x - prevX), iy);
 
-                    //System.out.println(x + ' '  + v);
+                    System.out.println(x + ' '  + v);
                     prevX = (int)x;
                     x += dx;
                 }
@@ -144,12 +144,12 @@ public class LinePlot extends AbstractNode implements UIBuilder {
                 SpikeOutput so = (SpikeOutput) input.get();
                 boolean[] v = so.getValues();
                 push( v[0]  ? 1f : 0f);
-                label = (Arrays.toString(v));
+                label = String.valueOf(v[0]);
             }
             else if (i instanceof RealOutput) {
                 float[] v = ((RealOutput) input.get()).getValues();
                 push(v[0]);
-                label = (Arrays.toString(v));
+                label = String.valueOf(v[0]);
             }
             else if (i instanceof Number) {
                 push(((Number)i).doubleValue());

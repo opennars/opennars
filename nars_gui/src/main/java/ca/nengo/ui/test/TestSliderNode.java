@@ -214,19 +214,21 @@ public class TestSliderNode extends Nengrow {
                             boolean insideComponent = (y > 0 && x > 0 && x< getWidth() && y < getHeight());
                             boolean insideSlider = insideComponent && ((y > margin && y < getHeight() - margin && x > margin && x < getWidth()-margin));
 
-                            if (pInputEvent.isLeftMouseButton()) {
 
-                                if ((pInputEvent.getSourceSwingEvent().getModifiers() & MouseEvent.MOUSE_PRESSED) > 0) {
-                                    if (insideSlider) {
+                            if (insideComponent && pInputEvent.isLeftMouseButton()) {
+
+                                if (insideSlider) {
+                                    if ((pInputEvent.getSourceSwingEvent().getModifiers() & MouseEvent.MOUSE_PRESSED) > 0) {
                                         updatePosition(pos.getX());
                                         pInputEvent.setHandled(true);
                                     }
                                 }
+                                setHover(insideComponent);
 
                                 repaint();
                             }
 
-                            setHover(insideComponent);
+
                         }
                     }
                 });

@@ -9,10 +9,10 @@ import ca.nengo.ui.actions.*;
 import ca.nengo.ui.data.DataListView;
 import ca.nengo.ui.lib.AppFrame;
 import ca.nengo.ui.lib.AuxillarySplitPane;
-import ca.nengo.ui.lib.style.NengoStyle;
 import ca.nengo.ui.lib.actions.*;
 import ca.nengo.ui.lib.misc.ShortcutKey;
 import ca.nengo.ui.lib.objects.models.ModelObject;
+import ca.nengo.ui.lib.style.NengoStyle;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.util.menus.MenuBuilder;
@@ -32,13 +32,10 @@ import ca.nengo.ui.util.*;
 import ca.nengo.util.Environment;
 import org.simplericity.macify.eawt.Application;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -347,6 +344,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     /**
      * @see ca.nengo.ui.models.NodeContainer#addNodeModel(ca.nengo.model.Node)
      */
+    //public <U extends UINeoNode> U addNodeModel(Node node) throws ContainerException {
     public UINeoNode addNodeModel(Node node) throws ContainerException {
         return addNodeModel(node, null, null);
     }
