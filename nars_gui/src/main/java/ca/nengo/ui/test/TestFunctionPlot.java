@@ -5,7 +5,7 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.BasicSource;
-import ca.nengo.model.impl.DirectTarget;
+import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.PaintContext;
@@ -34,20 +34,20 @@ public class TestFunctionPlot extends Nengrow {
     public class Approximator extends AbstractNode  {
 
         private final BasicSource out;
-        private final DirectTarget in;
+        private final ObjectTarget in;
         private final DiffableFunctionGenerator dfg;
-        final int tmpWidth = 100;
+
 
         public Approximator(String name) {
             super(name);
-            setSources(out = new BasicSource(this, "Approximation", 1, Units.UNK));
-            setTargets(in = new DirectTarget(this, "Signal", 1));
+            setOutputs(out = new BasicSource(this, "Approximation", 1, Units.UNK));
+            setInputs(in = new ObjectTarget(this, "Signal", 1));
 
             double[] ys = new double[10];
             for (int i = 0; i < ys.length; ++i) {
-                ys[i] = Math.random();
+                ys[i] = (Math.random()-0.5f)*2d;
             }
-            input = new RenderArrayFunction(tmpWidth, Color.blue, ys);
+            input = new RenderArrayFunction(1.0, Color.blue, ys);
 
 
             int numFeatures = 7;
@@ -68,7 +68,7 @@ public class TestFunctionPlot extends Nengrow {
 
             final int numIterationsPerLoop = (int)((endTime - startTime)*1000f);
             for (int i = 0; i < numIterationsPerLoop; ++i) {
-                double x = Math.random() * tmpWidth;
+                double x = Math.random() * 1.0;
                 parameterizedFunction.learn(new double[]{x}, input.compute(x));
             }
         }
@@ -92,12 +92,13 @@ public class TestFunctionPlot extends Nengrow {
 
     public class FunctionPlot extends AbstractNode implements UIBuilder {
 
-        private final DirectTarget in;
+        private final ObjectTarget in;
 
         public FunctionPlot(String name) {
             super(name);
 
-            setTargets(in = new DirectTarget(this, "Signal", 1));
+            setInputs(in = new ObjectTarget(this, "Signal", 1));
+
 
         }
 
@@ -105,29 +106,25 @@ public class TestFunctionPlot extends Nengrow {
 
 
             int numPoints = 32;
-            private int[] xPoints;
-            private int[] yPoints;
+            private int[][] xPoints;
+            private int[][] yPoints;
 
             public FunctionPlotUI() {
                 super(FunctionPlot.this);
 
+                xPoints = new int[2][];
+                yPoints = new int[2][];
+
                 setIcon(new EmptyIcon(this));
                 setResizable(true);
+                setSelected(true);
 
-                setBounds(0,0,250,70);
+                setBounds(0,0,250,150);
             }
 
             @Override
             public void paint(PaintContext paintContext) {
                 super.paint(paintContext);
-
-                paintFunction(paintContext, parameterizedFunction);
-                //paintFunction(paintContext, input);
-
-            }
-
-            private void paintFunction(PaintContext paintContext, ParameterizedFunction parameterizedFunction) {
-                if (parameterizedFunction == null) return;
 
                 Graphics2D g = paintContext.getGraphics();
 
@@ -137,24 +134,41 @@ public class TestFunctionPlot extends Nengrow {
                 g.setColor(Color.black);
                 g.fillRect(0, 0, w, h);
 
-                g.setColor(Color.GREEN);
+                paintFunction(g, 0, input);
+                paintFunction(g, 1, parameterizedFunction);
 
-                if (xPoints == null || xPoints.length != numPoints) {
-                    xPoints = new int[numPoints];
-                    yPoints = new int[numPoints];
+            }
+
+            private void paintFunction(Graphics2D g, int f,  ParameterizedFunction parameterizedFunction) {
+                if (parameterizedFunction == null) return;
+
+
+                int w = (int)(getBounds().getWidth());
+                int h = (int)(getBounds().getHeight());
+
+
+                if (f == 0) {
+                    g.setColor(Color.GREEN);
+                }
+                else {
+                    g.setColor(Color.YELLOW);
                 }
 
-                int maxX = 100;
+                if (xPoints[f] == null || xPoints[f].length != numPoints) {
+                    xPoints[f] = new int[numPoints];
+                    yPoints[f] = new int[numPoints];
+                }
+
                 for (int i = 0; i < numPoints; i++) {
-                    double x = ((double)i/numPoints) * maxX; //tmp
+                    double x = ((double)i/numPoints) * 1.0;
                     double y = parameterizedFunction.value(x);
                     x = ((double)i/numPoints)* w;
                     y = (-y * h/2 + h/2);
-                    xPoints[i] = (int)x;
-                    yPoints[i] = (int)y;
+                    xPoints[f][i] = (int)x;
+                    yPoints[f][i] = (int)y;
                 }
 
-                g.drawPolyline(xPoints, yPoints, xPoints.length);
+                g.drawPolyline(xPoints[f], yPoints[f], xPoints[f].length);
 
             }
 

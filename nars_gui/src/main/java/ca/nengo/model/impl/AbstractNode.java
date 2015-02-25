@@ -69,14 +69,14 @@ public abstract class AbstractNode implements Node {
 		}
 	}
 
-    public void setSources(Source... s) {
+    public void setOutputs(Source... s) {
         mySources = new LinkedHashMap<String, Source>(10);
         for (Source o : s) {
             mySources.put(o.getName(), o);
         }
     }
 
-    public void setTargets(Target... s) {
+    public void setInputs(Target... s) {
         myTargets = new LinkedHashMap<String, Target>(10);
         for (Target o : s) {
             myTargets.put(o.getName(), o);

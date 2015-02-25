@@ -6,7 +6,7 @@ import ca.nengo.util.MU;
 /**
  * Termination that receives input unaltered.
  */
-public class DirectTarget implements Target {
+public class ObjectTarget<V> implements Target<V> {
 
     private static final long serialVersionUID = 1L;
 
@@ -14,14 +14,14 @@ public class DirectTarget implements Target {
     private String myName;
     private int myDimension;
     private float[][] myTransform;
-    private InstantaneousOutput myValues;
+    private V myValues;
 
     /**
      * @param node Parent node
      * @param name Termination name
      * @param dimension Dimensionality of input
      */
-    public DirectTarget(Node node, String name, int dimension) {
+    public ObjectTarget(Node node, String name, int dimension) {
         myNode = node;
         myName = name;
         myDimension = dimension;
@@ -33,7 +33,7 @@ public class DirectTarget implements Target {
      * @param dimension Dimensionality of input
      * @param transform Transformation matrix
      */
-    public DirectTarget(Node node, String name, int dimension, float[][] transform) {
+    public ObjectTarget(Node node, String name, int dimension, float[][] transform) {
         assert MU.isMatrix(transform);
         assert dimension == transform.length;
 
@@ -48,7 +48,7 @@ public class DirectTarget implements Target {
      * @param name Termination name
      * @param transform Transformation matrix
      */
-    public DirectTarget(Node node, String name, float[][] transform) {
+    public ObjectTarget(Node node, String name, float[][] transform) {
         assert MU.isMatrix(transform);
 
         myNode = node;
@@ -65,15 +65,22 @@ public class DirectTarget implements Target {
         return myName;
     }
 
-    public void setValues(InstantaneousOutput values) throws SimulationException {
-        if (values.getDimension() != myDimension) {
-            throw new SimulationException("Input is wrong dimension (expected " + myDimension + " got " + values.getDimension() + ')');
+    @Override public boolean applies(V value) {
+        if (value instanceof InstantaneousOutput)
+            return (((InstantaneousOutput)value).getDimension() == myDimension);
+        return true;
+    }
+
+    public void apply(V values) throws SimulationException {
+        if (!applies(values)) {
+            throw new SimulationException("Input is wrong type"); //(expected " + myDimension + " got " + v.getDimension() + ')');
         }
 
-        if (myTransform != null) {
-            if (values instanceof RealOutput) {
+        if ((myTransform != null) && (values instanceof InstantaneousOutput)) {
+            InstantaneousOutput v = (InstantaneousOutput) values;
+            if (v instanceof RealOutput) {
                 float[] transformed = MU.prod(myTransform, ((RealOutput) values).getValues());
-                values = new RealOutputImpl(transformed, values.getUnits(), values.getTime());
+                values = (V) new RealOutputImpl(transformed, v.getUnits(), v.getTime());
             } else {
                 throw new SimulationException("Transforms can only be performed on RealOutput in a PassthroughNode");
             }
@@ -82,12 +89,7 @@ public class DirectTarget implements Target {
         myValues = values;
     }
 
-    /**
-     * @return Values currently stored in termination
-     */
-    public InstantaneousOutput getValues() {
-        return myValues;
-    }
+
 
     public Node getNode() {
         return myNode;
@@ -121,7 +123,7 @@ public class DirectTarget implements Target {
         throw new StructuralException("A termination on a passthrough node has no dynamics");
     }
 
-    public InstantaneousOutput get(){
+    public V get(){
         return myValues;
     }
 
@@ -133,15 +135,15 @@ public class DirectTarget implements Target {
     }
 
     @Override
-    public DirectTarget clone() throws CloneNotSupportedException {
+    public ObjectTarget clone() throws CloneNotSupportedException {
         return this.clone(myNode);
     }
 
-    public DirectTarget clone(Node node) throws CloneNotSupportedException {
-        DirectTarget result = (DirectTarget) super.clone();
+    public ObjectTarget clone(Node node) throws CloneNotSupportedException {
+        ObjectTarget result = (ObjectTarget) super.clone();
         result.myNode = node;
         if (myValues != null)
-            result.myValues = myValues.clone();
+            result.myValues = ((InstantaneousOutput)myValues).clone();
         if (myTransform != null)
             result.myTransform = MU.clone(myTransform);
         return result;

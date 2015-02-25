@@ -836,12 +836,12 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 *
 	 * @author Bryan Tripp
 	 */
-	public static class SourceWrapper implements Source {
+	public static class SourceWrapper<V> implements Source<V> {
 
 		private static final long serialVersionUID = 1L;
 
 		private Node myNode;
-		private Source myWrapped;
+		private Source<V> myWrapped;
 		private String myName;
 
 		/**
@@ -849,7 +849,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		 * @param wrapped Warpped Origin
 		 * @param name Name of new origin
 		 */
-		public SourceWrapper(Node node, Source wrapped, String name) {
+		public SourceWrapper(Node node, Source<V> wrapped, String name) {
 			myNode = node;
 			myWrapped = wrapped;
 			myName = name;
@@ -908,11 +908,11 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			return myWrapped.getDimensions();
 		}
 
-		public InstantaneousOutput get() {
+		public V get() {
 			return myWrapped.get();
 		}
 
-		public void accept(InstantaneousOutput values) {
+		public void accept(V values) {
 			myWrapped.accept(values);
 		}
 		
@@ -950,12 +950,12 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 *
 	 * @author Bryan Tripp
 	 */
-	public static class TargetWrapper implements Target {
+	public static class TargetWrapper<V> implements Target<V> {
 
 		private static final long serialVersionUID = 1L;
 
 		private final Node myNode;
-		private final Target myWrapped;
+		private final Target<V> myWrapped;
 		private final String myName;
 
 		/**
@@ -963,7 +963,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		 * @param wrapped Termination being wrapped
 		 * @param name New name
 		 */
-		public TargetWrapper(Node node, Target wrapped, String name) {
+		public TargetWrapper(Node node, Target<V> wrapped, String name) {
 			myNode = node;
 			myWrapped = wrapped;
 			myName = name;
@@ -1000,8 +1000,8 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			return myWrapped.getDimensions();
 		}
 
-		public void setValues(InstantaneousOutput values) throws SimulationException {
-			myWrapped.setValues(values);
+		public void apply(V values) throws SimulationException {
+			myWrapped.apply(values);
 		}
 
 		public Node getNode() {
@@ -1027,7 +1027,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		/**
 		 * @return Extract the input to the termination.
 		 */
-		public InstantaneousOutput get(){
+		public V get(){
 			return myWrapped.get();
 		}
 

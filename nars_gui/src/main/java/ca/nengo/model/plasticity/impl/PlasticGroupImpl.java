@@ -136,7 +136,7 @@ public class PlasticGroupImpl extends GroupImpl implements TaskSpawner {
         if (myLastPlasticityTime < endTime) {
             for (PlasticGroupTarget pet : myPlasticEnsembleTerminations.values()) {
                 try {
-                    Source source = this.getOrigin(pet.getOriginName());
+                    Source<InstantaneousOutput> source = this.getOrigin(pet.getOriginName());
                     pet.setOriginState(source.getName(), source.get(), endTime);
                     pet.setTerminationState(endTime);
 

@@ -64,31 +64,9 @@ import java.io.Serializable;
  *
  * @author Bryan Tripp
  */
-public interface Target extends Serializable, Resettable, Cloneable, Supplier<InstantaneousOutput> {
+public interface Target<V> extends Serializable, Resettable, Cloneable, Supplier<V> {
 
-	/**
-	 * Standard name of the post-synaptic current time constant property (most Terminations
-	 * have this property).
-	 */
-//	public static final String TAU_PSC = "tauPSC";
 
-	/**
-	 * A modulatory termination does not induce current directly but may influence membrane properties or
-	 * excitability: Boolean(true) means modulatory; Boolean(false) means not modulatory.
-	 */
-//	public static final String MODULATORY = "MODULATORY";
-
-	/**
-	 * Standard name of synaptic weights property (a float[][])
-	 */
-//	public static final String WEIGHTS = "WEIGHTS";
-
-	/**
-	 * A property value for Terminations that are composed of multiple underlying
-	 * Terminations. This property value indicates that different underlying Terminations
-	 * report different values for the requested property.
-	 */
-//	public static final String MIXED_VALUE = "MIXED VALUE";
 
 	/**
 	 * @return Name of this Termination (unique in the scope of the object the which the Termination
@@ -107,7 +85,9 @@ public interface Target extends Serializable, Resettable, Cloneable, Supplier<In
 	 * @param values InstantaneousOutput (eg from another Ensemble) to apply to this Termination.
 	 * @throws SimulationException if the given values have the wrong dimension
 	 */
-	public void setValues(InstantaneousOutput values) throws SimulationException;
+	public void apply(V values) throws SimulationException;
+
+    default public boolean applies(V value) { return true; }
 
 	/**
 	 * @return The Node to which this Termination belongs
@@ -141,14 +121,14 @@ public interface Target extends Serializable, Resettable, Cloneable, Supplier<In
 	 * @return Latest input to the termination.
 	 */
     @Override
-	public InstantaneousOutput get();
+	public V get();
 
 
 	/**
 	 * @return Valid clone
 	 * @throws CloneNotSupportedException if clone can't be made
 	 */
-	public Target clone() throws CloneNotSupportedException;
+	public Target<V> clone() throws CloneNotSupportedException;
 	
 	/**
 	 * Clone method that changes necessary parameters to point to a new parent,
@@ -157,6 +137,31 @@ public interface Target extends Serializable, Resettable, Cloneable, Supplier<In
 	 * @return A clone of the termination for the new parent ensemble
 	 * @throws CloneNotSupportedException if clone cannot be made
 	 */
-	public Target clone(Node node) throws CloneNotSupportedException;
+	public Target<V> clone(Node node) throws CloneNotSupportedException;
 
+
+
+    /**
+     * Standard name of the post-synaptic current time constant property (most Terminations
+     * have this property).
+     */
+//	public static final String TAU_PSC = "tauPSC";
+
+    /**
+     * A modulatory termination does not induce current directly but may influence membrane properties or
+     * excitability: Boolean(true) means modulatory; Boolean(false) means not modulatory.
+     */
+//	public static final String MODULATORY = "MODULATORY";
+
+    /**
+     * Standard name of synaptic weights property (a float[][])
+     */
+//	public static final String WEIGHTS = "WEIGHTS";
+
+    /**
+     * A property value for Terminations that are composed of multiple underlying
+     * Terminations. This property value indicates that different underlying Terminations
+     * report different values for the requested property.
+     */
+//	public static final String MIXED_VALUE = "MIXED VALUE";
 }

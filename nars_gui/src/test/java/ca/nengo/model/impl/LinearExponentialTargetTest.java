@@ -64,7 +64,7 @@ public class LinearExponentialTargetTest extends TestCase {
      */
     public void testReset() throws SimulationException {
         LinearExponentialTarget let = new LinearExponentialTarget(null, "test", new float[]{2f}, 1f);
-        let.setValues(new RealOutputImpl(new float[]{1f}, Units.ACU, 0));
+        let.apply(new RealOutputImpl(new float[]{1f}, Units.ACU, 0));
 
         float current = let.updateCurrent(false, 1f, 0f);
         assertTrue(current > 1.99f);
@@ -82,17 +82,17 @@ public class LinearExponentialTargetTest extends TestCase {
         LinearExponentialTarget let = new LinearExponentialTarget(null, "test", new float[]{1f, 2f, 3f}, 1f);
 
         try {
-            let.setValues(new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0));
+            let.apply(new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0));
             fail("Should have thrown exception because dimension of input is 1 (should be 3)");
         } catch (SimulationException e) {} //exception is expected
 
-        let.setValues(new SpikeOutputImpl(new boolean[]{true, false, true}, Units.SPIKES, 0));
+        let.apply(new SpikeOutputImpl(new boolean[]{true, false, true}, Units.SPIKES, 0));
         float current = let.updateCurrent(true, 0, 0);
         assertClose(4f, current, .01f);
 
         let.reset(false);
 
-        let.setValues(new RealOutputImpl(new float[]{1f, .1f, .01f}, Units.SPIKES_PER_S, 0));
+        let.apply(new RealOutputImpl(new float[]{1f, .1f, .01f}, Units.SPIKES_PER_S, 0));
         current = let.updateCurrent(false, 1, 0);
         assertClose(1.23f, current, .001f);
     }
@@ -106,20 +106,20 @@ public class LinearExponentialTargetTest extends TestCase {
         LinearExponentialTarget let = new LinearExponentialTarget(null, "test", new float[]{1f}, tauPSC);
         assertClose(0, let.updateCurrent(false, 0, 0), tol);
 
-        let.setValues(new SpikeOutputImpl(new boolean[]{false}, Units.SPIKES, 0));
+        let.apply(new SpikeOutputImpl(new boolean[]{false}, Units.SPIKES, 0));
         assertClose(0, let.updateCurrent(true, 0, 0), tol);
 
-        let.setValues(new RealOutputImpl(new float[]{0f}, Units.SPIKES_PER_S, 0));
+        let.apply(new RealOutputImpl(new float[]{0f}, Units.SPIKES_PER_S, 0));
         assertClose(0, let.updateCurrent(false, 1f, 0), tol);
 
-        let.setValues(new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0));
+        let.apply(new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0));
         assertClose(1f/tauPSC, let.updateCurrent(true, 0, 0), tol);
         assertClose(0, let.updateCurrent(false, 0, tauPSC), tol); //which illustrates that we need time steps << tauPSC
 
         let.reset(false);
 
         //decay a spike to 0
-        let.setValues(new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0));
+        let.apply(new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0));
         float current = let.updateCurrent(true, 0, 0);
         for (int i = 0; i < 150; i++) {
             current = let.updateCurrent(false, 0, tauPSC/10f);
@@ -128,7 +128,7 @@ public class LinearExponentialTargetTest extends TestCase {
         assertClose(0f, current, tol);
 
         //low-pass filter constant rate input
-        let.setValues(new RealOutputImpl(new float[]{10f}, Units.SPIKES_PER_S, 0));
+        let.apply(new RealOutputImpl(new float[]{10f}, Units.SPIKES_PER_S, 0));
         current = 0;
         for (int i = 0; i < 120; i++) {
             float lastCurrent = current;
@@ -234,7 +234,7 @@ public class LinearExponentialTargetTest extends TestCase {
 
     private float[] getCurrents(LinearExponentialTarget let, InstantaneousOutput values, float time, int steps)
     throws SimulationException {
-        let.setValues(values);
+        let.apply(values);
 
         float dt=time/steps;
         float[] currents=new float[steps+1];

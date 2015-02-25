@@ -60,7 +60,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 	private final int[] myNodeDimensions;
 	
 	private NEFGroupImpl[] myNodes;
-	private Map<String, Source> myOrigins;
+	private Map<String, Source<InstantaneousOutput>> myOrigins;
 	private int myNeurons;
 
 	
@@ -102,7 +102,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		
 		myNeurons = 0;
 		
-		myOrigins = new HashMap<String, Source>(10);
+		myOrigins = new HashMap<String, Source<InstantaneousOutput>>(10);
 		
 		for (int i = 0; i < nodes.length; i++) {
 			super.addNode(nodes[i]);
@@ -622,7 +622,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		
 		private final String myName;
 		private final NetworkArrayImpl myParent;
-		private Source[] mySources;
+		private Source<InstantaneousOutput>[] mySources;
 		private int myDimensions;
 
 		public ArraySource(NetworkArrayImpl parent, String name, Source[] sources) {
@@ -797,7 +797,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		
 		private final String myName;
 		private final NetworkArrayImpl myParent;
-		private Source[] mySources;
+		private Source<InstantaneousOutput>[] mySources;
 		private final int myDimensions;
 
 		public ArraySummedSource(NetworkArrayImpl parent, String name, Source[] sources) {

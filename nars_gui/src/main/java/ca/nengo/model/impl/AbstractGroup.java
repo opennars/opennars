@@ -193,7 +193,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 
 			if (myCollectSpikesFlag && (myCollectSpikesRatio == 1 || i % myCollectSpikesRatio == 0)) {
 				try {
-					InstantaneousOutput output = myNodes[i].getOrigin(Neuron.AXON).get();
+					Object output = myNodes[i].getOrigin(Neuron.AXON).get();
 					if (output instanceof PreciseSpikeOutput) {
 						PreciseSpikeOutput precise=((PreciseSpikeOutput) output);
 						if (precise.getValues()[0]) {

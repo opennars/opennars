@@ -76,7 +76,7 @@ public class SpikingNeuronTest extends TestCase {
 	 */
 	public void testRun() throws StructuralException, SimulationException {
 		myIntegrator.addTermination("test", new float[]{1}, .005f, false);
-		myIntegrator.getTerminations()[0].setValues(new RealOutputImpl(new float[]{5}, Units.SPIKES_PER_S, 0));
+		myIntegrator.getTerminations()[0].apply(new RealOutputImpl(new float[]{5}, Units.SPIKES_PER_S, 0));
 		
 		myNeuron.run(0, .005f);
 		InstantaneousOutput output = myNeuron.getOrigins()[0].get();

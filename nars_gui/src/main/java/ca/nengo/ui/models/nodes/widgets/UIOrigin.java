@@ -94,10 +94,11 @@ public abstract class UIOrigin extends Widget {
 		tooltips.addProperty("Dimensions", String.valueOf(getModel().getDimensions()));
 
 		//try {
-			InstantaneousOutput value = getModel().get();
+			Object value = getModel().get();
+            tooltips.addProperty("Value: ", value.toString());
 
-			tooltips.addProperty("Time: ", String.valueOf(value.getTime()));
-			tooltips.addProperty("Units: ", String.valueOf(value.getUnits()));
+			//tooltips.addProperty("Time: ", String.valueOf(value.getTime()));
+			//tooltips.addProperty("Units: ", String.valueOf(value.getUnits()));
 
 		/*} catch (SimulationException e) {
 		}*/

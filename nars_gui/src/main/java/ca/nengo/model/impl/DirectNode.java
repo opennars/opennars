@@ -70,7 +70,7 @@ public class DirectNode implements Node {
 
 	private String myName;
 	private final int myDimension; //TODO: clean this up (can be obtained from transform)
-	private Map<String, DirectTarget> myTerminations;
+	private Map<String, ObjectTarget<InstantaneousOutput>> myTerminations;
 	private BasicSource myOrigin;
 	private String myDocumentation;
 	private transient List<VisiblyMutable.Listener> myListeners;
@@ -84,8 +84,8 @@ public class DirectNode implements Node {
 	public DirectNode(String name, int dimension) {
 		myName = name;
 		myDimension = dimension;
-		myTerminations = new HashMap<String, DirectTarget>(10);
-		myTerminations.put(TERMINATION, new DirectTarget(this, TERMINATION, dimension));
+		myTerminations = new HashMap(10);
+		myTerminations.put(TERMINATION, new ObjectTarget(this, TERMINATION, dimension));
 		myOrigin = new BasicSource(this, ORIGIN, dimension, Units.UNK);
 		reset(false);
 	}
@@ -101,13 +101,13 @@ public class DirectNode implements Node {
 	public DirectNode(String name, int dimension, Map<String, float[][]> termDefinitions) {
 		myName = name;
 		myDimension = dimension;
-		myTerminations = new HashMap<String, DirectTarget>(10);
+		myTerminations = new HashMap(10);
 
 		Iterator<String> it = termDefinitions.keySet().iterator();
 		while (it.hasNext()) {
 			String termName = it.next();
 			float[][] termTransform = termDefinitions.get(termName);
-			myTerminations.put(termName, new DirectTarget(this, termName, dimension, termTransform));
+			myTerminations.put(termName, new ObjectTarget(this, termName, dimension, termTransform));
 		}
 		myOrigin = new BasicSource(this, ORIGIN, dimension, Units.UNK);
 		reset(false);
@@ -161,8 +161,8 @@ public class DirectNode implements Node {
 	 * @see ca.nengo.model.Node#getTerminations()
 	 */
 	public Target[] getTerminations() {
-        Collection<DirectTarget> var = myTerminations.values();
-        return var.toArray(new DirectTarget[var.size()]);
+        Collection<ObjectTarget<InstantaneousOutput>> var = myTerminations.values();
+        return var.toArray(new ObjectTarget[var.size()]);
 	}
 
 	/**
@@ -170,13 +170,13 @@ public class DirectNode implements Node {
 	 */
 	public void run(float startTime, float endTime) throws SimulationException {
 		if (myTerminations.size() == 1) {
-			myOrigin.accept(myTerminations.values().iterator().next().getValues());
+			myOrigin.accept(myTerminations.values().iterator().next().get());
 		} else {
 			float[] values = new float[myDimension];
-			Iterator<DirectTarget> it = myTerminations.values().iterator();
+			Iterator<ObjectTarget<InstantaneousOutput>> it = myTerminations.values().iterator();
 			while (it.hasNext()) {
-				DirectTarget termination = it.next();
-				InstantaneousOutput io = termination.getValues();
+				ObjectTarget<InstantaneousOutput> termination = it.next();
+				InstantaneousOutput io = termination.get();
 				if (io instanceof RealOutput) {
 					values = MU.sum(values, ((RealOutput) io).getValues());
 				} else if (io instanceof SpikeOutput) {
@@ -270,9 +270,9 @@ public class DirectNode implements Node {
 			throw new CloneNotSupportedException("Problem copying origin values: " + e.getMessage());
 		}*/
 
-		result.myTerminations = new HashMap<String, DirectTarget>(10);
-		for (DirectTarget oldTerm : myTerminations.values()) {
-			DirectTarget newTerm = new DirectTarget(result, oldTerm.getName(),
+		result.myTerminations = new HashMap(10);
+		for (ObjectTarget oldTerm : myTerminations.values()) {
+			ObjectTarget newTerm = new ObjectTarget(result, oldTerm.getName(),
 					oldTerm.getDimensions(), MU.clone(oldTerm.getTransform()));
 			result.myTerminations.put(newTerm.getName(), newTerm);
 		}

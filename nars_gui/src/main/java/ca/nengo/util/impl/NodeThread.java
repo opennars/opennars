@@ -1,6 +1,5 @@
 package ca.nengo.util.impl;
 
-import ca.nengo.model.InstantaneousOutput;
 import ca.nengo.model.Node;
 import ca.nengo.model.Projection;
 import ca.nengo.model.SimulationException;
@@ -91,8 +90,8 @@ public class NodeThread extends Thread {
 		
 		for (int i = myStartIndexInProjections; i < myEndIndexInProjections; i++) {
 			
-			InstantaneousOutput values = myProjections[i].getOrigin().get();
-			myProjections[i].getTermination().setValues(values);
+			Object values = myProjections[i].getOrigin().get();
+			myProjections[i].getTermination().apply(values);
 		}
 		
 	}

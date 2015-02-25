@@ -202,7 +202,7 @@ public class ProjectionImplTest extends TestCase {
 		return netWeights;
 	}
 
-	public static class MockSource implements Source {
+	public static class MockSource implements Source<InstantaneousOutput> {
 
 		private static final long serialVersionUID = 1L;
 
@@ -261,7 +261,7 @@ public class ProjectionImplTest extends TestCase {
 		}
 	}
 
-	public static class MockTarget implements Target {
+	public static class MockTarget implements Target<InstantaneousOutput> {
 
 		private static final long serialVersionUID = 1L;
 
@@ -281,7 +281,7 @@ public class ProjectionImplTest extends TestCase {
 			return myDimensions;
 		}
 
-		public void setValues(InstantaneousOutput values) throws SimulationException {
+		public void apply(InstantaneousOutput values) throws SimulationException {
 			throw new RuntimeException("not implemented");
 		}
 

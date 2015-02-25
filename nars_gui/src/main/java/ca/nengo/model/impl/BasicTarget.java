@@ -45,7 +45,7 @@ import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManage
  *
  * @author Bryan Tripp
  */
-public class BasicTarget implements Target, Resettable {
+public class BasicTarget implements Target<InstantaneousOutput>, Resettable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -87,10 +87,11 @@ public class BasicTarget implements Target, Resettable {
 		return myName;
 	}
 
+
 	/**
-	 * @see ca.nengo.model.Target#setValues(ca.nengo.model.InstantaneousOutput)
+	 * @see ca.nengo.model.Target#apply(ca.nengo.model.InstantaneousOutput)
 	 */
-	public void setValues(InstantaneousOutput values) throws SimulationException {
+	public void apply(InstantaneousOutput values) throws SimulationException {
 		myInput = values;
 	}
 

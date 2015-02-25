@@ -196,9 +196,9 @@ public class LinearExponentialTarget implements PlasticNodeTarget {
 
     /**
      * @param values Can be either SpikeOutput or RealOutput
-     * @see ca.nengo.model.Target#setValues(ca.nengo.model.InstantaneousOutput)
+     * @see ca.nengo.model.Target#apply(ca.nengo.model.InstantaneousOutput)
      */
-    public void setValues(InstantaneousOutput values) throws SimulationException {
+    public void apply(InstantaneousOutput values) throws SimulationException {
         if (values.getDimension() != getDimensions()) {
             throw new SimulationException("Input must have dimension " + getDimensions());
         }

@@ -36,7 +36,8 @@ import ca.nengo.util.MU;
 import ca.nengo.util.ScriptGenException;
 import ca.nengo.util.VisiblyMutable;
 import ca.nengo.util.VisiblyMutableUtils;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.*;
@@ -74,7 +75,7 @@ public class SocketUDPNode implements Node, Resettable {
 
 	private String myName;
 	private int myDimension;
-	private Map<String, DirectTarget> myTerminations;
+	private Map<String, ObjectTarget<InstantaneousOutput>> myTerminations;
 	private BasicSource myOrigin;
 	private String myDocumentation;
 	private transient List<VisiblyMutable.Listener> myListeners;
@@ -110,7 +111,7 @@ public class SocketUDPNode implements Node, Resettable {
 		                 int socketTimeout, boolean ignoreTimestamp) throws UnknownHostException {
 		myName = name;
 		myDimension = dimension;
-		myTerminations = new HashMap<String, DirectTarget>(10);
+		myTerminations = new HashMap<String, ObjectTarget<InstantaneousOutput>>(10);
 
 		myLocalPort = localPort;
 		myGivenLocalPort = localPort; // Stored 
@@ -307,7 +308,7 @@ public class SocketUDPNode implements Node, Resettable {
 				throw new StructuralException("This node already contains a termination named " + name);
 		}
 
-		DirectTarget result = new DirectTarget(this, name, transform);
+		ObjectTarget result = new ObjectTarget(this, name, transform);
 		myTerminations.put(name, result);
 		return result;
 	}
@@ -327,8 +328,8 @@ public class SocketUDPNode implements Node, Resettable {
 	 * @see ca.nengo.model.Node#getTerminations()
 	 */
 	public Target[] getTerminations() {
-        Collection<DirectTarget> var = myTerminations.values();
-        return var.toArray(new DirectTarget[var.size()]);
+        Collection<ObjectTarget<InstantaneousOutput>> var = myTerminations.values();
+        return var.toArray(new ObjectTarget[var.size()]);
 	}
 
 	/**
@@ -347,10 +348,10 @@ public class SocketUDPNode implements Node, Resettable {
 			else {
 				// TODO: Test with spiking outputs?
 				float[] values = new float[myDimension];
-				Iterator<DirectTarget> it = myTerminations.values().iterator();
+				Iterator<ObjectTarget<InstantaneousOutput>> it = myTerminations.values().iterator();
 				while (it.hasNext()) {
-					DirectTarget termination = it.next();
-					InstantaneousOutput io = termination.getValues();
+					ObjectTarget<InstantaneousOutput> termination = it.next();
+					InstantaneousOutput io = termination.get();
 					if (io instanceof RealOutput) {
 						values = MU.sum(values, ((RealOutput) io).getValues());
 					} else if (io instanceof SpikeOutput) {
@@ -542,9 +543,9 @@ public class SocketUDPNode implements Node, Resettable {
 				
 				if (myOrigin != null)
 					result.myOrigin = myOrigin.clone(result);
-				result.myTerminations = new HashMap<String, DirectTarget>(10);
-				for (DirectTarget oldTerm : myTerminations.values()) {
-					DirectTarget newTerm = oldTerm.clone(result);
+				result.myTerminations = new HashMap(10);
+				for (ObjectTarget oldTerm : myTerminations.values()) {
+					ObjectTarget newTerm = oldTerm.clone(result);
 					result.myTerminations.put(newTerm.getName(), newTerm);
 				}
 	

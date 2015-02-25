@@ -129,7 +129,7 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	/**
 	 * @see ca.nengo.model.neuron.Neuron#getOrigins()
 	 */
-	public Source[] getOrigins() {
+	public Source<InstantaneousOutput>[] getOrigins() {
 		return new Source[]{mySpikeOrigin, myCurrentOrigin};
 	}
 

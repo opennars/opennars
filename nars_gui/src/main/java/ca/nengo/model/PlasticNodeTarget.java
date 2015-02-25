@@ -36,7 +36,7 @@ package ca.nengo.model;
  *
  * @author Trevor Bekolay
  */
-public interface PlasticNodeTarget extends Target {
+public interface PlasticNodeTarget extends Target<InstantaneousOutput> {
 
     /**
      * @return List of synaptic weights for each input channel

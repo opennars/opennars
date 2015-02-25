@@ -39,11 +39,11 @@ public class DelayedLinearExponentialTarget extends LinearExponentialTarget {
 	 * processed until myDelay timesteps have called (we are assuming this function
 	 * will be called once per timestep).
 	 * 
-	 * @see LinearExponentialTarget#setValues(InstantaneousOutput)
+	 * @see LinearExponentialTarget#apply(InstantaneousOutput)
 	 */
-	public void setValues(InstantaneousOutput values) throws SimulationException {
+	public void apply(InstantaneousOutput values) throws SimulationException {
 		myQueue.add(values);
 		InstantaneousOutput v = myQueue.remove(0);
-		super.setValues(v);
+		super.apply(v);
 	}
 }

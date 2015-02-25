@@ -40,7 +40,7 @@ import ca.nengo.model.neuron.SpikeGenerator;
  * 
  * @author Bryan Tripp
  */
-public class SpikeGeneratorSource implements Source {
+public class SpikeGeneratorSource implements Source<InstantaneousOutput> {
 
     private static final long serialVersionUID = 1L;
 

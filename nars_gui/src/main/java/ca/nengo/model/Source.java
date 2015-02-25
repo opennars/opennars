@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  *
  * @author Bryan Tripp
  */
-public interface Source extends Serializable, Cloneable, Consumer<InstantaneousOutput>, Supplier<InstantaneousOutput> {
+public interface Source<V> extends Serializable, Cloneable, Consumer<V>, Supplier<V> {
 
 	/**
 	 * @return Name of this Origin (unique in the scope of a source of Origins, eg a Neuron or
@@ -69,13 +69,13 @@ public interface Source extends Serializable, Cloneable, Consumer<InstantaneousO
 	 * @throws SimulationException if there is any problem retrieving values
 	 */
     @Override
-	public InstantaneousOutput get();
+	public V get();
 	
 	/**
 	 * @param Instantaneous output from this Origin.
 	 */
     @Override
-	public void accept(InstantaneousOutput val);
+	public void accept(V val);
 	
 	public void setRequiredOnCPU(boolean val);
 	

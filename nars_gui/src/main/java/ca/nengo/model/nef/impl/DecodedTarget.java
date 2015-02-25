@@ -56,7 +56,7 @@ import java.util.Properties;
  *
  * @author Bryan Tripp
  */
-public class DecodedTarget implements Target, Resettable, Probeable {
+public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, Probeable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -166,9 +166,9 @@ public class DecodedTarget implements Target, Resettable, Probeable {
 	/**
 	 * @param values Only RealOutput is accepted.
 	 *
-	 * @see ca.nengo.model.Target#setValues(ca.nengo.model.InstantaneousOutput)
+	 * @see ca.nengo.model.Target#apply(ca.nengo.model.InstantaneousOutput)
 	 */
-	public void setValues(InstantaneousOutput values) throws SimulationException {
+	public void apply(InstantaneousOutput values) throws SimulationException {
 		if (values.getDimension() != getDimensions()) {
 			throw new SimulationException("Dimension of input (" + values.getDimension()
 					+ ") does not equal dimension of this Termination (" + getDimensions() + ')');
@@ -197,7 +197,7 @@ public class DecodedTarget implements Target, Resettable, Probeable {
 
 		if (!myValuesSet) {
 			ourLogger.warn("Input values not set on termination " + myName + ".  Assuming input of zero.");
-			setValues(new RealOutputImpl(new float[getDimensions()], Units.UNK, 0.0f));
+			apply(new RealOutputImpl(new float[getDimensions()], Units.UNK, 0.0f));
 		}
 
 		float[][] transform = getTransform();

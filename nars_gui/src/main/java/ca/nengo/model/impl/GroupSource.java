@@ -38,12 +38,12 @@ import ca.nengo.model.*;
  *   
  * @author Bryan Tripp
  */
-public class GroupSource implements Source {
+public class GroupSource implements Source<InstantaneousOutput> {
 
 	private static final long serialVersionUID = 1L;
 	
 	private Node myNode;
-	private Source[] myNodeSources;
+	private Source<InstantaneousOutput>[] myNodeSources;
 	private final String myName;
 	private boolean myRequiredOnCPU;
 	
@@ -116,7 +116,7 @@ public class GroupSource implements Source {
 		}
 	}
 	
-	private static RealOutput composeRealOutput(Source[] sources, Units units) throws SimulationException {
+	private static RealOutput composeRealOutput(Source<InstantaneousOutput>[] sources, Units units) throws SimulationException {
 		float[] values = new float[sources.length];
 		
 		for (int i = 0; i < sources.length; i++) {
@@ -134,7 +134,7 @@ public class GroupSource implements Source {
 		return new RealOutputImpl(values, units, sources[0].get().getTime());
 	}
 	
-	private static SpikeOutput composeSpikeOutput(Source[] sources, Units units) throws SimulationException {
+	private static SpikeOutput composeSpikeOutput(Source<InstantaneousOutput>[] sources, Units units) throws SimulationException {
 		boolean[] values = new boolean[sources.length];
 		
 		for (int i = 0; i < sources.length; i++) {
@@ -152,7 +152,7 @@ public class GroupSource implements Source {
 		return new SpikeOutputImpl(values, units, sources[0].get().getTime());
 	}
 
-	private static PreciseSpikeOutput composePreciseSpikeOutput(Source[] sources, Units units) throws SimulationException {
+	private static PreciseSpikeOutput composePreciseSpikeOutput(Source<InstantaneousOutput>[] sources, Units units) throws SimulationException {
 		float[] values = new float[sources.length];
 		
 		for (int i = 0; i < sources.length; i++) {

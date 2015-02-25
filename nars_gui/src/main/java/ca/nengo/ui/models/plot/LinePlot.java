@@ -3,7 +3,7 @@ package ca.nengo.ui.models.plot;
 
 import ca.nengo.model.*;
 import ca.nengo.model.impl.AbstractNode;
-import ca.nengo.model.impl.DirectTarget;
+import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.models.UIBuilder;
 import ca.nengo.ui.models.UINeoNode;
@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class LinePlot extends AbstractNode implements UIBuilder {
 
-    final Target input = new DirectTarget(this, "input", 1);
+    final Target<InstantaneousOutput> input = new ObjectTarget(this, "input", 1);
     private String label = "?";
 
     Deque<Float> history = new ConcurrentLinkedDeque<>(); //TODO use seomthing more efficient

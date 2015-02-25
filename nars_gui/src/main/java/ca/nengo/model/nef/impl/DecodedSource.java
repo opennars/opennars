@@ -60,7 +60,7 @@ import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManage
  *
  * @author Bryan Tripp
  */
-public class DecodedSource implements Source, Resettable, SimulationMode.ModeConfigurable, Noise.Noisy, Configurable, ShortTermPlastic {
+public class DecodedSource implements Source<InstantaneousOutput>, Resettable, SimulationMode.ModeConfigurable, Noise.Noisy, Configurable, ShortTermPlastic {
 
 	private static final long serialVersionUID = 1L;
 
@@ -472,7 +472,7 @@ public class DecodedSource implements Source, Resettable, SimulationMode.ModeCon
 		} else {
 			for (int i = 0; i < myNodes.length; i++) {
 				try {
-					InstantaneousOutput o = myNodes[i].getOrigin(myNodeOrigin).get();
+					Object o = myNodes[i].getOrigin(myNodeOrigin).get();
 
 					float val = 0;
 					if (o instanceof SpikeOutput) {

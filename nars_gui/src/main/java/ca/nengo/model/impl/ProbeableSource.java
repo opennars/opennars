@@ -68,7 +68,7 @@ import ca.nengo.model.*;
  * 
  * @author Bryan Tripp
  */
-public class ProbeableSource implements Source {
+public class ProbeableSource implements Source<InstantaneousOutput> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -475,7 +475,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
     public TimeSeries getHistory(String stateName) throws SimulationException {
 		TimeSeries result = null;
 
-		Source source = myDecodedOrigins.get(stateName);
+		Source<InstantaneousOutput> source = myDecodedOrigins.get(stateName);
 		DecodedTarget t = myDecodedTerminations.get(stateName);
 
 		if (source != null) {

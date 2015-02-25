@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManage
  *
  * @author Bryan Tripp
  */
-public class BasicSource implements Source, Noise.Noisy, Resettable, Configurable {
+public class BasicSource implements Source<InstantaneousOutput>, Noise.Noisy, Resettable, Configurable {
 
 	private static final long serialVersionUID = 1L;
 

@@ -45,13 +45,13 @@ import ca.nengo.model.*;
  *
  * @author Bryan Tripp
  */
-public class GroupTarget implements Target {
+public class GroupTarget implements Target<InstantaneousOutput> {
 
 	private static final long serialVersionUID = 1L;
 
 	private Node myNode;
 	private String myName;
-	private Target[] myNodeTargets;
+	private Target<InstantaneousOutput>[] myNodeTargets;
 
 	/**
 	 * @param node The parent Node
@@ -91,15 +91,15 @@ public class GroupTarget implements Target {
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#setValues(ca.nengo.model.InstantaneousOutput)
+	 * @see ca.nengo.model.Target#apply(ca.nengo.model.InstantaneousOutput)
 	 */
-    public void setValues(InstantaneousOutput values) throws SimulationException {
+    public void apply(InstantaneousOutput values) throws SimulationException {
 		if (values.getDimension() != getDimensions()) {
 			throw new SimulationException("Input to this Termination must have dimension " + getDimensions());
 		}
 
 		for (Target myNodeTarget : myNodeTargets) {
-			myNodeTarget.setValues(values);
+			myNodeTarget.apply(values);
 		}
 	}
 

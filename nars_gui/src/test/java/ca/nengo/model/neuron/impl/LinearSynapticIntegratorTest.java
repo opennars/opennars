@@ -58,9 +58,9 @@ public class LinearSynapticIntegratorTest extends TestCase {
 		
 		InstantaneousOutput spike = new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0);
 		
-		t[0].setValues(spike);
-		t[1].setValues(spike);
-		t[2].setValues(spike);
+		t[0].apply(spike);
+		t[1].apply(spike);
+		t[2].apply(spike);
 		
 		TimeSeries1D current = si.run(0f, .01f); 
 		assertEquals(11, current.getTimes().length);
@@ -78,10 +78,10 @@ public class LinearSynapticIntegratorTest extends TestCase {
 		si.addTermination("test", new float[]{1f}, 1f, false);
 		
 		Target t = si.getTerminations()[0];
-		t.setValues(new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0));		
+		t.apply(new SpikeOutputImpl(new boolean[]{true}, Units.SPIKES, 0));
 		for (int i = 0; i < 10; i++) {
 			si.run(.001f * ((float) i), .001f * ((float) i+1));			
-			t.setValues(new SpikeOutputImpl(new boolean[]{false}, Units.SPIKES, 0));
+			t.apply(new SpikeOutputImpl(new boolean[]{false}, Units.SPIKES, 0));
 		}
 		TimeSeries1D current = si.run(.010f, .011f);
 		assertTrue(current.getValues()[1][0] > .9f);
