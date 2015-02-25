@@ -37,6 +37,20 @@ public class RuntimeNARSettings implements Plugin {
         n.param.duration.set((int) val);
     }
     
+    public double getDerivationPriorityLeak() {
+        return Parameters.DERIVATION_PRIORITY_LEAK;
+    }
+    public void setDerivationPriorityLeak(double val) {
+        Parameters.DERIVATION_PRIORITY_LEAK=(float) val;
+    }
+    
+    public double getDerivationDurabilityLeak() {
+        return Parameters.DERIVATION_PRIORITY_LEAK;
+    }
+    public void setDerivationDurabilityLeak(double val) {
+        Parameters.DERIVATION_DURABILITY_LEAK=(float) val;
+    }
+    
     public double getTemporalInductionPriority() {
         return Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
     }
