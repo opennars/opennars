@@ -35,12 +35,12 @@ import ca.nengo.ui.lib.util.UserMessages;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.piccolo.objects.Button;
-import ca.nengo.ui.lib.world.piccolo.objects.icons.ArrowIcon;
-import ca.nengo.ui.lib.world.piccolo.objects.icons.LoadIcon;
-import ca.nengo.ui.lib.world.piccolo.objects.icons.SaveIcon;
-import ca.nengo.ui.lib.world.piccolo.objects.icons.ZoomIcon;
-import ca.nengo.ui.lib.world.piccolo.primitives.Path;
+import ca.nengo.ui.lib.world.piccolo.object.Button;
+import ca.nengo.ui.lib.world.piccolo.icon.ArrowIcon;
+import ca.nengo.ui.lib.world.piccolo.icon.LoadIcon;
+import ca.nengo.ui.lib.world.piccolo.icon.SaveIcon;
+import ca.nengo.ui.lib.world.piccolo.icon.ZoomIcon;
+import ca.nengo.ui.lib.world.piccolo.primitive.Path;
 import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINetwork;
@@ -202,7 +202,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         LinkedList<UIProjection> projectionsToRemove = new LinkedList<UIProjection>();
 
         for (UINeoNode<?> nodeUI : getUINodes()) {
-            for (UITarget<?> terminationUI : nodeUI.getVisibleSources()) {
+            for (UITarget<?> terminationUI : nodeUI.getVisibleTargets()) {
                 if (terminationUI.getConnector() != null) {
                     UISource originUI = terminationUI.getConnector().getOriginUI();
 
@@ -369,13 +369,13 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                     UINeoNode<?> nodeUI = (UINeoNode) wo;
 
                     if (exposedOriginsChanged) {
-                        for (UISource originUI : nodeUI.getVisibleOrigins()) {
+                        for (UISource originUI : nodeUI.getVisibleSources()) {
                             boolean isExposed = exposedSources.contains(originUI.getModel());
                             originUI.setExposed(isExposed);
                         }
                     }
                     if (exposedTerminationsChanged) {
-                        for (UITarget terminationUI : nodeUI.getVisibleSources()) {
+                        for (UITarget terminationUI : nodeUI.getVisibleTargets()) {
                             boolean isExposed = exposedTargets.contains(terminationUI.getModel());
                             terminationUI.setExposed(isExposed);
                         }

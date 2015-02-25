@@ -36,7 +36,7 @@ import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;
-import ca.nengo.ui.lib.world.handlers.AbstractStatusHandler;
+import ca.nengo.ui.lib.world.handler.AbstractStatusHandler;
 import ca.nengo.ui.model.ModelsContextMenu;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINodeViewable;

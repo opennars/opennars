@@ -29,7 +29,7 @@ package ca.nengo.ui.model.icon;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXPath;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXPath;
 
 import java.awt.*;
 

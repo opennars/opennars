@@ -18,7 +18,7 @@ public class NengoStyle {
 	 * Colors
 	 */
 	public static final Color COLOR_BACKGROUND = Color.black;
-	public static final Color COLOR_FOREGROUND = Color.white;
+	public static final Color COLOR_FOREGROUND = new Color(192,192,192,192);//Color.lightGray;
 	public static final Color COLOR_BACKGROUND2 = Color.darkGray;
 	public static final Color COLOR_FOREGROUND2 = Color.gray;
 	public static final Color COLOR_BORDER_SELECTED = Color.orange;

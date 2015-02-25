@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world;
 
-import ca.nengo.ui.lib.world.handlers.SelectionHandler;
+import ca.nengo.ui.lib.world.handler.SelectionHandler;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;

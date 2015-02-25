@@ -2,8 +2,8 @@ package ca.nengo.ui.lib.world.piccolo;
 
 import ca.nengo.ui.lib.world.WorldLayer;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.piccolo.objects.Window;
-import ca.nengo.ui.lib.world.piccolo.primitives.PiccoloNodeInWorld;
+import ca.nengo.ui.lib.world.piccolo.object.Window;
+import ca.nengo.ui.lib.world.piccolo.primitive.PiccoloNodeInWorld;
 
 import java.util.ArrayList;
 import java.util.List;

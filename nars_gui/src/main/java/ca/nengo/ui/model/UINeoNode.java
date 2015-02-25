@@ -26,7 +26,6 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model;
 
-import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import ca.nengo.io.FileManager;
 import ca.nengo.model.*;
 import ca.nengo.model.impl.FunctionInput;
@@ -49,7 +48,6 @@ import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.DroppableX;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXEdge;
 import ca.nengo.ui.model.NodeContainer.ContainerException;
 import ca.nengo.ui.model.node.*;
 import ca.nengo.ui.model.tooltip.TooltipBuilder;
@@ -60,8 +58,6 @@ import ca.nengo.ui.model.widget.*;
 import ca.nengo.util.Probe;
 import ca.nengo.util.VisiblyMutable;
 import ca.nengo.util.VisiblyMutable.Event;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.jgrapht.graph.DefaultDirectedGraph;
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
@@ -79,12 +75,8 @@ import java.util.Map.Entry;
 public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements DroppableX {
 
 
-    /** stores connectivity between this node and its chidlren (sources, targets, etc..) for
-     * layout and other morpholoigcal purposes */
-    private DefaultDirectedGraph<WorldObject,String> bodyGraph;
 
-    private double childlayoutTime = 0.15f; //in seconds
-    private HyperassociativeMap bodyLayout;
+
 
     /**
 	 * Factory method which creates a Node UI object around a Node
@@ -575,7 +567,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		return probes;
 	}
 
-	public Collection<UISource> getVisibleOrigins() {
+	public Collection<UISource> getVisibleSources() {
 		List<UISource> origins = new ArrayList(getChildrenCount());
 
 		for (WorldObject wo : getChildren()) {
@@ -586,7 +578,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		return origins;
 	}
 
-	public Collection<UITarget> getVisibleSources() {
+	public Collection<UITarget> getVisibleTargets() {
 		List<UITarget> terminations = new ArrayList(getChildrenCount());
 
 		for (WorldObject wo : getChildren()) {
@@ -609,6 +601,8 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		layoutChildren();
 	}
 
+
+
 	@Override
 	public void layoutChildren() {
         super.layoutChildren();
@@ -629,35 +623,10 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
         double termY = getIcon().getHeight() + offsetY;
 
         double originX = getIcon().getWidth() + 5 + offsetX;
-        //double originY = termY;
+        double originY = termY;
 
         double probeY = 0;
 
-
-        if (getChildrenCount() == 0) return;
-
-        if (bodyGraph == null) {
-            bodyGraph = new DefaultDirectedGraph(String.class);
-            bodyGraph.addVertex(this);
-            bodyLayout = new HyperassociativeMap(bodyGraph, HyperassociativeMap.Manhattan, 2) {
-
-                @Override
-                public double getSpeedFactor(Object o) {
-                    if (o == UINeoNode.this) return 0; //do not all this UINeoNode to move
-                    return super.getSpeedFactor(o);
-                }
-
-                @Override
-                public double getRadius(Object o) {
-                    if (o == UINeoNode.this)
-                        return 1;
-                    return super.getRadius(o);
-                }
-            };
-            bodyLayout.getPosition(this).set(0);
-            bodyLayout.setEquilibriumDistance(0.1);
-
-        }
 
 
 		/*
@@ -698,29 +667,14 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
                         widget.setPickable(true);
                         widget.setChildrenPickable(true);
 
-                        if (!bodyGraph.containsVertex(widget)) {
-                            bodyGraph.addVertex(widget);
-
-
-                            if (widget instanceof UISource) {
-                                //originY -= scale * widget.getHeight() + 8;
-                                //widget.setOffset(originX, originY);
-                                bodyGraph.addEdge(this, widget, widget.getName() + " out");
-                                widget.getPiccolo().addChild(new PXEdge(this, widget));
-                            } else if (widget instanceof UITarget) {
-                                //termY -= scale * widget.getHeight() + 8;
-                                //widget.setOffset(termX, termY);
-                                bodyGraph.addEdge(widget, this, widget.getName() + " in");
-                                widget.getPiccolo().addChild(new PXEdge(widget, this));
-                            }
-
-                            //TODO add additional contextual edges to cluster the items by:
-                            //  argument type
-                            //  return type
-                            //  annotations
-                            //  which superclass or interface it is declared
+                        if (widget instanceof UISource) {
+                            originY -= scale * widget.getHeight() + 8;
+                            widget.setOffset(originX, originY);
+                        } else if (widget instanceof UITarget) {
+                            termY -= scale * widget.getHeight() + 8;
+                            widget.setOffset(termX, termY);
                         }
-                        //TODO remove removed widgets
+
 
                     }
                 }
@@ -728,20 +682,6 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
             }
         }
 
-
-        bodyLayout.run(10);
-
-        final double w = getWidth();
-        final double h = getHeight();
-        final double s = Math.max(w, h);
-        for (WorldObject wo : bodyGraph.vertexSet()) {
-            if (wo == this) continue;
-            //w.setOffset
-            ArrayRealVector p = bodyLayout.getPosition(wo);
-
-            wo.animateToPosition(p.getEntry(0)*s-w/2, p.getEntry(1)*s-h/2, childlayoutTime);
-            //w.setOffset(p.getEntry(0), p.getEntry(1));
-        }
 
     }
 
@@ -801,7 +741,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	/**
 	 * Shows all the origins on the Node model
 	 */
-	public void showAllOrigins() {
+	public void showAllSources() {
 
 		Source[] sources = getModel().getSources();
 
@@ -1054,7 +994,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 		@Override
 		protected void action() throws ActionException {
-			showAllOrigins();
+			showAllSources();
 			showAllTerminations();
 		}
 	}

@@ -27,7 +27,7 @@ package ca.nengo.ui.model.icon;
 import ca.nengo.model.SimulationMode;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.piccolo.primitives.Text;
+import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 import ca.nengo.ui.model.node.UINodeViewable;
 
 /**

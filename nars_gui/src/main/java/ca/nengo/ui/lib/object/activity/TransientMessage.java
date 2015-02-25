@@ -2,8 +2,8 @@ package ca.nengo.ui.lib.object.activity;
 
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.util.UIEnvironment;
-import ca.nengo.ui.lib.world.activities.Fader;
-import ca.nengo.ui.lib.world.piccolo.primitives.Text;
+import ca.nengo.ui.lib.world.activity.Fader;
+import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 import org.piccolo2d.activities.PActivity;
 
 import java.awt.geom.Point2D;

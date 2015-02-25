@@ -5,7 +5,7 @@ import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.activities.Pulsator;
+import ca.nengo.ui.lib.world.activity.Pulsator;
 import ca.nengo.ui.lib.world.elastic.ElasticObject;
 import ca.nengo.ui.model.tooltip.Tooltip;
 import ca.nengo.ui.model.tooltip.TooltipBuilder;

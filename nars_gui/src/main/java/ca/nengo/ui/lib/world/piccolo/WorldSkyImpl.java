@@ -2,10 +2,10 @@ package ca.nengo.ui.lib.world.piccolo;
 
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.WorldSky;
-import ca.nengo.ui.lib.world.handlers.KeyboardFocusHandler;
-import ca.nengo.ui.lib.world.handlers.ScrollZoomHandler;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXCamera;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXEdge;
+import ca.nengo.ui.lib.world.handler.KeyboardFocusHandler;
+import ca.nengo.ui.lib.world.handler.ScrollZoomHandler;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXCamera;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.PLayer;
 import org.piccolo2d.event.PZoomEventHandler;

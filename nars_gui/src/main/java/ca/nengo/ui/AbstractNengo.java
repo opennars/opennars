@@ -18,9 +18,9 @@ import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.menu.MenuBuilder;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;
-import ca.nengo.ui.lib.world.handlers.MouseHandler;
-import ca.nengo.ui.lib.world.handlers.SelectionHandler;
-import ca.nengo.ui.lib.world.piccolo.primitives.Universe;
+import ca.nengo.ui.lib.world.handler.MouseHandler;
+import ca.nengo.ui.lib.world.handler.SelectionHandler;
+import ca.nengo.ui.lib.world.piccolo.primitive.Universe;
 import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.build.CNetwork;
@@ -101,7 +101,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
      *          the Top Window is not a Node Container
      */
     protected NodeContainer getRoot() {
-        ca.nengo.ui.lib.world.piccolo.objects.Window window = getTopWindow();
+        ca.nengo.ui.lib.world.piccolo.object.Window window = getTopWindow();
         NodeContainer nodeContainer = null;
 
         if (window != null) {

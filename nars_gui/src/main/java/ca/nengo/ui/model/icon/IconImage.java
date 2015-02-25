@@ -27,7 +27,7 @@ package ca.nengo.ui.model.icon;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXImage;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXImage;
 import org.piccolo2d.util.PBounds;
 import org.piccolo2d.util.PPaintContext;
 

@@ -3,7 +3,7 @@ package ca.nengo.ui.lib.action;
 import ca.nengo.ui.lib.world.Droppable;
 import ca.nengo.ui.lib.world.DroppableX;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.piccolo.objects.Window;
+import ca.nengo.ui.lib.world.piccolo.object.Window;
 
 import java.awt.geom.Point2D;
 import java.lang.ref.WeakReference;

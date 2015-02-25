@@ -5,7 +5,7 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.ui.lib.world.PaintContext;
-import ca.nengo.ui.lib.world.piccolo.objects.BoundsHandle;
+import ca.nengo.ui.lib.world.piccolo.object.BoundsHandle;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.EmptyIcon;

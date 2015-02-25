@@ -28,7 +28,7 @@ package ca.nengo.ui.model.widget;
 
 import ca.nengo.ui.lib.object.line.ILineTermination;
 import ca.nengo.ui.lib.object.line.LineConnector;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXEdge;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
 import ca.nengo.ui.model.UINeoNode;
 
 /**

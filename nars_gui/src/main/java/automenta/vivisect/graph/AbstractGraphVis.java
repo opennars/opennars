@@ -75,7 +75,6 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
         return vertices.get(v);
     }
 
-
     public VertexVis updateVertex(final V o) {
 
         deadVertices.remove(o);

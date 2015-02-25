@@ -3,7 +3,7 @@ package ca.nengo.ui.lib.util;
 import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.PiccoloNodeInWorld;
+import ca.nengo.ui.lib.world.piccolo.primitive.PiccoloNodeInWorld;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PStack;
 

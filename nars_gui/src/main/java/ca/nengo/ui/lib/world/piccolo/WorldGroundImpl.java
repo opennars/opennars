@@ -5,8 +5,8 @@ import ca.nengo.ui.lib.world.ObjectSet;
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldLayer;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXEdge;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXNode;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXNode;
 import org.piccolo2d.PLayer;
 import org.piccolo2d.PNode;
 

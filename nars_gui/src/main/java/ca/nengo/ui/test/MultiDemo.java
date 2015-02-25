@@ -23,7 +23,50 @@ public class MultiDemo extends Nengrow {
         UINetwork a = (UINetwork) addNodeModel(TestFunctionPlot.newFunctionApproximationDemo());
         a.doubleClicked();
         UINetwork b = (UINetwork) addNodeModel(TestPlotNode.newPlotNodeDemo());
-        a.doubleClicked();
+        b.doubleClicked();
+
+//        PStyledText ps = new PStyledText();
+//        getWorld().getSky().getPiccolo().addChild(ps);
+//        ps.raiseToTop();
+//        ps.setBounds(0, 0, 500, 500);
+//        ps.getDocument().insertString(0, "abc", null);
+//        ps.syncWithDocument();
+
+
+        /*
+        StringBuffer html = new StringBuffer();
+        html.append("<p style='margin-bottom: 10px;'>");
+        html.append("This is an example <a href='#testing'>of what can</a> be done with PHtml.");
+        html.append("</p>");
+        html.append("<p>It supports:</p>");
+
+        final PHtmlView htmlNode = new PHtmlView(html.toString());
+        htmlNode.setTextColor(Color.WHITE);
+        htmlNode.setBounds(0, 0, 400, 400);
+        getWorld().getGround().getPiccolo().addChild(htmlNode);
+        */
+
+
+
+
+
+
+//        final JSlider js = new JSlider(0, 100);
+//        js.addChangeListener(new ChangeListener() {
+//            public void stateChanged(final ChangeEvent e) {
+//                System.out.println("e = " + e);
+//            }
+//        });
+//        js.setBorder(BorderFactory.createTitledBorder("Test JSlider"));
+//        final PSwing pSwing = new PSwing(js);
+//        pSwing.translate(100, 100);
+//        WorldObject o;
+//        p.addChild(pSwing);
+//        getWorld().addChild(p);
+//        pSwing.raiseToTop();
+
+
+        //getWorld().addChild(new TextEdit("te1", "THIS IS A SENTENCE"));
 
 
         new Timer(35, new ActionListener() {

@@ -4,7 +4,7 @@ import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.ObjectSet;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXEdge;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
 import edu.uci.ics.jung.graph.impl.AbstractSparseEdge;
 import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
 import edu.uci.ics.jung.graph.impl.SparseGraph;

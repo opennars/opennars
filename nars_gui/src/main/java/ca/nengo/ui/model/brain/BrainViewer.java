@@ -25,13 +25,13 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.model.brain;
 
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.handlers.AbstractStatusHandler;
-import ca.nengo.ui.lib.world.handlers.EventConsumer;
+import ca.nengo.ui.lib.world.handler.AbstractStatusHandler;
+import ca.nengo.ui.lib.world.handler.EventConsumer;
 import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXImage;
-import ca.nengo.ui.lib.world.piccolo.primitives.Text;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXImage;
+import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 import org.piccolo2d.event.PDragSequenceEventHandler;
 import org.piccolo2d.event.PInputEvent;
 

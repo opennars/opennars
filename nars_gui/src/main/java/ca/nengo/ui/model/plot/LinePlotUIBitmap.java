@@ -6,7 +6,7 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXImage;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXImage;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.util.ScriptGenException;
 

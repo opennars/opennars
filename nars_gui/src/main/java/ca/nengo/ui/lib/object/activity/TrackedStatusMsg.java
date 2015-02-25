@@ -3,7 +3,7 @@ package ca.nengo.ui.lib.object.activity;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.Text;
+import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 
 /**
  * Displays and removes a task message from the application status bar

@@ -49,7 +49,7 @@ public class UIFunctionInput extends UINeoNode {
 
 	private void init() {
 		setIcon(new FunctionInputIcon(this));
-		showAllOrigins();
+		showAllSources();
 	}
 
 	@Override

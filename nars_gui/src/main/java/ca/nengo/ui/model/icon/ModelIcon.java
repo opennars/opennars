@@ -28,7 +28,7 @@ import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.Text;
+import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 
 /**
  * An Icon which has a representation and an label. It is used to represent NEO
@@ -57,8 +57,9 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 * Whether to show the type of model in the label
 	 */
 	private boolean showTypeInLabel = false;
+    private boolean showingLabel;
 
-	/**
+    /**
 	 * @param parent
 	 *            The Model the icon is representing
 	 * @param icon
@@ -158,9 +159,11 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 *            Whether the label is visible
 	 */
 	public void setLabelVisible(boolean isVisible) {
-		if (isVisible) {
-			addChild(label);
-		} else {
+		if (isVisible && !showingLabel) {
+            showingLabel = true;
+            addChild(label);
+		} else if (showingLabel) {
+            showingLabel = false;
 			if (label.getParent() != null)
 				label.removeFromParent();
 
@@ -172,12 +175,12 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 */
 	public void updateLabel() {
 		if (showTypeInLabel) {
-			if (parent.getName().compareTo("") == 0)
+			if (parent.getName().isEmpty())
 				label.setText("unnamed " + parent.getTypeName());
 			else
 				label.setText(parent.getName() + " (" + parent.getTypeName() + ')');
 		} else {
-			if (parent.getName().compareTo("") == 0)
+			if (parent.getName().isEmpty())
 				label.setText("unnamed");
 			else
 				label.setText(parent.getName());

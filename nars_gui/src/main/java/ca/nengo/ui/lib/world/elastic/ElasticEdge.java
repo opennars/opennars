@@ -1,7 +1,7 @@
 package ca.nengo.ui.lib.world.elastic;
 
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitives.PXEdge;
+import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
 
 public class ElasticEdge extends PXEdge {
 

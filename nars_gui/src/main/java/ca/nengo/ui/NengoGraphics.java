@@ -32,7 +32,7 @@ import ca.nengo.ui.action.SaveNodeAction;
 import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.handlers.SelectionHandler;
+import ca.nengo.ui.lib.world.handler.SelectionHandler;
 import ca.nengo.ui.model.node.UINetwork;
 
 /**
