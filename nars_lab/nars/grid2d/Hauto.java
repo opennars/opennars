@@ -234,7 +234,7 @@ public class Hauto {
                 if(!inverse) {
                     nar.addInput("<" + s +" --> ["+wishreal+"]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.addInput("(--,<" + s +" --> ["+wishreal+"]>)! :|:");
+                    nar.addInput("<" + s +" --> ["+wishreal+"]>! :|: %0.00;0.90%");
                 }
                 //--nar.step(1);
             }
