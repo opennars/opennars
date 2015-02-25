@@ -224,7 +224,7 @@ public class Hauto {
                 if(!inverse) {
                     nar.addInput("<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.addInput("(--,<" + readCells[x][y].name+" --> ["+wishreal+"]>)! :|:");
+                    nar.addInput("<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|: %0.00;0.90%");
                 }
                 //--nar.step(1);
             }

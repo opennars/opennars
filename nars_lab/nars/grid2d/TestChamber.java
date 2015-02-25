@@ -117,7 +117,8 @@ public class TestChamber {
     public static boolean needpizza=false;
     public static int hungry=250;
     public List<PVector> path=null;
-
+    public static boolean ComplexFeedback=false; //false is minimal feedback
+    
     public TestChamber() {
         super();        
     }
@@ -279,7 +280,7 @@ public class TestChamber {
                                                 }
                                             }
                                         }
-                                        //nar.addInput("<"+goal+" --> hold>. :|:");
+                                        nar.addInput("<"+goal+" --> hold>. :|:");
                                     }
                                     else
                                     if("deactivate".equals(opname)) {
@@ -291,7 +292,8 @@ public class TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.OFFSWITCH;
                                                         cells.readCells[i][j].charge=0.0f;
                                                         cells.writeCells[i][j].charge=0.0f;
-                                                        //nar.addInput("<"+goal+" --> off>. :|:");
+                                                        if(ComplexFeedback)
+                                                            nar.addInput("<"+goal+" --> [on]>. :|: %0.00;0.90%");
                                                     }
                                                 }
                                             }
@@ -308,7 +310,8 @@ public class TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.SWITCH;
                                                         cells.readCells[i][j].charge=1.0f;
                                                         cells.writeCells[i][j].charge=1.0f;
-                                                        //nar.addInput("<"+goal+" --> on>. :|:");
+                                                        if(ComplexFeedback)
+                                                            nar.addInput("<"+goal+" --> [on]>. :|:");
                                                     }
                                                 }
                                             }
