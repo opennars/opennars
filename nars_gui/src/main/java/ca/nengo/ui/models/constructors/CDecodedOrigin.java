@@ -31,7 +31,7 @@ package ca.nengo.ui.models.constructors;
 import ca.nengo.math.Function;
 import ca.nengo.model.Source;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.nef.NEFGroup;
+import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.ui.configurable.*;
 import ca.nengo.ui.configurable.descriptors.PFunctionArray;
 import ca.nengo.ui.configurable.descriptors.PString;

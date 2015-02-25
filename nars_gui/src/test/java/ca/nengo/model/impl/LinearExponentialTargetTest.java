@@ -8,6 +8,8 @@ import ca.nengo.model.InstantaneousOutput;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Units;
+import ca.nengo.neural.impl.PreciseSpikeOutputImpl;
+import ca.nengo.neural.impl.SpikeOutputImpl;
 import junit.framework.TestCase;
 import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
 

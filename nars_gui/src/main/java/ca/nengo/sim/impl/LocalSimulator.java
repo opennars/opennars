@@ -31,7 +31,7 @@ package ca.nengo.sim.impl;
 import ca.nengo.model.*;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.SocketUDPNode;
-import ca.nengo.model.plasticity.impl.PlasticGroupTarget;
+import ca.nengo.neural.plasticity.impl.PlasticGroupTarget;
 import ca.nengo.sim.Simulator;
 import ca.nengo.sim.SimulatorEvent;
 import ca.nengo.sim.SimulatorListener;
@@ -196,7 +196,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
         
         while (time < endTime && !interrupt) {
 
-            if (c++ % 100 == 99 && myDisplayProgress) {
+            if (myDisplayProgress && c++ % 100 == 99) {
                 System.out.println("Step " + c + ' ' + Math.min(endTime, time + thisStepSize));
             }
 
@@ -248,19 +248,19 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
                 }
             }
 
-    		Iterator<Node> it1 = myDeferredSocketNodes.iterator();
-        	while (it1.hasNext()) {
-      			it1.next().run(startTime, endTime);
-        	}
+            for (int i = 0; i < myDeferredSocketNodes.size(); i++) {
+                myDeferredSocketNodes.get(i).run(startTime, endTime);
+            }
+
         	myDeferredSocketNodes.clear();
 
+
             for (ThreadTask myTask : myTasks) {
-                myTask.run(startTime, endTime);
+                   myTask.run(startTime, endTime);
             }
-            
-            Iterator<Probe> it = myProbes.iterator();
-            while (it.hasNext()) {
-                it.next().collect(endTime);
+
+            for (int i = 0; i < myProbes.size(); i++) {
+                myProbes.get(i).collect(endTime);
             }
         }
     }
@@ -286,7 +286,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
         if (saveWeights) {
             Target[] terms;
             for (Node myNode : myNodes) {
-                terms = myNode.getTerminations();
+                terms = myNode.getTargets();
                 for (Target term : terms) {
                     if (term instanceof PlasticGroupTarget) {
                         ((PlasticGroupTarget) term).saveTransform();

@@ -29,9 +29,9 @@ package ca.nengo.ui.models;
 import ca.nengo.io.FileManager;
 import ca.nengo.model.*;
 import ca.nengo.model.impl.FunctionInput;
-import ca.nengo.model.nef.NEFGroup;
-import ca.nengo.model.nef.impl.DecodedSource;
-import ca.nengo.model.neuron.Neuron;
+import ca.nengo.neural.nef.NEFGroup;
+import ca.nengo.neural.nef.impl.DecodedSource;
+import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.ui.AbstractNengo;
 import ca.nengo.ui.actions.*;
 import ca.nengo.ui.configurable.ConfigException;
@@ -284,7 +284,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		/*
 		 * Build the "show origins" menu
 		 */
-		Target[] targets = getModel().getTerminations();
+		Target[] targets = getModel().getTargets();
 		if (targets.length > 0) {
 
 			AbstractMenuBuilder terminationsMenu = originsAndTerminations.addSubMenu("Show termination");
@@ -314,7 +314,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		HashSet<Source> modelSourceSet = new HashSet<Source>(modelSources.length);
         Collections.addAll(modelSourceSet, modelSources);
 
-		Target[] modelTargets = getModel().getTerminations();
+		Target[] modelTargets = getModel().getTargets();
 		HashSet<Target> modelTargetSet = new HashSet<Target>(
 				modelTargets.length);
         Collections.addAll(modelTargetSet, modelTargets);
@@ -390,7 +390,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		} else if (source == null) {
 			Target term = null;
 			try {
-				term = getModel().getTermination(probeUI.getName());
+				term = getModel().getTarget(probeUI.getName());
 
 			} catch (StructuralException e) {
                 e.printStackTrace();
@@ -602,6 +602,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	public void layoutChildren() {
 		super.layoutChildren();
 
+
 		/*
 		 * layout widgets such as Origins and Terminations
 		 */
@@ -763,7 +764,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 */
 	public void showAllTerminations() {
 
-		Target[] targets = getModel().getTerminations();
+		Target[] targets = getModel().getTargets();
 
 		for (Target element : targets) {
 			UITermination termUI = showTermination(element.getName());
@@ -858,7 +859,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 			// Otherwise try to create it
 			try {
 
-				Target termModel = getModel().getTermination(terminationName);
+				Target termModel = getModel().getTarget(terminationName);
 				if (termModel != null) {
 					termUI = UITermination.createTerminationUI(this, termModel);
 					addWidget(termUI);

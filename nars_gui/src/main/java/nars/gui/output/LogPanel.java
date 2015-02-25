@@ -4,16 +4,15 @@ import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.AwesomeToggleButton;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
-import nars.core.NAR;
-import nars.gui.NARControls;
-import nars.gui.WrapLayout;
-import nars.io.TraceWriter;
-import nars.io.TraceWriter.LogOutput;
-import nars.io.Output;
 import nars.core.Events.ERR;
 import nars.core.Events.EXE;
-import nars.io.TextOutput;
+import nars.core.NAR;
 import nars.event.AbstractReaction;
+import nars.gui.WrapLayout;
+import nars.io.Output;
+import nars.io.TextOutput;
+import nars.io.TraceWriter;
+import nars.io.TraceWriter.LogOutput;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 
@@ -59,16 +58,19 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
     
     
-    public LogPanel(NARControls c) {
+    public LogPanel(NAR c) {
         this(c, outputEvents);
     }
     
-    public LogPanel(NARControls c, Class... events) {
+    public LogPanel(NAR n, Class... events) {
         super();
         setLayout(new BorderLayout());
 
-        this.nar = c.nar;
-        this.logger = c.logger;
+        this.nar = n;
+
+
+        this.logger = new TraceWriter(nar);
+        logger.setActive(false);
 
         out = new AbstractReaction(nar, false, events) {
             @Override public void event(final Class event, final Object[] arguments) {

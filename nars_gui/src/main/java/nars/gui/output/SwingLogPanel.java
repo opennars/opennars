@@ -1,7 +1,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import nars.gui.NARControls;
+import nars.core.NAR;
 import nars.gui.output.SwingLogText.LogLine;
 import nars.io.TextOutput;
 
@@ -21,14 +21,14 @@ public class SwingLogPanel extends LogPanel {
     static int defaultFontSize = 19;
     public HashMap<Integer, LogLine> lines = new HashMap();
     
-    public SwingLogPanel(NARControls narControls) {
-        this(narControls, LogPanel.outputEvents);
+    public SwingLogPanel(NAR nar) {
+        this(nar, LogPanel.outputEvents);
     }
     
-    public SwingLogPanel(NARControls narControls, Class... events) {
-        super(narControls, events);
+    public SwingLogPanel(NAR nar, Class... events) {
+        super(nar, events);
 
-        ioText = new SwingLogText(narControls.nar) {
+        ioText = new SwingLogText(nar) {
 
             @Override
             protected void onLineVisible(final int offset) {                

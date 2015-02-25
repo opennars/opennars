@@ -8,7 +8,7 @@ import ca.nengo.model.Target;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.NetworkImpl.SourceWrapper;
 import ca.nengo.model.impl.NetworkImpl.TargetWrapper;
-import ca.nengo.model.nef.impl.NEFGroupImpl;
+import ca.nengo.neural.nef.impl.NEFGroupImpl;
 import org.jgrapht.Graph;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;

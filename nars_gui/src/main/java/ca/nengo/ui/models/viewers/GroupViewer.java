@@ -30,7 +30,7 @@ import ca.nengo.model.Group;
 import ca.nengo.model.Network;
 import ca.nengo.model.Node;
 import ca.nengo.model.Probeable;
-import ca.nengo.model.neuron.Neuron;
+import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.ui.lib.util.UserMessages;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.models.UINeoNode;
@@ -40,7 +40,6 @@ import ca.nengo.ui.models.nodes.UINeuron;
 import ca.nengo.ui.models.nodes.UINodeViewable;
 import ca.nengo.util.Probe;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 

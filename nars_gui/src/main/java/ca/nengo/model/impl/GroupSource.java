@@ -28,6 +28,10 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
+import ca.nengo.neural.PreciseSpikeOutput;
+import ca.nengo.neural.SpikeOutput;
+import ca.nengo.neural.impl.PreciseSpikeOutputImpl;
+import ca.nengo.neural.impl.SpikeOutputImpl;
 
 /**
  * An Origin that is composed of the Origins of multiple Nodes. The dimension 

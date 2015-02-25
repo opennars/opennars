@@ -33,7 +33,7 @@ import ca.nengo.config.ui.ConfigurationChangeListener;
 import ca.nengo.config.ui.ConfigurationTreeModel.NullValue;
 import ca.nengo.model.SimulationMode;
 import ca.nengo.model.Units;
-import ca.nengo.model.neuron.impl.IzhikevichSpikeGenerator;
+import ca.nengo.neural.neuron.impl.IzhikevichSpikeGenerator;
 import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;

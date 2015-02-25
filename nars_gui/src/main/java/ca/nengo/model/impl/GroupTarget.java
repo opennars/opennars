@@ -206,13 +206,13 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 				if (node instanceof Group) {
 					Group group = (Group)node;
 					for (int i = 0; i < result.myNodeTargets.length; i++){
-						result.myNodeTargets[i] = group.getNodes()[i].getTermination(myNodeTargets[i].getName());
+						result.myNodeTargets[i] = group.getNodes()[i].getTarget(myNodeTargets[i].getName());
 					}
 				}
 				if (node instanceof Network) {
 					Network network = (Network)node;
 					for (int i = 0; i < result.myNodeTargets.length; i++){
-						result.myNodeTargets[i] = network.getNodes()[i].getTermination(myNodeTargets[i].getName());
+						result.myNodeTargets[i] = network.getNodes()[i].getTarget(myNodeTargets[i].getName());
 					}
 				}
 			} catch (StructuralException e) {

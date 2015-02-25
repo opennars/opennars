@@ -33,7 +33,7 @@ package ca.nengo.model.impl;
 import ca.nengo.math.PDF;
 import ca.nengo.math.impl.IndicatorPDF;
 import ca.nengo.model.*;
-import ca.nengo.model.neuron.impl.ExpandableSpikingNeuron;
+import ca.nengo.neural.neuron.impl.ExpandableSpikingNeuron;
 import ca.nengo.util.ScriptGenException;
 
 import java.util.*;
@@ -106,22 +106,22 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 	}
 
     /**
-     * @see ca.nengo.model.Node#getTermination(java.lang.String)
+     * @see ca.nengo.model.Node#getTarget(java.lang.String)
      */
     @Override
-    public Target getTermination(String name) throws StructuralException {
+    public Target getTarget(String name) throws StructuralException {
         return myExpandedTerminations.containsKey(name) ?
-                myExpandedTerminations.get(name) : super.getTermination(name);
+                myExpandedTerminations.get(name) : super.getTarget(name);
     }
 
 	/**
-	 * @see ca.nengo.model.Group#getTerminations()
+	 * @see ca.nengo.model.Group#getTargets()
 	 */
-	public Target[] getTerminations() {
+	public Target[] getTargets() {
 		ArrayList<Target> result = new ArrayList<Target>(10);
 		result.addAll(myExpandedTerminations.values());
 
-		Target[] composites = super.getTerminations();
+		Target[] composites = super.getTargets();
         Collections.addAll(result, composites);
 
 		return result.toArray(new Target[result.size()]);
@@ -153,7 +153,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 	 * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
 	 */
     public synchronized Target addTermination(String name, float[][] weights, PDF tauPSC, PDF delays, boolean modulatory) throws StructuralException {
-    	for(Target t : getTerminations()) {
+    	for(Target t : getTargets()) {
         	if(t.getName().equals(name))
         		throw new StructuralException("The ensemble already contains a termination named " + name);
         }
@@ -204,7 +204,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 
 			fireVisibleChangeEvent();
 			return result;
-		} else if (getTermination(name) != null) {
+		} else if (getTarget(name) != null) {
 			return super.removeTermination(name);
 		}
 		throw new StructuralException("Termination " + name + " does not exist");

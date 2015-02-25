@@ -36,7 +36,7 @@ public class ObjectTarget<V> implements Target<V> {
     public ObjectTarget(Node node, String name, int dimension, Class<? extends V> type) {
         myNode = node;
         myName = name;
-        myDimension = 1;
+        myDimension = dimension;
         this.requiredType = type;
 
 //        requiredType = (Class<V>)

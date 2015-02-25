@@ -14,7 +14,7 @@ public class NARFacePanel extends HumanoidFacePanel  {
     }
     
     @Override
-    protected void onShowing(boolean showing) {
+    public void onShowing(boolean showing) {
         super.onShowing(showing);
         
 //        if (showing) {

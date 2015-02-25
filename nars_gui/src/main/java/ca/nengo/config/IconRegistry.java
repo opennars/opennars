@@ -34,9 +34,9 @@ import ca.nengo.dynamics.Integrator;
 import ca.nengo.math.Function;
 import ca.nengo.math.PDF;
 import ca.nengo.model.*;
-import ca.nengo.model.neuron.Neuron;
-import ca.nengo.model.neuron.SpikeGenerator;
-import ca.nengo.model.neuron.SynapticIntegrator;
+import ca.nengo.neural.neuron.Neuron;
+import ca.nengo.neural.neuron.SpikeGenerator;
+import ca.nengo.neural.neuron.SynapticIntegrator;
 import ca.nengo.util.SpikePattern;
 import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
 

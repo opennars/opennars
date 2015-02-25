@@ -81,14 +81,14 @@ public interface Node extends Serializable, Resettable, SimulationMode.ModeConfi
 	 * @return Sets of input channels (these have the same dimension as corresponding Origins
 	 * 		to which they are connected).
 	 */
-	public Target[] getTerminations();
+	public Target[] getTargets();
 
 	/**
 	 * @param name Name of a Termination onto this Node
 	 * @return The named Termination if it exists
 	 * @throws StructuralException if the named Termination does not exist
 	 */
-	public Target getTermination(String name) throws StructuralException;
+	public Target getTarget(String name) throws StructuralException;
 	
 	
 	public Node[] getChildren();

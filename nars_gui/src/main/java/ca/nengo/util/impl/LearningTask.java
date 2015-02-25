@@ -2,8 +2,8 @@ package ca.nengo.util.impl;
 
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.plasticity.impl.PlasticGroupImpl;
-import ca.nengo.model.plasticity.impl.PlasticGroupTarget;
+import ca.nengo.neural.plasticity.impl.PlasticGroupImpl;
+import ca.nengo.neural.plasticity.impl.PlasticGroupTarget;
 import ca.nengo.util.ThreadTask;
 
 /**
@@ -94,7 +94,7 @@ public class LearningTask implements ThreadTask {
     public LearningTask clone(PlasticGroupImpl parent)
     throws CloneNotSupportedException {
     	try {
-    		return this.clone(parent, (PlasticGroupTarget)parent.getTermination(myTermination.getName()));
+    		return this.clone(parent, (PlasticGroupTarget)parent.getTarget(myTermination.getName()));
     	} catch (StructuralException e) {
     		throw new CloneNotSupportedException("Error cloning LearningTask: " + e.getMessage());
     	}

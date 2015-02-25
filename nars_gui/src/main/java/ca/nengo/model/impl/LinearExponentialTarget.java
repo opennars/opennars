@@ -26,6 +26,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
+import ca.nengo.neural.PreciseSpikeOutput;
+import ca.nengo.neural.SpikeOutput;
 
 import java.util.Random;
 

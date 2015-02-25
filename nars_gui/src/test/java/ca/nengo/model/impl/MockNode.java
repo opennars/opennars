@@ -55,16 +55,16 @@ public class MockNode implements Node, Cloneable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getTermination(java.lang.String)
+	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTermination(String name) throws StructuralException {
+	public Target getTarget(String name) throws StructuralException {
 		return null;
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getTerminations()
+	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTerminations() {
+	public Target[] getTargets() {
 		return new Target[0];
 	}
 

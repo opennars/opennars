@@ -26,7 +26,7 @@ package ca.nengo.ui.models.constructors;
 
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Target;
-import ca.nengo.model.nef.NEFGroup;
+import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.ui.configurable.*;
 import ca.nengo.ui.configurable.descriptors.PBoolean;
 import ca.nengo.ui.configurable.descriptors.PFloat;
@@ -62,7 +62,7 @@ public class CDecodedTermination extends ProjectionConstructor {
 	@Override
 	protected boolean IsNameAvailable(String name) {
 		try {
-			return nefEnsembleParent.getTermination(name) == null;
+			return nefEnsembleParent.getTarget(name) == null;
 		} catch (StructuralException e) {
 			return false;
 		}

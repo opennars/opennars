@@ -5,6 +5,8 @@ package ca.nengo.model.impl;
 
 import ca.nengo.TestUtil;
 import ca.nengo.model.*;
+import ca.nengo.neural.SpikeOutput;
+import ca.nengo.neural.impl.SpikeOutputImpl;
 import ca.nengo.util.MU;
 import junit.framework.TestCase;
 
@@ -24,7 +26,7 @@ public class DirectNodeTest extends TestCase {
 
 	public void testRun() throws SimulationException, StructuralException {
 		DirectNode node1 = new DirectNode("test", 2);
-		node1.getTermination(DirectNode.TERMINATION).apply(
+		node1.getTarget(DirectNode.TERMINATION).apply(
                 new SpikeOutputImpl(new boolean[]{true, false}, Units.UNK, 0));
 		node1.run(0, .01f);
 		SpikeOutput out1 = (SpikeOutput) node1.getOrigin(DirectNode.ORIGIN).get();
@@ -35,8 +37,8 @@ public class DirectNodeTest extends TestCase {
 		terminations2.put("a", MU.I(2));
 		terminations2.put("b", MU.I(2));
 		DirectNode node2 = new DirectNode("test2", 2, terminations2);
-		node2.getTermination("a").apply(new RealOutputImpl(new float[]{10, 5}, Units.UNK, 0));
-		node2.getTermination("b").apply(new RealOutputImpl(new float[]{1, 0}, Units.UNK, 0));
+		node2.getTarget("a").apply(new RealOutputImpl(new float[]{10, 5}, Units.UNK, 0));
+		node2.getTarget("b").apply(new RealOutputImpl(new float[]{1, 0}, Units.UNK, 0));
 		node2.run(0, .01f);
 		RealOutput out2 = (RealOutput) node2.getOrigin(DirectNode.ORIGIN).get();
 		TestUtil.assertClose(11, out2.getValues()[0], .001f);
@@ -45,7 +47,7 @@ public class DirectNodeTest extends TestCase {
 		Map<String, float[][]> terminations3 = new HashMap<String, float[][]>(10);
 		terminations3.put("a", new float[][]{new float[]{1, -1}});
 		DirectNode node3 = new DirectNode("test3", 1, terminations3);
-		node3.getTermination("a").apply(new RealOutputImpl(new float[]{10, 3}, Units.UNK, 0));
+		node3.getTarget("a").apply(new RealOutputImpl(new float[]{10, 3}, Units.UNK, 0));
 		node3.run(0, .01f);
 		RealOutput out3 = (RealOutput) node3.getOrigin(DirectNode.ORIGIN).get();
 		TestUtil.assertClose(7, out3.getValues()[0], .001f);

@@ -87,6 +87,7 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
     protected MenuBuilder editMenu;
 
     protected MenuBuilder runMenu;
+    protected JMenuBar menuBar;
 
     /**
      * TODO
@@ -117,7 +118,7 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
      * Initializes the menu
      */
     private void initMenu() {
-        JMenuBar menuBar = new JMenuBar();
+        menuBar = new JMenuBar();
         menuBar.setBorder(null);
         //style.applyMenuStyle(menuBar, true);
 

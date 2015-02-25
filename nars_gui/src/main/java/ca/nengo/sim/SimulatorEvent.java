@@ -26,7 +26,7 @@ package ca.nengo.sim;
 
 public class SimulatorEvent {
 
-	public enum Type {
+	public static enum Type {
 		STARTED, FINISHED, STEP_TAKEN
 	}
 

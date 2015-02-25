@@ -93,7 +93,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
     @Override
     protected void initialize() {
         exposedSources = new HashSet<Source>(getModel().getOrigins().length);
-        exposedTargets = new HashSet<Target>(getModel().getTerminations().length);
+        exposedTargets = new HashSet<Target>(getModel().getTargets().length);
 
         super.initialize();
         addLayoutButtons();
@@ -303,7 +303,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
          */
         HashSet<Source> exposedOriginsTemp = new HashSet<Source>(getModel().getOrigins().length);
         HashSet<Target> exposedTerminationsTemp = new HashSet<Target>(
-                getModel().getTerminations().length);
+                getModel().getTargets().length);
 
         for (Source source : getModel().getOrigins()) {
             if (source instanceof NetworkImpl.SourceWrapper) {
@@ -312,7 +312,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             }
         }
 
-        for (Target target : getModel().getTerminations()) {
+        for (Target target : getModel().getTargets()) {
             if (target instanceof NetworkImpl.TargetWrapper) {
                 NetworkImpl.TargetWrapper terminationWr = (NetworkImpl.TargetWrapper) target;
                 exposedTerminationsTemp.add(terminationWr.getWrappedTermination());

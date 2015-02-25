@@ -39,11 +39,11 @@ import ca.nengo.math.impl.PostfixFunction;
 import ca.nengo.model.*;
 import ca.nengo.model.impl.NetworkImpl.SourceWrapper;
 import ca.nengo.model.impl.NetworkImpl.TargetWrapper;
-import ca.nengo.model.nef.NEFGroup;
-import ca.nengo.model.nef.impl.BiasSource;
-import ca.nengo.model.nef.impl.BiasTarget;
-import ca.nengo.model.nef.impl.DecodedSource;
-import ca.nengo.model.nef.impl.DecodedTarget;
+import ca.nengo.neural.nef.NEFGroup;
+import ca.nengo.neural.nef.impl.BiasSource;
+import ca.nengo.neural.nef.impl.BiasTarget;
+import ca.nengo.neural.nef.impl.DecodedSource;
+import ca.nengo.neural.nef.impl.DecodedTarget;
 import ca.nengo.util.MU;
 import ca.nengo.util.ScriptGenException;
 
@@ -292,7 +292,7 @@ public class ProjectionImpl implements Projection {
 	    		// this relies on the decoded terminations in the child nodes having the 
 	    		// same name as the ensemble termination that contains them
 	    		try{
-	    			dTermination = (DecodedTarget) node.getTermination(tempTarget.getName());
+	    			dTermination = (DecodedTarget) node.getTarget(tempTarget.getName());
 	    		}catch(Exception e){
 	    			dTermination = null;
 	    		}

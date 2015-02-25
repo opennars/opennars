@@ -7,9 +7,9 @@ import ca.nengo.TestUtil;
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.ConstantFunction;
 import ca.nengo.model.*;
-import ca.nengo.model.nef.impl.NEFGroupFactoryImpl;
-import ca.nengo.model.nef.impl.NEFGroupImpl;
-import ca.nengo.model.neuron.impl.SpikingNeuron;
+import ca.nengo.neural.nef.impl.NEFGroupFactoryImpl;
+import ca.nengo.neural.nef.impl.NEFGroupImpl;
+import ca.nengo.neural.neuron.impl.SpikingNeuron;
 import ca.nengo.util.*;
 import junit.framework.TestCase;
 
@@ -401,7 +401,7 @@ public class NetworkImplTest extends TestCase {
 		FunctionInput fin = new FunctionInput("fin", new Function[]{new ConstantFunction(1,0)}, Units.UNK);
 		net.addNode(fin);
 		
-		net.addProjection(fin.getOrigin("origin"), a.getTermination("input"));
+		net.addProjection(fin.getOrigin("origin"), a.getTarget("input"));
 		
 		Probe p = net.getSimulator().addProbe("a", "rate", true);
 		
@@ -433,7 +433,7 @@ public class NetworkImplTest extends TestCase {
 	    testens.addDecodedTermination("input", new float[][]{new float[]{1}}, 0.01f, false);
 	    test1.addNode(testens);
 	    
-	    test1.exposeTermination(testens.getTermination("input"), "in");
+	    test1.exposeTermination(testens.getTarget("input"), "in");
 	    
 	    NetworkImpl test2 = (NetworkImpl)test1.clone();
 	    test2.setName("test2");
@@ -442,10 +442,10 @@ public class NetworkImplTest extends TestCase {
 	    FunctionInput fin = new FunctionInput("fin", new Function[]{new ConstantFunction(1,0.5f)}, Units.UNK);
 	    top.addNode(fin);
 	    
-	    top.addProjection(fin.getOrigin("origin"), test1.getTermination("in"));
-	    top.addProjection(fin.getOrigin("origin"), test2.getTermination("in"));
+	    top.addProjection(fin.getOrigin("origin"), test1.getTarget("in"));
+	    top.addProjection(fin.getOrigin("origin"), test2.getTarget("in"));
 	    
-	    if(test1.getTermination("in") == test2.getTermination("in"))
+	    if(test1.getTarget("in") == test2.getTarget("in"))
 	    	fail("Exposed terminations did not clone correctly");
 	    if(test1.getNode("test") == test2.getNode("test"))
 	    	fail("Network nodes did not clone correctly");
@@ -487,7 +487,7 @@ public class NetworkImplTest extends TestCase {
 			throw new RuntimeException("not implemented");
 		}
 
-		public Target[] getTerminations() {
+		public Target[] getTargets() {
 			throw new RuntimeException("not implemented");
 		}
 
@@ -512,7 +512,7 @@ public class NetworkImplTest extends TestCase {
 			throw new RuntimeException("not implemented");
 		}
 
-		public Target getTermination(String name)
+		public Target getTarget(String name)
 				throws StructuralException {
 			throw new RuntimeException("not implemented");
 		}

@@ -34,11 +34,8 @@ import nars.gui.output.*;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.io.TraceWriter;
 import nars.logic.meta.NARMetrics;
-import nars.logic.meta.NARTrace;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,17 +97,11 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
     private NSlider volumeSlider;
 
     private boolean allowFullSpeed = true;
-    public final TraceWriter logger;
+
 
     int chartHistoryLength = 128;
     private final NARMetrics metrics;
-    
-    /**
-     * Constructor
-     *
-     * @param nar
-     * @param title
-     */
+
     public NARControls(final NAR nar) {
         this(nar, null, true);
     }
@@ -124,10 +115,8 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
 
 
         experienceWriter = new TextOutput(nar);
-        
-        logger = new TraceWriter(nar);
-        logger.setActive(false);
-        
+
+
         JMenuBar menuBar = new JMenuBar();
 
         JMenu m = new JMenu("Memory");
@@ -175,7 +164,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
             ml.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
-                    new NWindow("Output", new SwingLogPanel(NARControls.this)).show(500, 300);
+                    new NWindow("Output", new SwingLogPanel(nar)).show(500, 300);
                 }
             });
             m.add(ml);
@@ -221,7 +210,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
             gml.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
-                    new NWindow("Forgot", new SwingLogPanel(NARControls.this, 
+                    new NWindow("Forgot", new SwingLogPanel(nar,
                             Events.ConceptForget.class
                             //, Events.TaskRemove.class, Events.TermLinkRemove.class, Events.TaskLinkRemove.class)
                     ))

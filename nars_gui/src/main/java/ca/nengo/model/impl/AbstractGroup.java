@@ -30,7 +30,9 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
-import ca.nengo.model.neuron.Neuron;
+import ca.nengo.neural.PreciseSpikeOutput;
+import ca.nengo.neural.SpikeOutput;
+import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.util.SpikePattern;
 import ca.nengo.util.TimeSeries;
 import ca.nengo.util.VisiblyMutable;
@@ -234,9 +236,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	}
 
 	/**
-	 * @see ca.nengo.model.Group#getTermination(java.lang.String)
+	 * @see ca.nengo.model.Group#getTarget(java.lang.String)
 	 */
-    public Target getTermination(String name) throws StructuralException {
+    public Target getTarget(String name) throws StructuralException {
 		return myTerminations.get(name);
 	}
 
@@ -285,9 +287,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	}
 
 	/**
-	 * @see ca.nengo.model.Group#getTerminations()
+	 * @see ca.nengo.model.Group#getTargets()
 	 */
-    public Target[] getTerminations() {
+    public Target[] getTargets() {
 	    ArrayList<Target> result = new ArrayList<Target>(10);
 	    for (Target t : myTerminations.values()) {
             result.add(t);
@@ -489,7 +491,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 		Map<String, List<Target>> groups = new LinkedHashMap<String, List<Target>>(10);
 
 		for (Node node : nodes) {
-			Target[] targets = node.getTerminations();
+			Target[] targets = node.getTargets();
 			for (Target target : targets) {
 				if (target.getDimensions() == 1) {
 					List<Target> group = groups.get(target.getName());

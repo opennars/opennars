@@ -7,9 +7,9 @@ import ca.nengo.model.Network;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.model.nef.NEFGroup;
-import ca.nengo.model.nef.NEFGroupFactory;
-import ca.nengo.model.nef.impl.NEFGroupFactoryImpl;
+import ca.nengo.neural.nef.NEFGroup;
+import ca.nengo.neural.nef.NEFGroupFactory;
+import ca.nengo.neural.nef.impl.NEFGroupFactoryImpl;
 import ca.nengo.util.Probe;
 import junit.framework.TestCase;
 

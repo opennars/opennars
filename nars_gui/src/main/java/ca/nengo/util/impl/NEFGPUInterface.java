@@ -8,12 +8,12 @@ import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.NetworkImpl.SourceWrapper;
 import ca.nengo.model.impl.NetworkImpl.TargetWrapper;
 import ca.nengo.model.impl.RealOutputImpl;
-import ca.nengo.model.nef.NEFGroup;
-import ca.nengo.model.nef.impl.DecodedSource;
-import ca.nengo.model.nef.impl.DecodedTarget;
-import ca.nengo.model.nef.impl.NEFGroupImpl;
-import ca.nengo.model.neuron.impl.LIFSpikeGenerator;
-import ca.nengo.model.neuron.impl.SpikingNeuron;
+import ca.nengo.neural.nef.NEFGroup;
+import ca.nengo.neural.nef.impl.DecodedSource;
+import ca.nengo.neural.nef.impl.DecodedTarget;
+import ca.nengo.neural.nef.impl.NEFGroupImpl;
+import ca.nengo.neural.neuron.impl.LIFSpikeGenerator;
+import ca.nengo.neural.neuron.impl.SpikingNeuron;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -236,7 +236,7 @@ public class NEFGPUInterface {
 			
 			networkArrayData.endIndex = networkArrayOffset;
 				
-			Target[] networkArrayTargets = workingArray.getTerminations();
+			Target[] networkArrayTargets = workingArray.getTargets();
 			networkArrayData.numTerminations = networkArrayTargets.length;
 			
 			
@@ -361,7 +361,7 @@ public class NEFGPUInterface {
 			
 			isSpikingEnsemble[i] = (workingNode.getMode() == SimulationMode.DEFAULT) ? 1 : 0;
 
-			targets = workingNode.getTerminations();
+			targets = workingNode.getTargets();
 
 			int terminationDim = 0;
 			ensembleData.maxTransformDimension = 0;
@@ -454,7 +454,7 @@ public class NEFGPUInterface {
 		spikeOutput = new float [myGPUEnsembles.length][];
 		
 		for (i = 0; i < myGPUNetworkArrays.length; i++) {
-			targets = myGPUNetworkArrays[i].getTerminations();
+			targets = myGPUNetworkArrays[i].getTargets();
 			representedInputValues[i] = new float[targets.length][];
 		}
 
@@ -510,7 +510,7 @@ public class NEFGPUInterface {
 				
 				// get the input data from the terminations
 				for (i = 0; i < myGPUNetworkArrays.length; i++) {
-					targets = myGPUNetworkArrays[i].getTerminations();
+					targets = myGPUNetworkArrays[i].getTargets();
 					count = targets.length;
 					
 					for (j = 0; j < count; j++) {

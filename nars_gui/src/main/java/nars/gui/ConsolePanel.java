@@ -1,25 +1,25 @@
 package nars.gui;
 
-import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
+import nars.core.NAR;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Combines input panel with a log output panel, divided by a splitpane
  */
 public class ConsolePanel extends JSplitPane {
     
-    public ConsolePanel(NARControls narControls) {
+    public ConsolePanel(NAR nar) {
         super(JSplitPane.VERTICAL_SPLIT);
         
-        LogPanel outputLog = new SwingLogPanel(narControls);
+        LogPanel outputLog = new SwingLogPanel(nar);
         add(outputLog, 0);
         
-        TextInputPanel inputPanel = new TextInputPanel(narControls.nar);
+        TextInputPanel inputPanel = new TextInputPanel(nar);
         add(inputPanel, 1);
 
         setOpaque(false);

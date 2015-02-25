@@ -28,9 +28,9 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
-import ca.nengo.model.nef.impl.DecodableGroupImpl;
-import ca.nengo.model.nef.impl.NEFGroupImpl;
-import ca.nengo.model.neuron.Neuron;
+import ca.nengo.neural.nef.impl.DecodableGroupImpl;
+import ca.nengo.neural.nef.impl.NEFGroupImpl;
+import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.sim.Simulator;
 import ca.nengo.sim.impl.LocalSimulator;
 import ca.nengo.util.*;
@@ -292,7 +292,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		Node[] nodes = getNodes();
         ArrayList<Target> nodeTargets = new ArrayList<Target>(nodes.length);
 		for (Node node : nodes) {
-			Target[] terms = node.getTerminations();
+			Target[] terms = node.getTargets();
             Collections.addAll(nodeTargets, terms);
 		}
 
@@ -764,9 +764,9 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#getTermination(java.lang.String)
+	 * @see ca.nengo.model.Network#getTarget(java.lang.String)
 	 */
-	public Target getTermination(String name) throws StructuralException {
+	public Target getTarget(String name) throws StructuralException {
 		if ( !myExposedTerminations.containsKey(name) ) {
 			throw new StructuralException("There is no exposed Termination named " + name);
 		}
@@ -774,9 +774,9 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#getTerminations()
+	 * @see ca.nengo.model.Network#getTargets()
 	 */
-	public Target[] getTerminations() {
+	public Target[] getTargets() {
 		if (myExposedTerminations.values().size() == 0) {
             Collection<Target> var = myExposedTerminations.values();
             return var.toArray(new Target[var.size()]);
@@ -1172,7 +1172,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 				Source newSource = result.getNode(oldProjection.getOrigin().getNode().getName())
 					.getOrigin(oldProjection.getOrigin().getName());
 				Target newTarget = result.getNode(oldProjection.getTermination().getNode().getName())
-					.getTermination(oldProjection.getTermination().getName());
+					.getTarget(oldProjection.getTermination().getName());
 				Projection newProjection = new ProjectionImpl(newSource, newTarget, result);
 				result.myProjectionMap.put(newTarget, newProjection);
 			} catch (StructuralException e) {
@@ -1200,13 +1200,13 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		result.myExposedTerminations = new HashMap<String, Target>(10);
 		result.myExposedTerminationNames = new HashMap<Target, String>(10);
 		result.orderedExposedTargets = new LinkedList <Target> ();
-		for (Target exposed : getTerminations()) {
+		for (Target exposed : getTargets()) {
 			String name = exposed.getName();
 			Target wrapped = ((TargetWrapper) exposed).getWrappedTermination();
 			try {
 				// Check to see if referenced node is the network itself. If it is, handle the termination differently.
 				if (wrapped.getNode().getName() != myName ) {
-					Target toExpose = result.getNode(wrapped.getNode().getName()).getTermination(wrapped.getName());
+					Target toExpose = result.getNode(wrapped.getNode().getName()).getTarget(wrapped.getName());
 					result.exposeTermination(toExpose, name);
 				}
 			} catch (StructuralException e) {

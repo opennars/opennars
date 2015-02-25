@@ -29,10 +29,14 @@ package ca.nengo.model.impl;
 
 import ca.nengo.math.Function;
 import ca.nengo.model.*;
-import ca.nengo.model.nef.impl.DecodedSource;
-import ca.nengo.model.nef.impl.DecodedTarget;
-import ca.nengo.model.nef.impl.NEFGroupImpl;
-import ca.nengo.model.plasticity.impl.PESTarget;
+import ca.nengo.neural.PreciseSpikeOutput;
+import ca.nengo.neural.SpikeOutput;
+import ca.nengo.neural.impl.PreciseSpikeOutputImpl;
+import ca.nengo.neural.impl.SpikeOutputImpl;
+import ca.nengo.neural.nef.impl.DecodedSource;
+import ca.nengo.neural.nef.impl.DecodedTarget;
+import ca.nengo.neural.nef.impl.NEFGroupImpl;
+import ca.nengo.neural.plasticity.impl.PESTarget;
 import ca.nengo.util.MU;
 import ca.nengo.util.TimeSeries;
 import ca.nengo.util.impl.TimeSeriesImpl;
@@ -231,7 +235,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		}
 		
 		exposeTermination(new GroupTarget(this, name, targets), name);
-		return getTermination(name);
+		return getTarget(name);
 	}
 	
 	/**
@@ -265,7 +269,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		}
 		
 		exposeTermination(new GroupTarget(this, name, targets), name);
-		return getTermination(name);
+		return getTarget(name);
 	}
 
 	
@@ -304,7 +308,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		}
 		
 		exposeTermination(new GroupTarget(this, name, targets), name);
-		return getTermination(name);
+		return getTarget(name);
 	}	
 	
 	
@@ -362,7 +366,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		
 		GroupTarget term = new GroupTarget(this, name, targets.toArray(new Target[targets.size()]));
 		exposeTermination(term,name);
-		return getTermination(name);
+		return getTarget(name);
 	}
 
 	/**
@@ -387,10 +391,10 @@ public class NetworkArrayImpl extends NetworkImpl {
 	}
 	
 	/**
-	 * @see ca.nengo.model.Network#getTerminations()
+	 * @see ca.nengo.model.Network#getTargets()
 	 */
-	public Target[] getTerminations() {
-		Target[] targets = super.getTerminations();
+	public Target[] getTargets() {
+		Target[] targets = super.getTargets();
 		ArrayList<Target> decodedTargets = new ArrayList<Target>();
 		ArrayList<Target> nonDecodedTargets = new ArrayList<Target>();
 		GroupTarget baseTermination;
@@ -451,7 +455,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		}
 		
 		exposeTermination(new GroupTarget(this, name, targets), name);
-		return getTermination(name);
+		return getTarget(name);
 	}
 	
 	public interface WeightFunc {
@@ -464,7 +468,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 	}
 	
 	/**
-	 * @see ca.nengo.model.nef.NEFGroup#getDimension()
+	 * @see ca.nengo.neural.nef.NEFGroup#getDimension()
 	 */
 	public int getDimension() {
 		return myDimension;
@@ -524,7 +528,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		for(int i=0; i < myNumNodes; i++) {
 			PESTarget term;
 			try {
-				term = (PESTarget)myNodes[i].getTermination(learnTerm);
+				term = (PESTarget)myNodes[i].getTarget(learnTerm);
 			}
 			catch(StructuralException se) {
 				//term does not exist on this node
@@ -595,7 +599,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 				Source clonedSource = ((SourceWrapper) exposedSource).getBaseOrigin().clone(result);
 				result.exposeOrigin(clonedSource, exposedSource.getName());
 			}
-			for (Target exposedTarget : getTerminations()) {
+			for (Target exposedTarget : getTargets()) {
 				Target clonedTarget = ((TargetWrapper) exposedTarget).getBaseTermination().clone(result);
 				result.exposeTermination(clonedTarget, exposedTarget.getName());
 			}

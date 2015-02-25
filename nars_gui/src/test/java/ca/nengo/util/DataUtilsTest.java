@@ -12,9 +12,9 @@ import ca.nengo.model.StructuralException;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.FunctionInput;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.model.nef.NEFGroup;
-import ca.nengo.model.nef.NEFGroupFactory;
-import ca.nengo.model.nef.impl.NEFGroupFactoryImpl;
+import ca.nengo.neural.nef.NEFGroup;
+import ca.nengo.neural.nef.NEFGroupFactory;
+import ca.nengo.neural.nef.impl.NEFGroupFactoryImpl;
 import ca.nengo.plot.Plotter;
 import ca.nengo.util.impl.SpikePatternImpl;
 import ca.nengo.util.impl.TimeSeriesImpl;
@@ -131,7 +131,7 @@ public class DataUtilsTest extends TestCase {
 		ensemble.collectSpikes(true);
 		network.addNode(ensemble);
 		
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), ensemble.getTermination("input"));
+		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), ensemble.getTarget("input"));
 		network.run(0, 2);
 		
 		SpikePattern unsorted = ensemble.getSpikePattern();

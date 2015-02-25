@@ -125,19 +125,23 @@ public abstract class AbstractNode implements Node {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getTermination(java.lang.String)
+	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTermination(String name) throws StructuralException {
+	public Target getTarget(String name) throws StructuralException {
 		return myTargets.get(name);
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getTerminations()
+	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTerminations() {
+	public Target[] getTargets() {
         java.util.Collection<Target> var = myTargets.values();
         return var.toArray(new Target[var.size()]);
 	}
+
+    public int getTargetCount() {
+        return myTargets.size();
+    }
 
 	/**
 	 * Does nothing.

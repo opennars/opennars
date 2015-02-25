@@ -80,7 +80,7 @@ public class NARSwing extends Video {
         
         
         if (logPanel) {
-            NWindow nw = new NWindow("I/O", new ConsolePanel(controls));
+            NWindow nw = new NWindow("I/O", new ConsolePanel(nar));
             nw.setBounds(mainWindow.getX() + mainWindow.getWidth(), mainWindow.getY(), 800, 650);
             nw.setVisible(true);
             

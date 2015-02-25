@@ -1,10 +1,13 @@
 package ca.nengo.ui.test;
 
-import ca.nengo.math.impl.GaussianPDF;
+import ca.nengo.math.impl.PoissonPDF;
 import ca.nengo.model.SimulationException;
+import ca.nengo.model.Units;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.NoiseFactory;
-import ca.nengo.model.neuron.impl.SpikingNeuron;
+import ca.nengo.neural.neuron.impl.LIFSpikeGenerator;
+import ca.nengo.neural.neuron.impl.LinearSynapticIntegrator;
+import ca.nengo.neural.neuron.impl.SpikingNeuron;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.models.nodes.UINetwork;
@@ -16,35 +19,34 @@ import java.awt.event.ActionListener;
 
 
 public class TestPlotNode extends Nengrow {
+    public static final float RESOLUTION_SEC = .001f;
 
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
 
     @Override
     public void init() throws Exception {
         NetworkImpl network = new NetworkImpl();
-        network.addNode(new SpikingNeuron(null, null, 1, 0.5f, "A").
-                setNoise(NoiseFactory.makeRandomNoise(100f, new GaussianPDF())));
-        network.addNode( new SpikingNeuron(null, null, 1, 0.5f, "B"));
+
+        SpikingNeuron sn = new SpikingNeuron(
+                new LinearSynapticIntegrator(RESOLUTION_SEC, Units.ACU),
+                new  LIFSpikeGenerator(.001f, .02f, .002f), 1, 0.9f, "A");
+
+        network.addNode(sn.setNoise(NoiseFactory.makeRandomNoise(100f, new PoissonPDF(100f))));
+
         network.addNode(new LinePlot("plot1"));
 
 
         UINetwork networkUI = (UINetwork) addNodeModel(network);
 
         networkUI.doubleClicked();
-        //addNodeModel(new SpikingNeuron(null, null, 1, 0, "C"));
 
 
-        //networkUI.addNodeModel(new LinePlotUI("plot1"), 50d, 20d);
-
-        network.run(0,0);
-
-
-        new Timer(10, new ActionListener() {
+        new Timer(25, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    float dt = 0.001f; //myStepSize
+                    float dt = getSimulationDT();
                     network.run(time, time+dt);
                     time += dt;
                 } catch (SimulationException e1) {

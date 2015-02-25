@@ -32,6 +32,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
+import ca.nengo.neural.SpikeOutput;
 import ca.nengo.util.MU;
 import ca.nengo.util.ScriptGenException;
 import ca.nengo.util.VisiblyMutable;
@@ -303,7 +304,7 @@ public class SocketUDPNode implements Node, Resettable {
 
 	public Target addTermination(String name, float[][] transform)
 			throws StructuralException {
-		for (Target t : getTerminations()) {
+		for (Target t : getTargets()) {
 			if (t.getName().equals(name))
 				throw new StructuralException("This node already contains a termination named " + name);
 		}
@@ -314,9 +315,9 @@ public class SocketUDPNode implements Node, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getTermination(java.lang.String)
+	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTermination(String name) throws StructuralException {
+	public Target getTarget(String name) throws StructuralException {
 		if (myTerminations.containsKey(name)) {
 			return myTerminations.get(name);
 		} else {
@@ -325,9 +326,9 @@ public class SocketUDPNode implements Node, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getTerminations()
+	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTerminations() {
+	public Target[] getTargets() {
         Collection<ObjectTarget<InstantaneousOutput>> var = myTerminations.values();
         return var.toArray(new ObjectTarget[var.size()]);
 	}

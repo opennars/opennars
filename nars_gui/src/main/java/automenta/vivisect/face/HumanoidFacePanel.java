@@ -22,10 +22,14 @@ public class HumanoidFacePanel extends NPanel {
     public boolean happy = false;
     public int talk=-1;
 
-    
-    public HumanoidFacePanel()   {   
+
+    public HumanoidFacePanel()   {
+        this(800, 800);
+    }
+
+    public HumanoidFacePanel(int w, int h)   {
         super(new BorderLayout());   
-        setSize(800,600);
+        setSize(w, h);
         
         face = new FaceGUI() {           
             
@@ -116,7 +120,7 @@ public class HumanoidFacePanel extends NPanel {
     }
     
     @Override
-    protected void onShowing(boolean showing) {
+    public void onShowing(boolean showing) {
         
         if (showing) {
             face.start();

@@ -5,6 +5,7 @@
  */
 package jurls.examples.approximation;
 
+import nars.util.data.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.awt.Color;
@@ -89,4 +90,22 @@ public class RenderArrayFunction implements RenderFunction {
         return color;
     }
 
+    final static XORShiftRandom mutateRandom = new XORShiftRandom();
+
+    public void mutate(final double v, float rerandomProbability) {
+        for (int i = 0; i < ys.length; i++) {
+            double y;
+            if (mutateRandom.nextDouble() < rerandomProbability) {
+                y = (Math.random()-0.5f) * 2f;
+            }
+            else {
+                y = ys[i] + (mutateRandom.nextDouble()-0.5) * v;
+                if (y < -1) y = -1;
+                if (y > 1) y = 1;
+            }
+            ys[i] = y;
+
+
+        }
+    }
 }

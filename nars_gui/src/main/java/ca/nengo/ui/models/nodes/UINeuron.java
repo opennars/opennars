@@ -26,7 +26,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.models.nodes;
 
-import ca.nengo.model.neuron.Neuron;
+import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.ui.models.UINeoNode;
 import ca.nengo.ui.models.icons.NodeIcon;
 

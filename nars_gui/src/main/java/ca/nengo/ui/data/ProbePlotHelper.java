@@ -1,7 +1,7 @@
 package ca.nengo.ui.data;
 
 import ca.nengo.model.SimulationMode;
-import ca.nengo.model.nef.NEFGroup;
+import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.ui.actions.PlotTimeSeries;
 import ca.nengo.ui.lib.actions.StandardAction;
 import ca.nengo.ui.util.NengoConfigManager;

@@ -6,9 +6,9 @@ package ca.nengo.model.impl;
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.IdentityFunction;
 import ca.nengo.model.*;
-import ca.nengo.model.nef.NEFGroup;
-import ca.nengo.model.nef.NEFGroupFactory;
-import ca.nengo.model.nef.impl.*;
+import ca.nengo.neural.nef.NEFGroup;
+import ca.nengo.neural.nef.NEFGroupFactory;
+import ca.nengo.neural.nef.impl.*;
 import ca.nengo.util.DataUtils;
 import ca.nengo.util.MU;
 import ca.nengo.util.Probe;
@@ -135,14 +135,14 @@ public class ProjectionImplTest extends TestCase {
 		NEFGroup pre = ef.make("pre", n, 2);
 		pre.addDecodedTermination("input", MU.uniform(2, 1, 1), .005f, false);
 		network.addNode(pre);
-		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), pre.getTermination("input"));
+		network.addProjection(input.getOrigin(FunctionInput.ORIGIN_NAME), pre.getTarget("input"));
 		NEFGroup post = ef.make("post", n, 2);
 		network.addNode(post);
 		post.addDecodedTermination("input", MU.I(2), .01f, false);
-		Projection p = network.addProjection(pre.getOrigin(NEFGroup.X), post.getTermination("input"));
+		Projection p = network.addProjection(pre.getOrigin(NEFGroup.X), post.getTarget("input"));
 
 		DecodedSource o = (DecodedSource) pre.getOrigin(NEFGroup.X);
-		DecodedTarget t = (DecodedTarget) post.getTermination("input");
+		DecodedTarget t = (DecodedTarget) post.getTarget("input");
 		float[][] directWeights = MU.prod(post.getEncoders(), MU.prod(t.getTransform(), MU.transpose(o.getDecoders())));
 		System.out.println("Direct weights: " + MU.min(directWeights) + " to " + MU.max(directWeights));
 
@@ -159,7 +159,7 @@ public class ProjectionImplTest extends TestCase {
 
 		p.addBias(300, .005f, .01f, true, false);
 		BiasSource bo = (BiasSource) pre.getOrigin("post_input");
-		BiasTarget bt = (BiasTarget) post.getTermination("input (bias)");
+		BiasTarget bt = (BiasTarget) post.getTarget("input (bias)");
 		assertTrue(MU.min(getNetWeights(directWeights, bo, bt)) > -1e-10);
 		network.run(-1.5f, 1);
 //		Plotter.plot(probe.getData(), "positive non-optimal");
@@ -170,7 +170,7 @@ public class ProjectionImplTest extends TestCase {
 
 		p.addBias(300, .005f, .01f, true, true);
 		bo = (BiasSource) pre.getOrigin("post_input");
-		bt = (BiasTarget) post.getTermination("input (bias)");
+		bt = (BiasTarget) post.getTarget("input (bias)");
 		assertTrue(MU.min(getNetWeights(directWeights, bo, bt)) > -1e-10);
 		network.run(-1.5f, 1);
 //		Plotter.plot(probe.getData(), "positive optimal");

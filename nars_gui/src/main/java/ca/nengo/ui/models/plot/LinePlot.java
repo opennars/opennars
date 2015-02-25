@@ -1,10 +1,13 @@
 package ca.nengo.ui.models.plot;
 
 
+import automenta.vivisect.swing.ColorArray;
 import ca.nengo.model.*;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.ObjectTarget;
+import ca.nengo.neural.SpikeOutput;
 import ca.nengo.ui.lib.world.PaintContext;
+import ca.nengo.ui.lib.world.piccolo.objects.BoundsHandle;
 import ca.nengo.ui.models.UIBuilder;
 import ca.nengo.ui.models.UINeoNode;
 import ca.nengo.ui.models.icons.EmptyIcon;
@@ -20,59 +23,35 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class LinePlot extends AbstractNode implements UIBuilder {
 
+    public static final ColorArray grayScale = new ColorArray(16, Color.GRAY, Color.WHITE);
+
     final Target<InstantaneousOutput> input = new ObjectTarget(this, "input",InstantaneousOutput.class);
     private String label = "?";
 
-    Deque<Float> history = new ConcurrentLinkedDeque<>(); //TODO use seomthing more efficient
-    final int maxHistory = 128;
+    Deque<Double> history = new ConcurrentLinkedDeque<>(); //TODO use seomthing more efficient
+    final int maxHistory = 256;
+    double[] hv = new double[maxHistory]; //values are cached here for fast access
+
     private LinePlotUI ui;
+    private boolean changed = false;
 
     public class LinePlotUI extends UINeoNode<LinePlot> {
 
         public LinePlotUI() {
             super(LinePlot.this);
 
+            BoundsHandle.addBoundsHandlesTo(this);
+
             setIcon(new EmptyIcon(this));
             //img = new BufferedImage(400, 200, BufferedImage.TYPE_4BYTE_ABGR);
             //setIcon(new WorldObjectImpl(new PXImage(img)));
-            setBounds(0, 0, 251, 91);
+            setBounds(0, 0, 512, 256);
 
             addWidget(UITermination.createTerminationUI(this, getInput()));
 
 
 
             repaint();
-
-            /*
-            JComponent jt;
-            //PSwing pp = new PSwing(jt = new JTextField("button"));
-            PSwing pp = new PSwing(jt = new JSlider());
-            jt.repaint();
-            jt.revalidate();
-            jt.grabFocus();
-            jt.setDoubleBuffered(false);
-            */
-
-
-            //pp.setScale(2.0);
-          //  PInputEventListener x;
-//            pp.addInputEventListener(x = new PInputEventListener() {
-//
-//                @Override
-//                public void processEvent(PInputEvent pInputEvent, int i) {
-//                    InputEvent ie = pInputEvent.getSourceSwingEvent();
-//                    if (ie!=null && !ie.isConsumed()) {
-//                        ie.setSource(jt);
-//                        jt.dispatchEvent(ie);
-//                        ie.consume();
-//                        pp.repaint();
-//                    }
-//                }
-//            });
-            //getPiccolo().addChild(pp);
-
-
-
         }
 
         @Override
@@ -82,37 +61,53 @@ public class LinePlot extends AbstractNode implements UIBuilder {
 
 
 
+        double min, max;
+
         @Override
         public void paint(PaintContext paintContext) {
             super.paint(paintContext);
 
+            if (changed) {
+                min = Float.POSITIVE_INFINITY;
+                max = Float.NEGATIVE_INFINITY;
+                int i = 0;
+                Iterator<Double> x = history.iterator();
+                while (x.hasNext()) {
+                    double v = x.next();
+                    if (v < min) min = v;
+                    if (v > max) max = v;
+                    hv[i++] = v;
+                }
+                changed = false;
+            }
+
+
             Graphics2D g = paintContext.getGraphics();
 
             int nh = history.size();
-            float x = 0, y = 0;
-            float dx = (float) Math.ceil(getBounds().getWidth() / nh);
+            double x = 0;
+            double dx = (getWidth() / nh);
+            final float bh = (float)getHeight();
+            final int ih = (int)bh;
 
-            float min = Float.POSITIVE_INFINITY, max = Float.NEGATIVE_INFINITY;
-            Iterator<Float> hi = history.iterator();
-            while (hi.hasNext()) {
-                float v = hi.next();
-                if (v < min) min = v;
-                if (v > max) max = v;
-            }
+            g.setColor(Color.WHITE);
 
-            final float bh = (float)getBounds().getHeight();
+            if (max != min) {
+                int prevX = 0;
+                for (int i = 0; i < history.size(); i++) {
+                    final double v = hv[i];
+                    final double py = (v - min) / (max - min);
+                    double y = py * bh;
 
-            hi = history.iterator();
+                    final int iy = (int) y;
 
-            while (hi.hasNext()) {
-                float v = hi.next();
-                y = (v - min) / (max - min) * bh;
+                    g.setColor(grayScale.get(py));
+                    g.fillRect(prevX, ih / 2 - iy / 2, (int) Math.ceil(x - prevX), iy);
 
-                g.setColor(Color.getHSBColor((float)Math.sin(v), 1, 1));
-                g.fillRect((int) x, (int) y, (int) dx, (int) dx);
-
-                //System.out.println(x + ' '  + v);
-                x += dx;
+                    //System.out.println(x + ' '  + v);
+                    prevX = (int)x;
+                    x += dx;
+                }
             }
 
             g.setColor(Color.WHITE);
@@ -156,6 +151,9 @@ public class LinePlot extends AbstractNode implements UIBuilder {
                 push(v[0]);
                 label = (Arrays.toString(v));
             }
+            else if (i instanceof Number) {
+                push(((Number)i).doubleValue());
+            }
 
         }
 
@@ -165,12 +163,14 @@ public class LinePlot extends AbstractNode implements UIBuilder {
     }
 
 
-    protected void push(float f) {
+    protected void push(double f) {
         history.addLast(f);
         if (history.size() == maxHistory)
             history.removeFirst();
+        changed = true;
         ui.repaint();
     }
+
     @Override
     public void reset(boolean randomize) {
 

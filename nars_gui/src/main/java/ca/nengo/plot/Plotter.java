@@ -28,7 +28,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.plot;
 
 import ca.nengo.math.Function;
-import ca.nengo.model.nef.NEFGroup;
+import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.util.DataUtils;
 import ca.nengo.util.Environment;
 import ca.nengo.util.SpikePattern;

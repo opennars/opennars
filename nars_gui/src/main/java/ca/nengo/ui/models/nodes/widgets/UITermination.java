@@ -29,7 +29,7 @@ package ca.nengo.ui.models.nodes.widgets;
 import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Target;
-import ca.nengo.model.nef.impl.DecodedTarget;
+import ca.nengo.neural.nef.impl.DecodedTarget;
 import ca.nengo.ui.lib.actions.ActionException;
 import ca.nengo.ui.lib.actions.StandardAction;
 import ca.nengo.ui.lib.objects.lines.ILineTermination;

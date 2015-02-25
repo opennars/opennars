@@ -37,12 +37,12 @@ public class GroupImplTest extends TestCase {
 
 		GroupImpl copy = ensemble.clone();
         System.out.println("Termination Length");
-        System.out.println( copy.getTerminations().length);
-		assertEquals(2, copy.getTerminations().length);
+        System.out.println( copy.getTargets().length);
+		assertEquals(2, copy.getTargets().length);
 		copy.removeTermination("new");
         System.out.println("Termination Name");
-        System.out.println( copy.getTermination("existing").getClass().getName());
-		assertTrue(copy.getTermination("existing") instanceof GroupTarget);
+        System.out.println( copy.getTarget("existing").getClass().getName());
+		assertTrue(copy.getTarget("existing") instanceof GroupTarget);
 //		try {
 //			copy.removeTermination("existing");
 //			fail("Should have thrown exception (can't remove non-expanded terminations)");
@@ -77,22 +77,22 @@ public class GroupImplTest extends TestCase {
 		}
 
 		@Override
-		public Target getTermination(String name) throws StructuralException {
+		public Target getTarget(String name) throws StructuralException {
 			if (myExpandedTerminations.containsKey(name)) {
 				return myExpandedTerminations.get(name);
 			} else {
-				return super.getTermination(name);
+				return super.getTarget(name);
 			}
 		}
 
 		@Override
-		public Target[] getTerminations() {
-			Target[] result = new Target[super.getTerminations().length + myExpandedTerminations.size()];
+		public Target[] getTargets() {
+			Target[] result = new Target[super.getTargets().length + myExpandedTerminations.size()];
 			int i = 0;
 			for (Target t : myExpandedTerminations.values()) {
 				result[i++] = t;
 			}
-			System.arraycopy(super.getTerminations(), 0, result, i++, super.getTerminations().length);
+			System.arraycopy(super.getTargets(), 0, result, i++, super.getTargets().length);
 
 			return result;
 		}

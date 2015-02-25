@@ -31,7 +31,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.util;
 
 import ca.nengo.math.Function;
-import ca.nengo.model.nef.NEFGroup;
+import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.plot.Plotter;
 import ca.nengo.util.SpikePattern;
 import ca.nengo.util.TimeSeries;
