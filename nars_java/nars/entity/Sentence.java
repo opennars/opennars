@@ -127,7 +127,11 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         this.punctuation = punctuation;
         
         if (_content instanceof Interval)
-            throw new RuntimeException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
+        {
+            truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
+            if(Parameters.DEBUG)
+                throw new RuntimeException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
+        }
         
         if ( (!isQuestion() && !isQuest()) && (truth == null) ) {            
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");

@@ -305,7 +305,7 @@ public class Hauto {
                 readCells[(int) x][(int) y].name = name;
                 writeCells[(int) x][(int) y].name = name;
                 if(selected.logic==Logic.OFFSWITCH) {
-                    nar.addInput("(--,<"+name+" --> "+"[on]>). :|:");
+                    nar.addInput("<"+name+" --> "+"[on]>. :|: %0.00;0.90%");
                     if(TestChamber.curiousity) {
                         space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");

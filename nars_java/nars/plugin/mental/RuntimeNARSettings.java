@@ -45,7 +45,7 @@ public class RuntimeNARSettings implements Plugin {
     }
     
     public double getDerivationDurabilityLeak() {
-        return Parameters.DERIVATION_PRIORITY_LEAK;
+        return Parameters.DERIVATION_DURABILITY_LEAK;
     }
     public void setDerivationDurabilityLeak(double val) {
         Parameters.DERIVATION_DURABILITY_LEAK=(float) val;
