@@ -117,7 +117,7 @@ public class TestChamber {
     public static boolean needpizza=false;
     public static int hungry=250;
     public List<PVector> path=null;
-    public static boolean ComplexFeedback=false; //false is minimal feedback
+    public static boolean ComplexFeedback=true; //false is minimal feedback
     
     public TestChamber() {
         super();        
