@@ -82,7 +82,7 @@ public class Hauto {
             else {
                 if(!r.is_solid && TestChamber.keyn!=doornumber(r)) {
                     w.is_solid=true;
-                    nar.addInput("(--,<"+r.name+" --> [opened]>). :|:");
+                    nar.addInput("<"+r.name+" --> [opened]>. :|: %0.00;0.90%");
                 }
             }
         }
@@ -154,7 +154,7 @@ public class Hauto {
         }
         if(r.machine==Machine.Light || r.machine==Machine.Turret) {
             if(r.light==1.0f && w.light!=1.0f) { //changed
-                nar.addInput("(--,<"+r.name+" --> [on]>). :|:");
+                nar.addInput("<"+r.name+" --> [on]>. :|: %0.00;0.90%");
             }
         }
             //w.charge *= w.conductivity;
