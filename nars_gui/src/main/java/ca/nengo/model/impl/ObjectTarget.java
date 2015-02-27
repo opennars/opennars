@@ -2,12 +2,6 @@ package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
 import ca.nengo.util.MU;
-import com.google.common.reflect.TypeToken;
-import sun.net.www.content.text.Generic;
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 /**
  * Termination that receives input unaltered.
@@ -27,7 +21,6 @@ public class ObjectTarget<V> implements Target<V> {
     /**
      * @param node Parent node
      * @param name Termination name
-     * @param dimension Dimensionality of input
      */
     public ObjectTarget(Node node, String name, Class<? extends V> receivesClass) {
         this(node, name, 1, receivesClass);
@@ -99,6 +92,11 @@ public class ObjectTarget<V> implements Target<V> {
 
     public String getName() {
         return myName;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     @Override public boolean applies(V value) {

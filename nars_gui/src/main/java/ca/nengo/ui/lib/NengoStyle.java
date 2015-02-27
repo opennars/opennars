@@ -85,6 +85,7 @@ public class NengoStyle {
 	public static final Font FONT_LARGE = new Font(FONT_FAMILY, Font.BOLD, 18);
 	public static final Font FONT_NORMAL = new Font(FONT_FAMILY, Font.PLAIN, 14);
 
+    public static final Font FONT_TINY = new Font(FONT_FAMILY, Font.PLAIN, 7);
 	public static final Font FONT_SMALL = new Font(FONT_FAMILY, Font.PLAIN, 10);
 	public static final Font FONT_BIG = new Font(FONT_FAMILY, Font.BOLD, 16);
 

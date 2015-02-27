@@ -79,6 +79,7 @@ public class HyperassociativeMap<N, E> {
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
     private double acceptableMaxDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
     private double speedFactor = 1.0;
+    final double acceptableDistanceAdjustment = 0.1;
     private EdgeWeightToDistanceFunction edgeWeightToDistance = EdgeWeightToDistanceFunction.OneDivSum;
     
     private DistanceMetric distanceFunction;
@@ -169,8 +170,10 @@ public class HyperassociativeMap<N, E> {
         this.graph = graph;
     }
 
-    
-    
+    public void setMaxRepulsionDistance(double maxRepulsionDistance) {
+        this.maxRepulsionDistance = maxRepulsionDistance;
+    }
+
     public final Graph<N, E> getGraph() {
         return graph;
     }
@@ -574,7 +577,6 @@ public class HyperassociativeMap<N, E> {
             throw new RuntimeException("Unexpected execution exception. Get should block indefinitely", caught);
         }
         if (learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT < DEFAULT_LEARNING_RATE) {
-            final double acceptableDistanceAdjustment = 0.1;
             if (getAverageMovement() < (equilibriumDistance * acceptableMaxDistanceFactor * acceptableDistanceAdjustment)) {
                 acceptableMaxDistanceFactor = maxMovement * 2.0;
             }

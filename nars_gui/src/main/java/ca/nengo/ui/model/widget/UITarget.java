@@ -30,6 +30,7 @@ import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Target;
 import ca.nengo.neural.nef.impl.DecodedTarget;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.ui.lib.object.line.ILineTermination;
@@ -88,7 +89,8 @@ public abstract class UITarget<T extends Target> extends Widget<T> implements IL
 		myIcon = new LineTerminationIcon();
 		myIconDefaultColor = myIcon.getColor();
 		ModelIcon iconWr = new ModelIcon(this, myIcon);
-		iconWr.configureLabel(false);
+        iconWr.getLabel().setFont(NengoStyle.FONT_TINY);
+        iconWr.configureLabel(false);
 		
 		setSelectable(true);
 

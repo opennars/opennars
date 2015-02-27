@@ -37,10 +37,10 @@ import ca.nengo.ui.lib.world.piccolo.primitive.Path;
  */
 public class NodeIcon extends ModelIcon {
 
-    public static final Path defaultPath = Path.createPolygon(6, 50, NengoStyle.COLOR_FOREGROUND);
+
 
 	public NodeIcon(ModelObject parent) {
-		super(parent, defaultPath);
+		super(parent, Path.createPolygon(6, 50, NengoStyle.COLOR_FOREGROUND));
 		configureLabel(false);
 	}
 }

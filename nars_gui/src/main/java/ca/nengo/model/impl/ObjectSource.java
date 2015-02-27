@@ -29,6 +29,11 @@ public class ObjectSource<V> implements Source<V>, Resettable {
     }
 
     @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
     public int getDimensions() {
         return 1;
     }

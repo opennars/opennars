@@ -130,7 +130,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 * @param type
 	 *            of the Child
 	 */
-	private WorldObject getChild(String name, Class<?> type) {
+	public WorldObject getChild(String name, Class<?> type) {
 
 		/*
 		 * Linear search used because there tends to be only a small number of

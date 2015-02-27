@@ -1,13 +1,13 @@
 package ca.nengo.model.impl;
 
-import automenta.vivisect.dimensionalize.AbstractFastOrganicLayout;
+import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.Source;
 import ca.nengo.model.Target;
+import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.icon.ArrowIcon;
-import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.NodeIcon;
@@ -16,15 +16,16 @@ import ca.nengo.ui.model.widget.UISource;
 import ca.nengo.ui.model.widget.UITarget;
 import ca.nengo.ui.model.widget.Widget;
 import ca.nengo.util.ScriptGenException;
-import org.jgrapht.Graph;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Wraps a POJO/Bean
@@ -33,14 +34,15 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
     private O obj;
 
-    /** stores connectivity between this node and its chidlren (sources, targets, etc..) for
-     * layout and other morpholoigcal purposes */
-    private DefaultDirectedGraph<WorldObject,String> bodyGraph;
-    private AbstractFastOrganicLayout<WorldObject,String,WorldObject> bodyLayout;
-    private double childlayoutTime = 1.25f; //in seconds
+    /**
+     * stores connectivity between this node and its chidlren (sources, targets, etc..) for
+     * layout and other morpholoigcal purposes
+     */
+    private DefaultDirectedGraph<String, String> bodyGraph;
+    private double childlayoutTime = 0.15f; //in seconds
     private ArrowIcon commonIn;
     private ArrowIcon commonOut;
-    Map<WorldObject, double[]> pos = new HashMap();
+    private UIObjectNode ui;
 
     public ObjectNode(String name, O object) {
         super(name);
@@ -48,28 +50,40 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
         setObject(object);
     }
 
+    public O getObject() {
+        return obj;
+    }
+
     protected void setObject(O object) {
 
         this.obj = object;
+        this.ui = new UIObjectNode();
 
         List<Target> inputs = new ArrayList();
         List<Source> outputs = new ArrayList();
 
+        commonIn = new ArrowIcon(4);
+        commonOut = new ArrowIcon(4);
+
+        bodyGraph = new DefaultDirectedGraph(String.class);
+        bodyGraph.addVertex(ui.getName());
+        bodyGraph.addVertex(commonIn.getName());
+        bodyGraph.addVertex(commonOut.getName());
+
+
 
         for (Method m : obj.getClass().getMethods()) {
             //if (!m.isAccessible()) continue;
-            System.out.println(m);
-            buildMethod(m, inputs, outputs, 2);
+            if (Modifier.isPublic(m.getModifiers()))
+                buildMethod(m, inputs, outputs, 2);
         }
         System.out.println(inputs);
         System.out.println(outputs);
 
         setInputs(inputs);
         setOutputs(outputs);
-    }
 
-    public O getObject() {
-        return obj;
+        ui.update();
     }
 
     @Override
@@ -90,11 +104,67 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
     @Override
     public void reset(boolean randomize) {
 
+
     }
 
     @Override
     public UINeoNode newUI() {
-        return new UIObjectNode();
+        return ui;
+    }
+
+    private void buildMethod(Method m, List<Target> inputs, List<Source> outputs, int remainingDepth) {
+        if (remainingDepth < 1) return;
+        String name = m.getName();
+        if ((m.getDeclaringClass() == Object.class) &&
+                (!(name.equals("hashCode") || name.equals("equals") || name.equals("toString"))))
+            return;
+
+        if (m.getParameterCount() == 0) {
+            if (m.getReturnType() == Void.class) {
+                //pushbutton
+                ActionPushButton pb = new ActionPushButton(this, m, obj);
+                //TODO add a "sub-target source" to collect the output of the method
+                inputs.add(pb);
+                bodyGraph.addVertex(pb.getName());
+                bodyGraph.addEdge(pb.getName(), commonIn.getName(), pb.getName() + ".in");
+            } else {
+                ProducerPushButton pb = new ProducerPushButton(this, m, obj);
+                bodyGraph.addVertex(pb.getName());
+                bodyGraph.addEdge(commonOut.getName(), pb.getName(),  pb.getName() + ".out");
+                outputs.add(pb);
+            }
+        } else if (m.getParameterCount() == 1) {
+            ObjectTarget pb = new ObjectTarget(this, getName() + "_" + m.toGenericString(), m.getReturnType());
+            bodyGraph.addVertex(pb.getName());
+            bodyGraph.addEdge(pb.getName(), commonIn.getName(), pb.getName() + ".in");
+            inputs.add(pb);
+        } else {
+            //create a sub-node for this multi-arg method
+        }
+
+
+
+
+//            //TODO draw inter-node edges in paint function, less expensive
+//
+//            if (widget instanceof UISource) {
+//                //originY -= scale * widget.getHeight() + 8;
+//                //widget.setOffset(originX, originY);
+//                widget.getPiccolo().addChild(new PXEdge(commonOut, widget));
+//            } else if (widget instanceof UITarget) {
+//                //termY -= scale * widget.getHeight() + 8;
+//                //widget.setOffset(termX, termY);
+//                widget.getPiccolo().addChild(new PXEdge(widget, commonIn));
+//            }
+
+            //TODO add additional contextual edges to cluster the items by:
+            //  argument type
+            //  return type
+            //  annotations
+            //  which superclass or interface it is declared
+            //  equivalent but overloaded method name
+
+
     }
 
     public static class ActionPushButton<O> extends ObjectTarget<Boolean> {
@@ -111,7 +181,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
     }
 
-    public static class ProducerPushButton<O> extends ObjectSource  {
+    public static class ProducerPushButton<O> extends ObjectSource {
 
         private final Method method;
         private final O obj;
@@ -123,37 +193,12 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
         }
 
 
-
-    }
-
-    private void buildMethod(Method m, List<Target> inputs, List<Source> outputs, int remainingDepth) {
-        if (remainingDepth < 1) return;
-
-        if (m.getParameterCount() == 0) {
-            if (m.getReturnType() == Void.class) {
-                //pushbutton
-                ActionPushButton pb = new ActionPushButton(this, m, obj);
-                //TODO add a "sub-target source" to collect the output of the method
-                inputs.add(pb);
-            }
-            else {
-                ProducerPushButton pb = new ProducerPushButton(this, m, obj);
-                outputs.add(pb);
-            }
-        }
-        else if (m.getParameterCount() == 1) {
-            ObjectTarget o = new ObjectTarget(this, getName() + "_" + m.toGenericString(), m.getReturnType());
-            inputs.add(o);
-        }
-        else {
-            //create a sub-node for this multi-arg method
-        }
-
-
     }
 
     public class UIObjectNode extends UINeoNode<ObjectNode> {
 
+
+        private HyperassociativeMap<String,String> bodyLayout;
 
         public UIObjectNode() {
             super(ObjectNode.this);
@@ -161,13 +206,44 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
         }
 
-        @Override
-        public void layoutChildren() {
+        public void update() {
+            //TOOD remove children if update called > 1 time
+            for (Target t : getTargets()) {
+                showSource(t.getName());
+            }
+            for (Source t : getSources()) {
+                showSource(t.getName());
+            }
+
+        }
+//
+//        private void attemptAdd(Object t) {
+//            if (t instanceof Node)
+//                addChild(UINeoNode.createNodeUI((Node)t));
+//            else if (t instanceof UIBuilder)
+//                addChild(((UIBuilder)t).newUI());
+//            else if (t instanceof WorldObject)
+//                addChild((UINeoNode)t);
+//            else
+//                System.err.println("unknown: " + t);
+//        }
+//
+//        @Override
+//        public void addChild(WorldObject wo) {
+//            super.addChild(wo);
+//            wo.setVisible(true);
+//            wo.setPickable(true);
+//            wo.setChildrenPickable(true);
+//            wo.setBounds(Math.random(), Math.random(), 10, 10);
+//        }
+
+        //@Override
+        public void layoutChildren2() {
             //super.layoutChildren();
 
 
 		/*
-		 * layout widgets such as Origins and Terminations
+         * layout widgets such as Origins and Terminations
 		 */
             Rectangle2D bounds = getIcon().localToParent(getIcon().getBounds());
 
@@ -186,129 +262,50 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
             double probeY = 0;
 
 
-            if (getChildrenCount() == 0) return;
+            if (getChildrenCount() == 0) {
 
-            if (bodyGraph == null) {
+                return;
+            }
 
-                commonIn = new ArrowIcon(4);
+            if (bodyLayout == null) {
+
+                commonIn.setOffset(-getWidth() / 2, 0);
+                commonOut.setOffset(+getWidth() / 2, 0);
+
                 addChild(commonIn);
-                commonIn.animateToPosition(-getWidth()/2, 0, 0);
-                commonOut = new ArrowIcon(4);
                 addChild(commonOut);
-                commonOut.animateToPosition(+getWidth()/2, 0, 0);
 
-                bodyGraph = new DefaultDirectedGraph(String.class);
-                bodyGraph.addVertex(this);
-                bodyGraph.addVertex(commonIn);
-                bodyGraph.addVertex(commonOut);
 
-            /*
-            bodyLayout = new HyperassociativeMap(bodyGraph, HyperassociativeMap.Manhattan, 2) {
-
-                @Override
-                public double getSpeedFactor(Object o) {
-                    if (o == UINeoNode.this) return 0; //do not all this UINeoNode to move
-                    return super.getSpeedFactor(o);
-                }
-
-                @Override
-                public double getRadius(Object o) {
-                    if (o == UINeoNode.this)
-                        return 1;
-                    return super.getRadius(o);
-                }
-            };
-            bodyLayout.getPosition(this).set(0);
-            bodyLayout.setEquilibriumDistance(0.01);
-            */
-
-                bodyLayout = new AbstractFastOrganicLayout<WorldObject,String,WorldObject>() {
-
+                bodyLayout = new HyperassociativeMap<String,String>(bodyGraph, HyperassociativeMap.Euclidean, 2) {
 
                     @Override
-                    public WorldObject getDisplay(Graph<WorldObject, String> graph, WorldObject vertex) {
-                        return vertex;
+                    public double getSpeedFactor() {
+                        return 1000f;
                     }
 
                     @Override
-                    public boolean isVertexMovable(WorldObject vd) {
-                        if (vd==UIObjectNode.this) return false;
-                        if (vd==commonIn) return false;
-                        if (vd==commonOut) return false;
-                        return true;
+                    public double getSpeedFactor(String o) {
+                        if (o.equals(UIObjectNode.this.getName())) return 0;
+                        if (o.equals(commonIn.getName())) return 0;
+                        if (o.equals(commonOut.getName())) return 0;
+                        return super.getSpeedFactor(o);
                     }
 
                     @Override
-                    public void setPosition(WorldObject vd, float x, float y) {
-                        if (!isVertexMovable(vd)) return;
+                    public double getRadius(String o) {
 
-                        double[] p = pos.get(vd);
-                        if (p == null) { p = new double[2]; pos.put(vd, p); }
-                        p[0] = x; p[1] = y;
-
-
-                        pos(vd, p);
+//                        if (o instanceof WorldObject) {
+//                            WorldObject w = (WorldObject)o;
+//                            return Math.max(w.getWidth(), w.getHeight()) * 1f;
+//                        }
+                        return 1d;
                     }
 
-                    @Override
-                    public void movePosition(WorldObject vd, final float dx, final float dy) {
-                        if (!isVertexMovable(vd)) return;
-
-                        double[] p = pos.get(vd);
-                        if (p == null) return;
-
-                        p[0] += dx; p[1] += dy;
-                        pos(vd, p);
-                    }
-
-                    protected void pos(WorldObject w, double[]p) {
-                        double x = p[0];
-                        double y = p[1];
-                        double ww = getWidth()/1.5f;
-                        if (w instanceof UISource && x < ww) x = ww;
-                        else if (w instanceof UITarget && x > -ww) x = -ww;
-                        w.animateToPosition(x, y, 1.25);
-                        p[0] = x;
-                        p[1] = y;
-                    }
-
-                    @Override
-                    public WorldObject getVertex(WorldObject vd) {
-                        return vd;
-                    }
-
-                    @Override
-                    public double getX(WorldObject vd) {
-
-                        double[] x = pos.get(vd);
-                        if (x == null) return vd.getX();
-                        return x[0];
-                        //return vd.getX();
-                    }
-
-                    @Override
-                    public double getY(WorldObject vd) {
-                        double[] x = pos.get(vd);
-                        if (x == null) return vd.getY();
-                        return x[1];
-                        //return vd.getY();
-                    }
-
-                    @Override
-                    public float getRadius(WorldObject vd) {
-                        final float w = (float)vd.getWidth()*4f;
-                        final float h = (float)vd.getHeight()*4f;
-                        if (w > h) return w;
-                        return h;
-                    }
                 };
-                //bodyLayout.setForceConstant(2180);
-                //bodyLayout.setInitialTemp(4f);
-                bodyLayout.setIterationsRemain(1);
+                bodyLayout.getPosition(getName()).set(0);
+                bodyLayout.setEquilibriumDistance(0.1);
+                bodyLayout.setMaxRepulsionDistance(100);
 
-                bodyLayout.setMinDistanceLimit(0.1f);
-                bodyLayout.setMaxDistanceLimit(520f);
-                //bodyLayout.setMaxDistanceLimit(bodyLayout.getRadius(this) * 16f);*/
 
             }
 
@@ -351,30 +348,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
                             widget.setPickable(true);
                             widget.setChildrenPickable(true);
 
-                            if (!bodyGraph.containsVertex(widget)) {
-                                bodyGraph.addVertex(widget);
 
-                                //TODO draw inter-node edges in paint function, less expensive
-
-                                if (widget instanceof UISource) {
-                                    //originY -= scale * widget.getHeight() + 8;
-                                    //widget.setOffset(originX, originY);
-                                    bodyGraph.addEdge(commonOut, widget, widget.getName() + " out");
-                                    widget.getPiccolo().addChild(new PXEdge(commonOut, widget));
-                                } else if (widget instanceof UITarget) {
-                                    //termY -= scale * widget.getHeight() + 8;
-                                    //widget.setOffset(termX, termY);
-                                    bodyGraph.addEdge(widget, commonIn, widget.getName() + " in");
-                                    widget.getPiccolo().addChild(new PXEdge(widget, commonIn));
-                                }
-
-                                //TODO add additional contextual edges to cluster the items by:
-                                //  argument type
-                                //  return type
-                                //  annotations
-                                //  which superclass or interface it is declared
-                                //  equivalent but overloaded method name
-                            }
                             //TODO remove removed widgets
 
                         }
@@ -385,36 +359,73 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
 
 
-            if (bodyLayout.getIterationsRemain() > 0) {
-                for (Map.Entry<WorldObject,double[]> x : pos.entrySet()) {
-                    //copy current positoin to p[]
-                    double[] p = x.getValue();
-                    WorldObject w = x.getKey();
-                    p[0] = w.getX();
-                    p[1] = w.getY();
-                }
-                bodyLayout.update(bodyGraph);
+            /*if (bodyLayout.isAlignable())*/ {
+                layoutGraph();
+
             }
-
-        /*
-        final double w = getWidth();
-        final double h = getHeight();
-        final double s = Math.max(w, h);
-
-        for (WorldObject wo : bodyGraph.vertexSet()) {
-            if (wo == this) continue;
-            //w.setOffset
-            ArrayRealVector p = bodyLayout.getPosition(wo);
-
-            wo.animateToPosition(p.getEntry(0)*s-w/2, p.getEntry(1)*s-h/2, childlayoutTime);
-            //w.setOffset(p.getEntry(0), p.getEntry(1));
-        }*/
 
         }
 
-            @Override
+        protected void layoutGraph() {
+            //bodyLayout.resetLearning();
+            bodyLayout.run(16);
+
+            final double w = getWidth();
+            final double h = getHeight();
+            //final double s = Math.max(w, h);
+
+            for (WorldObject wo : getChildren()) {
+
+                ArrayRealVector p = bodyLayout.getPosition(wo.getName());
+                //System.out.println(wo + " " + p);
+
+                if (wo == this || wo == commonIn || wo == commonOut) {
+                    //force set the map's value to the fixed position
+                    p.setEntry(0, wo.getX());
+                    p.setEntry(1, wo.getY());
+                }
+                else {
+                    double x = p.getEntry(0);
+                    double ww = w/2 * 1.25f;
+                    if (wo instanceof UITarget && x > -ww) x = -ww;
+                    else if (wo instanceof UISource && x < ww) x = ww;
+                    wo.animateToPosition(x, p.getEntry(1), childlayoutTime);
+                }
+            }
+
+
+        }
+
+        @Override
+        public void paint(PaintContext paintContext) {
+
+            super.paint(paintContext);
+
+            Graphics2D g = paintContext.getGraphics();
+
+            g.setStroke(new BasicStroke(1));
+            g.setColor(Color.ORANGE);
+
+            //draw edges
+            for (String a : bodyGraph.edgeSet()) {
+                String src = bodyGraph.getEdgeSource(a);
+                WorldObject sw = getChild(src, null); //this function can be accelerated if children are stored as a map
+                if (sw == null) continue;
+                String tgt = bodyGraph.getEdgeTarget(a);
+                WorldObject tw = getChild(tgt, null); //this function can be accelerated if children are stored as a map
+                if (tw == null) continue;
+
+                System.out.println(src + " " + sw.getX() + " " + sw.getY() + " " + tgt + " " + tw.getX());
+                g.drawLine((int) sw.getX(), (int) sw.getY(), (int) tw.getX(), (int) tw.getY());
+            }
+
+        }
+
+        @Override
         public String getTypeName() {
             return getClass().getSimpleName();
         }
     }
+
+
 }

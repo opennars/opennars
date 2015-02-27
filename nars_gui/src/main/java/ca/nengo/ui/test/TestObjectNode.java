@@ -7,6 +7,8 @@ import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.model.node.UINetwork;
+import nars.build.Default;
+import nars.core.NAR;
 import nars.logic.entity.TruthValue;
 
 
@@ -18,8 +20,8 @@ public class TestObjectNode extends Nengrow {
     public static Node newObjectNodeDemo() throws StructuralException {
         NetworkImpl network = new NetworkImpl();
 
-        //network.addNode(new ObjectNode("NAR", new NAR(new Default())));
-        network.addNode(new ObjectNode("TestObjectNode", new TruthValue()));
+        network.addNode(new ObjectNode("NAR", new NAR(new Default())));
+        network.addNode(new ObjectNode("The Whole Truth", new TruthValue()));
 
         return network;
     }

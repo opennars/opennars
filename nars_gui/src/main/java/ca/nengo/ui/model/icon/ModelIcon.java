@@ -30,6 +30,8 @@ import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 
+import java.awt.*;
+
 /**
  * An Icon which has a representation and an label. It is used to represent NEO
  * models.
@@ -76,7 +78,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 
 		label = new Text();
 		label.setConstrainWidthToTextWidth(true);
-		updateLabel();
+        updateLabel();
 		addChild(label);
 
 		parent.addPropertyChangeListener(Property.MODEL_CHANGED, this);
@@ -196,4 +198,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 		}
 	}
 
+    public Text getLabel() {
+        return label;
+    }
 }

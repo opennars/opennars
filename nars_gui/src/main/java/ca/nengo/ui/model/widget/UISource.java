@@ -26,6 +26,7 @@ package ca.nengo.ui.model.widget;
 
 import ca.nengo.model.*;
 import ca.nengo.neural.nef.impl.DecodedSource;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.util.UserMessages;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.ModelIcon;
@@ -63,7 +64,7 @@ public abstract class UISource extends Widget {
 		}
 	}
 
-	private static final String typeName = "Origin";
+	private static final String typeName = "Source";
 
 	private boolean isExposed = false;
 
@@ -82,6 +83,8 @@ public abstract class UISource extends Widget {
 		lineWellDefaultColor = lineWell.getColor();
 		ModelIcon icon = new ModelIcon(this, lineWell);
 		icon.configureLabel(false);
+        icon.getLabel().setFont(NengoStyle.FONT_TINY);
+
 		setIcon(icon);
 
 		attachViewToModel();
