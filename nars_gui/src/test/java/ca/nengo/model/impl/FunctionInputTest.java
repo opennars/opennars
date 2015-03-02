@@ -42,14 +42,14 @@ public class FunctionInputTest extends TestCase {
 		FunctionInput input = new FunctionInput("test", new Function[]{new ConstantFunction(1, 1f), new ConstantFunction(1, 2f)}, Units.UNK);
 		Source<InstantaneousOutput> source = input.getSource(FunctionInput.ORIGIN_NAME);
 		assertEquals(2, source.get().getDimension());
-		assertEquals(2, ((RealOutput) source.get()).getValues().length);
+		assertEquals(2, ((RealSource) source.get()).getValues().length);
 		
 		input.run(0f, 1f);
 		assertEquals(2, source.get().getDimension());
-		assertEquals(2, ((RealOutput) source.get()).getValues().length);
-		float value = ((RealOutput) source.get()).getValues()[0];
+		assertEquals(2, ((RealSource) source.get()).getValues().length);
+		float value = ((RealSource) source.get()).getValues()[0];
 		assertTrue(value > .9f);
-		value = ((RealOutput) source.get()).getValues()[1];
+		value = ((RealSource) source.get()).getValues()[1];
 		assertTrue(value > 1.9f);
 	}
 

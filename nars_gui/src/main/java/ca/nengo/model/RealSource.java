@@ -33,7 +33,7 @@ package ca.nengo.model;
  * 
  * @author Bryan Tripp
  */
-public interface RealOutput extends InstantaneousOutput {
+public interface RealSource extends InstantaneousOutput {
 
 	/**
 	 * @return Instantaneous activity within real-valued channels. A real-valued channel could 

@@ -178,8 +178,8 @@ public class DirectNode implements Node {
 			while (it.hasNext()) {
 				ObjectTarget<InstantaneousOutput> termination = it.next();
 				InstantaneousOutput io = termination.get();
-				if (io instanceof RealOutput) {
-					values = MU.sum(values, ((RealOutput) io).getValues());
+				if (io instanceof RealSource) {
+					values = MU.sum(values, ((RealSource) io).getValues());
 				} else if (io instanceof SpikeOutput) {
 					boolean[] spikes = ((SpikeOutput) io).getValues();
 					for (int i = 0; i < spikes.length; i++) {

@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.model.impl;
 
-import ca.nengo.model.RealOutput;
+import ca.nengo.model.RealSource;
 import ca.nengo.model.Units;
 
 /**
@@ -35,7 +35,7 @@ import ca.nengo.model.Units;
  * 
  * @author Bryan Tripp
  */
-public class RealOutputImpl implements RealOutput {
+public class RealOutputImpl implements RealSource {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -55,7 +55,7 @@ public class RealOutputImpl implements RealOutput {
 	}
 
 	/**
-	 * @see ca.nengo.model.RealOutput#getValues()
+	 * @see ca.nengo.model.RealSource#getValues()
 	 */
 	public float[] getValues() {
 		return myValues;
@@ -83,7 +83,7 @@ public class RealOutputImpl implements RealOutput {
 	}
 
 	@Override
-	public RealOutput clone() throws CloneNotSupportedException {
+	public RealSource clone() throws CloneNotSupportedException {
 		return new RealOutputImpl(myValues.clone(), myUnits, myTime);
 	}
 

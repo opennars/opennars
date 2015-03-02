@@ -63,6 +63,7 @@ public class Path extends WorldObjectImpl {
     public static Path createPolygon(int sides, int radius, Color c) {
         Path p = new Path(new PXPath(new RegularPolygon(0,0,radius,sides)));
         p.setPaint(c);
+        p.setStroke(null);
         return p;
     }
 }

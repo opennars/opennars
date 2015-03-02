@@ -247,15 +247,17 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
         loadPreferences();
         UIEnvironment.setInstance(this);
 
-        if (preferences.isWelcomeScreen()) {
-            preferences.setWelcomeScreen(false);
+        if (preferences!=null) {
+            if (preferences.isWelcomeScreen()) {
+                preferences.setWelcomeScreen(false);
 
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
 
-                    (new TipsAction("", true)).doAction();
-                }
-            });
+                        (new TipsAction("", true)).doAction();
+                    }
+                });
+            }
         }
 
         restoreDefaultTitle();
@@ -447,10 +449,12 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
             // worldMenu.addAction(new TurnOffFullScreen(), KeyEvent.VK_F);
         }
 
-        if (!preferences.isEnableTooltips()) {
-            worldMenu.addAction(new TurnOnTooltips(), KeyEvent.VK_T);
-        } else {
-            worldMenu.addAction(new TurnOffTooltips(), KeyEvent.VK_T);
+        if (preferences!=null) {
+            if (!preferences.isEnableTooltips()) {
+                worldMenu.addAction(new TurnOnTooltips(), KeyEvent.VK_T);
+            } else {
+                worldMenu.addAction(new TurnOffTooltips(), KeyEvent.VK_T);
+            }
         }
 
         if (!PXGrid.isGridVisible()) {

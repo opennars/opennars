@@ -10,15 +10,15 @@ import java.awt.*;
  * @author Shu Wu
  */
 public class NengoStyle {
-	public static final boolean GTK = UIManager.getSystemLookAndFeelClassName().
-		equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+	/*public static final boolean GTK = UIManager.getSystemLookAndFeelClassName().
+		equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");*/
 	
 	public static final int ANIMATION_DROP_IN_WORLD_MS = 200;
 	/*
 	 * Colors
 	 */
 	public static final Color COLOR_BACKGROUND = Color.black;
-	public static final Color COLOR_FOREGROUND = new Color(192,192,192,192);//Color.lightGray;
+	public static final Color COLOR_FOREGROUND = new Color(128,128,128,192);//Color.lightGray;
 	public static final Color COLOR_BACKGROUND2 = Color.darkGray;
 	public static final Color COLOR_FOREGROUND2 = Color.gray;
 	public static final Color COLOR_BORDER_SELECTED = Color.orange;
@@ -85,7 +85,7 @@ public class NengoStyle {
 	public static final Font FONT_LARGE = new Font(FONT_FAMILY, Font.BOLD, 18);
 	public static final Font FONT_NORMAL = new Font(FONT_FAMILY, Font.PLAIN, 14);
 
-    public static final Font FONT_TINY = new Font(FONT_FAMILY, Font.PLAIN, 7);
+    public static final Font FONT_TINY = new Font(FONT_FAMILY, Font.PLAIN, 8);
 	public static final Font FONT_SMALL = new Font(FONT_FAMILY, Font.PLAIN, 10);
 	public static final Font FONT_BIG = new Font(FONT_FAMILY, Font.BOLD, 16);
 
@@ -101,8 +101,9 @@ public class NengoStyle {
 	 */
 	public static final Font FONT_SEARCH_TEXT = new Font(FONT_FAMILY, Font.BOLD, 30);
 	public static final Font FONT_SEARCH_RESULT_COUNT = new Font(FONT_FAMILY, Font.BOLD, 22);
+    public static final Color COLOR_ICON_LABEL = Color.WHITE;
 
-	public static void applyStyle(JComponent item) {
+    public static void applyStyle(JComponent item) {
 		item.setBorder(null);
 		applyStyle((Container) item);
 	}

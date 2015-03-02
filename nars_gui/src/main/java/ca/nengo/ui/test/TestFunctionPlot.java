@@ -7,6 +7,7 @@ import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.model.math.JuRLsFunctionApproximator;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.FunctionPlot;
+import ca.nengo.ui.model.widget.SliderNode;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -50,7 +51,7 @@ public class TestFunctionPlot extends Nengrow {
     public static NetworkImpl newFunctionApproximationDemo() throws StructuralException {
         NetworkImpl network = new NetworkImpl("Function Approximation");
 
-        network.addNode( new TestSliderNode.SliderNode("Detail Level", 8f, 3, 24f));
+        network.addNode( new SliderNode("Detail Level", 8f, 3, 24f));
         network.addNode(new JuRLsFunctionApproximator("Fourier Approximator Test"));
         network.addNode(new FunctionPlot("Function Plot"));
         return network;

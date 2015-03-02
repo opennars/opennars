@@ -35,7 +35,7 @@ import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.ui.lib.object.line.ILineTermination;
 import ca.nengo.ui.lib.object.line.LineConnector;
-import ca.nengo.ui.lib.object.line.LineTerminationIcon;
+import ca.nengo.ui.lib.object.line.LineTargetIcon;
 import ca.nengo.ui.lib.util.UserMessages;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.WorldObject;
@@ -74,7 +74,7 @@ public abstract class UITarget<T extends Target> extends Widget<T> implements IL
 
 	private boolean isExposed = false;
 
-	private LineTerminationIcon myIcon;
+	private LineTargetIcon myIcon;
 
 	private Color myIconDefaultColor;
 
@@ -86,7 +86,7 @@ public abstract class UITarget<T extends Target> extends Widget<T> implements IL
 	}
 
 	private void init() {
-		myIcon = new LineTerminationIcon();
+		myIcon = new LineTargetIcon();
 		myIconDefaultColor = myIcon.getColor();
 		ModelIcon iconWr = new ModelIcon(this, myIcon);
         iconWr.getLabel().setFont(NengoStyle.FONT_TINY);

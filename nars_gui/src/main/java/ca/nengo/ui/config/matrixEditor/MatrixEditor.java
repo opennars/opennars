@@ -29,8 +29,6 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.ui.config.matrixEditor;
 
-import ca.nengo.ui.lib.NengoStyle;
-
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
@@ -126,9 +124,9 @@ public class MatrixEditor extends JPanel {
         super(new BorderLayout());
         myTableModel = new MatrixTableModel(theMatrix);
         myTable = new JTable(myTableModel);
-        if (NengoStyle.GTK) {
+        /*if (NengoStyle.GTK) {
             myTable.setRowHeight(24);
-        }
+        }*/
 
         // manually resize massive tables to preserve minimum column width
         int columnCount = myTable.getColumnCount();

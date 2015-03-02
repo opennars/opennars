@@ -12,6 +12,7 @@ import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.EmptyIcon;
 import ca.nengo.ui.model.widget.UITarget;
+import ca.nengo.model.AtomicDoubleSource;
 import ca.nengo.util.ScriptGenException;
 
 import java.awt.*;
@@ -25,7 +26,7 @@ public class LinePlot extends AbstractNode implements UIBuilder {
     //public static final ColorArray grayScale = new ColorArray(16, Color.GRAY, Color.WHITE);
     public static final ColorArray grayScale = new ColorArray(16, Color.GREEN, Color.RED);
 
-    final Target<InstantaneousOutput> input = new ObjectTarget(this, "input",InstantaneousOutput.class);
+    final Target<InstantaneousOutput> input = new ObjectTarget(this, "input",Object.class);
     private String label = "?";
 
     Deque<Double> history = new ConcurrentLinkedDeque<>(); //TODO use seomthing more efficient
@@ -138,17 +139,26 @@ public class LinePlot extends AbstractNode implements UIBuilder {
         label = "?";
 
         if ((input!=null && input.get()!=null)) {
-            InstantaneousOutput i = input.get();
+            Object i = input.get();
+            if (i instanceof InstantaneousOutput) {
+                i = input.get();
+            }
+
             if (i instanceof SpikeOutput) {
                 SpikeOutput so = (SpikeOutput) input.get();
                 boolean[] v = so.getValues();
                 push( v[0]  ? 1f : 0f);
                 label = String.valueOf(v[0]);
             }
-            else if (i instanceof RealOutput) {
-                float[] v = ((RealOutput) input.get()).getValues();
+            else if (i instanceof RealSource) {
+                float[] v = ((RealSource) input.get()).getValues();
                 push(v[0]);
                 label = String.valueOf(v[0]);
+            }
+            else if (i instanceof AtomicDoubleSource) {
+                float v;
+                push(v = ((AtomicDoubleSource) input.get()).get().floatValue());
+                label = String.valueOf(v);
             }
             else if (i instanceof Number) {
                 push(((Number)i).doubleValue());

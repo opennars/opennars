@@ -91,9 +91,9 @@ public class SpikingNeuronTest extends TestCase {
 		myNeuron.setMode(SimulationMode.CONSTANT_RATE);
 		myNeuron.run(0, .01f);
 		output = myNeuron.getSources()[0].get();
-		assertTrue(output instanceof RealOutput);
-		assertTrue(((RealOutput) output).getValues()[0] > 100);
-		ourLogger.info(((RealOutput) output).getValues()[0]);
+		assertTrue(output instanceof RealSource);
+		assertTrue(((RealSource) output).getValues()[0] > 100);
+		ourLogger.info(((RealSource) output).getValues()[0]);
 	}
 
 }

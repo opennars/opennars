@@ -108,7 +108,7 @@ public class ALIFSpikeGeneratorTest extends TestCase {
 		int steps = 1000;
 		sg.setMode(SimulationMode.RATE);
 		sg.reset(false);
-		float rate = ((RealOutput) sg.run(new float[1], new float[]{current})).getValues()[0];
+		float rate = ((RealSource) sg.run(new float[1], new float[]{current})).getValues()[0];
 		rate=rate*steps*stepSize;
 
 		int spikeCount = 0;
@@ -185,10 +185,10 @@ public class ALIFSpikeGeneratorTest extends TestCase {
 			neuron.setMode(SimulationMode.CONSTANT_RATE);
 			neuron.setRadialInput(-1);
 			neuron.run(0, 0);
-			RealOutput low = (RealOutput) neuron.getSource(Neuron.AXON).get();
+			RealSource low = (RealSource) neuron.getSource(Neuron.AXON).get();
 			neuron.setRadialInput(1);
 			neuron.run(0, 0);
-			RealOutput high = (RealOutput) neuron.getSource(Neuron.AXON).get();
+			RealSource high = (RealSource) neuron.getSource(Neuron.AXON).get();
 			slope = (high.getValues()[0] - low.getValues()[0]) / 2f;
 			System.out.println("high: " + high.getValues()[0] + " low: " + low.getValues()[0] + " slope: " + slope);
 			neuron.setMode(mode);

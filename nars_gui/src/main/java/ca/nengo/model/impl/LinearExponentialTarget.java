@@ -230,7 +230,7 @@ public class LinearExponentialTarget implements PlasticNodeTarget {
             }
         }
 
-        myNetRealInput = (values instanceof RealOutput) ? combineReals((RealOutput) values, myWeights) : 0;
+        myNetRealInput = (values instanceof RealSource) ? combineReals((RealSource) values, myWeights) : 0;
     }
 
     /**
@@ -335,7 +335,7 @@ public class LinearExponentialTarget implements PlasticNodeTarget {
         return result;
     }
 
-    private float combineReals(RealOutput input, float[] weights) {
+    private float combineReals(RealSource input, float[] weights) {
         float result = 0;
         float[] reals = input.getValues();
 

@@ -106,8 +106,8 @@ public class BasicTarget implements Target<InstantaneousOutput>, Resettable {
 	 */
 	public void run(float startTime, float endTime) {
 		float[] input = null;
-		if (myInput instanceof RealOutput) {
-			input = ((RealOutput) myInput).getValues();
+		if (myInput instanceof RealSource) {
+			input = ((RealSource) myInput).getValues();
 		} else if (myInput instanceof SpikeOutput) {
 			boolean[] spikes = ((SpikeOutput) myInput).getValues();
 			input = new float[spikes.length];

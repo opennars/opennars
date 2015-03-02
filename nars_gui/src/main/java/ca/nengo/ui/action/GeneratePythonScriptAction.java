@@ -81,12 +81,12 @@ public class GeneratePythonScriptAction extends StandardAction {
         saveSuccessful = false;
         int returnVal = JFileChooser.CANCEL_OPTION;
 
-        AbstractNengo.FileChooser.setSelectedFile(new File(nodeUI.getFileName().replace(' ', '_').replace(".nef","") + ".py"));
+        AbstractNengo.getFileChooser().setSelectedFile(new File(nodeUI.getFileName().replace(' ', '_').replace(".nef", "") + ".py"));
 		
-        returnVal = AbstractNengo.FileChooser.showSaveDialog();
+        returnVal = AbstractNengo.getFileChooser().showSaveDialog();
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            file = AbstractNengo.FileChooser.getSelectedFile();
+            file = AbstractNengo.getFileChooser().getSelectedFile();
             new TrackedAction("Generating script") {
                 private static final long serialVersionUID = 1L;
 

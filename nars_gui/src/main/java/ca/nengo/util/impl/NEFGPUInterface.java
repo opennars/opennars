@@ -516,7 +516,7 @@ public class NEFGPUInterface {
 					for (j = 0; j < count; j++) {
 						// we only get input for non-GPU terminations
 						if (!inputOnGPU[i][j]) {
-							inputRow = ((RealOutput) targets[j].get()).getValues();
+							inputRow = ((RealSource) targets[j].get()).getValues();
 								
 							representedInputValues[i][j] = inputRow;
 						}

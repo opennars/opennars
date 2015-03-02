@@ -74,7 +74,7 @@ public class DecodedSource implements Source<InstantaneousOutput>, Resettable, S
 	private Function[] myFunctions;
 	private float[][] myDecoders;
 	private SimulationMode myMode;
-	private RealOutput myOutput;
+	private RealSource myOutput;
 	private Noise myNoise = null;
 	private Noise[] myNoises = null;
 	private DynamicalSystem mySTPDynamicsTemplate;
@@ -478,8 +478,8 @@ public class DecodedSource implements Source<InstantaneousOutput>, Resettable, S
 					float val = 0;
 					if (o instanceof SpikeOutput) {
 						val = ((SpikeOutput) o).getValues()[0] ? 1f / stepSize : 0f;
-					} else if (o instanceof RealOutput) {
-						val = ((RealOutput) o).getValues()[0];
+					} else if (o instanceof RealSource) {
+						val = ((RealSource) o).getValues()[0];
 					} else {
 						throw new Error("Node output is of type " + o.getClass().getName()
 							+ ". DecodedOrigin can only deal with RealOutput and SpikeOutput, so it apparently has to be updated");
@@ -536,14 +536,14 @@ public class DecodedSource implements Source<InstantaneousOutput>, Resettable, S
 	 * @see ca.nengo.model.Source#setValues()
 	 */
 	public void accept(InstantaneousOutput val){
-		if(val instanceof RealOutput)
-			myOutput = (RealOutput) val;
+		if(val instanceof RealSource)
+			myOutput = (RealSource) val;
 	}
 
 	/**
 	 * @param ro Values to be set
 	 */
-	public void setValues(RealOutput ro) {
+	public void setValues(RealSource ro) {
 		myOutput = ro;
 		myTime = ro.getTime();
 	}
@@ -594,7 +594,7 @@ public class DecodedSource implements Source<InstantaneousOutput>, Resettable, S
 			result.myNodeOrigin = myNodeOrigin;
 			result.myNodes = de.getNodes();
 			result.myNode = de;
-			result.myOutput = (RealOutput) myOutput.clone();
+			result.myOutput = (RealSource) myOutput.clone();
             if (myNoise != null) {
 			    result.setNoise(myNoise.clone());
             }

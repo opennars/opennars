@@ -185,7 +185,7 @@ public class FunctionInput implements Node, Probeable {
 			throw new SimulationException("State " + stateName + " is unknown");
 		}
 
-		float[] values = ((RealOutput) myOrigin.get()).getValues();
+		float[] values = ((RealSource) myOrigin.get()).getValues();
 		result = new TimeSeriesImpl(new float[]{myTime}, new float[][]{values}, Units.uniform(myUnits, values.length));
 
 		return result;

@@ -9,11 +9,11 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public abstract class LineWell extends WorldObjectImpl {
-	private final LineOriginIcon myIcon;
+	private final LineSourceIcon myIcon;
 
 	public LineWell() {
 		super();
-		myIcon = new LineOriginIcon();
+		myIcon = new LineSourceIcon();
 
 		addChild(myIcon);
 		setBounds(getFullBounds());

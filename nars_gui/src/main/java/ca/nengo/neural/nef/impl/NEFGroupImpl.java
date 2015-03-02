@@ -351,7 +351,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 
 				node.run(0f, 0f);
 
-				RealOutput output = (RealOutput) node.getSource(origin).get();
+				RealSource output = (RealSource) node.getSource(origin).get();
 				result[i] = output.getValues()[0];
 			}
 
@@ -437,7 +437,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 	
 					node.run(times[t], times[t]+dt);
 	
-					RealOutput output = (RealOutput) node.getSource(origin).get();
+					RealSource output = (RealSource) node.getSource(origin).get();
 					result[i][t] = output.getValues()[0];
 				}
 			}

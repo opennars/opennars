@@ -9,13 +9,13 @@ import ca.nengo.ui.action.*;
 import ca.nengo.ui.data.DataListView;
 import ca.nengo.ui.lib.AppFrame;
 import ca.nengo.ui.lib.AuxillarySplitPane;
-import ca.nengo.ui.lib.action.*;
-import ca.nengo.ui.lib.ShortcutKey;
-import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.NengoStyle;
+import ca.nengo.ui.lib.ShortcutKey;
+import ca.nengo.ui.lib.action.*;
+import ca.nengo.ui.lib.menu.MenuBuilder;
+import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.Util;
-import ca.nengo.ui.lib.menu.MenuBuilder;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.handler.MouseHandler;
@@ -44,19 +44,17 @@ import java.util.List;
  * Created by me on 2/23/15.
  */
 public class AbstractNengo extends AppFrame implements NodeContainer {
+
     /**
      * Use the configure panel in the right side? Otherwise it's a pop-up.
      */
-    public static final boolean CONFIGURE_PLANE_ENABLED = true;
+    public static final boolean CONFIGURE_PLANE_ENABLED = false;
     /**
      * File extension for Nengo Nodes
      */
     public static final String NEONODE_FILE_EXTENSION = "nef";
     private static final long serialVersionUID = 1L;
-    /**
-     * UI delegate object used to show the FileChooser
-     */
-    public static NeoFileChooser FileChooser;
+    private static NeoFileChooser fileChooser;
     private NengoClipboard clipboard;
 
     protected DataListView dataListViewer;
@@ -77,6 +75,17 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     public static AbstractNengo getInstance() {
         Util.Assert(UIEnvironment.getInstance() instanceof AbstractNengo);
         return (AbstractNengo)UIEnvironment.getInstance();
+    }
+
+    /**
+     * UI delegate object used to show the FileChooser
+     */
+    public static NeoFileChooser getFileChooser() {
+        if (fileChooser == null) {
+            fileChooser = new NeoFileChooser();
+        }
+
+        return fileChooser;
     }
 
     public void setApplication(Application application) {
@@ -142,9 +151,6 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
         //initializeSimulatorSourceFiles();
 
-        if (FileChooser == null) {
-            FileChooser = new NeoFileChooser();
-        }
 
         /// Set up Environment variables
         Environment.setUserInterface(true);
@@ -155,6 +161,8 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
         setExtendedState(NengoConfigManager.getUserInteger(NengoConfigManager.UserProperties.NengoWindowExtendedState,
                 JFrame.MAXIMIZED_BOTH));
     }
+
+
 
 //    /**
 //     * Find and initialize the main simulator source code

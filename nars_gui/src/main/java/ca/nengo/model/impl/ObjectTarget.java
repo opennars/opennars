@@ -116,8 +116,8 @@ public class ObjectTarget<V> implements Target<V> {
 
         if ((myTransform != null) && (values instanceof InstantaneousOutput)) {
             InstantaneousOutput v = (InstantaneousOutput) values;
-            if (v instanceof RealOutput) {
-                float[] transformed = MU.prod(myTransform, ((RealOutput) values).getValues());
+            if (v instanceof RealSource) {
+                float[] transformed = MU.prod(myTransform, ((RealSource) values).getValues());
                 values = (V) new RealOutputImpl(transformed, v.getUnits(), v.getTime());
             } else {
                 throw new SimulationException("Transforms can only be performed on RealOutput in a PassthroughNode");

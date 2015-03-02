@@ -26,7 +26,7 @@ public abstract class LineConnector extends WorldObjectImpl implements Interacta
 
 	private final Edge myEdge;
 
-	private final LineOriginIcon myIcon;
+	private final LineSourceIcon myIcon;
 
 	private ILineTermination myTermination;
 	private final LineWell myWell;
@@ -40,7 +40,7 @@ public abstract class LineConnector extends WorldObjectImpl implements Interacta
 		myEdge.setPointerVisible(true);
 		well.getWorldLayer().addEdge(myEdge);
 
-		myIcon = new LineOriginIcon();
+		myIcon = new LineSourceIcon();
 		myIcon.setColor(NengoStyle.COLOR_LINEEND);
 		addChild(myIcon);
 

@@ -656,8 +656,8 @@ public class NetworkArrayImpl extends NetworkImpl {
 			Units units = values.getUnits();
 
 			float[] vals;
-			if(values instanceof RealOutput)
-				vals = ((RealOutput)values).getValues();
+			if(values instanceof RealSource)
+				vals = ((RealSource)values).getValues();
 			else if(values instanceof PreciseSpikeOutput) {
 				vals = ((PreciseSpikeOutput)values).getSpikeTimes();
 			}
@@ -678,7 +678,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 				for(int j=0; j < ovals.length; j++)
 					ovals[j] = vals[d++];
 				
-				if(values instanceof RealOutput)
+				if(values instanceof RealSource)
 					mySources[i].accept(new RealOutputImpl(ovals, units, time));
 				else if(values instanceof PreciseSpikeOutput) {
 					mySources[i].accept(new PreciseSpikeOutputImpl(ovals, units, time));

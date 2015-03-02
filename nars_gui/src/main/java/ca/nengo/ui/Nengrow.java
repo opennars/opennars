@@ -35,6 +35,11 @@ abstract public class Nengrow extends AbstractNengo {
         }
     }
 
+    @Override
+    protected void loadPreferences() {
+        //nothing
+    }
+
     protected void setSimulationDT(float newDT) {
         this.simulationDT = newDT;
     }

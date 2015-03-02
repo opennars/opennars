@@ -3,7 +3,7 @@
  */
 package ca.nengo.model.impl;
 
-import ca.nengo.model.RealOutput;
+import ca.nengo.model.RealSource;
 import ca.nengo.model.Units;
 import junit.framework.TestCase;
 
@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  */
 public class RealOutputImplTest extends TestCase {
 
-	private RealOutput myRealOutput;
+	private RealSource myRealOutput;
 	
 	protected void setUp() throws Exception {
 		super.setUp();

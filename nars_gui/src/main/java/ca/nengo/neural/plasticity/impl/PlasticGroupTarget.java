@@ -147,8 +147,8 @@ public abstract class PlasticGroupTarget extends GroupTarget {
     }
 
     protected static void updateRaw(final float[] raw, final InstantaneousOutput state, final float integrationTime) throws StructuralException {
-        if (state instanceof RealOutput) {
-            float[] values = ((RealOutput) state).getValues();
+        if (state instanceof RealSource) {
+            float[] values = ((RealSource) state).getValues();
             if (values.length != raw.length) {
                 throw new StructuralException("State is length "
                         + values.length + "; should be " + raw.length);

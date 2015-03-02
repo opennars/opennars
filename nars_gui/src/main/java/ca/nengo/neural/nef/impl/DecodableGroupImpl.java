@@ -484,7 +484,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 						stateName + "\"), probing origin by default");
 			
 		    source.setRequiredOnCPU(true);
-			float[] vals = ((RealOutput) source.get()).getValues();
+			float[] vals = ((RealSource) source.get()).getValues();
 			Units[] units = new Units[vals.length];
 			for (int i = 0; i < vals.length; i++) {
 				units[i] = source.get().getUnits();

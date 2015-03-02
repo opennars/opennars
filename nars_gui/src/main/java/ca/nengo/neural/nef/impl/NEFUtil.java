@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.neural.nef.impl;
 
-import ca.nengo.model.RealOutput;
+import ca.nengo.model.RealSource;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.SimulationMode;
 import ca.nengo.neural.nef.NEFGroup;
@@ -74,7 +74,7 @@ public class NEFUtil {
 				for (int i = 0; i < input.length; i++) {
 					if (mode.equals(SimulationMode.DIRECT) || mode.equals(SimulationMode.EXPRESS)) {
 						origin.run(input[i], 0f, 1f);
-						output[i] = ((RealOutput) origin.get()).getValues();
+						output[i] = ((RealSource) origin.get()).getValues();
 					} else {
 						for (int j = 0; j < nodes.length; j++) {
 							float radialInput = 0;
@@ -92,7 +92,7 @@ public class NEFUtil {
 							}
 						}
 						origin.run(null, (float) i * dt, (float) (i+1) * dt);
-						output[i] = ((RealOutput) origin.get()).getValues();
+						output[i] = ((RealSource) origin.get()).getValues();
 					}				
 				}
 				ensemble.setMode(oldMode);

@@ -13,23 +13,25 @@ import java.awt.geom.Ellipse2D;
  * 
  * @author Shu Wu
  */
-public class LineTerminationIcon extends WorldObjectImpl {
+public class LineTargetIcon extends WorldObjectImpl {
 
 	static final int LINE_IN_HEIGHT = 30;
 
 	static final int LINE_IN_WIDTH = 30;
-    private final Area a1;
+    private static final Area a1 = new Area(new Ellipse2D.Double(0, 0, LINE_IN_WIDTH,
+            LINE_IN_HEIGHT));
+    static {
+        a1.exclusiveOr(new Area(new Ellipse2D.Double(5.0, 5.0,
+                LINE_IN_WIDTH - 10.0, LINE_IN_HEIGHT - 10.0)));
+    }
 
     private Color myColor = NengoStyle.COLOR_LINEIN;
 
-	public LineTerminationIcon() {
+	public LineTargetIcon() {
 		super();
 		this.setBounds(0, 0, LINE_IN_WIDTH, LINE_IN_HEIGHT);
 
-        a1 = new Area(new Ellipse2D.Double(0, 0, LINE_IN_WIDTH,
-                LINE_IN_HEIGHT));
-        a1.exclusiveOr(new Area(new Ellipse2D.Double(5.0, 5.0,
-                LINE_IN_WIDTH - 10.0, LINE_IN_HEIGHT - 10.0)));
+
     }
 
 	@Override

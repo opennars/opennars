@@ -24,13 +24,12 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model.icon;
 
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.lib.world.piccolo.primitive.Text;
-
-import java.awt.*;
 
 /**
  * An Icon which has a representation and an label. It is used to represent NEO
@@ -59,7 +58,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 * Whether to show the type of model in the label
 	 */
 	private boolean showTypeInLabel = false;
-    private boolean showingLabel;
+    private boolean showingLabel = true;
 
     /**
 	 * @param parent
@@ -78,6 +77,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 
 		label = new Text();
 		label.setConstrainWidthToTextWidth(true);
+        label.setTextPaint(NengoStyle.COLOR_ICON_LABEL);
         updateLabel();
 		addChild(label);
 
@@ -116,7 +116,8 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 		double labelWidth = label.getWidth();
 		double offsetX = ((labelWidth - iconWidth) / 2.0) * -1;
 
-		label.setOffset(offsetX, getHeight() * getScale());
+		//label.setOffset(offsetX, getHeight() * getScale());
+        label.setOffset(0, 0);
 
 	}
 
@@ -161,7 +162,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 *            Whether the label is visible
 	 */
 	public void setLabelVisible(boolean isVisible) {
-		if (isVisible && !showingLabel) {
+		if (!showingLabel) {
             showingLabel = true;
             addChild(label);
 		} else if (showingLabel) {

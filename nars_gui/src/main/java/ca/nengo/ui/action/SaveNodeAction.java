@@ -94,12 +94,12 @@ public class SaveNodeAction extends StandardAction {
         saveSuccessful = false;
         int returnVal = JFileChooser.CANCEL_OPTION;
 
-        AbstractNengo.FileChooser.setSelectedFile(new File(nodeUI.getFileName()));
+        AbstractNengo.getFileChooser().setSelectedFile(new File(nodeUI.getFileName()));
 
-        returnVal = AbstractNengo.FileChooser.showSaveDialog();
+        returnVal = AbstractNengo.getFileChooser().showSaveDialog();
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            file = AbstractNengo.FileChooser.getSelectedFile();
+            file = AbstractNengo.getFileChooser().getSelectedFile();
 
             if (blocking) {
                 saveSuccessful = saveModel();

@@ -34,9 +34,9 @@ import ca.nengo.ui.model.icon.NodeIcon;
  * 
  * @author Shu Wu
  */
-public class UIGenericNode extends UINeoNode {
+public class UIGenericNode<N extends Node> extends UINeoNode<N> {
 
-	public UIGenericNode(Node model) {
+	public UIGenericNode(N model) {
 		super(model);
 		setIcon(new NodeIcon(this));
 	}

@@ -57,11 +57,11 @@ public class SpikeGeneratorSourceTest extends TestCase {
 		
 		myOrigin.run(new float[]{0f}, new float[]{0f});
 		output = myOrigin.get();
-		assertTrue(output instanceof RealOutput);
+		assertTrue(output instanceof RealSource);
 		assertEquals(1, output.getDimension());
 		assertEquals(Units.SPIKES_PER_S, output.getUnits());
-		assertEquals(1, ((RealOutput) output).getValues().length);
-		assertTrue(((RealOutput) output).getValues()[0] > .99f);		
+		assertEquals(1, ((RealSource) output).getValues().length);
+		assertTrue(((RealSource) output).getValues()[0] > .99f);
 	}
 	
 	private static class MockSpikeGenerator implements SpikeGenerator {

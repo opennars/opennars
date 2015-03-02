@@ -99,7 +99,7 @@ public class GroupSource implements Source<InstantaneousOutput> {
 		Units units = myNodeSources[0].get().getUnits(); //must be same for all
 
         try {
-            if (myNodeSources[0].get() instanceof RealOutput) {
+            if (myNodeSources[0].get() instanceof RealSource) {
                 result = composeRealOutput(myNodeSources, units);
             } else if (myNodeSources[0].get() instanceof PreciseSpikeOutput) {
                 result = composePreciseSpikeOutput(myNodeSources, units);
@@ -120,19 +120,19 @@ public class GroupSource implements Source<InstantaneousOutput> {
 		}
 	}
 	
-	private static RealOutput composeRealOutput(Source<InstantaneousOutput>[] sources, Units units) throws SimulationException {
+	private static RealSource composeRealOutput(Source<InstantaneousOutput>[] sources, Units units) throws SimulationException {
 		float[] values = new float[sources.length];
 		
 		for (int i = 0; i < sources.length; i++) {
 			InstantaneousOutput o = sources[i].get();
-			if ( !(o instanceof RealOutput) ) {
+			if ( !(o instanceof RealSource) ) {
 				throw new SimulationException("Some of the Node Origins are not producing real-valued output");
 			}
 			if ( !o.getUnits().equals(units) ) {
 				throw new SimulationException("Some of the Node Origins are producing outputs with non-matching units");
 			}
 			
-			values[i] = ((RealOutput) o).getValues()[0];
+			values[i] = ((RealSource) o).getValues()[0];
 		}
 		
 		return new RealOutputImpl(values, units, sources[0].get().getTime());

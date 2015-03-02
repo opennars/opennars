@@ -75,7 +75,7 @@ public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, P
 	private LinearSystem[] myDynamics;
 	private Integrator myIntegrator;
 	private Units[] myNullUnits;
-	private RealOutput myInputValues;
+	private RealSource myInputValues;
 	private float myTime;
 	private float[] myOutputValues;
 	private boolean myTauMutable;
@@ -174,11 +174,11 @@ public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, P
 					+ ") does not equal dimension of this Termination (" + getDimensions() + ')');
 		}
 
-		if ( !(values instanceof RealOutput) ) {
+		if ( !(values instanceof RealSource) ) {
 			throw new SimulationException("Only real-valued input is accepted at a DecodedTermination");
 		}
 
-		RealOutput ro = (RealOutput) values;
+		RealSource ro = (RealSource) values;
 		myInputValues = new RealOutputImpl(MU.sum(ro.getValues(), myStaticBias), ro.getUnits(), ro.getTime());
 
 		if (!myValuesSet) {
@@ -239,7 +239,7 @@ public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, P
 	/**
 	 * @return Latest input to Termination (pre transform and dynamics)
 	 */
-	public RealOutput get() {
+	public RealSource get() {
 		return myInputValues;
 	}
 
@@ -468,7 +468,7 @@ public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, P
 			result.setDynamics((LinearSystem) myDynamicsTemplate.clone());
 			result.myIntegrator = myIntegrator.clone();
 			if (myInputValues != null) {
-                result.myInputValues = (RealOutput) myInputValues.clone();
+                result.myInputValues = (RealSource) myInputValues.clone();
             }
 			if (myOutputValues != null) {
                 result.myOutputValues = myOutputValues.clone();

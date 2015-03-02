@@ -193,8 +193,8 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 			InstantaneousOutput output = mySpikeOrigin.get();
 			float[] times = myCurrent.getTimes();
 			float rate = 0;
-			if (output instanceof RealOutput) {
-				rate = ((RealOutput) output).getValues()[0];
+			if (output instanceof RealSource) {
+				rate = ((RealSource) output).getValues()[0];
 			} else if (output instanceof SpikeOutput) {
 				rate = ((SpikeOutput) output).getValues()[0] ? 1/(times[times.length-1]-times[0]) : 0;
 			}

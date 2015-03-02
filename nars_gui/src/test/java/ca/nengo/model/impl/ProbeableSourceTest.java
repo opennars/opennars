@@ -48,9 +48,9 @@ public class ProbeableSourceTest extends TestCase {
 		ProbeableSource origin = new ProbeableSource(null, p, "x", 0, "test");
 		
 		assertEquals(Units.UNK, origin.get().getUnits());
-		assertTrue(origin.get() instanceof RealOutput);
+		assertTrue(origin.get() instanceof RealSource);
 		assertEquals(1, origin.get().getDimension());
-		assertTrue(((RealOutput) origin.get()).getValues()[0] > 0);
+		assertTrue(((RealSource) origin.get()).getValues()[0] > 0);
 	}
 	
 	public void testConstructor() {
