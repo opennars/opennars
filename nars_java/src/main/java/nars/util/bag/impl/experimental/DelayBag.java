@@ -412,7 +412,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     }
 
     @Override
-    public float getAveragePriority() {
+    public float getPriorityMean() {
         //quick way to calculate this passively while iterating
         return avgPriority;
     }

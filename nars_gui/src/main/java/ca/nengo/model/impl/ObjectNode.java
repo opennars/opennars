@@ -1,5 +1,6 @@
 package ca.nengo.model.impl;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
@@ -77,8 +78,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
             if (Modifier.isPublic(m.getModifiers()))
                 buildMethod(m, inputs, outputs, 2);
         }
-        System.out.println(inputs);
-        System.out.println(outputs);
+
 
         setInputs(inputs);
         setOutputs(outputs);
@@ -134,7 +134,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
                 outputs.add(pb);
             }
         } else if (m.getParameterCount() == 1) {
-            ObjectTarget pb = new ObjectTarget(this, getName() + "_" + m.toGenericString(), m.getReturnType());
+            ObjectTarget pb = new MethodTarget1(this, obj, m);
             bodyGraph.addVertex(pb.getName());
             bodyGraph.addEdge(pb.getName(), commonIn.getName(), pb.getName() + ".in");
             inputs.add(pb);
@@ -167,6 +167,29 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
     }
 
+    /** method target with 1 parameter value */
+    public static class MethodTarget1<O> extends ObjectTarget {
+
+        private final Method method;
+        private final O obj;
+
+        public MethodTarget1(Node parent, O instance, Method m) {
+            super(parent, m.toGenericString(), m.getParameterTypes()[0]);
+
+            this.method = m;
+            this.obj = instance;
+        }
+
+        @Override
+        public void apply(Object values) throws SimulationException {
+            super.apply(values);
+            try {
+                method.invoke(obj, values);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public static class ActionPushButton<O> extends ObjectTarget<Boolean> {
 
         private final Method method;
@@ -183,8 +206,8 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
     public static class ProducerPushButton<O> extends ObjectSource {
 
-        private final Method method;
-        private final O obj;
+        public final Method method;
+        public final O obj;
 
         public ProducerPushButton(Node parent, Method m, O instance) {
             super(parent, m.toGenericString());
@@ -211,15 +234,21 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
             super(ObjectNode.this);
             setIcon(new NodeIcon(this));
 
+
         }
 
         public void update() {
             //TOOD remove children if update called > 1 time
             for (Target t : getTargets()) {
-                showSource(t.getName());
+                showTarget(t.getName());
             }
             for (Source t : getSources()) {
-                showSource(t.getName());
+                UISource u = showSource(t.getName());
+                if (t instanceof ProducerPushButton) {
+                    ProducerPushButton pp = (ProducerPushButton)t;
+                    u.setColor( Video.getColor(pp.method.getReturnType().hashCode(), 0.85f, 0.85f) );
+                }
+
             }
 
         }

@@ -348,7 +348,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     }
 
     @Override
-    public float getAveragePriority() {
+    public float getPriorityMean() {
         final int s = size();
         if (s == 0) return 0;
         return (float)mass / s;

@@ -17,7 +17,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 
-public class ToStringView extends AbstractNode implements UIBuilder {
+public class StringView extends AbstractNode implements UIBuilder {
 
     final Target<InstantaneousOutput> input = new ObjectTarget(this, "input",Object.class);
 
@@ -25,10 +25,10 @@ public class ToStringView extends AbstractNode implements UIBuilder {
     String label = "";
     private Object currentValue = null;
 
-    public class ToStringUI extends UINeoNode<ToStringView> {
+    public class ToStringUI extends UINeoNode<StringView> {
 
         public ToStringUI() {
-            super(ToStringView.this);
+            super(StringView.this);
 
             BoundsHandle.addBoundsHandlesTo(this);
 
@@ -111,7 +111,7 @@ public class ToStringView extends AbstractNode implements UIBuilder {
         return input;
     }
 
-    public ToStringView(String name) {
+    public StringView(String name) {
         super(name);
         reset(false);
     }

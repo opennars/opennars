@@ -6,6 +6,7 @@ import ca.nengo.model.*;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.neural.SpikeOutput;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.piccolo.object.BoundsHandle;
 import ca.nengo.ui.model.UIBuilder;
@@ -46,7 +47,7 @@ public class LinePlot extends AbstractNode implements UIBuilder {
             setIcon(new EmptyIcon(this));
             //img = new BufferedImage(400, 200, BufferedImage.TYPE_4BYTE_ABGR);
             //setIcon(new WorldObjectImpl(new PXImage(img)));
-            setBounds(0, 0, 512, 256);
+            setBounds(0, 0, 128, 64);
 
             addWidget(UITarget.createTerminationUI(this, getInput()));
 
@@ -110,6 +111,7 @@ public class LinePlot extends AbstractNode implements UIBuilder {
                 }
             }
 
+            g.setFont(NengoStyle.FONT_NORMAL);
             g.setColor(Color.WHITE);
             g.drawString(label, 10, 10);
         }
@@ -139,8 +141,9 @@ public class LinePlot extends AbstractNode implements UIBuilder {
 
         label = "?";
 
-        if ((input!=null && input.get()!=null)) {
-            Object i = input.get();
+        Object i;
+        if ((input!=null && (i = input.get())!=null)) {
+
             if (i instanceof InstantaneousOutput) {
                 i = input.get();
             }
@@ -162,7 +165,12 @@ public class LinePlot extends AbstractNode implements UIBuilder {
                 label = String.valueOf(v);
             }
             else if (i instanceof Number) {
-                push(((Number)i).doubleValue());
+                double d = ((Number)i).doubleValue();
+                push(d);
+                label = String.valueOf(d);
+            }
+            else {
+                System.err.println(this + " can not use " + i + " (" + i.getClass() + ')');
             }
 
         }

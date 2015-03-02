@@ -197,6 +197,10 @@ public abstract class UISource extends Widget {
 		return lineWell.getColor();
 	}
 
+    public void setColor(Color c) {
+        lineWell.setColor(c);
+    }
+
 	@Override
 	public Source getModel() {
 		return (Source) super.getModel();

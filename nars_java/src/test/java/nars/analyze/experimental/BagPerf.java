@@ -74,7 +74,7 @@ public class BagPerf {
                 randomBagIO(b, randomAccesses, insertRatio);
                 
                 if (!warmup) {                    
-                    totalPriority += b.getAveragePriority();
+                    totalPriority += b.getPriorityMean();
                     totalMass += b.getMass();                    
                     totalMinItemsPerLevel += b.getMinItemsPerLevel();
                     totalMaxItemsPerLevel += b.getMaxItemsPerLevel();

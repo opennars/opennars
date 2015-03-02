@@ -161,28 +161,28 @@ public class CurveBagTest extends AbstractBagTest {
         LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
         
         assertEquals(c.getMass(), d.getMass(), 0);
-        assertEquals(c.getAveragePriority(), d.getAveragePriority(), 0);
+        assertEquals(c.getPriorityMean(), d.getPriorityMean(), 0);
         
         c.put(new NullItem(.25f));
         d.put(new NullItem(.25f));
         
         //check that continuousbag and discretebag calculate the same average priority value        
-        assertEquals(0.25f, c.getAveragePriority(), priorityEpsilon);
-        assertEquals(0.25f, d.getAveragePriority(), priorityEpsilon);
+        assertEquals(0.25f, c.getPriorityMean(), priorityEpsilon);
+        assertEquals(0.25f, d.getPriorityMean(), priorityEpsilon);
         
         c.clear();
         d.clear();
         
-        assert(c.getAveragePriority() == 0.01f);
-        assert(d.getAveragePriority() == 0.01f);
+        assert(c.getPriorityMean() == 0.01f);
+        assert(d.getPriorityMean() == 0.01f);
         
         c.put(new NullItem(.30f));
         d.put(new NullItem(.30f));
         c.put(new NullItem(.50f));
         d.put(new NullItem(.50f));
         
-        assertEquals(0.4, c.getAveragePriority(), priorityEpsilon);
-        assertEquals(0.4, d.getAveragePriority(), priorityEpsilon);
+        assertEquals(0.4, c.getPriorityMean(), priorityEpsilon);
+        assertEquals(0.4, d.getPriorityMean(), priorityEpsilon);
 
     }
 

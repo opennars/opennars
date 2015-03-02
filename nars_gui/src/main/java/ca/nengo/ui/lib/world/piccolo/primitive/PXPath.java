@@ -98,7 +98,7 @@ public class PXPath extends PXNode {
 	private static final BasicStroke DEFAULT_STROKE = new BasicStroke(1.0f);
 	private static final Color DEFAULT_STROKE_PAINT = Color.black;
 
-	private transient GeneralPath path;
+	protected transient GeneralPath path;
 	private transient GeneralPath resizePath;
 	private transient Stroke stroke;
 	private transient boolean updatingBoundsFromPath;
@@ -330,6 +330,13 @@ public class PXPath extends PXNode {
 		updateBoundsFromPath();
 		invalidatePaint();
 	}
+    public void quadTo(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
+        path.quadTo(x1, y1, x2, y2);
+        path.quadTo(x3, y3, x4, y4);
+        firePropertyChange(PROPERTY_CODE_PATH, PROPERTY_PATH, null, path);
+        updateBoundsFromPath();
+        invalidatePaint();
+    }
 
 	public void curveTo(float x1, float y1, float x2, float y2, float x3,
 			float y3) {

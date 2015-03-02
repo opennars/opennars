@@ -367,14 +367,28 @@ public class PXEdge extends PXPath implements PropertyChangeListener, Destroyabl
 		Point2D startBounds = toLocal(myStartNode, myStartNode.getBounds().getCenter2D());
 		Point2D endBounds = toLocal(myEndNode, myEndNode.getBounds().getCenter2D());
 
+        final float sx = (float)startBounds.getX();
+        final float sy = (float)startBounds.getY();
+        final float ex = (float)endBounds.getX();
+        final float ey = (float)endBounds.getY();
+        final float cx = (sx + ex) / 2f;
+        final float cy = (sy + ey) / 2f;
+
 		switch (myShape) {
 		case STRAIGHT:
 			this.moveTo((float) startBounds.getX(), (float) startBounds.getY());
 			this.lineTo((float) endBounds.getX(), (float) endBounds.getY());
 			break;
+        case CURVE:
+            this.moveTo(sx, sy);
+            //this.quadTo( sx, cy,  cx, cy, ex, cy,  ex, ey);
+            //this.quadTo(cx, cy, (float) endBounds.getX(), (float) endBounds.getY());
+            this.curveTo((float)startBounds.getX(), cy,
+                    cx, cy,
+                    (float) endBounds.getX(), (float) endBounds.getY());
+            break;
 		case UPWARD_ARC:
 			createArc(startBounds, endBounds, true);
-
 			break;
 		case DOWNWARD_ARC:
 			createArc(startBounds, endBounds, false);
@@ -383,7 +397,6 @@ public class PXEdge extends PXPath implements PropertyChangeListener, Destroyabl
 
 		if (trianglePointer != null) {
 			trianglePointer.setOffset(endBounds.getX(), endBounds.getY());
-
 		}
 
 	}
@@ -394,7 +407,7 @@ public class PXEdge extends PXPath implements PropertyChangeListener, Destroyabl
 	 * @author Shu Wu
 	 */
 	public static enum EdgeShape {
-		DOWNWARD_ARC, STRAIGHT, UPWARD_ARC
+		DOWNWARD_ARC, STRAIGHT, CURVE, UPWARD_ARC
 	}
 
 	/**

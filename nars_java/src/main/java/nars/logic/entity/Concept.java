@@ -837,7 +837,7 @@ public class Concept extends Item<Term> implements Termable {
      */
     @Override
     public float getQuality() {
-        float linkPriority = termLinks.getAveragePriority();
+        float linkPriority = termLinks.getPriorityMean();
         float termComplexityFactor = 1.0f / term.getComplexity();
         float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {

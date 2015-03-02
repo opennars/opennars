@@ -75,7 +75,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
 
     abstract public Iterable<V> values();
 
-    abstract public float getAveragePriority();
+    abstract public float getPriorityMean();
 
     /**
      * iterates all items in (approximately) descending priority
@@ -173,10 +173,10 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
 
 
 
-    public float getTotalPriority() {
+    public float getPrioritySum() {
         int size = size();
         if (size == 0) return 0;
-        return getAveragePriority() * size();
+        return getPriorityMean() * size();
     }
 
 

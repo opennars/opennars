@@ -252,7 +252,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
      * @return The average priority of Items in the bag
      */
     @Override
-    public float getAveragePriority() {
+    public float getPriorityMean() {
         if (size() == 0) {
             return 0.01f;
         }
