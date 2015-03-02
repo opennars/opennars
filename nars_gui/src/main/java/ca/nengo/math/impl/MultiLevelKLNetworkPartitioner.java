@@ -578,14 +578,14 @@ public class MultiLevelKLNetworkPartitioner implements NetworkPartitioner {
 	
 		for(Projection proj : projections){
 			
-			Target projectionTarget = proj.getTermination();
+			Target projectionTarget = proj.getTarget();
 			boolean projectionTerminationWrapped = projectionTarget instanceof TargetWrapper;
 			if(projectionTerminationWrapped)
 				projectionTarget = ((TargetWrapper) projectionTarget).getBaseTermination();
 			
 			Node terminationNode = projectionTarget.getNode();
 
-			Source projectionSource = proj.getOrigin();
+			Source projectionSource = proj.getSource();
 			boolean projectionOriginWrapped = projectionSource instanceof SourceWrapper;
 			
 			if(projectionOriginWrapped)

@@ -123,8 +123,8 @@ public class ScriptGenerator extends DFSIterator {
             for(Projection proj : ((Network) node).getProjections())
             {
                 HashMap templateProjections = (HashMap)((Network) node).getMetaData("templateProjections");
-                String preName = proj.getOrigin().getNode().getName();
-                String postName = proj.getTermination().getNode().getName();
+                String preName = proj.getSource().getNode().getName();
+                String postName = proj.getTarget().getNode().getName();
                 if (templateProjections == null || !postName.equals(templateProjections.get(preName)))
                 {
                     try {

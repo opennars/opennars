@@ -21,9 +21,9 @@ public class SolidBagTest extends AbstractBagTest {
 
         BubbleBag<NullItem,CharSequence> s = new BubbleBag(4);
 
-        s.PUT(new NullItem(0.5f, "5"));
-        s.PUT(new NullItem(0.3f, "3"));
-        s.PUT(new NullItem(0.2f, "2"));
+        s.put(new NullItem(0.5f, "5"));
+        s.put(new NullItem(0.3f, "3"));
+        s.put(new NullItem(0.2f, "2"));
 
         assertEquals(3, s.inPriority. getN(), 0.001f);
         assertEquals(0.333f, s.inPriority.getMean(), 0.001f);
@@ -33,7 +33,7 @@ public class SolidBagTest extends AbstractBagTest {
         assertTrue(s.contains("3"));
 
 
-        NullItem three = s.TAKE("3");
+        NullItem three = s.remove("3");
         assertNotNull(three);
         assertEquals(2, s.size());
         assertEquals(0.3f, s.outPriority.getMean(), 0.001f);
@@ -46,18 +46,18 @@ public class SolidBagTest extends AbstractBagTest {
 
         assertEquals(2, s.size());
 
-        s.PUT(new NullItem(0.8f, "8"));
+        s.put(new NullItem(0.8f, "8"));
         assertEquals(3, s.size());
 
-        s.PUT(new NullItem(0.4f, "4"));
+        s.put(new NullItem(0.4f, "4"));
         assertEquals("max capacity reached", 4, s.size());
 
 
-        NullItem overflow = s.PUT(new NullItem(0.1f, "1"));
+        NullItem overflow = s.put(new NullItem(0.1f, "1"));
         assertEquals("max capacity; overflow", 4, s.size());
         assertNotNull(overflow);
 
-        overflow = s.PUT(new NullItem(0.0f, "0"));
+        overflow = s.put(new NullItem(0.0f, "0"));
         assertEquals("max capacity; exceeded ", 4, s.size());
         assertNotNull(overflow);
 
@@ -77,7 +77,7 @@ public class SolidBagTest extends AbstractBagTest {
         int ii = 15;
         for (int i = 0; i < ii; i++) {
             //System.out.println(s.size() + " " + s.getCapacity());
-            s.PUT(new NullItem(Memory.randomNumber.nextFloat() * 0.95f));
+            s.put(new NullItem(Memory.randomNumber.nextFloat() * 0.95f));
         }
 
         assertEquals(c, s.size());
@@ -88,7 +88,7 @@ public class SolidBagTest extends AbstractBagTest {
         boolean shifted = false;
         for (int i = 0; i < 16; i++) {
             //System.out.println(s);
-            NullItem p = s.PEEKNEXT();
+            NullItem p = s.peekNext();
             //System.out.println(" " + p);
 
             if (prev!=null)

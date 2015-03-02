@@ -475,7 +475,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	public void removeProjection(Target target) throws StructuralException {
 		if (myProjectionMap.containsKey(target)) {
 			Projection p = myProjectionMap.get(target);
-			p.getTermination().reset(false);
+			p.getTarget().reset(false);
 			
 			myProjectionMap.remove(target);
 		} else {
@@ -1171,10 +1171,10 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		result.myProjectionMap = new HashMap<Target, Projection>(10);
 		for (Projection oldProjection : getProjections()) {
 			try {
-				Source newSource = result.getNode(oldProjection.getOrigin().getNode().getName())
-					.getSource(oldProjection.getOrigin().getName());
-				Target newTarget = result.getNode(oldProjection.getTermination().getNode().getName())
-					.getTarget(oldProjection.getTermination().getName());
+				Source newSource = result.getNode(oldProjection.getSource().getNode().getName())
+					.getSource(oldProjection.getSource().getName());
+				Target newTarget = result.getNode(oldProjection.getTarget().getNode().getName())
+					.getTarget(oldProjection.getTarget().getName());
 				Projection newProjection = new ProjectionImpl(newSource, newTarget, result);
 				result.myProjectionMap.put(newTarget, newProjection);
 			} catch (StructuralException e) {

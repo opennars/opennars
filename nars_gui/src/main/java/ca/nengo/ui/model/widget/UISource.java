@@ -95,17 +95,17 @@ public abstract class UISource extends Widget {
 		super.constructTooltips(tooltips);
 
 		tooltips.addProperty("Dimensions", String.valueOf(getModel().getDimensions()));
-
-		//try {
-			Object value = getModel().get();
-            if (value!=null)
-                tooltips.addProperty("Value: ", value.toString());
-
-			//tooltips.addProperty("Time: ", String.valueOf(value.getTime()));
-			//tooltips.addProperty("Units: ", String.valueOf(value.getUnits()));
-
-		/*} catch (SimulationException e) {
-		}*/
+//
+//		//try {
+//			Object value = getModel().get();
+//            if (value!=null)
+//                tooltips.addProperty("Value: ", value.toString());
+//
+//			//tooltips.addProperty("Time: ", String.valueOf(value.getTime()));
+//			//tooltips.addProperty("Units: ", String.valueOf(value.getUnits()));
+//
+//		/*} catch (SimulationException e) {
+//		}*/
 
 	}
 

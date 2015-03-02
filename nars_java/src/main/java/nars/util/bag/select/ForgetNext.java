@@ -25,7 +25,7 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
 
     @Override
     public K name() {
-        V x = bag.PEEKNEXT();
+        V x = bag.peekNext();
         this.currentItem = x;
         if (x == null) return null;
 

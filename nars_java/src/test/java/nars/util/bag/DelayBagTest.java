@@ -67,7 +67,7 @@ public class DelayBagTest {
         n.run(30);
         assertEquals(6, numConcepts(n) );
         
-        ((AntCore)n.memory.concepts).concepts.TAKE(
+        ((AntCore)n.memory.concepts).concepts.remove(
                 new Narsese(n).parseTerm("<a --> b>"));
         
         assertEquals(5, numConcepts(n) );

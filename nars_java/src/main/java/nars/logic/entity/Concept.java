@@ -1009,7 +1009,7 @@ public class Concept extends Item<Term> implements Termable {
 
         for (int i = 0; (i < toMatch); i++) {
 
-            final TermLink termLink = termLinks.PEEKNEXT();
+            final TermLink termLink = termLinks.peekNext();
 
             if (termLink == null)
                 return null;

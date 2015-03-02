@@ -36,7 +36,7 @@ public class AbstractBagTest {
             for (int i= 0; i < insertsPerLoop; i++) {
                 BagPerf.NullItem ni = new BagPerf.NullItem();
                 ni.key = "" + (int)(Memory.randomNumber.nextFloat() * insertsPerLoop * 1.2f);
-                f.PUT(ni);
+                f.put(ni);
             }
 
 
@@ -50,7 +50,7 @@ public class AbstractBagTest {
                     t.budget.setPriority(t.budget.getPriority()*0.99f);
                 else
                     t.budget.setPriority(Math.min(1.0f,t.budget.getPriority()*1.01f));
-                f.PUT(t);
+                f.put(t);
             }
 
             int postadjustCount = f.size();
@@ -130,7 +130,7 @@ public class AbstractBagTest {
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
                 BagPerf.NullItem ni = new BagPerf.NullItem(Memory.randomNumber.nextFloat());
-                f.PUT(ni);
+                f.put(ni);
             }
 
 

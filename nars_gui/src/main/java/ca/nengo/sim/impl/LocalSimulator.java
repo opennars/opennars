@@ -233,8 +233,8 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
             myNodeThreadPool.step(startTime, endTime);
         }else{
             for (Projection myProjection : myProjections) {
-                Object values = myProjection.getOrigin().get();
-                myProjection.getTermination().apply(values);
+                Object values = myProjection.getSource().get();
+                myProjection.getTarget().apply(values);
             }
 
             for (Node myNode : myNodes) {

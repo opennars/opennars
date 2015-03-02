@@ -100,7 +100,7 @@ public class ObjectTarget<V> implements Target<V> {
     }
 
     @Override public boolean applies(V value) {
-        if (!this.requiredType.isAssignableFrom(value.getClass()))
+        if (requiredType!=Object.class && !this.requiredType.isAssignableFrom(value.getClass()))
             return false;
 
         if (value instanceof InstantaneousOutput)

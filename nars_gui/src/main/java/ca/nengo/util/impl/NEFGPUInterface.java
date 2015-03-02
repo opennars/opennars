@@ -283,7 +283,7 @@ public class NEFGPUInterface {
 				boolean projectionMatches = false;
 				
 				while(!projectionMatches && k < myGPUProjections.length){
-					Target projectionTarget = myGPUProjections[k].getTermination();
+					Target projectionTarget = myGPUProjections[k].getTarget();
 					boolean projectionTerminationWrapped = projectionTarget instanceof TargetWrapper;
 					if(projectionTerminationWrapped)
 						projectionTarget = ((TargetWrapper) projectionTarget).getBaseTermination();
@@ -315,7 +315,7 @@ public class NEFGPUInterface {
 					source = ((SourceWrapper) source).getWrappedOrigin();
 				
 				for (k = 0; k < myGPUProjections.length; k++) {
-					Source projectionSource = myGPUProjections[k].getOrigin();
+					Source projectionSource = myGPUProjections[k].getSource();
 					boolean projectionOriginWrapped = projectionSource instanceof SourceWrapper;
 					
 					if(projectionOriginWrapped)
@@ -333,7 +333,7 @@ public class NEFGPUInterface {
 				// if it is attached to a projection whose termination is on the CPU
 				if(outputRequiredOnCPU[i][j] == 0){
     				for (k = 0; k < nonGPUProjections.length; k++) {
-    					Source projectionSource = nonGPUProjections[k].getOrigin();
+    					Source projectionSource = nonGPUProjections[k].getSource();
                         boolean projectionOriginWrapped = projectionSource instanceof SourceWrapper;
                         
                         if(projectionOriginWrapped)
@@ -655,8 +655,8 @@ public class NEFGPUInterface {
 		
 		for(int i = 0; i < projections.length; i++)
 		{
-			Node originNode = projections[i].getOrigin().getNode();
-			Node terminationNode = projections[i].getTermination().getNode();
+			Node originNode = projections[i].getSource().getNode();
+			Node terminationNode = projections[i].getTarget().getNode();
 
 			boolean originNodeOnGPU = GPUNetworkArrayList.contains(originNode);
 			boolean terminationNodeOnGPU = GPUNetworkArrayList.contains(terminationNode);

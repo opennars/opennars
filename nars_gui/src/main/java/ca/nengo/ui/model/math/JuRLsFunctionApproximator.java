@@ -5,7 +5,7 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.ObjectSource;
 import ca.nengo.model.impl.ObjectTarget;
-import ca.nengo.ui.test.TestSliderNode;
+import ca.nengo.model.AtomicDoubleTarget;
 import ca.nengo.util.ScriptGenException;
 import jurls.core.approximation.*;
 import jurls.examples.approximation.RenderArrayFunction;
@@ -43,7 +43,7 @@ public class JuRLsFunctionApproximator extends AbstractNode {
         setOutputs(out);
 
         setInputs(
-                detailLevelIn = new TestSliderNode.AtomicDoubleTarget(this, "Detail", detailLevel),
+                detailLevelIn = new AtomicDoubleTarget(this, "Detail", detailLevel),
                 in = new ObjectTarget(this, "Signal", ParameterizedFunction[].class));
 
         int pieceWiseFeatures = 16;

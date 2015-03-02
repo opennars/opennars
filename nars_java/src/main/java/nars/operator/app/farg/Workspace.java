@@ -33,7 +33,7 @@ public class Workspace {
                     Codelet cod=farg.coderack.TAKENEXT();
                     if(cod!=null) {
                         if(cod.run(ws)) {
-                            farg.coderack.PUT(cod);
+                            farg.coderack.put(cod);
                         }
                     }
                     temperature=calc_temperature();

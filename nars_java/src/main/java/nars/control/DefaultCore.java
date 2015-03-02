@@ -111,7 +111,7 @@ public class DefaultCore extends UniCore {
     private ConceptFire nextTaskLink(Concept concept) {
         if (concept == null) return null;
 
-        TaskLink taskLink = concept.taskLinks.PEEKNEXT();
+        TaskLink taskLink = concept.taskLinks.peekNext();
         if (taskLink!=null)
             return newFireConcept(concept, taskLink);
         return null;
@@ -144,7 +144,7 @@ public class DefaultCore extends UniCore {
             if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
 
                 // new concept formation
-                Task overflow = novelTasks.PUT(task);
+                Task overflow = novelTasks.put(task);
                 memory.logic.TASK_ADD_NOVEL.hit();
 
                 if (overflow != null) {

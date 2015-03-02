@@ -130,7 +130,7 @@ public class BagPerf {
             }
             else {
                 //insert
-                b.PUT(new NullItem());
+                b.put(new NullItem());
             }            
         }
     }

@@ -308,7 +308,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
             return null;
         else if (s <= flatThreshold) {
             K nn = nameTable.keySet().iterator().next();
-            return TAKE(nn);
+            return remove(nn);
         }
         
         /* this doesnt seem to be necessary:
@@ -330,7 +330,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
                
         E n = pending.pollFirst();
         if (n!=null) {
-            return TAKE(n.name());
+            return remove(n.name());
         }
         else {
             if (Parameters.THREADS == 1)
@@ -340,20 +340,20 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     }
 
     @Override
-    public E PEEKNEXT() {
+    public E peekNext() {
         if (size() == 0) return null;
         
         E x = TAKENEXT();
         
         if (x == null) return null;
         
-        PUT(x);
+        put(x);
 
         return x;
     }
 
     @Override
-    public E TAKE(K key) {
+    public E remove(K key) {
         return take(key, true);
     }
 
@@ -372,7 +372,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     }
 
     @Override
-    public E PUT(E newItem) {
+    public E put(E newItem) {
 
         final E existingItemWithSameKey = TAKE(newItem);
 

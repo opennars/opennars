@@ -192,7 +192,14 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
             this.obj = instance;
         }
 
-
+        @Override
+        public Object get() {
+            try {
+                return method.invoke(obj);
+            } catch (Exception e) {
+                return e;
+            }
+        }
     }
 
     public class UIObjectNode extends UINeoNode<ObjectNode> {

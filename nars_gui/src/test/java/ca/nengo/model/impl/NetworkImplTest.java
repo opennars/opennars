@@ -82,7 +82,7 @@ public class NetworkImplTest extends TestCase {
 		} // exception is expected
 
 		myNetwork.removeProjection(t2);
-		assertEquals(t1, myNetwork.getProjections()[0].getTermination());
+		assertEquals(t1, myNetwork.getProjections()[0].getTarget());
 	}
 	
 	public void testNodeNameChange() throws StructuralException {

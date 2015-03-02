@@ -33,16 +33,16 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * gets the next value without removing changing it or removing it from any index.  however
      * the bag is cycled so that subsequent elements are different.
      */
-    abstract public V PEEKNEXT();
+    abstract public V peekNext();
 
     /**
      * TODO rename 'remove'
      * @param key
      * @return
      */
-    abstract public V TAKE(K key);
+    abstract public V remove(K key);
 
-    abstract public V PUT(V newItem);
+    abstract public V put(V newItem);
 
     /**
      * Get an Item by key
@@ -99,7 +99,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
 
     @Override
     public void accept(V v) {
-        PUT(v);
+        put(v);
     }
 
     @Override
@@ -111,7 +111,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected
      */
     public final V TAKENEXT(final Predicate<V> iff) {
-        V v = PEEKNEXT();
+        V v = peekNext();
 
         if (v == null) return null;
         if (iff.apply(v)) {
@@ -123,7 +123,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
 
 
     public V TAKE(final V item) {
-        return TAKE(item.name());
+        return remove(item.name());
     }
 
 
@@ -157,7 +157,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
         }
 
         // put the (new or merged) item into itemTable
-        final V overflow = PUT(item);
+        final V overflow = put(item);
         if (overflow != null)
             selector.overflow(overflow);
 
@@ -199,7 +199,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
     public V putBack(final V oldItem, final float forgetCycles, final Memory m) {
         if (forgetCycles > 0)
             m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), Parameters.FORGET_QUALITY_RELATIVE);
-        return PUT(oldItem);
+        return put(oldItem);
     }
 
     public V putBack(final V oldItem) {

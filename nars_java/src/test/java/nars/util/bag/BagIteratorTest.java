@@ -40,14 +40,14 @@ public class BagIteratorTest {
     
     public void testBagIterator(Bag<CharSequence, NullItem> b) {
         
-        b.PUT(new NullItem(0.1f));
-        b.PUT(new NullItem(0.2f));
-        b.PUT(new NullItem(0.3f));
-        b.PUT(new NullItem(0.4f));
-        b.PUT(new NullItem(0.5f));
-        b.PUT(new NullItem(0.6f));
-        b.PUT(new NullItem(0.7f));
-        b.PUT(new NullItem(0.8f));
+        b.put(new NullItem(0.1f));
+        b.put(new NullItem(0.2f));
+        b.put(new NullItem(0.3f));
+        b.put(new NullItem(0.4f));
+        b.put(new NullItem(0.5f));
+        b.put(new NullItem(0.6f));
+        b.put(new NullItem(0.7f));
+        b.put(new NullItem(0.8f));
                 
         if (b instanceof LevelBag)
             assert(((LevelBag)b).numEmptyLevels() < L);
@@ -58,7 +58,7 @@ public class BagIteratorTest {
         
         testIterator(b);        
         
-        b.PUT(new NullItem(0.6f));
+        b.put(new NullItem(0.6f));
         
         testIterator(b);
         

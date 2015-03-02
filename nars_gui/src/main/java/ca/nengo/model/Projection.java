@@ -42,12 +42,12 @@ public interface Projection extends Serializable {
 	/**
 	 * @return Origin of this Projection (where information comes from)
 	 */
-	public Source getOrigin();
+	public Source getSource();
 
 	/**
 	 * @return Termination of this Projection (where information goes)
 	 */
-	public Target getTermination();
+	public Target getTarget();
 
 	/**
 	 * @return The Network to which this Projection belongs

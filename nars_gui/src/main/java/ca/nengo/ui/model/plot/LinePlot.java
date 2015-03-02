@@ -128,7 +128,8 @@ public class LinePlot extends AbstractNode implements UIBuilder {
 
     @Override
     public UINeoNode newUI() {
-        ui = new LinePlotUI();
+        if (ui==null)
+            ui = new LinePlotUI();
         return ui;
     }
 

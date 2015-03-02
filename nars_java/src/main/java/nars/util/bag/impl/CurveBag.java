@@ -294,7 +294,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public E TAKE(final K key) {
+    public E remove(final K key) {
         return nameTable.remove(key);
     }
 
@@ -315,7 +315,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     @Override
-    public E PEEKNEXT() {
+    public E peekNext() {
 
         if (size() == 0) return null; // empty bag
         return items.get(nextRemovalIndex());
@@ -393,7 +393,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
      * @return The overflow Item, or null if nothing displaced
      */
     @Override
-    public E PUT(E i) {
+    public E put(E i) {
 
         /*synchronized (nameTable)*/ {
             float newPriority = i.getPriority();

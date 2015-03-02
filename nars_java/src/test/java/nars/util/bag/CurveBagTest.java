@@ -73,12 +73,12 @@ public class CurveBagTest extends AbstractBagTest {
     public void testCurveBag(boolean random, SortedIndex<NullItem> items) {
         CurveBag<NullItem,CharSequence> f = new CurveBag(4, curve, random, items);
         
-        f.PUT(new NullItem(.25f));
+        f.put(new NullItem(.25f));
         assert(f.size() == 1);
         assert(f.getMass() > 0);
         
-        f.PUT(new NullItem(.9f));
-        f.PUT(new NullItem(.75f));
+        f.put(new NullItem(.9f));
+        f.put(new NullItem(.75f));
         
         //System.out.println(f);
         
@@ -102,10 +102,10 @@ public class CurveBagTest extends AbstractBagTest {
         NullItem four = new NullItem(.4f);
         NullItem five = new NullItem(.5f);
         
-        f.PUT(four);
-        f.PUT(five);
-        f.PUT(new NullItem(.6f));
-        Item a = f.PUT(new NullItem(.7f));
+        f.put(four);
+        f.put(five);
+        f.put(new NullItem(.6f));
+        Item a = f.put(new NullItem(.7f));
         assert(a==null);
         
         assertEquals(4, f.size());
@@ -114,7 +114,7 @@ public class CurveBagTest extends AbstractBagTest {
                 
         assertTrue(f.contains(five));    //5 should be in lowest position
         
-        f.PUT(new NullItem(.8f)); //limit
+        f.put(new NullItem(.8f)); //limit
         
         assertTrue(!f.contains(four)); //4 should get removed
         
@@ -134,7 +134,7 @@ public class CurveBagTest extends AbstractBagTest {
         
         //fill
         for (int i= 0; i < capacity; i++) {
-            f.PUT(new NullItem());
+            f.put(new NullItem());
         }
         
         assertEquals(f.size(), f.getCapacity());
@@ -163,8 +163,8 @@ public class CurveBagTest extends AbstractBagTest {
         assertEquals(c.getMass(), d.getMass(), 0);
         assertEquals(c.getAveragePriority(), d.getAveragePriority(), 0);
         
-        c.PUT(new NullItem(.25f));
-        d.PUT(new NullItem(.25f));
+        c.put(new NullItem(.25f));
+        d.put(new NullItem(.25f));
         
         //check that continuousbag and discretebag calculate the same average priority value        
         assertEquals(0.25f, c.getAveragePriority(), priorityEpsilon);
@@ -176,10 +176,10 @@ public class CurveBagTest extends AbstractBagTest {
         assert(c.getAveragePriority() == 0.01f);
         assert(d.getAveragePriority() == 0.01f);
         
-        c.PUT(new NullItem(.30f));
-        d.PUT(new NullItem(.30f));
-        c.PUT(new NullItem(.50f));
-        d.PUT(new NullItem(.50f));
+        c.put(new NullItem(.30f));
+        d.put(new NullItem(.30f));
+        c.put(new NullItem(.50f));
+        d.put(new NullItem(.50f));
         
         assertEquals(0.4, c.getAveragePriority(), priorityEpsilon);
         assertEquals(0.4, d.getAveragePriority(), priorityEpsilon);
@@ -231,21 +231,21 @@ public class CurveBagTest extends AbstractBagTest {
         CurveBag<NullItem,CharSequence> c = new CurveBag(capacity, curve, true);
 
         NullItem a, b;
-        c.PUT(a = new NullItem(0.5f));
-        c.PUT(b = new NullItem(0.5f));
+        c.put(a = new NullItem(0.5f));
+        c.put(b = new NullItem(0.5f));
 
         assertEquals(2, c.size());
 
-        NullItem aRemoved = c.TAKE(a.name());
+        NullItem aRemoved = c.remove(a.name());
 
         assertEquals(aRemoved, a);
         assertNotEquals(aRemoved, b);
         assertEquals(1, c.size());
 
-        c.PUT(a);
+        c.put(a);
         assertEquals(2, c.size());
 
-        NullItem x = c.PEEKNEXT();
+        NullItem x = c.peekNext();
         assertNotNull(x);
 
         assertEquals(2, c.size());

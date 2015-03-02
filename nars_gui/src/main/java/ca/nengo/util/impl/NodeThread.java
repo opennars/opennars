@@ -90,8 +90,8 @@ public class NodeThread extends Thread {
 		
 		for (int i = myStartIndexInProjections; i < myEndIndexInProjections; i++) {
 			
-			Object values = myProjections[i].getOrigin().get();
-			myProjections[i].getTermination().apply(values);
+			Object values = myProjections[i].getSource().get();
+			myProjections[i].getTarget().apply(values);
 		}
 		
 	}

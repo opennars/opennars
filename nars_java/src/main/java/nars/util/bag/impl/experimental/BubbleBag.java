@@ -107,7 +107,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     }
 
     @Override
-    public E PEEKNEXT() {
+    public E peekNext() {
         E selected = next(false, true);
 
         swapToProportionalIndex(0, selected.getPriority());
@@ -277,14 +277,14 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 
 
     @Override
-    public E PUT(E n) {
+    public E put(E n) {
 
         if (n==null)
             throw new RuntimeException(this + " can not accept null item");
 
         E overflow;
 
-        E existing = TAKE(n.name());
+        E existing = remove(n.name());
         if (existing!=null) {
             //just value has changed, but doesn't matter we have removed it
             overflow = null;
@@ -331,7 +331,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     }
 
     @Override
-    public E TAKE(K key) {
+    public E remove(K key) {
         return onExit(index.remove(key));
     }
 

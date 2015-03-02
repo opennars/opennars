@@ -38,14 +38,14 @@ public class ProjectionImplTest extends TestCase {
 	 * Test method for 'ca.bpt.cn.model.impl.ProjectionImpl.getOrigin()'
 	 */
 	public void testGetOrigin() {
-		assertEquals(mySource, myProjection.getOrigin());
+		assertEquals(mySource, myProjection.getSource());
 	}
 
 	/*
 	 * Test method for 'ca.bpt.cn.model.impl.ProjectionImpl.getTermination()'
 	 */
 	public void testGetTermination() {
-		assertEquals(myTarget, myProjection.getTermination());
+		assertEquals(myTarget, myProjection.getTarget());
 	}
 
 //	public void testAddBias() throws StructuralException, SimulationException {

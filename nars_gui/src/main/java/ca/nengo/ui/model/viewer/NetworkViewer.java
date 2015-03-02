@@ -190,10 +190,10 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                 projectionsToAdd.size());
 
         for (Projection projection : projectionsToAdd) {
-            Util.Assert(!projectionMap.containsKey(projection.getTermination()),
+            Util.Assert(!projectionMap.containsKey(projection.getTarget()),
                     "More than one projection found per termination");
 
-            projectionMap.put(projection.getTermination(), projection);
+            projectionMap.put(projection.getTarget(), projection);
         }
 
         /*
@@ -210,7 +210,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                     Source source = originUI.getModel();
 
                     Projection projection = projectionMap.get(target);
-                    if (projection != null && projection.getOrigin() == source) {
+                    if (projection != null && projection.getSource() == source) {
                         /*
                          * Projection already exists
                          */
@@ -240,8 +240,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
          * Construct projections
          */
         for (Projection projection : projectionsToAdd) {
-            Source source = projection.getOrigin();
-            Target term = projection.getTermination();
+            Source source = projection.getSource();
+            Target term = projection.getTarget();
 
             UINeoNode nodeOrigin = getUINode(source.getNode());
 

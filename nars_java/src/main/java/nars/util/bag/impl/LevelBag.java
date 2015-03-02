@@ -264,7 +264,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public E TAKE(final K name) {
+    public E remove(final K name) {
         DD<E> t = index.get(name);
         if (t == null) return null;
         return OUT(t);
@@ -394,7 +394,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             //allow selector to provide a new instance
             E n = selector.newItem();
             if (n!=null) {
-                E overflow = PUT(n);
+                E overflow = put(n);
                 if (overflow!=null)
                     selector.overflow(overflow);
                 return n; //return the new instance
@@ -456,7 +456,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public E PEEKNEXT() {
+    public E peekNext() {
         return next(false);
     }
 
@@ -568,7 +568,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     @Override
-    public E PUT(final E newItem) {
+    public E put(final E newItem) {
         if (newItem==null)
             throw new RuntimeException("PUT item muts be non-null");
 

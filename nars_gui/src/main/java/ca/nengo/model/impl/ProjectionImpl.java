@@ -88,16 +88,16 @@ public class ProjectionImpl implements Projection {
 	}
 
 	/**
-	 * @see ca.nengo.model.Projection#getOrigin()
+	 * @see ca.nengo.model.Projection#getSource()
 	 */
-	public Source getOrigin() {
+	public Source getSource() {
 		return mySource;
 	}
 
 	/**
-	 * @see ca.nengo.model.Projection#getTermination()
+	 * @see ca.nengo.model.Projection#getTarget()
 	 */
-	public Target getTermination() {
+	public Target getTarget() {
 		return myTarget;
 	}
 

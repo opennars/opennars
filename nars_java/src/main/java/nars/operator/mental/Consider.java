@@ -51,7 +51,7 @@ public class Consider extends Operator implements Mental {
         
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
 
-        TaskLink taskLink = concept.taskLinks.PEEKNEXT();
+        TaskLink taskLink = concept.taskLinks.peekNext();
         if (taskLink!=null) {
             new ConceptFire(concept, taskLink) {
 
