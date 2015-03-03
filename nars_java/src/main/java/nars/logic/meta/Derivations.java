@@ -5,14 +5,18 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import nars.core.Events;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.event.AbstractReaction;
 import nars.logic.NAL;
 import nars.logic.entity.*;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.jgrapht.ext.*;
+import org.jgrapht.graph.DirectedMaskSubgraph;
 import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.graph.MaskFunctor;
 
 import java.io.FileWriter;
 import java.io.PrintStream;
@@ -41,6 +45,7 @@ public class Derivations extends DirectedMultigraph {
 
 
     public final Multimap<Premise, Set<TaskResult>> premiseResult;
+    Map<Object,Double> edgeWeights = Parameters.newHashMap();
 
     private final boolean includeDerivedBudget;
     private final boolean includeDerivedTruth;
@@ -187,7 +192,10 @@ public class Derivations extends DirectedMultigraph {
     }
 
     static Iterable<Task> getTasks(NAL n, int taskStart, int taskEnd) {
-        return Iterables.limit(Iterables.skip(n.getNewTasks(), taskStart), taskEnd - taskStart);    }
+        if (taskStart == taskEnd)
+            return Collections.emptyList();
+        return Iterables.limit(Iterables.skip(n.getNewTasks(), taskStart), taskEnd - taskStart);
+    }
 
 
 
@@ -205,15 +213,32 @@ public class Derivations extends DirectedMultigraph {
         return tempTaskString.toString();
     }
 
+    @Override
+    public void setEdgeWeight(Object o, double weight) {
+        edgeWeights.put(o, weight);
+    }
+
+    @Override
+    public double getEdgeWeight(Object o) {
+        return edgeWeights.get(o);
+    }
+
     public Object newEdge(Keyed a, Keyed b) {
         Object edge = a.name() + "||" + b.name();
-        addEdge(a, b, edge);
+
+        if (containsEdge(edge)) {
+            setEdgeWeight(edge, getEdgeWeight(edge)+1);
+        }
+        else {
+            addEdge(a, b, edge);
+            setEdgeWeight(edge, 1);
+        }
         return edge;
     }
 
     public void result(Concept c, TaskLink tasklink, TermLink termlink, Iterable<Task> result, long now) {
 
-        Map<Term,Integer> unique = new HashMap();
+        Map<Term,Integer> unique = Parameters.newHashMap();
 
         Premise premise = newPremise(c.getTerm(), tasklink, termlink, unique, now);
         addVertex(premise);
@@ -242,7 +267,8 @@ public class Derivations extends DirectedMultigraph {
             //SentencePattern sp = addSentencePattern(t.sentence, unique, now);
             TermPattern tp = addTermPattern(t.getTerm(), unique);
 
-            newEdge(premise, tp);
+            newEdge(premise, tr);
+            newEdge(tr, tp);
             /*newEdge(tr, sp);
             newEdge(sp, tp);*/
 
@@ -358,12 +384,43 @@ public class Derivations extends DirectedMultigraph {
 
         p.println(vertexSet().size() + " " + edgeSet().size());
 
-        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
+
+        SummaryStatistics s = new SummaryStatistics();
+        for (Double d : edgeWeights.values())
+            s.addValue(d);
+        System.out.println("weights: " + s);
+
+        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider() {
+            @Override
+            public String getVertexName(Object vertex) {
+                return super.getVertexName(vertex);
+            }
+        }, new IntegerEdgeNameProvider(), new StringEdgeNameProvider() {
+            @Override
+            public String getEdgeName(Object edge) {
+                return super.getEdgeName(edge) + "\"\n\tweight \"" + getEdgeWeight(edge) ;
+            }
+        });
         gme.setPrintLabels(GmlExporter.PRINT_EDGE_VERTEX_LABELS);
         try {
-            gme.export(new FileWriter("/tmp/g.gml"), this);
+            gme.export(new FileWriter("/tmp/g.gml"), weightAtleast(0.5 * (s.getMean() + s.getGeometricMean())));
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private DirectedMaskSubgraph weightAtleast(double v) {
+        MaskFunctor e = new MaskFunctor() {
+            @Override
+            public boolean isEdgeMasked(Object edge) {
+                return getEdgeWeight(edge) < v;
+            }
+
+            @Override
+            public boolean isVertexMasked(Object vertex) {
+                return false;
+            }
+        };
+        return new DirectedMaskSubgraph(this, e);
     }
 }

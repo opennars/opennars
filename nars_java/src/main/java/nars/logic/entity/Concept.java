@@ -384,22 +384,17 @@ public class Concept extends Item<Term> implements Termable {
      */
     public boolean executeDecision(final Task t) {
 
-        if (isDesired()) {
+        if ((term instanceof Operation) && (isDesired())) {
 
-            Term content = term;
+            Operation op=(Operation)term;
+            Operator oper = op.getOperator();
 
-            if(content instanceof Operation) {
-
-                Operation op=(Operation)content;
-                Operator oper = op.getOperator();
-
-                op.setTask(t);
-                if(!oper.call(op, memory)) {
-                    return false;
-                }
-
-                return true;
+            op.setTask(t);
+            if(!oper.call(op, memory)) {
+                return false;
             }
+
+            return true;
         }
         return false;
     }
@@ -423,6 +418,7 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp oldStamp = oldGoal.stamp;
             
             if (newStamp.equals(oldStamp,false, true, false,false)) {
+                memory.removeTask(task, "Duplicated");
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
 
@@ -544,7 +540,7 @@ public class Concept extends Item<Term> implements Termable {
         final int numTemplates = templates.size();
 
 
-        float linkSubBudgetDivisor = (float)numTemplates + 1;
+        float linkSubBudgetDivisor = (float)numTemplates+1;
         //float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);

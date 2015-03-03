@@ -136,12 +136,13 @@ public class TransformTask extends ConceptFireTask {
             Term[] componentList;
             Term condition = oldContent.term[0];
             if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
-                componentList = ((CompoundTerm) condition).cloneTerms();
+                componentList = ((CompoundTerm) condition).cloneVariableTermsDeep(); //cloneTerms();
                 componentList[indices[1]] = newInh;
                 Term newCond = Memory.term((CompoundTerm) condition, componentList);
                 content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
             } else {
-                componentList = oldContent.cloneTerms();
+
+                componentList = oldContent.cloneVariableTermsDeep(); //oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
                     Term newContent = Memory.term(oldContent, componentList);

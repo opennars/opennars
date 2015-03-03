@@ -221,23 +221,6 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         return derived;
     }
 
-    /**
-     * Shared final operations by all double-premise rules, called from the
-     * rules except StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
-     * @param revisible Whether the sentence is revisible
-     */
-    //    public void doublePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget, boolean revisible) {
-    //        if (newContent != null) {
-    //            Sentence taskSentence = currentTask.getSentence();
-    //            Sentence newSentence = new Sentence(newContent, taskSentence.getPunctuation(), newTruth, newStamp, revisible);
-    //            Task newTaskAt = new Task(newSentence, newBudget, currentTask, currentBelief);
-    //            derivedTask(newTaskAt, false, false);
-    //        }
-    //    }
 
     /**
      * Shared final operations by all single-premise rules, called in
@@ -282,7 +265,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
 
     public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
+        newTask.sentence.setRevisible(newTask.sentence.isRevisible() || getCurrentTask().sentence.isRevisible());
         return deriveTask(newTask, false, true);
     }
 

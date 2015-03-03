@@ -128,7 +128,7 @@ public class InternalExperience extends AbstractPlugin  {
         if (event==Events.TaskImmediateProcessed.class) {
 
             Task task = (Task)a[0];
-            //NAL nal = (NAL)a[1];
+            NAL nal = (NAL)a[1];
 
             if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return;
@@ -142,21 +142,28 @@ public class InternalExperience extends AbstractPlugin  {
             Sentence sentence = task.sentence;
             TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
 
-            Stamp stamp = task.sentence.stamp.cloneWithNewOccurrenceTime(memory.time());
-
-            Term ret=toTerm(sentence, memory);
-            if(ret==null) {
-                return;
-            }
-            Sentence j = new Sentence(ret, Symbols.JUDGMENT, truth, stamp);
             BudgetValue newbudget=new BudgetValue(
-                    Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                    Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                    task.getPriority() * INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                    task.getDurability() * INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                    //Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                    //Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
                     truth);
 
-            Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
+            if (newbudget.aboveThreshold()) {
+                //Stamp stamp = task.sentence.stamp.cloneWithNewOccurrenceTime(memory.time());
+                NAL.StampBuilder stamp = nal.newStamp(task.sentence, memory.time());
 
-            memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
+                Term ret=toTerm(sentence, memory);
+                if(ret==null) {
+                    return;
+                }
+
+                Sentence j = new Sentence(ret, Symbols.JUDGMENT, truth, stamp);
+
+                Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
+
+                memory.addNewTask(newTask, "Internally remembered experienced");
+            }
 
         }
         else if (event == Events.BeliefReason.class) {
