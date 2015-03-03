@@ -1,4 +1,4 @@
-package ca.nengo.ui.test.depr;
+package ca.nengo.test.depr;
 
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.ConstantFunction;

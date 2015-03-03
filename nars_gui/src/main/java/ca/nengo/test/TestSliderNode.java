@@ -1,16 +1,12 @@
-package ca.nengo.ui.test;
+package ca.nengo.test;
 
-import ca.nengo.model.Node;
-import ca.nengo.model.RealSource;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

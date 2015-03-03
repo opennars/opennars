@@ -1,4 +1,4 @@
-package ca.nengo.ui.test;
+package ca.nengo.test;
 
 import automenta.vivisect.swing.NSlider;
 import ca.nengo.model.Node;

@@ -7,8 +7,9 @@ Software distributed under the License is distributed on an "AS IS" basis, WITHO
 WARRANTY OF ANY KIND, either express or implied. See the License for the specific 
 language governing rights and limitations under the License.
 
-The Original Code is "GFuzzyLogicExample.java". Description: 
-"In this example, a Fuzzy Logic network is constructed
+The Original Code is "ExampleRunner.java". Description: 
+"Used to conveniently create a NeoGraphics instance with an existing Network
+  model
   
   @author Shu Wu"
 
@@ -24,44 +25,68 @@ provisions required by the GPL License.  If you do not delete the provisions abo
 a recipient may use your version of this file under either the MPL or the GPL License.
 */
 
-package ca.nengo.ui.test.depr;
+package ca.nengo.test.depr;
 
 import ca.nengo.model.Network;
-import ca.nengo.model.StructuralException;
+import ca.nengo.ui.Nengrow;
+import ca.nengo.ui.lib.object.activity.TrackedStatusMsg;
 import ca.nengo.ui.model.node.UINetwork;
 
+import javax.swing.*;
+
 /**
- * In this example, a Fuzzy Logic network is constructed
+ * Used to conveniently create a NeoGraphics instance with an existing Network
+ * model
  * 
  * @author Shu Wu
  */
-public class GFuzzyLogicExample extends ExampleRunner {
+abstract public class ExampleRunner extends Nengrow {
 
-	public static void main(String[] args) {
+	private UINetwork networkUI;
 
-		try {
-			new GFuzzyLogicExample();
-		} catch (StructuralException e) {
-			e.printStackTrace();
-		}
+	public ExampleRunner() {
+        super();
+
+		/**
+		 * All UI funcitons and constructors must be invoked from the Swing
+		 * Event Thread
+		 */
+
 	}
 
-	public GFuzzyLogicExample() throws StructuralException {
-		super();
+
+	protected void doStuff(UINetwork network) {
+
 	}
+
+
+
+	protected void processNetwork(UINetwork network) {
+
+	}
+
+    public abstract Network getNetwork();
 
     @Override
-    public Network getNetwork() {
-        try {
-            return FuzzyLogicExample.createNetwork();
-        } catch (StructuralException e) {
-            throw new RuntimeException(e);
+    public void init() throws Exception {
+
+        TrackedStatusMsg task;
+        task = new TrackedStatusMsg("Creating Model UI");
+        if (networkUI == null) {
+
+            networkUI = new UINetwork(getNetwork());
+            getWorld().getGround().addChild(networkUI);
+            networkUI.openViewer();
         }
+
+        processNetwork(networkUI);
+        task.finished();
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+
+                doStuff(networkUI);
+            }
+        });
     }
-
-	@Override
-	protected void doStuff(UINetwork network) {
-		// (new RunSimulatorAction("Run", network)).doAction();
-	}
-
 }

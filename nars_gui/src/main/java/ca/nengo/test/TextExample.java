@@ -26,7 +26,7 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ca.nengo.ui.test;
+package ca.nengo.test;
 
 import org.piccolo2d.PCanvas;
 import org.piccolo2d.extras.PFrame;

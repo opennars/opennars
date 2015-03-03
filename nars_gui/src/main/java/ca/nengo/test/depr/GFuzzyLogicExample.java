@@ -22,33 +22,31 @@ others to use your version of this file under the MPL, indicate your decision
 by deleting the provisions above and replace  them with the notice and other 
 provisions required by the GPL License.  If you do not delete the provisions above,
 a recipient may use your version of this file under either the MPL or the GPL License.
- */
+*/
 
-package ca.nengo.ui.test.depr;
+package ca.nengo.test.depr;
 
 import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
-import ca.nengo.ui.AbstractNengo;
-import ca.nengo.ui.action.RunSimulatorAction;
 import ca.nengo.ui.model.node.UINetwork;
 
 /**
- * Creates a Fuzzy Network, and runs it for 1 second
+ * In this example, a Fuzzy Logic network is constructed
  * 
  * @author Shu Wu
  */
-public class DataViewerTest2 extends ExampleRunner {
+public class GFuzzyLogicExample extends ExampleRunner {
 
 	public static void main(String[] args) {
 
 		try {
-			new DataViewerTest2();
+			new GFuzzyLogicExample();
 		} catch (StructuralException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public DataViewerTest2() throws StructuralException {
+	public GFuzzyLogicExample() throws StructuralException {
 		super();
 	}
 
@@ -63,8 +61,7 @@ public class DataViewerTest2 extends ExampleRunner {
 
 	@Override
 	protected void doStuff(UINetwork network) {
-		(new RunSimulatorAction("Run", network, 0f, 1f, 0.002f)).doAction();
-		AbstractNengo.getInstance().setDataViewerPaneVisible(true);
+		// (new RunSimulatorAction("Run", network)).doAction();
 	}
 
 }

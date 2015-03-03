@@ -89,9 +89,13 @@ public interface Node extends Serializable, Resettable, SimulationMode.ModeConfi
 	 * @throws StructuralException if the named Termination does not exist
 	 */
 	public Target getTarget(String name) throws StructuralException;
-	
-	
-	public Node[] getChildren();
+
+    final static Node[] emptyNodeArray = new Node[0];
+
+    /** what is this for */
+    default public Node[] getChildren() {
+        return emptyNodeArray;
+    }
 	
     /**
      * @param scriptData Map of class parent and prefix data for generating python script

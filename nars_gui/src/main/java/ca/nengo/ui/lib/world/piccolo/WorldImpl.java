@@ -130,7 +130,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 	/**
 	 * Selection handler
 	 */
-	private final SelectionHandler selectionEventHandler;
+	protected final SelectionHandler selectionEventHandler;
 
 	/**
 	 * Status bar handler

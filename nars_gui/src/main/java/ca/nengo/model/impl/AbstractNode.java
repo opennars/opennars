@@ -55,22 +55,19 @@ public abstract class AbstractNode implements Node {
 	 * @param targets List of Terminations onto the Node
 	 */
 	public AbstractNode(String name, List<Source> sources, List<Target> targets) {
+        super();
 		myName = name;
 		myMode = SimulationMode.DEFAULT;
 
-		mySources = new LinkedHashMap<String, Source>(10);
-		for (Source o : sources) {
-			mySources.put(o.getName(), o);
-		}
 
-		myTargets = new LinkedHashMap<String, Target>(10);
-		for (Target t : targets) {
-			myTargets.put(t.getName(), t);
-		}
+        setOutputs(sources);
+
+        setInputs(targets);
 	}
 
     public void setOutputs(Source... s) {
-        mySources = new LinkedHashMap<String, Source>(10);
+        if (mySources == null)
+            mySources = new LinkedHashMap<String, Source>(10);
         for (Source o : s) {
             mySources.put(o.getName(), o);
         }
@@ -80,9 +77,13 @@ public abstract class AbstractNode implements Node {
     }
 
     public void setInputs(Target... s) {
-        myTargets = new LinkedHashMap<String, Target>(10);
-        for (Target o : s) {
-            myTargets.put(o.getName(), o);
+        if ((s!=null) && (s.length > 0)) {
+            if (myTargets==null)
+                myTargets = new LinkedHashMap<String, Target>(10);
+            for (Target o : s) {
+                if (o!=null)
+                    myTargets.put(o.getName(), o);
+            }
         }
     }
     public void setInputs(List<Target> t) {
@@ -126,6 +127,8 @@ public abstract class AbstractNode implements Node {
 	 * @see ca.nengo.model.Node#getSources()
 	 */
 	public Source[] getSources() {
+        if (mySources==null)
+            return emptySourceArray;
         java.util.Collection<Source> var = mySources.values();
         return var.toArray(new Source[var.size()]);
 	}
@@ -137,10 +140,14 @@ public abstract class AbstractNode implements Node {
 		return myTargets.get(name);
 	}
 
+    final static Source[] emptySourceArray = new Source[0];
+    final static Target[] emptyTargetArray = new Target[0];
 	/**
 	 * @see ca.nengo.model.Node#getTargets()
 	 */
 	public Target[] getTargets() {
+        if (myTargets == null)
+            return emptyTargetArray;
         java.util.Collection<Target> var = myTargets.values();
         return var.toArray(new Target[var.size()]);
 	}

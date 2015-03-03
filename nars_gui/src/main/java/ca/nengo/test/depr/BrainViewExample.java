@@ -7,9 +7,8 @@ Software distributed under the License is distributed on an "AS IS" basis, WITHO
 WARRANTY OF ANY KIND, either express or implied. See the License for the specific 
 language governing rights and limitations under the License.
 
-The Original Code is "ExampleRunner.java". Description: 
-"Used to conveniently create a NeoGraphics instance with an existing Network
-  model
+The Original Code is "BrainViewExample.java". Description: 
+"In this example, an Integrator network is constructed
   
   @author Shu Wu"
 
@@ -25,68 +24,41 @@ provisions required by the GPL License.  If you do not delete the provisions abo
 a recipient may use your version of this file under either the MPL or the GPL License.
 */
 
-package ca.nengo.ui.test.depr;
+package ca.nengo.test.depr;
 
 import ca.nengo.model.Network;
-import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.lib.object.activity.TrackedStatusMsg;
+import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.model.node.UINetwork;
 
-import javax.swing.*;
-
 /**
- * Used to conveniently create a NeoGraphics instance with an existing Network
- * model
+ * In this example, an Integrator network is constructed
  * 
  * @author Shu Wu
  */
-abstract public class ExampleRunner extends Nengrow {
+public class BrainViewExample extends ExampleRunner {
 
-	private UINetwork networkUI;
+	public static void main(String[] args) {
 
-	public ExampleRunner() {
-        super();
-
-		/**
-		 * All UI funcitons and constructors must be invoked from the Swing
-		 * Event Thread
-		 */
-
+		//try {
+			new BrainViewExample();
+		/*} catch (StructuralException e) {
+			e.printStackTrace();
+		}*/
 	}
 
-
-	protected void doStuff(UINetwork network) {
-
+	public BrainViewExample() {
+		super();
 	}
-
-
-
-	protected void processNetwork(UINetwork network) {
-
-	}
-
-    public abstract Network getNetwork();
 
     @Override
-    public void init() throws Exception {
-
-        TrackedStatusMsg task;
-        task = new TrackedStatusMsg("Creating Model UI");
-        if (networkUI == null) {
-
-            networkUI = new UINetwork(getNetwork());
-            getWorld().getGround().addChild(networkUI);
-            networkUI.openViewer();
-        }
-
-        processNetwork(networkUI);
-        task.finished();
-
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-
-                doStuff(networkUI);
-            }
-        });
+    public Network getNetwork() {
+        return new NetworkImpl();
     }
+
+    @Override
+	protected void processNetwork(UINetwork network) {
+		network.closeViewer();
+		network.createBrainViewer();
+	}
+
 }

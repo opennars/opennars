@@ -24,7 +24,7 @@ provisions required by the GPL License.  If you do not delete the provisions abo
 a recipient may use your version of this file under either the MPL or the GPL License.
 */
 
-package ca.nengo.ui.test.depr;
+package ca.nengo.test.depr;
 
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.ConstantFunction;

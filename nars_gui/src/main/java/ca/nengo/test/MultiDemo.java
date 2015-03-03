@@ -1,4 +1,4 @@
-package ca.nengo.ui.test;
+package ca.nengo.test;
 
 import ca.nengo.model.SimulationException;
 import ca.nengo.ui.Nengrow;

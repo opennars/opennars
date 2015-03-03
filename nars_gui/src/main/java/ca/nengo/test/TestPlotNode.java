@@ -1,4 +1,4 @@
-package ca.nengo.ui.test;
+package ca.nengo.test;
 
 import ca.nengo.math.impl.GaussianPDF;
 import ca.nengo.model.Node;
