@@ -191,6 +191,11 @@ public abstract class UITarget<T extends Target> extends Widget<T> implements IL
 		super.prepareToDestroyModel();
 	}
 
+    public void setColor(Color c) {
+        myIcon.setColor(c);
+        myIconDefaultColor = c;
+    }
+
 	@Override
 	protected void unExpose(Network network) {
 		if (getExposedName() != null) {

@@ -25,7 +25,7 @@ public class LineSourceIcon extends WorldObjectImpl {
 
 	public LineSourceIcon() {
 		super();
-		this.setBounds(0, 0, _LINE_END_WIDTH, _LINE_END_HEIGHT);
+		this.setBounds(-_LINE_END_WIDTH / 2, -_LINE_END_HEIGHT / 2, _LINE_END_WIDTH, _LINE_END_HEIGHT);
 		setColor(NengoStyle.COLOR_LINEENDWELL);
 
 	}
@@ -36,10 +36,10 @@ public class LineSourceIcon extends WorldObjectImpl {
 		Graphics2D g2 = paintContext.getGraphics();
 		if (paintContext.getScale() < 0.5) {
 			g2.setColor(color);
-			g2.fillOval(0, 0, _LINE_END_WIDTH, _LINE_END_HEIGHT);
 		} else {
-			g2.setColor(dark);
-			g2.fillOval(0, 0, _LINE_END_WIDTH, _LINE_END_HEIGHT);
+            g2.setColor(dark);
+        }
+        g2.fillOval(-_LINE_END_WIDTH / 2, -_LINE_END_HEIGHT / 2, _LINE_END_WIDTH, _LINE_END_HEIGHT);
 
 //
 //			g2.setColor(medium);
@@ -57,7 +57,7 @@ public class LineSourceIcon extends WorldObjectImpl {
 //			g2.setColor(hilite);
 //			g2.fillOval(_LINE_END_WIDTH / 3 - 1, _LINE_END_HEIGHT / 6,
 //					_LINE_END_WIDTH / 3 + 2, 3 * _LINE_END_HEIGHT / 16);
-		}
+
 	}
 
 	public Color getColor() {

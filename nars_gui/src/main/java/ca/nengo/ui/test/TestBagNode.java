@@ -4,12 +4,13 @@ import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.NetworkImpl;
+import ca.nengo.model.impl.ObjectGraphNode;
 import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.plot.StringView;
+import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
 import nars.build.Default;
 import nars.control.DefaultCore;
@@ -32,24 +33,84 @@ public class TestBagNode extends Nengrow {
         NetworkImpl network = new NetworkImpl();
 
         ObjectNode narUI;
-        network.addNode(narUI = new ObjectNode("NAR", new NARNode()));
+        NARNode narNode;
+        network.addNode(narUI = new ObjectNode("NAR", narNode = new NARNode()));
 
 
 
-        ObjectNode bagUI;
-        network.addNode(bagUI = new ObjectNode("Concepts Bag", new BagNode()));
+        ObjectGraphNode bagUI;
+        network.addNode(bagUI = new ObjectGraphNode("Concepts Bag", new BagNode()));
+        //network.addNode(bagUI = new ObjectGraphNode("NARObj", narNode.n));
+
+        //network.addNode(new ObjectNode("BagUI", new ObjectGraphController(bagUI)));
 
 //        network.addProjection(
 //                narUI.getSource("public nars.util.bag.Bag<nars.logic.entity.Term, nars.logic.entity.Concept> ca.nengo.ui.test.TestBagNode$NARNode.concepts()"),
 //                bagUI.getTarget("Concepts Bag_public void ca.nengo.ui.test.TestBagNode$BagNode.setBag(nars.util.bag.Bag<K, V>)"));
 
-        //network.addNode(new ObjectNode("NAR Output", new NAROutput(n)));
+        network.addNode(new ObjectNode("NAR Output", new NAROutput(narNode.n)));
 
         network.addNode(new StringView("Text1"));
         network.addNode(new LinePlot("Plot1"));
-        network.addNode(new SliderNode("NAR FPS", 0, 0, 2.0f));
+        network.addNode(new SliderNode("A", 0, 0, 1f));
+        network.addNode(new SliderNode("B", 0, 0, 50f));
+        network.addNode(new PadNode("XY", 2, 0, 8, 4, 0, 8));
 
         return network;
+    }
+
+    public static class ObjectGraphController {
+        private final ObjectGraphNode.UIObjectGraphNode ui;
+
+        public ObjectGraphController(ObjectGraphNode ogn) {
+
+            ui = ogn.newUI();
+        }
+
+        public void setEquilibriumDistance(Double d) {
+            if (d!=null) {
+                if (ui.bodyLayout.getEquilibriumDistance()!=d) {
+                    ui.bodyLayout.reset();
+                    ui.bodyLayout.setEquilibriumDistance(d);
+                    ui.layoutChildren();
+                    ui.repaint();
+                }
+
+            }
+        }
+
+        public void setMaxDistance(Double d) {
+            if (d!=null) {
+                if (ui.bodyLayout.getMaxRepulsionDistance()!=d) {
+                    ui.bodyLayout.reset();
+                    ui.bodyLayout.setMaxRepulsionDistance(d);
+                    ui.layoutChildren();
+                    ui.repaint();
+                }
+
+            }
+
+        }
+        public void setAttractiveStrength(Double d) {
+            if (d!=null) {
+                if (ui.bodyLayout.getAttractionStrength()!=d) {
+                    ui.bodyLayout.reset();
+                    ui.bodyLayout.setAttractionStrength(d);
+                    ui.layoutChildren();
+                    ui.repaint();
+                }
+            }
+        }
+        public void setRepulsion(Double d) {
+            if (d!=null) {
+                if (ui.bodyLayout.getRepulsiveWeakness()!=d) {
+                    ui.bodyLayout.reset();
+                    ui.bodyLayout.setRepulsiveWeakness(d);
+                    ui.layoutChildren();
+                    ui.repaint();
+                }
+            }
+        }
     }
 
     public static class NARNode {
@@ -169,14 +230,6 @@ public class TestBagNode extends Nengrow {
     float time = 0;
 
 
-    public void cycle() {
-
-
-        for (WorldObject x : this.getNengoWorld().getChildren()) {
-                    //System.out.println( x.getChildren() );
-            //x.run(time, time+1);
-        }
-    }
 
     public static void main(String[] args) {
         new TestBagNode();

@@ -17,6 +17,9 @@ public class PaintContext {
 
     public void set(Graphics2D graphics, double scale) {
         this.graphics = graphics;
+        //hint(ENABLE_NATIVE_FONTS);
+        graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+        graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
         this.scale = scale;
     }
 }

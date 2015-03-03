@@ -172,7 +172,7 @@ public class SliderNode extends AbstractNode implements UIBuilder {
             }
 
             int wp = (int)(((float)w) * p );
-            final int barWidth = wp - m*2;
+            final int barWidth = Math.max(0, wp - m*2);
             final int barHeight = h-m*2;
             g.fillRect(m, m, barWidth, barHeight);
 

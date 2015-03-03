@@ -34,9 +34,9 @@ public class Predict2D extends JPanel {
 
         abstract public void update(float t, Graphics g);
 
-        public void draw(Graphics g, float x, float y, Color c) {
-            int w = (int)(getWidth()/20f);
-            int h = (int)(getHeight()/20f);
+        public void draw(Graphics g, float x, float y, float r, Color c) {
+            int w = (int)r;
+            int h = (int)r;
             int px = (int)((x*0.9f + 1f) * getWidth()/2f);
             int py = (int)((y*0.9f + 1f) * getHeight()/2f);
             g.setColor(c);
@@ -169,6 +169,38 @@ public class Predict2D extends JPanel {
             level.put(c, l);
         }
 
+        public interface PredictionHandler {
+            public void onPrediction(String term, long when, float value, float truth, float conf);
+        }
+
+        /** v[0] = scalar value, v[1] = confidence */
+        public void predictAll(long whenStart, long whenStop, PredictionHandler p) {
+
+            for (Map.Entry<Concept,Integer> e : level.entrySet()) {
+                Concept c = e.getKey();
+                int level = e.getValue();
+
+                if (!c.beliefs.isEmpty()) {
+                    for (Sentence s : c.beliefs) {
+                        if (s == null) {
+                            throw new RuntimeException(c.beliefs.toString());
+                        }
+
+                        if (s.isEternal()) continue;
+                        long o = s.getOccurrenceTime();
+                        if (o < whenStart) continue;
+                        if (o > whenStop) continue;
+
+                        //float futureFactor = 1.0f / (1.0f + Math.abs(o - when));
+                        //expect[level] += s.truth.getFrequency() * s.truth.getConfidence() * futureFactor;
+                        float value =  ((float) disc.continuous(level) - 0.5f) * 2f;
+                        p.onPrediction(term, o, value, s.truth.getFrequency(), s.truth.getConfidence());
+                    }
+                }
+
+            }
+
+        }
 
         /** v[0] = scalar value, v[1] = confidence */
         public float[] predictBest(long when, float[] v) {
@@ -249,12 +281,12 @@ public class Predict2D extends JPanel {
         Parameters.IMMEDIATE_ETERNALIZATION = false;
 
         NAR n = new NAR(new Default().setInternalExperience(null).simulationTime());
-        n.param.shortTermMemoryHistory.set(2);
+        n.param.shortTermMemoryHistory.set(5);
         n.param.duration.set(5);
-        n.param.duration.setLinear(16f);
-        n.param.conceptBeliefsMax.set(32);
+        n.param.duration.setLinear(4);
+        n.param.conceptBeliefsMax.set(48);
 
-        int levels = 3;
+        int levels = 5;
 
         float freq = 2f;
 
@@ -275,36 +307,11 @@ public class Predict2D extends JPanel {
             public void update(float ms, Graphics g) {
                 tx = (float)Math.sin(ms / 1000f * freq);
                 ty = (float)Math.cos(ms / 1000f * freq);
-                draw(g, tx, ty, Color.RED);
+                draw(g, tx, ty, 10, Color.RED);
             }
         });
 
-        points.add(belief = new Point() {
-
-            float v[] = new float[2];
-
-            @Override
-            public void update(float ms, Graphics g) {
-
-                try {
-                    for (int j = 0; j < 5; j += 100) {
-                        float x, y, c;
-
-                        px.predictBest(n.time() + j, v);
-                        x = v[0];
-                        c = v[1];
-
-                        py.predictBest(n.time() + j, v);
-                        y = v[0];
-                        c += v[1];
-                        c /= 2f;
-
-                        draw(g, x, y, new Color(j / 256f, j / 256.0f, c));
-                    }
-                }
-                catch (Exception e) { System.out.println(e); } //TODO use correct threading
-            }
-        });
+        points.add(belief = new FuturePoints(n, px, py));
 
         //TextOutput.out(n);
 
@@ -318,7 +325,7 @@ public class Predict2D extends JPanel {
             update(t);
 
             n.memory.addSimulationTime(1);
-            n.step(10);
+            n.step(20);
 
             t += 1;
 
@@ -329,5 +336,57 @@ public class Predict2D extends JPanel {
     }
     public static void main(String[] args) throws InterruptedException {
         new Predict2D();
+    }
+
+    private class FuturePoints extends Point implements ValuePrediction.PredictionHandler {
+
+        private final NAR n;
+        private final ValuePrediction px;
+        private final ValuePrediction py;
+        float v[];
+        private Graphics graphics;
+        float dj = 1000;
+
+        public FuturePoints(NAR n, ValuePrediction px, ValuePrediction py) {
+            this.n = n;
+            this.px = px;
+            this.py = py;
+            v = new float[2];
+        }
+
+        @Override
+        public void update(float ms, Graphics g) {
+
+            this.graphics = g;
+            try {
+
+                {
+                    float now = n.time()+1;
+                    px.predictAll((long)now, (long)(now + dj), this);
+                    py.predictAll((long)now, (long)(now + dj), this);
+                }
+            }
+            catch (Exception e) { /*System.out.println(e);*/ } //TODO use correct threading
+        }
+
+        @Override
+        public void onPrediction(String term, long when, float value, float truth, float conf) {
+            float x, y;
+            float c = conf * truth; //expectation
+            if (c < 0.5f) return;
+
+            float j = 1.0f / (1.0f + (when - (1+n.time()))/dj);
+            Color oc = new Color(1f-j, 1f-j, 1f-j, c);
+            if (term.equals("x")) {
+                x = value; y = 0;
+            }
+            else {
+                y = value; x = 0;
+            }
+            //System.out.println((when-n.time()) + " " + value + " " + j + " " + c);
+
+            draw(graphics, x, y, 10 + j, oc);
+
+        }
     }
 }

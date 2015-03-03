@@ -60,7 +60,7 @@ public class Path extends WorldObjectImpl {
 		pathNode.setPathToPolyline(points);
 	}
 
-    public static Path createPolygon(int sides, int radius, Color c) {
+    public static Path createPolygon(int sides, float radius, Color c) {
         Path p = new Path(new PXPath(new RegularPolygon(0,0,radius,sides)));
         p.setPaint(c);
         p.setStroke(null);

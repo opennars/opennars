@@ -38,7 +38,7 @@ import java.awt.*;
  */
 public class PolygonIcon extends ModelIcon {
 
-	public PolygonIcon(ModelObject parent, int sides, int radius, Color fillColor) {
+	public PolygonIcon(ModelObject parent, int sides, float radius, Color fillColor) {
         super(parent, Path.createPolygon(sides, radius, fillColor));
 		configureLabel(false);
 	}

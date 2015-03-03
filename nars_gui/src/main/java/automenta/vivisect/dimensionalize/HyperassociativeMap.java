@@ -14,6 +14,7 @@
  */
 package automenta.vivisect.dimensionalize;
 
+import nars.core.Parameters;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.Graph;
 
@@ -51,10 +52,10 @@ import java.util.concurrent.Future;
  */
 public class HyperassociativeMap<N, E> {
 
-    private static final double REPULSIVE_WEAKNESS = 2.0;
-    private static final double ATTRACTION_STRENGTH = 4.0;
+    private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
+    private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;
     private static final double EQUILIBRIUM_ALIGNMENT_FACTOR = 0.005;
-    private static final double LEARNING_RATE_INCREASE_FACTOR = 0.95;
+    private static final double LEARNING_RATE_INCREASE_FACTOR = 0.99;
     private static final double LEARNING_RATE_PROCESSING_ADJUSTMENT = 1.01;
     
     private static final double DEFAULT_LEARNING_RATE = 0.4;
@@ -79,12 +80,14 @@ public class HyperassociativeMap<N, E> {
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
     private double acceptableMaxDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
     private double speedFactor = 1.0;
-    final double acceptableDistanceAdjustment = 0.1;
+    final double acceptableDistanceAdjustment = 0.01;
     private EdgeWeightToDistanceFunction edgeWeightToDistance = EdgeWeightToDistanceFunction.OneDivSum;
     
     private DistanceMetric distanceFunction;
     final double[] zero;
-    
+    private double attractionStrength = DEFAULT_ATTRACTION_STRENGTH;
+    private double repulsiveWeakness = DEFAULT_REPULSIVE_WEAKNESS;
+
     public Collection<N> keys() {
         return coordinates.keySet();
     }
@@ -108,6 +111,18 @@ public class HyperassociativeMap<N, E> {
             align();
     }
 
+    public double getMaxRepulsionDistance() {
+        return maxRepulsionDistance;
+    }
+
+    public double getAttractionStrength() {
+        return attractionStrength;
+    }
+
+    public double getRepulsiveWeakness() {
+        return repulsiveWeakness;
+    }
+
     private class Align implements Callable<ArrayRealVector> {
 
         private final N node;
@@ -118,7 +133,7 @@ public class HyperassociativeMap<N, E> {
 
         @Override
         public ArrayRealVector call() {
-            return align(node, null);
+            return align(node, null, graph.vertexSet());
         }
     }
 
@@ -138,16 +153,13 @@ public class HyperassociativeMap<N, E> {
         this.zero = new double[dimensions];
 
         if (threadExecutor!=null) {
-            coordinates = Collections.synchronizedMap(new WeakHashMap<N, ArrayRealVector>());
+            coordinates = Collections.synchronizedMap(new HashMap<N, ArrayRealVector>());
         }
         else {
-            coordinates = new WeakHashMap<>();
+            coordinates = new HashMap<>();
         }
-        
-        // refresh all nodes
-        for (final N node : this.graph.vertexSet()) {
-            this.coordinates.put(node, randomCoordinates(this.dimensions));
-        }
+
+        reset();
     }
 
     public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, DistanceMetric distance, final ExecutorService threadExecutor) {
@@ -195,7 +207,7 @@ public class HyperassociativeMap<N, E> {
 
     public void reset() {
         resetLearning();
-        
+
         // randomize all nodes
         coordinates.clear();
         for (final N node : graph.vertexSet()) {
@@ -335,7 +347,7 @@ public class HyperassociativeMap<N, E> {
     
     void getNeighbors(final N nodeToQuery, Map<N, Double> neighbors) {
         if (neighbors == null)
-            neighbors = new HashMap<N, Double>();
+            neighbors = Parameters.newHashMap(graph.vertexSet().size());
         else
             neighbors.clear();
         
@@ -384,6 +396,13 @@ public class HyperassociativeMap<N, E> {
         
     }
 
+    public void setRepulsiveWeakness(double repulsiveWeakness) {
+        this.repulsiveWeakness = repulsiveWeakness;
+    }
+
+    public void setAttractionStrength(double attractionStrength) {
+        this.attractionStrength = attractionStrength;
+    }
 
     public double getSpeedFactor() {
         return speedFactor;
@@ -393,7 +412,8 @@ public class HyperassociativeMap<N, E> {
         return distanceFunction.getDistance(zero, x.getDataRef());
     }
 
-    private ArrayRealVector align(final N nodeToAlign, Map<N, Double> neighbors) {
+    /** vertices is passed as a list because the Set iterator from JGraphT is slow */
+    private ArrayRealVector align(final N nodeToAlign, Map<N, Double> neighbors, Collection<N> vertices) {
         
         
         // calculate equilibrium with neighbors
@@ -422,15 +442,16 @@ public class HyperassociativeMap<N, E> {
             
             double newDistance;
             double factor = 0;
+            final double deltaDist = oldDistance - distToNeighbor;
             if (oldDistance > distToNeighbor) {
-                newDistance = Math.pow(oldDistance - distToNeighbor, ATTRACTION_STRENGTH);                
+                newDistance = Math.pow(deltaDist, attractionStrength);
                 
             } else {
                 
-                newDistance = -targetDistance * atanh((distToNeighbor - oldDistance) / distToNeighbor);
+                newDistance = -targetDistance * atanh((-deltaDist) / distToNeighbor);
                 
-                if (Math.abs(newDistance) > (Math.abs(distToNeighbor - oldDistance))) {
-                    newDistance = -targetDistance * (distToNeighbor - oldDistance);
+                if (Math.abs(newDistance) > (Math.abs(-deltaDist))) {
+                    newDistance = -targetDistance * (-deltaDist);
                 }
                 
             }
@@ -447,7 +468,7 @@ public class HyperassociativeMap<N, E> {
         double maxEffectiveDistance = targetDistance * maxRepulsionDistance;
         
         // calculate repulsion with all non-neighbors
-        for (final N node : graph.vertexSet()) {
+        for (final N node : vertices) {
             if (node == nodeToAlign) continue;
             if (neighbors.containsKey(node)) continue;
 
@@ -457,7 +478,7 @@ public class HyperassociativeMap<N, E> {
             if (oldDistance == Double.POSITIVE_INFINITY)
                 continue;
             
-            double newDistance = -targetDistance / Math.pow(oldDistance, REPULSIVE_WEAKNESS);
+            double newDistance = -targetDistance * Math.pow(oldDistance, -repulsiveWeakness);
 
             if (Math.abs(newDistance) > targetDistance) {
                 newDistance = Math.copySign(targetDistance, newDistance);
@@ -481,7 +502,7 @@ public class HyperassociativeMap<N, E> {
                 learningRate = newLearningRate;
                 //LOGGER.debug("learning rate: " + learningRate);
             } else {
-                learningRate *= LEARNING_RATE_INCREASE_FACTOR;
+                learningRate *= LEARNING_RATE_INCREASE_FACTOR/vertices.size();
                 //LOGGER.debug("learning rate: " + learningRate);
             }
             
@@ -502,6 +523,8 @@ public class HyperassociativeMap<N, E> {
     public boolean normalize() {
         return true;
     }
+
+
 
     /**
      * Obtains a ArrayRealVector with RANDOM coordinates for the specified
@@ -540,25 +563,30 @@ public class HyperassociativeMap<N, E> {
         return futures;
     }
 
+    Map<N, Double> reusableNeighborData = Parameters.newHashMap();
+
     private ArrayRealVector processLocally() {
         ArrayRealVector pointSum = new ArrayRealVector(dimensions);
-        Map<N, Double> reusableNeighborData = new HashMap();
-        
-        for (final N node : graph.vertexSet()) {
-            
-            final ArrayRealVector newPosition = align(node, reusableNeighborData);
+         //new HashMap();
+
+        List<N> vertices = new ArrayList(graph.vertexSet());
+        for (int i = 0; i < vertices.size(); i++) {
+            N node = vertices.get(i);
+
+            final ArrayRealVector newPosition = align(node, reusableNeighborData, vertices);
 
             add(pointSum, newPosition);
         }
         
         if ((learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT) < DEFAULT_LEARNING_RATE) {
-            final double acceptableDistanceAdjustment = 0.1;
             if (getAverageMovement() < (equilibriumDistance * acceptableMaxDistanceFactor * acceptableDistanceAdjustment)) {
                 acceptableMaxDistanceFactor *= LEARNING_RATE_INCREASE_FACTOR;
             }
             learningRate *= LEARNING_RATE_PROCESSING_ADJUSTMENT;
             //LOGGER.debug("learning rate: " + learningRate + ", acceptableDistanceFactor: " + acceptableDistanceFactor);
         }
+
+
         return pointSum;
     }
 

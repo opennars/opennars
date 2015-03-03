@@ -51,6 +51,9 @@ public class ObjectTarget<V> implements Target<V> {
     }
 
 
+    public Class<? extends V> getRequiredType() {
+        return requiredType;
+    }
 
     /**
      * @param node Parent node

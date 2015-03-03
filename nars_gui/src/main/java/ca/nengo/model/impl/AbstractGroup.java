@@ -63,8 +63,8 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	private String myDocumentation;
 	private transient List<VisiblyMutable.Listener> myListeners;
 	private Node[] myNodes;
-	private Map<String, Source> myOrigins;
-	private Map<String, GroupTarget> myTerminations;
+	private Map<String, Source> mySources;
+	private Map<String, GroupTarget> myTargets;
 	
 	private transient Map<String, Object> myMetadata;
 
@@ -87,16 +87,16 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 
 	private void init() {
 		// Using LinkedHashMap to keep ordering
-		myOrigins = new LinkedHashMap<String, Source>(10);
+		mySources = new LinkedHashMap<String, Source>(10);
 		Source[] sources = findOrigins(this, myNodes);
 		for (Source source : sources) {
-		    myOrigins.put(source.getName(), source);
+		    mySources.put(source.getName(), source);
 		}
 
-		myTerminations = new LinkedHashMap<String, GroupTarget>(10);
+		myTargets = new LinkedHashMap<String, GroupTarget>(10);
 		GroupTarget[] terminations = findTerminations(this, myNodes);
 		for (GroupTarget termination : terminations) {
-		    myTerminations.put(termination.getName(), termination);
+		    myTargets.put(termination.getName(), termination);
 		}
 
         myStateNames = findStateNames(myNodes);
@@ -220,7 +220,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 		for (Node myNode : myNodes) {
 			myNode.reset(randomize);
 		}
-		for (Target t : myTerminations.values()) {
+		for (Target t : myTargets.values()) {
 			t.reset(randomize);
 		}
 
@@ -232,14 +232,14 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	 * @see ca.nengo.model.Group#getSource(java.lang.String)
 	 */
     public Source getSource(String name) throws StructuralException {
-		return myOrigins.get(name);
+		return mySources.get(name);
 	}
 
 	/**
 	 * @see ca.nengo.model.Group#getTarget(java.lang.String)
 	 */
     public Target getTarget(String name) throws StructuralException {
-		return myTerminations.get(name);
+		return myTargets.get(name);
 	}
 
     /**
@@ -249,8 +249,8 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
      * @see ca.nengo.model.ExpandableNode#removeTermination(java.lang.String)
      */
     public synchronized Source removeOrigin(String name) throws StructuralException {
-        if (myOrigins.containsKey(name)) {
-            Source result = myOrigins.remove(name);
+        if (mySources.containsKey(name)) {
+            Source result = mySources.remove(name);
 
             fireVisibleChangeEvent();
             return result;
@@ -265,8 +265,8 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
      * @see ca.nengo.model.ExpandableNode#removeTermination(java.lang.String)
      */
     public synchronized Target removeTermination(String name) throws StructuralException {
-        if (myTerminations.containsKey(name)) {
-            Target result = myTerminations.remove(name);
+        if (myTargets.containsKey(name)) {
+            Target result = myTargets.remove(name);
 
             fireVisibleChangeEvent();
             return result;
@@ -280,7 +280,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	 */
     public Source[] getSources() {
         ArrayList<Source> result = new ArrayList<Source>(10);
-        for (Source o : myOrigins.values()) {
+        for (Source o : mySources.values()) {
             result.add(o);
         }
         return result.toArray(new Source[result.size()]);
@@ -291,7 +291,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	 */
     public Target[] getTargets() {
 	    ArrayList<Target> result = new ArrayList<Target>(10);
-	    for (Target t : myTerminations.values()) {
+	    for (Target t : myTargets.values()) {
             result.add(t);
         }
 	    return result.toArray(new Target[result.size()]);
@@ -599,14 +599,14 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 		result.myNodes = nodes;
 		result.myStateNames = findStateNames(nodes);
 		
-		result.myOrigins = new LinkedHashMap<String, Source>(myOrigins.size());
-		for (Source source : myOrigins.values()) {
-			result.myOrigins.put(source.getName(), source.clone(result));
+		result.mySources = new LinkedHashMap<String, Source>(mySources.size());
+		for (Source source : mySources.values()) {
+			result.mySources.put(source.getName(), source.clone(result));
 		}
 		
-		result.myTerminations = new LinkedHashMap<String, GroupTarget>(myTerminations.size());
-		for (GroupTarget termination : myTerminations.values()) {
-			result.myTerminations.put(termination.getName(), termination.clone(result));
+		result.myTargets = new LinkedHashMap<String, GroupTarget>(myTargets.size());
+		for (GroupTarget termination : myTargets.values()) {
+			result.myTargets.put(termination.getName(), termination.clone(result));
 		}
 		
 		if (mySpikePattern != null) {

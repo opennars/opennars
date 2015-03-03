@@ -559,6 +559,11 @@ public interface WorldObject extends NamedObject, Destroyable {
      */
     public void translate(double dx, double dy);
 
+    default public void setSize(double w, double h) {
+        //TODO may not be optimal; may invoke 2 change events when they could just be one
+        setWidth(w);
+        setHeight(h);
+    }
 
 
     public interface ChildListener {

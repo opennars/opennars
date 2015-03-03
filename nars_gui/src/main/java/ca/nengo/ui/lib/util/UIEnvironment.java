@@ -13,7 +13,7 @@ public class UIEnvironment {
 
 	private static AppFrame uiInstance;
 
-	static boolean debugEnabled = false;
+	static boolean debugEnabled = true;
 
 	public static boolean isDebugEnabled() {
 		return debugEnabled;

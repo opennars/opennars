@@ -167,6 +167,10 @@ public class Video {
         float hue = hashFloat(hashCode);
         return Color.getHSBColor(hue, saturation, brightness);
     }
+    @Deprecated public static final Color getColorA(int hashCode, float saturation, float brightness, float alpha) {
+        float hue = hashFloat(hashCode);
+        return getColor(Color.getHSBColor(hue, saturation, brightness), alpha);
+    }
 
     public static final int getColor(int hashCode, float saturation, float brightness, float alpha) {
         return colorHSB(hashCode, saturation, brightness, alpha);
