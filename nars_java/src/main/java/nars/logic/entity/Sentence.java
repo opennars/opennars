@@ -203,10 +203,6 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
 
-    @Deprecated final protected boolean isUniqueByOcurrenceTime() {
-        return true;
-        //return ((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
-    }
     
     /**
      * To check whether two sentences are equal
@@ -218,29 +214,15 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     public boolean equals(final Object that) {
         if (this == that) return true;
         if (that instanceof Sentence) {
-            final Sentence t = (Sentence) that;
-
-            if (punctuation!=t.punctuation) return false;
-
-
-            if (isUniqueByOcurrenceTime()) {
-
-                if (!TemporalRules.concurrent(this, t, Parameters.SentenceOcurrenceTimeCyclesEqualityThreshold)) return false;
-            }
-
-
-            if (truth==null) {
-                if (t.truth!=null) return false;
-            }
-            else /*truth!=null*/ {
-                if (t.truth==null) return false;
-
-                if (!truth.equals(t.truth)) return false;
-            }
-
-            return term.equals(t.term);
+            return equivalentTo((Sentence) that);
         }
         return false;
+    }
+
+    /** compares all sentence fields, after comparing hash (which includes them all) */
+    private boolean equivalentTo(Sentence that) {
+        if (that.hashCode()!=hashCode()) return false;
+        return equivalentTo(that, true, true, true, true);
     }
 
     /**
@@ -251,10 +233,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     @Override
     public int hashCode() {
         if ((this.hash == 0) && (stamp!=null)) {
-            if (isUniqueByOcurrenceTime())
-                this.hash = Objects.hash(term, punctuation, truth, stamp.getOccurrenceTime());
-            else
-                this.hash = Objects.hash(term, punctuation, truth);
+            this.hash = Objects.hash(term, punctuation, truth, stamp);
         }
         return hash;
     }
@@ -265,18 +244,27 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      * @param that The other judgment
      * @return Whether the two are equivalent
      */
-    public boolean equivalentTo(final Sentence that, boolean term, boolean truth, boolean stamp) {
+    public boolean equivalentTo(final Sentence that, boolean punctuation, boolean term, boolean truth, boolean stamp) {
 
         if (this == that) return true;
+        if (punctuation) {
+            if (this.punctuation!=that.punctuation) return false;
+        }
+        if (stamp) {
+            if (!this.stamp.equals(that.stamp, true, true, true, true)) return false;
+        }
         if (term) {
             if (!equalTerms(that)) return false;
         }
         if (truth) {
-            if (!this.truth.equals(that.truth)) return false;
+            if (this.truth==null) {
+                if (that.truth!=null) return false;
+            }
+            else {
+                if (!this.truth.equals(that.truth)) return false;
+            }
         }
-        if (stamp) {
-            if (!this.stamp.equals(that.stamp, true, true, true)) return false;
-        }
+
         return true;
     }
 
@@ -601,6 +589,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     final public boolean equalTerms(final Sentence s) {
         return term.equals(s.term);
     }
+
     final public boolean equalPunctuations(Sentence s) {
         return punctuation == s.punctuation;
     }

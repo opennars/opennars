@@ -220,6 +220,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
             int is = sizeItems();
             if (Math.abs(is - in) > 1) {
+                printAll(System.err);
+                System.err.println("index: " + index);
                 throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
 
             }
@@ -574,6 +576,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         E overflow = null;
 
+        //if (Parameters.DEBUG_BAG) size();
+
         //1. ensure capacity
         int inLevel = getLevel(newItem);
 
@@ -596,6 +600,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         /*Bagged dd = */IN(newItem, inLevel);
 
         //4.
+
+        if (Parameters.DEBUG_BAG) size();
+
         return overflow;
     }
 

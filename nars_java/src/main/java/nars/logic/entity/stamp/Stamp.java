@@ -29,6 +29,7 @@ import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import static nars.logic.nal7.TemporalRules.*;
 import static nars.logic.nal7.Tense.*;
@@ -76,7 +77,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
 
     
     /** cache of hashcode of evidential base */
-    transient private int evidentialHash;
+    transient private int hash;
 
 
 
@@ -350,7 +351,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     public long[] toSet() {
         if (evidentialSet == null) {        
             evidentialSet = toSetArray(evidentialBase);
-            evidentialHash = Arrays.hashCode(evidentialSet);
+            hash = Objects.hash(Arrays.hashCode(evidentialSet), occurrenceTime, creationTime);
         }
         
         return evidentialSet;
@@ -364,19 +365,20 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     /**
      * Check if two stamps contains the same types of content
      *
+     * NOTE: hashcode will include within it the creationTime & occurrenceTime, so if those are not to be compared then avoid comparing hash
      * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase) {
+    public boolean equals(Stamp s, final boolean hash, final boolean evidentialBase, final boolean creationTime, final boolean ocurrenceTime) {
         if (this == s) return true;
 
+        if (hash)
+            if (hashCode()!=s.hashCode()) return false;
         if (creationTime)
             if (getCreationTime()!=s.getCreationTime()) return false;
         if (ocurrenceTime)
             if (getOccurrenceTime()!=s.getOccurrenceTime()) return false;       
         if (evidentialBase) {
-            if (evidentialHash() != s.evidentialHash()) return false;
-
             //iterate in reverse; the ending of the evidence chain is more likely to be different
             final long[] a = toSet();
             final long[] b = s.toSet();
@@ -396,10 +398,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      *
      * @return The hash code
      */
-    public final int evidentialHash() {
+    public final int hashCode() {
         if (evidentialSet==null)
             toSet();       
-        return evidentialHash;
+        return hash;
     }
 
     public Stamp cloneWithNewCreationTime(long newCreationTime) {

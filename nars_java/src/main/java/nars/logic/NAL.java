@@ -276,13 +276,13 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
                 new Sentence(newContent,
                         punctuation,
                         newTruth,
-                        newStamp(getCurrentTask().sentence,
-                        getCurrentBelief())).setRevisible(getCurrentTask().sentence.isRevisible()),
+                        newStamp(getCurrentTask().sentence, getCurrentBelief())),
                 newBudget);
     }
 
     public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
+        newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
         return deriveTask(newTask, false, true);
     }
 
@@ -454,9 +454,10 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         for (long ae : a) {
             for (long be : b) {
                 if (ae == be) return null;
+                if (be > ae) break; //if be exceeds ae, it will never be equal so go to the next ae
             }
         }
-        return newStamp(A, B);
+        return newStamp(A, B, A.getOccurrenceTime());
     }
 
     public interface DerivationFilter extends Plugin {

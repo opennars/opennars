@@ -73,6 +73,11 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
 
     }
 
+    @Override
+    public BudgetValue getBudgetRef() {
+        return null;
+    }
+
     public V getItem() {
         return currentItem;
     }

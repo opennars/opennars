@@ -105,7 +105,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
         @Override
         public E put(final K key, final E value) {
 
-            E removed;
+            E removed, removed2;
 
             /*synchronized (nameTable)*/ {
 
@@ -114,7 +114,15 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
                     removeItem(removed);
                 }
 
-                addItem(value);
+
+                removed2 = addItem(value);
+                if (removed!=null && removed2!=null) {
+                    throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
+                }
+                if (removed2!=null) {
+                    removeKey(removed2.name());
+                    return removed2;
+                }
             }
 
             return removed;
@@ -134,13 +142,13 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
             return super.remove(key);
         }
 
-        public E removeItem(K name) {
-            /*synchronized (nameTable)*/ {
-                E item = nameTable.get(name);
-                if (item == null) return null;
-                return removeItem(item);
-            }
-        }
+//        public E removeItem(K name) {
+//            /*synchronized (nameTable)*/ {
+//                E item = nameTable.get(name);
+//                if (item == null) return null;
+//                return removeItem(item);
+//            }
+//        }
 
         public E removeItem(final E removed) {
             if (items.remove(removed)) {
@@ -150,8 +158,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
             return null;
         }
 
-        public void addItem(final E removed) {
-            items.add(removed);
+        public E addItem(final E i) {
+            return items.insert(i);
         }
 
         @Override
@@ -165,6 +173,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
                 if (e != null) {
                     removeItem(e);
                 }
+                if (Parameters.DEBUG_BAG)
+                    size();
 
             }
             return e;
@@ -395,36 +405,50 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
     @Override
     public E put(E i) {
 
-        /*synchronized (nameTable)*/ {
+
+
             float newPriority = i.getPriority();
 
-            E oldItem = nameTable.remove(i.name());
-            if (oldItem!=null) {
-                i.budget.merge(oldItem.budget);
-            }
-
-            else if (nameTable.size() >= capacity) {
+            boolean contains = nameTable.containsKey(i.name());
+            if ((nameTable.size() >= capacity) && (!contains)) {
                 // the bag is full
 
-                // this item is below the bag's already minimum item
+                // this item is below the bag's already minimum item, no change (return the input as the overflow)
                 if (newPriority < getMinPriority()) {
                     return i;
                 }
 
-                oldItem = removeItem(0);
-            }
+                E oldItem = removeItem(0);
 
-            nameTable.put(i.name(), i);
+                if (oldItem == null)
+                    throw new RuntimeException("required removal but nothing removed");
+                else {
+                    if (oldItem.name().equals(i.name())) {
+                        throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ")");
+                    }
+                }
 
-            mass += (i.budget.getPriority());                  // increase total mass
 
-            if ((oldItem!=null) && (oldItem.name().equals(i.name()))) {
-                //no overflow actually occurred
+                //insert
+                nameTable.put(i.name(), i);
+
+                mass += i.getPriority();
+
+                return oldItem;
+            } else if (contains) {
+                //TODO check this mass calculation
+                E existingToReplace = nameTable.put(i.name(), i);
+                mass += i.getPriority();
+                return null;
+            } else /* if (!contains) */ {
+                E shouldNotExist = nameTable.put(i.name(), i);
+                if (shouldNotExist != null)
+                    throw new RuntimeException("already expected no existing key/item but it was actually there");
+                mass += i.getPriority();
                 return null;
             }
 
-            return oldItem;
-        }
+
 
 
     }

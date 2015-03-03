@@ -6,24 +6,23 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingNode;
-import javafx.event.EventType;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.paint.Color;
+import javafx.scene.control.Control;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARControls;
-import nars.gui.output.chart.MeterVis;
-import nars.io.meter.TemporalMetrics;
 
 import javax.swing.*;
 import java.awt.*;
@@ -145,6 +144,7 @@ public class NARWindow extends Stage {
                 Button bp = AwesomeDude.createIconButton(AwesomeIcon.PLAY);
                 bp.setTooltip(new Tooltip("Play"));
                 v.getChildren().add(bp);
+
 
                 Button bs = AwesomeDude.createIconButton(AwesomeIcon.STEP_FORWARD);
                 bs.setTooltip(new Tooltip("Step"));

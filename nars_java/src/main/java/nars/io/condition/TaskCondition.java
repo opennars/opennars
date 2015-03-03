@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -348,7 +349,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         if (!close.isEmpty()) {
             x += "Similar:\n";
             for (Map.Entry<Double,Task> et : close.entrySet())
-                x += et.getKey() + " (" + et.getValue() + ")\n";
+                x += Texts.n4(et.getKey().floatValue()) + ' ' + et.getValue().toStringExternal2(true) + ' ' + et.getValue().getStamp().toString() + "\n";
         }
         else {
             x += "No similar\n";
@@ -356,7 +357,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         if (!removals.isEmpty()) {
             x += "Matching removals:\n";
             for (Task t : removals)
-                x += t.toString() + " (" + t.getReason() + ")\n";
+                x += t.toString() + ' ' + t.getReason() + '\n';
         }
         return x;
     }

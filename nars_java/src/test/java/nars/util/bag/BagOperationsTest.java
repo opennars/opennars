@@ -12,6 +12,7 @@ import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.LevelBag;
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -91,20 +92,18 @@ public class BagOperationsTest {
         else if (b instanceof CurveBag) {
             assertEquals("c", b.put(new NullConcept("c", 0.1f)).name().toString()); //could not insert, so got the object returned as result
             assertEquals(2, b.size());
-        
+
             //same id, different priority (lower, so budget will not be affected)
             assertEquals(null, b.put(new NullConcept("b", 0.1f)));
-            assertEquals(0.2f, b.getMinPriority(),0.001f); //unaffected, 0.2 still lowest
-
-            //same id, higher priority
-            assertEquals(0.3f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
+            assertEquals(0.1f, b.getMinPriority(),0.001f); //affected, item budget replaced to new value, 0.1 new lowest
+            assertEquals(0.2f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
 
             //increasing b's priority should not cause 'a' to be removed
             Item zzz = b.put(new NullConcept("b", 0.4f));
             assertNull(null, zzz);
 
             assertEquals(0.4f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
-
+            assertNotNull(b.GET(Term.get("a")));
         }
         
     }

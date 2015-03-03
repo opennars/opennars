@@ -2,14 +2,18 @@ package nars.logic.entity.tlink;
 
 import nars.logic.entity.Term;
 
+import java.util.Objects;
+
 
 public interface TermLinkKey {
+
+    public Term getSource();
     public Term getTarget();
 
     public String getPrefix();
 
     default public int termLinkHashCode() {
-        return 31 * ((31 * getPrefix().hashCode()) + getTarget().hashCode());
+        return Objects.hash(getPrefix(), getTarget());
     }
 
     default public boolean termLinkEquals(Object obj) {
@@ -17,7 +21,11 @@ public interface TermLinkKey {
         if (obj == this) return true;
 
         TermLinkKey t = (TermLinkKey) obj;
-        return getPrefix().equals(t.getPrefix()) && getTarget().equals(t.getTarget());
+        return getPrefix().equals(t.getPrefix()) && getTarget().equals(t.getTarget());//
+
+        //shouldnt be necessary to compare the source because prefix will contain the necessary information how it relates to target
+        // && getSource().equals(t.getSource());
     }
+
 
 }

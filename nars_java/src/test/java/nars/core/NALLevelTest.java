@@ -37,7 +37,7 @@ public class NALLevelTest {
         n8.addInput(productSentence);
         n8.run(5);
 
-        assertTrue("NAL8 will accept sentence containing a Product", n8Count.getOutputs() > 1);
+        assertTrue("NAL8 will accept sentence containing a Product", n8Count.getOutputs() >= 1);
         assertEquals("NAL1 will NOT accept sentence containing a Product", 0, n1Count.getOutputs() + n1Count.getOthers());
 
 

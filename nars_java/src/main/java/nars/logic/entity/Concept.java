@@ -306,10 +306,10 @@ public class Concept extends Item<Term> implements Termable {
         if ((oldBelief != null) && (oldBelief!=judg)) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp, false, false, true)) {
-                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
-                    //task.budget.decPriority(0);    // duplicated task
-                }   // else: activated belief
+            if (newStamp.equals(oldStamp, false, true, false, false)) {
+//                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
+//                    //task.budget.decPriority(0);    // duplicated task
+//                }   // else: activated belief
                 
                 memory.removeTask(task, "Duplicated");                
                 return;
@@ -350,7 +350,6 @@ public class Concept extends Item<Term> implements Termable {
 
 
             addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
-
         }
     }
 
@@ -423,7 +422,7 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
-            if (newStamp.equals(oldStamp,false,false,true)) {
+            if (newStamp.equals(oldStamp,false, true, false,false)) {
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
 
@@ -530,14 +529,8 @@ public class Concept extends Item<Term> implements Termable {
      */
     public boolean linkToTask(final Task task) {
         BudgetValue taskBudget = task.budget;
-        taskLinkBuilder.setBudget(taskBudget);
         taskLinkBuilder.setTask(task);
         taskLinkBuilder.setTemplate(null);
-        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
-
-        if (!(term instanceof CompoundTerm)) {
-            return false;
-        }
 
         List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
@@ -551,20 +544,19 @@ public class Concept extends Item<Term> implements Termable {
         final int numTemplates = templates.size();
 
 
-        //float linkSubBudgetDivisor = (float)numTemplates;
-        float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
+        float linkSubBudgetDivisor = (float)numTemplates + 1;
+        //float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
-        taskLinkBuilder.setBudget(subBudget);
-
         if (!subBudget.aboveThreshold()) {
             //unused
             taskBudgetBalance += taskBudget.getPriority();
             return false;
         }
 
-        taskLinkBuilder.setTask(task);
-        taskLinkBuilder.setBudget(taskBudget);
+        taskLinkBuilder.setBudget(subBudget);
+
+        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
 
         for (int i = 0; i < numTemplates; i++) {
             TermLinkTemplate termLink = templates.get(i);
@@ -584,7 +576,7 @@ public class Concept extends Item<Term> implements Termable {
             else {
                 taskBudgetBalance += subBudget.getPriority();
             }
-//             }
+
         }
 
         return true;
@@ -630,7 +622,7 @@ public class Concept extends Item<Term> implements Termable {
 //            }
 
             if (rank1 >= rank2) {
-                if (newSentence.equivalentTo(existingSentence, false, true, true)) {
+                if (newSentence.equivalentTo(existingSentence, false, false, true, true)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return null;
                 }
@@ -712,28 +704,34 @@ public class Concept extends Item<Term> implements Termable {
         int recipients = termLinkBuilder.getNonTransforms();
 
 
-        float subBudget = 0;
+        final float subBudget;
         if (recipients == 0) {
-            termBudgetBalance += subBudget;
-            subBudget = 0;
-            termLinkBuilder.set(0,0,0);
+            //termBudgetBalance += subBudget;
+            //subBudget = 0;
             return false;
         }
+        else {
+            //TODO make this parameterizable
 
-        //TODO make this parameterizable
+            //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
 
-        //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
+            //half of each subBudget is spent on this concept and the other concept's termlink
+            subBudget = taskBudget.getPriority() * (1f / (2 * recipients));
 
-        //half of each subBudget is spent on this concept and the other concept's termlink
-        //subBudget = taskBudget.getPriority() * (1f / (2* * recipients));
+            //subBudget = taskBudget.getPriority() * (1f / (float)Math.sqrt(recipients));
 
-        subBudget = taskBudget.getPriority() * (1f / (float)Math.sqrt(recipients));
 
-        if (!termLinkBuilder.set(subBudget, taskBudget.getDurability(), taskBudget.getQuality()).aboveThreshold()) {
-            //account for unused priority
-            termBudgetBalance += taskBudget.getPriority();
-            return false;
         }
+
+
+//            //account for unused priority
+//            termBudgetBalance += taskBudget.getPriority();
+//            return false;
+//        }
+
+
+        if (!termLinkBuilder.set(subBudget, taskBudget.getDurability(), taskBudget.getQuality()).aboveThreshold())
+            return false;
 
         boolean activity = false;
 
@@ -746,7 +744,7 @@ public class Concept extends Item<Term> implements Termable {
 
             Term target = template.target;
 
-            final Concept otherConcept = memory.conceptualize(taskBudget, target);
+            final Concept otherConcept = memory.conceptualize(termLinkBuilder.getBudget(), target);
             if (otherConcept == null) {
                 termBudgetBalance += subBudget*2;
                 continue;
@@ -755,15 +753,16 @@ public class Concept extends Item<Term> implements Termable {
             activity = true;
 
             // this concept termLink to that concept
-            activateTermLink(termLinkBuilder.set(template, term, target));
+            activateTermLink(termLinkBuilder.set(template, term));
 
             // that concept termLink to this concept
-            otherConcept.activateTermLink(termLinkBuilder.set(template, target, term));
+            otherConcept.activateTermLink(termLinkBuilder.set(template, target));
 
             if (target instanceof CompoundTerm) {
-                otherConcept.linkToTerms(termLinkBuilder.getBudget());
+                otherConcept.linkToTerms(termLinkBuilder.getBudgetRef());
             }
         }
+
         return activity;
     }
 

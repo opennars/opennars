@@ -50,7 +50,7 @@ public class Parameters {
     public static final boolean DEBUG_TRACE_EVENTS = false;
 
     /** for thorough bag debugging (slow) */
-    public static boolean DEBUG_BAG = false;
+    public static boolean DEBUG_BAG = true;
     public static boolean DEBUG_INVALID_SENTENCES = false;
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -196,12 +196,12 @@ public class Parameters {
     public static boolean IMMEDIATE_ETERNALIZATION=true;
 
 
-    /** how many maximum cycles difference in ocurrence time
-     * are two non-eternal sentences considered equal, if all
-     * other features (term, punctuation, truth, ..) are equal.
-     * this is similar to Duration parameter
-     */
-    public static final int SentenceOcurrenceTimeCyclesEqualityThreshold = 1;
+//    /** how many maximum cycles difference in ocurrence time
+//     * are two non-eternal sentences considered equal, if all
+//     * other features (term, punctuation, truth, ..) are equal.
+//     * this is similar to Duration parameter
+//     */
+//    public static final int SentenceOcurrenceTimeCyclesEqualityThreshold = 1;
 
     /**
      * this determines the percentage of concepts which have their priority

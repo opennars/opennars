@@ -10,7 +10,13 @@ import java.util.Iterator;
  * @author me
  */
 public interface SortedIndex<T> extends Collection<T> {
- 
+
+    @Override
+    default boolean add(T t) {
+        throw new RuntimeException("Use insert method which can return a displaced object");
+    }
+
+    public T insert(T i);
     public T get(int i);
     public T remove(int i);
     public T getFirst();
@@ -29,5 +35,6 @@ public interface SortedIndex<T> extends Collection<T> {
         }
         System.out.println();
     }
-    
+
+
 }

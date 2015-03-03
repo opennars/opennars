@@ -34,6 +34,10 @@ public class RedBlackSortedIndex<E extends Item> extends IndexedTreeSet<E> imple
         return last();
     }
 
+    @Override
+    public E insert(E i) {
+        throw new RuntimeException("Not implemented yet");
+    }
 
 
     @Override

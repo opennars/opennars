@@ -3,6 +3,7 @@
 <a --> b>?
 'ok lets ask something different, then NARS should knows something very interesting about what happened:
 <c --> d>?
-20
+'20
+40
 ''outputMustContain('<(^believe,<a --> b>,TRUE) =|> (^wonder,<c --> d>)>. :|: %1.00;0.45%')
 'todo, look why tense is different than in GUI here

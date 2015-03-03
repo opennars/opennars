@@ -115,7 +115,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
 
-        this.hash = (sentence==null? 0 : sentence.hashCode()) + parentHash();
+        this.hash = (sentence==null? 0 : sentence.hashCode());// + parentHash();
 
         if (Parameters.DEBUG) {
             if ((parentTask!=null && parentTask.get() == null))
@@ -175,7 +175,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         if (obj == this) return true;
         if (obj instanceof Task) {
             Task t = (Task)obj;
-            return sentence.equals(t.sentence) && equalParents(t);
+            return sentence.equals(t.sentence);// && equalParents(t);
         }
         return false;        
     }

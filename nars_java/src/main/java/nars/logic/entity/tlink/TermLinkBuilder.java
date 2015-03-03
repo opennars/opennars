@@ -22,7 +22,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     final CompoundTerm host;
 
-    Term from = null;
 
     TermLinkTemplate currentTemplate;
     boolean incoming;
@@ -32,7 +31,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
         this.concept = c;
 
-        setBudget(new BudgetValue(0,0.5f,0.5f));
+        setBudget(null);
 
         host = (CompoundTerm)c.getTerm();
 
@@ -42,6 +41,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         nonTransforms = 0;
 
         prepareComponentLinks(host);
+
+        setKey(this);
     }
 
     void prepareComponentLinks(CompoundTerm ct) {
@@ -127,6 +128,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
 
+
     /** count how many termlinks are non-transform */
     public List<TermLinkTemplate> templates() {
         return template;
@@ -143,18 +145,14 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     /** configures this selector's current budget for the next bag operation */
     public BudgetValue set(float subBudget, float durability, float quality) {
-        budget.setPriority(subBudget);
-        budget.setDurability(durability);
-        budget.setQuality(quality);
+        this.budget = new BudgetValue(subBudget, durability, quality);
         return budget;
     }
 
     /** configures this selector's current bag key for the next bag operation */
-    public TermLinkBuilder set(TermLinkTemplate temp, Term source, Term target) {
+    public TermLinkBuilder set(TermLinkTemplate temp, Term source) {
         this.currentTemplate = temp;
         this.incoming = !source.equals(concept.term);
-        this.from = source;
-        //this.to = target;
         return this;
     }
 
@@ -175,8 +173,14 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     public String getPrefix() {
         return currentTemplate.prefix(incoming);
     }
+
     public Term getTarget() {
-        return concept.getTerm();
+        return incoming ? concept.getTerm() : currentTemplate.target;
+    }
+
+    @Override
+    public Term getSource() {
+        return incoming ? currentTemplate.target : concept.getTerm();
     }
 
     @Override
@@ -192,7 +196,14 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     @Override
     public TermLink newItem() {
-        return new TermLink(incoming, getTarget(), currentTemplate, getPrefix(), getBudget());
+        TermLink t = new TermLink(incoming, concept.getTerm(), currentTemplate, getPrefix(), getBudget());
+        if (Parameters.DEBUG) {
+            if (!equals(t))
+                throw new RuntimeException("builder to select an existing termlink does not equal that which it creates");
+            if (!t.equals(this))
+                throw new RuntimeException("created termlink does not equal the builder used to select an existing one");
+        }
+        return t;
     }
 
     public int size() {
@@ -212,4 +223,12 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override public TermLink updateItem(TermLink termLink) {
         return null;
     }
+
+    @Override
+    public String toString() {
+        //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
+        return getPrefix() + ':' + getTarget();
+    }
+
+
 }

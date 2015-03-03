@@ -96,24 +96,30 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
 
    
     @Override
-    public boolean add(final E o) {
-                
+    public E insert(final E o) {
+
+        E removed = o;
+
         if (isEmpty()) {
-            return list.add(o);
+            list.add(o);
+            return null;
         } else {
             if (size() >= capacity) {
 
                 if (positionOf(o) == 0) {
                     //priority too low to join this list
-                    return false;
+                    return o;
                 }
 
-                reject(remove(0));
+                removed = remove(0);
+            }
+            else {
+                removed = null;
             }
             
             list.add(validPosition(positionOf(o)), o);
-            return true;
         }
+        return removed;
     }
 
     @Override
@@ -153,11 +159,11 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
         return reverse.iterator();
     }
 
-    /**
-     * can be handled in subclasses
-     */
-    protected void reject(E removeFirst) {
-    }
+//    /**
+//     * can be handled in subclasses
+//     */
+//    protected void reject(E removeFirst) {
+//    }
 
     
     @Override public E remove(int i) {
@@ -226,34 +232,33 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
         do {
             
             if (i < s) {
-                E r = list.get( i );
-                if ((o == r) || (r.name().equals(on))) {
-                    if (list.remove(i)!=null)
-                        return true;
-                    else
-                        continue;
-                }
-                i++;                
+                if (attemptRemoval(o, on, i))
+                    return true;
+                i++;
             }
-            else
+            if (i == s)
                 finishedUp = true;
 
             if (j >= 0) {
-                E r = list.get( j );
-                if ((o == r) || (r.name().equals(on))) {
-                    if (list.remove(j)!=null)
-                        return true;
-                    else 
-                        continue;
-                }
+                if (attemptRemoval(o, on, j))
+                    return true;
                 j--;
             }
-            else
+            if (j < 0)
                 finishedDown = true;
             
         } while ( (!finishedUp) || (!finishedDown) );
                 
         //throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
+        return false;
+    }
+
+    private boolean attemptRemoval(Object o, Object on, int i) {
+        E r = list.get( i );
+        if ((o == r) || (r.name().equals(on))) {
+            if (list.remove(i)!=null)
+                return true;
+        }
         return false;
     }
 

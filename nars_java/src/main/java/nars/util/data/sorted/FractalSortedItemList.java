@@ -47,7 +47,12 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
         this.capacity = capacity;
     }
 
-    
+
+    @Override
+    public E insert(E i) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
     @Override
     public void setCapacity(int capacity) {
         this.capacity = capacity;

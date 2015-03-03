@@ -29,7 +29,7 @@ public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable
         boolean changed = false;
 
         //1. merge the budget, if specified
-        BudgetValue b = getBudget();
+        BudgetValue b = getBudgetRef();
         if (b!=null) {
             changed = v.budget.merge(b);
         }
@@ -50,5 +50,7 @@ public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable
 
     }
 
+    /** returns a reference to the budgetvalue; not a clone */
+    public BudgetValue getBudgetRef();
 
 }

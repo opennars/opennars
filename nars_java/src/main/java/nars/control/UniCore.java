@@ -66,8 +66,6 @@ abstract public class UniCore implements Core {
         }
         @Override
         public void beforeFinish() {
-            float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
-            bag.putBack(currentConcept, forgetCycles, memory);
         }
     }
 
@@ -81,13 +79,11 @@ abstract public class UniCore implements Core {
     }
 
     protected Concept nextConcept() {
-        //TODO use an UPDATE to avoid changing the bag's nameTable
-        Concept currentConcept = concepts.TAKENEXT();
+        Concept currentConcept = concepts.peekNext();
         if (currentConcept==null)
             return null;
 
         if (currentConcept.getPriority() < memory.param.conceptFireThreshold.get()) {
-            concepts.putBack(currentConcept);
             return null;
         }
 

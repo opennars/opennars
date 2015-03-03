@@ -76,6 +76,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
     private final String prefix;
 
     transient final int hash;
+    private final Term source;
 
     /**
      * Constructor to make actual TermLink from a template
@@ -90,10 +91,12 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
         super(v);
 
         if (incoming) {
+            this.source = template.target;
             this.target = host;
             type = template.type;
         }
         else {
+            this.source = host;
             this.target = template.target;
             type = (short)(template.type - 1); //// point to component
         }
@@ -131,40 +134,13 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
     @Override
     public boolean equals(final Object obj) {
         return termLinkEquals(obj);
-//
-//            short[] ti = t.index;
-//            final int il = index.length;
-//
-//            //compare index length
-//            if (il!=ti.length) return false;
-//
-//            //compare type
-//            if (type != t.type) return false;
-//
-//            //compare array content
-//            for (int i=0; i<il; i++)
-//                if (index[i] != ti[i])
-//                    return false;
-//
-//            //compare target nullity
-//            final Term tt = t.target;
-//            if (target == null) {
-//                if (tt!=null) return false;
-//            }
-//            else if (tt == null)
-//                return false;
-//
-//            //compare target
-//            return (target.equals(t.target));
-
-        //return false;
     }
 
     
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return getPrefix() + ":" + getTarget();
+        return getPrefix() + ':' + getTarget();
     }
 
     public String getPrefix() { return prefix; }
@@ -229,6 +205,11 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
     @Override
     public Term getTarget() {
         return getTerm();
+    }
+
+    @Override
+    public Term getSource() {
+        return source;
     }
 
 

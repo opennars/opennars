@@ -6,6 +6,7 @@ package nars.logic.reason;
 
 import nars.core.Events;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.logic.NAL;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
@@ -20,6 +21,10 @@ public class ImmediateProcess extends NAL {
     public ImmediateProcess(Memory mem, Task task) {
         super(mem, task);
 
+        if (Parameters.DEBUG) {
+            if (!task.aboveThreshold())
+                throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
+        }
     }
 
     @Override

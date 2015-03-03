@@ -35,7 +35,11 @@ abstract public class BagActivator<K,V extends Item<K>> implements BagSelector<K
 
     @Override
     public BudgetValue getBudget() {
-        return budget;
+        return budget.clone();
     }
 
+    /** returns a reference to the budgetvalue; not a clone */
+    public BudgetValue getBudgetRef() {
+        return budget;
+    }
 }

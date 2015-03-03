@@ -21,9 +21,8 @@
 
 package automenta.vivisect.javafx.willow.util;
 
-import de.jensd.fx.fontawesome.AwesomeDude;
-import de.jensd.fx.fontawesome.AwesomeIcon;
-import javafx.scene.image.Image;
+
+
 import javafx.scene.image.ImageView;
 
 import javax.imageio.ImageIO;

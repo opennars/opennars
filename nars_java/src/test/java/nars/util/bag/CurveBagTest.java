@@ -162,10 +162,14 @@ public class CurveBagTest extends AbstractBagTest {
         
         assertEquals(c.getMass(), d.getMass(), 0);
         assertEquals(c.getPriorityMean(), d.getPriorityMean(), 0);
-        
+
+        c.printAll(System.out);
+
         c.put(new NullItem(.25f));
         d.put(new NullItem(.25f));
-        
+
+        c.printAll(System.out);
+
         //check that continuousbag and discretebag calculate the same average priority value        
         assertEquals(0.25f, c.getPriorityMean(), priorityEpsilon);
         assertEquals(0.25f, d.getPriorityMean(), priorityEpsilon);
