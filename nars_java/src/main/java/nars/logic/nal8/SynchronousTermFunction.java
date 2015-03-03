@@ -36,9 +36,13 @@ public abstract class SynchronousTermFunction extends Operator {
     abstract protected Term function(Memory memory, Term[] x);
     
     /** the term that the output will inherit from; analogous to the 'Range' of a function in mathematical terminology */
-    @Deprecated abstract protected Term getRange();
+    protected Term getRange() {
+        return null;
+    }
         
-    //abstract protected int getMinArity();
+    protected int getMinArity() {
+        return 0;
+    }
     //abstract protected int getMaxArity();
     
     @Override
@@ -49,7 +53,7 @@ public abstract class SynchronousTermFunction extends Operator {
         if (args[args.length-1].equals(m.getSelf()))
             numArgs--;
         
-        if (numArgs < 2) {
+        if (numArgs < (1+getMinArity())) {
             throw new RuntimeException("Requires at least 2 arguments");
         }
         

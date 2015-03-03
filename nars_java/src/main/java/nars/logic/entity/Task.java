@@ -317,6 +317,10 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         return s.toString();
     }
 
+    @Override
+    public String toString() {
+        return toStringExternal();
+    }
 
     public boolean hasParent(Task t) {
         if (getParentTask() == null)

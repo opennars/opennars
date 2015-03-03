@@ -129,11 +129,15 @@ public abstract class Operator extends Term implements Plugin {
             if (getTask() != null) {
                 b = getTask().budget;
             }
-            Term[] args = operation.getArguments().term;
-            Operator operator = operation.getOperator();
-            
-            return ((b != null) ? (b.toStringExternal() + ' ') : "") +
+            if (operation instanceof ImmediateOperation) {
+                return operation.toString();
+            }
+            else {
+                Term[] args = operation.getArguments().term;
+                Operator operator = operation.getOperator();
+                return ((b != null) ? (b.toStringExternal() + ' ') : "") +
                         operator + '(' + Arrays.toString(args) + ")=" + feedback;
+            }
         }
         
         

@@ -87,6 +87,11 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
 
 
         @Override
+        public void dragOffset(double dx, double dy) {
+            super.dragOffset(dx, dy);
+        }
+
+        @Override
         public String getTypeName() {
             return AbstractWidget.this.getTypeName();
         }
@@ -99,5 +104,9 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
             AbstractWidget.this.paint(paintContext, getWidth(), getHeight());
         }
 
+    }
+
+    public void move(double dx, double dy) {
+        ui.dragOffset(dx, dy);
     }
 }

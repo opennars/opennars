@@ -31,6 +31,11 @@ abstract public class ImmediateOperation extends Operation {
         public CompoundTerm getTerm() {
             return imm;
         }
+
+        @Override
+        public String toString() {
+            return imm.toString();
+        }
     }
 
     /** create a new task that wraps this operation */
@@ -40,4 +45,5 @@ abstract public class ImmediateOperation extends Operation {
 
     @Override
     public CharSequence name() { return getClass().getSimpleName(); }
+
 }

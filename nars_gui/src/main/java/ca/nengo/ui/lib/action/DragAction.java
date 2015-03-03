@@ -113,13 +113,11 @@ public class DragAction extends ReversableAction {
         dropNode(node, null);
     }
 
+
 	public static void dropNode(WorldObject node, List<WorldObject> intersectingObjectsBuffer) throws UserCancelledException {
 		if (node instanceof DroppableX || node instanceof Droppable) {
-			WorldObject worldLayer = node.getWorldLayer();
 
-
-			Collection<WorldObject> allTargets = worldLayer.findIntersectingNodes(node
-					.localToGlobal(node.getBounds()), intersectingObjectsBuffer);
+            Collection<WorldObject> allTargets = node.intersecting(intersectingObjectsBuffer);
 
 			Collection<WorldObject> goodTargets = null;
 
@@ -147,8 +145,8 @@ public class DragAction extends ReversableAction {
 					}
 				}
 				if (target == null) {
-					if (droppable.acceptTarget(worldLayer)) {
-						target = worldLayer;
+					if (droppable.acceptTarget(node.getWorldLayer())) {
+						target = node.getWorldLayer();
 					}
 				}
 				else {
