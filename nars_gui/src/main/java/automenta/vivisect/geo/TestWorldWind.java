@@ -1,4 +1,4 @@
-package nars.gui.output.geo;
+package automenta.vivisect.geo;
 
 
 import gov.nasa.worldwind.Configuration;
