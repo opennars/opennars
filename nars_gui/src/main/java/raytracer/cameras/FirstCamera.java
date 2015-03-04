@@ -22,7 +22,7 @@ import javax.vecmath.Vector3d;
  */
 public class FirstCamera extends AsyncCamera
 {
-    private final static Vector3d org = new Vector3d(0.0, 0.0, -10.0);
+    public final static Vector3d org = new Vector3d(0.0, 0.0, -10.0);
     
     
     private final double factor;

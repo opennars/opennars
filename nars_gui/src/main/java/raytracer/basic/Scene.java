@@ -11,7 +11,7 @@ import raytracer.objects.SceneObject;
 
 import javax.media.opengl.GLAutoDrawable;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * Eine Szene ist eine Ansammlung von Objekten mit bestimmten Eigenschaften.<br>
@@ -52,7 +52,7 @@ abstract public class Scene
      * 
      * @return Iterator �ber alle Lichter dieser Szene.
      */
-    abstract public Iterator<Light> lightIterator();
+    abstract public List<Light> getLights();
     
     
 	/**
@@ -141,4 +141,7 @@ abstract public class Scene
      * @param drawable Informationen zum Zeichnen mittels OpenGL.
      */
     abstract public void display(GLAutoDrawable drawable);
+
+    /** returns boolean if the scene needs to be updated */
+    public boolean update(double t) { return false; }
 }

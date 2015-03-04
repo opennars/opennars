@@ -16,8 +16,6 @@ import raytracer.util.BoundingField;
 
 import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Vector3d;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Locale;
@@ -164,7 +162,7 @@ public class OffObject extends SceneObject
     throws IOException, InvalidFormatException
     {
         // Datei �ffnen:
-        Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(fileName)));
+        Scanner scanner = new Scanner(getClass().getClassLoader().getResourceAsStream(fileName));
         scanner.useLocale(Locale.US);
 
         Vector<Vector3d> vertices = new Vector<Vector3d>();
@@ -172,7 +170,7 @@ public class OffObject extends SceneObject
         try
         {
             // OFF-Format Kennung pr�fen:
-            if (!scanner.next().equals("OFF"))
+            if (!scanner.hasNext() || !scanner.next().equals("OFF"))
                 throw new InvalidFormatException();
             
             // Anzahl der Punkte, Fl�chen und Kanten bestimmen:

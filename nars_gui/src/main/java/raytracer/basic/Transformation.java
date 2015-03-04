@@ -235,10 +235,10 @@ public class Transformation
      * 
      * @param t Transformation, mit der diese Transformation kombiniert wird.
      */
-    private void concat(double[][] t)
+    private void concat(final double[][] t)
     {
         int i, j;
-        double m[][] = new double[4][4];
+        final double m[][] = new double[4][4];
         
         // Ergebnis berechnen:
         for (i = 0; i < 4; i++)

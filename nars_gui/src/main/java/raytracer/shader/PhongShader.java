@@ -14,7 +14,7 @@ import raytracer.lights.Light;
 
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * Dieser Shader arbeitet nach dem Phong-Blinn-Modell und ber�cksichtigt dabei
@@ -130,11 +130,10 @@ public class PhongShader implements Shader
         // Vektoren normalisieren:
         eyelight.normalize();
 
-        Iterator<Light> it = intersection.scene.lightIterator();
-        while (it.hasNext())
-        {
-            // Vorbereiten, um Strahlen zum n�chsten Licht zu senden:
-            Light light = it.next();
+        List<Light> lights = intersection.scene.getLights();
+        final int numLights = lights.size();
+        for (int i = 0; i < numLights; i++) {
+            final Light light = lights.get(i);
             if (!light.isIlluminated(point))
                 continue;
             light.startRay(point);

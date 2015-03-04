@@ -102,7 +102,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
         
         // Ereignisbehandlung initialisieren:
         addWindowListener(this);
-        
+
         // Men�leiste initialisieren:
         initMenu();
         
@@ -110,7 +110,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
         initComponents();
     }
     
-    private void initCamera()
+    private void startCamera()
     {
         if (!windowStartet)
             return;
@@ -119,7 +119,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
         {
             // Ereignisbehandlung initialisieren:
             camera.addRendererListener(this);
-            
+
             // Starzeit ermitteln:
             startTime = System.currentTimeMillis();
             
@@ -128,20 +128,19 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
         }
         
         // Bild zur�cksetzen:
-        renderedImage = null;
+        //renderedImage = null;
         
         // Titel aktualisieren:
-        updateTitle();        
+        SwingUtilities.invokeLater(this::updateTitle);
     }
     
-    private void destroyCamera()
+    private void stopCamera()
     {
         // Rendervorgang abbrechen:
         if (camera != null)
             camera.stop();
-        
-        // Titel aktualisieren:
-        updateTitle();
+
+        SwingUtilities.invokeLater(this::updateTitle);
     }
     
     private void initMenu()
@@ -169,8 +168,46 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
         scroller = new JScrollPane(preview);
         scroller.addComponentListener(this);
         add(scroller);
+
+        scroller.addMouseMotionListener(mouseHandler);
+        scroller.addMouseListener(mouseHandler);
+
     }
-    
+
+    final MouseAdapter mouseHandler = new MouseAdapter() {
+        int dragStartX = -1, dragStartY = -1;
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            dragStartX = e.getX(); dragStartY = e.getY();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (camera!=null) {
+                if (camera instanceof FirstCamera) {
+                    FirstCamera f = (FirstCamera)camera;
+
+                    Vector3d delta = new Vector3d(e.getX() - dragStartX, e.getY() - dragStartY, 0);
+                    delta.scale(0.0005);
+                    f.org.add( delta );
+
+                    dragStartX = e.getX();
+                    dragStartY = e.getY();
+
+                    SwingUtilities.invokeLater(RaytracerFrame.this::restartCamera);
+
+                    //camera.fpsRotate(e.getX() - dragStartX, e.getY() - dragStartY);
+                }
+
+            }
+        }
+    };
+
+    public void restartCamera() {
+        stopCamera();
+        startCamera();
+    }
     
     /**
      * Men� erstellen: "Datei"
@@ -768,18 +805,15 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
             event.getSource().getImage(renderedImage);
         updateTitle();
         updateImage();
+
+        if (this.camera.getScene().update(System.currentTimeMillis())) {
+            SwingUtilities.invokeLater(this::restartCamera);
+        }
     }
     
     @Override
-    public void renderFinished(RendererEvent event)
-    {
-        progress = event.getProgress();
-        if (renderedImage == null)
-            renderedImage = event.getSource().getImage();
-        else
-            event.getSource().getImage(renderedImage);
-        updateTitle();
-        updateImage();
+    public void renderFinished(RendererEvent event) {
+        renderUpdate(event);
     }
     
     
@@ -788,7 +822,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
     {
         // Kamera initialisieren:
         windowStartet = true;
-        initCamera();
+        startCamera();
 
     }
     
@@ -796,7 +830,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
     public void windowClosed(WindowEvent e)
     {
         // Kamera stoppen:
-        destroyCamera();
+        stopCamera();
     }
     
     
@@ -963,8 +997,25 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
         switch (sceneId)
         {
         case 0:     // FlatShader
-            scene = new EfficientScene();
-            scene.add(new Sphere(new Vector3d(-2.0, 1.7, 0.0), 2.0, new ColorShader(ColorEx.RED)));
+            final Sphere s = new Sphere(new Vector3d(-2.0, 1.7, 0.0), 2.0, new ColorShader(ColorEx.RED));
+            scene = new EfficientScene() {
+
+                final double start = System.currentTimeMillis();
+
+                @Override
+                public boolean update(double t) {
+                    //doesnt work yet:
+                    /*
+                    double c = (t - start) / 1000.0 ;
+                    s.getCenter().set( 10*Math.sin(c), 10*Math.cos(c), 0.5f);
+                    s.setShader(new ColorShader(new ColorEx(Color.getHSBColor((float)Math.random(), 0.5f, 0.5f))));
+                    */
+                    //remove(s);
+                    //add(s);
+                    return false;
+                }
+            };
+            scene.add(s);
             scene.add(new Sphere(new Vector3d(1.0, -1.0, -1.0), 2.2, new ColorShader(ColorEx.GREEN)));
             scene.add(new Sphere(new Vector3d(3.0, 0.8, 2.0), 2.0, new ColorShader(ColorEx.BLUE)));
             scene.add(new InfinitePlane(new Vector3d(0.0, -1.0, 0.0), new Vector3d(0.0, 1.0, 0.0), new ColorShader(ColorEx.YELLOW)));
@@ -1095,7 +1146,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
                 scene = new EfficientScene();
                 scene.add(off);
                 scene.add(new Sphere(new Vector3d(-2.0, 1.7, 0.0), 2.0, new ReflectionShader(new PhongShader(new ColorShader(ColorEx.WHITE), new Vector3f(0.5f, 0.0f, 0.0f), new Vector3f(0.7f, 0.0f, 0.0f), new Vector3f(0.5f, 0.2f, 0.0f), new Vector3f(0.05f, 0.05f, 0.05f)))));
-                scene.add(new Sphere(new Vector3d(3.0, 0.8, 2.0), 2.0, new ReflectionShader(new PhongShader(new TextureShader(ImageIO.read(new File("texture/earth.jpg"))), new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(0.6f, 0.6f, 0.6f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector3f(0.0f, 0.0f, 0.0f)))));
+                scene.add(new Sphere(new Vector3d(3.0, 0.8, 2.0), 2.0, new ReflectionShader(new PhongShader(new TextureShader("texture/earth.jpg"), new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(0.6f, 0.6f, 0.6f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector3f(0.0f, 0.0f, 0.0f)))));
                 scene.add(new Triangle(new Vector3d(-7.0, -1.0, 7.0), new Vector3d(-7.0, -1.0, -7.0), new Vector3d(7.0, -1.0, -7.0), new ReflectionShader(new PhongShader(new ColorShader(ColorEx.WHITE), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.9f, 0.9f, 0.0f), new Vector3f(0.9f, 0.9f, 0.0f), new Vector3f(0.05f, 0.05f, 0.05f)))));
                 scene.add(new Triangle(new Vector3d(7.0, -1.0, -7.0), new Vector3d(7.0, -1.0, 7.0), new Vector3d(-7.0, -1.0, 7.0), new ReflectionShader(new PhongShader(new ColorShader(ColorEx.WHITE), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.9f, 0.9f, 0.0f), new Vector3f(0.9f, 0.9f, 0.0f), new Vector3f(0.05f, 0.05f, 0.05f)))));
 
@@ -1142,7 +1193,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
             {
                 Transformation t = new Transformation();
                 
-                BufferedImage texture = ImageIO.read(new File("texture/synth11.jpg"));
+                String texture = "texture/synth11.jpg";
                 Triangle t1 = new Triangle(new Vector3d(-7.0, -1.0, 7.0), new Vector3d(-7.0, -1.0, -7.0), new Vector3d(7.0, -1.0, -7.0), new ReflectionShader(new PhongShader(new TextureShader(texture), new Vector3f(0.1f, 0.1f, 0.1f), new Vector3f(0.5f, 0.5f, 0.5f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector3f(0.0f, 0.0f, 0.0f))));
                 Triangle t2 = new Triangle(new Vector3d(7.0, -1.0, -7.0), new Vector3d(7.0, -1.0, 7.0), new Vector3d(-7.0, -1.0, 7.0), new ReflectionShader(new PhongShader(new TextureShader(texture), new Vector3f(0.1f, 0.1f, 0.1f), new Vector3f(0.5f, 0.5f, 0.5f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector3f(0.0f, 0.0f, 0.0f))));
                 
@@ -1161,7 +1212,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
                 ply.transform(t);
                 
                 scene = new EfficientScene();
-                scene.add(new Sphere(new Vector3d(), 30.0, new TextureShader(ImageIO.read(new File("texture/univ02.jpg")))));
+                scene.add(new Sphere(new Vector3d(), 30.0, new TextureShader("texture/univ02.jpg")));
                 scene.add(ply);
                 scene.add(new Sphere(new Vector3d(-2.0, 1.7, 0.0), 2.0, new ConcatShader(new PhongShader(new ColorShader(ColorEx.WHITE), new Vector3f(0.1f, 0.0f, 0.0f), new Vector3f(0.5f, 0.0f, 0.0f), new Vector3f(1.0f, 0.4f, 0.2f), new Vector3f(0.0f, 0.0f, 0.0f)), 0.8f, new RefractionShader(RefractionShader.INDEX_GLASS, new ColorEx(0.95f, 0.85f, 0.85f)))));
                 scene.add(new Sphere(new Vector3d(3.0, 0.8, 2.0), 2.0, new PhongShader(new ColorShader(ColorEx.WHITE), new Vector3f(0.0f, 0.0f, 0.3f), new Vector3f(0.0f, 0.0f, 0.5f), new Vector3f(0.0f, 0.0f, 1.0f), new Vector3f(0.05f, 0.05f, 0.05f))));
@@ -1251,14 +1302,14 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
                 scene.add(new AreaLight(new Vector3d(0.0, 0.999999, 0.0), new Vector3d(0.2, 0.0, 0.0), new Vector3d(0.0, 0.0, 0.2), new ColorEx(3.0f, 3.0f, 3.0f)));
                 
                 // Kugel mit Spiegelung:
-                Sphere s = new Sphere(new Vector3d(-0.5, -0.65, -0.5), 0.35, new MirrorShader());
-                s.setNormalEffect(new RoughNormalEffect(0.03f));
-                scene.add(s);
+                Sphere rs = new Sphere(new Vector3d(-0.5, -0.65, -0.5), 0.35, new MirrorShader());
+                rs.setNormalEffect(new RoughNormalEffect(0.03f));
+                scene.add(rs);
                 
                 // Kugel mit Lichtbrechung:
-                s = new Sphere(new Vector3d(0.5, -0.65, 0.0), 0.35, new RefractionShader(RefractionShader.INDEX_GLASS, new ColorEx(0.9f, 0.9f, 0.9f)));
-                s.setNormalEffect(new RoughNormalEffect(0.1f));
-                scene.add(s);
+                rs = new Sphere(new Vector3d(0.5, -0.65, 0.0), 0.35, new RefractionShader(RefractionShader.INDEX_GLASS, new ColorEx(0.9f, 0.9f, 0.9f)));
+                rs.setNormalEffect(new RoughNormalEffect(0.1f));
+                scene.add(rs);
                 
             }
             catch (Exception e)
@@ -1587,10 +1638,10 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
      */
     private void setCameraScene(AsyncCamera camera, Scene scene)
     {
-        destroyCamera();
+        stopCamera();
         camera.setScene(scene);
         this.camera = camera;
-        initCamera();
+        startCamera();
     }
     
     /**

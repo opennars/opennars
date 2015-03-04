@@ -54,7 +54,10 @@ public class Sphere extends Shape
 		this.radius = Math.abs(radius);
 	}
 
-    
+    public Vector3d getCenter() {
+        return center;
+    }
+
     @Override
     public Sphere clone()
     throws CloneNotSupportedException 
@@ -100,7 +103,7 @@ public class Sphere extends Shape
     }
         
     @Override
-    public double getCentroid(byte axisId)
+    public double getCentroid(final byte axisId)
     {
         switch (axisId)
         {
@@ -113,7 +116,7 @@ public class Sphere extends Shape
     }
 
     @Override
-    public byte compareAxis(byte axisId, double axisValue)
+    public byte compareAxis(final byte axisId, final double axisValue)
     {
         // Abstand des Kugel-Zentrums vom Achsen-Punkt berechnen:
         double distance;
@@ -141,7 +144,7 @@ public class Sphere extends Shape
     }
 
     @Override
-    public double minAxisValue(byte axisId)
+    public double minAxisValue(final byte axisId)
     {
         switch (axisId)
         {
@@ -154,7 +157,7 @@ public class Sphere extends Shape
     }
     
     @Override
-    public double maxAxisValue(byte axisId)
+    public double maxAxisValue(final byte axisId)
     {
         switch (axisId)
         {

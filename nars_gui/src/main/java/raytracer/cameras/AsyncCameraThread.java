@@ -2,12 +2,15 @@ package raytracer.cameras;
 
 import raytracer.basic.ColorEx;
 import raytracer.basic.RaytracerConstants;
+import raytracer.util.FloatingPoint;
+
+import java.util.Arrays;
 
 class AsyncCameraThread extends Thread
 {
     /** Minimale zeitliche Verz�gerung zwischen zwei <code>renderUpdate</code>-
      * Events (in Millisekunden).*/
-    protected final static int UPDATE_DELAY = 3000;
+    protected final static int UPDATE_DELAY = 50; //millisec
     
     
     /** Referenz auf die Kamera. */
@@ -24,7 +27,7 @@ class AsyncCameraThread extends Thread
     {
         super();
         this.camera = camera;
-        setPriority(Thread.MIN_PRIORITY);
+        //setPriority(Thread.MIN_PRIORITY);
     }
     
     
@@ -39,7 +42,7 @@ class AsyncCameraThread extends Thread
         {
 
             // Aufl�sung des Render-Vorganges bestimmen:
-            int resolution = camera.sizeExponent;
+            int lowestResolution = camera.sizeExponent;
 
             // Anzahl der 'updateImage' berechnen:
             expectedProgress = (long)camera.resX* (long) camera.resY * (long) (2 + RaytracerConstants.RAYS_PER_PIXEL);
@@ -48,10 +51,10 @@ class AsyncCameraThread extends Thread
             currentProgress = 0L;
             
             //Eckpunkte setzen:
-            updateImage(0.0, 0.0, false, camera.resX, camera.resY);
-            updateImage((double) camera.resX, 0.0, false, camera.resX, camera.resY);
-            updateImage(0.0, (double) camera.resY, false, camera.resX, camera.resY);
-            updateImage((double) camera.resX, (double) camera.resY, true, camera.resX, camera.resY);
+            updateImage(0.0, 0.0, camera.resX, camera.resY);
+            updateImage((double) camera.resX, 0.0, camera.resX, camera.resY);
+            updateImage(0.0, (double) camera.resY, camera.resX, camera.resY);
+            updateImage((double) camera.resX, (double) camera.resY, camera.resX, camera.resY);
             
             // Initiale Rastergr��e ist die Gr��e der kleinsten Seite, aufgerundet
             // zur n�chsten Zweierpotenz:
@@ -62,8 +65,7 @@ class AsyncCameraThread extends Thread
             int y;
             int x;
             int a;
-            for (a = 0; a < resolution; a++)
-            {
+            for (a = 0; a < lowestResolution; a++) {
                 double factor = offset;
 
                 // Anzahl der Rastereinheiten auf der L�nge bzw. Breite des Bildes:
@@ -77,19 +79,21 @@ class AsyncCameraThread extends Thread
                 // Mittelpunkte setzen:
                 for (y = 0; y < countY; y++)
                     for (x = 0; x < countX; x++)
-                        updateImage(offset+factor* (double) x, offset+factor* (double) y, true, pixelSize, pixelSize);
+                        updateImage(offset+factor* (double) x, offset+factor* (double) y, pixelSize, pixelSize);
                 
                 // Randpunkte setzen:
                 for (y = 0; y < countY; y++)
                     for (x = 0; x < countX; x++)
                     {
-                        updateImage(factor* (double) x, offset+factor* (double) y, false, pixelSize, pixelSize);
-                        updateImage(offset+factor* (double) x, factor* (double) y, true, pixelSize, pixelSize);
+                        updateImage(factor* (double) x, offset+factor* (double) y, pixelSize, pixelSize);
+                        updateImage(offset+factor* (double) x, factor* (double) y, pixelSize, pixelSize);
                     }
                 for (x = 0; x < countX; x++)
-                    updateImage(offset+factor* (double) x, (double) camera.resY, true, pixelSize, pixelSize);
+                    updateImage(offset+factor* (double) x, (double) camera.resY, pixelSize, pixelSize);
                 for (y = 0; y < countY; y++)
-                    updateImage((double) camera.resX, offset+factor* (double) y, true, pixelSize, pixelSize);
+                    updateImage((double) camera.resX, offset+factor* (double) y, pixelSize, pixelSize);
+
+                ensureUpdated();
             }
             
             // Anti-Aliasing von beliebiger Genauigkeit auf das Bild anwenden:
@@ -99,7 +103,8 @@ class AsyncCameraThread extends Thread
                     for (x = 0; x < camera.resX; x++)
                     {
                         // Zuf�lligen Strahl in die Szene schicken:
-                        updateImage((double) x +Math.random(), (double) y +Math.random(), true, 1, 1);
+                        updateImage((double) x + FloatingPoint.nextRandom(),
+                                (double) y + FloatingPoint.nextRandom(), 1, 1);
                     }
             
             // Bild mit hoher Genauigkeit neu generieren.
@@ -108,13 +113,12 @@ class AsyncCameraThread extends Thread
             countX = camera.resX*camera.resY;
             
             ColorEx pixel = new ColorEx();
-            for (x = 0; x < countX; x++)
-            {
+            for (x = 0; x < countX; x++) {
                 // Farbwert berechnen:
                 pixel.x = camera.rmap[x];
                 pixel.y = camera.gmap[x];
                 pixel.z = camera.bmap[x];
-                pixel.scale(1.0f/camera.countmap[x]);
+                pixel.scale(1.0f / camera.countmap[x]);
                 camera.bitmap[x] = pixel.get().getRGB();
             }
             
@@ -143,15 +147,13 @@ class AsyncCameraThread extends Thread
      * ein Pixelblock der Breite <code>pixelWidth</code> und der H�he
      * <code>pixelHeight</code>, mit dem zugeh�rigen Pixel im Zentrum,
      * eingef�rbt.
-     * 
-     * @param x x-Koordinate des zu sendenen Strahls.
+     *  @param x x-Koordinate des zu sendenen Strahls.
      * @param y x-Koordinate des zu sendenen Strahls.
-     * @param sendEvent Gibt an, ob Update-Ereignisse versendet werden sollen.
      * @param pixelWidth H�he des zu f�rbenden Pixelblocks.
      * @param pixelHeight Breite des zu f�rbenden Pixelblocks.
      */
-    private void updateImage(double x, double y, boolean sendEvent,
-            int pixelWidth, int pixelHeight)
+    private void updateImage(final double x, final double y,
+                             final int pixelWidth, final int pixelHeight)
     {
         // Pr�fen, ob das zu aktualisierende Pixel �berhaupt im Bild liegt:
         if ((x > (double) camera.resX) || (y > (double) camera.resY))
@@ -194,17 +196,21 @@ class AsyncCameraThread extends Thread
         // Fortschritt aktualisieren:
         if (currentProgress < expectedProgress)
             currentProgress++;
-        
+
+        ensureUpdated();
+    }
+
+    protected void ensureUpdated() {
         // Signalisieren, dass sich das gerenderte Bild ver�ndert hat:
-        if (sendEvent)
-        {
+
+
             long time = System.currentTimeMillis();
             if (time >= renderTime+ (long) UPDATE_DELAY)
             {
                 renderTime = time;
                 camera.fireRenderUpdate((double)currentProgress/ (double) expectedProgress);
             }
-        }
+
     }
     
     /**
@@ -220,15 +226,15 @@ class AsyncCameraThread extends Thread
     private void updatePixel(int x, int y, ColorEx color,
             int pixelWidth, int pixelHeight)
     {
-        int index = y*camera.resX+x;
+        final int resX = camera.resX;
+        final int resY = camera.resY;
+
+        int index = y*resX+x;
         int count = camera.countmap[index];
         
-        if (antialiasing)
-        {
+        if (antialiasing) {
             // Falls die �nderung des Farbwertes unterhalb der Grenze liegt:
-            double difference = (double)(Math.abs(camera.rmap[index]-color.x* (float) count)+
-                    Math.abs(camera.gmap[index]-color.y* (float) count)+
-                    Math.abs(camera.bmap[index]-color.z* (float) count))/ (double) (count * count + count);
+            double difference = camera.pixelDifference(color, index, count);
             if (difference < RaytracerConstants.AA_MIN_DIFFERENCE)
                 camera.aaUnchangedCount[index]++;
             else
@@ -236,11 +242,8 @@ class AsyncCameraThread extends Thread
         }
         
         // Neuen Farbwert verrechnen:
-        camera.rmap[index] += color.x;
-        camera.gmap[index] += color.y;
-        camera.bmap[index] += color.z;
-        camera.countmap[index]++;
-        
+        camera.absorb(index, color);
+
         // Farbwert berechnen:
         ColorEx pixel = new ColorEx(camera.rmap[index], camera.gmap[index], camera.bmap[index]);
         pixel.scale(1.0f/camera.countmap[index]);
@@ -255,21 +258,26 @@ class AsyncCameraThread extends Thread
         // Sicher stellen, dass die Grenzbereiche eingehalten werden:
         if (startX < 0) startX = 0;
         if (startY < 0) startY = 0;
-        if (endX >= camera.resX) endX = camera.resX-1;
-        if (endY >= camera.resY) endY = camera.resY-1;
+        if (endX >= resX) endX = resX-1;
+        if (endY >= resY) endY = resY-1;
 
-        // Pixelbereich f�llen:
-        for (y = startY; y <= endY; y++)
-            for (x = startX; x <= endX; x++)
-                camera.bitmap[y*camera.resX+x] = rgb;
+        // blit a rect with this color
+        for (y = startY; y <= endY; y++) {
+            final int o = y * resX;
+            Arrays.fill(camera.bitmap, o + startX, o + endX + 1, rgb);
+//            for (x = startX; x <= endX; x++) {
+//                camera.bitmap[y * camera.resX + x] = rgb;
+//            }
+        }
     }
-    
-    
+
+
+
+
     /**
      * Signalisiert dem Thread, dass es Zeit ist, zu sterben.
      */
-    public void die()
-    {
+    public void die()    {
         camera = null;
     }
 }

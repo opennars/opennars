@@ -1,5 +1,5 @@
 /*
- * RaytracerConstants.java                STATUS: Vorläufig abgeschlossen
+ * RaytracerConstants.java                STATUS: Vorlï¿½ufig abgeschlossen
  * ----------------------------------------------------------------------
  * 
  */
@@ -7,7 +7,7 @@
 package raytracer.basic;
 
 /**
- * Konstanten, die für den gesamten Raytracer gelten.
+ * Konstanten, die fï¿½r den gesamten Raytracer gelten.
  * 
  * @author Mathias Kosch
  *
@@ -17,62 +17,62 @@ public class RaytracerConstants
     /**
      * Anzahl der Strahlen, die pro Pixel gesendet werden.
      */
-    public final static int RAYS_PER_PIXEL = 1000;
+    public final static int RAYS_PER_PIXEL = 1;
     
     /**
-     * Minimale Farbänderung zwischen zwei Render-Schritten, die noch als eine
-     * Änderung gilt.
+     * Minimale Farbï¿½nderung zwischen zwei Render-Schritten, die noch als eine
+     * ï¿½nderung gilt.
      */
-    public final static double AA_MIN_DIFFERENCE = 0.025;
+    public final static double AA_MIN_DIFFERENCE = 0.045;
     
     /**
      * Maximale Anzahl an Antialiasing-Schritten, nachdem sich der Farbwert
-     * nicht mehr geändert hat.
+     * nicht mehr geï¿½ndert hat.
      */
     public final static int AA_MAX_UNCHANGED_COUNT = 3;
     
     
     /**
-     * Maximale Anzahl an Objekten, die von einem fortgeführten Strahl getroffen
-     * werden dürfen.<br>
+     * Maximale Anzahl an Objekten, die von einem fortgefï¿½hrten Strahl getroffen
+     * werden dï¿½rfen.<br>
      * Nachdem ein Strahl so viele Objekte getroffen hat, wird er nicht weiter
      * verfolgt.
      */
-    public final static int MAX_RAY_HITCOUNT = 10;
+    public final static int MAX_RAY_HITCOUNT = 4;
     
     /**
-     * Maximale Länge eines fortgeführten Strahls.<br>
-     * Nachdem ein Strahl diese Länge erreicht hat, wird er nicht weiter
-     * verfolgt.
+     * Maximale Lï¿½nge eines fortgefï¿½hrten Strahls.<br>
+     * Nachdem ein Strahl diese Lï¿½nge erreicht hat, wird er nicht weiter
+     * verfolgt. DISTANCE LIMIT?
      */
-    public final static double MAX_RAY_WAY = Double.POSITIVE_INFINITY;
+    public final static double MAX_RAY_WAY = 200; //Double.POSITIVE_INFINITY;
     
     /**
      * Minimales Gewicht eines Strahls.<br>
      * Nachdem ein Strahl dieses Gewicht unterschreitet, wird er nicht weiter
      * verfolgt.
      */
-    public final static double MIN_RAY_WEIGHT = 0.002;
+    public final static double MIN_RAY_WEIGHT = 0.005;
     
     
     /**
-     * Gibt an, ob Farbwerte über <code>1.0</code> abgeschnitten werden sollen.
+     * Gibt an, ob Farbwerte ï¿½ber <code>1.0</code> abgeschnitten werden sollen.
      */
     public final static boolean LIMIT_COLOR_INTENSITY = true;
     
     
     /**
-     * Konstanter Lichtabschwächungsfaktor.
+     * Konstanter Lichtabschwï¿½chungsfaktor.
      */
     public final static float LIGHT_ATTENUATION_CONSTANT = 1.0f;
     
     /**
-     * Linearer Lichtabschwächungsfaktor.
+     * Linearer Lichtabschwï¿½chungsfaktor.
      */
     public final static float LIGHT_ATTENUATION_LINEAR = 0.5f;
     
     /**
-     * Quadratischer Lichtabschwächungsfaktor.
+     * Quadratischer Lichtabschwï¿½chungsfaktor.
      */
     public final static float LIGHT_ATTENUATION_QUADRATIC = 0.2f;
 
@@ -84,39 +84,39 @@ public class RaytracerConstants
     public final static boolean SOFT_SHADOWS_ENABLED = false;
     
     /**
-     * Gibt an, wie viele Strahlen für weiche Schatten pro Flächeneinheit
+     * Gibt an, wie viele Strahlen fï¿½r weiche Schatten pro Flï¿½cheneinheit
      * verwendet werden.
      */
-    public final static int RAYS_PER_UNIT_SPHERE = 250;
+    public final static int RAYS_PER_UNIT_SPHERE = 50;
     
     /**
      * Gibt an, wie viele Strahlen mindestens (in folge) auf ein weiches Licht
      * geschickt werden.
      */
-    public final static int MIN_RAYS_PER_SOFT_LIGHT = 3;
+    public final static int MIN_RAYS_PER_SOFT_LIGHT = 2;
     
     /**
-     * Gibt an, wie viele Strahlen höchstens (in folge) auf ein weiches Licht
+     * Gibt an, wie viele Strahlen hï¿½chstens (in folge) auf ein weiches Licht
      * geschickt werden.
      */
-    public final static int MAX_RAYS_PER_SOFT_LIGHT = 15;
+    public final static int MAX_RAYS_PER_SOFT_LIGHT = 7;
     
     /**
      * Gibt an, wie oft sich die Anzahl der versendeten Strahlen
-     * (für weiche Schatten) erhöhen darf, falls eine Schattengrenze
+     * (fï¿½r weiche Schatten) erhï¿½hen darf, falls eine Schattengrenze
      * festgestellt wurde.
      */
     public final static int SOFT_LIGHT_RAY_INCREASE_COUNT = 3;
     
     
     /**
-     * Gibt an, ob Texturen geglättet werden sollen.
+     * Gibt an, ob Texturen geglï¿½ttet werden sollen.
      */
     public final static boolean SMOOTH_TEXTURES = true;
     
 
     /**
-     * Auflösung für Objekte in OpenGL.
+     * Auflï¿½sung fï¿½r Objekte in OpenGL.
      */
     public final static int GL_RESOLUTION = 50;
     
@@ -124,4 +124,8 @@ public class RaytracerConstants
      * Gibt an, ob alle Objekte im Drahtgitter-Modus gezeichnet werden sollen.
      */
     public final static boolean GL_GRID_MODE_ENABLED = false;
+
+    public static byte getLowResolution(int resX, int resY) {
+        return (byte) (Math.ceil(Math.log((double) Math.max(resX, resY)) / Math.log(2)));
+    }
 }

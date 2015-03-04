@@ -12,8 +12,8 @@ import raytracer.objects.SceneObject;
 import raytracer.objects.SceneObjectCollection;
 
 import javax.media.opengl.GLAutoDrawable;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -28,7 +28,7 @@ public class EfficientScene extends Scene
     /** Objekte dieser Szene. */
     protected final SceneObjectCollection objects = new EfficientCollection();
     /** Lichter dieser Szene. */
-    protected final Vector<Light> lights = new Vector<Light>();
+    protected final List<Light> lights = new ArrayList<Light>();
     
     
     @Override
@@ -37,21 +37,23 @@ public class EfficientScene extends Scene
         try
         {
             objects.add(object);
-            if (object instanceof Light)
-                lights.add((Light)object.clone());
+            if (object instanceof Light) {
+                if (!lights.contains(object))
+                    lights.add((Light) object.clone());
+            }
         }
         catch (CloneNotSupportedException e)
         {
             throw new IllegalStateException();
         }
     }
-    
+
+
     @Override
-    public Iterator<Light> lightIterator()
-    {
-        return lights.iterator();
+    public List<Light> getLights() {
+        return lights;
     }
-    
+
     
     @Override
     public ColorEx trace(Ray ray)

@@ -47,6 +47,7 @@ class PreviewMain
         // We may at this point tweak the caps and request a translucent drawable
         caps.setBackgroundOpaque(false);
         caps.setStencilBits(1);
+        caps.setHardwareAccelerated(true);
         GLWindow glWindow = GLWindow.create(caps);
 
 
@@ -216,6 +217,7 @@ class PreviewMain
             
             // Lichtquellen initialisieren:
             initLights();
+            resetMaterial();
         }
         
         // Lichtquellen initialisieren:
@@ -702,9 +704,7 @@ class PreviewMain
         // Gibt das Array "{a, b, c, d}" zur�ck:
         protected static FloatBuffer getFloatv4(float a, float b, float c, float d)
         {
-            float v[] = new float[4];
-            v[0] = a; v[1] = b; v[2] = c; v[3] = d;
-            return FloatBuffer.wrap(v);
+            return FloatBuffer.wrap( new float[] { a, b, c, d } );
         }
 
         public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}

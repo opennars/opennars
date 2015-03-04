@@ -14,6 +14,7 @@
 
 package raytracer.objects;
 
+import org.apache.commons.math3.util.FastMath;
 import raytracer.basic.Ray;
 import raytracer.basic.Transformation;
 import raytracer.util.FloatingPoint;
@@ -32,17 +33,18 @@ import java.util.*;
 public class EfficientCollection extends SceneObjectCollection
 {
     /** Maximale Anzahl von Szenen-Objekten pro Blatt. (Mindestens <code>1</code>.). */
-    protected final static int MAX_OBJECTS_IN_LEAF = 20;
+    protected final static int MAX_OBJECTS_IN_LEAF = 12;
     /** Maximale Rate von duplizierten Objekten in den Teilb�umen. */
     protected final static float MAX_DUPLICATE_RATIO = 1.0f/3.0f;
     /** Minimaler Anteil, um einen leeren Achsenabschnitt abzuschneiden. */
     protected final static float MIN_CUT_EMPTY_RATIO = 0.0001f;
+
     public static final Shape[] emptyShapes = new Shape[0];
 
 
     /** Liste aller Objekte im KD-Tree. */
-    protected Vector<Shape> finiteObjects = new Vector<Shape>();
-    protected Vector<Shape> infiniteObjects = new Vector<Shape>();
+    protected List<Shape> finiteObjects = new ArrayList<Shape>();
+    protected List<Shape> infiniteObjects = new ArrayList<Shape>();
     
     /** Wurzel des KD-Trees, oder <code>null</code>. */
     protected Object root = null;
@@ -53,8 +55,8 @@ public class EfficientCollection extends SceneObjectCollection
     throws CloneNotSupportedException
     {
         EfficientCollection clone = (EfficientCollection)super.clone();
-        clone.finiteObjects = new Vector<Shape>();
-        clone.infiniteObjects = new Vector<Shape>();
+        clone.finiteObjects = new ArrayList<Shape>();
+        clone.infiniteObjects = new ArrayList<Shape>();
         clone.root = null;
 
         // Alle endlichen Objekte zum Klon hinzuklonen:
@@ -74,6 +76,8 @@ public class EfficientCollection extends SceneObjectCollection
     @Override
     public void getShapes(Collection<Shape> shapes)
     {
+        //TODO use a forEach visitor
+
         shapes.addAll(finiteObjects);
         shapes.addAll(infiniteObjects);
     }
@@ -98,7 +102,7 @@ public class EfficientCollection extends SceneObjectCollection
         try
         {
             // Alle Shapes des neuen Objekts erfragen:
-            Vector<Shape> shapes = new Vector<Shape>();
+            List<Shape> shapes = new ArrayList<Shape>();
             object.getShapes(shapes);
             
             // Alle shapes durchlaufen und zur passenden Megne hinzuf�gen:
@@ -217,7 +221,7 @@ public class EfficientCollection extends SceneObjectCollection
      * @param r Informationen zu der Rekursion.
      * @throws raytracer.objects.EfficientCollection.Result
      */
-    private static void traceRecursive(Object node, Recursion r)
+    private static void traceRecursive(final Object node, final Recursion r)
     throws Result
     {
         // Ab hier gild die Bedingung, dass der Strahl auf jeden Fall den Quader
@@ -233,14 +237,15 @@ public class EfficientCollection extends SceneObjectCollection
             int count = ((SceneObject[])node).length;
             for (int i = 0; i < count; i++)
             {
+                final SceneObject obj = ((SceneObject[])node)[i];
                 if (r.shortestIntersection)
                 {
-                    if (((SceneObject[])node)[i].intersect(r.ray))
+                    if (obj.intersect(r.ray))
                         intersection = true;
                 }
                 else
                 {
-                    if (((SceneObject[])node)[i].occlude(r.ray))
+                    if (obj.occlude(r.ray))
                     {
                         r.intersection = true;
                         throw new Result();
@@ -268,7 +273,9 @@ public class EfficientCollection extends SceneObjectCollection
             // der Schnittpunkt liegt innerhalb des Quaders:
             throw new Result();
         }
-                
+
+        final Node nn = (Node)node;
+
         // Aktuelle Achsen-ID speichern:
         double saved;
         
@@ -277,7 +284,7 @@ public class EfficientCollection extends SceneObjectCollection
         // Teilquader auf der anderen Seite besucht wird ('second'):
         boolean first = true, second = true;
         
-        if (r.dir[((int) ((Node) node).axisId)] == 0.0)
+        if (r.dir[((int) nn.axisId)] == 0.0)
         {
             // Der Strahl verl�uft parallel zur Trennebene und schneidet deshalb
             // genau den ersten Teilquader.
@@ -287,7 +294,7 @@ public class EfficientCollection extends SceneObjectCollection
         else
         {
             // Schnittpunkt des Strahls mit der Trennebene berechnen:
-            double t = ((double) ((Node) node).axisValue -r.org[((int) ((Node) node).axisId)])/r.dir[((int) ((Node) node).axisId)];
+            double t = ((double) nn.axisValue -r.org[((int) nn.axisId)])/r.dir[((int) nn.axisId)];
             
             // Schnittpunkte des Strahls mit den 6 Ebenen des Quaders berechnen.
             // Dabei z�hlen, wie viele Schnittpunkte nicht vor bzw. nicht hinter
@@ -324,7 +331,7 @@ public class EfficientCollection extends SceneObjectCollection
                 // Der Strahl schneidet die Trennebene, bevor bzw. nachdem er
                 // durch einen Teilw�rfel gegangen ist.
                 
-                if (t* (double) tCount <= 0.0)
+                if (t* tCount <= 0.0)
                     second = false;
                 else
                     first = false;
@@ -333,23 +340,23 @@ public class EfficientCollection extends SceneObjectCollection
         
         // Berechnen, welchen der beiden Teilquader bez�glich der Trennebene
         // auf welcher Seite des Strahls sitzt:
-        if (r.org[((int) ((Node) node).axisId)] < (double) ((Node) node).axisValue)
+        if (r.org[((int) nn.axisId)] < (double) nn.axisValue)
         {
             // Einen oder beide Teilb�ume des aktuellen Knotens in der
             // korrekten besuchen:
             if (first)
             {
-                saved = r.max[((int) ((Node) node).axisId)];
-                r.max[((int) ((Node) node).axisId)] = ((Node)node).axisValue;
-                traceRecursive(((Node)node).left, r);
-                r.max[((int) ((Node) node).axisId)] = (float)saved;
+                saved = r.max[((int) nn.axisId)];
+                r.max[((int) nn.axisId)] = nn.axisValue;
+                traceRecursive(nn.left, r);
+                r.max[((int) nn.axisId)] = (float)saved;
             }
             if (second)
             {
-                saved = r.min[((int) ((Node) node).axisId)];
-                r.min[((int) ((Node) node).axisId)] = ((Node)node).axisValue;
-                traceRecursive(((Node)node).right, r);
-                r.min[((int) ((Node) node).axisId)] = (float)saved;
+                saved = r.min[((int) nn.axisId)];
+                r.min[((int) nn.axisId)] = nn.axisValue;
+                traceRecursive(nn.right, r);
+                r.min[((int) nn.axisId)] = (float)saved;
             }
         }
         else
@@ -358,17 +365,17 @@ public class EfficientCollection extends SceneObjectCollection
             // verdrehten Reihenfolge besuchen:
             if (first)
             {
-                saved = r.min[((int) ((Node) node).axisId)];
-                r.min[((int) ((Node) node).axisId)] = ((Node)node).axisValue;
-                traceRecursive(((Node)node).right, r);
-                r.min[((int) ((Node) node).axisId)] = (float)saved;
+                saved = r.min[((int) nn.axisId)];
+                r.min[((int) nn.axisId)] = nn.axisValue;
+                traceRecursive(nn.right, r);
+                r.min[((int) nn.axisId)] = (float)saved;
             }
             if (second)
             {
-                saved = r.max[((int) ((Node) node).axisId)];
-                r.max[((int) ((Node) node).axisId)] = ((Node)node).axisValue;
-                traceRecursive(((Node)node).left, r);
-                r.max[((int) ((Node) node).axisId)] = (float)saved;
+                saved = r.max[((int) nn.axisId)];
+                r.max[((int) nn.axisId)] = nn.axisValue;
+                traceRecursive(nn.left, r);
+                r.max[((int) nn.axisId)] = (float)saved;
             }
         }
     }
@@ -409,6 +416,7 @@ public class EfficientCollection extends SceneObjectCollection
         
         // Falls sich innerhalb von einer festen Anzahl an Schritten nichts
         // �ndert, breche ab:
+        //TODO extract these constant
         if ((cutUpdateCount > 20) || (medianUpdateCount > 3))
             return objects;
         
@@ -469,8 +477,8 @@ public class EfficientCollection extends SceneObjectCollection
             byte axisId, float axisValue, int cutUpdateCount, int medianUpdateCount)
     {
         int duplicateCount = 0;
-        Vector<Shape> lowerEqual = new Vector<Shape>();
-        Vector<Shape> higherEqual = new Vector<Shape>();
+        List<Shape> lowerEqual = new ArrayList<Shape>(objects.length/2);
+        List<Shape> higherEqual = new ArrayList<Shape>(objects.length/2);
         
         // Objekte anhand des Achsen-Wertes partitionieren:
         int count = objects.length;
@@ -488,14 +496,12 @@ public class EfficientCollection extends SceneObjectCollection
         }
         
         // Neuen Knoten erzeugen:
-        Node node = new Node();
-        
+        Node node = new Node(axisId, axisValue);
+
         // Geschnittene Objekte zuweisen:
-        node.axisId = axisId;
-        node.axisValue = axisValue;
-        
+
         // Teilb�ume erzeugen und zuweisen:
-        byte newAxisId = (byte)(((int) axisId +1) % 3);
+        byte newAxisId = (byte)((axisId +1) % 3);
 
         float saved = max[axisId];
         max[((int) axisId)] = axisValue;
@@ -572,7 +578,7 @@ public class EfficientCollection extends SceneObjectCollection
                 if (minValue-maxValue > length)
                 {
                     length = minValue-maxValue;
-                    if (Math.abs(middle-maxValue) < Math.abs(middle-minValue))
+                    if (FastMath.abs(middle-maxValue) < FastMath.abs(middle - minValue))
                         axisValue = maxValue+FloatingPoint.floatEpsilon(maxValue);
                     else
                         axisValue = minValue-FloatingPoint.floatEpsilon(minValue);
@@ -692,10 +698,15 @@ public class EfficientCollection extends SceneObjectCollection
     private static class Node
     {
         /** ID der Achse, beginnend bei <code>0</code> f�r die x-Achse. */
-        public byte axisId;
+        public final byte axisId;
         /** Position der Trennebene. */
-        public float axisValue;
-        
+        public final float axisValue;
+
+        public Node(byte axisId, float axisValue) {
+            this.axisId = axisId;
+            this.axisValue = axisValue;
+        }
+
         /**
          * Zeiger auf den linken Teilbaum.<br>
          * Falls vom Typ <code>Node</code>, dann ist dieser Zeiger ein Verweis
@@ -749,8 +760,8 @@ public class EfficientCollection extends SceneObjectCollection
         
         /** Tempor�rer Speicherplatz. */
         public final Vector3d temp = new Vector3d();
-        
-        
+
+
         /**
          * Erzeugt eine neue Datenstruktur vom Typ <code>Recursion</code>.
          * 
@@ -794,6 +805,15 @@ public class EfficientCollection extends SceneObjectCollection
     {
         /** Serielle Standardversions-ID. */
         private static final long serialVersionUID = 1L;
+
+        public Result() {
+            super();
+        }
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return this; //skips generating a stack trace
+        }
     }
     
     
@@ -809,14 +829,14 @@ public class EfficientCollection extends SceneObjectCollection
         
         
         @Override
-        public int compare(Shape o1, Shape o2)
+        public int compare(final Shape o1, final Shape o2)
         {
-            double centroid1 = o1.getCentroid(axisId);
-            double centroid2 = o2.getCentroid(axisId);
+            final double centroid1 = o1.getCentroid(axisId);
+            final double centroid2 = o2.getCentroid(axisId);
             return (centroid1 < centroid2) ? -1 : (centroid1 > centroid2) ? 1 : 0;
         }
         
-        public boolean equals(Object obj) 
+        public boolean equals(final Object obj)
         {
             if (!(obj instanceof ShapeComparator))
                 return false;

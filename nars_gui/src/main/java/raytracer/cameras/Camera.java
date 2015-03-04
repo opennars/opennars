@@ -114,4 +114,5 @@ abstract public class Camera
      * @return Ermittelter Farbwert des Pixels der Kamera.
      */
     abstract public ColorEx getColor(double x, double y);
+
 }
