@@ -1,12 +1,11 @@
 package ca.nengo.test;
 
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.Terminal;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.lib.world.piccolo.object.BoundsHandle;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.EmptyIcon;
@@ -14,11 +13,12 @@ import ca.nengo.ui.model.math.JuRLsFunctionApproximator;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.FunctionPlot;
 import ca.nengo.util.ScriptGenException;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.event.PInputEventListener;
 import org.piccolo2d.extras.pswing.PSwing;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.HashMap;
 
 /**
@@ -44,9 +44,10 @@ public class TestSwingUI extends Nengrow {
 //        network.addNode(new SwingNode("Humanoid", h = new HumanoidFacePanel(400,400)));
 
 
-        network.addNode(new SwingNode("Button", new JButton("Button")));
+        network.addNode(new SwingNode("Terminal", new Terminal().view));
+        //network.addNode(new SwingNode("Button", new JButton("Button")));
 
-        network.addNode(new SwingNode("NSlider", new NSlider(0.25f, 0, 1)));
+        //network.addNode(new SwingNode("NSlider", new NSlider(0.25f, 0, 1)));
 
 //        NAR nn = new NAR(new Default());
 //        network.addNode(new SwingNode("NAR", new TextInputPanel(nn)));
@@ -110,7 +111,8 @@ public class TestSwingUI extends Nengrow {
 
         @Override
         public UINeoNode newUI() {
-            this.ui = new SwingNodeUI();
+            if (this.ui==null)
+                this.ui = new SwingNodeUI();
             return ui;
         }
 
@@ -120,13 +122,14 @@ public class TestSwingUI extends Nengrow {
                 super(SwingNode.this);
 
 
-                BoundsHandle.addBoundsHandlesTo(this);
+                //BoundsHandle.addBoundsHandlesTo(this);
 
                 setIcon(new EmptyIcon(this));
                 setBounds(0, 0, 150, 150);
 
-                setSelected(true);
+                setSelectable(true);
 
+                //setSelected(true);
 
 
                 PSwing pp = new PSwing(component);
@@ -135,33 +138,42 @@ public class TestSwingUI extends Nengrow {
                 component.grabFocus();
 
 
-                pp.setScale(1f);
-                pp.validateFullPaint();
+                //pp.setScale(1f);
+                //pp.validateFullPaint();
 
                 getPiccolo().addChild(pp);
                 pp.raiseToTop();
                 pp.updateBounds();
 
 
-                //pp.setScale(2.0);
-                //  PInputEventListener x;
-//            pp.addInputEventListener(x = new PInputEventListener() {
-//
-//                @Override
-//                public void processEvent(PInputEvent pInputEvent, int i) {
-//                    InputEvent ie = pInputEvent.getSourceSwingEvent();
-//                    if (ie!=null && !ie.isConsumed()) {
-//                        ie.setSource(jt);
-//                        jt.dispatchEvent(ie);
-//                        ie.consume();
-//                        pp.repaint();
-//                    }
-//                }
-//            });
+                pp.setScale(0.5);
+                PInputEventListener x;
+                addInputEventListener(x = new PInputEventListener() {
+
+                    @Override
+                    public void processEvent(PInputEvent pInputEvent, int i) {
+                        InputEvent ie = pInputEvent.getSourceSwingEvent();
+                        if (pInputEvent.isKeyEvent()) {
+                            int c = pInputEvent.getKeyCode();
+
+                            for (KeyListener k :component.getKeyListeners()) {
+                                k.keyTyped((KeyEvent) pInputEvent.getSourceSwingEvent());
+                            }
+                            pp.repaint();
+                        }
+                        else if (ie != null && !ie.isConsumed()) {
+                            ie.setSource(component);
+                            component.dispatchEvent(ie);
+                            ie.consume();
+                            pp.repaint();
+                        }
+                        pInputEvent.setHandled(true);
+                    }
+                });
+//pp.addInputEventListener();
                 //getPiccolo().addChild(pp);
 
             }
-
 
 
             @Override

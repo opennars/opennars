@@ -9,6 +9,7 @@ import nars.io.Texts;
 import nars.logic.NALOperator;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
+import nars.logic.nal7.Interval;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
 import org.parboiled.BaseParser;
@@ -235,6 +236,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         return sequence(
                 firstOf(
+                        Interval(),
 
                         CompoundTerm(),
                         Copula(),
@@ -264,20 +266,26 @@ public class NarseseParser extends BaseParser<Object> {
         //TODO handle \" escape
         return oneOrMore(noneOf("\""));
     }
-            
-    
+
+
+    Rule Interval() {
+        return sequence(Symbols.INTERVAL_PREFIX, sequence(oneOrMore(digit()), push(match()),
+                push(Interval.interval(-1 + Integer.valueOf((String)pop())))
+        ));
+    }
+
     Rule Variable() {
         /*
            <variable> ::= "$"<word>                          // independent variable
                         | "#"[<word>]                        // dependent variable
                         | "?"[<word>]                        // query variable in question
         */
-        return firstOf(IndependentVariable(), DependentVariable(), QueryVariable());
+        return sequence(
+                firstOf(Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY),
+                push(match()), Atom(), swap(),
+                push(new Variable((String)pop() + (String) pop() ) )
+        );
     }
-    
-    Rule IndependentVariable() { return sequence('$', Atom());     }
-    Rule DependentVariable() { return sequence('#', optional(Atom())); }
-    Rule QueryVariable() { return sequence('?', optional(Atom())); }
     
     Rule CompoundTerm() {
         /*

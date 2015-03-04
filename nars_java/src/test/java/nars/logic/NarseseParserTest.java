@@ -3,15 +3,18 @@ package nars.logic;
 import nars.build.Default;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.io.Symbols;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.NarseseParser;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
+import nars.logic.entity.Variable;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal3.Intersect;
 import nars.logic.nal3.IntersectionInt;
 import nars.logic.nal4.Product;
+import nars.logic.nal7.Interval;
 import nars.logic.nal8.Operation;
 import org.junit.Test;
 
@@ -184,10 +187,33 @@ public class NarseseParserTest {
 
     @Test public void testInterval() throws InvalidInputException {
 
+        Term x = term("/2");
+        assertNotNull(x);
+        assertEquals(Interval.class, x.getClass());
+        Interval i = (Interval)x;
+        assertEquals(1, i.magnitude);
+
+    }
+
+    protected Variable testVar(char prefix) {
+        Term x = term(prefix + "x");
+        assertNotNull(x);
+        assertEquals(Variable.class, x.getClass());
+        Variable i = (Variable)x;
+        assertEquals(prefix + "x", i.name());
+        return i;
     }
 
     @Test public void testVariables() throws InvalidInputException {
+        Variable v;
+        v = testVar(Symbols.VAR_DEPENDENT);
+        assertTrue(v.hasVarDep());
 
+        v = testVar(Symbols.VAR_INDEPENDENT);
+        assertTrue(v.hasVarIndep());
+
+        v = testVar(Symbols.VAR_QUERY);
+        assertTrue(v.hasVarQuery());
     }
 
     @Test public void testTenses() throws InvalidInputException {

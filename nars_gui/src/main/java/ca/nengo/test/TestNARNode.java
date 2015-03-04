@@ -51,7 +51,7 @@ public class TestNARNode extends Nengrow {
     public Node newAgentNodeDemo() throws StructuralException {
         NetworkImpl network = new NetworkImpl();
 
-        NAR nar = new NAR(new Default());
+        NAR nar = new NAR(new Default().setInternalExperience(null));
         NARNode an = new NARNode("NARBot1", nar);
         Video.themeInvert();
         new NARSwing(nar);
@@ -246,12 +246,12 @@ public class TestNARNode extends Nengrow {
                 }
             });
 
-            /*nar.addInput(
+            nar.addInput(
                     "see(#objects)! \n 10\n see(front, #objects)!\n 20 \n move(front)! \n" +
                             " 20 \n" +
                             " move(back)! \n 20 \n move(left)! \n 20 \n 20 \n turn(left)! \n 20 \n turn(right)!\n" +
                             "20\n turn(north)! \n 20 \n turn(south)! \n"
-            );*/
+            );
         }
 
 
@@ -266,7 +266,7 @@ public class TestNARNode extends Nengrow {
         networkUI.doubleClicked();
 
 
-        new Timer(200, new ActionListener() {
+        new Timer(100, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {

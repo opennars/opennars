@@ -60,8 +60,7 @@ public class Terminal {
 
         @Override
         public void keyTyped(KeyEvent e) {
-            char c = e.getKeyChar();
-            out(c, true);
+
         }
 
         @Override
@@ -71,15 +70,16 @@ public class Terminal {
 
         @Override
         public void keyReleased(KeyEvent e) {
-
+            char c = e.getKeyChar();
+            out(c, true);
         }
     }
 
-    View view = new View();
+    public final View view = new View();
 
     public Terminal() throws IOException {
 
-        new NWindow("x", view).show(600,400);
+        //new NWindow("x", view).show(600,400);
 
         String s;
 
