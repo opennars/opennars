@@ -2,8 +2,8 @@ package ca.nengo.ui.lib;
 
 import ca.nengo.plot.Plotter;
 import ca.nengo.ui.lib.action.*;
-import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.menu.MenuBuilder;
+import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;
@@ -321,13 +321,17 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
         }
     }
 
-    protected void initLayout(Universe canvas) {
-        Container cp = getContentPane();
-
-        cp.add(canvas);
-
-        canvas.requestFocus();
-    }
+    abstract protected void initLayout(Universe canvas);
+//    protected void initLayout(Universe canvas) {
+//        Container cp = getContentPane();
+//
+//        //cp.add(canvas);
+//        setContentPane(new GLG2DCanvas(canvas));
+//
+//
+//
+//        canvas.requestFocus();
+//    }
 
     /**
      * Use this function to add menu items to the frame menu bar

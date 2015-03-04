@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-
     <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
+    <artifactId>opennars-gui</artifactId>
+
     <parent>
         <groupId>opennars</groupId>
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <packaging>jar</packaging>
-    <artifactId>opennars-gui</artifactId>
+
 
     <name>OpenNARS GUI (Swing)</name>
     <url>https://github.com/opennars/opennars</url>
@@ -28,6 +28,11 @@
                 <enabled>false</enabled>
             </snapshots>
             <url>file://${project.basedir}/lib</url>
+        </repository>
+
+        <repository>
+            <id>glg2d-repo</id>
+            <url>http://brandonborkholder.github.com/glg2d/maven2/</url>
         </repository>
 
     </repositories>
@@ -185,6 +190,45 @@
             <scope>test</scope>
         </dependency>
 
+
+        <!--
+        <dependency>
+            <groupId>org.jogamp.glg2d</groupId>
+            <artifactId>glg2d</artifactId>
+            <version>0.3-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jogamp.gluegen</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jogamp.jogl</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+
+        </dependency> -->
+
+        <dependency>
+            <groupId>org.jogamp.gluegen</groupId>
+            <artifactId>gluegen-rt-main</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.jogl</groupId>
+            <artifactId>jogl-all-main</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>worldwind</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>worldwindx</artifactId>
+            <version>2.0.0</version>
+        </dependency>
     </dependencies>
 
 

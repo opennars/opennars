@@ -25,7 +25,9 @@ abstract public class Nengrow extends AbstractNengo {
         super.initialize();
 
         menuBar.add(newSpeedControl());
-        add(getUniverse());
+
+
+        setContentPane(getUniverse());
 
 
         try {

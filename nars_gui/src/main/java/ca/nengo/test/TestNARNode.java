@@ -163,7 +163,6 @@ public class TestNARNode extends Nengrow {
                             dy = ww * Math.sin(heading);
                         }
                         intersects = ui.intersecting(null, dx, dy);
-                        System.out.println(dx + " " + dy + "" + intersects);
                     }
 
                     intersects.add(ui.getNetworkParent());

@@ -16,7 +16,6 @@ import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.event.PInputEventListener;
-import org.piccolo2d.extras.nodes.PClip;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -49,7 +48,7 @@ public class Window extends WorldObjectImpl implements Interactable {
 
 	private final Border myBorder;
 
-	private final PClip myClippingRectangle;
+	//private final PClip myClippingRectangle;
 
 	private final WorldObjectImpl myContent;
 
@@ -82,12 +81,12 @@ public class Window extends WorldObjectImpl implements Interactable {
 		menubar = new MenuBar(this);
 
 
-		myClippingRectangle = new PClip();
-		myClippingRectangle.addChild(content.getPiccolo());
-		myClippingRectangle.setPaint(NengoStyle.COLOR_BACKGROUND);
-		myBorder = new Border(this, NengoStyle.COLOR_FOREGROUND);
-
-		getPiccolo().addChild(myClippingRectangle);
+//		myClippingRectangle = new PClip();
+//		myClippingRectangle.addChild(content.getPiccolo());
+//		myClippingRectangle.setPaint(NengoStyle.COLOR_BACKGROUND);
+//
+//		getPiccolo().addChild(myClippingRectangle);
+        myBorder = new Border(this, NengoStyle.COLOR_FOREGROUND);
         addChild(myContent);
 		addChild(menubar);
 		addChild(myBorder);
@@ -260,7 +259,7 @@ public class Window extends WorldObjectImpl implements Interactable {
 		myContent.setBounds(0, 0, getWidth() - 4, getHeight() - 4 - MENU_BAR_HEIGHT);
 		myContent.setOffset(2, 2 + MENU_BAR_HEIGHT);
 
-        myClippingRectangle.setBounds((float) getX(), (float) getY(), (float) getWidth(), (float) getHeight());
+        //myClippingRectangle.setBounds((float) getX(), (float) getY(), (float) getWidth(), (float) getHeight());
 
 	}
 

@@ -1,6 +1,7 @@
 package ca.nengo.ui.lib.util;
 
 import ca.nengo.ui.lib.AppFrame;
+import nars.core.Parameters;
 
 /**
  * Holds user interface instance variables.
@@ -13,7 +14,7 @@ public class UIEnvironment {
 
 	private static AppFrame uiInstance;
 
-	static boolean debugEnabled = true;
+	static boolean debugEnabled = Parameters.DEBUG;
 
 	public static boolean isDebugEnabled() {
 		return debugEnabled;

@@ -12,10 +12,10 @@ import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
+import org.piccolo2d.PCanvas;
 import org.piccolo2d.PLayer;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
-import org.piccolo2d.extras.pswing.PSwingCanvas;
 
 import java.util.*;
 
@@ -25,7 +25,7 @@ import java.util.*;
  * 
  * @author Shu Wu
  */
-public class Universe extends PSwingCanvas implements Destroyable {
+public class Universe extends PCanvas implements Destroyable {
 
 	private static final long serialVersionUID = 1L;
 

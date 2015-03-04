@@ -95,7 +95,11 @@ public class NARGraphPanel extends NPanel {
             menu.add(layoutControl);
         }
 
+
+
         add(canvas, BorderLayout.CENTER);
+
+
         add(menu, BorderLayout.NORTH);
 
         canvas.setFrameRate(paintFPS);
