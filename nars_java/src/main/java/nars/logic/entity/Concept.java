@@ -506,7 +506,11 @@ public class Concept extends Item<Term> implements Termable {
     public boolean linkToTask(final Task task) {
         BudgetValue taskBudget = task.budget;
         taskLinkBuilder.setTask(task);
+
         taskLinkBuilder.setTemplate(null);
+        taskLinkBuilder.setBudget(taskBudget);
+        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
+
 
         List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
@@ -515,6 +519,7 @@ public class Concept extends Item<Term> implements Termable {
             return false;
         }
 
+
         //TODO parameter to use linear division, conserving total budget
         //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
         final int numTemplates = templates.size();
@@ -522,6 +527,7 @@ public class Concept extends Item<Term> implements Termable {
 
         float linkSubBudgetDivisor = (float)numTemplates+1;
         //float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
+
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
         if (!subBudget.aboveThreshold()) {
@@ -532,13 +538,19 @@ public class Concept extends Item<Term> implements Termable {
 
         taskLinkBuilder.setBudget(subBudget);
 
-        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
-
         for (int i = 0; i < numTemplates; i++) {
             TermLinkTemplate termLink = templates.get(i);
 
-//              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
+            //if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
+            //if (termLink.type == TermLink.TRANSFORM) // avoid circular transform
+
+
             Term componentTerm = termLink.target;
+            if (componentTerm.equals(term)) {
+                //TODO is it right to avoid self-activating here?
+                //subbudget should be larger than it was originally calculated if this is the case
+                continue;
+            }
 
             Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
 

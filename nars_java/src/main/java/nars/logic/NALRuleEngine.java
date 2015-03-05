@@ -58,8 +58,6 @@ public class NALRuleEngine extends RuleEngine {
         //derivationFilters.add(new FilterCyclic());
     }
 
-
-
     public void fire(ConceptFire fireConcept) {
         base.fire(ConceptFire.class, fireConcept);
     }
@@ -68,6 +66,7 @@ public class NALRuleEngine extends RuleEngine {
         return derivationFilters;
     }
 
+    /** tests validity of a derived task; if valid returns null, else returns a String reason explaining why it is invalid */
     public String isRejected(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
         List<NAL.DerivationFilter> derivationFilters = getDerivationFilters();

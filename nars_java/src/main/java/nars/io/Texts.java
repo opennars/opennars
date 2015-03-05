@@ -319,6 +319,7 @@ public class Texts {
 
     final static Format fourDecimal = new DecimalFormat("0.0000");
     public static final String n4(final float x) { return fourDecimal.format(x);     }
+    public static final String n4(final double x) { return fourDecimal.format(x);     }
 
     final static Format twoDecimal = new DecimalFormat("0.00");    
     public static final String n2Slow(final float x) { return twoDecimal.format(x);     }

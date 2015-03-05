@@ -11,9 +11,7 @@ import nars.util.data.CuckooMap;
 
 import java.util.*;
 
-/**
-* Created by me on 2/10/15.
-*/
+
 public class CountDerivationCondition extends AbstractPlugin {
 
     //SM = success method

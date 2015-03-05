@@ -676,8 +676,10 @@ public class NAR implements Runnable {
 
                 throw new RuntimeException(e);
             }
-            else
+            else {
                 memory.error(e);
+                System.err.println(e);
+            }
         }
 
         emit(FrameEnd.class);

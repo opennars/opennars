@@ -362,8 +362,15 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     }
 
     public String getExplanation() {
+        StringBuilder sb = new StringBuilder();
+        getExplanation(0, sb);
+        return sb.toString();
+    }
+
+    protected void getExplanation(int indent, StringBuilder sb) {
         //TODO StringBuilder
-        String x = toString() + '\n';
+        String x = toString() + ' ' + getStamp() + '\n';
+
         if (cause!=null)
             x += "  cause=" + cause + '\n';
         if (bestSolution!=null) {
@@ -388,7 +395,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
             } while (true);
         }
         
-        return x;
+        sb.append(x);
     }
 
     public TruthValue getDesire() { return sentence.truth; }

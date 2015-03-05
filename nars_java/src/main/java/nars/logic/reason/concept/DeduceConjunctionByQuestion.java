@@ -35,7 +35,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
      * @param belief   The second premise
      * @param nal      Reference to the memory
      */
-    public static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final NAL nal) {
+    static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final NAL nal) {
         if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }

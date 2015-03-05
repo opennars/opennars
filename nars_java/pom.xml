@@ -24,6 +24,7 @@
     <build>
         <plugins>
             <!-- Order is important ! Execution follows the declaration order -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -43,7 +44,24 @@
                     <threadCount>1</threadCount>
                 </configuration>-->
             </plugin>
-
+            <!--<plugin>-->
+                <!--<groupId>net.ju-n.maven.plugins</groupId>-->
+                <!--<artifactId>soot-maven-plugin</artifactId>-->
+                <!--<version>0.1.1</version>-->
+                <!--&lt;!&ndash; http://nicoulaj.github.io/soot-maven-plugin/soot-mojo.html &ndash;&gt;-->
+                <!--&lt;!&ndash;<executions>&ndash;&gt;-->
+                <!--&lt;!&ndash;<execution>&ndash;&gt;-->
+                <!--&lt;!&ndash;<goals>&ndash;&gt;-->
+                <!--&lt;!&ndash;<goal></goal>&ndash;&gt;-->
+                <!--&lt;!&ndash;</goals>&ndash;&gt;-->
+                <!--&lt;!&ndash;</execution>&ndash;&gt;-->
+                <!--&lt;!&ndash;</executions>&ndash;&gt;-->
+                <!--<configuration>-->
+                    <!--<debug>true</debug>-->
+                    <!--<interactiveMode>true</interactiveMode>-->
+                    <!--&lt;!&ndash; put your configurations here &ndash;&gt;-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
             <!-- mvn org.pitest:pitest-maven:mutationCoverage -->
             <!--<plugin>
