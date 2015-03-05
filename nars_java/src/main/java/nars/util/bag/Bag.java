@@ -137,7 +137,14 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
     public V UPDATE(final BagSelector<K, V> selector) {
         //TODO this is the generic version which may or may not work, or be entirely efficient in some subclasses
 
-        V item = GET(selector.name()); //
+        K key = selector.name();
+        V item;
+        if (key != null) {
+            item = GET(key);
+        }
+        else {
+            item = peekNext();
+        }
 
         if (item != null) {
             V changed = selector.update(item);
@@ -225,21 +232,19 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
         processNext(forgetCycles, accuracy, m);
     }
 
-    /**
-     * x = takeOut(), then putBack(x)
-     *
-     * @return the variable that was updated, or null if none was taken out
-     * @forgetCycles forgetting time in cycles
-     */
-    public V processNext(final float forgetCycles, final Memory m) {
-        V next;
-        synchronized (forgetNext) {
-            forgetNext.set(forgetCycles, m);
-            UPDATE(forgetNext);
-            next = forgetNext.getItem();
-        }
-        return next;
-    }
+//    /**
+//     * x = takeOut(), then putBack(x)
+//     *
+//     * @return the variable that was updated, or null if none was taken out
+//     * @forgetCycles forgetting time in cycles
+//     */
+//    public void forgetNext(final float forgetCycles, final Memory m) {
+//
+//        //synchronized (forgetNext) {
+//            forgetNext.set(forgetCycles, m);
+//            UPDATE(forgetNext);
+//        //}
+//    }
 
     public double[] getPriorityDistribution(int bins) {
         return getPriorityDistribution(new double[bins]);

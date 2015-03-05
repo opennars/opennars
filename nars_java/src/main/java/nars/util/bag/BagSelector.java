@@ -11,7 +11,7 @@ public interface BagSelector<K,V extends Item<K>> extends BudgetValue.Budgetable
     ////TODO called before anything, including name().  return false to cancel the process before anything else happens */
     //default void start() {    }
 
-    /** item's key */
+    /** item's key; if null, the bag will use a peekNext operation to as the next item */
     public K name();
 
     /** called if putIn a bag and the item specified by the key doesn't exist,

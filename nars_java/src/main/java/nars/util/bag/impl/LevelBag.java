@@ -173,8 +173,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             return remove(e);
         }*/
 
-        public EE peekFirst() {
-            return getFirst();
+        public DD<EE> peekFirst() {
+            return getFirstNode();
         }
 
         public Iterator<EE> descendingIterator() {
@@ -304,15 +304,30 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
 
-    protected void nextNonEmptyLevel() {
-        switch (nextNonEmptyMode) {
-            case Default:
-                nextNonEmptyLevelDefault();
-                break;
-            case Fast:
-                nextNonEmptyLevelFast();
-                break;
+    /** returns whether there is available item; if so then currentLevel will be set to the next level of it */
+    protected boolean nextNonEmptyLevel() {
+        if (size() == 0)
+            return false; // empty bag
+
+        if (levelEmpty[currentLevel] || (currentCounter <= 0)) {
+            switch (nextNonEmptyMode) {
+                case Default:
+                    nextNonEmptyLevelDefault();
+                    break;
+                case Fast:
+                    nextNonEmptyLevelFast();
+                    break;
+            }
+            if (Parameters.DEBUG) {
+                if (levelEmpty[currentLevel] || (level[currentLevel] == null) || (level(currentLevel).isEmpty())) {
+                    if (Parameters.THREADS == 1) {
+                        throw new RuntimeException("Empty setLevel selected for takeNext");
+                    }
+                }
+            }
         }
+        currentCounter--;
+        return true;
     }
 
 
@@ -389,9 +404,15 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     public E UPDATE(final BagSelector<K, E> selector) {
 
         final K key = selector.name();
-        if (key == null) return null;
+        final DD<E> bx;
+        if (key != null) {
+            bx = index.get(key);
+        }
+        else {
+            bx = rotateNext();
+        }
 
-        final DD<E> bx = index.get(key);
+
         if ((bx == null) || (bx.item == null)) {
             //allow selector to provide a new instance
             E n = selector.newItem();
@@ -422,50 +443,31 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         return c;
     }
 
-    protected E next(boolean remove) {
-        if (size() == 0)
-            return null; // empty bag
-
-
-        if (levelEmpty[currentLevel] || (currentCounter <= 0)) { // done with the current level
-            nextNonEmptyLevel();
-        }
-
-
-        if (Parameters.DEBUG) {
-            if (levelEmpty[currentLevel] || (level[currentLevel] == null) || (level(currentLevel).isEmpty())) {
-                if (Parameters.THREADS == 1) {
-                    throw new RuntimeException("Empty setLevel selected for takeNext");
-                } else {
-                    return null;
-                }
-            }
-        }
-
-        currentCounter--;
-
-        if (remove) {
-            // take out the first item in the level
-            return TAKE(currentLevel);
-        }
-        else {
-            final Level<K,E> cl = level[currentLevel];
-            E r = cl.peekFirst();
-            cl.rotate();
-            return r;
-        }
-
+    protected DD<E> rotateNext() {
+        if (!nextNonEmptyLevel())
+            return null;
+        final Level<K,E> cl = level[currentLevel];
+        DD<E> r = cl.peekFirst();
+        cl.rotate();
+        return r;
     }
+
 
     @Override
     public E peekNext() {
-        return next(false);
+        DD<E> e = rotateNext();
+        if (e == null) return null;
+        return e.item;
     }
 
 
     @Override
-    public /*synchronized*/ E TAKENEXT() {
-        return next(true);
+    public synchronized E TAKENEXT() {
+        if (!nextNonEmptyLevel())
+            return null;
+
+        // take out the first item in the level
+        return TAKE(currentLevel);
     }
 
 

@@ -21,7 +21,7 @@ public class NALPerfLoop {
         int repeats = 1;
         int warmups = 1;
         int maxConcepts = 1024;
-        int extraCycles = 2048;
+        int extraCycles = 4048;
         int randomExtraCycles = 512;
         Parameters.THREADS = 1;
           

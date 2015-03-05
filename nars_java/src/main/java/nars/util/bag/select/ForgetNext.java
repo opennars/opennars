@@ -13,7 +13,6 @@ import nars.util.bag.BagSelector;
 public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
 
     private final Bag<K, V> bag;
-    private V currentItem;
     private float forgetCycles;
     private Memory memory;
 
@@ -25,21 +24,22 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
 
     @Override
     public K name() {
-        V x = bag.peekNext();
-        this.currentItem = x;
-        if (x == null) return null;
+        return null; //signals to the bag updater to use the next item
 
-        //check whether forgetting will actually change anything to avoid the cost of needlessly updating an item (ex: re-leveling in LevelBag)
-        if (!forgetWillChangeBudget()) {
-            this.currentItem = null;
-            return null;
-        }
-
-        return x.name();
+//        V x = bag.peekNext();
+//        this.currentItem = x;
+//        if (x == null) return null;
+//
+//        //check whether forgetting will actually change anything to avoid the cost of needlessly updating an item (ex: re-leveling in LevelBag)
+//        if (!forgetWillChangeBudget()) {
+//            this.currentItem = null;
+//            return null;
+//        }
+//
+//        return x.name();
     }
 
-    protected boolean forgetWillChangeBudget() {
-        BudgetValue v = this.currentItem.budget;
+    protected boolean forgetWillChangeBudget(BudgetValue v) {
         return (v.getLastForgetTime() != memory.time()) && //there is >0 time across which forgetting would be applied
                 (v.getPriority() > v.getQuality() * Parameters.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
     }
@@ -50,14 +50,17 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
     }
 
     @Override
-    public V updateItem(V v) {
-        if (Parameters.DEBUG) {
+    public V updateItem(final V v) {
+        /*if (Parameters.DEBUG) {
             if (!Float.isFinite(forgetCycles))
                 throw new RuntimeException("Invalid forgetCycles parameter; set() method was probably not called prior");
+        }*/
+        if (!forgetWillChangeBudget(v.budget)) {
+            return null; //unaffected (null means that the item's budget was not changed, so the bag knows it can avoid any reindexing it)
         }
 
-        memory.forget(currentItem, forgetCycles, Parameters.FORGET_QUALITY_RELATIVE);
-        return currentItem;
+        memory.forget(v, forgetCycles, Parameters.FORGET_QUALITY_RELATIVE);
+        return v;
     }
 
     @Override
@@ -79,6 +82,6 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
     }
 
     public V getItem() {
-        return currentItem;
+        return null;
     }
 }

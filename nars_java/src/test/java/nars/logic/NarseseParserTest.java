@@ -187,7 +187,7 @@ public class NarseseParserTest {
 
     @Test public void testInterval() throws InvalidInputException {
 
-        Term x = term("/2");
+        Term x = term(Symbols.INTERVAL_PREFIX + "2");
         assertNotNull(x);
         assertEquals(Interval.class, x.getClass());
         Interval i = (Interval)x;
