@@ -79,7 +79,8 @@ abstract public class UniCore implements Core {
     }
 
     protected Concept nextConcept() {
-        Concept currentConcept = concepts.peekNext();
+        Concept currentConcept = concepts.peekNextForget(memory.param.conceptForgetDurations, memory);
+
         if (currentConcept==null)
             return null;
 

@@ -97,7 +97,7 @@ public class DefaultCore extends UniCore {
 
         }
 
-        concepts.processNext(
+        concepts.peekNextForget(
                 memory.param.conceptForgetDurations,
                 Parameters.CONCEPT_FORGETTING_ACCURACY,
                 memory);
@@ -111,7 +111,7 @@ public class DefaultCore extends UniCore {
     private ConceptFire nextTaskLink(Concept concept) {
         if (concept == null) return null;
 
-        TaskLink taskLink = concept.taskLinks.peekNext();
+        TaskLink taskLink = concept.taskLinks.peekNextForget(memory.param.taskLinkForgetDurations, memory);
         if (taskLink!=null)
             return newFireConcept(concept, taskLink);
         return null;

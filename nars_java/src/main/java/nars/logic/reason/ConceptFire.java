@@ -50,12 +50,12 @@ abstract public class ConceptFire extends NAL {
     protected void onFinished() {
         beforeFinish();
 
-        currentConcept.termLinks.processNext(
+        currentConcept.termLinks.peekNextForget(
                 memory.param.termLinkForgetDurations,
                 Parameters.TERMLINK_FORGETTING_ACCURACY,
                 memory);
 
-        currentConcept.taskLinks.processNext(
+        currentConcept.taskLinks.peekNextForget(
                 memory.param.taskLinkForgetDurations,
                 Parameters.TASKLINK_FORGETTING_ACCURACY,
                 memory);
@@ -111,7 +111,7 @@ abstract public class ConceptFire extends NAL {
                 int numAddedTasksAfter = newTasksCount();
 
                 //TODO redudant to send both 'this' and currentTaskLink, etc.., so remove them
-                emit(Events.TermLinkSelected.class, beliefLink, getCurrentTaskLink(), getCurrentConcept(), this, numAddedTasksBefore, numAddedTasksAfter);
+                emit(Events.TermLinkSelected.class, beliefLink, this, numAddedTasksBefore, numAddedTasksAfter);
                 memory.logic.TERM_LINK_SELECT.hit();
 
 

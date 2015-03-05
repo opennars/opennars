@@ -204,8 +204,10 @@ public class Parameters {
 //    public static final int SentenceOcurrenceTimeCyclesEqualityThreshold = 1;
 
     /**
-     * this determines the percentage of concepts which have their priority
-     * reduced by forgetting each cycle.  forgetting an item can be applied as often
+     * this determines the percentage of additional items (concepts, termlinks, tasklinks, ...etc)
+     * which have their priority reduced by forgetting each cycle.
+     *
+     * forgetting an item can be applied as often
      * as possible since it is governed by rate over time.  however we can
      * afford to update item priority less frequently than every cycle.
      * an accuracy of 1.0 means to process approximatley all concepts every cycle,
@@ -222,9 +224,9 @@ public class Parameters {
      * in which case the forgetting will have been applied some amount of time past
      * when it would have completed its forget descent.
      */
-    public static final float CONCEPT_FORGETTING_ACCURACY = 0.05f;
-    public static final float TERMLINK_FORGETTING_ACCURACY = 0.05f;
-    public static final float TASKLINK_FORGETTING_ACCURACY = 0.05f;
+    public static final float CONCEPT_FORGETTING_ACCURACY = 0.03f;
+    public static final float TERMLINK_FORGETTING_ACCURACY = 0.03f;
+    public static final float TASKLINK_FORGETTING_ACCURACY = 0.03f;
 
 
     public static <X> List<X> newArrayList() {

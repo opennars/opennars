@@ -1004,7 +1004,7 @@ public class Concept extends Item<Term> implements Termable {
 
         for (int i = 0; (i < toMatch); i++) {
 
-            final TermLink termLink = termLinks.peekNext();
+            final TermLink termLink = termLinks.peekNextForget(memory.param.termLinkForgetDurations, memory);
 
             if (termLink == null)
                 return null;

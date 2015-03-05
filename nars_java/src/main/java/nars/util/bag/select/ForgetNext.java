@@ -15,6 +15,7 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
     private final Bag<K, V> bag;
     private float forgetCycles;
     private Memory memory;
+    public V current = null;
 
 
     public ForgetNext(Bag<K, V> bag) {
@@ -55,11 +56,15 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
             if (!Float.isFinite(forgetCycles))
                 throw new RuntimeException("Invalid forgetCycles parameter; set() method was probably not called prior");
         }*/
+
+        this.current = v;
+
         if (!forgetWillChangeBudget(v.budget)) {
             return null; //unaffected (null means that the item's budget was not changed, so the bag knows it can avoid any reindexing it)
         }
 
         memory.forget(v, forgetCycles, Parameters.FORGET_QUALITY_RELATIVE);
+
         return v;
     }
 

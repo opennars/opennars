@@ -217,7 +217,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * accuracy determines the percentage of items which will be processNext().
      * this is a way to apply the forgetting process applied in putBack.
      */
-    public void processNext(final float forgetCycles, float accuracy, final Memory m) {
+    public void peekNextForget(final float forgetCycles, float accuracy, final Memory m) {
         int conceptsToForget = Math.max(1, (int) Math.round(size() * accuracy));
         /*synchronized (forgetNext)*/ {
             forgetNext.set(forgetCycles, m);
@@ -227,24 +227,22 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
         }
     }
 
-    public void processNext(AtomicDouble forgetDurations, float accuracy, final Memory m) {
+    public void peekNextForget(AtomicDouble forgetDurations, float accuracy, final Memory m) {
         float forgetCycles = m.param.cycles(forgetDurations);
-        processNext(forgetCycles, accuracy, m);
+        peekNextForget(forgetCycles, accuracy, m);
     }
 
 //    /**
-//     * x = takeOut(), then putBack(x)
+//     * equivalent to a peekNext where forgetting is applied
 //     *
 //     * @return the variable that was updated, or null if none was taken out
 //     * @forgetCycles forgetting time in cycles
 //     */
-//    public void forgetNext(final float forgetCycles, final Memory m) {
-//
-//        //synchronized (forgetNext) {
-//            forgetNext.set(forgetCycles, m);
-//            UPDATE(forgetNext);
-//        //}
-//    }
+    public V peekNextForget(final AtomicDouble forgetDurations, final Memory m) {
+        forgetNext.set(m.param.cycles(forgetDurations), m);
+        UPDATE(forgetNext);
+        return forgetNext.current;
+    }
 
     public double[] getPriorityDistribution(int bins) {
         return getPriorityDistribution(new double[bins]);

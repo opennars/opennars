@@ -12,6 +12,7 @@ import nars.logic.entity.*;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
+import nars.logic.reason.ConceptFire;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.DirectedMaskSubgraph;
@@ -175,11 +176,11 @@ public class Derivations extends DirectedMultigraph {
 
                 else if (event == Events.TermLinkSelected.class) {
                     TermLink termlink = (TermLink)args[0];
-                    TaskLink tasklink = (TaskLink)args[1];
-                    Concept c = (Concept)args[2];
-                    NAL n = (NAL)args[3];
-                    int taskStart = (int) args[4];
-                    int taskEnd = (int) args[5];
+                    ConceptFire n = (ConceptFire)args[1];
+                    TaskLink tasklink = n.getCurrentTaskLink();
+                    Concept c = n.getCurrentConcept();
+                    int taskStart = (int) args[2];
+                    int taskEnd = (int) args[3];
 
                     result(c, tasklink, termlink, getTasks(n, taskStart, taskEnd), n.time());
                 }
