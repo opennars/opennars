@@ -20,7 +20,6 @@
  */
 package nars.logic.entity;
 
-import com.google.common.base.Strings;
 import nars.core.Parameters;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.stamp.Stamp;
@@ -111,6 +110,8 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         super(b);
         this.sentence = s;
         this.parentTask = parentTask;
+        if (parentTask == null)
+            reason = "Input";
 
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
@@ -363,39 +364,41 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
 
     public String getExplanation() {
         StringBuilder sb = new StringBuilder();
-        getExplanation(0, sb);
+        getExplanation(this, 0, sb);
         return sb.toString();
     }
 
-    protected void getExplanation(int indent, StringBuilder sb) {
+    protected static void getExplanation(Task task, int indent, StringBuilder sb) {
         //TODO StringBuilder
-        String x = toString() + ' ' + getStamp() + '\n';
 
-        if (cause!=null)
-            x += "  cause=" + cause + '\n';
-        if (bestSolution!=null) {
-            if (!getTerm().equals(bestSolution.term))
-                x += "  solution=" + bestSolution + '\n';
+        for (int i = 0; i < indent; i++)
+            sb.append("  ");
+
+        sb.append(task.toString()).append(task.getStamp()).append(" reason=\"").append(task.getReason()).append('\"');
+
+        if (task.getCause()!=null)
+            sb.append(" cause=").append(task.getCause());
+        if (task.getBestSolution()!=null) {
+            if (!task.getTerm().equals(task.getBestSolution().term))
+                sb.append(" solution=").append(task.getBestSolution());
         }
-        if (parentBelief!=null)
-            x += "  parentBelief=" + parentBelief + " @ " + parentBelief.getCreationTime() + '\n';
-        
-        Task pt = getParentTask();
+
+        Task pt = task.getParentTask();
+
+        Sentence pb = task.getParentBelief();
+        if (pb!=null) {
+            if (pt!=null && pb.equals(pt.sentence)) {
+
+            }
+            else {
+                sb.append(" parentBelief=").append(task.getParentBelief()).append(task.getParentBelief().getStamp());
+            }
+        }
+        sb.append('\n');
+
         if (pt!=null) {
-            x += "  parentTask=" + pt + " @ " + pt.getCreationTime() + '\n';
-        
-            int indentLevel = 1;
-            Task p=getParentTask();
-            do {            
-                indentLevel++;
-                Task n = p.getParentTask();
-                if (n == null) break;
-                x += Strings.repeat("  ",indentLevel) + n.toString();
-                p = n;
-            } while (true);
+            getExplanation(pt, indent+1, sb);
         }
-        
-        sb.append(x);
     }
 
     public TruthValue getDesire() { return sentence.truth; }

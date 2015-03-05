@@ -32,6 +32,7 @@ public class BooleanChallenge {
     private final Narsese parser;
     int bits = 0;
     boolean failOnError = true; //exit on the first logical error
+    double negationProb = 0;
     double inputProb;
     double axiomProb = 1 / 1000.0f;
     float questionRatio = 0.1f; //lower is easier
@@ -207,7 +208,21 @@ public class BooleanChallenge {
 
         //NAR n = new CurveBagNARBuilder().build();
 
-        new TextOutput(n, System.out);
+        new TextOutput(n, System.out) {
+
+            String lastOutput = "";
+            @Override
+            public String process(Class c, Object[] o) {
+                String p = super.process(c, o);
+
+                if (p.equals(lastOutput)) {
+                    System.err.println("DUPLICATED OUTPUT");
+                    new Exception().printStackTrace();
+                }
+                lastOutput = p;
+                return p;
+            }
+        };
 
         //new NARSwing(n);
 
@@ -215,7 +230,7 @@ public class BooleanChallenge {
 
             @Override
             public void test() { */
-        new BooleanChallenge(n).run(1, 5500, 5500);
+        new BooleanChallenge(n).run(1, 155000, 155000);
 /*            }
 
         }).start();*/
@@ -360,7 +375,7 @@ public class BooleanChallenge {
         int y = rand(bits);
         int correct;
         String op;
-        float truth = 1.0f;
+        boolean allowNegation = Math.random() < negationProb;
         switch ((int) (Math.random() * 3)) {
             case 0:
                 op = "and";
@@ -376,6 +391,9 @@ public class BooleanChallenge {
                 correct = a ^ b;
                 break;
         }
+
+        if ((!allowNegation) && (correct!=y))
+            y = correct;
 
 
         //String term = "<(*,(*," + b(a) + "," + b(b) + ")," + b(y) + ") --> " + op + ">";
@@ -403,8 +421,8 @@ public class BooleanChallenge {
             answerProvided.add(t);
         }
 
+        float truth = 1f;
         if (!question) {
-            truth = 1f;
             //truth = (correct == y) ? 1.0f : 0.0f;
             if (correct != y) {
                 term = "(--," + term + ")";

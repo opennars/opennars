@@ -216,11 +216,14 @@ public class Concept extends Item<Term> implements Termable {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT:
-                processJudgment(nal, task);
+                if (!processJudgment(nal, task))
+                    return false;
+
                 memory.logic.JUDGMENT_PROCESS.hit();
                 break;
             case Symbols.GOAL:
-                processGoal(nal, task);
+                if (!processGoal(nal, task))
+                    return false;
                 memory.logic.GOAL_PROCESS.hit();
                 break;
             case Symbols.QUESTION:
@@ -277,7 +280,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processJudgment(final ImmediateProcess nal, final Task task) {
+    protected boolean processJudgment(final ImmediateProcess nal, final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief;
 
@@ -292,7 +295,7 @@ public class Concept extends Item<Term> implements Termable {
 //                }   // else: activated belief
                 
                 memory.removeTask(task, "Duplicated");                
-                return;
+                return false;
             } else if (revisible(judg, oldBelief)) {
                 final long now = memory.time();
 
@@ -316,7 +319,8 @@ public class Concept extends Item<Term> implements Termable {
                         nal.singlePremiseTask(projectedBelief, task.budget);
                     }
 
-                    revision(judg, projectedBelief, false, nal, projectedBelief);
+                    if (revision(judg, projectedBelief, false, nal, projectedBelief))
+                        return false;
                 }
 
             }
@@ -331,6 +335,7 @@ public class Concept extends Item<Term> implements Termable {
 
             addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
         }
+        return true;
     }
 
     protected void addToTable(final Task task, final List<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
@@ -387,7 +392,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processGoal(final ImmediateProcess nal, final Task task) {
+    protected boolean processGoal(final ImmediateProcess nal, final Task task) {
 
         final Sentence goal = task.sentence, oldGoal;
 
@@ -399,38 +404,36 @@ public class Concept extends Item<Term> implements Termable {
             
             if (newStamp.equals(oldStamp,false, true, false,false)) {
                 memory.removeTask(task, "Duplicated");
-                return; // duplicate
+                return false; // duplicate
             } else if (revisible(goal, oldGoal)) {
 
                 boolean revisionSucceeded = revision(goal, oldGoal, false, nal);
                 if(revisionSucceeded) {
                     // it is revised, so there is a new task for which this function will be called
-                    return; // with higher/lower desire
+                    return false; // with higher/lower desire
                 } 
             } 
         } 
-        
-        /*if (task.aboveThreshold())*/ {
 
 
+        // check if the Goal is already satisfied
+        trySolution(selectCandidate(goal, beliefs), task, nal);
 
-
-            // check if the Goal is already satisfied
-            trySolution(selectCandidate(goal, beliefs), task, nal);
-
-            // still worth pursuing?
-            if (task.aboveThreshold()) {
-
-                addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
-
-                //if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) { see: https://github.com/opennars/opennars/commit/9f9581aa677e74c0fb85aae67495d55d02803af1
-                    if(!executeDecision(task)) {
-                        memory.emit(UnexecutableGoal.class, task, this, nal);
-                    }
-                //}
-                
-            }
+        // still worth pursuing?
+        if (!task.aboveThreshold()) {
+            return false;
         }
+
+
+        addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+
+        //if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) { see: https://github.com/opennars/opennars/commit/9f9581aa677e74c0fb85aae67495d55d02803af1
+            if(!executeDecision(task)) {
+                memory.emit(UnexecutableGoal.class, task, this, nal);
+            }
+        //}
+
+        return true;
     }
 
     /**
