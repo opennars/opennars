@@ -245,7 +245,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
      */
     protected void init(Term[] term) {
 
-
         this.complexity = 1;
         this.hasVariables = this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = false;
         for (final Term t : term) {
@@ -257,19 +256,19 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         }
 
         invalidateName();
-
-        if (!hasVar())
-            setNormalized(true);
     }
 
     public void invalidateName() {
-        this.name = null; //invalidate name so it will be (re-)created lazily
-        setNormalized(false);
         if (hasVar()) {
+            setNormalized(false);
+            this.name = null; //invalidate name so it will be (re-)created lazily
             for (final Term t : term) {
-                if ((t instanceof CompoundTerm) && (t.hasVar()))
+                if (t instanceof CompoundTerm)
                     ((CompoundTerm) t).invalidateName();
             }
+        }
+        else {
+            setNormalized(true);
         }
     }
 

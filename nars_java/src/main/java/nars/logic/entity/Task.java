@@ -58,12 +58,12 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
      */
     public final Sentence parentBelief;
 
-    /** hash calculated on creation; if parentTask reference is lost, the hash (which includes its hash) will still be preserved,
+    /** if hash calculated once creation; if parentTask reference is lost, the hash (which includes its hash) will still be preserved,
      * allowing it to be differentiated from another equal task with a lost parent
      * this may result in duplicate equivalent tasks that can be merged but it preserves their
      * position within a bag. otherwise if the hash suddenly changed, there would be a bag fault.
      */
-    private final int hash;
+    private int hash;
 
     /**
      * For Question and Goal: best solution found so far
@@ -115,7 +115,6 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
 
-        this.hash = (sentence==null? 0 : sentence.hashCode());// + parentHash();
 
         if (Parameters.DEBUG) {
             if ((parentTask!=null && parentTask.get() == null))
@@ -182,6 +181,8 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
 
     @Override
     public int hashCode() {
+        if (this.hash == 0)
+            this.hash = (sentence==null? toString().hashCode() : sentence.hashCode());// + parentHash();
         return hash;
     }
 
@@ -413,15 +414,10 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
 //    }
 //
 
-    /** ends, indicating whether successful completion */
-    public void end(boolean success) {
 
-    }
     
-    
-    /** sets priority to zero, signaling that the Task has ended or discarded */
+    /** signaling that the Task has ended or discarded */
     @Override public void end() {
-        end(false);
     }
 
     /** flag to indicate whether this Event Task participates in tempporal induction */

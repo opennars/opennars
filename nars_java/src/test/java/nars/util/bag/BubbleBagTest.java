@@ -5,7 +5,6 @@ import com.google.common.collect.Iterators;
 import nars.core.Memory;
 import nars.logic.entity.Item;
 import nars.util.bag.impl.experimental.BubbleBag;
-import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
@@ -13,7 +12,7 @@ import static junit.framework.TestCase.assertNotNull;
 import static nars.analyze.experimental.BagPerf.NullItem;
 import static org.junit.Assert.assertTrue;
 
-public class SolidBagTest extends AbstractBagTest {
+public class BubbleBagTest extends AbstractBagTest {
 
     @Test
     public void testSolidBagSetOperations() {
@@ -113,6 +112,7 @@ public class SolidBagTest extends AbstractBagTest {
                 false
         );
 
+        //System.out.println(Arrays.toString(dist));
         assertTrue(dist[0] + dist[dist.length - 1] > 0);
     }
 
@@ -136,13 +136,15 @@ public class SolidBagTest extends AbstractBagTest {
                 loops, insertsPerLoop, bag
         );
 
+        /*
         System.out.println(bag.inPriority);
         System.out.println(bag.outPriority);
         System.out.println(bag.size());
+        */
 
         //double[] dist = (bag.getPriorityDistribution(10));
-        Frequency f = bag.removal;
-        System.out.println(f);
+        //Frequency f = bag.removal;
+        //System.out.println(f);
 
     }
 

@@ -2,7 +2,6 @@ package nars.logic.nal5;
 
 import nars.build.Curve;
 import nars.build.Default;
-import nars.build.DefaultBuffered;
 import nars.core.NewNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.JavaNALTest;
@@ -26,7 +25,7 @@ public class NAL5Test extends JavaNALTest {
                 { new Default().setInternalExperience(null) },
                 { new Default().level(5) },
                 //{ new Neuromorphic(4) },
-                { new DefaultBuffered().setInternalExperience(null) },
+                //{ new DefaultBuffered().setInternalExperience(null) },
                 {new Curve().setInternalExperience(null)}
 
         });

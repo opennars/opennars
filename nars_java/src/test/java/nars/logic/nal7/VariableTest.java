@@ -6,7 +6,6 @@ package nars.logic.nal7;
 
 import nars.build.Curve;
 import nars.build.Default;
-import nars.build.DefaultBuffered;
 import nars.core.Events.Answer;
 import nars.core.NewNAR;
 import nars.event.AbstractReaction;
@@ -36,8 +35,8 @@ public class VariableTest extends JavaNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default().setInternalExperience(null)},
                 {new Default()},
-                {new DefaultBuffered()},
-                {new DefaultBuffered().setInternalExperience(null)},
+                //{new DefaultBuffered()},
+                //{new DefaultBuffered().setInternalExperience(null)},
                 {new Curve().setInternalExperience(null)}
 
                 /*{new Neuromorphic(1)},

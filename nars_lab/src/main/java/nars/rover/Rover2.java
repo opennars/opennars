@@ -1,7 +1,7 @@
 package nars.rover;
 
 import nars.NARPrologMirror;
-import nars.build.DefaultBuffered;
+import nars.build.Default;
 import nars.build.Neuromorphic;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -9,11 +9,11 @@ import nars.core.Parameters;
 import nars.gui.NARSwing;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
+import nars.logic.nal8.NullOperator;
 import nars.logic.nal8.Operation;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
 import nars.rover.jbox2d.j2d.DrawPhy2D;
-import nars.logic.nal8.NullOperator;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -66,7 +66,7 @@ public class Rover2 extends PhysicsModel {
         }
         else {
             Parameters.THREADS = 1;
-            nar = new NAR(new DefaultBuffered().simulationTime().
+            nar = new NAR(new Default().simulationTime().
                     setConceptBagSize(1500).
                     setSubconceptBagSize(12000).
                     setNovelTaskBagSize(256));

@@ -108,8 +108,8 @@ public class Concept extends Item<Term> implements Termable {
     private final TaskLinkBuilder taskLinkBuilder;
 
     /** remaining unspent budget from previous cycle can be accumulated */
-    float taskBudgetBalance = 0;
-    float termBudgetBalance = 0;
+    /*float taskBudgetBalance = 0;
+    float termBudgetBalance = 0;*/
 
     /**
      * The display window
@@ -124,7 +124,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final BudgetValue b, final Term term, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
+    public Concept(final BudgetValue b, final Term term, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(b);        
         
         this.term = term;
@@ -142,32 +142,12 @@ public class Concept extends Item<Term> implements Termable {
         if (termLinks instanceof MemoryAware)  ((MemoryAware)termLinks).setMemory(memory);
                 
         if (term instanceof CompoundTerm) {
-            this.termLinkBuilder = new TermLinkBuilder(this) {
-
-                @Override
-                public void overflow(TermLink overflow) {
-                    if (overflow.name().equals(getKey())) {
-                        //the inserted item was returned, so absorb the refund
-                        termBudgetBalance += getBudget().getPriority();
-                    }
-                }
-            };
+            this.termLinkBuilder = new TermLinkBuilder(this);
         } else {
             this.termLinkBuilder = null;
         }
 
-        this.taskLinkBuilder = new TaskLinkBuilder(memory) {
-            @Override
-            public void overflow(TaskLink overflow) {
-                if (overflow.name().equals(getKey())) {
-                    //the inserted item was returned, so absorb the refund
-                    termBudgetBalance += getBudget().getPriority();
-                }
-                else {
-                    //another item was displaced
-                }
-            }
-        };
+        this.taskLinkBuilder = new TaskLinkBuilder(memory);
 
     }
 
@@ -546,7 +526,7 @@ public class Concept extends Item<Term> implements Termable {
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
         if (!subBudget.aboveThreshold()) {
             //unused
-            taskBudgetBalance += taskBudget.getPriority();
+            //taskBudgetBalance += taskBudget.getPriority();
             return false;
         }
 
@@ -570,7 +550,7 @@ public class Concept extends Item<Term> implements Termable {
                 componentConcept.activateTaskLink(taskLinkBuilder);                }
 
             else {
-                taskBudgetBalance += subBudget.getPriority();
+                //taskBudgetBalance += subBudget.getPriority();
             }
 
         }
@@ -742,7 +722,7 @@ public class Concept extends Item<Term> implements Termable {
 
             final Concept otherConcept = memory.conceptualize(termLinkBuilder.getBudget(), target);
             if (otherConcept == null) {
-                termBudgetBalance += subBudget*2;
+                //termBudgetBalance += subBudget*2;
                 continue;
             }
 

@@ -688,7 +688,12 @@ public class Memory implements Serializable {
 
         event.emit(Events.CycleStart.class);
 
-        concepts.cycle();
+        try {
+            concepts.cycle();
+        }
+        catch(Exception e) {
+            emit(Events.ERR.class, e);
+        }
 
         event.emit(Events.CycleEnd.class);
 
