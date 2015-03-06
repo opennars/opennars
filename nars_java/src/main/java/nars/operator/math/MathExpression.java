@@ -1,6 +1,5 @@
 package nars.operator.math;
 
-import nars.core.Memory;
 import nars.io.Texts;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
@@ -35,7 +34,7 @@ public class MathExpression  extends TermFunction {
     
     
     @Override
-    public Term function(Memory memory, Term[] x) {
+    public Term function(Term[] x) {
 
         //TODO this may not be thread-safe, this block may need synchronized:
         synchronized (context) {

@@ -133,7 +133,7 @@ public class TestNARNode extends Nengrow {
 
 
                 @Override
-                public Term function(Memory memory, Term[] x) {
+                public Term function(Term[] x) {
 
 
                     Collection<WorldObject> intersects;

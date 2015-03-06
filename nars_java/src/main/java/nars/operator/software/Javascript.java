@@ -1,6 +1,5 @@
 package nars.operator.software;
 
-import nars.core.Memory;
 import nars.io.Texts;
 import nars.logic.entity.Term;
 import nars.logic.nal8.TermFunction;
@@ -22,7 +21,7 @@ public class Javascript extends TermFunction implements Mental {
         super("^js");
     }
     
-    @Override public Term function(Memory memory, Term[] args) {
+    @Override public Term function(Term[] args) {
         if (args.length < 1) {
             return null;
         }
@@ -39,7 +38,7 @@ public class Javascript extends TermFunction implements Mental {
         
         Bindings bindings = new SimpleBindings();
         bindings.put("scriptArguments", scriptArguments);
-        bindings.put("memory", memory);
+        bindings.put("memory", getMemory());
         
         String input = Texts.unescape(args[0].name()).toString();
         if (input.charAt(0) == '"') {

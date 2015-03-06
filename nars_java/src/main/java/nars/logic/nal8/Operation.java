@@ -188,12 +188,74 @@ public class Operation extends Inheritance {
         return new Task(sentence, budget, getTask());
     }
 
-    public Term[] getArgumentTerms() {
-        return getArguments().term;
+    public Term[] getArgumentTerms(boolean evaluate) {
+        final Term[] rawArgs = getArgumentsRaw();
+        int numInputs = rawArgs.length;
+
+        if (rawArgs[numInputs - 1].equals(getOperator().getMemory().getSelf()))
+            numInputs--;
+
+        if (rawArgs[numInputs - 1] instanceof Variable)
+            numInputs--;
+
+        Term[] x;
+
+        if (evaluate) {
+            x = new Term[numInputs];
+            for (int i = 0; i < numInputs; i++) {
+                x[i] = evaluate(getOperator().getMemory(), rawArgs[i]);
+            }
+        }
+        else {
+            x = Arrays.copyOfRange(rawArgs, 0, numInputs);
+        }
+
+        return x;
     }
+
+    protected static Term evaluate(final Memory m, final Term x) {
+        if (x instanceof Operation) {
+            final Operation o = (Operation)x;
+            final Operator op = o.getOperator();
+            if (op instanceof TermEval) {
+//                CompoundTerm[] ee = ((TermFunction) op).executeTerm(o);
+//                if ((ee!=null) && (ee[0]!=null))
+//                    return ee[0];
+                ((TermFunction)op).function(o.getArgumentTerms(true));
+            }
+        }
+
+        if (x instanceof CompoundTerm) {
+            CompoundTerm ct = (CompoundTerm)x;
+            Term[] r = new Term[ct.size()];
+            boolean modified = false;
+            int j = 0;
+            for (final Term w : ct.term) {
+                Term v = evaluate(m, w);
+                if ((v!=null) && (v!=w)) {
+                    r[j] = v;
+                    modified = true;
+                }
+                else {
+                    r[j] = w;
+                }
+                j++;
+            }
+            if (modified)
+                return ct.clone(r);
+        }
+
+        return x; //return as-is
+    }
+
 
     /** produces a cloned instance with the replaced args + additional terms in a new argument product */
     public Operation cloneWithArguments(Term[] args, Term... additional) {
         return (Operation)setComponent(0, Product.make(args, additional));
+    }
+
+    /** returns a reference to the raw arguments as contained by the Product subject of this operation */
+    public Term[] getArgumentsRaw() {
+        return getArguments().term;
     }
 }

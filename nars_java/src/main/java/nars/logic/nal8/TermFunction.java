@@ -31,71 +31,32 @@ public abstract class TermFunction extends Operator implements TermEval {
     /** y = function(x) 
      * @return y, or null if unsuccessful
      */
-    @Override abstract public Term function(Memory memory, Term[] x);
+    @Override abstract public Term function(Term[] x);
 
 
 
-    protected static Term evaluate(final Memory m, final Term x) {
-        if (x instanceof Operation) {
-            final Operation o = (Operation)x;
-            final Operator op = o.getOperator();
-            if (op instanceof TermEval) {
-                //CompoundTerm[] ee = ((TermFunction) op).executeTerm(o);
-                return evaluate(m, o);
-            }
-        }
-
-        if (x instanceof CompoundTerm) {
-            CompoundTerm ct = (CompoundTerm)x;
-            Term[] r = new Term[ct.size()];
-            boolean modified = false;
-            int j = 0;
-            for (final Term w : ct.term) {
-                Term v = evaluate(m, w);
-                if ((v!=null) && (v!=w)) {
-                    r[j] = v;
-                    modified = true;
-                }
-                else {
-                    r[j] = w;
-                }
-                j++;
-            }
-            if (modified)
-                return ct.clone(r);
-        }
-
-        return x; //return as-is
-    }
 
     protected static CompoundTerm[] executeTerm(Operation operation) {
         TermFunction op = (TermFunction) operation.getOperator();
 
-        Term[] args = operation.getArgumentTerms();
+        Term[] rawArgs = operation.getArguments().term;
 
-        int numInputs = args.length;
-        if (args[numInputs - 1].equals(op.getMemory().getSelf()))
+        int numInputs = rawArgs.length;
+        if (rawArgs[numInputs - 1].equals(op.getMemory().getSelf()))
             numInputs--;
 
         Term lastTerm = null;
-        if (args[numInputs - 1] instanceof Variable) {
-            lastTerm = args[numInputs-1];
+        if (rawArgs[numInputs - 1] instanceof Variable) {
+            lastTerm = rawArgs[numInputs-1];
             numInputs--;
         }
 
+        Term[] x = operation.getArgumentTerms(true);
 
-        Term[] x = new Term[numInputs];
-
-        //evaluate parameters
-        for (int i = 0; i < numInputs; i++)
-            x[i] = evaluate(op.getMemory(), args[i]);
-
-
-        Term y = op.function(op.getMemory(), x);
+        Term y = op.function(x);
         if (y == null) {
             return null;
         }
-
 
         //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
         //which wont happen on temporal induction with dependent variable for good reason,
@@ -126,7 +87,8 @@ public abstract class TermFunction extends Operator implements TermEval {
         if (actual == null) return null;
 
 
-        float confidence = 0.99f;
+        float confidence = operation.getTask().sentence.truth.getConfidence();
+        //TODO add a delay discount/projection for executions that happen further away from creation time
 
         return newArrayList(
 

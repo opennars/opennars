@@ -1,6 +1,5 @@
 package nars;
 
-import nars.core.Memory;
 import nars.logic.entity.Term;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal8.TermFunction;
@@ -31,7 +30,7 @@ public class PrologFactual extends TermFunction {
     final int maxAnswers = 16;
 
     @Override
-    public Term function(Memory memory, Term[] x) {
+    public Term function(Term[] x) {
         Prolog p = context.getProlog(null); //default
 
             nars.prolog.Term factTerm = NARPrologMirror.pterm(x[0]);

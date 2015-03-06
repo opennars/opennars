@@ -4,7 +4,6 @@
  */
 package nars.operator.meta;
 
-import nars.core.Memory;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
@@ -30,7 +29,7 @@ public class Reflect extends TermFunction {
 
     
     @Override
-    public Term function(Memory memory, Term[] x) {
+    public Term function(Term[] x) {
         
 
         Term content = x[0];

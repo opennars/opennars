@@ -126,13 +126,13 @@ public class BindJavascriptExpression implements TextReaction {
 
 
                                 @Override
-                                public Term function(Memory memory, Term[] args) {
-                                    Object result = evalJS(o, args, memory);
+                                public Term function(Term[] args) {
+                                    Object result = evalJS(o, args, getMemory());
 
                                     try {
                                         return narsese.parseTerm(result.toString());
                                     } catch (InvalidInputException ex) {
-                                        memory.emit(ERR.class, ex.toString());
+                                        getMemory().emit(ERR.class, ex.toString());
                                         if (Parameters.DEBUG)
                                             ex.printStackTrace();
                                     }

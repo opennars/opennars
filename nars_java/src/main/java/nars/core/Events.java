@@ -25,8 +25,11 @@ public class Events {
         NAR nar;
 
         @Override
-        public void event(Class event, Object[] args) {
+        public void event(final Class event, final Object[] args) {
+
             Task t = (Task)args[0];
+            if (t.isInput()) return; //input events will already have been output via IN channel
+
             final float budget = t.budget.summary();
             final float noiseLevel = 1.0f - (this.volume.get() / 100.0f);
 

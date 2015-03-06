@@ -3,7 +3,6 @@ package nars.operator.software;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import nars.core.Memory;
 import nars.logic.entity.Term;
 import nars.logic.nal4.Product;
 import nars.logic.nal8.TermFunction;
@@ -85,7 +84,7 @@ public class Scheme extends TermFunction {
     };
 
     @Override
-    public Term function(Memory memory, Term[] x) {
+    public Term function(Term[] x) {
         Term code = x[0];
         if (code instanceof Product) {
             //evaluate as an s-expression

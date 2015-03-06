@@ -50,7 +50,7 @@ import java.util.List;
 public abstract class Operator extends Term implements Plugin {
 
     protected NAR nar;
-    public static final float executionConfidence = Parameters.MAX_CONFIDENCE; // 0.9999f;
+    public static final float executionConfidence = Parameters.MAX_CONFIDENCE;
     
     //protected Operator() {   super();    }
     
@@ -133,10 +133,10 @@ public abstract class Operator extends Term implements Plugin {
                 return operation.toString();
             }
             else {
-                Term[] args = operation.getArguments().term;
+                Term[] args = operation.getArgumentsRaw();
                 Operator operator = operation.getOperator();
                 return ((b != null) ? (b.toStringExternal() + ' ') : "") +
-                        operator + '(' + Arrays.toString(args) + ")=" + feedback;
+                        operator + '(' + Arrays.toString(args) + "): " + feedback;
             }
         }
         

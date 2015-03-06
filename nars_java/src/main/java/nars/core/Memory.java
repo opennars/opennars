@@ -602,12 +602,11 @@ public class Memory implements Serializable {
      */
     public int inputTask(final Task task) {
 
-
-
-
-        Stamp s = task.sentence.stamp;
-        if (s.getCreationTime() == -1) {
-            s.setCreationTime(time());
+        if (task.sentence!=null) {
+            Stamp s = task.sentence.stamp;
+            if (s.getCreationTime() == -1) {
+                s.setCreationTime(time());
+            }
         }
 
         emit(Events.IN.class, task);
@@ -695,7 +694,6 @@ public class Memory implements Serializable {
         event.emit(Events.CycleStart.class);
 
         concepts.cycle();
-
 
         event.emit(Events.CycleEnd.class);
 

@@ -1,7 +1,6 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import nars.gui.NARSwing;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -93,6 +92,7 @@ public class SwingText extends JTextPane {
     }
 
     public void printColorBlock(final Color color, final String s) {
+
 
         //StyleContext sc = StyleContext.getDefaultStyleContext();
         MutableAttributeSet aset = getInputAttributes();

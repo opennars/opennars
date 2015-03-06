@@ -644,7 +644,7 @@ public class NAR implements Runnable {
 
     
     public void emit(final Class c, final Object... o) {
-        memory.event.emit(c, o);
+        memory.emit(c, o);
     }
     
     
@@ -677,7 +677,7 @@ public class NAR implements Runnable {
             }
             else {
                 memory.error(e);
-                System.err.println(e);
+                e.printStackTrace();
             }
         }
 

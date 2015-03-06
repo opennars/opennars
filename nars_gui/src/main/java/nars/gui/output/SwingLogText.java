@@ -130,11 +130,10 @@ public class SwingLogText extends SwingText  {
         //final Rectangle bottom = new Rectangle(0,Integer.MAX_VALUE-1,1,1);        
         
         @Override public void run() {
-            
+
             while (pendingDisplay.size() > 0) {
                 LogLine l = pendingDisplay.removeFirst();
                 print(l.c, l.o);
-            
             }
                         
             limitBuffer();                        
@@ -168,7 +167,8 @@ public class SwingLogText extends SwingText  {
 
         float priority = 1f;
 
-        
+
+
         
         if (c!=OUT.class) {
             //pad the channel name to max 6 characters, right aligned

@@ -17,7 +17,6 @@
 
 package nars.operator.math;
 
-import nars.core.Memory;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 import nars.logic.nal3.SetExt;
@@ -51,7 +50,7 @@ public class Count extends TermFunction implements Mental {
     
     
     @Override
-    public Term function(Memory memory, Term[] x) {
+    public Term function(Term[] x) {
 //        if (x.length!=1) {
 //            throw new RuntimeException(requireMessage);
 //        }

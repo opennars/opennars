@@ -16,7 +16,6 @@
  */
 package nars.operator.math;
 
-import nars.core.Memory;
 import nars.logic.entity.Term;
 import nars.logic.nal8.TermFunction;
 import nars.operator.mental.Mental;
@@ -31,7 +30,7 @@ public class Add extends TermFunction implements Mental {
     }
 
     @Override
-    public Term function(Memory memory, Term[] x) {
+    public Term function(Term[] x) {
         if (x.length!= 2) {
             throw new RuntimeException("Requires 2 arguments");
         }
