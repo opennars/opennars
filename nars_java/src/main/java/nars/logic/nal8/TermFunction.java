@@ -17,17 +17,15 @@ import static com.google.common.collect.Lists.newArrayList;
  * N input parameters and one variable argument (as the final argument), generating a new task
  * with the result of the function substituted in the variable's place.
  */
-public abstract class SynchronousTermFunction extends Operator implements TermEval {
+public abstract class TermFunction extends Operator implements TermEval {
 
     static final Variable inVar=new Variable("$x");
     static final Variable var=new Variable("$y");
 
-    protected SynchronousTermFunction(String name) {
+    protected TermFunction(String name) {
         super(name);
     }
-//    protected SynchronousFunctionOperator(String name, boolean requireVariable) {
-//
-//    }
+
 
 
     /** y = function(x) 
@@ -35,24 +33,15 @@ public abstract class SynchronousTermFunction extends Operator implements TermEv
      */
     @Override abstract public Term function(Memory memory, Term[] x);
 
-    /** the term that the output will inherit from; analogous to the 'Range' of a function in mathematical terminology */
-    protected Term getRange() {
-        return null;
-    }
-        
-    protected int getMinArity() {
-        return 0;
-    }
-    //abstract protected int getMaxArity();
+
 
     protected static Term evaluate(final Memory m, final Term x) {
         if (x instanceof Operation) {
             final Operation o = (Operation)x;
             final Operator op = o.getOperator();
             if (op instanceof TermEval) {
-                CompoundTerm[] ee = ((SynchronousTermFunction) op).executeTerm(o);
-                if (ee!=null)
-                    return ee[0];
+                //CompoundTerm[] ee = ((TermFunction) op).executeTerm(o);
+                return evaluate(m, o);
             }
         }
 
@@ -80,41 +69,26 @@ public abstract class SynchronousTermFunction extends Operator implements TermEv
     }
 
     protected static CompoundTerm[] executeTerm(Operation operation) {
-        SynchronousTermFunction op = (SynchronousTermFunction) operation.getOperator();
+        TermFunction op = (TermFunction) operation.getOperator();
 
         Term[] args = operation.getArgumentTerms();
 
-        //TODO make memory access optional by constructor argument
-        //TODO allow access to NAR instance?
-        int numArgs = args.length;
-        if (args[args.length - 1].equals(op.getMemory().getSelf()))
-            numArgs--;
+        int numInputs = args.length;
+        if (args[numInputs - 1].equals(op.getMemory().getSelf()))
+            numInputs--;
 
-        if (numArgs < (op.getMinArity())) {
-            throw new RuntimeException("Requires at least 2 arguments");
+        Term lastTerm = null;
+        if (args[numInputs - 1] instanceof Variable) {
+            lastTerm = args[numInputs-1];
+            numInputs--;
         }
 
-        //last argument a variable?
-        Term lastTerm = args[numArgs-1];
-        boolean resultVariable = lastTerm instanceof Variable;
 
+        Term[] x = new Term[numInputs];
 
-
-        final int numParam = numArgs+(resultVariable ? 0 : 1);
-        Term[] x = new Term[numParam];
-
-        if (!resultVariable) {
-            //evaluate parameters
-            for (int i = 0; i < numParam-1; i++)
-                x[i] = evaluate(op.getMemory(), args[i]);
-            lastTerm = x[numParam-1] = inVar;
-            resultVariable = true;
-            numArgs++;
-        }
-        else {
-            //use the terms as-is
-            System.arraycopy(args, 0, x, 0, numParam);
-        }
+        //evaluate parameters
+        for (int i = 0; i < numInputs; i++)
+            x[i] = evaluate(op.getMemory(), args[i]);
 
 
         Term y = op.function(op.getMemory(), x);
@@ -129,17 +103,16 @@ public abstract class SynchronousTermFunction extends Operator implements TermEv
         //can not be assumed to be related, but here we have to assume
         //it if we don't want to use the "resultof"-relation.
 
-        Term actual_part = Similarity.make(var, y);
-        Operation opart =(Operation) operation.setComponent(0,
-                ((CompoundTerm)operation.getSubject()).setComponent(
-                        numArgs-1, var));
 
+        return new CompoundTerm[] {
 
-        CompoundTerm actual_dep_part = resultVariable ? Similarity.make(lastTerm, y) : null;
+                Implication.make(
+                            operation.cloneWithArguments(x, var),
+                            Similarity.make(var, y),
+                        TemporalRules.ORDER_FORWARD),
 
-
-        CompoundTerm actual = Sentence.termOrNull(Implication.make(opart, actual_part, TemporalRules.ORDER_FORWARD));
-        return new CompoundTerm[] { actual, actual_dep_part };
+                lastTerm!=null ? Similarity.make(lastTerm, y) : null
+        };
     }
 
     @Override
@@ -174,6 +147,13 @@ public abstract class SynchronousTermFunction extends Operator implements TermEv
 
         );
     }
+
+    /** the term that the output will inherit from; analogous to the 'Range' of a function in mathematical terminology */
+    //protected Term getRange() {        return null;    }
+
+    //protected int getMinArity() {        return 0;    }
+    //abstract protected int getMaxArity();
+
 
     /** (can be overridden in subclasses) the extent to which it is truth 
      * that the 2 given terms are equal.  in other words, a distance metric

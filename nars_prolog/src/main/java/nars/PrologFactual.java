@@ -3,7 +3,7 @@ package nars;
 import nars.core.Memory;
 import nars.logic.entity.Term;
 import nars.logic.nal3.SetExt;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 import nars.prolog.NoMoreSolutionException;
 import nars.prolog.Prolog;
 import nars.prolog.SolveInfo;
@@ -17,7 +17,7 @@ import static nars.NARPrologMirror.nterm;
 /**
  *  usage: factual(termexpression, #resultSet)!
 */
-public class PrologFactual extends SynchronousTermFunction {
+public class PrologFactual extends TermFunction {
 
 
     private final PrologContext context;
@@ -92,11 +92,6 @@ public class PrologFactual extends SynchronousTermFunction {
                 throw new RuntimeException("Could not assert non-struct: " + factTerm);
             }
 
-    }
-
-    @Override
-    protected Term getRange() {
-        return null;
     }
 
 }

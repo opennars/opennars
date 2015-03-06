@@ -16,7 +16,7 @@ import nars.logic.entity.Term;
 import nars.logic.nal8.ImmediateOperation;
 import nars.logic.nal8.Operator;
 import nars.logic.nal8.SynchronousSentenceFunction;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -122,7 +122,7 @@ public class BindJavascriptExpression implements TextReaction {
 
                         } else {
 
-                            nar.addPlugin(new SynchronousTermFunction(newOp) {
+                            nar.addPlugin(new TermFunction(newOp) {
 
 
                                 @Override
@@ -140,10 +140,6 @@ public class BindJavascriptExpression implements TextReaction {
                                     return null;
                                 }
 
-                                @Override
-                                protected Term getRange() {
-                                    return null;
-                                }
                             });
 
 

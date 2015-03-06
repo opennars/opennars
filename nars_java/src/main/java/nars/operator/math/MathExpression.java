@@ -5,7 +5,7 @@ import nars.io.Texts;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 import org.encog.ml.prg.EncogProgram;
 import org.encog.ml.prg.EncogProgramContext;
 import org.encog.ml.prg.ProgramNode;
@@ -20,7 +20,7 @@ import static nars.io.Texts.unescape;
  * Parses an expression string to terms
  * @see https://github.com/encog/encog-java-core/blob/master/src/test/java/org/encog/ml/prg/TestProgramClone.java
  */
-public class MathExpression  extends SynchronousTermFunction {
+public class MathExpression  extends TermFunction {
 
     static EncogProgramContext context;
 
@@ -63,10 +63,6 @@ public class MathExpression  extends SynchronousTermFunction {
         return getTerm(p.getRootNode());
     }
 
-    @Override
-    protected Term getRange() {
-        return exp;
-    }
 
     public static Term getTerm(TreeNode node) {
         

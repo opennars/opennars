@@ -23,10 +23,7 @@ package nars.logic.nal8;
 import nars.core.Memory;
 import nars.io.Symbols;
 import nars.logic.NALOperator;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal4.Product;
 
@@ -193,5 +190,10 @@ public class Operation extends Inheritance {
 
     public Term[] getArgumentTerms() {
         return getArguments().term;
+    }
+
+    /** produces a cloned instance with the replaced args + additional terms in a new argument product */
+    public Operation cloneWithArguments(Term[] args, Term... additional) {
+        return (Operation)setComponent(0, Product.make(args, additional));
     }
 }

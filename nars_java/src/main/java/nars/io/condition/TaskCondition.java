@@ -357,7 +357,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         if (!removals.isEmpty()) {
             x += "Matching removals:\n";
             for (Task t : removals)
-                x += t.toString() + ' ' + t.getReason() + '\n';
+                x += t.toString() + ' ' + t.getHistory() + '\n';
         }
         return x;
     }

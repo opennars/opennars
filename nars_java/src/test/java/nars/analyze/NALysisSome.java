@@ -56,7 +56,7 @@ public class NALysisSome extends NALysis {
         n.on(Events.TaskRemove.class, new Reaction() {
             @Override public void event(Class event, Object[] args) {
                 Task t = (Task)args[0];
-                System.out.println("Remove: " + t + " " + t.getReason());
+                System.out.println("Remove: " + t + " " + t.getHistory());
             }
         });
 

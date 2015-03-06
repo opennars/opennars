@@ -537,7 +537,7 @@ public class Memory implements Serializable {
     }
 
     public boolean addTask(final Task t) {
-        return addTask(t, t.getReason());
+        return addTask(t, null);
     }
 
 
@@ -546,8 +546,27 @@ public class Memory implements Serializable {
      * add new task that waits to be processed next
      */
     public boolean addTask(final Task t, final String reason) {
-        /*if (!Term.valid(t.getContent()))
-         throw new RuntimeException("Invalid term: " + t);*/
+
+        if (reason!=null)
+            t.addHistory(reason);
+
+        /* process ImmediateOperation and Operations of ImmediateOperators */
+        final Term taskTerm = t.getTerm();
+        if (taskTerm instanceof Operation) {
+            Operation o = (Operation) taskTerm;
+            o.setTask(t);
+
+            if (o instanceof ImmediateOperation) {
+                ImmediateOperation i = (ImmediateOperation) t.getTerm();
+                i.execute(this);
+                emit(ImmediateOperation.class, i);
+                return false;
+            }
+            else if (o.getOperator().isImmediate()) {
+                o.getOperator().call(o, this);
+                return false;
+            }
+        }
 
         if (!t.budget.aboveThreshold()) {
             removeTask(t, "Insufficient budget");
@@ -584,23 +603,7 @@ public class Memory implements Serializable {
     public int inputTask(final Task task) {
 
 
-        final Term taskTerm = task.getTerm();
-        if (taskTerm instanceof Operation) {
-            Operation o = (Operation) taskTerm;
-            o.setTask(task);
 
-            if (o instanceof ImmediateOperation) {
-                ImmediateOperation i = (ImmediateOperation) task.getTerm();
-                i.execute(this);
-                emit(ImmediateOperation.class, i);
-                return 0;
-            }
-            else if (o.getOperator().isImmediate()) {
-                o.getOperator().call(o, this);
-                return 0;
-            }
-
-        }
 
         Stamp s = task.sentence.stamp;
         if (s.getCreationTime() == -1) {
@@ -616,8 +619,7 @@ public class Memory implements Serializable {
     }
 
     public void removeTask(final Task task, final String removalReason) {
-        if (Parameters.DEBUG)
-            task.setReason( task.getReason() + " -> " + removalReason);
+        task.addHistory(removalReason);
         emit(TaskRemove.class, task, removalReason);
         task.end();
     }

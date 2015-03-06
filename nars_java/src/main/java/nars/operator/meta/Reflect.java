@@ -11,13 +11,13 @@ import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal4.Product;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term
  * @author me
  */
-public class Reflect extends SynchronousTermFunction {
+public class Reflect extends TermFunction {
 
 
     /*
@@ -74,10 +74,4 @@ public class Reflect extends SynchronousTermFunction {
         
     }
 
-    @Override
-    protected Term getRange() {
-        return Term.get("reflect");
-    }
-    
-    
 }

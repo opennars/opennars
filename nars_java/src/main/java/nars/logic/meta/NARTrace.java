@@ -85,24 +85,22 @@ public class NARTrace extends MemoryObserver {
 
         public final Task task;
         public final AddOrRemove type;
-        public final String reason;
         public final float priority;
 
-        public TaskEvent(Task t, long when, AddOrRemove type, String reason) {
+        public TaskEvent(Task t, long when, AddOrRemove type) {
             super(when);
             this.task = t;
             this.type = type;
-            this.reason = reason;
             this.priority = t.getPriority();
         }
 
         @Override
         public String toString() {
-            return "Task " + type + " (" + reason + "): " + task.toStringExternal();
+            return "Task " + type + " (" + task.getHistory() + "): " + task.toStringExternal();
         }
         @Override
         public String toLabel() {
-            return "Task " + type + " (" + reason + "):\n" + task.name();
+            return "Task " + type + " (" + task.getHistory()  + "):\n" + task.name();
         }
     }
 
@@ -169,13 +167,13 @@ public class NARTrace extends MemoryObserver {
 
     @Override
     public void onTaskAdd(Task task) {
-        TaskEvent ta = new TaskEvent(task, t, AddOrRemove.Add, task.getReason());
+        TaskEvent ta = new TaskEvent(task, t, AddOrRemove.Add);
         addEvent(ta);
     }
 
     @Override
     public void onTaskRemove(Task task, String reason) {
-        TaskEvent tr = new TaskEvent(task, t, AddOrRemove.Remove, reason);
+        TaskEvent tr = new TaskEvent(task, t, AddOrRemove.Remove);
         addEvent(tr);
     }
 

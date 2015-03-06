@@ -18,13 +18,13 @@ package nars.operator.math;
 
 import nars.core.Memory;
 import nars.logic.entity.Term;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 import nars.operator.mental.Mental;
 
 /**
  * Count the number of elements in a set
  */
-public class Add extends SynchronousTermFunction implements Mental {
+public class Add extends TermFunction implements Mental {
 
     public Add() {
         super("^add");
@@ -53,9 +53,4 @@ public class Add extends SynchronousTermFunction implements Mental {
         return new Term(String.valueOf(n1 + n2));            
     }
 
-    @Override
-    protected Term getRange() {
-        return Term.get("added");
-    }
-    
 }

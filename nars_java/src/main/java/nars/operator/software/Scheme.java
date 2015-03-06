@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.logic.entity.Term;
 import nars.logic.nal4.Product;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 import nars.operator.software.scheme.DefaultEnvironment;
 import nars.operator.software.scheme.Environment;
 import nars.operator.software.scheme.Evaluator;
@@ -19,7 +19,7 @@ import nars.operator.software.scheme.expressions.SymbolExpression;
 import java.util.List;
 
 
-public class Scheme extends SynchronousTermFunction {
+public class Scheme extends TermFunction {
 
     public static final Environment env = DefaultEnvironment.newInstance();
 
@@ -99,11 +99,6 @@ public class Scheme extends SynchronousTermFunction {
 
         }
 
-        return null;
-    }
-
-    @Override
-    protected Term getRange() {
         return null;
     }
 

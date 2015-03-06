@@ -3,7 +3,7 @@ package nars.operator.software;
 import nars.core.Memory;
 import nars.io.Texts;
 import nars.logic.entity.Term;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 import nars.operator.mental.Mental;
 
 import javax.script.Bindings;
@@ -14,7 +14,7 @@ import javax.script.SimpleBindings;
 /**
  * Executes a Javascript expression
  */
-public class Javascript extends SynchronousTermFunction implements Mental {
+public class Javascript extends TermFunction implements Mental {
     
     ScriptEngine js = null;      
 
@@ -54,7 +54,4 @@ public class Javascript extends SynchronousTermFunction implements Mental {
         return Term.text(result.toString());
     }
 
-    @Override public Term getRange() {
-        return Term.get("js_evaluation");
-    }
 }

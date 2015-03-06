@@ -45,7 +45,16 @@ public class Product extends CompoundTerm {
     public Product(final List<Term> x) {
         this(x.toArray(new Term[x.size()]));
     }
-    
+
+    public static Product make(final Term[] pre, final Term... suf) {
+        final int pLen = pre.length;
+        final int sLen = suf.length;
+        Term[] x = new Term[pLen + suf.length];
+        System.arraycopy(pre, 0, x, 0, pLen);
+        System.arraycopy(suf, 0, x, pLen, sLen);
+        return new Product(x);
+    }
+
     public static Product make(final Term... arg) {
         return new Product(arg);
     }

@@ -27,6 +27,7 @@ import nars.logic.entity.stamp.Stamped;
 
 import java.lang.ref.Reference;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -71,7 +72,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     
     /** causal factor; usually an instance of Operation */
     private Term cause;
-    private String reason = null;
+    private List<String> history = null;
     private boolean temporalInducted=true;
 
 
@@ -110,8 +111,9 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         super(b);
         this.sentence = s;
         this.parentTask = parentTask;
+
         if (parentTask == null)
-            reason = "Input";
+            addHistory("Input");
 
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
@@ -374,7 +376,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         for (int i = 0; i < indent; i++)
             sb.append("  ");
 
-        sb.append(task.toString()).append(task.getStamp()).append(" reason=\"").append(task.getReason()).append('\"');
+        sb.append(task.toString()).append(task.getStamp()).append(" history=").append(task.getHistory());
 
         if (task.getCause()!=null)
             sb.append(" cause=").append(task.getCause());
@@ -453,13 +455,21 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     }
 
 
-    /** optional string explanation about the reason for this task, useful for debugging but can also be applied to meta-analysis */
-    public void setReason(String reason) {
-        this.reason = reason;
+    /** optional list of strings explaining the reasons that make up this task's [hi-]story.
+     *  useful for debugging but can also be applied to meta-analysis */
+    public void addHistory(String reason) {
+        if (!Parameters.TASK_HISTORY)
+            return;
+
+        //TODO parameter for max history length, although task history should not grow after they are crystallized with a concept
+        if (this.history == null)
+            this.history = Parameters.newArrayList(2);
+
+        this.history.add(reason);
     }
 
-    public String getReason() {
-        return reason;
+    public List<String> getHistory() {
+        return history;
     }
 
     public boolean equalPunctuations(Task t) {

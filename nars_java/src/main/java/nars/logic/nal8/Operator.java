@@ -100,14 +100,14 @@ public abstract class Operator extends Term implements Plugin {
 //     */
     public static void reportExecution(final Operation operation, final Term[] args, Object feedback, final Memory memory) {
 
-        if (memory.emitting(EXE.class)) {
+        //if (memory.emitting(EXE.class)) {
 
             /*if (feedback instanceof Exception)
                 feedback = feedback.getClass().getSimpleName() + ": " + ((Throwable)feedback).getMessage();*/
             
             memory.emit(EXE.class, 
                     new ExecutionResult(operation, feedback));
-        }
+        //}
     }
     
     public static class ExecutionResult {
@@ -181,37 +181,13 @@ public abstract class Operator extends Term implements Plugin {
             for (final Task t : feedback) {
                 if (t == null) continue;
                 t.setCause(op);
-                t.setReason("Feedback");
-                memory.inputTask(t);
+                t.addHistory("Feedback");
+
+                memory.addTask(t);
             }
         }
 
         return true;
-
-//        catch (NegativeFeedback n) {
-//
-//            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
-//                memory.executedTask(operation, new TruthValue(n.freqOcurred, n.confidenceOcurred));
-//            }
-//
-//            if (n.freqCorrection >= 0 && n.confCorrection >=0) {
-//                //for inputting an inversely frequent goal to counteract a repeat invocation
-//                BudgetValue b = operation.getTask().budget;
-//                float priority = b.getPriority();
-//                float durability = b.getDurability();
-//
-//                memory.addNewTask(
-//                        memory.newTaskAt(operation, Symbols.GOAL, n.freqCorrection, n.confCorrection, priority, durability, (Tense)null),
-//                        "Negative feedback"
-//                );
-//
-//            }
-//
-//            if (!n.quiet) {
-//                reportExecution(operation, args, n, memory);
-//            }
-//        }
-
 
     }
 
@@ -243,35 +219,6 @@ public abstract class Operator extends Term implements Plugin {
         return opName;
     }
 
-    
-//    public static class NegativeFeedback extends RuntimeException {
-//
-//        /** convenience method for creating a "never again" negative feedback"*/
-//        public static NegativeFeedback never(String reason, boolean quiet) {
-//            return new NegativeFeedback(reason, 0, executionConfidence, 
-//                    0, executionConfidence, quiet
-//            );
-//        }
-//        /** convenience method for ignoring an invalid operation; does not recognize that it occurred, and does not report anything*/
-//        public static NegativeFeedback ignore(String reason) {
-//            return new NegativeFeedback(reason, -1, -1, -1, -1, true);
-//        }        
-//        
-//        public final float freqCorrection;
-//        public final float confCorrection;
-//        public final float freqOcurred;
-//        public final float confidenceOcurred;
-//        public final boolean quiet;
-//    
-//        public NegativeFeedback(String reason, float freqOcurred, float confidenceOccurred, float freqCorrection, float confCorrection, boolean quiet) {
-//            super(reason);
-//            this.freqOcurred = freqOcurred;
-//            this.confidenceOcurred = confidenceOccurred;
-//            this.freqCorrection = freqCorrection;
-//            this.confCorrection = confCorrection;
-//            this.quiet = quiet;
-//        }
-//    }
 
     @Override
     public boolean isExecutable(final Memory mem) {
@@ -283,3 +230,56 @@ public abstract class Operator extends Term implements Plugin {
     public boolean isImmediate() { return false; }
 }
 
+//        catch (NegativeFeedback n) {
+//
+//            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
+//                memory.executedTask(operation, new TruthValue(n.freqOcurred, n.confidenceOcurred));
+//            }
+//
+//            if (n.freqCorrection >= 0 && n.confCorrection >=0) {
+//                //for inputting an inversely frequent goal to counteract a repeat invocation
+//                BudgetValue b = operation.getTask().budget;
+//                float priority = b.getPriority();
+//                float durability = b.getDurability();
+//
+//                memory.addNewTask(
+//                        memory.newTaskAt(operation, Symbols.GOAL, n.freqCorrection, n.confCorrection, priority, durability, (Tense)null),
+//                        "Negative feedback"
+//                );
+//
+//            }
+//
+//            if (!n.quiet) {
+//                reportExecution(operation, args, n, memory);
+//            }
+//        }
+
+
+//    public static class NegativeFeedback extends RuntimeException {
+//
+//        /** convenience method for creating a "never again" negative feedback"*/
+//        public static NegativeFeedback never(String reason, boolean quiet) {
+//            return new NegativeFeedback(reason, 0, executionConfidence,
+//                    0, executionConfidence, quiet
+//            );
+//        }
+//        /** convenience method for ignoring an invalid operation; does not recognize that it occurred, and does not report anything*/
+//        public static NegativeFeedback ignore(String reason) {
+//            return new NegativeFeedback(reason, -1, -1, -1, -1, true);
+//        }
+//
+//        public final float freqCorrection;
+//        public final float confCorrection;
+//        public final float freqOcurred;
+//        public final float confidenceOcurred;
+//        public final boolean quiet;
+//
+//        public NegativeFeedback(String reason, float freqOcurred, float confidenceOccurred, float freqCorrection, float confCorrection, boolean quiet) {
+//            super(reason);
+//            this.freqOcurred = freqOcurred;
+//            this.confidenceOcurred = confidenceOccurred;
+//            this.freqCorrection = freqCorrection;
+//            this.confCorrection = confCorrection;
+//            this.quiet = quiet;
+//        }
+//    }

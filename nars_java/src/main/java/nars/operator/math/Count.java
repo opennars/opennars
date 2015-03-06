@@ -22,7 +22,7 @@ import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 import nars.operator.mental.Mental;
 
 /**
@@ -39,7 +39,7 @@ import nars.operator.mental.Mental;
 
  * 
  */
-public class Count extends SynchronousTermFunction implements Mental {
+public class Count extends TermFunction implements Mental {
 
     public Count() {
         super("^count");
@@ -64,12 +64,6 @@ public class Count extends SynchronousTermFunction implements Mental {
         int n = ((CompoundTerm) content).size();
         return Term.get(n);
     }
-
-    @Override
-    protected Term getRange() {
-        return counted;
-    }
-
 
     
 }

@@ -52,8 +52,9 @@ public class Parameters {
     public static boolean DEBUG_DERIVED_STACKTRACES = false; //includes stack trace in task's derivation reason string
     public static boolean DEBUG_INVALID_SENTENCES = false;
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
+    public static boolean TASK_HISTORY = true; //false disables task history completely
 
-    public static boolean SORT_DERIVATION_BATCH = true; //TODO move this to Param
+
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
@@ -229,6 +230,7 @@ public class Parameters {
     public static final float CONCEPT_FORGETTING_ACCURACY = 0.03f;
     public static final float TERMLINK_FORGETTING_ACCURACY = 0.03f;
     public static final float TASKLINK_FORGETTING_ACCURACY = 0.03f;
+
 
 
     public static <X> List<X> newArrayList() {

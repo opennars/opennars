@@ -26,7 +26,7 @@ import nars.logic.nal1.Inheritance;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
-import nars.logic.nal8.SynchronousTermFunction;
+import nars.logic.nal8.TermFunction;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -129,7 +129,7 @@ public class TestNARNode extends Nengrow {
 
             });*/
 
-            nar.addPlugin(new SynchronousTermFunction("^see") {
+            nar.addPlugin(new TermFunction("^see") {
 
 
                 @Override
