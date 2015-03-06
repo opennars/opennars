@@ -49,11 +49,11 @@ public class Parameters {
     public static boolean DEBUG = false;
     public static boolean DEBUG_BAG = true; // for complete bag debugging
     public static boolean DEBUG_TRACE_EVENTS = false; //shows all emitted events
-    public static boolean DEBUG_DERIVED_STACKTRACES = false; //includes stack trace in task's derivation reason string
+    public static boolean DEBUG_DERIVATION_STACKTRACES = true; //includes stack trace in task's derivation reason string
     public static boolean DEBUG_INVALID_SENTENCES = false;
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
     public static boolean TASK_HISTORY = true; //false disables task history completely
-
+    public static boolean EXIT_ON_EXCEPTION = false;
 
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

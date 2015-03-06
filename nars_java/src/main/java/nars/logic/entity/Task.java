@@ -20,6 +20,7 @@
  */
 package nars.logic.entity;
 
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.stamp.Stamp;
@@ -298,32 +299,20 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         return parentTask.get();
     }
 
-    /**
-     * Get a String representation of the Task
-     *
-     * @return The Task as a String
-     */
     @Override
-    public String toStringLong() {
-        final StringBuilder s = new StringBuilder();
-        s.append(super.toString()).append(' ').append(sentence.stamp.name());
-        
-        Task pt = getParentTask();
-        if (pt != null) {
-            s.append("  \n from task: ").append(pt.toStringExternal());
-            if (parentBelief != null) {
-                s.append("  \n from belief: ").append(parentBelief.toString());
-            }
-        }
-        if (bestSolution != null) {
-            s.append("  \n solution: ").append(bestSolution.toString());
-        }
-        return s.toString();
+    @Deprecated public String toString() {
+        return toStringExternal();
     }
 
-    @Override
-    public String toString() {
-        return toStringExternal();
+
+    public StringBuilder toString(Memory memory) {
+        return appendToString(null, memory);
+    }
+
+    public StringBuilder appendToString(StringBuilder sb, Memory memory) {
+        if (sb == null) sb = new StringBuilder();
+        sb.append(sentence.toString(memory,true)).append(getBudget());
+        return sb;
     }
 
     public boolean hasParent(Task t) {
@@ -376,7 +365,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
         for (int i = 0; i < indent; i++)
             sb.append("  ");
 
-        sb.append(task.toString()).append(task.getStamp()).append(" history=").append(task.getHistory());
+        task.appendToString(sb, null).append(" history=").append(task.getHistory());
 
         if (task.getCause()!=null)
             sb.append(" cause=").append(task.getCause());
@@ -404,7 +393,32 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     }
 
     public TruthValue getDesire() { return sentence.truth; }
-    
+
+
+//    /**
+//     * Get a String representation of the Task
+//     *
+//     * @return The Task as a String
+//     */
+//    @Override
+//    public String toStringLong() {
+//        final StringBuilder s = new StringBuilder();
+//        s.append(super.toString()).append(' ').append(sentence.stamp.name());
+//
+//        Task pt = getParentTask();
+//        if (pt != null) {
+//            s.append("  \n from task: ").append(pt.toStringExternal());
+//            if (parentBelief != null) {
+//                s.append("  \n from belief: ").append(parentBelief.toString());
+//            }
+//        }
+//        if (bestSolution != null) {
+//            s.append("  \n solution: ").append(bestSolution.toString());
+//        }
+//        return s.toString();
+//    }
+
+
 //    /** returns the goal term for this task, which may be either the predicate of a forward implication,
 //     * an operation.  if neither, returns null      */
 //    public Term getGoalTerm() {

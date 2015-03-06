@@ -666,18 +666,15 @@ public class NAR implements Runnable {
                 memory.cycle();
         }
         catch (Throwable e) {
-            if (Parameters.DEBUG) {
-
-                if (e.getCause()!=null)
-                    e.getCause().printStackTrace();
-                else
-                    e.printStackTrace();
-
-                throw e;// new RuntimeException(e);
-            }
-            else {
-                memory.error(e);
+            if (e.getCause()!=null)
+                e.getCause().printStackTrace();
+            else
                 e.printStackTrace();
+
+            memory.error(e);
+
+            if (Parameters.EXIT_ON_EXCEPTION) {
+                throw e;// new RuntimeException(e);
             }
         }
 

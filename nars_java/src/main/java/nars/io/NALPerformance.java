@@ -7,7 +7,6 @@ package nars.io;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.io.condition.OutputCondition;
 
 import java.io.PrintStream;
@@ -40,24 +39,15 @@ import java.util.List;
     }
 
     public void run(int minCycles, int maxCycles) {
-        try {
+            
+        nar.addInput( input );
+
+        if (minCycles == -1)
+            nar.run(maxCycles);
+        else
+            nar.run(minCycles, maxCycles);
             
 
-            
-            nar.addInput( input );
-
-            if (minCycles == -1)
-                nar.run(maxCycles);
-            else
-                nar.run(minCycles, maxCycles);
-            
-        } catch (Throwable e) {
-            System.err.println(e);
-            if (Parameters.DEBUG) {
-                e.printStackTrace();
-            }
-            error = true;
-        }
         success = expects.size() > 0 && (!error);
         if (success) {
             for (OutputCondition e : expects) {

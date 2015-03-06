@@ -51,7 +51,6 @@ import nars.logic.nal8.ImmediateOperation;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.operator.app.plan.MultipleExecutionManager;
-import nars.util.bag.Bag;
 import reactor.function.Supplier;
 
 import java.io.Serializable;
@@ -547,6 +546,11 @@ public class Memory implements Serializable {
      */
     public boolean addTask(final Task t, final String reason) {
 
+        if (Parameters.DEBUG) {
+            if (t.sentence != null && t.sentence.stamp.getOccurrenceTime() < -999999 && t.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL)
+                throw new RuntimeException("Probably invalid occurence time:\n" + t.getExplanation());
+        }
+
         if (reason!=null)
             t.addHistory(reason);
 
@@ -772,21 +776,7 @@ public class Memory implements Serializable {
         //return sb.toString();
         return super.toString();
     }
-
-    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
-        return item == null ? "" : "\n " + title + ":\n"
-                + item.toString();
-    }
-
-    private String toStringLongIfNotNull(Item item, String title) {
-        return item == null ? "" : "\n " + title + ":\n"
-                + item.toStringLong();
-    }
-
-    private String toStringIfNotNull(Object item, String title) {
-        return item == null ? "" : "\n " + title + ":\n"
-                + item.toString();
-    }
+//
 
     public long newStampSerial() {
         return currentStampSerial++;
@@ -887,4 +877,20 @@ public class Memory implements Serializable {
     public interface MemoryAware {
         public void setMemory(Memory m);
     }
+
+
+//    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
+//        return item == null ? "" : "\n " + title + ":\n"
+//                + item.toString();
+//    }
+//
+//    private String toStringLongIfNotNull(Item item, String title) {
+//        return item == null ? "" : "\n " + title + ":\n"
+//                + item.toStringLong();
+//    }
+//
+//    private String toStringIfNotNull(Object item, String title) {
+//        return item == null ? "" : "\n " + title + ":\n"
+//                + item.toString();
+//    }
 }

@@ -201,13 +201,13 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
             task.setParticipateInTemporalInduction(false);
 
-            if (Parameters.DEBUG_DERIVED_STACKTRACES) {
+            if (Parameters.DEBUG_DERIVATION_STACKTRACES) {
                 task.addHistory(System.nanoTime() + " " + this.toString());
             }
 
             task.addHistory(reason);
 
-            if (Parameters.DEBUG_DERIVED_STACKTRACES) {
+            if (Parameters.DEBUG_DERIVATION_STACKTRACES) {
                 task.addHistory(getNALStack().toString());
             }
 

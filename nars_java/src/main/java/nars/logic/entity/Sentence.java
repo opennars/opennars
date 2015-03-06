@@ -20,6 +20,7 @@
  */
 package nars.logic.entity;
 
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.Symbols;
@@ -530,18 +531,30 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         return key;
     }
 
+    public CharSequence toString(NAR nar, boolean showStamp) {
+        return toString(nar.memory, showStamp);
+    }
+
     /**
      * Get a String representation of the sentence for display purpose
      *
+     * @param memory may be null in which case the tense is expressed in numbers without any relativity to memory's current time or duration
      * @return The String
      */
-    public CharSequence toString(NAR nar, boolean showStamp) {
+    public CharSequence toString(Memory memory, boolean showStamp) {
     
         CharSequence contentName = term.name();
-        
-        final long t = nar.memory.time();
 
-        final String tenseString = stamp.getTense(t, nar.memory.getDuration());
+        final CharSequence tenseString;
+        if (memory!=null) {
+            final long t = memory.time();
+
+            tenseString = stamp.getTense(t, memory.getDuration());
+        }
+        else {
+            tenseString = new StringBuilder();
+            stamp.appendOcurrenceTime((StringBuilder)tenseString);
+        }
         
         
         CharSequence stampString = showStamp ? stamp.name() : null;

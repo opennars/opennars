@@ -433,7 +433,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         if (occurrenceTime != ETERNAL) {
             int estTimeLength = 10; /* # digits */
             sb.ensureCapacity(estTimeLength);
-            sb.append(creationTime);
+            sb.append(Long.toString(creationTime));
 
             long relOc = (occurrenceTime - creationTime);
             if (relOc >= 0) sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
