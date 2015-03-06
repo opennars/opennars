@@ -1,6 +1,7 @@
 package nars.control;
 
 import nars.core.Core;
+import nars.core.Events;
 import nars.core.Parameters;
 import nars.logic.entity.*;
 import nars.logic.reason.ConceptFire;
@@ -91,13 +92,17 @@ public class DefaultCore extends UniCore {
         }
 
         //1 concept
-        /*if (memory.newTasks.isEmpty())*/ {
+        /*if (memory.newTasks.isEmpty())*/
+        int conceptsToFire = memory.param.conceptsFiredPerCycle.get();
+
+        for (int i = 0; i < conceptsToFire; i++) {
             ConceptFire f = nextTaskLink(nextConcept());
             if (f != null) {
                 f.run();
             }
-
         }
+
+
 
         concepts.peekNextForget(
                 memory.param.conceptForgetDurations,
@@ -113,10 +118,15 @@ public class DefaultCore extends UniCore {
     private ConceptFire nextTaskLink(Concept concept) {
         if (concept == null) return null;
 
+
         TaskLink taskLink = concept.taskLinks.peekNextForget(memory.param.taskLinkForgetDurations, memory);
         if (taskLink!=null)
             return newFireConcept(concept, taskLink);
-        return null;
+        else {
+            memory.emit(Events.ERR.class, concept.toString() + " had no taskLink to fire");
+            return null;
+        }
+
     }
 
     protected Runnable nextNewTask() {

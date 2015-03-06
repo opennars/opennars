@@ -284,8 +284,7 @@ public class NAR implements Runnable {
     }
     
     public NAR addInput(final Task t) {
-        TaskInput ti = new TaskInput(t);
-        addInput(ti);
+        addInput( new TaskInput(t) );
         return this;
     }
 

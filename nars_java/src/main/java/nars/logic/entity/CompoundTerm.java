@@ -427,6 +427,12 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     }
 
 
+    @Override
+    public boolean isConstant() {
+        return isNormalized();
+    }
+
+
     /**
      * Gives a set of all (unique) contained term, recursively
      */

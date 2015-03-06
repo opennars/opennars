@@ -36,10 +36,10 @@ public class NALysisSome extends NALysis {
         //String test = "./nal/test6/nal6.22.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
-        String test = "./nal/test3/nal3.7.nal";
+        String test = "./nal/test5/nal5.29.nal";
 
-        //NewNAR build = new Default().setInternalExperience(null);
-        NewNAR build = new Default();
+        NewNAR build = new Default().setInternalExperience(null);
+        //NewNAR build = new Default();
 
         TestNAR n = analyze(
                 build,

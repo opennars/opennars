@@ -464,13 +464,14 @@ public final class SyllogisticRules {
         if ((content == null) || (!(content instanceof CompoundTerm)))
             return false;
 
-        long occurTime = Stamp.ETERNAL; //nal.time();
+        final long now = nal.time();
+        long occurTime = now;
 
         if (delta != 0) {
             long baseTime = (belief.term instanceof Implication) ?
                 taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
             if (baseTime == Stamp.ETERNAL) {
-                baseTime = nal.time();
+                baseTime = now;
             }
 
             if(premise1.getTemporalOrder()== TemporalRules.ORDER_CONCURRENT) {

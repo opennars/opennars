@@ -144,7 +144,7 @@ abstract public class UniCore implements Core {
                 BudgetValue cb = c.budget;
 
                 final float activationFactor = memory.param.conceptActivationFactor.floatValue();
-                BudgetFunctions.activate(cb, getBudget(), BudgetFunctions.Activating.TaskLink, activationFactor );
+                BudgetFunctions.activate(cb, getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor );
             }
 
             return c;

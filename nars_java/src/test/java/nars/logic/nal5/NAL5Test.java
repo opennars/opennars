@@ -24,6 +24,8 @@ public class NAL5Test extends JavaNALTest {
                 { new Default() },
                 { new Default().setInternalExperience(null) },
                 { new Default().level(5) },
+                { new Default().level(6) },
+                { new Default.DefaultMicro().level(6) },
                 //{ new Neuromorphic(4) },
                 //{ new DefaultBuffered().setInternalExperience(null) },
                 {new Curve().setInternalExperience(null)}

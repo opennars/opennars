@@ -528,7 +528,7 @@ public class Concept extends Item<Term> implements Termable {
         final int numTemplates = templates.size();
 
 
-        float linkSubBudgetDivisor = (float)numTemplates+1;
+        float linkSubBudgetDivisor = (float)numTemplates;
         //float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
 
 
@@ -545,15 +545,10 @@ public class Concept extends Item<Term> implements Termable {
             TermLinkTemplate termLink = templates.get(i);
 
             //if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
-            //if (termLink.type == TermLink.TRANSFORM) // avoid circular transform
-
 
             Term componentTerm = termLink.target;
-            if (componentTerm.equals(term)) {
-                //TODO is it right to avoid self-activating here?
-                //subbudget should be larger than it was originally calculated if this is the case
+            if (componentTerm.equals(term)) // avoid circular transform
                 continue;
-            }
 
             Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
 
@@ -733,9 +728,9 @@ public class Concept extends Item<Term> implements Termable {
             if (template.type == TermLink.TRANSFORM)
                 continue;
 
-            Term target = template.target;
+            final Term target = template.target;
 
-            final Concept otherConcept = memory.conceptualize(termLinkBuilder.getBudget(), target);
+            final Concept otherConcept = memory.conceptualize(termLinkBuilder.getBudgetRef(), target);
             if (otherConcept == null) {
                 //termBudgetBalance += subBudget*2;
                 continue;

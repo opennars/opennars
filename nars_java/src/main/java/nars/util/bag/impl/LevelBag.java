@@ -438,9 +438,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         E c = selector.update(b);
         if (c!=null) {
             relevel(bx, c);
+            return c;
         }
+        else
+            return b;
 
-        return c;
     }
 
     protected DD<E> rotateNext() {

@@ -36,8 +36,8 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
         Concept concept = f.getCurrentBeliefConcept();
         if (concept == null) return true;
 
-        Task taskLinkTask = taskLink.getTask();
-        f.getCurrentTask();
+        Task taskLinkTask = f.getCurrentTask();// taskLink.getTask();
+
 
         if (!(taskLinkTask.sentence.isJudgment() || taskLinkTask.sentence.isGoal())) return true;
 
@@ -117,7 +117,9 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                     Task newTask = new Task(
                             new Sentence(resImp, s.punctuation, truth,
                                     f.newStamp(taskLinkTask.sentence, f.memory.time())),
-                            new BudgetValue(BudgetFunctions.forward(truth, f)));
+                            new BudgetValue(BudgetFunctions.forward(truth, f)),
+                            taskLinkTask
+                            );
 
                     f.deriveTask(newTask, false, false, s, taskLinkTask);
 

@@ -67,7 +67,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         for (short i = 0; i < t.term.length; ) {
             final Term ti = t.term[i];
 
-            if (!ti.hasVar()) {
+            if (ti.isConstant()) {
                 addTemplate(new TermLinkTemplate(concept, type, ti, i));
             }
             if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
@@ -83,11 +83,11 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                 for (short j = 0; j < tiSize; ) {
                     Term tj = cti.term[j];
 
-                    if (!tj.hasVar()) {
+                    if (tj.isConstant()) {
                         TermLinkTemplate a;
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
-                                //WARNING: COVERAGE FOUND THIS CONDITION NEVER BEING CALLED
+                                //WARNING: COVERAGE FOUND THIS CONDITION NEVER BEING CALLED, TODO check if this is still the case
                                 a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, 0, i, j);
                             } else {
                                 a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, i, j);
@@ -105,7 +105,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         for (short k = 0; k < tjSize; ) {
                             final Term tk = ctj.term[k];
 
-                            if (!tk.hasVar()) {
+                            if (tk.isConstant()) {
                                 TermLinkTemplate b;
                                 if (type == TermLink.COMPOUND_CONDITION) {
                                     b = new TermLinkTemplate(concept, TermLink.TRANSFORM, tk, 0, i, j, k);
@@ -196,13 +196,13 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     @Override
     public TermLink newItem() {
-        TermLink t = new TermLink(incoming, concept.getTerm(), currentTemplate, getPrefix(), getBudget());
-        if (Parameters.DEBUG) {
-            if (!equals(t))
-                throw new RuntimeException("builder to select an existing termlink does not equal that which it creates");
-            if (!t.equals(this))
-                throw new RuntimeException("created termlink does not equal the builder used to select an existing one");
-        }
+        TermLink t = new TermLink(incoming, concept.getTerm(), currentTemplate, getPrefix(), getBudgetRef());
+//        if (Parameters.DEBUG) {
+//            if (!equals(t))
+//                throw new RuntimeException("builder to select an existing termlink does not equal that which it creates");
+//            if (!t.equals(this))
+//                throw new RuntimeException("created termlink does not equal the builder used to select an existing one");
+//        }
         return t;
     }
 

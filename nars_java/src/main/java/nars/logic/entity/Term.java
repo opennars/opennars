@@ -170,14 +170,7 @@ public class Term implements AbstractTerm, Termable {
     }
 
     /**
-     * Check whether the current Term can name a Concept.
-     * isConstant means if the term contains free variable
-     * True if:
-     *   has zero variables, or
-     *   uses several instances of the same variable
-     * False if it uses one instance of a variable ("free" like a "free radical" in chemistry).
-     * Therefore it may be considered Constant, yet actually contain variables.
-     * 
+     * Alias for 'isNormalized'
      * @return A Term is constant by default
      */
     public boolean isConstant() {
