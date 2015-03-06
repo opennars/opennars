@@ -23,7 +23,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
 
     int mouseScroll = 0;
 
-    Hnav hnav = new Hnav();
+    final Hnav hnav = new Hnav();
 
     float zoom = 0.1f;
     float scale = 1f;
@@ -49,12 +49,14 @@ public class PCanvas extends PApplet implements HierarchyListener {
     boolean EnableZooming = true;
     float scrollcamspeed = 1.1f;
     
-    
-    public static PFont font12;
+
+    /*public static PFont font12;
     public static PFont font9;
-    public static PFont font15;
+    public static PFont font15;*/
+
     private PGraphics b;
     private boolean renderEveryFrame = false/*, renderEveryInput = true*/;
+    private static PFont font12 = null;
 
     public PCanvas() {
         this(null);
@@ -182,8 +184,7 @@ public class PCanvas extends PApplet implements HierarchyListener {
         else
             b.smooth();
 
-        if (font12!=null)
-            b.textFont(font12);
+
         b.strokeJoin(MITER);
         b.strokeCap(PROJECT);        
         
@@ -252,17 +253,26 @@ public class PCanvas extends PApplet implements HierarchyListener {
         mouseScrolled();
     }
 
+    public PFont getDefaultFont() {
+        if (font12 == null) {
+            //font12 = createDefaultFont(12);
+            boolean smooth = false;
+            return this.createFont("Monofonto", 12, smooth, (char[]) null);
+        }
+
+        return font12;
+
+        /*font9 = createDefaultFont(9);
+        font15 = createDefaultFont(15);*/
+    }
     @Override
     public void setup() {
 
         //size(500,500,P3D);
         frameRate(FrameRate);
-        
-        font9 = createDefaultFont(9);
-        font12 = createDefaultFont(12);
-        font15 = createDefaultFont(15);
+
                 
-        textFont(font12);
+        textFont(getDefaultFont());
 
         if (isGL()) {
             smooth();
