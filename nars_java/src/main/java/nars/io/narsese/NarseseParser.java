@@ -106,7 +106,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         Tense tense = Tense.Eternal; //TODO support different tense
 
-        return new Task(new Sentence(content, p, t, new Stamp(memory, tense)), B);
+        return new Task(new Sentence(content, p, t, new Stamp(memory, Stamp.UNPERCEIVED, tense)), B);
     }
 
 

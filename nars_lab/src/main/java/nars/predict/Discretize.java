@@ -5,15 +5,14 @@
 package nars.predict;
 
 import nars.core.NAR;
-import nars.io.Symbols;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.reason.ImmediateProcess;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Instance;
 import nars.logic.nal7.Tense;
+import nars.logic.reason.ImmediateProcess;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,8 +152,8 @@ public class Discretize {
         }
         else if ((mode == BeliefInsertion.MemoryInput)|| (mode == BeliefInsertion.ImmediateProcess)) {
             
-            Task t = nar.memory.newTask(getValueTerm(variable, level), Symbols.JUDGMENT, freq, conf, 1.0f, 0.8f);
-        
+            Task t = nar.memory.newTask(getValueTerm(variable, level)).judgment().truth(freq, conf).budget(1.0f, 0.8f).get();
+
             System.out.println(t);
             
             if (mode == BeliefInsertion.MemoryInput)

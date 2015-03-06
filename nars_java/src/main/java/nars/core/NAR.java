@@ -8,6 +8,7 @@ import nars.event.Reaction;
 import nars.io.*;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
+import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal7.Tense;
@@ -15,6 +16,7 @@ import nars.logic.nal8.Operator;
 import reactor.event.registry.Registration;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -64,9 +66,7 @@ public class NAR implements Runnable {
     public final Narsese narsese;
     public TextPerception textPerception;
 
-    public int nal() {
-        return memory.nal();
-    }
+
 
 
 
@@ -106,7 +106,7 @@ public class NAR implements Runnable {
     /** used by stop() to signal that a running loop should be interrupted */
     private boolean stopped = false;
     
-    private boolean threadYield;
+    private boolean threadYield = false;
 
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
@@ -119,7 +119,7 @@ public class NAR implements Runnable {
         this.narsese = new Narsese(this);
         this.textPerception = new TextPerception(this, narsese);
 
-        m.event.on(Events.ResetStart.class, resetReaction);
+        m.event.on(Events.ResetStart.class, togglePluginOnReset);
     }
 
     /**
@@ -131,19 +131,28 @@ public class NAR implements Runnable {
         memory.reset(true);
     }
 
-    final Reaction resetReaction = new Reaction() {
+    final Reaction togglePluginOnReset = new Reaction() {
+
+        final List<PluginState> toReEnable = new ArrayList();
 
         @Override
         public void event(Class event, Object[] args) {
 
             //toggle plugins
+
+            //1. disable all
             for (PluginState p : getPlugins()) {
                 if (p.isEnabled()) {
+                    toReEnable.add(p);
                     p.setEnabled(false);
-                    p.setEnabled(true);
                 }
             }
+            //2. enable all
+            for (PluginState p : toReEnable) {
+                p.setEnabled(true);
+            }
 
+            toReEnable.clear();
         }
     };
 
@@ -197,19 +206,7 @@ public class NAR implements Runnable {
     public Task goal(String goalTerm, float freq, float conf) {
         return goal(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, goalTerm, freq, conf);
     }
-    public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
-        Task t = memory.newTask(narsese.parseCompoundTerm(goalTerm),
-                Symbols.GOAL, freq, conf, pri, dur, Tense.Eternal);
-        addInput(t);
-        return t;
-    }
 
-    public Task believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
-        Task t = memory.newTask(narsese.parseCompoundTerm(beliefTerm),
-                Symbols.JUDGMENT, freq, conf, pri, dur, tense);
-        addInput(t);
-        return t;
-    }
 
     public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         return believe(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, tense, freq, conf);
@@ -238,17 +235,51 @@ public class NAR implements Runnable {
         return ask(termString, answered, Symbols.QUESTION);
     }
 
+    public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
+        final Task t;
+        final TruthValue tv;
+        addInput(
+                t = new Task(
+                        new Sentence(
+                                narsese.parseCompoundTerm(goalTerm),
+                                Symbols.GOAL,
+                                tv = new TruthValue(freq, conf),
+                                new Stamp(memory, Stamp.UNPERCEIVED, Stamp.ETERNAL)),
+                        new BudgetValue(
+                                pri,
+                                dur, BudgetFunctions.truthToQuality(tv)))
+        );
+        return t;
+    }
+
+    public Task believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+        final Task t;
+        final TruthValue tv;
+        addInput(
+                t = new Task(
+                        new Sentence(
+                                narsese.parseCompoundTerm(beliefTerm),
+                                Symbols.JUDGMENT,
+                                tv = new TruthValue(freq, conf),
+                                new Stamp(memory, Stamp.UNPERCEIVED, tense)),
+                        new BudgetValue(
+                                pri,
+                                dur, BudgetFunctions.truthToQuality(tv)))
+        );
+        return t;
+    }
+
     public Task ask(String termString, Answered answered, char questionOrQuest) throws InvalidInputException {
 
 
-        Task t;
+        final Task t;
         addInput(
                 t = new Task(
                         new Sentence(
                                 narsese.parseCompoundTerm(termString),
                                 questionOrQuest,
                                 null, 
-                                new Stamp(memory, Tense.Eternal)),
+                                new Stamp(memory, Stamp.UNPERCEIVED, Tense.Eternal)),
                         new BudgetValue(
                                 Parameters.DEFAULT_QUESTION_PRIORITY, 
                                 Parameters.DEFAULT_QUESTION_DURABILITY, 
@@ -295,84 +326,16 @@ public class NAR implements Runnable {
         return memory.event.on(c, o);
     }
     
-    /** remove event handler */
-    @Deprecated public void off(Class c, Reaction o) {
-        memory.event.off(c, o);
-    }
-    
-    /** set an event handler. useful for multiple events. */
-    @Deprecated public void event(Reaction e, boolean enabled, Class... events) {
-        memory.event.set(e, enabled, events);
-    }
 
-    
-    public int getCyclesPerFrame() {
+
+    @Deprecated public int getCyclesPerFrame() {
         return cyclesPerFrame;
     }
 
-    public void setCyclesPerFrame(int cyclesPerFrame) {
+    @Deprecated public void setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
     }
 
-    /*
-    static final class ObjectTaskInPort extends InPort<Object,Task> {
-        private final Memory memory;
-        private long creationTime = -1;
-
-        public ObjectTaskInPort(Memory memory, Input input, Buffer buffer, float initialAttention) {
-            super(input, buffer, initialAttention);
-            this.memory = memory;
-        }
-
-        @Override public void perceive(final Object x) {
-            memory.emit(Perceive.class, this, x);
-        }
-        
-        @Override
-        public Iterator<AbstractTask> postprocess(final Iterator<AbstractTask> at) {
-            try {
-                if (creationTime == -1)
-                    return at;
-                else {                    
-                    //Process tasks with overrides                    
-                    final int duration = memory.param.duration.get();
-                    
-                    return Iterators.transform(at, new TaskCreationTimeTransformer(duration));
-                }
-            }
-            catch (Throwable e) {
-                if (Parameters.DEBUG)
-                    throw e;
-                return singletonIterator(new Echo(Events.ERR.class, e));
-            }
-        }
-
-        * sets the 'creationTime' override for new Tasks.  sets the stamp to a particular
-         * value upon its exit from the queue.
-        public void setCreationTimeOverride(final long creationTime) {
-            this.creationTime = creationTime;
-        }
-
-        private class TaskCreationTimeTransformer implements Function<AbstractTask,AbstractTask> {
-            private final int duration;
-
-            public TaskCreationTimeTransformer(int duration) {
-                this.duration = duration;
-            }
-
-            @Override public AbstractTask apply(AbstractTask at) {
-                if (at instanceof Task) {
-                    Task t = (Task)at;
-                    if (t.sentence!=null)
-                        if (t.sentence.stamp!=null) {
-                            t.sentence.stamp.setCreationTime(creationTime, duration);
-                        }
-                }
-                return at;
-            }
-        }
-    }
-    */
 
     /** Adds an input channel for input from an external sense / sensor.
      *  Will remain added until it closes or it is explicitly removed. */
@@ -442,7 +405,7 @@ public class NAR implements Runnable {
      * 
      * @param minCyclePeriodMS minimum cycle period (milliseconds).
      */    
-    public void start(final long minCyclePeriodMS) {
+    @Deprecated public void start(final long minCyclePeriodMS) {
         start(minCyclePeriodMS, getCyclesPerFrame());
     }
 
@@ -461,10 +424,17 @@ public class NAR implements Runnable {
         stopped = true;
         running = false;
     }    
-    
-    /** Execute a fixed number of frames. 
-     * may execute more than requested cycles if cyclesPerFrame > 1 */
-    public void step(final int frames) {
+
+    /** steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of */
+    public double step() {
+        return step(1);
+    }
+
+    /** Execute a fixed number of frames.  cyclesPerFrame determines how many cycles each frame consists of
+     * may execute more than requested cycles if cyclesPerFrame > 1
+     * @return total time in seconds elapsed in realtime
+     * */
+    public double step(final int frames) {
         /*if (thread!=null) {
             memory.stepLater(cycles);
             return;
@@ -473,10 +443,12 @@ public class NAR implements Runnable {
         final boolean wasRunning = running;
         running = true;
         stopped = false;
+        double elapsed = 0;
         for (int f = 0; (f < frames) && (!stopped); f++) {
-            frame();
+            elapsed += frame(cyclesPerFrame);
         }
-        running = wasRunning;        
+        running = wasRunning;
+        return elapsed;
     }
 
     /**
@@ -554,7 +526,7 @@ public class NAR implements Runnable {
         while (running && !stopped) {      
             
 
-            double frameTime = frame(); //in seconds
+            double frameTime = step(1); //in seconds
 
             if (minFramePeriodMS > 0) {
                 
@@ -562,11 +534,8 @@ public class NAR implements Runnable {
                 if (remainingTime > 0) {
                     try {
                         Thread.sleep(minFramePeriodMS);
-                    } catch (InterruptedException e) {
-                        if (e.getCause()!=null) {
-                            emit(Events.ERR.class, e);
-                            e.printStackTrace();
-                        }
+                    } catch (InterruptedException ee) {
+                        onError(ee);
                     }
                 }
                 else if (remainingTime < 0) {
@@ -581,81 +550,37 @@ public class NAR implements Runnable {
     }
     
     
-    private void debugTime() {
-        //if (running || stepsQueued > 0 || !finishedInputs) {
-            System.out.println("// doTick: "
-                    //+ "walkingSteps " + stepsQueued
-                    + ", clock " + time());
 
-            System.out.flush();
-        //}
+    /** returns the configured NAL level */
+    public int nal() {
+        return memory.nal();
     }
 
-
-    
-//    /**
-//     * Processes the next input from each input channel.  Removes channels that have finished.
-//     * @return whether to finish the reasoner afterward, which is true if any input exists.
-//     */
-//    @Override
-//    public AbstractTask nextInputTask() {
-//        if ((!inputting) || (inputChannels.isEmpty()))
-//           return null;
-//
-//        int remainingChannels = inputChannels.size(); //remaining # of channels to poll
-//
-//        while ((remainingChannels > 0) && (inputChannels.size() > 0)) {
-//            inputSelected %= inputChannels.size();
-//
-//            final InPort<Object,AbstractTask> i = inputChannels.get(inputSelected++);
-//            remainingChannels--;
-//
-//            if (i.finished()) {
-//                inputChannels.remove(i);
-//                continue;
-//            }
-//
-//            try {
-//                i.update();
-//            } catch (IOException ex) {
-//                emit(Events.ERR.class, ex);
-//            }
-//
-//            if (i.hasNext()) {
-//                AbstractTask task = i.next();
-//                if (task!=null) {
-//                    return task;
-//                }
-//            }
-//
-//        }
-//
-//        /** no available inputs */
-//        return null;
-//    }
-//
-//    /** count of how many items are buffered */
-//    @Override public int numBuffered() {
-//        int total = 0;
-//        for (final InPort i : inputChannels)
-//            total += i.getItemsBuffered();
-//        return total;
-//    }
 
     
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }
-    
-    
-    protected double frame() {
-        return frame(cyclesPerFrame);
+
+
+    protected void onError(Throwable e)  {
+        /*if (e.getCause()!=null)
+            e.getCause().printStackTrace();
+        else*/
+            e.printStackTrace();
+
+        memory.error(e);
+
+        if (Parameters.EXIT_ON_EXCEPTION) {
+            //throw the exception to the next lower stack catcher, or cause program exit if none exists
+            throw new RuntimeException(e);
+        }
     }
-    
+
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
-    public double frame(int cycles) {
+    public double frame(final int cycles) {
 
         memory.resource.FRAME_DURATION.start();
 
@@ -666,26 +591,17 @@ public class NAR implements Runnable {
                 memory.cycle();
         }
         catch (Throwable e) {
-            if (e.getCause()!=null)
-                e.getCause().printStackTrace();
-            else
-                e.printStackTrace();
-
-            memory.error(e);
-
-            if (Parameters.EXIT_ON_EXCEPTION) {
-                throw e;// new RuntimeException(e);
-            }
+            onError(e);
         }
 
         emit(FrameEnd.class);
 
-        double frameTime = memory.resource.FRAME_DURATION.stop();
+        final double frameTime = memory.resource.FRAME_DURATION.stop();
 
+        //in real-time mode, warn if frame consumed more time than reasoner duration
         if (memory.getTiming() == Timing.Real) {
             final int d = param.duration.get();
 
-            //warn if frame consumed more time than reasoner duration
             if (frameTime > d) {
                 emit(Events.ERR.class,
                         "Real-time consumed by frame (" +
@@ -698,7 +614,7 @@ public class NAR implements Runnable {
 
     @Override
     public String toString() {
-        return memory.toString();
+        return "NAR[" + memory.toString() + "]";
     }
 
      /**
@@ -726,34 +642,6 @@ public class NAR implements Runnable {
         this.threadYield = b;
     }
 
-//    /** stops ad empties all input channels into a receiver. this
-//        results in no pending input.
-//        @return total number of items flushed
-//        */
-//    public int flushInput(Output receiver) {
-//        int total = 0;
-//        for (InPort c : inputChannels) {
-//            total += flushInput(c, receiver);
-//        }
-//        return total;
-//    }
-//
-//    /** stops and empties an input channel into a receiver.
-//     * this results in no pending input from this channel. */
-//    public static int flushInput(InPort i, Reaction receiver) {
-//        int total = 0;
-//        i.finish();
-//
-//        //TODO re=use constructed array if possible, assuming recipient knows to save the value and not the array
-//        while (i.hasNext()) {
-//            receiver.event(Events.IN.class, new Object[] { i.next() });
-//            total++;
-//        }
-//
-//        return total;
-//    }
-
-
 
     /** create a NAR given the class of a Build.  its default constructor will be used */
     public static NAR build(Class<? extends NewNAR> g) {
@@ -770,5 +658,16 @@ public class NAR implements Runnable {
         this(b.newMemory(b.param));
         b.init(this);
     }
-    
+
+
+//    private void debugTime() {
+//        //if (running || stepsQueued > 0 || !finishedInputs) {
+//            System.out.println("// doTick: "
+//                    //+ "walkingSteps " + stepsQueued
+//                    + ", clock " + time());
+//
+//            System.out.flush();
+//        //}
+//    }
+
 }

@@ -574,7 +574,7 @@ public class GraphExecutive {
             
             Cause currentEdge = path[path.length-1];
 
-            Stamp stamp = new Stamp(goal.sentence.stamp, currentEdge.getStamp(), memory.time());
+            Stamp stamp = Stamp.zip(goal.sentence.stamp, currentEdge.getStamp(), memory.time(), goal.getOcurrenceTime());
 
             //add all terms to derivation chain
 //            for(Term T : sequence) {
@@ -585,7 +585,6 @@ public class GraphExecutive {
             //memory.setTheNewStamp(stamp);
 
             //memory.setCurrentTask(task);
-
             //remove final element from path if it's equal to target
             /*if (seq.get(seq.size()-1).equals(target)) {
                 seq.remove(seq.size()-1);

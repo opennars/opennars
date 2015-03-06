@@ -17,7 +17,6 @@
 package nars.io.nlp;
 
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.io.nlp.Twokenize.Span;
@@ -134,10 +133,12 @@ public class Twenglish {
             Term p = 
                     /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
             CompoundTerm q = Sentence.termOrNull( Instance.make( p, Term.get(sentenceType) ) );
-            if (q != null)
-                tt.add(
+            if (q != null) {
+                throw new RuntimeException("API Upgrade not finished here:");
+                /*tt.add(
                         memory.newTask(q, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-                );
+                );*/
+            }
         }
         
         //2. add the 'heard' sequence of just the terms
@@ -151,10 +152,12 @@ public class Twenglish {
             cont.removeLast(); //remove trailnig interval term
 
             CompoundTerm con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD));
-            if (con!=null)
-                tt.add(
+            if (con!=null) {
+                throw new RuntimeException("API Upgrade not finished here:");
+                /*tt.add(
                         memory.newTask(con, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-                );
+                );*/
+            }
         }
         
         return tt;

@@ -294,7 +294,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
     
-    public Sentence clone(boolean makeEternal) {
+    public Sentence clone(final boolean makeEternal) {
         Sentence clon = clone(term);
         if(clon.stamp.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
             //change occurence time of clone
@@ -304,7 +304,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
     }
 
 
-    public final <X extends CompoundTerm> Sentence<X> clone(Term t, Class<? extends X> necessaryTermType) {
+    public final <X extends CompoundTerm> Sentence<X> clone(final Term t, final Class<? extends X> necessaryTermType) {
         X ct = termOrNull(t);
         if (ct == null) return null;
 
@@ -359,7 +359,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         
         final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
 
-        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
+        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.cloneWithNewOccurrenceTime(targetTime);
 
         return new Sentence(term, punctuation, newTruth, newStamp, false);
     }

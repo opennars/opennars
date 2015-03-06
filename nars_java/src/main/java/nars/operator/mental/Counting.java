@@ -58,7 +58,7 @@ public class Counting implements Plugin {
                                     Term.get(cardinality) 
                                 };
 
-                                //TODO CARDINATLITY can be a static final instance shared by all
+                                //TODO CARDINALITY can be a static final instance shared by all
                                 Term new_term=Inheritance.make(new Product(product_args), /* --> */ CARDINALITY);
                                 if (new_term == null) {
                                     //this usually happens when product_args contains the term CARDINALITY in which case it is an invalid Inheritance statement

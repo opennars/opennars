@@ -37,92 +37,70 @@ import static nars.logic.nal7.Tense.*;
 public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
 
     /**
+     * default for atemporal events
+     * means "always" in Judgment/Question, but "current" in Goal/Quest
+     */
+    public static final long ETERNAL = Integer.MIN_VALUE;
+    /**
+     * flag for an un-perceived stamp, which signals to be set to the current time if it is eventually perceived
+     */
+    public static final long UNPERCEIVED = Integer.MIN_VALUE + 1;
+    /**
      * serial numbers. not to be modified after Stamp constructor has initialized it
      */
     public final long[] evidentialBase;
-
-
+    /**
+     * duration (in cycles) which any contained intervals are measured by
+     */
+    private final int duration;
     /**
      * creation time of the stamp
      */
     private long creationTime;
-
     /**
      * estimated occurrence time of the event
      * TODO: make this final?
      */
     private long occurrenceTime;
 
-    /** duration (in cycles) which any contained intervals are measured by */
-    private final int duration;
-
-    /**
-     * default for atemporal events
-     * means "always" in Judgment/Question, but "current" in Goal/Quest     
-     */
-    public static final long ETERNAL = Integer.MIN_VALUE;
-
     /**
      * used when the occurrence time cannot be estimated, means "unknown"
      */
     //public static final long UNKNOWN = Integer.MAX_VALUE;
-
-    
-    /** caches evidentialBase as a set for comparisons and hashcode.
-        stores the unique Long's in-order for efficiency
-     */    
+    /**
+     * caches evidentialBase as a set for comparisons and hashcode.
+     * stores the unique Long's in-order for efficiency
+     */
     private long[] evidentialSet = null;
-    
 
 
-    
-    /** cache of hashcode of evidential base */
+    /**
+     * cache of hashcode of evidential base
+     */
     transient private int hash;
 
 
-
-    public boolean before(Stamp s, int duration) {
-        if (isEternal() || s.isEternal())
-            return false;
-        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_BACKWARD;
-    }
-    
-    public boolean after(Stamp s, int duration) {
-        if (isEternal() || s.isEternal())
-            return false;
-        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;        }
-
-    public float getOriginality() {
-        return 1.0f / (evidentialBase.length + 1);
-    }
-
-    public void setOccurrenceTime(long l) {
-        this.occurrenceTime = l;
-    }
-
-    protected Stamp(final long serial, long creationTime, final int duration) {
+    protected Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
         super();
-
-        this.duration = duration;
-        this.evidentialBase = new long[1];
-        this.evidentialBase[0] = serial;
-
         this.creationTime = creationTime;
+        this.occurrenceTime = occurenceTime;
+        this.duration = duration;
+        this.evidentialBase = evidentialBase;
+    }
 
-     }
+    protected Stamp(final long serial, final long creationTime, final long occurenceTime, final int duration) {
+        this(new long[]{serial}, creationTime, occurenceTime, duration);
+    }
 
 
 
-    protected void setOccurenceTime(Tense tense, int duration) {
-        if (tense == null) {
-            occurrenceTime = ETERNAL;
-        } else if (tense == Past) {
-            occurrenceTime = creationTime - duration;
-        } else if (tense == Future) {
-            occurrenceTime = creationTime + duration;
-        } else if (tense == Present) {
-            occurrenceTime = creationTime;
-        }
+    public Stamp(final Stamp parent, final Memory memory, final Tense tense) {
+        this(parent, memory.time(), getOccurrenceTime(memory.time(), tense, memory.getDuration()));
+    }
+
+
+    public Stamp(Operation operation, Memory memory, Tense tense) {
+        this(operation.getTask().sentence.getStamp(), memory, tense);
     }
 
     /**
@@ -130,144 +108,161 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      *
      * @param parent The stamp to be cloned
      */
-    private Stamp(final Stamp parent) {
-        this(parent, parent.creationTime);
+    protected Stamp(final Stamp parent) {
+        this(parent, parent.creationTime, parent.occurrenceTime);
     }
-
-    /**
-     * Generate a new stamp from an existing one, with the same evidentialBase
-     * but different creation time
-     * <p>
-     * For single-premise rules
-     *
-     * @param parent The stamp of the single premise
-     */
-
-
-    public Stamp(final Stamp parent, final Memory memory, final Tense tense) {
-        this(parent, memory.time() );
-
-        setOccurenceTime(tense, memory.getDuration());
-    }
-    public Stamp(final Stamp parent, final Memory memory, long occurrenceTime) {
-        this(parent, memory.time() );
-
-        this.occurrenceTime = occurrenceTime;
-    }
-    public Stamp(Operation operation, Memory memory, Tense tense) {
-        this(operation.getTask().sentence.getStamp(), memory, tense);
-    }
-
 
     public Stamp(final Stamp parent, final long creationTime, final long occurenceTime) {
-        this(parent, creationTime);
-
-        this.occurrenceTime = occurenceTime;
-
-    }
-    public Stamp(final Stamp parent, final long creationTime) {
-
-
-
-        this.duration = parent.duration;
-        this.evidentialBase = parent.evidentialBase;
-
-        this.creationTime = creationTime;
-        this.occurrenceTime = parent.getOccurrenceTime();
-
+        this(parent.evidentialBase, creationTime, occurenceTime, parent.duration);
     }
 
-    public Stamp(final Stamp first, final Stamp second, final long creationTime) {
-        this(first, second, creationTime,  first.getOccurrenceTime() /* use the creation time of the first task */ );
-    }
 
     /**
      * Generate a new stamp for derived sentence by merging the two from parents
      * the first one is no shorter than the second
      *
-     * @param first The first Stamp
+     * @param first  The first Stamp
      * @param second The second Stamp
      */
-    public Stamp(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
-        //TODO use iterators instead of repeated first and second .get's?
-        
+    public static Stamp zip(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
         int i2, j;
         int i1 = i2 = j = 0;
 
         final long[] firstBase = first.evidentialBase;
         final long[] secondBase = second.evidentialBase;
 
-        this.duration = first.duration;
+        int duration = first.duration;
         //this may not be a problem, but let's deal with that when we use different durations in the same system(s):
-        if (second.duration!=first.duration)
+        if (second.duration != first.duration)
             throw new RuntimeException("Stamp can not be created from parents with different durations: " + first + ", " + second);
 
         final int baseLength = Math.min(firstBase.length + secondBase.length, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
-        this.evidentialBase = new long[baseLength];
+        long[] evidentialBase = new long[baseLength];
 
         int firstLength = firstBase.length;
         int secondLength = secondBase.length;
 
-        this.creationTime = creationTime;
-        this.occurrenceTime = occurenceTime;
-        
-
-        //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
+        //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143
         while (i2 < secondLength && j < baseLength) {
             evidentialBase[j++] = secondBase[i2++];
         }
         while (i1 < firstLength && j < baseLength) {
             evidentialBase[j++] = firstBase[i1++];
         }
+
+        return new Stamp(evidentialBase, creationTime, occurenceTime, duration);
     }
 
-    public Stamp(final Memory memory, final Tense tense, long creationTime) {
-        this(memory.newStampSerial(), creationTime, memory.getDuration());
 
-        setOccurenceTime(tense, duration);
-    }
 
-    /** create stamp at current memory time */
+
+    /**
+     * create an original stamp at current memory time, with a tense offset
+     */
     public Stamp(final Memory memory, final Tense tense) {
-        this(memory, tense, memory.time());
+        this(memory, memory.time(), tense);
     }
 
-
-    public Stamp(final Memory memory, long creationTime, long occurenceTime) {
-        this(memory.newStampSerial(), creationTime, memory.getDuration());
-        this.occurrenceTime = occurenceTime;
-    }
-
+    /**
+     * create an original stamp at current memory time, with a specific occurence time
+     */
     public Stamp(final Memory memory, long occurenceTime) {
         this(memory, memory.time(), occurenceTime);
     }
 
-    
+    /**
+     * create an original stamp at current memory time, with a specific creation and occurence time
+     */
+    public Stamp(final Memory memory, long creationTime, long occurenceTime) {
+        this(memory.newStampSerial(), creationTime, occurenceTime, memory.getDuration());
+    }
+
+    /**
+     * create an original stamp at current memory time, with a specific creation and tense offset
+     */
+    public Stamp(final Memory memory, long creationTime, final Tense tense) {
+        this(memory, creationTime, getOccurrenceTime(creationTime, tense, memory.getDuration()));
+    }
+
+
+    public static long getOccurrenceTime(final long creationTime, final Tense tense, final int duration) {
+
+        if (tense == Past) {
+            return creationTime - duration;
+        } else if (tense == Future) {
+            return creationTime + duration;
+        } else if (tense == Present) {
+            return creationTime;
+        }
+
+        return Stamp.ETERNAL;
+    }
+
+    public static long[] toSetArray(final long[] x) {
+        long[] set = x.clone();
+
+        if (x.length < 2)
+            return set;
+
+        //1. copy evidentialBse
+        //2. sorted
+        //3. count duplicates
+        //4. create new array
+
+        Arrays.sort(set);
+        long lastValue = -1;
+        int j = 0; //# of unique items
+        for (int i = 0; i < set.length; i++) {
+            long v = set[i];
+            if (lastValue != v)
+                j++;
+            lastValue = v;
+        }
+        lastValue = -1;
+        long[] sorted = new long[j];
+        j = 0;
+        for (int i = 0; i < set.length; i++) {
+            long v = set[i];
+            if (lastValue != v)
+                sorted[j++] = v;
+            lastValue = v;
+        }
+        return sorted;
+    }
+
+    public boolean before(Stamp s, int duration) {
+        if (isEternal() || s.isEternal())
+            return false;
+        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_BACKWARD;
+    }
+
+    public boolean after(Stamp s, int duration) {
+        if (isEternal() || s.isEternal())
+            return false;
+        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;
+    }
+
+    public float getOriginality() {
+        return 1.0f / (evidentialBase.length + 1);
+    }
+
     public boolean isEternal() {
         return occurrenceTime == ETERNAL;
     }
 
-    /** sets the creationTime to a non-value so that it will be set at a later point, ex: after traversing the input queue */
-    public void setNotYetPerceived() {
-        creationTime = -1;
-    }
-
-    /** sets the creation time; used to set input tasks with the actual time they enter Memory */
-    public void setCreationTime(long creationTime) {
-
-        long originalCreationTime = this.creationTime;
-        this.creationTime = creationTime;
-
-        //shift occurence time relative to the new creation time
-        if (!isEternal()) {
-            occurrenceTime = occurrenceTime + (creationTime - originalCreationTime);
-        }
-    }
-    
-
     @Override
     public Stamp build() {
         return this;
+    }
+
+    /**
+     * Clone a stamp
+     *
+     * @return The cloned stamp
+     */
+    @Override
+    public Stamp clone() {
+        return new Stamp(this);
     }
 
     /*
@@ -289,16 +284,6 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      return true;
      }
      */
-    /**
-     * Clone a stamp
-     *
-     * @return The cloned stamp
-     */
-    @Override
-    public Stamp clone() {
-        return new Stamp(this);
-    }
-
 
     /**
      * Get a number from the evidentialBase by index, called in this class only
@@ -310,62 +295,30 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         return evidentialBase[i];
     }
 
-
-    public static long[] toSetArray(final long[] x) {
-        long[] set = x.clone();
-        
-        if (x.length < 2)
-            return set;
-        
-        //1. copy evidentialBse
-        //2. sorted
-        //3. count duplicates
-        //4. create new array 
-        
-        Arrays.sort(set);
-        long lastValue = -1;
-        int j = 0; //# of unique items
-        for (int i = 0; i < set.length; i++) {
-            long v = set[i];
-            if (lastValue != v)
-                j++;                
-            lastValue = v;
-        }
-        lastValue = -1;
-        long[] sorted = new long[j];
-        j = 0;
-        for (int i = 0; i < set.length; i++) {
-            long v = set[i];
-            if (lastValue != v)
-                sorted[j++] = v;
-            lastValue = v;
-        }
-        return sorted;
-    }
-
     /**
      * Convert the evidentialBase into a set
      *
      * @return The TreeSet representation of the evidential base
      */
     public long[] toSet() {
-        if (evidentialSet == null) {        
+        if (evidentialSet == null) {
             evidentialSet = toSetArray(evidentialBase);
-            hash = Objects.hash(Arrays.hashCode(evidentialSet), occurrenceTime, creationTime);
+            hash = 0;
         }
-        
+
         return evidentialSet;
     }
 
-    
-    @Override public boolean equals(final Object that) {
+    @Override
+    public boolean equals(final Object that) {
         throw new RuntimeException("Use other equals() method");
     }
-    
+
     /**
      * Check if two stamps contains the same types of content
-     *
+     * <p>
      * NOTE: hashcode will include within it the creationTime & occurrenceTime, so if those are not to be compared then avoid comparing hash
+     *
      * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
@@ -373,44 +326,46 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         if (this == s) return true;
 
         if (hash)
-            if (hashCode()!=s.hashCode()) return false;
+            if (hashCode() != s.hashCode()) return false;
         if (creationTime)
-            if (getCreationTime()!=s.getCreationTime()) return false;
+            if (getCreationTime() != s.getCreationTime()) return false;
         if (ocurrenceTime)
-            if (getOccurrenceTime()!=s.getOccurrenceTime()) return false;       
+            if (getOccurrenceTime() != s.getOccurrenceTime()) return false;
         if (evidentialBase) {
             //iterate in reverse; the ending of the evidence chain is more likely to be different
             final long[] a = toSet();
             final long[] b = s.toSet();
             if (a.length != b.length) return false;
-            for (int i = a.length-1; i >=0; i--)
-                if (a[i]!=b[i]) return false;
+            for (int i = a.length - 1; i >= 0; i--)
+                if (a[i] != b[i]) return false;
         }
-        
 
-        return true;        
+
+        return true;
     }
-            
 
-    
     /**
      * The hash code of Stamp
      *
      * @return The hash code
      */
     public final int hashCode() {
-        if (evidentialSet==null)
-            toSet();       
+        if (evidentialSet == null)
+            toSet();
+        if (hash == 0) {
+            hash = Objects.hash(Arrays.hashCode(evidentialSet), creationTime, occurrenceTime);
+        }
         return hash;
     }
 
     public Stamp cloneWithNewCreationTime(long newCreationTime) {
-        return new Stamp(this, newCreationTime);
+        return new Stamp(this, newCreationTime, getOccurrenceTime());
     }
+
     public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime) {
-        Stamp s = new Stamp(this, getCreationTime(), newOcurrenceTime);
-        return s;
+        return new Stamp(this, getCreationTime(), newOcurrenceTime);
     }
+
     public Stamp cloneEternal() {
         return cloneWithNewOccurrenceTime(ETERNAL);
     }
@@ -423,12 +378,16 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     public long getOccurrenceTime() {
         return occurrenceTime;
     }
-    
-    public void setEternal() {
-        occurrenceTime=ETERNAL;
+
+    public void setOccurrenceTime(long l) {
+        this.occurrenceTime = l;
+        this.hash = 0;
     }
 
-    
+    public void setEternal() {
+        occurrenceTime = ETERNAL;
+    }
+
     public StringBuilder appendOcurrenceTime(final StringBuilder sb) {
         if (occurrenceTime != ETERNAL) {
             int estTimeLength = 10; /* # digits */
@@ -436,12 +395,29 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
             sb.append(Long.toString(creationTime));
 
             long relOc = (occurrenceTime - creationTime);
-            if (relOc >= 0) sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
+            if (relOc >= 0)
+                sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
             sb.append(relOc);
 
 
         }
         return sb;
+    }
+
+    public String getTense(final long currentTime, final int duration) {
+
+        if (isEternal()) {
+            return "";
+        }
+
+        switch (TemporalRules.order(currentTime, occurrenceTime, duration)) {
+            case ORDER_FORWARD:
+                return Symbols.TENSE_FUTURE;
+            case ORDER_BACKWARD:
+                return Symbols.TENSE_PAST;
+            default:
+                return Symbols.TENSE_PRESENT;
+        }
     }
 //
 //    /**
@@ -457,60 +433,40 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
 //        }
 //    }
 
-    public String getTense(final long currentTime, final int duration) {
-        
-        if (isEternal()) {
-            return "";
-        }
-        
-        switch (TemporalRules.order(currentTime, occurrenceTime, duration)) {
-            case ORDER_FORWARD:
-                return Symbols.TENSE_FUTURE;
-            case ORDER_BACKWARD:
-                return Symbols.TENSE_PAST;
-            default:
-                return Symbols.TENSE_PRESENT;
-        }        
-    }
-
-
-
     public CharSequence name() {
 
-            final int baseLength = evidentialBase.length;
-            final int estimatedInitialSize = 8 + (baseLength * 3);
+        final int baseLength = evidentialBase.length;
+        final int estimatedInitialSize = 8 + (baseLength * 3);
 
-            final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
-            buffer.append(Symbols.STAMP_OPENER);
-            if (!isEternal()) {
-                appendOcurrenceTime(buffer);
+        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+        buffer.append(Symbols.STAMP_OPENER);
+        if (!isEternal()) {
+            appendOcurrenceTime(buffer);
+        } else {
+            buffer.append(getCreationTime());
+        }
+        buffer.append(Symbols.STAMP_STARTER).append(' ');
+        for (int i = 0; i < baseLength; i++) {
+            buffer.append(Long.toString(evidentialBase[i], 16));
+            if (i < (baseLength - 1)) {
+                buffer.append(Symbols.STAMP_SEPARATOR);
             }
-            else {
-                buffer.append(getCreationTime());
-            }
-            buffer.append(Symbols.STAMP_STARTER).append(' ');
-            for (int i = 0; i < baseLength; i++) {
-                buffer.append(Long.toString(evidentialBase[i], 16));
-                if (i < (baseLength - 1)) {
-                    buffer.append(Symbols.STAMP_SEPARATOR);
-                }
-            }
+        }
 
-            buffer.append(Symbols.STAMP_CLOSER).append(' ');
+        buffer.append(Symbols.STAMP_CLOSER).append(' ');
 
-            //this is for estimating an initial size of the stringbuffer
-            //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
+        //this is for estimating an initial size of the stringbuffer
+        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
 
-            return buffer;
+        return buffer;
 
 
     }
 
     @Override
-    public String toString() {        
+    public String toString() {
         return name().toString();
     }
-
 
     /**
      * @return the creationTime
@@ -519,12 +475,21 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         return creationTime;
     }
 
+    /**
+     * sets the creation time; used to set input tasks with the actual time they enter Memory
+     */
+    public void setCreationTime(long l) {
+        this.creationTime = l;
+        this.hash = 0;
+    }
+
     public int getDuration() {
         return duration;
     }
 
 
     //String toStringCache = null; //holds pre-allocated symbol for toString()
+
     /**
      * Get a String form of the Stamp for display Format: {creationTime [:
      * eventTime] : evidentialBase}
@@ -559,7 +524,6 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      return toStringCache;
      }
      */
-
     @Override
     public Stamp getStamp() {
         return this;

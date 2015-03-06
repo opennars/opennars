@@ -46,7 +46,6 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.nal7.Tense;
 import nars.logic.nal8.ImmediateOperation;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
@@ -834,33 +833,33 @@ public class Memory implements Serializable {
         return new NewTask(this, s);
     }
 
-    public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability) {
-        return newTask(content, sentenceType, freq, conf, priority, durability, (Task) null);
-    }
-
-    public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
-        return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
-    }
-
-    public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
-        return newTask(content, sentenceType, freq, conf, priority, durability, null, tense);
-    }
-
-    public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
-        return newTaskAt(content, sentenceType, freq, conf, priority, durability, parentTask, tense, time());
-    }
-
-    public Task newTaskAt(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense, long ocurrenceTime) {
-
-        TruthValue truth = new TruthValue(freq, conf);
-        Sentence sentence = new Sentence(
-                content,
-                sentenceType,
-                truth,
-                new Stamp(this, tense, ocurrenceTime));
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
-        return new Task(sentence, budget, parentTask);
-    }
+//    @Deprecated public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability) {
+//        return newTask(content, sentenceType, freq, conf, priority, durability, (Task) null);
+//    }
+//
+//    @Deprecated public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
+//        return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
+//    }
+//
+//    @Deprecated public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
+//        return newTask(content, sentenceType, freq, conf, priority, durability, null, tense);
+//    }
+//
+//    @Deprecated public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
+//        return newTaskAt(content, sentenceType, freq, conf, priority, durability, parentTask, tense, time());
+//    }
+//
+//    @Deprecated public Task newTaskAt(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense, long ocurrenceTime) {
+//
+//        TruthValue truth = new TruthValue(freq, conf);
+//        Sentence sentence = new Sentence(
+//                content,
+//                sentenceType,
+//                truth,
+//                new Stamp(this, ocurrenceTime, tense));
+//        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
+//        return new Task(sentence, budget, parentTask);
+//    }
 
     /**
      * gets a next concept for processing

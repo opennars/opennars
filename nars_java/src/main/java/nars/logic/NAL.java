@@ -528,7 +528,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                 else if (b == null)
                     stamp = new Stamp(a, creationTime, occurrenceTime);
                 else
-                    stamp = new Stamp(a, b, creationTime, occurrenceTime);
+                    stamp = Stamp.zip(a, b, creationTime, occurrenceTime);
             }
             return stamp;
         }

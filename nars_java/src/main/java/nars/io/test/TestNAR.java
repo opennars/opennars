@@ -153,7 +153,6 @@ public class TestNAR extends NAR {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
         Task t = super.ask(termString);
-        t.sentence.stamp.setNotYetPerceived();
 
         return explainable(t);
     }
@@ -163,7 +162,6 @@ public class TestNAR extends NAR {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
         Task t = super.believe(pri, dur, beliefTerm, tense, freq, conf);
-        t.sentence.stamp.setNotYetPerceived();
 
         return explainable(t);
     }
