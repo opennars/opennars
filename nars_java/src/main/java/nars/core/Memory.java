@@ -607,7 +607,7 @@ public class Memory implements Serializable {
 
         if (task.sentence!=null) {
             Stamp s = task.sentence.stamp;
-            if (s.getCreationTime() == -1) {
+            if (s.getCreationTime() == Stamp.UNPERCEIVED) {
                 s.setCreationTime(time());
             }
         }

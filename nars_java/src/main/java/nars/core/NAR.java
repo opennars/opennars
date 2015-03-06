@@ -166,7 +166,8 @@ public class NAR implements Runnable {
      */
     public TextInput addInput(final String text) {
         
-        return addInput(text, text.contains("\n") ? -1 : time());
+        //return addInput(text, text.contains("\n") ? Stamp.UNPERCEIVED : time());
+        return addInput(text, Stamp.UNPERCEIVED);
     }
 
     public SensorPort addInput(final File input) throws FileNotFoundException {
@@ -177,7 +178,9 @@ public class NAR implements Runnable {
                 new BufferedReader(new InputStreamReader( input ) ) ) );
     }
 
-        /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
+    /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated
+     * if creationTime == Stamp.UNPERCEIVED, creationTime will not be changed
+     * */
     public TextInput addInput(final String text, long creationTime) {
         final TextInput i = new TextInput(textPerception, text);
 
@@ -348,7 +351,7 @@ public class NAR implements Runnable {
 
         SensorPort i = new SensorPort(channel, 1.0f);
 
-        if (creationTime!=-1)
+        if (creationTime!=Stamp.UNPERCEIVED)
             i.setCreationTimeOverride(creationTime);
 
         memory.perception.accept(i);

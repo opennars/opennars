@@ -10,6 +10,7 @@ import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.entity.TruthValue;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal7.Tense;
 
 import java.io.Serializable;
@@ -65,20 +66,20 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
         this.channel = channel;
 
+        long ct;
+        if (creationTimeOffset == Stamp.UNPERCEIVED)
+            ct = (n.time());
+        else
+            ct = (creationTimeOffset);
 
-        this.creationTime = creationTimeOffset;
+        this.creationTime = t.getStamp().setCreationTime(ct);
 
         if (t.sentence.isEternal()) {
             setEternal();
         }
         else {
-            /* a TaskCondition created for a Task with a tense (non-eternal)
-                will refer to a time interval relative to creationTimeOffset
-                which refers to a specific time during execution.
-                Ex: if the task is past, it will reference any time before creationTime-duration/2
-             */
-            long oc = t.getOcurrenceTime() - t.getCreationTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
-            setOccurrenceTime(oc, n.memory.getDuration());
+            long oc = t.getOcurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
+            setOccurrenceTime(oc+creationTimeOffset, n.memory.getDuration());
         }
 
 

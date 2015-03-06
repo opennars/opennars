@@ -140,7 +140,7 @@ public class Narsese {
         char punc = str.charAt(last);
 
         /* if -1, will be set right before the Task is input */
-        Stamp stamp = new Stamp(memory, -1, tense);
+        Stamp stamp = new Stamp(memory, Stamp.UNPERCEIVED, tense);
 
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));

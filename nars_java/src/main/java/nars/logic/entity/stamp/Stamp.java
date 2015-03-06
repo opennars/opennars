@@ -185,7 +185,13 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     }
 
 
-    public static long getOccurrenceTime(final long creationTime, final Tense tense, final int duration) {
+    public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
+
+        if (creationTime == Stamp.UNPERCEIVED) {
+            //in this case, occurenceTime must be considered relative to whatever creationTime will be set when perceived
+            //so we base it at zero to make this possible
+            creationTime = 0;
+        }
 
         if (tense == Past) {
             return creationTime - duration;
@@ -478,9 +484,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     /**
      * sets the creation time; used to set input tasks with the actual time they enter Memory
      */
-    public void setCreationTime(long l) {
+    public long setCreationTime(long l) {
         this.creationTime = l;
         this.hash = 0;
+        return l;
     }
 
     public int getDuration() {
