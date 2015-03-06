@@ -6,7 +6,7 @@ import nars.core.Events.OUT;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.Reaction;
-import nars.io.TextOutput;
+import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Task;
@@ -15,7 +15,10 @@ import nars.logic.nal1.Inheritance;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal4.Product;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +34,7 @@ public class BooleanChallenge {
     private final NAR nar;
     private final Narsese parser;
     int bits = 0;
-    boolean failOnError = true; //exit on the first logical error
+    boolean failOnError = false; //exit on the first logical error
     double negationProb = 0;
     double inputProb;
     double axiomProb = 1 / 1000.0f;
@@ -140,7 +143,8 @@ public class BooleanChallenge {
 
                                 //give correct answer
                                 if (correctFeedback) {
-                                    String c = getTerm(n[0], n[1], pred.toString(), not(n[2])) + ('.');
+                                    //String c = getTerm(n[0], n[1], pred.toString(), not(n[2])) + ('.');
+                                    String c = "(--," + getTerm(n[0], n[1], pred.toString(), n[2]) + ("). %1.00;" + Texts.n2(inputConf) + "%");
                                     nar.addInput(c);
                                 }
 
@@ -202,13 +206,13 @@ public class BooleanChallenge {
         Parameters.DEBUG = true;
         NAR n = new NAR(new Default().setInternalExperience(null));
         //NAR n = new NAR(new Discretinuous());
-
-
         //new NARPrologMirror(n, 0.9f, true, true, false);
-
         //NAR n = new CurveBagNARBuilder().build();
 
-        new TextOutput(n, System.out) {
+        //new TraceWriter(n, System.out);
+        //new TextOutput(n, System.out);
+        /*
+        {
 
             String lastOutput = "";
             @Override
@@ -222,7 +226,7 @@ public class BooleanChallenge {
                 lastOutput = p;
                 return p;
             }
-        };
+        };*/
 
         //new NARSwing(n);
 
@@ -230,7 +234,7 @@ public class BooleanChallenge {
 
             @Override
             public void test() { */
-        new BooleanChallenge(n).run(1, 155000, 155000);
+        new BooleanChallenge(n).run(1, 6550000, 6550000);
 /*            }
 
         }).start();*/
@@ -253,12 +257,12 @@ public class BooleanChallenge {
 
     void inputAxioms() {
 
-        nar.believe("<(||,or,xor,and) --> operator>", inputConf);
+        nar.believe("<{or,xor,and} --> operator>", inputConf);
 
-        String a = "<(||,";
+        String a = "<{";
         for (int i = 1; i < (1 << bits); i++)
             a += i + ",";
-        a += "0) --> number>";
+        a += "0} --> number>";
         nar.believe(a, inputConf);
     }
 
@@ -305,65 +309,6 @@ public class BooleanChallenge {
         //System.out.println("  " + getNALStack());
     }
 
-    public List<String> getNALStack() {
-        StackTraceElement[] s = Thread.currentThread().getStackTrace();
-
-        String prefix = "";
-
-        boolean tracing = false;
-        String prevMethodID = null;
-
-        List<String> path = new ArrayList();
-        int i;
-        for (i = 0; i < s.length; i++) {
-            StackTraceElement e = s[i];
-
-            String className = e.getClassName();
-            String methodName = e.getMethodName();
-
-
-            if (tracing) {
-
-                //Filter conditions
-                if (className.contains("reactor."))
-                    continue;
-                if (className.contains("EventEmitter"))
-                    continue;
-                if ((className.equals("NAL") || className.equals("Memory")) && methodName.equals("emit"))
-                    continue;
-
-                int cli = className.lastIndexOf(".") + 1;
-                if (cli != -1)
-                    className = className.substring(cli, className.length()); //class's simpleName
-
-                String methodID = className + '_' + methodName;
-                String sm = prefix + '_' + methodID;
-
-                path.add(sm);
-
-                prevMethodID = methodID;
-
-
-                //Termination conditions
-                if (className.contains("ConceptFireTask") && methodName.equals("accept"))
-                    break;
-                if (className.contains("ImmediateProcess") && methodName.equals("reason"))
-                    break;
-                if (className.contains("ConceptFire") && methodName.equals("reason"))
-                    break;
-            } else if (className.endsWith(".NAL") && methodName.equals("deriveTask")) {
-                tracing = true; //begins with next stack element
-            }
-
-        }
-
-        if (i >= s.length - 1) {
-            System.err.println("Stack not clipped: " + Arrays.toString(s));
-        }
-
-        return path;
-
-    }
 
     int rand(int bits) {
         return (int) (Math.random() * (1 << bits));
@@ -392,7 +337,7 @@ public class BooleanChallenge {
                 break;
         }
 
-        if ((!allowNegation) && (correct!=y))
+        if (!question && (!allowNegation) && (correct!=y))
             y = correct;
 
 
@@ -462,7 +407,7 @@ public class BooleanChallenge {
     public String getTerm(int a, int b, String op, int y) {
 
         //use the { } --> form and not {-- because this is the form answers will return in
-        return "<{(*," + b(a) + "," + b(b) + "," + b(y) + ")} --> " + op + ">";
+        return "<(*," + b(a) + "," + b(b) + "," + b(y) + ") --> " + op + ">";
 
         //return "<(*,(*," + b(a) + "," + b(b) + ")," + b(y) + ") --> " + op + ">";        
 

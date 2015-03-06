@@ -162,7 +162,7 @@ public class InternalExperience extends AbstractPlugin  {
 
                 Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
 
-                memory.addNewTask(newTask, "Internally remembered experienced");
+                memory.addTask(newTask, "Internally remembered experienced");
             }
 
         }

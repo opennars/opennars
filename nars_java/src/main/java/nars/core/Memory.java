@@ -117,11 +117,16 @@ public class Memory implements Serializable {
      * could be implemented (ex: round robin) which will be
      * more important when heavier data flow occurrs
      */
-    public void addNewTasks(Supplier<Task> source) {
+    public void addTasks(final Supplier<Task> source) {
         Task next;
         while ((next = source.get())!=null) {
-            addNewTask(next, next.getReason());
+            addTask(next);
         }
+    }
+
+    public void addTasks(final Iterable<Task> source) {
+        for (final Task t : source)
+            addTask(t);
     }
 
     public Term getSelf() {
@@ -531,11 +536,16 @@ public class Memory implements Serializable {
         //}
     }
 
+    public boolean addTask(final Task t) {
+        return addTask(t, t.getReason());
+    }
+
+
     /* ---------- new task entries ---------- */
     /**
      * add new task that waits to be processed next
      */
-    public boolean addNewTask(final Task t, final String reason) {
+    public boolean addTask(final Task t, final String reason) {
         /*if (!Term.valid(t.getContent()))
          throw new RuntimeException("Invalid term: " + t);*/
 
@@ -599,14 +609,8 @@ public class Memory implements Serializable {
 
         emit(Events.IN.class, task);
 
-        if (task.budget.aboveThreshold()) {
-
-            if (addNewTask(task, "Perceived"))
-                return 1;
-
-        } else {
-            removeTask(task, "Neglected");
-        }
+        if (addTask(task, "Perceived"))
+            return 1;
 
         return 0;
     }
@@ -688,12 +692,8 @@ public class Memory implements Serializable {
 
         event.emit(Events.CycleStart.class);
 
-        try {
-            concepts.cycle();
-        }
-        catch(Exception e) {
-            emit(Events.ERR.class, e);
-        }
+        concepts.cycle();
+
 
         event.emit(Events.CycleEnd.class);
 

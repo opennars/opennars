@@ -25,8 +25,6 @@ import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.LocalRules;
 import nars.logic.nal1.Negation;
 import nars.logic.nal2.Similarity;
-import nars.logic.nal3.SetExt;
-import nars.logic.nal3.SetInt;
 import nars.logic.nal3.SetTensional;
 import nars.logic.nal5.*;
 
@@ -508,7 +506,7 @@ public class RuleTables {
             if (task.sentence.isJudgment()) {
                 if (statement instanceof Inheritance) {
                     StructuralRules.structuralCompose1(compound, index, statement, nal);
-                    if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation)) {
+                    if (!(compound instanceof SetTensional || compound instanceof Negation)) {
                         StructuralRules.structuralCompose2(compound, index, statement, side, nal);
                     }    // {A --> B, A @ (A&C)} |- (A&C) --> (B&C)
                 } else if ((statement instanceof Similarity) && !(compound instanceof Conjunction)) {

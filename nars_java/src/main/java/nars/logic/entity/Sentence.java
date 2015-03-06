@@ -119,7 +119,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         if ((isQuestion() || isQuest()) && !st.isEternal()) {
             //need to clone in case this stamp is shared by others which are not to eternalize it
             st = st.cloneEternal();
-            if (Parameters.DEBUG)
+            if (Parameters.DEBUG_NONETERNAL_QUESTIONS)
                 throw new RuntimeException("Questions and Quests require eternal tense");
         }
 

@@ -225,7 +225,7 @@ public abstract class Operator extends Term implements Plugin {
         final Task opTask = operation.getTask();
         memory.logic.TASK_EXECUTED.hit();
 
-        memory.addNewTask(
+        memory.addTask(
                 memory.newTask(operation).
                         judgment().
                         truth(truth).

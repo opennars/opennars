@@ -47,11 +47,13 @@ public class Parameters {
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
-    public static final boolean DEBUG_TRACE_EVENTS = false;
-
-    /** for thorough bag debugging (slow) */
-    public static boolean DEBUG_BAG = true;
+    public static boolean DEBUG_BAG = true; // for complete bag debugging
+    public static boolean DEBUG_TRACE_EVENTS = false; //shows all emitted events
+    public static boolean DEBUG_DERIVED_STACKTRACES = false; //includes stack trace in task's derivation reason string
     public static boolean DEBUG_INVALID_SENTENCES = false;
+    public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
+
+    public static boolean SORT_DERIVATION_BATCH = true; //TODO move this to Param
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //

@@ -60,19 +60,18 @@ abstract public class ConceptFire extends NAL {
                 Parameters.TASKLINK_FORGETTING_ACCURACY,
                 memory);
 
-        /*
-        System.err.println(this);
-        for (Task t : tasksAdded) {
-            System.err.println("  " + t);
+
+        if (newTasks!=null && !newTasks.isEmpty()) {
+            memory.addTasks(newTasks);
         }
-        System.err.println();
-        */
-
-
-        if (newTasks!=null && !newTasks.isEmpty())
-            memory.addNewTasks(this);
     }
 
+
+    @Override
+    protected boolean addNewTask(Task task, String reason, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+        boolean b = super.addNewTask(task, reason, solution, revised, single, currentBelief, currentTask);
+        return b;
+    }
 
     @Override
     protected void reason() {
@@ -208,7 +207,10 @@ abstract public class ConceptFire extends NAL {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + '[' + currentConcept + ',' + currentTaskLink + ']';
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append('[').append(currentConcept).append(',').append(currentTaskLink).append(currentBeliefLink).append(']');
+        return sb.toString();
     }
 
 

@@ -674,7 +674,7 @@ public class NAR implements Runnable {
                 else
                     e.printStackTrace();
 
-                throw new RuntimeException(e);
+                throw e;// new RuntimeException(e);
             }
             else {
                 memory.error(e);

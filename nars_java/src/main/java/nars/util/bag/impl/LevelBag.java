@@ -216,7 +216,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         int in = index.size();
 
-        if (Parameters.DEBUG_BAG && (Parameters.DEBUG) && (Parameters.THREADS == 1)) {
+        if (Parameters.DEBUG_BAG) {
 
             int is = sizeItems();
             if (Math.abs(is - in) > 1) {

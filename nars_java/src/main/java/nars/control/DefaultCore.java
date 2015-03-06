@@ -71,7 +71,8 @@ public class DefaultCore extends UniCore {
             if (r != null) {
                 r.run();
             }
-            else break;
+            else
+                break;
         }
 
         //all novel tasks
@@ -80,7 +81,8 @@ public class DefaultCore extends UniCore {
             for (int i = 0; i < numNovelTasks; i++) {
                 Runnable novel = nextNovelTask();
                 if (novel != null) novel.run();
-                else break;
+                else
+                    break;
             }
 
             //1 noveltask if no newtasks

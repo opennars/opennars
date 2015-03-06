@@ -10,8 +10,7 @@ import nars.logic.entity.stamp.Stamp;
 import reactor.event.Event;
 import reactor.function.Supplier;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.*;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
@@ -24,17 +23,45 @@ import java.util.Deque;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL extends Event implements Runnable, Supplier<Task> {
+public abstract class NAL extends Event implements Runnable, Supplier<Iterable<Task>> {
 
 
     public final Memory memory;
     protected final Task currentTask;
     protected final NALRuleEngine reasoner;
     protected Sentence currentBelief;
+
+
     /**
      * stores the tasks that this process generates, and adds to memory
      */
-    protected Deque<Task> newTasks = null; //lazily instantiated
+    protected SortedSet<Task> newTasks; //lazily instantiated
+
+    final Comparator<Task> taskPriorityComparator = new Comparator<Task>() {
+
+        @Override
+        public int compare(final Task o1, final Task o2) {
+            if (o1 == o2) return 0;
+
+            if (o1.sentence.equals(o2.sentence)) {
+                o1.budget.merge(o2.budget);
+                o2.budget.merge(o1.budget);
+                return 0;
+            }
+
+            //o2, o1 = highest first
+            final int priorityComparison = Float.compare(o2.getPriority(), o1.getPriority());
+            if (priorityComparison != 0)
+                return priorityComparison;
+
+            final int complexityComparison = Integer.compare(o1.getTerm().complexity, o2.getTerm().getComplexity());
+            if (complexityComparison != 0)
+                return complexityComparison;
+            else
+                return Integer.compare(o1.hashCode(), o2.hashCode());
+        }
+    };
+
 
     public NAL(Memory mem, Task task) {
         this(mem, -1, task);
@@ -114,6 +141,9 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      */
     public boolean deriveTask(final Task task, final boolean revised, final boolean single, Sentence currentBelief, Task currentTask) {
 
+        if (task.getParentTask() == null) {
+            throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
+        }
 
         if (addNewTask(task, "Derived", false, revised, single, currentBelief, currentTask)) {
 
@@ -131,7 +161,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         return true;
     }
 
-    public Deque<Task> getNewTasks() {
+    public Collection<Task> getNewTasks() {
         return newTasks;
     }
 
@@ -164,16 +194,25 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         }
 
 
-
-        task.setParticipateInTemporalInduction(false);
-
-        task.setReason(reason);
-
         if (newTasks == null)
-            newTasks = new ArrayDeque(4);
+            newTasks = new TreeSet(taskPriorityComparator);
 
-        newTasks.addLast(task);
-        return true;
+        if (newTasks.add(task)) {
+
+            task.setParticipateInTemporalInduction(false);
+
+            task.setReason(reason);
+
+            if (Parameters.DEBUG_DERIVED_STACKTRACES)
+                task.setReason(System.nanoTime() + " " + task.getReason() + ": " + this.toString() + "|" + getNALStack());
+
+            return true;
+        }
+        else {
+            return false;
+        }
+
+
     }
 
     /* --------------- new task building --------------- */
@@ -369,10 +408,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
      * called from consumers of the tasks that this context generates
      */
     @Override
-    public Task get() {
+    public Collection<Task> get() {
         if (newTasks == null || newTasks.isEmpty())
             return null;
-        return newTasks.removeFirst();
+        SortedSet<Task> prevNewTasks = newTasks;
+        newTasks = null;
+        return prevNewTasks;
     }
 
     /**
@@ -556,6 +597,66 @@ public abstract class NAL extends Event implements Runnable, Supplier<Task> {
         */
 
         return oc;
+    }
+
+    /** produces a cropped and filtered stack trace (list of methods called) */
+    public static List<String> getNALStack() {
+        StackTraceElement[] s = Thread.currentThread().getStackTrace();
+
+        String prefix = "";
+
+        boolean tracing = false;
+        String prevMethodID = null;
+
+        List<String> path = new ArrayList();
+        int i;
+        for (i = 0; i < s.length; i++) {
+            StackTraceElement e = s[i];
+
+            String className = e.getClassName();
+            String methodName = e.getMethodName();
+
+
+            if (tracing) {
+
+                //Filter conditions
+                if (className.contains("reactor."))
+                    continue;
+                if (className.contains("EventEmitter"))
+                    continue;
+                if ((className.equals("NAL") || className.equals("Memory")) && methodName.equals("emit"))
+                    continue;
+
+                int cli = className.lastIndexOf(".") + 1;
+                if (cli != -1)
+                    className = className.substring(cli, className.length()); //class's simpleName
+
+                String methodID = className + '_' + methodName;
+
+                String sm = prefix + methodID + '_' + e.getLineNumber();
+
+
+                path.add(sm);
+
+                prevMethodID = methodID;
+
+
+                //Termination conditions
+                if (className.contains("ConceptFireTask") && methodName.equals("accept"))
+                    break;
+                if (className.contains("ImmediateProcess") && methodName.equals("reason"))
+                    break;
+                if (className.contains("ConceptFire") && methodName.equals("reason"))
+                    break;
+            } else if (className.endsWith(".NAL") && methodName.equals("deriveTask")) {
+                tracing = true; //begins with next stack element
+            }
+
+        }
+
+
+        return path;
+
     }
 
 }
