@@ -161,10 +161,10 @@ abstract public class AbstractNALTest extends TestCase {
             }
         }
         if (!suc && script!=null) {
-            report.insert(0, '\n');
             report.insert(0, script);
             report.insert(0, "\n\n");
         }
+        report.insert(0, '\n');
 
 
         assertTrue(report.toString(), suc);

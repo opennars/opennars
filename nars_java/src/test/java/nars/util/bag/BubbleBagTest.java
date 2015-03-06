@@ -2,6 +2,7 @@ package nars.util.bag;
 
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import nars.core.Memory;
 import nars.logic.entity.Item;
 import nars.util.bag.impl.experimental.BubbleBag;
@@ -13,6 +14,10 @@ import static nars.analyze.experimental.BagPerf.NullItem;
 import static org.junit.Assert.assertTrue;
 
 public class BubbleBagTest extends AbstractBagTest {
+
+    static {
+        Memory.resetStatic(1);
+    }
 
     @Test
     public void testSolidBagSetOperations() {
@@ -68,12 +73,11 @@ public class BubbleBagTest extends AbstractBagTest {
     }
 
     @Test public void testActivity() {
-        Memory.resetStatic(1);
 
-        int c = 4;
+        int c = 16;
         BubbleBag<NullItem,CharSequence> s = new BubbleBag(c);
 
-        int ii = 15;
+        int ii = c*3;
         for (int i = 0; i < ii; i++) {
             //System.out.println(s.size() + " " + s.getCapacity());
             s.put(new NullItem(Memory.randomNumber.nextFloat() * 0.95f));
@@ -85,7 +89,7 @@ public class BubbleBagTest extends AbstractBagTest {
 
         NullItem prev = null;
         boolean shifted = false;
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < c*2; i++) {
             //System.out.println(s);
             NullItem p = s.peekNext();
             //System.out.println(" " + p);
@@ -95,7 +99,7 @@ public class BubbleBagTest extends AbstractBagTest {
                     shifted = true;
             prev = p;
         }
-        assertTrue("peek()'d item has changed at least once", shifted);
+        assertTrue("peek()'d item has changed at least once; final state=" + Lists.newArrayList(s), shifted);
 
     }
 

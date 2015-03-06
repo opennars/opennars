@@ -36,7 +36,7 @@ public class NALysisSome extends NALysis {
         //String test = "./nal/test6/nal6.22.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
-        String test = "./nal/test5/nal5.29.nal";
+        String test = "./nal/test2/nal2.13.nal";
 
         NewNAR build = new Default().setInternalExperience(null);
         //NewNAR build = new Default();
@@ -44,7 +44,7 @@ public class NALysisSome extends NALysis {
         TestNAR n = analyze(
                 build,
                 test,
-                4800,
+                200,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {

@@ -546,7 +546,7 @@ public class Memory implements Serializable {
     public boolean addTask(final Task t, final String reason) {
 
         if (Parameters.DEBUG) {
-            if (t.sentence != null && t.sentence.stamp.getOccurrenceTime() < -999999 && t.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL)
+            if (t.sentence != null && t.sentence.stamp.getOccurrenceTime() < -999999 && !t.sentence.isEternal())
                 throw new RuntimeException("Probably invalid occurence time:\n" + t.getExplanation());
         }
 

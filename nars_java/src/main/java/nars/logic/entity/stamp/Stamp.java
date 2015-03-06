@@ -391,7 +391,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     }
 
     public void setEternal() {
-        occurrenceTime = ETERNAL;
+        setOccurrenceTime(ETERNAL);
     }
 
     public StringBuilder appendOcurrenceTime(final StringBuilder sb) {

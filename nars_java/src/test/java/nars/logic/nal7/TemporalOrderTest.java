@@ -7,7 +7,6 @@ package nars.logic.nal7;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.core.NewNAR;
-import nars.io.TextOutput;
 import nars.io.condition.OutputContainsCondition;
 import nars.logic.JavaNALTest;
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class TemporalOrderTest extends JavaNALTest {
     public void testFutureQuestion() {
 
 
-        TextOutput.out(nar);
+        //TextOutput.out(nar);
 
         nar.addInput("<e --> f>. :/:");
         nar.addInput("<c --> d>. :|:");

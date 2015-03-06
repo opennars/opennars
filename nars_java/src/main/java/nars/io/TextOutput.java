@@ -24,8 +24,10 @@ package nars.io;
 import nars.core.Events;
 import nars.core.Events.Answer;
 import nars.core.NAR;
-import nars.logic.entity.*;
-import nars.logic.nal8.Operator;
+import nars.logic.entity.Concept;
+import nars.logic.entity.Sentence;
+import nars.logic.entity.Task;
+import nars.logic.entity.TruthValue;
 import nars.operator.io.Echo;
 
 import java.io.*;
@@ -210,10 +212,15 @@ public class TextOutput extends Output {
 
 
             Task t = (Task)signal;
-            if (t.getPriority() < minPriority)
-                return null;
+            if (t.budget!=null && t.sentence!=null) {
+                if (t.getPriority() < minPriority)
+                    return null;
 
-            buffer.append(t.sentence.toString(nar, showStamp));
+                buffer.append(t.sentence.toString(nar, showStamp));
+            }
+            else {
+                buffer.append(t.toString());
+            }
                 
                 
                 /*

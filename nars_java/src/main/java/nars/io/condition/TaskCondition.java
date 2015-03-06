@@ -60,14 +60,11 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
 
     public TaskCondition(NAR n, Class channel, Task t, long creationTimeOffset)  {
-        super(n, Events.OUT.class, Events.TaskRemove.class);
+        super(n, Events.OUT.class, Events.TaskRemove.class, channel);
 
         //TODO verify that channel is included in the listened events
 
         this.channel = channel;
-
-
-
 
         if (t.sentence.isEternal()) {
             setEternal();
@@ -98,7 +95,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-        super(n);
+        super(n, channel);
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
 
@@ -116,6 +113,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.punc = punc;
         this.term = n.term(sentenceTerm);
     }
+
 
     //continue examining output task in case a closer result appears
     @Override
@@ -212,7 +210,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     @Override
     public boolean condition(Class channel, Object signal) {
 
-        if (channel == Events.OUT.class) {
+        if (channel == this.channel) {
 
             if (signal instanceof Task) {
 
@@ -348,8 +346,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
         if (!close.isEmpty()) {
             x += "Similar:\n";
-            for (Map.Entry<Double,Task> et : close.entrySet())
-                x += Texts.n4(et.getKey().floatValue()) + ' ' + et.getValue().toStringExternal2(true) + ' ' + et.getValue().getStamp().toString() + "\n";
+            for (Map.Entry<Double,Task> et : close.entrySet()) {
+                Task tt = et.getValue();
+                x += Texts.n4(et.getKey().floatValue()) + ' ' + tt.toString() + ' ' + tt.getHistory() + '\n';
+            }
         }
         else {
             x += "No similar\n";

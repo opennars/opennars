@@ -111,11 +111,12 @@ public class VariableTest extends JavaNALTest {
     }
 
     void testNormalize(String left, String right) {
+        //TextOutput.out(nar);
 
+        nar.mustInput(1, "<" + left + " ==> " + right + ">.");
         nar.addInput("<" + left + " ==> " + right + ">.");
-        nar.mustOutput(1, "<" + left + " ==> " + right + ">.");
 
-        nar.run(5);
+        nar.run(4);
     }
 
     /*

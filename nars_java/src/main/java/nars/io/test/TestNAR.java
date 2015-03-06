@@ -1,6 +1,9 @@
 package nars.io.test;
 
-import nars.core.*;
+import nars.core.Events;
+import nars.core.NAR;
+import nars.core.NewNAR;
+import nars.core.Parameters;
 import nars.event.AbstractReaction;
 import nars.io.TextOutput;
 import nars.io.condition.OutputCondition;
@@ -87,9 +90,12 @@ public class TestNAR extends NAR {
         return et;
     }
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+        return mustEmit(Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
+    }
+    public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
-        TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
+        TaskCondition tc = new TaskCondition(this, c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         requires.add(tc);
 
         ExplainableTask et = new ExplainableTask(tc);
@@ -103,13 +109,28 @@ public class TestNAR extends NAR {
         return error;
     }
 
+    public ExplainableTask mustInput(long withinCycles, String task) {
+        return mustEmit(withinCycles, task, Events.IN.class);
+    }
+
     public ExplainableTask mustOutput(long withinCycles, String task) throws InvalidInputException {
+        return mustEmit(withinCycles, task, Events.OUT.class);
+    }
+
+    public ExplainableTask mustEmit(long withinCycles, String task, Class channel) throws InvalidInputException {
         Task t = narsese.parseTask(task);
         //TODO avoid reparsing term from string
-        if (t.sentence.truth!=null)
-            return mustOutput(withinCycles, t.getTerm().toString(), t.sentence.punctuation, t.sentence.getTruth().getFrequency(), t.sentence.getTruth().getConfidence());
-        else
-            return mustOutput(withinCycles, t.getTerm().toString(), t.sentence.punctuation, -1, -1);
+
+        final long now = time();
+        final String termString = t.getTerm().toString();
+        if (t.sentence.truth!=null) {
+            final float freq = t.sentence.getTruth().getFrequency();
+            final float conf = t.sentence.getTruth().getConfidence();
+            return mustEmit(channel, now, withinCycles, termString, t.sentence.punctuation, freq, freq, conf, conf);
+        }
+        else {
+            return mustEmit(channel, now, withinCycles, termString, t.sentence.punctuation, -1, -1, -1, -1);
+        }
     }
 
     public ExplainableTask mustOutput(long withinCycles, String term, char punc, float freq, float conf) throws InvalidInputException {

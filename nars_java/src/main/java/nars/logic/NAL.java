@@ -176,6 +176,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      */
     protected boolean addNewTask(Task task, String reason, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
+        if (Parameters.DEBUG) {
+            //detect strange occurrence time
+            if (task.sentence != null && task.sentence.stamp.getOccurrenceTime() < -999999 && !task.sentence.isEternal())
+                throw new RuntimeException("Probably invalid occurence time:\n" + task.getExplanation());
+        }
+
         if (!nal(7) && !task.sentence.isEternal()) {
             throw new RuntimeException("Temporal task derived with non-temporal reasoning");
         }
@@ -289,11 +295,32 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      */
     public boolean singlePremiseTask(final CompoundTerm newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
 
+
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
-            if (newContent.equals(parentTask.getTerm()))
+            if (parentTask.getTerm() == null) {
                 return false;
+            }
+            if (newContent == null) {
+                return false;
+            }
+            if (newContent.equals(parentTask.getTerm())) {
+                return false;
+            }
         }
+
+        Sentence taskSentence = getCurrentTask().sentence;
+
+        //final long now = nal(7) ? time() : Stamp.ETERNAL;
+
+        StampBuilder stamp;
+        if (taskSentence.isJudgment() || getCurrentBelief() == null) {
+            stamp = newStamp(taskSentence.stamp, null);
+        } else {
+            // to answer a question with negation in NAL-5 --- move to activated task?
+            stamp = newStamp(null, getCurrentBelief());
+        }
+
 
         if (newContent.subjectOrPredicateIsIndependentVar()) {
             return false;
@@ -303,13 +330,14 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                 new Sentence(newContent,
                         punctuation,
                         newTruth,
-                        newStamp(getCurrentTask().sentence, getCurrentBelief())),
+                        stamp), //should be getParentTask?
                 newBudget);
     }
 
+
     public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        newTask.sentence.setRevisible(newTask.sentence.isRevisible() || getCurrentTask().sentence.isRevisible());
+        newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
         return deriveTask(newTask, false, true);
     }
 

@@ -104,8 +104,13 @@ public class OutputContainsCondition extends OutputCondition {
         return almost;
     }
 
+    protected boolean validChannel(Class channel) {
+        return (channel == Events.OUT.class) || (channel == Events.EXE.class) || (channel == Events.Answer.class);
+    }
+
     public boolean cond(Class channel, Object signal) {
-        if ((channel == Events.OUT.class) || (channel == Events.EXE.class) || (channel == Events.Answer.class)) {
+
+        if (validChannel(channel)) {
             String o;
             if (signal instanceof Task) {
                 //only compare for Sentence string, faster than TextOutput.getOutputString

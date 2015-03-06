@@ -25,7 +25,7 @@ public class NAL5Test extends JavaNALTest {
                 { new Default().setInternalExperience(null) },
                 { new Default().level(5) },
                 { new Default().level(6) },
-                { new Default.DefaultMicro().level(6) },
+                { new Default.DefaultMicro().level(5) },
                 //{ new Neuromorphic(4) },
                 //{ new DefaultBuffered().setInternalExperience(null) },
                 {new Curve().setInternalExperience(null)}
@@ -87,16 +87,16 @@ public class NAL5Test extends JavaNALTest {
 
         long time = 500;
 
-
-        nar.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", Eternal, 0.9f, 0.9f)
-                .en("robin can fly and swim.")
-                .en("robin is one of the flying and is a swimmer.");
-
         nar.mustBelieve(time, "<robin --> swimmer>", 0.90f, 0.90f, 0.73f, 0.73f)
                 .en("robin can swim.");
         nar.mustBelieve(time, "<robin --> [flying]>", 0.90f, 0.90f, 0.73f, 0.73f)
                 .en("robin can fly.")
                 .en("robin is one of the flying.");
+
+        nar.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", Eternal, 0.9f, 0.9f)
+                .en("robin can fly and swim.")
+                .en("robin is one of the flying and is a swimmer.");
+
         nar.run();
 
     }

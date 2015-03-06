@@ -187,7 +187,8 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
                         //accordingly
                         //TODO make this interval not hardcoded
                         long time = Interval.cycles(((Interval) c.term[c.term.length - 1]).magnitude, new Interval.AtomicDuration(st.getDuration()));
-                        st.setOccurrenceTime(st.getOccurrenceTime() - time);
+                        if (!st.isEternal())
+                            st.setOccurrenceTime(st.getOccurrenceTime() - time);
                         return u;
                     }
                     else {

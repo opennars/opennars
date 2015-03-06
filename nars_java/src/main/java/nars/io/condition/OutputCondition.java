@@ -85,7 +85,8 @@ public abstract class OutputCondition extends AbstractReaction {
 
         int cycle = 0;
         final String expectOutNotContains2 = "''outputMustNotContain('";
-        final String expectOutContains2 = "''outputMustContain('";
+        final String expectInContains = "''inputMustContain('";
+        final String expectOutContains = "''outputMustContain('";
         final String expectOutEmpty = "''expect.outEmpty";
 
         for (String s : lines) {
@@ -94,24 +95,27 @@ public abstract class OutputCondition extends AbstractReaction {
             
             
 
-            if (s.indexOf(expectOutContains2)==0) {
+            if (s.indexOf(expectOutContains)==0) {
 
-                //remove ') suffix:
-                String match = s.substring(expectOutContains2.length(), s.length()-2);
-                
+                String match = s.substring(expectOutContains.length(), s.length() - 2); //remove ') suffix:
 
-                boolean added = false;
                 Task t = n.narsese.parseTask(match);
-                if (t!=null) {
+                if (t!=null)
                     conditions.add(new TaskCondition(n, Events.OUT.class, t, cycle));
-                    added = true;
-                }
-
-                if (!added)
+                else
                     conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
+            }
 
+            else if (s.indexOf(expectInContains)==0) {
+                String match = s.substring(expectInContains.length(), s.length()-2); //remove ') suffix:
 
-            }     
+                Task t = n.narsese.parseTask(match);
+                if (t!=null)
+                    conditions.add(new TaskCondition(n, Events.IN.class, t, cycle));
+                else
+                    throw new RuntimeException("API upgrade incomplete"); //conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
+
+            }
             
 
             else if (s.indexOf(expectOutNotContains2)==0) {

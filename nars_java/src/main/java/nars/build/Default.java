@@ -428,7 +428,7 @@ public class Default extends NewNAR implements ConceptBuilder {
 
             //Runtime Initial Values
 
-            param.confidenceThreshold.set(0.02);
+            param.confidenceThreshold.set(0.05);
 
             param.temporalRelationsMax.set(4);
 

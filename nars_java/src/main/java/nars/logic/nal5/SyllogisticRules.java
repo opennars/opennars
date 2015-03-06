@@ -296,15 +296,20 @@ public final class SyllogisticRules {
         if (beliefSentence == null)
             return;
 
-        long occurTime = Stamp.ETERNAL;
-        int order = statement.getTemporalOrder();
-        if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() && (!taskSentence.isQuestion()))) {
-            long baseTime = subSentence.getOccurrenceTime();
-            if (baseTime == Stamp.ETERNAL) {
-                baseTime = nal.time();
+        final boolean temporalReasoning = nal.nal(7);
+
+        long occurTime = Stamp.ETERNAL; //nal.time()
+        if (temporalReasoning) {
+            final long now = nal.time();
+            int order = statement.getTemporalOrder();
+            if ((order != ORDER_NONE) && (order != ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() && (!taskSentence.isQuestion()))) {
+                long baseTime = subSentence.getOccurrenceTime();
+                if (baseTime == Stamp.ETERNAL) {
+                    baseTime = now;
+                }
+                long inc = order * nal.memory.param.duration.get();
+                occurTime = (side == 0) ? baseTime + inc : baseTime - inc;
             }
-            long inc = order * nal.memory.param.duration.get();
-            occurTime = (side == 0) ? baseTime+inc : baseTime-inc;
         }
 
         
@@ -464,10 +469,10 @@ public final class SyllogisticRules {
         if ((content == null) || (!(content instanceof CompoundTerm)))
             return false;
 
-        final long now = nal.time();
-        long occurTime = now;
+        long occurTime = Stamp.ETERNAL;
 
-        if (delta != 0) {
+        if (nal.nal(7) && (delta != 0)) {
+            final long now = nal.time();
             long baseTime = (belief.term instanceof Implication) ?
                 taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
             if (baseTime == Stamp.ETERNAL) {

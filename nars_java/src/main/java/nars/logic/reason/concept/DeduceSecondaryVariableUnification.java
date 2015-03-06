@@ -47,9 +47,9 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
     ArrayList<Term> terms_dependent = null;
     ArrayList<Term> terms_independent = null;
     Map<Term, Term> Values = null;
-    Map<Term, Term> Values2 = null;
+    /*Map<Term, Term> Values2 = null;
     Map<Term, Term> Values3 = null;
-    Map<Term, Term> Values4 = null;
+    Map<Term, Term> Values4 = null;*/
     Map<Term, Term> smap = null;
 
     /*
@@ -111,10 +111,12 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 final int initialTermListSize = 8;
                 terms_dependent = new ArrayList<>(initialTermListSize);
                 terms_independent = new ArrayList<>(initialTermListSize);
+
+                //TODO use one Map<Term, Term[]> instead of 4 Map<Term,Term> (values would be 4-element array)
                 Values = newVariableSubstitutionMap();
-                Values2 = newVariableSubstitutionMap();
+                /*Values2 = newVariableSubstitutionMap();
                 Values3 = newVariableSubstitutionMap();
-                Values4 = newVariableSubstitutionMap();
+                Values4 = newVariableSubstitutionMap();*/
                 smap = newVariableSubstitutionMap();
             }
 
@@ -143,12 +145,12 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     }
                 }
 
-                Values2.clear(); //we are only interested in first variables
+                Values.clear(); //we are only interested in first variables
                 smap.clear();
 
-                if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values2, smap)) {
+                if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
                     CompoundTerm ctaskterm_subs = (CompoundTerm) first;
-                    ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values2);
+                    ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
                     Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
 
@@ -166,26 +168,26 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     for (final Term T2 : components_level2) {
                         Term T2_unwrap = unwrapNegation(T2);
 
-                        Values3.clear(); //we are only interested in first variables
+                        Values.clear(); //we are only interested in first variables
                         smap.clear();
 
-                        if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values3, smap)) {
+                        if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values, smap)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
                             CompoundTerm ctaskterm_subs = (CompoundTerm) first;
-                            ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values3);
+                            ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
                             Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_dependent.add(taskterm_subs);
                             }
                         }
 
-                        Values4.clear(); //we are only interested in first variables
+                        Values.clear(); //we are only interested in first variables
                         smap.clear();
 
-                        if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values4, smap)) {
+                        if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values, smap)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
                             CompoundTerm ctaskterm_subs = (CompoundTerm) first;
-                            ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values4);
+                            ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
                             Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_independent.add(taskterm_subs);
@@ -292,6 +294,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 if (sx == null)
                     sx = nal.newStamp(taskSentence.stamp, s.build());
+                    //sx = s.build(); // nal.newStamp(taskSentence.stamp, s.build());
 
                 Sentence newSentence = new Sentence(result, mark, truth, sx);
 
