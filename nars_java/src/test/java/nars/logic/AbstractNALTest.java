@@ -143,39 +143,31 @@ abstract public class AbstractNALTest extends TestCase {
     //Default test procedure
     @After public void test() {
 
-
-
-        //assertTrue("No conditions to test", !conditions.isEmpty());
-        if (nar.requires.isEmpty()) {
-            System.err.println("WARNING: No Conditions Added");
-            new Exception().printStackTrace();
-            assertTrue(false);
-        }
-
-
-
-
+        assertTrue("No conditions tested", !nar.requires.isEmpty());
 
         assertTrue("No cycles elapsed", nar.time() > 0);
 
-
-        String report = '@' + nar.time() + ": ";
+        StringBuilder report = new StringBuilder();
+        report.append('@').append(nar.time()).append(": ");
         boolean suc = nar.getError()==null;
         for (OutputCondition e : nar.requires) {
             if (!e.succeeded) {
-                report += e.toString() + '\n';
-                report += e.getFalseReason().toString() + '\n';
+                report.append(e.toString()).append('\n');
+                report.append(e.getFalseReason()).append('\n');
                 suc = false;
             }
             else {
-                report += e.getTrueReasons().toString() + '\n';
+                report.append(e.getTrueReasons().toString()).append('\n');
             }
         }
         if (!suc && script!=null) {
-            report = "\n\n\n"  + script + '\n' + report;
+            report.insert(0, '\n');
+            report.insert(0, script);
+            report.insert(0, "\n\n");
         }
 
-        assertTrue(report, suc);
+
+        assertTrue(report.toString(), suc);
     }
 
 

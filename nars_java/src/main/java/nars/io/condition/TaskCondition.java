@@ -66,20 +66,17 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
         this.channel = channel;
 
-        long ct;
-        if (creationTimeOffset == Stamp.UNPERCEIVED)
-            ct = (n.time());
-        else
-            ct = (creationTimeOffset);
 
-        this.creationTime = t.getStamp().setCreationTime(ct);
+
 
         if (t.sentence.isEternal()) {
             setEternal();
+            t.getStamp().setTime(creationTimeOffset, Stamp.ETERNAL);
         }
         else {
             long oc = t.getOcurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
-            setOccurrenceTime(oc+creationTimeOffset, n.memory.getDuration());
+            setRelativeOccurrenceTime(oc, n.memory.getDuration());
+            t.getStamp().setTime(creationTimeOffset, oc);
         }
 
 
@@ -161,19 +158,21 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     /** task's tense is compared by its occurence time delta to the current time when processing */
-    public void setOccurrenceTime(long ocRelative, int duration) {
+    public void setRelativeOccurrenceTime(long ocRelative, int duration) {
         //may be more accurate if duration/2
 
         if (ocRelative > duration/2) tense = Tense.Future;
         if (ocRelative < -duration/2) tense = Tense.Past;
         else tense = Tense.Present;
     }
-    public void setOccurrenceTime(long creationTime, int ocRelative, int duration) {
+    public void setRelativeOccurrenceTime(long creationTime, int ocRelative, int duration) {
         this.creationTime = creationTime;
-        setOccurrenceTime(ocRelative, duration);
+        setRelativeOccurrenceTime(ocRelative, duration);
     }
 
-    public void setEternal() { this.tense = Tense.Eternal; }
+    public void setEternal() {
+        this.tense = Tense.Eternal;
+    }
     public boolean isEternal() { return this.tense == Tense.Eternal; }
 
     public boolean matches(Task task) {

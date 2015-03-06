@@ -81,8 +81,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      */
     private boolean revisible;
 
-    /** caches the 'getKey()' result */
-    private transient CharSequence key;
+
 
     transient private int hash;
 
@@ -491,44 +490,40 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
  
     /**
      * Get a String representation of the sentence for key of Task and TaskLink
-     *
-     * @return The String
+     * We don't cache the Sentence string for 2 reasons:
+     *      1. it is not ordinarily generated except for output
+     *      2. if the stamp or other component changes, it would need to be re-calculated
      */
     public CharSequence getKey() {
-        //key must be invalidated if content or truth change
-        if (key == null) {
-            final CharSequence contentName = term.name();
-            
-            final boolean showOcurrenceTime = !isEternal(); //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
-            //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
-            
-            //final CharSequence truthString = truth != null ? truth.name() : null;
+        final CharSequence contentName = term.name();
 
-            int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
-            if (truth != null) {
-                stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
-            }
+        final boolean showOcurrenceTime = !isEternal(); //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
+        //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
 
-            //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
-            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
+        //final CharSequence truthString = truth != null ? truth.name() : null;
 
-            if (truth != null) {
-                suffix.append(' ');
-                truth.appendString(suffix, false);
-            }
-            if ((showOcurrenceTime) && (stamp!=null)) {
-                suffix.append(" {"); //space + stamp opener
-                stamp.appendOcurrenceTime(suffix);
-                suffix.append('}'); //stamp closer
-            }
-
-            key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
-                    contentName,//.toString(), 
-                    suffix); //.toString());
-            //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
-
+        int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
+        if (truth != null) {
+            stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
         }
-        return key;
+
+        //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
+        final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
+
+        if (truth != null) {
+            suffix.append(' ');
+            truth.appendString(suffix, false);
+        }
+        if ((showOcurrenceTime) && (stamp!=null)) {
+            suffix.append(" {"); //space + stamp opener
+            stamp.appendOcurrenceTime(suffix);
+            suffix.append('}'); //stamp closer
+        }
+
+        return Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
+                contentName,//.toString(),
+                suffix); //.toString());
+        //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
     }
 
     public CharSequence toString(NAR nar, boolean showStamp) {

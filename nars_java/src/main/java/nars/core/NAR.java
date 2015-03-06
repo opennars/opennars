@@ -157,18 +157,7 @@ public class NAR implements Runnable {
     };
 
 
-    /**
-     * Convenience method for creating a TextInput and adding as Input Channel.
-     * Generally the text will consist of Task's to be parsed in Narsese, but
-     * may contain other commands recognized by the system. The creationTime
-     * will be set to the current memory cycle time, but may be processed by
-     * memory later according to the length of the input queue.
-     */
-    public TextInput addInput(final String text) {
-        
-        //return addInput(text, text.contains("\n") ? Stamp.UNPERCEIVED : time());
-        return addInput(text, Stamp.UNPERCEIVED);
-    }
+
 
     public SensorPort addInput(final File input) throws FileNotFoundException {
         return addInput( new TextInput(textPerception, input) );
@@ -178,14 +167,9 @@ public class NAR implements Runnable {
                 new BufferedReader(new InputStreamReader( input ) ) ) );
     }
 
-    /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated
-     * if creationTime == Stamp.UNPERCEIVED, creationTime will not be changed
-     * */
-    public TextInput addInput(final String text, long creationTime) {
+    public TextInput addInput(final String text) {
         final TextInput i = new TextInput(textPerception, text);
-
-        addInput(i, creationTime);
-
+        addInput(i);
         return i;
     }
     
@@ -343,16 +327,8 @@ public class NAR implements Runnable {
     /** Adds an input channel for input from an external sense / sensor.
      *  Will remain added until it closes or it is explicitly removed. */
     public SensorPort addInput(final Input channel) {
-        return addInput(channel, -1);
-    }
-
-    /** provides a specific creationTime that the input's generated tasks will be overriden with */
-    public SensorPort addInput(final Input channel, long creationTime) {
 
         SensorPort i = new SensorPort(channel, 1.0f);
-
-        if (creationTime!=Stamp.UNPERCEIVED)
-            i.setCreationTimeOverride(creationTime);
 
         memory.perception.accept(i);
 

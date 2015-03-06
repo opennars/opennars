@@ -41,11 +41,15 @@ public class TemporalOrderTest extends JavaNALTest {
 
         nar.addInput("<e --> f>. :/:");
         nar.addInput("<c --> d>. :|:");
-        OutputContainsCondition futureQuestion = new OutputContainsCondition(nar, "<e --> f>. :/:", 5);
-        assertTrue(!futureQuestion.isTrue());
+        nar.requires.add(new OutputContainsCondition(nar, "<e --> f>. :/:", 5));
+        nar.requires.add(new OutputContainsCondition(nar, "<c --> d>. :\\:", 5));
+
+
+        //assertTrue(!futureQuestion.isTrue());
+
         nar.runUntil(1);
         
-        assertTrue(futureQuestion.isTrue());
+        //assertTrue(futureQuestion.isTrue());
         
         nar.runUntil(10);
 
@@ -59,7 +63,6 @@ public class TemporalOrderTest extends JavaNALTest {
         }
                 */
 
-        nar.requires.add(new OutputContainsCondition(nar, "<c --> d>. :\\:", 5));
         nar.addInput("<c --> d>?");
 
 

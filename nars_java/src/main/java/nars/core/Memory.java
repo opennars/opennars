@@ -606,9 +606,16 @@ public class Memory implements Serializable {
     public int inputTask(final Task task) {
 
         if (task.sentence!=null) {
+            //if a task has an unperceived creationTime,
+            // set it to the memory's current time here,
+            // and adjust occurenceTime if it's not eternal
             Stamp s = task.sentence.stamp;
             if (s.getCreationTime() == Stamp.UNPERCEIVED) {
-                s.setCreationTime(time());
+                final long now = time();
+                long oc = s.getOccurrenceTime();
+                if (oc!=Stamp.ETERNAL)
+                    oc += now;
+                task.getStamp().setTime(now, oc);
             }
         }
 

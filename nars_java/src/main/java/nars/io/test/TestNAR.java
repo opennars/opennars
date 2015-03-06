@@ -75,7 +75,7 @@ public class TestNAR extends NAR {
         TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
 
         /** occurence time measured relative to the beginning */
-        tc.setOccurrenceTime(cycleStart, ocRelative, memory.getDuration());
+        tc.setRelativeOccurrenceTime(cycleStart, ocRelative, memory.getDuration());
 
         requires.add(tc);
 
@@ -225,7 +225,9 @@ public class TestNAR extends NAR {
 
 
     /** returns null if there is no error, or a non-null String containing report if error */
-    public String evaluate() {
+    @Deprecated public String evaluate() {
+        //TODO use report(..)
+
         int conditions = requires.size();
         int failures = getError()!=null ? 1 : 0;
 
@@ -243,9 +245,11 @@ public class TestNAR extends NAR {
 
         if (error!=null || failures > 0) {
             String result = "";
+
             if (error!=null) {
                 result += error.toString() + " ";
             }
+
             if (failures > 0) {
                 result += successes + "/ " + conditions + " conditions passed";
             }

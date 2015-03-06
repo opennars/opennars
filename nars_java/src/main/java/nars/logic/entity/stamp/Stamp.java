@@ -484,10 +484,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     /**
      * sets the creation time; used to set input tasks with the actual time they enter Memory
      */
-    public long setCreationTime(long l) {
-        this.creationTime = l;
+    public void setTime(long creation, long occurrence) {
+        this.creationTime = creation;
+        this.occurrenceTime = occurrence;
         this.hash = 0;
-        return l;
     }
 
     public int getDuration() {

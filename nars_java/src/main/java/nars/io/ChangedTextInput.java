@@ -1,7 +1,6 @@
 package nars.io;
 
 import nars.core.NAR;
-import nars.logic.entity.stamp.Stamp;
 
 
 /** TextInput subclass that only inputs when the next input value changes from previous */
@@ -16,12 +15,8 @@ public class ChangedTextInput  {
     }
 
     public boolean set(String s) {
-        return set(s, Stamp.UNPERCEIVED);
-    }
-    
-    public boolean set(String s, long time) {
         if (allowRepeats() || (last == null) || (!last.equals(s)) && enable()) {
-            nar.addInput(s, time);
+            nar.addInput(s);
             last = s;
             return true;
         }
