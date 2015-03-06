@@ -11,12 +11,13 @@ import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Similarity;
 import nars.logic.nal4.Product;
+import nars.logic.nal8.SynchronousTermFunction;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term
  * @author me
  */
-public class Reflect extends TermTransform {
+public class Reflect extends SynchronousTermFunction {
 
 
     /*
@@ -27,15 +28,10 @@ public class Reflect extends TermTransform {
         super("^reflect");
     }
 
-    final static String requireMessage = "Requires 1 Term argument";    
-    
     
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    public Term function(Memory memory, Term[] x) {
         
-        if (x.length!=1) {
-            throw new RuntimeException(requireMessage);
-        }
 
         Term content = x[0];
 
@@ -51,7 +47,7 @@ public class Reflect extends TermTransform {
         return Inheritance.make(Product.make(getMetaTerm(subject),getMetaTerm(object)), predicate);
     }
     public static Term sop(Statement s, String operatorName) {
-        return Inheritance.make(Product.make(getMetaTerm(s.getSubject()), getMetaTerm(s.getPredicate())), Term.get(operatorName));
+        return Inheritance.make(Product.make(getMetaTerm(s.getSubject()), getMetaTerm(s.getPredicate())), Term.text(operatorName));
     }
     public static Term sop(Statement s, Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);
@@ -62,7 +58,7 @@ public class Reflect extends TermTransform {
         for (Term x : t)
             m[i++] = getMetaTerm(x);
         
-        return Inheritance.make(Product.make(m), Term.get(operatorName));
+        return Inheritance.make(Product.make(m), Term.text(operatorName));
     }
     
     public static Term getMetaTerm(Term node) {

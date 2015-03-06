@@ -22,7 +22,7 @@ public class Javascript extends SynchronousTermFunction implements Mental {
         super("^js");
     }
     
-    @Override protected Term function(Memory memory, Term[] args) {
+    @Override public Term function(Memory memory, Term[] args) {
         if (args.length < 1) {
             return null;
         }

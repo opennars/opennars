@@ -1,7 +1,6 @@
 package nars.control;
 
 import nars.core.Core;
-import nars.core.Events;
 import nars.core.Parameters;
 import nars.logic.entity.*;
 import nars.logic.reason.ConceptFire;
@@ -123,7 +122,6 @@ public class DefaultCore extends UniCore {
         if (taskLink!=null)
             return newFireConcept(concept, taskLink);
         else {
-            memory.emit(Events.ERR.class, concept.toString() + " had no taskLink to fire");
             return null;
         }
 

@@ -31,7 +31,7 @@ public class Add extends SynchronousTermFunction implements Mental {
     }
 
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    public Term function(Memory memory, Term[] x) {
         if (x.length!= 2) {
             throw new RuntimeException("Requires 2 arguments");
         }

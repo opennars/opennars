@@ -190,4 +190,8 @@ public class Operation extends Inheritance {
     public Task newSubTask(Sentence sentence, BudgetValue budget) {
         return new Task(sentence, budget, getTask());
     }
+
+    public Term[] getArgumentTerms() {
+        return getArguments().term;
+    }
 }

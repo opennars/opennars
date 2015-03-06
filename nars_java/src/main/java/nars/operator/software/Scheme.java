@@ -1,4 +1,4 @@
-package nars.operator.software.scheme.op;
+package nars.operator.software;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -85,7 +85,7 @@ public class Scheme extends SynchronousTermFunction {
     };
 
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    public Term function(Memory memory, Term[] x) {
         Term code = x[0];
         if (code instanceof Product) {
             //evaluate as an s-expression

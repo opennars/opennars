@@ -51,10 +51,10 @@ public class Count extends SynchronousTermFunction implements Mental {
     
     
     @Override
-    protected Term function(Memory memory, Term[] x) {
-        if (x.length!=1) {
-            throw new RuntimeException(requireMessage);
-        }
+    public Term function(Memory memory, Term[] x) {
+//        if (x.length!=1) {
+//            throw new RuntimeException(requireMessage);
+//        }
 
         Term content = x[0];
         if (!(content instanceof SetExt) && !(content instanceof SetInt)) {

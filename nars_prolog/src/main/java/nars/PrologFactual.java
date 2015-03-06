@@ -31,7 +31,7 @@ public class PrologFactual extends SynchronousTermFunction {
     final int maxAnswers = 16;
 
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    public Term function(Memory memory, Term[] x) {
         Prolog p = context.getProlog(null); //default
 
             nars.prolog.Term factTerm = NARPrologMirror.pterm(x[0]);

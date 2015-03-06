@@ -126,7 +126,7 @@ public class BindJavascriptExpression implements TextReaction {
 
 
                                 @Override
-                                protected Term function(Memory memory, Term[] args) {
+                                public Term function(Memory memory, Term[] args) {
                                     Object result = evalJS(o, args, memory);
 
                                     try {

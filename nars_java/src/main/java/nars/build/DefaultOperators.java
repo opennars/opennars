@@ -10,7 +10,7 @@ import nars.operator.mental.*;
 import nars.operator.meta.Reflect;
 import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
-import nars.operator.software.scheme.op.Scheme;
+import nars.operator.software.Scheme;
 
 
 public class DefaultOperators {

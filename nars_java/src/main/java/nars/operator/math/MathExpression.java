@@ -35,7 +35,7 @@ public class MathExpression  extends SynchronousTermFunction {
     
     
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    public Term function(Memory memory, Term[] x) {
 
         //TODO this may not be thread-safe, this block may need synchronized:
         synchronized (context) {
