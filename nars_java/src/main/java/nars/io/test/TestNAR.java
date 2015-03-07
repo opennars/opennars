@@ -126,10 +126,10 @@ public class TestNAR extends NAR {
         if (t.sentence.truth!=null) {
             final float freq = t.sentence.getTruth().getFrequency();
             final float conf = t.sentence.getTruth().getConfidence();
-            return mustEmit(channel, now, withinCycles, termString, t.sentence.punctuation, freq, freq, conf, conf);
+            return mustEmit(channel, now, now + withinCycles, termString, t.sentence.punctuation, freq, freq, conf, conf);
         }
         else {
-            return mustEmit(channel, now, withinCycles, termString, t.sentence.punctuation, -1, -1, -1, -1);
+            return mustEmit(channel, now, now + withinCycles, termString, t.sentence.punctuation, -1, -1, -1, -1);
         }
     }
 
@@ -274,6 +274,7 @@ public class TestNAR extends NAR {
             if (failures > 0) {
                 result += successes + "/ " + conditions + " conditions passed";
             }
+
             return result;
         }
 

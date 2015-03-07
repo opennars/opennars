@@ -50,6 +50,7 @@ public abstract class TermFunction extends Operator implements TermEval {
             numInputs--;
         }
 
+        Term[] x0 = operation.getArgumentTerms(false);
         Term[] x = operation.getArgumentTerms(true);
 
         Term y = op.function(x);
@@ -67,7 +68,7 @@ public abstract class TermFunction extends Operator implements TermEval {
         return new CompoundTerm[] {
 
                 Implication.make(
-                            operation.cloneWithArguments(x, var),
+                            operation.cloneWithArguments(x0, var),
                             Similarity.make(var, y),
                         TemporalRules.ORDER_FORWARD),
 

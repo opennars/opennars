@@ -72,7 +72,7 @@ public class AntCore extends ConceptWaveCore {
             }
         }
 
-        other = memory.dequeueOtherTasks(run);
+        memory.runNextTasks(); //probably want to batch this with the next tasks below.. but this will work for now
         
         for (Ant a : ants) {            
             numConcepts += a.cycle(cycleSpeed, run);

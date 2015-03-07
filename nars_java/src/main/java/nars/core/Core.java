@@ -8,7 +8,6 @@ import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
 import java.util.Deque;
-import java.util.List;
 
 
 /** Core implements a central reasoning component which references a set of Concepts and activates them during a memory cycle.*/
@@ -72,7 +71,7 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
     
     
     /** Generic utility method for running a list of tasks in current thread */
-    public static void run(final List<Runnable> tasks) {
+    public static void run(final Deque<Runnable> tasks) {
         run(tasks, tasks.size());
     }
 

@@ -281,7 +281,10 @@ public class TextOutput extends Output {
             
             Sentence s = t.sentence;
 
-            buffer.append(s.toString(nar, showStamp));
+            if (s!=null)
+                buffer.append(s.toString(nar, showStamp));
+            else
+                buffer.append(t.toString());
             
         }            
         else if (signal instanceof Sentence) {

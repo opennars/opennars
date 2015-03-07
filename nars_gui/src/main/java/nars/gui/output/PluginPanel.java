@@ -191,7 +191,7 @@ public class PluginPanel extends VerticalPanel {
         }
     }
     protected void removePlugin(PluggedIn ps) {
-        nar.off(ps);
+        ps.off();
     }
     
     

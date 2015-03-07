@@ -221,7 +221,7 @@ public class Operation extends Inheritance {
 //                CompoundTerm[] ee = ((TermFunction) op).executeTerm(o);
 //                if ((ee!=null) && (ee[0]!=null))
 //                    return ee[0];
-                ((TermFunction)op).function(o.getArgumentTerms(true));
+                return ((TermFunction)op).function(o.getArgumentTerms(true));
             }
         }
 

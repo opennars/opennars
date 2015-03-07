@@ -8,6 +8,7 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
 import nars.logic.entity.Task;
+import nars.logic.entity.stamp.Stamp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +27,7 @@ public abstract class OutputCondition extends AbstractReaction {
     
     
     public final NAR nar;
-    long successAt = -1;
+    long successAt = Stamp.UNPERCEIVED;
 
     public OutputCondition(NAR nar, Class... events) {
         super(nar, events);
@@ -64,7 +65,7 @@ public abstract class OutputCondition extends AbstractReaction {
     protected void setTrue() {
         succeeded = true;
 
-        if (successAt == -1) {
+        if (successAt == Stamp.UNPERCEIVED) {
             successAt = nar.time();
             nar.emit(OutputCondition.class, this);
         }
@@ -175,15 +176,15 @@ public abstract class OutputCondition extends AbstractReaction {
      *  if any conditions were not successful, the cost is infinity
      * */
     public static double cost(List<OutputCondition> conditions) {
-        long lastSuccess = -1;
+        long lastSuccess = Stamp.UNPERCEIVED;
         for (OutputCondition e : conditions) {
-            if (e.getTrueTime() != -1) {
+            if (e.getTrueTime() != Stamp.UNPERCEIVED) {
                 if (lastSuccess < e.getTrueTime()) {
                     lastSuccess = e.getTrueTime();
                 }
             }
         }
-        if (lastSuccess != -1) {
+        if (lastSuccess != Stamp.UNPERCEIVED) {
             //score = 1.0 + 1.0 / (1+lastSuccess);
             return lastSuccess;
         }

@@ -49,7 +49,7 @@ public class TestChamber {
 
         for(NAR.PluggedIn pluginstate : nar.getPlugins()) {
             if(pluginstate.plugin instanceof InternalExperience || pluginstate.plugin instanceof FullInternalExperience) {
-                nar.off(pluginstate);
+                pluginstate.off();
             }
         }
   

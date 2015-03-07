@@ -520,7 +520,7 @@ public class NAR implements Runnable {
                     try {
                         Thread.sleep(minFramePeriodMS);
                     } catch (InterruptedException ee) {
-                        error(ee);
+                        //error(ee);
                     }
                 }
                 else if (remainingTime < 0) {
