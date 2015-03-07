@@ -370,7 +370,7 @@ public class Texts {
         return (char)('0' + i);
     }
 
-    public static int compareTo(final CharSequence s, final CharSequence t) {
+    public static int compare(final CharSequence s, final CharSequence t) {
         if ((s instanceof String) && (t instanceof String)) {
             return ((String)s).compareTo((String)t);
         }

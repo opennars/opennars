@@ -2,7 +2,6 @@ package nars.logic.nal4;
 
 import nars.io.Symbols;
 import nars.logic.NALOperator;
-import nars.logic.entity.AbstractTerm;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 
@@ -32,12 +31,6 @@ abstract public class Image extends CompoundTerm {
 //    public boolean equals2(final CompoundTerm other) {
 //        return relationIndex == ((Image)other).relationIndex;
 //    }
-    
-    @Override
-    public int compareTo(final AbstractTerm that) {
-        //compares by name
-        return super.compareTo(that);
-    }
 
     
     

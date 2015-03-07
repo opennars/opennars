@@ -213,11 +213,15 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
             if (n == null) {
                 //type + id
                 rename.put(vname, n = Variable.getName(v.getType(), rename.size() + 1));
-                if (!n.equals(vname))
+                if (!n.equals(v.name()))
                     renamed = true;
             }
 
-            v.setScope(c, n);
+
+            //if (!v.hasVarIndep())
+                v.setScope(c, n);
+            //else
+              //  v.setScope(v.hasScope() ? v.getScope() : c, n);
         }
 
         if (renamed) {
@@ -234,7 +238,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
 
         }
 
-        c.setNormalized(true);
+        c.setNormalizedSubTerms(true);
 
         return c;
 
@@ -287,7 +291,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
             throw new UnableToCloneException("cloneDeep resulted in different class: " + c + '(' + c.getClass() + ") from " + this + " (" + getClass() + ')');
         }
 
-        return ((CompoundTerm) c).setNormalized(normalized);
+
+        return ((CompoundTerm) c);
     }
     
     
@@ -303,7 +308,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         if (c.operator() != operator())
             throw new UnableToCloneException("cloneDeepVariables resulted in different class: " + c + " from " + this);
 
-        return ((CompoundTerm) c).setNormalized(normalized);
+        return ((CompoundTerm) c);
     }
 
     /**
@@ -869,16 +874,25 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         Collections.addAll(c, term);
     }
 
+    @Override
     public boolean isNormalized() {
         return normalized;
     }
 
     
-    /* ----- tlink CompoundTerm and its term ----- */
 
-    public CompoundTerm setNormalized(boolean b) {
+    protected void setNormalized(boolean b) {
         this.normalized = b;
-        return this;
+    }
+
+    /** recursively sets all subterms normalization */
+    protected void setNormalizedSubTerms(boolean b) {
+        setNormalized(b);
+
+        //recursively set subterms as normalized
+        for (final Term t : term)
+            if (t instanceof CompoundTerm)
+                ((CompoundTerm)t).setNormalizedSubTerms(b);
     }
 
     /**

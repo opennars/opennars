@@ -29,14 +29,14 @@ public class NALysisSome extends NALysis {
         showOutput = true;
         showTrace = false;
 
-        //String test = "./nal/test6/nal6.22.nal";
+        String test = "./nal/test6/nal6.23.nal";
         //String test = "./nal/test7/nal7.6.nal";
         //String test = "./nal/test8/nal8.1.0.nal";
         //String test = "./nal/test8/nal8.1.21.nal";
         //String test = "./nal/test6/nal6.22.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
-        String test = "./nal/test2/nal2.13.nal";
+
 
         NewNAR build = new Default().setInternalExperience(null);
         //NewNAR build = new Default();

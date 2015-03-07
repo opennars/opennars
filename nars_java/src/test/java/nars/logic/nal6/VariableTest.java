@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.logic.nal7;
+package nars.logic.nal6;
 
 import nars.build.Curve;
 import nars.build.Default;
@@ -110,7 +110,7 @@ public class VariableTest extends JavaNALTest {
 
     }
 
-    void testNormalize(String left, String right) {
+    void unaffected(String left, String right) {
         //TextOutput.out(nar);
 
         nar.mustInput(1, "<" + left + " ==> " + right + ">.");
@@ -128,13 +128,13 @@ public class VariableTest extends JavaNALTest {
     final String normC = "<(*,bird,$1,$abc,$2) --> AndShortcut>";
 
     @Test public void testNormalizeSomeVars1ab() {
-        testNormalize(normA, normB);
+        unaffected(normA, normB);
     }
     @Test public void testNormalizeSomeVars1ba() {
-        testNormalize(normB, normA);
+        unaffected(normB, normA);
     }
     @Test public void testNormalizeSomeVars1ac() {
-        testNormalize(normA, normC);
+        unaffected(normA, normC);
     }
 
 }

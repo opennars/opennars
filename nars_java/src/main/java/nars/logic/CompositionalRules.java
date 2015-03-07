@@ -53,12 +53,14 @@ public final class CompositionalRules {
 
     /* -------------------- intersections and differences -------------------- */
 
-    public static final Variable depIndVar1 = new Variable("#di1");
-    public static final Variable depIndVar2 = new Variable("#di2");
-    final static Variable varInd1 = new Variable("$i1");
-    final static Variable varInd2 = new Variable("$i2");
-    final static Variable varDep = new Variable("#d1");
-    final static Variable varDep2 = new Variable("#d2");
+    //Descriptive variable names are used during debugging;
+    //but otherwise should be $1, $2, #1, #2 to help avoid the need to rename during certain normalizations
+    public static final Variable depIndVar1 = new Variable(Parameters.DEBUG ? "#di1" : "#1");
+    public static final Variable depIndVar2 = new Variable(Parameters.DEBUG ? "#di2" : "#2");
+    final static Variable varInd1 = new Variable(Parameters.DEBUG ? "$i1" : "$1");
+    final static Variable varInd2 = new Variable(Parameters.DEBUG ? "$i2" : "$2");
+    final static Variable varDep = new Variable(Parameters.DEBUG ? "#d1" : "#1");
+    final static Variable varDep2 = new Variable(Parameters.DEBUG ? "#d2" : "#2");
 
     /**
      * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==>

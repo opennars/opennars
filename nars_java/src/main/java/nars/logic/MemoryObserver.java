@@ -94,14 +94,8 @@ public abstract class MemoryObserver extends AbstractReaction {
      */
     abstract public void onCycleEnd(long clock);
 
-    /**
-     * Added task
-     */
     abstract public void onTaskAdd(Task task);
 
-    /**
-     * Neglected task
-     */
     abstract public void onTaskRemove(Task task, String reason);
 
 }

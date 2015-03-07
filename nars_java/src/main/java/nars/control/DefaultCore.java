@@ -128,13 +128,14 @@ public class DefaultCore extends UniCore {
     protected Runnable nextNewTask() {
         if (newTasks.isEmpty()) return null;
 
-        Task task = newTasks.removeFirst();
+        final Task task = newTasks.removeFirst();
+        final Sentence sentence = task.sentence;
 
         memory.emotion.adjustBusy(task.getPriority(), task.getDurability());
 
-        if (task.isInput() || task.sentence.isQuest() || task.sentence.isGoal()
-                || task.sentence.isQuestion()
-                || (concept(task.sentence.term) != null)
+        if (task.isInput() || sentence.isQuest() || sentence.isGoal()
+                || sentence.isQuestion()
+                || (concept(sentence.term) != null)
                 ) {
             //it is a question/quest or a judgment for a concept which exists:
 
@@ -144,7 +145,7 @@ public class DefaultCore extends UniCore {
             //it is a judgment or goal which would create a new concept:
 
 
-            final Sentence s = task.sentence;
+            final Sentence s = sentence;
 
             //if (s.isJudgment() || s.isGoal()) {
 

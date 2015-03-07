@@ -8,8 +8,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.NAL;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
+import nars.logic.entity.*;
 
 /**
  * Immediate processing of a new task, in constant time Local processing, in
@@ -44,7 +43,16 @@ public class ImmediateProcess extends NAL {
 
     @Override
     public void reason() {
-        Concept c = memory.conceptualize(currentTask.budget, getCurrentTask().getTerm());
+        Term t = getCurrentTask().getTerm();
+//        if (t instanceof Variable) {
+//            throw new RuntimeException("Variables, like " + t +", are invalid task term for ImmediateProcess");
+//        }
+//        if (t.hasVar()) {
+//            CompoundTerm ct = (CompoundTerm)t;
+//
+//        }
+
+        Concept c = memory.conceptualize(currentTask.budget, t);
         if (c == null) return;
 
         if (c.directProcess(this, currentTask)) {

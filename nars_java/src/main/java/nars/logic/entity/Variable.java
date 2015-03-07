@@ -21,6 +21,8 @@
 package nars.logic.entity;
 
 
+import nars.io.Texts;
+
 import static nars.io.Symbols.*;
 
 /**
@@ -191,6 +193,8 @@ public class Variable extends Term {
         return scope;
     }
 
+    public boolean hasScope() { return scope != this; }
+
 
     public static boolean validVariableType(final char c) {
         return (c == VAR_QUERY) || (c == VAR_DEPENDENT) || (c == VAR_INDEPENDENT);
@@ -235,5 +239,11 @@ public class Variable extends Term {
         return cb.toString();
 
     }
-    
+
+    public static int compare(final Variable a, final Variable b) {
+        int i = Texts.compare(a.name(), b.name());
+        if (i == 0)
+            return a.getScope().compareTo(b.getScope());
+        return i;
+    }
 }

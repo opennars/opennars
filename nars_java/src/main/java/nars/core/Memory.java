@@ -371,7 +371,10 @@ public class Memory implements Serializable {
      * @param t the name of a concept
      * @return a Concept or null
      */
-    public Concept concept(final Term t) {
+    public Concept concept(Term t) {
+        if (!t.isNormalized()) {
+            t = ((CompoundTerm)t).cloneNormalized();
+        }
         return concepts.concept(t);
     }
 

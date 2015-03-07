@@ -53,6 +53,9 @@ public class Term implements AbstractTerm, Termable {
         return false;
     }
 
+    public boolean isNormalized() {
+        return true;
+    }
 
 
     public interface TermVisitor {
@@ -251,12 +254,13 @@ public class Term implements AbstractTerm, Termable {
         if (that==this) return 0;
 
         //previously: Orders among terms: variable < atomic < compound
-        if ((that instanceof Variable) && (getClass()!=Variable.class))
-            return 1;
-        else if ((this instanceof Variable) && (that.getClass()!=Variable.class))
+        if (that instanceof Variable) {
+            if (getClass()!=Variable.class) return 1;
+            return Variable.compare((Variable)this, (Variable)that);
+        }
+        else if (this instanceof Variable)
             return -1;
-        return Texts.compareTo(name(), that.name());
-
+        return Texts.compare(name(), that.name());
     }
 
     

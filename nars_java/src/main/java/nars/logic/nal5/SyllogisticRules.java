@@ -298,7 +298,7 @@ public final class SyllogisticRules {
 
         final boolean temporalReasoning = nal.nal(7);
 
-        long occurTime = Stamp.ETERNAL; //nal.time()
+        long occurTime = Stamp.ETERNAL;
         if (temporalReasoning) {
             final long now = nal.time();
             int order = statement.getTemporalOrder();
@@ -469,7 +469,7 @@ public final class SyllogisticRules {
         if ((content == null) || (!(content instanceof CompoundTerm)))
             return false;
 
-        long occurTime = Stamp.ETERNAL;
+        long occurTime = nal.time();
 
         if (nal.nal(7) && (delta != 0)) {
             final long now = nal.time();
