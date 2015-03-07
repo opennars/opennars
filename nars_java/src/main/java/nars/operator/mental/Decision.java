@@ -1,4 +1,4 @@
-package nars.operator;
+package nars.operator.mental;
 
 import nars.core.Memory;
 import nars.logic.entity.Task;

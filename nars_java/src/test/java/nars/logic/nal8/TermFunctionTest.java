@@ -45,9 +45,5 @@ public class TermFunctionTest extends JavaNALTest {
         testIO("count({ count({a,b}), 2})!",
                 "<(^count,{(^count,{a,b}),2},$1) =/> <$1 <-> 1>>. :|: %1.00;0.90%"
         );
-
-        //count({ count({a,b}), 2})!
-        //      reflect(js("Math.random()"))!
-
     }
 }

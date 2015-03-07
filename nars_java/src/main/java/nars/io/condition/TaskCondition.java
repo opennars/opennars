@@ -174,6 +174,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public boolean isEternal() { return this.tense == Tense.Eternal; }
 
     public boolean matches(Task task) {
+        if (task.sentence == null) {
+            return false;
+        }
         if (task.sentence.punctuation != punc)
             return false;
         //long now = nar.time();

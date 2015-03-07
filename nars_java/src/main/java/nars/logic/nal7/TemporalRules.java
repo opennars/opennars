@@ -178,7 +178,9 @@ public class TemporalRules {
     }
 
 
-    public static long applyExpectationOffset(Memory memory, Term temporalStatement, long occurrenceTime) {
+    public static long applyExpectationOffset(final Memory memory, final Term temporalStatement, final long occurrenceTime) {
+        if (occurrenceTime==Stamp.ETERNAL) return Stamp.ETERNAL;
+
         if(temporalStatement!=null && temporalStatement instanceof Implication) {
             Implication imp=(Implication) temporalStatement;
             if(imp.getSubject() instanceof Conjunction && imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD)  {

@@ -10,6 +10,7 @@ import nars.io.condition.OutputCondition;
 import nars.io.condition.TaskCondition;
 import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Task;
+import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal7.Tense;
 
 import java.io.PrintStream;
@@ -72,30 +73,27 @@ public class TestNAR extends NAR {
 
     }
 
-    public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
-        float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
-        TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
-
-        /** occurence time measured relative to the beginning */
-        tc.setRelativeOccurrenceTime(cycleStart, ocRelative, memory.duration());
-
-        requires.add(tc);
-
-
-        ExplainableTask et = new ExplainableTask(tc);
-        if (showExplanations) {
-            explanations.add(et);
-        }
-        return et;
-    }
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         return mustEmit(Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
     }
+
+    public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
+        return mustEmit(Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL );
+    }
+
     public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL );
+    }
+
+    public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
         float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
 
         TaskCondition tc = new TaskCondition(this, c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
+        if (ocRelative!= Stamp.ETERNAL) {
+            /** occurence time measured relative to the beginning */
+            tc.setRelativeOccurrenceTime(cycleStart, (int)ocRelative, memory.duration());
+        }
         requires.add(tc);
 
         ExplainableTask et = new ExplainableTask(tc);
@@ -126,7 +124,8 @@ public class TestNAR extends NAR {
         if (t.sentence.truth!=null) {
             final float freq = t.sentence.getTruth().getFrequency();
             final float conf = t.sentence.getTruth().getConfidence();
-            return mustEmit(channel, now, now + withinCycles, termString, t.sentence.punctuation, freq, freq, conf, conf);
+            long occurrence = t.sentence.getOccurrenceTime();
+            return mustEmit(channel, now, now + withinCycles, termString, t.sentence.punctuation, freq, freq, conf, conf, occurrence);
         }
         else {
             return mustEmit(channel, now, now + withinCycles, termString, t.sentence.punctuation, -1, -1, -1, -1);
