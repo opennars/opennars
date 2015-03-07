@@ -230,10 +230,10 @@ public class Concept extends Item<Term> implements Termable {
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp,false,false,true,true)) {
-                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
-                    //task.budget.decPriority(0);    // duplicated task
-                }   // else: activated belief
+            if (newStamp.equals(oldStamp,false,true,true,false)) {
+                //if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
+                    ////task.budget.decPriority(0);    // duplicated task
+                //}   //// else: activated belief
                 
                 memory.removeTask(task, "Duplicated");                
                 return;
@@ -258,12 +258,11 @@ public class Concept extends Item<Term> implements Termable {
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
                 if (projectedBelief!=null) {
                     if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
-                        nal.singlePremiseTask(projectedBelief, task.budget);
+                       // nal.singlePremiseTask(projectedBelief, task.budget);
                     }
                     nal.setCurrentBelief(projectedBelief);
                     revision(judg, projectedBelief, false, nal);
                 }
-//
             }
         }
         if (task.aboveThreshold()) {
@@ -347,7 +346,7 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
-            if (newStamp.equals(oldStamp,false,false,true,true)) {
+            if (newStamp.equals(oldStamp,false,true,true,false)) {
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
                 
@@ -356,13 +355,13 @@ public class Concept extends Item<Term> implements Termable {
                 Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), memory.time());
                 if (projectedGoal!=null) {
                     if (projectedGoal.getOccurenceTime()!=oldGoal.getOccurenceTime()) {
-                        nal.singlePremiseTask(projectedGoal, task.budget);
+                       // nal.singlePremiseTask(projectedGoal, task.budget);
                     }
                     nal.setCurrentBelief(projectedGoal);
                     boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
                     if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
                         return; // with higher/lower desire
-                    } 
+                    } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
                 }
             } 
         } 
