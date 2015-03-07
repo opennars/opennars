@@ -45,7 +45,7 @@ public class Register extends Operator implements Mental {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Operator op=new NullOperator(args[0].toString());
-        nar.addPlugin(op);  // add error checking
+        nar.on(op);  // add error checking
         return null;
     }
     

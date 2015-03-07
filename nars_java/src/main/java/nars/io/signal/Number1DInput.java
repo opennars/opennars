@@ -64,7 +64,7 @@ public class Number1DInput {
     }
 
     public void append(String s) {
-        nar.addInput(s);
+        nar.input(s);
     }
 
     public static String getValueTerm(double v, int resolution) {

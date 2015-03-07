@@ -261,7 +261,7 @@ public class ClassicalConditioningHelper implements Plugin {
                 Task TT= new Task(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY,
 
                         BudgetFunctions.truthToQuality(Truth)), lastElems.get(lastElems.size() - 1), null);
-                nar.addInput(TT);
+                nar.input(TT);
 
                 break;
             }

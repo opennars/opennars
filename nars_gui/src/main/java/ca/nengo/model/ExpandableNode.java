@@ -55,14 +55,14 @@ public interface ExpandableNode extends Node {
 	 * @throws StructuralException if length of weights doesn't equal getDimension(),
 	 * 		or if there are different numbers of weights given in different rows.
 	 */
-	public Target addTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException;
+	public NTarget addTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException;
 
 	/**
 	 * @param name Name of Termination to remove.
 	 * @return The removed Termination
 	 * @throws StructuralException if the Termination doesn't exist
 	 */
-	public Target removeTermination(String name) throws StructuralException;
+	public NTarget removeTermination(String name) throws StructuralException;
 	
 	public ExpandableNode clone() throws CloneNotSupportedException;
 }

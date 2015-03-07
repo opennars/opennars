@@ -259,7 +259,7 @@ public class Rover extends PhysicsModel {
                     }
                     
                     if(n%500==0) {
-                        nar.addInput("<goal --> reached>!"); //also remember on goal
+                        nar.input("<goal --> reached>!"); //also remember on goal
                     }
                     if(di <= 0.2f) {
                         float x = (float) Math.random() * sz - sz / 2f;
@@ -279,10 +279,10 @@ public class Rover extends PhysicsModel {
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     if(Sgood.equals("bad") && n%25==0) {
-                        nar.addInput("(--,<(*," + id + ",good) --> see>). :|:");
+                        nar.input("(--,<(*," + id + ",good) --> see>). :|:");
                     } else if(n%50==0) {
                         //nar.addInput("<(*," + id + ",good) --> see>. :|:");
-                        nar.addInput("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
+                        nar.input("<(*," + id + "," + dist + "," + Sgood + ") --> see>. :|:");
                     }
                 }
                 else {
@@ -301,7 +301,7 @@ public class Rover extends PhysicsModel {
             if(Rover.cnt>=do_sth_importance) {
                 Rover.cnt=0;
                 Rover.do_sth_importance+=decrease_of_importance_step; //increase
-                nar.addInput("(^motor,random)!");
+                nar.input("(^motor,random)!");
             }
             
             if(feel_motion) {
@@ -404,7 +404,7 @@ public class Rover extends PhysicsModel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                nar.addInput(command);
+                nar.input(command);
             }
 
             
@@ -509,13 +509,12 @@ public class Rover extends PhysicsModel {
     public static boolean allow_imitate=false;
     
     protected void addOperators() {
-        nar.addPlugin(new NullOperator("^motor") {
+        nar.on(new NullOperator("^motor") {
             @Override
             protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
                 Term t1 = args[0];
                 float priority = operation.getTask().budget.getPriority();
 
-                
 
                 if (args.length > 2) {
                     Term t2 = args[1];
@@ -542,41 +541,41 @@ public class Rover extends PhysicsModel {
                             //nar.addInput("(^motor,random). :|:\n");
                             rover.thrust(0, linearSpeed);
                             //nar.step(100);
-                            
- 
-                            if(true) { //allow_subcons
-                                ArrayList<String> candids=new ArrayList<>();
+
+
+                            if (true) { //allow_subcons
+                                ArrayList<String> candids = new ArrayList<>();
                                 candids.add("(^motor,turn,left). :|:");
                                 candids.add("(^motor,turn,right). :|:");
                                 //candids.add("(^motor,backward). :|:");
                                 candids.add("(^motor,forward). :|:");
                                 candids.add("(^motor,forward). :|:");
-                                int candid=(int)(Math.random()*candids.size()-0.001);
-                                nar.addInput(candids.get(candid));
-                                if(candid>=3)
+                                int candid = (int) (Math.random() * candids.size() - 0.001);
+                                nar.input(candids.get(candid));
+                                if (candid >= 3)
                                     rover.thrust(0, linearSpeed);
-                                if(candid==2)
+                                if (candid == 2)
                                     rover.thrust(0, -linearSpeed);
-                                if(candid==1)
+                                if (candid == 1)
                                     rover.rotate(-rotationSpeed);
-                                if(candid==0)
+                                if (candid == 0)
                                     rover.rotate(rotationSpeed);
                             } else {
-                                ArrayList<String> candids=new ArrayList<>();
+                                ArrayList<String> candids = new ArrayList<>();
                                 candids.add("(^motor,turn,left)! :|:");
                                 candids.add("(^motor,turn,right)! :|:");
                                 candids.add("(^motor,backward)! :|:");
                                 candids.add("(^motor,forward)! :|:");
-                                int candid=(int)(Math.random()*candids.size()-0.001);
-                                nar.addInput(candids.get(candid));
+                                int candid = (int) (Math.random() * candids.size() - 0.001);
+                                nar.input(candids.get(candid));
                             }
-                            
+
                             //{"(^motor,turn,left)! :|:", "(^motor,turn,right)! :|:", "(^motor,forward)! :|:", "(^motor,backward)! :|:"};
-                            
+
                             break;
                     }
                 }
-                Rover.cnt=0;
+                Rover.cnt = 0;
                 return null;
             }
         });
@@ -590,19 +589,19 @@ public class Rover extends PhysicsModel {
         //nar.addInput("<0.0 <-> -0.0>. %1.00;0.99%");
         //nar.addInput("<{0.0,0.1} --> zeroishNumber>. %1.00;0.99%");
         //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
-        nar.addInput("<0 <-> 0.0>. %1.00;0.99%");
-        nar.addInput("<0.0 <-> 0.1>. %1.00;0.50%");
-        nar.addInput("<0.1 <-> 0.2>. %1.00;0.50%");
-        nar.addInput("<0.2 <-> 0.3>. %1.00;0.50%");
-        nar.addInput("<0.3 <-> 0.4>. %1.00;0.50%");
-        nar.addInput("<0.4 <-> 0.5>. %1.00;0.50%");
-        nar.addInput("<0.5 <-> 0.6>. %1.00;0.50%");
-        nar.addInput("<0.6 <-> 0.7>. %1.00;0.50%");
-        nar.addInput("<0.7 <-> 0.8>. %1.00;0.50%");
-        nar.addInput("<0.8 <-> 0.9>. %1.00;0.50%");
+        nar.input("<0 <-> 0.0>. %1.00;0.99%");
+        nar.input("<0.0 <-> 0.1>. %1.00;0.50%");
+        nar.input("<0.1 <-> 0.2>. %1.00;0.50%");
+        nar.input("<0.2 <-> 0.3>. %1.00;0.50%");
+        nar.input("<0.3 <-> 0.4>. %1.00;0.50%");
+        nar.input("<0.4 <-> 0.5>. %1.00;0.50%");
+        nar.input("<0.5 <-> 0.6>. %1.00;0.50%");
+        nar.input("<0.6 <-> 0.7>. %1.00;0.50%");
+        nar.input("<0.7 <-> 0.8>. %1.00;0.50%");
+        nar.input("<0.8 <-> 0.9>. %1.00;0.50%");
         //nar.addInput("<feltOrientation <-> feltAngularMotion>?");
         //nar.addInput("<feltSpeed <-> feltAngularMotion>?");
-        nar.addInput("<{left,right,forward,backward} --> direction>.");
+        nar.input("<{left,right,forward,backward} --> direction>.");
 
     }
 
@@ -617,7 +616,7 @@ public class Rover extends PhysicsModel {
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new NAR(new Default().simulationTime());
 
-        nar.addPlugin(new TemporalParticlePlanner());
+        nar.on(new TemporalParticlePlanner());
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    
         (nar.param).noiseLevel.set(0);
@@ -629,7 +628,7 @@ public class Rover extends PhysicsModel {
             @Override
             public void cycle() {
                 super.cycle(); 
-                nar.memory.addSimulationTime(cyclesPerFrame);
+                nar.memory.timeSimulationAdd(cyclesPerFrame);
             }
             
             @Override
@@ -641,33 +640,33 @@ public class Rover extends PhysicsModel {
 
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     if(!Rover.allow_imitate) {
-                        nar.addInput("(^motor,forward). :|:");
+                        nar.input("(^motor,forward). :|:");
                     } else {
-                        nar.addInput("(^motor,forward)! :|:");
+                        nar.input("(^motor,forward)! :|:");
                     }
                     rover.thrust(0, linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                     if(!Rover.allow_imitate) {
-                        nar.addInput("(^motor,backward). :|:");
+                        nar.input("(^motor,backward). :|:");
                     } else {
-                        nar.addInput("(^motor,backward)! :|:");
+                        nar.input("(^motor,backward)! :|:");
                     }
                     rover.thrust(0, -linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     if(!Rover.allow_imitate) {
-                        nar.addInput("(^motor,turn,left). :|:");
+                        nar.input("(^motor,turn,left). :|:");
                     } else {
-                        nar.addInput("(^motor,turn,left)! :|:");
+                        nar.input("(^motor,turn,left)! :|:");
                     }
                     rover.rotate(rotationSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     if(!Rover.allow_imitate) {
-                        nar.addInput("(^motor,turn,right). :|:");
+                        nar.input("(^motor,turn,right). :|:");
                     } else {
-                        nar.addInput("(^motor,turn,right)! :|:");
+                        nar.input("(^motor,turn,right)! :|:");
                     }
                     rover.rotate(-rotationSpeed);
                 }

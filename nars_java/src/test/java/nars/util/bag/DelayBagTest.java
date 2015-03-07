@@ -48,7 +48,7 @@ public class DelayBagTest {
 
         assertTrue(n.memory.concepts != null);
         
-        n.addInput("<a --> b>.");
+        n.input("<a --> b>.");
         
         n.run(1);        
         assertEquals(3, numConcepts(n) );
@@ -59,7 +59,7 @@ public class DelayBagTest {
         n.run(1);        
         assertEquals(3, numConcepts(n) );
         
-        n.addInput("<c --> d>.");
+        n.input("<c --> d>.");
         
         n.run(2);        
         assertEquals(6, numConcepts(n) );
@@ -74,7 +74,7 @@ public class DelayBagTest {
         n.run(10);
         assertEquals(5, numConcepts(n) );
 
-        n.addInput("<a --> b>.");
+        n.input("<a --> b>.");
         n.run(5);
         assertEquals(6, numConcepts(n) );
     }

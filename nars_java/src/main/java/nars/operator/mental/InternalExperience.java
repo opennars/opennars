@@ -105,7 +105,7 @@ public class InternalExperience extends AbstractPlugin  {
                 return null;
         }
         
-        Operator opTerm = mem.getOperator(opName);
+        Operator opTerm = mem.operator(opName);
         Term[] arg = new Term[ s.truth==null ? 1 : 2 ];
         arg[0]=s.getTerm();
         if (s.truth != null) {
@@ -162,7 +162,7 @@ public class InternalExperience extends AbstractPlugin  {
 
                 Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
 
-                memory.addTask(newTask, "Internally remembered experienced");
+                memory.taskAdd(newTask, "Internally remembered experienced");
             }
 
         }
@@ -188,7 +188,7 @@ public class InternalExperience extends AbstractPlugin  {
             
             //the operators which dont have a innate belief
             //also get a chance to reveal its effects to the system this way
-            Operator op=memory.getOperator(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
+            Operator op=memory.operator(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
             
             Product prod=new Product(belief.term);
             
@@ -234,7 +234,7 @@ public class InternalExperience extends AbstractPlugin  {
                 }    
 
                 if(valid) {
-                    Operator op=memory.getOperator("^anticipate");
+                    Operator op=memory.operator("^anticipate");
                     if (op == null)
                         throw new RuntimeException(this + " requires ^anticipate operator");
                     

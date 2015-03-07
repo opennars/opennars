@@ -118,8 +118,8 @@ public class TestBagNode extends Nengrow {
 
         public NARNode() {
             n = new NAR(new Default());
-            n.addInput("<a --> b>.");
-            n.addInput("<b --> c>. :|:");
+            n.input("<a --> b>.");
+            n.input("<b --> c>. :|:");
             n.run(10);
         }
 

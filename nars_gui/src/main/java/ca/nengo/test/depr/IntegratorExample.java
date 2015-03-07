@@ -30,7 +30,7 @@ import ca.nengo.math.Function;
 import ca.nengo.math.impl.ConstantFunction;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.FunctionInput;
 import ca.nengo.model.impl.NetworkImpl;
@@ -94,9 +94,9 @@ public class IntegratorExample {
 
 		NEFGroupFactory ef = new NEFGroupFactoryImpl();
 		NEFGroup integrator = ef.make("integrator", 500, 1, "integrator1", false);
-		Target interm = integrator.addDecodedTermination("input",
+		NTarget interm = integrator.addDecodedTermination("input",
 				new float[][] { new float[] { tau } }, tau, false);
-		Target fbterm = integrator.addDecodedTermination("feedback",
+		NTarget fbterm = integrator.addDecodedTermination("feedback",
 				new float[][] { new float[] { 1f } }, tau, false);
 
 		network.addNode(integrator);

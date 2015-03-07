@@ -55,7 +55,7 @@ public class UniformVector  {
         
         System.arraycopy(data, 0, lastData, 0, data.length);
         
-        nar.addInput(s.toString());
+        nar.input(s.toString());
         
     }
 

@@ -71,15 +71,16 @@ public class NAR implements Runnable {
 
 
 
-    public class PluginState implements Serializable {
+    /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */
+    public class PluggedIn implements Serializable {
         final public Plugin plugin;
         boolean enabled = false;
 
-        public PluginState(Plugin plugin) {
+        public PluggedIn(Plugin plugin) {
             this(plugin,true);
         }
         
-        public PluginState(Plugin plugin, boolean enabled) {
+        public PluggedIn(Plugin plugin, boolean enabled) {
             this.plugin = plugin;
             setEnabled(enabled);
         }
@@ -95,9 +96,14 @@ public class NAR implements Runnable {
         public boolean isEnabled() {
             return enabled;
         }
+
+        public void off() {
+            NAR.this.off(this);
+        }
+
     }
     
-    protected final List<PluginState> plugins = new CopyOnWriteArrayList<>();
+    protected final List<PluggedIn> plugins = new CopyOnWriteArrayList<>();
     
     /** Flag for running continuously  */
     private boolean running = false;
@@ -133,7 +139,7 @@ public class NAR implements Runnable {
 
     final Reaction togglePluginOnReset = new Reaction() {
 
-        final List<PluginState> toReEnable = new ArrayList();
+        final List<PluggedIn> toReEnable = new ArrayList();
 
         @Override
         public void event(Class event, Object[] args) {
@@ -141,14 +147,14 @@ public class NAR implements Runnable {
             //toggle plugins
 
             //1. disable all
-            for (PluginState p : getPlugins()) {
+            for (PluggedIn p : getPlugins()) {
                 if (p.isEnabled()) {
                     toReEnable.add(p);
                     p.setEnabled(false);
                 }
             }
             //2. enable all
-            for (PluginState p : toReEnable) {
+            for (PluggedIn p : toReEnable) {
                 p.setEnabled(true);
             }
 
@@ -159,22 +165,22 @@ public class NAR implements Runnable {
 
 
 
-    public SensorPort addInput(final File input) throws FileNotFoundException {
-        return addInput( new TextInput(textPerception, input) );
+    public TaskSource input(final File input) throws FileNotFoundException {
+        return input(new TextInput(textPerception, input));
     }
-    public SensorPort addInput(final InputStream input) {
-        return addInput( new TextInput(textPerception,
-                new BufferedReader(new InputStreamReader( input ) ) ) );
+    public TaskSource input(final InputStream input) {
+        return input(new TextInput(textPerception,
+                new BufferedReader(new InputStreamReader(input))));
     }
 
-    public TextInput addInput(final String text) {
+    public TextInput input(final String text) {
         final TextInput i = new TextInput(textPerception, text);
-        addInput(i);
+        input(i);
         return i;
     }
     
-    public NAR addInput(final String taskText, float frequency, float confidence) throws InvalidInputException {
-        return addInput(-1, -1, taskText, frequency, confidence);
+    public NAR input(final String taskText, float frequency, float confidence) throws InvalidInputException {
+        return input(-1, -1, taskText, frequency, confidence);
     }
 
     public Term term(String t) throws InvalidInputException {
@@ -225,7 +231,7 @@ public class NAR implements Runnable {
     public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
         final Task t;
         final TruthValue tv;
-        addInput(
+        input(
                 t = new Task(
                         new Sentence(
                                 narsese.parseCompoundTerm(goalTerm),
@@ -242,7 +248,7 @@ public class NAR implements Runnable {
     public Task believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
         final Task t;
         final TruthValue tv;
-        addInput(
+        input(
                 t = new Task(
                         new Sentence(
                                 narsese.parseCompoundTerm(beliefTerm),
@@ -260,16 +266,16 @@ public class NAR implements Runnable {
 
 
         final Task t;
-        addInput(
+        input(
                 t = new Task(
                         new Sentence(
                                 narsese.parseCompoundTerm(termString),
                                 questionOrQuest,
-                                null, 
+                                null,
                                 new Stamp(memory, Stamp.UNPERCEIVED, Tense.Eternal)),
                         new BudgetValue(
-                                Parameters.DEFAULT_QUESTION_PRIORITY, 
-                                Parameters.DEFAULT_QUESTION_DURABILITY, 
+                                Parameters.DEFAULT_QUESTION_PRIORITY,
+                                Parameters.DEFAULT_QUESTION_DURABILITY,
                                 1))
         );
         
@@ -280,13 +286,13 @@ public class NAR implements Runnable {
         
     }
     
-    public NAR addInput(final Sentence sentence) {
-        return addInput(
+    public NAR input(final Sentence sentence) {
+        return input(
                 new Task(sentence, BudgetValue.newDefault(sentence, memory))
         );
     }
     
-    public NAR addInput(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
+    public NAR input(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
         
         Task t = new Narsese(this).parseTask(taskText);        
         if (frequency!=-1)
@@ -298,11 +304,11 @@ public class NAR implements Runnable {
         if (durability!=-1)
             t.budget.setDurability(durability);
         
-        return addInput(t);
+        return input(t);
     }
     
-    public NAR addInput(final Task t) {
-        addInput( new TaskInput(t) );
+    public NAR input(final Task t) {
+        input(new TaskInput(t));
         return this;
     }
 
@@ -326,9 +332,9 @@ public class NAR implements Runnable {
 
     /** Adds an input channel for input from an external sense / sensor.
      *  Will remain added until it closes or it is explicitly removed. */
-    public SensorPort addInput(final Input channel) {
+    public TaskSource input(final Input channel) {
 
-        SensorPort i = new SensorPort(channel, 1.0f);
+        TaskSource i = new TaskSource(channel, 1.0f);
 
         memory.perception.accept(i);
 
@@ -344,27 +350,27 @@ public class NAR implements Runnable {
 
 
     /** add and enable a plugin or operator */
-    public PluginState addPlugin(Plugin p) {
+    public PluggedIn on(Plugin p) {
         if (p instanceof Operator) {
-            memory.addOperator((Operator)p);
+            memory.operatorAdd((Operator) p);
         }
-        PluginState ps = new PluginState(p);
+        PluggedIn ps = new PluggedIn(p);
         plugins.add(ps);
         return ps;
     }
 
-    /** disable and remove a plugin or operator */
-    public void removePlugin(PluginState ps) {
+    /** disable and remove a plugin or operator; use the PluginState instance returned by on(plugin) to .off() it */
+    protected void off(PluggedIn ps) {
         if (plugins.remove(ps)) {
             Plugin p = ps.plugin;
             if (p instanceof Operator) {
-                memory.removeOperator((Operator)p);
+                memory.operatorRemove((Operator) p);
             }
             ps.setEnabled(false);
         }
     }
     
-    public List<PluginState> getPlugins() {
+    public List<PluggedIn> getPlugins() {
         return Collections.unmodifiableList(plugins);
     }
 
@@ -483,10 +489,10 @@ public class NAR implements Runnable {
         //queue additional cycles, 
         cycles -= cyclesCompleted;
         if (cycles > 0)
-            memory.stepLater(cycles);
+            memory.think(cycles);
         
         //finish all remaining cycles
-        while (!memory.isProcessingInput() && (!stopped)) {
+        while (!memory.thinking() && (!stopped)) {
             step(1);
         }
         
@@ -514,7 +520,7 @@ public class NAR implements Runnable {
                     try {
                         Thread.sleep(minFramePeriodMS);
                     } catch (InterruptedException ee) {
-                        onError(ee);
+                        error(ee);
                     }
                 }
                 else if (remainingTime < 0) {
@@ -542,18 +548,8 @@ public class NAR implements Runnable {
     }
 
 
-    protected void onError(Throwable e)  {
-        /*if (e.getCause()!=null)
-            e.getCause().printStackTrace();
-        else*/
-            e.printStackTrace();
-
+    protected void error(Throwable e)  {
         memory.error(e);
-
-        if (Parameters.EXIT_ON_EXCEPTION) {
-            //throw the exception to the next lower stack catcher, or cause program exit if none exists
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -570,7 +566,7 @@ public class NAR implements Runnable {
                 memory.cycle();
         }
         catch (Throwable e) {
-            onError(e);
+            error(e);
         }
 
         emit(FrameEnd.class);

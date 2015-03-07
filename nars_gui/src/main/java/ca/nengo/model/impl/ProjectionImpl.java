@@ -60,8 +60,8 @@ public class ProjectionImpl implements Projection {
 
 	private static final long serialVersionUID = 1L;
 
-	private final Source mySource;
-	private final Target myTarget;
+	private final NSource mySource;
+	private final NTarget myTarget;
 	private final Network myNetwork;
 
 	private boolean myBiasIsEnabled;
@@ -76,7 +76,7 @@ public class ProjectionImpl implements Projection {
 	 * @param target  The Termination at the end of this Projection
 	 * @param network The Network of which this Projection is a part
 	 */
-	public ProjectionImpl(Source source, Target target, Network network) {
+	public ProjectionImpl(NSource source, NTarget target, Network network) {
 		mySource = source;
 		myTarget = target;
 		myNetwork = network;
@@ -90,14 +90,14 @@ public class ProjectionImpl implements Projection {
 	/**
 	 * @see ca.nengo.model.Projection#getSource()
 	 */
-	public Source getSource() {
+	public NSource getSource() {
 		return mySource;
 	}
 
 	/**
 	 * @see ca.nengo.model.Projection#getTarget()
 	 */
-	public Target getTarget() {
+	public NTarget getTarget() {
 		return myTarget;
 	}
 
@@ -247,7 +247,7 @@ public class ProjectionImpl implements Projection {
 	    py.append(String.format("%1s.connect(", pythonNetworkName));
 	    
 	    StringBuilder originNodeFullName = new StringBuilder();
-	    Source tempSource = mySource;
+	    NSource tempSource = mySource;
 
 	    while(tempSource instanceof SourceWrapper)
 	    {
@@ -256,7 +256,7 @@ public class ProjectionImpl implements Projection {
 	    }
 	    
 	    StringBuilder terminationNodeFullName = new StringBuilder();
-	    Target tempTarget = myTarget;
+	    NTarget tempTarget = myTarget;
 
 	    while(tempTarget instanceof TargetWrapper)
 	    {

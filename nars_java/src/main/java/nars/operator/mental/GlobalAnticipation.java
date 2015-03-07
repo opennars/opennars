@@ -7,7 +7,7 @@ package nars.operator.mental;
 
 import nars.core.Events;
 import nars.core.NAR;
-import nars.core.NAR.PluginState;
+import nars.core.NAR.PluggedIn;
 import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.event.Reaction;
@@ -212,7 +212,7 @@ public class GlobalAnticipation implements Plugin, Reaction {
     public boolean setEnabled(NAR n, boolean enabled) {
         //Events.TaskDerive.class Events.ConceptBeliefRemove.class
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.TaskDerive.class, Events.ConceptBeliefRemove.class);
-        for(PluginState s : n.getPlugins()) {
+        for(PluggedIn s : n.getPlugins()) {
             if(s.plugin instanceof Anticipate)
             {
                 s.plugin.setEnabled(n, !enabled);

@@ -161,7 +161,7 @@ public class Operation extends Inheritance {
 
         Term[] args = Arrays.copyOfRange(raw, 1, raw.length);
 
-        Operator o = m.getOperator(operator);
+        Operator o = m.operator(operator);
         if (o == null)
             throw new RuntimeException("Unknown operator: " + operator); //TODO use a 'UnknownOperatorException' so this case can be detected by callers
 

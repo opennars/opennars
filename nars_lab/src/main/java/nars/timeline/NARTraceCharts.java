@@ -32,12 +32,12 @@ public class NARTraceCharts extends TimelineExample {
 
         NAR nar = new NAR(new Default());
         NARMetrics t = new NARMetrics(nar, 128);
-        nar.addInput("<a --> b>.");
-        nar.addInput("<b --> c>.");
-        nar.addInput("<(^pick,x) =\\> a>.");
-        nar.addInput("<(*, b, c) <-> x>.");
-        nar.addInput("a!");
-        nar.addInput("<a <-> ^pick>?");
+        nar.input("<a --> b>.");
+        nar.input("<b --> c>.");
+        nar.input("<(^pick,x) =\\> a>.");
+        nar.input("<(*, b, c) <-> x>.");
+        nar.input("a!");
+        nar.input("<a <-> ^pick>?");
         nar.run(cycles);
 
         System.out.println(t.getMetrics().getSignals());

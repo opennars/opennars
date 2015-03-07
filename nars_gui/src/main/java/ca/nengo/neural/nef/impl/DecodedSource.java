@@ -61,7 +61,7 @@ import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManage
  *
  * @author Bryan Tripp
  */
-public class DecodedSource implements Source<InstantaneousOutput>, Resettable, SimulationMode.ModeConfigurable, Noise.Noisy, Configurable, ShortTermPlastic {
+public class DecodedSource implements NSource<InstantaneousOutput>, Resettable, SimulationMode.ModeConfigurable, Noise.Noisy, Configurable, ShortTermPlastic {
 
 	private static final long serialVersionUID = 1L;
 
@@ -344,14 +344,14 @@ public class DecodedSource implements Source<InstantaneousOutput>, Resettable, S
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getName()
+	 * @see ca.nengo.model.NSource#getName()
 	 */
 	public String getName() {
 		return myName;
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getDimensions()
+	 * @see ca.nengo.model.NSource#getDimensions()
 	 */
 	public int getDimensions() {
 		return myFunctions.length;
@@ -526,14 +526,14 @@ public class DecodedSource implements Source<InstantaneousOutput>, Resettable, S
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#get()
+	 * @see ca.nengo.model.NSource#get()
 	 */
 	public InstantaneousOutput get()  {
 		return myOutput;
 	}
 	
 	/**
-	 * @see ca.nengo.model.Source#setValues()
+	 * @see ca.nengo.model.NSource#setValues()
 	 */
 	public void accept(InstantaneousOutput val){
 		if(val instanceof RealSource)
@@ -563,7 +563,7 @@ public class DecodedSource implements Source<InstantaneousOutput>, Resettable, S
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getNode()
+	 * @see ca.nengo.model.NSource#getNode()
 	 */
 	public Node getNode() {
 		return myNode;

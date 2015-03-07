@@ -47,7 +47,7 @@ public class PlanDecisionExperiment {
         System.out.println(Arrays.toString(confidences));
 
         NAR n = new NAR(new Default());
-        n.addInput(i);
+        n.input(i);
         //new TextOutput(n, System.out);
         
         new Output(n) {            

@@ -3,8 +3,8 @@ package ca.nengo.ui;
 import ca.nengo.config.ConfigUtil;
 import ca.nengo.model.Network;
 import ca.nengo.model.Node;
-import ca.nengo.model.Source;
-import ca.nengo.model.Target;
+import ca.nengo.model.NSource;
+import ca.nengo.model.NTarget;
 import ca.nengo.ui.action.*;
 import ca.nengo.ui.data.DataListView;
 import ca.nengo.ui.lib.AppFrame;
@@ -628,10 +628,10 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
                 String name;
                 if (obj instanceof Node) {
                     name = ((Node) obj).getName();
-                } else if (obj instanceof Target) {
-                    name = ((Target) obj).getName();
-                } else if (obj instanceof Source) {
-                    name = ((Source) obj).getName();
+                } else if (obj instanceof NTarget) {
+                    name = ((NTarget) obj).getName();
+                } else if (obj instanceof NSource) {
+                    name = ((NSource) obj).getName();
                 } else {
                     name = "Inspector";
                 }

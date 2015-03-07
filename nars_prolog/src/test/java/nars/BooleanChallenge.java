@@ -145,7 +145,7 @@ public class BooleanChallenge {
                                 if (correctFeedback) {
                                     //String c = getTerm(n[0], n[1], pred.toString(), not(n[2])) + ('.');
                                     String c = "(--," + getTerm(n[0], n[1], pred.toString(), n[2]) + ("). %1.00;" + Texts.n2(inputConf) + "%");
-                                    nar.addInput(c);
+                                    nar.input(c);
                                 }
 
                             }
@@ -380,7 +380,7 @@ public class BooleanChallenge {
         //System.out.println(questionScores.keySet());
         //System.out.println(answerProvided);
 
-        nar.addInput(ii);
+        nar.input(ii);
 
     }
 

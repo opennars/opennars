@@ -93,13 +93,13 @@ public class IconRegistry {
 			ourInstance.setIcon(PDF.class, "/ca/nengo/config/ui/pdf.jpg");
 			ourInstance.setIcon(Function.class, "/ca/nengo/config/ui/function.jpg");
 			ourInstance.setIcon(Noise.class, "/ca/nengo/config/ui/noise01.jpg");
-			ourInstance.setIcon(Source.class, "/ca/nengo/config/ui/origin4.jpg");
+			ourInstance.setIcon(NSource.class, "/ca/nengo/config/ui/origin4.jpg");
 			ourInstance.setIcon(SpikeGenerator.class, "/ca/nengo/config/ui/spikegenerator.jpg");
 			ourInstance.setIcon(SimulationMode.class, "/ca/nengo/config/ui/simulationmode.jpg");
 			ourInstance.setIcon(Units.class, "/ca/nengo/config/ui/units.jpg");
 			ourInstance.setIcon(Enum.class, "/ca/nengo/config/ui/enum.gif");
 			ourInstance.setIcon(SpikePattern.class, "/ca/nengo/config/ui/spikepattern.jpg");
-			ourInstance.setIcon(Target.class, "/ca/nengo/config/ui/termination4.jpg");
+			ourInstance.setIcon(NTarget.class, "/ca/nengo/config/ui/termination4.jpg");
 
 			ourInstance.setIcon(Neuron.class, "/ca/nengo/config/ui/neuron.jpg");
 			ourInstance.setIcon(Network.class, "/ca/nengo/config/ui/network.jpg");

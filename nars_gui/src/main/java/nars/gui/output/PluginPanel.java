@@ -4,7 +4,7 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.ReflectPanel;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.core.NAR.PluginState;
+import nars.core.NAR.PluggedIn;
 import nars.core.Plugin;
 import nars.event.AbstractReaction;
 import nars.util.data.PackageUtility;
@@ -91,9 +91,9 @@ public class PluginPanel extends VerticalPanel {
 
     
     public class PluginPane extends JPanel {
-        private final PluginState plugin;
+        private final PluggedIn plugin;
 
-        public PluginPane(PluginState p) {
+        public PluginPane(PluggedIn p) {
             super(new BorderLayout());
             
             this.plugin = p;
@@ -143,9 +143,9 @@ public class PluginPanel extends VerticalPanel {
         content.removeAll();
         
         int i = 0;
-        List<PluginState> ppp = nar.getPlugins();
+        List<PluggedIn> ppp = nar.getPlugins();
         if (!ppp.isEmpty()) {
-            for (PluginState p : ppp) {
+            for (PluggedIn p : ppp) {
                 PluginPane pp = new PluginPane(p);
                 pp.setBorder(new BevelBorder(BevelBorder.RAISED));            
                 addPanel(i++, pp);
@@ -185,13 +185,13 @@ public class PluginPanel extends VerticalPanel {
     protected void addPlugin(Class c) {
         try {
             Plugin p = (Plugin)c.newInstance();
-            nar.addPlugin(p);
+            nar.on(p);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.toString());
         }
     }
-    protected void removePlugin(PluginState ps) {
-        nar.removePlugin(ps);
+    protected void removePlugin(PluggedIn ps) {
+        nar.off(ps);
     }
     
     

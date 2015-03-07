@@ -44,7 +44,7 @@ abstract public class AbstractMirror extends AbstractReaction {
     
     public boolean input(Sentence s, InputMode mode, Task parent) {
         if (mode == InputMode.Perceive) {
-            nar.addInput(s);
+            nar.input(s);
             return true;
         }
         else if ((mode == InputMode.InputTask)|| (mode == InputMode.ImmediateProcess)) {
@@ -54,7 +54,7 @@ abstract public class AbstractMirror extends AbstractReaction {
             //System.err.println("  " + t);
 
             if (mode == InputMode.InputTask)
-                nar.memory.inputTask(t);
+                nar.memory.taskInput(t);
             else if (mode == InputMode.ImmediateProcess)
                 new ImmediateProcess(nar.memory, t).run();
 

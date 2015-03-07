@@ -3,12 +3,12 @@ package nars.io;
 import nars.logic.entity.Task;
 import reactor.function.Supplier;
 
-/** input port for external, sensory events */
-public class SensorPort extends InPort<Task> {
+/** input port for external, ex: sensory events */
+public class TaskSource extends Source<Task> {
 
     private final Supplier<Task> input;
 
-    public SensorPort(Supplier<Task> input, float priority) {
+    public TaskSource(Supplier<Task> input, float priority) {
         super(priority);
         this.input = input;
     }

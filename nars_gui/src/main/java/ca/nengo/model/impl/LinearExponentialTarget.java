@@ -102,14 +102,14 @@ public class LinearExponentialTarget implements PlasticNodeTarget {
     }
 
     /**
-     * @see ca.nengo.model.Target#getName()
+     * @see ca.nengo.model.NTarget#getName()
      */
     public String getName() {
         return myName;
     }
 
     /**
-     * @see ca.nengo.model.Target#getDimensions()
+     * @see ca.nengo.model.NTarget#getDimensions()
      */
     public int getDimensions() {
         return myWeights.length;
@@ -198,7 +198,7 @@ public class LinearExponentialTarget implements PlasticNodeTarget {
 
     /**
      * @param values Can be either SpikeOutput or RealOutput
-     * @see ca.nengo.model.Target#apply(ca.nengo.model.InstantaneousOutput)
+     * @see ca.nengo.model.NTarget#apply(ca.nengo.model.InstantaneousOutput)
      */
     public void apply(InstantaneousOutput values) throws SimulationException {
         if (values.getDimension() != getDimensions()) {
@@ -347,7 +347,7 @@ public class LinearExponentialTarget implements PlasticNodeTarget {
     }
 
     /**
-     * @see ca.nengo.model.Target#getNode()
+     * @see ca.nengo.model.NTarget#getNode()
      */
     public Node getNode() {
         return myNode;
@@ -361,28 +361,28 @@ public class LinearExponentialTarget implements PlasticNodeTarget {
     }
 
     /**
-     * @see ca.nengo.model.Target#getModulatory()
+     * @see ca.nengo.model.NTarget#getModulatory()
      */
     public boolean getModulatory() {
         return myModulatory;
     }
 
     /**
-     * @see ca.nengo.model.Target#getTau()
+     * @see ca.nengo.model.NTarget#getTau()
      */
     public float getTau() {
         return myTauPSC;
     }
 
     /**
-     * @see ca.nengo.model.Target#setModulatory(boolean)
+     * @see ca.nengo.model.NTarget#setModulatory(boolean)
      */
     public void setModulatory(boolean modulatory) {
         myModulatory = modulatory;
     }
 
     /**
-     * @see ca.nengo.model.Target#setTau(float)
+     * @see ca.nengo.model.NTarget#setTau(float)
      */
     public void setTau(float tau) throws StructuralException {
         myTauPSC = tau;

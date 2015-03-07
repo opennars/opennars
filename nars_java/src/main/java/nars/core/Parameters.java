@@ -194,7 +194,7 @@ public class Parameters {
 
 
     //temporary parameter for setting #threads to use, globally
-    public static int THREADS = 1;
+    @Deprecated public static int THREADS = 1;
 
     public static boolean IMMEDIATE_ETERNALIZATION=true;
 

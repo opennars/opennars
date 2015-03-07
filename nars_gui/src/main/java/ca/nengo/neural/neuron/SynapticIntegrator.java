@@ -34,7 +34,7 @@ package ca.nengo.neural.neuron;
 import ca.nengo.model.Node;
 import ca.nengo.model.Resettable;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 import ca.nengo.util.TimeSeries1D;
 
 import java.io.Serializable;
@@ -53,14 +53,14 @@ public interface SynapticIntegrator extends Resettable, Serializable, Cloneable 
 	/**
 	 * @return List of distinct inputs (eg sets of synapses from different ensembles).
 	 */
-	public Target[] getTerminations();
+	public NTarget[] getTerminations();
 
 	/**
 	 * @param name Name of a Termination onto this SynapticIntegrator
 	 * @return The named Termination if it exists
 	 * @throws StructuralException if the named Termination does not exist
 	 */
-	public Target getTermination(String name);
+	public NTarget getTermination(String name);
 
 	/**
 	 * This method should be called by the neuron that incorporates this SynapticIntegrator

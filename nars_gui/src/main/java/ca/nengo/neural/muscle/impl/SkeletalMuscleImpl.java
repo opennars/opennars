@@ -142,7 +142,7 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	/**
 	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getSource(String name) throws StructuralException {
+	public NSource getSource(String name) throws StructuralException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -150,7 +150,7 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	/**
 	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getSources() {
+	public NSource[] getSources() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -158,7 +158,7 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	/**
 	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTarget(String name) throws StructuralException {
+	public NTarget getTarget(String name) throws StructuralException {
 		if (name.equals(SkeletalMuscle.EXCITATION_TERMINATION)) {
 			return myTermination;
 		} else {
@@ -169,8 +169,8 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	/**
 	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTargets() {
-		return new Target[]{myTermination};
+	public NTarget[] getTargets() {
+		return new NTarget[]{myTermination};
 	}
 
 	/**

@@ -132,7 +132,7 @@ public class DirectNode implements Node {
 	/**
 	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getSource(String name) throws StructuralException {
+	public NSource getSource(String name) throws StructuralException {
 		if (ORIGIN.equals(name)) {
 			return myOrigin;
 		} else {
@@ -143,14 +143,14 @@ public class DirectNode implements Node {
 	/**
 	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getSources() {
-		return new Source[]{myOrigin};
+	public NSource[] getSources() {
+		return new NSource[]{myOrigin};
 	}
 
 	/**
 	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTarget(String name) throws StructuralException {
+	public NTarget getTarget(String name) throws StructuralException {
 		if (myTerminations.containsKey(name)) {
 			return myTerminations.get(name);
 		} else {
@@ -161,7 +161,7 @@ public class DirectNode implements Node {
 	/**
 	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTargets() {
+	public NTarget[] getTargets() {
         Collection<ObjectTarget<InstantaneousOutput>> var = myTerminations.values();
         return var.toArray(new ObjectTarget[var.size()]);
 	}

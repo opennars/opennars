@@ -131,9 +131,9 @@ public class Abbreviation extends AbstractPlugin {
         memory = n.memory;
 
         if (abbreviate == null) {
-            Operator _abbreviate = memory.getOperator("^abbreviate");
+            Operator _abbreviate = memory.operator("^abbreviate");
             if (_abbreviate == null) {
-                n.addPlugin(abbreviate = new Abbreviate());
+                n.on(abbreviate = new Abbreviate());
             }
         }
         

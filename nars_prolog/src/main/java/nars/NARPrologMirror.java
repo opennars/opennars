@@ -86,7 +86,7 @@ public class NARPrologMirror extends AbstractMirror {
         this.nar = nar;
         this.confidenceThreshold = minConfidence;
         this.prolog = new NARTuprolog(nar);
-        this.forgetCyclePeriod = nar.memory.getDuration() / 2;
+        this.forgetCyclePeriod = nar.memory.duration() / 2;
         this.maxSolveTime = 40.0f / 1e3f;
         this.minSolveTime = maxSolveTime/2f;
 
@@ -423,7 +423,7 @@ public class NARPrologMirror extends AbstractMirror {
         else if (ae && !be) return false;
         else if (!ae && be) return false;
         else {
-            return (TemporalRules.concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), nar.memory.getDuration()));
+            return (TemporalRules.concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), nar.memory.duration()));
         }
     }
 

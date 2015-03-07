@@ -44,12 +44,12 @@ class play extends javax.swing.JFrame {
     public play() {
 
 
-        nar.addPlugin(new AddO("^addO"));
+        nar.on(new AddO("^addO"));
         (nar.param).noiseLevel.set(0);
         
         initComponents();
         addStartKnowledge();
-        nar.addInput("<game --> reset>. :|:");
+        nar.input("<game --> reset>. :|:");
         
         try {
             Thread.sleep(500);
@@ -341,12 +341,12 @@ class play extends javax.swing.JFrame {
         }
         else
         if(args[0].toString().equals("9") && field[8]==0) {
-            nar.addInput("<input --> succeeded>. :|: %1.00;0.99%");
+            nar.input("<input --> succeeded>. :|: %1.00;0.99%");
             jButton10.setText("O");
             field[8]=2;
         }
         else {
-            nar.addInput("<input --> succeeded>. :|: %0.00;0.99%");
+            nar.input("<input --> succeeded>. :|: %0.00;0.99%");
             success=false;
         }
         
@@ -394,11 +394,11 @@ class play extends javax.swing.JFrame {
         
         if(won==1) {
             this.jLabel1.setText("Player won");
-            nar.addInput("<goal --> reached>. %0.0;0.99%");
+            nar.input("<goal --> reached>. %0.0;0.99%");
         }
         if(won==2) {
             this.jLabel1.setText("NARS won");
-            nar.addInput("<goal --> reached>. %1.0;0.99%");
+            nar.input("<goal --> reached>. %1.0;0.99%");
         }
         
         return won!=0;
@@ -427,7 +427,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[0]!=0) {
             return;
         }
-        nar.addInput("<1 --> set>. :|:");
+        nar.input("<1 --> set>. :|:");
         jButton2.setText("X");
         field[0]=1;
         if(!check_field()) {
@@ -441,7 +441,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[3]!=0) {
             return;
         }
-        nar.addInput("<4 --> set>. :|:");
+        nar.input("<4 --> set>. :|:");
         jButton3.setText("X");
         field[3]=1;
         check_field();
@@ -456,7 +456,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[6]!=0) {
             return;
         }
-        nar.addInput("<7 --> set>. :|:");
+        nar.input("<7 --> set>. :|:");
         jButton4.setText("X");
         field[6]=1;
         check_field();
@@ -471,7 +471,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[1]!=0) {
             return;
         }
-        nar.addInput("<2 --> set>. :|:");
+        nar.input("<2 --> set>. :|:");
         jButton5.setText("X");
         field[1]=1;
         check_field();
@@ -486,7 +486,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[4]!=0) {
             return;
         }
-        nar.addInput("<5 --> set>. :|:");
+        nar.input("<5 --> set>. :|:");
         jButton6.setText("X");
         field[4]=1;
         check_field();
@@ -501,7 +501,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[7]!=0) {
             return;
         }
-        nar.addInput("<8 --> set>. :|:");
+        nar.input("<8 --> set>. :|:");
         jButton7.setText("X");
         field[7]=1;
         check_field();
@@ -516,7 +516,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[2]!=0) {
             return;
         }
-        nar.addInput("<3 --> set>. :|:");
+        nar.input("<3 --> set>. :|:");
         jButton8.setText("X");
         field[2]=1;
         check_field();
@@ -531,7 +531,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[5]!=0) {
             return;
         }
-        nar.addInput("<6 --> set>. :|:");
+        nar.input("<6 --> set>. :|:");
         jButton9.setText("X");
         field[5]=1;
         check_field();
@@ -546,7 +546,7 @@ class play extends javax.swing.JFrame {
         if(!en || field[8]!=0) {
             return;
         }
-        nar.addInput("<9 --> set>. :|:");
+        nar.input("<9 --> set>. :|:");
         jButton10.setText("X");
         field[8]=1;
         check_field();
@@ -573,7 +573,7 @@ class play extends javax.swing.JFrame {
                          0,0,0,
                          0,0,0
         };
-        nar.addInput("<game --> reset>. :|:");
+        nar.input("<game --> reset>. :|:");
         addStartKnowledge();
         
         if(!beginner) {
@@ -594,23 +594,23 @@ class play extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton12ActionPerformed
 
     public void addStartKnowledge() {
-        nar.addInput("<goal --> reached>! %1.0;0.99%");
+        nar.input("<goal --> reached>! %1.0;0.99%");
         
         //nar.addInput("<(^addO,$1) =/> <input --> succeeded>>."); //usually input succeeds
         //nar.addInput("<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>."); //usually input succeeds but not when it was set by player cause overwrite is not valid
         //nar.addInput("<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>."); //also overwriting on own is not valid
-        nar.addInput("<(&|,(^addO,1),<input --> succeeded>,(^addO,2),<input --> succeeded>,(^addO,3),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&|,(^addO,4),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,6),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&|,(^addO,7),<input --> succeeded>,(^addO,8),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.input("<(&|,(^addO,1),<input --> succeeded>,(^addO,2),<input --> succeeded>,(^addO,3),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.input("<(&|,(^addO,4),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,6),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.input("<(&|,(^addO,7),<input --> succeeded>,(^addO,8),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
         //also with 3 in a column:
-        nar.addInput("<(&|,(^addO,1),<input --> succeeded>,(^addO,4),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&|,(^addO,2),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,8),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&|,(^addO,3),<input --> succeeded>,(^addO,6),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.input("<(&|,(^addO,1),<input --> succeeded>,(^addO,4),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.input("<(&|,(^addO,2),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,8),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.input("<(&|,(^addO,3),<input --> succeeded>,(^addO,6),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
         //and with the 2 diagonals:
-        nar.addInput("<(&|,(^addO,1),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&|,(^addO,3),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.input("<(&|,(^addO,1),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.input("<(&|,(^addO,3),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
         //
-        nar.addInput("<goal --> reached>! %1.0;0.99%");
+        nar.input("<goal --> reached>! %1.0;0.99%");
         
         /*nar.addInput("(&/,<#1 --> field>,(^addO,#1))!"); //doing something is also a goal :D
         nar.addInput("(^addO,1)! %1.0;0.7%");
@@ -628,7 +628,7 @@ class play extends javax.swing.JFrame {
         nar.addInput("<7 --> field>.");
         nar.addInput("<8 --> field>.");
         nar.addInput("<9 --> field>.");*/
-        nar.addInput("<input --> succeeded>!");
+        nar.input("<input --> succeeded>!");
         
     }
     

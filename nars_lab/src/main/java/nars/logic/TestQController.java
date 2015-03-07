@@ -138,7 +138,7 @@ public class TestQController {
 
     public static void input(String example, NAR... n) {
         for (NAR x : n)
-            x.addInput( getExample( example));
+            x.input(getExample(example));
     }
     
     public static NAR newNAR() {

@@ -284,10 +284,10 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
      */
     public synchronized void resetNetwork(boolean randomize, boolean saveWeights) {
         if (saveWeights) {
-            Target[] terms;
+            NTarget[] terms;
             for (Node myNode : myNodes) {
                 terms = myNode.getTargets();
-                for (Target term : terms) {
+                for (NTarget term : terms) {
                     if (term instanceof PlasticGroupTarget) {
                         ((PlasticGroupTarget) term).saveTransform();
                     }

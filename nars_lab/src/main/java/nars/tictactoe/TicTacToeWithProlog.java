@@ -94,7 +94,7 @@ public class TicTacToeWithProlog extends JPanel {
         new NARPrologMirror(nar, 0.9f, true, true, true);
 
 
-        nar.addPlugin(new AddO("^addO"));
+        nar.on(new AddO("^addO"));
         nar.param.duration.set(5);
         nar.param.noiseLevel.set(0);
         nar.param.shortTermMemoryHistory.set(8);
@@ -105,7 +105,7 @@ public class TicTacToeWithProlog extends JPanel {
 
             @Override
             public void event(Class event, Object[] args) {
-                nar.memory.addSimulationTime(1);
+                nar.memory.timeSimulationAdd(1);
             }
             
         });
@@ -156,7 +156,7 @@ public class TicTacToeWithProlog extends JPanel {
                     return;
                 }
                 
-                nar.addInput("<(*," + i + ",human) --> move>. :|:");
+                nar.input("<(*," + i + ",human) --> move>. :|:");
                 c.setText("X");
                 field[i] = 1;
                 playing = !playing;
@@ -257,7 +257,7 @@ public class TicTacToeWithProlog extends JPanel {
                 
                 if (success) {
                     nar.emit(TicTacToeWithProlog.class, "NARS plays: " + i);
-                    nar.addInput("<(*," + i + ",nars) --> move>. :|:");
+                    nar.input("<(*," + i + ",nars) --> move>. :|:");
                     playing = !playing;
                     
                     System.out.println( operation.getTask().getExplanation() );
@@ -318,11 +318,11 @@ public class TicTacToeWithProlog extends JPanel {
     public void updateField() {
         if (playing == COMPUTER) {
             status.setText("NARS Turn");
-            nar.addInput("<(*,undecided,nars) --> move>. :|:");
+            nar.input("<(*,undecided,nars) --> move>. :|:");
         }
         else {
             status.setText("Humans Turn");
-            nar.addInput("<(*,undecided,human) --> move>. :|:");
+            nar.input("<(*,undecided,human) --> move>. :|:");
         }
                     
         Boolean winner = null;
@@ -351,19 +351,19 @@ public class TicTacToeWithProlog extends JPanel {
                 }
                 s += "<" + i + " --> " + f + ">. :|:\n";
             }
-            nar.addInput(s);                       
+            nar.input(s);
         }
         else if (winner == HUMAN) {
             status.setText("Human wins");
             nar.emit(OUT.class, "Human wins");
-            nar.addInput("<human --> win>. :|: %1.0;0.99%");
-            nar.addInput("<nars --> win>. :|: %0.0;0.99%");
+            nar.input("<human --> win>. :|: %1.0;0.99%");
+            nar.input("<nars --> win>. :|: %0.0;0.99%");
         }
         else if (winner == COMPUTER) {
             status.setText("NARS wins");
             nar.emit(OUT.class, "NARS wins");
-            nar.addInput("<human --> win>. :|: %0.0;0.99%");
-            nar.addInput("<nars --> win>. :|: %1.0;0.99%");
+            nar.input("<human --> win>. :|: %0.0;0.99%");
+            nar.input("<nars --> win>. :|: %1.0;0.99%");
         }
     }
 
@@ -372,7 +372,7 @@ public class TicTacToeWithProlog extends JPanel {
     public void reset() {
         playing = STARTING_PLAYER;
         Arrays.fill(field, 0);
-        nar.addInput("<game --> reset>. :|:");
+        nar.input("<game --> reset>. :|:");
         teach();
         updateField();
     }
@@ -440,7 +440,7 @@ public class TicTacToeWithProlog extends JPanel {
 
         String[] rs = rules.split("\n");
         for (String x : rs) {
-            nar.addInput(x);
+            nar.input(x);
         }
         
         updateField();

@@ -60,7 +60,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	private static final Logger ourLogger = LogManager.getLogger(NetworkImpl.class);
 
 	private Map<String, Node> myNodeMap; //keyed on name
-	private Map<Target, Projection> myProjectionMap; //keyed on Termination
+	private Map<NTarget, Projection> myProjectionMap; //keyed on Termination
 	private String myName;
 	private SimulationMode myMode;
 	private List<SimulationMode> myFixedModes;
@@ -68,17 +68,17 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	private float myStepSize;
 	private final Map<String, Probeable> myProbeables;
 	private final Map<String, String> myProbeableStates;
-	private Map<String, Source> myExposedOrigins;
-	private Map<String, Target> myExposedTerminations;
+	private Map<String, NSource> myExposedOrigins;
+	private Map<String, NTarget> myExposedTerminations;
 
-	private List<Source> orderedExposedSources;
-	private List<Target> orderedExposedTargets;
+	private List<NSource> orderedExposedSources;
+	private List<NTarget> orderedExposedTargets;
 
 	private String myDocumentation;
 	private Map<String, Object> myMetaData;
 
-	private Map<Source, String> myExposedOriginNames;
-	private Map<Target, String> myExposedTerminationNames;
+	private Map<NSource, String> myExposedOriginNames;
+	private Map<NTarget, String> myExposedTerminationNames;
 
 	private transient List<VisiblyMutable.Listener> myListeners;
 
@@ -99,22 +99,22 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 */
 	public NetworkImpl(String name) {
 		myNodeMap = new HashMap<String, Node>(20);
-		myProjectionMap	= new HashMap<Target, Projection>(50);
+		myProjectionMap	= new HashMap<NTarget, Projection>(50);
 		myName = name;
 		myStepSize = .001f;
 		myProbeables = new HashMap<String, Probeable>(30);
 		myProbeableStates = new HashMap<String, String>(30);
-		myExposedOrigins = new HashMap<String, Source>(10);
-		myExposedOriginNames = new HashMap<Source, String>(10);
-		myExposedTerminations = new HashMap<String, Target>(10);
-		myExposedTerminationNames = new HashMap<Target, String>(10);
+		myExposedOrigins = new HashMap<String, NSource>(10);
+		myExposedOriginNames = new HashMap<NSource, String>(10);
+		myExposedTerminations = new HashMap<String, NTarget>(10);
+		myExposedTerminationNames = new HashMap<NTarget, String>(10);
 		myMode = SimulationMode.DEFAULT;
 		myFixedModes = null;
 		myMetaData = new HashMap<String, Object>(20);
 		myListeners = new ArrayList<Listener>(10);
 
-		orderedExposedSources = new ArrayList<Source> ();
-		orderedExposedTargets = new ArrayList<Target> ();
+		orderedExposedSources = new ArrayList<NSource> ();
+		orderedExposedTargets = new ArrayList<NTarget> ();
 		
 		myStepListeners = new ArrayList<StepListener>(1);		
 	}
@@ -289,12 +289,12 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 *
 	 * @return arraylist of terminations
 	 */
-	public ArrayList<Target> getNodeTerminations()
+	public ArrayList<NTarget> getNodeTerminations()
 	{
 		Node[] nodes = getNodes();
-        ArrayList<Target> nodeTargets = new ArrayList<Target>(nodes.length);
+        ArrayList<NTarget> nodeTargets = new ArrayList<NTarget>(nodes.length);
 		for (Node node : nodes) {
-			Target[] terms = node.getTargets();
+			NTarget[] terms = node.getTargets();
             Collections.addAll(nodeTargets, terms);
 		}
 
@@ -306,12 +306,12 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 *
 	 * @return arraylist of origins
 	 */
-	public ArrayList<Source> getNodeOrigins()
+	public ArrayList<NSource> getNodeOrigins()
 	{
 		Node[] nodes = getNodes();
-        ArrayList<Source> nodeSources = new ArrayList<Source>(nodes.length);
+        ArrayList<NSource> nodeSources = new ArrayList<NSource>(nodes.length);
 		for (Node node : nodes) {
-			Source[] origs = node.getSources();
+			NSource[] origs = node.getSources();
             Collections.addAll(nodeSources, origs);
 		}
 
@@ -412,8 +412,8 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			else if(node instanceof DecodableGroupImpl)
 			{
 				NEFGroupImpl pop = (NEFGroupImpl)node;
-				Source[] sources = pop.getSources();
-				for (Source source : sources) {
+				NSource[] sources = pop.getSources();
+				for (NSource source : sources) {
 					String exposedName = getExposedOriginName(source);
 					if(exposedName != null) {
                         hideOrigin(exposedName);
@@ -439,9 +439,9 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#addProjection(ca.nengo.model.Source, ca.nengo.model.Target)
+	 * @see ca.nengo.model.Network#addProjection(ca.nengo.model.NSource, ca.nengo.model.NTarget)
 	 */
-	public Projection addProjection(Source source, Target target) throws StructuralException {
+	public Projection addProjection(NSource source, NTarget target) throws StructuralException {
 		if (myProjectionMap.containsKey(target)) {
 			throw new StructuralException("There is already an Origin connected to the specified Termination");
 		} else if (source.getDimensions() != target.getDimensions()) {
@@ -465,14 +465,14 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
         return var.toArray(new Projection[var.size()]);
 	}
 	
-	public Map<Target, Projection> getProjectionMap() {
+	public Map<NTarget, Projection> getProjectionMap() {
 		return myProjectionMap;
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#removeProjection(ca.nengo.model.Target)
+	 * @see ca.nengo.model.Network#removeProjection(ca.nengo.model.NTarget)
 	 */
-	public void removeProjection(Target target) throws StructuralException {
+	public void removeProjection(NTarget target) throws StructuralException {
 		if (myProjectionMap.containsKey(target)) {
 			Projection p = myProjectionMap.get(target);
 			p.getTarget().reset(false);
@@ -650,11 +650,11 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	}
 	
 	/**
-	 * @see ca.nengo.model.Network#exposeOrigin(ca.nengo.model.Source,
+	 * @see ca.nengo.model.Network#exposeOrigin(ca.nengo.model.NSource,
 	 *      java.lang.String)
 	 */
-	public void exposeOrigin(Source source, String name) {
-		Source temp;
+	public void exposeOrigin(NSource source, String name) {
+		NSource temp;
 
 		temp = new SourceWrapper(this, source, name);
 
@@ -700,16 +700,16 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#getExposedOriginName(ca.nengo.model.Source)
+	 * @see ca.nengo.model.Network#getExposedOriginName(ca.nengo.model.NSource)
 	 */
-	public String getExposedOriginName(Source insideSource) {
+	public String getExposedOriginName(NSource insideSource) {
 		return myExposedOriginNames.get(insideSource);
 	}
 
 	/**
 	 * @see ca.nengo.model.Network#getSource(java.lang.String)
 	 */
-	public Source getSource(String name) throws StructuralException {
+	public NSource getSource(String name) throws StructuralException {
 		if ( !myExposedOrigins.containsKey(name) ) {
 			throw new StructuralException("There is no exposed Origin named " + name);
 		}
@@ -719,19 +719,19 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	/**
 	 * @see ca.nengo.model.Network#getSources()
 	 */
-	public Source[] getSources() {
+	public NSource[] getSources() {
 		if (myExposedOrigins.values().size() == 0) {
-            Collection<Source> var = myExposedOrigins.values();
-            return var.toArray(new Source[var.size()]);
+            Collection<NSource> var = myExposedOrigins.values();
+            return var.toArray(new NSource[var.size()]);
         }
-		return orderedExposedSources.toArray(new Source[orderedExposedSources.size()]);
+		return orderedExposedSources.toArray(new NSource[orderedExposedSources.size()]);
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#exposeTermination(ca.nengo.model.Target, java.lang.String)
+	 * @see ca.nengo.model.Network#exposeTermination(ca.nengo.model.NTarget, java.lang.String)
 	 */
-	public void exposeTermination(Target target, String name) {
-		Target term;
+	public void exposeTermination(NTarget target, String name) {
+		NTarget term;
 		
 			term = new TargetWrapper(this, target, name);
 			
@@ -746,7 +746,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 * @see ca.nengo.model.Network#hideTermination(java.lang.String)
 	 */
 	public void hideTermination(String name) {
-		Target term = myExposedTerminations.get(name);
+		NTarget term = myExposedTerminations.get(name);
 		
 		if(term == null) return;
 		
@@ -759,16 +759,16 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	}
 
 	/**
-	 * @see ca.nengo.model.Network#getExposedTerminationName(ca.nengo.model.Target)
+	 * @see ca.nengo.model.Network#getExposedTerminationName(ca.nengo.model.NTarget)
 	 */
-	public String getExposedTerminationName(Target insideTarget) {
+	public String getExposedTerminationName(NTarget insideTarget) {
 		return myExposedTerminationNames.get(insideTarget);
 	}
 
 	/**
 	 * @see ca.nengo.model.Network#getTarget(java.lang.String)
 	 */
-	public Target getTarget(String name) throws StructuralException {
+	public NTarget getTarget(String name) throws StructuralException {
 		if ( !myExposedTerminations.containsKey(name) ) {
 			throw new StructuralException("There is no exposed Termination named " + name);
 		}
@@ -778,12 +778,12 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	/**
 	 * @see ca.nengo.model.Network#getTargets()
 	 */
-	public Target[] getTargets() {
+	public NTarget[] getTargets() {
 		if (myExposedTerminations.values().size() == 0) {
-            Collection<Target> var = myExposedTerminations.values();
-            return var.toArray(new Target[var.size()]);
+            Collection<NTarget> var = myExposedTerminations.values();
+            return var.toArray(new NTarget[var.size()]);
         }
-		return orderedExposedTargets.toArray(new Target[orderedExposedTargets.size()]);
+		return orderedExposedTargets.toArray(new NTarget[orderedExposedTargets.size()]);
 	}
 
 	/**
@@ -838,12 +838,12 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 *
 	 * @author Bryan Tripp
 	 */
-	public static class SourceWrapper<V> implements Source<V> {
+	public static class SourceWrapper<V> implements NSource<V> {
 
 		private static final long serialVersionUID = 1L;
 
 		private Node myNode;
-		private Source<V> myWrapped;
+		private NSource<V> myWrapped;
 		private String myName;
 
 		/**
@@ -851,7 +851,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		 * @param wrapped Warpped Origin
 		 * @param name Name of new origin
 		 */
-		public SourceWrapper(Node node, Source<V> wrapped, String name) {
+		public SourceWrapper(Node node, NSource<V> wrapped, String name) {
 			myNode = node;
 			myWrapped = wrapped;
 			myName = name;
@@ -868,7 +868,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		/**
 		 * @return The underlying wrapped Origin
 		 */
-		public Source getWrappedOrigin() {
+		public NSource getWrappedOrigin() {
 			return myWrapped;
 		}
 
@@ -877,7 +877,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
          *
          * @return Base origin if there are multiple levels of wrapping
          */
-        public Source getBaseOrigin() {
+        public NSource getBaseOrigin() {
             SourceWrapper other = this;
             while (true) {
                 if (other.myWrapped instanceof SourceWrapper) {
@@ -891,7 +891,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		/**
 		 * @param wrapped Set the underlying wrapped Origin
 		 */
-		public void setWrappedOrigin(Source wrapped) {
+		public void setWrappedOrigin(NSource wrapped) {
 			myWrapped = wrapped;
 		}
 
@@ -930,11 +930,11 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		}
 
 		@Override
-		public Source clone() throws CloneNotSupportedException {
-			return (Source) super.clone();
+		public NSource clone() throws CloneNotSupportedException {
+			return (NSource) super.clone();
 		}
 		
-		public Source clone(Node node) throws CloneNotSupportedException {
+		public NSource clone(Node node) throws CloneNotSupportedException {
 			return this.clone();
 		}
 
@@ -952,12 +952,12 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 *
 	 * @author Bryan Tripp
 	 */
-	public static class TargetWrapper<V> implements Target<V> {
+	public static class TargetWrapper<V> implements NTarget<V> {
 
 		private static final long serialVersionUID = 1L;
 
 		private final Node myNode;
-		private final Target<V> myWrapped;
+		private final NTarget<V> myWrapped;
 		private final String myName;
 
 		/**
@@ -965,7 +965,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		 * @param wrapped Termination being wrapped
 		 * @param name New name
 		 */
-		public TargetWrapper(Node node, Target<V> wrapped, String name) {
+		public TargetWrapper(Node node, NTarget<V> wrapped, String name) {
 			myNode = node;
 			myWrapped = wrapped;
 			myName = name;
@@ -974,7 +974,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		/**
 		 * @return Wrapped Termination
 		 */
-		public Target getWrappedTermination() {
+		public NTarget getWrappedTermination() {
 			return myWrapped;
 		}
 
@@ -983,7 +983,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
          *
          * @return Underlying Termination, not wrapped
          */
-        public Target getBaseTermination() {
+        public NTarget getBaseTermination() {
             TargetWrapper other = this;
             while (true) {
                 if (other.myWrapped instanceof TargetWrapper) {
@@ -1168,12 +1168,12 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 //		result.myProbeableStates
 
 		//TODO: this works with a single Projection impl & no params; should add Projection.copy(Origin, Termination, Network)?
-		result.myProjectionMap = new HashMap<Target, Projection>(10);
+		result.myProjectionMap = new HashMap<NTarget, Projection>(10);
 		for (Projection oldProjection : getProjections()) {
 			try {
-				Source newSource = result.getNode(oldProjection.getSource().getNode().getName())
+				NSource newSource = result.getNode(oldProjection.getSource().getNode().getName())
 					.getSource(oldProjection.getSource().getName());
-				Target newTarget = result.getNode(oldProjection.getTarget().getNode().getName())
+				NTarget newTarget = result.getNode(oldProjection.getTarget().getNode().getName())
 					.getTarget(oldProjection.getTarget().getName());
 				Projection newProjection = new ProjectionImpl(newSource, newTarget, result);
 				result.myProjectionMap.put(newTarget, newProjection);
@@ -1182,16 +1182,16 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			}
 		}
 
-		result.myExposedOrigins = new HashMap<String, Source>(10);
-		result.myExposedOriginNames = new HashMap<Source, String>(10);
-		result.orderedExposedSources = new LinkedList <Source> ();
-		for (Source exposed : getSources()) {
+		result.myExposedOrigins = new HashMap<String, NSource>(10);
+		result.myExposedOriginNames = new HashMap<NSource, String>(10);
+		result.orderedExposedSources = new LinkedList <NSource> ();
+		for (NSource exposed : getSources()) {
 			String name = exposed.getName();
-			Source wrapped = ((SourceWrapper) exposed).getWrappedOrigin();
+			NSource wrapped = ((SourceWrapper) exposed).getWrappedOrigin();
 			try {
 				// Check to see if referenced node is the network itself. If it is, handle the origin differently.
 				if (wrapped.getNode().getName() != myName ) {
-					Source toExpose = result.getNode(wrapped.getNode().getName()).getSource(wrapped.getName());
+					NSource toExpose = result.getNode(wrapped.getNode().getName()).getSource(wrapped.getName());
 					result.exposeOrigin(toExpose, name);
 				}
 			} catch (StructuralException e) {
@@ -1199,16 +1199,16 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			}
 		}
 
-		result.myExposedTerminations = new HashMap<String, Target>(10);
-		result.myExposedTerminationNames = new HashMap<Target, String>(10);
-		result.orderedExposedTargets = new LinkedList <Target> ();
-		for (Target exposed : getTargets()) {
+		result.myExposedTerminations = new HashMap<String, NTarget>(10);
+		result.myExposedTerminationNames = new HashMap<NTarget, String>(10);
+		result.orderedExposedTargets = new LinkedList <NTarget> ();
+		for (NTarget exposed : getTargets()) {
 			String name = exposed.getName();
-			Target wrapped = ((TargetWrapper) exposed).getWrappedTermination();
+			NTarget wrapped = ((TargetWrapper) exposed).getWrappedTermination();
 			try {
 				// Check to see if referenced node is the network itself. If it is, handle the termination differently.
 				if (wrapped.getNode().getName() != myName ) {
-					Target toExpose = result.getNode(wrapped.getNode().getName()).getTarget(wrapped.getName());
+					NTarget toExpose = result.getNode(wrapped.getNode().getName()).getTarget(wrapped.getName());
 					result.exposeTermination(toExpose, name);
 				}
 			} catch (StructuralException e) {

@@ -85,7 +85,7 @@ public interface Network extends Group, Probeable {
 	 * 		or if there is already an Origin connected to the given Termination (note that an
 	 * 		Origin can project to multiple Terminations though).
 	 */
-	public Projection addProjection(Source source, Target target) throws StructuralException;
+	public Projection addProjection(NSource source, NTarget target) throws StructuralException;
 
 	/**
 	 * @return All Projections in this Network
@@ -97,7 +97,7 @@ public interface Network extends Group, Probeable {
 	 * @throws StructuralException if there exists no Projection between the specified
 	 * 		Origin and Termination
 	 */
-	public void removeProjection(Target target) throws StructuralException;
+	public void removeProjection(NTarget target) throws StructuralException;
 
 	/**
 	 * Declares the given Origin as available for connection outside the Network
@@ -107,7 +107,7 @@ public interface Network extends Group, Probeable {
 	 * 		outside this Network
 	 * @param name Name of the Origin as it will appear outside this Network
 	 */
-	public void exposeOrigin(Source source, String name);
+	public void exposeOrigin(NSource source, String name);
 
 
 	/**
@@ -115,7 +115,7 @@ public interface Network extends Group, Probeable {
 	 * @return Name of the exposed origin given the inner origin. null if no
 	 *   such origin is exposed.
 	 */
-	public String getExposedOriginName(Source insideSource);
+	public String getExposedOriginName(NSource insideSource);
 
 	/**
 	 * Undoes exposeOrigin(x, x, name).
@@ -133,7 +133,7 @@ public interface Network extends Group, Probeable {
 	 * 		outside this Network
 	 * @param name Name of the Termination as it will appear outside this Network
 	 */
-	public void exposeTermination(Target target, String name);
+	public void exposeTermination(NTarget target, String name);
 
 	/**
 	 * Undoes exposeTermination(x, x, name).
@@ -147,7 +147,7 @@ public interface Network extends Group, Probeable {
 	 * @return Name of the exposed termination given the inner termination or
      *   null if no such termination is exposed.
 	 */
-	public String getExposedTerminationName(Target insideTarget);
+	public String getExposedTerminationName(NTarget insideTarget);
 
 	/**
 	 * Declares the given Probeable state as being available for Probing from outside this

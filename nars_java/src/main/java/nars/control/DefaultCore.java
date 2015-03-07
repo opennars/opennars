@@ -1,6 +1,5 @@
 package nars.control;
 
-import nars.core.Core;
 import nars.core.Parameters;
 import nars.logic.entity.*;
 import nars.logic.reason.ConceptFire;
@@ -62,7 +61,7 @@ public class DefaultCore extends UniCore {
     @Override
     public void cycle() {
 
-        memory.nextPercept(memory.param.inputsMaxPerCycle.get());
+        memory.perceiveNext(memory.param.inputsMaxPerCycle.get());
 
         //all new tasks
         int numNewTasks = newTasks.size();
@@ -108,8 +107,7 @@ public class DefaultCore extends UniCore {
                 Parameters.CONCEPT_FORGETTING_ACCURACY,
                 memory);
 
-        memory.dequeueOtherTasks(run);
-        Core.run(run);
+        memory.runNextTasks();
         run.clear();
 
     }
@@ -159,14 +157,14 @@ public class DefaultCore extends UniCore {
 
                 if (overflow != null) {
                     if (overflow == task) {
-                        memory.removeTask(task, "Ignored");
+                        memory.taskRemoved(task, "Ignored");
                     } else {
-                        memory.removeTask(overflow, "Displaced novel task");
+                        memory.taskRemoved(overflow, "Displaced novel task");
                     }
                 }
 
             } else {
-                memory.removeTask(task, "Neglected");
+                memory.taskRemoved(task, "Neglected");
             }
             //}
         }

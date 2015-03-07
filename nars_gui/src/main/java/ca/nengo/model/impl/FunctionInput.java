@@ -203,7 +203,7 @@ public class FunctionInput implements Node, Probeable {
 	/**
 	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getSource(String name) throws StructuralException {
+	public NSource getSource(String name) throws StructuralException {
 		if (!ORIGIN_NAME.equals(name)) {
 			throw new StructuralException("This Node only has origin FunctionInput.ORIGIN_NAME");
 		}
@@ -214,22 +214,22 @@ public class FunctionInput implements Node, Probeable {
 	/**
 	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getSources() {
-		return new Source[]{myOrigin};
+	public NSource[] getSources() {
+		return new NSource[]{myOrigin};
 	}
 
 	/**
 	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTarget(String name) throws StructuralException {
+	public NTarget getTarget(String name) throws StructuralException {
 		throw new StructuralException("This node has no Terminations");
 	}
 
 	/**
 	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTargets() {
-		return new Target[0];
+	public NTarget[] getTargets() {
+		return new NTarget[0];
 	}
 
 	/**

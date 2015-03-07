@@ -32,7 +32,7 @@ package ca.nengo.neural.neuron.impl;
 
 import ca.nengo.model.Node;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.DelayedLinearExponentialTarget;
 import ca.nengo.model.impl.LinearExponentialTarget;
@@ -185,15 +185,15 @@ public class LinearSynapticIntegrator implements ExpandableSynapticIntegrator {
 	/**
 	 * @see ca.nengo.neural.neuron.SynapticIntegrator#getTerminations()
 	 */
-	public Target[] getTerminations() {
+	public NTarget[] getTerminations() {
         Collection<LinearExponentialTarget> var = myTerminations.values();
-        return var.toArray(new Target[var.size()]);
+        return var.toArray(new NTarget[var.size()]);
 	}
 
 	/**
 	 * @see ca.nengo.neural.neuron.ExpandableSynapticIntegrator#addTermination(java.lang.String, float[], float, boolean)
 	 */
-	public Target addTermination(String name, float[] weights, float tauPSC, boolean modulatory) throws StructuralException {
+	public NTarget addTermination(String name, float[] weights, float tauPSC, boolean modulatory) throws StructuralException {
 		if (myTerminations.containsKey(name)) {
 			throw new StructuralException("This SynapticIntegrator already has a Termination named " + name);
 		}
@@ -205,7 +205,7 @@ public class LinearSynapticIntegrator implements ExpandableSynapticIntegrator {
 		return result;
 	}
 	
-	public Target addTermination(String name, float[] weights, float tauPSC, float delay, boolean modulatory) throws StructuralException {
+	public NTarget addTermination(String name, float[] weights, float tauPSC, float delay, boolean modulatory) throws StructuralException {
 		if (myTerminations.containsKey(name)) {
 			throw new StructuralException("This SynapticIntegrator already has a Termination named " + name);
 		}
@@ -221,14 +221,14 @@ public class LinearSynapticIntegrator implements ExpandableSynapticIntegrator {
 	/**
 	 * @see ca.nengo.neural.neuron.ExpandableSynapticIntegrator#removeTermination(java.lang.String)
 	 */
-	public Target removeTermination(String name) {
+	public NTarget removeTermination(String name) {
 		return myTerminations.remove(name);
 	}
 
 	/**
 	 * @see ca.nengo.neural.neuron.SynapticIntegrator#getTermination(java.lang.String)
 	 */
-	public Target getTermination(String name) {
+	public NTarget getTermination(String name) {
 		return myTerminations.get(name);
 	}
 

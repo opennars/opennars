@@ -103,7 +103,7 @@ public class Predict2D extends JPanel {
                 //input += ("<" + current+ " =/> ?>?\n");
             }
 
-            nar.addInput(input);
+            nar.input(input);
 
             prev = current;
             lastI = i;
@@ -324,7 +324,7 @@ public class Predict2D extends JPanel {
 
             update(t);
 
-            n.memory.addSimulationTime(1);
+            n.memory.timeSimulationAdd(1);
             n.step(20);
 
             t += 1;

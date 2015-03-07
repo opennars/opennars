@@ -206,8 +206,8 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 		myDecodingApproximators.clear();
 
 		// update the decoders for any existing origins
-		Source[] sources = getSources();
-		for (Source source2 : sources) {
+		NSource[] sources = getSources();
+		for (NSource source2 : sources) {
 			if (source2 instanceof DecodedSource) {
 				DecodedSource origin=((DecodedSource) source2);
 				if (oldRadii!=null && origin.getName().equals(NEFGroup.X)) {
@@ -491,7 +491,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 	/**
 	 * @see ca.nengo.neural.nef.NEFGroup#addDecodedOrigin(java.lang.String, Function[], String)
 	 */
-    public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin) throws StructuralException {
+    public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin) throws StructuralException {
 		if (!myReuseApproximators || !myDecodingApproximators.containsKey(nodeOrigin)) {
 			float[][] outputs = getConstantOutputs(myEvalPoints, nodeOrigin);
 			LinearApproximator approximator = getApproximatorFactory().getApproximator(myEvalPoints, outputs);
@@ -513,7 +513,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      * @param nodeOrigin origin from which to draw output from each node
      * @return the new DecodedOrigin created
      */
-    public Source addDecodedSignalOrigin(String name, TimeSeries targetSignal, TimeSeries[] evalSignals, String nodeOrigin) throws StructuralException {
+    public NSource addDecodedSignalOrigin(String name, TimeSeries targetSignal, TimeSeries[] evalSignals, String nodeOrigin) throws StructuralException {
     	float[][][] evalSignalsF = new float[evalSignals.length][][];
     	for(int i=0; i < evalSignals.length; i++)
     		evalSignalsF[i] = MU.transpose(evalSignals[i].getValues());
@@ -533,7 +533,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      * @param o the origin to be added
      * @return the new origin
      */
-    public Source addDecodedOrigin(DecodedSource o) {
+    public NSource addDecodedOrigin(DecodedSource o) {
     	o.setMode(getMode());
     	myDecodedOrigins.put(o.getName(), o);
     	fireVisibleChangeEvent();
@@ -541,9 +541,9 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
     }
 
 	/**
-	 * @see ca.nengo.neural.nef.NEFGroup#addBiasOrigin(ca.nengo.model.Source, int, java.lang.String, boolean)
+	 * @see ca.nengo.neural.nef.NEFGroup#addBiasOrigin(ca.nengo.model.NSource, int, java.lang.String, boolean)
 	 */
-    public BiasSource addBiasOrigin(Source existing, int numInterneurons, String name, boolean excitatory) throws StructuralException {
+    public BiasSource addBiasOrigin(NSource existing, int numInterneurons, String name, boolean excitatory) throws StructuralException {
 		if ( !(existing instanceof DecodedSource) ) {
 			throw new StructuralException("A DecodedOrigin is needed to make a BiasOrigin");
 		}
@@ -562,7 +562,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 	}
 
 	@Override
-    public Target addDecodedTermination(String name, float[][] matrix, float tauPSC,
+    public NTarget addDecodedTermination(String name, float[][] matrix, float tauPSC,
             boolean isModulatory) throws StructuralException {
     	 if (matrix.length != myDimension) {
              throw new StructuralException("Output dimension " + matrix.length + " doesn't equal ensemble dimension " + myDimension);
@@ -571,7 +571,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 	}
 
 	@Override
-    public Target addDecodedTermination(String name, float[][] matrix, float[] tfNumerator, float[] tfDenominator,
+    public NTarget addDecodedTermination(String name, float[][] matrix, float[] tfNumerator, float[] tfDenominator,
             float passthrough, boolean isModulatory) throws StructuralException {
 	    if (matrix.length != myDimension) {
 	        throw new StructuralException("Output dimension " + matrix.length + " doesn't equal ensemble dimension " + myDimension);
@@ -590,7 +590,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      * @throws StructuralException if weight matrix dimensionality is incorrect
      * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
      */
-    public synchronized Target addPESTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
+    public synchronized NTarget addPESTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
         //TODO: check name for duplicate
         if (myExpandableNodes.length != weights.length) {
             throw new StructuralException(weights.length + " sets of weights given for "
@@ -599,7 +599,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 
         int dimension = weights[0].length;
 
-        Target[] components = new Target[myExpandableNodes.length];
+        NTarget[] components = new NTarget[myExpandableNodes.length];
         for (int i = 0; i < myExpandableNodes.length; i++) {
             if (weights[i].length != dimension) {
                 throw new StructuralException("Equal numbers of weights are needed for termination onto each node");
@@ -658,7 +658,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      * @throws StructuralException if weight matrix dimensionality is incorrect
      * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
      */
-    public synchronized Target addHPESTermination(String name, float[][] weights, float tauPSC, boolean modulatory, float[] theta) throws StructuralException {
+    public synchronized NTarget addHPESTermination(String name, float[][] weights, float tauPSC, boolean modulatory, float[] theta) throws StructuralException {
         //TODO: check name for duplicate
         if (myExpandableNodes.length != weights.length) {
             throw new StructuralException(weights.length + " sets of weights given for "
@@ -667,7 +667,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 
         int dimension = weights[0].length;
 
-        Target[] components = new Target[myExpandableNodes.length];
+        NTarget[] components = new NTarget[myExpandableNodes.length];
         for (int i = 0; i < myExpandableNodes.length; i++) {
             if (weights[i].length != dimension) {
                 throw new StructuralException("Equal numbers of weights are needed for termination onto each node");
@@ -726,7 +726,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      * @throws StructuralException if weight matrix dimensionality is incorrect
      * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
      */
-    public synchronized Target addBCMTermination(String name, float[][] weights, float tauPSC, boolean modulatory, float[] theta) throws StructuralException {
+    public synchronized NTarget addBCMTermination(String name, float[][] weights, float tauPSC, boolean modulatory, float[] theta) throws StructuralException {
         //TODO: check name for duplicate
         if (myExpandableNodes.length != weights.length) {
             throw new StructuralException(weights.length + " sets of weights given for "
@@ -735,7 +735,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 
         int dimension = weights[0].length;
 
-        Target[] components = new Target[myExpandableNodes.length];
+        NTarget[] components = new NTarget[myExpandableNodes.length];
         for (int i = 0; i < myExpandableNodes.length; i++) {
             if (weights[i].length != dimension) {
                 throw new StructuralException("Equal numbers of weights are needed for termination onto each node");
@@ -783,7 +783,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
         return result;
     }
 
-    public synchronized Target addPreLearnTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
+    public synchronized NTarget addPreLearnTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
         //TODO: check name for duplicate
         if (myExpandableNodes.length != weights.length) {
             throw new StructuralException(weights.length + " sets of weights given for "
@@ -792,7 +792,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 
         int dimension = weights[0].length;
 
-        Target[] components = new Target[myExpandableNodes.length];
+        NTarget[] components = new NTarget[myExpandableNodes.length];
         for (int i = 0; i < myExpandableNodes.length; i++) {
             if (weights[i].length != dimension) {
                 throw new StructuralException("Equal numbers of weights are needed for termination onto each node");
@@ -936,8 +936,8 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 						state = dynamicsOutput.getValues()[dynamicsOutput.getValues().length-1];
 					}
 
-					Source[] sources = getSources();
-					for (Source source : sources) {
+					NSource[] sources = getSources();
+					for (NSource source : sources) {
 						if (source instanceof DecodedSource) {
 							((DecodedSource) source).run(state, startTime, endTime);
 						}
@@ -996,8 +996,8 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 		
 		super.setMode(mode);
 
-		Source[] sources = getSources();
-		for (Source source : sources) {
+		NSource[] sources = getSources();
+		for (NSource source : sources) {
 			if (source instanceof DecodedSource) {
 				((DecodedSource) source).setMode(mode);
 			}
@@ -1091,8 +1091,8 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 		myDecodingApproximators.clear();
 
 		// update the decoders for any existing origins
-		Source[] sources = getSources();
-		for (Source source2 : sources) {
+		NSource[] sources = getSources();
+		for (NSource source2 : sources) {
 			if (source2 instanceof DecodedSource) {
 				DecodedSource origin=((DecodedSource) source2);
 				String nodeOrigin=origin.getNodeOrigin();
@@ -1115,13 +1115,13 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 	public Properties listStates() {
 		Properties p = super.listStates();
 
-		for (Source o : getSources()) {
+		for (NSource o : getSources()) {
 			if (o instanceof DecodedSource) {
 				p.setProperty(o.getName() + ":STP", "Decoder scaling due to short-term plasticity");
 			}
 		}
 
-		for (Target t : getTargets()) {
+		for (NTarget t : getTargets()) {
             if (t instanceof DecodedTarget) {
                 p.setProperty(t.getName() + ":STP", "Decoder scaling due to short-term plasticity");
             }

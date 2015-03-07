@@ -259,7 +259,7 @@ public class LogicPerformance {
                 
         List<OutputCondition> conditions = example.enableConditions(n, 5);
 
-        n.addInput(example);
+        n.input(example);
                 
         System.out.println(example.getSource());
         

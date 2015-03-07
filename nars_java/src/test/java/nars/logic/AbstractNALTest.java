@@ -86,8 +86,8 @@ abstract public class AbstractNALTest extends TestCase {
         }
         */
         if (analyzeStack) {
-            nar.addPlugin(eventCounter);
-            nar.addPlugin(deriveMethodCounter);
+            nar.on(eventCounter);
+            nar.on(deriveMethodCounter);
         }
 
 
@@ -130,7 +130,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         nar.requires.addAll(OutputCondition.getConditions(nar, script, similarsToSave));
 
-        nar.addInput(script);
+        nar.input(script);
 
         long start = System.nanoTime();
 

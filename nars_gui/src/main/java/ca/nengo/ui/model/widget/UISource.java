@@ -55,7 +55,7 @@ public abstract class UISource extends Widget {
 	 * @param source
 	 * @return UI Origin Wrapper
 	 */
-	public static UISource createOriginUI(UINeoNode uiNodeParent, Source source) {
+	public static UISource createOriginUI(UINeoNode uiNodeParent, NSource source) {
 
 		if (source instanceof DecodedSource) {
 			return new UIDecodedSource(uiNodeParent, (DecodedSource) source);
@@ -72,7 +72,7 @@ public abstract class UISource extends Widget {
 
 	private Color lineWellDefaultColor;
 
-	protected UISource(UINeoNode nodeParent, Source source) {
+	protected UISource(UINeoNode nodeParent, NSource source) {
 		super(nodeParent, source);
 
 		init();
@@ -202,8 +202,8 @@ public abstract class UISource extends Widget {
     }
 
 	@Override
-	public Source getModel() {
-		return (Source) super.getModel();
+	public NSource getModel() {
+		return (NSource) super.getModel();
 	}
 
 	@Override
@@ -236,7 +236,7 @@ public abstract class UISource extends Widget {
 
 class UIGenericSource extends UISource {
 
-	protected UIGenericSource(UINeoNode nodeParent, Source source) {
+	protected UIGenericSource(UINeoNode nodeParent, NSource source) {
 		super(nodeParent, source);
 	}
 

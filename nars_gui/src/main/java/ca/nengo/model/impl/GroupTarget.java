@@ -45,13 +45,13 @@ import ca.nengo.model.*;
  *
  * @author Bryan Tripp
  */
-public class GroupTarget implements Target<InstantaneousOutput> {
+public class GroupTarget implements NTarget<InstantaneousOutput> {
 
 	private static final long serialVersionUID = 1L;
 
 	private Node myNode;
 	private String myName;
-	private Target<InstantaneousOutput>[] myNodeTargets;
+	private NTarget<InstantaneousOutput>[] myNodeTargets;
 
 	/**
 	 * @param node The parent Node
@@ -59,7 +59,7 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 	 * @param nodeTargets Node-level Terminations that make up this Termination
 	 * @throws StructuralException If dimensions of different terminations are not all the same
 	 */
-	public GroupTarget(Node node, String name, Target[] nodeTargets) throws StructuralException {
+	public GroupTarget(Node node, String name, NTarget[] nodeTargets) throws StructuralException {
 		checkSameDimension(nodeTargets, name);
 
 		myNode = node;
@@ -67,7 +67,7 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 		myNodeTargets = nodeTargets;
 	}
 
-	private static void checkSameDimension(Target[] targets, String name) throws StructuralException {
+	private static void checkSameDimension(NTarget[] targets, String name) throws StructuralException {
 		int dim = targets[0].getDimensions();
 		for (int i = 1; i < targets.length; i++) {
 			if (targets[i].getDimensions() != dim) {
@@ -77,28 +77,28 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getName()
+	 * @see ca.nengo.model.NTarget#getName()
 	 */
     public String getName() {
 		return myName;
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getDimensions()
+	 * @see ca.nengo.model.NTarget#getDimensions()
 	 */
     public int getDimensions() {
 		return myNodeTargets[0].getDimensions();
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#apply(ca.nengo.model.InstantaneousOutput)
+	 * @see ca.nengo.model.NTarget#apply(ca.nengo.model.InstantaneousOutput)
 	 */
     public void apply(InstantaneousOutput values) throws SimulationException {
 		if (values.getDimension() != getDimensions()) {
 			throw new SimulationException("Input to this Termination must have dimension " + getDimensions());
 		}
 
-		for (Target myNodeTarget : myNodeTargets) {
+		for (NTarget myNodeTarget : myNodeTargets) {
 			myNodeTarget.apply(values);
 		}
 	}
@@ -112,11 +112,11 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 
 	/**
 	 * Returns true if more than half of node terminations are modulatory.
-	 * @see ca.nengo.model.Target#getModulatory()
+	 * @see ca.nengo.model.NTarget#getModulatory()
 	 */
     public boolean getModulatory() {
 		int nModulatory = 0;
-		for (Target myNodeTarget : myNodeTargets) {
+		for (NTarget myNodeTarget : myNodeTargets) {
 			if (myNodeTarget.getModulatory()) {
                 nModulatory++;
             }
@@ -127,27 +127,27 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 	/**
 	 * Returns the average.
 	 *
-	 * @see ca.nengo.model.Target#getTau()
+	 * @see ca.nengo.model.NTarget#getTau()
 	 */
     public float getTau() {
 		float sumTau = 0;
-		for (Target myNodeTarget : myNodeTargets) {
+		for (NTarget myNodeTarget : myNodeTargets) {
 			sumTau += myNodeTarget.getTau();
 		}
 		return sumTau / myNodeTargets.length;
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#setModulatory(boolean)
+	 * @see ca.nengo.model.NTarget#setModulatory(boolean)
 	 */
     public void setModulatory(boolean modulatory) {
-		for (Target myNodeTarget : myNodeTargets) {
+		for (NTarget myNodeTarget : myNodeTargets) {
 			myNodeTarget.setModulatory(modulatory);
 		}
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#setTau(float)
+	 * @see ca.nengo.model.NTarget#setTau(float)
 	 */
     public void setTau(float tau) throws StructuralException {
 		float[] oldValues = new float[myNodeTargets.length];
@@ -167,7 +167,7 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getNode()
+	 * @see ca.nengo.model.NTarget#getNode()
 	 */
     public Node getNode() {
 		return myNode;
@@ -176,7 +176,7 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 	/**
 	 * @return Array with all of the underlying node terminations
 	 */
-	public Target[] getNodeTerminations(){
+	public NTarget[] getNodeTerminations(){
 		return myNodeTargets;
 	}
 
@@ -184,7 +184,7 @@ public class GroupTarget implements Target<InstantaneousOutput> {
 	 * @see ca.nengo.model.Resettable#reset(boolean)
 	 */
     public void reset(boolean randomize) {
-		for (Target myNodeTarget : myNodeTargets) {
+		for (NTarget myNodeTarget : myNodeTargets) {
 			myNodeTarget.reset(randomize);
 		}
 	}

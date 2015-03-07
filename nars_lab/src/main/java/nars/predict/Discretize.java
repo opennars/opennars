@@ -157,7 +157,7 @@ public class Discretize {
             System.out.println(t);
             
             if (mode == BeliefInsertion.MemoryInput)
-                nar.memory.inputTask(t);
+                nar.memory.taskInput(t);
             else if (mode == BeliefInsertion.ImmediateProcess)
                 new ImmediateProcess(nar.memory, t).run();
             

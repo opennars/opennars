@@ -158,17 +158,17 @@ public class Default extends NewNAR implements ConceptBuilder {
         n.memory.setLevel(level);
 
         for (Operator o : DefaultOperators.get())
-            n.addPlugin(o);
+            n.on(o);
         for (Operator o : ExampleOperators.get())
-            n.addPlugin(o);
+            n.on(o);
 
 
 
         if (level >= 7) {
-            n.addPlugin(new STMInduction());
+            n.on(new STMInduction());
 
             if (pluginPlanner != null) {
-                n.addPlugin(pluginPlanner);
+                n.on(pluginPlanner);
             }
         }
 
@@ -177,20 +177,20 @@ public class Default extends NewNAR implements ConceptBuilder {
             //n.addPlugin(new Anticipate());      // expect an event
 
             if (internalExperience == Minimal) {
-                n.addPlugin(new InternalExperience());
+                n.on(new InternalExperience());
             } else if (internalExperience == Full) {
-                n.addPlugin(new FullInternalExperience());
-                n.addPlugin(new Abbreviation());
-                n.addPlugin(new Counting());
+                n.on(new FullInternalExperience());
+                n.on(new Abbreviation());
+                n.on(new Counting());
             }
         }
 
 
-        n.addPlugin(new Events.OUT());
+        n.on(new Events.OUT());
 
-        n.addPlugin(new RuntimeNARSettings());
+        n.on(new RuntimeNARSettings());
 
-        n.addPlugin(new Author(n.narsese));
+        n.on(new Author(n.narsese));
 
     }
 
@@ -351,7 +351,7 @@ public class Default extends NewNAR implements ConceptBuilder {
             
             for (String x : filesToLoad) {
                 try {
-                    n.addInput( new File(x) );
+                    n.input(new File(x));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

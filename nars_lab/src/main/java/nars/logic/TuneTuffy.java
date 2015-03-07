@@ -10,7 +10,6 @@ import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.build.Default;
 import nars.core.Events.OUT;
-import nars.io.TextInput;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.Sentence;
@@ -36,7 +35,7 @@ public class TuneTuffy {
             Term t = new Narsese(n).parseTerm(term);
             this.term = t;
             
-            n.addInput(t.toString() + "?");
+            n.input(t.toString() + "?");
         }
 
         @Override
@@ -75,7 +74,7 @@ public class TuneTuffy {
                 
         
         NAR n = new NAR(b);
-        n.addInput(new File("nal/use_cases/tuffy.smokes.nal"));
+        n.input(new File("nal/use_cases/tuffy.smokes.nal"));
         
         //new TextOutput(n, System.out, 0.95f);                
         

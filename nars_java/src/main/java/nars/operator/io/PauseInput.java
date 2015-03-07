@@ -23,6 +23,6 @@ public class PauseInput extends ImmediateOperation {
 
     @Override
     public void execute(Memory m) {
-        m.stepLater(cycles);
+        m.think(cycles);
     }
 }

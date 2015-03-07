@@ -5,7 +5,7 @@ package ca.nengo.model.impl;
 
 import ca.nengo.TestUtil;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 import junit.framework.TestCase;
 
 /**
@@ -18,7 +18,7 @@ public class GroupTargetTest extends TestCase {
 	private static float ourTau = .005f;
 	private static float ourTolerance = 1e-5f;
 	
-	private Target[] myNodeTargets;
+	private NTarget[] myNodeTargets;
 	private GroupTarget myEnsembleTermination;
 	
 	/**
@@ -34,7 +34,7 @@ public class GroupTargetTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		myNodeTargets = new Target[10];
+		myNodeTargets = new NTarget[10];
 		for (int i = 0; i < myNodeTargets.length; i++) {
 			myNodeTargets[i] = new LinearExponentialTarget(null, ""+i, new float[]{1}, ourTau);
 		}

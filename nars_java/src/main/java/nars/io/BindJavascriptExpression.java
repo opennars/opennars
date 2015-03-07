@@ -50,7 +50,7 @@ public class BindJavascriptExpression implements TextReaction {
             }
 
             String newOp = Operator.addPrefixIfMissing(p[0].trim());
-            Operator existing = nar.memory.getOperator(newOp);
+            Operator existing = nar.memory.operator(newOp);
             if (existing != null) {
                 throw new RuntimeException("Unable to bind new expression to existing Operator: " + existing);
             }
@@ -93,12 +93,11 @@ public class BindJavascriptExpression implements TextReaction {
 
                         if (sentence) {
 
-                            nar.addPlugin(new SynchronousSentenceFunction(newOp) {
+                            nar.on(new SynchronousSentenceFunction(newOp) {
 
 
                                 @Override
                                 protected Collection<Sentence> function(Memory memory, Term[] args) {
-
 
 
                                     Object result = evalJS(o, args, memory);
@@ -122,7 +121,7 @@ public class BindJavascriptExpression implements TextReaction {
 
                         } else {
 
-                            nar.addPlugin(new TermFunction(newOp) {
+                            nar.on(new TermFunction(newOp) {
 
 
                                 @Override

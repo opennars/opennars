@@ -49,7 +49,7 @@ public class TemporalParticlePlannerTest {
         
         OutputContainsCondition e = new OutputContainsCondition(n, expected, 5);
                
-        n.addInput(input);
+        n.input(input);
         
         new TextOutput(n, System.out);
 

@@ -44,8 +44,8 @@ public abstract class AbstractNode implements Node {
 
 	private String myName;
 	private SimulationMode myMode;
-	private Map<String, Source> mySources;
-	private Map<String, Target> myTargets;
+	private Map<String, NSource> mySources;
+	private Map<String, NTarget> myTargets;
 	private String myDocumentation;
 	private transient List<VisiblyMutable.Listener> myListeners;
 
@@ -54,7 +54,7 @@ public abstract class AbstractNode implements Node {
 	 * @param sources List of Origins from the Node
 	 * @param targets List of Terminations onto the Node
 	 */
-	public AbstractNode(String name, List<Source> sources, List<Target> targets) {
+	public AbstractNode(String name, List<NSource> sources, List<NTarget> targets) {
         super();
 		myName = name;
 		myMode = SimulationMode.DEFAULT;
@@ -65,29 +65,29 @@ public abstract class AbstractNode implements Node {
         setInputs(targets);
 	}
 
-    public void setOutputs(Source... s) {
+    public void setOutputs(NSource... s) {
         if (mySources == null)
-            mySources = new LinkedHashMap<String, Source>(10);
-        for (Source o : s) {
+            mySources = new LinkedHashMap<String, NSource>(10);
+        for (NSource o : s) {
             mySources.put(o.getName(), o);
         }
     }
-    public void setOutputs(List<Source> t) {
-        setOutputs(t.toArray(new Source[t.size()]));
+    public void setOutputs(List<NSource> t) {
+        setOutputs(t.toArray(new NSource[t.size()]));
     }
 
-    public void setInputs(Target... s) {
+    public void setInputs(NTarget... s) {
         if ((s!=null) && (s.length > 0)) {
             if (myTargets==null)
-                myTargets = new LinkedHashMap<String, Target>(10);
-            for (Target o : s) {
+                myTargets = new LinkedHashMap<String, NTarget>(10);
+            for (NTarget o : s) {
                 if (o!=null)
                     myTargets.put(o.getName(), o);
             }
         }
     }
-    public void setInputs(List<Target> t) {
-        setInputs(t.toArray(new Target[t.size()]));
+    public void setInputs(List<NTarget> t) {
+        setInputs(t.toArray(new NTarget[t.size()]));
     }
 
     public AbstractNode(String name) {
@@ -119,37 +119,37 @@ public abstract class AbstractNode implements Node {
 	/**
 	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getSource(String name) throws StructuralException {
+	public NSource getSource(String name) throws StructuralException {
 		return mySources.get(name);
 	}
 
 	/**
 	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getSources() {
+	public NSource[] getSources() {
         if (mySources==null)
             return emptySourceArray;
-        java.util.Collection<Source> var = mySources.values();
-        return var.toArray(new Source[var.size()]);
+        java.util.Collection<NSource> var = mySources.values();
+        return var.toArray(new NSource[var.size()]);
 	}
 
 	/**
 	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTarget(String name) throws StructuralException {
+	public NTarget getTarget(String name) throws StructuralException {
 		return myTargets.get(name);
 	}
 
-    final static Source[] emptySourceArray = new Source[0];
-    final static Target[] emptyTargetArray = new Target[0];
+    final static NSource[] emptySourceArray = new NSource[0];
+    final static NTarget[] emptyTargetArray = new NTarget[0];
 	/**
 	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTargets() {
+	public NTarget[] getTargets() {
         if (myTargets == null)
             return emptyTargetArray;
-        java.util.Collection<Target> var = myTargets.values();
-        return var.toArray(new Target[var.size()]);
+        java.util.Collection<NTarget> var = myTargets.values();
+        return var.toArray(new NTarget[var.size()]);
 	}
 
     public int getTargetCount() {

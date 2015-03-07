@@ -28,10 +28,10 @@ public class GroupImplTest extends TestCase {
 
 	public void testClone() throws StructuralException, CloneNotSupportedException {
         System.out.println("EnsembleImplTest");
-		MockExpandableNode node1 = new MockExpandableNode("1", new Source[0],
-				new Target[]{new BasicTarget(null, new SimpleLTISystem(1, 1, 1), null, "existing")});
-		MockExpandableNode node2 = new MockExpandableNode("2", new Source[0],
-				new Target[]{new BasicTarget(null, new SimpleLTISystem(1, 1, 1), null, "existing")});
+		MockExpandableNode node1 = new MockExpandableNode("1", new NSource[0],
+				new NTarget[]{new BasicTarget(null, new SimpleLTISystem(1, 1, 1), null, "existing")});
+		MockExpandableNode node2 = new MockExpandableNode("2", new NSource[0],
+				new NTarget[]{new BasicTarget(null, new SimpleLTISystem(1, 1, 1), null, "existing")});
 		GroupImpl ensemble = new GroupImpl("ensemble", new Node[]{node1, node2});
 		ensemble.addTermination("new", MU.uniform(2, 2, 1), .005f, false);
 
@@ -55,15 +55,15 @@ public class GroupImplTest extends TestCase {
 
 		private static final long serialVersionUID = 1L;
 
-		private final Map<String, Target> myExpandedTerminations;
+		private final Map<String, NTarget> myExpandedTerminations;
 
-		public MockExpandableNode(String name, Source[] sources, Target[] targets) {
+		public MockExpandableNode(String name, NSource[] sources, NTarget[] targets) {
 			super(name, Arrays.asList(sources), Arrays.asList(targets));
-			myExpandedTerminations = new LinkedHashMap<String, Target>(10);
+			myExpandedTerminations = new LinkedHashMap<String, NTarget>(10);
 		}
 
-		public Target addTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
-			Target result = new BasicTarget(this, new SimpleLTISystem(1, 1, 1), null, name);
+		public NTarget addTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
+			NTarget result = new BasicTarget(this, new SimpleLTISystem(1, 1, 1), null, name);
 			myExpandedTerminations.put(name, result);
 			return result;
 		}
@@ -72,12 +72,12 @@ public class GroupImplTest extends TestCase {
 			return 1;
 		}
 
-		public Target removeTermination(String name) throws StructuralException {
+		public NTarget removeTermination(String name) throws StructuralException {
 			return myExpandedTerminations.remove(name);
 		}
 
 		@Override
-		public Target getTarget(String name) throws StructuralException {
+		public NTarget getTarget(String name) throws StructuralException {
 			if (myExpandedTerminations.containsKey(name)) {
 				return myExpandedTerminations.get(name);
 			} else {
@@ -86,10 +86,10 @@ public class GroupImplTest extends TestCase {
 		}
 
 		@Override
-		public Target[] getTargets() {
-			Target[] result = new Target[super.getTargets().length + myExpandedTerminations.size()];
+		public NTarget[] getTargets() {
+			NTarget[] result = new NTarget[super.getTargets().length + myExpandedTerminations.size()];
 			int i = 0;
-			for (Target t : myExpandedTerminations.values()) {
+			for (NTarget t : myExpandedTerminations.values()) {
 				result[i++] = t;
 			}
 			System.arraycopy(super.getTargets(), 0, result, i++, super.getTargets().length);

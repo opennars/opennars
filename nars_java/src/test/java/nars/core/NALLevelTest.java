@@ -31,10 +31,10 @@ public class NALLevelTest {
 
         String productSentence = "<(*,a,b) --> c>.";
 
-        n1.addInput(productSentence);
+        n1.input(productSentence);
         n1.run(5);
 
-        n8.addInput(productSentence);
+        n8.input(productSentence);
         n8.run(5);
 
         assertTrue("NAL8 will accept sentence containing a Product", n8Count.getOutputs() >= 1);

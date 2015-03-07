@@ -67,7 +67,7 @@ public interface DecodableGroup extends PlasticGroup, Probeable {
 	 * @throws StructuralException May arise in instantiating the Origin
 	 * @throws SimulationException If there is a problem running the simulation
 	 */
-	public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
+	public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
 			Probe probe, float startTime, float endTime) throws StructuralException, SimulationException;
 
 	/**
@@ -91,8 +91,8 @@ public interface DecodableGroup extends PlasticGroup, Probeable {
 	 * @throws StructuralException May arise in instantiating the Origin
 	 * @throws SimulationException If there is a problem running the simulations
 	 */
-	public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
-			Probe probe, Target target, float[][] evalPoints, float transientTime) throws StructuralException, SimulationException;
+	public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
+			Probe probe, NTarget target, float[][] evalPoints, float transientTime) throws StructuralException, SimulationException;
 
 	/**
 	 * This method can optionally be called after all decoded Origins have been added, in order to free

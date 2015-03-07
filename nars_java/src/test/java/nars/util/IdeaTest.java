@@ -31,9 +31,9 @@ public class IdeaTest {
     
     @Test public void testIdeaCreation() {
         
-        n.addInput("<a <=> b>.");
-        n.addInput("<a <-> b>.");
-        n.addInput("<b --> a>.");
+        n.input("<a <=> b>.");
+        n.input("<a <-> b>.");
+        n.input("<b --> a>.");
         
         n.run(4);
                         
@@ -53,13 +53,13 @@ public class IdeaTest {
         //n.test(2);
         //assertEquals(i.get("[a, b]").getSentenceTypes().toString(), 1, i.get("[a, b]").getSentenceTypes().size());
 
-        n.addInput("<a <-> b>.");
-        n.addInput("<a <=> b>.");
-        n.addInput("<a <=> b>!");
-        n.addInput("<b <=> a>?");
-        n.addInput("<a <-> b>.");
-        n.addInput("<a <-> b>!");
-        n.addInput("<b <-> a>?");
+        n.input("<a <-> b>.");
+        n.input("<a <=> b>.");
+        n.input("<a <=> b>!");
+        n.input("<b <=> a>?");
+        n.input("<a <-> b>.");
+        n.input("<a <-> b>!");
+        n.input("<b <-> a>?");
         
         n.run(12);
 

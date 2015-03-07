@@ -27,7 +27,6 @@ import nars.core.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.output.SwingText;
 import nars.core.Events.OUT;
-import nars.io.TextInput;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -138,7 +137,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
                                     if (!f.isDirectory()) {
                                         try {
-                                            nar.addInput( f );
+                                            nar.input(f);
                                             nar.emit(OUT.class, "Loaded file: " + f.getAbsolutePath());
                                         } catch (IOException ex) {
                                             System.err.println(ex);
@@ -299,7 +298,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         
         public void evaluateSeq(String input) {
             //TODO make sequential evaluation
-            nar.addInput(input);
+            nar.input(input);
             nar.step(1);
         }
 

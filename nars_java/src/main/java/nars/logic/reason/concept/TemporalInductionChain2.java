@@ -75,7 +75,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     private void induct(ConceptFire f, Task task, Sentence taskSentence, Memory memory, Sentence otherBelief) {
         Sentence current, prev;
 
-        if(otherBelief.after(taskSentence, memory.getDuration())) {
+        if(otherBelief.after(taskSentence, memory.duration())) {
             current = otherBelief;
             prev = task.sentence;
         } else {

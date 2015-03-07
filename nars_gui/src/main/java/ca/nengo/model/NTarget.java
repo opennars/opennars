@@ -64,7 +64,7 @@ import java.io.Serializable;
  *
  * @author Bryan Tripp
  */
-public interface Target<V> extends Serializable, Resettable, Cloneable, Supplier<V> {
+public interface NTarget<V> extends Serializable, Resettable, Cloneable, Supplier<V> {
 
 
 
@@ -128,7 +128,7 @@ public interface Target<V> extends Serializable, Resettable, Cloneable, Supplier
 	 * @return Valid clone
 	 * @throws CloneNotSupportedException if clone can't be made
 	 */
-	public Target<V> clone() throws CloneNotSupportedException;
+	public NTarget<V> clone() throws CloneNotSupportedException;
 	
 	/**
 	 * Clone method that changes necessary parameters to point to a new parent,
@@ -137,7 +137,7 @@ public interface Target<V> extends Serializable, Resettable, Cloneable, Supplier
 	 * @return A clone of the termination for the new parent ensemble
 	 * @throws CloneNotSupportedException if clone cannot be made
 	 */
-	public Target<V> clone(Node node) throws CloneNotSupportedException;
+	public NTarget<V> clone(Node node) throws CloneNotSupportedException;
 
 
 

@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 public class StringView extends AbstractNode implements UIBuilder {
 
-    final Target<InstantaneousOutput> input = new ObjectTarget(this, "input",Object.class);
+    final NTarget<InstantaneousOutput> input = new ObjectTarget(this, "input",Object.class);
 
     private ToStringUI ui;
     String label = "";
@@ -107,7 +107,7 @@ public class StringView extends AbstractNode implements UIBuilder {
 
 
 
-    private Target getInput() {
+    private NTarget getInput() {
         return input;
     }
 

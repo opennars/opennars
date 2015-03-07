@@ -89,7 +89,7 @@ public class PlasticGroupImpl extends GroupImpl implements TaskSpawner {
         myLearning = learning;
     }
 
-    protected static boolean isPopulationPlastic(Target[] targets) {
+    protected static boolean isPopulationPlastic(NTarget[] targets) {
         boolean result = true;
 
         for (int i=0; i < targets.length; i++) {
@@ -136,7 +136,7 @@ public class PlasticGroupImpl extends GroupImpl implements TaskSpawner {
         if (myLastPlasticityTime < endTime) {
             for (PlasticGroupTarget pet : myPlasticEnsembleTerminations.values()) {
                 try {
-                    Source<InstantaneousOutput> source = this.getSource(pet.getOriginName());
+                    NSource<InstantaneousOutput> source = this.getSource(pet.getOriginName());
                     pet.setOriginState(source.getName(), source.get(), endTime);
                     pet.setTerminationState(endTime);
 
@@ -177,7 +177,7 @@ public class PlasticGroupImpl extends GroupImpl implements TaskSpawner {
      * @see ca.nengo.model.Node#getTarget(java.lang.String)
      */
     @Override
-    public Target getTarget(String name) throws StructuralException {
+    public NTarget getTarget(String name) throws StructuralException {
         return myPlasticEnsembleTerminations.containsKey(name) ?
                 myPlasticEnsembleTerminations.get(name) : super.getTarget(name);
     }
@@ -186,15 +186,15 @@ public class PlasticGroupImpl extends GroupImpl implements TaskSpawner {
      * @see ca.nengo.model.Group#getTargets()
      */
     @Override
-    public Target[] getTargets() {
-        ArrayList<Target> result = new ArrayList<Target>(10);
-        Target[] composites = super.getTargets();
+    public NTarget[] getTargets() {
+        ArrayList<NTarget> result = new ArrayList<NTarget>(10);
+        NTarget[] composites = super.getTargets();
         Collections.addAll(result, composites);
 
-        for (Target t : myPlasticEnsembleTerminations.values()) {
+        for (NTarget t : myPlasticEnsembleTerminations.values()) {
             result.add(t);
         }
-        return result.toArray(new Target[result.size()]);
+        return result.toArray(new NTarget[result.size()]);
     }
 
     /**

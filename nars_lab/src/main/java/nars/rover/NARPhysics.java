@@ -50,7 +50,7 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
     @Override
     public void cycle() {
         
-        nar.memory.queueOtherTask(this);
+        nar.memory.taskNext(this);
         
 //        if (phy!=null) {
 //            

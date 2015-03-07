@@ -486,7 +486,7 @@ public class OWLInput extends PrintWriterInput {
         new TextOutput(n, System.out);
 
         //new NARSwing(n);
-        n.addInput(new OWLInput(n.textPerception, "/home/me/Downloads/schemaorg.owl"));
+        n.input(new OWLInput(n.textPerception, "/home/me/Downloads/schemaorg.owl"));
 
     }
 }

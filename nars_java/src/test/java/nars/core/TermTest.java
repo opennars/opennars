@@ -178,16 +178,16 @@ public class TermTest {
        Term a1 = np.parseTerm("a");
        assertTrue(a.equals(a1));
        
-       n.addInput(statement1);       
+       n.input(statement1);
        n.step(4);
               
-       n.addInput(" <a  --> b>.  ");
+       n.input(" <a  --> b>.  ");
        n.step(1);
-       n.addInput(" <a--> b>.  ");
+       n.input(" <a--> b>.  ");
        n.step(1);
        
        String statement2 = "<a --> c>.";
-       n.addInput(statement2);
+       n.input(statement2);
        n.step(4);
        
        Term a2 = np.parseTerm("a");

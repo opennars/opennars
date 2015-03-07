@@ -5,13 +5,12 @@ import reactor.function.Supplier;
 
 /**
  * An attached Input supplier and Attention Allocation State
- * @author me
  */
-abstract public class InPort<Y> implements Supplier<Y> {
+abstract public class Source<Y> implements Supplier<Y> {
 
     private float attention;
 
-    public InPort(float initialAttention) {
+    public Source(float initialAttention) {
         super();
         this.attention = initialAttention;
     }

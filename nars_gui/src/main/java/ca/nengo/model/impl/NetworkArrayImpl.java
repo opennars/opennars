@@ -64,7 +64,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 	private final int[] myNodeDimensions;
 	
 	private NEFGroupImpl[] myNodes;
-	private Map<String, Source<InstantaneousOutput>> myOrigins;
+	private Map<String, NSource<InstantaneousOutput>> myOrigins;
 	private int myNeurons;
 
 	
@@ -106,7 +106,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		
 		myNeurons = 0;
 		
-		myOrigins = new HashMap<String, Source<InstantaneousOutput>>(10);
+		myOrigins = new HashMap<String, NSource<InstantaneousOutput>>(10);
 		
 		for (int i = 0; i < nodes.length; i++) {
 			super.addNode(nodes[i]);
@@ -125,14 +125,14 @@ public class NetworkArrayImpl extends NetworkImpl {
      * @throws StructuralException
 	 */
 	public void createEnsembleOrigin(String name) throws StructuralException {
-		Source[] sources = new Source[myNumNodes];
+		NSource[] sources = new NSource[myNumNodes];
 		for (int i = 0; i < myNumNodes; i++) {
 			sources[i] = myNodes[i].getSource(name);
 		}
 		createEnsembleOrigin(name, sources);
 	}
 	
-	private void createEnsembleOrigin(String name, Source[] sources) {
+	private void createEnsembleOrigin(String name, NSource[] sources) {
 		myOrigins.put(name, new ArraySource(this, name, sources));
 		this.exposeOrigin(this.myOrigins.get(name), name);
 	}
@@ -157,7 +157,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 	 * @return Origin that encapsulates all of the internal node origins
 	 * @throws StructuralException
 	 */
-	public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin) throws StructuralException {
+	public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin) throws StructuralException {
 		DecodedSource[] origins = new DecodedSource[myNumNodes];
 		for (int i = 0; i < myNumNodes; i++) {
 			origins[i] = (DecodedSource) myNodes[i].addDecodedOrigin(name,  functions,  nodeOrigin);
@@ -180,7 +180,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 	 * @return Origin that encapsulates all of the internal node origins
 	 * @throws StructuralException
 	 */
-	public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin, boolean splitFunctions) throws StructuralException {
+	public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin, boolean splitFunctions) throws StructuralException {
 		if(!splitFunctions)
 			return addDecodedOrigin(name, functions, nodeOrigin);
 		
@@ -216,14 +216,14 @@ public class NetworkArrayImpl extends NetworkImpl {
 	 * @return Termination that encapsulates all of the internal node terminations
 	 * @throws StructuralException
 	 */
-	public Target addTermination(String name, float[][] matrix, float tauPSC) throws StructuralException {
+	public NTarget addTermination(String name, float[][] matrix, float tauPSC) throws StructuralException {
 		return addTermination(name, matrix, tauPSC, false);
 	}
 	
-	public Target addTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
+	public NTarget addTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
 		assert weights.length == myNeurons;
 		
-		Target[] targets = new Target[myNumNodes];
+		NTarget[] targets = new NTarget[myNumNodes];
 		
 		for (int i = 0; i < myNumNodes; i++) {
 			int nodeNeuronCount = myNodes[i].getNeurons();
@@ -254,14 +254,14 @@ public class NetworkArrayImpl extends NetworkImpl {
 	 * @return Termination that encapsulates all of the internal node terminations
 	 * @throws StructuralException
 	 */
-	public Target addTermination(String name, float[][][] matrix, float tauPSC) throws StructuralException {
+	public NTarget addTermination(String name, float[][][] matrix, float tauPSC) throws StructuralException {
 		return addTermination(name, matrix, tauPSC, false);
 	}
 	
-	public Target addTermination(String name, float[][][] weights, float tauPSC, boolean modulatory) throws StructuralException {
+	public NTarget addTermination(String name, float[][][] weights, float tauPSC, boolean modulatory) throws StructuralException {
 		assert weights.length == myNumNodes && weights[0].length == myNeurons;
 		
-		Target[] targets = new Target[myNumNodes];
+		NTarget[] targets = new NTarget[myNumNodes];
 		
 		for (int i = 0; i < myNumNodes; i++) {
 			assert weights[i][0].length == myNodeDimensions[i];
@@ -289,14 +289,14 @@ public class NetworkArrayImpl extends NetworkImpl {
 	 * @return Termination that encapsulates all of the internal node terminations
 	 * @throws StructuralException
 	 */
-	public Target addDecodedTermination(String name, float[][] matrix, float tauPSC) throws StructuralException {
+	public NTarget addDecodedTermination(String name, float[][] matrix, float tauPSC) throws StructuralException {
 		return addDecodedTermination(name, matrix, tauPSC, false);
 	}
 	
-	public Target addDecodedTermination(String name, float[][] matrix, float tauPSC, boolean modulatory) throws StructuralException {
+	public NTarget addDecodedTermination(String name, float[][] matrix, float tauPSC, boolean modulatory) throws StructuralException {
 		assert matrix.length == myDimension;
 		
-		Target[] targets = new Target[myNumNodes];
+		NTarget[] targets = new NTarget[myNumNodes];
 		
 		int dimCount = 0;
 		
@@ -329,33 +329,33 @@ public class NetworkArrayImpl extends NetworkImpl {
 	 * 
 	 * @return the new termination
 	 */
-	public Target addIndexTermination(String name, float[][] matrix, float tauPSC) throws StructuralException {
+	public NTarget addIndexTermination(String name, float[][] matrix, float tauPSC) throws StructuralException {
 		return addIndexTermination(name, matrix, tauPSC, false, null);
 	}
 	
 
-	public Target addIndexTermination(String name, float[][] matrix, float tauPSC, boolean isModulatory) throws StructuralException {
+	public NTarget addIndexTermination(String name, float[][] matrix, float tauPSC, boolean isModulatory) throws StructuralException {
 		return addIndexTermination(name, matrix, tauPSC, isModulatory, null);
 	}
 		
-	public Target addIndexTermination(String name, float[][] matrix, float tauPSC, int[] index) throws StructuralException {
+	public NTarget addIndexTermination(String name, float[][] matrix, float tauPSC, int[] index) throws StructuralException {
 		return addIndexTermination(name, matrix, tauPSC, false, index);
 	}
 	
-	public Target addIndexTermination(String name, float[][] matrix, float tauPSC, boolean isModulatory, int[] index) throws StructuralException {
+	public NTarget addIndexTermination(String name, float[][] matrix, float tauPSC, boolean isModulatory, int[] index) throws StructuralException {
 		if(index == null){
 			index = new int[myNumNodes];
 			for(int i=0; i < index.length; i++)
 				index[i] = i;
 		}
 		
-		ArrayList<Target> targets = new ArrayList<Target>();
+		ArrayList<NTarget> targets = new ArrayList<NTarget>();
 
 		int count=0;
 		for(int i=0; i < myNumNodes; i++) {
 			for(int j=0; j < index.length; j++) {
 				if(index[j] == i) {
-					Target t = myNodes[i].addTermination(name, MU.copy(matrix,count*myNodes[i].getNeurons(),0,myNodes[i].getNeurons(),-1),
+					NTarget t = myNodes[i].addTermination(name, MU.copy(matrix,count*myNodes[i].getNeurons(),0,myNodes[i].getNeurons(),-1),
 							tauPSC, isModulatory);
 					count++;
 					targets.add(t);
@@ -364,7 +364,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 			}
 		}
 		
-		GroupTarget term = new GroupTarget(this, name, targets.toArray(new Target[targets.size()]));
+		GroupTarget term = new GroupTarget(this, name, targets.toArray(new NTarget[targets.size()]));
 		exposeTermination(term,name);
 		return getTarget(name);
 	}
@@ -393,10 +393,10 @@ public class NetworkArrayImpl extends NetworkImpl {
 	/**
 	 * @see ca.nengo.model.Network#getTargets()
 	 */
-	public Target[] getTargets() {
-		Target[] targets = super.getTargets();
-		ArrayList<Target> decodedTargets = new ArrayList<Target>();
-		ArrayList<Target> nonDecodedTargets = new ArrayList<Target>();
+	public NTarget[] getTargets() {
+		NTarget[] targets = super.getTargets();
+		ArrayList<NTarget> decodedTargets = new ArrayList<NTarget>();
+		ArrayList<NTarget> nonDecodedTargets = new ArrayList<NTarget>();
 		GroupTarget baseTermination;
 		for(int i=0; i < targets.length; i++) {
 			if(targets[i] instanceof TargetWrapper)
@@ -404,7 +404,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 			else
 				baseTermination = (GroupTarget) targets[i];
 			
-			Target[] nodeTargets = baseTermination.getNodeTerminations();
+			NTarget[] nodeTargets = baseTermination.getNodeTerminations();
 			if(nodeTargets != null) {
 				if(nodeTargets[0] instanceof DecodedTarget)
 					decodedTargets.add(targets[i]);
@@ -414,11 +414,11 @@ public class NetworkArrayImpl extends NetworkImpl {
 		}
 		nonDecodedTargets.addAll(decodedTargets);
 		
-		return nonDecodedTargets.toArray(new Target[nonDecodedTargets.size()]);
+		return nonDecodedTargets.toArray(new NTarget[nonDecodedTargets.size()]);
 		
 	}
 	
-	public Target addPlasticTermination(String name, float[][] weights, float tauPSC, float[][] decoders) throws StructuralException {
+	public NTarget addPlasticTermination(String name, float[][] weights, float tauPSC, float[][] decoders) throws StructuralException {
 		return addPlasticTermination(name, weights, tauPSC, decoders, null);
 	}
 	
@@ -434,10 +434,10 @@ public class NetworkArrayImpl extends NetworkImpl {
 	 * @return Termination that encapsulates all of the internal node terminations
 	 * @throws StructuralException
 	 */
-	public Target addPlasticTermination(String name, float[][] weights, float tauPSC, float[][] decoders, WeightFunc weightFunc) throws StructuralException {
+	public NTarget addPlasticTermination(String name, float[][] weights, float tauPSC, float[][] decoders, WeightFunc weightFunc) throws StructuralException {
 		assert weights.length == myNeurons;
 		
-		Target[] targets = new Target[myNumNodes];
+		NTarget[] targets = new NTarget[myNumNodes];
 		int d=0;
 		
 		int nodeDs = myNodes[0].getDimension();
@@ -595,12 +595,12 @@ public class NetworkArrayImpl extends NetworkImpl {
 			}
 			
 			// Clone array origins and ensemble terminations
-			for (Source exposedSource : getSources()) {
-				Source clonedSource = ((SourceWrapper) exposedSource).getBaseOrigin().clone(result);
+			for (NSource exposedSource : getSources()) {
+				NSource clonedSource = ((SourceWrapper) exposedSource).getBaseOrigin().clone(result);
 				result.exposeOrigin(clonedSource, exposedSource.getName());
 			}
-			for (Target exposedTarget : getTargets()) {
-				Target clonedTarget = ((TargetWrapper) exposedTarget).getBaseTermination().clone(result);
+			for (NTarget exposedTarget : getTargets()) {
+				NTarget clonedTarget = ((TargetWrapper) exposedTarget).getBaseTermination().clone(result);
 				result.exposeTermination(clonedTarget, exposedTarget.getName());
 			}
 			
@@ -626,10 +626,10 @@ public class NetworkArrayImpl extends NetworkImpl {
 		
 		private final String myName;
 		private final NetworkArrayImpl myParent;
-		private Source<InstantaneousOutput>[] mySources;
+		private NSource<InstantaneousOutput>[] mySources;
 		private int myDimensions;
 
-		public ArraySource(NetworkArrayImpl parent, String name, Source[] sources) {
+		public ArraySource(NetworkArrayImpl parent, String name, NSource[] sources) {
 			super(parent, name);
             myParent = parent;
 			myName = name;
@@ -647,7 +647,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 			return myDimensions;
 		}
 		
-		public Source[] getNodeOrigins(){
+		public NSource[] getNodeOrigins(){
 			return mySources;
 		}
 		
@@ -801,10 +801,10 @@ public class NetworkArrayImpl extends NetworkImpl {
 		
 		private final String myName;
 		private final NetworkArrayImpl myParent;
-		private Source<InstantaneousOutput>[] mySources;
+		private NSource<InstantaneousOutput>[] mySources;
 		private final int myDimensions;
 
-		public ArraySummedSource(NetworkArrayImpl parent, String name, Source[] sources) {
+		public ArraySummedSource(NetworkArrayImpl parent, String name, NSource[] sources) {
             super(parent, name);
 			myParent = parent;
 			myName = name;
@@ -820,7 +820,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 			return myDimensions;
 		}
 		
-		public Source[] getNodeOrigins(){
+		public NSource[] getNodeOrigins(){
 			return mySources;
 		}
 		

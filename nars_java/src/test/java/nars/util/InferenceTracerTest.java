@@ -19,7 +19,7 @@ public class InferenceTracerTest {
         
         NARTrace tracer = new NARTrace(n);
         
-        n.addInput("<a --> b>.");
+        n.input("<a --> b>.");
         
         n.run(2);
         
@@ -39,19 +39,19 @@ public class InferenceTracerTest {
         
         NARTrace tracer = new NARTrace(n);
         
-        n.addInput("<a --> b>.");
+        n.input("<a --> b>.");
         
         n.step(1);
         
-        n.addInput("<a <-> b>.");
+        n.input("<a <-> b>.");
         
         n.step(1);
         
-        n.addInput("<b --> c>.");
+        n.input("<b --> c>.");
         
         n.step(1);
         
-        n.addInput("<(*,a,b) --> d>.");        
+        n.input("<(*,a,b) --> d>.");
         
         n.step(1);
         

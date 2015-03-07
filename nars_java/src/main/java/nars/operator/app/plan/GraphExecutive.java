@@ -758,7 +758,7 @@ public class GraphExecutive {
         
         Task newTask = plan.planTask(c, task, target, punctuation);
 
-        memory.inputTask(newTask);
+        memory.taskInput(newTask);
         
         //it comes through temporal induction with correct truth value anyway
         //nal.derivedTask(newTaskAt, false, true, null, null);  //and if this is a implication then wrong

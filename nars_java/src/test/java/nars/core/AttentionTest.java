@@ -26,7 +26,7 @@ public class AttentionTest {
         int numConcepts = 32;
         NAR n = new NAR(new Default());
         for (int i = 0; i < numConcepts; i++)
-            n.addInput("<x" + i + " <-> x" + (i+1) + ">.");
+            n.input("<x" + i + " <-> x" + (i + 1) + ">.");
         
         n.run(100);
         
@@ -36,7 +36,7 @@ public class AttentionTest {
         Set<Concept> uniqueconcepts = new HashSet();
         
         for (int i = 0; i < numConcepts; i++) {
-            Concept s = n.memory.sampleNextConcept();
+            Concept s = n.memory.conceptNext();
             uniqueconcepts.add(s);
         }
 

@@ -15,7 +15,7 @@ public class NARGraphTest {
 
         NAR n = new NAR(new Default());
         
-        n.addInput("<a --> b>.");
+        n.input("<a --> b>.");
         
         n.run(2);
         

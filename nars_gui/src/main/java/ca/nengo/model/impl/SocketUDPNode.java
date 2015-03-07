@@ -284,7 +284,7 @@ public class SocketUDPNode implements Node, Resettable {
 	/**
 	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
-	public Source getSource(String name) throws StructuralException {
+	public NSource getSource(String name) throws StructuralException {
 		if (myOrigin != null && myOrigin.getName().equals(name)) {
 			return myOrigin;
 		} else {
@@ -295,16 +295,16 @@ public class SocketUDPNode implements Node, Resettable {
 	/**
 	 * @see ca.nengo.model.Node#getSources()
 	 */
-	public Source[] getSources() {
+	public NSource[] getSources() {
 		if (myOrigin != null)
-			return new Source[]{myOrigin};
+			return new NSource[]{myOrigin};
 		else
-			return new Source[0];
+			return new NSource[0];
 	}
 
-	public Target addTermination(String name, float[][] transform)
+	public NTarget addTermination(String name, float[][] transform)
 			throws StructuralException {
-		for (Target t : getTargets()) {
+		for (NTarget t : getTargets()) {
 			if (t.getName().equals(name))
 				throw new StructuralException("This node already contains a termination named " + name);
 		}
@@ -317,7 +317,7 @@ public class SocketUDPNode implements Node, Resettable {
 	/**
 	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTarget(String name) throws StructuralException {
+	public NTarget getTarget(String name) throws StructuralException {
 		if (myTerminations.containsKey(name)) {
 			return myTerminations.get(name);
 		} else {
@@ -328,7 +328,7 @@ public class SocketUDPNode implements Node, Resettable {
 	/**
 	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTargets() {
+	public NTarget[] getTargets() {
         Collection<ObjectTarget<InstantaneousOutput>> var = myTerminations.values();
         return var.toArray(new ObjectTarget[var.size()]);
 	}

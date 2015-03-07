@@ -108,7 +108,7 @@ public class TestNARNode extends Nengrow {
         protected void initOperators() {
 
             //access to world objects
-            nar.addPlugin(new Operator("^object") {
+            nar.on(new Operator("^object") {
 
                 @Override
                 protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
@@ -129,7 +129,7 @@ public class TestNARNode extends Nengrow {
 
             });*/
 
-            nar.addPlugin(new TermFunction("^see") {
+            nar.on(new TermFunction("^see") {
 
 
                 @Override
@@ -140,8 +140,7 @@ public class TestNARNode extends Nengrow {
 
                     if (x.length == 0) {
                         intersects = ui.intersecting(null);
-                    }
-                    else {
+                    } else {
                         Term t = x[0];
                         String st = t.toString();
 
@@ -149,10 +148,18 @@ public class TestNARNode extends Nengrow {
                         double dx = 0, dy = 0;
                         double heading = Double.NaN;
                         switch (st) {
-                            case "front":  heading = getHeading(); break;
-                            case "back":  heading = -getHeading(); break;
-                            case "left":  heading = getHeading() - Math.PI/2; break;
-                            case "right":  heading = getHeading() + Math.PI/2; break;
+                            case "front":
+                                heading = getHeading();
+                                break;
+                            case "back":
+                                heading = -getHeading();
+                                break;
+                            case "left":
+                                heading = getHeading() - Math.PI / 2;
+                                break;
+                            case "right":
+                                heading = getHeading() + Math.PI / 2;
+                                break;
                             default:
                                 dx = dy = 0;
                                 break;
@@ -186,7 +193,7 @@ public class TestNARNode extends Nengrow {
 
             });
 
-            nar.addPlugin(new Operator("^move") {
+            nar.on(new Operator("^move") {
 
                 @Override
                 protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
@@ -200,8 +207,12 @@ public class TestNARNode extends Nengrow {
                         error = false;
                         double d = 0;
                         switch (ps) {
-                            case "front": d = +dx; break;
-                            case "back": d = -dx; break;
+                            case "front":
+                                d = +dx;
+                                break;
+                            case "back":
+                                d = -dx;
+                                break;
                             default:
                                 error = true;
                         }
@@ -213,11 +224,11 @@ public class TestNARNode extends Nengrow {
                     return null;
                 }
             });
-            nar.addPlugin(new Operator("^turn") {
+            nar.on(new Operator("^turn") {
 
                 @Override
                 protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-                    double dA = Math.PI/4; //radians
+                    double dA = Math.PI / 4; //radians
 
                     boolean error = true;
                     if (args.length > 1) {
@@ -226,12 +237,24 @@ public class TestNARNode extends Nengrow {
 
                         error = false;
                         switch (ps) {
-                            case "left": rotate(-dA); break;
-                            case "right": rotate(+dA); break;
-                            case "north": heading(-Math.PI / 2); break;
-                            case "south": heading(Math.PI / 2); break;
-                            case "east": heading(0); break;
-                            case "west": heading(2 * Math.PI / 2); break;
+                            case "left":
+                                rotate(-dA);
+                                break;
+                            case "right":
+                                rotate(+dA);
+                                break;
+                            case "north":
+                                heading(-Math.PI / 2);
+                                break;
+                            case "south":
+                                heading(Math.PI / 2);
+                                break;
+                            case "east":
+                                heading(0);
+                                break;
+                            case "west":
+                                heading(2 * Math.PI / 2);
+                                break;
                             default:
                                 error = true;
                         }
@@ -245,7 +268,7 @@ public class TestNARNode extends Nengrow {
                 }
             });
 
-            nar.addInput(
+            nar.input(
                     "see(#objects)! \n 10\n see(front, #objects)!\n 20 \n move(front)! \n" +
                             " 20 \n" +
                             " move(back)! \n 20 \n move(left)! \n 20 \n 20 \n turn(left)! \n 20 \n turn(right)!\n" +

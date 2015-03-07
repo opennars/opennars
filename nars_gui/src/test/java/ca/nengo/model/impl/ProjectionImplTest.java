@@ -22,8 +22,8 @@ import junit.framework.TestCase;
 public class ProjectionImplTest extends TestCase {
 
 	private Projection myProjection;
-	private Source mySource;
-	private Target myTarget;
+	private NSource mySource;
+	private NTarget myTarget;
 
 	@Override
     protected void setUp() throws Exception {
@@ -202,7 +202,7 @@ public class ProjectionImplTest extends TestCase {
 		return netWeights;
 	}
 
-	public static class MockSource implements Source<InstantaneousOutput> {
+	public static class MockSource implements NSource<InstantaneousOutput> {
 
 		private static final long serialVersionUID = 1L;
 
@@ -252,16 +252,16 @@ public class ProjectionImplTest extends TestCase {
 		}
 
 		@Override
-		public Source clone() throws CloneNotSupportedException {
-			return (Source) super.clone();
+		public NSource clone() throws CloneNotSupportedException {
+			return (NSource) super.clone();
 		}
 		
-		public Source clone(Node node) throws CloneNotSupportedException {
+		public NSource clone(Node node) throws CloneNotSupportedException {
 			return this.clone();
 		}
 	}
 
-	public static class MockTarget implements Target<InstantaneousOutput> {
+	public static class MockTarget implements NTarget<InstantaneousOutput> {
 
 		private static final long serialVersionUID = 1L;
 

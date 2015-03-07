@@ -54,11 +54,12 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         });
         
         arm = getModel();
-        nar.addPlugin(new NullOperator("^joint") {
-            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        nar.on(new NullOperator("^joint") {
+            @Override
+            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
 
                 if ((autonomous) || (operation.getTask().isInput())) {
-                    
+
 
                     String as = args[1].toString();
 
@@ -67,26 +68,26 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
                     switch (args[0].toString()) {
                         case "shoulder":
                             float a = shoulderAngle;
-                            
-                            if (as.equals("left")) a-=dA;
-                            else if (as.equals("right")) a+=dA;
+
+                            if (as.equals("left")) a -= dA;
+                            else if (as.equals("right")) a += dA;
                             else if (as.startsWith("a")) {
                                 int i = Integer.parseInt(as.substring(1));
                                 double radians = Math.toRadians(i);
                                 a = (float) radians;
                             }
                             forceMoveShoulder(false, a);
-                            
+
                             break;
                         case "elbow":
-                            if (args[1].toString().equals("left")) elbowAngle-=dA;
-                            else if (args[1].toString().equals("right")) elbowAngle+=dA;
+                            if (args[1].toString().equals("left")) elbowAngle -= dA;
+                            else if (args[1].toString().equals("right")) elbowAngle += dA;
                             if (elbowAngle < -elbowRange) elbowAngle = -elbowRange;
                             if (elbowAngle > elbowRange) elbowAngle = elbowRange;
-                            break;                        
+                            break;
                     }
                 }
-                
+
                 return super.execute(operation, args, memory);
             }
         });
@@ -99,7 +100,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     public void forceMoveShoulder(boolean addInput, float angle) {
         int a = (int)angle;
         if (addInput)
-            nar.addInput("(^joint,shoulder,a" + a + ")!");
+            nar.input("(^joint,shoulder,a" + a + ")!");
         
         shoulderAngle = angle;
         if (shoulderAngle < -shoulderRange) shoulderAngle = -shoulderRange;

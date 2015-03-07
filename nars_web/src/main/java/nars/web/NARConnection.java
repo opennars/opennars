@@ -29,7 +29,7 @@ abstract public class NARConnection implements LineOutput {
     }
 
     public void read(final String message) {
-        nar.addInput(message);
+        nar.input(message);
                 
         if (!running)
             resume();

@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManage
  *
  * @author Bryan Tripp
  */
-public class BasicSource implements Source<InstantaneousOutput>, Noise.Noisy, Resettable, Configurable {
+public class BasicSource implements NSource<InstantaneousOutput>, Noise.Noisy, Resettable, Configurable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -137,7 +137,7 @@ public class BasicSource implements Source<InstantaneousOutput>, Noise.Noisy, Re
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getDimensions()
+	 * @see ca.nengo.model.NSource#getDimensions()
 	 */
 	public int getDimensions() {
 		return myDimension;
@@ -155,7 +155,7 @@ public class BasicSource implements Source<InstantaneousOutput>, Noise.Noisy, Re
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getName()
+	 * @see ca.nengo.model.NSource#getName()
 	 */
 	public String getName() {
 		return myName;
@@ -183,7 +183,7 @@ public class BasicSource implements Source<InstantaneousOutput>, Noise.Noisy, Re
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#get()
+	 * @see ca.nengo.model.NSource#get()
 	 */
 	public InstantaneousOutput get()  {
 		return myValues;
@@ -210,7 +210,7 @@ public class BasicSource implements Source<InstantaneousOutput>, Noise.Noisy, Re
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getNode()
+	 * @see ca.nengo.model.NSource#getNode()
 	 */
 	public Node getNode() {
 		return myNode;

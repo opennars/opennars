@@ -108,7 +108,7 @@ public class Rover2 extends PhysicsModel {
             @Override
             public void cycle() {
                 super.cycle();
-                nar.memory.addSimulationTime(1);
+                nar.memory.timeSimulationAdd(1);
             }
 
 
@@ -311,20 +311,20 @@ public class Rover2 extends PhysicsModel {
 
     protected void addAxioms() {
 
-        nar.addInput("<{left,right,forward,reverse} --> direction>.");
-        nar.addInput("<{Wall,Empty,Food} --> material>.");
-        nar.addInput("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
+        nar.input("<{left,right,forward,reverse} --> direction>.");
+        nar.input("<{Wall,Empty,Food} --> material>.");
+        nar.input("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
 
-        nar.addInput("<0 <-> x>. %0.60;0.60%");
-        nar.addInput("<x <-> xx>. %0.60;0.60%");
-        nar.addInput("<xx <-> xxx>. %0.60;0.60%");
-        nar.addInput("<xxx <-> xxxx>. %0.60;0.60%");
-        nar.addInput("<xxxx <-> xxxxx>. %0.60;0.60%");
-        nar.addInput("<xxxxx <-> xxxxxx>. %0.60;0.60%");
-        nar.addInput("<xxxxxx <-> xxxxxxx>. %0.60;0.60%");
-        nar.addInput("<xxxxxxx <-> xxxxxxxxx>. %0.60;0.60%");
-        nar.addInput("<xxxxxxxx <-> xxxxxxxxxx>. %0.60;0.60%");
-        nar.addInput("<0 <-> xxxxxxxxx>. %0.00;0.90%");
+        nar.input("<0 <-> x>. %0.60;0.60%");
+        nar.input("<x <-> xx>. %0.60;0.60%");
+        nar.input("<xx <-> xxx>. %0.60;0.60%");
+        nar.input("<xxx <-> xxxx>. %0.60;0.60%");
+        nar.input("<xxxx <-> xxxxx>. %0.60;0.60%");
+        nar.input("<xxxxx <-> xxxxxx>. %0.60;0.60%");
+        nar.input("<xxxxxx <-> xxxxxxx>. %0.60;0.60%");
+        nar.input("<xxxxxxx <-> xxxxxxxxx>. %0.60;0.60%");
+        nar.input("<xxxxxxxx <-> xxxxxxxxxx>. %0.60;0.60%");
+        nar.input("<0 <-> xxxxxxxxx>. %0.00;0.90%");
 
     }
 
@@ -339,15 +339,15 @@ public class Rover2 extends PhysicsModel {
 
                 nar.goal(0.95f, 0.9f, "<goal --> Food>", 1.00f, 0.99f);
 
-                nar.addInput("<goal --> Food>! %1.00;0.99%");
-                nar.addInput("<goal --> stop>! %0.00;0.99%");
+                nar.input("<goal --> Food>! %1.00;0.99%");
+                nar.input("<goal --> stop>! %0.00;0.99%");
                 //nar.addInput("Wall! %0.00;0.50%");
-                nar.addInput("<goal --> feel>! %1.00;0.70%");
+                nar.input("<goal --> feel>! %1.00;0.70%");
             } else if (mission == 1) {
                 //rest
                 curiosity = 0;
-                nar.addInput("<goal --> stop>! %1.00;0.99%");
-                nar.addInput("<goal --> Food>! %0.00;0.99%");
+                nar.input("<goal --> stop>! %1.00;0.99%");
+                nar.input("<goal --> Food>! %0.00;0.99%");
             }
         }
         catch (Exception e) {
@@ -381,7 +381,7 @@ public class Rover2 extends PhysicsModel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                nar.addInput(command);
+                nar.input(command);
             }
 
         }
@@ -448,11 +448,11 @@ public class Rover2 extends PhysicsModel {
 
     protected void randomAction() {
         int candid = (int) (Math.random() * randomActions.size());
-        nar.addInput(randomActions.get(candid));
+        nar.input(randomActions.get(candid));
     }
 
     protected void addOperators() {
-        nar.addPlugin(new NullOperator("^motor") {
+        nar.on(new NullOperator("^motor") {
 
             @Override
             protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
@@ -462,13 +462,13 @@ public class Rover2 extends PhysicsModel {
                 float priority = operation.getTask().budget.getPriority();
 
                 String command = "";
-                if (args.length == 1+1) {
+                if (args.length == 1 + 1) {
                     command = t1.name().toString();
                 }
-                if (args.length == 2+1) {
+                if (args.length == 2 + 1) {
                     Term t2 = args[1];
                     command = t1.name().toString() + "," + t2.name().toString();
-                } else if (args.length == 3+1) {
+                } else if (args.length == 3 + 1) {
                     Term t2 = args[1];
                     Term t3 = args[2];
                     command = t1.name().toString() + "," + t2.name().toString() + "," + t3.name().toString();

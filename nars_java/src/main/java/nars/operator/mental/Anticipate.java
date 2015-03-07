@@ -181,7 +181,7 @@ public class Anticipate extends AbstractPlugin implements Mental {
 
         if (anticipations.isEmpty()) return;
 
-        int dur = nal.memory.getDuration();
+        int dur = nal.memory.duration();
 
         int news = newTaskTerms.size(), dids = 0, didnts =0, expireds = 0;
 

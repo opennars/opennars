@@ -130,7 +130,7 @@ public class ALIFSpikeGeneratorTest extends TestCase {
 	public void testAdaptation() throws StructuralException, SimulationException {
 		NetworkImpl network = new NetworkImpl();
 		LinearSynapticIntegrator integrator = new LinearSynapticIntegrator(.001f, Units.ACU);
-		Target t = integrator.addTermination("input", new float[]{1}, .005f, false);
+		NTarget t = integrator.addTermination("input", new float[]{1}, .005f, false);
 		ALIFSpikeGenerator generator = new ALIFSpikeGenerator(.0005f, .02f, .2f, .05f);
 		SpikingNeuron neuron = new SpikingNeuron(integrator, generator, 2, 5, "neuron");
 		network.addNode(neuron);

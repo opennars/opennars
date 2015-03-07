@@ -24,11 +24,11 @@ public class PrologContext {
     public PrologContext(NAR n) {
         this.nar = n;
         
-        nar.addPlugin(new PrologTheoryStringOperator(this));
-        nar.addPlugin(new PrologQueryOperator(this));
-        nar.addPlugin(new PrologTheoryFileOperator(this));
-        nar.addPlugin(new PrologFact(this));
-        nar.addPlugin(new PrologFactual(this));
+        nar.on(new PrologTheoryStringOperator(this));
+        nar.on(new PrologQueryOperator(this));
+        nar.on(new PrologTheoryFileOperator(this));
+        nar.on(new PrologFact(this));
+        nar.on(new PrologFactual(this));
 
     }
     

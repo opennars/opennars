@@ -3,8 +3,8 @@ package ca.nengo.model.impl;
 import automenta.vivisect.Video;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
-import ca.nengo.model.Source;
-import ca.nengo.model.Target;
+import ca.nengo.model.NSource;
+import ca.nengo.model.NTarget;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.NodeIcon;
@@ -53,8 +53,8 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
         this.obj = object;
         newUI();
 
-        List<Target> inputs = new ArrayList();
-        List<Source> outputs = new ArrayList();
+        List<NTarget> inputs = new ArrayList();
+        List<NSource> outputs = new ArrayList();
 
         commonIn = new PolygonIcon(ui,4,1f,Color.GRAY) {
             @Override
@@ -121,7 +121,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
         return ui;
     }
 
-    private void buildMethod(Method m, List<Target> inputs, List<Source> outputs, int remainingDepth) {
+    private void buildMethod(Method m, List<NTarget> inputs, List<NSource> outputs, int remainingDepth) {
         if (remainingDepth < 1) return;
         String name = m.getName();
 
@@ -295,13 +295,13 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
         public void update() {
             //TOOD remove children if update called > 1 time
-            for (Target t : getTargets()) {
+            for (NTarget t : getTargets()) {
                 UITarget u = showTarget(t.getName());
                 if (t instanceof ObjectTarget) {
                     u.setColor(Video.getColorA(((ObjectTarget) t).getRequiredType().hashCode(), 0.85f, 0.85f, 0.75f));
                 }
             }
-            for (Source t : getSources()) {
+            for (NSource t : getSources()) {
                 UISource u = showSource(t.getName());
                 if (t instanceof ProducerPushButton) {
                     ProducerPushButton pp = (ProducerPushButton)t;

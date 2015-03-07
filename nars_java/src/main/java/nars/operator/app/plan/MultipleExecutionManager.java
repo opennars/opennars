@@ -374,7 +374,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
         boolean isOp=t instanceof Operation;
         if(isOp) {
             Operator op=((Operation)t).getOperator();
-            if(op.equals(memory.getOperator("^want")) || op.equals(memory.getOperator("^believe"))) {
+            if(op.equals(memory.operator("^want")) || op.equals(memory.operator("^believe"))) {
                 return false;
             }
         }
@@ -410,7 +410,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
         if (currentTerm instanceof Operation) {
             Concept conc = memory.concept(currentTerm);
             execute((Operation) currentTerm, task.t);
-            task.delayUntil = now + memory.getDuration();
+            task.delayUntil = now + memory.duration();
             s++;
         } else if (currentTerm instanceof Interval) {
             Interval ui = (Interval) currentTerm;

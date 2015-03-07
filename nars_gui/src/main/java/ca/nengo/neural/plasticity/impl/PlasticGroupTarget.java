@@ -183,7 +183,7 @@ public abstract class PlasticGroupTarget extends GroupTarget {
      *   This can be thought of as the connection weight matrix in most cases.
      */
     public float[][] getTransform() {
-        Target[] terms = this.getNodeTerminations();
+        NTarget[] terms = this.getNodeTerminations();
         float[][] transform = new float[terms.length][];
         for (int postIx = 0; postIx < terms.length; postIx++) {
             PlasticNodeTarget pnt = (PlasticNodeTarget) terms[postIx];
@@ -199,7 +199,7 @@ public abstract class PlasticGroupTarget extends GroupTarget {
      *   to set the weight vectors on each PlasticNodeTermination within.
      */
     public void setTransform(float[][] transform, boolean save) {
-        Target[] terms = this.getNodeTerminations();
+        NTarget[] terms = this.getNodeTerminations();
         for(int postIx = 0; postIx < terms.length; postIx++) {
             PlasticNodeTarget pnt = (PlasticNodeTarget) terms[postIx];
             pnt.setWeights(transform[postIx], save);
@@ -215,7 +215,7 @@ public abstract class PlasticGroupTarget extends GroupTarget {
      * @param end Row in transformation matrix to end modifications
      */
     public void modifyTransform(float[][] change, boolean save, int start, int end) {
-        Target[] terms = this.getNodeTerminations();
+        NTarget[] terms = this.getNodeTerminations();
         for(int postIx = start; postIx < end; postIx++) {
             PlasticNodeTarget pnt = (PlasticNodeTarget) terms[postIx];
             pnt.modifyWeights(change[postIx-start], save);
@@ -226,8 +226,8 @@ public abstract class PlasticGroupTarget extends GroupTarget {
      * Saves the weights in the PlasticNodeTerminations within.
      */
     public void saveTransform() {
-        Target[] terms = this.getNodeTerminations();
-        for (Target term : terms) {
+        NTarget[] terms = this.getNodeTerminations();
+        for (NTarget term : terms) {
             ((PlasticNodeTarget) term).saveWeights();
         }
     }
@@ -269,7 +269,7 @@ public abstract class PlasticGroupTarget extends GroupTarget {
      */
     @Override
     public InstantaneousOutput get() {
-        Target[] terms = this.getNodeTerminations();
+        NTarget[] terms = this.getNodeTerminations();
         PlasticNodeTarget pnt = (PlasticNodeTarget) terms[0];
 
         return pnt.get();
@@ -279,7 +279,7 @@ public abstract class PlasticGroupTarget extends GroupTarget {
      * @return The output currents from the PlasticNodeTermination being wrapped
      */
     public float[] getOutputs() {
-        Target[] terms = this.getNodeTerminations();
+        NTarget[] terms = this.getNodeTerminations();
         float[] currents = new float[terms.length];
         for (int i = 0; i < terms.length; i++) {
             PlasticNodeTarget pnt = (PlasticNodeTarget) terms[i];

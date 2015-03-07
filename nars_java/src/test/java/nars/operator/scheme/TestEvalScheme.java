@@ -29,7 +29,7 @@ public class TestEvalScheme extends JavaNALTest {
 
         //nar.addPlugin(new Scheme());
 
-        nar.addInput("scheme((*, car, (*, quote, (*, 2, 3))), #x)!");
+        nar.input("scheme((*, car, (*, quote, (*, 2, 3))), #x)!");
 
         //OUT: <(^scheme,(*,car,(*,quote,(*,2,3))),$1) =/> <$1 <-> 2>>. :|: %1.00;0.99% {0|0 : 1 : }
 

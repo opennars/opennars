@@ -130,14 +130,14 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	/**
 	 * @see ca.nengo.neural.neuron.Neuron#getSources()
 	 */
-	public Source<InstantaneousOutput>[] getSources() {
-		return new Source[]{mySpikeOrigin, myCurrentOrigin};
+	public NSource<InstantaneousOutput>[] getSources() {
+		return new NSource[]{mySpikeOrigin, myCurrentOrigin};
 	}
 
 	/**
 	 * @see ca.nengo.neural.neuron.Neuron#getSource(java.lang.String)
 	 */
-	public Source getSource(String name) throws StructuralException {
+	public NSource getSource(String name) throws StructuralException {
 //		assert (name.equals(Neuron.AXON) || name.equals(CURRENT)); //this is going to be called a lot, so let's skip the exception
 		//Shu: I added the exception back in because the UI needs it for reflection.
         switch (name) {
@@ -298,14 +298,14 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	/**
 	 * @see ca.nengo.model.Node#getTargets()
 	 */
-	public Target[] getTargets() {
+	public NTarget[] getTargets() {
 		return myIntegrator.getTerminations();
 	}
 
 	/**
 	 * @see ca.nengo.model.Node#getTarget(java.lang.String)
 	 */
-	public Target getTarget(String name) throws StructuralException {
+	public NTarget getTarget(String name) throws StructuralException {
 		return myIntegrator.getTermination(name);
 	}
 

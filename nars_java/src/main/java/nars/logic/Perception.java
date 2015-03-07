@@ -1,7 +1,7 @@
 package nars.logic;
 
 import com.google.common.collect.Iterators;
-import nars.io.InPort;
+import nars.io.Source;
 import nars.logic.entity.Task;
 import reactor.function.Consumer;
 import reactor.function.Supplier;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Entry point for all new memory percepts
  */
-public class Perception  implements Consumer<InPort>, Supplier<Task> {
+public class Perception  implements Consumer<Source>, Supplier<Task> {
 
     //protected Environment env = Environment.initializeIfEmpty().assignErrorJournal();
 
@@ -22,9 +22,9 @@ public class Perception  implements Consumer<InPort>, Supplier<Task> {
 //    private final Supplier<AbstractTask> intIn;
 //    private final Supplier<AbstractTask> extIn;
 
-    final Queue<InPort<Task>> in;
-    InPort<Task> currentInput;
-    final Iterator<InPort<Task>> cycle;
+    final Queue<Source<Task>> in;
+    Source<Task> currentInput;
+    final Iterator<Source<Task>> cycle;
 
 
     public Perception() {
@@ -33,7 +33,7 @@ public class Perception  implements Consumer<InPort>, Supplier<Task> {
     }
 
     @Override
-    public void accept(InPort input) {
+    public void accept(Source input) {
         in.add(input);
     }
 
@@ -57,7 +57,7 @@ public class Perception  implements Consumer<InPort>, Supplier<Task> {
 
     public void reset() {
         currentInput = null;
-        for (InPort i : in) {
+        for (Source i : in) {
             i.stop();
         }
         in.clear();

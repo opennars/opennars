@@ -46,7 +46,7 @@ public class KIFExample {
         
         //start before adding input to begin filling buffer
         k.start();
-        n.addInput(k);
+        n.input(k);
         
         n.run(1);
         

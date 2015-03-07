@@ -273,12 +273,12 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		/*
 		 * Build the "show origins" menu
 		 */
-		Source[] sources = getModel().getSources();
+		NSource[] sources = getModel().getSources();
 		if (sources.length > 0) {
 
 			AbstractMenuBuilder originsMenu = originsAndTerminations.addSubMenu("Show origin");
 
-			for (Source element : sources) {
+			for (NSource element : sources) {
 				originsMenu.addAction(new ShowOriginAction(element.getName()));
 			}
 
@@ -287,12 +287,12 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		/*
 		 * Build the "show origins" menu
 		 */
-		Target[] targets = getModel().getTargets();
+		NTarget[] targets = getModel().getTargets();
 		if (targets.length > 0) {
 
 			AbstractMenuBuilder terminationsMenu = originsAndTerminations.addSubMenu("Show termination");
 
-			for (Target element : targets) {
+			for (NTarget element : targets) {
 				terminationsMenu.addAction(new ShowTerminationAction(element.getName()));
 			}
 
@@ -313,12 +313,12 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	protected void modelUpdated() {
 		super.modelUpdated();
 
-		Source[] modelSources = getModel().getSources();
-		HashSet<Source> modelSourceSet = new HashSet<Source>(modelSources.length);
+		NSource[] modelSources = getModel().getSources();
+		HashSet<NSource> modelSourceSet = new HashSet<NSource>(modelSources.length);
         Collections.addAll(modelSourceSet, modelSources);
 
-		Target[] modelTargets = getModel().getTargets();
-		HashSet<Target> modelTargetSet = new HashSet<Target>(
+		NTarget[] modelTargets = getModel().getTargets();
+		HashSet<NTarget> modelTargetSet = new HashSet<NTarget>(
 				modelTargets.length);
         Collections.addAll(modelTargetSet, modelTargets);
 
@@ -326,7 +326,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 			if (wo instanceof ModelObject) {
 				Object model = ((ModelObject) wo).getModel();
 
-				if (model instanceof Target) {
+				if (model instanceof NTarget) {
 					if (!modelTargetSet.contains(model)) {
 						wo.destroy();
 						this.showPopupMessage("Termination removed: " + wo.getName());
@@ -334,7 +334,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 						modelTargetSet.remove(model);
 					}
 				}
-				if (wo instanceof Source) {
+				if (wo instanceof NSource) {
 					if (!modelSourceSet.contains(model)) {
 						wo.destroy();
 						this.showPopupMessage("Origin removed: " + wo.getName());
@@ -347,10 +347,10 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		}
 		
 		// Ensure that any new origins and terminations are shown
-		for (Target term: modelTargetSet) {
+		for (NTarget term: modelTargetSet) {
 			this.showTarget(term.getName());
 		}
-		for (Source source : modelSourceSet) {
+		for (NSource source : modelSourceSet) {
 			String name= source.getName();
 			
 			// don't automatically show these two origins for NEFEnsembles
@@ -380,7 +380,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 		WorldObject probeHolder = null;
 
-		Source source = null;
+		NSource source = null;
 		try {
 			source = getModel().getSource(probeUI.getName());
 
@@ -391,7 +391,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		if (source != null) {
 			probeHolder = showSource(source.getName());
 		} else if (source == null) {
-			Target term = null;
+			NTarget term = null;
 			try {
 				term = getModel().getTarget(probeUI.getName());
 
@@ -743,9 +743,9 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 */
 	public void showAllSources() {
 
-		Source[] sources = getModel().getSources();
+		NSource[] sources = getModel().getSources();
 
-		for (Source element : sources) {
+		for (NSource element : sources) {
 			UISource originUI = showSource(element.getName());
 			originUI.setWidgetVisible(true);
 		}
@@ -757,9 +757,9 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 */
 	public void showAllDecodedOrigins() {
 
-		Source[] sources = getModel().getSources();
+		NSource[] sources = getModel().getSources();
 
-		for (Source element : sources) {
+		for (NSource element : sources) {
 			if (element instanceof DecodedSource) {
 				UISource originUI = showSource(element.getName());
 				originUI.setWidgetVisible(true);
@@ -774,9 +774,9 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 */
 	public void showAllTerminations() {
 
-		Target[] targets = getModel().getTargets();
+		NTarget[] targets = getModel().getTargets();
 
-		for (Target element : targets) {
+		for (NTarget element : targets) {
 			UITarget termUI = showTarget(element.getName());
 			termUI.setWidgetVisible(true);
 		}
@@ -796,7 +796,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		if (originUI == null) {
 			// try to create it
 			try {
-				Source sourceModel = getModel().getSource(originName);
+				NSource sourceModel = getModel().getSource(originName);
 				if (sourceModel != null) {
 					originUI = UISource.createOriginUI(this, sourceModel);
 					addWidget(originUI);
@@ -869,7 +869,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 			// Otherwise try to create it
 			try {
 
-				Target termModel = getModel().getTarget(terminationName);
+				NTarget termModel = getModel().getTarget(terminationName);
 				if (termModel != null) {
 					termUI = UITarget.createTerminationUI(this, termModel);
 					addWidget(termUI);

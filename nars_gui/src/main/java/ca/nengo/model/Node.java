@@ -68,27 +68,27 @@ public interface Node extends Serializable, Resettable, SimulationMode.ModeConfi
 	/**
 	 * @return Sets of ouput channels (eg spiking outputs, gap junctional outputs, etc.)
 	 */
-	public Source[] getSources();
+	public NSource[] getSources();
 
 	/**
 	 * @param name Name of an Origin on this Node
 	 * @return The named Origin if it exists
 	 * @throws StructuralException if the named Origin does not exist
 	 */
-	public Source getSource(String name) throws StructuralException;
+	public NSource getSource(String name) throws StructuralException;
 
 	/**
 	 * @return Sets of input channels (these have the same dimension as corresponding Origins
 	 * 		to which they are connected).
 	 */
-	public Target[] getTargets();
+	public NTarget[] getTargets();
 
 	/**
 	 * @param name Name of a Termination onto this Node
 	 * @return The named Termination if it exists
 	 * @throws StructuralException if the named Termination does not exist
 	 */
-	public Target getTarget(String name) throws StructuralException;
+	public NTarget getTarget(String name) throws StructuralException;
 
     final static Node[] emptyNodeArray = new Node[0];
 

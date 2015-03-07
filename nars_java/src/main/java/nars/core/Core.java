@@ -7,6 +7,7 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
+import java.util.Deque;
 import java.util.List;
 
 
@@ -72,37 +73,38 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
     
     /** Generic utility method for running a list of tasks in current thread */
     public static void run(final List<Runnable> tasks) {
-        run(tasks, 1);
+        run(tasks, tasks.size());
     }
 
     /** Generic utility method for running a list of tasks in current thread (concurrency == 1) or in multiple threads (> 1, in which case it will block until they finish) */
-    public static void run(final List<Runnable> tasks, int concurrency) {
+    public static void run(final Deque<Runnable> tasks, int maxTasksToRun) {
 
-        if ((tasks == null) || (tasks.isEmpty())) {
-            return;
-        } else if (tasks.size() == 1) {
-            tasks.get(0).run();
-        } else if (concurrency == 1) {
-            //single threaded
-            for (final Runnable t : tasks) {
-                t.run();
+        final int concurrency = Math.min(Parameters.THREADS, maxTasksToRun);
+
+            ConcurrentContext ctx = null;
+            if (concurrency > 1)  {
+                //execute in parallel, multithreaded
+                ctx = ConcurrentContext.enter();
+
+                ctx.setConcurrency(concurrency);
             }
-        } else {
-            
-            //execute in parallel, multithreaded
-            final ConcurrentContext ctx = ConcurrentContext.enter();
 
-            ctx.setConcurrency(concurrency);
             try {
-                for (final Runnable r : tasks) {
-                    ctx.execute(r);
+                while (!tasks.isEmpty() && maxTasksToRun-- > 0) {
+                    Runnable tt = tasks.removeFirst();
+                    if (ctx!=null)
+                        ctx.execute(tt);
+                    else
+                        tt.run();
                 }
+
             } finally {
                 // Waits for all concurrent executions to complete.
-                // Re-exports any exception raised during concurrent executions. 
-                ctx.exit();
+                // Re-exports any exception raised during concurrent executions.
+                if (ctx!=null)
+                    ctx.exit();
             }
-        }
+
     }
 
 }

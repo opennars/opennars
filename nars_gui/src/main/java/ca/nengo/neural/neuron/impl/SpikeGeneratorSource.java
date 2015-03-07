@@ -40,7 +40,7 @@ import ca.nengo.neural.neuron.SpikeGenerator;
  * 
  * @author Bryan Tripp
  */
-public class SpikeGeneratorSource implements Source<InstantaneousOutput> {
+public class SpikeGeneratorSource implements NSource<InstantaneousOutput> {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,7 +63,7 @@ public class SpikeGeneratorSource implements Source<InstantaneousOutput> {
 
     /**
      * @return Neuron.AXON
-     * @see ca.nengo.model.Source#getName()
+     * @see ca.nengo.model.NSource#getName()
      */
     public String getName() {
         return myName;
@@ -75,7 +75,7 @@ public class SpikeGeneratorSource implements Source<InstantaneousOutput> {
 
     /**
      * @return 1
-     * @see ca.nengo.model.Source#getDimensions()
+     * @see ca.nengo.model.NSource#getDimensions()
      */
     public int getDimensions() {
         return 1;
@@ -98,7 +98,7 @@ public class SpikeGeneratorSource implements Source<InstantaneousOutput> {
      * Returns spike values or real-valued spike rate values, depending on whether the mode
      * is SimulationMode.DEFAULT or SimulationMode.CONSTANT_RATE.
      * 
-     * @see ca.nengo.model.Source#get()
+     * @see ca.nengo.model.NSource#get()
      */
     public InstantaneousOutput get() {
         return myOutput;
@@ -109,7 +109,7 @@ public class SpikeGeneratorSource implements Source<InstantaneousOutput> {
     }
 
     /**
-     * @see ca.nengo.model.Source#getNode()
+     * @see ca.nengo.model.NSource#getNode()
      */
     public Node getNode() {
         return myNode;

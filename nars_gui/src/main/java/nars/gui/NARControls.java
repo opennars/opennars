@@ -468,7 +468,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
         String filePath = directoryName + fileName;
 
         try {
-            nar.addInput( new File(filePath) );
+            nar.input(new File(filePath));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -621,7 +621,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
                 sb.append('@');
                 
                 if ((tt == Real) || (tt == Simulation)) {
-                    sb.append(memory.time() + "|" + memory.getCycleTime());
+                    sb.append(memory.time() + "|" + memory.timeCycle());
                 }
                 else {
                     sb.append(memory.time());

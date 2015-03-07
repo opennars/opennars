@@ -27,7 +27,7 @@ public class NARSwingNeuromorphic {
         };
         n.param.conceptBeliefsMax.set(32);
         
-        n.addInput( new File("/tmp/h.nal") );
+        n.input(new File("/tmp/h.nal"));
         
         NARSwing.themeInvert();
         

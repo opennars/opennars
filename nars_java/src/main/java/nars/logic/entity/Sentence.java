@@ -545,7 +545,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         if (memory!=null) {
             final long t = memory.time();
 
-            tenseString = stamp.getTense(t, memory.getDuration());
+            tenseString = stamp.getTense(t, memory.duration());
         }
         else {
             tenseString = new StringBuilder();

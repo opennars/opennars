@@ -23,7 +23,7 @@ public class Derivations1  {
                 Memory.resetStatic(seed);
                 NAR n = new TestNAR(new Default().setInternalExperience(null).level(3));
                 d.record(n);
-                n.addInput(ExampleFileInput.getExample(s));
+                n.input(ExampleFileInput.getExample(s));
                 n.run(200);
             }
         }

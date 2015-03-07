@@ -63,7 +63,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	private String myDocumentation;
 	private transient List<VisiblyMutable.Listener> myListeners;
 	private Node[] myNodes;
-	private Map<String, Source> mySources;
+	private Map<String, NSource> mySources;
 	private Map<String, GroupTarget> myTargets;
 	
 	private transient Map<String, Object> myMetadata;
@@ -87,9 +87,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 
 	private void init() {
 		// Using LinkedHashMap to keep ordering
-		mySources = new LinkedHashMap<String, Source>(10);
-		Source[] sources = findOrigins(this, myNodes);
-		for (Source source : sources) {
+		mySources = new LinkedHashMap<String, NSource>(10);
+		NSource[] sources = findOrigins(this, myNodes);
+		for (NSource source : sources) {
 		    mySources.put(source.getName(), source);
 		}
 
@@ -220,7 +220,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 		for (Node myNode : myNodes) {
 			myNode.reset(randomize);
 		}
-		for (Target t : myTargets.values()) {
+		for (NTarget t : myTargets.values()) {
 			t.reset(randomize);
 		}
 
@@ -231,14 +231,14 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	/**
 	 * @see ca.nengo.model.Group#getSource(java.lang.String)
 	 */
-    public Source getSource(String name) throws StructuralException {
+    public NSource getSource(String name) throws StructuralException {
 		return mySources.get(name);
 	}
 
 	/**
 	 * @see ca.nengo.model.Group#getTarget(java.lang.String)
 	 */
-    public Target getTarget(String name) throws StructuralException {
+    public NTarget getTarget(String name) throws StructuralException {
 		return myTargets.get(name);
 	}
 
@@ -248,9 +248,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
      * @throws StructuralException if named Origin does not exist
      * @see ca.nengo.model.ExpandableNode#removeTermination(java.lang.String)
      */
-    public synchronized Source removeOrigin(String name) throws StructuralException {
+    public synchronized NSource removeOrigin(String name) throws StructuralException {
         if (mySources.containsKey(name)) {
-            Source result = mySources.remove(name);
+            NSource result = mySources.remove(name);
 
             fireVisibleChangeEvent();
             return result;
@@ -264,9 +264,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
      * @throws StructuralException if named Termination does not exist
      * @see ca.nengo.model.ExpandableNode#removeTermination(java.lang.String)
      */
-    public synchronized Target removeTermination(String name) throws StructuralException {
+    public synchronized NTarget removeTermination(String name) throws StructuralException {
         if (myTargets.containsKey(name)) {
-            Target result = myTargets.remove(name);
+            NTarget result = myTargets.remove(name);
 
             fireVisibleChangeEvent();
             return result;
@@ -278,23 +278,23 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	/**
 	 * @see ca.nengo.model.Node#getSources()
 	 */
-    public Source[] getSources() {
-        ArrayList<Source> result = new ArrayList<Source>(10);
-        for (Source o : mySources.values()) {
+    public NSource[] getSources() {
+        ArrayList<NSource> result = new ArrayList<NSource>(10);
+        for (NSource o : mySources.values()) {
             result.add(o);
         }
-        return result.toArray(new Source[result.size()]);
+        return result.toArray(new NSource[result.size()]);
 	}
 
 	/**
 	 * @see ca.nengo.model.Group#getTargets()
 	 */
-    public Target[] getTargets() {
-	    ArrayList<Target> result = new ArrayList<Target>(10);
-	    for (Target t : myTargets.values()) {
+    public NTarget[] getTargets() {
+	    ArrayList<NTarget> result = new ArrayList<NTarget>(10);
+	    for (NTarget t : myTargets.values()) {
             result.add(t);
         }
-	    return result.toArray(new Target[result.size()]);
+	    return result.toArray(new NTarget[result.size()]);
 	}
 
 	/**
@@ -417,33 +417,33 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	 * @param nodes Nodes on which to look for Origins
 	 * @return Ensemble Origins encompassing Node-level Origins
 	 */
-	private static Source[] findOrigins(Node parent, Node[] nodes) {
-		Map<String, List<Source>> groups = group1DOrigins(nodes);
+	private static NSource[] findOrigins(Node parent, Node[] nodes) {
+		Map<String, List<NSource>> groups = group1DOrigins(nodes);
 		Iterator<String> it = groups.keySet().iterator();
-		List<Source> result = new ArrayList<Source>(10);
+		List<NSource> result = new ArrayList<NSource>(10);
 		while (it.hasNext()) {
 			String name = it.next();
-			List<Source> group = groups.get(name);
-			result.add(new GroupSource(parent, name, group.toArray(new Source[group.size()])));
+			List<NSource> group = groups.get(name);
+			result.add(new GroupSource(parent, name, group.toArray(new NSource[group.size()])));
 		}
 
-		return result.toArray(new Source[result.size()]);
+		return result.toArray(new NSource[result.size()]);
 	}
 
 	/**
 	 * @param nodes A list of Nodes in an Ensemble
 	 * @return A grouping of one-dimensional origins on these nodes, by name
 	 */
-	private static Map<String, List<Source>> group1DOrigins(Node[] nodes) {
-		Map<String, List<Source>> groups = new LinkedHashMap<String, List<Source>>(10);
+	private static Map<String, List<NSource>> group1DOrigins(Node[] nodes) {
+		Map<String, List<NSource>> groups = new LinkedHashMap<String, List<NSource>>(10);
 
 		for (Node node : nodes) {
-			Source[] sources = node.getSources();
-			for (Source source : sources) {
+			NSource[] sources = node.getSources();
+			for (NSource source : sources) {
 				if (source.getDimensions() == 1) {
-					List<Source> group = groups.get(source.getName());
+					List<NSource> group = groups.get(source.getName());
 					if (group == null) {
-						group = new ArrayList<Source>(nodes.length * 2);
+						group = new ArrayList<NSource>(nodes.length * 2);
 						groups.put(source.getName(), group);
 					}
 					group.add(source);
@@ -470,8 +470,8 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 
 	private static List<String> get1DOriginNames(Node node) {
 		List<String> result = new ArrayList<String>(10);
-		Source[] sources = node.getSources();
-		for (Source source : sources) {
+		NSource[] sources = node.getSources();
+		for (NSource source : sources) {
 			if (source.getDimensions() == 1) {
                 result.add(source.getName());
             }
@@ -488,15 +488,15 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	 * @return Ensemble Terminations encompassing Node-level Terminations
 	 */
 	private static GroupTarget[] findTerminations(Node parent, Node[] nodes) {
-		Map<String, List<Target>> groups = new LinkedHashMap<String, List<Target>>(10);
+		Map<String, List<NTarget>> groups = new LinkedHashMap<String, List<NTarget>>(10);
 
 		for (Node node : nodes) {
-			Target[] targets = node.getTargets();
-			for (Target target : targets) {
+			NTarget[] targets = node.getTargets();
+			for (NTarget target : targets) {
 				if (target.getDimensions() == 1) {
-					List<Target> group = groups.get(target.getName());
+					List<NTarget> group = groups.get(target.getName());
 					if (group == null) {
-						group = new ArrayList<Target>(nodes.length * 2);
+						group = new ArrayList<NTarget>(nodes.length * 2);
 						groups.put(target.getName(), group);
 					}
 					group.add(target);
@@ -508,9 +508,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 		List<GroupTarget> result = new ArrayList<GroupTarget>(10);
 		while (it.hasNext()) {
 			String name = it.next();
-			List<Target> group = groups.get(name);
+			List<NTarget> group = groups.get(name);
 			try {
-				result.add(new GroupTarget(parent, name, group.toArray(new Target[group.size()])));
+				result.add(new GroupTarget(parent, name, group.toArray(new NTarget[group.size()])));
 			} catch (StructuralException e) {
 				throw new Error("Composite Termination should consist only of 1D Terminations, but apparently does not", e);
 			}
@@ -599,8 +599,8 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 		result.myNodes = nodes;
 		result.myStateNames = findStateNames(nodes);
 		
-		result.mySources = new LinkedHashMap<String, Source>(mySources.size());
-		for (Source source : mySources.values()) {
+		result.mySources = new LinkedHashMap<String, NSource>(mySources.size());
+		for (NSource source : mySources.values()) {
 			result.mySources.put(source.getName(), source.clone(result));
 		}
 		

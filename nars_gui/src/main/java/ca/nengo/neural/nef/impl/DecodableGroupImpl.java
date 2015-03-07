@@ -88,7 +88,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 	/**
 	 * @see ca.nengo.neural.nef.DecodableGroup#addDecodedOrigin(java.lang.String, ca.nengo.math.Function[], java.lang.String, ca.nengo.model.Network, ca.nengo.util.Probe, float, float)
 	 */
-    public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
+    public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
 			Probe probe, float startTime, float endTime) throws StructuralException, SimulationException {
 
 	    if (myDecodedOrigins.containsKey(name)) {
@@ -115,10 +115,10 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 	}
 
 	/**
-	 * @see ca.nengo.neural.nef.DecodableGroup#addDecodedOrigin(java.lang.String, ca.nengo.math.Function[], java.lang.String, ca.nengo.model.Network, ca.nengo.util.Probe, ca.nengo.model.Target, float[][], float)
+	 * @see ca.nengo.neural.nef.DecodableGroup#addDecodedOrigin(java.lang.String, ca.nengo.math.Function[], java.lang.String, ca.nengo.model.Network, ca.nengo.util.Probe, ca.nengo.model.NTarget, float[][], float)
 	 */
-    public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
-			Probe probe, Target target, float[][] evalPoints, float transientTime) throws StructuralException, SimulationException {
+    public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
+			Probe probe, NTarget target, float[][] evalPoints, float transientTime) throws StructuralException, SimulationException {
 
 	    if (myDecodedOrigins.containsKey(name)) {
             throw new StructuralException("The ensemble already contains a origin named " + name);
@@ -175,7 +175,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 	 * @throws StructuralException if origin name is taken
 	 * @throws SimulationException if environment can't run
 	 */
-	public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
+	public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin, Network environment,
 			Probe probe, Probe state, float startTime, float endTime, float tau) throws StructuralException, SimulationException {
 
 	    if (myDecodedOrigins.containsKey(name)) {
@@ -245,10 +245,10 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
      * @throws StructuralException if termination name is taken
      * @see ca.nengo.neural.nef.NEFGroup#addDecodedTermination(java.lang.String, float[][], float, boolean)
      */
-    public Target addDecodedTermination(String name, float[][] matrix, float tauPSC, boolean isModulatory)
+    public NTarget addDecodedTermination(String name, float[][] matrix, float tauPSC, boolean isModulatory)
             throws StructuralException {
 
-    	for(Target t : getTargets()) {
+    	for(NTarget t : getTargets()) {
         	if(t.getName().equals(name))
         		throw new StructuralException("The ensemble already contains a termination named " + name);
         }
@@ -291,10 +291,10 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
      * @throws StructuralException if termination name is taken
      * @see ca.nengo.neural.nef.NEFGroup#addDecodedTermination(java.lang.String, float[][], float[], float[], float, boolean)
      */
-    public Target addDecodedTermination(String name, float[][] matrix, float[] tfNumerator, float[] tfDenominator,
+    public NTarget addDecodedTermination(String name, float[][] matrix, float[] tfNumerator, float[] tfDenominator,
             float passthrough, boolean isModulatory) throws StructuralException {
 
-    	for(Target t : getTargets()) {
+    	for(NTarget t : getTargets()) {
         	if(t.getName().equals(name))
         		throw new StructuralException("The ensemble already contains a termination named " + name);
         }
@@ -373,7 +373,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 	 * @see ca.nengo.model.Node#getSource(java.lang.String)
 	 */
 	@Override
-    public Source getSource(String name) throws StructuralException {
+    public NSource getSource(String name) throws StructuralException {
 		return myDecodedOrigins.containsKey(name) ?
 		        myDecodedOrigins.get(name) : super.getSource(name);
 	}
@@ -382,7 +382,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
      * @see ca.nengo.model.Node#getTarget(java.lang.String)
      */
     @Override
-    public Target getTarget(String name) throws StructuralException {
+    public NTarget getTarget(String name) throws StructuralException {
         return myDecodedTerminations.containsKey(name) ?
                 myDecodedTerminations.get(name) : super.getTarget(name);
     }
@@ -391,21 +391,21 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 	 * @see ca.nengo.model.Group#getSources()
 	 */
 	@Override
-    public Source[] getSources() {
-        ArrayList<Source> result = new ArrayList<Source>(10);
-        Source[] composites = super.getSources();
+    public NSource[] getSources() {
+        ArrayList<NSource> result = new ArrayList<NSource>(10);
+        NSource[] composites = super.getSources();
         Collections.addAll(result, composites);
 
         // getOrigins is called by NEFEnsembleImpl in the constructor
         if (myDecodedOrigins == null) {
-            return result.toArray(new Source[result.size()]);
+            return result.toArray(new NSource[result.size()]);
         }
 
 
-        for (Source o : myDecodedOrigins.values()) {
+        for (NSource o : myDecodedOrigins.values()) {
             result.add(o);
         }
-        return result.toArray(new Source[result.size()]);
+        return result.toArray(new NSource[result.size()]);
 	}
 
     /**
@@ -425,15 +425,15 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
      * @see ca.nengo.model.Group#getTargets()
      */
     @Override
-    public Target[] getTargets() {
-        ArrayList<Target> result = new ArrayList<Target>(10);
-        Target[] composites = super.getTargets();
+    public NTarget[] getTargets() {
+        ArrayList<NTarget> result = new ArrayList<NTarget>(10);
+        NTarget[] composites = super.getTargets();
         Collections.addAll(result, composites);
 
-        for (Target t : myDecodedTerminations.values()) {
+        for (NTarget t : myDecodedTerminations.values()) {
             result.add(t);
         }
-        return result.toArray(new Target[result.size()]);
+        return result.toArray(new NTarget[result.size()]);
     }
 
 	/**
@@ -475,7 +475,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
     public TimeSeries getHistory(String stateName) throws SimulationException {
 		TimeSeries result = null;
 
-		Source<InstantaneousOutput> source = myDecodedOrigins.get(stateName);
+		NSource<InstantaneousOutput> source = myDecodedOrigins.get(stateName);
 		DecodedTarget t = myDecodedTerminations.get(stateName);
 
 		if (source != null) {
@@ -530,7 +530,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 	}
 
 	public void stopProbing(String stateName){
-		Source source = myDecodedOrigins.get(stateName);
+		NSource source = myDecodedOrigins.get(stateName);
 		
 		if (source != null) {
 		    source.setRequiredOnCPU(false);

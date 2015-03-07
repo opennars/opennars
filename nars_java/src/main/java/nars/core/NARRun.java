@@ -78,13 +78,13 @@ public class NARRun {
         
         if (args.length > 0) {
             try {
-                nar.addInput(  new File(args[0]) );
+                nar.input(new File(args[0]));
             } catch (FileNotFoundException ex) {
                 System.err.println("NARRun.init: " + ex);
             }
         }
         else {            
-            nar.addInput( System.in );
+            nar.input(System.in);
         }
         
         while (true) {

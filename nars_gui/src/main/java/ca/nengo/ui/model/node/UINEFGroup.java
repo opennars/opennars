@@ -28,9 +28,9 @@ package ca.nengo.ui.model.node;
 
 //import java.util.List;
 
-import ca.nengo.model.Source;
+import ca.nengo.model.NSource;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.impl.DecodedSource;
 import ca.nengo.plot.Plotter;
@@ -90,9 +90,9 @@ public class UINEFGroup extends UIGroup {
 			}
 
 		});
-		Source[] sources = getModel().getSources();
+		NSource[] sources = getModel().getSources();
 
-		for (Source element : sources) {
+		for (NSource element : sources) {
 			if (element instanceof DecodedSource) {
 				if(getModel().getDimension() > 1)
 					plotMenu.addAction(new PlotDecodedOriginMSE(element.getName()));
@@ -122,7 +122,7 @@ public class UINEFGroup extends UIGroup {
 	public UITarget addDecodedTermination() {
 
 		try {
-			Target term = (Target) ModelFactory.constructModel(this,
+			NTarget term = (NTarget) ModelFactory.constructModel(this,
 					new CDecodedTermination(getModel()));
 
 			UITarget termUI = UITarget.createTerminationUI(this, term);
@@ -141,7 +141,7 @@ public class UINEFGroup extends UIGroup {
 
 		try {
 
-			Source source = (Source) ModelFactory.constructModel(this, new CDecodedOrigin(
+			NSource source = (NSource) ModelFactory.constructModel(this, new CDecodedOrigin(
 					getModel()));
 			UISource originUI = UISource.createOriginUI(this, source);
 

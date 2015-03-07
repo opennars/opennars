@@ -16,7 +16,7 @@ public class ChangedTextInput  {
 
     public boolean set(String s) {
         if (allowRepeats() || (last == null) || (!last.equals(s)) && enable()) {
-            nar.addInput(s);
+            nar.input(s);
             last = s;
             return true;
         }

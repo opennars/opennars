@@ -88,10 +88,10 @@ public class NAL8Test extends JavaNALTest {
 
 
     @Test public void testOperationInheritance() {
-        nar.addInput("pick(c). :|:");
+        nar.input("pick(c). :|:");
         nar.run(6);
-        nar.addInput("<a --> b>. :|:");
-        nar.addInput("<a --> b>!");
+        nar.input("<a --> b>. :|:");
+        nar.input("<a --> b>!");
         /*nar.on(Events.TaskDerive.class, new Reaction() {
             @Override
             public void event(Class event, Object[] args) {

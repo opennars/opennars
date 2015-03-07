@@ -362,7 +362,7 @@ public class Narsese {
                 
                 String operatorString = Operator.addPrefixIfMissing( s.substring(0, pOpen) );
                                 
-                Operator operator = memory.getOperator(operatorString);
+                Operator operator = memory.operator(operatorString);
                 
                 if (operator == null) {
                     //???
@@ -423,7 +423,7 @@ public class Narsese {
             return Interval.interval(s);
         }
         else if (c == '^') {
-            return memory.getOperator(s);
+            return memory.operator(s);
         }
  
         if (containVar(s)) {
@@ -484,7 +484,7 @@ public class Narsese {
                 
         String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
         NALOperator oNative = getOperator(op);
-        Operator oRegistered = memory.getOperator(op);
+        Operator oRegistered = memory.operator(op);
         
         if ((oRegistered==null) && (oNative == null)) {
             throw new InvalidInputException("Unknown operator: " + op);

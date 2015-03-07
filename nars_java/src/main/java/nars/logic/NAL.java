@@ -195,7 +195,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
         String rejectionReason = reasoner.isRejected(this, task, solution, revised, single, currentBelief, currentTask);
         if (rejectionReason != null) {
-            memory.removeTask(task, rejectionReason);
+            memory.taskRemoved(task, rejectionReason);
             return false;
         }
 
@@ -602,6 +602,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             The belief is eternal, while the task is tensed.
             In this case, the conclusion will get the occurrenceTime of the task,
             because an eternal belief applies to every moment
+
+            ---
+
+            If the task is not tensed but the belief is,
+            then an eternalization rule is used to take the belief as
+            providing evidence for the sentence in the task.
             */
             oc = tOc;
         } else {
@@ -614,6 +620,15 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             This formula is cited in https://code.google.com/p/open-nars/wiki/OpenNarsOneDotSix.
             Here the idea is that if a tensed belief is projected to a different time
             */
+            /*
+            If both premises are tensed, then the belief is "projected" to the occurrenceTime of the task. Ideally, temporal inference is valid only when
+            the premises are about the same moment, i.e., have the same occurrenceTime or no occurrenceTime (i.e., eternal). However, since
+            occurrenceTime is an approximation and the system is adaptive, a conclusion about one moment (that of the belief) can be projected to
+            another (that of the task), at the cost of a confidence discount. Let t0 be the current time, and t1 and t2 are the occurrenceTime of the
+            premises, then the discount factor is d = 1 - |t1-t2| / (|t0-t1| + |t0-t2|), which is in [0,1]. This factor d is multiplied to the confidence of a
+            promise as a "temporal discount" to project it to the occurrence of the other promise, so as to derive a conclusion about that moment. In
+            this way, if there are conflicting conclusions, the temporally closer one will be preferred by the choice rule.
+             */
             oc = tOc;
         }
 

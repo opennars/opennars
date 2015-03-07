@@ -47,13 +47,13 @@ public class TestChamber {
         NAR nar = new NAR(builder);
         //set NAR runtime parmeters:  
 
-        for(NAR.PluginState pluginstate : nar.getPlugins()) {
+        for(NAR.PluggedIn pluginstate : nar.getPlugins()) {
             if(pluginstate.plugin instanceof InternalExperience || pluginstate.plugin instanceof FullInternalExperience) {
-                nar.removePlugin(pluginstate);
+                nar.off(pluginstate);
             }
         }
   
-        nar.addPlugin(new TemporalParticlePlanner());
+        nar.on(new TemporalParticlePlanner());
         
         //(nar.param).duration.set(10);
         (nar.param).noiseLevel.set(0); 
@@ -192,7 +192,7 @@ public class TestChamber {
                         hungry--;
                         if(hungry<0) {
                             hungry=250;
-                            nar.addInput("(&&,<#1 --> pizza>,<#1 --> [at]>)!"); //also works but better:
+                            nar.input("(&&,<#1 --> pizza>,<#1 --> [at]>)!"); //also works but better:
                             /*for (GridObject obj : space.objects) {
                                 if (obj instanceof Pizza) {
                                     nar.addInput("<" + ((Pizza) obj).doorname + "--> at>!");
@@ -315,7 +315,7 @@ public class TestChamber {
                                     }
                                     if("go-to".equals(opname)) {
                                         executed_going=false;
-                                        nar.addInput("<"+goal+" --> [at]>. :|:");
+                                        nar.input("<" + goal + " --> [at]>. :|:");
                                         if (goal.startsWith("{pizza")) {
                                             GridObject ToRemove = null;
                                             for (GridObject obj : space.objects) { //remove pizza
@@ -331,14 +331,14 @@ public class TestChamber {
                                             }
                                             hungry=500;
                                             //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
-                                            nar.addInput("<"+goal+" --> [at]>. :|:");
+                                            nar.input("<" + goal + " --> [at]>. :|:");
                                         }
                                         active=true;
                                     }
                                 }
                             }
                             opname="";
-                            nar.memory.setEnabled(true);
+                            nar.memory.enable(true);
                             /*if(!executed && !executed_going)
                                 nar.step(1);*/
                         } else {
@@ -380,13 +380,13 @@ public class TestChamber {
             }
         };
         Goto wu = new Goto(this, "^go-to");
-        nar.addPlugin(wu);
+        nar.on(wu);
         Pick wa = new Pick(this, "^pick");
-        nar.addPlugin(wa);
+        nar.on(wa);
         Activate waa = new Activate(this, "^activate");
-        nar.addPlugin(waa);
+        nar.on(waa);
         Deactivate waaa = new Deactivate(this, "^deactivate");
-        nar.addPlugin(waaa);
+        nar.on(waaa);
         space.add(a);
 
     }

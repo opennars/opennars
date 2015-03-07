@@ -6,7 +6,7 @@ import ca.nengo.util.MU;
 /**
  * Termination that receives input unaltered.
  */
-public class ObjectTarget<V> implements Target<V> {
+public class ObjectTarget<V> implements NTarget<V> {
 
     private static final long serialVersionUID = 1L;
 

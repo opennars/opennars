@@ -42,12 +42,12 @@ import ca.nengo.neural.impl.SpikeOutputImpl;
  *   
  * @author Bryan Tripp
  */
-public class GroupSource implements Source<InstantaneousOutput> {
+public class GroupSource implements NSource<InstantaneousOutput> {
 
 	private static final long serialVersionUID = 1L;
 	
 	private Node myNode;
-	private Source<InstantaneousOutput>[] myNodeSources;
+	private NSource<InstantaneousOutput>[] myNodeSources;
 	private final String myName;
 	private boolean myRequiredOnCPU;
 	
@@ -58,21 +58,21 @@ public class GroupSource implements Source<InstantaneousOutput> {
 	 * 		Origin. Each of these is expected to have dimension 1, but this is not enforced. 
 	 * 		Other dimensions are ignored. 
 	 */
-	public GroupSource(Node node, String name, Source[] nodeSources) {
+	public GroupSource(Node node, String name, NSource[] nodeSources) {
 		myNode = node;
 		myNodeSources = nodeSources;
 		myName = name;
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getName()
+	 * @see ca.nengo.model.NSource#getName()
 	 */
 	public String getName() {
 		return myName;
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getDimensions()
+	 * @see ca.nengo.model.NSource#getDimensions()
 	 */
 	public int getDimensions() {
 		return myNodeSources.length;
@@ -81,7 +81,7 @@ public class GroupSource implements Source<InstantaneousOutput> {
 	/**
 	 * @return Array with all of the underlying node origins
 	 */
-	public Source[] getNodeOrigins(){
+	public NSource[] getNodeOrigins(){
 		return myNodeSources;
 	}
 
@@ -91,7 +91,7 @@ public class GroupSource implements Source<InstantaneousOutput> {
 	 * 		dimension 1, but this isn't enforced here. All Node Origins must have 
 	 * 		the same units, and must output the same type of InstantaneousOuput (ie 
 	 * 		either SpikeOutput or RealOutput), otherwise an exception is thrown.   
-	 * @see ca.nengo.model.Source#get()
+	 * @see ca.nengo.model.NSource#get()
 	 */
 	public InstantaneousOutput get() {
 		InstantaneousOutput result = null;
@@ -115,12 +115,12 @@ public class GroupSource implements Source<InstantaneousOutput> {
 	}
 	
 	public void accept(InstantaneousOutput values) {
-		for(Source source : myNodeSources){
+		for(NSource source : myNodeSources){
 			source.accept(values);
 		}
 	}
 	
-	private static RealSource composeRealOutput(Source<InstantaneousOutput>[] sources, Units units) throws SimulationException {
+	private static RealSource composeRealOutput(NSource<InstantaneousOutput>[] sources, Units units) throws SimulationException {
 		float[] values = new float[sources.length];
 		
 		for (int i = 0; i < sources.length; i++) {
@@ -138,7 +138,7 @@ public class GroupSource implements Source<InstantaneousOutput> {
 		return new RealOutputImpl(values, units, sources[0].get().getTime());
 	}
 	
-	private static SpikeOutput composeSpikeOutput(Source<InstantaneousOutput>[] sources, Units units) throws SimulationException {
+	private static SpikeOutput composeSpikeOutput(NSource<InstantaneousOutput>[] sources, Units units) throws SimulationException {
 		boolean[] values = new boolean[sources.length];
 		
 		for (int i = 0; i < sources.length; i++) {
@@ -156,7 +156,7 @@ public class GroupSource implements Source<InstantaneousOutput> {
 		return new SpikeOutputImpl(values, units, sources[0].get().getTime());
 	}
 
-	private static PreciseSpikeOutput composePreciseSpikeOutput(Source<InstantaneousOutput>[] sources, Units units) throws SimulationException {
+	private static PreciseSpikeOutput composePreciseSpikeOutput(NSource<InstantaneousOutput>[] sources, Units units) throws SimulationException {
 		float[] values = new float[sources.length];
 		
 		for (int i = 0; i < sources.length; i++) {
@@ -184,7 +184,7 @@ public class GroupSource implements Source<InstantaneousOutput> {
 	
 	
 	/**
-	 * @see ca.nengo.model.Source#getNode()
+	 * @see ca.nengo.model.NSource#getNode()
 	 */
 	public Node getNode() {
 		return myNode;
@@ -212,7 +212,7 @@ public class GroupSource implements Source<InstantaneousOutput> {
 			result.myNode = node;
 			
 			// get origins for nodes in new ensemble
-			Source[] sources = new Source[myNodeSources.length];
+			NSource[] sources = new NSource[myNodeSources.length];
 			if (node instanceof Group) {
 				Group group = (Group)node;
 				for (int i = 0; i < myNodeSources.length; i++)

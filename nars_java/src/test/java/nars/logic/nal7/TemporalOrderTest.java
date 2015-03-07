@@ -38,8 +38,8 @@ public class TemporalOrderTest extends JavaNALTest {
 
         //TextOutput.out(nar);
 
-        nar.addInput("<e --> f>. :/:");
-        nar.addInput("<c --> d>. :|:");
+        nar.input("<e --> f>. :/:");
+        nar.input("<c --> d>. :|:");
         nar.requires.add(new OutputContainsCondition(nar, "<e --> f>. :/:", 5));
         nar.requires.add(new OutputContainsCondition(nar, "<c --> d>. :\\:", 5));
 
@@ -62,7 +62,7 @@ public class TemporalOrderTest extends JavaNALTest {
         }
                 */
 
-        nar.addInput("<c --> d>?");
+        nar.input("<c --> d>?");
 
 
         nar.runUntil(20);

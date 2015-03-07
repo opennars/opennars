@@ -62,10 +62,10 @@ public class VariableTest extends JavaNALTest {
         nar.requires.add(new OutputContainsCondition(nar, "=/> <a --> 4>>.", 5));
 
 
-        nar.addInput(
+        nar.input(
                 "<a --> 3>. :\\: \n" +
-                "<a --> 4>. :/: \n" +
-                "<(&/,<a --> 3>,?what) =/> <a --> #wat>>?");
+                        "<a --> 4>. :/: \n" +
+                        "<(&/,<a --> 3>,?what) =/> <a --> #wat>>?");
 
         nar.run(32);
 
@@ -93,10 +93,10 @@ public class VariableTest extends JavaNALTest {
 
 //        TextOutput.out(nar);
 
-        nar.addInput(
+        nar.input(
                 "<a --> 3>. :|:" + '\n' +
-                "<a --> 4>. :/:" + '\n' +
-                "<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
+                        "<a --> 4>. :/:" + '\n' +
+                        "<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
 
         nar.requires.add(new OutputContainsCondition(nar, "<(&/,<a --> 3>,+3) =/> <a --> 4>>.", 1));
 
@@ -114,7 +114,7 @@ public class VariableTest extends JavaNALTest {
         //TextOutput.out(nar);
 
         nar.mustInput(1, "<" + left + " ==> " + right + ">.");
-        nar.addInput("<" + left + " ==> " + right + ">.");
+        nar.input("<" + left + " ==> " + right + ">.");
 
         nar.run(4);
     }

@@ -68,7 +68,7 @@ import ca.nengo.model.*;
  * 
  * @author Bryan Tripp
  */
-public class ProbeableSource implements Source<InstantaneousOutput> {
+public class ProbeableSource implements NSource<InstantaneousOutput> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -104,7 +104,7 @@ public class ProbeableSource implements Source<InstantaneousOutput> {
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getName()
+	 * @see ca.nengo.model.NSource#getName()
 	 */
 	public String getName() {
 		return myName;
@@ -112,7 +112,7 @@ public class ProbeableSource implements Source<InstantaneousOutput> {
 
 	/**
 	 * @return 1
-	 * @see ca.nengo.model.Source#getDimensions()
+	 * @see ca.nengo.model.NSource#getDimensions()
 	 */
 	public int getDimensions() {
 		return 1;
@@ -146,7 +146,7 @@ public class ProbeableSource implements Source<InstantaneousOutput> {
 	}
 
 	/**
-	 * @see ca.nengo.model.Source#getNode()
+	 * @see ca.nengo.model.NSource#getNode()
 	 */
 	public Node getNode() {
 		return myNode;

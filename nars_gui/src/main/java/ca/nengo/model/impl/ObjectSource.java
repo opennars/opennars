@@ -2,12 +2,12 @@ package ca.nengo.model.impl;
 
 import ca.nengo.model.Node;
 import ca.nengo.model.Resettable;
-import ca.nengo.model.Source;
+import ca.nengo.model.NSource;
 
 /**
  * Default source implementation which can provide any type of object
  */
-public class ObjectSource<V> implements Source<V>, Resettable {
+public class ObjectSource<V> implements NSource<V>, Resettable {
 
     public final String name;
     private final Node node;
@@ -64,12 +64,12 @@ public class ObjectSource<V> implements Source<V>, Resettable {
     }
 
     @Override
-    public Source clone() throws CloneNotSupportedException {
+    public NSource clone() throws CloneNotSupportedException {
         return null;
     }
 
     @Override
-    public Source clone(Node node) throws CloneNotSupportedException {
+    public NSource clone(Node node) throws CloneNotSupportedException {
         return null;
     }
 }

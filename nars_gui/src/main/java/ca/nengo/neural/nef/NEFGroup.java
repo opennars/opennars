@@ -33,9 +33,9 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.neural.nef;
 
 import ca.nengo.math.Function;
-import ca.nengo.model.Source;
+import ca.nengo.model.NSource;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 import ca.nengo.neural.nef.impl.BiasSource;
 import ca.nengo.neural.nef.impl.BiasTarget;
 import ca.nengo.neural.nef.impl.DecodedTarget;
@@ -83,7 +83,7 @@ public interface NEFGroup extends DecodableGroup {
 	 * @throws StructuralException if functions do not all have the same input dimension as the
 	 * 		dimension of this ensemble
 	 */
-	public Source addDecodedOrigin(String name, Function[] functions, String nodeOrigin) throws StructuralException;
+	public NSource addDecodedOrigin(String name, Function[] functions, String nodeOrigin) throws StructuralException;
 
 	/**
 	 * Adds a BiasOrigin, which operates in parallel with an existing Origin, such that the effective weights of the
@@ -98,7 +98,7 @@ public interface NEFGroup extends DecodableGroup {
 	 * @return Resulting BiasOrigin
 	 * @throws StructuralException if given Origin is not a DecodedOrigin or if there is a construction problem
 	 */
-	public BiasSource addBiasOrigin(Source existing, int numInterneurons, String name, boolean excitatory) throws StructuralException;
+	public BiasSource addBiasOrigin(NSource existing, int numInterneurons, String name, boolean excitatory) throws StructuralException;
 
 	/**
 	 * Adds a new Termination into this Ensemble, at which information is to be received
@@ -119,7 +119,7 @@ public interface NEFGroup extends DecodableGroup {
 	 * @return The resulting Termination
 	 * @throws StructuralException if given transformation matrix is not a matrix
 	 */
-	public Target addDecodedTermination(String name, float[][] matrix, float tauPSC, boolean isModulatory)
+	public NTarget addDecodedTermination(String name, float[][] matrix, float tauPSC, boolean isModulatory)
 		throws StructuralException;
 
 	/**
@@ -138,7 +138,7 @@ public interface NEFGroup extends DecodableGroup {
 	 * @throws StructuralException if given transformation matrix is not a matrix or there is a problem
 	 * 		with the transfer function
 	 */
-	public Target addDecodedTermination(String name, float[][] matrix, float[] tfNumerator, float[] tfDenominator,
+	public NTarget addDecodedTermination(String name, float[][] matrix, float[] tfNumerator, float[] tfDenominator,
 			float passthrough, boolean isModulatory) throws StructuralException;
 
 	/**

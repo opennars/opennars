@@ -56,7 +56,7 @@ import java.util.Properties;
  *
  * @author Bryan Tripp
  */
-public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, Probeable {
+public class DecodedTarget implements NTarget<InstantaneousOutput>, Resettable, Probeable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -166,7 +166,7 @@ public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, P
 	/**
 	 * @param values Only RealOutput is accepted.
 	 *
-	 * @see ca.nengo.model.Target#apply(ca.nengo.model.InstantaneousOutput)
+	 * @see ca.nengo.model.NTarget#apply(ca.nengo.model.InstantaneousOutput)
 	 */
 	public void apply(InstantaneousOutput values) throws SimulationException {
 		if (values.getDimension() != getDimensions()) {
@@ -244,14 +244,14 @@ public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, P
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getName()
+	 * @see ca.nengo.model.NTarget#getName()
 	 */
 	public String getName() {
 		return myName;
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getDimensions()
+	 * @see ca.nengo.model.NTarget#getDimensions()
 	 */
 	public int getDimensions() {
 		return myTransform[0].length;
@@ -409,14 +409,14 @@ public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, P
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getModulatory()
+	 * @see ca.nengo.model.NTarget#getModulatory()
 	 */
 	public boolean getModulatory() {
 		return myModulatory;
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#setModulatory(boolean)
+	 * @see ca.nengo.model.NTarget#setModulatory(boolean)
 	 */
 	public void setModulatory(boolean modulatory) {
 		myModulatory = modulatory;
@@ -444,7 +444,7 @@ public class DecodedTarget implements Target<InstantaneousOutput>, Resettable, P
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getNode()
+	 * @see ca.nengo.model.NTarget#getNode()
 	 */
 	public Node getNode() {
 		return myNode;

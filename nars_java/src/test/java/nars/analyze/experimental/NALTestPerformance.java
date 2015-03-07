@@ -79,7 +79,7 @@ public class NALTestPerformance {
                 expects.add(e1);
             }
 
-            nar.addInput(input);
+            nar.input(input);
 
             boolean error = false;
             int successes = 0;

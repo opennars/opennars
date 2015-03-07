@@ -165,7 +165,7 @@ public class TestChamber2 extends TestChamber {
                                                 }
                                             }
                                         }
-                                        nar.addInput("(*,hold,"+goal+"). :|:");
+                                        nar.input("(*,hold," + goal + "). :|:");
                                     }
                                     else
                                     if("deactivate".equals(opname)) {
@@ -177,7 +177,7 @@ public class TestChamber2 extends TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.OFFSWITCH;
                                                         cells.readCells[i][j].charge=0.0f;
                                                         cells.writeCells[i][j].charge=0.0f;
-                                                        nar.addInput("(off,"+goal+"). :|:");
+                                                        nar.input("(off," + goal + "). :|:");
                                                     }
                                                 }
                                             }
@@ -194,14 +194,14 @@ public class TestChamber2 extends TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.SWITCH;
                                                         cells.readCells[i][j].charge=1.0f;
                                                         cells.writeCells[i][j].charge=1.0f;
-                                                        nar.addInput("(*,on,"+goal+"). :|:");
+                                                        nar.input("(*,on," + goal + "). :|:");
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                     if("go-to".equals(opname)) {
-                                        nar.addInput("(*,at,"+goal+"). :|:");
+                                        nar.input("(*,at," + goal + "). :|:");
                                     }
                                 }
                             }
@@ -250,7 +250,7 @@ public class TestChamber2 extends TestChamber {
                 if (actionParam == null) actionParam = "";
                 if (actionParam.length() != 0) actionParam = "(*," + actionParam + ")";
                 
-                nar.addInput("$0.60$ (*,effect," + action + "," + actionParam + "," + success +"). :|:");
+                nar.input("$0.60$ (*,effect," + action + "," + actionParam + "," + success + "). :|:");
                 
                 final int SightPeriod = 32;
                 if ((e.action instanceof Forward) || (space.getTime()%SightPeriod == 0)) {
@@ -263,19 +263,19 @@ public class TestChamber2 extends TestChamber {
                     seeing += this.cellAbsolute(270).material + ")";
 
 
-                    nar.addInput("$0.50$ (*,see," + seeing + "). :|:");
+                    nar.input("$0.50$ (*,see," + seeing + "). :|:");
                 }
                 
             }
         };
         Goto wu = new Goto(this, "^go-to");
-        nar.addPlugin(wu);
+        nar.on(wu);
         Pick wa = new Pick(this, "^pick");
-        nar.addPlugin(wa);
+        nar.on(wa);
         Activate waa = new Activate(this, "^activate");
-        nar.addPlugin(waa);
+        nar.on(waa);
         Deactivate waaa = new Deactivate(this, "^deactivate");
-        nar.addPlugin(waaa);
+        nar.on(waaa);
         space.add(a);
         
         

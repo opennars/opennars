@@ -78,7 +78,7 @@ public class TestNAR extends NAR {
         TaskCondition tc = new TaskCondition(this, Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
 
         /** occurence time measured relative to the beginning */
-        tc.setRelativeOccurrenceTime(cycleStart, ocRelative, memory.getDuration());
+        tc.setRelativeOccurrenceTime(cycleStart, ocRelative, memory.duration());
 
         requires.add(tc);
 

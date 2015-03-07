@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  *
  * @author Bryan Tripp
  */
-public interface Source<V> extends Serializable, Cloneable, Consumer<V>, Supplier<V> {
+public interface NSource<V> extends Serializable, Cloneable, Consumer<V>, Supplier<V> {
 
 	/**
 	 * @return Name of this Origin (unique in the scope of a source of Origins, eg a Neuron or
@@ -90,7 +90,7 @@ public interface Source<V> extends Serializable, Cloneable, Consumer<V>, Supplie
 	 * @return Valid clone
 	 * @throws CloneNotSupportedException if clone cannot be made
 	 */
-	public Source clone() throws CloneNotSupportedException;
+	public NSource clone() throws CloneNotSupportedException;
 	
 	/**
 	 * Clone method that changes necessary parameters to point to a new parent,
@@ -99,6 +99,6 @@ public interface Source<V> extends Serializable, Cloneable, Consumer<V>, Supplie
 	 * @return A clone of the origin for the new parent ensemble
 	 * @throws CloneNotSupportedException if clone cannot be made
 	 */
-	public Source clone(Node node) throws CloneNotSupportedException;
+	public NSource clone(Node node) throws CloneNotSupportedException;
 
 }

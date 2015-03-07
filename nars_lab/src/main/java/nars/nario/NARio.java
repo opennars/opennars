@@ -58,7 +58,7 @@ public class NARio extends Run {
 
         NAR nar = new NAR(new Default().simulationTime().setConceptBagSize(500));
         
-        nar.addPlugin(new TemporalParticlePlanner());
+        nar.on(new TemporalParticlePlanner());
 
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
         /*nar.param().termLinkRecordLength.set(4);
@@ -137,7 +137,7 @@ public class NARio extends Run {
     protected void setKey(int k, boolean pressed) {
         if (keyInput[k] == null && pressed)
             keyInput[k] = new ChangedTextInput(nar);
-        nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
+        nar.input("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
     }
     
     @Override protected void toggleKey(int keyCode, boolean isPressed)
@@ -260,7 +260,7 @@ public class NARio extends Run {
             @Override
             public void event(Class event, Object... arguments) {
 
-                nar.memory.addSimulationTime(memoryCyclesPerFrame);
+                nar.memory.timeSimulationAdd(memoryCyclesPerFrame);
 
                 {
         //                int ji = 10;
@@ -362,7 +362,7 @@ public class NARio extends Run {
                                 String dir=direction(mx,my);
                                 if (right!=false) { // && moveInput.set(/*"$" + movementPriority + "$"*/"<"+dir+" --> moved>. :|:")) {
                                     //if significantly changed block position, record it for next difference
-                                    nar.addInput("<right --> moved>. :|:");
+                                    nar.input("<right --> moved>. :|:");
                                     lastMX = x;
                                     lastMY = y;
                                 }
@@ -431,20 +431,20 @@ public class NARio extends Run {
                     int[] keys = new int[] { Mario.KEY_LEFT,Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED };
                     for (final int k : keys) {
                         String ko = "^keyboard" + k;
-                        if (nar.memory.getOperator(ko) == null) {
-                            nar.addPlugin(new NullOperator("^" + "keyboard" + k) {
+                        if (nar.memory.operator(ko) == null) {
+                            nar.on(new NullOperator("^" + "keyboard" + k) {
 
                                 @Override
-                                protected List<Task> execute(Operation operation, Term[] args, Memory memory) {                                  
-                                    
+                                protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+
                                     String state = args[0].toString();
-                                    
+
                                     Task task = operation.getTask();
                                     //if ((task.getParentTask()!=null) && (task.getParentBelief()!=null)) {
-                                        Task parent = task.getParentTask();
-                                        Task root = task.getRootTask();
-                                        
-                                        //System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief() + ", parent=" + parent);
+                                    Task parent = task.getParentTask();
+                                    Task root = task.getRootTask();
+
+                                    //System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief() + ", parent=" + parent);
                                         
                                         /*if (parent!=root) {
                                             System.out.println(", root=" + root);
@@ -452,10 +452,10 @@ public class NARio extends Run {
                                         else {
                                             System.out.println();
                                         }*/
-                                        if(Mario.KEY_UP==k || Mario.KEY_JUMP==k) {
-                                            mario.keys[Mario.KEY_RIGHT] = state.equals("on");
-                                        }
-                                        mario.keys[k] = state.equals("on");
+                                    if (Mario.KEY_UP == k || Mario.KEY_JUMP == k) {
+                                        mario.keys[Mario.KEY_RIGHT] = state.equals("on");
+                                    }
+                                    mario.keys[k] = state.equals("on");
                                     //}
 
                                     return super.execute(operation, args, memory);
@@ -531,7 +531,7 @@ public class NARio extends Run {
                     gotCoin = 0;
                 }
                 if(www%200==0) {
-                     nar.addInput("<right --> moved>!");
+                     nar.input("<right --> moved>!");
                      //nar.addInput("<up --> moved>!");
                      //nar.addInput("<up --> moved>!");
                      /* nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right

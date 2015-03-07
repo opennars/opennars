@@ -18,7 +18,7 @@ public class NARPrologTest {
     @Test
     public void testFact() {
 
-        n.addInput("fact(<x --> y>)!");
+        n.input("fact(<x --> y>)!");
         n.run(5);
         assertTrue(p.getProlog(null).getTheory().toString().contains("inheritance(x,y)."));
 
@@ -29,9 +29,9 @@ public class NARPrologTest {
 
         TextOutput.out(n);
 
-        n.addInput("fact(<a --> y>)!");
-        n.addInput("fact(<b --> y>)!");
-        n.addInput("factual(<$q --> y>, #result)!");
+        n.input("fact(<a --> y>)!");
+        n.input("fact(<b --> y>)!");
+        n.input("factual(<$q --> y>, #result)!");
         n.run(4);
 
         //contains("<$2 <-> {<x --> y>}>>")

@@ -46,7 +46,7 @@ import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManage
  *
  * @author Bryan Tripp
  */
-public class BasicTarget implements Target<InstantaneousOutput>, Resettable {
+public class BasicTarget implements NTarget<InstantaneousOutput>, Resettable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -75,14 +75,14 @@ public class BasicTarget implements Target<InstantaneousOutput>, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getDimensions()
+	 * @see ca.nengo.model.NTarget#getDimensions()
 	 */
 	public int getDimensions() {
 		return myDynamics.getInputDimension();
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getName()
+	 * @see ca.nengo.model.NTarget#getName()
 	 */
 	public String getName() {
 		return myName;
@@ -90,7 +90,7 @@ public class BasicTarget implements Target<InstantaneousOutput>, Resettable {
 
 
 	/**
-	 * @see ca.nengo.model.Target#apply(ca.nengo.model.InstantaneousOutput)
+	 * @see ca.nengo.model.NTarget#apply(ca.nengo.model.InstantaneousOutput)
 	 */
 	public void apply(InstantaneousOutput values) throws SimulationException {
 		myInput = values;
@@ -133,7 +133,7 @@ public class BasicTarget implements Target<InstantaneousOutput>, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getNode()
+	 * @see ca.nengo.model.NTarget#getNode()
 	 */
 	public Node getNode() {
 		return myNode;
@@ -147,14 +147,14 @@ public class BasicTarget implements Target<InstantaneousOutput>, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getModulatory()
+	 * @see ca.nengo.model.NTarget#getModulatory()
 	 */
 	public boolean getModulatory() {
 		return myModulatory;
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#getTau()
+	 * @see ca.nengo.model.NTarget#getTau()
 	 */
 	public float getTau() {
 		if (myDynamics instanceof LTISystem) {
@@ -166,14 +166,14 @@ public class BasicTarget implements Target<InstantaneousOutput>, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#setModulatory(boolean)
+	 * @see ca.nengo.model.NTarget#setModulatory(boolean)
 	 */
 	public void setModulatory(boolean modulatory) {
 		myModulatory = modulatory;
 	}
 
 	/**
-	 * @see ca.nengo.model.Target#setTau(float)
+	 * @see ca.nengo.model.NTarget#setTau(float)
 	 */
 	public void setTau(float tau) throws StructuralException {
 		if (myDynamics instanceof LTISystem) {

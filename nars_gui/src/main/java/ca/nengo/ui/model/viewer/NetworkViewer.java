@@ -87,13 +87,13 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         return true;
     }
 
-    private HashSet<Source> exposedSources;
-    private HashSet<Target> exposedTargets;
+    private HashSet<NSource> exposedSources;
+    private HashSet<NTarget> exposedTargets;
 
     @Override
     protected void initialize() {
-        exposedSources = new HashSet<Source>(getModel().getSources().length);
-        exposedTargets = new HashSet<Target>(getModel().getTargets().length);
+        exposedSources = new HashSet<NSource>(getModel().getSources().length);
+        exposedTargets = new HashSet<NTarget>(getModel().getTargets().length);
 
         super.initialize();
         addLayoutButtons();
@@ -186,7 +186,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                 getModel().getProjections().length);
         Collections.addAll(projectionsToAdd, getModel().getProjections());
 
-        HashMap<Target, Projection> projectionMap = new HashMap<Target, Projection>(
+        HashMap<NTarget, Projection> projectionMap = new HashMap<NTarget, Projection>(
                 projectionsToAdd.size());
 
         for (Projection projection : projectionsToAdd) {
@@ -206,8 +206,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                 if (terminationUI.getConnector() != null) {
                     UISource originUI = terminationUI.getConnector().getOriginUI();
 
-                    Target target = terminationUI.getModel();
-                    Source source = originUI.getModel();
+                    NTarget target = terminationUI.getModel();
+                    NSource source = originUI.getModel();
 
                     Projection projection = projectionMap.get(target);
                     if (projection != null && projection.getSource() == source) {
@@ -240,8 +240,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
          * Construct projections
          */
         for (Projection projection : projectionsToAdd) {
-            Source source = projection.getSource();
-            Target term = projection.getTarget();
+            NSource source = projection.getSource();
+            NTarget term = projection.getTarget();
 
             UINeoNode nodeOrigin = getUINode(source.getNode());
 
@@ -301,18 +301,18 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         /*
          * Get exposed Origins and Terminations
          */
-        HashSet<Source> exposedOriginsTemp = new HashSet<Source>(getModel().getSources().length);
-        HashSet<Target> exposedTerminationsTemp = new HashSet<Target>(
+        HashSet<NSource> exposedOriginsTemp = new HashSet<NSource>(getModel().getSources().length);
+        HashSet<NTarget> exposedTerminationsTemp = new HashSet<NTarget>(
                 getModel().getTargets().length);
 
-        for (Source source : getModel().getSources()) {
+        for (NSource source : getModel().getSources()) {
             if (source instanceof NetworkImpl.SourceWrapper) {
                 NetworkImpl.SourceWrapper originWr = (NetworkImpl.SourceWrapper) source;
                 exposedOriginsTemp.add(originWr.getWrappedOrigin());
             }
         }
 
-        for (Target target : getModel().getTargets()) {
+        for (NTarget target : getModel().getTargets()) {
             if (target instanceof NetworkImpl.TargetWrapper) {
                 NetworkImpl.TargetWrapper terminationWr = (NetworkImpl.TargetWrapper) target;
                 exposedTerminationsTemp.add(terminationWr.getWrappedTermination());
@@ -329,7 +329,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             /*
              * Iterate through origins to see if any have changed
              */
-            for (Source source : exposedOriginsTemp) {
+            for (NSource source : exposedOriginsTemp) {
                 if (!exposedSources.contains(source)) {
                     break;
                 }
@@ -348,7 +348,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             /*
              * Iterate through Termination to see if any have changed
              */
-            for (Target target : exposedTerminationsTemp) {
+            for (NTarget target : exposedTerminationsTemp) {
                 if (!exposedTargets.contains(target)) {
                     break;
                 }

@@ -2,9 +2,9 @@ package ca.nengo.math.impl;
 
 import ca.nengo.math.NetworkPartitioner;
 import ca.nengo.model.Node;
-import ca.nengo.model.Source;
+import ca.nengo.model.NSource;
 import ca.nengo.model.Projection;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.NetworkImpl.SourceWrapper;
 import ca.nengo.model.impl.NetworkImpl.TargetWrapper;
@@ -578,14 +578,14 @@ public class MultiLevelKLNetworkPartitioner implements NetworkPartitioner {
 	
 		for(Projection proj : projections){
 			
-			Target projectionTarget = proj.getTarget();
+			NTarget projectionTarget = proj.getTarget();
 			boolean projectionTerminationWrapped = projectionTarget instanceof TargetWrapper;
 			if(projectionTerminationWrapped)
 				projectionTarget = ((TargetWrapper) projectionTarget).getBaseTermination();
 			
 			Node terminationNode = projectionTarget.getNode();
 
-			Source projectionSource = proj.getSource();
+			NSource projectionSource = proj.getSource();
 			boolean projectionOriginWrapped = projectionSource instanceof SourceWrapper;
 			
 			if(projectionOriginWrapped)

@@ -42,7 +42,7 @@ abstract public class NARGame implements Reaction {
         if (event == Events.FrameEnd.class) {
             cycle();
         }
-        nar.memory.addSimulationTime(cyclesPerFrame);
+        nar.memory.timeSimulationAdd(cyclesPerFrame);
         
     }
     

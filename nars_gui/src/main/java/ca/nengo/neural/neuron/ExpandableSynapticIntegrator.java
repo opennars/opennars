@@ -29,7 +29,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.neural.neuron;
 
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 
 /**
  * A SynapticIntegrator to which Terminations can be added after construction,
@@ -56,7 +56,7 @@ public interface ExpandableSynapticIntegrator extends SynapticIntegrator {
 	 * @throws StructuralException if there is already a Termination of the same name on this
 	 * 		SynapticIntegrator
 	 */
-	public Target addTermination(String name, float[] weights, float tauPSC, boolean modulatory) throws StructuralException;
+	public NTarget addTermination(String name, float[] weights, float tauPSC, boolean modulatory) throws StructuralException;
 	
 	/**
 	 * @param name Name of Termination to remove.
@@ -64,7 +64,7 @@ public interface ExpandableSynapticIntegrator extends SynapticIntegrator {
 	 * @throws StructuralException if there is no Termination of the given name on this
      *      SynapticIntegrator
 	 */
-	public Target removeTermination(String name);
+	public NTarget removeTermination(String name);
 
 	public ExpandableSynapticIntegrator clone() throws CloneNotSupportedException;
 

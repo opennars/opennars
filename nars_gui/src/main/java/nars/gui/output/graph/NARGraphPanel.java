@@ -79,7 +79,7 @@ public class NARGraphPanel extends NPanel {
             public void draw() {
                 //MULTITHREADED RENDERING LOOP:
                 if (!isPredrawing())
-                    nar.memory.addLaterTask(super::predraw);
+                    nar.memory.taskLater(super::predraw);
 
                 super.draw();
 

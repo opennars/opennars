@@ -19,7 +19,6 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 public abstract class TermFunction extends Operator implements TermEval {
 
-    static final Variable inVar=new Variable("$x");
     static final Variable var=new Variable("$y");
 
     protected TermFunction(String name) {

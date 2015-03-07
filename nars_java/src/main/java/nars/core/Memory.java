@@ -115,16 +115,16 @@ public class Memory implements Serializable {
      * could be implemented (ex: round robin) which will be
      * more important when heavier data flow occurrs
      */
-    public void addTasks(final Supplier<Task> source) {
+    public void taskAdd(final Supplier<Task> source) {
         Task next;
         while ((next = source.get())!=null) {
-            addTask(next);
+            taskAdd(next);
         }
     }
 
-    public void addTasks(final Iterable<Task> source) {
+    public void taskAdd(final Iterable<Task> source) {
         for (final Task t : source)
-            addTask(t);
+            taskAdd(t);
     }
 
     public Term getSelf() {
@@ -134,6 +134,8 @@ public class Memory implements Serializable {
     public void setSelf(Term t) {
         this.self = t;
     }
+
+
 
     @Deprecated public static enum Forgetting {
         @Deprecated Iterative,
@@ -173,7 +175,7 @@ public class Memory implements Serializable {
     }
 
 
-    private final Deque<Runnable> otherTasks = new ConcurrentLinkedDeque();
+    private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
     public final Perception perception;
     public final Core concepts;
@@ -207,7 +209,7 @@ public class Memory implements Serializable {
 
     public final Param param;
 
-    final ExecutorService laterTasks = Executors.newFixedThreadPool(1);
+    ExecutorService laterTasks = null;
 
     /* ---------- Constructor ---------- */
     /**
@@ -314,48 +316,48 @@ public class Memory implements Serializable {
     public long time() {
         switch (timing) {
             case Iterative:
-                return getCycleTime();
+                return timeCycle();
             case Real:
-                return getRealTime();
+                return timeReal();
             case Simulation:
-                return getSimulationTime();
+                return timeSimulation();
         }
         return 0;
     }
 
-    public int getDuration() {
+    public int duration() {
         return param.duration.get();
     }
 
     /**
      * internal, subjective time (logic steps)
      */
-    public long getCycleTime() {
+    public long timeCycle() {
         return cycle;
     }
 
     /**
      * hard real-time, uses system clock
      */
-    public long getRealTime() {
+    public long timeReal() {
         return timeRealNow - timeRealStart;
     }
 
     /**
      * soft real-time, uses controlled simulation time
      */
-    public long getSimulationTime() {
+    public long timeSimulation() {
         return timeSimulation;
     }
 
-    public void addSimulationTime(long dt) {
+    public void timeSimulationAdd(long dt) {
         timeSimulation += dt;
     }
 
     /**
      * difference in time since last cycle
      */
-    public long getTimeDelta() {
+    public long timeSinceLastCycle() {
         return time() - timePreviousCycle;
     }
 
@@ -408,7 +410,7 @@ public class Memory implements Serializable {
      * @param t The Term naming a concept
      * @return the priority value of the concept
      */
-    public float getConceptActivation(final Term t) {
+    public float conceptPriority(final Term t) {
         final Concept c = concept(t);
         return (c == null) ? 0f : c.getPriority();
     }
@@ -534,8 +536,8 @@ public class Memory implements Serializable {
         //}
     }
 
-    public boolean addTask(final Task t) {
-        return addTask(t, null);
+    public boolean taskAdd(final Task t) {
+        return taskAdd(t, null);
     }
 
 
@@ -543,7 +545,7 @@ public class Memory implements Serializable {
     /**
      * add new task that waits to be processed next
      */
-    public boolean addTask(final Task t, final String reason) {
+    public boolean taskAdd(final Task t, final String reason) {
 
         if (Parameters.DEBUG) {
             if (t.sentence != null && t.sentence.stamp.getOccurrenceTime() < -999999 && !t.sentence.isEternal())
@@ -572,12 +574,12 @@ public class Memory implements Serializable {
         }
 
         if (!t.budget.aboveThreshold()) {
-            removeTask(t, "Insufficient budget");
+            taskRemoved(t, "Insufficient budget");
             return false;
         }
 
         if (!Terms.levelValid(t.sentence, nal())) {
-            removeTask(t, "Insufficient NAL level");
+            taskRemoved(t, "Insufficient NAL level");
             return false;
         }
 
@@ -603,7 +605,7 @@ public class Memory implements Serializable {
      * @param task The addInput task
      * @return how many tasks were queued to newTasks
      */
-    public int inputTask(final Task task) {
+    public int taskInput(final Task task) {
 
         if (task.sentence!=null) {
             //if a task has an unperceived creationTime,
@@ -621,23 +623,26 @@ public class Memory implements Serializable {
 
         emit(Events.IN.class, task);
 
-        if (addTask(task, "Perceived"))
+        if (taskAdd(task, "Perceived"))
             return 1;
 
         return 0;
     }
 
-    public void removeTask(final Task task, final String removalReason) {
+    /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
+    public void taskRemoved(final Task task, final String removalReason) {
         task.addHistory(removalReason);
         emit(TaskRemove.class, task, removalReason);
         task.end();
     }
 
 
+    /** sends an event signal to listeners subscribed to channel 'c' */
     final public void emit(final Class c, final Object... signal) {
         event.emit(c, signal);
     }
 
+    /** tells whether a given channel has any listeners that might react to something emitted to it */
     final public boolean emitting(final Class channel) {
         return event.isActive(channel);
     }
@@ -647,7 +652,7 @@ public class Memory implements Serializable {
      * events will continue to be generated, allowing the memory to be used as a
      * clock tick while disabled.
      */
-    public void setEnabled(boolean e) {
+    public void enable(boolean e) {
         this.enabled = e;
     }
 
@@ -661,12 +666,12 @@ public class Memory implements Serializable {
      *  handle it by immediately acting on it, or
      *  adding it to the new tasks queue for future reasoning.
      * @return how many tasks were generated as a result of perceiving, or -1 if no percept was available */
-    public int nextPercept() {
-        if (!isProcessingInput()) return -1;
+    public int perceiveNext() {
+        if (!thinking()) return -1;
 
         Task t = perception.get();
         if (t != null)
-            return inputTask(t);
+            return taskInput(t);
 
         return -1;
     }
@@ -676,8 +681,8 @@ public class Memory implements Serializable {
      *  if N == -1, continue perceives until perception buffer is emptied
      *  @return how many tasks perceived
      */
-    public int nextPercept(int maxPercepts) {
-        if (!isProcessingInput()) return 0;
+    public int perceiveNext(int maxPercepts) {
+        if (!thinking()) return 0;
 
         boolean inputEverything;
 
@@ -686,20 +691,19 @@ public class Memory implements Serializable {
 
         int perceived = 0;
         while (perceived < maxPercepts) {
-            int p = nextPercept();
+            int p = perceiveNext();
             if (p == -1) break;
             else if (!inputEverything) perceived += p;
         }
         return perceived;
     }
 
+    /** executes one complete memory cycle (if not disabled) */
     public /*synchronized*/ void cycle() {
 
         if (!isEnabled()) {
             return;
         }
-
-        //logic.TASK_INPUT.set((double) inputs.numBuffered());
 
         event.emit(Events.CycleStart.class);
 
@@ -707,67 +711,73 @@ public class Memory implements Serializable {
 
         event.emit(Events.CycleEnd.class);
 
-        updateTime();
+        timeUpdate();
 
     }
 
     /**
      * automatically called each cycle
      */
-    protected void updateTime() {
+    protected void timeUpdate() {
         timePreviousCycle = time();
         cycle++;
         if (getTiming()==Timing.Real)
             timeRealNow = System.currentTimeMillis();
     }
 
-    public void addLaterTask(Runnable t) {
+    /** queues a task to (hopefully) be executed at an unknown time in the future,
+     *  in its own thread in a thread pool */
+    public void taskLater(Runnable t) {
+        if (laterTasks==null) {
+            laterTasks = Executors.newFixedThreadPool(1);
+        }
+
         laterTasks.submit(t);
         laterTasks.execute(t);
     }
 
 
-    public void queueOtherTask(Runnable t) {
-        otherTasks.addLast(t);
-    }
-    
-    public int dequeueOtherTasks(Collection<Runnable> target) {
-        int originalSize = otherTasks.size();
-        if (originalSize == 0) return 0;
-
-        int count = 0;
-
-        while (!otherTasks.isEmpty() && count++ < originalSize)
-            target.add(otherTasks.removeFirst());
-
-        return count;
+    /** adds a task to the queue of task which will be executed in batch
+     *  at the end of the current cycle.     */
+    public void taskNext(Runnable t) {
+        nextTasks.addLast(t);
     }
 
+    /** runs all the tasks in the 'Next' queue */
+    public void runNextTasks() {
+        int originalSize = nextTasks.size();
+        if (originalSize == 0) return;
 
+        Core.run(nextTasks, originalSize);
+    }
 
-
-
+    /** signals an error through one or more event notification systems */
     protected void error(Throwable ex) {
         emit(Events.ERR.class, ex);
 
-        if (Parameters.DEBUG) {
-            ex.printStackTrace();
+        ex.printStackTrace();
+
+        if (Parameters.EXIT_ON_EXCEPTION) {
+            //throw the exception to the next lower stack catcher, or cause program exit if none exists
+            throw new RuntimeException(ex);
         }
 
     }
 
-
-
-    public Operator getOperator(final CharSequence op) {
-        return operators.get(op);
+    /** returns the operator identified by its name, or null if none such exists */
+    public Operator operator(final CharSequence name) {
+        return operators.get(name);
     }
 
-    Operator addOperator(final Operator op) {
+    /** adds a operator directly to Memory; the preferred way to do this from
+     * external code is through a NAR's Plugin registry (since Operator extends Plugin)*
+     */
+    Operator operatorAdd(final Operator op) {
         operators.put(op.name(), op);
         return op;
     }
 
-    public Operator removeOperator(final Operator op) {
+    Operator operatorRemove(final Operator op) {
         return operators.remove(op.name());
     }
 
@@ -782,22 +792,25 @@ public class Memory implements Serializable {
         //return sb.toString();
         return super.toString();
     }
-//
 
+
+    /** produces a new stamp serial #, used to uniquely identify inputs */
     public long newStampSerial() {
         return currentStampSerial++;
     }
 
-    public boolean isProcessingInput() {
+    public boolean thinking() {
         return time() >= inputPausedUntil;
     }
 
     /**
-     * Queue additional cycle()'s to the logic process.
+     * Queue additional cycle()'s to the logic process during which no new input will
+     * be perceived.  Analogous to closing one's eyes to focus internally for a brief
+     * or extended amount of time - but not necessarily sleeping.
      *
-     * @param cycles The number of logic steps
+     * @param cycles The number of logic steps to think for, will end thinking at time() + cycles unless more thinking is queued
      */
-    public void stepLater(final long cycles) {
+    public void think(final long cycles) {
         inputPausedUntil = (int) (time() + cycles);
     }
 
@@ -869,9 +882,10 @@ public class Memory implements Serializable {
 //    }
 
     /**
-     * gets a next concept for processing
+     * samples a next concept for processing;
+     * may return null if no concept is available depending on the control system
      */
-    public Concept sampleNextConcept() {
+    public Concept conceptNext() {
         return concepts.sampleNextConcept();
     }
 

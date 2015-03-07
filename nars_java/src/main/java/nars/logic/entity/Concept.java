@@ -294,7 +294,7 @@ public class Concept extends Item<Term> implements Termable {
 //                    //task.budget.decPriority(0);    // duplicated task
 //                }   // else: activated belief
                 
-                memory.removeTask(task, "Duplicated");                
+                memory.taskRemoved(task, "Duplicated");
                 return false;
             } else if (revisible(judg, oldBelief)) {
                 final long now = memory.time();
@@ -403,7 +403,7 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp oldStamp = oldGoal.stamp;
             
             if (newStamp.equals(oldStamp,false, true, false,false)) {
-                memory.removeTask(task, "Duplicated");
+                memory.taskRemoved(task, "Duplicated");
                 return false; // duplicate
             } else if (revisible(goal, oldGoal)) {
 

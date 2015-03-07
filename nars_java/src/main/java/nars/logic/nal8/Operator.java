@@ -183,7 +183,7 @@ public abstract class Operator extends Term implements Plugin {
                 t.setCause(op);
                 t.addHistory("Feedback");
 
-                memory.addTask(t);
+                memory.taskAdd(t);
             }
         }
 
@@ -201,7 +201,7 @@ public abstract class Operator extends Term implements Plugin {
         final Task opTask = operation.getTask();
         memory.logic.TASK_EXECUTED.hit();
 
-        memory.addTask(
+        memory.taskAdd(
                 memory.newTask(operation).
                         judgment().
                         truth(truth).

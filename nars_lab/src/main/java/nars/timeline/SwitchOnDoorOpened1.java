@@ -60,7 +60,7 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
             }
         };
         
-        nar.addInput(i);
+        nar.input(i);
         
         nar.step(cycles);        
 

@@ -28,7 +28,7 @@ package ca.nengo.ui.model.widget;
 
 import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.Target;
+import ca.nengo.model.NTarget;
 import ca.nengo.neural.nef.impl.DecodedTarget;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.action.ActionException;
@@ -51,7 +51,7 @@ import java.awt.*;
  * 
  * @author Shu Wu
  */
-public abstract class UITarget<T extends Target> extends Widget<T> implements ILineTermination {
+public abstract class UITarget<T extends NTarget> extends Widget<T> implements ILineTermination {
 
 	/**
 	 * Factory method for creating a UI Wrapper around a termination
@@ -62,7 +62,7 @@ public abstract class UITarget<T extends Target> extends Widget<T> implements IL
 	 * @param target
 	 * @return UI Termination Wrapper
 	 */
-	public static UITarget createTerminationUI(UINeoNode uiNodeParent, Target target) {
+	public static UITarget createTerminationUI(UINeoNode uiNodeParent, NTarget target) {
 	    if (uiNodeParent instanceof UINetwork) {
 	        return new UINetworkTarget((UINetwork)uiNodeParent, target);
 	    } else if (target instanceof DecodedTarget) {
@@ -292,7 +292,7 @@ public abstract class UITarget<T extends Target> extends Widget<T> implements IL
 
 class UIGenericTarget extends UITarget implements ILineTermination {
 
-	protected UIGenericTarget(UINeoNode nodeParent, Target term) {
+	protected UIGenericTarget(UINeoNode nodeParent, NTarget term) {
 		super(nodeParent, term);
 	}
 

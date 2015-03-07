@@ -71,7 +71,7 @@ public class Counting implements Plugin {
                                 BudgetValue budg = task.budget.clone();
                                 Task newTask = new Task(j, budg,task);                               
 
-                                memory.addTask(newTask, "Derived (Cardinality)");
+                                memory.taskAdd(newTask, "Derived (Cardinality)");
                             }
                         }
                     }

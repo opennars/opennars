@@ -40,7 +40,7 @@ import java.util.List;
 
     public void run(int minCycles, int maxCycles) {
             
-        nar.addInput( input );
+        nar.input(input);
 
         if (minCycles == -1)
             nar.run(maxCycles);
@@ -73,7 +73,7 @@ import java.util.List;
     }
 
     private long getCycleTime() {
-        return nar.memory.getCycleTime();
+        return nar.memory.timeCycle();
     }
 
     public void printResults(PrintStream p) {

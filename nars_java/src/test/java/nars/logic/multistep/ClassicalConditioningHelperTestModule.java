@@ -19,25 +19,25 @@ public class ClassicalConditioningHelperTestModule {
     public static void main(String[] args) {
         ClassicalConditioningHelper blub=new ClassicalConditioningHelper();
         NAR nar= new NAR(new Default());
-        nar.addPlugin(blub);
+        nar.on(blub);
         blub.EnableAutomaticConditioning=false;
-        nar.addInput("<a --> M>. :|:"); //abcbbbabc
+        nar.input("<a --> M>. :|:"); //abcbbbabc
         nar.step(6);
-        nar.addInput("<b --> M>. :|:");
+        nar.input("<b --> M>. :|:");
         nar.step(6);
-        nar.addInput("<c --> M>. :|:");
+        nar.input("<c --> M>. :|:");
         nar.step(6);
-        nar.addInput("<b --> M>. :|:");
+        nar.input("<b --> M>. :|:");
         nar.step(6);
-        nar.addInput("<b --> M>. :|:");
+        nar.input("<b --> M>. :|:");
         nar.step(6);
-        nar.addInput("<b --> M>. :|:");
+        nar.input("<b --> M>. :|:");
         nar.step(6);
-        nar.addInput("<a --> M>. :|:");
+        nar.input("<a --> M>. :|:");
         nar.step(6);
-        nar.addInput("<b --> M>. :|:");
+        nar.input("<b --> M>. :|:");
         nar.step(6);
-        nar.addInput("<c --> M>. :|:");
+        nar.input("<c --> M>. :|:");
         nar.step(1);
         blub.classicalConditioning();
     }

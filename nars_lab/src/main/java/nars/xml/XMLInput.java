@@ -47,7 +47,7 @@ public class XMLInput extends PrintWriterInput {
         n.start(0);
 
         //new XMLInput(n, "/home/me/Downloads/schemaorg.owl","");
-        n.addInput(new XMLInput(n.textPerception, "/home/me/Downloads/Semantic_Web.rdf", ""));
+        n.input(new XMLInput(n.textPerception, "/home/me/Downloads/Semantic_Web.rdf", ""));
 
     }
 

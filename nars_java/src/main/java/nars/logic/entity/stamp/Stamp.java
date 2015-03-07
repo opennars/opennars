@@ -95,7 +95,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
 
 
     public Stamp(final Stamp parent, final Memory memory, final Tense tense) {
-        this(parent, memory.time(), getOccurrenceTime(memory.time(), tense, memory.getDuration()));
+        this(parent, memory.time(), getOccurrenceTime(memory.time(), tense, memory.duration()));
     }
 
 
@@ -174,14 +174,14 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      * create an original stamp at current memory time, with a specific creation and occurence time
      */
     public Stamp(final Memory memory, long creationTime, long occurenceTime) {
-        this(memory.newStampSerial(), creationTime, occurenceTime, memory.getDuration());
+        this(memory.newStampSerial(), creationTime, occurenceTime, memory.duration());
     }
 
     /**
      * create an original stamp at current memory time, with a specific creation and tense offset
      */
     public Stamp(final Memory memory, long creationTime, final Tense tense) {
-        this(memory, creationTime, getOccurrenceTime(creationTime, tense, memory.getDuration()));
+        this(memory, creationTime, getOccurrenceTime(creationTime, tense, memory.duration()));
     }
 
 
