@@ -4,5 +4,5 @@
 30
 <stefan --> good>. :|:
 20
-''outputMustContain('<(&/,(^pick,stefan),+4) =/> <stefan --> good>>. :\: %0.00;0.47%')
-''outputMustContain('<(&/,(^pick,$1),+4) =/> <$1 --> good>>. :\: %0.00;0.47%')
+''outputMustContain('<(&/,(^pick,stefan),+3) =/> <stefan --> good>>. :\: %0.00;0.47%')
+''outputMustContain('<(&/,(^pick,$1),+3) =/> <$1 --> good>>. :\: %0.00;0.47%')
