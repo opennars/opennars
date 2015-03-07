@@ -205,7 +205,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         for (final Variable v : vars) {
 
             CharSequence vname = v.name();
-            if (!v.hasVarIndep())
+            if (!v.hasVarIndep() && v.hasScope()) //include the scope as part of its uniqueness
                 vname = vname.toString() + v.getScope().name();
 
             CharSequence n = rename.get(vname);
@@ -218,10 +218,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
             }
 
 
-            //if (!v.hasVarIndep())
-                v.setScope(c, n);
-            //else
-              //  v.setScope(v.hasScope() ? v.getScope() : c, n);
+            v.setScope(c, n);
+
         }
 
         if (renamed) {

@@ -3,6 +3,7 @@ package nars.analyze;
 import nars.build.Default;
 import nars.core.Events;
 import nars.core.NewNAR;
+import nars.core.Parameters;
 import nars.event.Reaction;
 import nars.io.test.TestNAR;
 import nars.logic.entity.Task;
@@ -25,11 +26,12 @@ public class NALysisSome extends NALysis {
 
     public static void main(String[] args) throws FileNotFoundException {
 
+        Parameters.DEBUG = true;
         showInput = true;
         showOutput = true;
         showTrace = false;
 
-        String test = "./nal/test6/nal6.23.nal";
+        String test = "./nal/test6/nal6.27.nal";
         //String test = "./nal/test7/nal7.6.nal";
         //String test = "./nal/test8/nal8.1.0.nal";
         //String test = "./nal/test8/nal8.1.21.nal";
@@ -44,7 +46,7 @@ public class NALysisSome extends NALysis {
         TestNAR n = analyze(
                 build,
                 test,
-                200,
+                800,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {

@@ -401,17 +401,26 @@ public class Concept extends Item<Term> implements Termable {
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
-            
-            if (newStamp.equals(oldStamp,false, true, false,false)) {
+
+
+
+            if (newStamp.equals(oldStamp,false, true, false, true)) {
                 memory.taskRemoved(task, "Duplicated");
                 return false; // duplicate
             } else if (revisible(goal, oldGoal)) {
 
-                boolean revisionSucceeded = revision(goal, oldGoal, false, nal);
-                if(revisionSucceeded) {
-                    // it is revised, so there is a new task for which this function will be called
-                    return false; // with higher/lower desire
-                } 
+                Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), memory.time());
+                if (projectedGoal!=null) {
+                    if (projectedGoal.getOccurrenceTime()!=oldGoal.getOccurrenceTime()) {
+                        nal.singlePremiseTask(projectedGoal, task.budget);
+                    }
+
+                    boolean revisionSucceeded = revision(goal, projectedGoal, false, nal, projectedGoal);
+                    if(revisionSucceeded) {
+                        // it is revised, so there is a new task for which this function will be called
+                        return false; // with higher/lower desire
+                    }
+                }
             } 
         } 
 
@@ -528,8 +537,8 @@ public class Concept extends Item<Term> implements Termable {
         final int numTemplates = templates.size();
 
 
-        float linkSubBudgetDivisor = (float)numTemplates;
-        //float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
+        //float linkSubBudgetDivisor = (float)numTemplates;
+        float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
 
 
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
@@ -702,9 +711,9 @@ public class Concept extends Item<Term> implements Termable {
             //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
 
             //half of each subBudget is spent on this concept and the other concept's termlink
-            subBudget = taskBudget.getPriority() * (1f / (2 * recipients));
+            //subBudget = taskBudget.getPriority() * (1f / (2 * recipients));
 
-            //subBudget = taskBudget.getPriority() * (1f / (float)Math.sqrt(recipients));
+            subBudget = taskBudget.getPriority() * (1f / (float)Math.sqrt(recipients));
 
 
         }

@@ -35,6 +35,10 @@ public class NARGraph extends DirectedMultigraph {
      */
     public static interface Filter {
 
+        default public float getMinPriority() {
+            return 0;
+        }
+
         boolean includePriority(float l);
 
         boolean includeConcept(Concept c);
@@ -55,6 +59,12 @@ public class NARGraph extends DirectedMultigraph {
     public final static class ExcludeBelowPriority implements Filter {
 
         final float thresh;
+
+
+        @Override
+        public float getMinPriority() {
+            return thresh;
+        }
 
         public ExcludeBelowPriority(float l) {
             this.thresh = l;
@@ -98,6 +108,8 @@ public class NARGraph extends DirectedMultigraph {
          * @param g
          */
         void onFinish(NARGraph g);
+
+        void setMinPriority(float minPriority);
     }
 
     abstract public static class NAREdge<X> extends DefaultEdge {
@@ -301,6 +313,8 @@ public class NARGraph extends DirectedMultigraph {
 
     public NARGraph add(NAR n, Filter filter, Grapher graphize) {
         graphize.onTime(this, n.time());
+
+        graphize.setMinPriority(filter.getMinPriority());
 
         //TODO support AbstractBag
         for (Concept c : n.memory.concepts) {

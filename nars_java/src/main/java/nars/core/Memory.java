@@ -567,7 +567,6 @@ public class Memory implements Serializable {
             if (o instanceof ImmediateOperation) {
                 ImmediateOperation i = (ImmediateOperation) t.getTerm();
                 i.execute(this);
-                emit(ImmediateOperation.class, i);
                 return false;
             }
             else if (o.getOperator().isImmediate()) {
@@ -623,6 +622,7 @@ public class Memory implements Serializable {
                 task.getStamp().setTime(now, oc);
             }
         }
+
 
         emit(Events.IN.class, task);
 

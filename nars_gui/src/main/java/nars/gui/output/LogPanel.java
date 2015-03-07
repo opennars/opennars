@@ -10,6 +10,7 @@ import nars.core.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.WrapLayout;
 import nars.io.Output;
+import nars.io.Symbols;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
 import nars.io.TraceWriter.LogOutput;
@@ -290,15 +291,15 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         
         float r = 1f, g = 1f, b = 1f;
         switch (punctuation) {
-            case '!': r = 1f; g = 0.75f; b = 0f; break;
-            case '?': b = 1f; r = 0.3f; g = 0f; break;
-            case '=': r = 0.2f; g = 1f; b = 0.2f; break; //solution
-            case '.': break;
+            case Symbols.GOAL: r = 1f; g = 0.75f; b = 0f; break;
+            case Symbols.QUESTION: b = 1f; r = 0.3f; g = 0f; break;
+            case Symbols.QUEST: r = 0.2f; g = 1f; b = 0.2f; break; //solution
+            case Symbols.JUDGMENT: break;
                 
         }        
-        r *= 0.25f + 0.75f*priority;
-        g *= 0.25f + 0.75f*priority;
-        b *= 0.25f + 0.75f*priority;
+        r *= 0.4f + 0.6f*priority;
+        g *= 0.4f + 0.6f*priority;
+        b *= 0.4f + 0.6f*priority;
         return new Color(r, g, b);
     }
     

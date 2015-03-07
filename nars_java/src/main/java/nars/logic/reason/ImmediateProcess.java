@@ -43,16 +43,7 @@ public class ImmediateProcess extends NAL {
 
     @Override
     public void reason() {
-        Term t = getCurrentTask().getTerm();
-//        if (t instanceof Variable) {
-//            throw new RuntimeException("Variables, like " + t +", are invalid task term for ImmediateProcess");
-//        }
-//        if (t.hasVar()) {
-//            CompoundTerm ct = (CompoundTerm)t;
-//
-//        }
-
-        Concept c = memory.conceptualize(currentTask.budget, t);
+        Concept c = memory.conceptualize(currentTask.budget, getCurrentTask().getTerm());
         if (c == null) return;
 
         if (c.directProcess(this, currentTask)) {

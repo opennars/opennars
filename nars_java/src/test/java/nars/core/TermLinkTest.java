@@ -25,6 +25,13 @@ public class TermLinkTest {
         Bag<TermLinkKey, TermLink> cj1 = getTermLinks("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)");
         assertEquals(5, cj1.size());
 
+        Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>");
+        cj2.printAll(System.out);
+
+        System.out.println();
+
+        Bag<TermLinkKey, TermLink> cj3 = getTermLinks("<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>");
+        cj3.printAll(System.out);
     }
 
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term) {

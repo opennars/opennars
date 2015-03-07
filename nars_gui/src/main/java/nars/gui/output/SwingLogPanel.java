@@ -28,14 +28,14 @@ public class SwingLogPanel extends LogPanel {
     public SwingLogPanel(NAR nar, Class... events) {
         super(nar, events);
 
-        ioText = new SwingLogText(nar) {
+        ioText = new SwingLogText(nar)/* {
 
             @Override
             protected void onLineVisible(final int offset) {                
                 //System.out.println(offset + " " + lines.get(offset));
             }
             
-        };
+        }*/;
         
         
 
@@ -64,13 +64,11 @@ public class SwingLogPanel extends LogPanel {
     void print(Class c, Object o) {
         ioText.output(c, o);//, showStamp, nar);
 
-        CharSequence s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
+            CharSequence s = TextOutput.getOutputString(c, o, true, showStamp, nar);
             logFile.append(s).append('\n');
         }
-        
-        
-        
+
     }
 
     

@@ -24,6 +24,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
     private final boolean includeDerivations;
     
     @Deprecated protected int includeSyntax; //how many recursive levels to decompose per Term
+    private float minPriority = 0;
 
     //g.addVertex(c);
     //g.addVertex(belief);
@@ -70,7 +71,9 @@ public class DefaultGrapher implements NARGraph.Grapher {
 
     }
 
-    public void onTask(Task t) {
+    /** return true if the edge to the task should be included */
+    public boolean onTask(Task t) {
+        return true;
     }
 
     public Sentence onBelief(Sentence kb) {
@@ -126,9 +129,8 @@ public class DefaultGrapher implements NARGraph.Grapher {
 
     void recurseTermComponents(NARGraph g, CompoundTerm c, int level) {
         for (Term b : c.term) {
-            if (!g.containsVertex(b)) {
-                g.addVertex(b);
-            }
+            g.addVertex(b);
+
             if (!includeTermContent) {
                 g.addEdge(c, b, new NARGraph.TermContent());
             }
@@ -211,32 +213,36 @@ public class DefaultGrapher implements NARGraph.Grapher {
             }
         }
         if (includeTaskLinks) {
-            for (Map.Entry<TaskLink, Concept> et : taskLinks.entries()) {
 
-                TaskLink t = et.getKey();
-                Concept from = et.getValue();
-                if (t.targetTask != null) {
-                    Task theTask = t.targetTask;
-                    if (!g.containsVertex(theTask)) {
-                        g.addVertex(theTask);
-                    }
+            for (final Map.Entry<TaskLink, Concept> et : taskLinks.entries()) {
+
+                final TaskLink t = et.getKey();
+                final Concept from = et.getValue();
+                if (t.targetTask != null && t.targetTask.getPriority() > minPriority) {
+                    final Task theTask = t.targetTask;
+                    g.addVertex(theTask);
+
 
                     Term term = theTask.getTerm();
                     if (term != null) {
                         Concept c = terms.get(term);
                         if (c != null) {
-                            if (!g.containsVertex(c)) {
-                                g.addVertex(c);
-                            }
+                            g.addVertex(c);
                             g.addEdge(c, theTask, new NARGraph.TermContent());
                         }
                     }
-                    onTask(theTask);
 
-                    g.addEdge(from, t.targetTask, new NARGraph.TaskLinkEdge(t));
+                    if (onTask(theTask)) {
+                        g.addEdge(from, theTask, new NARGraph.TaskLinkEdge(t));
+                    }
                 }
             }
         }
+    }
+
+    @Override
+    public void setMinPriority(float minPriority) {
+        this.minPriority = minPriority;
     }
 
     public void setShowSyntax(boolean showSyntax) {

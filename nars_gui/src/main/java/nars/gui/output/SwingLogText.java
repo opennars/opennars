@@ -5,16 +5,15 @@ import automenta.vivisect.swing.NWindow;
 import nars.core.Events;
 import nars.core.Events.OUT;
 import nars.core.NAR;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.entity.TruthValue;
+import nars.logic.entity.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 
 public class SwingLogText extends SwingText  {
@@ -133,7 +132,7 @@ public class SwingLogText extends SwingText  {
 
             while (pendingDisplay.size() > 0) {
                 LogLine l = pendingDisplay.removeFirst();
-                print(l.c, l.o);
+                print(l);
             }
                         
             limitBuffer();                        
@@ -163,8 +162,10 @@ public class SwingLogText extends SwingText  {
 //    }
     
     
-    protected int print(Class c, Object o)  {        
+    protected int print(final LogLine l)  {
 
+        Class c = l.c;
+        Object o = l.o;
         float priority = 1f;
 
 
@@ -174,7 +175,9 @@ public class SwingLogText extends SwingText  {
             //pad the channel name to max 6 characters, right aligned
             
             String n = c.getSimpleName();
-            n = n.substring(0,Math.min(6, n.length()));
+            final int nl = n.length();
+            if (nl > 6)
+                n = n.substring(0,6);
             switch (n.length()) {
                 case 0: break;
                 case 1: n = "     " + n; break;
@@ -193,18 +196,18 @@ public class SwingLogText extends SwingText  {
                 Sentence s = t.sentence;
                 if (s!=null) {
                     priority = t.budget.getPriority();
-                    printColorBlock(LogPanel.getPriorityColor(priority), "  ");
+                    printBlock(LogPanel.getPriorityColor(priority), "  ");
                 
                     TruthValue tv = s.truth;
                     if (tv!=null) {                    
-                        printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
-                        printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");                        
+                        printBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
+                        printBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");
                     }
                     else if ( t.getBestSolution()!=null) {
-                        printColorBlock(LogPanel.getStatementColor('=', priority), "    ");
+                        printBlock(LogPanel.getStatementColor('=', priority), "    ");
                     }
                     else {                        
-                        printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");                   
+                        printBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");
                     }
                 }
             }
@@ -224,36 +227,48 @@ public class SwingLogText extends SwingText  {
                 
         if (o instanceof Task) {
             Task t = (Task)o;
-            Concept cc = nar.memory.concept(t.getTerm());            
-            if (cc!=null) {
-                
-                print(Color.WHITE, sb.toString(), new ConceptAction(cc));
-                return doc.getLength();
-            }            
+            float tc = 0.5f + 0.5f * priority;
+            Color textColor = new Color(tc,tc,tc);
+            print(textColor, sb.toString(), new ConceptAction(t.getTerm()));
+            return doc.getLength();
         }
         
 //        float tc = 0.75f + 0.25f * priority;
-//        Color textColor = new Color(tc,tc,tc);        
+//        Color textColor = new Color(tc,tc,tc);
         print(Color.GRAY, sb.toString());        
         return doc.getLength();
         
     }
-    
-    public class ConceptAction extends AbstractAction {
-        private final Concept concept;
 
-        public ConceptAction(Concept c) {
+    private static final Map<Term, NWindow> opened = new WeakHashMap<>();
+
+    public class ConceptAction extends AbstractAction {
+        private final Term term;
+
+        public ConceptAction(Term t) {
             super();
-            this.concept = c;
+            this.term = t;
         }
         
         @Override
-        public void actionPerformed(ActionEvent e) {            
-            NWindow w = new NWindow(concept.term.toString(),
-                    cpBuilder.newPanel(concept, true, 64));
-            
-            w.pack();
-            w.setVisible(true);
+        public void actionPerformed(ActionEvent e) {
+
+            NWindow existing = opened.get(term);
+            if (existing == null) {
+                Concept concept = nar.concept(term);
+                if (concept!=null) {
+                    NWindow w = new NWindow(concept.term.toString(),
+                            cpBuilder.newPanel(concept, true, 64));
+
+                    w.pack();
+                    w.setVisible(true);
+                    opened.put(term, w);
+                }
+            }
+            else {
+                if (existing.isVisible())
+                    existing.requestFocusInWindow();
+            }
 
         }
         

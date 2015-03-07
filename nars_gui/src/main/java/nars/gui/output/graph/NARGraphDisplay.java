@@ -126,16 +126,17 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
         float thickness = lineWidth;
         if (edge instanceof NARGraph.TermLinkEdge) {
             TermLink t = ((NARGraph.TermLinkEdge)edge).getObject();
-            float p = t.getPriority();            
+            float p = t.getPriority();
+            float d = t.getDurability();
             thickness = (1 + p) * lineWidth;            
-            color = Video.color(255f * (0.5f + p*0.5f), 125f, 125f, 255f * (0.5f + p*0.5f) );
+            color = Video.color(255f * (0.5f + p*0.5f), 15f, 255f * (0.5f + d*0.5f), 255f * (0.75f + p*0.25f) );
         }
         if (edge instanceof NARGraph.TaskLinkEdge) {
             TaskLink t = ((NARGraph.TaskLinkEdge)edge).getObject();
             float tp = t.targetTask.getPriority(); //task priority
             float lp = t.getPriority();  //link priority
             thickness = (1 + (tp+lp)/2f) * lineWidth;
-            color = Video.color(55f, 255f * (0.5f + tp*0.5f), 255f * (0.5f + lp*0.5f), 255f * (0.5f + lp*0.5f) );
+            color = Video.color(15f, 255f * (0.5f + tp*0.5f), 255f * (0.5f + lp*0.5f), 255f * (0.75f + lp*0.25f) );
         }
     
         e.color = color;

@@ -91,7 +91,7 @@ public class SwingText extends JTextPane {
 
     }
 
-    public void printColorBlock(final Color color, final String s) {
+    public void printBlock(final Color color, final String s) {
 
 
         //StyleContext sc = StyleContext.getDefaultStyleContext();
