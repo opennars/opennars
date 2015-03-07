@@ -350,11 +350,20 @@ public class Concept extends Item<Term> implements Termable {
             if (newStamp.equals(oldStamp,false,false,true,true)) {
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
+                
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
-                boolean successOfRevision = revision(goal, oldGoal, false, nal);
-                if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
-                    return; // with higher/lower desire
-                } 
+                
+                Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), memory.time());
+                if (projectedGoal!=null) {
+                    if (projectedGoal.getOccurenceTime()!=oldGoal.getOccurenceTime()) {
+                        nal.singlePremiseTask(projectedGoal, task.budget);
+                    }
+                    nal.setCurrentBelief(projectedGoal);
+                    boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
+                    if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
+                        return; // with higher/lower desire
+                    } 
+                }
             } 
         } 
         
