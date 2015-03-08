@@ -155,6 +155,7 @@ public class RuleTables {
                                 {
                                     if(!Variables.findSubstitute(VAR_INDEPENDENT, conj.term[j], conj2.term[j], map, map2)) {
                                         equal=false;
+                                        break;
                                     }
                                 }
                                 if(equal) {
