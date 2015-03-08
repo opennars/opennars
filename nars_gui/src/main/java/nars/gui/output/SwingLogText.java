@@ -12,38 +12,41 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 
-public class SwingLogText extends SwingText  {
+public class SwingLogText extends SwingText {
+    final Deque<LogLine> pendingDisplay = new ArrayDeque(); //new ConcurrentLinkedDeque<>();
+    public final Runnable update = new Runnable() {
+
+        //final Rectangle bottom = new Rectangle(0,Integer.MAX_VALUE-1,1,1);
+
+        @Override
+        public void run() {
+
+            while (pendingDisplay.size() > 0) {
+                LogLine l = pendingDisplay.removeFirst();
+                print(l);
+            }
+
+            limitBuffer();
+
+            /*try {
+                //scrollRectToVisible(bottom);
+            }
+            catch (Exception e) { } */
+        }
+    };
     private final NAR nar;
     private final ConceptPanelBuilder cpBuilder;
     public boolean showStamp = false;
-    final Deque<LogLine> pendingDisplay = new ArrayDeque(); //new ConcurrentLinkedDeque<>();
     private JScrollPane scroller;
 
 
-    
-    public static class LogLine {
-        public final Class c;
-        public final Object o;
-
-        public LogLine(Class c, Object o) {
-            this.c = c;
-            this.o = o;
-        }
-        
-    }
-
-
-    
-
-    public SwingLogText(NAR n) {        
+    public SwingLogText(NAR n) {
         super();
-        
+
         this.nar = n;
-     
+
         this.cpBuilder = new ConceptPanelBuilder(n);
     }
 
@@ -70,7 +73,7 @@ public class SwingLogText extends SwingText  {
 //        }
 //
 //    }
-    
+
     void setScroller(JScrollPane scroller) {
         this.scroller = scroller;
         /*scroller.getViewport().addChangeListener(new ChangeListener() {
@@ -111,39 +114,111 @@ public class SwingLogText extends SwingText  {
 //            //System.out.println("< -- (" + endIndex + ", " + startIndex);
 //        }        
 //    }
-    
-    protected void onLineVisible(int offset) { }
-    
-    
-    public void output(final Class c, final Object o) {                
+
+    protected void onLineVisible(int offset) {
+    }
+
+
+    public void output(final Class c, final Object o) {
         pendingDisplay.addLast(new LogLine(c, o));
-                
+
         if (pendingDisplay.size() == 1) {
             //only invoke update after the first has been added
             SwingUtilities.invokeLater(update);
         }
     }
-    
-    public final Runnable update = new Runnable() {
-        
-        //final Rectangle bottom = new Rectangle(0,Integer.MAX_VALUE-1,1,1);        
-        
-        @Override public void run() {
 
-            while (pendingDisplay.size() > 0) {
-                LogLine l = pendingDisplay.removeFirst();
-                print(l);
-            }
-                        
-            limitBuffer();                        
+    protected int print(final LogLine l) {
 
-            /*try {
-                //scrollRectToVisible(bottom);
+        Class c = l.c;
+        Object o = l.o;
+        float priority = 1f;
+
+
+        if (c != OUT.class) {
+            //pad the channel name to max 6 characters, right aligned
+
+            String n = c.getSimpleName();
+            final int nl = n.length();
+            if (nl > 6)
+                n = n.substring(0, 6);
+            switch (n.length()) {
+                case 0:
+                    break;
+                case 1:
+                    n = "     " + n;
+                    break;
+                case 2:
+                    n = "    " + n;
+                    break;
+                case 3:
+                    n = "   " + n;
+                    break;
+                case 4:
+                    n = "  " + n;
+                    break;
+                case 5:
+                    n = " " + n;
+                    break;
             }
-            catch (Exception e) { } */
+            Color chanColor = Video.getColor(c.getClass().hashCode(), 0.8f, 0.8f);
+            print(chanColor, n);
+        } else {
+            if (o instanceof Task) {
+                Task t = (Task) o;
+                Sentence s = t.sentence;
+                if (s != null) {
+                    priority = t.budget.getPriority();
+                    printBlock(LogPanel.getPriorityColor(priority), "  ");
+
+                    TruthValue tv = s.truth;
+                    if (tv != null) {
+                        printBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
+                        printBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");
+                    } else if (t.getBestSolution() != null) {
+                        printBlock(LogPanel.getStatementColor('=', priority), "    ");
+                    } else {
+                        printBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");
+                    }
+                }
+            }
         }
-    };
-    
+
+
+        CharSequence text = LogPanel.getText(c, o, showStamp, nar);
+        StringBuilder sb = new StringBuilder(text.length() + 2);
+        sb.append(' ');
+        if ((text.length() > maxLineWidth) && (c != Events.ERR.class))
+            sb.append(text.subSequence(0, maxLineWidth));
+        else
+            sb.append(text);
+
+        if (sb.charAt(sb.length() - 1) == '\n') {
+            throw new RuntimeException(sb + " should not end in newline char");
+        }
+
+
+        if (o instanceof Task) {
+            Task t = (Task) o;
+            float tc = 0.5f + 0.5f * priority;
+            Color textColor = new Color(tc, tc, tc);
+            print(textColor, sb.toString(), new ConceptAction(t.getTerm()));
+
+            print(Color.GRAY, "\n"); //print the newline separately without the action handler
+        }
+        else {
+//        float tc = 0.75f + 0.25f * priority;
+//        Color textColor = new Color(tc,tc,tc);
+            sb.append('\n');
+            print(Color.GRAY, sb.toString());
+        }
+
+
+
+        return doc.getLength();
+
+    }
+
 //    public class TaskIcon extends NCanvas {
 //
 //        public TaskIcon() {
@@ -160,119 +235,59 @@ public class SwingLogText extends SwingText  {
 //        
 //        
 //    }
-    
-    
-    protected int print(final LogLine l)  {
 
-        Class c = l.c;
-        Object o = l.o;
-        float priority = 1f;
+    public static class LogLine {
+        public final Class c;
+        public final Object o;
 
-
-
-        
-        if (c!=OUT.class) {
-            //pad the channel name to max 6 characters, right aligned
-            
-            String n = c.getSimpleName();
-            final int nl = n.length();
-            if (nl > 6)
-                n = n.substring(0,6);
-            switch (n.length()) {
-                case 0: break;
-                case 1: n = "     " + n; break;
-                case 2: n = "    " + n; break;
-                case 3: n = "   " + n; break;
-                case 4: n = "  " + n; break;
-                case 5: n = " " + n; break;                    
-            }
-            Color chanColor = Video.getColor(c.getClass().hashCode(), 0.8f, 0.8f);
-            print(chanColor, n);
+        public LogLine(Class c, Object o) {
+            this.c = c;
+            this.o = o;
         }
-        
-        else {
-            if (o instanceof Task) {
-                Task t = (Task)o;
-                Sentence s = t.sentence;
-                if (s!=null) {
-                    priority = t.budget.getPriority();
-                    printBlock(LogPanel.getPriorityColor(priority), "  ");
-                
-                    TruthValue tv = s.truth;
-                    if (tv!=null) {                    
-                        printBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
-                        printBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");
-                    }
-                    else if ( t.getBestSolution()!=null) {
-                        printBlock(LogPanel.getStatementColor('=', priority), "    ");
-                    }
-                    else {                        
-                        printBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");
-                    }
-                }
-            }
-        }        
-        
-        
-        CharSequence text = LogPanel.getText(c, o, showStamp, nar);
-        StringBuilder sb = new StringBuilder(text.length()+2);
-        sb.append(' ');
-        if ((text.length() > maxLineWidth) && (c!=Events.ERR.class))
-            sb.append(text.subSequence(0,maxLineWidth));
-        else
-            sb.append(text);
 
-        if (sb.charAt(sb.length()-1)!='\n')
-            sb.append('\n');
-                
-        if (o instanceof Task) {
-            Task t = (Task)o;
-            float tc = 0.5f + 0.5f * priority;
-            Color textColor = new Color(tc,tc,tc);
-            print(textColor, sb.toString(), new ConceptAction(t.getTerm()));
-            return doc.getLength();
-        }
-        
-//        float tc = 0.75f + 0.25f * priority;
-//        Color textColor = new Color(tc,tc,tc);
-        print(Color.GRAY, sb.toString());        
-        return doc.getLength();
-        
     }
-
-    private static final Map<Term, NWindow> opened = new WeakHashMap<>();
 
     public class ConceptAction extends AbstractAction {
         private final Term term;
+        private NWindow w = null;
 
         public ConceptAction(Term t) {
             super();
             this.term = t;
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            NWindow existing = opened.get(term);
-            if (existing == null) {
-                Concept concept = nar.concept(term);
-                if (concept!=null) {
-                    NWindow w = new NWindow(concept.term.toString(),
+
+            Concept concept = nar.concept(term);
+            if (concept != null) {
+
+
+                //Collection<ConceptPanelBuilder.ConceptPanel> panels = cpBuilder.getPanels(concept);
+
+                if (w == null) {
+                    w = new NWindow(concept.term.toString(),
                             cpBuilder.newPanel(concept, true, 64));
 
                     w.pack();
                     w.setVisible(true);
-                    opened.put(term, w);
+                } else {
+                    if (w!=null) {
+                        w.setVisible(false);
+                        w.removeAll();
+                        w = null;
+                    }
                 }
             }
-            else {
-                if (existing.isVisible())
-                    existing.requestFocusInWindow();
-            }
+//            else {
+//                if (existing.isVisible())
+//                    existing.requestFocusInWindow();
+//            }
 
         }
-        
+
     }
-    
+
 
 }

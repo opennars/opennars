@@ -195,7 +195,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     /** linear interpolate between target & current, factor is between 0 and 1.0 */
-    public static float lerp(float target, float current, float factor) {
+    public static float lerp(final float target, final float current, final float factor) {
         return target * factor + current * (1f - factor);
     }
 

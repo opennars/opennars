@@ -12,17 +12,23 @@ import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
+import nars.logic.BudgetFunctions;
 import nars.logic.entity.BudgetValue.Budgetable;
 import nars.logic.entity.Concept;
+import nars.logic.entity.Item;
 import nars.logic.entity.Sentence;
-import nars.logic.entity.TermLink;
 import nars.logic.entity.TruthValue.Truthable;
+import nars.util.bag.Bag;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import static java.awt.BorderLayout.*;
 
@@ -35,31 +41,45 @@ public class ConceptPanelBuilder extends AbstractReaction {
     private final NAR nar;
     private final Multimap<Concept, ConceptPanel> concept = HashMultimap.create();
 
-    public ConceptPanelBuilder(NAR n, Concept... c) {
-        super(n, Events.FrameEnd.class,
+    public ConceptPanelBuilder(NAR n) {
+        super(n, Events.FrameEnd.class
+                /*,
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,
                 Events.ConceptQuestionAdd.class,
                 Events.ConceptQuestionRemove.class,
                 Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class);
+                Events.ConceptGoalRemove.class*/);
 
         this.nar = n;
 
     }
 
+    public static Color getColor(float freq, float conf, float factor) {
+        float ii = 0.25f + (factor * conf) * 0.75f;
+        float green = freq > 0.5f ? (freq / 2f) : 0f;
+        float red = freq <= 0.5f ? ((1.0f - freq) / 2f) : 0;
+        return new Color(red, green, 1.0f, ii);
+    }
+
     public ConceptPanel newPanel(Concept c, boolean label, int chartSize) {
-        return new ConceptPanel(c, label, chartSize) {
+        ConceptPanel cp = new ConceptPanel(c, label, chartSize){
+
             @Override
-            protected void onShowing(boolean showing) {
-                if (showing) {
-                    concept.put(c, this);
-                }
-                else {
-                    concept.remove(c, this);
-                }
+            protected void onShowing(final boolean showing) {
+
+                    if (showing) {
+                        //concept.put(c, this);
+                    } else {
+                        this.closed = true;
+                    }
+
             }
         }.update(nar.time());
+        synchronized (concept) {
+            concept.put(c, cp);
+        }
+        return cp;
     }
 
     @Override
@@ -70,41 +90,62 @@ public class ConceptPanelBuilder extends AbstractReaction {
             updateAll();
         }
     }
-    
+
     public void updateAll() {
         //TODO only update the necessary concepts
         long t = nar.time();
-        for (final ConceptPanel cp : concept.values())
-            if (cp.isShowing() && cp.isVisible())
-                cp.update(t);
+        synchronized (concept) {
+            final Iterator<Map.Entry<Concept, ConceptPanel>> ee = concept.entries().iterator();
+            while (ee.hasNext()) {
+                final Map.Entry<Concept, ConceptPanel> e = ee.next();
+                final ConceptPanel cp = e.getValue();
+                if ((cp.closed) || (!cp.isVisible())) {
+                    ee.remove();
+                }
+                else if ( cp.isVisible() ) {
+                    cp.update(t);
+                }
+            }
+        }
     }
 
     public void off() {
         super.off();
-        concept.clear();
+        synchronized (concept) {
+            concept.clear();
+        }
+
+    }
+
+    public Collection<ConceptPanel> getPanels(Concept c) {
+        Collection<ConceptPanel> x = concept.get(c);
+        if (x == null) return Collections.EMPTY_LIST;
+        return x;
     }
 
     public static class ConceptPanel extends NPanel {
 
+        final float titleSize = 24f;
         private final Concept concept;
         private final TruthChart beliefChart;
         private final TruthChart desireChart;
         private final PriorityColumn questionChart;
-        private final TermLinkChart termLinkChart;
-        private JTextArea title;
-        private JLabel subtitle;
-
+        private final BagChart termLinkChart;
+        private final BagChart taskLinkChart;
         int chartWidth = 64;
         int chartHeight = 64;
-        final float titleSize = 24f;
+        private JTextArea title;
+        private JLabel subtitle;
         //final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
-       // private final PCanvas syntaxPanel;
+        public boolean closed;
+        // private final PCanvas syntaxPanel;
 
 
         public ConceptPanel(Concept c, boolean label, int chartSize) {
             super(new BorderLayout());
             this.concept = c;
+            this.closed = false;
 
             this.chartWidth = this.chartHeight = chartSize;
             setOpaque(false);
@@ -113,14 +154,15 @@ public class ConceptPanelBuilder extends AbstractReaction {
             JPanel details = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
             details.setOpaque(false);
 
-            details.add(this.beliefTime = new BeliefTimeline(chartWidth/2, chartHeight));
+            details.add(this.beliefTime = new BeliefTimeline(chartWidth / 2, chartHeight));
             details.add(this.beliefChart = new TruthChart(chartWidth, chartHeight));
 
-            details.add(this.questionChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight));
+            details.add(this.questionChart = new PriorityColumn((int) Math.ceil(Math.sqrt(chartWidth)), chartHeight));
 
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
             //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
-            details.add(this.termLinkChart = new TermLinkChart(c));
+            details.add(this.termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
+            details.add(this.taskLinkChart = new RadialBagChart(c, c.taskLinks));
 
             JPanel titlePanel = new JPanel(new BorderLayout());
             titlePanel.setOpaque(false);
@@ -136,25 +178,25 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
                 add(titlePanel, NORTH);
             }
-            
+
 
             add(details, CENTER);
 
            /* TermSyntaxVis tt = new TermSyntaxVis(c.term);
             syntaxPanel = new PCanvas(tt);
             syntaxPanel.setZoom(10f);
-            
+
             syntaxPanel.noLoop();
             syntaxPanel.redraw();
 
-            
-                        
+
+
 
             add(syntaxPanel);*/
             //setComponentZOrder(overlay, 1);
             //syntaxPanel.setBounds(0,0,400,400);
-            
-            
+
+
         }
 
         public ConceptPanel update(long time) {
@@ -171,7 +213,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
                         beliefTime.update(time, bb));
             }
 
-            if (subtitle!=null)
+            if (subtitle != null)
                 subtitle.setText(st);
 
             /*
@@ -185,25 +227,26 @@ public class ConceptPanelBuilder extends AbstractReaction {
             if (!concept.questions.isEmpty()) {
                 questionChart.setVisible(true);
                 questionChart.update(concept.questions);
-            }
-            else {
+            } else {
                 questionChart.setVisible(false);
             }
-            
+
             if (!concept.goals.isEmpty()) {
                 desireChart.setVisible(true);
-                if (subtitle!=null) {
+                if (subtitle != null) {
                     String s = subtitle.getText();
                     subtitle.setText(s + (s.equals("") ? "" : " ") + "desire: " + concept.goals.get(0).truth.toString());
                 }
                 desireChart.update(time, concept.goals);
-            }
-            else {
+            } else {
                 desireChart.setVisible(false);
             }
 
-            if (termLinkChart!=null) {
+            if (termLinkChart != null) {
                 termLinkChart.update(time);
+            }
+            if (taskLinkChart != null) {
+                taskLinkChart.update(time);
             }
 
             validate();
@@ -221,8 +264,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
     public static class ImagePanel extends JPanel {
 
-        public BufferedImage image;
         final int w, h;
+        public BufferedImage image;
 
         public ImagePanel(int width, int height) {
             super();
@@ -252,6 +295,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         }
 
     }
+
     public static class PriorityColumn extends ImagePanel {
 
         public PriorityColumn(int width, int height) {
@@ -262,7 +306,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         public void update(Iterable<? extends Budgetable> i) {
             Graphics g = g();
             if (g == null) return;
-            
+
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
             for (Budgetable s : i) {
@@ -273,23 +317,24 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 g.setColor(new Color(ii, ii, ii, 0.5f + 0.5f * dur));
 
                 int h = 8;
-                int y = (int)((1f - pri) * (getHeight() - h));
-                
-                g.fillRect(0, y-h/2, getWidth(), h);
+                int y = (int) ((1f - pri) * (getHeight() - h));
+
+                g.fillRect(0, y - h / 2, getWidth(), h);
 
             }
-            g.dispose();            
+            g.dispose();
         }
     }
-    
-    /** normalized to entire history of non-eternal beliefs;
+
+    /**
+     * normalized to entire history of non-eternal beliefs;
      * displayed horizontally
      */
     public static class BeliefTimeline extends ImagePanel {
 
         float minTime, maxTime;
         private float timeFactor;
-        
+
         public BeliefTimeline(int width, int height) {
             super(width, height);
         }
@@ -297,20 +342,20 @@ public class ConceptPanelBuilder extends AbstractReaction {
         public int getT(long when) {
             return Math.round((when - minTime) / timeFactor);
         }
-        
+
         public boolean update(long time, Collection<Sentence> i) {
-            
+
             minTime = maxTime = time;
             for (Sentence s : i) {
                 if (s.isEternal()) continue;
                 long when = s.getOccurrenceTime();
-                                
+
                 if (minTime > when)
-                    minTime = when;                
+                    minTime = when;
                 if (maxTime < when)
                     maxTime = when;
             }
-            
+
             if (minTime == maxTime) {
                 //no time-distinct beliefs
                 return false;
@@ -318,48 +363,41 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             Graphics g = g();
             if (g == null) return false;
-            
-            int thick = 4;                
-            timeFactor = (maxTime - minTime) / ((float)w-thick);
-            
+
+            int thick = 4;
+            timeFactor = (maxTime - minTime) / ((float) w - thick);
+
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
             for (Sentence s : i) {
                 if (s.isEternal()) continue;
                 long when = s.getOccurrenceTime();
-                
+
                 int yy = getT(when);
-                
-                
+
+
                 float freq = s.getTruth().getFrequency();
                 float conf = s.getTruth().getConfidence();
 
-                int xx = (int)((1.0f - freq) * (this.w - thick));
-                        
-                
+                int xx = (int) ((1.0f - freq) * (this.w - thick));
+
+
                 g.setColor(getColor(freq, conf, 1.0f));
-                
+
                 g.fillRect(xx, yy, thick, thick);
 
             }
-            
-            // "now" axis            
+
+            // "now" axis
             g.setColor(Color.GRAY);
             int tt = getT(time);
-            g.fillRect(0, tt-1, getWidth(), 3);
-            
-            g.dispose();        
+            g.fillRect(0, tt - 1, getWidth(), 3);
+
+            g.dispose();
             return true;
         }
     }
-    
-    public static Color getColor(float freq, float conf, float factor) {
-        float ii = 0.25f + (factor * conf) * 0.75f;
-        float green = freq > 0.5f ? (freq/2f) : 0f;
-        float red = freq <= 0.5f ? ((1.0f-freq)/2f) : 0;
-        return new Color(red, green, 1.0f, ii);
-    }
-    
+
     public static class TruthChart extends ImagePanel {
 
         public TruthChart(int width, int height) {
@@ -369,7 +407,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         public void update(long now, Iterable<? extends Truthable> i) {
             Graphics g = g();
             if (g == null) return;
-            
+
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
             for (Truthable s : i) {
@@ -378,10 +416,10 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
                 float factor = 1.0f;
                 if (s instanceof Sentence) {
-                    Sentence ss = (Sentence)s;
+                    Sentence ss = (Sentence) s;
                     if (!ss.isEternal()) {
                         //float factor = TruthFunctions.temporalProjection(now, ss.getOccurenceTime(), now);
-                        factor = 1.0f / (1f + Math.abs(ss.getOccurrenceTime() - now)  );
+                        factor = 1.0f / (1f + Math.abs(ss.getOccurrenceTime() - now));
                     }
                 }
                 g.setColor(getColor(freq, conf, factor));
@@ -398,73 +436,183 @@ public class ConceptPanelBuilder extends AbstractReaction {
         }
     }
 
-    public static class TermLinkChart extends ImagePanel {
+    abstract public static class BagChart extends ImagePanel {
 
+        final Map<String, Float> priority = new TreeMap();
         private final Concept concept;
-        TreeMap<String,Float> priority = new TreeMap();
+        private final Bag bag;
 
-        public TermLinkChart(Concept c) {
-            super(400,200);
+        float momentum = 0.9f;
+        int maxItems = 32;
+
+        public BagChart(Concept c, Bag b) {
+            super(400, 200);
 
             this.concept = c;
+            this.bag = b;
         }
 
-        synchronized boolean updateData() {
-            priority.clear();
+        boolean updateData() {
 
-            boolean changed = false;
-            for (TermLink t : concept.termLinks) {
-                String n = t.name().toString();
-                float v = t.getPriority();
-                float existing = priority.getOrDefault(n, -1f);
-                if (existing==-1 || existing != v) {
-                    priority.put(n, v);
-                    changed = true;
-                }
+            final AtomicBoolean changed = new AtomicBoolean(false);
+
+            synchronized (priority) {
+                priority.clear();
+
+                bag.forEach(new Consumer<Item>() {
+                    boolean finished = false;
+
+                    @Override
+                    public void accept(final Item t) {
+
+                        if (finished || priority.size() >= maxItems) {
+                            finished = true;
+                            //this isnt the most efficient way to do it
+                            //instead what would be best is: Bag.forEach(consumer, max) method ,maybe with an iteration direction (high to low, low to high)
+                            return;
+                        }
+
+                        String n = t.name().toString();
+
+                        float existing = priority.getOrDefault(n, -0.01f);
+
+                        float v = BudgetFunctions.lerp(t.getPriority(), existing, 1.0f - momentum);
+
+                        if (existing != v) {
+                            priority.put(n, v);
+                            changed.set(true);
+                        }
+
+
+                    }
+                });
             }
 
-            return (changed);
+            return (changed.get());
         }
+
+        abstract protected void render(Graphics2D g);
 
         public void update(long now) {
             if (!updateData())
                 return;
 
+            Graphics2D g = (Graphics2D) g();
+            render(g);
+            g.dispose();
+
             repaint();
         }
 
+
+    }
+
+    public static class ScatterPlotBagChart extends BagChart {
+
+        public ScatterPlotBagChart(Concept c, Bag b) {
+            super(c, b);
+        }
+
         @Override
-        public void paint(Graphics g1) {
-            super.paint(g1);
-
-            if (priority.isEmpty()) return;
-
-            Graphics2D g = (Graphics2D)g1;
+        protected void render(Graphics2D g) {
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
 
             int height = getHeight();
             float dx = getWidth() / (1 + priority.size());
-            float x = dx/2;
+            float x = dx / 2;
             g.setFont(Video.monofont.deriveFont(8f));
-            for (Map.Entry<String,Float> e : priority.entrySet()) {
+            for (Map.Entry<String, Float> e : priority.entrySet()) {
 
                 String s = e.getKey();
                 //int textLength = g.getFontMetrics().stringWidth(s);
-                float y = e.getValue() * (height*0.85f) + (height*0.1f);
+                float y = e.getValue() * (height * 0.85f) + (height * 0.1f);
 
-                g.setColor(Color.getHSBColor(e.getValue()*0.5f + 0.25f, 0.75f, 0.8f ));
+                g.setColor(Color.getHSBColor(e.getValue() * 0.5f + 0.25f, 0.75f, 0.8f));
                 //g.translate((int) x, (int) y /*+ textLength*/);
 
                 //g.rotate(-Math.PI/2);
-                g.drawString(s, (int)x, (int)y);
+                g.drawString(s, (int) x, (int) y);
                 //g.rotate(Math.PI/2);
 
                 x += dx;
             }
-            g.dispose();
+        }
+    }
+
+    public static class RadialBagChart extends BagChart implements MouseMotionListener {
+
+        float phase = 0;
+
+        public RadialBagChart(Concept c, Bag b) {
+            super(c, b);
+
+            addMouseMotionListener(this);
         }
 
+        @Override
+        protected void render(Graphics2D g) {
+
+            g.setColor(new Color(0.1f, 0.1f, 0.1f));
+            g.fillRect(0, 0, getWidth(), getHeight());
+
+            int count = priority.size();
+            final int width = getWidth();
+            final int height = getHeight();
+            float dx = (float)(Math.PI*2) / (count);
+            float theta = phase;
+            g.setFont(Video.monofont.deriveFont(8f));
+
+            int i = 0;
+            g.translate(width/2, height/2);
+            for (Map.Entry<String, Float> e : priority.entrySet()) {
+
+                String s = e.getKey();
+
+                float rad = e.getValue() * (width/2 * 0.65f) + (width/2 * 0.15f);
+
+                g.setColor(Color.getHSBColor(e.getValue() * 0.5f + 0.25f, 0.75f, 0.8f));
+                //g.translate((int) theta, (int) y /*+ textLength*/);
+
+                int x, y;
+                if (count == 1) {
+                    int textLength = g.getFontMetrics().stringWidth(s);
+                    x = 0;
+                    y = 0;
+                    x -= textLength/2;
+                    g.drawString(s, x, y);
+                }
+                else {
+                    if (i == 0) g.rotate(phase); //initial angle offset
+
+                    //x = (int) (rad * Math.cos(theta)) + width / 2;
+                    //y = (int) (rad * Math.sin(theta)) + height / 2;
+                    g.drawString(s, rad, 0);
+                    g.rotate(dx);
+                    //g.rotate(-theta);
+                }
+
+                theta += dx;
+                i++;
+            }
+        }
+
+        int prevx;
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            int ex = e.getPoint().x;
+            phase += (ex - prevx)/32f;
+            prevx = ex;
+            repaint();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            prevx = e.getPoint().x;
+        }
     }
+
+
 }

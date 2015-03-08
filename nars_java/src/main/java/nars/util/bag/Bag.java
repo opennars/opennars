@@ -221,8 +221,8 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * accuracy determines the percentage of items which will be processNext().
      * this is a way to apply the forgetting process applied in putBack.
      */
-    public void forgetNext(final float forgetCycles, float accuracy, final Memory m) {
-        int conceptsToForget = Math.max(1, (int) Math.round(size() * accuracy));
+    public void forgetNext(final float forgetCycles, final float accuracy, final Memory m) {
+        int conceptsToForget = (int)Math.ceil(size() * accuracy);
         /*synchronized (forgetNext)*/ {
             forgetNext.set(forgetCycles, m);
             for (int i = 0; i < conceptsToForget; i++) {
@@ -231,7 +231,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
         }
     }
 
-    public void forgetNext(AtomicDouble forgetDurations, float accuracy, final Memory m) {
+    public void forgetNext(AtomicDouble forgetDurations, final float accuracy, final Memory m) {
         float forgetCycles = m.param.cycles(forgetDurations);
         forgetNext(forgetCycles, accuracy, m);
     }

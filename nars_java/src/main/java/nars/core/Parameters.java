@@ -227,11 +227,11 @@ public class Parameters {
      * in which case the forgetting will have been applied some amount of time past
      * when it would have completed its forget descent.
      */
-    public static final float CONCEPT_FORGETTING_ACCURACY = 0.03f;
+    public static final float CONCEPT_FORGETTING_ACCURACY = 0.06f;
 
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
-    public static final float TERMLINK_FORGETTING_ACCURACY = 0.10f;
-    public static final float TASKLINK_FORGETTING_ACCURACY = 0.10f;
+    public static final float TERMLINK_FORGETTING_ACCURACY = 0.15f;
+    public static final float TASKLINK_FORGETTING_ACCURACY = 0.15f;
 
 
 
