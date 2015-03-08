@@ -208,14 +208,24 @@ public class TextOutput extends Output {
         else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Answer.class))  {
 
 
-
-            
             if (signal instanceof Task) {
                 Task t = (Task)signal;                
                 if (t.getPriority() < minPriority)
                     return null;
                 
-                buffer.append(t.sentence.toString(nar, showStamp));                    
+                
+                
+                if (channel == Answer.class) {
+                    Task task = t; //server / NARRun
+                    Sentence answer = task.getBestSolution();
+                    if(answer!=null)
+                        buffer.append(answer.toString(nar, showStamp));
+                    else
+                        buffer.append(t.sentence.toString(nar, showStamp));  
+                }
+                else            
+                    buffer.append(t.sentence.toString(nar, showStamp));   
+                                 
                 
                 
                 /*
