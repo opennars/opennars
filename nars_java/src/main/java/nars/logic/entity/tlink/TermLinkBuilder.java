@@ -18,10 +18,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     public final Concept concept;
 
     List<TermLinkTemplate> template;
+
+
     int nonTransforms;
-
-    final CompoundTerm host;
-
 
     TermLinkTemplate currentTemplate;
     boolean incoming;
@@ -33,14 +32,20 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
         setBudget(null);
 
-        host = (CompoundTerm)c.getTerm();
+        Term host = c.getTerm();
+        if (host instanceof CompoundTerm) {
 
-        int complexity = host.getComplexity();
 
-        template = Parameters.newArrayList(complexity + 1);
-        nonTransforms = 0;
+            int complexity = host.getComplexity();
 
-        prepareComponentLinks(host);
+            template = Parameters.newArrayList(complexity + 1);
+            nonTransforms = 0;
+
+            prepareComponentLinks((CompoundTerm)host);
+        }
+        else {
+        }
+
 
         setKey(this);
     }
@@ -142,10 +147,17 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             nonTransforms++;
     }
 
+    public BudgetValue set(BudgetValue b) {
+        this.budget = b;
+        return b;
+    }
 
     /** configures this selector's current budget for the next bag operation */
     public BudgetValue set(float subBudget, float durability, float quality) {
-        this.budget = new BudgetValue(subBudget, durability, quality);
+        if (budget == null)
+            this.budget = new BudgetValue(subBudget, durability, quality);
+        else
+            this.budget.set(subBudget, durability, quality);
         return budget;
     }
 
@@ -196,14 +208,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     @Override
     public TermLink newItem() {
-        TermLink t = new TermLink(incoming, concept.getTerm(), currentTemplate, getPrefix(), getBudgetRef());
-//        if (Parameters.DEBUG) {
-//            if (!equals(t))
-//                throw new RuntimeException("builder to select an existing termlink does not equal that which it creates");
-//            if (!t.equals(this))
-//                throw new RuntimeException("created termlink does not equal the builder used to select an existing one");
-//        }
-        return t;
+        return new TermLink(incoming, concept.getTerm(), currentTemplate, getPrefix(), getBudgetRef());
     }
 
     public int size() {
@@ -229,6 +234,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
         return getPrefix() + ':' + getTarget();
     }
+
+
 
 
 }

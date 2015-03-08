@@ -38,9 +38,11 @@ import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.logic.reason.ImmediateProcess;
 import nars.util.bag.Bag;
+import nars.util.data.CuckooMap;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static nars.logic.BudgetFunctions.divide;
 import static nars.logic.BudgetFunctions.rankBelief;
@@ -107,6 +109,9 @@ public class Concept extends Item<Term> implements Termable {
     private final TermLinkBuilder termLinkBuilder;
     private final TaskLinkBuilder taskLinkBuilder;
 
+    Map<Term, BudgetValue> queuedTermBudget;
+
+
     /** remaining unspent budget from previous cycle can be accumulated */
     /*float taskBudgetBalance = 0;
     float termBudgetBalance = 0;*/
@@ -148,6 +153,7 @@ public class Concept extends Item<Term> implements Termable {
         }
 
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
+        queuedTermBudget = new CuckooMap<>();
 
     }
 
@@ -239,9 +245,15 @@ public class Concept extends Item<Term> implements Termable {
         return true;
     }
 
-    public void link(Task t) {
+    /** called by concept before it fires to update termlinks */
+    public void updateTermLinks() {
+        linkToTerms(null, true);
+    }
+
+    public boolean link(Task t) {
         if (linkToTask(t))
-            linkToTerms(t.budget);  // recursively insert TermLink
+            return linkToTerms(t.budget, true);  // recursively insert TermLink
+        return false;
     }
 
     /** for batch processing a collection of tasks; more efficient than processing them individually */
@@ -268,7 +280,7 @@ public class Concept extends Item<Term> implements Termable {
 
         //linkToTerms the aggregate budget, rather than each task's budget separately
         if (aggregateBudget!=null) {
-            linkToTerms(aggregateBudget);
+            linkToTerms(aggregateBudget, true);
         }
     }
 
@@ -315,9 +327,11 @@ public class Concept extends Item<Term> implements Termable {
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), now);
                 if (projectedBelief!=null) {
 
+                    /*
                     if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
                     }
+                    */
 
                     if (revision(judg, projectedBelief, false, nal, projectedBelief))
                         return false;
@@ -411,9 +425,12 @@ public class Concept extends Item<Term> implements Termable {
 
                 Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), memory.time());
                 if (projectedGoal!=null) {
+
+                    /*
                     if (projectedGoal.getOccurrenceTime()!=oldGoal.getOccurrenceTime()) {
                         nal.singlePremiseTask(projectedGoal, task.budget);
                     }
+                    */
 
                     boolean revisionSucceeded = revision(goal, projectedGoal, false, nal, projectedGoal);
                     if(revisionSucceeded) {
@@ -541,6 +558,7 @@ public class Concept extends Item<Term> implements Termable {
         float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
 
 
+
         final BudgetValue subBudget = divide(taskBudget, linkSubBudgetDivisor);
         if (!subBudget.aboveThreshold()) {
             //unused
@@ -566,7 +584,8 @@ public class Concept extends Item<Term> implements Termable {
                 taskLinkBuilder.setTemplate(termLink);
 
                 /** activate the task tlink */
-                componentConcept.activateTaskLink(taskLinkBuilder);                }
+                componentConcept.activateTaskLink(taskLinkBuilder);
+            }
 
             else {
                 //taskBudgetBalance += subBudget.getPriority();
@@ -592,29 +611,12 @@ public class Concept extends Item<Term> implements Termable {
         float rank2;
         int i;
 
-        boolean eternal = newSentence.isEternal();
-        long now = memory.time();
-//        if (!eternal && newSentence.getOccurenceTime() < now) {
-//            //discount newSentence by its delta-time
-//            rank1 /= (1.0 + Math.abs(now - newSentence.getOccurenceTime()) / memory.getDuration());
-//            //rank1 *= TruthFunctions.temporalProjection(now, newSentence.getOccurenceTime(), now); //DOESNT WORK
-//        }
 
         //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top
         for (i = 0; i < table.size(); i++) {
             Sentence existingSentence = table.get(i);
 
             rank2 = rankBelief(existingSentence);
-//
-//            if (!eternal && !existingSentence.isEternal()  && existingSentence.getOccurenceTime() < now) {
-//                //discount existingSentence by delta-time
-//                rank2 *= TemporalRules.getBeliefRankFactor(now, existingSentence.getOccurenceTime(), memory.getDuration());
-//            }
-//            else if (!eternal && existingSentence.isEternal()) {
-//                //allow an eternal belief to be replaced by a newer non-eternal belief if its creation time is old
-//                //this divisor may need to be reduced to make age cost much less than how occurrence time is calculated above
-//                rank2 *= TemporalRules.getBeliefRankFactor(now, existingSentence.getCreationTime(), memory.getDuration());
-//            }
 
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(existingSentence, false, false, true, true)) {
@@ -688,24 +690,26 @@ public class Concept extends Item<Term> implements Termable {
      * called only from Memory.continuedProcess
      *
      * @param taskBudget The BudgetValue of the task
+     * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
-    public boolean linkToTerms(final BudgetValue taskBudget) {
+    public boolean linkToTerms(final BudgetValue taskBudget, boolean updateTLinks) {
 
-        if (termLinkBuilder.size() == 0)
-            return false;
+        if (termLinkBuilder == null) return false;
+        if (taskBudget == null && queuedTermBudget.isEmpty()) return false; //no result would occurr
 
-        List<TermLinkTemplate> templates = termLinkBuilder.templates();
+        //System.out.println("link to terms: " + this + " + " + taskBudget + " " + queuedTermBudget + " " + updateTLinks);
+
+        final float subPriority;
         int recipients = termLinkBuilder.getNonTransforms();
-
-
-        final float subBudget;
         if (recipients == 0) {
             //termBudgetBalance += subBudget;
             //subBudget = 0;
             return false;
         }
-        else {
+
+        float dur = 0, qua = 0;
+        if (taskBudget !=null) {
             //TODO make this parameterizable
 
             //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
@@ -713,22 +717,17 @@ public class Concept extends Item<Term> implements Termable {
             //half of each subBudget is spent on this concept and the other concept's termlink
             //subBudget = taskBudget.getPriority() * (1f / (2 * recipients));
 
-            subBudget = taskBudget.getPriority() * (1f / (float)Math.sqrt(recipients));
-
-
+            subPriority = taskBudget.getPriority() * (1f / (float) Math.sqrt(recipients));
+            dur = taskBudget.getDurability();
+            qua = taskBudget.getQuality();
+        }
+        else {
+            subPriority = 0;
         }
 
 
-//            //account for unused priority
-//            termBudgetBalance += taskBudget.getPriority();
-//            return false;
-//        }
-
-
-        if (!termLinkBuilder.set(subBudget, taskBudget.getDurability(), taskBudget.getQuality()).aboveThreshold())
-            return false;
-
         boolean activity = false;
+        List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
         for (int i = 0; i < recipients; i++) {
             TermLinkTemplate template = templates.get(i);
@@ -737,29 +736,86 @@ public class Concept extends Item<Term> implements Termable {
             if (template.type == TermLink.TRANSFORM)
                 continue;
 
-            final Term target = template.target;
+            linkToTerm(template, subPriority,dur, qua, updateTLinks);
 
-            final Concept otherConcept = memory.conceptualize(termLinkBuilder.getBudgetRef(), target);
-            if (otherConcept == null) {
-                //termBudgetBalance += subBudget*2;
-                continue;
+        }
+
+        return activity;
+    }
+
+    boolean linkToTerm(TermLinkTemplate template, float priority, float durability, float quality, boolean updateTLinks) {
+
+        final Term otherTerm = template.target;
+
+
+        BudgetValue b = dequeActivation(otherTerm);
+        if (b!=null) {
+            b.setPriority(b.getPriority() + priority);
+            b.setDurability(Math.max(b.getDurability(), durability));
+            b.setQuality(Math.max(b.getQuality(), quality));
+            if (!b.aboveThreshold()) {
+                queueActivation(otherTerm, b);
+                return false;
             }
+        }
+        else {
+            b = BudgetValue.budgetIfAboveThreshold(priority, durability, quality);
+        }
 
-            activity = true;
+        if (b == null) return false;
+
+        termLinkBuilder.set(b);
+
+        Concept otherConcept = memory.conceptualize(b, otherTerm);
+        if (otherConcept == null) {
+            queueActivation(otherTerm, b);
+            return false;
+        }
+
+
+        if (updateTLinks) {
 
             // this concept termLink to that concept
             activateTermLink(termLinkBuilder.set(template, term));
 
             // that concept termLink to this concept
-            otherConcept.activateTermLink(termLinkBuilder.set(template, target));
-
-            if (target instanceof CompoundTerm) {
-                otherConcept.linkToTerms(termLinkBuilder.getBudgetRef());
-            }
+            otherConcept.activateTermLink(termLinkBuilder.set(template, otherTerm));
+        }
+        else {
+            queueActivation(otherConcept, b);
+            otherConcept.queueActivation(this, b);
         }
 
-        return activity;
+        if (otherTerm instanceof CompoundTerm) {
+            otherConcept.linkToTerms(termLinkBuilder.getBudgetRef(), false);
+        }
+
+        return true;
     }
+
+    /** buffers activation from another Concept to be applied later */
+    void queueActivation(Concept from, BudgetValue b) {
+        queueActivation(from.term, b);
+    }
+    void queueActivation(Term from, BudgetValue b) {
+        BudgetValue accum = queuedTermBudget.get(from);
+        if (accum == null) {
+            queuedTermBudget.put(from, b.clone());
+        }
+        else {
+            accum.accumulate(b);
+        }
+    }
+
+        /** returns null if non-existing or not above threshold */
+    BudgetValue dequeActivation(Term from) {
+        BudgetValue accum = queuedTermBudget.get(from);
+        if (accum == null) return null;
+        if (!accum.aboveThreshold()) return null;
+        return accum;
+    }
+
+
 
     /**
      * Insert a new or activate an existing TermLink in the TermLink bag

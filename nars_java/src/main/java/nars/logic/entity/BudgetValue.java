@@ -27,6 +27,7 @@ import nars.io.Texts;
 import nars.logic.BudgetFunctions;
 
 import static nars.core.Parameters.TRUTH_EPSILON;
+import static nars.logic.BudgetFunctions.m;
 import static nars.logic.UtilityFunctions.*;
 
 /**
@@ -109,6 +110,17 @@ public class BudgetValue implements Cloneable {
     }
 
     /**
+     * priority: adds the value of another budgetvalue to this; all components max at 1.0
+     * durability: max(this, b) (similar to merge)
+     * quality: max(this, b)    (similar to merge)
+     * */
+    public void accumulate(BudgetValue b) {
+        setPriority(Math.min(1f, getPriority() + b.getPriority()));
+        setDurability(m(getPriority(), b.getPriority()));
+        setPriority(m(getPriority(), b.getPriority()));
+    }
+
+    /**
      * Get priority value
      * @return The current priority
      */
@@ -122,8 +134,6 @@ public class BudgetValue implements Cloneable {
      * @return whether the operation had any effect
      */
     public final boolean setPriority(float v) {
-        if (Parameters.DEBUG) ensureBetweenZeroAndOne(v);
-
         if(v>1.0) {
             v=1.0f;
             //throw new RuntimeException("priority value above 1");
@@ -314,6 +324,11 @@ public class BudgetValue implements Cloneable {
         return (summary(additionalPriority) >= Parameters.BUDGET_THRESHOLD);
     }
 
+    public static BudgetValue budgetIfAboveThreshold(float pri, float dur, float qua) {
+        if (aveGeo(pri, dur, qua) >= Parameters.BUDGET_THRESHOLD)
+            return new BudgetValue(pri, dur, qua);
+        return null;
+    }
 
 //    /**
 //     * Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
@@ -433,6 +448,12 @@ public class BudgetValue implements Cloneable {
                 throw new RuntimeException("Unknown sentence type: " + s.punctuation);
         }
         return new BudgetValue(priority, durability, s.getTruth());
+    }
+
+    public void set(float p, float d, float q) {
+        setPriority(p);
+        setDurability(d);
+        setQuality(q);
     }
 
 

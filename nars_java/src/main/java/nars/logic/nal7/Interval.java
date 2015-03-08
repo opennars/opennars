@@ -106,8 +106,12 @@ public class Interval extends Term {
         }
         return existing;            
     }
-    
-    
+
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
+
     public final int magnitude;
 
     // time is a positive integer

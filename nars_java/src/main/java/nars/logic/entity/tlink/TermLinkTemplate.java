@@ -1,11 +1,12 @@
 package nars.logic.entity.tlink;
 
+import nars.logic.Terms;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Term;
 import nars.logic.entity.TermLink;
 
 /** contains most of the essential data to populate new TermLinks */
-public class TermLinkTemplate {
+public class TermLinkTemplate implements Terms.Termable {
 
     /** The linked Term */
     public final Term target;
@@ -113,5 +114,10 @@ public class TermLinkTemplate {
     @Override
     public String toString() {
         return prefix(true) + "|" + prefix(false) + "|" + concept.getTerm();
+    }
+
+    @Override
+    public Term getTerm() {
+        return target;
     }
 }

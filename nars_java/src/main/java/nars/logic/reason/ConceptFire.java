@@ -89,6 +89,8 @@ abstract public class ConceptFire extends NAL {
             //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
             //int numTermLinks = getCurrentConcept().termLinks.size();
 
+            currentConcept.updateTermLinks();
+
             while (termLinkSelectionAttempts > 0)  {
 
 

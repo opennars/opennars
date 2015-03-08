@@ -46,6 +46,8 @@ public class ImmediateProcess extends NAL {
         Concept c = memory.conceptualize(currentTask.budget, getCurrentTask().getTerm());
         if (c == null) return;
 
+
+
         if (c.directProcess(this, currentTask)) {
 
             c.link(currentTask);
