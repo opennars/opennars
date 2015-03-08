@@ -193,9 +193,9 @@ public class Parameters {
     
     public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule, this should be 0 to restore 1.6.1 strategy
     
-    public static float DERIVATION_PRIORITY_LEAK=0.5f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+    public static float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
-    public static float DERIVATION_DURABILITY_LEAK=0.5f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+    public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
 }
 
