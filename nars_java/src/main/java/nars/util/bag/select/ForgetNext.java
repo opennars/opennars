@@ -41,6 +41,11 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
     }
 
     protected boolean forgetWillChangeBudget(BudgetValue v) {
+        final long now = memory.time();
+        if (v.getLastForgetTime() == -1) {
+            v.setLastForgetTime(now);
+            return false;
+        }
         return (v.getLastForgetTime() != memory.time()) && //there is >0 time across which forgetting would be applied
                 (v.getPriority() > v.getQuality() * Parameters.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
     }

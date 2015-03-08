@@ -761,8 +761,9 @@ public class Concept extends Item<Term> implements Termable {
         if (updateTLinks || linkPendingEveryCycle ) {
             for (TermLinkTemplate t : nextTermBudget.keySet()) {
                 BudgetValue pending = dequeNextTermBudget(t);
-                if (linkTerm(t, pending, updateTLinks))
-                    activity = true;
+                if (pending!=null)
+                    if (linkTerm(t, pending, updateTLinks))
+                        activity = true;
             }
         }
 
@@ -788,7 +789,8 @@ public class Concept extends Item<Term> implements Termable {
             }
         }
         else {
-            b = BudgetValue.budgetIfAboveThreshold(priority, durability, quality);
+            if (priority > 0)
+                b = new BudgetValue(priority, durability, quality);
         }
 
         if (b == null) return false;

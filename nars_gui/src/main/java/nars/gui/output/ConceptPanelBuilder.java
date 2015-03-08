@@ -15,19 +15,20 @@ import nars.event.AbstractReaction;
 import nars.logic.entity.BudgetValue.Budgetable;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
+import nars.logic.entity.TermLink;
 import nars.logic.entity.TruthValue.Truthable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 import static java.awt.BorderLayout.*;
 
 /**
  * Manages a set of ConceptPanels by receiving events and dispatching update commands
+ * TODO use a minimum framerate for updating
  */
 public class ConceptPanelBuilder extends AbstractReaction {
 
@@ -74,7 +75,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
         //TODO only update the necessary concepts
         long t = nar.time();
         for (final ConceptPanel cp : concept.values())
-            cp.update(t);
+            if (cp.isShowing() && cp.isVisible())
+                cp.update(t);
     }
 
     public void off() {
@@ -88,6 +90,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         private final TruthChart beliefChart;
         private final TruthChart desireChart;
         private final PriorityColumn questionChart;
+        private final TermLinkChart termLinkChart;
         private JTextArea title;
         private JLabel subtitle;
 
@@ -117,13 +120,15 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
             //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
-            
+            details.add(this.termLinkChart = new TermLinkChart(c));
 
             JPanel titlePanel = new JPanel(new BorderLayout());
             titlePanel.setOpaque(false);
 
             if (label) {
                 titlePanel.add(this.title = new JTextArea(concept.term.toString()), CENTER);
+                title.setWrapStyleWord(true);
+                title.setLineWrap(true);
                 title.setEditable(false);
                 title.setOpaque(false);
                 title.setFont(Video.monofont.deriveFont(titleSize));
@@ -197,6 +202,10 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 desireChart.setVisible(false);
             }
 
+            if (termLinkChart!=null) {
+                termLinkChart.update(time);
+            }
+
             validate();
 
             return this;
@@ -206,6 +215,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
         protected void onShowing(boolean showing) {
             validate();
         }
+
+
     }
 
     public static class ImagePanel extends JPanel {
@@ -224,7 +235,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             setPreferredSize(minimumSize);
         }
 
-        public Graphics g() {
+        public Graphics2D g() {
             if (image == null) {
                 image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
             }
@@ -386,6 +397,74 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
         }
     }
-    
-    
+
+    public static class TermLinkChart extends ImagePanel {
+
+        private final Concept concept;
+        TreeMap<String,Float> priority = new TreeMap();
+
+        public TermLinkChart(Concept c) {
+            super(400,200);
+
+            this.concept = c;
+        }
+
+        synchronized boolean updateData() {
+            priority.clear();
+
+            boolean changed = false;
+            for (TermLink t : concept.termLinks) {
+                String n = t.name().toString();
+                float v = t.getPriority();
+                float existing = priority.getOrDefault(n, -1f);
+                if (existing==-1 || existing != v) {
+                    priority.put(n, v);
+                    changed = true;
+                }
+            }
+
+            return (changed);
+        }
+
+        public void update(long now) {
+            if (!updateData())
+                return;
+
+            repaint();
+        }
+
+        @Override
+        public void paint(Graphics g1) {
+            super.paint(g1);
+
+            if (priority.isEmpty()) return;
+
+            Graphics2D g = (Graphics2D)g1;
+
+            g.setColor(new Color(0.1f, 0.1f, 0.1f));
+            g.fillRect(0, 0, getWidth(), getHeight());
+
+            int height = getHeight();
+            float dx = getWidth() / (1 + priority.size());
+            float x = dx/2;
+            g.setFont(Video.monofont.deriveFont(8f));
+            for (Map.Entry<String,Float> e : priority.entrySet()) {
+
+                String s = e.getKey();
+                //int textLength = g.getFontMetrics().stringWidth(s);
+                float y = e.getValue() * (height*0.85f) + (height*0.1f);
+
+                g.setColor(Color.getHSBColor(e.getValue()*0.5f + 0.25f, 0.75f, 0.8f ));
+                //g.translate((int) x, (int) y /*+ textLength*/);
+
+                //g.rotate(-Math.PI/2);
+                g.drawString(s, (int)x, (int)y);
+                //g.rotate(Math.PI/2);
+
+                x += dx;
+            }
+            g.dispose();
+        }
+
+    }
 }
