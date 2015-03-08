@@ -2,9 +2,8 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.core;
+package nars.evolve;
 
-import nars.analyze.evolve.GeneticSearchEncog;
 import org.encog.Encog;
 import org.encog.ml.ea.train.basic.TrainEA;
 import org.encog.ml.prg.EncogProgram;
@@ -19,7 +18,6 @@ import org.encog.ml.prg.species.PrgSpeciation;
 import org.encog.ml.prg.train.PrgPopulation;
 import org.encog.ml.prg.train.rewrite.RewriteAlgebraic;
 import org.encog.ml.prg.train.rewrite.RewriteConstants;
-import org.junit.Test;
 
 import java.util.Random;
 
@@ -54,7 +52,7 @@ public class NARGenomeTest {
         
     }
     
-    @Test public void testGenome() {
+    /*@Test*/ public void testGenome() {
         new NARGenome();
         
     }

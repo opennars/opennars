@@ -1,11 +1,10 @@
-package nars.analyze.experimental;
+package nars.evolve;
 
 import nars.build.Default;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.io.ExampleFileInput;
 import nars.io.condition.OutputCondition;
-import nars.logic.NALTest;
 import nars.util.data.XORShiftRandom;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;
@@ -343,20 +342,21 @@ public class NALTestPerformance {
         }
     }
     public static List<String> getExamplePaths() {
-        Collection c = NALTest.params();
-        List<String> l = new ArrayList();
-        for (Object o : c) {
-            String e = ((Object[])o)[0].toString();
-            e = e.substring(e.indexOf("nal/")+4, e.length());
-            l.add(e);
-        }
-        return l;        
+        return null;
+//        Collection c = NALTest.params();
+//        List<String> l = new ArrayList();
+//        for (Object o : c) {
+//            String e = ((Object[])o)[0].toString();
+//            e = e.substring(e.indexOf("nal/")+4, e.length());
+//            l.add(e);
+//        }
+//        return l;
     }
             
     public static NALControlMLDataSet test(NAR n, int tests, int maxCycles, int extraCycles, int[] ins, int[] outs, int historySize) throws Exception {
 
         
-        Collection c = NALTest.params();
+        Collection c = null; //NALTest.params();
      
         
 

@@ -25,6 +25,7 @@ import nars.core.Parameters;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public class NullOperator extends Operator {
     @Override 
     protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         if (Parameters.DEBUG) {
-            memory.emit(getClass(), args);
+            memory.emit(getClass(), Arrays.toString(args));
         }
         return null;
     }

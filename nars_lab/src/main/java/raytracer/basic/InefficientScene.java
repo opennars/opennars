@@ -6,10 +6,10 @@
 //
 //package raytracer.basic;
 //
-//import raytracer.lights.Light;
-//import raytracer.objects.InefficientCollection;
-//import raytracer.objects.SceneObject;
-//import raytracer.objects.SceneObjectCollection;
+//import Light;
+//import InefficientCollection;
+//import SceneObject;
+//import SceneObjectCollection;
 //import java.util.Iterator;
 //import java.util.Vector;
 //import javax.media.opengl.GLAutoDrawable;

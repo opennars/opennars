@@ -5,7 +5,6 @@ import nars.operator.io.Say;
 import nars.operator.io.Schizo;
 import nars.operator.math.Add;
 import nars.operator.math.Count;
-import nars.operator.math.MathExpression;
 import nars.operator.mental.*;
 import nars.operator.meta.Reflect;
 import nars.operator.software.Javascript;
@@ -54,7 +53,7 @@ public class DefaultOperators {
             // math operations
             new Count(),
             new Add(),
-            new MathExpression(),
+            //new MathExpression(),
                         
 
             new Javascript(),  // javascript evaluation

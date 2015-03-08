@@ -2,9 +2,8 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.analyze.evolve;
+package nars.evolve;
 
-import nars.analyze.experimental.NALTestScore;
 import nars.build.Default;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -162,7 +161,8 @@ public class GeneticSearchApache {
 
         public static synchronized double score(int maxCycles, NAR n) {
             Parameters.DEBUG = false;
-            return NALTestScore.score(n, maxCycles);
+            //return NALTestScore.score(n, maxCycles);
+            return 0;
         }
 
         @Override

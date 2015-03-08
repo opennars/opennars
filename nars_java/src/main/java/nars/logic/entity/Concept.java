@@ -249,12 +249,12 @@ public class Concept extends Item<Term> implements Termable {
     /** called by concept before it fires to update any pending changes */
     public void updateTermLinks() {
 
-        termLinks.peekNextForget(
+        termLinks.forgetNext(
                 memory.param.termLinkForgetDurations,
                 Parameters.TERMLINK_FORGETTING_ACCURACY,
                 memory);
 
-        taskLinks.peekNextForget(
+        taskLinks.forgetNext(
                 memory.param.taskLinkForgetDurations,
                 Parameters.TASKLINK_FORGETTING_ACCURACY,
                 memory);
@@ -691,7 +691,7 @@ public class Concept extends Item<Term> implements Termable {
      * @return the tasklink which was selected or updated
      */
     protected TaskLink activateTaskLink(final TaskLinkBuilder taskLink) {
-        TaskLink t = taskLinks.UPDATE(taskLink);
+        TaskLink t = taskLinks.update(taskLink);
         return t;
     }
 
@@ -850,7 +850,7 @@ public class Concept extends Item<Term> implements Termable {
      * */
     public TermLink activateTermLink(final TermLinkBuilder termLink) {
 
-        return termLinks.UPDATE(termLink);
+        return termLinks.update(termLink);
 
     }
 
@@ -1078,7 +1078,7 @@ public class Concept extends Item<Term> implements Termable {
 
         for (int i = 0; (i < toMatch); i++) {
 
-            final TermLink termLink = termLinks.peekNextForget(memory.param.termLinkForgetDurations, memory);
+            final TermLink termLink = termLinks.forgetNext(memory.param.termLinkForgetDurations, memory);
 
             if (termLink == null)
                 return null;

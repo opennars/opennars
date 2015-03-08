@@ -1,0 +1,3 @@
+These should be available in NAL4Test.java cases.
+They are moved to this directory to avoid running during a testsuite which would include those.
+

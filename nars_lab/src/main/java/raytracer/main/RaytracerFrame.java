@@ -1235,7 +1235,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
         case 13:     // Soft-Shadows 
             try 
             { 
-                Transformation t = new Transformation(); 
+                Transformation t = new Transformation();
                 t.scale(0.9, 0.9, 0.9); 
                 t.move(1.0, 1.0, -3.0); 
                  

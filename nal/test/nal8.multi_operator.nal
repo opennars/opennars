@@ -1,0 +1,8 @@
+'if I add 1 and 2, and the result will be $1, and when I then add 3 to this result which gives $2, this result I desire to reflect!
+<(&/,(^add,1,2,#1,SELF),<#1 <-> $1>,(^add,3,$1,#2,SELF),<#2 <-> $2>) =/> (^reflect,$2,SELF)>!
+
+300
+
+'TODO: find a complete output task that covers this (1+2+3 = 6)
+''outputMustContain('<#1 <-> 6>.')
+

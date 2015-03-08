@@ -401,7 +401,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public E UPDATE(final BagSelector<K, E> selector) {
+    public E update(final BagSelector<K, E> selector) {
 
         final K key = selector.name();
         final DD<E> bx;

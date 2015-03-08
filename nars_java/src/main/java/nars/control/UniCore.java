@@ -79,7 +79,7 @@ abstract public class UniCore implements Core {
     }
 
     protected Concept nextConcept() {
-        Concept currentConcept = concepts.peekNextForget(memory.param.conceptForgetDurations, memory);
+        Concept currentConcept = concepts.forgetNext(memory.param.conceptForgetDurations, memory);
 
         if (currentConcept==null)
             return null;
@@ -203,7 +203,7 @@ abstract public class UniCore implements Core {
     public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
 
         activator.set(term, budget, createIfMissing, memory.time());
-        return concepts.UPDATE( activator );
+        return concepts.update(activator);
 
     }
 

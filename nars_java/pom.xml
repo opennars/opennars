@@ -115,6 +115,35 @@
                 <!--</executions>-->
             <!--</plugin>-->
 
+
+            <!-- Proguard SOMEWHAT WORKING -->
+                    <!--<plugin>-->
+                        <!--<groupId>com.github.wvengen</groupId>-->
+                        <!--<artifactId>proguard-maven-plugin</artifactId>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<phase>package</phase>-->
+                                <!--<goals><goal>proguard</goal></goals>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                        <!--<configuration>-->
+                            <!--<obfuscate>true</obfuscate>-->
+                            <!--&lt;!&ndash;<injar>${project.build.finalName}${project.build.finalName}-capsule-fat.jar</injar>&ndash;&gt;-->
+                            <!--<injar>${project.build.finalName}.jar</injar>-->
+                            <!--<outjar>${project.build.finalName}-small.jar</outjar>-->
+                            <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
+                            <!--<proguardInclude>${basedir}/proguard.conf</proguardInclude>-->
+                            <!--<includeDependency>true</includeDependency>-->
+                            <!--<includeDependencyInjar>true</includeDependencyInjar>-->
+                            <!--<libs>-->
+                                <!--<lib>${java.home}/lib/rt.jar</lib>-->
+                                <!--<lib>${java.home}/lib/jsse.jar</lib>-->
+                            <!--</libs>-->
+                        <!--</configuration>-->
+                    <!--</plugin>-->
+
+
+
             <!--<plugin>-->
                 <!--<groupId>net.ju-n.maven.plugins</groupId>-->
                 <!--<artifactId>soot-maven-plugin</artifactId>-->
@@ -275,28 +304,8 @@
             <version>3.4.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.encog</groupId>
-            <artifactId>encog-core</artifactId>
-            <version>3.3.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-math3</artifactId>
-                </exclusion>
-            </exclusions>	
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.2</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.10</version>
-        </dependency>
+
 
         <dependency>
             <!-- TODO replace with: reactor.io.codec.json -->

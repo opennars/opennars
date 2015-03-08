@@ -134,7 +134,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
     /**
      * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
      */
-    public V UPDATE(final BagSelector<K, V> selector) {
+    public V update(final BagSelector<K, V> selector) {
         //TODO this is the generic version which may or may not work, or be entirely efficient in some subclasses
 
         K key = selector.name();
@@ -169,6 +169,10 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
             selector.overflow(overflow);
 
         return item;
+    }
+
+    public void printAll() {
+        printAll(System.out);
     }
 
     public void printAll(PrintStream p) {
@@ -217,19 +221,19 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * accuracy determines the percentage of items which will be processNext().
      * this is a way to apply the forgetting process applied in putBack.
      */
-    public void peekNextForget(final float forgetCycles, float accuracy, final Memory m) {
+    public void forgetNext(final float forgetCycles, float accuracy, final Memory m) {
         int conceptsToForget = Math.max(1, (int) Math.round(size() * accuracy));
         /*synchronized (forgetNext)*/ {
             forgetNext.set(forgetCycles, m);
             for (int i = 0; i < conceptsToForget; i++) {
-                UPDATE(forgetNext);
+                update(forgetNext);
             }
         }
     }
 
-    public void peekNextForget(AtomicDouble forgetDurations, float accuracy, final Memory m) {
+    public void forgetNext(AtomicDouble forgetDurations, float accuracy, final Memory m) {
         float forgetCycles = m.param.cycles(forgetDurations);
-        peekNextForget(forgetCycles, accuracy, m);
+        forgetNext(forgetCycles, accuracy, m);
     }
 
 //    /**
@@ -238,9 +242,9 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
 //     * @return the variable that was updated, or null if none was taken out
 //     * @forgetCycles forgetting time in cycles
 //     */
-    public V peekNextForget(final AtomicDouble forgetDurations, final Memory m) {
+    public V forgetNext(final AtomicDouble forgetDurations, final Memory m) {
         forgetNext.set(m.param.cycles(forgetDurations), m);
-        UPDATE(forgetNext);
+        update(forgetNext);
         return forgetNext.current;
     }
 

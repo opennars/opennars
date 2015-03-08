@@ -1,0 +1,12 @@
+<0 --> number>. %1.0000;0.9000%  {0 : 1<0 --> number>}
+<<$1 --> number> ==> <(/,successor,$1,_) --> number>>. %1.0000;0.9000%  {0 : 2 : }
+<(/,successor,(/,successor,0,_),_) --> number>?  {0 : 3 : }
+
+27
+
+''these two conditions need confidence values, otherwise they are assumed to represent 1.00;0.90 which isnt the case
+''//outputMustContain('<(/,successor,0,_) --> number>.')
+''//outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>.')
+
+''outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>. %1.00;0.73%')
+

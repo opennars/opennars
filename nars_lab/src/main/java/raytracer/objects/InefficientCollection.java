@@ -12,7 +12,6 @@ import raytracer.basic.Transformation;
 import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Vector3d;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 
 /**

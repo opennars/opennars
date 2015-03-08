@@ -97,7 +97,7 @@ public class DefaultProperty extends AbstractProperty {
 		try {
 			Method method = BeanUtils.getReadMethod(object.getClass(), getName());
 			if (method != null) {
-				Object value = method.invoke(object, null);
+				Object value = method.invoke(object, (Object[])null);
 				initializeValue(value); // avoid updating parent or firing
 										// property change
 				if (value != null) {
