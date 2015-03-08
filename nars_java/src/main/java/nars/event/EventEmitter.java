@@ -14,8 +14,6 @@ import reactor.function.Consumer;
 
 import java.util.ArrayList;
 
-import static reactor.event.selector.Selectors.T;
-
 /**
  * TODO separate this into a single-thread and multithread implementation
  */
@@ -42,6 +40,7 @@ public class EventEmitter<E>  {
                         r.getConsumerRegistry().select(x.getKey()).size());
             });
         }
+        /*
         r.on(T(Throwable.class), t -> {
             Throwable e = (Throwable)t.getData();
             //if (Parameters.DEBUG) {
@@ -52,12 +51,14 @@ public class EventEmitter<E>  {
 
                 //throw new RuntimeException(e);
             //}
-            /*else {
-                System.err.println(e);
-            }*/
 
+            //else {
+            //    System.err.println(e);
+            }///
 
-        });
+            //throw new RuntimeException(e.getCause());
+
+        });*/
 
     }
 

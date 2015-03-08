@@ -40,9 +40,7 @@ import nars.logic.reason.ImmediateProcess;
 import nars.util.bag.Bag;
 import nars.util.data.CuckooMap;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static nars.logic.BudgetFunctions.divide;
 import static nars.logic.BudgetFunctions.rankBelief;
@@ -109,7 +107,7 @@ public class Concept extends Item<Term> implements Termable {
     private final TermLinkBuilder termLinkBuilder;
     private final TaskLinkBuilder taskLinkBuilder;
 
-    Map<Term, BudgetValue> queuedTermBudget;
+    Map<Term, BudgetValue> nextTermBudget;
 
 
     /** remaining unspent budget from previous cycle can be accumulated */
@@ -146,14 +144,14 @@ public class Concept extends Item<Term> implements Termable {
         if (taskLinks instanceof MemoryAware)  ((MemoryAware)taskLinks).setMemory(memory);
         if (termLinks instanceof MemoryAware)  ((MemoryAware)termLinks).setMemory(memory);
                 
-        if (term instanceof CompoundTerm) {
+        //if (term instanceof CompoundTerm) {
             this.termLinkBuilder = new TermLinkBuilder(this);
-        } else {
+        /*} else {
             this.termLinkBuilder = null;
-        }
+        }*/
 
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
-        queuedTermBudget = new CuckooMap<>();
+        nextTermBudget = new CuckooMap<>();
 
     }
 
@@ -695,8 +693,8 @@ public class Concept extends Item<Term> implements Termable {
      */
     public boolean linkToTerms(final BudgetValue taskBudget, boolean updateTLinks) {
 
-        if (termLinkBuilder == null) return false;
-        if (taskBudget == null && queuedTermBudget.isEmpty()) return false; //no result would occurr
+        //if (termLinkBuilder == null) return false;
+        if (taskBudget == null && nextTermBudget.isEmpty()) return false; //no result would occurr
 
         //System.out.println("link to terms: " + this + " + " + taskBudget + " " + queuedTermBudget + " " + updateTLinks);
 
@@ -705,7 +703,7 @@ public class Concept extends Item<Term> implements Termable {
         if (recipients == 0) {
             //termBudgetBalance += subBudget;
             //subBudget = 0;
-            return false;
+            //return false;
         }
 
         float dur = 0, qua = 0;
@@ -727,26 +725,35 @@ public class Concept extends Item<Term> implements Termable {
 
 
         boolean activity = false;
-        List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
-        for (int i = 0; i < recipients; i++) {
-            TermLinkTemplate template = templates.get(i);
+        if (recipients > 0) {
+            final List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
-            //only apply this loop to non-transform termlink templates
-            if (template.type == TermLink.TRANSFORM)
-                continue;
+            for (int i = 0; i < recipients; i++) {
+                TermLinkTemplate template = templates.get(i);
 
-            linkToTerm(template, subPriority,dur, qua, updateTLinks);
+                //only apply this loop to non-transform termlink templates
+                if (template.type != TermLink.TRANSFORM) {
+                    if (linkToTerm(template, subPriority, dur, qua, updateTLinks))
+                        activity = true;
+                }
 
+            }
         }
+
+//        if (updateTLinks) {
+//            for (Term t : nextTermBudget.keySet()) {
+//                termLinkBuilder.set(t);
+//            }
+//        }
+
+
 
         return activity;
     }
 
     boolean linkToTerm(TermLinkTemplate template, float priority, float durability, float quality, boolean updateTLinks) {
-
-        final Term otherTerm = template.target;
-
+        Term otherTerm = termLinkBuilder.set(template).getOther();
 
         BudgetValue b = dequeActivation(otherTerm);
         if (b!=null) {
@@ -764,26 +771,23 @@ public class Concept extends Item<Term> implements Termable {
 
         if (b == null) return false;
 
-        termLinkBuilder.set(b);
-
         Concept otherConcept = memory.conceptualize(b, otherTerm);
         if (otherConcept == null) {
             queueActivation(otherTerm, b);
             return false;
         }
 
+        termLinkBuilder.set(b);
 
         if (updateTLinks) {
-
-            // this concept termLink to that concept
-            activateTermLink(termLinkBuilder.set(template, term));
-
-            // that concept termLink to this concept
-            otherConcept.activateTermLink(termLinkBuilder.set(template, otherTerm));
+            activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
+            otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
         }
         else {
-            queueActivation(otherConcept, b);
-            otherConcept.queueActivation(this, b);
+            termLinkBuilder.setIncoming(false).queue(b);
+            termLinkBuilder.setIncoming(true).queue(b);
+            //queueActivation(otherConcept, b);
+            //otherConcept.queueActivation(this, b);
         }
 
         if (otherTerm instanceof CompoundTerm) {
@@ -798,9 +802,9 @@ public class Concept extends Item<Term> implements Termable {
         queueActivation(from.term, b);
     }
     void queueActivation(Term from, BudgetValue b) {
-        BudgetValue accum = queuedTermBudget.get(from);
+        BudgetValue accum = nextTermBudget.get(from);
         if (accum == null) {
-            queuedTermBudget.put(from, b.clone());
+            nextTermBudget.put(from, b.clone());
         }
         else {
             accum.accumulate(b);
@@ -809,7 +813,7 @@ public class Concept extends Item<Term> implements Termable {
 
         /** returns null if non-existing or not above threshold */
     BudgetValue dequeActivation(Term from) {
-        BudgetValue accum = queuedTermBudget.get(from);
+        BudgetValue accum = nextTermBudget.get(from);
         if (accum == null) return null;
         if (!accum.aboveThreshold()) return null;
         return accum;

@@ -78,6 +78,8 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
     transient final int hash;
     private final Term source;
 
+    private BudgetValue pending = new BudgetValue(0,0,0);
+
     /**
      * Constructor to make actual TermLink from a template
      * <p>
@@ -107,6 +109,8 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
 
         this.hash = termLinkHashCode();
     }
+
+
 
     public boolean toSelfOrTransform() {
         return ((type == SELF) || (type == TRANSFORM));
@@ -219,4 +223,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
     }
 
 
+    public void queue(BudgetValue b) {
+        this.pending.accumulate(b);
+    }
 }
