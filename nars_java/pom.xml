@@ -12,8 +12,7 @@
     <name>OpenNARS Core</name>
     <url>https://github.com/opennars/opennars</url>
 
- 
-    
+
     <scm>
         <connection>scm:git:${project.url}.git</connection>
         <developerConnection>scm:git:${project.url}.git</developerConnection>
@@ -22,7 +21,9 @@
     </scm>
 
     <build>
+        <finalName>opennars_core_${project.version}</finalName>
         <plugins>
+
             <!-- Order is important ! Execution follows the declaration order -->
 
             <plugin>
@@ -44,21 +45,92 @@
                     <threadCount>1</threadCount>
                 </configuration>-->
             </plugin>
+
+
+            <plugin>
+                <!-- https://github.com/chrischristo/capsule-maven-plugin -->
+                <groupId>com.github.chrischristo</groupId>
+                <artifactId>capsule-maven-plugin</artifactId>
+                <version>0.10.1</version>
+                <configuration>
+                    <appClass>nars.core.NARRun</appClass>
+                    <manifest>
+                        <entry>
+                            <key>Min-Java-Version</key>
+                            <value>1.8.0</value>
+                        </entry>
+                    </manifest>
+                    <!--
+                    <fileSets>
+                        <fileSet>
+                            <directory>../nal/</directory>
+                            <outputDirectory>nal/</outputDirectory>
+                            <includes>
+                                <include>*</include>
+                            </includes>
+                        </fileSet>
+                    </fileSets>
+                    -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-shade-plugin</artifactId>-->
+                <!--<version>2.4</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>shade</goal>-->
+                        <!--</goals>-->
+                            <!--<configuration>-->
+                                <!--<transformers>-->
+                                    <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+                                        <!--<mainClass>nars.run.NARRun</mainClass>-->
+                                    <!--</transformer>-->
+                                <!--</transformers>-->
+                                <!--<minimizeJar>true</minimizeJar>-->
+                                <!--<artifactSet>-->
+                                    <!--<excludes>-->
+                                        <!--&lt;!&ndash;-->
+                                        <!--<exclude>classworlds:classworlds</exclude>-->
+                                        <!--<exclude>junit:junit</exclude>-->
+                                        <!--<exclude>jmock:*</exclude>-->
+                                        <!--<exclude>*:xml-apis</exclude>-->
+                                        <!--<exclude>org.apache.maven:lib:tests</exclude>-->
+                                        <!--<exclude>log4j:log4j:jar:</exclude>-->
+                                        <!--&ndash;&gt;-->
+                                    <!--</excludes>-->
+                                <!--</artifactSet>-->
+                            <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
             <!--<plugin>-->
                 <!--<groupId>net.ju-n.maven.plugins</groupId>-->
                 <!--<artifactId>soot-maven-plugin</artifactId>-->
                 <!--<version>0.1.1</version>-->
                 <!--&lt;!&ndash; http://nicoulaj.github.io/soot-maven-plugin/soot-mojo.html &ndash;&gt;-->
-                <!--&lt;!&ndash;<executions>&ndash;&gt;-->
-                <!--&lt;!&ndash;<execution>&ndash;&gt;-->
-                <!--&lt;!&ndash;<goals>&ndash;&gt;-->
-                <!--&lt;!&ndash;<goal></goal>&ndash;&gt;-->
-                <!--&lt;!&ndash;</goals>&ndash;&gt;-->
-                <!--&lt;!&ndash;</execution>&ndash;&gt;-->
-                <!--&lt;!&ndash;</executions>&ndash;&gt;-->
                 <!--<configuration>-->
                     <!--<debug>true</debug>-->
-                    <!--<interactiveMode>true</interactiveMode>-->
+
+                    <!--<sootClasspath>${java.class.path}:${java.home}/jre/lib:${java.home}/lib:${project.build.outputDirectory}</sootClasspath>-->
+                    <!--<applicationMode>true</applicationMode>-->
+                    <!--<wholeProgram>true</wholeProgram>-->
+                    <!--&lt;!&ndash;<prependClasspath>-->
+                        <!--target/classes-->
+                    <!--</prependClasspath>&ndash;&gt;-->
+                    <!--<mainClass>nars.core.NARRun</mainClass>-->
+                    <!--&lt;!&ndash;<interactiveMode>true</interactiveMode>&ndash;&gt;-->
                     <!--&lt;!&ndash; put your configurations here &ndash;&gt;-->
                 <!--</configuration>-->
             <!--</plugin>-->
