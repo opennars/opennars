@@ -23,7 +23,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     int nonTransforms;
 
     TermLinkTemplate currentTemplate;
-    private TermLinkKey existingLink;
 
     boolean incoming;
 
@@ -166,7 +165,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     /** configures this selector's current bag key for the next bag operation */
     public TermLinkBuilder set(TermLinkTemplate temp) {
         this.currentTemplate = temp;
-        existingLink = null;
         return this;
     }
 
@@ -175,13 +173,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return this;
     }
 
-    public TermLinkBuilder set(TermLinkKey link) {
-        this.existingLink = link;
-        currentTemplate = null;
-
-        this.incoming = !link.getTarget().equals(concept.term);
-        return this;
-    }
 
     /**
      *
@@ -251,24 +242,17 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
 
-    public TermLink get(boolean createIfMissing) {
-        TermLink t = concept.termLinks.GET(name());
-        if ((t == null) && createIfMissing) {
-            t = newItem();
-        }
-        return t;
-    }
+//    public TermLink get(boolean createIfMissing) {
+//        TermLink t = concept.termLinks.GET(name());
+//        if ((t == null) && createIfMissing) {
+//            t = newItem();
+//        }
+//        return t;
+//    }
 
     public Term getOther() {
         return currentTemplate.getTerm();
     }
 
-    public boolean queue(BudgetValue b) {
-        TermLink t = get(false);
-        if (t!=null) {
-            t.queue(b);
-            return true;
-        }
-        return false;
-    }
+
 }
