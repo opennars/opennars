@@ -107,7 +107,7 @@ public class Concept extends Item<Term> implements Termable {
     private final TermLinkBuilder termLinkBuilder;
     private final TaskLinkBuilder taskLinkBuilder;
 
-    Map<TermLinkTemplate, BudgetValue> nextTermBudget;
+    private final Map<TermLinkTemplate, BudgetValue> nextTermBudget;
 
     /** parameter to experiment with */
     private boolean linkPendingEveryCycle = false;
@@ -246,9 +246,21 @@ public class Concept extends Item<Term> implements Termable {
         return true;
     }
 
-    /** called by concept before it fires to update termlinks */
+    /** called by concept before it fires to update any pending changes */
     public void updateTermLinks() {
+
+        termLinks.peekNextForget(
+                memory.param.termLinkForgetDurations,
+                Parameters.TERMLINK_FORGETTING_ACCURACY,
+                memory);
+
+        taskLinks.peekNextForget(
+                memory.param.taskLinkForgetDurations,
+                Parameters.TASKLINK_FORGETTING_ACCURACY,
+                memory);
+
         linkTerms(null, true);
+
     }
 
     public boolean link(Task t) {

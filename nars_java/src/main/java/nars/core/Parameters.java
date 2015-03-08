@@ -53,7 +53,7 @@ public class Parameters {
     public static boolean DEBUG_INVALID_SENTENCES = false;
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
     public static boolean TASK_HISTORY = true; //false disables task history completely
-    public static boolean EXIT_ON_EXCEPTION = true;
+    public static boolean EXIT_ON_EXCEPTION = false;
 
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -228,8 +228,10 @@ public class Parameters {
      * when it would have completed its forget descent.
      */
     public static final float CONCEPT_FORGETTING_ACCURACY = 0.03f;
-    public static final float TERMLINK_FORGETTING_ACCURACY = 0.03f;
-    public static final float TASKLINK_FORGETTING_ACCURACY = 0.03f;
+
+    //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
+    public static final float TERMLINK_FORGETTING_ACCURACY = 0.10f;
+    public static final float TASKLINK_FORGETTING_ACCURACY = 0.10f;
 
 
 

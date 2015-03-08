@@ -173,8 +173,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
                 if (e != null) {
                     removeItem(e);
                 }
-                if (Parameters.DEBUG_BAG)
-                    size();
+                if (Parameters.DEBUG && Parameters.DEBUG_BAG)
+                    CurveBag.this.size();
 
             }
             return e;

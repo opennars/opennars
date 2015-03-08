@@ -5,7 +5,6 @@
 package nars.logic.reason;
 
 import nars.core.Events;
-import nars.core.Parameters;
 import nars.logic.NAL;
 import nars.logic.entity.*;
 
@@ -49,17 +48,6 @@ abstract public class ConceptFire extends NAL {
     @Override
     protected void onFinished() {
         beforeFinish();
-
-        currentConcept.termLinks.peekNextForget(
-                memory.param.termLinkForgetDurations,
-                Parameters.TERMLINK_FORGETTING_ACCURACY,
-                memory);
-
-        currentConcept.taskLinks.peekNextForget(
-                memory.param.taskLinkForgetDurations,
-                Parameters.TASKLINK_FORGETTING_ACCURACY,
-                memory);
-
 
         if (newTasks!=null && !newTasks.isEmpty()) {
             memory.taskAdd(newTasks);

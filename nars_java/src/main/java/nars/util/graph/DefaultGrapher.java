@@ -205,6 +205,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
 
         if (includeTermLinks) {
             for (TermLink t : termLinks.keySet()) {
+                if (t.getPriority() < minPriority) continue;
                 Concept from = termLinks.get(t);
                 Concept to = terms.get(t.target);
                 if (to != null) {
@@ -217,6 +218,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
             for (final Map.Entry<TaskLink, Concept> et : taskLinks.entries()) {
 
                 final TaskLink t = et.getKey();
+                if (t.getPriority() < minPriority) continue;
                 final Concept from = et.getValue();
                 if (t.targetTask != null && t.targetTask.getPriority() > minPriority) {
                     final Task theTask = t.targetTask;

@@ -216,7 +216,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         int in = index.size();
 
-        if (Parameters.DEBUG_BAG) {
+        if (Parameters.DEBUG && Parameters.DEBUG_BAG) {
 
             int is = sizeItems();
             if (Math.abs(is - in) > 1) {
@@ -605,7 +605,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         //4.
 
-        if (Parameters.DEBUG_BAG) size();
+        if (Parameters.DEBUG && Parameters.DEBUG_BAG)
+            size();
 
         return overflow;
     }
