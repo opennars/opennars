@@ -32,6 +32,11 @@ import static nars.logic.UtilityFunctions.*;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
+ * TODO abstract/subclasses
+ *      interface Budgetable
+ *      ForgettableBudgetValue - includes the last forget time
+ *      some subclasses / adapter classes for statistics,
+ * monitoring or event notification on changes
  */
 public class BudgetValue implements Cloneable {
 
@@ -39,11 +44,11 @@ public class BudgetValue implements Cloneable {
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
     /** The character that separates the factors in a budget value */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
-   
-    
+
+
     /** The relative share of time resource to be allocated */
     private float priority;
-    
+
     /**
      * The percent of priority to be kept in a constant period; All priority
      * values "decay" over time, though at different rates. Each item is given a
@@ -51,7 +56,7 @@ public class BudgetValue implements Cloneable {
      * left after each reevaluation
      */
     private float durability;
-    
+
     /** The overall (context-independent) evaluation */
     private float quality;
 
@@ -81,7 +86,7 @@ public class BudgetValue implements Cloneable {
     }
 
 
-    /** 
+    /**
      * Constructor with initialization
      * @param p Initial priority
      * @param d Initial durability
@@ -114,10 +119,23 @@ public class BudgetValue implements Cloneable {
      * durability: max(this, b) (similar to merge)
      * quality: max(this, b)    (similar to merge)
      * */
-    public void accumulate(BudgetValue b) {
-        setPriority(Math.min(1f, getPriority() + b.getPriority()));
-        setDurability(m(getPriority(), b.getPriority()));
-        setPriority(m(getPriority(), b.getPriority()));
+    public BudgetValue accumulate(BudgetValue b) {
+        return accumulate(b.getPriority(), b.getDurability(), b.getQuality());
+    }
+
+    public BudgetValue accumulate(final float addPriority, final float addDurability, final float addQuality) {
+        setPriority(Math.min(1f, getPriority() + addPriority));
+        setDurability(m(getDurability(), addDurability));
+        setQuality(m(getQuality(), addQuality));
+        return this;
+    }
+
+    /** set all quantities to zero */
+    public BudgetValue zero() {
+        setPriority(0);
+        setDurability(0);
+        setQuality(0);
+        return this;
     }
 
     /**
@@ -159,7 +177,7 @@ public class BudgetValue implements Cloneable {
      * Increase priority value by a percentage of the remaining range
      * @param v The increasing percent
      */
-    public void incPriority(final float v) {        
+    public void incPriority(final float v) {
         setPriority( (float) Math.min(1.0, or(priority, v)));
     }
 
@@ -264,7 +282,7 @@ public class BudgetValue implements Cloneable {
     public final boolean merge(final BudgetValue that) {
         return BudgetFunctions.merge(this, that);
     }
-    
+
 //    /**
 //     * returns true if this budget is greater in all quantities than another budget,
 //     * used to prevent a merge that would have no consequence
@@ -278,7 +296,7 @@ public class BudgetValue implements Cloneable {
 //                (getQuality() - other.getQuality() > Parameters.BUDGET_THRESHOLD);
 //    }
 
-    
+
     /**
      * To summarize a BudgetValue into a single number in [0, 1]
      * @return The summary value
@@ -291,8 +309,8 @@ public class BudgetValue implements Cloneable {
         return aveGeo(Math.min(1.0f, priority + additionalPriority), durability, quality);
     }
 
-    
-    public boolean equalsByPrecision(final Object that) { 
+
+    public boolean equalsByPrecision(final Object that) {
         if (that instanceof BudgetValue) {
             final BudgetValue t = ((BudgetValue) that);
             float dPrio = Math.abs(getPriority() - t.getPriority());
@@ -306,7 +324,7 @@ public class BudgetValue implements Cloneable {
         return false;
     }
 
-    
+
     /**
      * Whether the budget should get any processing at all
      * <p>
@@ -375,12 +393,12 @@ public class BudgetValue implements Cloneable {
         final CharSequence durabilityString = Texts.n2(durability);
         final CharSequence qualityString = Texts.n2(quality);
         return new StringBuilder(1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1)
-            .append(MARK)
-            .append(priorityString).append(SEPARATOR)
-            .append(durabilityString).append(SEPARATOR)
-            .append(qualityString)
-            .append(MARK)
-            .toString();                
+                .append(MARK)
+                .append(priorityString).append(SEPARATOR)
+                .append(durabilityString).append(SEPARATOR)
+                .append(qualityString)
+                .append(MARK)
+                .toString();
     }
 
     /** 1 digit resolution */
@@ -393,7 +411,7 @@ public class BudgetValue implements Cloneable {
                 .append(durabilityString);
 
         if (includeQuality)
-                sb.append(SEPARATOR).append(Texts.n1(quality));
+            sb.append(SEPARATOR).append(Texts.n1(quality));
 
         return sb.append(MARK).toString();
     }
@@ -414,13 +432,13 @@ public class BudgetValue implements Cloneable {
     /** returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime */
     public long setLastForgetTime(final long currentTime) {
         long period;
-        if (this.lastForgetTime == -1)            
+        if (this.lastForgetTime == -1)
             period = 0;
         else
             period = currentTime - lastForgetTime;
-        
+
         lastForgetTime = currentTime;
-        
+
         return period;
     }
 
@@ -450,10 +468,15 @@ public class BudgetValue implements Cloneable {
         return new BudgetValue(priority, durability, s.getTruth());
     }
 
-    public void set(float p, float d, float q) {
+    public BudgetValue set(final float p, final float d, final float q) {
         setPriority(p);
         setDurability(d);
         setQuality(q);
+        return this;
+    }
+
+    public BudgetValue set(final BudgetValue b) {
+        return set(b.getPriority(), b.getDurability(), b.getQuality());
     }
 
 

@@ -53,7 +53,7 @@ public class Parameters {
     public static boolean DEBUG_INVALID_SENTENCES = false;
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
     public static boolean TASK_HISTORY = true; //false disables task history completely
-    public static boolean EXIT_ON_EXCEPTION = false;
+    public static boolean EXIT_ON_EXCEPTION = true;
 
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

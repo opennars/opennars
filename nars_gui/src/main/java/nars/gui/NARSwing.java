@@ -25,7 +25,6 @@ import automenta.vivisect.swing.NWindow;
 import nars.build.Default.CommandLineNARBuilder;
 import nars.control.experimental.AntCore;
 import nars.core.NAR;
-import nars.gui.output.TaskTree;
 import nars.io.TextOutput;
 
 import javax.management.MBeanServer;
@@ -72,7 +71,7 @@ public class NARSwing extends Video {
         }*/
 
         //TEMPORARY
-        new NWindow("Tasks", new TaskTree(nar)).show(300, 400);
+        //new NWindow("Tasks", new TaskTree(nar)).show(300, 400);
 
 
         //TEMPORARY

@@ -43,7 +43,7 @@ public class TermFunctionTest extends JavaNALTest {
 
     @Test public void testRecursiveEvaluation2() {
         testIO("count({ count({a,b}), 2})!",
-                "<(^count,{(^count,{a,b}),2},$1) =/> <$1 <-> 1>>. :|: %1.00;0.90%"
+                "<(^count,{(^count,{a,b}),2,SELF},$1,SELF) =/> <$1 <-> 1>>. :|: %1.00;0.90%"
         );
     }
 }
