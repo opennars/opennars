@@ -889,7 +889,7 @@ public class Memory implements Serializable {
      * may return null if no concept is available depending on the control system
      */
     public Concept conceptNext() {
-        return concepts.sampleNextConcept();
+        return concepts.nextConcept();
     }
 
     public Timing getTiming() {

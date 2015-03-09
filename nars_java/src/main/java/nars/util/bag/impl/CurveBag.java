@@ -299,7 +299,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
      * @return The Item with the given key
      */
     @Override
-    public E GET(final K key) {
+    public E get(final K key) {
         return nameTable.get(key);
     }
 
@@ -316,7 +316,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public E TAKENEXT() {
+    public E remove() {
 
         if (size() == 0) return null; // empty bag
         return removeItem(nextRemovalIndex());
@@ -506,14 +506,14 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     @Override
-    public float getMass() {
+    public float mass() {
         if (mass < Float.MIN_VALUE)
             mass = 0;
         return mass + size();
     }
 
     @Override
-    public int getCapacity() {
+    public int capacity() {
         return capacity;
     }
 

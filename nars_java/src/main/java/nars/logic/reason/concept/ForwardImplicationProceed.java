@@ -65,7 +65,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
         for (int i = 0; i < PERCEPTION_DECISION_ACCEL_SAMPLES; i++) {
 
 
-            Concept next = f.memory.concepts.sampleNextConcept();
+            Concept next = f.memory.concepts.nextConcept();
 
             if ((next == null) || (next.equals(concept))) continue;
 

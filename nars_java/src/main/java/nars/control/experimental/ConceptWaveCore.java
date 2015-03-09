@@ -56,7 +56,7 @@ abstract public class ConceptWaveCore implements Core {
 
     @Override
     public Concept concept(Term term) {
-        return concepts.GET(term);
+        return concepts.get(term);
     }
 
     @Override
@@ -87,7 +87,7 @@ abstract public class ConceptWaveCore implements Core {
     }
 
     @Override
-    public Concept sampleNextConcept() {
+    public Concept nextConcept() {
         return concepts.peekNext();
     }
 

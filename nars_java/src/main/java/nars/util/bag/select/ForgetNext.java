@@ -26,18 +26,6 @@ public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
     @Override
     public K name() {
         return null; //signals to the bag updater to use the next item
-
-//        V x = bag.peekNext();
-//        this.currentItem = x;
-//        if (x == null) return null;
-//
-//        //check whether forgetting will actually change anything to avoid the cost of needlessly updating an item (ex: re-leveling in LevelBag)
-//        if (!forgetWillChangeBudget()) {
-//            this.currentItem = null;
-//            return null;
-//        }
-//
-//        return x.name();
     }
 
     protected boolean forgetWillChangeBudget(BudgetValue v) {

@@ -75,7 +75,7 @@ public class CurveBagTest extends AbstractBagTest {
         
         f.put(new NullItem(.25f));
         assert(f.size() == 1);
-        assert(f.getMass() > 0);
+        assert(f.mass() > 0);
         
         f.put(new NullItem(.9f));
         f.put(new NullItem(.75f));
@@ -86,15 +86,15 @@ public class CurveBagTest extends AbstractBagTest {
         assert(f.size() == 3);
         assert(f.items.get(0).getPriority() < f.items.get(1).getPriority());
 
-        f.TAKENEXT();
+        f.remove();
         
         assert(f.size() == 2);
-        f.TAKENEXT();
+        f.remove();
         assert(f.size() == 1);
-        f.TAKENEXT();
+        f.remove();
         assert(f.size() == 0);
         
-        assert(f.getMass() == 0);
+        assert(f.mass() == 0);
     }
 
     public void testCapacityLimit(Bag f) {
@@ -137,7 +137,7 @@ public class CurveBagTest extends AbstractBagTest {
             f.put(new NullItem());
         }
         
-        assertEquals(f.size(), f.getCapacity());
+        assertEquals(f.size(), f.capacity());
         
         for (int i= 0; i < samples; i++) {
             count[f.nextRemovalIndex()]++;
@@ -160,7 +160,7 @@ public class CurveBagTest extends AbstractBagTest {
         CurveBag<NullItem,CharSequence> c = new CurveBag(capacity, curve, false, items);
         LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
         
-        assertEquals(c.getMass(), d.getMass(), 0);
+        assertEquals(c.mass(), d.mass(), 0);
         assertEquals(c.getPriorityMean(), d.getPriorityMean(), 0);
 
         c.printAll(System.out);
@@ -254,7 +254,7 @@ public class CurveBagTest extends AbstractBagTest {
 
         assertEquals(2, c.size());
 
-        x = c.TAKENEXT();
+        x = c.remove();
 
         assertTrue(x.equals(a) || x.equals(b));
         assertEquals(1, c.size());

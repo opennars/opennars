@@ -50,7 +50,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
             for (int i = 0; i < chainSamples; i++) {
 
-                Concept next = memory.concepts.sampleNextConcept();
+                Concept next = memory.concepts.nextConcept();
                 if (next == null) continue;
 
                 Term t = next.getTerm();

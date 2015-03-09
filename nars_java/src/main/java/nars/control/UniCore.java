@@ -56,11 +56,11 @@ abstract public class UniCore implements Core {
             ((Memory.MemoryAware)concepts).setMemory(m);
     }
 
-    protected static class DefaultFireConcept extends ConceptProcess {
+    protected static class DefaultConceptProcess extends ConceptProcess {
 
         private final Bag<Term, Concept> bag;
 
-        public DefaultFireConcept(Memory mem, Bag<Term, Concept> bag, Concept concept, TaskLink taskLink) {
+        public DefaultConceptProcess(Memory mem, Bag<Term, Concept> bag, Concept concept, TaskLink taskLink) {
             super(concept, taskLink);
             this.bag = bag;
         }
@@ -74,11 +74,11 @@ abstract public class UniCore implements Core {
         return concepts.size();
     }
 
-    protected ConceptProcess newFireConcept(Concept c, TaskLink t) {
-        return new DefaultFireConcept(memory, concepts, c, t);
+    protected ConceptProcess newConceptProcess(Concept c, TaskLink t) {
+        return new DefaultConceptProcess(memory, concepts, c, t);
     }
 
-    protected Concept nextConcept() {
+    protected Concept nextConceptToProcess() {
         Concept currentConcept = concepts.forgetNext(memory.param.conceptForgetDurations, memory);
 
         if (currentConcept==null)
@@ -104,7 +104,7 @@ abstract public class UniCore implements Core {
 
     @Override
     public Concept concept(final Term term) {
-        return concepts.GET(term);
+        return concepts.get(term);
     }
 
     @Override
@@ -221,7 +221,7 @@ abstract public class UniCore implements Core {
 //    }
 
     @Override
-    public Concept sampleNextConcept() {
+    public Concept nextConcept() {
         return concepts.peekNext();
     }
 

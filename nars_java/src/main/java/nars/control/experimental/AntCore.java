@@ -177,7 +177,7 @@ public class AntCore extends ConceptWaveCore {
             int tries = 0;
             do {
 
-                c = concepts.TAKENEXT();
+                c = concepts.remove();
 
                 if (c == null)
                     return;

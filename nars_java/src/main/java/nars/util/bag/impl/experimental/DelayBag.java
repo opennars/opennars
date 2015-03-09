@@ -145,7 +145,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
 
 
     @Override
-    public E GET(K key) {
+    public E get(K key) {
         return nameTable.get(key);
     }
 
@@ -155,12 +155,12 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     }
 
     @Override
-    public int getCapacity() {
+    public int capacity() {
         return capacity;
     }
 
     @Override
-    public float getMass() {
+    public float mass() {
         return mass;
     }
 
@@ -301,7 +301,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     
     
     @Override
-    public E TAKENEXT() {
+    public E remove() {
        
         int s = nameTable.size();
         if (s == 0) 
@@ -343,7 +343,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     public E peekNext() {
         if (size() == 0) return null;
         
-        E x = TAKENEXT();
+        E x = remove();
         
         if (x == null) return null;
         
@@ -374,7 +374,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     @Override
     public E put(E newItem) {
 
-        final E existingItemWithSameKey = TAKE(newItem);
+        final E existingItemWithSameKey = remove(newItem.name());
 
         E item;
         if (existingItemWithSameKey != null) {

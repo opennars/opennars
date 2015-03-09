@@ -60,7 +60,7 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
     /**
      * Provides a "next" concept for sampling during logic.
      */
-    public Concept sampleNextConcept();
+    public Concept nextConcept();
 
     public void init(Memory m);
 

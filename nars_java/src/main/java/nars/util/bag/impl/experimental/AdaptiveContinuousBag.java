@@ -57,7 +57,7 @@ public class AdaptiveContinuousBag<I extends Item<K>, K> extends CurveBag<I, K> 
     protected void update() {
         if (size() == 0) {
             for (int i = 0; i < resolution; i++)
-                setIndex(i, i * (((double) getCapacity()) / (resolution - 1)));            
+                setIndex(i, i * (((double) capacity()) / (resolution - 1)));
             minPriority = maxPriority = 0;
         }
         else {

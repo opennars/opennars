@@ -79,7 +79,7 @@ public class BagOperationsTest {
         assertEquals(1, b.size());
         assertEquals(0.4f, tb.getPriority(), 0.001f);
         
-        Item tc = b.TAKENEXT();
+        Item tc = b.remove();
         assertEquals(0, b.size());
         assertEquals(0.2f, tc.getPriority(), 0.001f);
         
@@ -103,7 +103,7 @@ public class BagOperationsTest {
             assertNull(null, zzz);
 
             assertEquals(0.4f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
-            assertNotNull(b.GET(Term.get("a")));
+            assertNotNull(b.get(Term.get("a")));
         }
         
     }

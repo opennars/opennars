@@ -69,7 +69,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     }
 
     @Override
-    public E GET(K key) {
+    public E get(K key) {
         return index.get(key);
     }
 
@@ -80,17 +80,17 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     }
 
     @Override
-    public int getCapacity() {
+    public int capacity() {
         return capacity;
     }
 
     @Override
-    public float getMass() {
+    public float mass() {
         return (float)mass;
     }
 
     @Override
-    public E TAKENEXT() {
+    public E remove() {
         return next(true, true);
     }
 
@@ -192,7 +192,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     /** tests whether a particular value is consistent (identity test)
      *  with regard to the index's value */
     public boolean valid(E value) {
-        return value!=null && GET(value.name())==value;
+        return value!=null && get(value.name())==value;
     }
     public float validPriority(E value) {
         if (valid(value))

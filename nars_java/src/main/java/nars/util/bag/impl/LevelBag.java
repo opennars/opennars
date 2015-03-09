@@ -222,7 +222,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             if (Math.abs(is - in) > 1) {
                 printAll(System.err);
                 System.err.println("index: " + index);
-                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
+                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + capacity());
 
             }
         }
@@ -269,7 +269,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     public E remove(final K name) {
         DD<E> t = index.get(name);
         if (t == null) return null;
-        return OUT(t);
+        return extract(t);
     }
 
 
@@ -280,7 +280,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
      * @return The Item with the given key
      */
     @Override
-    public E GET(final K key) {
+    public E get(final K key) {
         DD<E> b = index.get(key);
         if (b==null) return null;
         return b.item;
@@ -464,16 +464,16 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     @Override
-    public synchronized E TAKENEXT() {
+    public E remove() {
         if (!nextNonEmptyLevel())
             return null;
 
         // take out the first item in the level
-        return TAKE(currentLevel);
+        return extract(currentLevel);
     }
 
 
-    private /*synchronized*/ E TAKE(int outLevel) {
+    private /*synchronized*/ E extract(int outLevel) {
 
         if (level[outLevel] == null)
             throw new RuntimeException("Attempted TAKE from empty (null) level " + outLevel);
@@ -487,7 +487,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         if (fn == null)
             throw new RuntimeException("Attempted TAKE from empty level " + outLevel);
 
-        return OUT(fn);
+        return extract(fn);
     }
 
 
@@ -529,8 +529,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         if (keyChange) {
             //name changed, must be rehashed
-            OUT(x);
-            IN(newValue);
+            extract(x);
+            insert(newValue);
         }
         else {
             if (prevLevel != nextLevel) {
@@ -545,7 +545,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     /** removal of the bagged item from its level and the index */
-    public /* synchronized */  E OUT(DD<E> node) {
+    public /* synchronized */  E extract(DD<E> node) {
         if (node == null)
             throw new RuntimeException("OUT must not be null");
         int lev = node.owner();
@@ -559,7 +559,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     /** addition of the item to its level and the index */
-    public /* synchronized */ DD<E> IN(E newItem, int inLevel) {
+    protected /* synchronized */ DD<E> insert(E newItem, int inLevel) {
         if (newItem == null)
             throw new RuntimeException("IN must not be null");
         addMass(newItem);
@@ -568,8 +568,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         return dd;
     }
 
-    public /* synchronized */ DD<E> IN(E newItem) {
-        return IN(newItem, getLevel(newItem));
+    protected /* synchronized */ DD<E> insert(E newItem) {
+        return insert(newItem, getLevel(newItem));
     }
 
 
@@ -593,7 +593,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             if (outLevel > inLevel) {           // ignore the item due to insufficent budget and exit
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
-                overflow = TAKE(outLevel);
+                overflow = extract(outLevel);
             }
         }
 
@@ -601,7 +601,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         ensureLevelExists(inLevel);
 
         //3. insert
-        /*Bagged dd = */IN(newItem, inLevel);
+        /*Bagged dd = */
+        insert(newItem, inLevel);
 
         //4.
 
@@ -716,7 +717,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public float getMass() {
+    public float mass() {
         return mass;
     }
 
@@ -747,7 +748,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public int getCapacity() {
+    public int capacity() {
         return capacity;
     }
 

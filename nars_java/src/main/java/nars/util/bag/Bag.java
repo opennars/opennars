@@ -50,20 +50,20 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * @param key The key of the Item
      * @return The Item with the given key
      */
-    abstract public V GET(final K key);
+    abstract public V get(final K key);
 
     abstract public Set<K> keySet();
 
-    abstract public int getCapacity();
+    abstract public int capacity();
 
-    abstract public float getMass();
+    abstract public float mass();
 
     /**
      * Choose an Item according to distribution policy and take it out of the Bag
      * TODO rename removeNext()
      * @return The selected Item, or null if this bag is empty
      */
-    abstract public V TAKENEXT();
+    abstract public V remove();
 
     /**
      * The number of items in the bag
@@ -91,39 +91,35 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * @return Whether the Item is in the Bag
      */
     public boolean contains(final V it) {
-        V exist = GET(it.name());
+        V exist = get(it.name());
         if (exist == null) return false;
         return exist.equals(it);
     }
 
 
-    @Override
-    public void accept(V v) {
+    /** implements the Consumer<V> interface; invokes a put() */
+    @Override public void accept(V v) {
         put(v);
     }
 
-    @Override
-    public V get() {
-        return TAKENEXT();
+
+    /** implements the Supplier<V> interface; invokes a remove() */
+    @Override public V get() {
+        return remove();
     }
 
     /**
      * if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected
      */
-    public final V TAKENEXT(final Predicate<V> iff) {
+    public final V remove(final Predicate<V> iff) {
         V v = peekNext();
 
         if (v == null) return null;
         if (iff.apply(v)) {
-            TAKE(v);
+            remove(v.name());
             return v;
         }
         return null;
-    }
-
-
-    public V TAKE(final V item) {
-        return remove(item.name());
     }
 
 
@@ -140,7 +136,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
         K key = selector.name();
         V item;
         if (key != null) {
-            item = GET(key);
+            item = get(key);
         }
         else {
             item = peekNext();
@@ -155,7 +151,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
 
                 //this PUT(TAKE( sequence can be optimized in particular impl
                 //the default is a non-optimal failsafe
-                TAKE(item);
+                remove(item.name());
                 item = changed;
             }
         } else {

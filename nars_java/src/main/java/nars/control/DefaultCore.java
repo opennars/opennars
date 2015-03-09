@@ -94,7 +94,7 @@ public class DefaultCore extends UniCore {
         int conceptsToFire = memory.param.conceptsFiredPerCycle.get();
 
         for (int i = 0; i < conceptsToFire; i++) {
-            ConceptProcess f = nextTaskLink(nextConcept());
+            ConceptProcess f = nextTaskLink(nextConceptToProcess());
             if (f != null) {
                 f.run();
             }
@@ -118,7 +118,7 @@ public class DefaultCore extends UniCore {
 
         TaskLink taskLink = concept.taskLinks.forgetNext(memory.param.taskLinkForgetDurations, memory);
         if (taskLink!=null)
-            return newFireConcept(concept, taskLink);
+            return newConceptProcess(concept, taskLink);
         else {
             return null;
         }
@@ -178,7 +178,7 @@ public class DefaultCore extends UniCore {
     protected Runnable nextNovelTask() {
         if (novelTasks.isEmpty()) return null;
 
-        final Task task = novelTasks.TAKENEXT();
+        final Task task = novelTasks.remove();
 
         return new DirectProcess(memory, task);
     }

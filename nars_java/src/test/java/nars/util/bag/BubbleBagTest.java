@@ -42,7 +42,7 @@ public class BubbleBagTest extends AbstractBagTest {
         assertEquals(2, s.size());
         assertEquals(0.3f, s.outPriority.getMean(), 0.001f);
         assertEquals(0.35f, s.getPriorityMean(), 0.001f);
-        assertEquals(0.7f, s.getMass(), 0.001f);
+        assertEquals(0.7f, s.mass(), 0.001f);
 
         assertEquals("removed middle element does not appear in iterator", 2, Iterators.size(s.iterator()));
 
@@ -65,7 +65,7 @@ public class BubbleBagTest extends AbstractBagTest {
         assertEquals("max capacity; exceeded ", 4, s.size());
         assertNotNull(overflow);
 
-        NullItem r = s.TAKENEXT();
+        NullItem r = s.remove();
         assertEquals("removed", 3, s.size());
         assertTrue(!s.contains(r));
         assertEquals(3, Iterators.size(s.iterator()));

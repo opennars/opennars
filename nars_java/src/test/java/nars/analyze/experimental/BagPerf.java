@@ -75,7 +75,7 @@ public class BagPerf {
                 
                 if (!warmup) {                    
                     totalPriority += b.getPriorityMean();
-                    totalMass += b.getMass();                    
+                    totalMass += b.mass();
                     totalMinItemsPerLevel += b.getMinItemsPerLevel();
                     totalMaxItemsPerLevel += b.getMaxItemsPerLevel();
                 }
@@ -126,7 +126,7 @@ public class BagPerf {
         for (int i = 0; i < accesses; i++) {
             if (Memory.randomNumber.nextFloat() > insertProportion) {
                 //remove
-                b.TAKENEXT();
+                b.remove();
             }
             else {
                 //insert
