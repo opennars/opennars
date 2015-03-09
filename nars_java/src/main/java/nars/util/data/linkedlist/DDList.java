@@ -73,13 +73,13 @@ public class DDList<E> implements Iterable<E> {
 
     public DD<E> getFirstNode() {
         //if (isEmpty()) return null;
-        DD<E> x = pre.next;
+        final DD<E> x = pre.next;
         if (x instanceof Sentinel) return x.next;
         return x;
     }
     public DD<E> getLastNode() {
         //if (isEmpty()) return null;
-        DD<E> x = post.prev;
+        final DD<E> x = post.prev;
         if (x instanceof Sentinel) return x.prev;
         return x;
     }

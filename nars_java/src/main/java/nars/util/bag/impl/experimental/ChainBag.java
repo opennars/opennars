@@ -131,35 +131,31 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     protected DD<V> next() {
         final int s = size();
         if (s == 0) return null;
-        boolean atCapacity = s >= capacity();
+        final boolean atCapacity = s >= capacity();
 
-        if (current == null || current.item == null) current = chain.getFirstNode();
+        DD<V> next = after(current);
 
-        DD<V> next = current;
-        DD<V> selected;
+        if (s == 1)
+            return next;
+
         do {
 
-            if (next == null) {
+
+            /*if (next == null) {
                 throw new RuntimeException("size = " + size() + " yet there is no first node in chain");
-            }
+            }*/
 
             final V ni = next.item;
 
-            if (ni == null) {
+            /*if (ni == null) {
                 throw new RuntimeException("size = " + size() + " yet iterated cell with null item");
-            }
-
-            if (s == 1) {
-                selected = next;
-                break;
-            }
+            }*/
 
             final double percentileEstimate = getPercentile(ni.getPriority());
 
-            if (selectPercentile(percentileEstimate)) {
-                selected = next;
+            if (selectPercentile(percentileEstimate))
                 break;
-            }
+
 
             if (atCapacity) {
                 considerRemoving(next, percentileEstimate);
@@ -169,9 +165,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
         } while (true);
 
-        if (size() > 1) current = after(next); //cycle
-
-        return selected;
+        return current = next;
     }
 
 
@@ -183,17 +177,12 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         this.mean.increment(priority);
         final double mean = this.mean.getResult();
 
-        //final double u = 0.01;
+        final double momentum = minMaxMomentum;
 
-        if (estimatedMax < priority)
-            estimatedMax = priority;
-        else
-            estimatedMax = (1.0 - minMaxMomentum) * (mean) + (minMaxMomentum * estimatedMax);
 
-        if (estimatedMin > priority)
-            estimatedMin = priority;
-        else
-            estimatedMin = (1.0 - minMaxMomentum) * (mean) + (minMaxMomentum * estimatedMin);
+        estimatedMax = (estimatedMax < priority) ? priority : (1.0 - momentum) * mean + (momentum) * estimatedMax;
+        estimatedMin = (estimatedMin > priority) ? priority : (1.0 - momentum) * mean + (momentum) * estimatedMin;
+
 
         final double upper, lower;
         if (priority < mean) {
@@ -208,28 +197,29 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             lower = mean;
         }
 
-        double perc = (priority - lower) / (upper-lower);
+        final double perc = (priority - lower) / (upper-lower);
 
-        double minPerc = 1.0 / size();
-        if (perc < minPerc) perc = minPerc;
-        if (perc > 1) perc = 1;
+        final double minPerc = 1.0 / size();
+
+        if (perc < minPerc) return minPerc;
+        //if (perc > 1) perc = 1;
 
         return perc;
     }
 
-    protected boolean considerRemoving(final DD<V> d, double percentileEstimate) {
+    protected boolean considerRemoving(final DD<V> d, final double percentileEstimate) {
         //TODO improve this based on adaptive statistics measurement
         final V item = d.item;
         final float p = item.getPriority();
-
-        if (nextRemoval==null) {
+        final V nr = nextRemoval;
+        if (nr==null) {
             if (percentileEstimate < PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL) {
                 nextRemoval = item;
                 return true;
             }
         }
-        else if (nextRemoval != item) {
-            if (p < nextRemoval.getPriority()) {
+        else if (nr != item) {
+            if (p < nr.getPriority()) {
                 nextRemoval = item;
                 return true;
             }
@@ -246,26 +236,23 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         return Memory.randomNumber.nextFloat() < v.getPriority();
     }
 
-    protected DD<V> after(DD<V> d) {
-        DD<V> n = d.next;
+    protected DD<V> after(final DD<V> d) {
+        final DD<V> n = d!=null ? d.next : null;
         if ((n == null) || (n.item == null))
-            n = chain.getFirstNode();
+            return chain.getFirstNode();
         return n;
     }
 
     @Override
     public int size() {
-        int s1 = index.size();
+        final int s1 = index.size();
         if (Parameters.DEBUG) {
-            int s2 = chain.size();
+            final int s2 = chain.size();
             if (s1 != s2)
                 throw new RuntimeException(this + " bag fault; inconsistent index");
         }
         return s1;
     }
-
-
-
 
 
     @Override
@@ -302,10 +289,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
 
     @Override
-    public V get(K key) {
-        DD<V> d = index.get(key);
-        if (d!=null) return d.item;
-        return null;
+    public V get(final K key) {
+        final DD<V> d = index.get(key);
+        return (d!=null) ? d.item : null;
     }
 
     @Override
