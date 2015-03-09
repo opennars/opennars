@@ -8,6 +8,8 @@ import nars.util.data.CuckooMap;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
 import nars.util.data.linkedlist.DDNodePool;
+import org.apache.commons.math3.stat.Frequency;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -32,10 +34,14 @@ import java.util.Set;
 public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
 
-
+    private final Mean mean; //priority mean, continuously calculated
     private int capacity;
     private float mass;
     DD<V> current = null;
+
+    public Frequency removal = new Frequency();
+
+    double minMaxMomentum = 0.98;
 
     private final DDNodePool<V> nodePool = new DDNodePool(16);
 
@@ -51,7 +57,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
      */
     public final DDList<V> chain;
 
-    private float MIN_PRIORITY_FOR_EMERGENCY_REMOVAL = 0.5f;
+    private float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f;
+    private double estimatedMax = 0.5f;
+    private double estimatedMin = 0.5f;
 
 
     public ChainBag(int capacity) {
@@ -61,6 +69,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         this.mass = 0;
         this.index = new CuckooMap(capacity * 2);
         this.chain = new DDList(0, nodePool);
+        this.mean = new Mean();
 
     }
 
@@ -80,6 +89,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         if (size() == 0) return null;
         DD<V> d = next();
         if (d==null) return null;
+
+        removal.addValue(d.item.getPriority());
         return remove(d.item.name());
     }
 
@@ -131,18 +142,27 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             if (next == null) {
                 throw new RuntimeException("size = " + size() + " yet there is no first node in chain");
             }
-            if (next.item == null) {
+
+            final V ni = next.item;
+
+            if (ni == null) {
                 throw new RuntimeException("size = " + size() + " yet iterated cell with null item");
             }
 
+            if (s == 1) {
+                selected = next;
+                break;
+            }
 
-            if (selects(next.item)) {
+            final double percentileEstimate = getPercentile(ni.getPriority());
+
+            if (selectPercentile(percentileEstimate)) {
                 selected = next;
                 break;
             }
 
             if (atCapacity) {
-                considerRemoving(next);
+                considerRemoving(next, percentileEstimate);
             }
 
             next = after(next);
@@ -154,13 +174,56 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         return selected;
     }
 
-    protected boolean considerRemoving(final DD<V> d) {
+
+    private double getPercentile(final float priority) {
+        //DescriptiveStatistics percentile is extremely slow
+        //contentStats.getPercentile(ni.getPriority())
+        //approximate percentile using max/mean/min
+
+        this.mean.increment(priority);
+        final double mean = this.mean.getResult();
+
+        //final double u = 0.01;
+
+        if (estimatedMax < priority)
+            estimatedMax = priority;
+        else
+            estimatedMax = (1.0 - minMaxMomentum) * (mean) + (minMaxMomentum * estimatedMax);
+
+        if (estimatedMin > priority)
+            estimatedMin = priority;
+        else
+            estimatedMin = (1.0 - minMaxMomentum) * (mean) + (minMaxMomentum * estimatedMin);
+
+        final double upper, lower;
+        if (priority < mean) {
+            lower = estimatedMin;
+            upper = mean;
+        }
+        else if (priority == mean) {
+            return 0.5f;
+        }
+        else {
+            upper = estimatedMax;
+            lower = mean;
+        }
+
+        double perc = (priority - lower) / (upper-lower);
+
+        double minPerc = 1.0 / size();
+        if (perc < minPerc) perc = minPerc;
+        if (perc > 1) perc = 1;
+
+        return perc;
+    }
+
+    protected boolean considerRemoving(final DD<V> d, double percentileEstimate) {
         //TODO improve this based on adaptive statistics measurement
         final V item = d.item;
         final float p = item.getPriority();
 
         if (nextRemoval==null) {
-            if (p < MIN_PRIORITY_FOR_EMERGENCY_REMOVAL) {
+            if (percentileEstimate < PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL) {
                 nextRemoval = item;
                 return true;
             }
@@ -175,7 +238,11 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         return false;
     }
 
-    protected boolean selects(V v) {
+    protected boolean selectPercentile(final double percentileEstimate) {
+        return Memory.randomNumber.nextFloat() < percentileEstimate;
+    }
+
+    protected boolean selectPercentage(V v) {
         return Memory.randomNumber.nextFloat() < v.getPriority();
     }
 

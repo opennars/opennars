@@ -37,11 +37,11 @@ public class ChainBagTest {
             for (int i = 0; i < loops; i++) {
                 Item x = bag.peekNext();
                 assertNotNull(x);
-                System.out.println(x);
+                //System.out.println(x);
             }
 
             Item r = bag.pop();
-            System.out.println("pop: " + r);
+            //System.out.println("pop: " + r);
             assertNotNull(r);
             assertEquals(loops * loops - (1+j), bag.size());
         }
