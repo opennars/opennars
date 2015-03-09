@@ -31,12 +31,15 @@ public class InternalExperience extends AbstractPlugin  {
     public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f;
     
     //internal experience has less durability?
-    public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
+    public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.01f;
     
     //less probable form
     public static final float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 
             INTERNAL_EXPERIENCE_PROBABILITY/4f;
-    
+
+
+
+
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
     //internal experience has less priority?
@@ -53,6 +56,10 @@ public class InternalExperience extends AbstractPlugin  {
     }*/
 
     private Memory memory;
+    private Operator believe;
+    private Operator want;
+    private Operator wonder;
+    private Operator evaluate;
 
 
     /** whether it is full internal experience, or minimal (false) */
@@ -75,6 +82,10 @@ public class InternalExperience extends AbstractPlugin  {
     public void onEnabled(NAR n) {
 
         this.memory = n.memory;
+        this.believe = memory.operator("^believe");
+        this.want = memory.operator("^want");
+        this.wonder = memory.operator("^wonder");
+        this.evaluate = memory.operator("^evaluate");
     }
 
     @Override
@@ -82,37 +93,35 @@ public class InternalExperience extends AbstractPlugin  {
 
     }
 
-    public static Term toTerm(final Sentence s, final Memory mem) {
-        String opName;
+    public Term toTerm(final Sentence s, final Memory mem) {
+        Operator opTerm;
         switch (s.punctuation) {
             case Symbols.JUDGMENT:
                 if(!AllowWantBelieve)
                     return null;
-                opName = "^believe";
+                opTerm = believe;
                 break;
             case Symbols.GOAL:
                 if(!AllowWantBelieve)
                     return null;
-                opName = "^want";
+                opTerm = want;
                 break;
             case Symbols.QUESTION:
-                opName = "^wonder";
+                opTerm = wonder;
                 break;
             case Symbols.QUEST:
-                opName = "^evaluate";
+                opTerm = evaluate;
                 break;
             default:
                 return null;
         }
         
-        Operator opTerm = mem.operator(opName);
         Term[] arg = new Term[ s.truth==null ? 1 : 2 ];
         arg[0]=s.getTerm();
         if (s.truth != null) {
             arg[1] = s.truth.toWordTerm();            
         }
         
-        //Operation.make ?
         Operation operation = Operation.make(opTerm, arg);
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
@@ -130,35 +139,40 @@ public class InternalExperience extends AbstractPlugin  {
             Task task = (Task)a[0];
             NAL nal = (NAL)a[1];
 
-            if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+            if(task.budget.summary() < MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return;
             }
+
             Term content = task.getTerm();
 
-            // to prevent infinite recursions
-            if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/)
-                return;
+            if (content instanceof Operation) return;   // to prevent infinite recursions
+
+            if (Memory.randomNumber.nextDouble()>INTERNAL_EXPERIENCE_PROBABILITY) return;
 
             Sentence sentence = task.sentence;
-            TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
 
-            BudgetValue newbudget=new BudgetValue(
-                    task.getPriority() * INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                    task.getDurability() * INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                    //Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                    //Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                    truth);
+            float conf = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
+
+
+            BudgetValue newbudget = BudgetValue.budgetIfAboveThreshold(
+                    task.getPriority() * INTERNAL_EXPERIENCE_PRIORITY_MUL, //Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL
+                    task.getDurability() * INTERNAL_EXPERIENCE_DURABILITY_MUL, //Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                    task.getQuality());
+            if (newbudget == null) return;
+
+
+            Term ret = toTerm(sentence, memory);
+            if(ret==null) return;
+
+
+
+
 
             if (newbudget.aboveThreshold()) {
-                //Stamp stamp = task.sentence.stamp.cloneWithNewOccurrenceTime(memory.time());
+
                 NAL.StampBuilder stamp = nal.newStamp(task.sentence, memory.time());
 
-                Term ret=toTerm(sentence, memory);
-                if(ret==null) {
-                    return;
-                }
-
-                Sentence j = new Sentence(ret, Symbols.JUDGMENT, truth, stamp);
+                Sentence j = new Sentence(ret, Symbols.JUDGMENT, new TruthValue(1.0f, conf), stamp);
 
                 Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
 

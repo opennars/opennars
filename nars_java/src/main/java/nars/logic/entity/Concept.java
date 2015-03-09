@@ -744,7 +744,8 @@ public class Concept extends Item<Term> implements Termable {
         if (recipients > 0) {
             final List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
-            for (int i = 0; i < recipients; i++) {
+            int numTemplates = templates.size();
+            for (int i = 0; i < numTemplates; i++) {
                 TermLinkTemplate template = templates.get(i);
 
                 //only apply this loop to non-transform termlink templates
@@ -1040,6 +1041,10 @@ public class Concept extends Item<Term> implements Termable {
 
     public Sentence getBestBelief() {
         return getBestBelief(true, true);
+    }
+
+    public List<TermLinkTemplate> getTermLinkTempltes() {
+        return termLinkBuilder.templates();
     }
 
     static final class TermLinkNovel implements Predicate<TermLink>    {

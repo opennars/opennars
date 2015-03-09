@@ -113,7 +113,7 @@ public class TermLinkTemplate implements Terms.Termable {
 
     @Override
     public String toString() {
-        return prefix(true) + "|" + prefix(false) + "|" + concept.getTerm();
+        return concept.getTerm() + ":" + prefix(true) + '|' + prefix(false) + ':' + target;
     }
 
     @Override

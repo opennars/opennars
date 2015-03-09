@@ -93,7 +93,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         TermLinkTemplate a;
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
-                                //WARNING: COVERAGE FOUND THIS CONDITION NEVER BEING CALLED, TODO check if this is still the case
+                                //WARNING: COVERAGE (at one point) FOUND THIS CONDITION NEVER BEING CALLED, TODO check if this is still the case
                                 a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, 0, i, j);
                             } else {
                                 a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, i, j);
