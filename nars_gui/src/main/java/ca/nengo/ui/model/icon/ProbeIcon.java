@@ -48,7 +48,7 @@ public class ProbeIcon extends ModelIcon {
 	}
 
 	public void setColor(Color color) {
-		getIconReal().setPaint(color);
+		getBody().setPaint(color);
 	}
 
 }

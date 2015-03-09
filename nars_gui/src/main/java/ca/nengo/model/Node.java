@@ -92,10 +92,7 @@ public interface Node extends Serializable, Resettable, SimulationMode.ModeConfi
 
     final static Node[] emptyNodeArray = new Node[0];
 
-    /** what is this for */
-    default public Node[] getChildren() {
-        return emptyNodeArray;
-    }
+
 	
     /**
      * @param scriptData Map of class parent and prefix data for generating python script
@@ -119,4 +116,8 @@ public interface Node extends Serializable, Resettable, SimulationMode.ModeConfi
 	 * @throws CloneNotSupportedException if clone can't be made
 	 */
 	public Node clone() throws CloneNotSupportedException;
+
+    default public Node[] getNodes() {
+        return emptyNodeArray;
+    }
 }

@@ -386,7 +386,8 @@ public class NetworkArrayImpl extends NetworkImpl {
      * 
      * @return the nodes in this network array
 	 */
-	public Node[] getNodes() {
+	@Override
+    public Node[] getNodes() {
 		return myNodes;
 	}
 	

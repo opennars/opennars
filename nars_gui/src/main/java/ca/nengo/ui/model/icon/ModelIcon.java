@@ -97,7 +97,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 		setBounds(iconReal.localToParent(iconReal.getBounds()));
 	}
 
-	protected WorldObject getIconReal() {
+	public WorldObject getBody() {
 		return iconReal;
 	}
 

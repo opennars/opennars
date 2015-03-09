@@ -1,7 +1,6 @@
 package ca.nengo.test;
 
 import automenta.vivisect.swing.Terminal;
-import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.NetworkImpl;
@@ -94,10 +93,6 @@ public class TestSwingUI extends Nengrow {
 
         }
 
-        @Override
-        public Node[] getChildren() {
-            return new Node[0];
-        }
 
         @Override
         public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {

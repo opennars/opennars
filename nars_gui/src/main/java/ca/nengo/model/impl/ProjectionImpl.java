@@ -280,7 +280,7 @@ public class ProjectionImpl implements Projection {
 	    	terminationNodeFullName.deleteCharAt(terminationNodeFullName.length()-1);
 	    	
 	    	boolean first = true;
-	    	for(Node node : tempTarget.getNode().getChildren())
+	    	for(Node node : ((NetworkArrayImpl) tempTarget.getNode()).getNodes())
 	    	{
 	    		if(first)
 	    		{
@@ -326,7 +326,7 @@ public class ProjectionImpl implements Projection {
 		    		tempSource.getNode() instanceof NetworkArrayImpl)
 		    {
 		    	originNodeFullName.deleteCharAt(originNodeFullName.length()-1);
-		    	Node node = tempSource.getNode().getChildren()[0];
+		    	Node node = (((NetworkArrayImpl)(tempSource.getNode())).getNodes()[0]);
 		    	
 		    	try{
 		    		dOrigin = (DecodedSource) node.getSource(tempSource.getName());

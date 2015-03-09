@@ -92,7 +92,7 @@ public abstract class NodeContainerIcon extends ModelIcon {
 		float scale = MIN_SCALE
 				+ (numOfNodesNormalized * (MAX_SCALE - MIN_SCALE));
 
-		getIconReal().setScale(scale);
+		getBody().setScale(scale);
 	}
 
 	protected abstract int getNodeCountNormalization();
@@ -102,7 +102,7 @@ public abstract class NodeContainerIcon extends ModelIcon {
 		super.layoutChildren();
 
 		// center the label
-		double iconWidth = getIconReal().getWidth() * getIconReal().getScale();
+		double iconWidth = getBody().getWidth() * getBody().getScale();
 		double labelWidth = sizeLabel.getWidth() * sizeLabel.getScale();
 		double xOffset = (iconWidth - labelWidth) / 2;
 		sizeLabel.setOffset(xOffset, -(sizeLabel.getHeight() + 1));

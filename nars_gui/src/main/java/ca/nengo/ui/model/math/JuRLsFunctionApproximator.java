@@ -1,11 +1,10 @@
 package ca.nengo.ui.model.math;
 
-import ca.nengo.model.Node;
+import ca.nengo.model.AtomicDoubleTarget;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.ObjectSource;
 import ca.nengo.model.impl.ObjectTarget;
-import ca.nengo.model.AtomicDoubleTarget;
 import ca.nengo.util.ScriptGenException;
 import jurls.core.approximation.*;
 import jurls.examples.approximation.RenderArrayFunction;
@@ -95,10 +94,6 @@ public class JuRLsFunctionApproximator extends AbstractNode {
         }
     }
 
-    @Override
-    public Node[] getChildren() {
-        return new Node[0];
-    }
 
     @Override
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {

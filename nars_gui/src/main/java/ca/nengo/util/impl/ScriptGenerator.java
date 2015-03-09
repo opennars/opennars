@@ -64,7 +64,7 @@ public class ScriptGenerator extends DFSIterator {
 				prefixes.put(node, topLevelPrefix);
 			}
 			
-			for (Node child : node.getChildren())
+			for (Node child : node.getNodes())
 			{
 				String prefix;
 				String nameNoSpaces = node.getName().replaceAll("\\p{Blank}|\\p{Punct}", Character.toString(spaceDelimiter));

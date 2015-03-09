@@ -36,7 +36,9 @@ import ca.nengo.sim.impl.LocalSimulator;
 import ca.nengo.util.*;
 import ca.nengo.util.impl.ProbeTask;
 import ca.nengo.util.impl.ScriptGenerator;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import nars.core.Parameters;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,7 +51,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.Listener, TaskSpawner {
+public class NetworkImpl<N extends Node> implements Network<N>, VisiblyMutable, VisiblyMutable.Listener, TaskSpawner {
 
 	/**
 	 * Default name for a Network
@@ -59,7 +61,10 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	private static final long serialVersionUID = 1L;
 	private static final Logger ourLogger = LogManager.getLogger(NetworkImpl.class);
 
-	private Map<String, Node> myNodeMap; //keyed on name
+
+    private Map<String, N> myNodeMap; //keyed on name
+    private Node[] myNodeArray; //cache of myNodeMap's items in the form of an array for getNodes()
+
 	private Map<NTarget, Projection> myProjectionMap; //keyed on Termination
 	private String myName;
 	private SimulationMode myMode;
@@ -98,8 +103,9 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 * Sets up a network's data structures
 	 */
 	public NetworkImpl(String name) {
-		myNodeMap = new HashMap<String, Node>(20);
-		myProjectionMap	= new HashMap<NTarget, Projection>(50);
+		myNodeMap = Parameters.newHashMap(20);
+        myNodeArray = null;
+		myProjectionMap	= Parameters.newHashMap(50);
 		myName = name;
 		myStepSize = .001f;
 		myProbeables = new HashMap<String, Probeable>(30);
@@ -158,11 +164,10 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 * @param time The current simulation time. Sets the current time on the Network's subnodes.
    * (Mainly for NEFEnsembles).
 	 */
-	public void setTime(float time) {
+	public void setTime(final float time) {
 			Node[] nodes = getNodes();
 			
-			for(int i = 0; i < nodes.length; i++){
-				Node workingNode = nodes[i];
+			for(Node workingNode : getNodes()) {
 				
 				if(workingNode instanceof DecodableGroupImpl){
 					((DecodableGroupImpl) workingNode).setTime(time);
@@ -175,17 +180,20 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	/**
 	 * @see ca.nengo.model.Network#addNode(ca.nengo.model.Node)
 	 */
-	public void addNode(Node node) throws StructuralException {
+	public void addNode(N node) throws StructuralException {
 		if (myNodeMap.containsKey(node.getName())) {
 			throw new StructuralException("This Network already contains a Node named " + node.getName());
 		}
 
 		myNodeMap.put(node.getName(), node);
+        myNodeArray = null;
+
 		node.addChangeListener(this);
 
 		getSimulator().initialize(this);
 		fireVisibleChangeEvent();
-	}
+
+    }
 
 	/**
 	 * Counts how many neurons are contained within this network.
@@ -276,8 +284,9 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			 * Also only do the swap if the node being changed is already in myNodeMap.
 			 */
 			if (!ne.getOldName().equals(ne.getNewName()) && (ne.getObject() == getNode(ne.getOldName()))) {
-				myNodeMap.put(ne.getNewName(), (Node)ne.getObject());
+				myNodeMap.put(ne.getNewName(), (N)ne.getObject());
 				myNodeMap.remove(ne.getOldName());
+                myNodeArray = null;
 			}
 		}
 		
@@ -322,8 +331,13 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 * @see ca.nengo.model.Network#getNodes()
 	 */
 	public Node[] getNodes() {
-        Collection<Node> var = myNodeMap.values();
-        return var.toArray(new Node[var.size()]);
+        if (myNodeArray == null) {
+            myNodeArray = new Node[myNodeMap.size()];
+            int x = 0;
+            for (final N n : myNodeMap.values())
+                myNodeArray[x++] = n;
+        }
+        return myNodeArray;
 	}
 
     @Override
@@ -349,7 +363,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
     /**
 	 * @see ca.nengo.model.Network#getNode(java.lang.String)
 	 */
-	public Node getNode(String name) throws StructuralException {
+	public N getNode(String name) throws StructuralException {
 		if (!myNodeMap.containsKey(name)) {
 			throw new StructuralException("No Node named " + name + " in this Network");
 		}
@@ -386,7 +400,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 */
 	public void removeNode(String name) throws StructuralException {
 		if (myNodeMap.containsKey(name)) {
-			Node node = myNodeMap.get(name);
+			N node = myNodeMap.get(name);
 
 			if(node instanceof Network)
 			{
@@ -428,6 +442,8 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			}
 
 			myNodeMap.remove(name);
+            myNodeArray = null;
+
 			node.removeChangeListener(this);
 //			VisiblyMutableUtils.nodeRemoved(this, node, myListeners);
 			
@@ -513,9 +529,9 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			return;
 		myMode = mode;
 
-		Iterator<Node> it = myNodeMap.values().iterator();
+		Iterator<N> it = myNodeMap.values().iterator();
 		while (it.hasNext()) {
-			Node node = it.next();
+			N node = it.next();
             node.setMode(mode);
 		}
 	}
@@ -575,6 +591,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	 * @see ca.nengo.model.Resettable#reset(boolean)
 	 */
 	public void reset(boolean randomize) {
+        //TODO iterate entry set
 		Iterator<String> it = myNodeMap.keySet().iterator();
 		while (it.hasNext()) {
 			Node n = myNodeMap.get(it.next());
@@ -1155,7 +1172,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 	public Network clone() throws CloneNotSupportedException {
 		NetworkImpl result = (NetworkImpl) super.clone();
 
-		result.myNodeMap = new HashMap<String, Node>(10);
+		result.myNodeMap = new HashMap(myNodeMap.size());
 		for (Node oldNode : myNodeMap.values()) {
 			Node newNode = oldNode.clone();
 			result.myNodeMap.put(newNode.getName(), newNode);
@@ -1168,7 +1185,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 //		result.myProbeableStates
 
 		//TODO: this works with a single Projection impl & no params; should add Projection.copy(Origin, Termination, Network)?
-		result.myProjectionMap = new HashMap<NTarget, Projection>(10);
+		result.myProjectionMap = new HashMap<NTarget, Projection>(myProjectionMap.size());
 		for (Projection oldProjection : getProjections()) {
 			try {
 				NSource newSource = result.getNode(oldProjection.getSource().getNode().getName())
@@ -1182,8 +1199,8 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 			}
 		}
 
-		result.myExposedOrigins = new HashMap<String, NSource>(10);
-		result.myExposedOriginNames = new HashMap<NSource, String>(10);
+		result.myExposedOrigins = new HashMap<String, NSource>(myExposedOrigins.size());
+		result.myExposedOriginNames = new HashMap<NSource, String>(myExposedOriginNames.size());
 		result.orderedExposedSources = new LinkedList <NSource> ();
 		for (NSource exposed : getSources()) {
 			String name = exposed.getName();
@@ -1303,11 +1320,7 @@ public class NetworkImpl implements Network, VisiblyMutable, VisiblyMutable.List
 		}
 	}
 
-	public Node[] getChildren() {
-		return getNodes();
-	}
-
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	public String toPostScript(HashMap<String, Object> scriptData) {
 		StringBuilder py = new StringBuilder();
 

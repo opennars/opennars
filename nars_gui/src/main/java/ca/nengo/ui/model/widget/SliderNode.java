@@ -1,12 +1,11 @@
 package ca.nengo.ui.model.widget;
 
-import ca.nengo.model.Node;
+import ca.nengo.model.AtomicDoubleSource;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.EmptyIcon;
-import ca.nengo.model.AtomicDoubleSource;
 import ca.nengo.util.ScriptGenException;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.event.PInputEventListener;
@@ -61,10 +60,6 @@ public class SliderNode extends AbstractNode implements UIBuilder {
 
     }
 
-    @Override
-    public Node[] getChildren() {
-        return new Node[0];
-    }
 
     @Override
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {

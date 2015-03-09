@@ -77,7 +77,7 @@ public interface Group extends Node {
 	/**
 	 * @return Nodes that make up the Ensemble
 	 */
-	public Node[] getNodes();
+	@Deprecated public Node[] getNodes();
 
 	/**
 	 * This method provides a means of efficiently storing the output of an

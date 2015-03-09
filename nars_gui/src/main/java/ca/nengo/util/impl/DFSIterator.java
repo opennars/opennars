@@ -29,7 +29,7 @@ public class DFSIterator {
 	{		
 		pre(node);
 		
-		Node[] children = node.getChildren();
+		Node[] children = node.getNodes();
 		
 		boolean oldTopLevel = topLevel;
 		topLevel = false;

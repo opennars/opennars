@@ -51,13 +51,13 @@ import java.util.HashMap;
  *
  * @author Bryan Tripp
  */
-public interface Network extends Group, Probeable {
+public interface Network<N extends Node> extends Group, Probeable {
 
 	/**
 	 * @param node Node to add to the Network
 	 * @throws StructuralException if the Network already contains a Node of the same name
 	 */
-	public void addNode(Node node) throws StructuralException;
+	public void addNode(N node) throws StructuralException;
 
 
 	/**
@@ -65,7 +65,7 @@ public interface Network extends Group, Probeable {
 	 * @return Named node
 	 * @throws StructuralException if named Node does not exist in network
 	 */
-	public Node getNode(String name) throws StructuralException;
+	public N getNode(String name) throws StructuralException;
 
 	/**
 	 * @param name Name of Node to remove

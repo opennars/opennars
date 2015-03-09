@@ -120,10 +120,6 @@ public class FunctionPlot extends AbstractNode implements UIBuilder {
 
     }
 
-    @Override
-    public Node[] getChildren() {
-        return new Node[0];
-    }
 
     @Override
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {

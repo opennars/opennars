@@ -214,6 +214,8 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 		}
 	}
 
+
+
 	/*
 	 * (non-Javadoc) This method is final. To add items to the menu, override
 	 * constructMenu() instead.

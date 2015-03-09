@@ -186,6 +186,7 @@ public abstract class UINodeViewable extends UINeoNode {
         openViewer();
     }
 
+
     /**
      * @return Number of nodes contained by the Model
      */
