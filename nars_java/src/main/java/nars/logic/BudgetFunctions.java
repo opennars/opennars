@@ -22,7 +22,7 @@ package nars.logic;
 
 import nars.core.Memory;
 import nars.logic.entity.*;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
@@ -75,9 +75,9 @@ public final class BudgetFunctions extends UtilityFunctions {
         task.decPriority(1f - difT);
         task.decDurability(1f - difT);
 
-        boolean feedbackToLinks = (nal instanceof ConceptFire);
+        boolean feedbackToLinks = (nal instanceof ConceptProcess);
         if (feedbackToLinks) {
-            ConceptFire fc = (ConceptFire)nal;
+            ConceptProcess fc = (ConceptProcess)nal;
             TaskLink tLink = fc.getCurrentTaskLink();
             tLink.decPriority(1f - difT);
             tLink.decDurability(1f - difT);
@@ -364,8 +364,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     private static BudgetValue budgetInference(final float qual, final int complexity, final NAL nal) {
         Item t = null;
-        if (nal instanceof ConceptFire) {
-            t =((ConceptFire)nal).getCurrentTaskLink();
+        if (nal instanceof ConceptProcess) {
+            t =((ConceptProcess)nal).getCurrentTaskLink();
         }
         if (t == null)
             t = nal.getCurrentTask();
@@ -374,7 +374,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
 
-        TermLink bLink = nal instanceof ConceptFire ? ((ConceptFire)nal).getCurrentBeliefLink() : null;
+        TermLink bLink = nal instanceof ConceptProcess ? ((ConceptProcess)nal).getCurrentBeliefLink() : null;
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());

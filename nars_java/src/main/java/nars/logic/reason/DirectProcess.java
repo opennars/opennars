@@ -11,13 +11,13 @@ import nars.logic.NAL;
 import nars.logic.entity.*;
 
 /**
- * Immediate processing of a new task, in constant time Local processing, in
- * one concept only
+ * "Direct" processing of a new task, in constant time Local processing,
+ * involving one concept only
  */
-public class ImmediateProcess extends NAL {
+public class DirectProcess extends NAL {
 
 
-    public ImmediateProcess(Memory mem, Task task) {
+    public DirectProcess(Memory mem, Task task) {
         super(mem, task);
 
         if (Parameters.DEBUG) {
@@ -42,13 +42,13 @@ public class ImmediateProcess extends NAL {
 
 
     @Override
-    public void reason() {
+    public void process() {
         Concept c = memory.conceptualize(currentTask.budget, getCurrentTask().getTerm());
         if (c == null) return;
 
 
 
-        if (c.directProcess(this, currentTask)) {
+        if (c.directProcess(this)) {
 
             c.link(currentTask);
 

@@ -2,8 +2,8 @@ package nars.control;
 
 import nars.core.Parameters;
 import nars.logic.entity.*;
-import nars.logic.reason.ConceptFire;
-import nars.logic.reason.ImmediateProcess;
+import nars.logic.reason.ConceptProcess;
+import nars.logic.reason.DirectProcess;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.CacheBag;
 
@@ -94,7 +94,7 @@ public class DefaultCore extends UniCore {
         int conceptsToFire = memory.param.conceptsFiredPerCycle.get();
 
         for (int i = 0; i < conceptsToFire; i++) {
-            ConceptFire f = nextTaskLink(nextConcept());
+            ConceptProcess f = nextTaskLink(nextConcept());
             if (f != null) {
                 f.run();
             }
@@ -112,7 +112,7 @@ public class DefaultCore extends UniCore {
 
     }
 
-    private ConceptFire nextTaskLink(Concept concept) {
+    private ConceptProcess nextTaskLink(Concept concept) {
         if (concept == null) return null;
 
 
@@ -139,7 +139,7 @@ public class DefaultCore extends UniCore {
                 ) {
             //it is a question/quest or a judgment for a concept which exists:
 
-            return new ImmediateProcess(memory, task);
+            return new DirectProcess(memory, task);
 
         } else {
             //it is a judgment or goal which would create a new concept:
@@ -180,7 +180,7 @@ public class DefaultCore extends UniCore {
 
         final Task task = novelTasks.TAKENEXT();
 
-        return new ImmediateProcess(memory, task);
+        return new DirectProcess(memory, task);
     }
 
 

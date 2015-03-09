@@ -4,7 +4,7 @@ import nars.logic.BudgetFunctions;
 import nars.logic.NAL;
 import nars.logic.entity.*;
 import nars.logic.nal5.Conjunction;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 import java.util.List;
 import java.util.Set;
@@ -22,7 +22,7 @@ import static nars.logic.TruthFunctions.intersection;
 public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
 
     @Override
-    public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
         if (f.getCurrentBelief()!=null)
             dedConjunctionByQuestion(
                     taskLink.getSentence(), f.getCurrentBelief(), f);

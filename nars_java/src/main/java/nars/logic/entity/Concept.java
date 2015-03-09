@@ -36,7 +36,7 @@ import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.entity.tlink.TermLinkTemplate;
 import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
-import nars.logic.reason.ImmediateProcess;
+import nars.logic.reason.DirectProcess;
 import nars.util.bag.Bag;
 import nars.util.data.CuckooMap;
 
@@ -147,32 +147,15 @@ public class Concept extends Item<Term> implements Termable {
         if (taskLinks instanceof MemoryAware)  ((MemoryAware)taskLinks).setMemory(memory);
         if (termLinks instanceof MemoryAware)  ((MemoryAware)termLinks).setMemory(memory);
                 
-        //if (term instanceof CompoundTerm) {
-            this.termLinkBuilder = new TermLinkBuilder(this);
-        /*} else {
-            this.termLinkBuilder = null;
-        }*/
-
+        this.termLinkBuilder = new TermLinkBuilder(this);
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
-        nextTermBudget = new CuckooMap<>();
+
+        this.nextTermBudget = new CuckooMap<>();
 
     }
 
-//    @Override public int hashCode() {
-//        return term.hashCode();
-//    }
-//
-//    @Override public boolean equals(final Object obj) {
-//        if (this == obj) return true;
-//        if (obj instanceof Concept) {
-//            Concept t = (Concept)obj;
-//            return (t.term.equals(term));
-//        }
-//        return false;
-//    }
-//    
 
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
         return ((Concept)obj).name().equals(name());
@@ -180,10 +163,6 @@ public class Concept extends Item<Term> implements Termable {
 
     @Override public int hashCode() { return name().hashCode();     }
 
-    
-    
-    
-    
     @Override
     public Term name() {
         return term;
@@ -201,24 +180,9 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return whether it was processed
      */
-    public boolean directProcess(final ImmediateProcess nal, final Task task) {
-        if (!task.aboveThreshold()) {
-            //available credit to boost priority (maximum=1-priority)
-            //NOT WORKING YET
-            /*
-            float credit = Math.min( taskBudgetBalance, 1.0f - budget.getPriority());
-            if (task.aboveThreshold(credit)) {
-                //spend credit
-                taskBudgetBalance -= credit;
-            }
-            else {
-                //save credit
-                this.taskBudgetBalance += task.getPriority();
-                return false;
-            }
-            */
-            return false;
-        }
+    public boolean directProcess(final DirectProcess nal) {
+
+        final Task task = nal.getCurrentTask();
 
         char type = task.sentence.punctuation;
         switch (type) {
@@ -242,7 +206,6 @@ public class Concept extends Item<Term> implements Termable {
                 throw new RuntimeException("Invalid sentence type");
         }
 
-
         return true;
     }
 
@@ -264,7 +227,7 @@ public class Concept extends Item<Term> implements Termable {
     }
 
     public boolean link(Task t) {
-        if (linkToTask(t))
+        if (linkTask(t))
             return linkTerms(t.budget, true);  // recursively insert TermLink
         return false;
     }
@@ -283,7 +246,7 @@ public class Concept extends Item<Term> implements Termable {
         //aggregate a merged budget, allowing a maximum of (1,1,1)
         BudgetValue aggregateBudget = null;
         for (Task t : tasks) {
-            if (linkToTask(t)) {
+            if (linkTask(t)) {
                 if (aggregateBudget == null) aggregateBudget = new BudgetValue(t.budget);
                 else {
                     aggregateBudget.merge(t.budget);
@@ -305,7 +268,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processJudgment(final ImmediateProcess nal, final Task task) {
+    protected boolean processJudgment(final DirectProcess nal, final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief;
 
@@ -419,7 +382,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processGoal(final ImmediateProcess nal, final Task task) {
+    protected boolean processGoal(final DirectProcess nal, final Task task) {
 
         final Sentence goal = task.sentence, oldGoal;
 
@@ -481,7 +444,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param newTask The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processQuestion(final ImmediateProcess nal, final Task newTask) {
+    protected void processQuestion(final DirectProcess nal, final Task newTask) {
 
         Sentence ques = newTask.sentence;
 
@@ -545,7 +508,7 @@ public class Concept extends Item<Term> implements Termable {
      *
      * @param task The task to be linked
      */
-    public boolean linkToTask(final Task task) {
+    public boolean linkTask(final Task task) {
         BudgetValue taskBudget = task.budget;
         taskLinkBuilder.setTask(task);
 
@@ -1074,7 +1037,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectNovelTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
+    public TermLink nextTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
 
         int toMatch = memory.param.termLinkMaxMatched.get();
 

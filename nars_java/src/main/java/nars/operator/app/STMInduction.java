@@ -7,7 +7,7 @@ import nars.core.Parameters;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.reason.ImmediateProcess;
+import nars.logic.reason.DirectProcess;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -49,7 +49,7 @@ public class STMInduction extends AbstractPlugin {
     public void event(Class event, Object[] args) {
         if (event == Events.TaskImmediateProcessed.class) {
             Task t = (Task) args[0];
-            ImmediateProcess n = (ImmediateProcess) args[1];
+            DirectProcess n = (DirectProcess) args[1];
             inductionOnSucceedingEvents(t, n);
         }
     }
@@ -58,7 +58,7 @@ public class STMInduction extends AbstractPlugin {
         return stmSize;
     }
 
-    boolean inductionOnSucceedingEvents(final Task newEvent, ImmediateProcess nal) {
+    boolean inductionOnSucceedingEvents(final Task newEvent, DirectProcess nal) {
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 

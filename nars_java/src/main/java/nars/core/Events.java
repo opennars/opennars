@@ -4,8 +4,8 @@ import nars.event.Reaction;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
-import nars.logic.reason.ConceptFire;
-import nars.logic.reason.ImmediateProcess;
+import nars.logic.reason.ConceptProcess;
+import nars.logic.reason.DirectProcess;
 
 import java.util.Arrays;
 import java.util.List;
@@ -156,10 +156,10 @@ public class Events {
          * Concept n.getCurrentConcept()
          * TaskLink n.getCurrentTaskLink()
          */
-        abstract public void onFire(ConceptFire n);
+        abstract public void onFire(ConceptProcess n);
         
         @Override public void event(Class event, Object[] args) {
-            onFire((ConceptFire)args[0]);
+            onFire((ConceptProcess)args[0]);
         }
         
     }
@@ -167,10 +167,10 @@ public class Events {
     /** fired at the end of an ImmediateProcess task */
     abstract public static class TaskImmediateProcessed implements Reaction {
 
-        abstract public void onProcessed(Task t, ImmediateProcess n, Concept c);
+        abstract public void onProcessed(Task t, DirectProcess n, Concept c);
         
         @Override public void event(Class event, Object[] args) {
-            onProcessed((Task)args[0], (ImmediateProcess)args[1], (Concept)args[2] );
+            onProcessed((Task)args[0], (DirectProcess)args[1], (Concept)args[2] );
         }
         
     }

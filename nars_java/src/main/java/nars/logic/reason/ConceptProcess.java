@@ -8,8 +8,14 @@ import nars.core.Events;
 import nars.logic.NAL;
 import nars.logic.entity.*;
 
-/** Firing a concept (reasoning event)  */
-abstract public class ConceptFire extends NAL {
+/** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
+ *
+ *  Concept
+ *     Task
+ *     TermLinks
+ *
+ * */
+abstract public class ConceptProcess extends NAL {
 
     protected final Term currentTerm;
     protected final TaskLink currentTaskLink;
@@ -20,11 +26,11 @@ abstract public class ConceptFire extends NAL {
     private int termLinkCount;
 
 
-    public ConceptFire(Concept concept, TaskLink taskLink) {
+    public ConceptProcess(Concept concept, TaskLink taskLink) {
         this(concept, taskLink, concept.memory.param.termLinkMaxReasoned.get());
     }
 
-    public ConceptFire(Concept concept, TaskLink taskLink, int termLinkCount) {
+    public ConceptProcess(Concept concept, TaskLink taskLink, int termLinkCount) {
         super(concept.memory, taskLink.getTask());
         this.currentTaskLink = taskLink;
         this.currentConcept = concept;
@@ -49,70 +55,50 @@ abstract public class ConceptFire extends NAL {
     protected void onFinished() {
         beforeFinish();
 
+
+        emit(Events.ConceptFired.class, this);
+        memory.logic.TASKLINK_FIRE.hit();
+
+
         if (newTasks!=null && !newTasks.isEmpty()) {
             memory.taskAdd(newTasks);
         }
     }
 
 
-    @Override
-    protected boolean addNewTask(Task task, String reason, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
-        boolean b = super.addNewTask(task, reason, solution, revised, single, currentBelief, currentTask);
-        return b;
-    }
-
-    @Override
-    protected void reason() {
-
+    protected void processTask() {
         setCurrentBeliefLink(null);
-
         reasoner.fire(this);
-
-        if (currentTaskLink.type != TermLink.TRANSFORM) {
-
-            int noveltyHorizon = memory.param.noveltyHorizon.get();
-
-            int termLinkSelectionAttempts = termLinkCount;
-
-            //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
-            //int numTermLinks = getCurrentConcept().termLinks.size();
-
-            currentConcept.updateTermLinks();
-
-            while (termLinkSelectionAttempts > 0)  {
-
-
-                final TermLink beliefLink = currentConcept.selectNovelTermLink(currentTaskLink, memory.time(), noveltyHorizon);
-
-
-
-                if (beliefLink == null) {
-                    //no novel termlinks available
-                    break;
-                }
-
-                termLinkSelectionAttempts--;
-
-                int numAddedTasksBefore = newTasksCount();
-
-                reason(currentTaskLink, beliefLink);
-
-                int numAddedTasksAfter = newTasksCount();
-
-                //TODO redudant to send both 'this' and currentTaskLink, etc.., so remove them
-                emit(Events.TermLinkSelected.class, beliefLink, this, numAddedTasksBefore, numAddedTasksAfter);
-                memory.logic.TERM_LINK_SELECT.hit();
-
-
-            }
-        }
-                
-        emit(Events.ConceptFired.class, this);
-        memory.logic.TASKLINK_FIRE.hit();
-
     }
 
+    protected void processTerms() {
 
+        final int noveltyHorizon = memory.param.noveltyHorizon.get();
+
+        int termLinkSelectionAttempts = termLinkCount;
+
+        //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
+        //int numTermLinks = getCurrentConcept().termLinks.size();
+
+        currentConcept.updateTermLinks();
+
+        while (termLinkSelectionAttempts-- > 0) {
+
+            int numAddedTasksBefore = newTasksCount();
+
+            final TermLink bLink = currentConcept.nextTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+            if (bLink == null)
+                break;  //no novel termlinks available
+
+            processTerm(bLink);
+
+            int numAddedTasksAfter = newTasksCount();
+
+            emit(Events.TermLinkSelected.class, bLink, this, numAddedTasksBefore, numAddedTasksAfter);
+            memory.logic.TERM_LINK_SELECT.hit();
+
+        }
+    }
 
     /**
      * Entry point of the logic engine
@@ -120,8 +106,7 @@ abstract public class ConceptFire extends NAL {
      * @param tLink The selected TaskLink, which will provide a task
      * @param bLink The selected TermLink, which may provide a belief
      */
-    protected void reason(final TaskLink tLink, final TermLink bLink) {
-
+    protected void processTerm(TermLink bLink) {
         setCurrentBeliefLink(bLink);
 
         Sentence belief = getCurrentBelief();
@@ -129,10 +114,27 @@ abstract public class ConceptFire extends NAL {
         reasoner.fire(this);
 
         if (belief!=null) {
-            emit(Events.BeliefReason.class, belief, tLink.getTarget(), this);
+            emit(Events.BeliefReason.class, belief, getCurrentTaskLink().getTarget(), this);
         }
+    }
+
+    @Override
+    protected void process() {
+
+        processTask();
+
+        if (currentTaskLink.type != TermLink.TRANSFORM) {
+
+            processTerms();
+
+        }
+                
 
     }
+
+
+
+
 
     /**
      * @return the currentBeliefLink

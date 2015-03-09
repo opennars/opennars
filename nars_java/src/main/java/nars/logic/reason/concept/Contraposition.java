@@ -9,13 +9,13 @@ import nars.logic.entity.*;
 import nars.logic.nal1.Negation;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 
 public class Contraposition extends ConceptFireTask {
 
     @Override
-    public boolean apply(ConceptFire f, TaskLink taskLink) {
+    public boolean apply(ConceptProcess f, TaskLink taskLink) {
         final Sentence taskSentence = taskLink.getSentence();
 
         final Term taskTerm = taskSentence.term;

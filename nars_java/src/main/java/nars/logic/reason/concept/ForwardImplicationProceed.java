@@ -7,7 +7,7 @@ import nars.logic.TruthFunctions;
 import nars.logic.entity.*;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +30,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
     public static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1;
 
     @Override
-    public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
         if (!f.nal(7)) return true;
 
         Concept concept = f.getCurrentBeliefConcept();

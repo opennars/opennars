@@ -9,7 +9,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
-import nars.logic.reason.ImmediateProcess;
+import nars.logic.reason.DirectProcess;
 
 import java.util.*;
 
@@ -68,7 +68,7 @@ public class AntCore extends ConceptWaveCore {
             for (int i = 0; i < maxNewTasks; i++) {
                 Task t = tasks.removeFirst();
                 if (t == null) break;
-                run.add(new ImmediateProcess(memory, t));
+                run.add(new DirectProcess(memory, t));
             }
         }
 

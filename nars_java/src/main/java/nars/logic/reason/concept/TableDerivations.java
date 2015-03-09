@@ -7,7 +7,7 @@ import nars.logic.nal1.Negation;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal5.SyllogisticRules;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 import static nars.io.Symbols.VAR_INDEPENDENT;
 
@@ -15,7 +15,7 @@ import static nars.io.Symbols.VAR_INDEPENDENT;
 public class TableDerivations extends ConceptFireTaskTerm {
 
     @Override
-    public boolean apply(ConceptFire f, TaskLink tLink, TermLink bLink) {
+    public boolean apply(ConceptProcess f, TaskLink tLink, TermLink bLink) {
 
         Sentence taskSentence = tLink.getSentence();
         final Term taskTerm = tLink.getTerm();

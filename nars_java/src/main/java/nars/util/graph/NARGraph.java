@@ -5,12 +5,11 @@ import nars.core.Parameters;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.*;
 import nars.logic.entity.BudgetValue.Budgetable;
+import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,7 +18,7 @@ import java.util.Set;
  *
  * @author me
  */
-public class NARGraph extends DirectedMultigraph {
+public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
     public <X> Set<X> vertices(Class<? extends X> type) {
         Set<X> s = Parameters.newHashSet(vertexSet().size());
@@ -305,10 +304,13 @@ public class NARGraph extends DirectedMultigraph {
     }
 
     public NARGraph() {
-        super(DefaultEdge.class);
+        super(new EdgeFactory() {
+            @Override
+            public Object createEdge(Object sourceVertex, Object targetVertex) {
+                return null;
+            }
+        });
     }
-
-    public List<Concept> currentLevel = new ArrayList();
 
 
     public NARGraph add(NAR n, Filter filter, Grapher graphize) {
@@ -341,13 +343,13 @@ public class NARGraph extends DirectedMultigraph {
 
     }
 
-    public boolean addEdge(Object sourceVertex, Object targetVertex, NAREdge e) {
+    public boolean addEdge(V sourceVertex, V targetVertex, E e) {
         return addEdge(sourceVertex, targetVertex, e, false);
     }
 
-    public boolean addEdge(Object sourceVertex, Object targetVertex, NAREdge e, boolean allowMultiple) {
+    public boolean addEdge(V sourceVertex, V targetVertex, E e, boolean allowMultiple) {
         if (!allowMultiple) {
-            Set existing = getAllEdges(sourceVertex, targetVertex);
+            Set<E> existing = getAllEdges(sourceVertex, targetVertex);
             if (existing != null) {
                 for (Object o : existing) {
                     if (o.getClass() == e.getClass()) {
@@ -434,17 +436,17 @@ public class NARGraph extends DirectedMultigraph {
 
     }
 
-    public void at(Object x, long t) {
+    @Deprecated public void at(V x, long t) {
         at(x, t, "c"); //c=creation time
     }
-    public void at(Object x, long t, String edgeLabel) {
-        at(x, t, new UniqueEdge(edgeLabel));
+    @Deprecated public void at(V x, long t, String edgeLabel) {
+        at(x, t, (E) new UniqueEdge(edgeLabel));
     }
 
-    public void at(Object x, long t, Object edge) {
+    @Deprecated public void at(V x, long t, E edge) {
         TimeNode timeNode = new TimeNode(t);
-        addVertex(timeNode);        
-        addEdge(timeNode, x, edge);
+        addVertex((V) timeNode);
+        addEdge((V) timeNode, x, edge);
     }
 
 }

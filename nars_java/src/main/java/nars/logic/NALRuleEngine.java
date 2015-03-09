@@ -3,7 +3,7 @@ package nars.logic;
 import nars.core.Memory;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 import nars.logic.reason.concept.*;
 import nars.logic.reason.filter.FilterBelowBudget;
 import nars.logic.reason.filter.FilterBelowConfidence;
@@ -58,8 +58,8 @@ public class NALRuleEngine extends RuleEngine {
         //derivationFilters.add(new FilterCyclic());
     }
 
-    public void fire(ConceptFire fireConcept) {
-        base.fire(ConceptFire.class, fireConcept);
+    public void fire(ConceptProcess fireConcept) {
+        base.fire(ConceptProcess.class, fireConcept);
     }
 
     public List<NAL.DerivationFilter> getDerivationFilters() {

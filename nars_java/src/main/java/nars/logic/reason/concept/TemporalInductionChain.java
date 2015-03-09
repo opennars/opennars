@@ -12,7 +12,7 @@ import nars.logic.entity.*;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +28,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
 
     @Override
-    public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
 
         if (!f.nal(7)) return true;
         final Sentence belief = f.getCurrentBelief();

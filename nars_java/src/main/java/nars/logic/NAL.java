@@ -95,7 +95,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
     @Override
     public void run() {
         onStart();
-        reason();
+        process();
         onFinished();
     }
 
@@ -107,7 +107,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
         /** implement if necessary in subclasses */
     }
 
-    protected abstract void reason();
+    protected abstract void process();
 
     protected int newTasksCount() {
         if (newTasks == null) return 0;

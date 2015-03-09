@@ -12,7 +12,7 @@ import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal2.Instance;
 import nars.logic.nal7.Tense;
-import nars.logic.reason.ImmediateProcess;
+import nars.logic.reason.DirectProcess;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -159,7 +159,7 @@ public class Discretize {
             if (mode == BeliefInsertion.MemoryInput)
                 nar.memory.taskInput(t);
             else if (mode == BeliefInsertion.ImmediateProcess)
-                new ImmediateProcess(nar.memory, t).run();
+                new DirectProcess(nar.memory, t).run();
             
         }
     }            

@@ -6,7 +6,7 @@ import nars.logic.NAL;
 import nars.logic.entity.*;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 import java.util.Set;
 
@@ -19,7 +19,7 @@ import static nars.logic.Terms.equalSubTermsInRespectToImageAndProduct;
 public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
     @Override
-    public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
 
         if (!f.nal(7)) return true;
 
@@ -72,7 +72,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     }
 
     /** should only take non-eternalized beliefs? */
-    private void induct(ConceptFire f, Task task, Sentence taskSentence, Memory memory, Sentence otherBelief) {
+    private void induct(ConceptProcess f, Task task, Sentence taskSentence, Memory memory, Sentence otherBelief) {
         Sentence current, prev;
 
         if(otherBelief.after(taskSentence, memory.duration())) {

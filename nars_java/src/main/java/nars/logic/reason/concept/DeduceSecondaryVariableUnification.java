@@ -12,7 +12,7 @@ import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Disjunction;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
     //TODO decide if f.currentBelief needs to be checked for null like it was originally
 
     @Override
-    public boolean apply(ConceptFire f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
         final Task task = taskLink.getTarget();
         final Sentence taskSentence = taskLink.getSentence();
 

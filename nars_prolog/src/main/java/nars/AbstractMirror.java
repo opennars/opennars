@@ -7,7 +7,7 @@ package nars;
 
 import nars.core.NAR;
 import nars.event.AbstractReaction;
-import nars.logic.reason.ImmediateProcess;
+import nars.logic.reason.DirectProcess;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
@@ -56,7 +56,7 @@ abstract public class AbstractMirror extends AbstractReaction {
             if (mode == InputMode.InputTask)
                 nar.memory.taskInput(t);
             else if (mode == InputMode.ImmediateProcess)
-                new ImmediateProcess(nar.memory, t).run();
+                new DirectProcess(nar.memory, t).run();
 
             return true;
 

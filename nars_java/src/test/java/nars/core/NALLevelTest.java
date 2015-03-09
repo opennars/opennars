@@ -29,7 +29,7 @@ public class NALLevelTest {
 
         TextOutput.out(n8);
 
-        String productSentence = "<(*,a,b) --> c>.";
+        String productSentence = "<(*,a,b) --> c>.\n<c <-> a>?\n";
 
         n1.input(productSentence);
         n1.run(5);

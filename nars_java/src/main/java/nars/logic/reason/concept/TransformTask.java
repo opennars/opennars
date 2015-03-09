@@ -12,7 +12,7 @@ import nars.logic.nal4.Product;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
-import nars.logic.reason.ConceptFire;
+import nars.logic.reason.ConceptProcess;
 
 
 /**
@@ -23,7 +23,7 @@ import nars.logic.reason.ConceptFire;
 public class TransformTask extends ConceptFireTask {
 
     @Override
-    public boolean apply(ConceptFire f, TaskLink t) {
+    public boolean apply(ConceptProcess f, TaskLink t) {
 
         if (t.type == TermLink.TRANSFORM) {
 

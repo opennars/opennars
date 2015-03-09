@@ -18,8 +18,8 @@ import nars.io.condition.OutputCondition;
 import nars.io.condition.OutputContainsCondition;
 import nars.logic.entity.*;
 import nars.logic.nal8.Operation;
-import nars.logic.reason.ConceptFire;
-import nars.logic.reason.ImmediateProcess;
+import nars.logic.reason.ConceptProcess;
+import nars.logic.reason.DirectProcess;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.TimeNode;
 import nars.util.graph.NARGraph.UniqueEdge;
@@ -142,7 +142,7 @@ public class LogicPerformance {
             }
         }
         
-        public void explain(long t, ConceptFire f) {
+        public void explain(long t, ConceptProcess f) {
             //Concept conceptFired, TaskLink tlink, List<Task> generated) {
             Term term = f.getCurrentConcept().term;
             TaskLink link = f.getCurrentTaskLink();
@@ -267,7 +267,7 @@ public class LogicPerformance {
         
         
         n.on(TaskImmediateProcessed.class, new TaskImmediateProcessed() {
-            @Override public void onProcessed(Task t, ImmediateProcess nal, Concept c) {
+            @Override public void onProcessed(Task t, DirectProcess nal, Concept c) {
                 //TODO i broke this
                 //process.explain(t, analysisDepth, nal.produced);
             }            
@@ -275,7 +275,7 @@ public class LogicPerformance {
          n.on(ConceptFired.class, new ConceptFired() {
 
             @Override
-            public void onFire(ConceptFire f) {
+            public void onFire(ConceptProcess f) {
                 
                 process.explain(n.time(), f);
             }            
