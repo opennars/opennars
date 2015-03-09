@@ -4,6 +4,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.logic.entity.Item;
 import nars.util.bag.Bag;
+import nars.util.bag.BagSelector;
 import nars.util.data.CuckooMap;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
@@ -60,6 +61,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     private float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f;
     private double estimatedMax = 0.5f;
     private double estimatedMin = 0.5f;
+    private double estimatedMean;
 
 
     public ChainBag(int capacity) {
@@ -102,6 +104,46 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     @Override
+    public V update(BagSelector<K, V> selector) {
+
+        final K key = selector.name();
+        final DD<V> bx;
+        if (key != null) {
+            bx = index.get(key);
+        }
+        else {
+            bx = next();
+        }
+
+
+        if ((bx == null) || (bx.item == null)) {
+            //allow selector to provide a new instance
+            V n = selector.newItem();
+            if (n!=null) {
+                V overflow = put(n);
+                if (overflow!=null)
+                    selector.overflow(overflow);
+                return n; //return the new instance
+            }
+            //no instance provided, nothing to do
+            return null;
+        }
+
+        final V b = bx.item;
+
+        //allow selector to modify it, then if it returns non-null, reinsert
+        final V c = selector.update(b);
+        if (c!=null) {
+            bx.item = c;
+            updatePercentile(c.getPriority());
+            return c;
+        }
+        else
+            return b;
+
+    }
+
+    @Override
     public V put(V newItem) {
 
         if (nextRemoval!=null && nextRemoval.getPriority() > newItem.getPriority())
@@ -112,6 +154,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         if (previous!=null) {
             //displaced an item with the same key
             merge(previous.item.budget,  newItem.budget);
+            updatePercentile(previous.item.getPriority());
             return null;
         }
         else {
@@ -126,6 +169,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
                 //bag will remain over-budget until a removal candidate is decided
             }
         }
+        updatePercentile(newItem.getPriority());
         return null;
     }
 
@@ -170,7 +214,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
 
-    private double getPercentile(final float priority) {
+    /** updates the adaptive percentile measurement; should be called on put and when budgets update  */
+    private void updatePercentile(final float priority) {
         //DescriptiveStatistics percentile is extremely slow
         //contentStats.getPercentile(ni.getPriority())
         //approximate percentile using max/mean/min
@@ -183,7 +228,13 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
         estimatedMax = (estimatedMax < priority) ? priority : (1.0 - momentum) * mean + (momentum) * estimatedMax;
         estimatedMin = (estimatedMin > priority) ? priority : (1.0 - momentum) * mean + (momentum) * estimatedMin;
+        estimatedMean = this.mean.getResult();
+    }
 
+    /** uses the adaptive percentile data to estimate a percentile of a given priority */
+    private double getPercentile(final float priority) {
+
+        final double mean = this.estimatedMean;
 
         final double upper, lower;
         if (priority < mean) {
@@ -203,7 +254,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         final double minPerc = 1.0 / size();
 
         if (perc < minPerc) return minPerc;
-        //if (perc > 1) perc = 1;
 
         return perc;
     }

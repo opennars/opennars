@@ -18,10 +18,10 @@ public class NALPerfLoop {
     
     public static void main(String[] args) {
        
-        int repeats = 1;
+        int repeats = 3;
         int warmups = 1;
-        int maxConcepts = 1024;
-        int extraCycles = 4048;
+        int maxConcepts = 2048;
+        int extraCycles = 8192;
         int randomExtraCycles = 512;
         Parameters.THREADS = 1;
           
@@ -29,7 +29,7 @@ public class NALPerfLoop {
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new NAR(new Curve());
         
-        NAR n = new NAR(new Discretinuous());
+        NAR n = new NAR(new Discretinuous().setConceptBagSize(2048));
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         
