@@ -67,14 +67,15 @@ public class BagOperationsTest {
         assertEquals(0.1f, b.getMinPriority(),0.001f);
         assertEquals(0.2f, b.getMaxPriority(),0.001f);
         
+
         //if (b instanceof GearBag()) return;
         
-        
         b.put(new NullConcept("b", 0.4f));
-        
-        
+
         assertEquals(2, b.size());
-        assertEquals(0.2f, b.getMinPriority(),0.001f);
+
+        //results in 0.2, not 0.1 if merged and not simply replaced B's budget
+        assertEquals("budget merge", 0.2f, b.getMinPriority(),0.001f);
         assertEquals(0.4f, b.getMaxPriority(),0.001f);
         
         

@@ -24,6 +24,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import nars.core.Parameters;
+import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Item;
 import nars.util.bag.Bag;
 import nars.util.bag.BagSelector;
@@ -428,13 +429,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         E b = bx.item;
 
-        /*if (b == null) {
-            printAll();
-            throw new RuntimeException("index provided a node with null value");
-        }*/
 
         //allow selector to modify it, then if it returns non-null, reinsert
-        //TODO maybe divide this into a 2 stage transaction that can be aborted before the unlevel begins
         E c = selector.update(b);
         if (c!=null) {
             relevel(bx, c);
@@ -581,6 +577,16 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         E overflow = null;
 
         //if (Parameters.DEBUG_BAG) size();
+        DD<E> existing = index.get(newItem.name());
+        if (existing != null) {
+            BudgetValue prevBudget = existing.item.budget;
+            existing.item = newItem;
+            if (merge(newItem.budget, prevBudget)) {
+                //budget changed, adjust level
+                relevel(existing, newItem);
+            }
+            return null;
+        }
 
         //1. ensure capacity
         int inLevel = getLevel(newItem);

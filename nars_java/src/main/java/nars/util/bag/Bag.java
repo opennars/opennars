@@ -3,6 +3,8 @@ package nars.util.bag;
 import com.google.common.base.Predicate;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.logic.BudgetFunctions;
+import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Item;
 import nars.util.bag.select.ForgetNext;
 import reactor.function.Consumer;
@@ -42,7 +44,18 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      */
     abstract public V remove(K key);
 
+    /**
+     *
+     * @param newItem
+     * @return null if put was successful, or a displaced item if newItem was inserted.
+     * if newItem itself is returned, then it was rejected due to insufficient budget
+     * if the newItem already existed, the resulting budget is merged.
+     */
     abstract public V put(V newItem);
+
+    protected boolean merge(BudgetValue newBudget, BudgetValue oldBudget) {
+        return BudgetFunctions.merge(newBudget, oldBudget);
+    }
 
     /**
      * Get an Item by key

@@ -111,6 +111,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         DD<V> previous = index.put(newItem.name(), d);
         if (previous!=null) {
             //displaced an item with the same key
+            merge(previous.item.budget,  newItem.budget);
             return null;
         }
         else {
