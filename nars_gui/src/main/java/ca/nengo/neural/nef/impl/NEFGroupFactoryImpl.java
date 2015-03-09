@@ -44,7 +44,7 @@ import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.neural.neuron.impl.LIFNeuronFactory;
 import ca.nengo.util.MU;
 import ca.nengo.util.VectorGenerator;
-import ca.nengo.util.VisiblyMutableUtils;
+import ca.nengo.util.VisiblyChangesUtils;
 import ca.nengo.util.impl.RandomHypersphereVG;
 import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
 
@@ -303,7 +303,7 @@ public class NEFGroupFactoryImpl implements NEFGroupFactory, java.io.Serializabl
 	 */
 	protected NEFGroup construct(String name, NEFNode[] nodes, float[][] encoders, ApproximatorFactory af, float[][] evalPoints, float[] radii)
 			throws StructuralException {
-		if (!VisiblyMutableUtils.isValidName(name)) throw new StructuralException("name '"+name+"' must not contain '.' or ':'");
+		if (!VisiblyChangesUtils.isValidName(name)) throw new StructuralException("name '"+name+"' must not contain '.' or ':'");
 		return new NEFGroupImpl(name, nodes, encoders, af, evalPoints, radii);
 	}
 

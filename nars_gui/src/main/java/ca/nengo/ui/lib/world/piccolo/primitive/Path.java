@@ -66,4 +66,11 @@ public class Path extends WorldObjectImpl {
         p.setStroke(null);
         return p;
     }
+
+    public PXPath getGeometry() { return pathNode; }
+
+    @Override
+    public String toString() {
+        return getName() + ":Path[" + myPNode + ']';
+    }
 }

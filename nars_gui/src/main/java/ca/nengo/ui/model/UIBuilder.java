@@ -6,6 +6,6 @@ package ca.nengo.ui.model;
 public interface UIBuilder {
 
     /** produces a new UI instance for this Node */
-    UINeoNode newUI();
+    UINeoNode newUI(double width, double height);
 
 }

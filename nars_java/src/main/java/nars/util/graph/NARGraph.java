@@ -106,7 +106,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
          *
          * @param g
          */
-        void onFinish(NARGraph g);
+        void finish(NARGraph g);
 
         void setMinPriority(float minPriority);
     }
@@ -338,7 +338,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
             //graphize.postLevel(this, level);
         }
 
-        graphize.onFinish(this);
+        graphize.finish(this);
         return this;
 
     }

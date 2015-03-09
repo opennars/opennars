@@ -96,11 +96,9 @@ public class NetworkImplTest extends TestCase {
 		
 		e1.setName("foo");
 		assertTrue(myNetwork.getNode("foo") != null);
-		try {
-			myNetwork.getNode("one");
-			fail("Shouldn't exist any more");
-		} catch (StructuralException e) {}
-		
+
+    	assertNull("Shouldn't exist any more", myNetwork.getNode("one"));
+
 		try {
 			e2.setName("foo");
 			fail("Should have thrown exception on duplicate name");
@@ -171,15 +169,8 @@ public class NetworkImplTest extends TestCase {
 	{
 		Group a = new MockGroup("a");
 		
-		try
-		{
-			myNetwork.getNode("a");
-			fail("Node is present in network when it shouldn't be");
-		}
-		catch(StructuralException se)
-		{
-		}
-			
+		assertNull("Node is present in network when it shouldn't be", myNetwork.getNode("a"));
+
 		
 		myNetwork.addNode(a);
 		
@@ -204,15 +195,9 @@ public class NetworkImplTest extends TestCase {
 			fail("Node not added");
 		
 		myNetwork.removeNode("a");
-		try
-		{
-			myNetwork.getNode("a");
-			fail("Node not removed");
-		}
-		catch(StructuralException se)
-		{
-		}
-			
+
+		assertNull("Node not removed",myNetwork.getNode("a"));
+
 		NetworkImpl b = new NetworkImpl();
 		b.setName("b");
 		myNetwork.addNode(b);
@@ -232,23 +217,8 @@ public class NetworkImplTest extends TestCase {
 		
 		myNetwork.removeNode("b");
 		
-		try
-		{
-			myNetwork.getNode("b");
-			fail("Network not removed");
-		}
-		catch(StructuralException se)
-		{
-		}
-		
-		try
-		{
-			b.getNode("c");
-			fail("Ensemble not recursively removed from network");
-		}
-		catch(StructuralException se)
-		{
-		}
+        assertNull("Network not removed", myNetwork.getNode("b"));
+        assertNull("Ensemble not recursively removed from network", myNetwork.getNode("c"));
 
 		if(b.getSimulator().getProbes().length != 0)
 			fail("Probes not removed correctly");
@@ -467,7 +437,7 @@ public class NetworkImplTest extends TestCase {
 		}
 		
 		public void setName(String name) throws StructuralException {
-			VisiblyMutableUtils.nameChanged(this, getName(), name, myListeners);
+			VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
 			myName = name;
 		}
 

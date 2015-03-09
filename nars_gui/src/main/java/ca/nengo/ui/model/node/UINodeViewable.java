@@ -213,11 +213,16 @@ public abstract class UINodeViewable extends UINeoNode {
      * @return the Container viewer
      */
     public NodeViewer openViewer() {
+        return openViewer(null);
+    }
+    public NodeViewer openViewer(WindowState state) {
         Window viewerWindow = getViewerWindow();
         if (viewerWindow.getWindowState() == WindowState.MINIMIZED) {
             viewerWindow.restoreSavedWindow();
         }
         ((NodeViewer) viewerWindow.getContents()).setJustOpened(true);
+        if (state!=null)
+            viewerWindow.setWindowState(state);
         return (NodeViewer) viewerWindow.getContents();
     }
 

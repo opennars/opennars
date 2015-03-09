@@ -117,10 +117,8 @@ public class StringView extends AbstractNode implements UIBuilder {
     }
 
     @Override
-    public UINeoNode newUI() {
-        if (ui==null)
-            ui = new ToStringUI();
-        return ui;
+    public UINeoNode newUI(double width, double height) {
+        return new ToStringUI();
     }
 
 

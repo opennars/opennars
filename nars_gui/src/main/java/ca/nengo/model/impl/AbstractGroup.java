@@ -36,7 +36,7 @@ import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.util.SpikePattern;
 import ca.nengo.util.TimeSeries;
 import ca.nengo.util.VisiblyChanges;
-import ca.nengo.util.VisiblyMutableUtils;
+import ca.nengo.util.VisiblyChangesUtils;
 import ca.nengo.util.impl.SpikePatternImpl;
 import ca.nengo.util.impl.TimeSeriesImpl;
 import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
@@ -138,7 +138,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyChanges 
 	 * @param name The new name
 	 */
     public void setName(String name) throws StructuralException {
-		VisiblyMutableUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
 		myName = name;
 	}
 
@@ -577,7 +577,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyChanges 
 	 * display of the ensemble may need updating.
 	 */
 	protected void fireVisibleChangeEvent() {
-		VisiblyMutableUtils.changed(this, myListeners);
+		VisiblyChangesUtils.changed(this, myListeners);
 	}
 
 	@Override

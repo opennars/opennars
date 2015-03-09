@@ -42,7 +42,7 @@ import ca.nengo.neural.muscle.SkeletalMuscle;
 import ca.nengo.util.MU;
 import ca.nengo.util.ScriptGenException;
 import ca.nengo.util.TimeSeries;
-import ca.nengo.util.VisiblyMutableUtils;
+import ca.nengo.util.VisiblyChangesUtils;
 import ca.nengo.util.impl.TimeSeries1DImpl;
 import ca.nengo.util.impl.TimeSeriesImpl;
 
@@ -135,7 +135,7 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	 * 		will be a part)
 	 */
 	public void setName(String name) throws StructuralException {
-		VisiblyMutableUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
 		myName = name;
 	}
 

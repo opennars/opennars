@@ -64,7 +64,7 @@ public class TestBagNode extends Nengrow {
 
         public ObjectGraphController(ObjectGraphNode ogn) {
 
-            ui = ogn.newUI();
+            ui = ogn.newUI(64,64);
         }
 
         public void setEquilibriumDistance(Double d) {

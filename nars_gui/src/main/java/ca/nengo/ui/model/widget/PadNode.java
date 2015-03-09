@@ -65,7 +65,7 @@ public class PadNode extends AbstractNode implements UIBuilder {
     }
 
     @Override
-    public UINeoNode newUI() {
+    public UINeoNode newUI(double width, double height) {
         if (this.ui == null)
             this.ui = new SliderNodeUI();
         return ui;

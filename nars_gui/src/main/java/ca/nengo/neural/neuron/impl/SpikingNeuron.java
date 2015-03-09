@@ -231,7 +231,7 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	 * @param name The new name
 	 */
 	public void setName(String name) throws StructuralException {
-		VisiblyMutableUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
 		myName = name;
 	}
 
@@ -352,7 +352,7 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	 * display of the ensemble may need updating.
 	 */
 	protected void fireVisibleChangeEvent() {
-		VisiblyMutableUtils.changed(this, myListeners);
+		VisiblyChangesUtils.changed(this, myListeners);
 	}
 
 	@Override

@@ -4,12 +4,13 @@ import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.PaintContext;
-import ca.nengo.ui.lib.world.WorldObject;
+import ca.nengo.ui.lib.world.elastic.ElasticGround;
+import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.UIBuilder;
+import ca.nengo.ui.model.icon.ModelIcon;
 import ca.nengo.ui.model.icon.NodeIcon;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.AbstractWidget;
@@ -19,8 +20,10 @@ import ca.nengo.util.ScriptGenException;
 import nars.build.Default;
 import nars.core.NAR;
 import nars.logic.entity.Concept;
+import nars.logic.entity.Item;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
+import org.jgraph.graph.DefaultEdge;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,23 +47,28 @@ public class TestNARGraph extends Nengrow {
 
     public static class NARGraphNode extends NetworkImpl implements UIBuilder {
 
-        private final NARGraph<Node,Object> graph;
+        private final NARGraph<NARGraphVertex,Object> graph;
         private final DefaultGrapher grapher;
         private final NAR nar;
-        private final UINARGraph ui;
+
+        public NARGraphVertex vertex(final Item o) {
+            return (NARGraphVertex) getNode(o.name().toString());
+        }
 
         public NARGraphNode(NAR n) {
             super();
 
-            this.grapher = new DefaultGrapher() {
+            this.grapher = new DefaultGrapher(false,false,false,false,0,true,false) {
 
                 @Override
                 public Object addVertex(NARGraph g, Object o) {
-                    Object vert = super.addVertex(g, o);
                     try {
-                        Node x = getNode(vert);
-                        addNode(x);
-                        return x;
+                        NARGraphVertex x = newNode(o);
+                        if (x!=null) {
+                            addNode(x);
+                            graph.addVertex(x);
+                            return x;
+                        }
                     } catch (StructuralException e) {
                         e.printStackTrace();
                     }
@@ -69,14 +77,27 @@ public class TestNARGraph extends Nengrow {
 
                 @Override
                 public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
-                    return super.addEdge(g, source, target, edge);
+                    if ((source instanceof Item) && (target instanceof Item)) {
+                        final NARGraphVertex v1 = vertex((Item) source);
+                        final NARGraphVertex v2 = vertex((Item) target);
+                        if (v1!=null && v2!=null)
+                            return graph.addEdge(v1, v2, new DefaultEdge(edge) {
+                                @Override public Object getSource() {
+                                    return v1;
+                                }
+                                @Override public Object getTarget() {
+                                    return v2;
+                                }
+                            });
+                    }
+                    return null;
                 }
             };
             
             this.graph = new NARGraph();
             this.nar = n;
 
-            this.ui = newUI();
+
             updateItems();
         }
 
@@ -84,6 +105,9 @@ public class TestNARGraph extends Nengrow {
             for (Concept c : nar.memory.concepts) {
                 grapher.onConcept(graph, c);
             }
+            grapher.finish(graph);
+
+
         }
 
         public void updateStyle() {
@@ -92,83 +116,136 @@ public class TestNARGraph extends Nengrow {
 
 
 
-        private Node getNode(Object x) {
+        private NARGraphVertex newNode(Object x) {
             if (x instanceof Concept) {
                 return new ConceptNode((Concept)x);
             }
-            return new ObjectNode("o" + n++, x);
+            return null; //new ObjectNode("o" + n++, x);
         }
 
         @Override
-        public UINARGraph newUI() {
-            if (ui == null)
-                return new UINARGraph(this);
-            return ui;
+        public UINARGraph newUI(double width, double height) {
+            return new UINARGraph(this);
         }
 
     }
     public static class UINARGraph extends UINetwork {
 
         private final NARGraphNode nargraph;
+        private final NARGraph<NARGraphVertex, Object> graph;
 
         public UINARGraph(NARGraphNode n) {
             super(n);
             this.nargraph = n;
+            this.graph = nargraph.graph;
+        }
+
+        @Override
+        public ModelIcon getIcon() {
+            return (ModelIcon) super.getIcon();
         }
 
         @Override
         public NodeViewer createViewerInstance() {
-
             return new UINARGraphViewer(this);
-
         }
 
+        protected void drawEdges(PaintContext paintContext) {
 
-        public static class UINARGraphViewer extends NetworkViewer {
+            Graphics2D g = paintContext.getGraphics();
 
-            private final NARGraph<Node, Object> graph;
+            g.setPaint(Color.WHITE);
+            g.setStroke(new BasicStroke(1));
 
-            public UINARGraphViewer(UINARGraph g) {
-                super(g);
-                this.graph = g.nargraph.graph;
+            for (Object e : graph.edgeSet()) {
+                NARGraphVertex source = graph.getEdgeSource(e);
+                if (source == null) continue;
+                NARGraphVertex target = graph.getEdgeTarget(e);
+                if (target == null) continue;
+
+
+                double sx = source.ui.getIcon().getBody().getX();
+                double sy = source.ui.getIcon().getBody().getY();
+                double tx = target.ui.getIcon().getBody().getX();
+                double ty = target.ui.getIcon().getBody().getY();
+
+
+                g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
             }
+        }
 
-            protected void drawEdges() {
-                for (Object e : graph.edgeSet()) {
-                    Object source = graph.getEdgeSource(e);
-                    Object target = graph.getEdgeTarget(e);
-                    System.out.println(e + " " + source.getClass() + " " + source + " " +target.getClass() + " "+ target);
-                }
-            }
-
+        class UINARGraphGround extends ElasticGround {
 
             @Override
             public void paint(PaintContext paintContext) {
-                drawEdges();
-
                 super.paint(paintContext);
-
-
+                drawEdges(paintContext);
             }
+        }
+
+        class UINARGraphViewer extends NetworkViewer {
+
+            public UINARGraphViewer(UINARGraph g) {
+                super(g, new UINARGraphGround());
+            }
+
         }
     }
 
-    public static class ConceptNode extends AbstractWidget {
+    abstract public static class NARGraphVertex<V extends Item> extends AbstractWidget {
+
+        private final V vertex;
+        private double x, y;
+
+
+        public NARGraphVertex(V vertex) {
+            super(vertex.name().toString());
+            this.vertex = vertex;
+
+        }
+        @Override
+        protected void paint(PaintContext paintContext, double width, double height) {
+
+
+
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+
+        public V vertex() {
+            return this.vertex;
+        }
+        @Override
+        public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
+            return vertex.name().toString();
+        }
+
+    }
+
+    public static class ConceptNode extends NARGraphVertex {
         public final Concept concept;
         private NodeIcon icon;
         private float priority;
 
 
         public ConceptNode(Concept concept) {
-            super(/*"concept_" + */concept.name().toString());
+            super(concept);
             this.concept = concept;
 
 
             updateStyle();
         }
 
+
         @Override
-        public WorldObject newIcon(ModelObject UI) {
+        public ModelIcon newIcon(ModelObject UI) {
             return icon = new NodeIcon(UI);
         }
 
@@ -186,23 +263,15 @@ public class TestNARGraph extends Nengrow {
 
                 priority = p;
             }
-        }
-        @Override
-        protected void paint(PaintContext paintContext, double width, double height) {
-
 
         }
 
         @Override
         public void run(float startTime, float endTime) throws SimulationException {
 
-            updateStyle();
+            //updateStyle();
         }
 
-        @Override
-        public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
-            return concept.toString();
-        }
 
         @Override
         public void reset(boolean randomize) {
@@ -225,8 +294,8 @@ public class TestNARGraph extends Nengrow {
 
 
         UINetwork networkUI = (UINetwork) addNodeModel(newGraph(nar));
-        NodeViewer window = networkUI.openViewer();
-        window.zoomToFit();
+        NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
+
 
 
 

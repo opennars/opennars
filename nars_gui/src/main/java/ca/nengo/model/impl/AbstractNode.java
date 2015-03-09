@@ -29,7 +29,7 @@ package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
 import ca.nengo.util.VisiblyChanges;
-import ca.nengo.util.VisiblyMutableUtils;
+import ca.nengo.util.VisiblyChangesUtils;
 
 import java.util.*;
 
@@ -112,7 +112,7 @@ public abstract class AbstractNode implements Node {
 	 * @param name The new name
 	 */
 	public void setName(String name) throws StructuralException {
-		VisiblyMutableUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
 		myName = name;
 	}
 

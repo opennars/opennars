@@ -41,7 +41,7 @@ import ca.nengo.model.*;
 import ca.nengo.util.ScriptGenException;
 import ca.nengo.util.TimeSeries;
 import ca.nengo.util.VisiblyChanges;
-import ca.nengo.util.VisiblyMutableUtils;
+import ca.nengo.util.VisiblyChangesUtils;
 import ca.nengo.util.impl.TimeSeriesImpl;
 
 import java.util.ArrayList;
@@ -131,7 +131,7 @@ public class FunctionInput implements Node, Probeable {
 	 * @param name The new name
 	 */
 	public void setName(String name) throws StructuralException {
-		VisiblyMutableUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
 		myName = name;
 	}
 

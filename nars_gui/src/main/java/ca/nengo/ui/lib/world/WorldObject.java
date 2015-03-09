@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -548,6 +550,18 @@ public interface WorldObject extends NamedObject, Destroyable {
                 localToGlobal(bb), intersectingObjectsBuffer);
     }
 
+    public default List<WorldObject> getParentPath() {
+        List<WorldObject> x = new ArrayList();
+
+        WorldObject w = getParent();
+        while (w!=null)  {
+            x.add(w);
+            w = w.getParent();
+        }
+
+        return x;
+    }
+
 
     public enum Property {
         BOUNDS_CHANGED, CHILDREN_CHANGED, FULL_BOUNDS, GLOBAL_BOUNDS, MODEL_CHANGED, PARENTS_BOUNDS, PARENTS_CHANGED, REMOVED_FROM_WORLD, VIEW_TRANSFORM, WIDGET
@@ -561,6 +575,22 @@ public interface WorldObject extends NamedObject, Destroyable {
 
     public interface Listener {
         public void propertyChanged(Property event);
+    }
+
+    default public void printTree(PrintStream s) {
+        printTree(s, 0);
+    }
+
+    default public void printTree(PrintStream s, int level) {
+        for (int i = 0; i < level; i++)
+            s.print("  ");
+        String x = this.toString();
+        if (x.trim().isEmpty()) {
+            x = "null";
+        }
+        s.println(x + ":" + getClass());
+        for (WorldObject o : getChildren())
+            o.printTree(s, level+1);
     }
 
 }

@@ -29,11 +29,11 @@ public class ElasticGround extends WorldGroundImpl {
 
 	private ElasticLayoutRunner elasticLayoutThread;
 
-	private final Hashtable<PXEdge, AbstractSparseEdge> myEdgeMap = new Hashtable<PXEdge, AbstractSparseEdge>();
+	private final Map<PXEdge, AbstractSparseEdge> myEdgeMap = new HashMap();
 
 	private SparseGraph myGraph;
 
-	private final Hashtable<ElasticObject, ElasticVertex> myVertexMap = new Hashtable<ElasticObject, ElasticVertex>();
+	private final Map<ElasticObject, ElasticVertex> myVertexMap = new HashMap();
 
 	public ElasticGround() {
 		super();

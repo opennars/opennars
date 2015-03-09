@@ -137,7 +137,7 @@ public class LinkSegmentModelImpl implements LinkSegmentModel {
 	 * @see ca.nengo.model.Node#setName(java.lang.String)
 	 */
 	public void setName(String name) throws StructuralException {
-		VisiblyMutableUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
 		myName = name;
 	}
 

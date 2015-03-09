@@ -28,14 +28,14 @@ public class DefaultGrapher implements NARGraph.Grapher {
 
     //addVertex(g,c);
     //addVertex(g,belief);
-    //g.addEdge(belief, c, new SentenceContent());
+    //addEdge(g,belief, c, new SentenceContent());
     //TODO extract to onBelief
     //TODO check if kb.getContent() is never distinct from c.getTerm()
     /*if (c.term.equals(belief.content)) {
     continue;
     }
     addTerm(g, belief.content);
-    g.addEdge(term, belief.content, new TermBelief());*/
+    addEdge(g,term, belief.content, new TermBelief());*/
     //TODO extract to onQuestion
     //TODO q.getParentBelief()
     //TODO q.getParentTask()
@@ -116,7 +116,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
         //that's why this isnt necessar and will cause a graph error
         if (includeTermContent) {
             addVertex(g,t);
-            g.addEdge(c, c.term, new NARGraph.TermContent());
+            addEdge(g,c, c.term, new NARGraph.TermContent());
         }
         if (includeBeliefs) {
             for (final Sentence belief : c.beliefs) {
@@ -132,7 +132,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
                 addVertex(g,q);
                 //TODO q.getParentBelief()
                 //TODO q.getParentTask()
-                g.addEdge(c, q, new NARGraph.TermQuestion());
+                addEdge(g,c, q, new NARGraph.TermQuestion());
                 onQuestion(q);
             }
         }
@@ -143,7 +143,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
             addVertex(g,b);
 
             if (!includeTermContent) {
-                g.addEdge(c, b, new NARGraph.TermContent());
+                addEdge(g,c, b, new NARGraph.TermContent());
             }
             if ((level > 1) && (b instanceof CompoundTerm)) {
                 recurseTermComponents(g, (CompoundTerm) b, level - 1);
@@ -152,13 +152,13 @@ public class DefaultGrapher implements NARGraph.Grapher {
     }
 
     @Override
-    public void onFinish(NARGraph g) {
+    public void finish(NARGraph g) {
 //        if (includeSyntax > 0) {
 //            for (final Term a : terms.keySet()) {
 //                if (a instanceof CompoundTerm) {
 //                    CompoundTerm c = (CompoundTerm) a;
 //                    addVertex(g,c.operator());
-//                    g.addEdge(c.operator(), c, new NARGraph.TermType());
+//                    addEdge(g,c.operator(), c, new NARGraph.TermType());
 //                    if (includeSyntax - 1 > 0) {
 //                        recurseTermComponents(g, c, includeSyntax - 1);
 //                    }
@@ -174,12 +174,12 @@ public class DefaultGrapher implements NARGraph.Grapher {
                     if (a.containsTerm(b)) {
                         addVertex(g,a);
                         addVertex(g,b);
-                        g.addEdge(a, b, new NARGraph.TermContent());
+                        addEdge(g,a, b, new NARGraph.TermContent());
                     }
                     if (b.containsTerm(a)) {
                         addVertex(g,a);
                         addVertex(g,b);
-                        g.addEdge(b, a, new NARGraph.TermContent());
+                        addEdge(g,b, a, new NARGraph.TermContent());
                     }
                 }
             }
@@ -203,12 +203,12 @@ public class DefaultGrapher implements NARGraph.Grapher {
 //                    if (schain.contains(deriverSentence.term)) {
 //                        addVertex(g,derived);
 //                        addVertex(g,deriver);
-//                        g.addEdge(deriver, derived, new NARGraph.TermDerivation());
+//                        addEdge(g,deriver, derived, new NARGraph.TermDerivation());
 //                    }
 //                    if (tchain.contains(derivedSentence.term)) {
 //                        addVertex(g,derived);
 //                        addVertex(g,deriver);
-//                        g.addEdge(derived, deriver, new NARGraph.TermDerivation());
+//                        addEdge(g,derived, deriver, new NARGraph.TermDerivation());
 //                    }
 //                }
 //            }
@@ -220,7 +220,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
                 Concept from = termLinks.get(t);
                 Concept to = terms.get(t.target);
                 if (to != null) {
-                    g.addEdge(from, to, new NARGraph.TermLinkEdge(t));
+                    addEdge(g,from, to, new NARGraph.TermLinkEdge(t));
                 }
             }
         }
@@ -241,12 +241,12 @@ public class DefaultGrapher implements NARGraph.Grapher {
                         Concept c = terms.get(term);
                         if (c != null) {
                             addVertex(g,c);
-                            g.addEdge(c, theTask, new NARGraph.TermContent());
+                            addEdge(g,c, theTask, new NARGraph.TermContent());
                         }
                     }
 
                     if (onTask(theTask)) {
-                        g.addEdge(from, theTask, new NARGraph.TaskLinkEdge(t));
+                        addEdge(g,from, theTask, new NARGraph.TaskLinkEdge(t));
                     }
                 }
             }

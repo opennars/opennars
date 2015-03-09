@@ -28,18 +28,20 @@ package ca.nengo.ui.model.viewer;
 
 import ca.nengo.model.Node;
 import ca.nengo.ui.lib.action.LayoutAction;
+import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.object.activity.TrackedStatusMsg;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.Util;
-import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.WorldObject;
+import ca.nengo.ui.lib.world.elastic.ElasticGround;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.handler.AbstractStatusHandler;
 import ca.nengo.ui.model.ModelsContextMenu;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINodeViewable;
+import nars.core.Parameters;
 import org.piccolo2d.activities.PActivity;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PBounds;
@@ -66,14 +68,17 @@ public abstract class NodeViewer extends ElasticWorld implements Interactable {
     /**
      * Children of NEO nodes
      */
-    protected final Map<Node, UINeoNode> neoNodesChildren = new HashMap<Node, UINeoNode>();
+    protected final Map<Node, UINeoNode> neoNodesChildren = Parameters.newHashMap();
 
+    public NodeViewer(UINodeViewable nodeContainer) {
+        this(nodeContainer, new ElasticGround());
+    }
     /**
      * @param nodeContainer
      *            UI Object containing the Node model
      */
-    public NodeViewer(UINodeViewable nodeContainer) {
-        super(nodeContainer.getName() + " (" + nodeContainer.getTypeName() + " Viewer)");
+    public NodeViewer(UINodeViewable nodeContainer, ElasticGround ground) {
+        super(nodeContainer.getName() + " (" + nodeContainer.getTypeName() + " Viewer)", ground);
         this.parentOfViewer = nodeContainer;
         this.justOpened = false;
 

@@ -51,7 +51,7 @@ public class TestNARNode extends Nengrow {
     public Node newAgentNodeDemo() throws StructuralException {
         NetworkImpl network = new NetworkImpl();
 
-        NAR nar = new NAR(new Default().setInternalExperience(null));
+        NAR nar = new NAR(new Default());
         NARNode an = new NARNode("NARBot1", nar);
         Video.themeInvert();
         new NARSwing(nar);

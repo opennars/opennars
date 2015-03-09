@@ -363,11 +363,12 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     /**
 	 * @see ca.nengo.model.Network#getNode(java.lang.String)
 	 */
-	public N getNode(String name) throws StructuralException {
-		if (!myNodeMap.containsKey(name)) {
-			throw new StructuralException("No Node named " + name + " in this Network");
-		}
-		return myNodeMap.get(name);
+	public N getNode(final String name) /*throws StructuralException*/ {
+        return myNodeMap.get(name);
+//		if (!myNodeMap.containsKey(name)) {
+//			throw new StructuralException("No Node named " + name + " in this Network");
+//		}
+//		return myNodeMap.get(name);
 	}
 
 	/**
@@ -516,7 +517,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 	public void setName(String name) throws StructuralException {
 		if (!myName.equals(name)) {
 			myName = name;
-			VisiblyMutableUtils.nameChanged(this, getName(), name, myListeners);
+			VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
 		}
 	}
 
@@ -1139,7 +1140,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 	}
 
 	private void fireVisibleChangeEvent() {
-		VisiblyMutableUtils.changed(this, myListeners);
+		VisiblyChangesUtils.changed(this, myListeners);
 	}
 
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
@@ -1265,10 +1266,11 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 						}
 						result.mySimulator.addProbe(oldProbe.getEnsembleName(), neuronIndex, oldProbe.getStateName(), true);
 					} catch (SimulationException e) {
-						ourLogger.warn("Problem copying Probe", e);
-					} catch (StructuralException e) {
-						ourLogger.warn("Problem copying Probe", e);
-					}
+                        ourLogger.warn("Problem copying Probe", e);
+                    }
+//					} catch (StructuralException e) {
+//						ourLogger.warn("Problem copying Probe", e);
+//					}
 				} else {
 					try {
 						result.mySimulator.addProbe(oldNode.getName(), oldProbe.getStateName(), true);

@@ -78,7 +78,8 @@ public class NengoStyle {
 	 * Fonts
 	 */
 	public static final String FONT_FAMILY =
-		UIManager.getDefaults().getFont("TabbedPane.font").getFamily();
+		//UIManager.getDefaults().getFont("TabbedPane.font").getFamily();
+            "Monofonto";
 
 	public static final Font FONT_BOLD = new Font(FONT_FAMILY, Font.BOLD, 14);
 	public static final Font FONT_BUTTONS = new Font(FONT_FAMILY, Font.PLAIN, 14);
@@ -89,7 +90,7 @@ public class NengoStyle {
 	public static final Font FONT_SMALL = new Font(FONT_FAMILY, Font.PLAIN, 10);
 	public static final Font FONT_BIG = new Font(FONT_FAMILY, Font.BOLD, 16);
 
-	public static final Font FONT_WINDOW_BUTTONS = new Font("sansserif", Font.BOLD, 16);
+	public static final Font FONT_WINDOW_BUTTONS = new Font(FONT_FAMILY, Font.BOLD, 16);
 	public static final Font FONT_XLARGE = new Font(FONT_FAMILY, Font.BOLD, 22);
 	public static final Font FONT_XXLARGE = new Font(FONT_FAMILY, Font.BOLD, 32);
 

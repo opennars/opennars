@@ -38,7 +38,7 @@ import ca.nengo.sim.SimulatorListener;
 import ca.nengo.util.Probe;
 import ca.nengo.util.ThreadTask;
 import ca.nengo.util.VisiblyChanges;
-import ca.nengo.util.VisiblyMutableUtils;
+import ca.nengo.util.VisiblyChangesUtils;
 import ca.nengo.util.impl.NodeThreadPool;
 import ca.nengo.util.impl.ProbeImpl;
 
@@ -473,7 +473,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     }
 
     private void fireVisibleChangeEvent() {
-        VisiblyMutableUtils.changed(this, myChangeListeners);
+        VisiblyChangesUtils.changed(this, myChangeListeners);
     }
 
     @Override

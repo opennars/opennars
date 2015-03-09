@@ -22,10 +22,8 @@ public class ObjectGraphNode extends ObjectNode {
     }
 
     @Override
-    public UIObjectGraphNode newUI() {
-        if (ui == null)
-            ui = new UIObjectGraphNode();
-        return (UIObjectGraphNode) ui;
+    public UIObjectGraphNode newUI(double width, double height) {
+        return new UIObjectGraphNode();
     }
 
     public class UIObjectGraphNode extends UIObjectNode {
@@ -286,7 +284,7 @@ public class ObjectGraphNode extends ObjectNode {
             if (graphChildren.containsKey(src)) {
                 return graphChildren.get(src);
             }
-            WorldObject r = r = getChild(src, null);
+            WorldObject r = getChild(src, null);
             graphChildren.put(src, r);
             return r;
         }

@@ -611,10 +611,10 @@ public class NetworkArrayImpl extends NetworkImpl {
 			System.err.println(e.getMessage());
 			throw new CloneNotSupportedException("Error cloning NetworkArrayImpl: " + e.getMessage());
 		}
-		catch (StructuralException e) {
+		/*catch (StructuralException e) {
 			System.err.println(e.getMessage());
 			throw new CloneNotSupportedException("Error cloning NetworkArrayImpl: " + e.getMessage());
-		}
+		}*/
 	}
 	
 	/**

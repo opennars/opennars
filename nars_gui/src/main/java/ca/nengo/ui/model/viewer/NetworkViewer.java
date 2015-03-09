@@ -30,22 +30,24 @@ import ca.nengo.model.*;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.action.StandardAction;
+import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.UserMessages;
 import ca.nengo.ui.lib.util.Util;
-import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.piccolo.object.Button;
+import ca.nengo.ui.lib.world.elastic.ElasticGround;
 import ca.nengo.ui.lib.world.piccolo.icon.ArrowIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.LoadIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.SaveIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.ZoomIcon;
+import ca.nengo.ui.lib.world.piccolo.object.Button;
 import ca.nengo.ui.lib.world.piccolo.primitive.Path;
 import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.widget.*;
 import ca.nengo.util.Probe;
+import nars.core.Parameters;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PBounds;
@@ -69,14 +71,20 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
     private Button save;
     private Button restore;
 
-    private static final int BUTTON_SIZE = 30;
+    private static final int BUTTON_SIZE = 18;
+    private HashSet<NSource> exposedSources;
+    private HashSet<NTarget> exposedTargets;
 
     /**
      * @param pNetwork
      *            Parent Network UI wrapper
      */
     public NetworkViewer(UINetwork pNetwork) {
-        super(pNetwork);
+        this(pNetwork, new ElasticGround());
+    }
+
+    public NetworkViewer(UINetwork pNetwork, ElasticGround g) {
+        super(pNetwork, g);
         String layoutFileName = "layouts/" + pNetwork.getName() + ".layout";
         this.layoutFile = new File(layoutFileName);
         this.backupLayoutFile = new File(layoutFileName + ".bak");
@@ -87,8 +95,6 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         return true;
     }
 
-    private HashSet<NSource> exposedSources;
-    private HashSet<NTarget> exposedTargets;
 
     @Override
     protected void initialize() {
@@ -182,18 +188,16 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         /*
          * Create projection map
          */
-        HashSet<Projection> projectionsToAdd = new HashSet<Projection>(
-                getModel().getProjections().length);
+        Projection[] projections = getModel().getProjections();
+
+        HashSet<Projection> projectionsToAdd = new HashSet<Projection>();
         Collections.addAll(projectionsToAdd, getModel().getProjections());
 
-        HashMap<NTarget, Projection> projectionMap = new HashMap<NTarget, Projection>(
-                projectionsToAdd.size());
+        Map<NTarget, Projection> projectionMap = Parameters.newHashMap(projections.length);
 
-        for (Projection projection : projectionsToAdd) {
-            Util.Assert(!projectionMap.containsKey(projection.getTarget()),
-                    "More than one projection found per termination");
-
-            projectionMap.put(projection.getTarget(), projection);
+        for (final Projection projection : projectionsToAdd) {
+            Projection existing = projectionMap.put(projection.getTarget(), projection);
+            Util.Assert(existing == null, "More than one projection found per termination");
         }
 
         /*

@@ -33,9 +33,9 @@ import java.util.List;
  * @author Shu Wu
  */
 public class WorldObjectImpl implements WorldObject {
-    private static Hashtable<String, Property> EVENT_CONVERSION_TABLE_1;
+    private static Map<String, Property> EVENT_CONVERSION_TABLE_1;
 
-    private static Hashtable<Property, String> EVENT_CONVERSION_TABLE_2;
+    private static EnumMap<Property, String> EVENT_CONVERSION_TABLE_2;
 
     public static final Object[][] CONVERSION_MAP = new Object[][] {
         { Property.PARENTS_CHANGED, PNode.PROPERTY_PARENT },
@@ -51,7 +51,7 @@ public class WorldObjectImpl implements WorldObject {
 
     protected static Property piccoloEventToWorldEvent(String propertyName) {
         if (EVENT_CONVERSION_TABLE_1 == null) {
-            EVENT_CONVERSION_TABLE_1 = new Hashtable<String, Property>(CONVERSION_MAP.length);
+            EVENT_CONVERSION_TABLE_1 = new HashMap<String, Property>(CONVERSION_MAP.length);
             for (Object[] conversion : CONVERSION_MAP) {
                 EVENT_CONVERSION_TABLE_1.put((String) conversion[1], (Property) conversion[0]);
 
@@ -64,7 +64,7 @@ public class WorldObjectImpl implements WorldObject {
 
     protected static String worldEventToPiccoloEvent(Property type) {
         if (EVENT_CONVERSION_TABLE_2 == null) {
-            EVENT_CONVERSION_TABLE_2 = new Hashtable<Property, String>(CONVERSION_MAP.length);
+            EVENT_CONVERSION_TABLE_2 = new EnumMap<Property, String>(Property.class);
             for (Object[] conversion : CONVERSION_MAP) {
                 EVENT_CONVERSION_TABLE_2.put((Property) conversion[0], (String) conversion[1]);
             }
@@ -106,7 +106,7 @@ public class WorldObjectImpl implements WorldObject {
     /**
      * Piccolo counterpart of this object
      */
-    private PNode myPNode;
+    protected PNode myPNode;
 
     protected WorldObjectImpl(String name, PiccoloNodeInWorld pNode) {
         super();
@@ -608,6 +608,7 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public Point2D localToParent(Point2D localPoint) {
+        if (localPoint == null) localPoint = new Point2D.Double(0,0);
         return myPNode.localToParent(localPoint);
     }
 

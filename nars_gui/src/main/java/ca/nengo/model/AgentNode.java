@@ -27,7 +27,6 @@ public class AgentNode extends AbstractWidget {
         cx = x = ui.getOffset().getX();
         cy = y = ui.getOffset().getY();
 
-
     }
 
 
@@ -60,11 +59,6 @@ public class AgentNode extends AbstractWidget {
     @Override
     public boolean isResizable() {
         return false;
-    }
-
-    @Override
-    public Rectangle2D getInitialBounds() {
-        return new Rectangle2D.Double(-32,-32,64,64);
     }
 
     protected boolean canMove() {
@@ -128,7 +122,9 @@ public class AgentNode extends AbstractWidget {
         }
 
         g.setPaint(Color.ORANGE);
+        g.translate((int)ww/2, (int)hh/2);
         g.fillOval((int) (-ww / 2), (int) (-hh / 2), (int) (ww), (int) hh);
+
 
 
         //eyes

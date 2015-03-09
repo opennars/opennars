@@ -50,6 +50,7 @@ import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.model.NodeContainer.ContainerException;
 import ca.nengo.ui.model.node.*;
+import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.ui.model.tooltip.TooltipBuilder;
 import ca.nengo.ui.model.viewer.GroupViewer;
 import ca.nengo.ui.model.viewer.NetworkViewer;
@@ -89,10 +90,13 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 		UINeoNode nodeUI = null;
 
-        if (node instanceof UIBuilder) {
-            return ((UIBuilder)node).newUI();
+        if (node instanceof AbstractWidget) {
+            nodeUI = ((AbstractWidget)node).ui;
         }
-		if (node instanceof Network) {
+        else if (node instanceof UIBuilder) {
+            nodeUI = ((UIBuilder)node).newUI(64,64);
+        }
+		else if (node instanceof Network) {
 			nodeUI = new UINetwork((Network) node);
 		} else if (node instanceof Group) {
 			if (node instanceof NEFGroup) {

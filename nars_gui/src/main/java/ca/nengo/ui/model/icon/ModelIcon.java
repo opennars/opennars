@@ -112,12 +112,11 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 		/*
 		 * Layout the icon and label
 		 */
-		double iconWidth = getWidth() * getScale();
+		//double iconWidth = getWidth() * getScale();
 		double labelWidth = label.getWidth();
-		double offsetX = ((labelWidth - iconWidth) / 2.0) * -1;
+        double labelHeight = label.getHeight();
 
-		//label.setOffset(offsetX, getHeight() * getScale());
-        label.setOffset(0, 0);
+        label.setOffset( -labelWidth/2, -labelHeight/2);
 
 	}
 

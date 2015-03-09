@@ -51,7 +51,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
     protected void setObject(O object) {
 
         this.obj = object;
-        newUI();
+        this.ui = newUI(64,64);
 
         List<NTarget> inputs = new ArrayList();
         List<NSource> outputs = new ArrayList();
@@ -111,10 +111,8 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
     }
 
     @Override
-    public UINeoNode newUI() {
-        if (ui == null)
-            ui = new UIObjectNode();
-        return ui;
+    public UIObjectNode newUI(double width, double height) {
+        return new UIObjectNode();
     }
 
     private void buildMethod(Method m, List<NTarget> inputs, List<NSource> outputs, int remainingDepth) {

@@ -1,6 +1,5 @@
 package ca.nengo.ui.model.plot;
 
-import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.ObjectTarget;
@@ -132,7 +131,7 @@ public class FunctionPlot extends AbstractNode implements UIBuilder {
     }
 
     @Override
-    public UINeoNode newUI() {
+    public UINeoNode newUI(double width, double height) {
         return new FunctionPlotUI();
     }
 }
