@@ -102,13 +102,13 @@ public class MockNode implements Node, Cloneable {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void addChangeListener(Listener listener) {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void removeChangeListener(Listener listener) {
 	}

@@ -35,7 +35,7 @@ import ca.nengo.neural.SpikeOutput;
 import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.util.SpikePattern;
 import ca.nengo.util.TimeSeries;
-import ca.nengo.util.VisiblyMutable;
+import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyMutableUtils;
 import ca.nengo.util.impl.SpikePatternImpl;
 import ca.nengo.util.impl.TimeSeriesImpl;
@@ -48,7 +48,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable {
+public abstract class AbstractGroup implements Group, Probeable, VisiblyChanges {
 
 	private static final long serialVersionUID = -5498397418584843304L;
 
@@ -61,7 +61,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	private boolean myCollectSpikesFlag;
 	private int myCollectSpikesRatio = 1;
 	private String myDocumentation;
-	private transient List<VisiblyMutable.Listener> myListeners;
+	private transient List<VisiblyChanges.Listener> myListeners;
 	private Node[] myNodes;
 	private Map<String, NSource> mySources;
 	private Map<String, GroupTarget> myTargets;
@@ -554,7 +554,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
     public void addChangeListener(Listener listener) {
 		if (myListeners == null) {
@@ -564,7 +564,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyMutable 
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
     public void removeChangeListener(Listener listener) {
 		if (myListeners != null) {

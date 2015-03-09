@@ -9,9 +9,11 @@ import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.WorldObject;
+import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.icon.NodeIcon;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.AbstractWidget;
+import ca.nengo.ui.model.viewer.NetworkViewer;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import ca.nengo.util.ScriptGenException;
 import nars.build.Default;
@@ -40,11 +42,12 @@ public class TestNARGraph extends Nengrow {
         return network;
     }
 
-    public static class NARGraphNode extends NetworkImpl {
+    public static class NARGraphNode extends NetworkImpl implements UIBuilder {
 
         private final NARGraph<Node,Object> graph;
         private final DefaultGrapher grapher;
         private final NAR nar;
+        private final UINARGraph ui;
 
         public NARGraphNode(NAR n) {
             super();
@@ -72,7 +75,8 @@ public class TestNARGraph extends Nengrow {
             
             this.graph = new NARGraph();
             this.nar = n;
-            
+
+            this.ui = newUI();
             updateItems();
         }
 
@@ -94,18 +98,73 @@ public class TestNARGraph extends Nengrow {
             }
             return new ObjectNode("o" + n++, x);
         }
+
+        @Override
+        public UINARGraph newUI() {
+            if (ui == null)
+                return new UINARGraph(this);
+            return ui;
+        }
+
+    }
+    public static class UINARGraph extends UINetwork {
+
+        private final NARGraphNode nargraph;
+
+        public UINARGraph(NARGraphNode n) {
+            super(n);
+            this.nargraph = n;
+        }
+
+        @Override
+        public NodeViewer createViewerInstance() {
+
+            return new UINARGraphViewer(this);
+
+        }
+
+
+        public static class UINARGraphViewer extends NetworkViewer {
+
+            private final NARGraph<Node, Object> graph;
+
+            public UINARGraphViewer(UINARGraph g) {
+                super(g);
+                this.graph = g.nargraph.graph;
+            }
+
+            protected void drawEdges() {
+                for (Object e : graph.edgeSet()) {
+                    Object source = graph.getEdgeSource(e);
+                    Object target = graph.getEdgeTarget(e);
+                    System.out.println(e + " " + source.getClass() + " " + source + " " +target.getClass() + " "+ target);
+                }
+            }
+
+
+            @Override
+            public void paint(PaintContext paintContext) {
+                drawEdges();
+
+                super.paint(paintContext);
+
+
+            }
+        }
     }
 
     public static class ConceptNode extends AbstractWidget {
         public final Concept concept;
         private NodeIcon icon;
+        private float priority;
 
 
         public ConceptNode(Concept concept) {
-            super("concept_" + concept.name());
+            super(/*"concept_" + */concept.name().toString());
             this.concept = concept;
 
 
+            updateStyle();
         }
 
         @Override
@@ -118,19 +177,26 @@ public class TestNARGraph extends Nengrow {
             return false;
         }
 
+        protected void updateStyle() {
+            float p = concept.getPriority();
+            if (priority!=p) {
+
+                icon.getBody().setPaint(Color.getHSBColor(p, 0.7f, 0.7f));
+                icon.setScale(1.0 + p);
+
+                priority = p;
+            }
+        }
         @Override
         protected void paint(PaintContext paintContext, double width, double height) {
+
 
         }
 
         @Override
         public void run(float startTime, float endTime) throws SimulationException {
-            float p = concept.getPriority();
 
-
-            icon.getBody().setPaint(Color.getHSBColor(p, 0.7f, 0.7f));
-
-            icon.setScale(1.0 + p);
+            updateStyle();
         }
 
         @Override
@@ -173,6 +239,7 @@ public class TestNARGraph extends Nengrow {
                     float dt = getSimulationDT();
                     networkUI.getModel().run(time, time + dt);
                     time += dt;
+                    nar.step(1);
                 } catch (SimulationException e1) {
                     e1.printStackTrace();
                 }

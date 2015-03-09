@@ -37,8 +37,8 @@ import ca.nengo.ui.model.icon.NetworkIcon;
 import ca.nengo.ui.model.tooltip.TooltipBuilder;
 import ca.nengo.ui.model.viewer.NetworkViewer;
 import ca.nengo.ui.model.viewer.NodeViewer;
-import ca.nengo.util.VisiblyMutable;
-import ca.nengo.util.VisiblyMutable.Event;
+import ca.nengo.util.VisiblyChanges;
+import ca.nengo.util.VisiblyChanges.Event;
 
 import javax.swing.*;
 
@@ -48,7 +48,7 @@ import javax.swing.*;
  * @author Shu Wu
  */
 public class UINetwork extends UINodeViewable {
-    private class MySimulatorListener implements VisiblyMutable.Listener {
+    private class MySimulatorListener implements VisiblyChanges.Listener {
         private boolean simulatorUpdatePending = false;
 
         public void changed(Event e) {
@@ -121,7 +121,7 @@ public class UINetwork extends UINodeViewable {
     }
 
     @Override
-    public NetworkViewer createViewerInstance() {
+    public NodeViewer createViewerInstance() {
         return new NetworkViewer(this);
     }
 

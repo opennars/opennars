@@ -31,14 +31,14 @@ import ca.nengo.model.Network;
 import ca.nengo.model.Probeable;
 import ca.nengo.model.SimulationException;
 import ca.nengo.util.Probe;
-import ca.nengo.util.VisiblyMutable;
+import ca.nengo.util.VisiblyChanges;
 
 /**
  * Runs simulations of a Network. 
  * 
  * @author Bryan Tripp
  */
-public interface Simulator extends VisiblyMutable, Cloneable {
+public interface Simulator extends VisiblyChanges, Cloneable {
 
 	/**
 	 * Initializes the Simulator with a given Network, after which changes to the 

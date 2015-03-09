@@ -67,7 +67,7 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	private float myBias;
 	private float myRadialInput;
 	private String myDocumentation;
-	private transient List<VisiblyMutable.Listener> myListeners;
+	private transient List<VisiblyChanges.Listener> myListeners;
 	private Noise myNoise = null;
 
 
@@ -331,7 +331,7 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void addChangeListener(Listener listener) {
 		if (myListeners == null) {
@@ -341,7 +341,7 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void removeChangeListener(Listener listener) {
 		myListeners.remove(listener);

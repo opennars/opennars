@@ -40,7 +40,7 @@ import ca.nengo.math.impl.PostfixFunction;
 import ca.nengo.model.*;
 import ca.nengo.util.ScriptGenException;
 import ca.nengo.util.TimeSeries;
-import ca.nengo.util.VisiblyMutable;
+import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyMutableUtils;
 import ca.nengo.util.impl.TimeSeriesImpl;
 
@@ -74,7 +74,7 @@ public class FunctionInput implements Node, Probeable {
 //	private float[] myValues;
 	private BasicSource myOrigin;
 	private String myDocumentation;
-	private transient List<VisiblyMutable.Listener> myListeners;
+	private transient List<VisiblyChanges.Listener> myListeners;
 
 	/**
 	 * @param name The name of this Node
@@ -247,7 +247,7 @@ public class FunctionInput implements Node, Probeable {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void addChangeListener(Listener listener) {
 		if (myListeners == null) {
@@ -257,7 +257,7 @@ public class FunctionInput implements Node, Probeable {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void removeChangeListener(Listener listener) {
 		myListeners.remove(listener);

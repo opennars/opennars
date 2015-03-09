@@ -38,7 +38,7 @@ import ca.nengo.model.StructuralException;
  *   
  * @author Bryan Tripp
  */
-public interface VisiblyMutable {
+public interface VisiblyChanges  {
 
 	/**
 	 * @param listener Listener to add
@@ -76,7 +76,7 @@ public interface VisiblyMutable {
 		/**
 		 * @return An object that has changed in some way 
 		 */
-		public VisiblyMutable getObject();		
+		public VisiblyChanges getObject();
 
 	}
 	

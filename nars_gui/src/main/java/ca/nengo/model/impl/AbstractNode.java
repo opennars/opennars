@@ -28,7 +28,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.model.impl;
 
 import ca.nengo.model.*;
-import ca.nengo.util.VisiblyMutable;
+import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyMutableUtils;
 
 import java.util.*;
@@ -47,7 +47,7 @@ public abstract class AbstractNode implements Node {
 	private Map<String, NSource> mySources;
 	private Map<String, NTarget> myTargets;
 	private String myDocumentation;
-	private transient List<VisiblyMutable.Listener> myListeners;
+	private transient List<VisiblyChanges.Listener> myListeners;
 
 	/**
 	 * @param name Name of Node
@@ -192,7 +192,7 @@ public abstract class AbstractNode implements Node {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void addChangeListener(Listener listener) {
 		if (myListeners == null) {
@@ -202,7 +202,7 @@ public abstract class AbstractNode implements Node {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void removeChangeListener(Listener listener) {
 		myListeners.remove(listener);

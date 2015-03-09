@@ -28,7 +28,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.model;
 
 import ca.nengo.util.ScriptGenException;
-import ca.nengo.util.VisiblyMutable;
+import ca.nengo.util.VisiblyChanges;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ import java.util.HashMap;
  *
  * @author Bryan Tripp
  */
-public interface Node extends Serializable, Resettable, SimulationMode.ModeConfigurable, VisiblyMutable, Cloneable {
+public interface Node extends Serializable, Resettable, SimulationMode.ModeConfigurable, VisiblyChanges, Cloneable {
 
     public final static Node[] EMPTY = new Node[0];
 

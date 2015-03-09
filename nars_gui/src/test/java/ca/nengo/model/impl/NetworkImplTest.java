@@ -375,7 +375,7 @@ public class NetworkImplTest extends TestCase {
 	{
 		NetworkImpl net = new NetworkImpl();
 		
-		if(net.getNodeOrigins().size() != 0)
+		if(net.getNodeSources().size() != 0)
 			fail("Network has origins when it shouldn't");
 		
 		NEFGroupFactoryImpl ef = new NEFGroupFactoryImpl();
@@ -383,7 +383,7 @@ public class NetworkImplTest extends TestCase {
 		
 		net.addNode(a);
 		
-		if(net.getNodeOrigins().size() != a.getSources().length)
+		if(net.getNodeSources().size() != a.getSources().length)
 			fail("Network hasn't found node origin");
 		
 	}
@@ -456,7 +456,7 @@ public class NetworkImplTest extends TestCase {
 		private static final long serialVersionUID = 1L;
 
 		private String myName;
-		private transient List<VisiblyMutable.Listener> myListeners;
+		private transient List<VisiblyChanges.Listener> myListeners;
 
 		public MockGroup(String name) {
 			myName = name;
@@ -546,7 +546,7 @@ public class NetworkImplTest extends TestCase {
 		}
 		
 		/**
-		 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+		 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 		 */
 		public void addChangeListener(Listener listener) {
 			if (myListeners == null) {
@@ -556,7 +556,7 @@ public class NetworkImplTest extends TestCase {
 		}
 
 		/**
-		 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+		 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 		 */
 		public void removeChangeListener(Listener listener) {
 			myListeners.remove(listener);

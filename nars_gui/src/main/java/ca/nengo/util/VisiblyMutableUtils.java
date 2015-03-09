@@ -49,9 +49,9 @@ public class VisiblyMutableUtils {
 	 * @param vm The changed VisiblyMutable object
 	 * @param listeners List of things listening for changes
 	 */
-	public static void changed(final VisiblyMutable vm, List<VisiblyMutable.Listener> listeners) {
-		VisiblyMutable.Event event = new VisiblyMutable.Event() {
-			public VisiblyMutable getObject() {
+	public static void changed(final VisiblyChanges vm, List<VisiblyChanges.Listener> listeners) {
+		VisiblyChanges.Event event = new VisiblyChanges.Event() {
+			public VisiblyChanges getObject() {
 				return vm;
 			}
 		};
@@ -78,12 +78,12 @@ public class VisiblyMutableUtils {
 	 * @param listeners List of things listening for changes
 	 * @throws StructuralException if the new name is invalid
 	 */
-	public static void nameChanged(final VisiblyMutable vm, final String oldName, final String newName, 
-			List<VisiblyMutable.Listener> listeners) throws StructuralException {
+	public static void nameChanged(final VisiblyChanges vm, final String oldName, final String newName,
+			List<VisiblyChanges.Listener> listeners) throws StructuralException {
 			
 		if (!isValidName(newName)) throw new StructuralException("Name '"+newName+"' must not contain '.' or ':'");
 		
-		VisiblyMutable.NameChangeEvent event = new VisiblyMutable.NameChangeEvent() {
+		VisiblyChanges.NameChangeEvent event = new VisiblyChanges.NameChangeEvent() {
 
 			public String getNewName() {
 				return newName;
@@ -93,7 +93,7 @@ public class VisiblyMutableUtils {
 				return oldName;
 			}
 
-			public VisiblyMutable getObject() {
+			public VisiblyChanges getObject() {
 				return vm;
 			}
 			
@@ -113,9 +113,9 @@ public class VisiblyMutableUtils {
 	 * @param n The node that was removed
 	 * @param listeners List of things listening for changes
 	 */
-	public static void nodeRemoved(final VisiblyMutable vm, final Node n, List<VisiblyMutable.Listener> listeners) {
-		VisiblyMutable.NodeRemovedEvent event = new VisiblyMutable.NodeRemovedEvent() {
-			public VisiblyMutable getObject() {
+	public static void nodeRemoved(final VisiblyChanges vm, final Node n, List<VisiblyChanges.Listener> listeners) {
+		VisiblyChanges.NodeRemovedEvent event = new VisiblyChanges.NodeRemovedEvent() {
+			public VisiblyChanges getObject() {
 				return vm;
 			}
 			
@@ -133,11 +133,11 @@ public class VisiblyMutableUtils {
 		}
 	}
 	
-	private static void fire(VisiblyMutable.Event event, List<VisiblyMutable.Listener> listeners) throws StructuralException {
+	private static void fire(VisiblyChanges.Event event, List<VisiblyChanges.Listener> listeners) throws StructuralException {
 		if (listeners != null) {
-			Iterator<VisiblyMutable.Listener> iterator = listeners.iterator();
+			Iterator<VisiblyChanges.Listener> iterator = listeners.iterator();
 			while (iterator.hasNext()) {
-				VisiblyMutable.Listener listener = iterator.next();
+				VisiblyChanges.Listener listener = iterator.next();
 				listener.changed(event);
 			}			
 		}

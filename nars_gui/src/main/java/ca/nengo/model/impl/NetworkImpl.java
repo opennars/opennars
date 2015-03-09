@@ -51,7 +51,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public class NetworkImpl<N extends Node> implements Network<N>, VisiblyMutable, VisiblyMutable.Listener, TaskSpawner {
+public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, VisiblyChanges.Listener, TaskSpawner {
 
 	/**
 	 * Default name for a Network
@@ -85,7 +85,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyMutable, 
 	private Map<NSource, String> myExposedOriginNames;
 	private Map<NTarget, String> myExposedTerminationNames;
 
-	private transient List<VisiblyMutable.Listener> myListeners;
+	private transient List<VisiblyChanges.Listener> myListeners;
 
 	protected int myNumGPU = 0;
 	protected int myNumJavaThreads = 1;
@@ -267,11 +267,11 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyMutable, 
 	/**
 	 * Handles any changes/errors that may arise from objects within the network changing.
 	 *
-	 * @see ca.nengo.util.VisiblyMutable.Listener#changed(ca.nengo.util.VisiblyMutable.Event)
+	 * @see ca.nengo.util.VisiblyChanges.Listener#changed(ca.nengo.util.VisiblyChanges.Event)
 	 */
 	public void changed(Event e) throws StructuralException {
-		if (e instanceof VisiblyMutable.NameChangeEvent) {
-			VisiblyMutable.NameChangeEvent ne = (VisiblyMutable.NameChangeEvent) e;
+		if (e instanceof VisiblyChanges.NameChangeEvent) {
+			VisiblyChanges.NameChangeEvent ne = (VisiblyChanges.NameChangeEvent) e;
 
 			if (myNodeMap.containsKey(ne.getNewName()) && !ne.getNewName().equals(ne.getOldName())) {
 				throw new StructuralException("This Network already contains a Node named " + ne.getNewName());
@@ -315,7 +315,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyMutable, 
 	 *
 	 * @return arraylist of origins
 	 */
-	public ArrayList<NSource> getNodeOrigins()
+	public ArrayList<NSource> getNodeSources()
 	{
 		Node[] nodes = getNodes();
         ArrayList<NSource> nodeSources = new ArrayList<NSource>(nodes.length);
@@ -1120,7 +1120,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyMutable, 
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void addChangeListener(Listener listener) {
 		if (myListeners == null) {
@@ -1130,7 +1130,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyMutable, 
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void removeChangeListener(Listener listener) {
 		if (myListeners != null) {

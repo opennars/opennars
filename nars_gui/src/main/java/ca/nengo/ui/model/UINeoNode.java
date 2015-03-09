@@ -56,8 +56,8 @@ import ca.nengo.ui.model.viewer.NetworkViewer;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import ca.nengo.ui.model.widget.*;
 import ca.nengo.util.Probe;
-import ca.nengo.util.VisiblyMutable;
-import ca.nengo.util.VisiblyMutable.Event;
+import ca.nengo.util.VisiblyChanges;
+import ca.nengo.util.VisiblyChanges.Event;
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
@@ -440,8 +440,8 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	@Override
 	public void attachViewToModel() {
 		super.attachViewToModel();
-		if (getModel() instanceof VisiblyMutable) {
-			VisiblyMutable visiblyMutable = getModel();
+		if (getModel() instanceof VisiblyChanges) {
+			VisiblyChanges visiblyMutable = getModel();
 			visiblyMutable.addChangeListener(myUpdateListener);
 		}
 	}
@@ -449,8 +449,8 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	@Override
 	public void detachViewFromModel() {
 		super.detachViewFromModel();
-		if (getModel() instanceof VisiblyMutable) {
-			VisiblyMutable visiblyMutable = getModel();
+		if (getModel() instanceof VisiblyChanges) {
+			VisiblyChanges visiblyMutable = getModel();
 
 			Util.Assert(myUpdateListener != null);
 			visiblyMutable.removeChangeListener(myUpdateListener);
@@ -888,7 +888,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 	}
 
-	private class ModelUpdateListener implements VisiblyMutable.Listener {
+	private class ModelUpdateListener implements VisiblyChanges.Listener {
 		private boolean modelUpdatePending = false;
 
 		public void changed(Event e) {

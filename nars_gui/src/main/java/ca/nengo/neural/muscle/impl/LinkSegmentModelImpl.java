@@ -57,7 +57,7 @@ public class LinkSegmentModelImpl implements LinkSegmentModel {
 	private float myTimeStep;
 	private float myTime;
 	private String myDocumentation;
-	private transient List<VisiblyMutable.Listener> myListeners;
+	private transient List<VisiblyChanges.Listener> myListeners;
 
 	/**
 	 * @param name Segment name
@@ -257,7 +257,7 @@ public class LinkSegmentModelImpl implements LinkSegmentModel {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void addChangeListener(Listener listener) {
 		if (myListeners == null) {
@@ -267,7 +267,7 @@ public class LinkSegmentModelImpl implements LinkSegmentModel {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void removeChangeListener(Listener listener) {
 		myListeners.remove(listener);

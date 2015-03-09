@@ -37,7 +37,7 @@ import ca.nengo.sim.SimulatorEvent;
 import ca.nengo.sim.SimulatorListener;
 import ca.nengo.util.Probe;
 import ca.nengo.util.ThreadTask;
-import ca.nengo.util.VisiblyMutable;
+import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyMutableUtils;
 import ca.nengo.util.impl.NodeThreadPool;
 import ca.nengo.util.impl.ProbeImpl;
@@ -63,7 +63,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     private List<Probe> myProbes;
     private Network myNetwork;
     private boolean myDisplayProgress;
-    private transient List<VisiblyMutable.Listener> myChangeListeners;
+    private transient List<VisiblyChanges.Listener> myChangeListeners;
     private transient NodeThreadPool myNodeThreadPool;
 
     /**
@@ -454,7 +454,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     }
 
     /**
-     * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+     * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
      */
     public void addChangeListener(Listener listener) {
         if (myChangeListeners == null) {
@@ -464,7 +464,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     }
 
     /**
-     * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+     * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
      */
     public void removeChangeListener(Listener listener) {
         if (myChangeListeners != null) {

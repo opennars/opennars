@@ -35,7 +35,7 @@ import ca.nengo.model.*;
 import ca.nengo.neural.SpikeOutput;
 import ca.nengo.util.MU;
 import ca.nengo.util.ScriptGenException;
-import ca.nengo.util.VisiblyMutable;
+import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyMutableUtils;
 import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
 
@@ -74,7 +74,7 @@ public class DirectNode implements Node {
 	private Map<String, ObjectTarget<InstantaneousOutput>> myTerminations;
 	private BasicSource myOrigin;
 	private String myDocumentation;
-	private transient List<VisiblyMutable.Listener> myListeners;
+	private transient List<VisiblyChanges.Listener> myListeners;
 
 	/**
 	 * Constructor for a simple passthrough with single input.
@@ -243,7 +243,7 @@ public class DirectNode implements Node {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#addChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#addChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void addChangeListener(Listener listener) {
 		if (myListeners == null) {
@@ -253,7 +253,7 @@ public class DirectNode implements Node {
 	}
 
 	/**
-	 * @see ca.nengo.util.VisiblyMutable#removeChangeListener(ca.nengo.util.VisiblyMutable.Listener)
+	 * @see ca.nengo.util.VisiblyChanges#removeChangeListener(ca.nengo.util.VisiblyChanges.Listener)
 	 */
 	public void removeChangeListener(Listener listener) {
 		myListeners.remove(listener);
