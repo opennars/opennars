@@ -51,6 +51,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
      */
     public final DDList<V> chain;
 
+    private float MIN_PRIORITY_FOR_EMERGENCY_REMOVAL = 0.5f;
+
 
     public ChainBag(int capacity) {
         super();
@@ -74,7 +76,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     @Override
-    public V remove() {
+    public V pop() {
+        if (size() == 0) return null;
         DD<V> d = next();
         if (d==null) return null;
         return remove(d.item.name());
@@ -119,38 +122,52 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         if (s == 0) return null;
         boolean atCapacity = s >= capacity();
 
-        if (current == null) current = chain.getFirstNode();
+        if (current == null || current.item == null) current = chain.getFirstNode();
 
         DD<V> next = current;
+        DD<V> selected;
         do {
 
-            if (selects(next.item))
+            if (next == null) {
+                throw new RuntimeException("size = " + size() + " yet there is no first node in chain");
+            }
+            if (next.item == null) {
+                throw new RuntimeException("size = " + size() + " yet iterated cell with null item");
+            }
+
+
+            if (selects(next.item)) {
+                selected = next;
                 break;
-            else if (atCapacity) {
+            }
+
+            if (atCapacity) {
                 considerRemoving(next);
             }
 
+            next = after(next);
+
         } while (true);
 
-        DD<V> selected = next;
-        if (size() > 1) next = after(next); //cycle
+        if (size() > 1) current = after(next); //cycle
 
         return selected;
     }
 
     protected boolean considerRemoving(final DD<V> d) {
         //TODO improve this based on adaptive statistics measurement
-        final float p = d.item.getPriority();
+        final V item = d.item;
+        final float p = item.getPriority();
 
         if (nextRemoval==null) {
-            if (p < 0.25f) {
-                nextRemoval = d.item;
+            if (p < MIN_PRIORITY_FOR_EMERGENCY_REMOVAL) {
+                nextRemoval = item;
                 return true;
             }
         }
-        else {
+        else if (nextRemoval != item) {
             if (p < nextRemoval.getPriority()) {
-                nextRemoval = d.item;
+                nextRemoval = item;
                 return true;
             }
         }
@@ -164,7 +181,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
     protected DD<V> after(DD<V> d) {
         DD<V> n = d.next;
-        if (n == null)
+        if ((n == null) || (n.item == null))
             n = chain.getFirstNode();
         return n;
     }
@@ -204,11 +221,12 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     public V remove(K key) {
         DD<V> d = index.remove(key);
         if (d!=null) {
+            V v = d.item; //save it here because chain.remove will nullify .item field
             chain.remove(d);
 
             if (Parameters.DEBUG) size();
 
-            return d.item;
+            return v;
         }
 
         return null;

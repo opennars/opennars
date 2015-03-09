@@ -86,12 +86,12 @@ public class CurveBagTest extends AbstractBagTest {
         assert(f.size() == 3);
         assert(f.items.get(0).getPriority() < f.items.get(1).getPriority());
 
-        f.remove();
+        f.pop();
         
         assert(f.size() == 2);
-        f.remove();
+        f.pop();
         assert(f.size() == 1);
-        f.remove();
+        f.pop();
         assert(f.size() == 0);
         
         assert(f.mass() == 0);
@@ -124,7 +124,7 @@ public class CurveBagTest extends AbstractBagTest {
     
     
     
-    public void testRemovalDistribution(int capacity, boolean random) {
+    public static void testRemovalDistribution(int capacity, boolean random) {
         int samples = 128 * capacity;
         
         int count[] = new int[capacity];
@@ -254,7 +254,7 @@ public class CurveBagTest extends AbstractBagTest {
 
         assertEquals(2, c.size());
 
-        x = c.remove();
+        x = c.pop();
 
         assertTrue(x.equals(a) || x.equals(b));
         assertEquals(1, c.size());

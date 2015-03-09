@@ -316,7 +316,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public E remove() {
+    public E pop() {
 
         if (size() == 0) return null; // empty bag
         return removeItem(nextRemovalIndex());

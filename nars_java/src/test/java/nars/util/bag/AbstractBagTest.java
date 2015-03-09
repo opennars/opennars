@@ -45,7 +45,8 @@ public class AbstractBagTest {
 
             //remove some, adjust their priority, and re-insert
             for (int i= 0; i < insertsPerLoop * adjustFraction; i++) {
-                BagPerf.NullItem t = f.remove();
+                BagPerf.NullItem t = f.pop();
+                if (t == null) break;
                 if (i % 2 == 0)
                     t.budget.setPriority(t.budget.getPriority()*0.99f);
                 else
@@ -70,7 +71,7 @@ public class AbstractBagTest {
             for (int i= 0; i < insertsPerLoop * removeFraction; i++) {
                 int sizeBefore = f.size();
 
-                BagPerf.NullItem t = f.remove();
+                BagPerf.NullItem t = f.pop();
 
                 int sizeAfter = f.size();
 

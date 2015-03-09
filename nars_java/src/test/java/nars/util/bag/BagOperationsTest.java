@@ -44,9 +44,13 @@ public class BagOperationsTest {
     @Test public void testCurveBag() {
         testBagSequence(new CurveBag(2, new CurveBag.FairPriorityProbabilityCurve(), true));
     }
-    
-    void testBagSequence(Bag b) {
-        
+
+    /** test with a bag of capacity 2 */
+    public static void testBagSequence(Bag b) {
+
+        assertEquals(0, b.size());
+        assertEquals(2, b.capacity());
+
         //different id, different priority
         b.put(new NullConcept("a", 0.1f));
         b.put(new NullConcept("b", 0.15f));
@@ -79,7 +83,7 @@ public class BagOperationsTest {
         assertEquals(1, b.size());
         assertEquals(0.4f, tb.getPriority(), 0.001f);
         
-        Item tc = b.remove();
+        Item tc = b.pop();
         assertEquals(0, b.size());
         assertEquals(0.2f, tc.getPriority(), 0.001f);
         

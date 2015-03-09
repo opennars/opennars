@@ -90,7 +90,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     }
 
     @Override
-    public E remove() {
+    public E pop() {
         return next(true, true);
     }
 

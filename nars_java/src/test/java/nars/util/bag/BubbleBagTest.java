@@ -65,7 +65,7 @@ public class BubbleBagTest extends AbstractBagTest {
         assertEquals("max capacity; exceeded ", 4, s.size());
         assertNotNull(overflow);
 
-        NullItem r = s.remove();
+        NullItem r = s.pop();
         assertEquals("removed", 3, s.size());
         assertTrue(!s.contains(r));
         assertEquals(3, Iterators.size(s.iterator()));

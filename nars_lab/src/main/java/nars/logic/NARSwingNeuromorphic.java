@@ -4,7 +4,7 @@
  */
 package nars.logic;
 
-import nars.build.Neuromorphic;
+import nars.build.Discretinuous;
 import nars.core.NAR;
 import nars.gui.NARSwing;
 
@@ -20,7 +20,8 @@ public class NARSwingNeuromorphic {
         int ants = 6;
         
         NAR n = new NAR(
-                new Neuromorphic(ants).simulationTime().setConceptBagSize(4096).setNovelTaskBagSize(100).setSubconceptBagSize(8192).setTaskLinkBagSize(50).setTermLinkBagSize(200)      
+                //new Neuromorphic(ants).simulationTime().setConceptBagSize(4096).setNovelTaskBagSize(100).setSubconceptBagSize(8192).setTaskLinkBagSize(50).setTermLinkBagSize(200)
+                new Discretinuous()
         ) {
 
 

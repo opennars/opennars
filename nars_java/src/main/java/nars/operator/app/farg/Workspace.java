@@ -30,7 +30,7 @@ public class Workspace {
             @Override
             public void event(Class event, Object[] args) {
                 for(int i=0;i<10;i++) { //process 10 codelets in each step
-                    Codelet cod=farg.coderack.remove();
+                    Codelet cod=farg.coderack.pop();
                     if(cod!=null) {
                         if(cod.run(ws)) {
                             farg.coderack.put(cod);

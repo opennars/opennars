@@ -63,7 +63,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * TODO rename removeNext()
      * @return The selected Item, or null if this bag is empty
      */
-    abstract public V remove();
+    abstract public V pop();
 
     /**
      * The number of items in the bag
@@ -111,7 +111,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
 
     /** implements the Supplier<V> interface; invokes a remove() */
     @Override public V get() {
-        return remove();
+        return pop();
     }
 
     /**

@@ -301,7 +301,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     
     
     @Override
-    public E remove() {
+    public E pop() {
        
         int s = nameTable.size();
         if (s == 0) 
@@ -343,7 +343,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     public E peekNext() {
         if (size() == 0) return null;
         
-        E x = remove();
+        E x = pop();
         
         if (x == null) return null;
         

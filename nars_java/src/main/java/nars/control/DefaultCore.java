@@ -178,7 +178,7 @@ public class DefaultCore extends UniCore {
     protected Runnable nextNovelTask() {
         if (novelTasks.isEmpty()) return null;
 
-        final Task task = novelTasks.remove();
+        final Task task = novelTasks.pop();
 
         return new DirectProcess(memory, task);
     }
