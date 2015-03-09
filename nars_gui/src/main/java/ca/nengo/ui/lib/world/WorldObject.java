@@ -147,7 +147,7 @@ public interface WorldObject extends NamedObject, Destroyable {
      *
      * @return a copy of this node's full bounds.
      */
-    public Rectangle2D getFullBounds();
+    public Rectangle2D getFullBoundsClone();
 
     /**
      * @return
@@ -561,6 +561,11 @@ public interface WorldObject extends NamedObject, Destroyable {
 
         return x;
     }
+
+    public Rectangle2D getFullBoundsReference();
+
+    public double getCenterX();
+    public double getCenterY();
 
 
     public enum Property {

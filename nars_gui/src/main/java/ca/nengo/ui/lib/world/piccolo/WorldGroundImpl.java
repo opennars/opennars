@@ -43,7 +43,7 @@ public class WorldGroundImpl extends WorldLayerImpl implements WorldLayer {
 
 		Point2D finalPosition;
 		if (centerCameraPosition) {
-			Rectangle2D fullBounds = wo.getFullBounds();
+			Rectangle2D fullBounds = wo.getFullBoundsReference();
 
 			finalPosition = world.skyToGround(new Point2D.Double(world.getWidth() / 2, world
 					.getHeight() / 2));

@@ -87,7 +87,7 @@ public class Tooltip extends WorldObjectImpl {
 			layoutY += wo.getHeight();
 		}
 
-		setBounds(parentToLocal(getFullBounds()));
+		setBounds(parentToLocal(getFullBoundsClone()));
 	}
 
 }

@@ -408,8 +408,20 @@ public class WorldObjectImpl implements WorldObject {
         return getChildrenInternal().size();
     }
 
-    public PBounds getFullBounds() {
+    public PBounds getFullBoundsClone() {
         return myPNode.getFullBounds();
+    }
+
+    @Override
+    public Rectangle2D getFullBoundsReference() {
+        return myPNode.getFullBoundsReference();
+    }
+
+    public double getCenterX() {
+        return getFullBoundsReference().getCenterX();
+    }
+    public double getCenterY() {
+        return getFullBoundsReference().getCenterY();
     }
 
     /*

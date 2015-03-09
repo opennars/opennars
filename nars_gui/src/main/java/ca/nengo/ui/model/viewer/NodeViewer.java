@@ -47,6 +47,7 @@ import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PBounds;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 
@@ -264,11 +265,12 @@ public abstract class NodeViewer extends ElasticWorld implements Interactable {
                     endY = y + node.getHeight();
                 }
 
-                if (node.getFullBounds().getHeight() > maxRowHeight) {
-                    maxRowHeight = node.getFullBounds().getHeight();
+                Rectangle2D fb = node.getFullBoundsReference();
+                if (fb.getHeight() > maxRowHeight) {
+                    maxRowHeight = fb.getHeight();
                 }
 
-                x += node.getFullBounds().getWidth() + 50;
+                x += fb.getWidth() + 50;
 
                 if (++columnCounter > numberOfColumns) {
                     x = 0;

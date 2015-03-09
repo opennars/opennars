@@ -47,7 +47,7 @@ public class TestNARGraph extends Nengrow {
 
     public static class NARGraphNode extends NetworkImpl implements UIBuilder {
 
-        private final NARGraph<NARGraphVertex,Object> graph;
+        private final NARGraph<NARGraphVertex,DefaultEdge> graph;
         private final DefaultGrapher grapher;
         private final NAR nar;
 
@@ -132,7 +132,7 @@ public class TestNARGraph extends Nengrow {
     public static class UINARGraph extends UINetwork {
 
         private final NARGraphNode nargraph;
-        private final NARGraph<NARGraphVertex, Object> graph;
+        private final NARGraph<NARGraphVertex, DefaultEdge> graph;
 
         public UINARGraph(NARGraphNode n) {
             super(n);
@@ -155,19 +155,20 @@ public class TestNARGraph extends Nengrow {
             Graphics2D g = paintContext.getGraphics();
 
             g.setPaint(Color.WHITE);
-            g.setStroke(new BasicStroke(1));
+            g.setStroke(new BasicStroke(4));
 
-            for (Object e : graph.edgeSet()) {
-                NARGraphVertex source = graph.getEdgeSource(e);
+            for (final DefaultEdge e : graph.edgeSet()) {
+
+                NARGraphVertex source = (NARGraphVertex) e.getSource();
                 if (source == null) continue;
-                NARGraphVertex target = graph.getEdgeTarget(e);
+                NARGraphVertex target = (NARGraphVertex) e.getTarget();
                 if (target == null) continue;
 
 
-                double sx = source.ui.getIcon().getBody().getX();
-                double sy = source.ui.getIcon().getBody().getY();
-                double tx = target.ui.getIcon().getBody().getX();
-                double ty = target.ui.getIcon().getBody().getY();
+                double sx = source.ui.getCenterX();
+                double sy = source.ui.getCenterY();
+                double tx = target.ui.getCenterX();
+                double ty = target.ui.getCenterY();
 
 
                 g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
@@ -195,7 +196,6 @@ public class TestNARGraph extends Nengrow {
     abstract public static class NARGraphVertex<V extends Item> extends AbstractWidget {
 
         private final V vertex;
-        private double x, y;
 
 
         public NARGraphVertex(V vertex) {
@@ -206,17 +206,8 @@ public class TestNARGraph extends Nengrow {
         @Override
         protected void paint(PaintContext paintContext, double width, double height) {
 
-
-
         }
 
-        public double getX() {
-            return x;
-        }
-
-        public double getY() {
-            return y;
-        }
 
 
         public V vertex() {
@@ -259,7 +250,7 @@ public class TestNARGraph extends Nengrow {
             if (priority!=p) {
 
                 icon.getBody().setPaint(Color.getHSBColor(p, 0.7f, 0.7f));
-                icon.setScale(1.0 + p);
+                ui.setScale(1.0 + p);
 
                 priority = p;
             }
@@ -269,7 +260,7 @@ public class TestNARGraph extends Nengrow {
         @Override
         public void run(float startTime, float endTime) throws SimulationException {
 
-            //updateStyle();
+            updateStyle();
         }
 
 

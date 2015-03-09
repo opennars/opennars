@@ -520,7 +520,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 	 * @return reference to animation activity
 	 */
 	public void zoomToObject(WorldObject object) {
-		Rectangle2D bounds = object.getParent().localToGlobal(object.getFullBounds());
+		Rectangle2D bounds = object.getParent().localToGlobal(object.getFullBoundsClone());
 
 		zoomToBounds(bounds);
 	}

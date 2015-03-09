@@ -131,7 +131,7 @@ class BrainImageWrapper extends WorldObjectImpl {
         addInputEventListener(new BrainImageMouseHandler());
 
         layoutChildren();
-        setBounds(parentToLocal(getFullBounds()));
+        setBounds(parentToLocal(getFullBoundsClone()));
         // addChild(new Border(this, style.COLOR_FOREGROUND));
 
     }

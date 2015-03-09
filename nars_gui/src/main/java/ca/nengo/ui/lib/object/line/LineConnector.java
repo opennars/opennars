@@ -44,7 +44,7 @@ public abstract class LineConnector extends WorldObjectImpl implements Interacta
 		myIcon.setColor(NengoStyle.COLOR_LINEEND);
 		addChild(myIcon);
 
-		setBounds(parentToLocal(getFullBounds()));
+		setBounds(parentToLocal(getFullBoundsClone()));
 		setChildrenPickable(false);
 		myDestroyListener = new DestroyListener(this);
 		myWell.addPropertyChangeListener(Property.REMOVED_FROM_WORLD, myDestroyListener);
