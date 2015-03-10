@@ -92,24 +92,7 @@ public abstract class Operator extends Term implements Plugin {
         throw new RuntimeException("Operators should not be cloned");
     }
 
-//    /**
-//     * Display a message in the output stream to indicate the reportExecution of
-//     * an operation
-//     * <p>
-//     * @param operation The content of the operation to be executed
-//     */
-    public static void reportExecution(final Operation operation, final Term[] args, Object feedback, final Memory memory) {
 
-        //if (memory.emitting(EXE.class)) {
-
-            /*if (feedback instanceof Exception)
-                feedback = feedback.getClass().getSimpleName() + ": " + ((Throwable)feedback).getMessage();*/
-            
-            memory.emit(EXE.class, 
-                    new ExecutionResult(operation, feedback));
-        //}
-    }
-    
     public static class ExecutionResult {
         private final Operation operation;
         private final Object feedback;
@@ -125,18 +108,27 @@ public abstract class Operator extends Term implements Plugin {
         
         @Override
         public String toString() {
-            BudgetValue b = null;
-            if (getTask() != null) {
-                b = getTask().budget;
-            }
             if (operation instanceof ImmediateOperation) {
                 return operation.toString();
             }
             else {
                 Term[] args = operation.getArgumentsRaw();
                 Operator operator = operation.getOperator();
-                return ((b != null) ? (b.toStringExternal() + ' ') : "") +
-                        operator + '(' + Arrays.toString(args) + "): " + feedback;
+                StringBuilder sb = new StringBuilder();
+
+                BudgetValue b = getTask()!=null ? getTask().budget : null;
+                if (b!=null)
+                    sb.append(b.toStringExternal()).append(' ');
+
+                sb.append(operator).append('(');
+                if (args.length > 0) {
+                    String argString = Arrays.toString(args);
+                    sb.append(argString.substring(1, argString.length()-1)); //remove '[' and ']'
+                }
+                sb.append(')');
+                if (feedback!=null)
+                    sb.append(": ").append(feedback);
+                return sb.toString();
             }
         }
         
@@ -167,7 +159,8 @@ public abstract class Operator extends Term implements Plugin {
             feedback = Lists.newArrayList(new Echo(getClass(), e.toString()).newTask());
         }
 
-        reportExecution(op, args, feedback, memory);
+        //Display a message in the output stream to indicate the reportExecution of an operation
+        memory.emit(EXE.class, new ExecutionResult(op, feedback));
 
 
         //internal notice of the execution

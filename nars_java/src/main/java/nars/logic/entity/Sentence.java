@@ -245,7 +245,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      * @param that The other judgment
      * @return Whether the two are equivalent
      */
-    public boolean equivalentTo(final Sentence that, boolean punctuation, boolean term, boolean truth, boolean stamp) {
+    public boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp) {
 
         final char thisPunc = this.punctuation;
 
@@ -254,15 +254,9 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
             if (thisPunc!=that.punctuation) return false;
         }
         if (stamp) {
-            final boolean stampEqual;
-            if ((thisPunc == Symbols.JUDGMENT) || (thisPunc == Symbols.GOAL))
-                stampEqual = this.stamp.equals(that.stamp, true, true, true, true);
-            else {
-                //Question/Quest relaxed equality condition: creation and occurence time irrelevant; hash wont apply here because it includes them. so only evidentialbase
-                stampEqual = this.stamp.equals(that.stamp, false, true, false, false);
-            }
-
-            if (!stampEqual)
+            //uniqueness includes every aspect of stamp except creation time
+            //<patham9> if they are only different in creation time, then they are the same
+            if (!this.stamp.equals(that.stamp, true, true, false, true))
                 return false;
         }
         if (term) {

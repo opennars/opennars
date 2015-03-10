@@ -330,14 +330,17 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    public boolean equals(Stamp s, final boolean hash, final boolean evidentialBase, final boolean creationTime, final boolean ocurrenceTime) {
+    public boolean equals(final Stamp s, final boolean hash, final boolean evidentialBase, final boolean creationTime, final boolean occurrenceTime) {
         if (this == s) return true;
+
+        if (hash && (!occurrenceTime || !evidentialBase))
+            throw new RuntimeException("Hash equality test must be followed by occurenceTime and evidentialSet equality since hash incorporates them");
 
         if (hash)
             if (hashCode() != s.hashCode()) return false;
         if (creationTime)
             if (getCreationTime() != s.getCreationTime()) return false;
-        if (ocurrenceTime)
+        if (occurrenceTime)
             if (getOccurrenceTime() != s.getOccurrenceTime()) return false;
         if (evidentialBase) {
             //iterate in reverse; the ending of the evidence chain is more likely to be different
@@ -355,7 +358,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     }
 
     /**
-     * The hash code of Stamp
+     * The hash code of Stamp; incorporates evidentialHash and occurenceTime (but not creationTime)
      *
      * @return The hash code
      */
@@ -363,7 +366,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         if (evidentialSet == null)
             toSet();
         if (hash == 0) {
-            hash = Objects.hash(evidentialHash, creationTime, occurrenceTime);
+            hash = Objects.hash(evidentialHash, occurrenceTime);
         }
         return hash;
     }
