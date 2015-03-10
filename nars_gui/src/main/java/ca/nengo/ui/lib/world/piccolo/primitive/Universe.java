@@ -242,7 +242,7 @@ public class Universe extends PCanvas implements Destroyable {
 
 			public void childAdded(WorldObject wo) {
 				if (wo instanceof Window) {
-					UIEnvironment.getInstance().setTopWindow((Window) wo);
+					//UIEnvironment.getInstance().setTopWindow((Window) wo);
 				}
 
 			}
@@ -251,9 +251,9 @@ public class Universe extends PCanvas implements Destroyable {
 				if (wo instanceof Window) {
 					List<Window> windows = getWorld().getSky().getWindows();
 					if (windows.size() > 0) {
-						UIEnvironment.getInstance().setTopWindow(windows.get(windows.size() - 1));
+						//UIEnvironment.getInstance().setTopWindow(windows.get(windows.size() - 1));
 					} else {
-						UIEnvironment.getInstance().setTopWindow(null);
+						//UIEnvironment.getInstance().setTopWindow(null);
 					}
 				}
 			}

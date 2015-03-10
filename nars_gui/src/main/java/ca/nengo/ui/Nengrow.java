@@ -2,6 +2,7 @@ package ca.nengo.ui;
 
 
 import automenta.vivisect.swing.NSlider;
+import ca.nengo.ui.lib.world.piccolo.primitive.Universe;
 import org.simplericity.macify.eawt.Application;
 import org.simplericity.macify.eawt.DefaultApplication;
 
@@ -24,17 +25,22 @@ abstract public class Nengrow extends AbstractNengo {
     protected void initialize() {
         super.initialize();
 
-        menuBar.add(newSpeedControl());
+        //menuBar.add(newSpeedControl());
 
 
-        setContentPane(getUniverse());
 
+
+        init(getUniverse());
 
         try {
             init();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    protected void init(Universe universe) {
+        add(universe, BorderLayout.CENTER);
     }
 
     @Override

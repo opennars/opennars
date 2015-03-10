@@ -51,6 +51,19 @@ public class NARfx extends Application {
 
 
 
+
+//    static {
+//        Toolkit.getToolkit().init();
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Application.launch(NARfx.class);
+//            }
+//        }).start();
+//
+//    }
+
     @Override
     public void start(Stage primaryStage) {
         NARWindow w = NARfx.window(new NAR(new Default()));
@@ -81,17 +94,6 @@ public class NARfx extends Application {
 
     }
 
-//    static {
-//        Toolkit.getToolkit().init();
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Application.launch(NARfx.class);
-//            }
-//        }).start();
-//
-//    }
 
     public static void main(String[] arg) {
 
@@ -108,7 +110,7 @@ public class NARfx extends Application {
 
     }
 
-    private static NARWindow window(NAR nar) {
+    public static NARWindow window(NAR nar) {
         NARWindow wn = new NARWindow(nar);
 
         NARWindow removed = window.put(nar, wn);

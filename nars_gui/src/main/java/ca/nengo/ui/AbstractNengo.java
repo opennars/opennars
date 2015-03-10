@@ -158,8 +158,8 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
         /// Register plugin classes
         //		registerPlugins();
 
-        setExtendedState(NengoConfigManager.getUserInteger(NengoConfigManager.UserProperties.NengoWindowExtendedState,
-                JFrame.MAXIMIZED_BOTH));
+        /*setExtendedState(NengoConfigManager.getUserInteger(NengoConfigManager.UserProperties.NengoWindowExtendedState,
+               JFrame.MAXIMIZED_BOTH));*/
     }
 
 
@@ -191,7 +191,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
         canvas.requestFocus();
 
         progressIndicator=new ProgressIndicator();
-        getContentPane().add(progressIndicator, BorderLayout.SOUTH);
+        add(progressIndicator, BorderLayout.SOUTH);
     }
 
     protected AuxillarySplitPane getDataViewer() {
@@ -228,6 +228,8 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
     @Override
     protected void updateEditMenu() {
+        if (editMenu == null) return;
+
         super.updateEditMenu();
 
         StandardAction copyAction = null;
@@ -297,6 +299,8 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
     @Override
     protected void updateRunMenu() {
+        if (runMenu == null) return;
+
         super.updateRunMenu();
 
         StandardAction simulateAction = null;
@@ -397,7 +401,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             configPane.toJComponent().setAuxVisible(true);
             configPane.configureObj(obj);
         } else {
-            ConfigUtil.configure(UIEnvironment.getInstance(), obj);
+            //ConfigUtil.configure(UIEnvironment.getInstance(), obj);
         }
     }
 
@@ -427,10 +431,10 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     }
 
     private void saveUserConfig() {
-        NengoConfigManager.setUserProperty(NengoConfigManager.UserProperties.NengoWindowExtendedState,
-                getExtendedState());
-
-        NengoConfigManager.saveUserConfig();
+//        NengoConfigManager.setUserProperty(NengoConfigManager.UserProperties.NengoWindowExtendedState,
+//                getExtendedState());
+//
+//        NengoConfigManager.saveUserConfig();
     }
 
     @Override

@@ -36,7 +36,7 @@ import java.util.List;
  * 
  * @author Shu Wu
  */
-public abstract class AppFrame extends JFrame implements ApplicationListener {
+public abstract class AppFrame extends JPanel implements ApplicationListener {
     private static final long serialVersionUID = 2769082313231407201L;
 
     /**
@@ -92,8 +92,10 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
      * TODO
      */
     public AppFrame() {
-        super(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-                .getDefaultConfiguration());
+        //super(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+          //      .getDefaultConfiguration());
+
+        super();
 
         if (!SwingUtilities.isEventDispatchThread()) {
             try {
@@ -113,55 +115,55 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
 
     }
 
-    /**
-     * Initializes the menu
-     */
-    private void initMenu() {
-        menuBar = new JMenuBar();
-        menuBar.setBorder(null);
-        //style.applyMenuStyle(menuBar, true);
-
-        MenuBuilder fileMenu = new MenuBuilder("File");
-        fileMenu.getJMenu().setMnemonic(KeyEvent.VK_F);
-        initFileMenu(fileMenu);
-        fileMenu.addAction(new ExitAction(this, "Quit"), KeyEvent.VK_P);
-        menuBar.add(fileMenu.getJMenu());
-
-        editMenu = new MenuBuilder("Edit");
-        editMenu.getJMenu().setMnemonic(KeyEvent.VK_E);
-
-        menuBar.add(editMenu.getJMenu());
-
-        initViewMenu(menuBar);
-
-        runMenu = new MenuBuilder("Run");
-        runMenu.getJMenu().setMnemonic(KeyEvent.VK_R);
-
-        menuBar.add(runMenu.getJMenu());
-
-        worldMenu = new MenuBuilder("Misc");
-        worldMenu.getJMenu().setMnemonic(KeyEvent.VK_O);
-        menuBar.add(worldMenu.getJMenu());
-
-        updateWorldMenu();
-        updateEditMenu();
-        updateRunMenu();
-
-        MenuBuilder helpMenu = new MenuBuilder("Help");
-        helpMenu.getJMenu().setMnemonic(KeyEvent.VK_H);
-        menuBar.add(helpMenu.getJMenu());
-
-        helpMenu.addAction(new OpenURLAction("Documentation (opens in browser)",
-                "http://www.nengo.ca/documentation"), KeyEvent.VK_F1);
-        helpMenu.addAction(new TipsAction("Tips and Commands", false), KeyEvent.VK_T);
-        boolean isMacOS = System.getProperty("mrj.version") != null;
-        if (!isMacOS) {
-            helpMenu.addAction(new AboutAction("About"), KeyEvent.VK_A);
-        }
-
-        menuBar.setVisible(true);
-        this.setJMenuBar(menuBar);
-    }
+//    /**
+//     * Initializes the menu
+//     */
+//    private void initMenu() {
+//        menuBar = new JMenuBar();
+//        menuBar.setBorder(null);
+//        //style.applyMenuStyle(menuBar, true);
+//
+//        MenuBuilder fileMenu = new MenuBuilder("File");
+//        fileMenu.getJMenu().setMnemonic(KeyEvent.VK_F);
+//        initFileMenu(fileMenu);
+//        fileMenu.addAction(new ExitAction(this, "Quit"), KeyEvent.VK_P);
+//        menuBar.add(fileMenu.getJMenu());
+//
+//        editMenu = new MenuBuilder("Edit");
+//        editMenu.getJMenu().setMnemonic(KeyEvent.VK_E);
+//
+//        menuBar.add(editMenu.getJMenu());
+//
+//        initViewMenu(menuBar);
+//
+//        runMenu = new MenuBuilder("Run");
+//        runMenu.getJMenu().setMnemonic(KeyEvent.VK_R);
+//
+//        menuBar.add(runMenu.getJMenu());
+//
+//        worldMenu = new MenuBuilder("Misc");
+//        worldMenu.getJMenu().setMnemonic(KeyEvent.VK_O);
+//        menuBar.add(worldMenu.getJMenu());
+//
+//        updateWorldMenu();
+//        updateEditMenu();
+//        updateRunMenu();
+//
+//        MenuBuilder helpMenu = new MenuBuilder("Help");
+//        helpMenu.getJMenu().setMnemonic(KeyEvent.VK_H);
+//        menuBar.add(helpMenu.getJMenu());
+//
+//        helpMenu.addAction(new OpenURLAction("Documentation (opens in browser)",
+//                "http://www.nengo.ca/documentation"), KeyEvent.VK_F1);
+//        helpMenu.addAction(new TipsAction("Tips and Commands", false), KeyEvent.VK_T);
+//        boolean isMacOS = System.getProperty("mrj.version") != null;
+//        if (!isMacOS) {
+//            helpMenu.addAction(new AboutAction("About"), KeyEvent.VK_A);
+//        }
+//
+//        menuBar.setVisible(true);
+//        this.setJMenuBar(menuBar);
+//    }
 
     protected void chooseBestDisplayMode(GraphicsDevice device) {
         DisplayMode best = getBestDisplayMode(device);
@@ -260,10 +262,9 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
             }
         }
 
-        restoreDefaultTitle();
 
         actionManager = new ReversableActionManager(this);
-        getContentPane().setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
 
         universe = new Universe();
         universe.setMinimumSize(new Dimension(200, 200));
@@ -278,17 +279,17 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
 
         setBounds(new Rectangle(100, 100, 800, 600));
         setBackground(null);
-        addWindowListener(new MyWindowListener());
+        /*addWindowListener(new MyWindowListener());
 
         try {
             setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         } catch (SecurityException e) {
             e.printStackTrace();
-        }
+        }*/
 
         universe.setSelectionMode(false);
 
-        initMenu();
+        //initMenu();
 
         /*
          * Initialize shortcut keys
@@ -298,7 +299,7 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
         this.shortcutKeys = shortcuts.toArray(new ShortcutKey[shortcuts.size()]);
 
         validate();
-        setFullScreenMode(false);
+        //setFullScreenMode(false);
 
     }
 
@@ -408,15 +409,17 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
      * Updates the menu 'edit'
      */
     protected void updateEditMenu() {
-        editMenu.reset();
+        if (editMenu!=null) {
+            editMenu.reset();
 
-        editMenu.addAction(new UndoAction(), KeyEvent.VK_Z, KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-                MENU_SHORTCUT_KEY_MASK));
+            editMenu.addAction(new UndoAction(), KeyEvent.VK_Z, KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+                    MENU_SHORTCUT_KEY_MASK));
 
-        editMenu.addAction(new RedoAction(), KeyEvent.VK_Y, KeyStroke.getKeyStroke(KeyEvent.VK_Y,
-                MENU_SHORTCUT_KEY_MASK));
-        
-        editMenu.getJMenu().addSeparator();
+            editMenu.addAction(new RedoAction(), KeyEvent.VK_Y, KeyStroke.getKeyStroke(KeyEvent.VK_Y,
+                    MENU_SHORTCUT_KEY_MASK));
+
+            editMenu.getJMenu().addSeparator();
+        }
 
     }
 
@@ -424,7 +427,8 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
      * Updates the menu 'run'
      */
     protected void updateRunMenu() {
-        runMenu.reset();
+        if (runMenu!=null)
+            runMenu.reset();
 
         // Configure parallelization
     }
@@ -433,6 +437,9 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
      * Updates the menu 'world'
      */
     protected void updateWorldMenu() {
+        if (worldMenu==null)
+            return;
+
         worldMenu.reset();
 
         if (!universe.isSelectionMode()) {
@@ -495,23 +502,23 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
         return universe.getRoot().addActivity(activity);
     }
 
-    /**
-     * This method adds a key listener that will take this PFrame out of full
-     * screen mode when the escape key is pressed. This is called for you
-     * automatically when the frame enters full screen mode.
-     */
-    public void addEscapeFullScreenModeListener() {
-        removeEscapeFullScreenModeListener();
-        escapeFullScreenModeListener = new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent aEvent) {
-                if (aEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    setFullScreenMode(false);
-                }
-            }
-        };
-        universe.addKeyListener((KeyListener) escapeFullScreenModeListener);
-    }
+//    /**
+//     * This method adds a key listener that will take this PFrame out of full
+//     * screen mode when the escape key is pressed. This is called for you
+//     * automatically when the frame enters full screen mode.
+//     */
+//    public void addEscapeFullScreenModeListener() {
+//        removeEscapeFullScreenModeListener();
+//        escapeFullScreenModeListener = new KeyAdapter() {
+//            @Override
+//            public void keyPressed(KeyEvent aEvent) {
+//                if (aEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
+//                    setFullScreenMode(false);
+//                }
+//            }
+//        };
+//        universe.addKeyListener((KeyListener) escapeFullScreenModeListener);
+//    }
 
     /**
      * @param window TODO
@@ -585,12 +592,12 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
         }
     }
 
-    /**
-     * TODO
-     */
-    public void restoreDefaultTitle() {
-        setTitle(getAppWindowTitle());
-    }
+//    /**
+//     * TODO
+//     */
+//    public void restoreDefaultTitle() {
+//        setTitle(getAppWindowTitle());
+//    }
 
     /**
      * Called when reversable actions have changed. Updates the edit menu.
@@ -603,49 +610,49 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
      * @param fullScreenMode
      *            sets the screen to fullscreen
      */
-    public void setFullScreenMode(boolean fullScreenMode) {
-        this.isFullScreenMode = fullScreenMode;
-        if (fullScreenMode) {
-            addEscapeFullScreenModeListener();
+//    public void setFullScreenMode(boolean fullScreenMode) {
+//        this.isFullScreenMode = fullScreenMode;
+//        if (fullScreenMode) {
+//            addEscapeFullScreenModeListener();
+//
+//            if (isDisplayable()) {
+//                dispose();
+//            }
+//
+//            setUndecorated(true);
+//            setResizable(false);
+//            //graphicsDevice.setFullScreenWindow(this);
+//
+//            if (graphicsDevice.isDisplayChangeSupported()) {
+//                chooseBestDisplayMode(graphicsDevice);
+//            }
+//            validate();
+//        } else {
+//            removeEscapeFullScreenModeListener();
+//
+//            if (isDisplayable()) {
+//                dispose();
+//            }
+//
+//            setUndecorated(false);
+//            setResizable(true);
+//            graphicsDevice.setFullScreenWindow(null);
+//            validate();
+//            setVisible(true);
+//        }
+//    }
 
-            if (isDisplayable()) {
-                dispose();
-            }
-
-            setUndecorated(true);
-            setResizable(false);
-            graphicsDevice.setFullScreenWindow(this);
-
-            if (graphicsDevice.isDisplayChangeSupported()) {
-                chooseBestDisplayMode(graphicsDevice);
-            }
-            validate();
-        } else {
-            removeEscapeFullScreenModeListener();
-
-            if (isDisplayable()) {
-                dispose();
-            }
-
-            setUndecorated(false);
-            setResizable(true);
-            graphicsDevice.setFullScreenWindow(null);
-            validate();
-            setVisible(true);
-        }
-    }
-
-    /**
-     * @param window TODO
-     */
-    public void setTopWindow(Window window) {
-        topWindow = window;
-        if (topWindow != null) {
-            setTitle(window.getName() + " - " + getAppWindowTitle());
-        } else {
-            UIEnvironment.getInstance().restoreDefaultTitle();
-        }
-    }
+//    /**
+//     * @param window TODO
+//     */
+//    public void setTopWindow(Window window) {
+//        topWindow = window;
+//        if (topWindow != null) {
+//            setTitle(window.getName() + " - " + getAppWindowTitle());
+//        } else {
+//            UIEnvironment.getInstance().restoreDefaultTitle();
+//        }
+//    }
 
     /**
      * Action to set rendering mode to high quality.
@@ -974,26 +981,26 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
         }
     }
 
-    /**
-     * Action to turn off full screen mode
-     * 
-     * @author Shu Wu
-     */
-    class TurnOffFullScreen extends StandardAction {
-
-        private static final long serialVersionUID = 1L;
-
-        public TurnOffFullScreen() {
-            super("Full screen off");
-        }
-
-        @Override
-        protected void action() throws ActionException {
-            setFullScreenMode(false);
-            updateWorldMenu();
-        }
-
-    }
+//    /**
+//     * Action to turn off full screen mode
+//     *
+//     * @author Shu Wu
+//     */
+//    class TurnOffFullScreen extends StandardAction {
+//
+//        private static final long serialVersionUID = 1L;
+//
+//        public TurnOffFullScreen() {
+//            super("Full screen off");
+//        }
+//
+//        @Override
+//        protected void action() throws ActionException {
+//            setFullScreenMode(false);
+//            updateWorldMenu();
+//        }
+//
+//    }
 
     /**
      * Action to turn off the grid
@@ -1038,26 +1045,26 @@ public abstract class AppFrame extends JFrame implements ApplicationListener {
 
     }
 
-    /**
-     * Action to turn on full screen mode
-     * 
-     * @author Shu Wu
-     */
-    class TurnOnFullScreen extends StandardAction {
-
-        private static final long serialVersionUID = 1L;
-
-        public TurnOnFullScreen() {
-            super("Full screen on");
-        }
-
-        @Override
-        protected void action() throws ActionException {
-            setFullScreenMode(true);
-            updateWorldMenu();
-        }
-
-    }
+//    /**
+//     * Action to turn on full screen mode
+//     *
+//     * @author Shu Wu
+//     */
+//    class TurnOnFullScreen extends StandardAction {
+//
+//        private static final long serialVersionUID = 1L;
+//
+//        public TurnOnFullScreen() {
+//            super("Full screen on");
+//        }
+//
+//        @Override
+//        protected void action() throws ActionException {
+//            setFullScreenMode(true);
+//            updateWorldMenu();
+//        }
+//
+//    }
 
     /**
      * Action to turn on the grid

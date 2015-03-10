@@ -29,7 +29,7 @@ public class TestAgentNode extends Nengrow {
         new TestAgentNode();
     }
 
-    public Node newAgentNodeDemo() throws StructuralException {
+    public static Node newAgentNodeDemo() throws StructuralException {
         NetworkImpl network = new NetworkImpl();
 
         AgentNode an = new AgentNode("NARBot1") {
@@ -37,7 +37,6 @@ public class TestAgentNode extends Nengrow {
             public void run(float startTime, float endTime) throws SimulationException {
                 super.run(startTime, endTime);
 
-                time = endTime;
 
                 rotate( (endTime-startTime)*24f  );
                 forward( Math.random() * 10 );
