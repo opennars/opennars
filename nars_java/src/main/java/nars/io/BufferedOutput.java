@@ -2,6 +2,7 @@ package nars.io;
 
 import nars.core.Events;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.logic.entity.Task;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
@@ -108,16 +109,18 @@ abstract public class BufferedOutput extends Output {
 
         //1. prevent subsequent duplicates of existing content but decrease its cost as a way of making it more important to ensure it will be output
         if (buffer.contains(o)) {
-            boolean found = false;
-            for (OutputItem e : buffer) {
-                if (e.channel.equals(event) && e.object.equals(o)) {
-                    //discount the cost?
-                    found = true;
-                    break;
+            if (Parameters.DEBUG) {
+                boolean found = false;
+                for (OutputItem e : buffer) {
+                    if (e.channel.equals(event) && e.object.equals(o)) {
+                        //discount the cost?
+                        found = true;
+                        break;
+                    }
                 }
+                if (!found)
+                    throw new RuntimeException("duplicate item reported by buffer but it was not actually found");
             }
-            if (!found)
-                throw new RuntimeException("duplicate item reported by buffer but it was not actually found");
             return Float.NaN;
         }
 
@@ -183,34 +186,49 @@ abstract public class BufferedOutput extends Output {
 
     }
 
-    public String toString(Iterable<OutputItem> l) {
+    public String toString(Collection<OutputItem> l) {
         return toString(l, -1);
     }
 
     //TODO add max length parameter
-    public String toString(Iterable<OutputItem> l, int limit) {
+    public String toString(Collection<OutputItem> l, int charLimit) {
         StringBuilder sb = new StringBuilder();
+
+        Set<String> strings = Parameters.newHashSet(l.size());
 
         String lastChannel = "";
         for (OutputItem i : l) {
 
             String nextChannel = i.channel.getSimpleName();
 
-            if (!nextChannel.equals(lastChannel)) {
-                if (!lastChannel.isEmpty())
-                    sb.append("  "); //additional space between channel change, could be a newline also
+            String content = TextOutput.getOutputString(
+                    i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, new StringBuilder(), 0);
 
-                sb.append(nextChannel).append(": ");
-                lastChannel = nextChannel;
+            String prefix = nextChannel + (": ");
+
+            String entry = prefix + content;
+
+            if (strings.add(entry)) {
+
+                if (!nextChannel.equals(lastChannel)) {
+                    if (!lastChannel.isEmpty())
+                        sb.append("  "); //additional space between channel change, could be a newline also
+
+                    sb.append(entry); //the entire entry (prefix+content)
+                    lastChannel = nextChannel;
+                }
+                else {
+                    sb.append(content); //just the content
+                }
+
+                sb.append("  ");
             }
 
-            sb.append( TextOutput.getOutputString(
-                    i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, new StringBuilder(), 0));
-
-            sb.append("   ");
         }
-        if (limit!=-1 && sb.length() > limit)
-            return sb.substring(0, limit);
+
+        if (charLimit!=-1 && sb.length() > charLimit)
+            return sb.replace(charLimit-2, charLimit, "..").substring(0, charLimit);
+
         return sb.toString();
     }
 

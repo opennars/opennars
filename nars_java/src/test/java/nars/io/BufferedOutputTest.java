@@ -47,7 +47,9 @@ public class BufferedOutputTest {
                 /*System.out.println(n.time() + ": " + buffer);
                 System.out.println("  in:" + in.getMean() + "," + in.getSum()
                         + " ex:" + ex.getMean() + "," + ex.getSum());
+
                 */
+                //System.out.println(toString(buffer));
 
                 if (in.getN() > 0 && ex.getN() > 0) {
                     assertTrue(in.getSum() + " exceeds limit of " + maxBufferCost + ": " + buffer.toString(),
