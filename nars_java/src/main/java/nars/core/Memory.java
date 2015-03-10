@@ -564,6 +564,9 @@ public class Memory implements Serializable {
             Operation o = (Operation) taskTerm;
             o.setTask(t);
 
+            if (t.getPunctuation()!= Symbols.GOAL)
+                throw new RuntimeException("ImmediateOperation " + o + " was not specified with goal punctuation");
+
             if (o instanceof ImmediateOperation) {
                 ImmediateOperation i = (ImmediateOperation) t.getTerm();
                 i.execute(this);

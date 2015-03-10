@@ -372,8 +372,9 @@ public class TestNARGraph extends Nengrow {
     float time = 0;
 
 
+
     public static void main(String[] args) {
-        new TestNARGraph();
+        new TestNARGraph().window(800, 600);
     }
 
 

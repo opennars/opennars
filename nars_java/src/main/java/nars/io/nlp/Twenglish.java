@@ -192,7 +192,7 @@ public class Twenglish {
         
         List<Task> results = new ArrayList();
 
-        List<Span> tokens = Twokenize.tokenizeRawTweetText(s);
+        List<Span> tokens = Twokenize.twokenize(s);
         
         List<List<Span>> sentences = new ArrayList();
         

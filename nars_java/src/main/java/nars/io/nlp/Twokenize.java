@@ -429,7 +429,7 @@ public class Twokenize {
      * the tokens you get back may not exactly correspond to substrings of the
      * original text.
      */
-    public static List<Span> tokenizeRawTweetText(String text) {
+    public static List<Span> twokenize(final String text) {
         List<Span> sp = tokenize(normalizeTextForTagger(text));
         sort(sp);
         return sp;
@@ -444,7 +444,7 @@ public class Twokenize {
         PrintStream output = new PrintStream(out, true, "UTF-8");
         String line;
         while ((line = input.readLine()) != null) {
-            List<Span> toks = tokenizeRawTweetText(line);
+            List<Span> toks = twokenize(line);
             for (int i = 0; i < toks.size(); i++) {
                 output.print(toks.get(i));
                 if (i < toks.size() - 1) {
