@@ -1,5 +1,6 @@
 package nars.io;
 
+import nars.core.Events;
 import nars.core.NAR;
 import nars.logic.entity.Task;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -19,6 +20,7 @@ abstract public class BufferedOutput extends Output {
     final SummaryStatistics itemCosts = new SummaryStatistics();
 
 
+
     public static class OutputItem implements Comparable<OutputItem> {
         public final Class channel;
         public final Object object;
@@ -32,20 +34,28 @@ abstract public class BufferedOutput extends Output {
 
         @Override
         public int hashCode() {
-            return object.hashCode();
+            return channel.hashCode() * 37 + object.hashCode();
         }
 
         @Override
         public boolean equals(final Object obj) {
-            return object.equals(obj);
+            if (this == obj) return true;
+            if (obj instanceof OutputItem) {
+                OutputItem oi = (OutputItem)obj;
+                return channel.equals(oi.channel) && object.equals(oi.object);
+            }
+            return false;
         }
 
         @Override
         public int compareTo(final OutputItem o) {
-            if (this == o) return 0;
+            if (equals(o)) return 0;
+
             final float oCost = o.cost;
-            if (oCost == cost)
+            if (oCost == cost) {
+                //equal cost, so sort by their hashcode
                 return o.hashCode() - hashCode();
+            }
 
             //arrange by highest cost first
             else if (oCost > cost)
@@ -59,15 +69,20 @@ abstract public class BufferedOutput extends Output {
     final LinkedHashSet<OutputItem> buffer = new LinkedHashSet();
 
     private long lastOutputEvent; //when last the buffer was flushed
-
+    private boolean showInput;
     private final NAR nar;
     private final float maxBudgetToEmit; //upper throughput amount bound
     float minCyclesPerEmit; //upper throughput frequency bound
 
     public BufferedOutput(NAR n, float addPerCycle, float minOutputInterval, float maxCostOfBuffer) {
+        this(n, addPerCycle, minOutputInterval, maxCostOfBuffer, false);
+    }
+
+    public BufferedOutput(NAR n, float addPerCycle, float minOutputInterval, float maxCostOfBuffer, boolean includeInput) {
         super(n);
 
         this.nar = n;
+        this.showInput = includeInput;
         this.minCyclesPerEmit = addPerCycle * minOutputInterval;
         this.maxBudgetToEmit = addPerCycle * maxCostOfBuffer;
         resetBuffer();
@@ -80,16 +95,22 @@ abstract public class BufferedOutput extends Output {
         bufferCosts.clear();
     }
 
+    public void setShowInput(boolean includeInput) {
+        this.showInput = includeInput;
+    }
 
     //TODO make this a pluggable function
     /** cost of emitting this signal; return Float.NaN to discard it completely */
     public float cost(Class event, Object o) {
 
+        if (!showInput && event == Events.IN.class)
+            return Float.NaN;
+
         //1. prevent subsequent duplicates of existing content but decrease its cost as a way of making it more important to ensure it will be output
         if (buffer.contains(o)) {
             boolean found = false;
             for (OutputItem e : buffer) {
-                if (e.object.equals(o)) {
+                if (e.channel.equals(event) && e.object.equals(o)) {
                     //discount the cost?
                     found = true;
                     break;
@@ -115,41 +136,59 @@ abstract public class BufferedOutput extends Output {
     public void queue(long now, Class channel, Object signal, float cost) {
         OutputItem i = new OutputItem(channel, signal, cost);
 
-        buffer.add(i);
-        bufferCosts.add(i);
-        itemCosts.addValue(cost);
-        if (bufferCosts.size() != buffer.size())
-            throw new RuntimeException("buffer fault");
-
-        if (now - lastOutputEvent >= minCyclesPerEmit) {
-            //create output
-            float totalCost = (float)itemCosts.getSum();
-            if (totalCost > maxBudgetToEmit) {
-                Iterator<OutputItem> f = bufferCosts.iterator();
-                while ((totalCost > maxBudgetToEmit) && (f.hasNext())) {
-                    OutputItem x = f.next();
-                    totalCost -= x.cost;
-                    buffer.remove(x);
-                    excluded(x);
-                }
+        int b1 = buffer.size();
+        int b2 = bufferCosts.size();
+        if (buffer.add(i)) {
+            if (!bufferCosts.add(i) || (bufferCosts.size() != buffer.size())) {
+                resetBuffer();
+                throw new RuntimeException("buffer fault when trying to add: " + signal); //should have added a unique value to the set and so both should be +1 item
             }
-
-            if (!buffer.isEmpty()) {
-                List<OutputItem> l = new ArrayList(buffer.size());
-                for (OutputItem oi : buffer) {
-                    included(oi);
-                    l.add(oi);
-                }
-                output(l);
-            }
-
-            resetBuffer();
+            itemCosts.addValue(cost);
         }
+        else {
+            return; //duplicated
+        }
+
+        if (now - lastOutputEvent < minCyclesPerEmit)
+            return;
+
+        //create output
+        float totalCost = (float)itemCosts.getSum();
+
+        if (totalCost > maxBudgetToEmit) {
+            Iterator<OutputItem> f = bufferCosts.iterator();
+            while ((totalCost > maxBudgetToEmit) && (f.hasNext())) {
+                OutputItem x = f.next();
+                totalCost -= x.cost;
+                buffer.remove(x);
+                excluded(x);
+            }
+        }
+
+        if (totalCost > maxBudgetToEmit) {
+            resetBuffer();
+            throw new RuntimeException("buffer overflow: " + totalCost + " > " + maxBudgetToEmit);
+        }
+
+        if (!buffer.isEmpty()) {
+            List<OutputItem> l = new ArrayList(buffer.size());
+            for (OutputItem oi : buffer) {
+                included(oi);
+                l.add(oi);
+            }
+            output(l);
+        }
+
+        resetBuffer();
 
     }
 
-    //TODO add max length parameter
     public String toString(Iterable<OutputItem> l) {
+        return toString(l, -1);
+    }
+
+    //TODO add max length parameter
+    public String toString(Iterable<OutputItem> l, int limit) {
         StringBuilder sb = new StringBuilder();
 
         String lastChannel = "";
@@ -170,6 +209,8 @@ abstract public class BufferedOutput extends Output {
 
             sb.append("   ");
         }
+        if (limit!=-1 && sb.length() > limit)
+            return sb.substring(0, limit);
         return sb.toString();
     }
 

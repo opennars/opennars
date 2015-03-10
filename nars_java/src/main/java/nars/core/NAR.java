@@ -173,6 +173,18 @@ public class NAR implements Runnable {
                 new BufferedReader(new InputStreamReader(input))));
     }
 
+    /** inputs a task, only if the parsed text is valid; returns null if invalid */
+    public Task inputTask(final String text) {
+        try {
+            Task t = narsese.parseTask(text);
+            input(t);
+            return t;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
     public TextInput input(final String text) {
         final TextInput i = new TextInput(textPerception, text);
         input(i);
