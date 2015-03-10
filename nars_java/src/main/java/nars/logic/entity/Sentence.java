@@ -247,12 +247,23 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
      */
     public boolean equivalentTo(final Sentence that, boolean punctuation, boolean term, boolean truth, boolean stamp) {
 
+        final char thisPunc = this.punctuation;
+
         if (this == that) return true;
         if (punctuation) {
-            if (this.punctuation!=that.punctuation) return false;
+            if (thisPunc!=that.punctuation) return false;
         }
         if (stamp) {
-            if (!this.stamp.equals(that.stamp, true, true, true, true)) return false;
+            final boolean stampEqual;
+            if ((thisPunc == Symbols.JUDGMENT) || (thisPunc == Symbols.GOAL))
+                stampEqual = this.stamp.equals(that.stamp, true, true, true, true);
+            else {
+                //Question/Quest relaxed equality condition: creation and occurence time irrelevant; hash wont apply here because it includes them. so only evidentialbase
+                stampEqual = this.stamp.equals(that.stamp, false, true, false, false);
+            }
+
+            if (!stampEqual)
+                return false;
         }
         if (term) {
             if (!equalTerms(that)) return false;

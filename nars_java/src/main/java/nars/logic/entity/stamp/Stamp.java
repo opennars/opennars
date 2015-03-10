@@ -78,6 +78,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      * cache of hashcode of evidential base
      */
     transient private int hash;
+    transient private int evidentialHash; //hash which includes only evidentialSet, not creation/occurenceTimes
 
 
     protected Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
@@ -308,8 +309,9 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      */
     public long[] toSet() {
         if (evidentialSet == null) {
-            evidentialSet = toSetArray(evidentialBase);
-            hash = 0;
+            this.evidentialSet = toSetArray(evidentialBase);
+            this.evidentialHash = Arrays.hashCode(evidentialSet);
+            this.hash = 0;
         }
 
         return evidentialSet;
@@ -341,6 +343,8 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
             //iterate in reverse; the ending of the evidence chain is more likely to be different
             final long[] a = toSet();
             final long[] b = s.toSet();
+            if (evidentialHash!=s.evidentialHash)
+                return false;
             if (a.length != b.length) return false;
             for (int i = a.length - 1; i >= 0; i--)
                 if (a[i] != b[i]) return false;
@@ -359,7 +363,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         if (evidentialSet == null)
             toSet();
         if (hash == 0) {
-            hash = Objects.hash(Arrays.hashCode(evidentialSet), creationTime, occurrenceTime);
+            hash = Objects.hash(evidentialHash, creationTime, occurrenceTime);
         }
         return hash;
     }
