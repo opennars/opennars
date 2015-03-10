@@ -123,27 +123,35 @@ public class TextOutput extends Output {
         if (!showInput && (channel == Events.IN.class))
             return;
         
-        if ((outExp!=null) || (outExp2!=null)) {
+        /*if ((outExp!=null) || (outExp2!=null))*/ {
             final String s = process(channel, oo);
             if (s!=null) {
                 if (outExp != null) {
-                    outExp.println(prefix + s);
+                    if (prefix!=null)
+                        outExp.print(prefix);
+                    outExp.println(s);
                     outExp.flush();
                 }
                 if (outExp2 != null) {
-                    outExp2.println(prefix + s);            
+                    if (prefix!=null)
+                        outExp2.println(prefix + s);
+                    else
+                        outExp2.println(s);
                 }
             }
         }
     }
     
-    final StringBuilder result = new StringBuilder(16 /* estimate */);
+
     
     public String process(final Class c, final Object[] o) {
         if (o[0] instanceof Task) {
             if (!allowTask((Task)o[0]))
                 return null;
         }
+        final StringBuilder result = new StringBuilder(16 /* estimate */);
+
+
         return getOutputString(c, o, true, showStamp, nar, result, minPriority);
     }
     
@@ -152,7 +160,11 @@ public class TextOutput extends Output {
         return true;
     }
 
-    public TextOutput setErrors(boolean errors) {
+    public void setShowStamp(boolean showStamp) {
+        this.showStamp = showStamp;
+    }
+
+    public TextOutput setShowErrors(boolean errors) {
         this.showErrors = errors;
         return this;
     }    
@@ -174,10 +186,14 @@ public class TextOutput extends Output {
         return this;
     }
 
-    public static String getOutputString(final Class channel, Object[] signals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
-        return getOutputString(channel, signals, showChannel, showStamp, nar, buffer, 0);
+//    public static String getOutputString(final Class channel, Object[] signals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+//        return getOutputString(channel, signals, showChannel, showStamp, nar, buffer, 0);
+//    }
+
+    public void setPriorityMin(float minPriority) {
+        this.minPriority = minPriority;
     }
-            
+
     /** generates a human-readable string from an output channel and signals */
     public static String getOutputString(final Class channel, Object[] signals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
         buffer.setLength(0);
@@ -206,17 +222,18 @@ public class TextOutput extends Output {
         else if (channel == Answer.class) {
             Task question = (Task)signals[0];
             Sentence answer = (Sentence)signals[1];
-            buffer.append(question.sentence.toString(nar, showStamp)).append(" = ").append(answer.toString(nar, showStamp));
+            question.sentence.toString(buffer, nar.memory, showStamp).append(" = ").append(answer.toString(nar, showStamp));
         }
         else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class)))  {
 
 
             Task t = (Task)signal;
             if (t.budget!=null && t.sentence!=null) {
+                minPriority = Math.min(nar.param.noiseLevel.get()/100.0f, minPriority);
                 if (t.getPriority() < minPriority)
                     return null;
 
-                buffer.append(t.sentence.toString(nar, showStamp));
+                t.sentence.toString(buffer, nar.memory, showStamp);
             }
             else {
                 buffer.append(t.toString());
@@ -282,14 +299,14 @@ public class TextOutput extends Output {
             Sentence s = t.sentence;
 
             if (s!=null)
-                buffer.append(s.toString(nar, showStamp));
+                s.toString(buffer, nar.memory, showStamp);
             else
                 buffer.append(t.toString());
             
         }            
         else if (signal instanceof Sentence) {
-            Sentence s = (Sentence)signal;                
-            buffer.append(s.toString(nar, showStamp));                        
+            Sentence s = (Sentence) signal;
+            s.toString(buffer, nar.memory, showStamp);
         }                    
         else if (signal instanceof Object[]) {
             if (channel == Answer.class) {
@@ -300,7 +317,7 @@ public class TextOutput extends Output {
                 //Sentence question = task.sentence;
                 Sentence answer = belief;
                 
-                buffer.append(answer.toString(nar, showStamp));
+                buffer.append(answer.toString(buffer, nar.memory, showStamp));
             }
             else {
                 //TODO use repeat buffer.append(..) rather than Array.toString

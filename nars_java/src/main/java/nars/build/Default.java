@@ -139,6 +139,11 @@ public class Default extends NewNAR implements ConceptBuilder {
         //param.getDefaultDerivationFilters().add(new BeRational());
     }
 
+    public Default(int maxConcepts) {
+        this();
+        conceptBagSize = maxConcepts;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName()+ '[' + level +

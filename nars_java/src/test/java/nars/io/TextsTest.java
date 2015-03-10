@@ -1,9 +1,7 @@
-package nars.util;
+package nars.io;
 
 import nars.build.Default;
 import nars.core.NAR;
-import nars.io.Symbols;
-import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.entity.*;

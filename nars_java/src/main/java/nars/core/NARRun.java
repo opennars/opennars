@@ -74,7 +74,7 @@ public class NARRun {
      */
     public void run(String args[]) {
         TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
-        output.setErrors(true);
+        output.setShowErrors(true);
         
         if (args.length > 0) {
             try {

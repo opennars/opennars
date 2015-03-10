@@ -531,25 +531,26 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         return toString(nar.memory, showStamp);
     }
 
+    public CharSequence toString(final Memory memory, final boolean showStamp) {
+        return toString(new StringBuilder(), memory, showStamp);
+    }
     /**
      * Get a String representation of the sentence for display purpose
      *
+     * @param buffer provided StringBuilder to append to
      * @param memory may be null in which case the tense is expressed in numbers without any relativity to memory's current time or duration
      * @return The String
      */
-    public CharSequence toString(Memory memory, boolean showStamp) {
+    public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean showStamp) {
     
         CharSequence contentName = term.name();
 
         final CharSequence tenseString;
         if (memory!=null) {
-            final long t = memory.time();
-
-            tenseString = stamp.getTense(t, memory.duration());
+            tenseString = stamp.getTense(memory.time(), memory.duration());
         }
         else {
-            tenseString = new StringBuilder();
-            stamp.appendOcurrenceTime((StringBuilder)tenseString);
+            stamp.appendOcurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
         }
         
         
@@ -563,9 +564,11 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         if (showStamp)
             stringLength += stampString.length()+1;
         
-        
-        final StringBuilder buffer = new StringBuilder(stringLength).
-                    append(contentName).append(punctuation);
+        if (buffer == null)
+            buffer = new StringBuilder(stringLength);
+        else
+            buffer.ensureCapacity(stringLength);
+        buffer.append(contentName).append(punctuation);
         
         if (tenseString.length() > 0)
             buffer.append(' ').append(tenseString);

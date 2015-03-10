@@ -7,7 +7,6 @@ import nars.operator.math.Add;
 import nars.operator.math.Count;
 import nars.operator.mental.*;
 import nars.operator.meta.Reflect;
-import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
 import nars.operator.software.Scheme;
 
@@ -56,7 +55,8 @@ public class DefaultOperators {
             //new MathExpression(),
                         
 
-            new Javascript(),  // javascript evaluation
+            //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
+            //new Javascript(),  // javascript evaluation
             new Scheme(),      // scheme evaluation
 
 
