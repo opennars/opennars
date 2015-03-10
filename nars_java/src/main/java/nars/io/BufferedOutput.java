@@ -19,11 +19,13 @@ abstract public class BufferedOutput extends Output {
     final SummaryStatistics itemCosts = new SummaryStatistics();
 
 
-    static class OutputItem implements Comparable<OutputItem> {
-        public Object object;
-        public float cost;
+    public static class OutputItem implements Comparable<OutputItem> {
+        public final Class channel;
+        public final Object object;
+        public final float cost;
 
-        public OutputItem(Object o, float c) {
+        public OutputItem(Class channel, Object o, float c) {
+            this.channel = channel;
             this.object = o;
             this.cost = c;
         }
@@ -110,8 +112,8 @@ abstract public class BufferedOutput extends Output {
     protected void included(OutputItem o) { }
     protected void excluded(OutputItem o) { }
 
-    public void queue(long now, Object signal, float cost) {
-        OutputItem i = new OutputItem(signal, cost);
+    public void queue(long now, Class channel, Object signal, float cost) {
+        OutputItem i = new OutputItem(channel, signal, cost);
 
         buffer.add(i);
         bufferCosts.add(i);
@@ -133,10 +135,10 @@ abstract public class BufferedOutput extends Output {
             }
 
             if (!buffer.isEmpty()) {
-                List<Object> l = new ArrayList(buffer.size());
+                List<OutputItem> l = new ArrayList(buffer.size());
                 for (OutputItem oi : buffer) {
                     included(oi);
-                    l.add(oi.object);
+                    l.add(oi);
                 }
                 output(l);
             }
@@ -146,10 +148,35 @@ abstract public class BufferedOutput extends Output {
 
     }
 
-    abstract protected void output(List<Object> buffer);
+    //TODO add max length parameter
+    public String toString(Iterable<OutputItem> l) {
+        StringBuilder sb = new StringBuilder();
+
+        String lastChannel = "";
+        for (OutputItem i : l) {
+
+            String nextChannel = i.channel.getSimpleName();
+
+            if (!nextChannel.equals(lastChannel)) {
+                if (!lastChannel.isEmpty())
+                    sb.append("  "); //additional space between channel change, could be a newline also
+
+                sb.append(nextChannel).append(": ");
+                lastChannel = nextChannel;
+            }
+
+            sb.append( TextOutput.getOutputString(
+                    i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, new StringBuilder(), 0));
+
+            sb.append("   ");
+        }
+        return sb.toString();
+    }
+
+    abstract protected void output(List<OutputItem> buffer);
 
     @Override
-    public void event(Class event, Object[] args) {
+    public void event(Class channel, Object[] args) {
 
 
         Object signal;
@@ -158,9 +185,9 @@ abstract public class BufferedOutput extends Output {
         else
             signal = args;
 
-        float cost = cost(event, signal);
+        float cost = cost(channel, signal);
         if (Float.isFinite(cost))
-            queue(nar.time(), signal, cost);
+            queue(nar.time(), channel, signal, cost);
         /*else
             excluded(signal); */
     }

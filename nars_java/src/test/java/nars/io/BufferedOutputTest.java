@@ -25,7 +25,7 @@ public class BufferedOutputTest {
             SummaryStatistics ex = new SummaryStatistics();
 
             @Override
-            protected void output(List<Object> buffer) {
+            protected void output(List<OutputItem> buffer) {
                 /*System.out.println(n.time() + ": " + buffer);
                 System.out.println("  in:" + in.getMean() + "," + in.getSum()
                         + " ex:" + ex.getMean() + "," + ex.getSum());
@@ -34,9 +34,11 @@ public class BufferedOutputTest {
                 if (in.getN() > 0 && ex.getN() > 0) {
                     assertTrue(in.getSum() <= maxBufferCost);
                     assertTrue(in.getMean() <= ex.getMean());
+                    assertTrue(!toString(buffer).isEmpty());
                 }
                 in.clear();
                 ex.clear();
+
             }
 
             @Override

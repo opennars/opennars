@@ -195,13 +195,23 @@ public class TextOutput extends Output {
     }
 
     /** generates a human-readable string from an output channel and signals */
-    public static String getOutputString(final Class channel, Object[] signals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
+    public static String getOutputString(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
         buffer.setLength(0);
         
         if (showChannel)
             buffer.append(channel.getSimpleName()).append(": ");
 
-        Object signal = signals[0];
+        Object signal;
+        Object[] signals;
+        if (signalOrSignals instanceof Object[]) {
+            signals =(Object[]) signalOrSignals;
+            signal = signals[0];
+        }
+        else {
+            signal = signalOrSignals;
+            signals = null;
+        }
+
 
         if (channel == Events.ERR.class) {
 
@@ -215,13 +225,16 @@ public class TextOutput extends Output {
                 }
             }
             else {
-                buffer.append(Arrays.toString(signals));
+                if (signals!=null)
+                    buffer.append(Arrays.toString(signals));
+                else
+                    buffer.append(signals);
             }      
             
         }
-        else if (channel == Answer.class) {
-            Task question = (Task)signals[0];
-            Sentence answer = (Sentence)signals[1];
+        else if ((channel == Answer.class) && (signals!=null)) {
+            Task question = (Task) signals[0];
+            Sentence answer = (Sentence) signals[1];
             question.sentence.toString(buffer, nar.memory, showStamp).append(" = ").append(answer.toString(nar, showStamp));
         }
         else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class)))  {
@@ -253,7 +266,7 @@ public class TextOutput extends Output {
             
         }
         else {
-            if (signals.length > 1)
+            if ((signals!=null) && (signals.length > 1))
                 buffer.append(Arrays.toString(signals));
             else
                 buffer.append(signal.toString());
