@@ -244,24 +244,16 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
     }
 
 
-    /**
-     * TODO avoid using transform, just calculation coordinates in current transform
-     */
-    void drawArrow(final PGraphics g, final float x1, final float y1, float x2, float y2, float destinationRadius) {
-        //float cx = (x1 + x2) / 2f;
-        //float cy = (y1 + y2) / 2f;
-        float dx = x2 - x1;
-        float dy = y2 - y1;
 
-        float angle = (float) (FastMath.atan2(dy, dx));
-
-        //if (len == 0) return;
-
-        //g.line(x1, y1, x2, y2);
-
-        final float arrowAngle = (float) Math.PI / 12f + g.strokeWeight / 200f;
-        final float arrowHeadRadius = /*len **/ arrowHeadScale * (g.strokeWeight * 16f);
+    void drawArrow(final PGraphics g, final int color, final float thick, final float x1, final float y1, float x2, float y2, float destinationRadius) {
+        final float arrowHeadRadius = /*len **/ arrowHeadScale * (thick * 16f);
         if (arrowHeadRadius > 0) {
+
+            float dx = x2 - x1;
+            float dy = y2 - y1;
+
+            float angle = (float) (FastMath.atan2(dy, dx));
+            final float arrowAngle = (float) FastMath.PI / 12f + thick / 200f;
 
             float len = (float) FastMath.sqrt(dx * dx + dy * dy) - destinationRadius;
             if (len <= 0) return;
@@ -276,11 +268,10 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
             float prx = (float) FastMath.cos(angle - Math.PI + arrowAngle) * arrowHeadRadius;
             float pry = (float) FastMath.sin(angle - Math.PI + arrowAngle) * arrowHeadRadius;
             //g.line(x2, y2, x2 + prx, y2 + pry);
-            g.fill(g.strokeColor);
+            g.fill(color);
             g.noStroke();
             //g.triangle(x2, y2, x2 + prx, y2 + pry, x2 + plx, y2 + ply);
             g.quad(x2, y2, x2 + prx, y2 + pry, x1, y1, x2 + plx, y2 + ply);
-            g.noFill();
         }
 
     }

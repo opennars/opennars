@@ -23,6 +23,7 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
+import org.apache.commons.math3.util.FastMath;
 import org.jgraph.graph.DefaultEdge;
 
 import javax.swing.*;
@@ -36,6 +37,7 @@ public class TestNARGraph extends Nengrow {
     public static final float RESOLUTION_SEC = .001f;
 
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
+
 
     static int n = 0;
     public static Node newGraph(NAR n) {
@@ -131,6 +133,8 @@ public class TestNARGraph extends Nengrow {
     }
     public static class UINARGraph extends UINetwork {
 
+        float arrowHeadScale = 1f / 16f;
+
         private final NARGraphNode nargraph;
         private final NARGraph<NARGraphVertex, DefaultEdge> graph;
 
@@ -150,12 +154,58 @@ public class TestNARGraph extends Nengrow {
             return new UINARGraphViewer(this);
         }
 
+        public Polygon drawArrow(final Graphics2D g, final Color color, final float thick, final int x1, final int y1, final int x2, final int y2, float destinationRadius) {
+            final float arrowHeadRadius = /*len **/ arrowHeadScale * (thick);
+            if (arrowHeadRadius > 0) {
+
+                float dx = x2 - x1;
+                float dy = y2 - y1;
+
+                float angle = (float) (FastMath.atan2(dy, dx));
+                final float arrowAngle = (float) FastMath.PI / 12f + thick / 200f;
+
+                float len = (float) FastMath.sqrt(dx * dx + dy * dy) - destinationRadius;
+                if (len <= 0) return null;
+
+                final int ix2 = (int) (FastMath.cos(angle) * len + x1);
+                final int iy2 = (int) (FastMath.sin(angle) * len + y1);
+
+                final double aMin = angle - Math.PI - arrowAngle;
+                final double aMax = angle - Math.PI + arrowAngle;
+
+                int plx = (int) (FastMath.cos(aMin) * arrowHeadRadius);
+                int ply = (int) (FastMath.sin(aMin) * arrowHeadRadius);
+                int prx = (int) (FastMath.cos(aMax) * arrowHeadRadius);
+                int pry = (int) (FastMath.sin(aMax) * arrowHeadRadius);
+
+
+
+                //Triangle
+                //g.triangle(x2, y2, x2 + prx, y2 + pry, x2 + plx, y2 + ply);
+
+                //Quad
+                //(x2, y2, x2 + prx, y2 + pry, x1, y1, x2 + plx, y2 + ply);
+
+
+                Polygon p = new Polygon(); //TODO recycle this .reset()
+                p.addPoint(ix2, iy2);
+                p.addPoint( ix2 + prx, iy2 + pry);
+                p.addPoint( x1, y1);
+                p.addPoint(  x2 + plx, y2 + ply );
+
+                g.setPaint(color);
+                g.fillPolygon(p);
+                return p;
+            }
+
+            return null;
+        }
+
+
         protected void drawEdges(PaintContext paintContext) {
 
             Graphics2D g = paintContext.getGraphics();
 
-            g.setPaint(Color.WHITE);
-            g.setStroke(new BasicStroke(4));
 
             for (final DefaultEdge e : graph.edgeSet()) {
 
@@ -164,15 +214,25 @@ public class TestNARGraph extends Nengrow {
                 NARGraphVertex target = (NARGraphVertex) e.getTarget();
                 if (target == null) continue;
 
+                if ((!source.ui.getVisible() || !target.ui.getVisible() )) {
+                    continue;
+                }
 
                 double sx = source.ui.getCenterX();
                 double sy = source.ui.getCenterY();
                 double tx = target.ui.getCenterX();
                 double ty = target.ui.getCenterY();
 
-
-                g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
+                final float targetRadius = (float) target.ui.getWidth()/2f;
+                //g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
+                drawArrow(g, getEdgeColor(e), 256f, (int)sx, (int)sy, (int)tx, (int)ty, targetRadius);
             }
+        }
+
+        final Color tempColor = new Color(255, 128, 0, 120);
+
+        public Color getEdgeColor(DefaultEdge e) {
+            return tempColor;
         }
 
         class UINARGraphGround extends ElasticGround {

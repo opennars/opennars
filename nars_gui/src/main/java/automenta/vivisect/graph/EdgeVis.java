@@ -54,15 +54,13 @@ public class EdgeVis<V, E> {
         assert(elem2.scale == scale);
         
         //TODO create EdgeDisplay class to cacahe these properties
-        g.stroke(color);
-        g.strokeWeight(thickness);
 
         float x1 = elem1.x*scale;
         float y1 = elem1.y*scale;
         float x2 = elem2.x*scale;
         float y2 = elem2.y*scale;
 
-        c.drawArrow(g, x1, y1, x2, y2, elem2.radius/2f);
+        c.drawArrow(g, color, thickness, x1, y1, x2, y2, elem2.radius/2f);
 
         //float cx = (x1 + x2) / 2.0f;
         //float cy = (y1 + y2) / 2.0f;
