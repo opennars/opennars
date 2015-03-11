@@ -305,7 +305,7 @@ public interface WorldObject extends NamedObject, Destroyable {
     /**
      * @return Whether this node is animating
      */
-    public boolean isAnimating();
+    public boolean isAnimating(long now);
 
     /**
      * @return Whether this Object has been destroyed

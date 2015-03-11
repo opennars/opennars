@@ -13,7 +13,7 @@ public class PXLayer extends PLayer implements PiccoloNodeInWorld {
 		return wo;
 	}
 
-	public boolean isAnimating() {
+	public boolean isAnimating(long now) {
 		return false;
 	}
 

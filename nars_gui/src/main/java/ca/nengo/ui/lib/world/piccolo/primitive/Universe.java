@@ -297,6 +297,8 @@ public class Universe extends PCanvas implements Destroyable {
 	 *            Sets the text of the status bar in the UI
 	 */
 	public void setStatusMessage(String message) {
+        if (statusStr.equals(message))
+            return;
 		statusStr = message;
 		statusMessageLabel.setText(statusStr);
 		layoutText();

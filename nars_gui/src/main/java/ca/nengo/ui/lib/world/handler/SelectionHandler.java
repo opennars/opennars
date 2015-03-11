@@ -576,15 +576,18 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 
 	protected void dragStandardSelection(PInputEvent e) {
 
+
 		Iterator<WorldObjectImpl> selectionEn = selectedObjects.iterator();
 
 		if (selectionEn.hasNext()) {
 			e.setHandled(true);
 			PDimension d = e.getDeltaRelativeTo(selectableParent.getPiccolo());
 
+            final long now = System.currentTimeMillis();
+
 			while (selectionEn.hasNext()) {
 				WorldObjectImpl node = selectionEn.next();
-				if (!node.isAnimating()) {
+				if (!node.isAnimating(now)) {
 					PDimension gDist = new PDimension();
 					gDist.setSize(d);
 

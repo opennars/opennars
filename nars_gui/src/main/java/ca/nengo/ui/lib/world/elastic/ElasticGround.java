@@ -11,6 +11,7 @@ import edu.uci.ics.jung.graph.impl.SparseGraph;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
 import edu.uci.ics.jung.utils.UserData;
 import edu.uci.ics.jung.visualization.Layout;
+import nars.core.Parameters;
 import org.piccolo2d.PNode;
 import org.piccolo2d.util.PBounds;
 
@@ -29,11 +30,11 @@ public class ElasticGround extends WorldGroundImpl {
 
 	private ElasticLayoutRunner elasticLayoutThread;
 
-	private final Map<PXEdge, AbstractSparseEdge> myEdgeMap = new HashMap();
+	private final Map<PXEdge, AbstractSparseEdge> myEdgeMap = Parameters.newHashMap();
 
 	private SparseGraph myGraph;
 
-	private final Map<ElasticObject, ElasticVertex> myVertexMap = new HashMap();
+	private final Map<ElasticObject, ElasticVertex> myVertexMap = Parameters.newHashMap();
 
 	public ElasticGround() {
 		super();
@@ -219,53 +220,61 @@ public class ElasticGround extends WorldGroundImpl {
 		double endX = Double.NEGATIVE_INFINITY;
 		double endY = Double.NEGATIVE_INFINITY;
 
-		for (ElasticObject elasticObj : getElasticChildren()) {
 
-			ElasticVertex vertex = myVertexMap.get(elasticObj);
-			if (vertex != null) {
 
-				Point2D coord = layout.getLocation(vertex);
+        if (!elasticChildren.isEmpty()) {
 
-				if (coord != null) {
+            final long now = System.currentTimeMillis();
 
-					foundNode = true;
-					double x = coord.getX();
-					double y = coord.getY();
+            for (ElasticObject elasticObj : getElasticChildren()) {
 
-					if (elasticObj.isAnimating()) {
-						// If the object is being animated in another process,
-						// then we force update it's position in the layout
-						x = elasticObj.getOffsetReal().getX();
-						y = elasticObj.getOffsetReal().getY();
-						if (elasticLayoutThread != null) {
-							elasticLayoutThread.forceMove(vertex, x, y);
-						}
-					} else {
-						x = coord.getX();
-						y = coord.getY();
-						if (animateNodes) {
-							elasticObj.animateToPositionScaleRotation(x, y, 1, 0, 1000);
-						} else {
-							elasticObj.setOffsetReal(x, y);
-						}
-					}
+                ElasticVertex vertex = myVertexMap.get(elasticObj);
+                if (vertex != null) {
 
-					if (x < startX) {
-						startX = x;
-					}
-					if (x + elasticObj.getWidth() > endX) {
-						endX = x + elasticObj.getWidth();
-					}
+                    Point2D coord = layout.getLocation(vertex);
 
-					if (y < startY) {
-						startY = y;
-					}
-					if (y + elasticObj.getHeight() > endY) {
-						endY = y + elasticObj.getHeight();
-					}
-				}
-			}
-		}
+                    if (coord != null) {
+
+                        foundNode = true;
+                        double x = coord.getX();
+                        double y = coord.getY();
+
+                        if (elasticObj.isAnimating(now)) {
+                            // If the object is being animated in another process,
+                            // then we force update it's position in the layout
+                            x = elasticObj.getOffsetReal().getX();
+                            y = elasticObj.getOffsetReal().getY();
+                            if (elasticLayoutThread != null) {
+                                elasticLayoutThread.forceMove(vertex, x, y);
+                            }
+                        } else {
+                            x = coord.getX();
+                            y = coord.getY();
+                            if (animateNodes) {
+                                elasticObj.animateToPositionScaleRotation(x, y, 1, 0, 1000);
+                            } else {
+                                elasticObj.setOffsetReal(x, y);
+                            }
+                        }
+
+                        if (x < startX) {
+                            startX = x;
+                        }
+                        if (x + elasticObj.getWidth() > endX) {
+                            endX = x + elasticObj.getWidth();
+                        }
+
+                        if (y < startY) {
+                            startY = y;
+                        }
+                        if (y + elasticObj.getHeight() > endY) {
+                            endY = y + elasticObj.getHeight();
+                        }
+                    }
+                }
+            }
+
+        }
 
 		if (zoomToLayout && foundNode) {
 			PBounds fullBounds = new PBounds(startX, startY, endX - startX, endY - startY);

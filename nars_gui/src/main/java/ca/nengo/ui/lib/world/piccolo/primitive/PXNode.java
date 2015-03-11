@@ -13,6 +13,7 @@ import org.piccolo2d.util.PUtil;
 import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 
 /**
@@ -32,7 +33,7 @@ public class PXNode extends PNode implements PiccoloNodeInWorld {
 	private long busyAnimatingUntilTime = 0;
 
 	private WorldObject worldObjectParent;
-    private PaintContext convertedPaintContext = new PaintContext();
+    private final PaintContext convertedPaintContext = new PaintContext();
 
     public PXNode() {
 		super();
@@ -40,7 +41,12 @@ public class PXNode extends PNode implements PiccoloNodeInWorld {
 		addPropertyChangeListener(PNode.PROPERTY_TRANSFORM, new TransformChangeListener());
 	}
 
-	@Override
+    @Override
+    protected void firePropertyChange(int propertyCode, String propertyName, Object oldValue, Object newValue) {
+        super.firePropertyChange(propertyCode, propertyName, oldValue, newValue);
+    }
+
+    @Override
 	protected final void layoutChildren() {
 		/*
 		 * Delegate layout out children to the WorldObject
@@ -52,18 +58,16 @@ public class PXNode extends PNode implements PiccoloNodeInWorld {
 
 	@Override
 	protected void paint(PPaintContext paintContext) {
-		super.paint(paintContext);
+		//super.paint(paintContext);
 		if (worldObjectParent != null) {
-			convertedPaintContext.set(paintContext.getGraphics(),
-					paintContext.getScale());
-
+			convertedPaintContext.set(paintContext.getGraphics());
 			worldObjectParent.paint(convertedPaintContext);
 		}
 	}
 
 	@Override
 	protected void parentBoundsChanged() {
-		firePropertyChange(0, PROPERTY_PARENT_BOUNDS, null, null);
+        firePropertyChange(0, PROPERTY_PARENT_BOUNDS, null, null);
 	}
 
 	@Override
@@ -130,12 +134,8 @@ public class PXNode extends PNode implements PiccoloNodeInWorld {
 		return worldObjectParent;
 	}
 
-	public boolean isAnimating() {
-		if (busyAnimatingUntilTime < System.currentTimeMillis()) {
-			return false;
-		} else {
-			return true;
-		}
+	public boolean isAnimating(final long now) {
+		return (busyAnimatingUntilTime >= now);
 	}
 
 	@Override
@@ -198,10 +198,12 @@ public class PXNode extends PNode implements PiccoloNodeInWorld {
 		/*
 		 * Updates children edges
 		 */
-		for (Object each : getChildrenReference()) {
+        final List childrenReference = getChildrenReference();
+        int ch = childrenReference.size();
+        for (int i = 0; i < ch; i++) {
+            Object each = childrenReference.get(i);
 			if (each instanceof PXNode) {
 				PXNode wo = (PXNode) each;
-
 				wo.signalGlobalBoundsChanged();
 			}
 		}

@@ -1,5 +1,8 @@
 package ca.nengo.ui.lib;
 
+import automenta.vivisect.Video;
+import org.apache.commons.math3.util.FastMath;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
@@ -79,7 +82,7 @@ public class NengoStyle {
 	 */
 	public static final String FONT_FAMILY =
 		//UIManager.getDefaults().getFont("TabbedPane.font").getFamily();
-            "Monofonto";
+            Video.monofont.getFamily();
 
 	public static final Font FONT_BOLD = new Font(FONT_FAMILY, Font.BOLD, 14);
 	public static final Font FONT_BUTTONS = new Font(FONT_FAMILY, Font.PLAIN, 14);
@@ -134,17 +137,17 @@ public class NengoStyle {
 		}
 	}
 
-	static public Color colorAdd(Color c1, Color c2) {
-		int r = Math.min(c1.getRed() + c2.getRed(), 255);
-		int g = Math.min(c1.getGreen() + c2.getGreen(), 255);
-		int b = Math.min(c1.getBlue() + c2.getBlue(), 255);
+	static public Color colorAdd(final Color c1, final Color c2) {
+		int r = FastMath.min(c1.getRed() + c2.getRed(), 255);
+		int g = FastMath.min(c1.getGreen() + c2.getGreen(), 255);
+		int b = FastMath.min(c1.getBlue() + c2.getBlue(), 255);
 		return new Color(r, g, b);
 	}
 
-	static public Color colorTimes(Color c1, double f) {
-		int r = (int) Math.min(c1.getRed() * f, 255);
-		int g = (int) Math.min(c1.getGreen() * f, 255);
-		int b = (int) Math.min(c1.getBlue() * f, 255);
+	static public Color colorTimes(final Color c1, final double f) {
+		int r = (int) FastMath.min(c1.getRed() * f, 255);
+		int g = (int) FastMath.min(c1.getGreen() * f, 255);
+		int b = (int) FastMath.min(c1.getBlue() * f, 255);
 		return new Color(r, g, b);
 	}
 

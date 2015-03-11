@@ -436,25 +436,28 @@ class NodeViewerStatus extends AbstractStatusHandler {
         super(world);
     }
 
+    StringBuilder statusStr = new StringBuilder(200);
+
     @Override
     protected String getStatusMessage(PInputEvent event) {
+        statusStr.setLength(0);
+
         ModelObject wo = (ModelObject) Util.getNodeFromPickPath(event, ModelObject.class);
 
-        StringBuilder statusStr = new StringBuilder(200);
         if (getWorld().getGround().isElasticMode()) {
-            statusStr.append("Elastic layout enabled | ");
+            statusStr.append("(Elastic) | ");
         }
         statusStr.append(getWorld().getViewerParent().getFullName()).append(" -> ");
 
         if (getWorld().getSelection().size() > 1) {
-            statusStr.append(getWorld().getSelection().size()).append(" Objects selected");
+            statusStr.append(getWorld().getSelection().size()).append(" objects selected");
 
         } else {
 
             if (wo != null) {
                 statusStr.append(wo.getFullName());
             } else {
-                statusStr.append("No Model Selected");
+                return "Nothing selected";
             }
         }
         return statusStr.toString();

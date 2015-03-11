@@ -1,5 +1,6 @@
 package ca.nengo.test;
 
+import automenta.vivisect.swing.ColorArray;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
@@ -178,7 +179,7 @@ public class TestNARGraph extends Nengrow {
         private class MyGrapher extends DefaultGrapher {
 
             public MyGrapher() {
-                super(false, false, false, false, 0, true, false);
+                super(false, false, false, false, 0, true, true);
             }
 
             @Override
@@ -300,20 +301,22 @@ public class TestNARGraph extends Nengrow {
             }
         }
 
-        final Color tempColor = new Color(255, 128, 0, 120);
+        final ColorArray red = new ColorArray(64, new Color(0.4f, 0.2f, 0.2f, 0.5f), new Color(1f, 0.7f, 0.3f, 1.0f));
+        final ColorArray blue = new ColorArray(64, new Color(0.2f, 0.2f, 0.4f, 0.5f), new Color(0.3f, 0.7f, 1f, 1.0f));
+
 
         public Color getEdgeColor(NARGraphNode.UIEdge e) {
 
             final Object x = e.e;
             if (x instanceof TermLink) {
                 float p = ((TermLink)x).budget.getPriority();
-                return new Color(p, 0, 0, p);
+                return red.get(p);
             }
             else if (e.e instanceof TaskLink) {
-                float p = ((TermLink)x).budget.getPriority();
-                return new Color(0, p, 0, p);
+                float p = ((TaskLink)x).budget.getPriority();
+                return blue.get(p);
             }
-            return tempColor;
+            return Color.WHITE;
         }
 
         class UINARGraphGround extends ElasticGround {
@@ -416,14 +419,18 @@ public class TestNARGraph extends Nengrow {
             return false;
         }
 
+        final static ColorArray green = new ColorArray(64, new Color(0.2f, 0.4f, 0.2f, 0.25f), new Color(0.25f, 0.8f, 0.25f, 0.9f));
+
         protected void updateUI() {
             if (concept != null) {
 
                 float p = concept.getPriority();
+                if (priority < 0) priority = 0;
                 if (priority != p) {
 
-                    icon.getBody().setPaint(Color.getHSBColor(p, 0.7f, 0.7f));
-                    icon.getBody().setTransparency(0.8f);
+                    Color c = green.get(priority);
+                    icon.getBody().setPaint(c); // Color.getHSBColor(p, 0.7f, 0.7f));
+                    icon.getBody().setTransparency(c.getAlpha()/256f);
                     ui.setScale(1.0 + p);
 
                     priority = p;
@@ -452,7 +459,7 @@ public class TestNARGraph extends Nengrow {
     public void init() throws Exception {
 
 
-        NAR nar = new NAR(new Default());
+        NAR nar = new NAR(new Default(32, 1, 1));
         nar.input("<a --> {b}>.");
         nar.input("<b --> c>.");
         nar.input("<[c] --> a>.");

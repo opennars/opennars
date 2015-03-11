@@ -544,14 +544,15 @@ public class WorldObjectImpl implements WorldObject {
         return getPiccolo().isAncestorOf(((WorldObjectImpl) wo).getPiccolo());
     }
 
+
     /*
      * (non-Javadoc)
      * 
      * @see ca.shu.ui.lib.world.impl.IWorldObject#isAnimating()
      */
-    public boolean isAnimating() {
+    public boolean isAnimating(long now) {
         if (myPNode instanceof PiccoloNodeInWorld) {
-            return ((PiccoloNodeInWorld) myPNode).isAnimating();
+            return ((PiccoloNodeInWorld) myPNode).isAnimating(now);
         } else {
             return false;
         }

@@ -84,8 +84,9 @@ class PXText extends PXNode {
 	private static boolean useBlurTextThreshold = true;
 
 	protected double blurTextThreshold;
+    private final boolean antialias = false;
 
-	public PXText() {
+    public PXText() {
 		super();
 		setTextPaint(Color.BLACK);
 		init();
@@ -100,6 +101,7 @@ class PXText extends PXNode {
 	private void init() {
 		setBlurTextThreshold(DEFAULT_BLURTEXT_THRESHOLD);
 		setConstrainWidthToTextWidth(true);
+
 
 		setFont(NengoStyle.FONT_NORMAL);
 		setTextPaint(NengoStyle.COLOR_FOREGROUND);
@@ -143,6 +145,10 @@ class PXText extends PXNode {
 
             Graphics2D g2 = paintContext.getGraphics();
 
+            if (!antialias) {
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            }
 			g2.setPaint(textPaint);
 
 			for (int i = 0; i < lines.length; i++) {
@@ -243,6 +249,7 @@ class PXText extends PXNode {
 		if (text != null && text.length() > 0) {
 			AttributedString atString = new AttributedString(text);
 			atString.addAttribute(TextAttribute.FONT, getFont());
+
 			AttributedCharacterIterator itr = atString.getIterator();
 			LineBreakMeasurer measurer = new LineBreakMeasurer(itr,
 					PPaintContext.RENDER_QUALITY_HIGH_FRC);

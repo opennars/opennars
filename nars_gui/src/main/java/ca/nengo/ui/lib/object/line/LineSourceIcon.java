@@ -34,11 +34,11 @@ public class LineSourceIcon extends WorldObjectImpl {
 	public void paint(PaintContext paintContext) {
 		super.paint(paintContext);
 		Graphics2D g2 = paintContext.getGraphics();
-		if (paintContext.getScale() < 0.5) {
+		//if (paintContext.getScale() < 0.5) {
 			g2.setColor(color);
-		} else {
+		/*} else {
             g2.setColor(dark);
-        }
+        }*/
         g2.fillOval(-_LINE_END_WIDTH / 2, -_LINE_END_HEIGHT / 2, _LINE_END_WIDTH, _LINE_END_HEIGHT);
 
 //

@@ -5,7 +5,7 @@ import ca.nengo.ui.lib.world.WorldObject;
 public interface PiccoloNodeInWorld {
 	public WorldObject getWorldObject();
 
-	public boolean isAnimating();
+	public boolean isAnimating(long now);
 
 	public void setWorldObject(WorldObject worldObjectParent);
 }

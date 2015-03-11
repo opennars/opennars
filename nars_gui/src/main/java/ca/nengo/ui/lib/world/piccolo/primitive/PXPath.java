@@ -95,7 +95,7 @@ public class PXPath extends PXNode {
 	private static final Rectangle2D.Float TEMP_RECTANGLE = new Rectangle2D.Float();
 	private static final Ellipse2D.Float TEMP_ELLIPSE = new Ellipse2D.Float();
 	private static final PAffineTransform TEMP_TRANSFORM = new PAffineTransform();
-	private static final BasicStroke DEFAULT_STROKE = new BasicStroke(1.0f);
+	private static final BasicStroke DEFAULT_STROKE = new BasicStroke(4f);
 	private static final Color DEFAULT_STROKE_PAINT = Color.black;
 
 	protected transient GeneralPath path;
@@ -177,6 +177,9 @@ public class PXPath extends PXNode {
 	}
 
 	public void setStrokePaint(Paint aPaint) {
+        if (this.strokePaint != null && this.strokePaint.equals(aPaint))
+            return;
+
 		Paint old = strokePaint;
 		strokePaint = aPaint;
 		invalidatePaint();
@@ -189,6 +192,9 @@ public class PXPath extends PXNode {
 	}
 
 	public void setStroke(Stroke aStroke) {
+        if (this.stroke != null && this.stroke.equals(aStroke))
+            return;
+
 		Stroke old = stroke;
 		stroke = aStroke;
 		updateBoundsFromPath();
@@ -228,15 +234,26 @@ public class PXPath extends PXNode {
 		}
 
 		Rectangle2D pathBounds = path.getBounds2D();
-		Rectangle2D pathStrokeBounds = getPathBoundsWithStroke();
-		double strokeOutset = Math.max(pathStrokeBounds.getWidth()
-				- pathBounds.getWidth(), pathStrokeBounds.getHeight()
-				- pathBounds.getHeight());
 
-		x += strokeOutset / 2;
-		y += strokeOutset / 2;
-		width -= strokeOutset;
-		height -= strokeOutset;
+        Rectangle2D pathStrokeBounds;
+        double strokeOutset;
+        if ((stroke==null) || (strokePaint == null)) {
+            pathStrokeBounds = pathBounds;
+            strokeOutset = 0;
+        }
+        else {
+            pathStrokeBounds = getPathBoundsWithStroke();
+            strokeOutset = Math.max(pathStrokeBounds.getWidth()
+                    - pathBounds.getWidth(), pathStrokeBounds.getHeight()
+                    - pathBounds.getHeight());
+
+            x += strokeOutset / 2;
+            y += strokeOutset / 2;
+            width -= strokeOutset;
+            height -= strokeOutset;
+        }
+
+
 
 		double scaleX = (width == 0 || pathBounds.getWidth() == 0) ? 1 : width
 				/ pathBounds.getWidth();
@@ -285,7 +302,7 @@ public class PXPath extends PXNode {
 	// Painting
 	// ****************************************************************
 
-	protected void paint(PPaintContext paintContext) {
+	protected void paint(final PPaintContext paintContext) {
 		Paint p = getPaint();
 		Graphics2D g2 = paintContext.getGraphics();
 
@@ -311,6 +328,9 @@ public class PXPath extends PXNode {
 	}
 
 	public void moveTo(float x, float y) {
+        Point2D p = path.getCurrentPoint();
+        if (p!=null && (p.getX() == x) && (p.getY() == y)) return;
+
 		path.moveTo(x, y);
 		firePropertyChange(PROPERTY_CODE_PATH, PROPERTY_PATH, null, path);
 		updateBoundsFromPath();
@@ -318,6 +338,9 @@ public class PXPath extends PXNode {
 	}
 
 	public void lineTo(float x, float y) {
+        Point2D p = path.getCurrentPoint();
+        if ((p.getX() == x) && (p.getY() == y)) return;
+
 		path.lineTo(x, y);
 		firePropertyChange(PROPERTY_CODE_PATH, PROPERTY_PATH, null, path);
 		updateBoundsFromPath();

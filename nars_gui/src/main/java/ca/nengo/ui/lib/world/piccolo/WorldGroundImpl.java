@@ -161,7 +161,7 @@ class GroundNode extends PXNode {
 
 	private final PNode edgeHolder;
 
-	public GroundNode() {
+    public GroundNode() {
 		super();
 		this.edgeHolder = new PNode();
 	}
@@ -171,11 +171,7 @@ class GroundNode extends PXNode {
 	}
 
 	public boolean containsEdge(PXEdge edge) {
-		if (edge.getParent() == edgeHolder) {
-			return true;
-		} else {
-			return false;
-		}
+		return edge.getParent() == edgeHolder;
 	}
 
 	public Collection<PXEdge> getEdges() {
@@ -190,23 +186,27 @@ class GroundNode extends PXNode {
 
 	@Override
 	public void setParent(PNode newParent) {
-		if (newParent != null && !(newParent instanceof PLayer)) {
+        if (getParent() == newParent) return;
+
+        if (newParent != null && !(newParent instanceof PLayer)) {
 			throw new InvalidParameterException();
 		}
+
 		super.setParent(newParent);
 		/*
 		 * Invoke later, otherwise the edge holder may be added below the
 		 * ground. We can't add directly here because this function is called
 		 * from also addChild
 		 */
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (getParent() != null) {
-					getParent().addChild(0, edgeHolder);
-				}
-			}
-		});
+		SwingUtilities.invokeLater(reparent);
 
 	}
+    final private Runnable reparent = new Runnable() {
+        public void run() {
+            if (getParent() != null) {
+                getParent().addChild(0, edgeHolder);
+            }
+        }
+    };
 
 }

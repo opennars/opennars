@@ -75,7 +75,7 @@ public class PXCamera extends PCamera implements PiccoloNodeInWorld {
 		return wo;
 	}
 
-	public boolean isAnimating() {
+	public boolean isAnimating(long now) {
 		return false;
 	}
 

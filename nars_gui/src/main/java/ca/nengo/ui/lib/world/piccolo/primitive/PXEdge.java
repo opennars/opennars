@@ -300,6 +300,8 @@ public class PXEdge extends PXPath implements PropertyChangeListener, Destroyabl
 	}
 
 	public void setDefaultColor(Color defaultColor) {
+        if (this.defaultColor!=null && this.defaultColor.equals(defaultColor))
+            return;
 		this.defaultColor = defaultColor;
 		stateChanged();
 	}
@@ -334,14 +336,12 @@ public class PXEdge extends PXPath implements PropertyChangeListener, Destroyabl
 	 *            direction of this edge.
 	 */
 	public void setPointerVisible(boolean visible) {
-		if (!visible) {
+		if (!visible && trianglePointer!=null) {
 			trianglePointer.removeFromParent();
 			trianglePointer = null;
-		} else {
-			if (trianglePointer == null) {
-				trianglePointer = new PointerTriangle(this);
-				addChild(trianglePointer);
-			}
+		} else if (trianglePointer==null) {
+            trianglePointer = new PointerTriangle(this);
+            addChild(trianglePointer);
 		}
 	}
 
