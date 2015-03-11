@@ -257,17 +257,17 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	///////////////////////////////////////////////////////////////////////////
 	/// Private members
 
-	private ArrayList<WorldObjectImpl> selectedObjects = null; // current selected objects
-	private ArrayList<WorldObjectImpl> allObjects = null;      // used in marquee code
-	private ArrayList<WorldObjectImpl> marqueeObjects = null;  // used in marquee code
+	private Collection<WorldObjectImpl> selectedObjects = null; // current selected objects
+	private Collection<WorldObjectImpl> allObjects = null;      // used in marquee code
+	///private Collection<WorldObjectImpl> marqueeObjects = null;  // used in marquee code
 
 	private DragAction dragAction;
 	
-	private PPath marquee = null;
+	//private PPath marquee = null;
 	private Paint marqueePaint;
 	private float marqueePaintTransparency = 1.0f;
 	private WorldSkyImpl marqueeParent = null; // Node that marquee is added to
-	private Paint marqueeStrokePaint;
+	//private Paint marqueeStrokePaint;
 	
 	private WorldObjectImpl pressNode = null; // Node pressed on (or null if none)
 	private Point2D presspt = null;
@@ -306,9 +306,9 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 			strokes[i] = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, dash, i);
 		}
 
-		selectedObjects = new ArrayList<WorldObjectImpl>();
-		allObjects = new ArrayList<WorldObjectImpl>();
-		marqueeObjects = new ArrayList<WorldObjectImpl>();
+		selectedObjects = new LinkedHashSet();
+		allObjects = new LinkedHashSet();
+		//marqueeObjects = new LinkedHashSet();
 		
 		addSelectionHandler(this);
 	}
@@ -422,11 +422,9 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	}
 	
 	public void undecorateSelectedNode(WorldObjectImpl node) {
-
 		Object frame = node.getPiccolo().getAttribute(SELECTION_HANDLER_FRAME_ATTR);
 		if (frame != null && frame instanceof SelectionBorder) {
 			((SelectionBorder) frame).destroy();
-
 		}
 		node.setSelected(false);
 		node.getPiccolo().addAttribute(SELECTION_HANDLER_FRAME_ATTR, null);
@@ -440,9 +438,10 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		
 		boolean changes = false;
 		for (int i = sel.size() - 1; i >= 0; i--) {
-			if (sel.get(i).isDestroyed()) {
-//				internalUnselect(sel.get(i));
-				selectedObjects.remove(sel.get(i));
+            WorldObject wo = sel.get(i);
+			if (wo.isDestroyed()) {
+				//internalUnselect(sel.get(i));
+				selectedObjects.remove(wo);
 				sel.remove(i);
 				changes = true;
 			}
@@ -544,7 +543,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	protected void drag(PInputEvent e) {
 		super.drag(e);
 
-		if (shouldStartMarqueeMode() && marquee != null) {
+		/*if (shouldStartMarqueeMode() && marquee != null) {
 			updateMarquee(e);
 
 			if (!isOptionSelection(e)) {
@@ -552,7 +551,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 			} else {
 				computeOptionMarqueeSelection(e);
 			}
-		} else {
+		} else */ {
 			dragStandardSelection(e);
 
 		}
@@ -563,7 +562,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	 * marquee
 	 */
 	protected void dragActivityStep(PInputEvent aEvent) {
-		if (marquee != null) {
+		/*if (marquee != null) {
 			float origStrokeNum = strokeNum;
 			
 			// Increment by partial steps to slow down animation
@@ -571,7 +570,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 			if ((int) strokeNum != (int) origStrokeNum) {
 				marquee.setStroke(strokes[(int) strokeNum]);
 			}
-		}
+		}*/
 	}
 
 	protected void dragStandardSelection(PInputEvent e) {
@@ -581,21 +580,33 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 
 		if (selectionEn.hasNext()) {
 			e.setHandled(true);
-			PDimension d = e.getDeltaRelativeTo(selectableParent.getPiccolo());
+            try {
+                PDimension d = e.getDeltaRelativeTo(selectableParent.getPiccolo());
 
-            final long now = System.currentTimeMillis();
+                final long now = System.currentTimeMillis();
 
-			while (selectionEn.hasNext()) {
-				WorldObjectImpl node = selectionEn.next();
-				if (!node.isAnimating(now)) {
-					PDimension gDist = new PDimension();
-					gDist.setSize(d);
+                while (selectionEn.hasNext()) {
+                    WorldObjectImpl node = selectionEn.next();
+                    if (!node.isAnimating(now)) {
+                        PDimension gDist = new PDimension();
+                        gDist.setSize(d);
 
-					node.localToParent(node.globalToLocal(gDist));
+                        node.localToParent(node.globalToLocal(gDist));
 
-					node.dragOffset(gDist.getWidth(), gDist.getHeight());
-				}
-			}
+                        node.dragOffset(gDist.getWidth(), gDist.getHeight());
+                    }
+                }
+            }
+            catch (RuntimeException ee) {
+
+                /*
+                Exception in thread "AWT-EventQueue-0" java.lang.RuntimeException: Node could not be found on pick path
+	at org.piccolo2d.util.PPickPath.getPathTransformTo(PPickPath.java:320)
+	at org.piccolo2d.util.PPickPath.canvasToLocal(PPickPath.java:393)
+	at org.piccolo2d.event.PInputEvent.getDeltaRelativeTo(PInputEvent.java:569)
+                 */
+                return;
+            }
 		}
 	}
 
@@ -606,11 +617,11 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	}
 
 	public void endSelection(boolean unselect) {
-		if (marquee != null) {
+		/*if (marquee != null) {
 			// Remove marquee
 			marquee.removeFromParent();
 			marquee = null;
-		}
+		}*/
 		if (!shouldStartMarqueeMode()) {
 			// store the parent, in case pressNode is destroyed and we want to select it
 			WorldObject parent = null;
@@ -654,21 +665,20 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	///////////////////////////////////////////////////////////////////////////
 	/// Marquee
 	protected void initializeMarquee(PInputEvent e) {
-		marquee = PPath.createRectangle((float) presspt.getX(), (float) presspt.getY(), 0, 0);
+		/*marquee = PPath.createRectangle((float) presspt.getX(), (float) presspt.getY(), 0, 0);
 		marquee.setPaint(marqueePaint);
 		marquee.setTransparency(marqueePaintTransparency);
 		marquee.setStrokePaint(marqueeStrokePaint);
 		marquee.setStroke(strokes[0]);
 
 		marqueeParent.getPiccolo().addChild(marquee);
-
-		marqueeObjects.clear();
+		marqueeObjects.clear();*/
 	}
 	
 	protected PBounds getMarqueeBounds() {
-		if (marquee != null) {
+		/*if (marquee != null) {
 			return marquee.getBounds();
-		}
+		}*/
 		return new PBounds();
 	}
 
@@ -711,7 +721,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	}
 
 	public void setMarqueeStrokePaint(Paint marqueeStrokePaint) {
-		this.marqueeStrokePaint = marqueeStrokePaint;
+		//this.marqueeStrokePaint = marqueeStrokePaint;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -737,8 +747,8 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		// marquee.globalToLocal(b);		
 
 
-		marquee.setBounds((float) marqueeBounds.x, (float) marqueeBounds.y, (float) marqueeBounds.width,
-				(float) marqueeBounds.height);
+		/*marquee.setBounds((float) marqueeBounds.x, (float) marqueeBounds.y, (float) marqueeBounds.width,
+				(float) marqueeBounds.height);*/
 
 		allObjects.clear();
 		PNodeFilter filter = new BoundsFilter(b);
@@ -777,9 +787,9 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		selectionEn = allObjects.iterator();
 		while (selectionEn.hasNext()) {
 			WorldObjectImpl node = selectionEn.next();
-			if (!selectedObjects.contains(node) && !marqueeObjects.contains(node) && isSelectable(node)) {
+			/*if (!selectedObjects.contains(node) && !marqueeObjects.contains(node) && isSelectable(node)) {
 				marqueeObjects.add(node);
-			} else if (!isSelectable(node)) {
+			} else */ if (!isSelectable(node)) {
 				selectionEn.remove();
 			}
 		}
@@ -793,8 +803,8 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		Iterator<WorldObjectImpl> selectionEn = selectedObjects.iterator();
 		while (selectionEn.hasNext()) {
 			WorldObjectImpl node = selectionEn.next();
-			if (!allObjects.contains(node) && marqueeObjects.contains(node)) {
-				marqueeObjects.remove(node);
+			if (!allObjects.contains(node) /*&& marqueeObjects.contains(node)*/) {
+				//marqueeObjects.remove(node);
 				unselectList.add(node);
 			}
 		}
@@ -804,9 +814,9 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		selectionEn = allObjects.iterator();
 		while (selectionEn.hasNext()) {
 			WorldObjectImpl node = selectionEn.next();
-			if (!selectedObjects.contains(node) && !marqueeObjects.contains(node) && isSelectable(node)) {
+			/*if (!selectedObjects.contains(node) && !marqueeObjects.contains(node) && isSelectable(node)) {
 				marqueeObjects.add(node);
-			} else if (!isSelectable(node)) {
+			} else */if (!isSelectable(node)) {
 				selectionEn.remove();
 			}
 		}
@@ -815,7 +825,8 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	}
 
 	protected boolean shouldStartMarqueeMode() {
-		return ((pressNode == null || pressNode instanceof Window) && world.isSelectionMode());
+        return false;
+		//return ((pressNode == null || pressNode instanceof Window) && world.isSelectionMode());
 	}
 
 	protected void startMarqueeSelection(PInputEvent e) {
@@ -842,7 +853,8 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 			node.globalToLocal(localBounds);
 
 			boolean boundsIntersects = node.intersects(localBounds);
-			boolean isMarquee = (node == marquee);
+			//boolean isMarquee = (node == marquee);
+            boolean isMarquee = false;
 
 			if (node instanceof PiccoloNodeInWorld) {
 				WorldObject wo = ((PiccoloNodeInWorld) node).getWorldObject();

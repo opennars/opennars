@@ -24,7 +24,7 @@ public class NengoStyle {
 	public static final Color COLOR_FOREGROUND = new Color(128,128,128,192);//Color.lightGray;
 	public static final Color COLOR_BACKGROUND2 = Color.darkGray;
 	public static final Color COLOR_FOREGROUND2 = Color.gray;
-	public static final Color COLOR_BORDER_SELECTED = Color.orange;
+	public static final Color COLOR_BORDER_SELECTED =  new Color(20, 225, 20, 120);
 	public static final Color COLOR_DARK_BLUE = new Color(0, 0, 80);
 	
 	public static final Color COLOR_CONFIGURE_BACKGROUND = Color.white;
@@ -75,7 +75,7 @@ public class NengoStyle {
 	public static final Color COLOR_MENU_BACKGROUND = Color.black;
 	public static final Color COLOR_NOTIFICATION = Color.orange;
 
-	public static final Color COLOR_TOOLTIP_BORDER = new Color(100, 149, 237);
+	public static final Color COLOR_TOOLTIP_BORDER = new Color(50, 109, 207, 200);
 
 	/*
 	 * Fonts

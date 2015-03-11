@@ -41,10 +41,10 @@ public class PXNode extends PNode implements PiccoloNodeInWorld {
 		addPropertyChangeListener(PNode.PROPERTY_TRANSFORM, new TransformChangeListener());
 	}
 
-    @Override
-    protected void firePropertyChange(int propertyCode, String propertyName, Object oldValue, Object newValue) {
-        super.firePropertyChange(propertyCode, propertyName, oldValue, newValue);
-    }
+//    @Override
+//    protected void firePropertyChange(int propertyCode, String propertyName, Object oldValue, Object newValue) {
+//        super.firePropertyChange(propertyCode, propertyName, oldValue, newValue);
+//    }
 
     @Override
 	protected final void layoutChildren() {
@@ -172,8 +172,11 @@ public class PXNode extends PNode implements PiccoloNodeInWorld {
 
 	@Override
 	public void setVisible(boolean isVisible) {
-		super.setVisible(isVisible);
-		signalGlobalBoundsChanged();
+        boolean oldVis = getVisible();
+        super.setVisible(isVisible);
+        if (isVisible!=oldVis) {
+            signalGlobalBoundsChanged();
+        }
 	}
 
 	public void setWorldObject(WorldObject worldObjectParent) {

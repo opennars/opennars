@@ -15,9 +15,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 
 /**
@@ -27,6 +25,13 @@ import java.util.Iterator;
  * @author Shu Wu
  */
 public class WorldGroundImpl extends WorldLayerImpl implements WorldLayer {
+
+    /*
+         * Convenient storage of all children
+         */
+    private final ObjectSet<WorldObject> children = new ObjectSet<WorldObject>();
+
+    private final GroundNode myLayerNode;
 
 	/**
 	 * Adds a little pizzaz when adding new objects
@@ -67,12 +72,7 @@ public class WorldGroundImpl extends WorldLayerImpl implements WorldLayer {
 		wo.animateToPositionScaleRotation(finalPosition.getX(), finalPosition.getY(), 1, 0, 500);
 	}
 
-	/*
-	 * Convenient storage of all children
-	 */
-	private final ObjectSet<WorldObject> children = new ObjectSet<WorldObject>();
 
-	private final GroundNode myLayerNode;
 
 	public WorldGroundImpl() {
 		super("Ground", new GroundNode());
@@ -84,12 +84,6 @@ public class WorldGroundImpl extends WorldLayerImpl implements WorldLayer {
 	protected void prepareForDestroy() {
 		myLayerNode.removeFromParent();
 		super.prepareForDestroy();
-	}
-
-	@Override
-	public void addChild(WorldObject wo, int index) {
-
-		super.addChild(wo, index);
 	}
 
 	public void addEdge(PXEdge edge) {
@@ -175,14 +169,16 @@ class GroundNode extends PXNode {
 	}
 
 	public Collection<PXEdge> getEdges() {
-		ArrayList<PXEdge> edges = new ArrayList<PXEdge>(edgeHolder.getChildrenCount());
-
-		Iterator<?> it = edgeHolder.getChildrenIterator();
-		while (it.hasNext()) {
-			edges.add((PXEdge) it.next());
-		}
-		return edges;
-	}
+//		ArrayList<PXEdge> edges = new ArrayList<PXEdge>(edgeHolder.getChildrenCount());
+//
+//		Iterator<?> it = edgeHolder.getChildrenIterator();
+//		while (it.hasNext()) {
+//			edges.add((PXEdge) it.next());
+//		}
+//        return edges;
+        //return new ArrayList(edgeHolder.getChildrenReference());
+        return edgeHolder.getChildrenReference();
+    }
 
 	@Override
 	public void setParent(PNode newParent) {

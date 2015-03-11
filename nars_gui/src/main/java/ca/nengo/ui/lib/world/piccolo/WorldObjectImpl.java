@@ -796,6 +796,8 @@ public class WorldObjectImpl implements WorldObject {
 
     public void setOffset(double arg0, double arg1) {
         myPNode.setOffset(arg0, arg1);
+        firePropertyChange(Property.GLOBAL_BOUNDS);
+
     }
 
     public void setOffset(Point2D arg0) {

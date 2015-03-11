@@ -75,6 +75,8 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
             if (isResizable())
                 BoundsHandle.addBoundsHandlesTo(this);
 
+
+
             setIcon(newIcon(this));
 
             setSize(width, height);
@@ -88,7 +90,6 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
 
         @Override
         public void dragOffset(double dx, double dy) {
-
             super.dragOffset(dx, dy);
         }
 

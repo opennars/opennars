@@ -8,8 +8,8 @@ import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.action.RemoveObjectsAction;
 import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.ui.lib.action.ZoomToFitAction;
-import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
+import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
@@ -30,6 +30,7 @@ import java.awt.geom.Rectangle2D;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Implementation of World. World holds World Objects and has navigation and
@@ -183,10 +184,12 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		mySky.getCamera().addInputEventListener(new TooltipPickHandler(this, 1000, 0));
 		mySky.getCamera().addInputEventListener(new MouseHandler(this));
 
+
 		selectionEventHandler = new SelectionHandler(this, panHandler);
 		selectionEventHandler.setMarqueePaint(NengoStyle.COLOR_BORDER_SELECTED);
 		selectionEventHandler.setMarqueeStrokePaint(NengoStyle.COLOR_BORDER_SELECTED);
 		selectionEventHandler.setMarqueePaintTransparency(0.1f);
+
 
 		getPiccolo().addInputEventListener(new EventConsumer());
 		setStatusBarHandler(new RootWorldStatusHandler(this));
@@ -303,20 +306,16 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 
 	/**
 	 * @return A collection of all the windows in this world
+     * TODO replace with iterator to avoid copying a new collection
 	 */
-	public Collection<Window> getWindows() {
+	@Deprecated public Collection<Window> getWindows() {
 		Collection<Window> skyWindows = getSky().getWindows();
 		Collection<Window> groundWindows = getGround().getWindows();
 
-		ArrayList<Window> allWindows = new ArrayList<Window>(skyWindows.size()
+		List<Window> allWindows = new ArrayList<Window>(skyWindows.size()
 				+ groundWindows.size());
-
-		for (Window window : skyWindows) {
-			allWindows.add(window);
-		}
-		for (Window window : groundWindows) {
-			allWindows.add(window);
-		}
+        allWindows.addAll(skyWindows);
+        allWindows.addAll(groundWindows);
 
 		return allWindows;
 	}

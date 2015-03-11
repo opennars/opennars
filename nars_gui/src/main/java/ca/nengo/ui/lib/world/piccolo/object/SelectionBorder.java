@@ -101,7 +101,6 @@ public class SelectionBorder implements Listener {
 			setSelected(null);
 		}
 		updateBounds();
-
 	}
 
 	public void setFrameColor(Color frameColor) {
@@ -111,6 +110,8 @@ public class SelectionBorder implements Listener {
 
 	public void setSelected(WorldObject newSelected) {
 		if (newSelected == selectedObj) {
+            if (selectedObj!=null)
+                updateBounds();
 			return;
 		}
 
@@ -122,7 +123,6 @@ public class SelectionBorder implements Listener {
 
 		selectedObj = newSelected;
 		if (selectedObj != null) {
-
 			selectedObj.addPropertyChangeListener(Property.GLOBAL_BOUNDS, this);
 			selectedObj.addPropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
 
