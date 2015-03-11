@@ -20,6 +20,7 @@ import ca.nengo.ui.lib.world.piccolo.primitive.PXGrid;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXLayer;
 import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.util.NengoClipboard;
+import com.google.common.collect.Iterables;
 import org.piccolo2d.PRoot;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.util.PBounds;
@@ -30,7 +31,6 @@ import java.awt.geom.Rectangle2D;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Implementation of World. World holds World Objects and has navigation and
@@ -308,16 +308,8 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 	 * @return A collection of all the windows in this world
      * TODO replace with iterator to avoid copying a new collection
 	 */
-	@Deprecated public Collection<Window> getWindows() {
-		Collection<Window> skyWindows = getSky().getWindows();
-		Collection<Window> groundWindows = getGround().getWindows();
-
-		List<Window> allWindows = new ArrayList<Window>(skyWindows.size()
-				+ groundWindows.size());
-        allWindows.addAll(skyWindows);
-        allWindows.addAll(groundWindows);
-
-		return allWindows;
+	public Iterable<Window> getWindows() {
+        return Iterables.concat(getSky().getWindows(), getGround().getWindows());
 	}
 
 	/*

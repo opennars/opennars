@@ -140,19 +140,19 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 	/**
 	 * @param weights Each row is used as a 1 by m matrix of weights in a new termination on the nth expandable node
 	 *
-	 * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
+	 * @see ca.nengo.model.ExpandableNode#addTarget(java.lang.String, float[][], float, boolean)
 	 */
-    public synchronized NTarget addTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
-    	return addTermination(name, weights, new IndicatorPDF(tauPSC,tauPSC), null, modulatory);
+    public synchronized NTarget addTarget(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
+    	return addTarget(name, weights, new IndicatorPDF(tauPSC, tauPSC), null, modulatory);
 	}
     
     /**
 	 * @param weights Each row is used as a 1 by m matrix of weights in a new termination on the nth expandable node
 	 * @param tauPSC PDF from which psc time constants will be sampled
 	 *
-	 * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
+	 * @see ca.nengo.model.ExpandableNode#addTarget(java.lang.String, float[][], float, boolean)
 	 */
-    public synchronized NTarget addTermination(String name, float[][] weights, PDF tauPSC, PDF delays, boolean modulatory) throws StructuralException {
+    public synchronized NTarget addTarget(String name, float[][] weights, PDF tauPSC, PDF delays, boolean modulatory) throws StructuralException {
     	for(NTarget t : getTargets()) {
         	if(t.getName().equals(name))
         		throw new StructuralException("The ensemble already contains a termination named " + name);
@@ -172,7 +172,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 			}
 			
 			if(delays == null)
-				components[i] = myExpandableNodes[i].addTermination(name, new float[][]{weights[i]}, tauPSC.sample()[0], modulatory);
+				components[i] = myExpandableNodes[i].addTarget(name, new float[][]{weights[i]}, tauPSC.sample()[0], modulatory);
 			else {
 				if(myExpandableNodes[i] instanceof ExpandableSpikingNeuron) 
 					components[i] = ((ExpandableSpikingNeuron)myExpandableNodes[i]).addDelayedTermination(name, 
@@ -192,20 +192,20 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 
 	/**
 	 * @throws StructuralException if Termination does not exist
-	 * @see ca.nengo.model.ExpandableNode#removeTermination(java.lang.String)
+	 * @see ca.nengo.model.ExpandableNode#removeTarget(java.lang.String)
 	 */
 	@Override
-    public synchronized NTarget removeTermination(String name) throws StructuralException {
+    public synchronized NTarget removeTarget(String name) throws StructuralException {
 		if (myExpandedTerminations.containsKey(name)) {
 		    NTarget result = myExpandedTerminations.remove(name);
 			for (ExpandableNode myExpandableNode : myExpandableNodes) {
-				myExpandableNode.removeTermination(name);
+				myExpandableNode.removeTarget(name);
 			}
 
 			fireVisibleChangeEvent();
 			return result;
 		} else if (getTarget(name) != null) {
-			return super.removeTermination(name);
+			return super.removeTarget(name);
 		}
 		throw new StructuralException("Termination " + name + " does not exist");
 	}

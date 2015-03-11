@@ -72,7 +72,6 @@ public class TooltipWrapper extends WorldObjectImpl implements Listener {
 	private void updateBounds() {
 		tooltip.setOffset(5, 5);
 		setBounds(0, 0, tooltip.getWidth() + 10, tooltip.getHeight() + 10);
-
 	}
 
 	/**
@@ -124,7 +123,13 @@ public class TooltipWrapper extends WorldObjectImpl implements Listener {
 			return;
 		}
 
-		PActivity fadeOutActivity = new Fader(this, 100, 0);
+		PActivity fadeOutActivity = new Fader(this, 100, 0) {
+
+            @Override
+            protected void activityFinished() {
+                TooltipWrapper.this.destroy();
+            }
+        };
 		if (fadeInActivity != null) {
 
 			if ((fadeInActivity.getStartTime() + fadeInActivity.getDuration()) > System
@@ -138,17 +143,6 @@ public class TooltipWrapper extends WorldObjectImpl implements Listener {
 
 		UIEnvironment.getInstance().addActivity(fadeOutActivity);
 
-		PActivity destroyActivity = new PActivity(0) {
-
-			@Override
-			protected void activityStarted() {
-				TooltipWrapper.this.destroy();
-			}
-
-		};
-
-		UIEnvironment.getInstance().addActivity(destroyActivity);
-		destroyActivity.startAfter(fadeOutActivity);
 
 	}
 

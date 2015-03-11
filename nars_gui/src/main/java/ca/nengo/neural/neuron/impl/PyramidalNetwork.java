@@ -544,7 +544,7 @@ public class PyramidalNetwork extends NetworkImpl
 
         while (i<this.size)
         {
-            ((GroupImpl)this.soma).addTermination("d"+i, solveEncoders(i), (float) 0.007, false);
+            ((GroupImpl)this.soma).addTarget("d" + i, solveEncoders(i), (float) 0.007, false);
             i = i +1;
         }
 

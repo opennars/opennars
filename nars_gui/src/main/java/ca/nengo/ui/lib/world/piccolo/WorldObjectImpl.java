@@ -10,6 +10,7 @@ import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXNode;
 import ca.nengo.ui.lib.world.piccolo.primitive.PiccoloNodeInWorld;
+import com.google.common.base.Function;
 import com.google.common.collect.*;
 import nars.core.Parameters;
 import org.piccolo2d.PCamera;
@@ -25,8 +26,10 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.security.InvalidParameterException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -73,6 +76,13 @@ public class WorldObjectImpl implements WorldObject {
 
     //private Map<Property, Map<Listener, ListenerAdapter>> eventListenerMap;
     private Table<Property, Listener, ListenerAdapter> eventListenerMap;
+
+
+    /**
+     * Perform any operations before being destroyed
+     */
+    protected void prepareForDestroy() {
+    }
 
     /**
      * Whether this object has been destroyed
@@ -154,22 +164,35 @@ public class WorldObjectImpl implements WorldObject {
         this(name, null);
     }
 
-    @Deprecated private Collection<WorldObject> getChildrenInternal() {
-        List piccoloChildren = getPiccolo().getChildrenReference();
-        int numChildren = piccoloChildren.size();
-        List<WorldObject> objects = new ArrayList(numChildren);
+//    @Deprecated private Collection<WorldObject> getChildrenInternal() {
+//        List piccoloChildren = getPiccolo().getChildrenReference();
+//        int numChildren = piccoloChildren.size();
+//        List<WorldObject> objects = new ArrayList(numChildren);
+//
+//        for (int i = 0; i < numChildren; i++) {
+//            Object next = piccoloChildren.get(i);
+//            if (next instanceof PiccoloNodeInWorld) {
+//                WorldObject wo = ((PiccoloNodeInWorld) next).getWorldObject();
+//
+//                if (wo != null) {
+//                    objects.add(wo);
+//                }
+//            }
+//        }
+//        return objects;
+//    }
 
-        for (int i = 0; i < numChildren; i++) {
-            Object next = piccoloChildren.get(i);
-            if (next instanceof PiccoloNodeInWorld) {
-                WorldObject wo = ((PiccoloNodeInWorld) next).getWorldObject();
+    public int getChildrenCount() {
+        return Iterables.size(getChildren());
+    }
 
-                if (wo != null) {
-                    objects.add(wo);
-                }
-            }
-        }
-        return objects;
+    public Iterable<WorldObject> getChildren() {
+        return Iterables.transform(Iterables.filter(getPiccolo().getChildrenReference(), PiccoloNodeInWorld.class),
+                new Function<PiccoloNodeInWorld,WorldObject>() {
+                    @Override public WorldObject apply(PiccoloNodeInWorld input) {
+                        return input.getWorldObject();
+                    }
+                });
     }
 
     /**
@@ -194,12 +217,6 @@ public class WorldObjectImpl implements WorldObject {
     // return myPNode.addActivity(arg0);
     // }
 
-    /**
-     * Perform any operations before being destroyed
-     */
-    protected void prepareForDestroy() {
-
-    }
 
     public void addChild(WorldObject wo) {
         addChild(wo, -1);
@@ -313,31 +330,34 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public final void destroy() {
-        if (!isDestroyed) {
-            isDestroyed = true;
+        if (isDestroyed)
+            return;
+        isDestroyed = true;
 
-            prepareForDestroy();
+        prepareForDestroy();
 
-            destroyChildren();
 
-            if (myPNode instanceof PXNode) {
-                ((PXNode) myPNode).removeFromWorld();
-            }
-
+        Collection children = getChildrenReference();
+        myPNode.removeAllChildren();
+        if (myPNode instanceof PXNode) {
+            ((PXNode) myPNode).removeFromWorld();
         }
-    }
+        else {
+            myPNode.removeFromParent();
+        }
 
-    public final void destroyChildren() {
-        /*
-         * Copy to list to avoid concurrency error
-         */
-        List<WorldObject> objects = new ArrayList<WorldObject>(getChildrenCount());
-        for (WorldObject wo : getChildren()) {
-            objects.add(wo);
+        for (Object o : children) {
+            if (o instanceof WorldObject)
+                ((WorldObject)o).destroy();
         }
-        for (WorldObject wo : objects) {
-            wo.destroy();
-        }
+
+        if (eventListenerMap!=null)
+            eventListenerMap.clear();
+
+        if (childListeners!=null)
+            childListeners.clear();
+
+        myPNode = null;
     }
 
     /*
@@ -384,14 +404,11 @@ public class WorldObjectImpl implements WorldObject {
         return myPNode.getBounds();
     }
 
-    public Collection<WorldObject> getChildren() {
-        return getChildrenInternal();
+
+    public Collection<WorldObject> getChildrenReference() {
+        return getPiccolo().getChildrenReference();
     }
 
-    public int getChildrenCount() {
-        //TODO this is inefficient to construct the array for this
-        return getChildrenInternal().size();
-    }
 
     public PBounds getFullBoundsClone() {
         return myPNode.getFullBounds();

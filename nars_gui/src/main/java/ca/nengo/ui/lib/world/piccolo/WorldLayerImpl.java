@@ -4,9 +4,7 @@ import ca.nengo.ui.lib.world.WorldLayer;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.lib.world.piccolo.primitive.PiccoloNodeInWorld;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.collect.Iterables;
 
 public abstract class WorldLayerImpl extends WorldObjectImpl implements WorldLayer {
 
@@ -24,14 +22,8 @@ public abstract class WorldLayerImpl extends WorldObjectImpl implements WorldLay
 		super(name, node);
 	}
 
-	public List<Window> getWindows() {
-		ArrayList<Window> windows = new ArrayList<Window>(5);
-		for (WorldObject wo : getChildren()) {
-			if (wo instanceof Window) {
-				windows.add((Window) wo);
-			}
-		}
-		return windows;
+	public Iterable<Window> getWindows() {
+        return Iterables.filter(getChildren(), Window.class);
 	}
 
 	/**

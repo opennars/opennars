@@ -588,7 +588,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      *      only have modulatory effects, eg on plasticity, which must be defined elsewhere).
      * @return Termination that was added
      * @throws StructuralException if weight matrix dimensionality is incorrect
-     * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
+     * @see ca.nengo.model.ExpandableNode#addTarget(java.lang.String, float[][], float, boolean)
      */
     public synchronized NTarget addPESTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
         //TODO: check name for duplicate
@@ -605,7 +605,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
                 throw new StructuralException("Equal numbers of weights are needed for termination onto each node");
             }
 
-            components[i] = myExpandableNodes[i].addTermination(name, new float[][]{weights[i]}, tauPSC, modulatory);
+            components[i] = myExpandableNodes[i].addTarget(name, new float[][]{weights[i]}, tauPSC, modulatory);
         }
 
         PlasticGroupTarget result;
@@ -656,7 +656,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      *      only have modulatory effects, eg on plasticity, which must be defined elsewhere).
      * @return Termination that was added
      * @throws StructuralException if weight matrix dimensionality is incorrect
-     * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
+     * @see ca.nengo.model.ExpandableNode#addTarget(java.lang.String, float[][], float, boolean)
      */
     public synchronized NTarget addHPESTermination(String name, float[][] weights, float tauPSC, boolean modulatory, float[] theta) throws StructuralException {
         //TODO: check name for duplicate
@@ -673,7 +673,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
                 throw new StructuralException("Equal numbers of weights are needed for termination onto each node");
             }
 
-            components[i] = myExpandableNodes[i].addTermination(name, new float[][]{weights[i]}, tauPSC, modulatory);
+            components[i] = myExpandableNodes[i].addTarget(name, new float[][]{weights[i]}, tauPSC, modulatory);
         }
 
         PlasticGroupTarget result;
@@ -724,7 +724,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      *      only have modulatory effects, eg on plasticity, which must be defined elsewhere).
      * @return Termination that was added
      * @throws StructuralException if weight matrix dimensionality is incorrect
-     * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
+     * @see ca.nengo.model.ExpandableNode#addTarget(java.lang.String, float[][], float, boolean)
      */
     public synchronized NTarget addBCMTermination(String name, float[][] weights, float tauPSC, boolean modulatory, float[] theta) throws StructuralException {
         //TODO: check name for duplicate
@@ -741,7 +741,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
                 throw new StructuralException("Equal numbers of weights are needed for termination onto each node");
             }
 
-            components[i] = myExpandableNodes[i].addTermination(name, new float[][]{weights[i]}, tauPSC, modulatory);
+            components[i] = myExpandableNodes[i].addTarget(name, new float[][]{weights[i]}, tauPSC, modulatory);
         }
 
         PlasticGroupTarget result;
@@ -798,7 +798,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
                 throw new StructuralException("Equal numbers of weights are needed for termination onto each node");
             }
 
-            components[i] = myExpandableNodes[i].addTermination(name, new float[][]{weights[i]}, tauPSC, modulatory);
+            components[i] = myExpandableNodes[i].addTarget(name, new float[][]{weights[i]}, tauPSC, modulatory);
         }
 
         PlasticGroupTarget result;

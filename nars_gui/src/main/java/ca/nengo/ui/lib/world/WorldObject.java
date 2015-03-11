@@ -87,7 +87,6 @@ public interface WorldObject extends NamedObject, Destroyable {
      */
     public void childRemoved(WorldObject wo);
 
-    public void destroyChildren();
 
     /**
      * Called if this object is double clicked on
@@ -122,7 +121,7 @@ public interface WorldObject extends NamedObject, Destroyable {
      *
      * @return reference to the children list
      */
-    public Collection<WorldObject> getChildren();
+    public Iterable<WorldObject> getChildren();
 
     /**
      * Schedule the given activity with the root, note that only scheduled

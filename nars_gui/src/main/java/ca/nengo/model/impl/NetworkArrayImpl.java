@@ -231,7 +231,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 			float[][] matrix = MU.copy(weights, i * nodeNeuronCount, 0, nodeNeuronCount, -1);
 			assert matrix[0].length == myNodeDimensions[i];
 
-			targets[i] = myNodes[i].addTermination(name, matrix, tauPSC, modulatory);
+			targets[i] = myNodes[i].addTarget(name, matrix, tauPSC, modulatory);
 		}
 		
 		exposeTermination(new GroupTarget(this, name, targets), name);
@@ -265,7 +265,7 @@ public class NetworkArrayImpl extends NetworkImpl {
 		
 		for (int i = 0; i < myNumNodes; i++) {
 			assert weights[i][0].length == myNodeDimensions[i];
-			targets[i] = myNodes[i].addTermination(name, weights[i], tauPSC, modulatory);
+			targets[i] = myNodes[i].addTarget(name, weights[i], tauPSC, modulatory);
 		}
 		
 		exposeTermination(new GroupTarget(this, name, targets), name);
@@ -355,8 +355,8 @@ public class NetworkArrayImpl extends NetworkImpl {
 		for(int i=0; i < myNumNodes; i++) {
 			for(int j=0; j < index.length; j++) {
 				if(index[j] == i) {
-					NTarget t = myNodes[i].addTermination(name, MU.copy(matrix,count*myNodes[i].getNeurons(),0,myNodes[i].getNeurons(),-1),
-							tauPSC, isModulatory);
+					NTarget t = myNodes[i].addTarget(name, MU.copy(matrix, count * myNodes[i].getNeurons(), 0, myNodes[i].getNeurons(), -1),
+                            tauPSC, isModulatory);
 					count++;
 					targets.add(t);
 					break;

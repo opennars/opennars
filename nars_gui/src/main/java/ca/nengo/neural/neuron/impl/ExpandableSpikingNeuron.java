@@ -70,9 +70,9 @@ public class ExpandableSpikingNeuron extends SpikingNeuron implements Expandable
 	}
 
 	/**
-	 * @see ca.nengo.model.ExpandableNode#addTermination(java.lang.String, float[][], float, boolean)
+	 * @see ca.nengo.model.ExpandableNode#addTarget(java.lang.String, float[][], float, boolean)
 	 */
-    public NTarget addTermination(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
+    public NTarget addTarget(String name, float[][] weights, float tauPSC, boolean modulatory) throws StructuralException {
     	if ( !(mySynapticIntegrator instanceof ExpandableSynapticIntegrator) ) {
 			throw new StructuralException("Underlying SynapticIntegrator is not expandable");
 		}
@@ -107,9 +107,9 @@ public class ExpandableSpikingNeuron extends SpikingNeuron implements Expandable
 	}
 
 	/**
-	 * @see ca.nengo.model.ExpandableNode#removeTermination(java.lang.String)
+	 * @see ca.nengo.model.ExpandableNode#removeTarget(java.lang.String)
 	 */
-    public NTarget removeTermination(String name) throws StructuralException {
+    public NTarget removeTarget(String name) throws StructuralException {
 		if ( !(mySynapticIntegrator instanceof ExpandableSynapticIntegrator) ) {
 			throw new StructuralException("Underlying SynapticIntegrator is not expandable");
 		}

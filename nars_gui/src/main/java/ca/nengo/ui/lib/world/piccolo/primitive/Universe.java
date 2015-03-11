@@ -5,7 +5,6 @@ import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Destroyable;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.WorldObject.ChildListener;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.WorldObject.Property;
 import ca.nengo.ui.lib.world.elastic.ElasticWorld;
@@ -238,26 +237,26 @@ public class Universe extends PCanvas implements Destroyable {
 			throw new UnsupportedOperationException("Can only initialize once");
 		}
 
-		getWorld().getSky().addChildrenListener(new ChildListener() {
-
-			public void childAdded(WorldObject wo) {
-				if (wo instanceof Window) {
-					//UIEnvironment.getInstance().setTopWindow((Window) wo);
-				}
-
-			}
-
-			public void childRemoved(WorldObject wo) {
-				if (wo instanceof Window) {
-					List<Window> windows = getWorld().getSky().getWindows();
-					if (windows.size() > 0) {
-						//UIEnvironment.getInstance().setTopWindow(windows.get(windows.size() - 1));
-					} else {
-						//UIEnvironment.getInstance().setTopWindow(null);
-					}
-				}
-			}
-		});
+//		getWorld().getSky().addChildrenListener(new ChildListener() {
+//
+//			public void childAdded(WorldObject wo) {
+//				if (wo instanceof Window) {
+//					//UIEnvironment.getInstance().setTopWindow((Window) wo);
+//				}
+//
+//			}
+//
+//			public void childRemoved(WorldObject wo) {
+//				if (wo instanceof Window) {
+//					List<Window> windows = getWorld().getSky().getWindows();
+//					if (windows.size() > 0) {
+//						//UIEnvironment.getInstance().setTopWindow(windows.get(windows.size() - 1));
+//					} else {
+//						//UIEnvironment.getInstance().setTopWindow(null);
+//					}
+//				}
+//			}
+//		});
 	}
 
 	@Override

@@ -108,11 +108,11 @@ public class SelectionBorder implements Listener {
 		updateBounds();
 	}
 
-	public void setSelected(WorldObject newSelected) {
+	public boolean setSelected(WorldObject newSelected) {
 		if (newSelected == selectedObj) {
             if (selectedObj!=null)
                 updateBounds();
-			return;
+			return false;
 		}
 
 		if (selectedObj != null) {
@@ -132,7 +132,7 @@ public class SelectionBorder implements Listener {
 
 			frame.removeFromParent();
 		}
-
+        return true;
 	}
 
 }

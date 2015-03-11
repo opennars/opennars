@@ -32,7 +32,6 @@ import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import org.piccolo2d.nodes.PText;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -77,8 +76,8 @@ public class Tooltip extends WorldObjectImpl {
 
         layoutY += tag.getHeight() + 10;
 
-        Collection<WorldObject> existingChildren = getChildren();
-        for (WorldObject o : existingChildren)
+        //Collection<WorldObject> existingChildren = getChildren();
+        for (WorldObject o : getChildren())
             removeChild(o);
 
 		List<ITooltipPart> parts = tooltipBuilder.getParts();

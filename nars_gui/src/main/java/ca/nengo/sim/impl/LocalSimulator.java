@@ -147,7 +147,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     /**
      * @see ca.nengo.sim.Simulator#run(float, float, float)
      */
-    public synchronized void run(float startTime, float endTime, float stepSize)
+    public void run(float startTime, float endTime, float stepSize)
             throws SimulationException {
         this.run(startTime, endTime, stepSize, true);
     }

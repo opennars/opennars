@@ -54,7 +54,7 @@ import java.util.List;
  * 
  * @author Bryan Tripp
  */
-public abstract class Plotter {
+@Deprecated public abstract class Plotter {
 	
 	private static Plotter ourInstance;
 	

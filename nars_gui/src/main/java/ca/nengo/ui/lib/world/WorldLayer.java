@@ -28,7 +28,7 @@ public interface WorldLayer extends WorldObject {
 	/**
 	 * @return A Collection of windows
 	 */
-	public Collection<Window> getWindows();
+	public Iterable<Window> getWindows();
 
 	/**
 	 * @param world

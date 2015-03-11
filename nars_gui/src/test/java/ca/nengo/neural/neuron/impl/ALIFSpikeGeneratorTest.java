@@ -238,7 +238,7 @@ public class ALIFSpikeGeneratorTest extends TestCase {
                 weights[i] = new float[]{1};
             }
             GroupImpl ensemble = new GroupImpl("ensemble", neurons);
-            ensemble.addTermination("input", weights, .005f, false);
+            ensemble.addTarget("input", weights, .005f, false);
             ensemble.collectSpikes(true);
             network.addNode(ensemble);
 

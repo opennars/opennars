@@ -199,7 +199,7 @@ public class Window extends WorldObjectImpl implements Interactable {
 		} else {
 			setVisible(true);
 			setChildrenPickable(true);
-			setPickable(true);
+			setPickable(myState!=WindowState.MAXIMIZED);
 		}
 
 		layoutChildren();
@@ -259,7 +259,7 @@ public class Window extends WorldObjectImpl implements Interactable {
 		menubar.setBounds(0, 0, getWidth(), MENU_BAR_HEIGHT);
 
 		myContent.setBounds(0, 0, getWidth() - 4, getHeight() - 4 - MENU_BAR_HEIGHT);
-		myContent.setOffset(2, 2 + MENU_BAR_HEIGHT);
+		myContent.setOffset(0, 0 + MENU_BAR_HEIGHT);
 
         myClippingRectangle.setBounds((float) getX(), (float) getY(), (float) getWidth(), (float) getHeight());
 

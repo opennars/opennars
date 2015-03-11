@@ -2,12 +2,12 @@ package ca.nengo.ui.lib;
 
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
+import nars.core.Parameters;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Hashtable;
+import java.util.Map;
 
 
 /**
@@ -32,7 +32,7 @@ public class WorldLayout implements Serializable {
 	/**
 	 * Node positions referenced by name
 	 */
-	private final Hashtable<Integer, PointSerializable> nodePositions;
+	private final Map<Integer, PointSerializable> nodePositions;
 
 	/**
 	 * Saved view bounds
@@ -50,11 +50,11 @@ public class WorldLayout implements Serializable {
 		this.layoutName = layoutName;
 		this.elasticMode = elasticMode;
 
-        Collection<WorldObject> cc = world.getGround().getChildren();
 
-		nodePositions = new Hashtable<Integer, PointSerializable>(cc.size());
 
-		for (WorldObject object : cc) {
+		nodePositions = Parameters.newHashMap();
+
+		for (WorldObject object : world.getGround().getChildren()) {
 			addPosition(object, object.getOffset());
 		}
 

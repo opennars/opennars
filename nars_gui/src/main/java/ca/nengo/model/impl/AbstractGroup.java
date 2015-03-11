@@ -94,7 +94,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyChanges 
 		}
 
 		myTargets = new LinkedHashMap<String, GroupTarget>(10);
-		GroupTarget[] terminations = findTerminations(this, myNodes);
+		GroupTarget[] terminations = findTargets(this, myNodes);
 		for (GroupTarget termination : terminations) {
 		    myTargets.put(termination.getName(), termination);
 		}
@@ -246,9 +246,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyChanges 
      * @param name Name of the Origin to remove from the ensemble
      * @return the removed Origin object
      * @throws StructuralException if named Origin does not exist
-     * @see ca.nengo.model.ExpandableNode#removeTermination(java.lang.String)
+     * @see ca.nengo.model.ExpandableNode#removeTarget(java.lang.String)
      */
-    public synchronized NSource removeOrigin(String name) throws StructuralException {
+    public synchronized NSource removeSource(String name) throws StructuralException {
         if (mySources.containsKey(name)) {
             NSource result = mySources.remove(name);
 
@@ -262,9 +262,9 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyChanges 
      * @param name Name of the Termination to remove from the ensemble
      * @return the removed Termination object
      * @throws StructuralException if named Termination does not exist
-     * @see ca.nengo.model.ExpandableNode#removeTermination(java.lang.String)
+     * @see ca.nengo.model.ExpandableNode#removeTarget(java.lang.String)
      */
-    public synchronized NTarget removeTermination(String name) throws StructuralException {
+    public synchronized NTarget removeTarget(String name) throws StructuralException {
         if (myTargets.containsKey(name)) {
             NTarget result = myTargets.remove(name);
 
@@ -487,7 +487,7 @@ public abstract class AbstractGroup implements Group, Probeable, VisiblyChanges 
 	 * @param nodes Nodes on which to look for Terminations
 	 * @return Ensemble Terminations encompassing Node-level Terminations
 	 */
-	private static GroupTarget[] findTerminations(Node parent, Node[] nodes) {
+	private static GroupTarget[] findTargets(Node parent, Node[] nodes) {
 		Map<String, List<NTarget>> groups = new LinkedHashMap<String, List<NTarget>>(10);
 
 		for (Node node : nodes) {

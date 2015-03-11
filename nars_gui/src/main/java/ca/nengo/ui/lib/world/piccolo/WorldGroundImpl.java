@@ -34,7 +34,7 @@ public class WorldGroundImpl extends WorldLayerImpl implements WorldLayer {
     private final GroundNode myLayerNode;
 
 	/**
-	 * Adds a little pizzaz when adding new objects
+	 * Extra effects when adding new objects
 	 * 
 	 * @param wo
 	 *            Object to be added

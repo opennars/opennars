@@ -30,13 +30,13 @@ public class TooltipPickHandler extends AbstractPickHandler {
 
 	private final SelectionBorder tooltipFrame;
 
-	private final int myPickDelay;
-    private final int myKeepPickDelay;
+	//private final int myPickDelay;
+    //private final int myKeepPickDelay;
 
 	public TooltipPickHandler(WorldImpl world, int pickDelay, int keepPickDelay) {
 		super(world);
-		myPickDelay = pickDelay;
-		myKeepPickDelay = keepPickDelay;
+		//myPickDelay = pickDelay;
+		//myKeepPickDelay = keepPickDelay;
 		tooltipFrame = new SelectionBorder(world);
 		tooltipFrame.setFrameColor(NengoStyle.COLOR_TOOLTIP_BORDER);
 
@@ -56,16 +56,6 @@ public class TooltipPickHandler extends AbstractPickHandler {
 
 	}
 
-	@Override
-	protected int getKeepPickDelay() {
-		return myKeepPickDelay;
-	}
-
-	@Override
-	protected int getPickDelay() {
-		return myPickDelay;
-	}
-
 	protected WorldObject getTooltipNode(PInputEvent event) {
 
 		PNode node = event.getPickedNode();
@@ -78,7 +68,7 @@ public class TooltipPickHandler extends AbstractPickHandler {
 				 * Do nothing if the mouse is over the controls
 				 */
 				if (node == controls) {
-					setKeepPickAlive(true);
+					//setKeepPickAlive(true);
 					return null;
 				} else if (wo instanceof WorldLayer || wo instanceof Window) {
 					break;
@@ -91,17 +81,22 @@ public class TooltipPickHandler extends AbstractPickHandler {
 
 			node = node.getParent();
 		}
-		setKeepPickAlive(false);
+		//setKeepPickAlive(false);
 		return null;
 
 	}
 
 	@Override
 	protected void nodePicked() {
-		WorldObject node = getPickedNode();
-		tooltipFrame.setSelected(node);
+        if (mouseOverTooltip!=null) {
+            mouseOverTooltip.fadeAndDestroy();
+            mouseOverTooltip = null;
+        }
 
-		mouseOverTooltip = getWorld().showTooltip(node);
+		WorldObject node = getPickedNode();
+		if (tooltipFrame.setSelected(node)) {
+            mouseOverTooltip = getWorld().showTooltip(node);
+        }
 	}
 
 	@Override
@@ -109,8 +104,10 @@ public class TooltipPickHandler extends AbstractPickHandler {
 
 		tooltipFrame.setSelected(null);
 
-		mouseOverTooltip.fadeAndDestroy();
-		mouseOverTooltip = null;
+        if (mouseOverTooltip!=null) {
+            mouseOverTooltip.fadeAndDestroy();
+            mouseOverTooltip = null;
+        }
 
 	}
 
@@ -122,7 +119,7 @@ public class TooltipPickHandler extends AbstractPickHandler {
 		if (WorldImpl.isTooltipsVisible()) {
 			node = getTooltipNode(event);
 		} else {
-			setKeepPickAlive(false);
+			//setKeepPickAlive(false);
 		}
 		setSelectedNode(node);
 		if (node == null) {
@@ -159,5 +156,16 @@ public class TooltipPickHandler extends AbstractPickHandler {
 		super.keyReleased(event);
 		processKeyboardEvent(event);
 	}
+
+//    @Override
+//    protected int getKeepPickDelay() {
+//        return myKeepPickDelay;
+//    }
+//
+//    @Override
+//    protected int getPickDelay() {
+//        return myPickDelay;
+//    }
+//
 
 }
