@@ -82,8 +82,8 @@ public abstract class Item<K> implements Budgetable {
      * @return Current priority value
      */
      public float getPriority() {
-        return budget.getPriority();
-    }
+         return budget.getPriority();
+     }
 
     /**
      * Set priority value

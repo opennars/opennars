@@ -4,15 +4,14 @@
  */
 package nars.gui.output.graph;
 
+import automenta.vivisect.dimensionalize.AbegoTreeLayout;
+import automenta.vivisect.graph.AnimatingGraphVis;
+import nars.core.NAR;
 import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Term;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.UniqueEdge;
-
 import org.jgrapht.Graph;
-
-import automenta.vivisect.dimensionalize.AbegoTreeLayout;
-import automenta.vivisect.graph.AnimatingGraphVis;
 
 /**
  *
@@ -21,8 +20,8 @@ import automenta.vivisect.graph.AnimatingGraphVis;
 public class TermSyntaxVis extends AnimatingGraphVis {
     private NARGraph syntaxGraph;
 
-    public TermSyntaxVis(Term... t) {
-        super(new NARGraph(), new NARGraphDisplay().setTextSize(0.25f,64)
+    public TermSyntaxVis(NAR n, Term... t) {
+        super(new NARGraph(), new NARGraphDisplay(n).setTextSize(0.25f,64)
                 , new AbegoTreeLayout());
         
         update(t);

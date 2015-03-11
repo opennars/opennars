@@ -7,6 +7,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.jgrapht.Graph;
 import processing.core.PGraphics;
 
+import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -51,6 +52,7 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
     static final float vertexTargetThreshold = 4f;
     private PGraphics graphics;
     private PCanvas canvas;
+    private Polygon p = null;
 
 
     public AbstractGraphVis(GraphDisplay display) {
@@ -269,8 +271,12 @@ abstract public class AbstractGraphVis<V, E> implements Vis {
             float pry = (float) FastMath.sin(angle - Math.PI + arrowAngle) * arrowHeadRadius;
             //g.line(x2, y2, x2 + prx, y2 + pry);
             g.fill(color);
-            g.noStroke();
+            //g.noStroke();
+
+
             //g.triangle(x2, y2, x2 + prx, y2 + pry, x2 + plx, y2 + ply);
+
+
             g.quad(x2, y2, x2 + prx, y2 + pry, x1, y1, x2 + plx, y2 + ply);
         }
 

@@ -5,6 +5,8 @@ import com.google.common.collect.Multimap;
 import nars.logic.entity.*;
 import nars.util.data.CuckooMap;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -15,10 +17,10 @@ public class DefaultGrapher implements NARGraph.Grapher {
     private final boolean includeQuestions;
     private final boolean includeTermLinks;
     private final boolean includeTaskLinks;
-    public final Map<TermLink, Concept> termLinks = new CuckooMap();
+    public final List<TermLink> termLinks = new ArrayList();
     public final Multimap<TaskLink, Concept> taskLinks = ArrayListMultimap.create();
 
-    public final Map<Term, Concept> terms = new CuckooMap();
+    //public final Map<Term, Concept> terms = new CuckooMap();
     public final Map<Sentence, Concept> sentenceTerms = new CuckooMap();
     private final boolean includeTermContent;
     private final boolean includeDerivations;
@@ -58,12 +60,20 @@ public class DefaultGrapher implements NARGraph.Grapher {
     //if (terms.put(t)) {
     //}
 
+    protected static Object v(final Object o) {
+        if (o instanceof Concept)
+            return ((Concept)o).term;
+        return o;
+    }
+
     public Object addVertex(NARGraph g, Object o) {
-        if (g.addVertex(o))
+        if (g.addVertex(o = v(o)))
             return o;
         return null;
     }
     public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
+        addVertex(g, source = v(source));
+        addVertex(g, target = v(target));
         if (g.addEdge(source, target, edge))
             return edge;
         return null;
@@ -71,7 +81,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
 
     @Override
     public void onTime(NARGraph g, long time) {
-        terms.clear();
+        //terms.clear();
         sentenceTerms.clear();
         termLinks.clear();
     }
@@ -98,13 +108,10 @@ public class DefaultGrapher implements NARGraph.Grapher {
     public void onConcept(NARGraph g, Concept c) {
         addVertex(g,c);
         
-        Term t = c.term;
-        
-        terms.put(c.term, c);
-                
+
         if (includeTermLinks) {
             for (TermLink x : c.termLinks) {
-                termLinks.put(x, c);
+                termLinks.add(x);
             }
         }
         if (includeTaskLinks) {
@@ -115,7 +122,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
         //TERM and Concept share the same hash, equality check, etc.. so they will be seen as the same vertex
         //that's why this isnt necessar and will cause a graph error
         if (includeTermContent) {
-            addVertex(g,t);
+            //addVertex(g,t);
             addEdge(g,c, c.term, new NARGraph.TermContent());
         }
         if (includeBeliefs) {
@@ -129,7 +136,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
                     continue;
                 }
                 //TODO extract to onQuestion
-                addVertex(g,q);
+                //addVertex(g,q);
                 //TODO q.getParentBelief()
                 //TODO q.getParentTask()
                 addEdge(g,c, q, new NARGraph.TermQuestion());
@@ -140,7 +147,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
 
     void recurseTermComponents(NARGraph g, CompoundTerm c, int level) {
         for (Term b : c.term) {
-            addVertex(g,b);
+            //addVertex(g,b);
 
             if (!includeTermContent) {
                 addEdge(g,c, b, new NARGraph.TermContent());
@@ -165,6 +172,8 @@ public class DefaultGrapher implements NARGraph.Grapher {
 //                }
 //            }
 //        }
+
+        /*
         if (includeTermContent) {
             for (final Term a : terms.keySet()) {
                 for (final Term b : terms.keySet()) {
@@ -184,6 +193,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
                 }
             }
         }
+        */
 
         ///TODO do this some other way
 
@@ -215,12 +225,13 @@ public class DefaultGrapher implements NARGraph.Grapher {
 //        }
 
         if (includeTermLinks) {
-            for (TermLink t : termLinks.keySet()) {
+            int nt = termLinks.size();
+            for (int i = 0; i < nt; i++) {
+                TermLink t = termLinks.get(i);
                 if (t.getPriority() < minPriority) continue;
-                Concept from = termLinks.get(t);
-                Concept to = terms.get(t.target);
+                Term to = t.target;
                 if (to != null) {
-                    addEdge(g,from, to, new NARGraph.TermLinkEdge(t));
+                    addEdge(g, t.getSource(), to, new NARGraph.TermLinkEdge(t));
                 }
             }
         }
@@ -233,21 +244,22 @@ public class DefaultGrapher implements NARGraph.Grapher {
                 final Concept from = et.getValue();
                 if (t.targetTask != null && t.targetTask.getPriority() > minPriority) {
                     final Task theTask = t.targetTask;
-                    addVertex(g,theTask);
-
-
-                    Term term = theTask.getTerm();
-                    if (term != null) {
-                        Concept c = terms.get(term);
-                        if (c != null) {
-                            addVertex(g,c);
-                            addEdge(g,c, theTask, new NARGraph.TermContent());
-                        }
-                    }
-
                     if (onTask(theTask)) {
-                        addEdge(g,from, theTask, new NARGraph.TaskLinkEdge(t));
+
+                        if (!g.containsVertex(theTask)) {
+                            //on adding theTask once
+                            Term taskTerm = theTask.getTerm();
+                            if (taskTerm != null) {
+                                addEdge(g, theTask, taskTerm, new NARGraph.TaskLinkEdge(t));
+                            }
+                        }
+
+                        addEdge(g, from, theTask, new NARGraph.TaskLinkEdge(t));
+
                     }
+
+
+
                 }
             }
         }

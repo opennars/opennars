@@ -23,8 +23,13 @@ public class EdgeVis<V, E> {
         color = 0xffffff;
         thickness = 1f;
     }
-    
-            
+
+
+    @Override
+    public String toString() {
+        return "EdgeVis[" + edge + "]";
+    }
+
     @Override
     public int hashCode() {
         return edge.hashCode();
@@ -36,6 +41,7 @@ public class EdgeVis<V, E> {
     }    
     
     private void updateVertices(final AbstractGraphVis c) {
+
         elem1 = c.getVertexDisplay(c.currentGraph.getEdgeSource(edge));
         elem2 = c.getVertexDisplay(c.currentGraph.getEdgeTarget(edge));
         if ((elem1 == null) || (elem2 == null) || (elem1 == elem2)) {

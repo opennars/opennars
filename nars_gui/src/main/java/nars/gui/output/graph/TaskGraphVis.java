@@ -44,7 +44,7 @@ public class TaskGraphVis extends NARGraphVis {
         layout.setMinDistanceLimit(10f);
         this.layout = layout;
 
-        update(new TaskGraphDisplay(), new TaskGraphLayout());
+        update(new TaskGraphDisplay(n), new TaskGraphLayout());
 
     }
 
@@ -106,7 +106,8 @@ public class TaskGraphVis extends NARGraphVis {
 
     class TaskGraphDisplay extends NARGraphDisplay {
 
-        public TaskGraphDisplay() {
+        public TaskGraphDisplay(NAR n) {
+            super(n);
             setTextSize(1f, 100);
         }
 
@@ -135,10 +136,10 @@ public class TaskGraphVis extends NARGraphVis {
             }
 
         }
-
-        @Override
-        public void edge(AbstractGraphVis g, EdgeVis e) {
-            super.edge(g, e);
-        }
+//
+//        @Override
+//        public void edge(AbstractGraphVis g, EdgeVis e) {
+//            super.edge(g, e);
+//        }
     }
 }

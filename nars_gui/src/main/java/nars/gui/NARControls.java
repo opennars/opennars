@@ -254,7 +254,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
                             new PCanvas( 
                                     new AnimatingGraphVis(
                                             nar.memory.executive.graph.implication,
-                                            new NARGraphDisplay(),
+                                            new NARGraphDisplay(nar),
                                             new FastOrganicLayout()
                                     ))).show(500, 500);
                 }

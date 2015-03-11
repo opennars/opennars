@@ -206,7 +206,7 @@ abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> imple
     boolean updateNextGraph = false;
 
     public NARGraphVis(NAR n) {
-        this(n, new NARGraphDisplay(), new FastOrganicLayout());
+        this(n, new NARGraphDisplay(n), new FastOrganicLayout());
     }
 
     public NARGraphVis(NAR n, GraphDisplay style, GraphDisplay layout) {
@@ -316,9 +316,9 @@ abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> imple
         layoutSelect.addItem("Circle Fixed");       
         layoutSelect.addItem("Circle Fixed (Half)");
         layoutSelect.addItem("Hyperassociative");
-        layoutSelect.addItem("GridSort");
-        layoutSelect.addItem("Circle Anim");
-        layoutSelect.addItem("Grid");
+        //layoutSelect.addItem("GridSort");
+        //layoutSelect.addItem("Circle Anim");
+        //layoutSelect.addItem("Grid");
         
         //modeSelect.setSelectedIndex(cg.mode);
         layoutSelect.addActionListener(new ActionListener() {

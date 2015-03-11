@@ -10,7 +10,7 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import automenta.vivisect.swing.NSlider;
-import nars.logic.Terms.Termable;
+import nars.core.NAR;
 import nars.logic.entity.*;
 import nars.util.graph.NARGraph;
 
@@ -22,6 +22,7 @@ import java.awt.*;
  */
 public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
 
+    private final NAR nar;
     float maxNodeSize = 160f;
     
     float lineWidth = 4f;
@@ -38,18 +39,30 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
         this.maxLabelLen = maxLabelLen;
         return this;
     }
-    
+
+    public NARGraphDisplay(NAR n) {
+        this.nar = n;
+    }
     
             
 
     @Override
     public void vertex(AbstractGraphVis<V, E> g, VertexVis<V, E> v) {
         float alpha = 0.9f;
+        float saturation = 0.75f;
+        float brightness = 0.85f;
+
         V o = v.getVertex();
         
         v.shape = Shape.Ellipse;
 
         float rad = 1f;
+
+        Item i;
+        if (o instanceof Item)
+            i = (Item)o;
+        else
+            i = null;
         
         if (o instanceof Sentence) {
             Sentence kb = (Sentence) o;
@@ -60,44 +73,35 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
             //Term t = ((Sentence) o).content;
             //rad = (float) (Math.log(1 + 2 + confidence));
         } else if (o instanceof Task) {
-            Task ta = (Task) o;
-            rad = 2.0f + ta.getPriority() * 2.0f;
-            alpha = ta.budget.summary() * 0.5f + 0.5f;
+            rad = 1.0f + i.getPriority() * 2.0f;
+            alpha = i.budget.summary() * 0.5f + 0.5f;
+            saturation = 0.25f + 0.75f * i.getQuality();
             v.shape = Shape.Rectangle;
-        } else if (o instanceof Concept) {
-            Concept co = (Concept) o;
-            //Term t = co.term;
-
-            rad = (2 + 6 * co.budget.summary());
-            
-            
-            /*if (!co.beliefs.isEmpty()) {
-                float confidence = co.beliefs.get(0).truth.getConfidence();
-                alpha = 0.5f + 0.5f * confidence;
-            }*/
-            
-            //v.stroke = 5;
         } else if (o instanceof Term) {
             Term t = (Term) o;
-            //rad = (float) (Math.log(1 + 2 + t.getComplexity()));
+            i = v.obj;
+            if (i == null) {
+                i = v.obj = nar.concept(t);
+            }
+            rad = (2 + 6 * i.budget.summary());
+            saturation = brightness = 0.25f + 0.75f * i.getQuality();
         }
         
         
 
         Object x = o;
-        if (x instanceof Termable) x = ((Termable)o).getTerm();
-        float hue = Video.hashFloat(x.hashCode());
+        float hue = Video.hashFloat(o.hashCode());
 
 
         
-        float brightness = 0.85f;
-        float saturation = 0.75f;
-        
+
+
         v.color = Video.colorHSB( hue, saturation, brightness, alpha );
 
         String label;
         if (o instanceof Concept) {
              label = ((Concept) o).term.toString();
+
          } else if (o instanceof Task) {
              label = ((Task)o).sentence.toString();
          } else {
@@ -122,23 +126,25 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
         
 
         int color = defaultEdgeColor;
-        
-        float thickness = lineWidth;
+        float thickness = 2f;
+
         if (edge instanceof NARGraph.TermLinkEdge) {
             TermLink t = ((NARGraph.TermLinkEdge)edge).getObject();
             float p = t.getPriority();
             float d = t.getDurability();
-            thickness = (1 + p) * lineWidth;            
-            color = Video.color(255f * (0.25f + p*0.75f), 15f, 255f * (0.25f + d*0.75f), 255f * (0.3f + p*0.7f) );
+            thickness = (1 + t.getQuality()*2f) * lineWidth;
+            color = Video.color(255f * (0.15f + p*0.85f), 19f, 255f * (0.15f + d*0.85f), 255f * (0.1f + p*0.9f) );
         }
         if (edge instanceof NARGraph.TaskLinkEdge) {
             TaskLink t = ((NARGraph.TaskLinkEdge)edge).getObject();
-            float tp = t.targetTask.getPriority(); //task priority
+            final Task tt = t.targetTask;
+            float tp = tt.getPriority(); //task priority
             float lp = t.getPriority();  //link priority
-            thickness = (1 + (tp+lp)/2f) * lineWidth;
-            color = Video.color(15f, 255f * (0.25f + tp*0.75f), 255f * (0.25f + lp*0.75f), 255f * (0.3f + lp*0.7f) );
+            float ap = (tp +lp)/2;
+            thickness = (1 + t.getQuality() + tt.getQuality()) * lineWidth;
+            color = Video.color(255f * (0.15f + lp*0.85f), 255f * (0.15f + tp*0.85f), 10f, 255f * (0.1f + ap*0.9f) );
         }
-    
+
         e.color = color;
         e.thickness = thickness;
     }

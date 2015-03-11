@@ -12,7 +12,6 @@ import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
-import nars.logic.BudgetFunctions;
 import nars.logic.entity.BudgetValue.Budgetable;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
@@ -438,12 +437,14 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
     abstract public static class BagChart extends ImagePanel {
 
-        final Map<String, Float> priority = new TreeMap();
+        final Map<String, Float> priority = new TreeMap(); //this might be limiting if items have the same .name().toString()
+
         private final Concept concept;
         private final Bag bag;
 
         float momentum = 0.9f;
         int maxItems = 32;
+        private float max = 0, min = 0;
 
         public BagChart(Concept c, Bag b) {
             super(400, 200);
@@ -457,6 +458,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
             final AtomicBoolean changed = new AtomicBoolean(false);
 
             synchronized (priority) {
+                min = Float.POSITIVE_INFINITY;
+                max = Float.NEGATIVE_INFINITY;
                 priority.clear();
 
                 bag.forEach(new Consumer<Item>() {
@@ -476,16 +479,19 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
                         float existing = priority.getOrDefault(n, -0.01f);
 
-                        float v = BudgetFunctions.lerp(t.getPriority(), existing, 1.0f - momentum);
+                        float p = t.getPriority();
+                        float v = p;
 
                         if (existing != v) {
                             priority.put(n, v);
                             changed.set(true);
                         }
 
-
+                        if (p > max) max = p;
+                        if (p < min) min = p;
                     }
                 });
+                setToolTipText("Min=" + min + ", Max=" + max);
             }
 
             return (changed.get());
@@ -516,13 +522,13 @@ public class ConceptPanelBuilder extends AbstractReaction {
         @Override
         protected void render(Graphics2D g) {
 
-            g.setColor(new Color(0.1f, 0.1f, 0.1f));
+            g.setColor(new Color(0.1f, 0.1f, 0.1f, 0.75f));
             g.fillRect(0, 0, getWidth(), getHeight());
 
             int height = getHeight();
             float dx = getWidth() / (1 + priority.size());
             float x = dx / 2;
-            g.setFont(Video.monofont.deriveFont(8f));
+            g.setFont(Video.monofont.deriveFont(9f));
             for (Map.Entry<String, Float> e : priority.entrySet()) {
 
                 String s = e.getKey();
@@ -562,7 +568,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             final int height = getHeight();
             float dx = (float)(Math.PI*2) / (count);
             float theta = phase;
-            g.setFont(Video.monofont.deriveFont(8f));
+            g.setFont(Video.monofont.deriveFont(9f));
 
             int i = 0;
             g.translate(width/2, height/2);
@@ -570,7 +576,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
                 String s = e.getKey();
 
-                float rad = e.getValue() * (width/2 * 0.65f) + (width/2 * 0.15f);
+                float rad = e.getValue() * (width/2 * 0.45f) + (width/2 * 0.12f);
 
                 g.setColor(Color.getHSBColor(e.getValue() * 0.5f + 0.25f, 0.75f, 0.8f));
                 //g.translate((int) theta, (int) y /*+ textLength*/);

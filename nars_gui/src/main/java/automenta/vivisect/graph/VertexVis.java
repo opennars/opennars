@@ -10,6 +10,7 @@ import automenta.vivisect.graph.GraphDisplay.Shape;
 import automenta.vivisect.swing.PCanvas;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
+import nars.logic.entity.Item;
 import processing.core.PGraphics;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import static automenta.vivisect.graph.GraphDisplay.Shape.Ellipse;
  */
 public class VertexVis<V, E> {
     public final V vertex;
+    public Item obj; //auxiliary object which can be used for any purpose during vis
     public float x;
     public float y;
     public float tx;
@@ -106,10 +108,10 @@ public class VertexVis<V, E> {
             p.text(label, x * scale, y * scale);
         }
         
-        if (stroke > 0) {
-            //reset stroke
-            p.noStroke();
-        }
+
+        //reset stroke
+        p.noStroke();
+
         
         
         if ((children!=null) && (!children.isEmpty())) {
@@ -133,6 +135,7 @@ public class VertexVis<V, E> {
                 this.edges = c.currentGraph.edgesOf(vertex);
             }
         }
+
         x = (x * (1.0f - speed) + tx * (speed));
         y = (y * (1.0f - speed) + ty * (speed));
         if ((Math.abs(tx - x) + Math.abs(ty - y)) > AbstractGraphVis.vertexTargetThreshold) {
