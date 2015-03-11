@@ -10,16 +10,28 @@ public class ColorArray {
     public final Color[] c;
 
     public ColorArray(int n, Color start, Color end) {
+        this(n, start, end, false);
+    }
+
+    public ColorArray(int n, Color start, Color end, boolean hsb) {
 
         c = new Color[n];
         for (int i = 0; i < n; i++) {
-            float p = ((float)i)/n;
-            float q = 1-p;
+            float p = ((float) i) / n;
+            float q = 1 - p;
+
             float r = start.getRed() * q + end.getRed() * p;
             float g = start.getGreen() * q + end.getGreen() * p;
             float b = start.getBlue() * q + end.getBlue() * p;
             float a = start.getAlpha() * q + end.getAlpha() * p;
-            c[i] = new Color(r/256.0f, g/256.0f, b/256.0f, a/256.0f);
+
+            if (!hsb) {
+            }
+            else {
+                throw new RuntimeException("not impl yet");
+            }
+            c[i] = new Color(r / 256.0f, g / 256.0f, b / 256.0f, a / 256.0f);
+
         }
 
     }
