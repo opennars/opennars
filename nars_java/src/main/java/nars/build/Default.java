@@ -84,10 +84,10 @@ public class Default extends NewNAR implements ConceptBuilder {
         setSubconceptBagSize(256);
         setConceptBagLevels(64);
         
-        setTaskLinkBagSize(48);
+        setTaskLinkBagSize(64);
         setTaskLinkBagLevels(32);
 
-        setTermLinkBagSize(32);
+        setTermLinkBagSize(48);
         setTermLinkBagLevels(32);
         
         setNovelTaskBagSize(96);
@@ -115,8 +115,8 @@ public class Default extends NewNAR implements ConceptBuilder {
 
         //param.budgetThreshold.set(0.01f);
 
-        param.conceptBeliefsMax.set(13);
-        param.conceptGoalsMax.set(9);
+        param.conceptBeliefsMax.set(11);
+        param.conceptGoalsMax.set(7);
         param.conceptQuestionsMax.set(5);
 
         param.inputsMaxPerCycle.set(1);
@@ -139,9 +139,13 @@ public class Default extends NewNAR implements ConceptBuilder {
         //param.getDefaultDerivationFilters().add(new BeRational());
     }
 
-    public Default(int maxConcepts) {
+    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         this();
         conceptBagSize = maxConcepts;
+        param.conceptsFiredPerCycle.set(conceptsFirePerCycle);
+        param.termLinkMaxReasoned.set(termLinksPerCycle);
+        param.termLinkMaxMatched.set((int)(termLinksPerCycle*1.5));
+
     }
 
     @Override

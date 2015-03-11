@@ -124,13 +124,35 @@ abstract public class BufferedOutput extends Output {
             return Float.NaN;
         }
 
+
+        float c = 1f;
         if (o instanceof Task) {
             Task t = (Task)o;
-            if (t.sentence != null)
-                return (1f + (1f - t.getPriority())) * (float)Math.sqrt(t.getTerm().complexity);
+            if (t.sentence != null) {
+
+                float conf;
+                if (t.sentence.truth!=null)
+                    conf = (t.sentence.truth.getConfidence());
+                else
+                    conf = 1.0f;
+
+                c =  1f + 0.2f * (1f - t.getPriority());
+                c *= 1f + 0.02f * (float) Math.sqrt(t.getTerm().complexity);
+                c *= 1f + 0.2f * (1f - conf);
+                c *= 1f + 0.1f * t.sentence.stamp.getOriginality();
+            }
         }
 
-        return 1;
+
+
+        if (event == Events.Answer.class) {
+            c/=0.5f;
+        }
+        if (event == Events.ERR.class) {
+            c*=2f;
+        }
+
+        return c;
     }
 
     protected void included(OutputItem o) { }
@@ -213,8 +235,11 @@ abstract public class BufferedOutput extends Output {
                 if (!nextChannel.equals(lastChannel)) {
                     if (!lastChannel.isEmpty())
                         sb.append("  "); //additional space between channel change, could be a newline also
+                    if (!nextChannel.equals("OUT"))
+                        sb.append(entry); //the entire entry (prefix+content)
+                    else
+                        sb.append(content);
 
-                    sb.append(entry); //the entire entry (prefix+content)
                     lastChannel = nextChannel;
                 }
                 else {
@@ -226,10 +251,16 @@ abstract public class BufferedOutput extends Output {
 
         }
 
-        if (charLimit!=-1 && sb.length() > charLimit)
-            return sb.replace(charLimit-2, charLimit, "..").substring(0, charLimit);
 
-        return sb.toString();
+        //optional: removing " %1.00;"
+        String s = sb.toString().replace(" %1.00;0."," 1;");
+
+
+        if (charLimit!=-1 && sb.length() > charLimit) {
+            return sb.substring(0, charLimit-2) + "..";
+        }
+
+        return s;
     }
 
     abstract protected void output(List<OutputItem> buffer);
