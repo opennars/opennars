@@ -823,7 +823,8 @@ public class Concept extends Item<Term> implements Termable {
     @Override
     public String toString() {  // called from concept bag
         //return (super.toStringBrief() + " " + key);
-        return super.toStringExternal();
+        //return super.toStringExternal();
+        return term.toString();
     }
 
     /**

@@ -162,7 +162,7 @@ public class TaskGraph  {
 
             Concept c = nar.concept(o.getTerm());
             if (c!=null) {
-                extraGrapher.onConcept(g, c);
+                extraGrapher.onConcept(c, true);
                 g.addEdge(o, c, new TaskConceptEdge(o, c));
             }
 

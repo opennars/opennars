@@ -56,8 +56,40 @@ public class TestNARGraph extends Nengrow {
         private final ConceptReaction conceptReaction;
         private UINARGraph ui;
 
-        public NARGraphVertex vertex(final Object o) {
-            return (NARGraphVertex) getNode(o.toString());
+        public NARGraphVertex vertex(final Object x, boolean createIfNotExist) {
+            NARGraphVertex v = (NARGraphVertex) getNode(x.toString());
+            if (v!=null) {
+                //already exists
+                if (x instanceof Concept) {
+                    ((TermNode)v).setConcept((Concept) x);
+                }
+            }
+            else if (v == null && createIfNotExist) {
+                TermNode vertex = null;
+
+                if (x instanceof Concept) {
+                    vertex = new TermNode((Concept)x);
+                }
+                else if (x instanceof Terms.Termable) {
+                    vertex = new TermNode((Terms.Termable)x);
+                }
+
+                if (vertex!=null) {
+                    if (graph.addVertex(vertex)) {
+
+                        new MyGrapher().on(graph, x).finish();
+
+                        try {
+                            super.addNode(vertex);
+                        } catch (StructuralException e) {
+                            e.printStackTrace();
+                        }
+                    /*if (ui != null)
+                        ui.layoutChildren();*/
+                    }
+                }
+            }
+            return v;
         }
 
         public NARGraphNode(NAR n) {
@@ -72,26 +104,12 @@ public class TestNARGraph extends Nengrow {
 
                 @Override
                 public void onNewConcept(Concept c) {
-                    NARGraphVertex node = vertex(c.term);
-                    if (node!=null /*&& node instanceof TermNode*/) {
-                        //conceptualizing an already visualized term
-                        TermNode tn = (TermNode)node;
-                        tn.setConcept(c);
-                    }
-                    else {
-                        //visualizing an existing concept
-                        try {
-                            addNode(c.getTerm());
-                        } catch (StructuralException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
+                    vertex(c, true);
                 }
 
                 @Override
                 public void onForgetConcept(Concept c) {
-                    NARGraphVertex node = vertex(c.term);
+                    NARGraphVertex node = vertex(c, false);
                     if (node!=null /*&& node instanceof TermNode*/) {
                         //another option is to set the node to pre-concept and leave it
                         try {
@@ -120,28 +138,6 @@ public class TestNARGraph extends Nengrow {
         }
 
 
-        protected NARGraphVertex addNode(Object x) throws StructuralException {
-            TermNode vertex = null;
-
-            if (x instanceof Concept) {
-                vertex = new TermNode((Concept)x);
-            }
-            else if (x instanceof Terms.Termable) {
-                vertex = new TermNode((Terms.Termable)x);
-            }
-
-            if (vertex!=null) {
-                if (graph.addVertex(vertex)) {
-
-                    new MyGrapher().on(graph, x);
-
-                    super.addNode(vertex);
-                    /*if (ui != null)
-                        ui.layoutChildren();*/
-                }
-            }
-            return vertex; //new ObjectNode("o" + n++, x);
-        }
 
         @Override
         public UINARGraph newUI(double width, double height) {
@@ -155,24 +151,17 @@ public class TestNARGraph extends Nengrow {
             }
 
             @Override
-            public Object addVertex(NARGraph g, Object o) {
-                try {
-                    NARGraphVertex x = addNode(o);
-                    if (x!=null) {
-                        addNode(x);
-                        return x;
-                    }
-                } catch (StructuralException e) {
-                    e.printStackTrace();
-                }
+            public Object addVertex(Object o) {
+                if (super.addVertex(o)!=null)
+                    return vertex(o, true);
                 return null;
             }
 
             @Override
             public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
-                final NARGraphVertex v1 = vertex(source);
+                final NARGraphVertex v1 = vertex(source, true);
                 if (v1 == null) return null;
-                final NARGraphVertex v2 = vertex(target);
+                final NARGraphVertex v2 = vertex(target, true);
                 if (v2 == null) return null;
 
                 return graph.addEdge(v1, v2, new DefaultEdge(edge) {
@@ -374,7 +363,7 @@ public class TestNARGraph extends Nengrow {
             this.priority = -1; //will be updated
             this.concept = c;
             if (c == null) {
-
+                this.term = null;
             }
             else {
                 this.term = c.getTerm();

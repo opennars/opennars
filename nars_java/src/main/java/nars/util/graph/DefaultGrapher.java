@@ -2,6 +2,7 @@ package nars.util.graph;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import nars.logic.Terms;
 import nars.logic.entity.*;
 import nars.util.data.CuckooMap;
 
@@ -27,6 +28,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
     
     @Deprecated protected int includeSyntax; //how many recursive levels to decompose per Term
     private float minPriority = 0;
+    private NARGraph graph;
 
     //addVertex(g,c);
     //addVertex(g,belief);
@@ -60,20 +62,20 @@ public class DefaultGrapher implements NARGraph.Grapher {
     //if (terms.put(t)) {
     //}
 
-    protected static Object v(final Object o) {
-        if (o instanceof Concept)
-            return ((Concept)o).term;
-        return o;
-    }
+//    protected static Object v(final Object o) {
+//        if (o instanceof Concept)
+//            return ((Concept)o).term;
+//        return o;
+//    }
 
-    public Object addVertex(NARGraph g, Object o) {
-        if (g.addVertex(o = v(o)))
+    public Object addVertex(Object o) {
+        if (graph.addVertex(o))
             return o;
         return null;
     }
     public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
-        addVertex(g, source = v(source));
-        addVertex(g, target = v(target));
+        addVertex(source);
+        addVertex(target);
         if (g.addEdge(source, target, edge))
             return edge;
         return null;
@@ -87,7 +89,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
     }
 
 
-    public void onTerm(NARGraph g, Term t) {
+    public void onTerm(Term t) {
         
 
     }
@@ -104,10 +106,12 @@ public class DefaultGrapher implements NARGraph.Grapher {
     public void onQuestion(Task q) {
     }
 
-    @Override
-    public void onConcept(NARGraph g, Concept c) {
-        addVertex(g,c);
-        
+
+    void onConcept(Concept c, boolean forceUpdate) {
+        if (addVertex(c)==null && !forceUpdate)
+            return; //already added
+
+        @Deprecated NARGraph g = this.graph;
 
         if (includeTermLinks) {
             for (TermLink x : c.termLinks) {
@@ -159,7 +163,8 @@ public class DefaultGrapher implements NARGraph.Grapher {
     }
 
     @Override
-    public void finish(NARGraph g) {
+    public void finish() {
+
 //        if (includeSyntax > 0) {
 //            for (final Term a : terms.keySet()) {
 //                if (a instanceof CompoundTerm) {
@@ -231,7 +236,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
                 if (t.getPriority() < minPriority) continue;
                 Term to = t.target;
                 if (to != null) {
-                    addEdge(g, t.getSource(), to, new NARGraph.TermLinkEdge(t));
+                    addEdge(graph, t.getSource(), to, new NARGraph.TermLinkEdge(t));
                 }
             }
         }
@@ -246,15 +251,15 @@ public class DefaultGrapher implements NARGraph.Grapher {
                     final Task theTask = t.targetTask;
                     if (onTask(theTask)) {
 
-                        if (!g.containsVertex(theTask)) {
+                        if (!graph.containsVertex(theTask)) {
                             //on adding theTask once
                             Term taskTerm = theTask.getTerm();
                             if (taskTerm != null) {
-                                addEdge(g, theTask, taskTerm, new NARGraph.TaskLinkEdge(t));
+                                addEdge(graph, theTask, taskTerm, new NARGraph.TaskLinkEdge(t));
                             }
                         }
 
-                        addEdge(g, from, theTask, new NARGraph.TaskLinkEdge(t));
+                        addEdge(graph, from, theTask, new NARGraph.TaskLinkEdge(t));
 
                     }
 
@@ -275,9 +280,16 @@ public class DefaultGrapher implements NARGraph.Grapher {
     }
 
     /** updates an object that may be in the graph */
-    public void on(NARGraph g, Object vertex) {
-        if (vertex instanceof Concept) {
-            onConcept(g, (Concept)vertex);
-        }
+    public DefaultGrapher on(NARGraph g, Object vertex) {
+        this.graph = g;
+
+        //if (!graph.containsVertex(v(vertex))) {
+            if (vertex instanceof Concept) {
+                onConcept((Concept) vertex, true);
+            } else if (vertex instanceof Terms.Termable) {
+                onTerm(((Terms.Termable) vertex).getTerm());
+            }
+        //}
+        return this;
     }
 }

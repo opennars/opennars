@@ -85,28 +85,22 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
      */
     public static interface Grapher {
 
+        public Grapher on(NARGraph g, Object o);
+
         /**
          * called at beginning of operation
          *
          * @param g
          * @param time
          */
-        void onTime(NARGraph g, long time);
+        @Deprecated void onTime(NARGraph g, long time);
 
-        /**
-         * called per concept
-         *
-         * @param g
-         * @param c
-         */
-        void onConcept(NARGraph g, Concept c);
 
         /**
          * called at end of operation
          *
-         * @param g
          */
-        void finish(NARGraph g);
+        void finish();
 
         void setMinPriority(float minPriority);
     }
@@ -333,12 +327,12 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
                 continue;
             }
 
-            graphize.onConcept(this, c);
+            graphize.on(this, c);
 
             //graphize.postLevel(this, level);
         }
 
-        graphize.finish(this);
+        graphize.finish();
         return this;
 
     }
