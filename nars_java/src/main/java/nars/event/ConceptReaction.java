@@ -1,0 +1,44 @@
+package nars.event;
+
+
+import nars.core.Events;
+import nars.core.NAR;
+import nars.logic.entity.Concept;
+
+import java.util.function.Consumer;
+
+/** watches for concept lifecycle (creation and forget) events */
+abstract public class ConceptReaction extends AbstractReaction {
+
+    public ConceptReaction(NAR n) {
+        super(n, Events.ConceptNew.class, Events.ConceptForget.class);
+
+        //add existing events
+        n.memory.taskLater(new Runnable() {
+            @Override
+            public void run() {
+                n.memory.concepts.forEach(new Consumer<Concept>() {
+                    @Override
+                    public void accept(Concept concept) {
+                        onNewConcept(concept);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void event(final Class event, final Object[] args) {
+        if (event == Events.ConceptNew.class) {
+            Concept c = (Concept)args[0];
+            onNewConcept(c);
+        }
+        else if (event == Events.ConceptForget.class) {
+            Concept c = (Concept)args[0];
+            onForgetConcept(c);
+        }
+    }
+
+    abstract public void onNewConcept(Concept c);
+    abstract public void onForgetConcept(Concept c);
+}

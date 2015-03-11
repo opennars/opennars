@@ -273,4 +273,11 @@ public class DefaultGrapher implements NARGraph.Grapher {
     public void setShowSyntax(boolean showSyntax) {
         this.includeSyntax = showSyntax ? 1 : 0;
     }
+
+    /** updates an object that may be in the graph */
+    public void on(NARGraph g, Object vertex) {
+        if (vertex instanceof Concept) {
+            onConcept(g, (Concept)vertex);
+        }
+    }
 }

@@ -19,8 +19,9 @@ import ca.nengo.ui.model.viewer.NodeViewer;
 import ca.nengo.util.ScriptGenException;
 import nars.build.Default;
 import nars.core.NAR;
+import nars.event.ConceptReaction;
+import nars.logic.Terms;
 import nars.logic.entity.Concept;
-import nars.logic.entity.Item;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.util.FastMath;
@@ -31,6 +32,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.UUID;
 
 
 public class TestNARGraph extends Nengrow {
@@ -49,87 +51,143 @@ public class TestNARGraph extends Nengrow {
 
     public static class NARGraphNode extends NetworkImpl implements UIBuilder {
 
-        private final NARGraph<NARGraphVertex,DefaultEdge> graph;
-        private final DefaultGrapher grapher;
+        private final NARGraph<NARGraphVertex,DefaultEdge> graph = new NARGraph();
         private final NAR nar;
+        private final ConceptReaction conceptReaction;
+        private UINARGraph ui;
 
-        public NARGraphVertex vertex(final Item o) {
-            return (NARGraphVertex) getNode(o.name().toString());
+        public NARGraphVertex vertex(final Object o) {
+            return (NARGraphVertex) getNode(o.toString());
         }
 
         public NARGraphNode(NAR n) {
             super();
 
-            this.grapher = new DefaultGrapher(false,false,false,false,0,true,false) {
 
-                @Override
-                public Object addVertex(NARGraph g, Object o) {
-                    try {
-                        NARGraphVertex x = newNode(o);
-                        if (x!=null) {
-                            addNode(x);
-                            graph.addVertex(x);
-                            return x;
-                        }
-                    } catch (StructuralException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }
 
-                @Override
-                public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
-                    if ((source instanceof Item) && (target instanceof Item)) {
-                        final NARGraphVertex v1 = vertex((Item) source);
-                        final NARGraphVertex v2 = vertex((Item) target);
-                        if (v1!=null && v2!=null)
-                            return graph.addEdge(v1, v2, new DefaultEdge(edge) {
-                                @Override public Object getSource() {
-                                    return v1;
-                                }
-                                @Override public Object getTarget() {
-                                    return v2;
-                                }
-                            });
-                    }
-                    return null;
-                }
-            };
-            
-            this.graph = new NARGraph();
             this.nar = n;
 
+
+            this.conceptReaction = new ConceptReaction(nar) {
+
+                @Override
+                public void onNewConcept(Concept c) {
+                    NARGraphVertex node = vertex(c.term);
+                    if (node!=null /*&& node instanceof TermNode*/) {
+                        //conceptualizing an already visualized term
+                        TermNode tn = (TermNode)node;
+                        tn.setConcept(c);
+                    }
+                    else {
+                        //visualizing an existing concept
+                        try {
+                            addNode(c.getTerm());
+                        } catch (StructuralException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onForgetConcept(Concept c) {
+                    NARGraphVertex node = vertex(c.term);
+                    if (node!=null /*&& node instanceof TermNode*/) {
+                        //another option is to set the node to pre-concept and leave it
+                        try {
+                            removeNode(node);
+                        } catch (StructuralException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
 
             updateItems();
         }
 
+
         public void updateItems() {
-            for (Concept c : nar.memory.concepts) {
-                grapher.onConcept(graph, c);
+
+
+        }
+
+
+        protected void removeNode(NARGraphVertex node) throws StructuralException {
+            if (graph.removeVertex(node)) {
+                super.removeNode(node.vertex.toString());
             }
-            grapher.finish(graph);
-
-
-        }
-
-        public void updateStyle() {
-
         }
 
 
+        protected NARGraphVertex addNode(Object x) throws StructuralException {
+            TermNode vertex = null;
 
-        private NARGraphVertex newNode(Object x) {
             if (x instanceof Concept) {
-                return new ConceptNode((Concept)x);
+                vertex = new TermNode((Concept)x);
             }
-            return null; //new ObjectNode("o" + n++, x);
+            else if (x instanceof Terms.Termable) {
+                vertex = new TermNode((Terms.Termable)x);
+            }
+
+            if (vertex!=null) {
+                if (graph.addVertex(vertex)) {
+
+                    new MyGrapher().on(graph, x);
+
+                    super.addNode(vertex);
+                    /*if (ui != null)
+                        ui.layoutChildren();*/
+                }
+            }
+            return vertex; //new ObjectNode("o" + n++, x);
         }
 
         @Override
         public UINARGraph newUI(double width, double height) {
-            return new UINARGraph(this);
+            return this.ui = new UINARGraph(this);
         }
 
+        private class MyGrapher extends DefaultGrapher {
+
+            public MyGrapher() {
+                super(false, false, false, false, 0, true, false);
+            }
+
+            @Override
+            public Object addVertex(NARGraph g, Object o) {
+                try {
+                    NARGraphVertex x = addNode(o);
+                    if (x!=null) {
+                        addNode(x);
+                        return x;
+                    }
+                } catch (StructuralException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
+                final NARGraphVertex v1 = vertex(source);
+                if (v1 == null) return null;
+                final NARGraphVertex v2 = vertex(target);
+                if (v2 == null) return null;
+
+                return graph.addEdge(v1, v2, new DefaultEdge(edge) {
+                    @Override
+                    public Object getSource() {
+                        return v1;
+                    }
+
+                    @Override
+                    public Object getTarget() {
+                        return v2;
+                    }
+                });
+            }
+        }
     }
     public static class UINARGraph extends UINetwork {
 
@@ -253,13 +311,13 @@ public class TestNARGraph extends Nengrow {
         }
     }
 
-    abstract public static class NARGraphVertex<V extends Item> extends AbstractWidget {
+    abstract public static class NARGraphVertex<V> extends AbstractWidget {
 
         private final V vertex;
 
 
         public NARGraphVertex(V vertex) {
-            super(vertex.name().toString());
+            super(vertex.toString());
             this.vertex = vertex;
 
         }
@@ -268,32 +326,62 @@ public class TestNARGraph extends Nengrow {
 
         }
 
-
-
         public V vertex() {
             return this.vertex;
         }
+
         @Override
         public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
-            return vertex.name().toString();
+            return vertex.toString();
         }
 
     }
 
-    public static class ConceptNode extends NARGraphVertex {
-        public final Concept concept;
+    /** a node which can represent a pre-Term, a Term, or a Concept */
+    public static class TermNode extends NARGraphVertex {
+        String text;
+        Terms.Termable term = null;
+        Concept concept = null;
+
+
         private NodeIcon icon;
-        private float priority;
+        private float priority = -1;
 
-
-        public ConceptNode(Concept concept) {
-            super(concept);
-            this.concept = concept;
-
-
-            updateStyle();
+        public TermNode() {
+            this("");
         }
 
+        public TermNode(String text) {
+            super(UUID.randomUUID().toString());
+            this.text = text;
+            this.term = null;
+            setConcept(null);
+        }
+
+        public TermNode(Concept c) {
+            super(c.getTerm());
+            setConcept(c);
+        }
+
+        public TermNode(Terms.Termable term) {
+            super(term);
+            this.term = term;
+            setConcept(null);
+        }
+
+        public boolean setConcept(Concept c) {
+            if (this.concept == c) return false;
+            this.priority = -1; //will be updated
+            this.concept = c;
+            if (c == null) {
+
+            }
+            else {
+                this.term = c.getTerm();
+            }
+            updateUI();
+            return true;
+        }
 
         @Override
         public ModelIcon newIcon(ModelObject UI) {
@@ -305,14 +393,17 @@ public class TestNARGraph extends Nengrow {
             return false;
         }
 
-        protected void updateStyle() {
-            float p = concept.getPriority();
-            if (priority!=p) {
+        protected void updateUI() {
+            if (concept != null) {
 
-                icon.getBody().setPaint(Color.getHSBColor(p, 0.7f, 0.7f));
-                ui.setScale(1.0 + p);
+                float p = concept.getPriority();
+                if (priority != p) {
 
-                priority = p;
+                    icon.getBody().setPaint(Color.getHSBColor(p, 0.7f, 0.7f));
+                    ui.setScale(1.0 + p);
+
+                    priority = p;
+                }
             }
 
         }
@@ -320,7 +411,7 @@ public class TestNARGraph extends Nengrow {
         @Override
         public void run(float startTime, float endTime) throws SimulationException {
 
-            updateStyle();
+            updateUI();
         }
 
 
@@ -351,12 +442,12 @@ public class TestNARGraph extends Nengrow {
 
 
 
-        new Timer(150, new ActionListener() {
+        new Timer(50, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    float dt = getSimulationDT();
+                    float dt = 0.05f;
                     networkUI.getModel().run(time, time + dt);
                     time += dt;
                     nar.step(1);

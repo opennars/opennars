@@ -58,7 +58,7 @@ abstract public class Nengrow extends AbstractNengo {
     }
 
     /** delta-time added each simulation iteration; while zero, simulation pauses */
-    public float getSimulationDT() {
+    @Deprecated public float getSimulationDT() {
         return simulationDT;
     }
 
