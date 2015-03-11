@@ -27,12 +27,13 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.model.tooltip;
 
 import ca.nengo.ui.lib.NengoStyle;
+import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import org.piccolo2d.nodes.PText;
 
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * UI Object which builds itself from a ToolTipBuilder
@@ -44,8 +45,9 @@ public class Tooltip extends WorldObjectImpl {
 	private final TooltipBuilder tooltipBuilder;
 	private final double tooltipWidth;
 	public static final double DEFAULT_WIDTH = 250;
+    private PText tag;
 
-	public Tooltip(TooltipBuilder tooltipBuilder) {
+    public Tooltip(TooltipBuilder tooltipBuilder) {
 		this(tooltipBuilder, DEFAULT_WIDTH);
 	}
 
@@ -54,30 +56,35 @@ public class Tooltip extends WorldObjectImpl {
 
 		this.tooltipBuilder = tooltipBuilder;
 		this.tooltipWidth = width;
-		init();
+        set(tooltipBuilder);
 	}
 
-	private void init() {
-		PText tag = new PText(tooltipBuilder.getName());
-		tag.setConstrainWidthToTextWidth(false);
-		tag.setTextPaint(NengoStyle.COLOR_FOREGROUND);
-		tag.setFont(NengoStyle.FONT_LARGE);
-		tag.setWidth(tooltipWidth);
-		int layoutY = 0;
-		getPiccolo().addChild(tag);
+	public void set(TooltipBuilder tooltipBuilder) {
+        int layoutY = 0;
 
-		layoutY += tag.getHeight() + 10;
 
-		Collection<ITooltipPart> parts = tooltipBuilder.getParts();
+        if (tag == null) {
+            tag = new PText(tooltipBuilder.getName());
+            tag.setConstrainWidthToTextWidth(false);
+            tag.setTextPaint(NengoStyle.COLOR_FOREGROUND);
+            tag.setFont(NengoStyle.FONT_LARGE);
+            tag.setWidth(tooltipWidth);
+            getPiccolo().addChild(tag);
+        }
+        else {
+            tag.setText(tooltipBuilder.getName());
+        }
 
-		Iterator<ITooltipPart> it = parts.iterator();
+        layoutY += tag.getHeight() + 10;
 
-		/*
-		 * Builds the tooltip parts
-		 */
+        Collection<WorldObject> existingChildren = getChildren();
+        for (WorldObject o : existingChildren)
+            removeChild(o);
 
-		while (it.hasNext()) {
-			ITooltipPart part = it.next();
+		List<ITooltipPart> parts = tooltipBuilder.getParts();
+        int numParts = parts.size();
+        for (int i = 0; i < numParts; i++) {
+            ITooltipPart part = parts.get(i);
 			WorldObject wo = part.toWorldObject(tooltipWidth);
 
 			wo.setOffset(wo.getOffset().getX(), layoutY);
@@ -89,5 +96,11 @@ public class Tooltip extends WorldObjectImpl {
 
 		setBounds(parentToLocal(getFullBoundsClone()));
 	}
+
+
+    @Override
+    public void paint(PaintContext paintContext) {
+        super.paint(paintContext);
+    }
 
 }

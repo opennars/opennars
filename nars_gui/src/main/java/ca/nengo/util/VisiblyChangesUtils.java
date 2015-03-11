@@ -50,11 +50,7 @@ public class VisiblyChangesUtils {
 	 * @param listeners List of things listening for changes
 	 */
 	public static void changed(final VisiblyChanges vm, List<VisiblyChanges.Listener> listeners) {
-		VisiblyChanges.Event event = new VisiblyChanges.Event() {
-			public VisiblyChanges getObject() {
-				return vm;
-			}
-		};
+		VisiblyChanges.Event event = new MyEvent(vm);
 		
 		try {
 			fire(event, listeners);
@@ -83,21 +79,7 @@ public class VisiblyChangesUtils {
 			
 		if (!isValidName(newName)) throw new StructuralException("Name '"+newName+"' must not contain '.' or ':'");
 		
-		VisiblyChanges.NameChangeEvent event = new VisiblyChanges.NameChangeEvent() {
-
-			public String getNewName() {
-				return newName;
-			}
-
-			public String getOldName() {
-				return oldName;
-			}
-
-			public VisiblyChanges getObject() {
-				return vm;
-			}
-			
-		};
+		VisiblyChanges.NameChangeEvent event = new MyNameChangeEvent(newName, oldName, vm);
 		
 		try {
 			fire(event, listeners);			
@@ -142,4 +124,42 @@ public class VisiblyChangesUtils {
 			}			
 		}
 	}
+
+    private static class MyEvent implements VisiblyChanges.Event {
+        private final VisiblyChanges vm;
+
+        public MyEvent(VisiblyChanges vm) {
+            this.vm = vm;
+        }
+
+        public VisiblyChanges getObject() {
+            return vm;
+        }
+    }
+
+    private static class MyNameChangeEvent implements VisiblyChanges.NameChangeEvent {
+
+        private final String newName;
+        private final String oldName;
+        private final VisiblyChanges vm;
+
+        public MyNameChangeEvent(String newName, String oldName, VisiblyChanges vm) {
+            this.newName = newName;
+            this.oldName = oldName;
+            this.vm = vm;
+        }
+
+        public String getNewName() {
+            return newName;
+        }
+
+        public String getOldName() {
+            return oldName;
+        }
+
+        public VisiblyChanges getObject() {
+            return vm;
+        }
+
+    }
 }

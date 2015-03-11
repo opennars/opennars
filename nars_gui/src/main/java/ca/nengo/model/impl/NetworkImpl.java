@@ -37,8 +37,6 @@ import ca.nengo.util.*;
 import ca.nengo.util.impl.ProbeTask;
 import ca.nengo.util.impl.ScriptGenerator;
 import nars.core.Parameters;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -59,7 +57,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     public static final String DEFAULT_NAME = "Network";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger ourLogger = LogManager.getLogger(NetworkImpl.class);
+    //private static final Logger ourLogger = LogManager.getLogger(NetworkImpl.class);
     private final Map<String, Probeable> myProbeables;
     private final Map<String, String> myProbeableStates;
     protected int myNumGPU = 0;
@@ -82,7 +80,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     private Map<NSource, String> myExposedOriginNames;
     private Map<NTarget, String> myExposedTerminationNames;
     private transient List<VisiblyChanges.Listener> myListeners;
-    private transient Collection<StepListener> myStepListeners;
+    private transient List<StepListener> myStepListeners;
 
     private transient Map<String, Object> myMetadata;
 
@@ -123,7 +121,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             Method cloneMethod = o.getClass().getMethod("clone");
             result = cloneMethod.invoke(o);
         } catch (Exception e) {
-            ourLogger.warn("Couldn't clone data of type " + o.getClass().getName(), e);
+            throw new RuntimeException("Couldn't clone data of type " + o.getClass().getName(), e);
         }
 
         return result;
@@ -1023,7 +1021,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
                         }
                         result.mySimulator.addProbe(oldProbe.getEnsembleName(), neuronIndex, oldProbe.getStateName(), true);
                     } catch (SimulationException e) {
-                        ourLogger.warn("Problem copying Probe", e);
+                        throw new RuntimeException("Problem copying Probe", e);
                     }
 //					} catch (StructuralException e) {
 //						ourLogger.warn("Problem copying Probe", e);
@@ -1032,11 +1030,11 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
                     try {
                         result.mySimulator.addProbe(oldNode.getName(), oldProbe.getStateName(), true);
                     } catch (SimulationException e) {
-                        ourLogger.warn("Problem copying Probe", e);
+                        throw new RuntimeException("Problem copying Probe", e);
                     }
                 }
             } else {
-                ourLogger.warn("Can't copy Probe on type " + target.getClass().getName()
+                throw new RuntimeException("Can't copy Probe on type " + target.getClass().getName()
                         + " (to be addressed in a future release)");
             }
         }
@@ -1062,7 +1060,9 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         if (myStepListeners == null) {
             myStepListeners = new ArrayList<StepListener>(1);
         }
-        for (StepListener listener : myStepListeners) {
+        final int sl = myStepListeners.size();
+        for (int i = 0; i < sl; i++) {
+            StepListener listener = myStepListeners.get(i);
             listener.stepStarted(time);
         }
     }

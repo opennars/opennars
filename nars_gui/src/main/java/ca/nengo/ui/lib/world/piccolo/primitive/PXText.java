@@ -29,6 +29,7 @@
  */
 package ca.nengo.ui.lib.world.piccolo.primitive;
 
+import automenta.vivisect.Video;
 import ca.nengo.ui.lib.NengoStyle;
 import org.piccolo2d.util.PPaintContext;
 
@@ -50,10 +51,12 @@ import java.util.ArrayList;
 class PXText extends PXNode {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextLayout[] EMPTY_TEXT_LAYOUT_ARRAY = new TextLayout[0];
-	public static final Font DEFAULT_FONT = new Font("Helvetica", Font.PLAIN, 12);
 
-	public static final double DEFAULT_GREEK_THRESHOLD = 5.5;
+    private static final TextLayout[] EMPTY_TEXT_LAYOUT_ARRAY = new TextLayout[0];
+
+    public static final Font DEFAULT_FONT = Video.monofont;
+
+	public static final double DEFAULT_BLURTEXT_THRESHOLD = 5.5;
 	public static final int PROPERTY_CODE_FONT = 1 << 20;
 	
 
@@ -78,9 +81,9 @@ class PXText extends PXNode {
 	private transient TextLayout[] lines;
 	private String text;
 	private Paint textPaint;
-	private static boolean useGreekThreshold = true;
+	private static boolean useBlurTextThreshold = true;
 
-	protected double greekThreshold = DEFAULT_GREEK_THRESHOLD;
+	protected double blurTextThreshold;
 
 	public PXText() {
 		super();
@@ -95,19 +98,19 @@ class PXText extends PXNode {
 	}
 
 	private void init() {
-		setGreekThreshold(4);
+		setBlurTextThreshold(DEFAULT_BLURTEXT_THRESHOLD);
 		setConstrainWidthToTextWidth(true);
 
 		setFont(NengoStyle.FONT_NORMAL);
 		setTextPaint(NengoStyle.COLOR_FOREGROUND);
 	}
 	
-	static public void setUseGreekThreshold(boolean state) {
-		useGreekThreshold=state;
+	static public void setUseBlurTextThreshold(boolean state) {
+		useBlurTextThreshold =state;
 	}
 	
-	static public boolean getUseGreekThreshold() {
-		return useGreekThreshold;
+	static public boolean getUseBlurTextThreshold() {
+		return useBlurTextThreshold;
 	}
 	
 
@@ -118,28 +121,27 @@ class PXText extends PXNode {
 		return measurer.nextLayout(availibleWidth, nextLineBreakOffset, false);
 	}
 
-	protected void internalUpdateBounds(double x, double y, double width,
-			double height) {
+	protected void internalUpdateBounds(double x, double y, double width, double height) {
 		recomputeLayout();
 	}
 
 	protected void paint(PPaintContext paintContext) {
 		super.paint(paintContext);
 
-		float screenFontSize = getFont().getSize()
-				* (float) paintContext.getScale();
-		if (textPaint != null && (!useGreekThreshold || (screenFontSize > greekThreshold))) {
+		float screenFontSize = getFont().getSize() * (float) paintContext.getScale();
+		if (textPaint != null && (!useBlurTextThreshold || (screenFontSize > blurTextThreshold))) {
 			float x = (float) getX();
 			float y = (float) getY();
 			float bottomY = (float) getHeight() + y;
 
-			Graphics2D g2 = paintContext.getGraphics();
 
 			if (lines == null) {
 				recomputeLayout();
 				repaint();
 				return;
 			}
+
+            Graphics2D g2 = paintContext.getGraphics();
 
 			g2.setPaint(textPaint);
 
@@ -151,8 +153,7 @@ class PXText extends PXNode {
 					return;
 				}
 
-				float offset = (float) (getWidth() - tl.getAdvance())
-						* justification;
+				float offset = (float) (getWidth() - tl.getAdvance()) * justification;
 				tl.draw(g2, x + offset, y);
 
 				y += tl.getDescent() + tl.getLeading();
@@ -192,12 +193,12 @@ class PXText extends PXNode {
 	}
 
 	/**
-	 * Returns the current greek threshold. When the screen font size will be
-	 * below this threshold the text is rendered as 'greek' instead of drawing
+	 * Returns the current blur text threshold. When the screen font size will be
+	 * below this threshold the text is rendered as blurred/distorted instead of drawing
 	 * the text glyphs.
 	 */
-	public double getGreekThreshold() {
-		return greekThreshold;
+	public double getBlurTextThreshold() {
+		return blurTextThreshold;
 	}
 
 	/**
@@ -299,9 +300,9 @@ class PXText extends PXNode {
 	 * Controls whether this node changes its height to fit the height of its
 	 * text. If flag is true it does; if flag is false it doesn't
 	 */
-	public void setConstrainHeightToTextHeight(
-			boolean constrainHeightToTextHeight) {
-		this.constrainHeightToTextHeight = constrainHeightToTextHeight;
+	public void setConstrainHeightToTextHeight(boolean constrainHeightToTextHeight) {
+		if (constrainHeightToTextHeight == this.constrainHeightToTextHeight) return;
+        this.constrainHeightToTextHeight = constrainHeightToTextHeight;
 		recomputeLayout();
 	}
 
@@ -310,7 +311,8 @@ class PXText extends PXNode {
 	 * text. If flag is true it does; if flag is false it doesn't
 	 */
 	public void setConstrainWidthToTextWidth(boolean constrainWidthToTextWidth) {
-		this.constrainWidthToTextWidth = constrainWidthToTextWidth;
+        if (this.constrainWidthToTextWidth == constrainWidthToTextWidth) return;
+        this.constrainWidthToTextWidth = constrainWidthToTextWidth;
 		recomputeLayout();
 	}
 
@@ -321,6 +323,7 @@ class PXText extends PXNode {
 	 * very large font sizes can slow performance.
 	 */
 	public void setFont(Font aFont) {
+        if (this.font!=null && this.font.equals(aFont)) return;
 		Font old = font;
 		font = aFont;
 		lines = null;
@@ -330,15 +333,14 @@ class PXText extends PXNode {
 	}
 
 	/**
-	 * Sets the current greek threshold. When the screen font size will be below
-	 * this threshold the text is rendered as 'greek' instead of drawing the
-	 * text glyphs.
+	 * Sets the current blur text threshold.
 	 * 
 	 * @param threshold
 	 *            minimum screen font size.
 	 */
-	public void setGreekThreshold(double threshold) {
-		greekThreshold = threshold;
+	public void setBlurTextThreshold(double threshold) {
+        if (threshold == blurTextThreshold) return;
+		blurTextThreshold = threshold;
 		invalidatePaint();
 	}
 
@@ -348,6 +350,7 @@ class PXText extends PXNode {
 	 * @param just
 	 */
 	public void setJustification(float just) {
+        if (justification == just) return;
 		justification = just;
 		recomputeLayout();
 	}

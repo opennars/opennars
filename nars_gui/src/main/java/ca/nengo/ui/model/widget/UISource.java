@@ -145,7 +145,7 @@ public abstract class UISource extends Widget {
 			if (exposedName != null)
 			{
 				//remove the origin from UI
-				getNodeParent().getNetworkParent().hideOrigin(exposedName);
+				getNodeParent().getNetworkParent().hideSource(exposedName);
 				
 				//remove the origin from actual network
 				network.hideOrigin(exposedName);

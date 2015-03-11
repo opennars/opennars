@@ -1,8 +1,8 @@
 package ca.nengo.ui.lib.object.model;
 
 import ca.nengo.ui.action.RemoveModelAction;
-import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
+import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.activity.Pulsator;
@@ -13,7 +13,7 @@ import ca.nengo.ui.model.tooltip.TooltipBuilder;
 import javax.swing.*;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  * A UI Object which wraps a model
@@ -43,7 +43,7 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 
 	private boolean isModelBusy = false;
 
-	private final HashSet<ModelListener> modelListeners = new HashSet<ModelListener>();
+	private final LinkedHashSet<ModelListener> modelListeners = new LinkedHashSet<ModelListener>();
 
 	/**
 	 * Model
@@ -174,10 +174,9 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 	}
 
 	public void addModelListener(ModelListener listener) {
-		if (modelListeners.contains(listener)) {
+		if (!modelListeners.add(listener)) {
 			throw new InvalidParameterException();
 		}
-		modelListeners.add(listener);
 	}
 
 	/*
@@ -251,6 +250,8 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 		return myModel;
 	}
 
+    Tooltip tooltip = null;
+
 	@Override
 	public final WorldObject getTooltip() {
 		String toolTipTitle = getFullName();
@@ -265,7 +266,12 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 			constructTooltips(tooltipBuilder);
 		}
 
-		return new Tooltip(tooltipBuilder);
+        if (tooltip == null)
+		    return new Tooltip(tooltipBuilder);
+        else
+            tooltip.set(tooltipBuilder);
+
+        return tooltip;
 	}
 
 	/**
@@ -278,10 +284,9 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 	}
 
 	public void removeModelListener(ModelListener listener) {
-		if (!modelListeners.contains(listener)) {
+		if (!modelListeners.remove(listener)) {
 			throw new InvalidParameterException();
 		}
-		modelListeners.remove(listener);
 	}
 
 	/**

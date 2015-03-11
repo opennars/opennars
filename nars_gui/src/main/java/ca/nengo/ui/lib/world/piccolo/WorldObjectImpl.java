@@ -110,9 +110,10 @@ public class WorldObjectImpl implements WorldObject {
         if (pNode == null) {
             pNode = new PXNode();
         }
-
-        if (!(pNode instanceof PNode)) {
-            throw new InvalidParameterException();
+        else {
+            if (!(pNode instanceof PNode)) {
+                throw new InvalidParameterException();
+            }
         }
 
         myPNode = (PNode) pNode;
@@ -217,10 +218,9 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public void addChildrenListener(ChildListener listener) {
-        if (childListeners.contains(listener)) {
+        if (!childListeners.add(listener)) {
             throw new InvalidParameterException();
         }
-        childListeners.add(listener);
     }
 
     public void addInputEventListener(PInputEventListener arg0) {
@@ -726,10 +726,9 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public void removeChildrenListener(ChildListener listener) {
-        if (!childListeners.contains(listener)) {
+        if (!childListeners.remove(listener)) {
             throw new InvalidParameterException();
         }
-        childListeners.remove(listener);
     }
 
     public void removeFromParent() {

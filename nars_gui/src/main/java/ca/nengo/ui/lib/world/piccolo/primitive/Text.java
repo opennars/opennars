@@ -37,10 +37,10 @@ public class Text extends WorldObjectImpl {
 	private PXText textNode;
 	
     public static void setUseGreekThreshold(boolean value) {
-    	PXText.setUseGreekThreshold(value);
+    	PXText.setUseBlurTextThreshold(value);
     }
     public static boolean getUseGreekThreshold() {
-    	return PXText.getUseGreekThreshold();
+    	return PXText.getUseBlurTextThreshold();
     }
 
 

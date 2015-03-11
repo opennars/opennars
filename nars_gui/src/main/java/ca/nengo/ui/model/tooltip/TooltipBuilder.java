@@ -26,8 +26,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model.tooltip;
 
-import java.util.Collection;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Builds tooltips from parts
@@ -37,7 +37,7 @@ import java.util.Vector;
 public class TooltipBuilder {
 	private final String name;
 
-	private final Vector<ITooltipPart> tooltipParts;
+	private final List<ITooltipPart> tooltipParts;
 
 	/**
 	 * @param name
@@ -46,7 +46,7 @@ public class TooltipBuilder {
 	public TooltipBuilder(String name) {
 		super();
 		this.name = name;
-		tooltipParts = new Vector<ITooltipPart>(10);
+		tooltipParts = new ArrayList<ITooltipPart>(4);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class TooltipBuilder {
 	/**
 	 * @return Collection of tooltip parts
 	 */
-	protected Collection<ITooltipPart> getParts() {
+	protected List<ITooltipPart> getParts() {
 		return tooltipParts;
 	}
 

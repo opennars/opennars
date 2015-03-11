@@ -59,6 +59,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.List;
 
 
 /**
@@ -84,8 +85,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	/// Static members
 		
 	/// this code allows other classes to be notified when the selection changes
-	private static final HashSet<SelectionListener> selectionListeners
-		= new HashSet<SelectionListener>();
+	private static final LinkedHashSet<SelectionListener> selectionListeners = new LinkedHashSet<SelectionListener>();
 	
 	public static void addSelectionListener(SelectionListener listener) {
 		selectionListeners.add(listener);
@@ -107,8 +107,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	
 	// this code keeps track of which selection handler (of all selection handlers)
 	// is active (i.e., has changed most recently)
-	private static final HashSet<SelectionHandler> selectionHandlers
-		= new HashSet<SelectionHandler>();
+	private static final LinkedHashSet<SelectionHandler> selectionHandlers = new LinkedHashSet<SelectionHandler>();
 	private static void addSelectionHandler(SelectionHandler s) {
 		selectionHandlers.add(s);
 	}
@@ -131,9 +130,9 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	/**
 	 * @return the selected objects in the active selection handler
 	 */
-	public static ArrayList<WorldObject> getActiveSelection() {
+	public static List<WorldObject> getActiveSelection() {
 		if( getActiveSelectionHandler() == null )
-			return new ArrayList<WorldObject>();
+			return Collections.emptyList();
 		else
 			return getActiveSelectionHandler().getSelection();
 	}
@@ -143,7 +142,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
      * null if no object selected)
      */
     public static WorldObject getActiveObject() {
-    	ArrayList<WorldObject> s = getActiveSelection();
+    	List<WorldObject> s = getActiveSelection();
     	if (!s.isEmpty())
     		return s.get(s.size() - 1); // return last item
     	else
@@ -209,12 +208,9 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 				World world = wo.getWorld();
 				if (world instanceof NodeViewer) {
 					return (NodeViewer)world;
-				} else {
-					wo = wo.getParent();
 				}
-			} else {
-				wo = wo.getParent();
 			}
+            wo = wo.getParent();
 		}
 		return null;
 	}
@@ -232,15 +228,13 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 			if (wo instanceof UINetwork) {
 				return (UINetwork)wo;
 			} else if (wo instanceof ElasticGround) {
-				World world = wo.getWorld();
-				if (world instanceof NodeViewer) {
-					wo = ((NodeViewer)world).getViewerParent();
-				} else {
-					wo = wo.getParent();
-				}
-			} else {
-				wo = wo.getParent();
-			}
+                World world = wo.getWorld();
+                if (world instanceof NodeViewer) {
+                    wo = ((NodeViewer) world).getViewerParent();
+                    continue;
+                }
+            }
+            wo = wo.getParent();
 		}
 		return null;
 	}

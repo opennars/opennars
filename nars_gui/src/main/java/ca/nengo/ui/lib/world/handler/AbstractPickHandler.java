@@ -12,6 +12,9 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Abstract handler which picks and unpicks nodes with a delay
  *
+ * TODO maybe this can be redesigned with an AtomicReference, async events,
+ * and no additional Thread/locks
+ *
  * @author Shu Wu
  */
 public abstract class AbstractPickHandler extends PBasicInputEventHandler {
@@ -95,6 +98,12 @@ public abstract class AbstractPickHandler extends PBasicInputEventHandler {
 
     class Timer extends Thread {
 
+        final private Runnable pickNode = new Runnable() {
+            public void run() {
+                nodePicked();
+            }
+        };
+
         private Timer() {
             super("Node Picker Timer");
         }
@@ -116,11 +125,7 @@ public abstract class AbstractPickHandler extends PBasicInputEventHandler {
                         if (transientNode == pickedNode) {
 
                             try {
-                                SwingUtilities.invokeAndWait(new Runnable() {
-                                    public void run() {
-                                        nodePicked();
-                                    }
-                                });
+                                SwingUtilities.invokeAndWait(pickNode);
                             } catch (InvocationTargetException e) {
                                 e.printStackTrace();
                             }

@@ -59,6 +59,7 @@ import ca.nengo.ui.model.widget.*;
 import ca.nengo.util.Probe;
 import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyChanges.Event;
+import nars.core.Parameters;
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
@@ -119,7 +120,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	/**
 	 * Attached probes
 	 */
-	private Vector<UIProbe> probes;
+	private List<UIProbe> probes;
 
 	public UINeoNode(N model) {
 		super(model);
@@ -266,13 +267,13 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 			tooltips.addProperty("Documentation",
 					Util.truncateString(getModel().getDocumentation(), 100));
 		}
-		tooltips.addProperty("Simulation mode", getModel().getMode().toString());
+		//tooltips.addProperty("Simulation mode", getModel().getMode().toString());
 
 	}
 
 	protected void constructViewMenu(AbstractMenuBuilder menu) {
 
-		AbstractMenuBuilder originsAndTerminations = menu.addSubMenu("Origins and terminations");
+		AbstractMenuBuilder originsAndTerminations = menu.addSubMenu("Connectors");
 
 		/*
 		 * Build the "show origins" menu
@@ -280,7 +281,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		NSource[] sources = getModel().getSources();
 		if (sources.length > 0) {
 
-			AbstractMenuBuilder originsMenu = originsAndTerminations.addSubMenu("Show origin");
+			AbstractMenuBuilder originsMenu = originsAndTerminations.addSubMenu("Show source");
 
 			for (NSource element : sources) {
 				originsMenu.addAction(new ShowOriginAction(element.getName()));
@@ -294,7 +295,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		NTarget[] targets = getModel().getTargets();
 		if (targets.length > 0) {
 
-			AbstractMenuBuilder terminationsMenu = originsAndTerminations.addSubMenu("Show termination");
+			AbstractMenuBuilder terminationsMenu = originsAndTerminations.addSubMenu("Show target");
 
 			for (NTarget element : targets) {
 				terminationsMenu.addAction(new ShowTerminationAction(element.getName()));
@@ -309,7 +310,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	@Override
 	protected void initialize() {
 		super.initialize();
-		probes = new Vector<UIProbe>();
+		probes = new ArrayList<UIProbe>();
 		myUpdateListener = new ModelUpdateListener();
 	}
 
@@ -318,12 +319,11 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		super.modelUpdated();
 
 		NSource[] modelSources = getModel().getSources();
-		HashSet<NSource> modelSourceSet = new HashSet<NSource>(modelSources.length);
+		Set<NSource> modelSourceSet = Parameters.newHashSet(modelSources.length);
         Collections.addAll(modelSourceSet, modelSources);
 
 		NTarget[] modelTargets = getModel().getTargets();
-		HashSet<NTarget> modelTargetSet = new HashSet<NTarget>(
-				modelTargets.length);
+		Set<NTarget> modelTargetSet = Parameters.newHashSet(modelTargets.length);
         Collections.addAll(modelTargetSet, modelTargets);
 
 		for (WorldObject wo : getChildren()) {
@@ -331,19 +331,15 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 				Object model = ((ModelObject) wo).getModel();
 
 				if (model instanceof NTarget) {
-					if (!modelTargetSet.contains(model)) {
+					if (!modelTargetSet.remove(model)) {
 						wo.destroy();
 						this.showPopupMessage("Termination removed: " + wo.getName());
-					} else {
-						modelTargetSet.remove(model);
 					}
 				}
 				if (wo instanceof NSource) {
-					if (!modelSourceSet.contains(model)) {
+					if (!modelSourceSet.remove(model)) {
 						wo.destroy();
 						this.showPopupMessage("Origin removed: " + wo.getName());
-					} else {
-						modelSourceSet.remove(model);
 					}
 				}
 			}
@@ -355,15 +351,16 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 			this.showTarget(term.getName());
 		}
 		for (NSource source : modelSourceSet) {
-			String name= source.getName();
+            this.showSource(source.getName());
+
+//			String name= source.getName();
 			
 			// don't automatically show these two origins for NEFEnsembles
-			if (this instanceof UINEFGroup) {
-				if (name.equals("AXON") || name.equals("current")) {
-					continue;				
-				}
-			}
-			this.showSource(source.getName());
+//			if (this instanceof UINEFGroup) {
+//				if (name.equals("AXON") || name.equals("current")) {
+//					continue;
+//				}
+//			}
 		}
 	}
 
@@ -567,7 +564,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		}
 	}
 
-	public Vector<UIProbe> getProbes() {
+	public List<UIProbe> getProbes() {
 		return probes;
 	}
 
@@ -759,7 +756,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	/**
 	 * Shows all the origins on the Node model
 	 */
-	public void showAllDecodedOrigins() {
+	public void showAllDecodedSources() {
 
 		NSource[] sources = getModel().getSources();
 
@@ -776,7 +773,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	/**
 	 * Shows all the terminations on the Node model
 	 */
-	public void showAllTerminations() {
+	public void showAllTargets() {
 
 		NTarget[] targets = getModel().getTargets();
 
@@ -824,7 +821,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 *            Name of an Origin on the Node model
 	 * @return the POrigin hidden
 	 */
-	public UISource hideOrigin(String originName) {
+	public UISource hideSource(String originName) {
 
 		UISource originUI;
 
@@ -892,21 +889,22 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 	}
 
-	private class ModelUpdateListener implements VisiblyChanges.Listener {
+	private class ModelUpdateListener implements VisiblyChanges.Listener, Runnable {
 		private boolean modelUpdatePending = false;
 
-		public void changed(Event e) {
+        @Override
+        public void run() {
+            modelUpdatePending = false;
+            firePropertyChange(Property.MODEL_CHANGED);
+            if (getModel() != null) {
+                modelUpdated();
+            }
+        }
+
+        public void changed(Event e) {
 			if (!modelUpdatePending) {
 				modelUpdatePending = true;
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						modelUpdatePending = false;
-						firePropertyChange(Property.MODEL_CHANGED);
-						if (getModel() != null) {
-							modelUpdated();
-						}
-					}
-				});
+				SwingUtilities.invokeLater(this);
 			}
 		}
 	}
@@ -999,7 +997,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		@Override
 		protected void action() throws ActionException {
 			showAllSources();
-			showAllTerminations();
+			showAllTargets();
 		}
 	}
 

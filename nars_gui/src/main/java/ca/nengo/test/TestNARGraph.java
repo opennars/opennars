@@ -466,7 +466,7 @@ public class TestNARGraph extends Nengrow {
 
 
 
-        new Timer(50, new ActionListener() {
+        new Timer(20, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
