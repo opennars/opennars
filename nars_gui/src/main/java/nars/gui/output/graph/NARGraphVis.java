@@ -10,7 +10,6 @@ package nars.gui.output.graph;
  */
 
 import automenta.vivisect.dimensionalize.FastOrganicLayout;
-import automenta.vivisect.dimensionalize.HyperassociativeLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.GraphDisplays;
@@ -334,7 +333,7 @@ abstract public class NARGraphVis extends AnimatingGraphVis<Object,Object> imple
                         update(style, new HashPriorityPolarLayout(0.25f, 0.75f, 75));     
                         break;
                     case 3:
-                        update(style, new HyperassociativeLayout());     
+                        //update(style, new HyperassociativeLayout());
                         break;
 
                 }

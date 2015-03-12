@@ -40,7 +40,7 @@ import java.util.TreeSet;
  * It is not linked in the Term, because a Concept may be forgot while the Term
  * exists. Multiple objects may represent the same Term.
  */
-public class Term implements AbstractTerm, Termable {
+public class Term implements AbstractTerm, Termable, Named<CharSequence> {
 
     private static final Map<CharSequence,Term> atoms = Parameters.newHashMap(8192);
 

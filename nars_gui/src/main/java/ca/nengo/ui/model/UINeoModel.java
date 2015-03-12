@@ -49,7 +49,7 @@ public abstract class UINeoModel<M> extends ModelObject<M> {
 	@Override
 	protected void constructMenu(PopupMenuBuilder menu) {
 		super.constructMenu(menu);
-		menu.addAction(new ConfigureAction("Inspector", node()));
+		menu.addAction(new ConfigureAction("Properties", node()));
 	}
 
 	@Override

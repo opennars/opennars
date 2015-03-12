@@ -301,7 +301,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
 
     @Override
     @Deprecated public String toString() {
-        return toStringExternal();
+        return toStringBudgetSentence();
     }
 
 

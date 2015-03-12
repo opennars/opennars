@@ -29,11 +29,11 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, double scale) {
         this.graph = graph;
         this.initialBounds = new mxRectangle(0,0, scale, scale);
-        setInitialTemp(50);
-        setMinDistanceLimit(1f);
+        setInitialTemp(100, 0.98f);
+        setMinDistanceLimit(0.1f);
         setMaxDistanceLimit(450f);
 
-        setForceConstant(150);
+        setForceConstant(30);
 
         resetLearning();
 
@@ -254,9 +254,9 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
      *
      * @param value
      */
-    public void setInitialTemp(double value) {
+    public void setInitialTemp(double value, double decay) {
         initialTemp = value;
-        temperatureDecay = 0.99;
+        temperatureDecay = decay;
         minTemperature = value / 100;
     }
 
@@ -557,7 +557,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
         final double dispX[] = this.dispX;
         final double dispY[] = this.dispY;
-        final double radiusSquared[] = this.radiusSquared;
+        final double radius[] = this.radius;
         final boolean[] isMoveable = this.isMoveable;
 
         for (int i = 0; i < vertexArray.size(); i++) {
@@ -572,22 +572,25 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
                 // Do not proceed self-loops
                 if (i != j) {
+                    double rsum = radius[i] + radius[j];
                     double xDelta = cellLocation[i][0] - cellLocation[j][0];
                     double yDelta = cellLocation[i][1] - cellLocation[j][1];
 
                     // The distance between the nodes
-                    double deltaLengthSquared = xDelta * xDelta + yDelta
-                            * yDelta - radiusSquared[i] - radiusSquared[j];
+                    double deltaLength = Math.sqrt(xDelta * xDelta + yDelta
+                            * yDelta);
 
-                    if (deltaLengthSquared < minDist) {
-                        deltaLengthSquared = minDist;
+                    deltaLength -= rsum;
+
+                    if (deltaLength < minDist) {
+                        deltaLength = minDist;
                     }
 
-                    double deltaLength = Math.sqrt(deltaLengthSquared);
-                    double force = (deltaLengthSquared) / fc;
 
-                    double displacementX = (xDelta / deltaLength) * force;
-                    double displacementY = (yDelta / deltaLength) * force;
+                    double force = (deltaLength) / (fc);
+
+                    double displacementX = xDelta * force;
+                    double displacementY = yDelta * force;
 
                     if (isMoveable[i]) {
                         dispX[i] -= displacementX;

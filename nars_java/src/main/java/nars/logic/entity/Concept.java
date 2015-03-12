@@ -833,7 +833,7 @@ public class Concept extends Item<Term> implements Termable {
     @Override
     public String toStringLong() {
         String res = 
-                toStringExternal() + " " + term.name()
+                toStringBudgetSentence() + " " + term.name()
                 + toStringIfNotNull(termLinks.size(), "termLinks")
                 + toStringIfNotNull(taskLinks.size(), "taskLinks")
                 + toStringIfNotNull(beliefs.size(), "beliefs")

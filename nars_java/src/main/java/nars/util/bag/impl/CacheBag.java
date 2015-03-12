@@ -1,6 +1,9 @@
 package nars.util.bag.impl;
 
 import com.google.common.cache.*;
+import nars.core.Events;
+import nars.core.Memory;
+import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
 
 /**
@@ -10,9 +13,10 @@ import nars.logic.entity.Item;
  * 
  * http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/cache/package-summary.html*
  */
-public class CacheBag<K, I extends Item<K>> implements RemovalListener<K,I> {
+public class CacheBag<K, I extends Item<K>> implements Memory.MemoryAware, RemovalListener<K,I> {
 
     public final Cache<K, I> data;
+    private Memory memory;
 
     public CacheBag(int capacity) {
         
@@ -58,9 +62,19 @@ public class CacheBag<K, I extends Item<K>> implements RemovalListener<K,I> {
 
     @Override
     public void onRemoval(RemovalNotification<K, I> rn) {
-        if (rn.getCause()==RemovalCause.SIZE)
+        if (rn.getCause()==RemovalCause.SIZE) {
+            if (memory!=null) {
+                Object v = rn.getValue();
+                if (v instanceof Concept)
+                    memory.emit(Events.ConceptForget.class, v);
+            }
             rn.getValue().end();
+        }
     }
-    
-    
+
+
+    @Override
+    public void setMemory(Memory m) {
+        this.memory = m;
+    }
 }

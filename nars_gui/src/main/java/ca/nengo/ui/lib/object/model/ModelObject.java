@@ -105,7 +105,7 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 		if (showRemoveModelAction()) {
 			ArrayList<ModelObject> arrayOfMe = new ArrayList<ModelObject>();
 			arrayOfMe.add(this);
-			menu.addAction(new RemoveModelAction("Remove model", arrayOfMe));
+			menu.addAction(new RemoveModelAction("Remove", arrayOfMe));
 		}
 	}
 

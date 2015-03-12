@@ -54,6 +54,8 @@ abstract public class UniCore implements Core {
             ((CoreAware)concepts).setCore(this);
         if (concepts instanceof Memory.MemoryAware)
             ((Memory.MemoryAware)concepts).setMemory(m);
+        if (subcon instanceof Memory.MemoryAware)
+            ((Memory.MemoryAware)subcon).setMemory(m);
     }
 
     protected static class DefaultConceptProcess extends ConceptProcess {
@@ -94,7 +96,8 @@ abstract public class UniCore implements Core {
     @Override
     public void reset() {
         concepts.clear();
-        subcon.clear();
+        if (subcon!=null)
+            subcon.clear();
     }
 
 

@@ -141,7 +141,7 @@ public class Default extends NewNAR implements ConceptBuilder {
 
     public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         this();
-        conceptBagSize = maxConcepts;
+        setConceptBagSize(maxConcepts);
         param.conceptsFiredPerCycle.set(conceptsFirePerCycle);
         param.termLinkMaxReasoned.set(termLinksPerCycle);
         param.termLinkMaxMatched.set((int)(termLinksPerCycle*1.5));
@@ -222,7 +222,7 @@ public class Default extends NewNAR implements ConceptBuilder {
     }
     
     CacheBag<Term,Concept> newSubconceptBag() {        
-        if (getSubconceptBagSize() == 0) return null;
+        if (getSubconceptBagSize() < 1) return null;
         return new CacheBag(getSubconceptBagSize());
     }
 

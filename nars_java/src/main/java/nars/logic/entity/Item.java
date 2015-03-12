@@ -31,7 +31,7 @@ import java.util.Comparator;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item<K> implements Budgetable {
+public abstract class Item<K> implements Budgetable, Named<K> {
 
     public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 
@@ -191,12 +191,15 @@ public abstract class Item<K> implements Budgetable {
      * Return a String representation of the Item after simplification
      * @return A simplified String representation of the content
      */
-    public String toStringExternal() {                
+    public String toStringBudgetSentence() {
         final String briefBudget = budget.toStringExternal();
         String n = name().toString();
         return new StringBuilder(briefBudget.length()+n.length()+1).append(briefBudget).append(' ').append(n).toString();
     }
-    
+    public String toStringSentence() {
+        return name().toString();
+    }
+
     /** similar to toStringExternal but includes budget afterward */
     public String toStringExternal2(boolean includeBudget) {
         final String briefBudget = budget.toStringExternal();

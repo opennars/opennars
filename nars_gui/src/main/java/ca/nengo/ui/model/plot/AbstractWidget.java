@@ -46,7 +46,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
     protected abstract void paint(PaintContext paintContext, double width, double height);
 
     public String getTypeName() {
-        return getClass().getName();
+        return getClass().getSimpleName();
     }
 
     @Override
@@ -82,7 +82,8 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
 
             setIcon(newIcon(this));
 
-            setSize(width, height);
+
+            setSize(getIcon().getWidth(), getIcon().getHeight());
 
 
             repaint();

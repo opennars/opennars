@@ -89,9 +89,9 @@ public abstract class Widget<M> extends UINeoModel<M> {
 		super.constructMenu(menu);
 
 		if (isWidgetVisible()) {
-			menu.addAction(new HideWidgetAction("Hide this icon"));
+			menu.addAction(new HideWidgetAction("Hide"));
 		} else {
-			menu.addAction(new ShowWidgetAction("Show this icon"));
+			menu.addAction(new ShowWidgetAction("Show"));
 		}
 
 		menu.addSection(getTypeName());

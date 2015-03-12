@@ -4,6 +4,7 @@ package nars.event;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.logic.entity.Concept;
+import nars.logic.reason.ConceptProcess;
 
 import java.util.function.Consumer;
 
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
 abstract public class ConceptReaction extends AbstractReaction {
 
     public ConceptReaction(NAR n) {
-        super(n, Events.ConceptNew.class, Events.ConceptForget.class);
+        super(n, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class);
 
         //add existing events
         n.memory.taskLater(new Runnable() {
@@ -37,8 +38,13 @@ abstract public class ConceptReaction extends AbstractReaction {
             Concept c = (Concept)args[0];
             onForgetConcept(c);
         }
+        else if (event == Events.ConceptFired.class) {
+            Concept c = ((ConceptProcess)args[0]).getCurrentConcept();
+            onFiredConcept(c);
+        }
     }
 
     abstract public void onNewConcept(Concept c);
     abstract public void onForgetConcept(Concept c);
+    abstract public void onFiredConcept(Concept c);
 }

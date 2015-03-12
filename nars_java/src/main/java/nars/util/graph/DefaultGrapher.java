@@ -68,12 +68,12 @@ public class DefaultGrapher implements NARGraph.Grapher {
 //        return o;
 //    }
 
-    public Object addVertex(Object o) {
+    public Object addVertex(Named o) {
         if (graph.addVertex(o))
             return o;
         return null;
     }
-    public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
+    public Object addEdge(NARGraph g, Named source, Named target, Object edge) {
         addVertex(source);
         addVertex(target);
         if (g.addEdge(source, target, edge))
@@ -251,7 +251,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
                     final Task theTask = t.targetTask;
                     if (onTask(theTask)) {
 
-                        if (!graph.containsVertex(theTask)) {
+                        if (graph == null || !graph.containsVertex(theTask)) {
                             //on adding theTask once
                             Term taskTerm = theTask.getTerm();
                             if (taskTerm != null) {

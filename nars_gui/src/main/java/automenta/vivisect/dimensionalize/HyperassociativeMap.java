@@ -15,6 +15,7 @@
 package automenta.vivisect.dimensionalize;
 
 import nars.core.Parameters;
+import nars.util.data.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.Graph;
 
@@ -50,7 +51,7 @@ import java.util.concurrent.Future;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
+public class HyperassociativeMap<N, E extends UIEdge<N>> implements IterativeLayout<N,E> {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;
@@ -61,7 +62,7 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
     private static final double DEFAULT_LEARNING_RATE = 0.4;
     private static final double DEFAULT_MAX_MOVEMENT = 0.0;
     private static final double DEFAULT_TOTAL_MOVEMENT = 0.0;
-    private static final double DEFAULT_ACCEPTABLE_DISTANCE_FACTOR = 0.85;
+    private static final double DEFAULT_ACCEPTABLE_DISTANCE_FACTOR = 0.95;
     private static final double DEFAULT_EQUILIBRIUM_DISTANCE = 1.0;
 
     /** when distance between nodes exceeds this factor times target distance, repulsion is not applied.  set to positive infinity to completely disable */
@@ -73,7 +74,7 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
     
     private final Map<N, ArrayRealVector> coordinates;
     
-    private static final Random RANDOM = new Random();
+    private static final Random RANDOM = new XORShiftRandom();
     private double equilibriumDistance;
     private double learningRate = DEFAULT_LEARNING_RATE;
     private double maxMovement = DEFAULT_MAX_MOVEMENT;
@@ -81,6 +82,7 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
     private double acceptableMaxDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
     private double speedFactor = 1.0;
     final double acceptableDistanceAdjustment = 0.01;
+    final double minDistance = 0.01;
     private EdgeWeightToDistanceFunction edgeWeightToDistance = EdgeWeightToDistanceFunction.OneDivSum;
     
     private DistanceMetric distanceFunction;
@@ -90,7 +92,7 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
 
     transient final Map<N, Double> reusableNeighborData = new LinkedHashMap();
     transient final List<N> vertices = new ArrayList();
-
+    //boolean normalizeRepulsion = true;
 
 
     public Collection<N> keys() {
@@ -164,6 +166,14 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
         reset();
     }
 
+    public HyperassociativeMap scale(double eqDist, double repulsionCutoff, double attractStrength) {
+        setEquilibriumDistance(eqDist);
+        setMaxRepulsionDistance(repulsionCutoff);
+        setAttractionStrength(attractStrength);
+
+        return this;
+    }
+
     public HyperassociativeMap(final Graph<N, E> graph, final int dimensions, DistanceMetric distance, final ExecutorService threadExecutor) {
         this(graph, dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, distance, threadExecutor);
     }
@@ -211,11 +221,11 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
     public void reset() {
         resetLearning();
 
-        // randomize all nodes
-        coordinates.clear();
-        for (final N node : graph.vertexSet()) {
-            coordinates.put(node, randomCoordinates(dimensions));
-        }
+//        // randomize all nodes
+//        coordinates.clear();
+//        for (final N node : graph.vertexSet()) {
+//            coordinates.put(node, randomCoordinates(dimensions));
+//        }
     }
 
     public boolean isAlignable() {
@@ -357,8 +367,8 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
             neighbors.clear();
         
         for (E neighborEdge : graph.edgesOf(nodeToQuery)) {
-            N s = graph.getEdgeSource(neighborEdge);
-            N t = graph.getEdgeSource(neighborEdge);
+            N s = neighborEdge.getSource();
+            N t = neighborEdge.getTarget();
             N neighbor = s == nodeToQuery ? t : s;
 
             Double existingWeight = neighbors.get(neighbor);
@@ -436,7 +446,8 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
 
         ArrayRealVector delta = new ArrayRealVector(dimensions);
 
-        double targetDistance = getRadius(nodeToAlign) + equilibriumDistance;
+        double radius = getRadius(nodeToAlign);
+        double targetDistance = radius + equilibriumDistance;
         
         // align with neighbours
         for (final Entry<N, Double> neighborEntry : neighbors.entrySet()) {
@@ -485,8 +496,11 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
             
             double oldDistance = distanceFunction.subtractIfLessThan(getPosition(node), position, repelVector, maxEffectiveDistance);
             if (oldDistance == Double.POSITIVE_INFINITY)
-                continue;
-            
+                continue; //too far to matter
+            if (oldDistance < minDistance)
+                oldDistance = minDistance; //continue;
+                //throw new RuntimeException("invalid oldDistance");
+
             double newDistance = -targetDistance * Math.pow(oldDistance, -repulsiveWeakness);
 
             if (Math.abs(newDistance) > targetDistance) {
@@ -494,16 +508,21 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
             }                
             newDistance *= learningRate;
 
+
             add(delta, repelVector, newDistance/oldDistance);
         }
 
-        
-        
+
+        /*if (normalizeRepulsion)
+            nodeSpeed/=delta.getNorm(); //TODO check when norm = 0*/
+
         if (nodeSpeed!=1.0) {
             delta.mapMultiplyToSelf(nodeSpeed);
         }
         
         double moveDistance = magnitude(delta);
+        if (!Double.isFinite(moveDistance))
+            throw new RuntimeException("invalid magnitude");
         
         if (moveDistance > targetDistance * acceptableMaxDistanceFactor) {
             final double newLearningRate = ((targetDistance * acceptableMaxDistanceFactor) / moveDistance);
@@ -691,7 +710,8 @@ public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
             double r[] = result.getDataRef();
             double maxDistanceSq = maxDistance*maxDistance;
             double d = 0;
-            for (int i = 0; i < a.length; i++) {
+            final int l = a.length;
+            for (int i = 0; i < l; i++) {
                 double ab = a[i] - b[i];
                 d += ab*ab;
              

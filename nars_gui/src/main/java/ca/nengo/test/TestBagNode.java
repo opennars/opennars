@@ -4,7 +4,6 @@ import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.model.impl.ObjectGraphNode;
 import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.model.node.UINetwork;
@@ -38,8 +37,8 @@ public class TestBagNode extends Nengrow {
 
 
 
-        ObjectGraphNode bagUI;
-        network.addNode(bagUI = new ObjectGraphNode("Concepts Bag", new BagNode()));
+        ObjectNode bagUI;
+        network.addNode(bagUI = new ObjectNode("Concepts Bag", new BagNode()));
         //network.addNode(bagUI = new ObjectGraphNode("NARObj", narNode.n));
 
         //network.addNode(new ObjectNode("BagUI", new ObjectGraphController(bagUI)));
@@ -59,59 +58,59 @@ public class TestBagNode extends Nengrow {
         return network;
     }
 
-    public static class ObjectGraphController {
-        private final ObjectGraphNode.UIObjectGraphNode ui;
-
-        public ObjectGraphController(ObjectGraphNode ogn) {
-
-            ui = ogn.newUI(64,64);
-        }
-
-        public void setEquilibriumDistance(Double d) {
-            if (d!=null) {
-                if (ui.bodyLayout.getEquilibriumDistance()!=d) {
-                    ui.bodyLayout.reset();
-                    ui.bodyLayout.setEquilibriumDistance(d);
-                    ui.layoutChildren();
-                    ui.repaint();
-                }
-
-            }
-        }
-
-        public void setMaxDistance(Double d) {
-            if (d!=null) {
-                if (ui.bodyLayout.getMaxRepulsionDistance()!=d) {
-                    ui.bodyLayout.reset();
-                    ui.bodyLayout.setMaxRepulsionDistance(d);
-                    ui.layoutChildren();
-                    ui.repaint();
-                }
-
-            }
-
-        }
-        public void setAttractiveStrength(Double d) {
-            if (d!=null) {
-                if (ui.bodyLayout.getAttractionStrength()!=d) {
-                    ui.bodyLayout.reset();
-                    ui.bodyLayout.setAttractionStrength(d);
-                    ui.layoutChildren();
-                    ui.repaint();
-                }
-            }
-        }
-        public void setRepulsion(Double d) {
-            if (d!=null) {
-                if (ui.bodyLayout.getRepulsiveWeakness()!=d) {
-                    ui.bodyLayout.reset();
-                    ui.bodyLayout.setRepulsiveWeakness(d);
-                    ui.layoutChildren();
-                    ui.repaint();
-                }
-            }
-        }
-    }
+//    public static class ObjectGraphController {
+//        private final ObjectGraphNode.UIObjectGraphNode ui;
+//
+//        public ObjectGraphController(ObjectGraphNode ogn) {
+//
+//            ui = ogn.newUI(64,64);
+//        }
+//
+//        public void setEquilibriumDistance(Double d) {
+//            if (d!=null) {
+//                if (ui.bodyLayout.getEquilibriumDistance()!=d) {
+//                    ui.bodyLayout.reset();
+//                    ui.bodyLayout.setEquilibriumDistance(d);
+//                    ui.layoutChildren();
+//                    ui.repaint();
+//                }
+//
+//            }
+//        }
+//
+//        public void setMaxDistance(Double d) {
+//            if (d!=null) {
+//                if (ui.bodyLayout.getMaxRepulsionDistance()!=d) {
+//                    ui.bodyLayout.reset();
+//                    ui.bodyLayout.setMaxRepulsionDistance(d);
+//                    ui.layoutChildren();
+//                    ui.repaint();
+//                }
+//
+//            }
+//
+//        }
+//        public void setAttractiveStrength(Double d) {
+//            if (d!=null) {
+//                if (ui.bodyLayout.getAttractionStrength()!=d) {
+//                    ui.bodyLayout.reset();
+//                    ui.bodyLayout.setAttractionStrength(d);
+//                    ui.layoutChildren();
+//                    ui.repaint();
+//                }
+//            }
+//        }
+//        public void setRepulsion(Double d) {
+//            if (d!=null) {
+//                if (ui.bodyLayout.getRepulsiveWeakness()!=d) {
+//                    ui.bodyLayout.reset();
+//                    ui.bodyLayout.setRepulsiveWeakness(d);
+//                    ui.layoutChildren();
+//                    ui.repaint();
+//                }
+//            }
+//        }
+//    }
 
     public static class NARNode {
         final NAR n;

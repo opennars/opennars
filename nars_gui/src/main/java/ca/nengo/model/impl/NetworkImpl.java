@@ -64,7 +64,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     protected int myNumJavaThreads = 1;
     protected boolean myUseGPU = true;
 
-    private final Map<String, N> nodes; //keyed on name
+    protected final Map<String, N> nodes; //keyed on name
     private final Map<NTarget, Projection> myProjectionMap; //keyed on Termination
 
     private Node[] myNodeArray; //cache of myNodeMap's items in the form of an array for getNodes()

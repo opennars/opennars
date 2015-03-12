@@ -147,6 +147,7 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
     }
 
     /**
+     * calls overflow() on an overflown object
      * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
      */
     public V update(final BagSelector<K, V> selector) {
