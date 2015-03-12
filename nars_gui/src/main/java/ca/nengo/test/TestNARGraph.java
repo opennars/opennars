@@ -1,7 +1,6 @@
 package ca.nengo.test;
 
 import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
-import automenta.vivisect.dimensionalize.IterativeLayout;
 import automenta.vivisect.dimensionalize.UIEdge;
 import automenta.vivisect.swing.ColorArray;
 import ca.nengo.model.Node;
@@ -33,7 +32,6 @@ import nars.util.graph.NARGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.util.FastMath;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -65,10 +63,11 @@ public class TestNARGraph extends Nengrow {
 
 
         float simTimePerCycle = 1.0f;
-        float simTimePerLayout = 2.0f;
+        float simTimePerLayout = 1.0f;
 
 
-        final IterativeLayout<NARGraphVertex,UIEdge<NARGraphVertex>> hmap = new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph, 500) {
+        final FastOrganicIterativeLayout<NARGraphVertex,UIEdge<NARGraphVertex>> hmap =
+                new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph, 500) {
             @Override public ArrayRealVector newPosition(NARGraphVertex node) {
                 ArrayRealVector a = node.getCoordinates();
                 randomCoordinatesArray(a.getDataRef());
@@ -94,10 +93,12 @@ public class TestNARGraph extends Nengrow {
             @Override
             public double getRadius(NARGraphVertex narGraphVertex) {
                 double r = 1+narGraphVertex.ui.getFullBoundsReference().getWidth();
-                return r/4.0;
+                return r/2.0;
                 //return 150;
             }
         };
+
+
 
 
         long lasTLayout = System.currentTimeMillis();
@@ -116,6 +117,11 @@ public class TestNARGraph extends Nengrow {
 
         /** returns a list of edges which can be used by drawing thread for non-synchronized fast drawing */
         public List<UIEdge<NARGraphVertex>> getEdges() {
+            if (edgesChanged) {
+                nextEdges.clear();
+                nextEdges.addAll(graph.edgeSet()); //use atomicRef?
+                edgesChanged = false;
+            }
             return nextEdges;
         }
 
@@ -169,7 +175,7 @@ public class TestNARGraph extends Nengrow {
                 */
 
                 hmap.resetLearning();
-                hmap.run(2);
+                hmap.run(8);
             }
         };
 
@@ -309,14 +315,9 @@ public class TestNARGraph extends Nengrow {
         protected void updateEdges() {
             if (!edgesChanged) {
                 edgesChanged = true;
-                SwingUtilities.invokeLater(this::updateCopyOfEdges);
             }
         }
 
-        private void updateCopyOfEdges() {
-            nextEdges = new ArrayList(graph.edgeSet()); //use atomicRef?
-            edgesChanged = false;
-        }
 
     }
 

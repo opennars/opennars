@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements IterativeLayout<N,E>{
 
-    public static final double LengthEpsilon = 0.001; //minimum distinguishable length
+    public static final double DisplacementLengthEpsilon = 0.0001; //minimum distinguishable length
 
     private final Map<N, ArrayRealVector> coordinates = new LinkedHashMap();
     private final DirectedGraph<N, E> graph;
@@ -24,12 +24,12 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, double scale) {
         this.graph = graph;
         this.initialBounds = new mxRectangle(-scale/2, -scale/2, scale, scale);
-        setInitialTemp(13f);
-        setMinDistanceLimit(1f);
-        setMaxDistanceLimit(200f);
+        setInitialTemp(100);
+        setMinDistanceLimit(10f);
+        setMaxDistanceLimit(1550f);
 
-        setForceConstant(100f);
-        setMaxIterations(1);
+        setForceConstant(100);
+
     }
 
     @Override
@@ -50,7 +50,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
     @Override
     public void resetLearning() {
-        this.temperature = getInitialTemp();
+
     }
 
 
@@ -100,27 +100,14 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
      * The maximum distance between vertex, beyond which their repulsion no
      longer has an effect
      */
-    protected double maxDistanceLimit = 500;
+    protected double maxDistanceLimit;
 
     /**
      * Start value of temperature. Default is 200.
      */
-    protected double initialTemp = 200;
+    protected double initialTemp;
 
-    /**
-     * Temperature to limit displacement at later stages of layout.
-     */
-    protected double temperature = 0;
 
-    /**
-     * Total number of iterations to run the layout though.
-     */
-    protected double maxIterations = 0;
-
-    /**
-     * Current iteration count.
-     */
-    protected double iteration = 0;
 
     /**
      * An array of all vertex to be laid out.
@@ -204,20 +191,6 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
 
 
-    /**
-     *
-     */
-    public double getMaxIterations() {
-        return maxIterations;
-    }
-
-    /**
-     *
-     * @param value
-     */
-    public void setMaxIterations(double value) {
-        maxIterations = value;
-    }
 
     /**
      *
@@ -278,13 +251,6 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
         initialTemp = value;
     }
 
-    /**
-     * Reduces the temperature of the layout from an initial setting in a linear
-     * fashion to zero.
-     */
-    protected void reduceTemperature() {
-        temperature = initialTemp * (1.0 - iteration / maxIterations);
-    }
 
     transient final List<N> cells = new ArrayList();
 
@@ -338,6 +304,11 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
         // ints which represents the neighbours cells to that vertex as
         // the indices into vertexArray
 
+        final double cellLocation[][] = this.cellLocation;
+        final int[][] neighbors = this.neighbors;
+        final List<N> cells = this.cells;
+        final double[] radii = this.radius;
+
         for (int i = 0; i < n; i++) {
             N v = vertexArray.get(i);
 
@@ -364,7 +335,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
             cellLocation[i][0] = x;// + width / 2.0;
             cellLocation[i][1] = y;// + height / 2.0;
 
-            this.radius[i] = radius;
+            radii[i] = radius;
             this.radiusSquared[i] = radius*radius;
 
 
@@ -392,14 +363,14 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 cells.clear();
                 for (E e : edges) {
 
-
                     N source = e.getSource();
                     N target = e.getTarget();
                     if (source!=v)  cells.add(source);
                     else if (target!=v)  cells.add(target);
                 }
 
-                neighbors[i] = new int[cells.size()];
+                if (neighbors[i]==null || neighbors[i].length < cells.size())
+                    neighbors[i] = new int[cells.size()];
 
                 for (int j = 0; j < cells.size(); j++) {
                     N cj = cells.get(j);
@@ -420,16 +391,18 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                         neighbors[i][j] = i;
                     }
                 }
+
+                //fill up the remaining indexes with -1 in case it was shrunk and not unallocated
+                for (int j = cells.size(); j < neighbors[i].length; j++)
+                    neighbors[i][j] = -1;
             }
         }
 
-        temperature = initialTemp;
 
 
         // Main iteration loop
         //try {
-            for (iteration = 0; iteration < iterations; iteration++) {
-                reduceTemperature();
+            for (int iteration = 0; iteration < iterations; iteration++) {
 
                 // Calculate repulsive forces on all vertex
                 calcRepulsion();
@@ -437,7 +410,8 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 // Calculate attractive forces through edge
                 calcAttraction();
 
-                calcPositions();
+                double temperature = initialTemp * (1.0 - iteration / iterations);
+                calcPositions(temperature);
             }
 
         //} catch (Exception e) { }
@@ -451,7 +425,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 //cellLocation[i][0] -= 1/2.0; //geo.getWidth() / 2.0;
                 //cellLocation[i][1] -= 1/2.0; //geo.getHeight() / 2.0;
 
-                double r = radius[i];
+                double r = radii[i];
                 double x = /*graph.snap*/(cellLocation[i][0] - r);
                 double y = /*graph.snap*/(cellLocation[i][1] - r);
 
@@ -496,32 +470,41 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
      * local cache of cell positions. Limits the displacement to the current
      * temperature.
      */
-    protected void calcPositions() {
-        for (int index = 0; index < vertexArray.size(); index++) {
+    protected void calcPositions(double temperature) {
+
+        final double[] dispX = this.dispX;
+        final double[] dispY = this.dispY;
+        int size = vertexArray.size();
+
+        final double[][] cellLocation = this.cellLocation;
+
+
+        for (int index = 0; index < size; index++) {
             if (isMoveable[index]) {
                 // Get the distance of displacement for this node for this
                 // iteration
                 double deltaLength = Math.sqrt(dispX[index] * dispX[index]
                         + dispY[index] * dispY[index]);
 
-                if (deltaLength < LengthEpsilon) {
-                    deltaLength = LengthEpsilon;
+                if (deltaLength < DisplacementLengthEpsilon) {
+                    deltaLength = DisplacementLengthEpsilon;
                 }
 
                 // Scale down by the current temperature if less than the
                 // displacement distance
-                double newXDisp = dispX[index] / deltaLength
-                        * Math.min(deltaLength, temperature);
-                double newYDisp = dispY[index] / deltaLength
-                        * Math.min(deltaLength, temperature);
+                double minDLT = Math.min(deltaLength, temperature);
+                double newXDisp = dispX[index] / deltaLength * minDLT;
+                double newYDisp = dispY[index] / deltaLength * minDLT;
+
+                // Update the cached cell locations
+                cellLocation[index][0] += newXDisp;
+                cellLocation[index][1] += newYDisp;
 
                 // reset displacements
                 dispX[index] = 0;
                 dispY[index] = 0;
 
-                // Update the cached cell locations
-                cellLocation[index][0] += newXDisp;
-                cellLocation[index][1] += newYDisp;
+
             }
         }
     }
@@ -533,12 +516,24 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     protected void calcAttraction() {
         // Check the neighbours of each vertex and calculate the attractive
         // force of the edge connecting them
+        final int[][] neighbors = this.neighbors;
+        final double[][] cellLocation = this.cellLocation;
+
+        final double minDist = minDistanceLimit; //cache as local variable for speed
+        final double fc = forceConstant;
+
+        final double dispX[] = this.dispX;
+        final double dispY[] = this.dispY;
+        final double radiusSquared[] = this.radiusSquared;
+        final boolean[] isMoveable = this.isMoveable;
+
         for (int i = 0; i < vertexArray.size(); i++) {
             if (neighbors[i]==null) continue;
             if (cellLocation[i] == null) continue;
             for (int k = 0; k < neighbors[i].length; k++) {
                 // Get the index of the othe cell in the vertex array
                 int j = neighbors[i][k];
+                if (j == -1) break; //empty neighbor index at the end of the shrunk array
 
                 if (cellLocation[j] == null) continue;
 
@@ -551,19 +546,19 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                     double deltaLengthSquared = xDelta * xDelta + yDelta
                             * yDelta - radiusSquared[i] - radiusSquared[j];
 
-                    if (deltaLengthSquared < minDistanceLimitSquared) {
-                        deltaLengthSquared = minDistanceLimitSquared;
+                    if (deltaLengthSquared < minDist) {
+                        deltaLengthSquared = minDist;
                     }
 
                     double deltaLength = Math.sqrt(deltaLengthSquared);
-                    double force = (deltaLengthSquared) / forceConstant;
+                    double force = (deltaLengthSquared) / fc;
 
                     double displacementX = (xDelta / deltaLength) * force;
                     double displacementY = (yDelta / deltaLength) * force;
 
                     if (isMoveable[i]) {
-                        this.dispX[i] -= displacementX;
-                        this.dispY[i] -= displacementY;
+                        dispX[i] -= displacementX;
+                        dispY[i] -= displacementY;
                     }
 
                     if (isMoveable[j]) {

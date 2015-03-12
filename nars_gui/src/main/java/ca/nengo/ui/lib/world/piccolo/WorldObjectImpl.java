@@ -346,6 +346,10 @@ public class WorldObjectImpl implements WorldObject {
 
 
         Collection children = getChildrenReference();
+
+
+
+
         pnode.removeAllChildren();
         if (pnode instanceof PXNode) {
             ((PXNode) pnode).removeFromWorld();
