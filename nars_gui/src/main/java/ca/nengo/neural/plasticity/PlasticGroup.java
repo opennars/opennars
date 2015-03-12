@@ -29,6 +29,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.neural.plasticity;
 
 import ca.nengo.model.Group;
+import ca.nengo.model.Node;
 
 /**
  * <p>
@@ -38,7 +39,7 @@ import ca.nengo.model.Group;
  *
  * @author Trevor Bekolay
  */
-public interface PlasticGroup extends Group {
+public interface PlasticGroup extends Group<Node> {
 
 	/**
 	 * @return Period after which plasticity rules are evaluated (defaults to every time step).

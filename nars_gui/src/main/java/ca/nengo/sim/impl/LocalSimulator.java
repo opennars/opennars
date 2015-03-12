@@ -107,7 +107,7 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
         	myProbeTasks = new ArrayList<ThreadTask>(20);
         }
 
-        myTasks = NodeThreadPool.collectTasks(network.getNodeMap().values(), myTasks);
+        myTasks = NodeThreadPool.collectTasks(network.getNodes(), myTasks);
     }
 
     /**
@@ -120,7 +120,7 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
             it.next().reset();
         }
 
-        for (N node: network.getNodeMap().values())
+        for (Node node: network.getNodes())
         {
             if(node instanceof Network) {
                 ((Network)node).getSimulator().resetProbes();
@@ -226,7 +226,8 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
         }
     }
 
-    public void step(float startTime, float endTime) throws SimulationException {
+    /** should be called from a synchronized method */
+    private void step(float startTime, float endTime) throws SimulationException {
 
     	network.fireStepListeners(startTime);
     	
@@ -238,7 +239,7 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
                 myProjection.getTarget().apply(values);
             }
 
-            for (N myNode : network.getNodeMap().values()) {
+            for (Node myNode : network.getNodes()) {
                 if(myNode instanceof NetworkImpl) {
                     ((NetworkImpl)myNode).run(startTime, endTime, false);
                 } /*else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {
@@ -288,7 +289,7 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
      */
     public synchronized void resetNetwork(boolean randomize, boolean saveWeights) {
         if (saveWeights) {
-            for (N myNode : network.getNodeMap().values()) {
+            for (Node myNode : network.getNodes()) {
                 NTarget[] terms = myNode.getTargets();
                 for (NTarget term : terms) {
                     if (term instanceof PlasticGroupTarget) {

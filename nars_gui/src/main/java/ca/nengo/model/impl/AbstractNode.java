@@ -38,7 +38,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public abstract class AbstractNode implements Node {
+public abstract class AbstractNode implements Node<Node> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -19,8 +19,11 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     private final DirectedGraph<N, E> graph;
     private final Random rng = new XORShiftRandom();
 
-    public FastOrganicIterativeLayout(DirectedGraph<N,E> graph) {
+    mxRectangle initialBounds;
+
+    public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, double scale) {
         this.graph = graph;
+        this.initialBounds = new mxRectangle(-scale/2, -scale/2, scale, scale);
         setInitialTemp(13f);
         setMinDistanceLimit(1f);
         setMaxDistanceLimit(200f);
@@ -47,7 +50,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
     @Override
     public void resetLearning() {
-
+        this.temperature = getInitialTemp();
     }
 
 
@@ -287,6 +290,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
     public void run(int iterations) {
 
+
         indices.clear();
 
         // Finds the relevant vertex for the layout
@@ -297,17 +301,21 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
         Set<N> vx = graph.vertexSet();
         if (vx == null || vx.isEmpty()) return;
-
-
         vertexArray.addAll(graph.vertexSet());
 
-        mxRectangle initialBounds = null; //new mxRectangle(-100, -50, 100, 50);
+
+        pre(vertexArray);
+
+
+        //null disables offset adjustment at the end
+
         //? graph.getBoundsForCells(vertexArray, false, false, true) : null;
+
 
         int n = vertexArray.size();
 
 
-        if ((cellLocation == null) || (cellLocation.length!=n)) {
+        if ((cellLocation == null) || (cellLocation.length<n)) {
             dispX = new double[n];
             dispY = new double[n];
             cellLocation = new double[n][];
@@ -348,16 +356,16 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
             // Randomize (0, 0) locations
             //TODO re-use existing location
-            ArrayRealVector c = getPosition(v);
-            double x = c.getEntry(0), y = c.getEntry(1);
+            double[] c = getPosition(v).getDataRef();
+            double x = c[0], y = c[1];
 
 
 
-            cellLocation[i][0] = x + width / 2.0;
-            cellLocation[i][1] = y + height / 2.0;
+            cellLocation[i][0] = x;// + width / 2.0;
+            cellLocation[i][1] = y;// + height / 2.0;
 
             this.radius[i] = radius;
-            this.radiusSquared[i] = radius;
+            this.radiusSquared[i] = radius*radius;
 
 
             // Moves cell location back to top-left from center locations used in
@@ -394,13 +402,17 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 neighbors[i] = new int[cells.size()];
 
                 for (int j = 0; j < cells.size(); j++) {
-                    Integer index = indices.get(cells.get(j));
+                    N cj = cells.get(j);
 
-                    // Check the connected cell in part of the vertex list to be
-                    // acted on by this layout
-                    if (index != null) {
-                        neighbors[i][j] = index.intValue();
-                    } // Else if index of the other cell doesn't correspond to
+                    if (indices.containsKey(cj)) {
+                        int index = indices.get(cj);
+
+                        // Check the connected cell in part of the vertex list to be
+                        // acted on by this layout
+
+                        neighbors[i][j] = index;
+                    }
+                    // Else if index of the other cell doesn't correspond to
                     // any cell listed to be acted upon in this layout. Set
                     // the index to the value of this vertex (a dummy self-loop)
                     // so the attraction force of the edge is not calculated
@@ -417,6 +429,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
         // Main iteration loop
         //try {
             for (iteration = 0; iteration < iterations; iteration++) {
+                reduceTemperature();
 
                 // Calculate repulsive forces on all vertex
                 calcRepulsion();
@@ -425,7 +438,6 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 calcAttraction();
 
                 calcPositions();
-                reduceTemperature();
             }
 
         //} catch (Exception e) { }
@@ -439,11 +451,13 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 //cellLocation[i][0] -= 1/2.0; //geo.getWidth() / 2.0;
                 //cellLocation[i][1] -= 1/2.0; //geo.getHeight() / 2.0;
 
-                double r = getRadius(v);
+                double r = radius[i];
                 double x = /*graph.snap*/(cellLocation[i][0] - r);
                 double y = /*graph.snap*/(cellLocation[i][1] - r);
-                getPosition(v).setEntry(0, x);
-                getPosition(v).setEntry(1, y);
+
+                double[] pos = getPosition(v).getDataRef();
+                pos[0] = x;
+                pos[1] = y;
 
                 if (i == 0) {
                     minx = maxx = x;
@@ -470,8 +484,9 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
         }
 
         for (ArrayRealVector a : coordinates.values()) {
-            a.addToEntry(0, dx);
-            a.addToEntry(1, dy);
+            double[] p = a.getDataRef();
+            p[0]+= dx;
+            p[1]+= dy;
         }
 
     }
@@ -564,46 +579,70 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
      * Calculates the repulsive forces between all laid out nodes
      */
     protected void calcRepulsion() {
-        int vertexCount = vertexArray.size();
+        final int vertexCount = vertexArray.size();
+
+        final double maxDist = maxDistanceLimit; //cache as local variable for speed
+        final double minDist = minDistanceLimit; //cache as local variable for speed
+        final double fcSq = forceConstantSquared;
+
+        final double dispX[] = this.dispX;
+        final double dispY[] = this.dispY;
+        final double cellLocation[][] = this.cellLocation;
+        final double radius[] = this.radius;
 
         for (int i = 0; i < vertexCount; i++) {
+            final double ri = radius[i];
+            if (cellLocation[i]==null) continue;
+
+            final double ix = cellLocation[i][0];
+            final double iy = cellLocation[i][1];
+            final boolean imi = isMoveable[i];
+
             for (int j = i; j < vertexCount; j++) {
                 // Exits if the layout is no longer allowed to run
 
-                if ((j != i) && (cellLocation[i]!=null) && (cellLocation[j]!=null)) {
-                    double xDelta = cellLocation[i][0] - cellLocation[j][0];
-                    double yDelta = cellLocation[i][1] - cellLocation[j][1];
+                if ((j != i) && (cellLocation[j]!=null)) {
+                    double xDelta = ix - cellLocation[j][0];
+                    double yDelta = iy - cellLocation[j][1];
 
                     if (xDelta == 0) {
-                        xDelta = 0.01 + rng.nextDouble();
+                        xDelta = 0.01 + (-0.5f + 0.5f * rng.nextDouble());
                     }
 
+                    if (xDelta - ri > maxDist) continue; // early exit condition
+
                     if (yDelta == 0) {
-                        yDelta = 0.01 + rng.nextDouble();
+                        yDelta = 0.01 + (-0.5f + 0.5f * rng.nextDouble());
                     }
+
+                    final double rj = radius[j];
+                    if (yDelta - rj > maxDist) continue; // early exit condition
 
                     // Distance between nodes
                     double deltaLength = Math.sqrt((xDelta * xDelta)
                             + (yDelta * yDelta));
 
-                    double deltaLengthWithRadius = deltaLength - radius[i]
-                            - radius[j];
+                    double deltaLengthWithRadius = deltaLength - ri - rj;
 
-                    if (deltaLengthWithRadius > maxDistanceLimit) {
+                    if (deltaLengthWithRadius > maxDist) {
                         // Ignore vertex too far apart
                         continue;
                     }
 
-                    if (deltaLengthWithRadius < minDistanceLimit) {
-                        deltaLengthWithRadius = minDistanceLimit;
+                    if (deltaLengthWithRadius < minDist) {
+                        deltaLengthWithRadius = minDist;
                     }
 
-                    double force = forceConstantSquared / deltaLengthWithRadius;
+                    double force = fcSq / deltaLengthWithRadius;
 
-                    double displacementX = (xDelta / deltaLength) * force;
-                    double displacementY = (yDelta / deltaLength) * force;
+                    force /= deltaLength;
 
-                    if (isMoveable[i]) {
+                    double displacementX = xDelta * force;
+                    double displacementY = yDelta * force;
+
+                    //TODO double displacement if only one is not moveable
+
+                    if (imi) {
                         dispX[i] += displacementX;
                         dispY[i] += displacementY;
                     }

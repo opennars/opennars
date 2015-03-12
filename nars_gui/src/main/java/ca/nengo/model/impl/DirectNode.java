@@ -50,7 +50,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public class DirectNode implements Node {
+public class DirectNode implements Node<Node> {
 
 	//implementation note: this class doesn't nicely extend AbstractNode
 

@@ -52,7 +52,7 @@ import java.util.Map;
  *
  * @author Bryan Tripp
  */
-public interface Network<N extends Node> extends Group, Probeable {
+public interface Network<N extends Node> extends Group<N>, Probeable {
 
 	/**
 	 * @param node Node to add to the Network

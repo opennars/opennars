@@ -36,7 +36,7 @@ import ca.nengo.model.Node;
  * 
  * @author Bryan Tripp
  */
-public interface Neuron extends Node {
+public interface Neuron extends Node<Node> {
 
 	/**
 	 * Standard name for the primary Origin of a Neuron, which outputs its spikes or firing rate 

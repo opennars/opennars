@@ -55,7 +55,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public class SocketUDPNode implements Node, Resettable {
+public class SocketUDPNode implements Node<Node>, Resettable {
 
 	//implementation note: this class doesn't nicely extend AbstractNode
 

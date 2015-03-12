@@ -34,7 +34,7 @@ package ca.nengo.model;
  *
  * @author Bryan Tripp
  */
-public interface ExpandableNode extends Node {
+public interface ExpandableNode extends Node<Node> {
 
 	/**
 	 * @return Output dimension of Terminations onto this Node

@@ -421,7 +421,7 @@ public class NetworkImplTest extends TestCase {
 	    	fail("Network nodes did not clone correctly");
 	}
 
-	private static class MockGroup implements Group {
+	private static class MockGroup implements Group<Node> {
 
 		private static final long serialVersionUID = 1L;
 

@@ -45,7 +45,7 @@ import ca.nengo.model.Node;
  * 
  * @author Bryan Tripp
  */
-public interface NEFNode extends Node {
+public interface NEFNode extends Node<Node> {
 
 	/**
 	 * @param value Value of filtered summary input. This value is typically in the range 

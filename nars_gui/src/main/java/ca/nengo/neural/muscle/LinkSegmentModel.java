@@ -37,7 +37,7 @@ import ca.nengo.model.Probeable;
  *
  * @author Bryan Tripp
  */
-public interface LinkSegmentModel extends Node, Probeable {
+public interface LinkSegmentModel extends Node<Node>, Probeable {
 
 	/**
 	 * @return Array of SkeletalMuscles

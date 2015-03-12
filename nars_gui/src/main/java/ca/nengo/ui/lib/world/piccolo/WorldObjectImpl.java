@@ -109,7 +109,7 @@ public class WorldObjectImpl implements WorldObject {
     /**
      * Piccolo counterpart of this object
      */
-    protected PNode pnode;
+    protected final PNode pnode;
 
     protected WorldObjectImpl(String name, PiccoloNodeInWorld pNode) {
         super();
@@ -365,7 +365,6 @@ public class WorldObjectImpl implements WorldObject {
         if (childListeners!=null)
             childListeners.clear();
 
-        pnode = null;
     }
 
     /*

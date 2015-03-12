@@ -35,11 +35,10 @@ import org.apache.commons.math3.util.FastMath;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
+
+import static automenta.vivisect.dimensionalize.HyperassociativeMap.randomCoordinatesArray;
 
 
 public class TestNARGraph extends Nengrow {
@@ -59,26 +58,28 @@ public class TestNARGraph extends Nengrow {
     public static class NARGraphNode extends NetworkImpl implements UIBuilder {
 
         private final NARGraph<NARGraphVertex,UIEdge<NARGraphVertex>> graph = new NARGraph();
+        private final NARGraph<NARGraphVertex,UIEdge<NARGraphVertex>> prev = new NARGraph();
         private final NAR nar;
         private final ConceptReaction conceptReaction;
         private UINARGraph ui;
 
-        float lastStep = 0;
+
         float simTimePerCycle = 1.0f;
-        final IterativeLayout<NARGraphVertex,UIEdge<NARGraphVertex>> hmap = new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph) {
+        float simTimePerLayout = 2.0f;
+
+
+        final IterativeLayout<NARGraphVertex,UIEdge<NARGraphVertex>> hmap = new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph, 500) {
             @Override public ArrayRealVector newPosition(NARGraphVertex node) {
                 ArrayRealVector a = node.getCoordinates();
-                //randomCoordinatesArray(a.getDataRef());
-                a.mapMultiplyToSelf(1000);
+                randomCoordinatesArray(a.getDataRef());
+                a.mapMultiplyToSelf(525);
                 return a;
             }
 
 
             @Override
             public void pre(Collection<NARGraphVertex> vertices) {
-                for (NARGraphVertex v : vertices) {
-                    v.getActualCoordinates();
-                }
+                updateCoordinates(vertices);
             }
 
 
@@ -92,7 +93,83 @@ public class TestNARGraph extends Nengrow {
 
             @Override
             public double getRadius(NARGraphVertex narGraphVertex) {
-                return 150;
+                double r = 1+narGraphVertex.ui.getFullBoundsReference().getWidth();
+                return r/4.0;
+                //return 150;
+            }
+        };
+
+
+        long lasTLayout = System.currentTimeMillis();
+        public List<UIEdge<NARGraphVertex>> nextEdges = new ArrayList();
+
+        void updateCoordinates(Collection<NARGraphVertex> vertices) {
+            long now = System.currentTimeMillis();
+            long dt = (now - lasTLayout);
+            if (dt > 0) {
+                for (NARGraphVertex v : vertices) {
+                    v.getActualCoordinates(dt);
+                }
+                lasTLayout = now;
+            }
+        }
+
+        /** returns a list of edges which can be used by drawing thread for non-synchronized fast drawing */
+        public List<UIEdge<NARGraphVertex>> getEdges() {
+            return nextEdges;
+        }
+
+        abstract public class SubCycle {
+
+            float lastCycle = 0;
+            long lastCycleReal = System.currentTimeMillis();
+
+            public void update(float endTime) {
+                if (endTime - lastCycle >= getTimePerCycle()) {
+                    float dt = endTime - lastCycle;
+                    int numCycles = (int)Math.floor( dt );
+
+
+                    long now = System.currentTimeMillis();
+                    run(numCycles, endTime, now - lastCycleReal);
+
+                    lastCycle = endTime;
+                    lastCycleReal = now;
+                    //System.out.println("run: " + endTime);
+                }
+                else {
+                    //System.out.println("waiting since " + lastCycle + " at " + endTime);
+                }
+            }
+
+            abstract public double getTimePerCycle();
+            abstract public void run(int count, float endTime, long deltaMS);
+        }
+
+        SubCycle narCycle = new SubCycle() {
+            @Override public double getTimePerCycle() {
+                return simTimePerCycle;
+            }
+            @Override public void run(int numCycles, float endTime, long deltaMS) {
+
+                nar.step(numCycles);
+            }
+        };
+        SubCycle layoutCycle = new SubCycle() {
+            @Override public double getTimePerCycle() {
+                return simTimePerLayout;
+            }
+            @Override public void run(int numCycles, float endTime, long deltaMS) {
+
+                /*
+                hmap.setEquilibriumDistance(55);
+                hmap.setMaxRepulsionDistance(5000);
+                hmap.setAttractionStrength(16);
+                hmap.setSpeedFactor(10);
+                */
+
+                hmap.resetLearning();
+                hmap.run(2);
             }
         };
 
@@ -100,28 +177,8 @@ public class TestNARGraph extends Nengrow {
         public void run(float startTime, float endTime) throws SimulationException {
             super.run(startTime, endTime);
 
-            if (endTime - lastStep > simTimePerCycle) {
-                float dt = endTime - lastStep;
-                int numCycles = (int)Math.floor( dt );
-
-                nar.step(numCycles);
-
-                lastStep = endTime - (dt - numCycles);
-                //System.out.println("run: " + endTime);
-            }
-            else {
-                //System.out.println("waiting since " + lastStep + " at " + endTime);
-            }
-
-            /*
-            hmap.setEquilibriumDistance(55);
-            hmap.setMaxRepulsionDistance(5000);
-            hmap.setAttractionStrength(16);
-            hmap.setSpeedFactor(10);
-            */
-
-            hmap.resetLearning();
-            hmap.run(1);
+            narCycle.update(endTime);
+            layoutCycle.update(endTime);
 
         }
 
@@ -178,17 +235,13 @@ public class TestNARGraph extends Nengrow {
 
                 @Override
                 public void onNewConcept(Concept c) {
-                    synchronized(graph) {
-                        vertex(c, true);
-                    }
+                    vertex(c, true);
                 }
 
                 @Override
                 public void onForgetConcept(Concept c) {
                     NARGraphVertex node;
-                    synchronized(graph) {
-                        node = vertex(c, false);
-                    }
+                    node = vertex(c, false);
                     if (node!=null /*&& node instanceof TermNode*/) {
                         //another option is to set the node to pre-concept and leave it
                         try {
@@ -206,21 +259,14 @@ public class TestNARGraph extends Nengrow {
 
         public void updateItems() {
 
-
-
         }
-
 
         protected void removeNode(NARGraphVertex node) throws StructuralException {
             boolean removed;
-            synchronized(graph) {
-                removed = graph.removeVertex(node);
-            }
+            removed = graph.removeVertex(node);
             if (removed)
                 super.removeNode(node.vertex.toString());
         }
-
-
 
         @Override
         public UINARGraph newUI(double width, double height) {
@@ -229,6 +275,7 @@ public class TestNARGraph extends Nengrow {
 
         private class MyGrapher extends DefaultGrapher {
 
+
             public MyGrapher() {
                 super(false, false, false, false, 0, true, true);
             }
@@ -236,38 +283,52 @@ public class TestNARGraph extends Nengrow {
             @Override
             public Object addVertex(Object o) {
                 Object x;
-                synchronized (graph) {
-                    x = vertex(o, true);
-                }
+                x = vertex(o, true);
                 return x;
             }
 
             @Override
             public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
                 UIEdge e;
-                synchronized(graph) {
-                    final NARGraphVertex v1 = vertex(source, true);
-                    if (v1 == null) return null;
-                    final NARGraphVertex v2 = vertex(target, true);
-                    if (v2 == null) return null;
+                final NARGraphVertex v1 = vertex(source, true);
+                if (v1 == null) return null;
+                final NARGraphVertex v2 = vertex(target, true);
+                if (v2 == null) return null;
 
-                    graph.addEdge(v1, v2, e = new UIEdge(v1, v2, edge));
-                }
+                graph.addEdge(v1, v2, e = new UIEdge(v1, v2, edge));
+
+                updateEdges();
+
                 return e;
+
             }
         }
+
+        private boolean edgesChanged = false;
+
+        protected void updateEdges() {
+            if (!edgesChanged) {
+                edgesChanged = true;
+                SwingUtilities.invokeLater(this::updateCopyOfEdges);
+            }
+        }
+
+        private void updateCopyOfEdges() {
+            nextEdges = new ArrayList(graph.edgeSet()); //use atomicRef?
+            edgesChanged = false;
+        }
+
     }
+
     public static class UINARGraph extends UINetwork {
 
         float arrowHeadScale = 1f / 16f;
 
         private final NARGraphNode nargraph;
-        private final NARGraph<NARGraphVertex, UIEdge<NARGraphVertex>> graph;
 
         public UINARGraph(NARGraphNode n) {
             super(n);
             this.nargraph = n;
-            this.graph = nargraph.graph;
         }
 
         @Override
@@ -338,8 +399,7 @@ public class TestNARGraph extends Nengrow {
             Graphics2D g = paintContext.getGraphics();
 
 
-            synchronized(graph) {
-                for (final UIEdge e : graph.edgeSet()) {
+                for (final UIEdge e : nargraph.getEdges()) {
 
                     NARGraphVertex source = (NARGraphVertex) e.getSource();
                     if (source == null) continue;
@@ -358,7 +418,7 @@ public class TestNARGraph extends Nengrow {
                     final float targetRadius = (float) target.ui.getWidth() / 2f;
                     //g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
                     e.shape = drawArrow(g, (Polygon) e.shape, getEdgeColor(e), 256f, (int) sx, (int) sy, (int) tx, (int) ty, targetRadius);
-                }
+
             }
         }
 
@@ -403,6 +463,7 @@ public class TestNARGraph extends Nengrow {
 
         private final V vertex;
         private final ArrayRealVector coords;
+        protected long layoutPeriod = -1;
 
 
         public NARGraphVertex(V vertex) {
@@ -412,7 +473,7 @@ public class TestNARGraph extends Nengrow {
 
             //initial random position, to seed layout
             ui.setOffset(Math.random()-0.5, Math.random()-0.5);
-            getActualCoordinates();
+            getActualCoordinates(-1);
         }
 
         @Override
@@ -451,13 +512,16 @@ public class TestNARGraph extends Nengrow {
         }
 
         /** loads the actual geometric coordinates to the coords array prior to next layout iteration */
-        public void getActualCoordinates() {
+        public void getActualCoordinates(long layoutPeriod /* in realtime msec */) {
             double x = getX();
             double y = getY();
-            if (!Double.isFinite(x) || !Double.isFinite(y))
+            if (!Double.isFinite(x) || !Double.isFinite(y)) {
+                this.layoutPeriod = -1;
                 return;
+            }
             coords.setEntry(0, x);
             coords.setEntry(1, y);
+            this.layoutPeriod = layoutPeriod;
         }
 
         public double getX() {
@@ -481,7 +545,6 @@ public class TestNARGraph extends Nengrow {
         private float priority = -1;
         private float lastUIUpdate;
         private float minUpdateTime = 1;
-        private float animationTime = 0.1f; //set to zero for no animation, instant updates
 
         public TermNode(NARGraphNode graphnode) {
             this(graphnode, "");
@@ -553,27 +616,23 @@ public class TestNARGraph extends Nengrow {
 
                 Color c = green.get(priority);
                 icon.getBody().setPaint(c); // Color.getHSBColor(p, 0.7f, 0.7f));
-                icon.getBody().setTransparency((0.5f + 0.5f * c.getAlpha() / 256f));
+                icon.getBody().setTransparency(0.5f + (0.5f * c.getAlpha()) / 256f);
 
 
             }
 
-//                    double x = ui.getPNode().getTransform().getTranslateX();
-//                    double y = ui.getPNode().getTransform().getTranslateY();
-//
-//                    ui.animateToPositionScaleRotation(
-//                            x, y,
-//                            1.0f + priority, 0, (long) (1000 * animationTime));
-
-
+            if (layoutPeriod > 0) {
                 double x = getCoordinates().getEntry(0);
                 double y = getCoordinates().getEntry(1);
                 if (Double.isFinite(x) && Double.isFinite(y)) {
-                    ui.animateToPositionScaleRotation(x, y, 1.0f + priority, 0, (long) (1000 * animationTime));
-
+                    ui.animateToPositionScaleRotation(x, y, 1.0f + priority, 0, (long)(layoutPeriod*2f));
                 }
                 //System.out.println(x + " " + y);
+                layoutPeriod = -1;
+            }
+            else {
 
+            }
 
 
         }
@@ -613,24 +672,39 @@ public class TestNARGraph extends Nengrow {
         UINetwork networkUI = (UINetwork) addNodeModel(newGraph(nar));
         NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
 
+        float fps = 10.0f;
 
-
-
-
-        new Timer(100, new ActionListener() {
-
+        java.util.Timer timer = new java.util.Timer("", false);
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void run() {
+                float dt = 1f;
                 try {
-                    float dt = 0.5f; //TODO allow dt < 1, but NAR aware of this so it can run only once per cycle
                     networkUI.node().run(time, time + dt);
-                    time += dt;
-                } catch (SimulationException e1) {
-                    e1.printStackTrace();
+                } catch (SimulationException e) {
+                    e.printStackTrace();
                 }
-                //cycle();
+                time += dt;
             }
-        }).start();
+        }, 0, (int)(1000/fps));
+
+
+//        Timer t = new Timer((int)(1000/fps), new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                try {
+//                    float dt = 0.5f;
+//                    networkUI.node().run(time, time + dt);
+//                    time += dt;
+//                } catch (SimulationException e1) {
+//                    e1.printStackTrace();
+//                }
+//                //cycle();
+//            }
+//        });
+//        t.setCoalesce(true);
+//         t.start();
 
     }
 

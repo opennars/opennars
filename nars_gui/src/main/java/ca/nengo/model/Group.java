@@ -72,12 +72,8 @@ import ca.nengo.util.SpikePattern;
  *
  * @author Bryan Tripp
  */
-public interface Group extends Node {
+public interface Group<N extends Node> extends Node<N> {
 
-	/**
-	 * @return Nodes that make up the Ensemble
-	 */
-	@Deprecated public Node[] getNodes();
 
 	/**
 	 * This method provides a means of efficiently storing the output of an

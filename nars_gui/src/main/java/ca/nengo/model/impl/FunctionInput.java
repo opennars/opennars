@@ -53,7 +53,7 @@ import java.util.Properties;
  * A class to compute functions analytically and provide that input to
  * other Nodes in a network.
  */
-public class FunctionInput implements Node, Probeable {
+public class FunctionInput implements Node<Node>, Probeable {
 
 	/**
 	 * Name for the default origin

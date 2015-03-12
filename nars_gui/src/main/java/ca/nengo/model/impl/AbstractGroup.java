@@ -48,7 +48,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public abstract class AbstractGroup implements Group, Probeable, VisiblyChanges {
+public abstract class AbstractGroup implements Group<Node>, Probeable, VisiblyChanges {
 
 	private static final long serialVersionUID = -5498397418584843304L;
 

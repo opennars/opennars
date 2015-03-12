@@ -37,7 +37,7 @@ import ca.nengo.model.Probeable;
  *
  * @author Bryan Tripp
  */
-public interface SkeletalMuscle extends Node, Probeable {
+public interface SkeletalMuscle extends Node<Node>, Probeable {
 
 	/**
 	 * GolgiTendonOrgan.ORIGIN_NAME

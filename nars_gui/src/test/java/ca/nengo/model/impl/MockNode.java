@@ -13,7 +13,7 @@ import java.util.HashMap;
  * 
  * @author Bryan Tripp
  */
-public class MockNode implements Node, Cloneable {
+public class MockNode implements Node<Node>, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 

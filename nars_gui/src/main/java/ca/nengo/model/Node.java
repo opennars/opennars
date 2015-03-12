@@ -39,7 +39,7 @@ import java.util.HashMap;
  *
  * @author Bryan Tripp
  */
-public interface Node extends Serializable, Resettable, SimulationMode.ModeConfigurable, VisiblyChanges, Cloneable {
+public interface Node<N extends Node> extends Serializable, Resettable, SimulationMode.ModeConfigurable, VisiblyChanges, Cloneable {
 
     public final static Node[] EMPTY = new Node[0];
 

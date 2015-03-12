@@ -36,7 +36,7 @@ import ca.nengo.sim.impl.LocalSimulator;
 import ca.nengo.util.*;
 import ca.nengo.util.impl.ProbeTask;
 import ca.nengo.util.impl.ScriptGenerator;
-import nars.core.Parameters;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,9 +63,11 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     protected int myNumGPU = 0;
     protected int myNumJavaThreads = 1;
     protected boolean myUseGPU = true;
-    private Map<String, N> nodes; //keyed on name
-    @Deprecated private Node[] myNodeArray; //cache of myNodeMap's items in the form of an array for getNodes()
-    private Map<NTarget, Projection> myProjectionMap; //keyed on Termination
+
+    private final Map<String, N> nodes; //keyed on name
+    private final Map<NTarget, Projection> myProjectionMap; //keyed on Termination
+
+    private Node[] myNodeArray; //cache of myNodeMap's items in the form of an array for getNodes()
     private String myName;
     private SimulationMode myMode;
     private List<SimulationMode> myFixedModes;
@@ -90,11 +92,11 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * Sets up a network's data structures
      */
     public NetworkImpl(String name) {
-        nodes = Parameters.newHashMap();
+        nodes = new LinkedHashMap<>();
         myNodeArray = null;
-        myProjectionMap = Parameters.newHashMap();
+        myProjectionMap = new LinkedHashMap<>();
         myName = name;
-        myStepSize = .001f;
+        myStepSize = -1f;
         myProbeables = new HashMap<String, Probeable>(30);
         myProbeableStates = new HashMap<String, String>(30);
         myExposedSources = new HashMap<String, NSource>(10);
@@ -158,7 +160,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     /**
      * @param stepSize New timestep size at which to simulate Network (some components of the network
      *                 may run with different step sizes, but information is exchanged between components with
-     *                 this step size). Defaults to 0.001s.
+     *                 this step size).
      */
     public void setStepSize(float stepSize) {
         myStepSize = stepSize;
@@ -274,7 +276,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         if (e instanceof VisiblyChanges.NameChangeEvent) {
             VisiblyChanges.NameChangeEvent ne = (VisiblyChanges.NameChangeEvent) e;
 
-            if (nodes.containsKey(ne.getNewName()) && !ne.getNewName().equals(ne.getOldName())) {
+            N existing = nodes.get(ne.getNewName());
+            if ((existing!=null) && !ne.getNewName().equals(ne.getOldName())) {
                 throw new StructuralException("This Network already contains a Node named " + ne.getNewName());
             }
 
@@ -289,9 +292,11 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
                 nodes.remove(ne.getOldName());
                 myNodeArray = null;
             }
+
+            fireVisibleChangeEvent();
+
         }
 
-        fireVisibleChangeEvent();
     }
 
     /**
@@ -931,7 +936,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     public Network clone() throws CloneNotSupportedException {
         NetworkImpl result = (NetworkImpl) super.clone();
 
-        result.nodes = new HashMap(nodes.size());
+        result.nodes.clear();
         for (Node oldNode : nodes.values()) {
             Node newNode = oldNode.clone();
             result.nodes.put(newNode.getName(), newNode);
@@ -944,7 +949,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 //		result.myProbeableStates
 
         //TODO: this works with a single Projection impl & no params; should add Projection.copy(Origin, Termination, Network)?
-        result.myProjectionMap = new HashMap<NTarget, Projection>(myProjectionMap.size());
+        result.myProjectionMap.clear();
         for (Projection oldProjection : getProjections()) {
             try {
                 NSource newSource = result.getNode(oldProjection.getSource().getNode().getName())
