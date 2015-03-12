@@ -379,6 +379,25 @@ public class WorldObjectImpl implements WorldObject {
     public void doubleClicked() {
     }
 
+    public void dragTo(double x, double y) {
+        if (isDraggable()) {
+            Point2D offset = getOffset();
+            offset.setLocation(x, y);
+            setOffset(offset);
+        }
+    }
+
+    public void dragTo(double dx, double dy, double speed /* 1 - LERP momentum */) {
+        if (isDraggable()) {
+            Point2D offset = getOffset();
+            double nx= offset.getX() * (1-speed)  +    dx * speed;
+            double ny= offset.getY() * (1-speed)  +    dy * speed;
+            offset.setLocation(nx, ny);
+            setOffset(offset);
+        }
+    }
+
+
     public void dragOffset(double dx, double dy) {
         if (isDraggable()) {
             Point2D offset = getOffset();

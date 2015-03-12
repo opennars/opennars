@@ -2,6 +2,7 @@ package automenta.vivisect.dimensionalize;
 
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import com.mxgraph.util.mxRectangle;
+import nars.core.Parameters;
 import nars.util.data.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.DirectedGraph;
@@ -21,14 +22,19 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
     mxRectangle initialBounds;
 
+    double temperature;
+    double temperatureDecay = 0.95;
+
     public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, double scale) {
         this.graph = graph;
         this.initialBounds = new mxRectangle(-scale/2, -scale/2, scale, scale);
-        setInitialTemp(100);
-        setMinDistanceLimit(10f);
-        setMaxDistanceLimit(1550f);
+        setInitialTemp(310);
+        setMinDistanceLimit(1f);
+        setMaxDistanceLimit(50f);
 
-        setForceConstant(100);
+        setForceConstant(500);
+
+        resetLearning();
 
     }
 
@@ -50,7 +56,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
     @Override
     public void resetLearning() {
-
+        temperature = initialTemp;
     }
 
 
@@ -112,7 +118,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     /**
      * An array of all vertex to be laid out.
      */
-    protected List<N> vertexArray;
+    protected List<N> vertexArray = Parameters.newArrayList();
 
     /**
      * An array of locally stored X co-ordinate displacements for the vertex.
@@ -260,14 +266,11 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
         indices.clear();
 
         // Finds the relevant vertex for the layout
-        if (vertexArray == null)
-            vertexArray = new ArrayList();
-        else
-            vertexArray.clear();
+        vertexArray.clear();
 
         Set<N> vx = graph.vertexSet();
         if (vx == null || vx.isEmpty()) return;
-        vertexArray.addAll(graph.vertexSet());
+        vertexArray.addAll(vx);
 
 
         pre(vertexArray);
@@ -396,6 +399,9 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 for (int j = cells.size(); j < neighbors[i].length; j++)
                     neighbors[i][j] = -1;
             }
+            else if (neighbors[i] != null) {
+                Arrays.fill(neighbors[i], -1);
+            }
         }
 
 
@@ -410,7 +416,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 // Calculate attractive forces through edge
                 calcAttraction();
 
-                double temperature = initialTemp * (1.0 - iteration / iterations);
+                temperature = temperature * temperatureDecay;
                 calcPositions(temperature);
             }
 

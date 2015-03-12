@@ -175,7 +175,7 @@ public class TestNARGraph extends Nengrow {
                 */
 
                 hmap.resetLearning();
-                hmap.run(8);
+                hmap.run(1);
             }
         };
 
@@ -622,18 +622,21 @@ public class TestNARGraph extends Nengrow {
 
             }
 
-            if (layoutPeriod > 0) {
+            //if (layoutPeriod > 0) {
                 double x = getCoordinates().getEntry(0);
                 double y = getCoordinates().getEntry(1);
                 if (Double.isFinite(x) && Double.isFinite(y)) {
-                    ui.animateToPositionScaleRotation(x, y, 1.0f + priority, 0, (long)(layoutPeriod*2f));
+                    long animTime = (long) (layoutPeriod * 1f);
+                    //long animTime = 0L;
+                    //ui.animateToPositionScaleRotation(x, y, 1.0f + priority, 0, animTime);
+                    ui.dragTo(x, y, 0.05);
                 }
                 //System.out.println(x + " " + y);
                 layoutPeriod = -1;
-            }
+            /*}
             else {
 
-            }
+            }*/
 
 
         }

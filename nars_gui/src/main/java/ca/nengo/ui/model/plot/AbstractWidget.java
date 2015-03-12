@@ -94,6 +94,15 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         }
 
         @Override
+        public void dragTo(double dx, double dy) {
+            super.dragTo(dx, dy);
+        }
+        @Override
+        public void dragTo(double dx, double dy, double speed /* 1 - LERP momentum */) {
+            super.dragTo(dx, dy, speed);
+        }
+
+        @Override
         public String getTypeName() {
             return AbstractWidget.this.getTypeName();
         }
