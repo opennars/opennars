@@ -29,11 +29,11 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, double scale) {
         this.graph = graph;
         this.initialBounds = new mxRectangle(0,0, scale, scale);
-        setInitialTemp(30);
-        setMinDistanceLimit(2f);
-        setMaxDistanceLimit(550f);
+        setInitialTemp(50);
+        setMinDistanceLimit(1f);
+        setMaxDistanceLimit(450f);
 
-        setForceConstant(100);
+        setForceConstant(150);
 
         resetLearning();
 

@@ -239,15 +239,19 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
                 myProjection.getTarget().apply(values);
             }
 
-            for (Node myNode : network.getNodes()) {
-                if (myNode == null) continue;
-                if(myNode instanceof NetworkImpl) {
-                    ((NetworkImpl)myNode).run(startTime, endTime, false);
-                } /*else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {
-                	myDeferredSocketNodes.add(myNode);
-                	continue;
-                } else*/ {
-                    myNode.run(startTime, endTime);
+            Node[] nn = network.getNodes();
+            if (nn != null) {
+                for (Node myNode : nn) {
+                    if (myNode == null) continue;
+                    if (myNode instanceof NetworkImpl) {
+                        ((NetworkImpl) myNode).run(startTime, endTime, false);
+                    } /*else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {
+                        myDeferredSocketNodes.add(myNode);
+                        continue;
+                    } else*/
+                    {
+                        myNode.run(startTime, endTime);
+                    }
                 }
             }
 

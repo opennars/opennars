@@ -397,6 +397,10 @@ public class WorldObjectImpl implements WorldObject {
         }
     }
 
+    public void scaleTo(double targetScale, double speed) {
+        setScale( getScale() * (1.0 - speed) + targetScale * speed );
+    }
+
 
     public void dragOffset(double dx, double dy) {
         if (isDraggable()) {

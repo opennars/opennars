@@ -25,6 +25,7 @@ import nars.core.NAR;
 import nars.event.ConceptReaction;
 import nars.logic.Terms;
 import nars.logic.entity.Concept;
+import nars.logic.entity.Task;
 import nars.logic.entity.TaskLink;
 import nars.logic.entity.TermLink;
 import nars.util.graph.DefaultGrapher;
@@ -63,8 +64,8 @@ public class TestNARGraph extends Nengrow {
         private UINARGraph ui;
 
 
-        float simTimePerCycle = 1.0f;
-        float simTimePerLayout = 1.0f;
+        float simTimePerCycle = 0.07f;
+        float simTimePerLayout = 0.15f;
 
 
         final FastOrganicIterativeLayout<NARGraphVertex,UIEdge<NARGraphVertex>> hmap =
@@ -94,7 +95,7 @@ public class TestNARGraph extends Nengrow {
             @Override
             public double getRadius(NARGraphVertex narGraphVertex) {
                 double r = 1+narGraphVertex.ui.getFullBoundsReference().getWidth();
-                return r * 1;
+                return r * 2;
             }
         };
 
@@ -131,21 +132,20 @@ public class TestNARGraph extends Nengrow {
             long lastCycleReal = System.currentTimeMillis();
 
             public void update(float endTime) {
-                if (endTime - lastCycle >= getTimePerCycle()) {
+                double interval = getTimePerCycle();
                     float dt = endTime - lastCycle;
-                    int numCycles = (int)Math.floor( dt );
+                    int numCycles = (int)(Math.floor( dt / interval));
 
+                    if (numCycles > 0) {
 
-                    long now = System.currentTimeMillis();
-                    run(numCycles, endTime, now - lastCycleReal);
+                        long now = System.currentTimeMillis();
+                        run(numCycles, endTime, now - lastCycleReal);
 
-                    lastCycle = endTime;
-                    lastCycleReal = now;
-                    //System.out.println("run: " + endTime);
-                }
-                else {
-                    //System.out.println("waiting since " + lastCycle + " at " + endTime);
-                }
+                        lastCycle = endTime;
+                        lastCycleReal = now;
+                    }
+                //System.out.println("run: " + endTime);
+                //System.out.println("waiting since " + lastCycle + " at " + endTime);
             }
 
             abstract public double getTimePerCycle();
@@ -205,21 +205,24 @@ public class TestNARGraph extends Nengrow {
                 }
             }
             else if (v == null && createIfNotExist) {
-                TermNode vertex = null;
+                v = null;
 
                 if (x instanceof Concept) {
-                    vertex = new TermNode(this, (Concept)x);
+                    v = new TermNode(this, (Concept)x);
+                }
+                else if (x instanceof Task) {
+                    v = new TermNode(this, (Task)x);
                 }
                 else if (x instanceof Terms.Termable) {
-                    vertex = new TermNode(this, (Terms.Termable)x);
+                    v = new TermNode(this, (Terms.Termable)x);
                 }
 
-                if (vertex!=null) {
-                    if (graph.addVertex(vertex)) {
+                if (v!=null) {
+                    if (graph.addVertex(v)) {
 
 
                         try {
-                            super.addNode(vertex);
+                            super.addNode(v);
                         } catch (StructuralException e) {
                             e.printStackTrace();
                         }
@@ -246,15 +249,18 @@ public class TestNARGraph extends Nengrow {
 
                 @Override
                 public void onForgetConcept(Concept c) {
-                    NARGraphVertex node;
-                    node = vertex(c, false);
-                    if (node!=null /*&& node instanceof TermNode*/) {
+                    NARGraphVertex v;
+                    v = vertex(c, false);
+                    if (v!=null /*&& node instanceof TermNode*/) {
                         //another option is to set the node to pre-concept and leave it
+                        /*graph.removeVertex(v);
                         try {
-                            removeNode(node);
+                            removeNode(v);
                         } catch (StructuralException e) {
                             e.printStackTrace();
-                        }
+                        }*/
+                        TermNode t = (TermNode)v;
+                        t.setConcept(null); //becomes a Term node
                     }
                 }
             };
@@ -545,12 +551,14 @@ public class TestNARGraph extends Nengrow {
         String text;
         Terms.Termable term = null;
         Concept concept = null;
-
+        private Task task = null;
 
         private NodeIcon icon;
         private float priority = -1;
         private float lastUIUpdate;
         private float minUpdateTime = 0.1f;
+
+        final Color inputTaskColor = new Color(0.4f, 0.3f, 0.85f, 1.0f);
 
         public TermNode(NARGraphNode graphnode) {
             this(graphnode, "");
@@ -560,7 +568,6 @@ public class TestNARGraph extends Nengrow {
             super(UUID.randomUUID().toString());
             this.graphnode = graphnode;
             this.text = text;
-            this.term = null;
             setConcept(null);
         }
 
@@ -570,6 +577,12 @@ public class TestNARGraph extends Nengrow {
             setConcept(c);
         }
 
+        public TermNode(NARGraphNode graphnode, Task t) {
+            super(t.sentence);
+            this.graphnode = graphnode;
+            setTask(t);
+        }
+
         public TermNode(NARGraphNode graphnode, Terms.Termable term) {
             super(term);
             this.graphnode = graphnode;
@@ -577,10 +590,25 @@ public class TestNARGraph extends Nengrow {
             setConcept(null);
         }
 
+        public boolean setTask(Task t) {
+            if (this.task == t) return false;
+            this.priority = -1; //will be updated
+            this.concept = null;
+            this.task = t;
+            if (t == null) {
+                this.term = null;
+            }
+            else {
+                this.term = t.getTerm();
+            }
+            updateUI();
+            return true;
+        }
         public boolean setConcept(Concept c) {
             if (this.concept == c) return false;
             this.priority = -1; //will be updated
             this.concept = c;
+            this.task = null;
             if (c == null) {
                 this.term = null;
             }
@@ -603,46 +631,55 @@ public class TestNARGraph extends Nengrow {
             return false;
         }
 
-        final static ColorArray green = new ColorArray(64, new Color(0.2f, 0.4f, 0.2f, 0.25f), new Color(0.25f, 0.8f, 0.25f, 0.9f));
+        final static ColorArray purple = new ColorArray(64, new Color(0.1f, 0f, 0.6f, 0.35f), new Color(0.2f, 0.0f, 0.87f, 0.93f));
+        final static ColorArray green = new ColorArray(64, new Color(0.2f, 0.6f, 0.2f, 0.55f), new Color(0.25f, 0.8f, 0.05f, 0.9f));
 
         protected void updateUI() {
-            float p = 0;
+            float alpha = 0.75f;
+            Color color = Color.DARK_GRAY;
+            float scale = 1f;
             if (concept != null) {
-
-                p = concept.getPriority();
+                priority = concept.getPriority();
+                color = green.get(priority);
+                alpha = 0.5f + (0.5f * color.getAlpha()) / 256f;
+                scale = 1.5f;
             }
-            else {
-                p = 0.5f;
-            }
-            if (p < 0) p = 0;
+            else if (task != null) {
+                priority = task.getPriority();
 
-            if (p!=priority) {
+                alpha = 0.5f + (0.5f * color.getAlpha()) / 256f;
 
-                priority = p;
-
-                Color c = green.get(priority);
-                icon.getBody().setPaint(c); // Color.getHSBColor(p, 0.7f, 0.7f));
-                icon.getBody().setTransparency(0.5f + (0.5f * c.getAlpha()) / 256f);
-
-
-            }
-
-            //if (layoutPeriod > 0) {
-                double[] d = getCoordinates().getDataRef();
-                double x = d[0];
-                double y = d[1];
-                if (Double.isFinite(x) && Double.isFinite(y)) {
-                    long animTime = (long) (layoutPeriod * 1f);
-                    //long animTime = 0L;
-                    //ui.animateToPositionScaleRotation(x, y, 1.0f + priority, 0, animTime);
-                    ui.dragTo(x, y, 0.02);
+                if (task.isInput()) {
+                    color = inputTaskColor;
+                    scale = 1.25f;
                 }
-                //System.out.println(x + " " + y);
-                layoutPeriod = -1;
-            /*}
+                else {
+                    color = purple.get(priority); //to match the blue of TaskLinks
+                    scale = 0.5f;
+                }
+            }
             else {
+                priority = 0;
+                scale = 0.5f;
+            }
+            icon.getBody().setPaint(color);
+            icon.setTransparency(alpha);
 
-            }*/
+            if (priority < 0) priority = 0;
+
+            double[] d = getCoordinates().getDataRef();
+            double x = d[0];
+            double y = d[1];
+            if (Double.isFinite(x) && Double.isFinite(y)) {
+                long animTime = (long) (layoutPeriod * 1f);
+
+                //TODO combine these into one Transform update
+                ui.dragTo(x, y, 0.05);
+                ui.scaleTo(scale * (0.75f + priority), 0.05);
+            }
+            //System.out.println(x + " " + y);
+            layoutPeriod = -1;
+
 
 
         }
@@ -696,13 +733,13 @@ public class TestNARGraph extends Nengrow {
         UINetwork networkUI = (UINetwork) addNodeModel(newGraph(nar));
         NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
 
-        float fps = 10.0f;
+        float fps = 40.0f;
 
         java.util.Timer timer = new java.util.Timer("", false);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                float dt = 1f;
+                float dt = 0.01f;
                 try {
                     networkUI.node().run(time, time + dt);
                 } catch (SimulationException e) {
