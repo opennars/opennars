@@ -35,6 +35,7 @@ import org.apache.commons.math3.util.FastMath;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static automenta.vivisect.dimensionalize.HyperassociativeMap.randomCoordinatesArray;
 
@@ -67,7 +68,7 @@ public class TestNARGraph extends Nengrow {
 
 
         final FastOrganicIterativeLayout<NARGraphVertex,UIEdge<NARGraphVertex>> hmap =
-                new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph, 500) {
+                new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph, 1200) {
             @Override public ArrayRealVector newPosition(NARGraphVertex node) {
                 ArrayRealVector a = node.getCoordinates();
                 randomCoordinatesArray(a.getDataRef());
@@ -102,7 +103,7 @@ public class TestNARGraph extends Nengrow {
 
 
         long lasTLayout = System.currentTimeMillis();
-        public List<UIEdge<NARGraphVertex>> nextEdges = new ArrayList();
+        public List<UIEdge<NARGraphVertex>> nextEdges = new CopyOnWriteArrayList();
 
         void updateCoordinates(Collection<NARGraphVertex> vertices) {
             long now = System.currentTimeMillis();
@@ -118,9 +119,9 @@ public class TestNARGraph extends Nengrow {
         /** returns a list of edges which can be used by drawing thread for non-synchronized fast drawing */
         public List<UIEdge<NARGraphVertex>> getEdges() {
             if (edgesChanged) {
+                edgesChanged = false;
                 nextEdges.clear();
                 nextEdges.addAll(graph.edgeSet()); //use atomicRef?
-                edgesChanged = false;
             }
             return nextEdges;
         }
@@ -303,11 +304,15 @@ public class TestNARGraph extends Nengrow {
 
                 graph.addEdge(v1, v2, e = new UIEdge(v1, v2, edge));
 
+
+
                 updateEdges();
 
                 return e;
 
             }
+
+
         }
 
         private boolean edgesChanged = false;
@@ -315,6 +320,7 @@ public class TestNARGraph extends Nengrow {
         protected void updateEdges() {
             if (!edgesChanged) {
                 edgesChanged = true;
+                getEdges();
             }
         }
 
@@ -545,7 +551,7 @@ public class TestNARGraph extends Nengrow {
         private NodeIcon icon;
         private float priority = -1;
         private float lastUIUpdate;
-        private float minUpdateTime = 1;
+        private float minUpdateTime = 0.1f;
 
         public TermNode(NARGraphNode graphnode) {
             this(graphnode, "");

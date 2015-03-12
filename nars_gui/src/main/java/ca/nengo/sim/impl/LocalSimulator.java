@@ -240,6 +240,7 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
             }
 
             for (Node myNode : network.getNodes()) {
+                if (myNode == null) continue;
                 if(myNode instanceof NetworkImpl) {
                     ((NetworkImpl)myNode).run(startTime, endTime, false);
                 } /*else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {

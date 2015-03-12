@@ -23,16 +23,16 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     mxRectangle initialBounds;
 
     double temperature;
-    double temperatureDecay = 0.95;
+    double temperatureDecay = 1;
 
     public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, double scale) {
         this.graph = graph;
-        this.initialBounds = new mxRectangle(-scale/2, -scale/2, scale, scale);
-        setInitialTemp(310);
-        setMinDistanceLimit(1f);
+        this.initialBounds = new mxRectangle(0,0, scale, scale);
+        setInitialTemp(50);
+        setMinDistanceLimit(2f);
         setMaxDistanceLimit(50f);
 
-        setForceConstant(500);
+        setForceConstant(10);
 
         resetLearning();
 
@@ -312,6 +312,9 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
         final List<N> cells = this.cells;
         final double[] radii = this.radius;
 
+        Map<N, ArrayRealVector> coordinates = this.coordinates;
+
+
         for (int i = 0; i < n; i++) {
             N v = vertexArray.get(i);
 
@@ -432,8 +435,8 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
                 //cellLocation[i][1] -= 1/2.0; //geo.getHeight() / 2.0;
 
                 double r = radii[i];
-                double x = /*graph.snap*/(cellLocation[i][0] - r);
-                double y = /*graph.snap*/(cellLocation[i][1] - r);
+                double x = /*graph.snap*/(cellLocation[i][0]);
+                double y = /*graph.snap*/(cellLocation[i][1]);
 
                 double[] pos = getPosition(v).getDataRef();
                 pos[0] = x;
@@ -452,21 +455,35 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
             }
         }
 
+
         // Modifies the cloned geometries in-place. Not needed
         // to clone the geometries again as we're in the same
         // undoable change.
         double dx = -(maxx+minx)/2f;
         double dy = -(maxy+miny)/2f;
 
+        //normalize to bounds
+
+        double wx, wy;
+
         if (initialBounds != null) {
+            wx =  (maxx - minx);
+            if (wx == 0) wx = 1;
+            else wx = initialBounds.getWidth() / wx;
+            wy =  (maxy - miny);
+            if (wy == 0) wy = 1;
+            else wy = initialBounds.getHeight() / wy;
             dx += initialBounds.getX();
             dy += initialBounds.getY();
         }
+        else {
+            wx = wy = 1;
+        }
 
-        for (ArrayRealVector a : coordinates.values()) {
+        for (final ArrayRealVector a : coordinates.values()) {
             double[] p = a.getDataRef();
-            p[0]+= dx;
-            p[1]+= dy;
+            p[0] = p[0] * wx + dx;
+            p[1] = p[1] * wy + dy;
         }
 
     }
