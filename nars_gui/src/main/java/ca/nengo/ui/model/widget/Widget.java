@@ -146,7 +146,7 @@ public abstract class Widget<M> extends UINeoModel<M> {
 
 	protected String getExposedName() {
 		if (getNodeParent() != null && getNodeParent().getNetworkParent() != null) {
-			Network network = getNodeParent().getNetworkParent().getModel();
+			Network network = getNodeParent().getNetworkParent().node();
 			if (network != null) {
 				String exposedName = getExposedName(network);
 				if (exposedName != null) {
@@ -166,7 +166,7 @@ public abstract class Widget<M> extends UINeoModel<M> {
 	 */
 	protected void unExpose() {
 		UINetwork networkUI = getNodeParent().getNetworkParent();
-		Network network = networkUI.getModel();
+		Network network = networkUI.node();
 		if (network != null) {
 			unExpose(network);
 			showPopupMessage(getName() + " is UN-exposed on Network: " + network.getName());
@@ -199,7 +199,7 @@ public abstract class Widget<M> extends UINeoModel<M> {
 		if (exposedName != null) {
 			if (myExposedIcon == null) {
 				myExposedIcon = new ExposedIcon(getColor());
-				getPiccolo().addChild(myExposedIcon);
+                getPNode().addChild(myExposedIcon);
 				myExposedIcon.setOffset(getWidth() + 2,
 						(getHeight() - myExposedIcon.getHeight()) / 2);
 			}
@@ -223,7 +223,7 @@ public abstract class Widget<M> extends UINeoModel<M> {
 		firePropertyChange(Property.WIDGET);
 
 		setVisible(isVisible);
-		getPiccolo().invalidateFullBounds();
+        getPNode().invalidateFullBounds();
 	}
 
 	class ExposeAction extends StandardAction {

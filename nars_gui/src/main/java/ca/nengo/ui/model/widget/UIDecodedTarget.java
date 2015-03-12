@@ -53,9 +53,9 @@ public class UIDecodedTarget extends UITarget<DecodedTarget> {
 
 	@Override
 	protected void destroyTerminationModel() {
-		if (getModel().getNode() instanceof NEFGroup) {
+		if (node().getNode() instanceof NEFGroup) {
             try {
-			    ((NEFGroup) getModel().getNode()).removeDecodedTermination(getModel().getName());
+			    ((NEFGroup) node().getNode()).removeDecodedTermination(node().getName());
             } catch(StructuralException e) {
                 Util.Assert(false, e.getMessage());
             }

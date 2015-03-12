@@ -56,7 +56,7 @@ public class DirectModeAction extends StandardAction {
     protected final void action() throws ActionException {
 
     	for (UINeoNode nodeUI : nodeUIs) {
-    		nodeUI.getModel().setMode(SimulationMode.DIRECT);
+    		nodeUI.node().setMode(SimulationMode.DIRECT);
     	}
 
     }

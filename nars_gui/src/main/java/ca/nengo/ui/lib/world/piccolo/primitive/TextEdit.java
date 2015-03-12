@@ -27,7 +27,7 @@ public class TextEdit extends WorldObjectImpl {
     private void init() {
 
         textNode = new PStyledText();
-        getPiccolo().addChild(textNode);
+        getPNode().addChild(textNode);
 
     /*
         getCanvas().removeInputEventListener(getCanvas().getPanEventHandler());

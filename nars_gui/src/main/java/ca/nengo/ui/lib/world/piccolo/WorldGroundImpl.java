@@ -76,7 +76,7 @@ public class WorldGroundImpl extends WorldLayerImpl implements WorldLayer {
 
 	public WorldGroundImpl() {
 		super("Ground", new GroundNode());
-		myLayerNode = (GroundNode) getPiccolo();
+        myLayerNode = (GroundNode) getPNode();
 		myLayerNode.setPickable(false);
 	}
 
@@ -145,7 +145,7 @@ public class WorldGroundImpl extends WorldLayerImpl implements WorldLayer {
 
 	@Override
 	public Dimension2D localToParent(Dimension2D localRectangle) {
-		return getPiccolo().localToParent(localRectangle);
+        return getPNode().localToParent(localRectangle);
 	}
 }
 

@@ -75,8 +75,8 @@ public class MultiDemo extends Nengrow {
             public void actionPerformed(ActionEvent e) {
                 try {
                     float dt = getSimulationDT(); //myStepSize
-                    a.getModel().run(time, time + dt);
-                    b.getModel().run(time, time + dt);
+                    a.node().run(time, time + dt);
+                    b.node().run(time, time + dt);
                     time += dt;
                 } catch (SimulationException e1) {
                     e1.printStackTrace();

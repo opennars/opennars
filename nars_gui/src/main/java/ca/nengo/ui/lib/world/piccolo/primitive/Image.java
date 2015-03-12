@@ -19,7 +19,7 @@ public class Image extends WorldObjectImpl {
 	}
 
 	public void init() {
-		imageNode = (PXImage) getPiccolo();
+        imageNode = (PXImage) getPNode();
 		setPaint(NengoStyle.COLOR_BACKGROUND2);
 		setPickable(false);
 	}

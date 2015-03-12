@@ -33,10 +33,10 @@ import ca.nengo.ui.model.tooltip.TooltipBuilder;
 public class UISpikeProbe extends UIProbe {
 
 	public UISpikeProbe(UIGroup nodeAttachedTo) {
-		super(nodeAttachedTo, nodeAttachedTo.getModel());
+		super(nodeAttachedTo, nodeAttachedTo.node());
 
 		getProbeParent().showPopupMessage("Collecting spikes on " + getProbeParent().getName());
-		getModel().collectSpikes(true);
+		node().collectSpikes(true);
 
 		// setProbeColor(ProbeIcon.SPIKE_PROBE_COLOR);
 	}
@@ -44,12 +44,12 @@ public class UISpikeProbe extends UIProbe {
 	@Override
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
-		tooltips.addProperty("Attached to", getModel().getName());
+		tooltips.addProperty("Attached to", node().getName());
 	}
 
 	@Override
-	public Group getModel() {
-		return (Group) super.getModel();
+	public Group node() {
+		return (Group) super.node();
 	}
 
 	@Override
@@ -66,14 +66,14 @@ public class UISpikeProbe extends UIProbe {
 	protected void constructMenu(PopupMenuBuilder menu) {
 		super.constructMenu(menu);
 
-		if (getModel().getSpikePattern() != null) {
-			menu.addAction(new PlotSpikePattern(getModel().getSpikePattern()));
+		if (node().getSpikePattern() != null) {
+			menu.addAction(new PlotSpikePattern(node().getSpikePattern()));
 		}
 	}
 
 	@Override
 	protected void prepareToDestroyModel() {
-		getModel().collectSpikes(false);
+		node().collectSpikes(false);
 
 		getProbeParent().showPopupMessage(
 				"Spike collection stopped on " + getProbeParent().getName());
@@ -83,6 +83,6 @@ public class UISpikeProbe extends UIProbe {
 
 	@Override
 	public void doubleClicked() {
-		(new PlotSpikePattern(getModel().getSpikePattern())).doAction();
+		(new PlotSpikePattern(node().getSpikePattern())).doAction();
 	}
 }

@@ -56,7 +56,7 @@ public class DefaultModeAction extends StandardAction {
     protected final void action() throws ActionException {
 
     	for (UINeoNode nodeUI : nodeUIs) {
-    		nodeUI.getModel().setMode(SimulationMode.DEFAULT);
+    		nodeUI.node().setMode(SimulationMode.DEFAULT);
     	}
 
     }

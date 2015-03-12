@@ -37,8 +37,8 @@ public class UINetworkTarget<T extends NTarget> extends UITarget<T> {
 
     @Override
     protected void destroyTerminationModel() {
-        Network network = ((UINetwork) getParent()).getModel();
-        network.hideTermination(getModel().getName());
+        Network network = ((UINetwork) getParent()).node();
+        network.hideTermination(node().getName());
         showPopupMessage("termination removed from network");
     }
 

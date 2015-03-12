@@ -184,7 +184,7 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 	 */
 	public final void destroyModel() {
 		for (ModelListener listener : modelListeners) {
-			listener.modelDestroyStarted(getModel());
+			listener.modelDestroyStarted(node());
 		}
 
 		prepareToDestroyModel();
@@ -196,7 +196,7 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 		}
 
 		for (ModelListener listener : modelListeners.toArray(new ModelListener[modelListeners.size()])) {
-			listener.modelDestroyed(getModel());
+			listener.modelDestroyed(node());
 		}
 
 		destroy();
@@ -246,7 +246,7 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 	/**
 	 * @return Model
 	 */
-	public M getModel() {
+	public M node() {
 		return myModel;
 	}
 

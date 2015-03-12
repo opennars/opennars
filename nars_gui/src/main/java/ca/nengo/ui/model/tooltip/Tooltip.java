@@ -68,7 +68,7 @@ public class Tooltip extends WorldObjectImpl {
             tag.setTextPaint(NengoStyle.COLOR_FOREGROUND);
             tag.setFont(NengoStyle.FONT_LARGE);
             tag.setWidth(tooltipWidth);
-            getPiccolo().addChild(tag);
+            getPNode().addChild(tag);
         }
         else {
             tag.setText(tooltipBuilder.getName());

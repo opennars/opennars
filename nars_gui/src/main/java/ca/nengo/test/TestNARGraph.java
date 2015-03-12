@@ -372,6 +372,8 @@ public class TestNARGraph extends Nengrow {
 
         private NodeIcon icon;
         private float priority = -1;
+        private float lastUIUpdate;
+        private float minUpdateTime = 0;
 
         public TermNode() {
             this("");
@@ -435,20 +437,29 @@ public class TestNARGraph extends Nengrow {
 
                     priority = p;
                 }
-            }
 
+                minUpdateTime = 16 * (1.0f - concept.getQuality());
+            }
+            else {
+                minUpdateTime = 16;
+            }
         }
 
         @Override
         public void run(float startTime, float endTime) throws SimulationException {
 
-            updateUI();
+            //real time mode
+            if (endTime - lastUIUpdate > minUpdateTime) {
+                updateUI();
+                lastUIUpdate = endTime;
+            }
         }
 
 
         @Override
         public void reset(boolean randomize) {
 
+            lastUIUpdate = -1;
         }
     }
 
@@ -478,8 +489,8 @@ public class TestNARGraph extends Nengrow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    float dt = 0.05f;
-                    networkUI.getModel().run(time, time + dt);
+                    float dt = 1; //TODO allow dt < 1, but NAR aware of this so it can run only once per cycle
+                    networkUI.node().run(time, time + dt);
                     time += dt;
                     nar.step(1);
                 } catch (SimulationException e1) {

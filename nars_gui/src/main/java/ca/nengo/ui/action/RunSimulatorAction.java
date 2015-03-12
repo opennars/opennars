@@ -173,7 +173,7 @@ public class RunSimulatorAction extends StandardAction {
                 }
 
                 ((AbstractNengo) (UIEnvironment.getInstance())).captureInDataViewer(uiNetwork
-                        .getModel());
+                        .node());
 
                 if (showDataViewer) {
                     SwingUtilities.invokeLater(new Runnable() {

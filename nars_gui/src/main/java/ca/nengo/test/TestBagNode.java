@@ -215,7 +215,7 @@ public class TestBagNode extends Nengrow {
             public void actionPerformed(ActionEvent e) {
                 try {
                     float dt = getSimulationDT();
-                    networkUI.getModel().run(time, time + dt);
+                    networkUI.node().run(time, time + dt);
                     time += dt;
 
                 } catch (SimulationException e1) {

@@ -65,7 +65,7 @@ public class NengoWorld extends ElasticWorld implements NodeContainer {
 				UINeoNode nodeUI = (UINeoNode) wo;
 
 				if (nodeUI.getName().equals(name)) {
-					return nodeUI.getModel();
+					return nodeUI.node();
 				}
 			}
 		}

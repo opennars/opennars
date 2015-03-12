@@ -67,7 +67,7 @@ public class ClearAllAction extends StandardAction {
             while (iter.hasNext())
                 copy.add(iter.next());
             for (WorldObject modelToRemove : copy) {
-        		nengo.removeNodeModel((Node) ((ModelObject) modelToRemove).getModel());
+        		nengo.removeNodeModel((Node) ((ModelObject) modelToRemove).node());
         	}
             
 //            //clear script console

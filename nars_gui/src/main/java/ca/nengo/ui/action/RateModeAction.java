@@ -56,7 +56,7 @@ public class RateModeAction extends StandardAction {
     protected final void action() throws ActionException {
 
     	for (UINeoNode nodeUI : nodeUIs) {
-    		nodeUI.getModel().setMode(SimulationMode.RATE);
+    		nodeUI.node().setMode(SimulationMode.RATE);
     	}
 
     }

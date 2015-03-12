@@ -1,5 +1,6 @@
 package ca.nengo.ui.lib.world;
 
+import org.piccolo2d.PNode;
 import org.piccolo2d.activities.PInterpolatingActivity;
 
 import java.awt.*;
@@ -565,6 +566,8 @@ public interface WorldObject extends NamedObject, Destroyable {
 
     public double getCenterX();
     public double getCenterY();
+
+    public PNode getPNode();
 
 
     public enum Property {

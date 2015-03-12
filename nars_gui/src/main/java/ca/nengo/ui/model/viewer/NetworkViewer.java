@@ -210,8 +210,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                 if (terminationUI.getConnector() != null) {
                     UISource originUI = terminationUI.getConnector().getOriginUI();
 
-                    NTarget target = terminationUI.getModel();
-                    NSource source = originUI.getModel();
+                    NTarget target = terminationUI.node();
+                    NSource source = originUI.node();
 
                     Projection projection = projectionMap.get(target);
                     if (projection != null && projection.getSource() == source) {
@@ -286,12 +286,13 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
 
         if (newItemPositionX != null && newItemPositionY != null) {
             nodeUI.setOffset(newItemPositionX, newItemPositionY);
-            neoNodesChildren.put(nodeUI.getModel(), nodeUI);
+            neoNodesChildren.put(nodeUI.node(), nodeUI);
             getGround().addChildFancy(nodeUI, false);
 
         } else {
             boolean centerAndNotify = !isFirstUpdate;
-            addUINode(nodeUI, centerAndNotify, false);
+            UINeoNode u = addUINode(nodeUI, centerAndNotify, false);
+            neoNodesChildren.put(node,u);
             if (centerAndNotify) {
                 nodeUI.showPopupMessage("Node " + node.getName() + " added to Network");
             }
@@ -374,13 +375,13 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
 
                     if (exposedOriginsChanged) {
                         for (UISource originUI : nodeUI.getVisibleSources()) {
-                            boolean isExposed = exposedSources.contains(originUI.getModel());
+                            boolean isExposed = exposedSources.contains(originUI.node());
                             originUI.setExposed(isExposed);
                         }
                     }
                     if (exposedTerminationsChanged) {
                         for (UITarget terminationUI : nodeUI.getVisibleTargets()) {
-                            boolean isExposed = exposedTargets.contains(terminationUI.getModel());
+                            boolean isExposed = exposedTargets.contains(terminationUI.node());
                             terminationUI.setExposed(isExposed);
                         }
                     }
@@ -664,8 +665,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             for (UIProbe probeUI : nodeUI.getProbes()) {
                 if (probeUI instanceof UIStateProbe) {
                     UIStateProbe stateProbe = (UIStateProbe) probeUI;
-                    if (probeToAdd.contains(stateProbe.getModel())) {
-                        probeToAdd.remove(stateProbe.getModel());
+                    if (probeToAdd.contains(stateProbe.node())) {
+                        probeToAdd.remove(stateProbe.node());
                     } else {
                         probesToDestroy.add(stateProbe);
 
@@ -812,12 +813,14 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
     @Override
     public WorldObject addNodeModel(WorldObject nodeUI, Double posX, Double posY) throws ContainerException {
 
+        UINeoNode u;
         if (posX != null && posY != null) {
             nodeUI.setOffset(posX, posY);
-            addUINode((UINeoNode) nodeUI, false, false);
+            u = addUINode((UINeoNode) nodeUI, false, false);
         } else {
-            addUINode((UINeoNode) nodeUI, true, false);
+            u = addUINode((UINeoNode) nodeUI, true, false);
         }
+        neoNodesChildren.put(u.node(),u);
 
         return nodeUI;
     }

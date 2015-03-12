@@ -101,13 +101,13 @@ public class PXEdge extends PXPath implements PropertyChangeListener, Destroyabl
 		Util.Assert(startNode != null);
 		Util.Assert(endNode != null);
 
-		startNode.getPiccolo().addPropertyChangeListener(PXNode.PROPERTY_GLOBAL_BOUNDS, this);
+        startNode.getPNode().addPropertyChangeListener(PXNode.PROPERTY_GLOBAL_BOUNDS, this);
 
-		endNode.getPiccolo().addPropertyChangeListener(PXNode.PROPERTY_GLOBAL_BOUNDS, this);
+        endNode.getPNode().addPropertyChangeListener(PXNode.PROPERTY_GLOBAL_BOUNDS, this);
 
-		startNode.getPiccolo().addPropertyChangeListener(PXNode.PROPERTY_REMOVED_FROM_WORLD, this);
+        startNode.getPNode().addPropertyChangeListener(PXNode.PROPERTY_REMOVED_FROM_WORLD, this);
 
-		endNode.getPiccolo().addPropertyChangeListener(PXNode.PROPERTY_REMOVED_FROM_WORLD, this);
+        endNode.getPNode().addPropertyChangeListener(PXNode.PROPERTY_REMOVED_FROM_WORLD, this);
 
 		setState(EdgeState.DEFAULT);
 	}
@@ -236,15 +236,15 @@ public class PXEdge extends PXPath implements PropertyChangeListener, Destroyabl
 	 */
 	public void destroy() {
 		removeFromParent();
-		myStartNode.getPiccolo().removePropertyChangeListener(PXNode.PROPERTY_GLOBAL_BOUNDS, this);
+        myStartNode.getPNode().removePropertyChangeListener(PXNode.PROPERTY_GLOBAL_BOUNDS, this);
 
-		myEndNode.getPiccolo().removePropertyChangeListener(PXNode.PROPERTY_GLOBAL_BOUNDS, this);
+        myEndNode.getPNode().removePropertyChangeListener(PXNode.PROPERTY_GLOBAL_BOUNDS, this);
 
-		myStartNode.getPiccolo().removePropertyChangeListener(PXNode.PROPERTY_REMOVED_FROM_WORLD,
-				this);
+        myStartNode.getPNode().removePropertyChangeListener(PXNode.PROPERTY_REMOVED_FROM_WORLD,
+                this);
 
-		myEndNode.getPiccolo().removePropertyChangeListener(PXNode.PROPERTY_REMOVED_FROM_WORLD,
-				this);
+        myEndNode.getPNode().removePropertyChangeListener(PXNode.PROPERTY_REMOVED_FROM_WORLD,
+                this);
 
 	}
 

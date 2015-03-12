@@ -134,7 +134,7 @@ public abstract class NodeViewer extends ElasticWorld implements Interactable {
             getWorld().animateToSkyPosition(node.getOffset().getX(), node.getOffset().getY());
         }
 
-        neoNodesChildren.put(node.getModel(), node);
+        neoNodesChildren.put(node.node(), node);
 
         if (dropInCenterOfCamera) {
             getGround().addChildFancy(node, dropInCenterOfCamera);
@@ -301,7 +301,7 @@ public abstract class NodeViewer extends ElasticWorld implements Interactable {
      * @return NEO Model represented by the viewer
      */
     public Node getModel() {
-        return parentOfViewer.getModel();
+        return parentOfViewer.node();
     }
 
     /**

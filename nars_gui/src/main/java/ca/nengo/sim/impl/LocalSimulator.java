@@ -196,9 +196,9 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
         
         while (time < endTime && !interrupt) {
 
-            if (myDisplayProgress && c++ % 100 == 99) {
+            /*if (myDisplayProgress && c++ % 100 == 99) {
                 System.out.println("Step " + c + ' ' + Math.min(endTime, time + thisStepSize));
-            }
+            }*/
 
             if (time + 1.5*thisStepSize > endTime) { //fudge step size to hit end exactly
                 thisStepSize = endTime - time;

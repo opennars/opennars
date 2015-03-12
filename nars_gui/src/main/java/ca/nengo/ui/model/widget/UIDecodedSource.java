@@ -47,7 +47,7 @@ public class UIDecodedSource extends UISource {
 	}
 
 	protected int getInputDimensions() {
-		return getModel().getDimensions();
+		return node().getDimensions();
 	}
 
 	@Override
@@ -57,11 +57,11 @@ public class UIDecodedSource extends UISource {
 
 	@Override
 	protected void destroyOriginModel() {
-		if (getModel().getNode() instanceof NEFGroup) {
+		if (node().getNode() instanceof NEFGroup) {
 			if(getExposedName() != null)
 				unExpose();
             try {
-			    ((NEFGroup) (getModel().getNode())).removeDecodedOrigin(getModel().getName());
+			    ((NEFGroup) (node().getNode())).removeDecodedOrigin(node().getName());
             } catch(StructuralException e) {
                 Util.Assert(false, e.getMessage());
             }

@@ -88,14 +88,14 @@ public class UIGroup extends UINodeViewable {
 	}
 
 	@Override
-	public Group getModel() {
-		return (Group) super.getModel();
+	public Group node() {
+		return (Group) super.node();
 	}
 
 	@Override
 	public int getNodesCount() {
-		if (getModel() != null) {
-			return getModel().getNodes().length;
+		if (node() != null) {
+			return node().getNodes().length;
 		} else
 			return 0;
 	}
@@ -122,7 +122,7 @@ public class UIGroup extends UINodeViewable {
 	@Override
 	protected void modelUpdated() {
 		super.modelUpdated();
-		if (getModel().isCollectingSpikes()) {
+		if (node().isCollectingSpikes()) {
 			collectSpikes(true);
 		}
 	}
@@ -142,7 +142,7 @@ public class UIGroup extends UINodeViewable {
 
 		@Override
 		protected void action() throws ActionException {
-			if (getModel().isCollectingSpikes())
+			if (node().isCollectingSpikes())
 				throw new ActionException("Already collecting spikes");
 			else
 				collectSpikes(true);
@@ -170,7 +170,7 @@ public class UIGroup extends UINodeViewable {
 
 		@Override
 		protected void action() throws ActionException {
-			if (!getModel().isCollectingSpikes())
+			if (!node().isCollectingSpikes())
 				throw new ActionException("Already not collecting spikes");
 			else
 				collectSpikes(false);

@@ -61,14 +61,14 @@ public class UIStateProbe extends UIProbe {
 		/*
 		 * Creates the probe
 		 */
-		Node node = nodeAttachedTo.getModel();
+		Node node = nodeAttachedTo.node();
 		Probe probe;
 		try {
 			if (nodeAttachedTo.getParentViewer() instanceof GroupViewer) {
 				NodeViewer groupViewer = nodeAttachedTo.getParentViewer();
 
 				UINodeViewable ensemble = groupViewer.getViewerParent();
-				Network network = ensemble.getNetworkParent().getModel();
+				Network network = ensemble.getNetworkParent().node();
 
 				probe = network.getSimulator().addProbe(ensemble.getName(),
 						(Probeable) node,
@@ -109,7 +109,7 @@ public class UIStateProbe extends UIProbe {
 		menu.addSection("Probe");
 		MenuBuilder plotMenu = menu.addSubMenu("plot");
 
-		Collection<StandardAction> actions = ProbePlotHelper.getInstance().getPlotActions(getModel().getData(),
+		Collection<StandardAction> actions = ProbePlotHelper.getInstance().getPlotActions(node().getData(),
 				getName());
 
 		for (StandardAction action : actions) {
@@ -123,22 +123,22 @@ public class UIStateProbe extends UIProbe {
 
 	@Override
 	public void doubleClicked() {
-		ProbePlotHelper.getInstance().getDefaultAction(getModel(), getName()).doAction();
+		ProbePlotHelper.getInstance().getDefaultAction(node(), getName()).doAction();
 	}
 
 	@Override
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
-		tooltips.addProperty("Attached to", getModel().getStateName());
+		tooltips.addProperty("Attached to", node().getStateName());
 	}
 
 	@Override
 	protected void prepareToDestroyModel() {
 		try {
-			getProbeParent().getNetworkParent().getSimulator().removeProbe(getModel());
+			getProbeParent().getNetworkParent().getSimulator().removeProbe(node());
 			getProbeParent().showPopupMessage("Probe removed from Simulator");
 			
-			Probe model = getModel();
+			Probe model = node();
 			if(model.isInEnsemble()){
 				Group target = (Group) model.getTarget();
 				target.stopProbing(model.getStateName());
@@ -166,8 +166,8 @@ public class UIStateProbe extends UIProbe {
 	}
 
 	@Override
-	public Probe getModel() {
-		return (Probe) super.getModel();
+	public Probe node() {
+		return (Probe) super.node();
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class UIStateProbe extends UIProbe {
 
 	@Override
 	public void modelUpdated() {
-		setName(getModel().getStateName());
+		setName(node().getStateName());
 	}
 
 	/**

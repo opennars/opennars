@@ -166,7 +166,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		 */
 		ground.setWorld(this);
 		myGround = ground;
-		layer.addChild(myGround.getPiccolo());
+        layer.addChild(myGround.getPNode());
 
 		/*
 		 * Create sky
@@ -191,7 +191,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		selectionEventHandler.setMarqueePaintTransparency(0.1f);
 
 
-		getPiccolo().addInputEventListener(new EventConsumer());
+        getPNode().addInputEventListener(new EventConsumer());
 		setStatusBarHandler(new RootWorldStatusHandler(this));
 
 		/*
@@ -500,7 +500,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 			Rectangle2D bounds = WorldImpl.getObjectBounds(getSelection());
 			zoomToBounds(bounds);
 		} else {
-			zoomToBounds(getGround().getPiccolo().getUnionOfChildrenBounds(null));
+            zoomToBounds(getGround().getPNode().getUnionOfChildrenBounds(null));
 		}
 
 	}

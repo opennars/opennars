@@ -516,7 +516,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             if (wo instanceof ModelObject) {
                 ModelObject modelObject = (ModelObject) wo;
 
-                if (modelObject.getModel() == node) {
+                if (modelObject.node() == node) {
                     modelToDestroy = modelObject;
                     break;
                 }

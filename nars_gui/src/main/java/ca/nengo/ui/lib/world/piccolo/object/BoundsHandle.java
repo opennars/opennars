@@ -66,7 +66,7 @@ public class BoundsHandle extends PHandle {
 	private static final long serialVersionUID = 1L;
 
 	public static void addBoundsHandlesTo(WorldObjectImpl wo) {
-		PNode aNode = wo.getPiccolo();
+        PNode aNode = wo.getPNode();
 		aNode
 				.addChild(new BoundsHandle(PBoundsLocator
 						.createEastLocator(aNode)));
@@ -108,7 +108,7 @@ public class BoundsHandle extends PHandle {
 
 	@SuppressWarnings("unchecked")
     public static void removeBoundsHandlesFrom(WorldObjectImpl wo) {
-		PNode aNode = wo.getPiccolo();
+        PNode aNode = wo.getPNode();
 
 		ArrayList<BoundsHandle> handles = new ArrayList<BoundsHandle>();
 

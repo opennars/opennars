@@ -100,7 +100,7 @@ public class SliderNode extends AbstractNode implements UIBuilder {
                 @Override
                 public void processEvent(PInputEvent pInputEvent, int i) {
                     if (pInputEvent.isMouseEvent()) {
-                        Point2D pos = pInputEvent.getPositionRelativeTo(SliderNodeUI.this.getPiccolo());
+                        Point2D pos = pInputEvent.getPositionRelativeTo(getPNode());
                         double y = pos.getY();
                         double x = pos.getX();
                         double margin = getMargin();

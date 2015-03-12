@@ -104,7 +104,7 @@ public class UINetwork extends UINodeViewable {
     @Override
     public void attachViewToModel() {
         super.attachViewToModel();
-        getModel().getSimulator().addChangeListener(mySimulatorListener);
+        node().getSimulator().addChangeListener(mySimulatorListener);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class UINetwork extends UINodeViewable {
     @Override
     protected void constructTooltips(TooltipBuilder tooltips) {
         super.constructTooltips(tooltips);
-        tooltips.addProperty("# Projections", String.valueOf(getModel().getProjections().length));
+        tooltips.addProperty("# Projections", String.valueOf(node().getProjections().length));
         tooltips.addProperty("Simulator", getSimulator().getClass().getSimpleName());
     }
 
@@ -128,7 +128,7 @@ public class UINetwork extends UINodeViewable {
     @Override
     public void detachViewFromModel() {
         super.detachViewFromModel();
-        getModel().getSimulator().removeChangeListener(mySimulatorListener);
+        node().getSimulator().removeChangeListener(mySimulatorListener);
     }
 
     //    @Override
@@ -137,24 +137,24 @@ public class UINetwork extends UINodeViewable {
     //    }
 
     @Override
-    public NetworkImpl getModel() {
-        return (NetworkImpl) super.getModel();
+    public NetworkImpl node() {
+        return (NetworkImpl) super.node();
     }
 
     @Override
     public String getName() {
-        if (getModel() == null) {
+        if (node() == null) {
             return super.getName();
         } else {
-            return getModel().getName();
+            return node().getName();
         }
     }
 
     @Override
     public int getNodesCount() {
-        if (getModel() != null) {
+        if (node() != null) {
             //			return getModel().getNodes().length;
-            return getModel().countNeurons();
+            return node().countNeurons();
         } else {
             return 0;
         }
@@ -193,7 +193,7 @@ public class UINetwork extends UINodeViewable {
      * @return Simulator
      */
     public Simulator getSimulator() {
-        return getModel().getSimulator();
+        return node().getSimulator();
     }
 
     @Override

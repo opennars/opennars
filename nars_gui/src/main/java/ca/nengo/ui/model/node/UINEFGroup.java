@@ -66,7 +66,7 @@ public class UINEFGroup extends UIGroup {
 
 	private void init() {
 		try {
-			if (getModel().getSource(NEFGroup.X) != null) {
+			if (node().getSource(NEFGroup.X) != null) {
 				showSource(NEFGroup.X);
 			}
 		} catch (StructuralException e) {
@@ -86,15 +86,15 @@ public class UINEFGroup extends UIGroup {
 
 			@Override
 			protected void action() {
-				Plotter.plot(getModel());
+				Plotter.plot(node());
 			}
 
 		});
-		NSource[] sources = getModel().getSources();
+		NSource[] sources = node().getSources();
 
 		for (NSource element : sources) {
 			if (element instanceof DecodedSource) {
-				if(getModel().getDimension() > 1)
+				if(node().getDimension() > 1)
 					plotMenu.addAction(new PlotDecodedOriginMSE(element.getName()));
 				else
 					plotMenu.addAction(new PlotDecodedOriginDistortion(element.getName()));
@@ -109,7 +109,7 @@ public class UINEFGroup extends UIGroup {
 	@Override
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
-		tooltips.addProperty("# Dimension", String.valueOf(getModel().getDimension()));
+		tooltips.addProperty("# Dimension", String.valueOf(node().getDimension()));
 
 	}
 
@@ -123,7 +123,7 @@ public class UINEFGroup extends UIGroup {
 
 		try {
 			NTarget term = (NTarget) ModelFactory.constructModel(this,
-					new CDecodedTermination(getModel()));
+					new CDecodedTermination(node()));
 
 			UITarget termUI = UITarget.createTerminationUI(this, term);
 			showPopupMessage("New decoded TERMINATION added");
@@ -142,7 +142,7 @@ public class UINEFGroup extends UIGroup {
 		try {
 
 			NSource source = (NSource) ModelFactory.constructModel(this, new CDecodedOrigin(
-					getModel()));
+					node()));
 			UISource originUI = UISource.createOriginUI(this, source);
 
 			addWidget(originUI);
@@ -158,8 +158,8 @@ public class UINEFGroup extends UIGroup {
 	}
 
 	@Override
-	public NEFGroup getModel() {
-		return (NEFGroup) super.getModel();
+	public NEFGroup node() {
+		return (NEFGroup) super.node();
 	}
 	
 	 @Override
@@ -174,8 +174,8 @@ public class UINEFGroup extends UIGroup {
 
 	@Override
 	public int getDimensionality() {
-		if (getModel() != null) {
-			return getModel().getDimension();
+		if (node() != null) {
+			return node().getDimension();
 		} else {
 			return -1;
 		}
@@ -267,7 +267,7 @@ public class UINEFGroup extends UIGroup {
 
 		@Override
 		protected void action() throws ActionException {
-				Plotter.plot(getModel(), decodedOriginName);
+				Plotter.plot(node(), decodedOriginName);
 		}
 	}
 
@@ -287,7 +287,7 @@ public class UINEFGroup extends UIGroup {
 
 		@Override
 		protected void action() throws ActionException {
-			Plotter.plot(getModel(), decodedOriginName);
+			Plotter.plot(node(), decodedOriginName);
 
 		}
 	}

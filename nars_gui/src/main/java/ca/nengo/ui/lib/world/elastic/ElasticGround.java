@@ -38,14 +38,14 @@ public class ElasticGround extends WorldGroundImpl {
 
 	public ElasticGround() {
 		super();
-		getPiccolo().addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getPropertyName().compareTo(PNode.PROPERTY_CHILDREN) == 0) {
-					childrenUpdatedFlag = true;
-				}
-			}
+        getPNode().addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().compareTo(PNode.PROPERTY_CHILDREN) == 0) {
+                    childrenUpdatedFlag = true;
+                }
+            }
 
-		});
+        });
 	}
 
 	public void modifyEdgeDistances(ElasticObject obj, double delta) {

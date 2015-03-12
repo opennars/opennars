@@ -74,7 +74,7 @@ public class CopyAction extends StandardAction {
     			world = nodeUI.getWorld();
     		}
     		try {
-    			nodes.add(nodeUI.getModel().clone());
+    			nodes.add(nodeUI.node().clone());
     			offsets.add(new Point2D.Double(nodeUI.getOffset().getX() - averagePoint.getX(), nodeUI.getOffset().getY() - averagePoint.getY()));
     		} catch (CloneNotSupportedException e) {
     			throw new ActionException("Could not clone node: ", e);

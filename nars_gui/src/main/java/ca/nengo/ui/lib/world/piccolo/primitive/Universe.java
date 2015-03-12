@@ -231,7 +231,7 @@ public class Universe extends PCanvas implements Destroyable {
 
 		if (topWorld == null) {
 			topWorld = world;
-			getLayer().addChild(topWorld.getPiccolo());
+            getLayer().addChild(topWorld.getPNode());
 			initStatusPanel();
 		} else {
 			throw new UnsupportedOperationException("Can only initialize once");

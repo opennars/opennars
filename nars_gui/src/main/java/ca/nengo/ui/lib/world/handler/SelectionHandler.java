@@ -50,7 +50,6 @@ import org.piccolo2d.event.PDragSequenceEventHandler;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.event.PInputEventFilter;
 import org.piccolo2d.extras.event.PNotificationCenter;
-import org.piccolo2d.nodes.PPath;
 import org.piccolo2d.util.PBounds;
 import org.piccolo2d.util.PDimension;
 import org.piccolo2d.util.PNodeFilter;
@@ -153,7 +152,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
     	WorldObject obj = getActiveObject();
 	    while (obj != null)
 	    	if (obj instanceof ModelObject)
-	    		return ((ModelObject) obj).getModel();
+	    		return ((ModelObject) obj).node();
 	    	else
 	    		obj = obj.getParent();
 	    
@@ -418,16 +417,16 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		SelectionBorder frame = new SelectionBorder(world, node);
 
 		node.setSelected(true);
-		node.getPiccolo().addAttribute(SELECTION_HANDLER_FRAME_ATTR, frame);
+        node.getPNode().addAttribute(SELECTION_HANDLER_FRAME_ATTR, frame);
 	}
 	
 	public void undecorateSelectedNode(WorldObjectImpl node) {
-		Object frame = node.getPiccolo().getAttribute(SELECTION_HANDLER_FRAME_ATTR);
+        Object frame = node.getPNode().getAttribute(SELECTION_HANDLER_FRAME_ATTR);
 		if (frame != null && frame instanceof SelectionBorder) {
 			((SelectionBorder) frame).destroy();
 		}
 		node.setSelected(false);
-		node.getPiccolo().addAttribute(SELECTION_HANDLER_FRAME_ATTR, null);
+        node.getPNode().addAttribute(SELECTION_HANDLER_FRAME_ATTR, null);
 	}
 
 	/**
@@ -581,7 +580,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		if (selectionEn.hasNext()) {
 			e.setHandled(true);
             try {
-                PDimension d = e.getDeltaRelativeTo(selectableParent.getPiccolo());
+                PDimension d = e.getDeltaRelativeTo(selectableParent.getPNode());
 
                 final long now = System.currentTimeMillis();
 
@@ -728,7 +727,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	protected void updateMarquee(PInputEvent pie) {
 		PBounds b = new PBounds();
 
-		if (marqueeParent.getPiccolo() instanceof PCamera) {
+        if (marqueeParent.getPNode() instanceof PCamera) {
 			b.add(canvasPressPt);
 			b.add(pie.getCanvasPosition());
 		} else {
@@ -755,7 +754,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 
 		Collection<PNode> items;
 
-		items = selectableParent.getPiccolo().getAllNodes(filter, null);
+        items = selectableParent.getPNode().getAllNodes(filter, null);
 
 		Iterator<PNode> itemsIt = items.iterator();
 		while (itemsIt.hasNext()) {
@@ -868,7 +867,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		}
 
 		public boolean acceptChildrenOf(PNode node) {
-			return node == selectableParent.getPiccolo();
+            return node == selectableParent.getPNode();
 		}
 
 	}

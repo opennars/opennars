@@ -66,7 +66,7 @@ public class IntegratorExample {
 
 			public void run() {
 				try {
-					buildNetwork(network.getModel());
+					buildNetwork(network.node());
 				} catch (StructuralException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {

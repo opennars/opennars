@@ -119,15 +119,15 @@ public abstract class UITarget<T extends NTarget> extends Widget<T> implements I
 				}
 
 
-                T target = getModel();
-                if (!target.applies(source.getModel().get())) {
+                T target = node();
+                if (!target.applies(source.node().get())) {
                     getNodeParent().showPopupMessage("Invalid connection"); //TODO show reason
                     successful = false;
                 }
                 else {
 
-                    getNodeParent().getNetworkParent().getModel().addProjection(source.getModel(),
-                            getModel());
+                    getNodeParent().getNetworkParent().node().addProjection(source.node(),
+                            node());
                     getNodeParent().showPopupMessage(
                             "Connected to " + getNodeParent().getName() + '.' + getName());
                     successful = true;
@@ -147,11 +147,11 @@ public abstract class UITarget<T extends NTarget> extends Widget<T> implements I
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
 
-		tooltips.addProperty("Dimensions", String.valueOf(getModel().getDimensions()));
+		tooltips.addProperty("Dimensions", String.valueOf(node().getDimensions()));
 
 		// tooltips.addTitle("Configuration");
-		tooltips.addProperty("Time Constant", String.valueOf(getModel().getTau()));
-		tooltips.addProperty("Modulatory", String.valueOf(getModel().getModulatory()));
+		tooltips.addProperty("Time Constant", String.valueOf(node().getTau()));
+		tooltips.addProperty("Modulatory", String.valueOf(node().getModulatory()));
 	}
 
 	/*@Override
@@ -170,18 +170,18 @@ public abstract class UITarget<T extends NTarget> extends Widget<T> implements I
 
 	@Override
 	protected void exposeModel(UINetwork networkUI, String exposedName) {
-		networkUI.getModel().exposeTermination(getModel(), exposedName);
+		networkUI.node().exposeTermination(node(), exposedName);
 		networkUI.showTarget(exposedName);
 	}
 
 	@Override
 	protected String getExposedName(Network network) {
-		return network.getExposedTerminationName(getModel());
+		return network.getExposedTerminationName(node());
 	}
 
 	@Override
 	protected String getModelName() {
-		return getModel().getName();
+		return node().getName();
 	}
 
 	@Override
@@ -212,7 +212,7 @@ public abstract class UITarget<T extends NTarget> extends Widget<T> implements I
 	public void disconnect() {
 		if (getConnector() != null) {
 			try {
-				getNodeParent().getNetworkParent().getModel().removeProjection(getModel());
+				getNodeParent().getNetworkParent().node().removeProjection(node());
 				getNodeParent().showPopupMessage(
 						"REMOVED Projection to " + getNodeParent().getName() + '.' + getName());
 

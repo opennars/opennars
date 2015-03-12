@@ -63,8 +63,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     protected int myNumGPU = 0;
     protected int myNumJavaThreads = 1;
     protected boolean myUseGPU = true;
-    private Map<String, N> myNodeMap; //keyed on name
-    private Node[] myNodeArray; //cache of myNodeMap's items in the form of an array for getNodes()
+    private Map<String, N> nodes; //keyed on name
+    @Deprecated private Node[] myNodeArray; //cache of myNodeMap's items in the form of an array for getNodes()
     private Map<NTarget, Projection> myProjectionMap; //keyed on Termination
     private String myName;
     private SimulationMode myMode;
@@ -92,7 +92,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * Sets up a network's data structures
      */
     public NetworkImpl(String name) {
-        myNodeMap = Parameters.newHashMap(20);
+        nodes = Parameters.newHashMap(20);
         myNodeArray = null;
         myProjectionMap = Parameters.newHashMap(50);
         myName = name;
@@ -183,11 +183,12 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Network#addNode(ca.nengo.model.Node)
      */
     public void addNode(N node) throws StructuralException {
-        if (myNodeMap.containsKey(node.getName())) {
+
+        if (nodes.containsKey(node.getName())) {
             throw new StructuralException("This Network already contains a Node named " + node.getName());
         }
 
-        myNodeMap.put(node.getName(), node);
+        nodes.put(node.getName(), node);
         myNodeArray = null;
 
         node.addChangeListener(this);
@@ -271,7 +272,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         if (e instanceof VisiblyChanges.NameChangeEvent) {
             VisiblyChanges.NameChangeEvent ne = (VisiblyChanges.NameChangeEvent) e;
 
-            if (myNodeMap.containsKey(ne.getNewName()) && !ne.getNewName().equals(ne.getOldName())) {
+            if (nodes.containsKey(ne.getNewName()) && !ne.getNewName().equals(ne.getOldName())) {
                 throw new StructuralException("This Network already contains a Node named " + ne.getNewName());
             }
 
@@ -282,8 +283,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 			 * Also only do the swap if the node being changed is already in myNodeMap.
 			 */
             if (!ne.getOldName().equals(ne.getNewName()) && (ne.getObject() == getNode(ne.getOldName()))) {
-                myNodeMap.put(ne.getNewName(), (N) ne.getObject());
-                myNodeMap.remove(ne.getOldName());
+                nodes.put(ne.getNewName(), (N) ne.getObject());
+                nodes.remove(ne.getOldName());
                 myNodeArray = null;
             }
         }
@@ -328,9 +329,9 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      */
     public Node[] getNodes() {
         if (myNodeArray == null) {
-            myNodeArray = new Node[myNodeMap.size()];
+            myNodeArray = new Node[nodes.size()];
             int x = 0;
-            for (final N n : myNodeMap.values())
+            for (final N n : nodes.values())
                 myNodeArray[x++] = n;
         }
         return myNodeArray;
@@ -360,14 +361,14 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Network#getNode(java.lang.String)
      */
     public N getNode(final String name) /*throws StructuralException*/ {
-        return myNodeMap.get(name);
+        return nodes.get(name);
     }
 
     /**
      * @return number of top-level nodes
      */
     public int getNodeCount() {
-        return myNodeMap.size();
+        return nodes.size();
     }
 
     /**
@@ -393,7 +394,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      */
     public void removeNode(String name) throws StructuralException {
 
-        N node = myNodeMap.get(name);
+        N node = nodes.get(name);
         if (node == null)
             throw new StructuralException("No Node named " + name + " in this Network");
 
@@ -429,7 +430,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             ((SocketUDPNode) node).close();
         }
 
-        myNodeMap.remove(name);
+        nodes.remove(name);
         myNodeArray = null;
 
         node.removeChangeListener(this);
@@ -545,7 +546,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             return;
         myMode = mode;
 
-        Iterator<N> it = myNodeMap.values().iterator();
+        Iterator<N> it = nodes.values().iterator();
         while (it.hasNext()) {
             N node = it.next();
             node.setMode(mode);
@@ -576,9 +577,9 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      */
     public void reset(boolean randomize) {
         //TODO iterate entry set
-        Iterator<String> it = myNodeMap.keySet().iterator();
+        Iterator<String> it = nodes.keySet().iterator();
         while (it.hasNext()) {
-            Node n = myNodeMap.get(it.next());
+            Node n = nodes.get(it.next());
             n.reset(randomize);
         }
     }
@@ -928,10 +929,10 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     public Network clone() throws CloneNotSupportedException {
         NetworkImpl result = (NetworkImpl) super.clone();
 
-        result.myNodeMap = new HashMap(myNodeMap.size());
-        for (Node oldNode : myNodeMap.values()) {
+        result.nodes = new HashMap(nodes.size());
+        for (Node oldNode : nodes.values()) {
             Node newNode = oldNode.clone();
-            result.myNodeMap.put(newNode.getName(), newNode);
+            result.nodes.put(newNode.getName(), newNode);
             newNode.addChangeListener(result);
         }
 
@@ -1080,7 +1081,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap array = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(array.get("name"))) {
+                if (!nodes.containsKey(array.get("name"))) {
                     continue;
                 }
 
@@ -1136,7 +1137,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap bg = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(bg.get("name"))) {
+                if (!nodes.containsKey(bg.get("name"))) {
                     continue;
                 }
 
@@ -1157,7 +1158,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap thal = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(thal.get("name"))) {
+                if (!nodes.containsKey(thal.get("name"))) {
                     continue;
                 }
 
@@ -1179,7 +1180,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap integrator = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(integrator.get("name"))) {
+                if (!nodes.containsKey(integrator.get("name"))) {
                     continue;
                 }
 
@@ -1201,7 +1202,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 
                 String controlled = (Boolean) oscillator.get("controlled") ? "True" : "False";
 
-                if (!myNodeMap.containsKey(oscillator.get("name"))) {
+                if (!nodes.containsKey(oscillator.get("name"))) {
                     continue;
                 }
 
@@ -1223,7 +1224,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap linear = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(linear.get("name"))) {
+                if (!nodes.containsKey(linear.get("name"))) {
                     continue;
                 }
 
@@ -1258,7 +1259,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap learnedterm = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(learnedterm.get("errName"))) {
+                if (!nodes.containsKey(learnedterm.get("errName"))) {
                     continue;
                 }
 
@@ -1277,7 +1278,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap binding = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(binding.get("name"))) {
+                if (!nodes.containsKey(binding.get("name"))) {
                     continue;
                 }
 
@@ -1329,7 +1330,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap bgrule = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(bgrule.get("name"))) {
+                if (!nodes.containsKey(bgrule.get("name"))) {
                     continue;
                 }
 
@@ -1353,7 +1354,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             while (iter.hasNext()) {
                 HashMap gate = (HashMap) iter.next();
 
-                if (!myNodeMap.containsKey(gate.get("name"))) {
+                if (!nodes.containsKey(gate.get("name"))) {
                     continue;
                 }
 

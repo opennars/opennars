@@ -34,7 +34,7 @@ public class WorldSkyImpl extends WorldLayerImpl implements WorldSky {
 	public WorldSkyImpl() {
 		super("Sky", new PXCamera());
 
-		myCamera = (PXCamera) getPiccolo();
+        myCamera = (PXCamera) getPNode();
 		myCamera.setPaint(NengoStyle.COLOR_BACKGROUND);
 
 		/*

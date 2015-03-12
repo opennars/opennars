@@ -40,7 +40,7 @@ public class Path extends WorldObjectImpl {
 	}
 
 	private void init() {
-		pathNode = (PXPath) getPiccolo();
+        pathNode = (PXPath) getPNode();
 		setPickable(false);
 	}
 
@@ -71,6 +71,6 @@ public class Path extends WorldObjectImpl {
 
     @Override
     public String toString() {
-        return getName() + ":Path[" + myPNode + ']';
+        return getName() + ":Path[" + pnode + ']';
     }
 }

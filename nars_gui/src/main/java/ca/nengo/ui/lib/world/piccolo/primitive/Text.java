@@ -57,7 +57,7 @@ public class Text extends WorldObjectImpl {
 	private void init() {
 		setPickable(false);
 
-		textNode = (PXText) getPiccolo();
+        textNode = (PXText) getPNode();
 	}
 
 	public void setFont(Font font) {

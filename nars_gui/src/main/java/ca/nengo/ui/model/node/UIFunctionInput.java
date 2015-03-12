@@ -58,20 +58,20 @@ public class UIFunctionInput extends UINeoNode {
 		// MenuBuilder plotMenu = menu.createSubMenu("Plot");
 		menu.addSection("Function");
 
-		menu.addAction(new PlotFunctionNodeAction(getName(), "Plot function", getModel()));
+		menu.addAction(new PlotFunctionNodeAction(getName(), "Plot function", node()));
 	}
 
 	@Override
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
 
-		tooltips.addProperty("Dimensions", String.valueOf(getModel().getFunctions().length));
+		tooltips.addProperty("Dimensions", String.valueOf(node().getFunctions().length));
 	}
 
 	@Override
-	public FunctionInput getModel() {
+	public FunctionInput node() {
 
-		return (FunctionInput) super.getModel();
+		return (FunctionInput) super.node();
 	}
 
 	@Override

@@ -71,8 +71,8 @@ class CreateLineEndHandler extends PBasicInputEventHandler {
 
 		PPickPath path = event.getPath();
 
-		path.pushNode(newLineEnd.getPiccolo());
-		path.pushTransform(newLineEnd.getPiccolo().getTransform());
+        path.pushNode(newLineEnd.getPNode());
+        path.pushTransform(newLineEnd.getPNode().getTransform());
 
 	}
 

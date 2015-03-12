@@ -57,7 +57,7 @@ public class DataViewerTest {
 		(new Thread(new Runnable() {
 			public void run() {
 				try {
-					buildNetwork(network.getModel());
+					buildNetwork(network.node());
 				} catch (StructuralException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {

@@ -170,9 +170,9 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		 */
 		AbstractMenuBuilder probesMenu = menu.addSubMenu("Add probe");
 		boolean somethingFound = false;
-		if (getModel() instanceof Probeable) {
+		if (node() instanceof Probeable) {
 
-			Probeable probeable = (Probeable) getModel();
+			Probeable probeable = (Probeable) node();
 			Properties states = probeable.listStates();
 
 			// Enumeration e = states.elements();
@@ -204,7 +204,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 			try {
 				String newName = UserDialogs.showDialogString("Enter name", getName());
 
-				getModel().setName(newName);
+				node().setName(newName);
 			} catch (ConfigException e) {
 				throw new UserCancelledException();
 			} catch (StructuralException e) {
@@ -224,7 +224,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		menu.addAction(new CopyAction("Copy", arrayOfMe));
 		menu.addAction(new CutAction("Cut", arrayOfMe));
 
-		SimulationMode mode = ((UINeoNode) arrayOfMe.toArray()[0]).getModel().getMode();
+		SimulationMode mode = ((UINeoNode) arrayOfMe.toArray()[0]).node().getMode();
 
 		int selected = -1;
 		if (mode == SimulationMode.DEFAULT) {
@@ -263,9 +263,9 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
 
-		if (getModel().getDocumentation() != null) {
+		if (node().getDocumentation() != null) {
 			tooltips.addProperty("Documentation",
-					Util.truncateString(getModel().getDocumentation(), 100));
+					Util.truncateString(node().getDocumentation(), 100));
 		}
 		//tooltips.addProperty("Simulation mode", getModel().getMode().toString());
 
@@ -278,7 +278,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		/*
 		 * Build the "show origins" menu
 		 */
-		NSource[] sources = getModel().getSources();
+		NSource[] sources = node().getSources();
 		if (sources.length > 0) {
 
 			AbstractMenuBuilder originsMenu = originsAndTerminations.addSubMenu("Show source");
@@ -292,7 +292,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		/*
 		 * Build the "show origins" menu
 		 */
-		NTarget[] targets = getModel().getTargets();
+		NTarget[] targets = node().getTargets();
 		if (targets.length > 0) {
 
 			AbstractMenuBuilder terminationsMenu = originsAndTerminations.addSubMenu("Show target");
@@ -318,17 +318,17 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	protected void modelUpdated() {
 		super.modelUpdated();
 
-		NSource[] modelSources = getModel().getSources();
+		NSource[] modelSources = node().getSources();
 		Set<NSource> modelSourceSet = Parameters.newHashSet(modelSources.length);
         Collections.addAll(modelSourceSet, modelSources);
 
-		NTarget[] modelTargets = getModel().getTargets();
+		NTarget[] modelTargets = node().getTargets();
 		Set<NTarget> modelTargetSet = Parameters.newHashSet(modelTargets.length);
         Collections.addAll(modelTargetSet, modelTargets);
 
 		for (WorldObject wo : getChildren()) {
 			if (wo instanceof ModelObject) {
-				Object model = ((ModelObject) wo).getModel();
+				Object model = ((ModelObject) wo).node();
 
 				if (model instanceof NTarget) {
 					if (!modelTargetSet.remove(model)) {
@@ -383,7 +383,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 		NSource source = null;
 		try {
-			source = getModel().getSource(probeUI.getName());
+			source = node().getSource(probeUI.getName());
 
 		} catch (StructuralException e1) {
             e1.printStackTrace();
@@ -394,7 +394,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		} else if (source == null) {
 			NTarget term = null;
 			try {
-				term = getModel().getTarget(probeUI.getName());
+				term = node().getTarget(probeUI.getName());
 
 			} catch (StructuralException e) {
                 e.printStackTrace();
@@ -441,8 +441,8 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	@Override
 	public void attachViewToModel() {
 		super.attachViewToModel();
-		if (getModel() instanceof VisiblyChanges) {
-			VisiblyChanges visiblyMutable = getModel();
+		if (node() instanceof VisiblyChanges) {
+			VisiblyChanges visiblyMutable = node();
 			visiblyMutable.addChangeListener(myUpdateListener);
 		}
 	}
@@ -450,8 +450,8 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	@Override
 	public void detachViewFromModel() {
 		super.detachViewFromModel();
-		if (getModel() instanceof VisiblyChanges) {
-			VisiblyChanges visiblyMutable = getModel();
+		if (node() instanceof VisiblyChanges) {
+			VisiblyChanges visiblyMutable = node();
 
 			Util.Assert(myUpdateListener != null);
 			visiblyMutable.removeChangeListener(myUpdateListener);
@@ -471,11 +471,11 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 				NodeContainer nodeContainer = (NodeContainer) wo;
 
 				try {
-					CreateModelAction.ensureNonConflictingName(getModel(), nodeContainer); // throws UserCancelledException
+					CreateModelAction.ensureNonConflictingName(node(), nodeContainer); // throws UserCancelledException
 					
 					Node node;
 					try {
-						node = getModel().clone();
+						node = node().clone();
 					} catch (CloneNotSupportedException e) {
 						throw new ContainerException("Could not clone node: " + e.getMessage());
 					}
@@ -508,14 +508,14 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	}
 
 	@Override
-	public N getModel() {
-		return super.getModel();
+	public N node() {
+		return super.node();
 	}
 
 	@Override
 	public String getName() {
-		if (getModel() != null) {
-			return getModel().getName();
+		if (node() != null) {
+			return node().getName();
 		} else {
 			return "Model not constructed";
 		}
@@ -708,14 +708,14 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	public void saveModel(File file) throws IOException {
 		FileManager fm = new FileManager();
 
-		fm.save(this.getModel(), file);
+		fm.save(this.node(), file);
 		new TransientStatusMessage(this.getFullName() + " was saved to " + file.toString(), 2500);
 	}
 	
 	public void generateScript(File file) throws IOException {
 		FileManager fm = new FileManager();
 
-		fm.generate(this.getModel(), file.toString());
+		fm.generate(this.node(), file.toString());
 		new TransientStatusMessage(this.getFullName() + " generated script " + file.toString(), 2500);
 	}
 
@@ -744,7 +744,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 */
 	public void showAllSources() {
 
-		NSource[] sources = getModel().getSources();
+		NSource[] sources = node().getSources();
 
 		for (NSource element : sources) {
 			UISource originUI = showSource(element.getName());
@@ -758,7 +758,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 */
 	public void showAllDecodedSources() {
 
-		NSource[] sources = getModel().getSources();
+		NSource[] sources = node().getSources();
 
 		for (NSource element : sources) {
 			if (element instanceof DecodedSource) {
@@ -775,7 +775,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 */
 	public void showAllTargets() {
 
-		NTarget[] targets = getModel().getTargets();
+		NTarget[] targets = node().getTargets();
 
 		for (NTarget element : targets) {
 			UITarget termUI = showTarget(element.getName());
@@ -797,7 +797,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		if (originUI == null) {
 			// try to create it
 			try {
-				NSource sourceModel = getModel().getSource(originName);
+				NSource sourceModel = node().getSource(originName);
 				if (sourceModel != null) {
 					originUI = UISource.createOriginUI(this, sourceModel);
 					addWidget(originUI);
@@ -847,7 +847,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		 * Check if the probe is already shown
 		 */
 		for (UIProbe probeUI : probes) {
-			if (probeUI.getModel() == probe) {
+			if (probeUI.node() == probe) {
 				return probeUI;
 			}
 		}
@@ -870,7 +870,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 			// Otherwise try to create it
 			try {
 
-				NTarget termModel = getModel().getTarget(terminationName);
+				NTarget termModel = node().getTarget(terminationName);
 				if (termModel != null) {
 					termUI = UITarget.createTerminationUI(this, termModel);
 					addWidget(termUI);
@@ -896,7 +896,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
         public void run() {
             modelUpdatePending = false;
             firePropertyChange(Property.MODEL_CHANGED);
-            if (getModel() != null) {
+            if (node() != null) {
                 modelUpdated();
             }
         }

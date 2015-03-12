@@ -41,7 +41,8 @@ import ca.nengo.ui.model.node.UINeuron;
 import ca.nengo.ui.model.node.UINodeViewable;
 import ca.nengo.util.Probe;
 
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -83,25 +84,47 @@ public class GroupViewer<N extends Group, G extends UINodeViewable> extends Node
 	}
 
 	@Override
-	public synchronized void updateViewFromModel(boolean isFirstUpdate) {
+	public void updateViewFromModel(boolean isFirstUpdate) {
 	       /*
          * Get the current children and map them
          */
-        HashMap<Node, UINeoNode> currentNodes = new HashMap<Node, UINeoNode>(
-                getGround().getChildrenCount());
+        /*HashMap<Node, UINeoNode> currentNodes = new HashMap<Node, UINeoNode>(
+                getGround().getChildrenCount());*/
 
-        for (Map.Entry<Node,UINeoNode> e : neoNodesChildren.entrySet()) {
-            UINeoNode node = e.getValue();
-            if (!node.isDestroyed()) {
-                //Util.Assert(node.getModel() != null);
-                currentNodes.put(e.getKey(), node);
+        List<UINeoNode> toAdd = null;
+        Iterator<Map.Entry<Node, UINeoNode>> it = neoNodesChildren.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Node, UINeoNode> e = it.next();
+            Node node = e.getKey();
+            UINeoNode nodeUI = e.getValue();
+            if (nodeUI ==null || nodeUI.isDestroyed()) {
+                it.remove();
             }
         }
-        neoNodesChildren.clear();
+
+        for (Node n : getModel().getNodes()) {
+            UINeoNode u = neoNodesChildren.get(n);
+            if (u == null) {
+                u = createUINode(n, isFirstUpdate);
+                neoNodesChildren.put(n, u);
+                getGround().addChild(u);
+            }
+        }
+
+//        for (Map.Entry<Node,UINeoNode> e : ) {
+//            UINeoNode node = e.getValue();
+//            if (!node.isDestroyed()) {
+//                //Util.Assert(node.getModel() != null);
+//                currentNodes.put(e.getKey(), node);
+//            }
+//        }
+//        neoNodesChildren.clear();
+
 
         /*
          * Construct Nodes from the Network model
          */
+        /*
         Node[] nodes = getModel().getNodes();
 
         for (Node node : nodes) {
@@ -118,11 +141,13 @@ public class GroupViewer<N extends Group, G extends UINodeViewable> extends Node
                 Util.Assert(false, "Trying to add node which already exists");
             }
         }
+        */
 
 
-        /*
+            /*
          * Prune existing nodes by deleting them
          */
+        /*
         for (Node node : currentNodes.keySet()) {
             // Remove nodes which are no longer referenced by the network model
             if (getUINode(node) == null) {
@@ -131,6 +156,7 @@ public class GroupViewer<N extends Group, G extends UINodeViewable> extends Node
                 nodeUI.destroy();
             }
         }
+        */
 
         afterViewUpdated(isFirstUpdate);
 	}

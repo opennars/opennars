@@ -94,7 +94,7 @@ public abstract class UISource extends Widget {
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
 
-		tooltips.addProperty("Dimensions", String.valueOf(getModel().getDimensions()));
+		tooltips.addProperty("Dimensions", String.valueOf(node().getDimensions()));
 //
 //		//try {
 //			Object value = getModel().get();
@@ -116,18 +116,18 @@ public abstract class UISource extends Widget {
 
 	@Override
 	protected void exposeModel(UINetwork networkUI, String exposedName) {
-		networkUI.getModel().exposeOrigin(getModel(), exposedName);
+		networkUI.node().exposeOrigin(node(), exposedName);
 		networkUI.showSource(exposedName);
 	}
 
 	@Override
 	protected String getExposedName(Network network) {
-		return network.getExposedOriginName(getModel());
+		return network.getExposedOriginName(node());
 	}
 
 	@Override
 	protected String getModelName() {
-		return getModel().getName();
+		return node().getName();
 	}
 
 	@Override
@@ -202,8 +202,8 @@ public abstract class UISource extends Widget {
     }
 
 	@Override
-	public NSource getModel() {
-		return (NSource) super.getModel();
+	public NSource node() {
+		return (NSource) super.node();
 	}
 
 	@Override

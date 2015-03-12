@@ -35,8 +35,8 @@ public abstract class AbstractButton extends WorldObjectImpl {
 
 		this.setChildrenPickable(false);
 
-		getPiccolo().addInputEventListener(new HandCursorHandler());
-		getPiccolo().addInputEventListener(new ButtonStateHandler(this));
+        getPNode().addInputEventListener(new HandCursorHandler());
+        getPNode().addInputEventListener(new ButtonStateHandler(this));
 	}
 
 	protected void doAction() {

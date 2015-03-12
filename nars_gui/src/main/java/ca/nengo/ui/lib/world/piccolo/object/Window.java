@@ -84,10 +84,10 @@ public class Window extends WorldObjectImpl implements Interactable {
 
 
 		myClippingRectangle = new PClip();
-		myClippingRectangle.addChild(content.getPiccolo());
+        myClippingRectangle.addChild(content.getPNode());
 		myClippingRectangle.setPaint(NengoStyle.COLOR_BACKGROUND);
 
-		getPiccolo().addChild(myClippingRectangle);
+        getPNode().addChild(myClippingRectangle);
         myBorder = new Border(this, NengoStyle.COLOR_FOREGROUND);
         addChild(myContent);
 		addChild(menubar);

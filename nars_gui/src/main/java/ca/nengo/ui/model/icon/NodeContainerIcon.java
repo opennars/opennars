@@ -70,7 +70,7 @@ public abstract class NodeContainerIcon extends ModelIcon {
         String neuronsText = myNumOfNodes + " Neuron" + (myNumOfNodes == 1 ? "" : "s");
 
         //if (getModelParent().getModel()!=null) {
-            if (getModelParent().getModel().getMode() == SimulationMode.DIRECT) {
+            if (getModelParent().node().getMode() == SimulationMode.DIRECT) {
                 neuronsText = "Direct Mode";
             }
         //}
