@@ -71,18 +71,16 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     private List<SimulationMode> myFixedModes;
     private Simulator mySimulator;
     private float myStepSize;
-    private Map<String, NSource> myExposedOrigins;
-    private Map<String, NTarget> myExposedTerminations;
+    private Map<String, NSource> myExposedSources;
+    private Map<String, NTarget> myExposedTargets;
     private List<NSource> orderedExposedSources;
     private List<NTarget> orderedExposedTargets;
     private String myDocumentation;
     private Map<String, Object> myMetaData;
-    private Map<NSource, String> myExposedOriginNames;
-    private Map<NTarget, String> myExposedTerminationNames;
+    private Map<NSource, String> exposedSourceNames;
+    private Map<NTarget, String> exposedTargetNames;
     private transient List<VisiblyChanges.Listener> myListeners;
     private transient List<StepListener> myStepListeners;
-
-    private transient Map<String, Object> myMetadata;
 
     public NetworkImpl() {
         this(DEFAULT_NAME);
@@ -92,17 +90,17 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * Sets up a network's data structures
      */
     public NetworkImpl(String name) {
-        nodes = Parameters.newHashMap(20);
+        nodes = Parameters.newHashMap();
         myNodeArray = null;
-        myProjectionMap = Parameters.newHashMap(50);
+        myProjectionMap = Parameters.newHashMap();
         myName = name;
         myStepSize = .001f;
         myProbeables = new HashMap<String, Probeable>(30);
         myProbeableStates = new HashMap<String, String>(30);
-        myExposedOrigins = new HashMap<String, NSource>(10);
-        myExposedOriginNames = new HashMap<NSource, String>(10);
-        myExposedTerminations = new HashMap<String, NTarget>(10);
-        myExposedTerminationNames = new HashMap<NTarget, String>(10);
+        myExposedSources = new HashMap<String, NSource>(10);
+        exposedSourceNames = new HashMap<NSource, String>(10);
+        myExposedTargets = new HashMap<String, NTarget>(10);
+        exposedTargetNames = new HashMap<NTarget, String>(10);
         myMode = SimulationMode.DEFAULT;
         myFixedModes = null;
         myMetaData = new HashMap<String, Object>(20);
@@ -112,6 +110,10 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         orderedExposedTargets = new ArrayList<NTarget>();
 
         myStepListeners = new ArrayList<StepListener>(1);
+    }
+
+    public Map<String,N> getNodeMap() {
+        return nodes;
     }
 
     private static Object tryToClone(Cloneable o) {
@@ -133,7 +135,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     public Simulator getSimulator() {
         if (mySimulator == null) {
             mySimulator = new LocalSimulator();
-            mySimulator.initialize(this);
+            mySimulator.update(this);
         }
         return mySimulator;
     }
@@ -143,7 +145,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      */
     public void setSimulator(Simulator simulator) {
         mySimulator = simulator;
-        mySimulator.initialize(this);
+        mySimulator.update(this);
     }
 
     /**
@@ -193,7 +195,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 
         node.addChangeListener(this);
 
-        getSimulator().initialize(this);
+        getSimulator().update(this);
         fireVisibleChangeEvent();
 
     }
@@ -436,7 +438,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         node.removeChangeListener(this);
 //			VisiblyMutableUtils.nodeRemoved(this, node, myListeners);
 
-        getSimulator().initialize(this);
+        getSimulator().update(this);
         fireVisibleChangeEvent();
 
     }
@@ -453,7 +455,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         } else {
             Projection result = new ProjectionImpl(source, target, this);
             myProjectionMap.put(target, result);
-            getSimulator().initialize(this);
+            getSimulator().update(this);
             fireVisibleChangeEvent();
 
             return result;
@@ -485,7 +487,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             throw new StructuralException("The Network contains no Projection ending on the specified Termination");
         }
 
-        getSimulator().initialize(this);
+        getSimulator().update(this);
         fireVisibleChangeEvent();
     }
 
@@ -659,8 +661,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 
         temp = new SourceWrapper(this, source, name);
 
-        myExposedOrigins.put(name, temp);
-        myExposedOriginNames.put(source, name);
+        myExposedSources.put(name, temp);
+        exposedSourceNames.put(source, name);
         orderedExposedSources.add(temp);
 
         // automatically add exposed origin to exposed states
@@ -679,16 +681,16 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Network#hideOrigin(java.lang.String)
      */
     public void hideOrigin(String name) throws StructuralException {
-        if (myExposedOrigins.get(name) == null) {
+        if (myExposedSources.get(name) == null) {
             throw new StructuralException("No origin named " + name + " exists");
         }
 
-        orderedExposedSources.remove(myExposedOrigins.get(name));
-        SourceWrapper originWr = (SourceWrapper) myExposedOrigins.remove(name);
+        orderedExposedSources.remove(myExposedSources.get(name));
+        SourceWrapper originWr = (SourceWrapper) myExposedSources.remove(name);
 
 
         if (originWr != null) {
-            myExposedOriginNames.remove(originWr.myWrapped);
+            exposedSourceNames.remove(originWr.myWrapped);
 
 
             // remove the automatically exposed state
@@ -704,14 +706,14 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Network#getExposedOriginName(ca.nengo.model.NSource)
      */
     public String getExposedOriginName(NSource insideSource) {
-        return myExposedOriginNames.get(insideSource);
+        return exposedSourceNames.get(insideSource);
     }
 
     /**
      * @see ca.nengo.model.Network#getSource(java.lang.String)
      */
     public NSource getSource(final String name) throws StructuralException {
-        NSource n = myExposedOrigins.get(name);
+        NSource n = myExposedSources.get(name);
         if (n == null)
             throw new StructuralException("There is no exposed Origin named " + name);
         return n;
@@ -721,8 +723,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Network#getSources()
      */
     public NSource[] getSources() {
-        if (myExposedOrigins.values().size() == 0) {
-            Collection<NSource> var = myExposedOrigins.values();
+        if (myExposedSources.values().size() == 0) {
+            Collection<NSource> var = myExposedSources.values();
             return var.toArray(new NSource[var.size()]);
         }
         return orderedExposedSources.toArray(new NSource[orderedExposedSources.size()]);
@@ -736,8 +738,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 
         term = new TargetWrapper(this, target, name);
 
-        myExposedTerminations.put(name, term);
-        myExposedTerminationNames.put(target, name);
+        myExposedTargets.put(name, term);
+        exposedTargetNames.put(target, name);
         orderedExposedTargets.add(term);
 
         fireVisibleChangeEvent();
@@ -747,14 +749,14 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Network#hideTermination(java.lang.String)
      */
     public void hideTermination(String name) {
-        NTarget term = myExposedTerminations.get(name);
+        NTarget term = myExposedTargets.get(name);
 
         if (term == null) return;
 
         orderedExposedTargets.remove(term);
-        TargetWrapper termination = (TargetWrapper) myExposedTerminations.remove(name);
+        TargetWrapper termination = (TargetWrapper) myExposedTargets.remove(name);
         if (termination != null) {
-            myExposedTerminationNames.remove(termination.myWrapped);
+            exposedTargetNames.remove(termination.myWrapped);
         }
         fireVisibleChangeEvent();
     }
@@ -763,14 +765,14 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Network#getExposedTerminationName(ca.nengo.model.NTarget)
      */
     public String getExposedTerminationName(NTarget insideTarget) {
-        return myExposedTerminationNames.get(insideTarget);
+        return exposedTargetNames.get(insideTarget);
     }
 
     /**
      * @see ca.nengo.model.Network#getTarget(java.lang.String)
      */
     public NTarget getTarget(String name) throws StructuralException {
-        NTarget n = myExposedTerminations.get(name);
+        NTarget n = myExposedTargets.get(name);
         if (n == null)
             throw new StructuralException("There is no exposed Termination named " + name);
         return n;
@@ -780,8 +782,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Network#getTargets()
      */
     public NTarget[] getTargets() {
-        if (myExposedTerminations.values().size() == 0) {
-            Collection<NTarget> var = myExposedTerminations.values();
+        if (myExposedTargets.values().size() == 0) {
+            Collection<NTarget> var = myExposedTargets.values();
             return var.toArray(new NTarget[var.size()]);
         }
         return orderedExposedTargets.toArray(new NTarget[orderedExposedTargets.size()]);
@@ -956,8 +958,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             }
         }
 
-        result.myExposedOrigins = new HashMap<String, NSource>(myExposedOrigins.size());
-        result.myExposedOriginNames = new HashMap<NSource, String>(myExposedOriginNames.size());
+        result.myExposedSources = new HashMap<String, NSource>(myExposedSources.size());
+        result.exposedSourceNames = new HashMap<NSource, String>(exposedSourceNames.size());
         result.orderedExposedSources = new LinkedList<NSource>();
         for (NSource exposed : getSources()) {
             String name = exposed.getName();
@@ -973,8 +975,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             }
         }
 
-        result.myExposedTerminations = new HashMap<String, NTarget>(10);
-        result.myExposedTerminationNames = new HashMap<NTarget, String>(10);
+        result.myExposedTargets = new HashMap<String, NTarget>(10);
+        result.exposedTargetNames = new HashMap<NTarget, String>(10);
         result.orderedExposedTargets = new LinkedList<NTarget>();
         for (NTarget exposed : getTargets()) {
             String name = exposed.getName();
@@ -1005,7 +1007,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 
         //TODO: take another look at Probe design (maybe Probeables reference Probes?)
         result.mySimulator = mySimulator.clone();
-        result.mySimulator.initialize(result);
+        result.mySimulator.update(result);
         Probe[] oldProbes = mySimulator.getProbes();
         for (Probe oldProbe : oldProbes) {
             Probeable target = oldProbe.getTarget();
@@ -1371,13 +1373,15 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     }
 
     public Object getMetadata(String key) {
-        if (myMetadata == null) myMetadata = new LinkedHashMap<String, Object>(2);
-        return myMetadata.get(key);
+        //if (myMetaData == null) myMetaData = new LinkedHashMap<String, Object>(2);
+        if (myMetaData == null)
+            return null;
+        return myMetaData.get(key);
     }
 
     public void setMetadata(String key, Object value) {
-        if (myMetadata == null) myMetadata = new LinkedHashMap<String, Object>(2);
-        myMetadata.put(key, value);
+        if (myMetaData == null) myMetaData = new LinkedHashMap<String, Object>(2);
+        myMetaData.put(key, value);
     }
 
     @Override

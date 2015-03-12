@@ -65,8 +65,20 @@ public abstract class AbstractNode implements Node {
         setInputs(targets);
 	}
 
+    @Override
+    public int hashCode() {
+        return myName.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof AbstractNode)
+            return myName.equals(((AbstractNode)obj).myName);
+        return false;
+    }
+
     public void setOutputs(NSource... s) {
-        if (mySources == null)
+        if (mySources == null && s.length > 0)
             mySources = new LinkedHashMap<String, NSource>(10);
         for (NSource o : s) {
             mySources.put(o.getName(), o);

@@ -1,19 +1,57 @@
 package automenta.vivisect.dimensionalize;
 
-import automenta.vivisect.graph.AbstractGraphVis;
-import automenta.vivisect.graph.EdgeVis;
-import automenta.vivisect.graph.GraphDisplay;
-import automenta.vivisect.graph.VertexVis;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import com.mxgraph.util.mxRectangle;
-import nars.util.data.CuckooMap;
-import org.jgrapht.Graph;
+import nars.util.data.XORShiftRandom;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.jgrapht.DirectedGraph;
 
 import java.util.*;
 
 /**
  * Fast organic layout algorithm, adapted from JGraph
  */
-public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
+public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements IterativeLayout<N,E>{
+
+    public static final double LengthEpsilon = 0.001; //minimum distinguishable length
+
+    private final Map<N, ArrayRealVector> coordinates = new LinkedHashMap();
+    private final DirectedGraph<N, E> graph;
+    private final Random rng = new XORShiftRandom();
+
+    public FastOrganicIterativeLayout(DirectedGraph<N,E> graph) {
+        this.graph = graph;
+        setInitialTemp(13f);
+        setMinDistanceLimit(1f);
+        setMaxDistanceLimit(200f);
+
+        setForceConstant(100f);
+        setMaxIterations(1);
+    }
+
+    @Override
+    public ArrayRealVector newPosition(N node) {
+        ArrayRealVector location = new ArrayRealVector(2);
+        return location;
+    }
+
+    @Override
+    public ArrayRealVector getPosition(N node) {
+        ArrayRealVector location = coordinates.get(node);
+        if (location == null) {
+            location = newPosition(node);
+            coordinates.put(node, location);
+        }
+        return location;
+    }
+
+    @Override
+    public void resetLearning() {
+
+    }
+
+
+
 
     /**
      * Specifies if the top left corner of the input cells should be the origin
@@ -84,7 +122,7 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
     /**
      * An array of all vertex to be laid out.
      */
-    protected List<VertexVis> vertexArray;
+    protected List<N> vertexArray;
 
     /**
      * An array of locally stored X co-ordinate displacements for the vertex.
@@ -121,30 +159,16 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
      */
     protected int[][] neighbors;
 
-    /**
-     * Boolean flag that specifies if the layout is allowed to run. If this is
-     * set to false, then the layout exits in the following iteration.
-     */
-    protected boolean allowedToRun = true;
 
     /**
      * Maps from vertex to indices.
      */
-    protected Map<V, Integer> indices;
 
+    protected ObjectIntHashMap<N> indices = new ObjectIntHashMap<>();
 
-
-    /**
-     * Constructs a new fast organic layout for the specified graph.
-     */
-    public FastOrganicLayout() {
-
-        setInitialTemp(13f);
-        setMinDistanceLimit(1f);
-        setMaxDistanceLimit(200f);
-
-        setForceConstant(100f);
-        setMaxIterations(1);
+    @Override
+    public double getRadius(N n) {
+        return 0.5;
     }
 
     /**
@@ -154,7 +178,7 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
      * @param vertex Object that represents the vertex to be tested.
      * @return Returns true if the vertex should be ignored.
      */
-    public boolean isVertexIgnored(V vertex) {
+    public boolean isVertexIgnored(N vertex) {
         return false;
         //return super.isVertexIgnored(vertex)
         //	graph.getConnections(vertex).length == 0;
@@ -175,35 +199,7 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
         useInputOrigin = value;
     }
 
-    /**
-     *
-     */
-    public boolean isResetEdges() {
-        return resetEdges;
-    }
 
-    /**
-     *
-     * @param value
-     */
-    public void setResetEdges(boolean value) {
-        resetEdges = value;
-    }
-
-    /**
-     *
-     */
-    public boolean isDisableEdgeStyle() {
-        return disableEdgeStyle;
-    }
-
-    /**
-     *
-     * @param value
-     */
-    public void setDisableEdgeStyle(boolean value) {
-        disableEdgeStyle = value;
-    }
 
     /**
      *
@@ -287,13 +283,11 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
         temperature = initialTemp * (1.0 - iteration / maxIterations);
     }
 
-    @Override public boolean postUpdate(AbstractGraphVis<V,E> g) {
-        Graph<V,E> graph = g.getGraph();
+    transient final List<N> cells = new ArrayList();
 
-        if (indices == null)
-            indices = new CuckooMap<>();
-        else
-            indices.clear();
+    public void run(int iterations) {
+
+        indices.clear();
 
         // Finds the relevant vertex for the layout
         if (vertexArray == null)
@@ -301,15 +295,11 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
         else
             vertexArray.clear();
 
-        Set<V> vx = graph.vertexSet();
-        if (vx == null) return true;
+        Set<N> vx = graph.vertexSet();
+        if (vx == null || vx.isEmpty()) return;
 
-        for (V v : graph.vertexSet()) {
-            VertexVis vd = g.getVertexDisplay(v);
-            if (vd == null) continue;
-            if (vd.getRadius() == 0) continue;
-            vertexArray.add(vd);
-        }
+
+        vertexArray.addAll(graph.vertexSet());
 
         mxRectangle initialBounds = null; //new mxRectangle(-100, -50, 100, 50);
         //? graph.getBoundsForCells(vertexArray, false, false, true) : null;
@@ -341,47 +331,33 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
         // the indices into vertexArray
 
         for (int i = 0; i < n; i++) {
-            VertexVis<V,E> vd = vertexArray.get(i);
-
-            //TODO is this necessary?
-            /*if (!graph.containsVertex(vd.getVertex()))
-                continue;*/
-            
-            /*if (vd == null) {
-                vd = new VertexVis(vertex);
-                displayed.put(vertex, vd);
-            }*/
+            N v = vertexArray.get(i);
 
             if (cellLocation[i]==null)
                 cellLocation[i] = new double[2];
 
             // Set up the mapping from array indices to cells
-            indices.put(vd.vertex, i);
+            indices.put(v, i);
             //mxRectangle bounds = getVertexBounds(vertex);
 
             // Set the X,Y value of the internal version of the cell to
             // the center point of the vertex for better positioning
-            double width = vd.getRadius()*2f; //bounds.getWidth();
-            double height = vd.getRadius()*2f; //bounds.getHeight();
+            double radius = getRadius(v);
+            double width = radius*2f; //bounds.getWidth();
+            double height = radius*2f; //bounds.getHeight();
 
             // Randomize (0, 0) locations
             //TODO re-use existing location
-            double x, y;
-            if (vd==null) {
-                x = 0;//Math.random() * 100.0;//Math.random() * 100; //bounds.getX();
-                y = 0;//Math.random() * 100.0;
-            }
-            else {
-                x = vd.getX();
-                y = vd.getY();
-            }
+            ArrayRealVector c = getPosition(v);
+            double x = c.getEntry(0), y = c.getEntry(1);
+
 
 
             cellLocation[i][0] = x + width / 2.0;
             cellLocation[i][1] = y + height / 2.0;
 
-            radius[i] = Math.min(width, height);
-            radiusSquared[i] = radius[i] * radius[i];
+            this.radius[i] = radius;
+            this.radiusSquared[i] = radius;
 
 
             // Moves cell location back to top-left from center locations used in
@@ -401,22 +377,16 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
             //TODO why does a vertex disappear from the graph... make this unnecessary
 
 
-            V v = vd.getVertex();
-            Set<E> edges = vd.getEdges();
+
+            Set<E> edges = graph.edgesOf(v);
             if (edges!=null) {
-                List<V> cells = new ArrayList(edges.size());
+
+                cells.clear();
                 for (E e : edges) {
-                    if (isResetEdges()) {
-                        //graph.resetEdge(edge[k]);
-                    }
-
-                    if (isDisableEdgeStyle()) {
-                        //setEdgeStyleEnabled(edge[k], false);
-                    }
 
 
-                    V source = graph.getEdgeSource(e);
-                    V target = graph.getEdgeTarget(e);
+                    N source = e.getSource();
+                    N target = e.getTarget();
                     if (source!=v)  cells.add(source);
                     else if (target!=v)  cells.add(target);
                 }
@@ -443,17 +413,10 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
 
         temperature = initialTemp;
 
-        // If max number of iterations has not been set, guess it
-        if (maxIterations == 0) {
-            maxIterations = 20.0 * Math.sqrt(n);
-        }
 
         // Main iteration loop
-        try {
-            for (iteration = 0; iteration < maxIterations; iteration++) {
-                if (!allowedToRun) {
-                    return false;
-                }
+        //try {
+            for (iteration = 0; iteration < iterations; iteration++) {
 
                 // Calculate repulsive forces on all vertex
                 calcRepulsion();
@@ -464,22 +427,23 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
                 calcPositions();
                 reduceTemperature();
             }
-        }
-        catch (Exception e) { }
+
+        //} catch (Exception e) { }
 
         double minx = 0, miny = 0, maxx = 0, maxy = 0;
 
         for (int i = 0; i < vertexArray.size(); i++) {
-            VertexVis vd = vertexArray.get(i);
+            N v = vertexArray.get(i);
 
-            if (vd != null) {
+            if (v != null) {
                 //cellLocation[i][0] -= 1/2.0; //geo.getWidth() / 2.0;
                 //cellLocation[i][1] -= 1/2.0; //geo.getHeight() / 2.0;
 
-                float r = vd.getRadius();
+                double r = getRadius(v);
                 double x = /*graph.snap*/(cellLocation[i][0] - r);
                 double y = /*graph.snap*/(cellLocation[i][1] - r);
-                vd.setPosition((float)x, (float)y);
+                getPosition(v).setEntry(0, x);
+                getPosition(v).setEntry(1, y);
 
                 if (i == 0) {
                     minx = maxx = x;
@@ -505,12 +469,11 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
             dy += initialBounds.getY();
         }
 
-        for (int i = 0; i < vertexArray.size(); i++) {
-            VertexVis vd = vertexArray.get(i);
-            vd.movePosition((float)dx, (float)dy);
+        for (ArrayRealVector a : coordinates.values()) {
+            a.addToEntry(0, dx);
+            a.addToEntry(1, dy);
         }
 
-        return true;
     }
 
     /**
@@ -526,8 +489,8 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
                 double deltaLength = Math.sqrt(dispX[index] * dispX[index]
                         + dispY[index] * dispY[index]);
 
-                if (deltaLength < 0.001) {
-                    deltaLength = 0.001;
+                if (deltaLength < LengthEpsilon) {
+                    deltaLength = LengthEpsilon;
                 }
 
                 // Scale down by the current temperature if less than the
@@ -606,20 +569,17 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
         for (int i = 0; i < vertexCount; i++) {
             for (int j = i; j < vertexCount; j++) {
                 // Exits if the layout is no longer allowed to run
-                if (!allowedToRun) {
-                    return;
-                }
 
                 if ((j != i) && (cellLocation[i]!=null) && (cellLocation[j]!=null)) {
                     double xDelta = cellLocation[i][0] - cellLocation[j][0];
                     double yDelta = cellLocation[i][1] - cellLocation[j][1];
 
                     if (xDelta == 0) {
-                        xDelta = 0.01 + Math.random();
+                        xDelta = 0.01 + rng.nextDouble();
                     }
 
                     if (yDelta == 0) {
-                        yDelta = 0.01 + Math.random();
+                        yDelta = 0.01 + rng.nextDouble();
                     }
 
                     // Distance between nodes
@@ -655,19 +615,6 @@ public class FastOrganicLayout<V, E> implements GraphDisplay<V,E>{
                 }
             }
         }
-    }
-
-    @Override
-    public boolean preUpdate(AbstractGraphVis<V,E> g) {
-        return true;
-    }
-
-    @Override
-    public void vertex(AbstractGraphVis<V, E> g, VertexVis<V, E> v) {
-    }
-
-    @Override
-    public void edge(AbstractGraphVis<V, E> g, EdgeVis<V, E> e) {
     }
 
 

@@ -50,18 +50,16 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public class LocalSimulator implements Simulator, java.io.Serializable {
+public class LocalSimulator<N extends Node> implements Simulator, java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Projection[] myProjections;
-    private Node[] myNodes;
-    private ThreadTask[] myTasks;
+    @Deprecated private Projection[] myProjections;
+    private List<ThreadTask> myTasks;
     private List<ThreadTask> myProbeTasks;
-    private Map<String, Node> myNodeMap;
     private List<SocketUDPNode> mySocketNodes;
     private List<Node> myDeferredSocketNodes;
     private List<Probe> myProbes;
-    private Network myNetwork;
+    private Network<N> network;
     private boolean myDisplayProgress;
     private transient List<VisiblyChanges.Listener> myChangeListeners;
     private transient NodeThreadPool myNodeThreadPool;
@@ -78,25 +76,28 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     }
 
     /**
-     * @see ca.nengo.sim.Simulator#initialize(ca.nengo.model.Network)
+     * @see ca.nengo.sim.Simulator#update(ca.nengo.model.Network)
      */
-    public synchronized void initialize(Network network) {
+    public synchronized void update(Network network) {
     	
-    	myNetwork = network;
+    	this.network = network;
         
-        myNodes = network.getNodes();
         myProjections = network.getProjections();
 
-        myNodeMap = new HashMap(myNodes.length * 2);
+
+        /*
         if (mySocketNodes == null)
         	mySocketNodes = new ArrayList(2);
         if (myDeferredSocketNodes == null)
         	myDeferredSocketNodes = new ArrayList(2);
+
+
         for (Node myNode : myNodes) {
             myNodeMap.put(myNode.getName(), myNode);
             if (myNode instanceof SocketUDPNode) 
             	mySocketNodes.add((SocketUDPNode) myNode);
         }
+        */
 
         if (myProbes == null) {
             myProbes = new ArrayList(20);
@@ -106,8 +107,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
         	myProbeTasks = new ArrayList<ThreadTask>(20);
         }
 
-        List<ThreadTask> var = NodeThreadPool.collectTasks(myNodes);
-        myTasks = var.toArray(new ThreadTask[var.size()]);
+        myTasks = NodeThreadPool.collectTasks(network.getNodeMap().values(), myTasks);
     }
 
     /**
@@ -120,7 +120,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
             it.next().reset();
         }
 
-        for(Node node : myNodes)
+        for (N node: network.getNodeMap().values())
         {
             if(node instanceof Network) {
                 ((Network)node).getSimulator().resetProbes();
@@ -134,9 +134,11 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     public void initRun(boolean interactive) throws SimulationException {
     	// Find all instances of the SocketUDPNodes and initialize them (get them to bind to their
     	// respective sockets).
-        for (int i = 0; i < mySocketNodes.size(); i++) {
-            SocketUDPNode n = mySocketNodes.get(i);
-            n.initialize();
+        if (mySocketNodes!=null) {
+            for (int i = 0; i < mySocketNodes.size(); i++) {
+                SocketUDPNode n = mySocketNodes.get(i);
+                n.initialize();
+            }
         }
 
         if(NodeThreadPool.isMultithreading()){
@@ -224,10 +226,9 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
         }
     }
 
-    public void step(float startTime, float endTime)
-            throws SimulationException {
+    public void step(float startTime, float endTime) throws SimulationException {
 
-    	myNetwork.fireStepListeners(startTime);
+    	network.fireStepListeners(startTime);
     	
         if(myNodeThreadPool != null){
             myNodeThreadPool.step(startTime, endTime);
@@ -237,22 +238,24 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
                 myProjection.getTarget().apply(values);
             }
 
-            for (Node myNode : myNodes) {
+            for (N myNode : network.getNodeMap().values()) {
                 if(myNode instanceof NetworkImpl) {
                     ((NetworkImpl)myNode).run(startTime, endTime, false);
-                } else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {
+                } /*else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {
                 	myDeferredSocketNodes.add(myNode);
                 	continue;
-                } else {
+                } else*/ {
                     myNode.run(startTime, endTime);
                 }
             }
 
-            for (int i = 0; i < myDeferredSocketNodes.size(); i++) {
-                myDeferredSocketNodes.get(i).run(startTime, endTime);
-            }
+            if (myDeferredSocketNodes!=null) {
+                for (int i = 0; i < myDeferredSocketNodes.size(); i++) {
+                    myDeferredSocketNodes.get(i).run(startTime, endTime);
+                }
 
-        	myDeferredSocketNodes.clear();
+                myDeferredSocketNodes.clear();
+            }
 
 
             for (ThreadTask myTask : myTasks) {
@@ -268,10 +271,11 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     public void endRun() {
     	// Find all instances of the SocketUDPNodes and shut them down. (get them to unbind from their
     	// respective sockets).
-        for (int i = 0; i < mySocketNodes.size(); i++) {
-            SocketUDPNode n = mySocketNodes.get(i);
-            n.close();
-        }
+        if (mySocketNodes!=null)
+            for (int i = 0; i < mySocketNodes.size(); i++) {
+                SocketUDPNode n = mySocketNodes.get(i);
+                n.close();
+            }
 
     	if(myNodeThreadPool != null){
             myNodeThreadPool.kill();
@@ -284,21 +288,17 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
      */
     public synchronized void resetNetwork(boolean randomize, boolean saveWeights) {
         if (saveWeights) {
-            NTarget[] terms;
-            for (Node myNode : myNodes) {
-                terms = myNode.getTargets();
+            for (N myNode : network.getNodeMap().values()) {
+                NTarget[] terms = myNode.getTargets();
                 for (NTarget term : terms) {
                     if (term instanceof PlasticGroupTarget) {
                         ((PlasticGroupTarget) term).saveTransform();
                     }
                 }
+                myNode.reset(randomize);
             }
         }
 
-        for (Node myNode : myNodes) {
-            myNode.reset(randomize);
-        }
-        
         // Force garbage collection
         System.gc();
     }
@@ -367,7 +367,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     }
 
     private Probeable getNode(String nodeName) throws SimulationException {
-        Node result = myNodeMap.get(nodeName);
+        N result = network.getNodeMap().get(nodeName);
 
         if (result == null) {
             throw new SimulationException("The named Node does not exist");
@@ -380,9 +380,8 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
         return (Probeable) result;
     }
 
-    private Probeable getNeuron(String nodeName, int index)
-            throws SimulationException {
-        Node ensemble = myNodeMap.get(nodeName);
+    private Probeable getNeuron(String nodeName, int index) throws SimulationException {
+        N ensemble = network.getNodeMap().get(nodeName);
 
         if (ensemble == null) {
             throw new SimulationException("The named Ensemble does not exist");
@@ -413,7 +412,7 @@ public class LocalSimulator implements Simulator, java.io.Serializable {
     }
     
     public void makeNodeThreadPool(boolean interactive) {
-        myNodeThreadPool = new NodeThreadPool(myNetwork, myProbeTasks, interactive);
+        myNodeThreadPool = new NodeThreadPool(network, myProbeTasks, interactive);
     }
     
     public NodeThreadPool getNodeThreadPool() {

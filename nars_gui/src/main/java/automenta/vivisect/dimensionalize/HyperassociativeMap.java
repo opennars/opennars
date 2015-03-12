@@ -50,7 +50,7 @@ import java.util.concurrent.Future;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-public class HyperassociativeMap<N, E> {
+public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;
@@ -88,27 +88,29 @@ public class HyperassociativeMap<N, E> {
     private double attractionStrength = DEFAULT_ATTRACTION_STRENGTH;
     private double repulsiveWeakness = DEFAULT_REPULSIVE_WEAKNESS;
 
+    transient final Map<N, Double> reusableNeighborData = new LinkedHashMap();
+    transient final List<N> vertices = new ArrayList();
+
+
+
     public Collection<N> keys() {
         return coordinates.keySet();
     }
 
-    protected ArrayRealVector newNodeCoordinates(N node) {
+    @Override
+    public ArrayRealVector newPosition(N node) {
         ArrayRealVector location = randomCoordinates(dimensions);
-        coordinates.put(node, location);
-        return location;    
+        return location;
     }
     
+    @Override
     public ArrayRealVector getPosition(N node) {
         ArrayRealVector location = coordinates.get(node);    
         if (location == null) {
-            location = newNodeCoordinates(node);
+            location = newPosition(node);
+            coordinates.put(node, location);
         }
         return location;
-    }
-
-    public void run(int i) {
-        for ( ; i > 0; i--)
-            align();
     }
 
     public double getMaxRepulsionDistance() {
@@ -198,6 +200,7 @@ public class HyperassociativeMap<N, E> {
         this.equilibriumDistance = Math.abs(equilibriumDistance);
     }
 
+    @Override
     public void resetLearning() {
         learningRate = DEFAULT_LEARNING_RATE;
         maxMovement = DEFAULT_TOTAL_MOVEMENT;
@@ -327,6 +330,7 @@ public class HyperassociativeMap<N, E> {
 
 
     /** added to equilibrium distance to get target alignment distance */
+    @Override
     public double getRadius(N n) {
         return 0;
     }
@@ -337,6 +341,7 @@ public class HyperassociativeMap<N, E> {
     }
     
     /** edge "weight" which can be mapped in certain ways (via EdgeWeightToDistanceFunction) to distance */
+    @Override
     public double getEdgeWeight(E e) {
         return 1.0;
     }
@@ -408,12 +413,16 @@ public class HyperassociativeMap<N, E> {
         return speedFactor;
     }
 
+    public void setSpeedFactor(double speedFactor) {
+        this.speedFactor = speedFactor;
+    }
+
     public double magnitude(ArrayRealVector x) {
         return distanceFunction.getDistance(zero, x.getDataRef());
     }
 
     /** vertices is passed as a list because the Set iterator from JGraphT is slow */
-    private ArrayRealVector align(final N nodeToAlign, Map<N, Double> neighbors, Collection<N> vertices) {
+    public ArrayRealVector align(final N nodeToAlign, Map<N, Double> neighbors, Collection<N> vertices) {
         
         
         // calculate equilibrium with neighbors
@@ -535,12 +544,17 @@ public class HyperassociativeMap<N, E> {
      * @since 1.0
      */
     public static ArrayRealVector randomCoordinates(final int dimensions) {
+        return new ArrayRealVector(randomCoordinatesArray(2));
+    }
+    public static double[] randomCoordinatesArray(final int dimensions) {
         final double[] randomCoordinates = new double[dimensions];
-        for (int randomCoordinatesIndex = 0; randomCoordinatesIndex < dimensions; randomCoordinatesIndex++) {
+        return randomCoordinatesArray(randomCoordinates);
+    }
+    public static double[] randomCoordinatesArray(double[] randomCoordinates) {
+        for (int randomCoordinatesIndex = 0; randomCoordinatesIndex < randomCoordinates.length; randomCoordinatesIndex++) {
             randomCoordinates[randomCoordinatesIndex] = (RANDOM.nextDouble() * 2.0) - 1.0;
         }
-
-        return new ArrayRealVector(randomCoordinates);
+        return randomCoordinates;
     }
 
     /**
@@ -557,19 +571,24 @@ public class HyperassociativeMap<N, E> {
 
     private List<Future<ArrayRealVector>> submitFutureAligns() {
         final ArrayList<Future<ArrayRealVector>> futures = new ArrayList<Future<ArrayRealVector>>();
+        pre(graph.vertexSet());
         for (final N node : graph.vertexSet()) {
             futures.add(threadExecutor.submit(new Align(node)));
         }
         return futures;
     }
 
-    Map<N, Double> reusableNeighborData = Parameters.newHashMap();
 
-    private ArrayRealVector processLocally() {
+
+    protected synchronized ArrayRealVector processLocally() {
         ArrayRealVector pointSum = new ArrayRealVector(dimensions);
          //new HashMap();
 
-        List<N> vertices = new ArrayList(graph.vertexSet());
+        vertices.clear();
+        vertices.addAll(graph.vertexSet());
+
+        pre(vertices);
+
         for (int i = 0; i < vertices.size(); i++) {
             N node = vertices.get(i);
 
@@ -589,6 +608,18 @@ public class HyperassociativeMap<N, E> {
 
         return pointSum;
     }
+
+    /** can be overriden to do some preprocessing on the vertices */
+    @Override
+    public void pre(Collection<N> vertices) {
+
+    }
+
+    public void run(int i) {
+        for ( ; i > 0; i--)
+            align();
+    }
+
 
     private ArrayRealVector waitAndProcessFutures(final List<Future<ArrayRealVector>> futures) throws InterruptedException {
         // wait for all nodes to finish aligning and calculate the new center point

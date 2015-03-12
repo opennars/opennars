@@ -1,5 +1,8 @@
 package ca.nengo.test;
 
+import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
+import automenta.vivisect.dimensionalize.IterativeLayout;
+import automenta.vivisect.dimensionalize.UIEdge;
 import automenta.vivisect.swing.ColorArray;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
@@ -27,13 +30,14 @@ import nars.logic.entity.TaskLink;
 import nars.logic.entity.TermLink;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.util.FastMath;
-import org.jgraph.graph.DefaultEdge;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -54,12 +58,82 @@ public class TestNARGraph extends Nengrow {
 
     public static class NARGraphNode extends NetworkImpl implements UIBuilder {
 
-        private final NARGraph<NARGraphVertex,UIEdge> graph = new NARGraph();
+        private final NARGraph<NARGraphVertex,UIEdge<NARGraphVertex>> graph = new NARGraph();
         private final NAR nar;
         private final ConceptReaction conceptReaction;
         private UINARGraph ui;
 
-        public synchronized NARGraphVertex vertex(final Object x, boolean createIfNotExist) {
+        float lastStep = 0;
+        float simTimePerCycle = 1.0f;
+        final IterativeLayout<NARGraphVertex,UIEdge<NARGraphVertex>> hmap = new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph) {
+            @Override public ArrayRealVector newPosition(NARGraphVertex node) {
+                ArrayRealVector a = node.getCoordinates();
+                //randomCoordinatesArray(a.getDataRef());
+                a.mapMultiplyToSelf(1000);
+                return a;
+            }
+
+
+            @Override
+            public void pre(Collection<NARGraphVertex> vertices) {
+                for (NARGraphVertex v : vertices) {
+                    v.getActualCoordinates();
+                }
+            }
+
+
+            @Override
+            public double getEdgeWeight(UIEdge<NARGraphVertex> e) {
+                if (e.e instanceof TermLink) {
+                    return 4.0;
+                }
+                return 0.5;
+            }
+
+            @Override
+            public double getRadius(NARGraphVertex narGraphVertex) {
+                return 150;
+            }
+        };
+
+        @Override
+        public void run(float startTime, float endTime) throws SimulationException {
+            super.run(startTime, endTime);
+
+            if (endTime - lastStep > simTimePerCycle) {
+                float dt = endTime - lastStep;
+                int numCycles = (int)Math.floor( dt );
+
+                nar.step(numCycles);
+
+                lastStep = endTime - (dt - numCycles);
+                //System.out.println("run: " + endTime);
+            }
+            else {
+                //System.out.println("waiting since " + lastStep + " at " + endTime);
+            }
+
+            /*
+            hmap.setEquilibriumDistance(55);
+            hmap.setMaxRepulsionDistance(5000);
+            hmap.setAttractionStrength(16);
+            hmap.setSpeedFactor(10);
+            */
+
+            hmap.resetLearning();
+            hmap.run(1);
+
+        }
+
+
+        /** vertex can just call their .getCoordinate() to get the same value without needing to do a map lookup */
+        public ArrayRealVector getPosition(NARGraphVertex v) {
+            ArrayRealVector a = hmap.getPosition(v);
+            return a;
+        }
+
+        /** should be called from within a synchronized(graph) { } block */
+        public NARGraphVertex vertex(final Object x, boolean createIfNotExist) {
             NARGraphVertex v = (NARGraphVertex) getNode(x.toString());
             if (v!=null) {
                 //already exists
@@ -71,10 +145,10 @@ public class TestNARGraph extends Nengrow {
                 TermNode vertex = null;
 
                 if (x instanceof Concept) {
-                    vertex = new TermNode((Concept)x);
+                    vertex = new TermNode(this, (Concept)x);
                 }
                 else if (x instanceof Terms.Termable) {
-                    vertex = new TermNode((Terms.Termable)x);
+                    vertex = new TermNode(this, (Terms.Termable)x);
                 }
 
                 if (vertex!=null) {
@@ -98,21 +172,23 @@ public class TestNARGraph extends Nengrow {
         public NARGraphNode(NAR n) {
             super();
 
-
-
             this.nar = n;
-
 
             this.conceptReaction = new ConceptReaction(nar) {
 
                 @Override
                 public void onNewConcept(Concept c) {
-                    vertex(c, true);
+                    synchronized(graph) {
+                        vertex(c, true);
+                    }
                 }
 
                 @Override
                 public void onForgetConcept(Concept c) {
-                    NARGraphVertex node = vertex(c, false);
+                    NARGraphVertex node;
+                    synchronized(graph) {
+                        node = vertex(c, false);
+                    }
                     if (node!=null /*&& node instanceof TermNode*/) {
                         //another option is to set the node to pre-concept and leave it
                         try {
@@ -131,13 +207,17 @@ public class TestNARGraph extends Nengrow {
         public void updateItems() {
 
 
+
         }
 
 
         protected void removeNode(NARGraphVertex node) throws StructuralException {
-            if (graph.removeVertex(node)) {
-                super.removeNode(node.vertex.toString());
+            boolean removed;
+            synchronized(graph) {
+                removed = graph.removeVertex(node);
             }
+            if (removed)
+                super.removeNode(node.vertex.toString());
         }
 
 
@@ -145,35 +225,6 @@ public class TestNARGraph extends Nengrow {
         @Override
         public UINARGraph newUI(double width, double height) {
             return this.ui = new UINARGraph(this);
-        }
-
-        public static class UIEdge<V> extends DefaultEdge {
-            public final V s, t;
-            private final Object e;
-            public Shape shape;
-
-            public UIEdge(V s, V t, Object e) {
-                super();
-                this.s = s;
-                this.t = t;
-
-                if (e instanceof NARGraph.NAREdge) {
-                    this.e = ((NARGraph.NAREdge)e).getObject();
-                }
-                else {
-                    this.e = e;
-                }
-            }
-
-            @Override
-            public Object getSource() {
-                return s;
-            }
-
-            @Override
-            public Object getTarget() {
-                return t;
-            }
         }
 
         private class MyGrapher extends DefaultGrapher {
@@ -184,19 +235,25 @@ public class TestNARGraph extends Nengrow {
 
             @Override
             public Object addVertex(Object o) {
-                if (super.addVertex(o)!=null)
-                    return vertex(o, true);
-                return null;
+                Object x;
+                synchronized (graph) {
+                    x = vertex(o, true);
+                }
+                return x;
             }
 
             @Override
             public Object addEdge(NARGraph g, Object source, Object target, Object edge) {
-                final NARGraphVertex v1 = vertex(source, true);
-                if (v1 == null) return null;
-                final NARGraphVertex v2 = vertex(target, true);
-                if (v2 == null) return null;
+                UIEdge e;
+                synchronized(graph) {
+                    final NARGraphVertex v1 = vertex(source, true);
+                    if (v1 == null) return null;
+                    final NARGraphVertex v2 = vertex(target, true);
+                    if (v2 == null) return null;
 
-                return graph.addEdge(v1, v2, new UIEdge(v1, v2, edge));
+                    graph.addEdge(v1, v2, e = new UIEdge(v1, v2, edge));
+                }
+                return e;
             }
         }
     }
@@ -205,7 +262,7 @@ public class TestNARGraph extends Nengrow {
         float arrowHeadScale = 1f / 16f;
 
         private final NARGraphNode nargraph;
-        private final NARGraph<NARGraphVertex, NARGraphNode.UIEdge> graph;
+        private final NARGraph<NARGraphVertex, UIEdge<NARGraphVertex>> graph;
 
         public UINARGraph(NARGraphNode n) {
             super(n);
@@ -274,30 +331,34 @@ public class TestNARGraph extends Nengrow {
         }
 
 
+
+
         protected void drawEdges(PaintContext paintContext) {
 
             Graphics2D g = paintContext.getGraphics();
 
 
-            for (final NARGraphNode.UIEdge e : graph.edgeSet()) {
+            synchronized(graph) {
+                for (final UIEdge e : graph.edgeSet()) {
 
-                NARGraphVertex source = (NARGraphVertex) e.getSource();
-                if (source == null) continue;
-                NARGraphVertex target = (NARGraphVertex) e.getTarget();
-                if (target == null) continue;
+                    NARGraphVertex source = (NARGraphVertex) e.getSource();
+                    if (source == null) continue;
+                    NARGraphVertex target = (NARGraphVertex) e.getTarget();
+                    if (target == null) continue;
 
-                if ((!source.ui.getVisible() || !target.ui.getVisible() )) {
-                    continue;
+                    if ((!source.ui.getVisible() || !target.ui.getVisible())) {
+                        continue;
+                    }
+
+                    double sx = source.ui.getCenterX();
+                    double sy = source.ui.getCenterY();
+                    double tx = target.ui.getCenterX();
+                    double ty = target.ui.getCenterY();
+
+                    final float targetRadius = (float) target.ui.getWidth() / 2f;
+                    //g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
+                    e.shape = drawArrow(g, (Polygon) e.shape, getEdgeColor(e), 256f, (int) sx, (int) sy, (int) tx, (int) ty, targetRadius);
                 }
-
-                double sx = source.ui.getCenterX();
-                double sy = source.ui.getCenterY();
-                double tx = target.ui.getCenterX();
-                double ty = target.ui.getCenterY();
-
-                final float targetRadius = (float) target.ui.getWidth()/2f;
-                //g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
-                e.shape = drawArrow(g, (Polygon)e.shape, getEdgeColor(e), 256f, (int)sx, (int)sy, (int)tx, (int)ty, targetRadius);
             }
         }
 
@@ -305,7 +366,7 @@ public class TestNARGraph extends Nengrow {
         final ColorArray blue = new ColorArray(64, new Color(0.2f, 0.2f, 0.4f, 0.5f), new Color(0.3f, 0.7f, 1f, 1.0f));
 
 
-        public Color getEdgeColor(NARGraphNode.UIEdge e) {
+        public Color getEdgeColor(UIEdge e) {
 
             final Object x = e.e;
             if (x instanceof TermLink) {
@@ -334,19 +395,43 @@ public class TestNARGraph extends Nengrow {
                 super(g, new UINARGraphGround());
             }
 
+
         }
     }
 
     abstract public static class NARGraphVertex<V> extends AbstractWidget {
 
         private final V vertex;
+        private final ArrayRealVector coords;
 
 
         public NARGraphVertex(V vertex) {
             super(vertex.toString());
             this.vertex = vertex;
+            this.coords = new ArrayRealVector(2);
 
+            //initial random position, to seed layout
+            ui.setOffset(Math.random()-0.5, Math.random()-0.5);
+            getActualCoordinates();
         }
+
+        @Override
+        public String toString() {
+            return "NARGraphVertex[" + vertex.toString() + ']';
+        }
+
+        @Override
+        public int hashCode() {
+            return vertex.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof NARGraphVertex)
+                return vertex.equals(((NARGraphVertex)obj).vertex);
+            return false;
+        }
+
         @Override
         protected void paint(PaintContext paintContext, double width, double height) {
 
@@ -361,10 +446,32 @@ public class TestNARGraph extends Nengrow {
             return vertex.toString();
         }
 
+        public ArrayRealVector getCoordinates() {
+            return coords;
+        }
+
+        /** loads the actual geometric coordinates to the coords array prior to next layout iteration */
+        public void getActualCoordinates() {
+            double x = getX();
+            double y = getY();
+            if (!Double.isFinite(x) || !Double.isFinite(y))
+                return;
+            coords.setEntry(0, x);
+            coords.setEntry(1, y);
+        }
+
+        public double getX() {
+            return ui.getPNode().getTransform().getTranslateX();
+        }
+        public double getY() {
+            return ui.getPNode().getTransform().getTranslateY();
+        }
     }
 
     /** a node which can represent a pre-Term, a Term, or a Concept */
     public static class TermNode extends NARGraphVertex {
+
+        private final NARGraphNode graphnode;
         String text;
         Terms.Termable term = null;
         Concept concept = null;
@@ -373,26 +480,30 @@ public class TestNARGraph extends Nengrow {
         private NodeIcon icon;
         private float priority = -1;
         private float lastUIUpdate;
-        private float minUpdateTime = 0;
+        private float minUpdateTime = 1;
+        private float animationTime = 0.1f; //set to zero for no animation, instant updates
 
-        public TermNode() {
-            this("");
+        public TermNode(NARGraphNode graphnode) {
+            this(graphnode, "");
         }
 
-        public TermNode(String text) {
+        public TermNode(NARGraphNode graphnode, String text) {
             super(UUID.randomUUID().toString());
+            this.graphnode = graphnode;
             this.text = text;
             this.term = null;
             setConcept(null);
         }
 
-        public TermNode(Concept c) {
+        public TermNode(NARGraphNode graphnode, Concept c) {
             super(c.getTerm());
+            this.graphnode = graphnode;
             setConcept(c);
         }
 
-        public TermNode(Terms.Termable term) {
+        public TermNode(NARGraphNode graphnode, Terms.Termable term) {
             super(term);
+            this.graphnode = graphnode;
             this.term = term;
             setConcept(null);
         }
@@ -411,6 +522,8 @@ public class TestNARGraph extends Nengrow {
             return true;
         }
 
+
+
         @Override
         public ModelIcon newIcon(ModelObject UI) {
             return icon = new NodeIcon(UI);
@@ -424,25 +537,45 @@ public class TestNARGraph extends Nengrow {
         final static ColorArray green = new ColorArray(64, new Color(0.2f, 0.4f, 0.2f, 0.25f), new Color(0.25f, 0.8f, 0.25f, 0.9f));
 
         protected void updateUI() {
+            float p = 0;
             if (concept != null) {
 
-                float p = concept.getPriority();
-                if (priority < 0) priority = 0;
-                if (priority != p) {
-
-                    Color c = green.get(priority);
-                    icon.getBody().setPaint(c); // Color.getHSBColor(p, 0.7f, 0.7f));
-                    icon.getBody().setTransparency(c.getAlpha()/256f);
-                    ui.setScale(1.0 + p);
-
-                    priority = p;
-                }
-
-                minUpdateTime = 16 * (1.0f - concept.getQuality());
+                p = concept.getPriority();
             }
             else {
-                minUpdateTime = 16;
+                p = 0.5f;
             }
+            if (p < 0) p = 0;
+
+            if (p!=priority) {
+
+                priority = p;
+
+                Color c = green.get(priority);
+                icon.getBody().setPaint(c); // Color.getHSBColor(p, 0.7f, 0.7f));
+                icon.getBody().setTransparency((0.5f + 0.5f * c.getAlpha() / 256f));
+
+
+            }
+
+//                    double x = ui.getPNode().getTransform().getTranslateX();
+//                    double y = ui.getPNode().getTransform().getTranslateY();
+//
+//                    ui.animateToPositionScaleRotation(
+//                            x, y,
+//                            1.0f + priority, 0, (long) (1000 * animationTime));
+
+
+                double x = getCoordinates().getEntry(0);
+                double y = getCoordinates().getEntry(1);
+                if (Double.isFinite(x) && Double.isFinite(y)) {
+                    ui.animateToPositionScaleRotation(x, y, 1.0f + priority, 0, (long) (1000 * animationTime));
+
+                }
+                //System.out.println(x + " " + y);
+
+
+
         }
 
         @Override
@@ -484,15 +617,14 @@ public class TestNARGraph extends Nengrow {
 
 
 
-        new Timer(20, new ActionListener() {
+        new Timer(100, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    float dt = 1; //TODO allow dt < 1, but NAR aware of this so it can run only once per cycle
+                    float dt = 0.5f; //TODO allow dt < 1, but NAR aware of this so it can run only once per cycle
                     networkUI.node().run(time, time + dt);
                     time += dt;
-                    nar.step(1);
                 } catch (SimulationException e1) {
                     e1.printStackTrace();
                 }

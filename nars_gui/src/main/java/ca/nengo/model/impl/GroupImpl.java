@@ -56,7 +56,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 	private static final long serialVersionUID = 1L;
 
 	protected ExpandableNode[] myExpandableNodes;
-	protected Map<String, NTarget> myExpandedTerminations;
+	protected Map<String, NTarget> myExpandedTargets;
 
 	/**
 	 * @param name Name of Ensemble
@@ -66,7 +66,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 		super(name, nodes);
 
 		myExpandableNodes = findExpandable(nodes);
-		myExpandedTerminations = new LinkedHashMap<String, NTarget>(10);
+		myExpandedTargets = new LinkedHashMap<String, NTarget>(10);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 		super(name, make(factory, n));
 
 		myExpandableNodes = findExpandable(this.getNodes());
-		myExpandedTerminations = new LinkedHashMap<String, NTarget>(10);
+		myExpandedTargets = new LinkedHashMap<String, NTarget>(10);
 	}
 
 	private static Node[] make(NodeFactory factory, int n) throws StructuralException {
@@ -110,8 +110,8 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
      */
     @Override
     public NTarget getTarget(String name) throws StructuralException {
-        return myExpandedTerminations.containsKey(name) ?
-                myExpandedTerminations.get(name) : super.getTarget(name);
+        return myExpandedTargets.containsKey(name) ?
+                myExpandedTargets.get(name) : super.getTarget(name);
     }
 
 	/**
@@ -119,7 +119,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 	 */
 	public NTarget[] getTargets() {
 		ArrayList<NTarget> result = new ArrayList<NTarget>(10);
-		result.addAll(myExpandedTerminations.values());
+		result.addAll(myExpandedTargets.values());
 
 		NTarget[] composites = super.getTargets();
         Collections.addAll(result, composites);
@@ -183,7 +183,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 		}
 
 		GroupTarget result = new GroupTarget(this, name, components);
-		myExpandedTerminations.put(name, result);
+		myExpandedTargets.put(name, result);
 
 		fireVisibleChangeEvent();
 
@@ -196,8 +196,8 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 	 */
 	@Override
     public synchronized NTarget removeTarget(String name) throws StructuralException {
-		if (myExpandedTerminations.containsKey(name)) {
-		    NTarget result = myExpandedTerminations.remove(name);
+		if (myExpandedTargets.containsKey(name)) {
+		    NTarget result = myExpandedTargets.remove(name);
 			for (ExpandableNode myExpandableNode : myExpandableNodes) {
 				myExpandableNode.removeTarget(name);
 			}
@@ -226,9 +226,9 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 			result.myExpandableNodes[i] = myExpandableNodes[i].clone();
 		}
 		
-		result.myExpandedTerminations = new LinkedHashMap<String, NTarget>(10);
-		for (Map.Entry<String, NTarget> stringTerminationEntry : myExpandedTerminations.entrySet()) {
-			result.myExpandedTerminations.put(stringTerminationEntry.getKey(),
+		result.myExpandedTargets = new LinkedHashMap<String, NTarget>(10);
+		for (Map.Entry<String, NTarget> stringTerminationEntry : myExpandedTargets.entrySet()) {
+			result.myExpandedTargets.put(stringTerminationEntry.getKey(),
                     stringTerminationEntry.getValue().clone(result));
 		}
 
@@ -238,7 +238,7 @@ public class GroupImpl extends AbstractGroup implements ExpandableNode {
 	public void reset(boolean randomize) {
 		super.reset(randomize);
 		
-		for(NTarget t: myExpandedTerminations.values())
+		for(NTarget t: myExpandedTargets.values())
 			t.reset(randomize);
 	}
 

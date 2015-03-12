@@ -53,7 +53,7 @@ public interface Simulator extends VisiblyChanges, Cloneable {
 	 * 
 	 * @param network Network to set up for simulation
 	 */
-	public void initialize(Network network);
+	public void update(Network network);
 	
 	/**
 	 * Resets all Nodes in the simulated Network.

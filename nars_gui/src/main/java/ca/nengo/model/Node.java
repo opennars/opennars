@@ -68,7 +68,7 @@ public interface Node extends Serializable, Resettable, SimulationMode.ModeConfi
 	/**
 	 * @return Sets of ouput channels (eg spiking outputs, gap junctional outputs, etc.)
 	 */
-	public NSource[] getSources();
+	@Deprecated public NSource[] getSources();
 
 	/**
 	 * @param name Name of an Origin on this Node
@@ -81,7 +81,7 @@ public interface Node extends Serializable, Resettable, SimulationMode.ModeConfi
 	 * @return Sets of input channels (these have the same dimension as corresponding Origins
 	 * 		to which they are connected).
 	 */
-	public NTarget[] getTargets();
+    @Deprecated public NTarget[] getTargets();
 
 	/**
 	 * @param name Name of a Termination onto this Node

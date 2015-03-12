@@ -31,6 +31,7 @@ import ca.nengo.sim.Simulator;
 import ca.nengo.util.ScriptGenException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>A neural circuit, consisting of Nodes such as Ensembles and ExternalInputs. A Network is the
@@ -72,6 +73,8 @@ public interface Network<N extends Node> extends Group, Probeable {
 	 * @throws StructuralException if named Node does not exist in network
 	 */
 	public void removeNode(String name) throws StructuralException;
+
+    public Map<String,N> getNodeMap();
 
 	/**
 	 * Connects an Origin to a Termination. Origins and Terminations belong to

@@ -31,9 +31,9 @@ import java.util.*;
 	protected NodeThread[] myThreads;
 	protected final Object myLock = new Object();
 
-	protected Node[] myNodes;
-	protected Projection[] myProjections;
-    protected ThreadTask[] myTasks;
+	@Deprecated protected Node[] myNodes;
+    @Deprecated protected Projection[] myProjections;
+    @Deprecated protected ThreadTask[] myTasks;
 
 	protected volatile int numThreadsComplete;
 	protected volatile int numThreadsWaiting;
@@ -114,12 +114,12 @@ import java.util.*;
 	protected void initialize(Network network, List<ThreadTask> threadTasks, boolean interactive){
 		
 
-		Node[] nodes = network.getNodes();
+		Collection<Node> nodes = network.getNodeMap().values();
 		Projection[] projections = network.getProjections();
 		
-		List<Node> nodeList = collectNodes(nodes, false);
-		List<Projection> projList = collectProjections(nodes, projections);
-		List<ThreadTask> taskList = collectTasks(nodes);
+		List<Node> nodeList = collectNodes(nodes, false, null);
+		List<Projection> projList = collectProjections(nodes, projections, null);
+		List<ThreadTask> taskList = collectTasks(nodes, null);
 		taskList.addAll(threadTasks);
 		
 		myNodes = nodeList.toArray(new Node[nodeList.size()]);
@@ -176,8 +176,8 @@ import java.util.*;
 		//In the remaining nodes (non-GPU nodes), DO break down the NetworkArrays, we don't want to call the 
 		// "run" method of nodes which are members of classes which derive from the NetworkImpl class since 
 		// NetworkImpls create their own LocalSimulators when run.
-        List<Node> var = collectNodes(myNodes, true);
-        myNodes = var.toArray(new Node[var.size()]);
+        //List<Node> var = collectNodes(myNodes, true, null);
+        myNodes = nodeList.toArray(new Node[nodeList.size()]);
 
 		int nodesPerJavaThread = (int) Math.ceil((float) myNodes.length / (float) myCurrentNumJavaThreads);
 		int projectionsPerJavaThread = (int) Math.ceil((float) myProjections.length / (float) myCurrentNumJavaThreads);
@@ -372,25 +372,22 @@ import java.util.*;
      * 
      * @author Eric Crawford
      */
-    public static List<Node> collectNodes(Node[] startingNodes, boolean breakDownNetworkArrays){
+    public static List<Node> collectNodes(Iterable<Node> startingNodes, boolean breakDownNetworkArrays, List<Node> nodes){
 
-        ArrayList<Node> nodes = new ArrayList<Node>();
-
-        List<Node> nodesToProcess = new LinkedList<Node>();
-        nodesToProcess.addAll(Arrays.asList(startingNodes));
-
-        Node workingNode;
+        if (nodes == null)
+            nodes = new ArrayList();
+        else
+            nodes.clear();
 
         boolean isNetwork = false;
-        while(nodesToProcess.size() != 0)
-        {
-            workingNode = nodesToProcess.remove(0);
-            
+        for (Node workingNode : startingNodes) {
+
             //Decide whether to break the node into its subnodes
-            if((workingNode.getClass().getCanonicalName().contains("CCMModelNetwork"))){
+            /*if((workingNode.getClass().getCanonicalName().contains("CCMModelNetwork"))){
             	isNetwork = false;
             }
-            else if(workingNode instanceof NetworkArrayImpl)
+            else*/
+            if(workingNode instanceof NetworkArrayImpl)
             {
             	if(breakDownNetworkArrays){
             		isNetwork = true;
@@ -407,10 +404,7 @@ import java.util.*;
             
             
             if(isNetwork){
-            	List<Node> nodeList = new LinkedList<Node>(Arrays.asList(((Network) workingNode).getNodes()));
-
-                nodeList.addAll(nodesToProcess);
-                nodesToProcess = nodeList;
+            	collectNodes(((Network) workingNode).getNodeMap().values(), breakDownNetworkArrays, nodes);
             }
             else{
             	nodes.add(workingNode);
@@ -426,26 +420,22 @@ import java.util.*;
      * 
      * @author Eric Crawford
      */
-    public static List<Projection> collectProjections(Node[] startingNodes, Projection[] startingProjections){
+    public static List<Projection> collectProjections(Iterable<Node> startingNodes, Projection[] startingProjections, List<Projection> projections){
 
-        ArrayList<Projection> projections = new ArrayList<Projection>(Arrays.asList(startingProjections));
+        if (projections == null)
+            projections = new ArrayList();
+        else {
+            projections.clear();
+        }
 
-        List<Node> nodesToProcess = new LinkedList<Node>();
-        nodesToProcess.addAll(Arrays.asList(startingNodes));
+        Collections.addAll(projections, startingProjections);
 
-        Node workingNode;
 
-        while(nodesToProcess.size() != 0)
-        {
-            workingNode = nodesToProcess.remove(0);
+        for (Node workingNode : startingNodes) {
 
             if(workingNode instanceof Network) {
-                List<Node> nodeList = new LinkedList<Node>(Arrays.asList(((Network) workingNode).getNodes()));
-
-                nodeList.addAll(nodesToProcess);
-                nodesToProcess = nodeList;
-
-                projections.addAll(Arrays.asList(((Network) workingNode).getProjections()));
+                Network nwn = ((Network) workingNode);
+                collectProjections(nwn.getNodeMap().values(), nwn.getProjections(), projections);
             }
         }
 
@@ -457,25 +447,17 @@ import java.util.*;
      * 
      * @author Eric Crawford
      */
-    public static List<ThreadTask> collectTasks(Node[] startingNodes){
+    public static List<ThreadTask> collectTasks(Iterable<Node> startingNodes, List<ThreadTask> tasks){
 
-        ArrayList<ThreadTask> tasks = new ArrayList<ThreadTask>();
+        if (tasks == null)
+            tasks = new ArrayList<ThreadTask>();
+        else
+            tasks.clear();
 
-        List<Node> nodesToProcess = new LinkedList<Node>();
-        nodesToProcess.addAll(Arrays.asList(startingNodes));
+        for (Node workingNode : startingNodes) {
 
-        Node workingNode;
-
-        while(nodesToProcess.size() != 0)
-        {
-            workingNode = nodesToProcess.remove(0);
-
-            if(workingNode instanceof Network && !(workingNode.getClass().getCanonicalName().contains("CCMModelNetwork")))
-            {
-                List<Node> nodeList = new LinkedList<Node>(Arrays.asList(((Network) workingNode).getNodes()));
-
-                nodeList.addAll(nodesToProcess);
-                nodesToProcess = nodeList;
+            if(workingNode instanceof Network) { // && !(workingNode.getClass().getCanonicalName().contains("CCMModelNetwork")))
+                collectTasks( ((Network) workingNode).getNodeMap().values(), tasks);
             }
             
             if(workingNode instanceof TaskSpawner)

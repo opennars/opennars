@@ -586,14 +586,20 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 
                 while (selectionEn.hasNext()) {
                     WorldObjectImpl node = selectionEn.next();
-                    if (!node.isAnimating(now)) {
                         PDimension gDist = new PDimension();
                         gDist.setSize(d);
 
                         node.localToParent(node.globalToLocal(gDist));
 
-                        node.dragOffset(gDist.getWidth(), gDist.getHeight());
+                    node.dragOffset(gDist.getWidth(), gDist.getHeight());
+
+                    if (node.isAnimating(now)) {
+                        double newX = node.getPNode().getOffset().getX();
+                        double newY = node.getPNode().getOffset().getY();
+                        node.animateToPosition(newX, newY, 0);
                     }
+
+
                 }
             }
             catch (RuntimeException ee) {

@@ -16,9 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @author me
  */
-public class HyperassociativeLayout implements GraphDisplay {
+public class HyperassociativeLayout<V,E> implements GraphDisplay<V,E> {
 
-    HyperassociativeMap h = null;
+    HyperassociativeMap<V,E> h = null;
     float scale = 200.0f, eqDistance = 1f;
     boolean normalizing = true;
 
@@ -41,11 +41,11 @@ public class HyperassociativeLayout implements GraphDisplay {
 
 
         if (h == null)
-            h = new HyperassociativeMap(g.getGraph(), HyperassociativeMap.Euclidean, 2) {
+            h = new HyperassociativeMap<V,E>(g.getGraph(), HyperassociativeMap.Euclidean, 2) {
                 @Override
-                protected ArrayRealVector newNodeCoordinates(Object node) {
+                public ArrayRealVector newPosition(V node) {
                     newNode.set(true);
-                    return super.newNodeCoordinates(node);
+                    return super.newPosition(node);
                 }
 
                 @Override
@@ -87,12 +87,12 @@ public class HyperassociativeLayout implements GraphDisplay {
 
 
     @Override
-    public void vertex(AbstractGraphVis g, VertexVis v) {
+    public void vertex(AbstractGraphVis<V,E> g, VertexVis<V,E> v) {
         if (h == null) return;
         if (v == null) return;
         if (v.vertex == null) return;
 
-        ArrayRealVector c = h.getPosition(v.vertex);
+        ArrayRealVector c = h.getPosition((V)v.vertex);
         if (c == null) return;
 
 
