@@ -68,7 +68,7 @@ public class TestNARGraph extends Nengrow {
 
 
         final FastOrganicIterativeLayout<NARGraphVertex,UIEdge<NARGraphVertex>> hmap =
-                new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph, 1200) {
+                new FastOrganicIterativeLayout<NARGraphVertex, UIEdge<NARGraphVertex>>(graph, 1900) {
             @Override public ArrayRealVector newPosition(NARGraphVertex node) {
                 ArrayRealVector a = node.getCoordinates();
                 randomCoordinatesArray(a.getDataRef());
@@ -94,8 +94,7 @@ public class TestNARGraph extends Nengrow {
             @Override
             public double getRadius(NARGraphVertex narGraphVertex) {
                 double r = 1+narGraphVertex.ui.getFullBoundsReference().getWidth();
-                return r/2.0;
-                //return 150;
+                return r * 1;
             }
         };
 
@@ -629,13 +628,14 @@ public class TestNARGraph extends Nengrow {
             }
 
             //if (layoutPeriod > 0) {
-                double x = getCoordinates().getEntry(0);
-                double y = getCoordinates().getEntry(1);
+                double[] d = getCoordinates().getDataRef();
+                double x = d[0];
+                double y = d[1];
                 if (Double.isFinite(x) && Double.isFinite(y)) {
                     long animTime = (long) (layoutPeriod * 1f);
                     //long animTime = 0L;
                     //ui.animateToPositionScaleRotation(x, y, 1.0f + priority, 0, animTime);
-                    ui.dragTo(x, y, 0.05);
+                    ui.dragTo(x, y, 0.02);
                 }
                 //System.out.println(x + " " + y);
                 layoutPeriod = -1;
@@ -647,16 +647,30 @@ public class TestNARGraph extends Nengrow {
 
         }
 
+
+        @Override
+        public void draggedTo(double x, double y) {
+            //set input dragged mouse coordinates to override layout
+            double[] d =getCoordinates().getDataRef();
+            d[0] = x;
+            d[1] = y;
+        }
+
         @Override
         public void run(float startTime, float endTime) throws SimulationException {
 
-            //real time mode
             if (endTime - lastUIUpdate > minUpdateTime) {
-                updateUI();
+                //updateUI();
                 lastUIUpdate = endTime;
             }
         }
 
+
+        @Override
+        protected void paint(PaintContext paintContext, double width, double height) {
+            super.paint(paintContext, width, height);
+            updateUI();
+        }
 
         @Override
         public void reset(boolean randomize) {

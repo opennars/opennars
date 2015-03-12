@@ -64,6 +64,9 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
 
     }
 
+    public void draggedTo(double x, double y) {
+
+    }
 
 
     public class AbstractWidgetUI extends UINeoNode<AbstractWidget> {
@@ -91,6 +94,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         @Override
         public void dragOffset(double dx, double dy) {
             super.dragOffset(dx, dy);
+            draggedTo(getOffset().getX(), getOffset().getY());
         }
 
         @Override
@@ -121,7 +125,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         }
     }
 
-    public void move(double dx, double dy) {
-        ui.dragOffset(dx, dy);
+    public void move(double x, double y) {
+        ui.dragTo(x, y);
     }
 }

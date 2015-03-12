@@ -23,16 +23,17 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     mxRectangle initialBounds;
 
     double temperature;
-    double temperatureDecay = 1;
+    double temperatureDecay;
+    double minTemperature;
 
     public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, double scale) {
         this.graph = graph;
         this.initialBounds = new mxRectangle(0,0, scale, scale);
-        setInitialTemp(50);
+        setInitialTemp(30);
         setMinDistanceLimit(2f);
-        setMaxDistanceLimit(50f);
+        setMaxDistanceLimit(550f);
 
-        setForceConstant(10);
+        setForceConstant(100);
 
         resetLearning();
 
@@ -255,6 +256,8 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
      */
     public void setInitialTemp(double value) {
         initialTemp = value;
+        temperatureDecay = 0.99;
+        minTemperature = value / 100;
     }
 
 
@@ -262,6 +265,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
     public void run(int iterations) {
 
+        if (temperature < minTemperature) return;
 
         indices.clear();
 
@@ -270,7 +274,13 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
         Set<N> vx = graph.vertexSet();
         if (vx == null || vx.isEmpty()) return;
-        vertexArray.addAll(vx);
+        try {
+            vertexArray.addAll(vx);
+        }
+        catch (Exception e) {
+            //HACK handle this better
+            return;
+        }
 
 
         pre(vertexArray);
