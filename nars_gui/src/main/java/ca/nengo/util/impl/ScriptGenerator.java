@@ -2,7 +2,6 @@ package ca.nengo.util.impl;
 
 import ca.nengo.model.Network;
 import ca.nengo.model.Node;
-import ca.nengo.model.Projection;
 import ca.nengo.util.ScriptGenException;
 
 import java.io.File;
@@ -100,56 +99,56 @@ public class ScriptGenerator extends DFSIterator {
     @SuppressWarnings("unchecked")
 	protected void post(Node node)
 	{
-        if (node instanceof Network && inTemplateNetwork <= 0)
-        {
-            Network net = (Network)node;
-            parentNetwork.pop();
-
-            HashMap<String, Object> toScriptArgs = new HashMap<String, Object>();
-            toScriptArgs.put("prefix", prefixes.get(node) + spaceDelimiter);
-            toScriptArgs.put("isSubnet", !topLevel);
-            toScriptArgs.put("netName", prefixes.get(node));
-            toScriptArgs.put("spaceDelim", spaceDelimiter);
-            
-            //try {
-                String code = net.toPostScript(toScriptArgs);
-                script.append(code);
-            /*} catch(ScriptGenException e) {
-                System.out.println(e.getMessage());
-            }*/
-
-            script.append("\n# ").append(node.getName()).append(" - Projections\n");
-
-            for(Projection proj : ((Network) node).getProjections())
-            {
-                HashMap templateProjections = (HashMap)((Network) node).getMetaData("templateProjections");
-                String preName = proj.getSource().getNode().getName();
-                String postName = proj.getTarget().getNode().getName();
-                if (templateProjections == null || !postName.equals(templateProjections.get(preName)))
-                {
-                    try {
-                        String code2 = proj.toScript(toScriptArgs);
-                        script.append(code2);
-                    } catch(ScriptGenException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-
-            script.append("\n# Network ").append(node.getName()).append(" End\n\n");
-                        
-            if(topLevel)
-            {
-            	String nameNoSpaces = topLevelPrefix + spaceDelimiter + node.getName().replaceAll("\\p{Blank}|\\p{Punct}", Character.toString(spaceDelimiter));
-            	script.append(nameNoSpaces).append(".add_to_nengo()\n");
-            }
-        }
-
-        if (parentNetwork.peek().getMetaData("templates") != null &&
-                ((ArrayList)parentNetwork.peek().getMetaData("templates")).contains(node.getName()))
-        {
-            inTemplateNetwork--;
-        }
+//        if (node instanceof Network && inTemplateNetwork <= 0)
+//        {
+//            Network net = (Network)node;
+//            parentNetwork.pop();
+//
+//            HashMap<String, Object> toScriptArgs = new HashMap<String, Object>();
+//            toScriptArgs.put("prefix", prefixes.get(node) + spaceDelimiter);
+//            toScriptArgs.put("isSubnet", !topLevel);
+//            toScriptArgs.put("netName", prefixes.get(node));
+//            toScriptArgs.put("spaceDelim", spaceDelimiter);
+//
+//            //try {
+//                String code = net.toPostScript(toScriptArgs);
+//                script.append(code);
+//            /*} catch(ScriptGenException e) {
+//                System.out.println(e.getMessage());
+//            }*/
+//
+//            script.append("\n# ").append(node.getName()).append(" - Projections\n");
+//
+//            for(Projection proj : ((Network) node).getProjections())
+//            {
+//                HashMap templateProjections = (HashMap)((Network) node).getMetaData("templateProjections");
+//                String preName = proj.getSource().getNode().getName();
+//                String postName = proj.getTarget().getNode().getName();
+//                if (templateProjections == null || !postName.equals(templateProjections.get(preName)))
+//                {
+//                    try {
+//                        String code2 = proj.toScript(toScriptArgs);
+//                        script.append(code2);
+//                    } catch(ScriptGenException e) {
+//                        System.out.println(e.getMessage());
+//                    }
+//                }
+//            }
+//
+//            script.append("\n# Network ").append(node.getName()).append(" End\n\n");
+//
+//            if(topLevel)
+//            {
+//            	String nameNoSpaces = topLevelPrefix + spaceDelimiter + node.getName().replaceAll("\\p{Blank}|\\p{Punct}", Character.toString(spaceDelimiter));
+//            	script.append(nameNoSpaces).append(".add_to_nengo()\n");
+//            }
+//        }
+//
+//        if (parentNetwork.peek().getMetaData("templates") != null &&
+//                ((ArrayList)parentNetwork.peek().getMetaData("templates")).contains(node.getName()))
+//        {
+//            inTemplateNetwork--;
+//        }
 	}
 	
 	protected void finish()

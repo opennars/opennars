@@ -28,12 +28,12 @@ package ca.nengo.test.depr;
 
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.ConstantFunction;
+import ca.nengo.model.NTarget;
 import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.NTarget;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.FunctionInput;
-import ca.nengo.model.impl.NetworkImpl;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.NEFGroupFactory;
 import ca.nengo.neural.nef.impl.NEFGroupFactoryImpl;
@@ -58,7 +58,7 @@ public class NetworkViewerMemoryTest {
 	// private static Window[] windows;
 	public static Network createNetwork() throws StructuralException {
 
-		Network network = new NetworkImpl();
+		Network network = new DefaultNetwork<>();
 
 		Function f = new ConstantFunction(1, 1f);
 		// Function f = new SineFunction();

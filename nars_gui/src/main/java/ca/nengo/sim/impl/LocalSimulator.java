@@ -50,7 +50,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public class LocalSimulator<N extends Node> implements Simulator, java.io.Serializable {
+public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     @Deprecated private Projection[] myProjections;
@@ -59,7 +59,7 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
     private List<SocketUDPNode> mySocketNodes;
     private List<Node> myDeferredSocketNodes;
     private List<Probe> myProbes;
-    private Network<N> network;
+    protected Network<K,N> network;
     private boolean myDisplayProgress;
     private transient List<VisiblyChanges.Listener> myChangeListeners;
     private transient NodeThreadPool myNodeThreadPool;
@@ -309,13 +309,22 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
         System.gc();
     }
 
-    /**
-     * @see ca.nengo.sim.Simulator#addProbe(java.lang.String, java.lang.String,
-     *      boolean)
-     */
-    public Probe addProbe(String nodeName, String state, boolean record)
+
+
+    @Override
+    public Probe addProbe(String ensembleName, int neuronIndex, String state, boolean record) throws SimulationException {
+        return null;
+    }
+
+
+    public Probe addProbe(K nodeName, String state, boolean record)
             throws SimulationException {
-        Probeable p = getNode(nodeName);
+        Probeable p = null;
+        try {
+            p = getNode(nodeName);
+        } catch (StructuralException e) {
+            throw new SimulationException(e);
+        }
         return addProbe(null, p, state, record);
     }
 
@@ -323,9 +332,14 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
      * @see ca.nengo.sim.Simulator#addProbe(java.lang.String, int,
      *      java.lang.String, boolean)
      */
-    public Probe addProbe(String ensembleName, int neuronIndex, String state,
+    public Probe addProbe(K ensembleName, int neuronIndex, String state,
             boolean record) throws SimulationException {
-        Probeable p = getNeuron(ensembleName, neuronIndex);
+        Probeable p = null;
+        try {
+            p = getNeuron(ensembleName, neuronIndex);
+        } catch (StructuralException e) {
+            throw new SimulationException(e);
+        }
         return addProbe(ensembleName, p, state, record);
     }
 
@@ -333,7 +347,7 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
      * @see ca.nengo.sim.Simulator#addProbe(java.lang.String, int,
      *      java.lang.String, boolean)
      */
-    public Probe addProbe(String ensembleName, Probeable target, String state,
+    public Probe addProbe(K ensembleName, Probeable target, String state,
             boolean record) throws SimulationException {
 
         /*
@@ -372,8 +386,8 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
         fireVisibleChangeEvent();
     }
 
-    private Probeable getNode(String nodeName) throws SimulationException {
-        N result = network.getNodeMap().get(nodeName);
+    private Probeable getNode(K nodeName) throws SimulationException, StructuralException {
+        Node result = network.getNode(nodeName);
 
         if (result == null) {
             throw new SimulationException("The named Node does not exist");
@@ -386,8 +400,8 @@ public class LocalSimulator<N extends Node> implements Simulator, java.io.Serial
         return (Probeable) result;
     }
 
-    private Probeable getNeuron(String nodeName, int index) throws SimulationException {
-        N ensemble = network.getNodeMap().get(nodeName);
+    private Probeable getNeuron(K nodeName, int index) throws SimulationException, StructuralException {
+        N ensemble = network.getNode(nodeName);
 
         if (ensemble == null) {
             throw new SimulationException("The named Ensemble does not exist");

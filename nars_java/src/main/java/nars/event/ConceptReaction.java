@@ -11,9 +11,12 @@ import java.util.function.Consumer;
 /** watches for concept lifecycle (creation and forget) events */
 abstract public class ConceptReaction extends AbstractReaction {
 
-    public ConceptReaction(NAR n) {
-        super(n, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class);
+    private final NAR nar;
 
+    public ConceptReaction(NAR n) {
+        super(n, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class);
+
+        this.nar = n;
         //add existing events
         n.memory.taskLater(new Runnable() {
             @Override
@@ -41,6 +44,14 @@ abstract public class ConceptReaction extends AbstractReaction {
         else if (event == Events.ConceptFired.class) {
             Concept c = ((ConceptProcess)args[0]).getCurrentConcept();
             onFiredConcept(c);
+        }
+        else if (event == Events.ResetStart.class) {
+            nar.memory.concepts.forEach(new Consumer<Concept>() {
+                @Override
+                public void accept(Concept concept) {
+                    onForgetConcept(concept);
+                }
+            });
         }
     }
 

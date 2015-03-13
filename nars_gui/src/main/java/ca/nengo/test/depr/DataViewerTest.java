@@ -28,6 +28,7 @@ package ca.nengo.test.depr;
 
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.AbstractNengo;
 import ca.nengo.ui.action.RunSimulatorAction;
@@ -48,7 +49,7 @@ public class DataViewerTest {
 
 	public void createUINetwork(AbstractNengo abstractNengo) {
 
-		network = new UINetwork(new NetworkImpl());
+		network = new UINetwork(new DefaultNetwork<>());
 		abstractNengo.getWorld().getGround().addChild(network);
 		network.openViewer();
 		network.getViewer().getGround().setElasticEnabled(true);

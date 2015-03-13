@@ -39,7 +39,7 @@ import ca.nengo.util.impl.ProbeTask;
  * @author Bryan Tripp
  */
 //TODO implement as a Source
-public interface Probe {
+public interface Probe<K> {
 
 	/**
 	 * @param ensembleName
@@ -55,7 +55,7 @@ public interface Probe {
 	 * @throws SimulationException
 	 *             if the given target does not have the given state
 	 */
-	public void connect(String ensembleName, Probeable target,
+	public void connect(K ensembleName, Probeable target,
 			String stateName, boolean record) throws SimulationException;
 
 	/**

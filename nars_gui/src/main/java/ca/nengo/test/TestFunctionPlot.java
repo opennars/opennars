@@ -2,6 +2,7 @@ package ca.nengo.test;
 
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.model.math.JuRLsFunctionApproximator;
@@ -49,7 +50,7 @@ public class TestFunctionPlot extends Nengrow {
     }
 
     public static NetworkImpl newFunctionApproximationDemo() throws StructuralException {
-        NetworkImpl network = new NetworkImpl("Function Approximation");
+        NetworkImpl network = new DefaultNetwork("Function Approximation");
 
         network.addNode( new SliderNode("Detail Level", 8f, 3, 24f));
         network.addNode(new JuRLsFunctionApproximator("Fourier Approximator Test"));

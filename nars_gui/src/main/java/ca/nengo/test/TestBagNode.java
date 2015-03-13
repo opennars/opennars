@@ -3,6 +3,7 @@ package ca.nengo.test;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.Nengrow;
@@ -29,7 +30,7 @@ public class TestBagNode extends Nengrow {
 
 
     public Node newBagNodeDemo() throws StructuralException {
-        NetworkImpl network = new NetworkImpl();
+        NetworkImpl network = new DefaultNetwork<>();
 
         ObjectNode narUI;
         NARNode narNode;

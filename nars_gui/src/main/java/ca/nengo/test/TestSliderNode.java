@@ -1,6 +1,7 @@
 package ca.nengo.test;
 
 import ca.nengo.model.SimulationException;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.model.node.UINetwork;
@@ -20,7 +21,7 @@ public class TestSliderNode extends Nengrow {
 
     @Override
     public void init() throws Exception {
-        NetworkImpl network = new NetworkImpl();
+        NetworkImpl network = new DefaultNetwork();
 
         network.addNode( new SliderNode("Slide", 0.25f, 0, 1f));
 

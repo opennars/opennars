@@ -6,8 +6,8 @@ import ca.nengo.math.impl.IndicatorPDF;
 import ca.nengo.math.impl.SigmoidFunction;
 import ca.nengo.math.impl.SineFunction;
 import ca.nengo.model.*;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.FunctionInput;
-import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.neural.SpikeOutput;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.NEFGroupFactory;
@@ -88,7 +88,7 @@ public class PoissonSpikeGeneratorTest extends TestCase {
             ensemble.addDecodedTermination("input", MU.I(1), .01f, false);
             Plotter.plot(ensemble);
 
-            Network network = new NetworkImpl();
+            Network network = new DefaultNetwork();
             network.addNode(ensemble);
             FunctionInput input = new FunctionInput("input", new Function[]{new SineFunction(3)}, Units.UNK);
             network.addNode(input);

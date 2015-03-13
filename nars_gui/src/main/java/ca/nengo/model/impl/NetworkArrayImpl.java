@@ -51,7 +51,7 @@ import java.util.Properties;
  *
  * @author Xuan Choo, Daniel Rasmussen
  */
-public class NetworkArrayImpl extends NetworkImpl {
+public class NetworkArrayImpl extends DefaultNetwork {
 
 	/**
 	 * Default name for a Network

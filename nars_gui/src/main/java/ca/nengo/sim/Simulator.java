@@ -28,6 +28,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.sim;
 
 import ca.nengo.model.Network;
+import ca.nengo.model.Node;
 import ca.nengo.model.Probeable;
 import ca.nengo.model.SimulationException;
 import ca.nengo.util.Probe;
@@ -38,7 +39,7 @@ import ca.nengo.util.VisiblyChanges;
  * 
  * @author Bryan Tripp
  */
-public interface Simulator extends VisiblyChanges, Cloneable {
+public interface Simulator<K, N extends Node> extends VisiblyChanges, Cloneable {
 
 	/**
 	 * Initializes the Simulator with a given Network, after which changes to the 
@@ -73,7 +74,7 @@ public interface Simulator extends VisiblyChanges, Cloneable {
 	 * @throws SimulationException if the referenced Node can not be found, or is not Probeable, or does 
 	 * 		not have the specified state variable
 	 */
-	public Probe addProbe(String nodeName, String state, boolean record) throws SimulationException; 
+	public Probe addProbe(K nodeName, String state, boolean record) throws SimulationException;
 
 	/**
 	 * @param ensembleName Name of Ensemble containing a Probeable Neuron from which state is to be probed 
@@ -102,7 +103,7 @@ public interface Simulator extends VisiblyChanges, Cloneable {
 	 *             if the referenced Neuron can not be found, or is not
 	 *             Probeable, or does not have the specified state variable
 	 */
-	public Probe addProbe(String ensembleName, Probeable target, String state,
+	public Probe addProbe(K ensembleName, Probeable target, String state,
 			boolean record) throws SimulationException;
 
 	/**

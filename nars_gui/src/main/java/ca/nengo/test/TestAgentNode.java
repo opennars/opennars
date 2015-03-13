@@ -4,6 +4,7 @@ import ca.nengo.model.AgentNode;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.model.node.UINetwork;
@@ -30,7 +31,7 @@ public class TestAgentNode extends Nengrow {
     }
 
     public static Node newAgentNodeDemo() throws StructuralException {
-        NetworkImpl network = new NetworkImpl();
+        NetworkImpl network = new DefaultNetwork<>();
 
         AgentNode an = new AgentNode("NARBot1") {
             @Override

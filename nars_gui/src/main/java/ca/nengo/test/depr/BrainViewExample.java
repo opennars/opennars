@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.test.depr;
 
 import ca.nengo.model.Network;
-import ca.nengo.model.impl.NetworkImpl;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.ui.model.node.UINetwork;
 
 /**
@@ -52,7 +52,7 @@ public class BrainViewExample extends ExampleRunner {
 
     @Override
     public Network getNetwork() {
-        return new NetworkImpl();
+        return new DefaultNetwork<>();
     }
 
     @Override

@@ -34,6 +34,7 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.FunctionInput;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.NEFGroupFactory;
@@ -53,7 +54,7 @@ import ca.nengo.sim.Simulator;
 public class FuzzyLogicExample {
 
 	public static Network createNetwork() throws StructuralException {
-		NetworkImpl net = new NetworkImpl();
+		NetworkImpl net = new DefaultNetwork<>();
 		net.setName("FuzzyLogic");
 		
 		Simulator simulator = net.getSimulator();

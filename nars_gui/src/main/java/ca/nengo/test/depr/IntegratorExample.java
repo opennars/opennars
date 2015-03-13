@@ -28,11 +28,12 @@ package ca.nengo.test.depr;
 
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.ConstantFunction;
+import ca.nengo.model.NTarget;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.NTarget;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.FunctionInput;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.NEFGroupFactory;
@@ -57,7 +58,7 @@ public class IntegratorExample {
 
 	public void createUINetwork(AbstractNengo abstractNengo) {
 
-		network = new UINetwork(new NetworkImpl());
+		network = new UINetwork(new DefaultNetwork());
 		abstractNengo.getWorld().getGround().addChild(network);
 		network.openViewer();
 		network.getViewer().getGround().setElasticEnabled(true);

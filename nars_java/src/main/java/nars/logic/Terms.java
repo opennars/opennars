@@ -529,7 +529,7 @@ public class Terms {
 
 
     /** has, or is associated with a specific term */
-    public static interface Termable<TT extends Term> {
+    public static interface Termable<TT extends Term>  {
         public TT getTerm();
     }
     

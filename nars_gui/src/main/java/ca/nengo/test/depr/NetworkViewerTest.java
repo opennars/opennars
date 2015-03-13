@@ -32,6 +32,7 @@ import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.FunctionInput;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.action.RunSimulatorAction;
 import ca.nengo.ui.model.node.UINetwork;
@@ -66,7 +67,7 @@ public class NetworkViewerTest extends ExampleRunner {
     }
 
     public static Network CreateNetwork() throws StructuralException {
-		NetworkImpl network = new NetworkImpl();
+		NetworkImpl network = new DefaultNetwork<>();
 		
 		Function f = new ConstantFunction(1, 1f);
 		FunctionInput input = new FunctionInput("input", new Function[] { f }, Units.UNK);

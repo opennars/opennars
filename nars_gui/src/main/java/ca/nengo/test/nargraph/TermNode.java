@@ -11,10 +11,9 @@ import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
 import java.awt.*;
-import java.util.UUID;
 
 /** a node which can represent a pre-Term, a Term, or a Concept */
-public class TermNode extends TestNARGraph.NARGraphVertex {
+public class TermNode extends UIVertex {
 
     private final TestNARGraph.NARGraphNode graphnode;
     String text;
@@ -29,12 +28,12 @@ public class TermNode extends TestNARGraph.NARGraphVertex {
 
     final Color inputTaskColor = new Color(0.4f, 0.3f, 0.85f, 1.0f);
 
-    public TermNode(TestNARGraph.NARGraphNode graphnode, String text) {
-        super(UUID.randomUUID().toString());
-        this.graphnode = graphnode;
-        setTerm(null);
-        this.text = text;
-    }
+//    public TermNode(TestNARGraph.NARGraphNode graphnode, String text) {
+//        super(UUID.randomUUID().toString());
+//        this.graphnode = graphnode;
+//        setTerm(null);
+//        this.text = text;
+//    }
 
     @Override
     public String toString() {
@@ -56,13 +55,10 @@ public class TermNode extends TestNARGraph.NARGraphVertex {
         setTask(t);
     }
 
-    public TermNode(TestNARGraph.NARGraphNode graphnode, Terms.Termable term) {
-        super(term instanceof Task ? ((Task)term).sentence : term);
+    public TermNode(TestNARGraph.NARGraphNode graphnode, Term term) {
+        super(term);
         this.graphnode = graphnode;
-        if (term instanceof Task)
-            setTask((Task)term);
-        else
-            setTerm(term.getTerm());
+        setTerm(term.getTerm());
     }
 
     public boolean setTask(Task t) {

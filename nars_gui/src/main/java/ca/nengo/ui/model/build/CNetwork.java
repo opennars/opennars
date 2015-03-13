@@ -26,7 +26,7 @@ package ca.nengo.ui.model.build;
 
 import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.impl.NetworkImpl;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.ui.config.ConfigException;
 import ca.nengo.ui.config.ConfigResult;
 import ca.nengo.ui.config.ConfigSchemaImpl;
@@ -50,7 +50,7 @@ public class CNetwork extends CNode<Network> {
 	@Override
 	protected Network createNode(ConfigResult configuredProperties, String name)
 			throws ConfigException {
-        Network network = new NetworkImpl();
+        Network network = new DefaultNetwork();
 
 		try {
 			network.setName(name);

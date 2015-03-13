@@ -5,6 +5,7 @@ import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Units;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.NoiseFactory;
 import ca.nengo.neural.neuron.impl.LIFSpikeGenerator;
@@ -26,7 +27,7 @@ public class TestPlotNode extends Nengrow {
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
 
     public static Node newPlotNodeDemo() throws StructuralException {
-        NetworkImpl network = new NetworkImpl();
+        NetworkImpl network = new DefaultNetwork();
 
         SpikingNeuron sn = new SpikingNeuron(
                 new LinearSynapticIntegrator(RESOLUTION_SEC/100f, Units.ACU),

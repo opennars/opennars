@@ -24,7 +24,7 @@ public class NetworkImplTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		myNetwork = new NetworkImpl();
+		myNetwork = new DefaultNetwork();
 	}
 
 	/*
@@ -111,7 +111,7 @@ public class NetworkImplTest extends TestCase {
 		NEFGroupImpl nef1 = (NEFGroupImpl)ef.make("nef1", 1000, 1);
 		NEFGroupImpl nef2 = (NEFGroupImpl)ef.make("nef2", 1000, 1);
 		NEFGroupImpl nef3 = (NEFGroupImpl)ef.make("nef3", 1, 1);
-		NetworkImpl net = new NetworkImpl();
+		NetworkImpl net = new DefaultNetwork();
 		
 		net.addNode(nef1);
 		myNetwork.addNode(net);
@@ -177,7 +177,7 @@ public class NetworkImplTest extends TestCase {
 		if(myNetwork.getNode("a") != a)
 			fail("Ensemble not added correctly");
 		
-		NetworkImpl b = new NetworkImpl();
+		NetworkImpl b = new DefaultNetwork();
 		b.setName("b");
 		myNetwork.addNode(b);
 		
@@ -198,7 +198,7 @@ public class NetworkImplTest extends TestCase {
 
 		assertNull("Node not removed",myNetwork.getNode("a"));
 
-		NetworkImpl b = new NetworkImpl();
+		NetworkImpl b = new DefaultNetwork();;
 		b.setName("b");
 		myNetwork.addNode(b);
 		
@@ -279,7 +279,7 @@ public class NetworkImplTest extends TestCase {
 	
 //	public void testChanged() throws StructuralException, SimulationException
 //	{
-//		NetworkImpl b = new NetworkImpl();
+//		NetworkImpl b = new DefaultNetwork();;
 //		b.setName("b");
 //		myNetwork.addNode(b);
 //		
@@ -324,7 +324,7 @@ public class NetworkImplTest extends TestCase {
 	
 	public void testGetNodeTerminations() throws StructuralException
 	{
-		NetworkImpl net = new NetworkImpl();
+		NetworkImpl net = new DefaultNetwork();
 		
 		if(net.getNodeTerminations().size() != 0)
 			fail("Network has terminations when it shouldn't");
@@ -343,7 +343,7 @@ public class NetworkImplTest extends TestCase {
 	
 	public void testGetNodeOrigins() throws StructuralException
 	{
-		NetworkImpl net = new NetworkImpl();
+		NetworkImpl net = new DefaultNetwork();;
 		
 		if(net.getNodeSources().size() != 0)
 			fail("Network has origins when it shouldn't");
@@ -360,7 +360,7 @@ public class NetworkImplTest extends TestCase {
 	
 	public void testReset() throws StructuralException, SimulationException
 	{
-		NetworkImpl net = new NetworkImpl();
+		NetworkImpl net = new DefaultNetwork();;
 		
 		NEFGroupFactoryImpl ef = new NEFGroupFactoryImpl();
 		NEFGroupImpl a = (NEFGroupImpl)ef.make("a", 10, 1);
@@ -392,9 +392,9 @@ public class NetworkImplTest extends TestCase {
 	}
 	
 	public void testClone() throws StructuralException, CloneNotSupportedException{
-		NetworkImpl top = new NetworkImpl();
+		NetworkImpl top = new DefaultNetwork();;
 	    
-	    NetworkImpl test1 = new NetworkImpl();
+	    NetworkImpl test1 = new DefaultNetwork();;
 	    test1.setName("test1");
 	    top.addNode(test1);
 	    

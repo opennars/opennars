@@ -45,7 +45,12 @@ public class StructuralException extends NengoException {
 		super(message);
 	}
 
-	/**
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this; //do not add stack
+    }
+
+    /**
 	 * @param cause Another throwable that indicates a problem underlying this 
 	 * 		exception.  
 	 */

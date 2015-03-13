@@ -7,8 +7,8 @@ import ca.nengo.TestUtil;
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.ConstantFunction;
 import ca.nengo.model.*;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.FunctionInput;
-import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.neural.SpikeOutput;
 import ca.nengo.plot.Plotter;
 import ca.nengo.util.MU;
@@ -86,7 +86,7 @@ public class IzhikevichSpikeGeneratorTest extends TestCase {
 		
 		FunctionInput input = new FunctionInput("input", new Function[]{new ConstantFunction(1, I)}, Units.UNK);
 		
-		Network network = new NetworkImpl();
+		Network network = new DefaultNetwork();
 		network.addNode(input);
 		network.addNode(neuron);
 		network.addProjection(input.getSource(FunctionInput.ORIGIN_NAME), t);

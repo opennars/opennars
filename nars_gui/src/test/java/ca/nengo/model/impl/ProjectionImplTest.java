@@ -127,7 +127,7 @@ public class ProjectionImplTest extends TestCase {
 //	}
 
 	public void testAddBias2D() throws StructuralException, SimulationException {
-		Network network = new NetworkImpl();
+		Network network = new DefaultNetwork();
 		FunctionInput input = new FunctionInput("input", new Function[]{new IdentityFunction(1, 0)}, Units.UNK);
 		network.addNode(input);
 		NEFGroupFactory ef = new NEFGroupFactoryImpl();

@@ -5,6 +5,7 @@ import ca.nengo.model.AgentNode;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.WorldObject;
@@ -49,7 +50,7 @@ public class TestNARNode extends Nengrow {
     }
 
     public Node newAgentNodeDemo() throws StructuralException {
-        NetworkImpl network = new NetworkImpl();
+        NetworkImpl network = new DefaultNetwork<>();
 
         NAR nar = new NAR(new Default());
         NARNode an = new NARNode("NARBot1", nar);

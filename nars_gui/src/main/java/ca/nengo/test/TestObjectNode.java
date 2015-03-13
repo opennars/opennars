@@ -2,6 +2,7 @@ package ca.nengo.test;
 
 import ca.nengo.model.Node;
 import ca.nengo.model.StructuralException;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.Nengrow;
@@ -18,7 +19,7 @@ public class TestObjectNode extends Nengrow {
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
 
     public static Node newObjectNodeDemo() throws StructuralException {
-        NetworkImpl network = new NetworkImpl();
+        NetworkImpl network = new DefaultNetwork<>();
 
         network.addNode(new ObjectNode("NAR", new NAR(new Default())));
         network.addNode(new ObjectNode("The Whole Truth", new TruthValue()));

@@ -40,7 +40,7 @@ import java.util.List;
  * 
  * @author Bryan Tripp
  */
-public class ProbeImpl implements Probe, java.io.Serializable {
+public class ProbeImpl implements Probe<String>, java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Probeable myTarget;

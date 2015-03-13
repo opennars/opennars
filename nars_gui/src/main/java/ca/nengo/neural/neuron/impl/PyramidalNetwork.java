@@ -7,7 +7,7 @@ import ca.nengo.math.impl.DefaultFunctionInterpreter;
 import ca.nengo.math.impl.IndicatorPDF;
 import ca.nengo.model.*;
 import ca.nengo.model.impl.GroupImpl;
-import ca.nengo.model.impl.NetworkImpl;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NodeFactory;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.impl.NEFGroupFactoryImpl;
@@ -32,7 +32,7 @@ import java.util.Random;
  *
  * @author Albert Mallia
  */
-public class PyramidalNetwork extends NetworkImpl
+public class PyramidalNetwork extends DefaultNetwork
 {
 
     private static final long serialVersionUID = 1L;

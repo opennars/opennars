@@ -43,9 +43,9 @@ abstract public class UniCore implements Core {
     }
 
     /** for removing a specific concept (if it's not putBack) */
-    public Concept takeOut(Term t) {
+    /*@Deprecated public Concept takeOut(Term t) {
         return concepts.remove(t);
-    }
+    }*/
 
     @Override
     public void init(Memory m) {
@@ -211,7 +211,7 @@ abstract public class UniCore implements Core {
     }
 
 
-    @Override public void activate(final Concept c, final BudgetValue b, BudgetFunctions.Activating mode) {
+    @Deprecated @Override public void activate(final Concept c, final BudgetValue b, BudgetFunctions.Activating mode) {
         concepts.remove(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);

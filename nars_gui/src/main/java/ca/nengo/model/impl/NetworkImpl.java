@@ -49,7 +49,7 @@ import java.util.*;
  *
  * @author Bryan Tripp
  */
-public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, VisiblyChanges.Listener, TaskSpawner {
+abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, VisiblyChanges, VisiblyChanges.Listener, TaskSpawner {
 
     /**
      * Default name for a Network
@@ -64,24 +64,24 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     protected int myNumJavaThreads = 1;
     protected boolean myUseGPU = true;
 
-    protected final Map<String, N> nodes; //keyed on name
-    private final Map<NTarget, Projection> myProjectionMap; //keyed on Termination
+
+    protected final Map<NTarget, Projection> myProjectionMap; //keyed on Termination
 
     private Node[] myNodeArray; //cache of myNodeMap's items in the form of an array for getNodes()
-    private String myName;
+    protected String myName;
     private SimulationMode myMode;
     private List<SimulationMode> myFixedModes;
-    private Simulator mySimulator;
+    protected Simulator mySimulator;
     private float myStepSize;
-    private Map<String, NSource> myExposedSources;
-    private Map<String, NTarget> myExposedTargets;
-    private List<NSource> orderedExposedSources;
-    private List<NTarget> orderedExposedTargets;
+    protected Map<String, NSource> myExposedSources;
+    protected Map<String, NTarget> myExposedTargets;
+    protected List<NSource> orderedExposedSources;
+    protected List<NTarget> orderedExposedTargets;
     private String myDocumentation;
-    private Map<String, Object> myMetaData;
-    private Map<NSource, String> exposedSourceNames;
-    private Map<NTarget, String> exposedTargetNames;
-    private transient List<VisiblyChanges.Listener> myListeners;
+    protected Map<String, Object> myMetaData;
+    protected Map<NSource, String> exposedSourceNames;
+    protected Map<NTarget, String> exposedTargetNames;
+    protected transient List<VisiblyChanges.Listener> myListeners;
     private transient List<StepListener> myStepListeners;
 
     public NetworkImpl() {
@@ -92,7 +92,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * Sets up a network's data structures
      */
     public NetworkImpl(String name) {
-        nodes = new LinkedHashMap<>();
+
         myNodeArray = null;
         myProjectionMap = new LinkedHashMap<>();
         myName = name;
@@ -114,11 +114,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         myStepListeners = new ArrayList<StepListener>(1);
     }
 
-    public Map<String,N> getNodeMap() {
-        return nodes;
-    }
 
-    private static Object tryToClone(Cloneable o) {
+    protected static Object tryToClone(Cloneable o) {
         Object result = null;
 
         try {
@@ -183,16 +180,20 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         }
     }
 
+    /** return true if successful, false otherwise (ex: already contains node with the ID) */
+    protected abstract boolean add(K name, N node);
+
+    public abstract K name(N node);
+
     /**
      * @see ca.nengo.model.Network#addNode(ca.nengo.model.Node)
      */
     public void addNode(N node) throws StructuralException {
 
-        if (nodes.containsKey(node.getName())) {
-            throw new StructuralException("This Network already contains a Node named " + node.getName());
-        }
 
-        nodes.put(node.getName(), node);
+        if (!add(name(node), node))
+            throw new StructuralException("This Network already contained a Node named " + node.getName());
+
         myNodeArray = null;
 
         node.addChangeListener(this);
@@ -276,7 +277,7 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         if (e instanceof VisiblyChanges.NameChangeEvent) {
             VisiblyChanges.NameChangeEvent ne = (VisiblyChanges.NameChangeEvent) e;
 
-            N existing = nodes.get(ne.getNewName());
+            N existing = getNode((K) ne.getNewName());
             if ((existing!=null) && !ne.getNewName().equals(ne.getOldName())) {
                 throw new StructuralException("This Network already contains a Node named " + ne.getNewName());
             }
@@ -287,9 +288,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
 			 *
 			 * Also only do the swap if the node being changed is already in myNodeMap.
 			 */
-            if (!ne.getOldName().equals(ne.getNewName()) && (ne.getObject() == getNode(ne.getOldName()))) {
-                nodes.put(ne.getNewName(), (N) ne.getObject());
-                nodes.remove(ne.getOldName());
+            if (!ne.getOldName().equals(ne.getNewName()) && (ne.getObject() == getNode((K)ne.getOldName()))) {
+                changed(ne.getObject(), (K)ne.getOldName(), (K)ne.getNewName());
                 myNodeArray = null;
             }
 
@@ -298,6 +298,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         }
 
     }
+
+    protected abstract void changed(VisiblyChanges object, K oldName, K newName);
 
     /**
      * Gathers all the terminations of nodes contained in this network.
@@ -331,15 +333,15 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         return nodeSources;
     }
 
+    abstract protected Collection<N> getNodeCollection();
+
     /**
      * @see ca.nengo.model.Network#getNodes()
      */
     public Node[] getNodes() {
         if (myNodeArray == null) {
-            myNodeArray = new Node[nodes.size()];
-            int x = 0;
-            for (final N n : nodes.values())
-                myNodeArray[x++] = n;
+            Collection<N> c = getNodeCollection();
+            myNodeArray = c.toArray(new Node[c.size()]);
         }
         return myNodeArray;
     }
@@ -367,15 +369,13 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     /**
      * @see ca.nengo.model.Network#getNode(java.lang.String)
      */
-    public N getNode(final String name) /*throws StructuralException*/ {
-        return nodes.get(name);
-    }
+
 
     /**
      * @return number of top-level nodes
      */
     public int getNodeCount() {
-        return nodes.size();
+        return getNodeCollection().size();
     }
 
     /**
@@ -396,14 +396,24 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         return neuron_count;
     }
 
+
+    //TODO just return the value or null
+    public void removeNode(N node) throws StructuralException {
+        removeNode(name(node));
+    }
+
     /**
      * @see ca.nengo.model.Network#removeNode(java.lang.String)
      */
-    public void removeNode(String name) throws StructuralException {
+    public void removeNode(K name) throws StructuralException {
+        //TODO just return the value or null
 
-        N node = nodes.get(name);
+        N node = remove(name);
         if (node == null)
             throw new StructuralException("No Node named " + name + " in this Network");
+
+        node.removeChangeListener(this);
+        myNodeArray = null;
 
 
         if (node instanceof Network) {
@@ -437,16 +447,17 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             ((SocketUDPNode) node).close();
         }
 
-        nodes.remove(name);
-        myNodeArray = null;
 
-        node.removeChangeListener(this);
+
 //			VisiblyMutableUtils.nodeRemoved(this, node, myListeners);
 
         getSimulator().update(this);
         fireVisibleChangeEvent();
 
     }
+
+    /** returns the removed item, or null if didn't exist */
+    protected abstract N remove(K name);
 
     /**
      * @see ca.nengo.model.Network#addProjection(ca.nengo.model.NSource, ca.nengo.model.NTarget)
@@ -553,11 +564,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
             return;
         myMode = mode;
 
-        Iterator<N> it = nodes.values().iterator();
-        while (it.hasNext()) {
-            N node = it.next();
-            node.setMode(mode);
-        }
+        for (N n : getNodeCollection())
+            n.setMode(mode);
     }
 
     /**
@@ -583,12 +591,8 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
      * @see ca.nengo.model.Resettable#reset(boolean)
      */
     public void reset(boolean randomize) {
-        //TODO iterate entry set
-        Iterator<String> it = nodes.keySet().iterator();
-        while (it.hasNext()) {
-            Node n = nodes.get(it.next());
+        for (N n : getNodeCollection())
             n.reset(randomize);
-        }
     }
 
     /**
@@ -932,123 +936,10 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         return py.toString();
     }
 
-    @Override
     public Network clone() throws CloneNotSupportedException {
-        NetworkImpl result = (NetworkImpl) super.clone();
-
-        result.nodes.clear();
-        for (Node oldNode : nodes.values()) {
-            Node newNode = oldNode.clone();
-            result.nodes.put(newNode.getName(), newNode);
-            newNode.addChangeListener(result);
-        }
-
-        //TODO: Exposed states aren't handled currently, pending redesign of Probes (it should be possible
-        //		to probe things that are nested deeply, in which case exposing state woulnd't be necessary)
-//		result.myProbeables
-//		result.myProbeableStates
-
-        //TODO: this works with a single Projection impl & no params; should add Projection.copy(Origin, Termination, Network)?
-        result.myProjectionMap.clear();
-        for (Projection oldProjection : getProjections()) {
-            try {
-                NSource newSource = result.getNode(oldProjection.getSource().getNode().getName())
-                        .getSource(oldProjection.getSource().getName());
-                NTarget newTarget = result.getNode(oldProjection.getTarget().getNode().getName())
-                        .getTarget(oldProjection.getTarget().getName());
-                Projection newProjection = new ProjectionImpl(newSource, newTarget, result);
-                result.myProjectionMap.put(newTarget, newProjection);
-            } catch (StructuralException e) {
-                throw new CloneNotSupportedException("Problem copying Projectio: " + e.getMessage());
-            }
-        }
-
-        result.myExposedSources = new HashMap<String, NSource>(myExposedSources.size());
-        result.exposedSourceNames = new HashMap<NSource, String>(exposedSourceNames.size());
-        result.orderedExposedSources = new LinkedList<NSource>();
-        for (NSource exposed : getSources()) {
-            String name = exposed.getName();
-            NSource wrapped = ((SourceWrapper) exposed).getWrappedOrigin();
-            try {
-                // Check to see if referenced node is the network itself. If it is, handle the origin differently.
-                if (wrapped.getNode().getName() != myName) {
-                    NSource toExpose = result.getNode(wrapped.getNode().getName()).getSource(wrapped.getName());
-                    result.exposeOrigin(toExpose, name);
-                }
-            } catch (StructuralException e) {
-                throw new CloneNotSupportedException("Problem exposing Origin: " + e.getMessage());
-            }
-        }
-
-        result.myExposedTargets = new HashMap<String, NTarget>(10);
-        result.exposedTargetNames = new HashMap<NTarget, String>(10);
-        result.orderedExposedTargets = new LinkedList<NTarget>();
-        for (NTarget exposed : getTargets()) {
-            String name = exposed.getName();
-            NTarget wrapped = ((TargetWrapper) exposed).getWrappedTermination();
-            try {
-                // Check to see if referenced node is the network itself. If it is, handle the termination differently.
-                if (wrapped.getNode().getName() != myName) {
-                    NTarget toExpose = result.getNode(wrapped.getNode().getName()).getTarget(wrapped.getName());
-                    result.exposeTermination(toExpose, name);
-                }
-            } catch (StructuralException e) {
-                throw new CloneNotSupportedException("Problem exposing Termination: " + e.getMessage());
-            }
-        }
-
-        result.myListeners = new ArrayList<Listener>(5);
-
-        result.myMetaData = new HashMap<String, Object>(10);
-        for (Map.Entry<String, Object> stringObjectEntry : myMetaData.entrySet()) {
-            Object o = stringObjectEntry.getValue();
-            if (o instanceof Cloneable) {
-                Object copy = tryToClone((Cloneable) o);
-                result.myMetaData.put(stringObjectEntry.getKey(), copy);
-            } else {
-                result.myMetaData.put(stringObjectEntry.getKey(), o);
-            }
-        }
-
-        //TODO: take another look at Probe design (maybe Probeables reference Probes?)
-        result.mySimulator = mySimulator.clone();
-        result.mySimulator.update(result);
-        Probe[] oldProbes = mySimulator.getProbes();
-        for (Probe oldProbe : oldProbes) {
-            Probeable target = oldProbe.getTarget();
-            if (target instanceof Node) {
-                Node oldNode = (Node) target;
-                if (oldProbe.isInEnsemble()) {
-                    try {
-                        Group oldGroup = (Group) getNode(oldProbe.getEnsembleName());
-                        int neuronIndex = -1;
-                        for (int j = 0; j < oldGroup.getNodes().length && neuronIndex < 0; j++) {
-                            if (oldNode == oldGroup.getNodes()[j]) {
-                                neuronIndex = j;
-                            }
-                        }
-                        result.mySimulator.addProbe(oldProbe.getEnsembleName(), neuronIndex, oldProbe.getStateName(), true);
-                    } catch (SimulationException e) {
-                        throw new RuntimeException("Problem copying Probe", e);
-                    }
-//					} catch (StructuralException e) {
-//						ourLogger.warn("Problem copying Probe", e);
-//					}
-                } else {
-                    try {
-                        result.mySimulator.addProbe(oldNode.getName(), oldProbe.getStateName(), true);
-                    } catch (SimulationException e) {
-                        throw new RuntimeException("Problem copying Probe", e);
-                    }
-                }
-            } else {
-                throw new RuntimeException("Can't copy Probe on type " + target.getClass().getName()
-                        + " (to be addressed in a future release)");
-            }
-        }
-
-        return result;
+        throw new CloneNotSupportedException();
     }
+
 
     public void addStepListener(StepListener listener) {
         if (myStepListeners == null) {
@@ -1075,307 +966,6 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public String toPostScript(HashMap<String, Object> scriptData) {
-        StringBuilder py = new StringBuilder();
-
-        String pythonNetworkName = scriptData.get("prefix") + myName.replaceAll("\\p{Blank}|\\p{Punct}", scriptData.get("spaceDelim").toString());
-
-        py.append("\n# ").append(myName).append(" - Templates\n");
-
-        if (myMetaData.get("NetworkArray") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("NetworkArray")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap array = (HashMap) iter.next();
-
-                if (!nodes.containsKey(array.get("name"))) {
-                    continue;
-                }
-
-            	/*
-                py.append(String.format("nef.templates.networkarray.make(%s, name='%s', neurons=%d, length=%d, radius=%.1f, rLow=%f, rHigh=%f, iLow=%f, iHigh=%f, encSign=%d, useQuick=%s)\n",
-                            pythonNetworkName,
-                            array.get("name"),
-                            (Integer)array.get("neurons"),
-                            (Integer)array.get("length"),
-                            (Double)array.get("radius"),
-                            (Double)array.get("rLow"),
-                            (Double)array.get("rHigh"),
-                            (Double)array.get("iLow"),
-                            (Double)array.get("iHigh"),
-                            (Integer)array.get("encSign"),
-                            useQuick));
-                            */
-
-                py.append(String.format("%s.make_array(name='%s', neurons=%d, length=%d, dimensions=%d",
-                        pythonNetworkName,
-                        array.get("name"),
-                        array.get("neurons"),
-                        array.get("length"),
-                        array.get("dimensions")
-                ));
-
-                if (array.containsKey("radius")) {
-                    py.append(", radius=").append(Double.toString((Double) array.get("radius")));
-                }
-
-                if (array.containsKey("rLow") && array.containsKey("rHigh")) {
-                    py.append(", max_rate=(").append(Double.toString((Double) array.get("rLow"))).append(", ").append(Double.toString((Double) array.get("rHigh"))).append(')');
-                }
-
-                if (array.containsKey("iLow") && array.containsKey("iHigh")) {
-                    py.append(", intercept=(").append(Double.toString((Double) array.get("iLow"))).append(", ").append(Double.toString((Double) array.get("iHigh"))).append(')');
-                }
-
-                if (array.containsKey("useQuick")) {
-                    String useQuick = (Boolean) array.get("useQuick") ? "True" : "False";
-                    py.append(", quick=").append(useQuick);
-                }
-
-                if (array.containsKey("encoders")) {
-                    py.append(", encoders=").append(array.get("encoders"));
-                }
-                py.append(")\n");
-            }
-        }
-
-        if (myMetaData.get("BasalGanglia") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("BasalGanglia")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap bg = (HashMap) iter.next();
-
-                if (!nodes.containsKey(bg.get("name"))) {
-                    continue;
-                }
-
-                String same_neurons = (Boolean) bg.get("same_neurons") ? "True" : "False";
-
-                py.append(String.format("nef.templates.basalganglia.make(%s, name='%s', dimensions=%d, neurons=%d, pstc=%.3f, same_neurons=%s)\n",
-                        pythonNetworkName,
-                        bg.get("name"),
-                        bg.get("dimensions"),
-                        bg.get("neurons"),
-                        bg.get("pstc"),
-                        same_neurons));
-            }
-        }
-
-        if (myMetaData.get("Thalamus") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("Thalamus")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap thal = (HashMap) iter.next();
-
-                if (!nodes.containsKey(thal.get("name"))) {
-                    continue;
-                }
-
-                String useQuick = (Boolean) thal.get("useQuick") ? "True" : "False";
-
-                py.append(String.format("nef.templates.thalamus.make(%s, name='%s', neurons=%d, dimensions=%d, inhib_scale=%d, tau_inhib=%.3f, useQuick=%s)\n",
-                        pythonNetworkName,
-                        thal.get("name"),
-                        thal.get("neurons"),
-                        thal.get("dimensions"),
-                        thal.get("inhib_scale"),
-                        thal.get("tau_inhib"),
-                        useQuick));
-            }
-        }
-
-        if (myMetaData.get("integrator") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("integrator")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap integrator = (HashMap) iter.next();
-
-                if (!nodes.containsKey(integrator.get("name"))) {
-                    continue;
-                }
-
-                py.append(String.format("nef.templates.integrator.make(%s, name='%s', neurons=%d, dimensions=%d, tau_feedback=%g, tau_input=%g, scale=%g)\n",
-                        pythonNetworkName,
-                        integrator.get("name"),
-                        integrator.get("neurons"),
-                        integrator.get("dimensions"),
-                        integrator.get("tau_feedback"),
-                        integrator.get("tau_input"),
-                        integrator.get("scale")));
-            }
-        }
-
-        if (myMetaData.get("oscillator") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("oscillator")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap oscillator = (HashMap) iter.next();
-
-                String controlled = (Boolean) oscillator.get("controlled") ? "True" : "False";
-
-                if (!nodes.containsKey(oscillator.get("name"))) {
-                    continue;
-                }
-
-                py.append(String.format("nef.templates.oscillator.make(%s, name='%s', neurons=%d, dimensions=%d, frequency=%g, tau_feedback=%g, tau_input=%g, scale=%g, controlled=%s)\n",
-                        pythonNetworkName,
-                        oscillator.get("name"),
-                        oscillator.get("neurons"),
-                        oscillator.get("dimensions"),
-                        oscillator.get("frequency"),
-                        oscillator.get("tau_feedback"),
-                        oscillator.get("tau_input"),
-                        oscillator.get("scale"),
-                        controlled));
-            }
-        }
-
-        if (myMetaData.get("linear") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("linear")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap linear = (HashMap) iter.next();
-
-                if (!nodes.containsKey(linear.get("name"))) {
-                    continue;
-                }
-
-                StringBuilder a = new StringBuilder("[");
-                double[][] arr = (double[][]) linear.get("A");
-                for (int i = 0; i < arr.length; i++) {
-                    a.append('[');
-                    for (int j = 0; j < arr[i].length; j++) {
-                        a.append(arr[i][j]);
-                        if ((j + 1) < arr[i].length) {
-                            a.append(',');
-                        }
-                    }
-                    a.append(']');
-                    if ((i + 1) < arr.length) {
-                        a.append(',');
-                    }
-                }
-                a.append(']');
-
-                py.append(String.format("nef.templates.linear_system.make(%s, name='%s', neurons=%d, A=%s, tau_feedback=%g)\n",
-                        pythonNetworkName,
-                        linear.get("name"),
-                        linear.get("neurons"),
-                        a.toString(),
-                        linear.get("tau_feedback")));
-            }
-        }
-
-        if (myMetaData.get("learnedterm") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("learnedterm")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap learnedterm = (HashMap) iter.next();
-
-                if (!nodes.containsKey(learnedterm.get("errName"))) {
-                    continue;
-                }
-
-                py.append(String.format("nef.templates.learned_termination.make(%s, errName='%s', N_err=%d, preName='%s', postName='%s', rate=%g)\n",
-                        pythonNetworkName,
-                        learnedterm.get("errName"),
-                        learnedterm.get("N_err"),
-                        learnedterm.get("preName"),
-                        learnedterm.get("postName"),
-                        learnedterm.get("rate")));
-            }
-        }
-
-        if (myMetaData.get("convolution") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("convolution")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap binding = (HashMap) iter.next();
-
-                if (!nodes.containsKey(binding.get("name"))) {
-                    continue;
-                }
-
-                String invert_first = (Boolean) binding.get("invert_first") ? "True" : "False";
-                String invert_second = (Boolean) binding.get("invert_second") ? "True" : "False";
-                String quick = (Boolean) binding.get("quick") ? "True" : "False";
-                String A = binding.get("A") == null ? "None" : "'" + binding.get("A") + '\'';
-                String B = binding.get("B") == null ? "None" : "'" + binding.get("B") + '\'';
-
-                StringBuilder encoders = new StringBuilder("[");
-                double[][] arr = (double[][]) binding.get("encoders");
-                for (int i = 0; i < arr.length; i++) {
-                    encoders.append('[');
-                    for (int j = 0; j < arr[i].length; j++) {
-                        encoders.append(arr[i][j]);
-                        if ((j + 1) < arr[i].length) {
-                            encoders.append(',');
-                        }
-                    }
-                    encoders.append(']');
-                    if ((i + 1) < arr.length) {
-                        encoders.append(',');
-                    }
-                }
-                encoders.append(']');
-
-                py.append(String.format("nef.convolution.make_convolution(%s, name='%s', A=%s, B=%s, C='%s', N_per_D=%d, quick=%s, encoders=%s, radius=%d, pstc_out=%g, pstc_in=%g, pstc_gate=%g, invert_first=%s, invert_second=%s, mode='%s', output_scale=%d)\n",
-                        pythonNetworkName,
-                        binding.get("name"),
-                        A,
-                        B,
-                        binding.get("C"),
-                        binding.get("N_per_D"),
-                        quick,
-                        encoders.toString(),
-                        binding.get("radius"),
-                        binding.get("pstc_out"),
-                        binding.get("pstc_in"),
-                        binding.get("pstc_gate"),
-                        invert_first,
-                        invert_second,
-                        binding.get("mode"),
-                        binding.get("output_scale")));
-            }
-        }
-
-        if (myMetaData.get("bgrule") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("bgrule")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap bgrule = (HashMap) iter.next();
-
-                if (!nodes.containsKey(bgrule.get("name"))) {
-                    continue;
-                }
-
-                String use_single_input = (Boolean) bgrule.get("use_single_input") ? "True" : "False";
-
-                // going to assume the current network is the BG...BG_rules can only be added on BG networks.
-                py.append(String.format("nef.templates.basalganglia_rule.make(%s, %s.network.getNode('%s'), index=%d, dim=%d, pattern='%s', pstc=%g, use_single_input=%s)\n",
-                        pythonNetworkName,
-                        pythonNetworkName,
-                        bgrule.get("name"),
-                        bgrule.get("index"),
-                        bgrule.get("dim"),
-                        bgrule.get("pattern"),
-                        bgrule.get("pstc"),
-                        use_single_input));
-            }
-        }
-
-        if (myMetaData.get("gate") != null) {
-            Iterator iter = ((HashMap) myMetaData.get("gate")).values().iterator();
-            while (iter.hasNext()) {
-                HashMap gate = (HashMap) iter.next();
-
-                if (!nodes.containsKey(gate.get("name"))) {
-                    continue;
-                }
-
-                py.append(String.format("nef.templates.gate.make(%s, name='%s', gated='%s', neurons=%d, pstc=%g)\n",
-                        pythonNetworkName,
-                        gate.get("name"),
-                        gate.get("gated"),
-                        gate.get("neurons"),
-                        gate.get("pstc")));
-            }
-        }
-
-        return py.toString();
-    }
 
     public Object getMetadata(String key) {
         //if (myMetaData == null) myMetaData = new LinkedHashMap<String, Object>(2);
@@ -1616,3 +1206,306 @@ public class NetworkImpl<N extends Node> implements Network<N>, VisiblyChanges, 
     }
 
 }
+
+
+//    @SuppressWarnings("unchecked")
+//    public String toPostScript(HashMap<String, Object> scriptData) {
+//        StringBuilder py = new StringBuilder();
+//
+//        String pythonNetworkName = scriptData.get("prefix") + myName.replaceAll("\\p{Blank}|\\p{Punct}", scriptData.get("spaceDelim").toString());
+//
+//        py.append("\n# ").append(myName).append(" - Templates\n");
+//
+//        if (myMetaData.get("NetworkArray") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("NetworkArray")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap array = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(array.get("name"))) {
+//                    continue;
+//                }
+//
+//            	/*
+//                py.append(String.format("nef.templates.networkarray.make(%s, name='%s', neurons=%d, length=%d, radius=%.1f, rLow=%f, rHigh=%f, iLow=%f, iHigh=%f, encSign=%d, useQuick=%s)\n",
+//                            pythonNetworkName,
+//                            array.get("name"),
+//                            (Integer)array.get("neurons"),
+//                            (Integer)array.get("length"),
+//                            (Double)array.get("radius"),
+//                            (Double)array.get("rLow"),
+//                            (Double)array.get("rHigh"),
+//                            (Double)array.get("iLow"),
+//                            (Double)array.get("iHigh"),
+//                            (Integer)array.get("encSign"),
+//                            useQuick));
+//                            */
+//
+//                py.append(String.format("%s.make_array(name='%s', neurons=%d, length=%d, dimensions=%d",
+//                        pythonNetworkName,
+//                        array.get("name"),
+//                        array.get("neurons"),
+//                        array.get("length"),
+//                        array.get("dimensions")
+//                ));
+//
+//                if (array.containsKey("radius")) {
+//                    py.append(", radius=").append(Double.toString((Double) array.get("radius")));
+//                }
+//
+//                if (array.containsKey("rLow") && array.containsKey("rHigh")) {
+//                    py.append(", max_rate=(").append(Double.toString((Double) array.get("rLow"))).append(", ").append(Double.toString((Double) array.get("rHigh"))).append(')');
+//                }
+//
+//                if (array.containsKey("iLow") && array.containsKey("iHigh")) {
+//                    py.append(", intercept=(").append(Double.toString((Double) array.get("iLow"))).append(", ").append(Double.toString((Double) array.get("iHigh"))).append(')');
+//                }
+//
+//                if (array.containsKey("useQuick")) {
+//                    String useQuick = (Boolean) array.get("useQuick") ? "True" : "False";
+//                    py.append(", quick=").append(useQuick);
+//                }
+//
+//                if (array.containsKey("encoders")) {
+//                    py.append(", encoders=").append(array.get("encoders"));
+//                }
+//                py.append(")\n");
+//            }
+//        }
+//
+//        if (myMetaData.get("BasalGanglia") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("BasalGanglia")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap bg = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(bg.get("name"))) {
+//                    continue;
+//                }
+//
+//                String same_neurons = (Boolean) bg.get("same_neurons") ? "True" : "False";
+//
+//                py.append(String.format("nef.templates.basalganglia.make(%s, name='%s', dimensions=%d, neurons=%d, pstc=%.3f, same_neurons=%s)\n",
+//                        pythonNetworkName,
+//                        bg.get("name"),
+//                        bg.get("dimensions"),
+//                        bg.get("neurons"),
+//                        bg.get("pstc"),
+//                        same_neurons));
+//            }
+//        }
+//
+//        if (myMetaData.get("Thalamus") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("Thalamus")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap thal = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(thal.get("name"))) {
+//                    continue;
+//                }
+//
+//                String useQuick = (Boolean) thal.get("useQuick") ? "True" : "False";
+//
+//                py.append(String.format("nef.templates.thalamus.make(%s, name='%s', neurons=%d, dimensions=%d, inhib_scale=%d, tau_inhib=%.3f, useQuick=%s)\n",
+//                        pythonNetworkName,
+//                        thal.get("name"),
+//                        thal.get("neurons"),
+//                        thal.get("dimensions"),
+//                        thal.get("inhib_scale"),
+//                        thal.get("tau_inhib"),
+//                        useQuick));
+//            }
+//        }
+//
+//        if (myMetaData.get("integrator") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("integrator")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap integrator = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(integrator.get("name"))) {
+//                    continue;
+//                }
+//
+//                py.append(String.format("nef.templates.integrator.make(%s, name='%s', neurons=%d, dimensions=%d, tau_feedback=%g, tau_input=%g, scale=%g)\n",
+//                        pythonNetworkName,
+//                        integrator.get("name"),
+//                        integrator.get("neurons"),
+//                        integrator.get("dimensions"),
+//                        integrator.get("tau_feedback"),
+//                        integrator.get("tau_input"),
+//                        integrator.get("scale")));
+//            }
+//        }
+//
+//        if (myMetaData.get("oscillator") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("oscillator")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap oscillator = (HashMap) iter.next();
+//
+//                String controlled = (Boolean) oscillator.get("controlled") ? "True" : "False";
+//
+//                if (!nodeMap.containsKey(oscillator.get("name"))) {
+//                    continue;
+//                }
+//
+//                py.append(String.format("nef.templates.oscillator.make(%s, name='%s', neurons=%d, dimensions=%d, frequency=%g, tau_feedback=%g, tau_input=%g, scale=%g, controlled=%s)\n",
+//                        pythonNetworkName,
+//                        oscillator.get("name"),
+//                        oscillator.get("neurons"),
+//                        oscillator.get("dimensions"),
+//                        oscillator.get("frequency"),
+//                        oscillator.get("tau_feedback"),
+//                        oscillator.get("tau_input"),
+//                        oscillator.get("scale"),
+//                        controlled));
+//            }
+//        }
+//
+//        if (myMetaData.get("linear") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("linear")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap linear = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(linear.get("name"))) {
+//                    continue;
+//                }
+//
+//                StringBuilder a = new StringBuilder("[");
+//                double[][] arr = (double[][]) linear.get("A");
+//                for (int i = 0; i < arr.length; i++) {
+//                    a.append('[');
+//                    for (int j = 0; j < arr[i].length; j++) {
+//                        a.append(arr[i][j]);
+//                        if ((j + 1) < arr[i].length) {
+//                            a.append(',');
+//                        }
+//                    }
+//                    a.append(']');
+//                    if ((i + 1) < arr.length) {
+//                        a.append(',');
+//                    }
+//                }
+//                a.append(']');
+//
+//                py.append(String.format("nef.templates.linear_system.make(%s, name='%s', neurons=%d, A=%s, tau_feedback=%g)\n",
+//                        pythonNetworkName,
+//                        linear.get("name"),
+//                        linear.get("neurons"),
+//                        a.toString(),
+//                        linear.get("tau_feedback")));
+//            }
+//        }
+//
+//        if (myMetaData.get("learnedterm") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("learnedterm")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap learnedterm = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(learnedterm.get("errName"))) {
+//                    continue;
+//                }
+//
+//                py.append(String.format("nef.templates.learned_termination.make(%s, errName='%s', N_err=%d, preName='%s', postName='%s', rate=%g)\n",
+//                        pythonNetworkName,
+//                        learnedterm.get("errName"),
+//                        learnedterm.get("N_err"),
+//                        learnedterm.get("preName"),
+//                        learnedterm.get("postName"),
+//                        learnedterm.get("rate")));
+//            }
+//        }
+//
+//        if (myMetaData.get("convolution") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("convolution")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap binding = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(binding.get("name"))) {
+//                    continue;
+//                }
+//
+//                String invert_first = (Boolean) binding.get("invert_first") ? "True" : "False";
+//                String invert_second = (Boolean) binding.get("invert_second") ? "True" : "False";
+//                String quick = (Boolean) binding.get("quick") ? "True" : "False";
+//                String A = binding.get("A") == null ? "None" : "'" + binding.get("A") + '\'';
+//                String B = binding.get("B") == null ? "None" : "'" + binding.get("B") + '\'';
+//
+//                StringBuilder encoders = new StringBuilder("[");
+//                double[][] arr = (double[][]) binding.get("encoders");
+//                for (int i = 0; i < arr.length; i++) {
+//                    encoders.append('[');
+//                    for (int j = 0; j < arr[i].length; j++) {
+//                        encoders.append(arr[i][j]);
+//                        if ((j + 1) < arr[i].length) {
+//                            encoders.append(',');
+//                        }
+//                    }
+//                    encoders.append(']');
+//                    if ((i + 1) < arr.length) {
+//                        encoders.append(',');
+//                    }
+//                }
+//                encoders.append(']');
+//
+//                py.append(String.format("nef.convolution.make_convolution(%s, name='%s', A=%s, B=%s, C='%s', N_per_D=%d, quick=%s, encoders=%s, radius=%d, pstc_out=%g, pstc_in=%g, pstc_gate=%g, invert_first=%s, invert_second=%s, mode='%s', output_scale=%d)\n",
+//                        pythonNetworkName,
+//                        binding.get("name"),
+//                        A,
+//                        B,
+//                        binding.get("C"),
+//                        binding.get("N_per_D"),
+//                        quick,
+//                        encoders.toString(),
+//                        binding.get("radius"),
+//                        binding.get("pstc_out"),
+//                        binding.get("pstc_in"),
+//                        binding.get("pstc_gate"),
+//                        invert_first,
+//                        invert_second,
+//                        binding.get("mode"),
+//                        binding.get("output_scale")));
+//            }
+//        }
+//
+//        if (myMetaData.get("bgrule") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("bgrule")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap bgrule = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(bgrule.get("name"))) {
+//                    continue;
+//                }
+//
+//                String use_single_input = (Boolean) bgrule.get("use_single_input") ? "True" : "False";
+//
+//                // going to assume the current network is the BG...BG_rules can only be added on BG networks.
+//                py.append(String.format("nef.templates.basalganglia_rule.make(%s, %s.network.getNode('%s'), index=%d, dim=%d, pattern='%s', pstc=%g, use_single_input=%s)\n",
+//                        pythonNetworkName,
+//                        pythonNetworkName,
+//                        bgrule.get("name"),
+//                        bgrule.get("index"),
+//                        bgrule.get("dim"),
+//                        bgrule.get("pattern"),
+//                        bgrule.get("pstc"),
+//                        use_single_input));
+//            }
+//        }
+//
+//        if (myMetaData.get("gate") != null) {
+//            Iterator iter = ((HashMap) myMetaData.get("gate")).values().iterator();
+//            while (iter.hasNext()) {
+//                HashMap gate = (HashMap) iter.next();
+//
+//                if (!nodeMap.containsKey(gate.get("name"))) {
+//                    continue;
+//                }
+//
+//                py.append(String.format("nef.templates.gate.make(%s, name='%s', gated='%s', neurons=%d, pstc=%g)\n",
+//                        pythonNetworkName,
+//                        gate.get("name"),
+//                        gate.get("gated"),
+//                        gate.get("neurons"),
+//                        gate.get("pstc")));
+//            }
+//        }
+//
+//        return py.toString();
+//    }

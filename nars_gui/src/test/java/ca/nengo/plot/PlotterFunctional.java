@@ -9,8 +9,8 @@ import ca.nengo.model.Network;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Units;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.FunctionInput;
-import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.NEFGroupFactory;
 import ca.nengo.neural.nef.impl.NEFGroupFactoryImpl;
@@ -73,7 +73,7 @@ public class PlotterFunctional {
 	
 	public static void rasterMemoryTest() {
 		try {
-			Network network = new NetworkImpl();
+			Network network = new DefaultNetwork();
 			
 			NEFGroupFactory ef = new NEFGroupFactoryImpl();
 			final NEFGroup ensemble = ef.make("ensemble", 200, 1);

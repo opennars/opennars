@@ -8,6 +8,7 @@ import ca.nengo.math.Function;
 import ca.nengo.math.impl.IndicatorPDF;
 import ca.nengo.math.impl.PiecewiseConstantFunction;
 import ca.nengo.model.*;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.GroupImpl;
 import ca.nengo.model.impl.FunctionInput;
 import ca.nengo.model.impl.NetworkImpl;
@@ -128,7 +129,7 @@ public class ALIFSpikeGeneratorTest extends TestCase {
 	}
 
 	public void testAdaptation() throws StructuralException, SimulationException {
-		NetworkImpl network = new NetworkImpl();
+		NetworkImpl network = new DefaultNetwork();
 		LinearSynapticIntegrator integrator = new LinearSynapticIntegrator(.001f, Units.ACU);
 		NTarget t = integrator.addTermination("input", new float[]{1}, .005f, false);
 		ALIFSpikeGenerator generator = new ALIFSpikeGenerator(.0005f, .02f, .2f, .05f);
@@ -217,7 +218,7 @@ public class ALIFSpikeGeneratorTest extends TestCase {
     public static void main2(String[] args) {
 
         try {
-            Network network = new NetworkImpl();
+            Network network = new DefaultNetwork();
 
             //x, .3: varying x keeps time constant, changes adapted rate
 //          ALIFSpikeGenerator generator = new ALIFSpikeGenerator(.002f, .02f, .5f, .01f);  //.2: .01 to .3 (150 to 20ms)

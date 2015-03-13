@@ -6,8 +6,8 @@ package ca.nengo.neural.nef.impl;
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.AbstractFunction;
 import ca.nengo.model.*;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.FunctionInput;
-import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.NEFGroupFactory;
 import ca.nengo.neural.neuron.impl.SpikingNeuron;
@@ -52,7 +52,7 @@ public class NEFGroupImplTest extends TestCase {
 		FunctionInput input = new FunctionInput("input", new Function[]{f}, Units.UNK);
 //		FunctionInput zero = new FunctionInput("zero", new Function[]{new ConstantFunction(1, 0f)}, Units.UNK);
 		
-		Network network = new NetworkImpl();
+		Network network = new DefaultNetwork();
 		network.addNode(input);
 		network.addNode(source);
 		network.addNode(dest);
@@ -101,7 +101,7 @@ public class NEFGroupImplTest extends TestCase {
 	public void functionalTestBiasOriginError() throws StructuralException, SimulationException {
 		float tauPSC = .01f;
 		
-		Network network = new NetworkImpl();
+		Network network = new DefaultNetwork();
 		
 		Function f = new AbstractFunction(1) {
 			private static final long serialVersionUID = 1L;

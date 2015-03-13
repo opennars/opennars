@@ -46,7 +46,7 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Truthable, Stamped {
+public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String>, Termable, Truthable, Stamped {
 
 
 
@@ -493,7 +493,11 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Termable, Tr
         return getKey().toString();
     }
 
- 
+    @Override
+    public String name() {
+        return toString();
+    }
+
     /**
      * Get a String representation of the sentence for key of Task and TaskLink
      * We don't cache the Sentence string for 2 reasons:
