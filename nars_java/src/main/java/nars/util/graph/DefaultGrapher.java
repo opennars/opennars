@@ -111,6 +111,11 @@ public class DefaultGrapher implements NARGraph.Grapher {
         if (addVertex(c)==null && !forceUpdate)
             return; //already added
 
+        aroundConcept(c, forceUpdate);
+
+    }
+
+    void aroundConcept(Concept c, boolean forceUpdate) {
         @Deprecated NARGraph g = this.graph;
 
         if (includeTermLinks) {
@@ -160,6 +165,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
                 recurseTermComponents(g, (CompoundTerm) b, level - 1);
             }
         }
+
     }
 
     @Override
@@ -279,15 +285,23 @@ public class DefaultGrapher implements NARGraph.Grapher {
         this.includeSyntax = showSyntax ? 1 : 0;
     }
 
-    /** updates an object that may be in the graph */
     public DefaultGrapher on(NARGraph g, Object vertex) {
+        return on(g, vertex);
+    }
+
+    /** updates an object that may be in the graph */
+    public DefaultGrapher on(NARGraph g, Object vertex, boolean aroundOnly) {
         this.graph = g;
 
         //if (!graph.containsVertex(v(vertex))) {
             if (vertex instanceof Concept) {
-                onConcept((Concept) vertex, true);
+                if (aroundOnly)
+                    aroundConcept((Concept) vertex, true);
+                else
+                    onConcept((Concept) vertex, true);
             } else if (vertex instanceof Terms.Termable) {
-                onTerm(((Terms.Termable) vertex).getTerm());
+                if (!aroundOnly)
+                    onTerm(((Terms.Termable) vertex).getTerm());
             }
         //}
         return this;

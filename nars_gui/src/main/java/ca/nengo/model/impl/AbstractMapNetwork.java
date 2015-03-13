@@ -5,6 +5,7 @@ import ca.nengo.util.Probe;
 import ca.nengo.util.VisiblyChanges;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<K, N> {
 
@@ -16,7 +17,8 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
 
     public AbstractMapNetwork(String s) {
         super(s);
-        nodeMap = new LinkedHashMap<>();
+        //nodeMap = new LinkedHashMap<>();
+        nodeMap = new ConcurrentHashMap<>();
     }
 
 

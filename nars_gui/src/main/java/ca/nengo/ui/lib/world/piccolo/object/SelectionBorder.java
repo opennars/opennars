@@ -20,7 +20,7 @@ import java.awt.geom.Rectangle2D;
  * @author Shu Wu
  */
 public class SelectionBorder implements Listener {
-	private Path frame;
+	private final Path frame;
 
 	private Color frameColor = NengoStyle.COLOR_BORDER_SELECTED;
 
@@ -34,6 +34,7 @@ public class SelectionBorder implements Listener {
 	 */
 	public SelectionBorder(World world) {
 		super();
+        frame = Path.createRectangle(0f, 0f, 1f, 1f);
 		init(world);
 	}
 
@@ -44,9 +45,9 @@ public class SelectionBorder implements Listener {
 	 *            Object to select initially
 	 */
 	public SelectionBorder(World world, WorldObject objSelected) {
-		super();
-		init(world);
+		this(world);
 		setSelected(objSelected);
+
 	}
 
 	/**
@@ -57,7 +58,7 @@ public class SelectionBorder implements Listener {
 	 */
 	private void init(World world) {
 		this.frameHolder = world.getSky();
-		frame = Path.createRectangle(0f, 0f, 1f, 1f);
+
 		frame.setPickable(false);
 
 		frameHolder.addPropertyChangeListener(Property.VIEW_TRANSFORM, this);
@@ -108,30 +109,32 @@ public class SelectionBorder implements Listener {
 		updateBounds();
 	}
 
-	public boolean setSelected(WorldObject newSelected) {
+	public  boolean setSelected(WorldObject newSelected) {
 		if (newSelected == selectedObj) {
             if (selectedObj!=null)
                 updateBounds();
 			return false;
 		}
 
-		if (selectedObj != null) {
-			selectedObj.removePropertyChangeListener(Property.GLOBAL_BOUNDS, this);
-			selectedObj.removePropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
-			selectedObj = null;
-		}
+        synchronized (frame) {
+            if (selectedObj != null) {
+                selectedObj.removePropertyChangeListener(Property.GLOBAL_BOUNDS, this);
+                selectedObj.removePropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
+                selectedObj = null;
+            }
 
-		selectedObj = newSelected;
-		if (selectedObj != null) {
-			selectedObj.addPropertyChangeListener(Property.GLOBAL_BOUNDS, this);
-			selectedObj.addPropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
+            selectedObj = newSelected;
+            if (selectedObj != null) {
+                selectedObj.addPropertyChangeListener(Property.GLOBAL_BOUNDS, this);
+                selectedObj.addPropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
 
-			frameHolder.addChild(frame);
-			updateBounds();
-		} else {
+                frameHolder.addChild(frame);
+                updateBounds();
+            } else {
 
-			frame.removeFromParent();
-		}
+                frame.removeFromParent();
+            }
+        }
         return true;
 	}
 

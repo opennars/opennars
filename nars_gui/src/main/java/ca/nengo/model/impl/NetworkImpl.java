@@ -340,8 +340,10 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      */
     public Node[] getNodes() {
         if (myNodeArray == null) {
-            Collection<N> c = getNodeCollection();
-            myNodeArray = c.toArray(new Node[c.size()]);
+            //synchronized(myProbeables /* just some final variable for now */) {
+                Collection<N> c = getNodeCollection();
+                myNodeArray = c.toArray(new Node[c.size()]);
+            //}
         }
         return myNodeArray;
     }

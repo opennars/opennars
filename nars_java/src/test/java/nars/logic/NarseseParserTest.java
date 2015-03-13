@@ -37,6 +37,23 @@ public class NarseseParserTest {
     }
 
 
+    @Test public void testSomethingTheOldParserCouldntHandle() {
+
+        Task t = task("<<$A --> $B> --> QPre>!");
+        assertNotNull(t);
+
+        Task t1 = task("<<<$A --> $B> --> QPre> =|> X>!");
+        assertNotNull(t);
+
+        Task t2 = task("<<<$A --> $B> --> QPre> =|> <X-->Y>>!");
+        assertNotNull(t);
+
+        Task t3 = task("<<<$A --> $B> --> QPre> =|> <$A --> $B>>!");
+        assertNotNull(t);
+
+        System.out.println(t);
+    }
+
     @Test public void testParseCompleteEternalTask() throws InvalidInputException {
         Task t = task("$0.99;0.95$ <a --> b>! %0.93;0.95%");
 

@@ -26,6 +26,7 @@ import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.*;
 
@@ -56,6 +57,7 @@ public class TestNARGraph extends Nengrow {
 //                }
 //                return false;
 //            }
+
         };
 
         private final NAR nar;
@@ -63,8 +65,8 @@ public class TestNARGraph extends Nengrow {
         private UINARGraph ui;
 
 
-        float simTimePerCycle = 0.02f;
-        float simTimePerLayout = 0.6f;
+        float simTimePerCycle = 0.1f;
+        float simTimePerLayout = 0.1f;
 
 
         float radius = 2500;
@@ -247,16 +249,23 @@ public class TestNARGraph extends Nengrow {
 
                 @Override
                 public void onNewConcept(Concept c) {
-                    add(c);
+                    if (add(c)!=null)
+                        refresh(c);
                 }
 
                 @Override
                 public void onForgetConcept(Concept c) {
 
+
+
+                    //int x = ui.getViewer().getGround().printTree(System.out);
+
                     remove(c);
 
+                    //int y = ui.getViewer().getGround().printTree(System.out);
 
-                    System.out.println("forget: " +
+
+                    System.out.println(" forget: " +
                         nar.memory.concepts.size() + " concepts, "
                     + graph.vertexSet().size() + " vertices, " +
                     Iterators.size(Iterators.filter(graph.vertexSet().iterator(), new Predicate<UIVertex>() {
@@ -283,7 +292,7 @@ public class TestNARGraph extends Nengrow {
 
 
         public void refresh(Object x) {
-            new MyGrapher().on(null, x).finish();
+            new MyGrapher().on(null, x, true).finish();
         }
 
 
@@ -327,6 +336,7 @@ public class TestNARGraph extends Nengrow {
          *  returns the existing one if already existed
          * */
         protected UIVertex add(Named o) {
+
             UIVertex existing = getNode(o);
             if (existing==null) {
                 synchronized (graph) {
@@ -339,7 +349,13 @@ public class TestNARGraph extends Nengrow {
                     } catch (StructuralException e) {
                         throw new RuntimeException(e);
                     }
-                    refresh(o);
+                }
+            }
+            else {
+                //allow upgrading from Term to Concept; not downgrading
+                if ((existing.vertex instanceof Term) && (o instanceof Concept)) {
+                    remove(existing.vertex);
+                    add(o);
                 }
             }
 
@@ -357,12 +373,15 @@ public class TestNARGraph extends Nengrow {
             UIVertex existing = getNode(id);
             if (existing == null) return null;
 
+
             synchronized (graph) {
                 try {
                     removeNode(id);
+                    //existing.ui.destroy();
                 } catch (StructuralException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
+                SwingUtilities.invokeLater(existing.ui::destroy);
 
                 if (!graph.removeVertex(existing))
                     throw new RuntimeException("graph / index inconsistency; vertex already existed");
@@ -394,7 +413,7 @@ public class TestNARGraph extends Nengrow {
     public void init() throws Exception {
 
 
-        Default d = new Default(8, 1, 1);
+        Default d = new Default(32, 1, 1);
         d.setSubconceptBagSize(0);
         NAR nar = new NAR(d);
         /*nar.input("<a --> {b}>.");
@@ -415,13 +434,13 @@ public class TestNARGraph extends Nengrow {
         UINetwork networkUI = (UINetwork) addNodeModel(newGraph(nar));
         NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
 
-        float fps = 10f;
+        float fps = 20f;
 
         java.util.Timer timer = new java.util.Timer("", false);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                float dt = 0.01f;
+                float dt = 0.05f;
                 try {
                     networkUI.node().run(time, time + dt);
                 } catch (SimulationException e) {

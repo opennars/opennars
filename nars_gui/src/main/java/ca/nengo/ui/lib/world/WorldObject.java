@@ -584,20 +584,25 @@ public interface WorldObject extends NamedObject, Destroyable {
         public void propertyChanged(Property event);
     }
 
-    default public void printTree(PrintStream s) {
-        printTree(s, 0);
+    /** returns total # of children */
+    default public int printTree(PrintStream s) {
+        return printTree(s, 0);
     }
 
-    default public void printTree(PrintStream s, int level) {
+    default public int printTree(PrintStream s, int level) {
         for (int i = 0; i < level; i++)
             s.print("  ");
+
+        int total = 1;
         String x = this.toString();
         if (x.trim().isEmpty()) {
             x = "null";
         }
         s.println(x + ":" + getClass());
         for (WorldObject o : getChildren())
-            o.printTree(s, level+1);
+            total += o.printTree(s, level+1);
+
+        return total;
     }
 
 }

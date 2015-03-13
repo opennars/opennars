@@ -23,6 +23,7 @@ import org.parboiled.support.ParsingResult;
 import org.parboiled.support.Var;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -37,6 +38,8 @@ import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 public class NarseseParser extends BaseParser<Object> {
 
     private final int level;
+
+    //These should be set to something like RecoveringParseRunner for performance
     ParseRunner inputParser = new RecoveringParseRunner(Input());
     ParseRunner singleTaskParser = new RecoveringParseRunner(Task());
     ParseRunner singleTermParser = new RecoveringParseRunner(Term());
@@ -72,10 +75,13 @@ public class NarseseParser extends BaseParser<Object> {
                 s(),
 
                 Term(),
-                term.set( (Term)pop() ),
+                term.set((Term) pop()),
+
+                s(),
 
                 SentenceTypeChar(),
-                punc.set( matchedChar() ),
+                punc.set(matchedChar()),
+
 
                 s(),
 
@@ -174,6 +180,7 @@ public class NarseseParser extends BaseParser<Object> {
                         | "<|>"                              // (concurrent equivalence)*/
 
         /**
+         * ??
          *   :- (apply, prolog implication)
          *   -: (reverse apply)
          */
@@ -183,10 +190,12 @@ public class NarseseParser extends BaseParser<Object> {
 
                 push( getTerm( (Term)pop(), (NALOperator)pop(), (Term)pop() ) )
         );
+
     }
 
 
-    
+
+
     Rule CopulaOperator() {
         NALOperator[] ops = getCopulas();
         Rule[] copulas = new Rule[ops.length];
@@ -236,14 +245,12 @@ public class NarseseParser extends BaseParser<Object> {
 
         return sequence(
                 firstOf(
-                        Interval(),
-
                         CompoundTerm(),
                         Copula(),
-
+                        Interval(),
+                        Variable(),
                         QuotedLiteral(),
-                        Atom(),
-                        Variable()
+                        Atom()
                 ),
                 push(Term.get(pop()))
         );
@@ -253,7 +260,7 @@ public class NarseseParser extends BaseParser<Object> {
     /** an atomic term */
     Rule Atom() {
         return sequence(
-                oneOrMore(noneOf(" ,.!?^<>-=*|&()<>[]{}#$\"\t")),
+                oneOrMore(noneOf(" ,.!?^" + Symbols.INTERVAL_PREFIX + "<>-=*|&()<>[]{}%#$@\'\"\t\n")),
                 push(match())
         );
     }
@@ -370,8 +377,10 @@ public class NarseseParser extends BaseParser<Object> {
     /** a list of terms enclosed by an opener/closer pair, which may compose a set or product */
     Rule VectorTerm(NALOperator opener, NALOperator closer) {
         return sequence(
-            opener.ch, s(),
+            opener.ch,
+            s(),
             push(opener),
+            s(),
             Term(),
             zeroOrMore(
 
@@ -539,9 +548,12 @@ public class NarseseParser extends BaseParser<Object> {
     public Task parseTask(String input) throws InvalidInputException {
         ParsingResult r = singleTaskParser.run(input);
 
-        Object x = r.getValueStack().iterator().next();
-        if (x instanceof Task)
-            return (Task)x;
+        Iterator ir = r.getValueStack().iterator();
+        if (ir.hasNext()) {
+            Object x = ir.next();
+            if (x instanceof Task)
+                return (Task) x;
+        }
 
         throw new InvalidInputException(r.parseErrors.toString());
     }
