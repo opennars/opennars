@@ -24,11 +24,15 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget {
         this.coords = new ArrayRealVector(2);
 
         //initial random position, to seed layout
-        ui.dragTo(Math.random() - 0.5, Math.random() - 0.5);
-        getActualCoordinates(0);
+        ui.dragTo(1000*(Math.random() - 0.5), 1000*(Math.random() - 0.5));
+        //getActualCoordinates(0);
     }
 
     abstract public float getPriority();
+
+    @Override
+    protected void beforeDestroy() {
+    }
 
     @Override
     public String toString() {
@@ -62,6 +66,7 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget {
     }
 
     public ArrayRealVector getCoordinates() {
+        //if (destroyed) return null;
         return coords;
     }
 

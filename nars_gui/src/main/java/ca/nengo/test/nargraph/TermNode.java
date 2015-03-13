@@ -137,7 +137,7 @@ public class TermNode extends UIVertex {
             }
             else {
                 color = purple.get(priority); //to match the blue of TaskLinks
-                scale = 0.5f;
+                scale = 0.75f;
             }
         }
         else {
@@ -150,6 +150,7 @@ public class TermNode extends UIVertex {
         if (priority < 0) priority = 0;
 
         double[] d = getCoordinates().getDataRef();
+
         double x = d[0];
         double y = d[1];
         if (Double.isFinite(x) && Double.isFinite(y)) {

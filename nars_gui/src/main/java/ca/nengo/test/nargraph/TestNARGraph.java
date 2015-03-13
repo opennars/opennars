@@ -63,8 +63,8 @@ public class TestNARGraph extends Nengrow {
         private UINARGraph ui;
 
 
-        float simTimePerCycle = 0.1f;
-        float simTimePerLayout = 0.1f;
+        float simTimePerCycle = 0.5f;
+        float simTimePerLayout = 0.5f;
 
 
         float radius = 2500;
@@ -242,6 +242,7 @@ public class TestNARGraph extends Nengrow {
 
                 @Override
                 public void onFiredConcept(Concept c) {
+
                     refresh(c);
                 }
 
@@ -318,9 +319,10 @@ public class TestNARGraph extends Nengrow {
                 UIEdge e;
                 //TODO use getVertex to see if it already exists to avoid reconstrucing
                 UIVertex v1 = add(source);
+                if (v1 == null) return null;
                 UIVertex v2 = add(target);
+                if (v2 == null) return null;
 
-                if (v1!=null && v2!=null) {
 
                     e = new UIEdge(v1, v2, edge);
                     boolean added;
@@ -332,7 +334,6 @@ public class TestNARGraph extends Nengrow {
                             return e;
                         }
 
-                }
                 return null;
             }
 
@@ -345,9 +346,14 @@ public class TestNARGraph extends Nengrow {
         protected UIVertex add(Named o) {
 
             UIVertex existing = getNode(o);
+
             if (existing==null) {
                 synchronized (graph) {
+
                     existing = newVertex(o);
+
+                    if (!graph.addVertex(existing))
+                        throw new RuntimeException("graph / index inconsistency; vertex already existed");
 
                     try {
                         addNode(existing);
@@ -355,17 +361,17 @@ public class TestNARGraph extends Nengrow {
                         throw new RuntimeException(e);
                     }
 
-                    if (!graph.addVertex(existing))
-                        throw new RuntimeException("graph / index inconsistency; vertex already existed");
 
                 }
             }
             else {
                 //allow upgrading from Term to Concept; not downgrading
-                if ((existing.vertex instanceof Term) && (o instanceof Concept)) {
+                if ((existing.vertex.getClass() == Term.class) && (o instanceof Concept)) {
                     remove(existing.vertex);
-                    add(o);
+                    return add(o);
                 }
+
+
             }
 
 
@@ -378,6 +384,7 @@ public class TestNARGraph extends Nengrow {
         }
 
         protected UIVertex remove(Named v) {
+
             String id = v.name().toString();
             UIVertex existing = getNode(id);
             if (existing == null) return null;
@@ -385,16 +392,23 @@ public class TestNARGraph extends Nengrow {
             SwingUtilities.invokeLater(existing.ui::destroy);
 
             synchronized (graph) {
+
+                int edgesBefore = graph.edgeSet().size();
+
+                if (!graph.removeVertex(existing))
+                    throw new RuntimeException("graph / index inconsistency; vertex already existed");
+
+                int edgesAfter = graph.edgeSet().size();
+
+
                 try {
                     removeNode(id);
                 } catch (StructuralException e) {
                     throw new RuntimeException(e);
                 }
 
-                if (!graph.removeVertex(existing))
-                    throw new RuntimeException("graph / index inconsistency; vertex already existed");
 
-                edgesChanged = true;
+                edgesChanged = edgesAfter!=edgesBefore;
             }
 
 
@@ -407,7 +421,6 @@ public class TestNARGraph extends Nengrow {
         protected void updateEdges() {
             if (!edgesChanged) {
                 edgesChanged = true;
-                getEdges();
             }
         }
 
@@ -423,7 +436,7 @@ public class TestNARGraph extends Nengrow {
     public void init() throws Exception {
 
 
-        Default d = new Default(32, 1, 1);
+        Default d = new Default(256, 1, 1);
         d.setSubconceptBagSize(0);
         NAR nar = new NAR(d);
         /*nar.input("<a --> {b}>.");
@@ -444,13 +457,13 @@ public class TestNARGraph extends Nengrow {
         UINetwork networkUI = (UINetwork) addNodeModel(newGraph(nar));
         NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
 
-        float fps = 20f;
+        float fps = 50f;
 
         java.util.Timer timer = new java.util.Timer("", false);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                float dt = 0.05f;
+                float dt = 0.25f;
                 try {
                     networkUI.node().run(time, time + dt);
                 } catch (SimulationException e) {

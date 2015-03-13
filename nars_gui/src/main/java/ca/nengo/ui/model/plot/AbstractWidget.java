@@ -69,6 +69,11 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
     }
 
 
+    /** called before destruction */
+    protected void beforeDestroy() {
+
+    }
+
     public class AbstractWidgetUI extends UINeoNode<AbstractWidget> {
 
         public AbstractWidgetUI(double width, double height) {
@@ -90,7 +95,13 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         }
 
 
+        @Override
+        protected void prepareForDestroy() {
+            super.prepareForDestroy();
 
+            if (!isDestroyed())
+                beforeDestroy();
+        }
 
         @Override
         public void dragOffset(double dx, double dy) {
