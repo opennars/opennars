@@ -353,7 +353,8 @@ public class TestNARGraph extends Nengrow {
                     existing = newVertex(o);
 
                     if (!graph.addVertex(existing))
-                        throw new RuntimeException("graph / index inconsistency; vertex already existed");
+                        return null;
+                        //throw new RuntimeException("graph / index inconsistency; vertex already existed");
 
                     try {
                         addNode(existing);
@@ -461,8 +462,13 @@ public class TestNARGraph extends Nengrow {
 
         java.util.Timer timer = new java.util.Timer("", false);
         timer.scheduleAtFixedRate(new TimerTask() {
+
+            boolean finished = true;
             @Override
             public void run() {
+                if (!finished) return;
+                finished = false;
+
                 float dt = 0.25f;
                 try {
                     networkUI.node().run(time, time + dt);
@@ -470,6 +476,7 @@ public class TestNARGraph extends Nengrow {
                     e.printStackTrace();
                 }
                 time += dt;
+                finished = true;
             }
         }, 0, (int)(1000/fps));
 

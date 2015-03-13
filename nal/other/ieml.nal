@@ -1,0 +1,128 @@
+'IEML
+'http://www.ieml.org/english/iemlword.html
+
+'2-letter language character codes
+<{en,fr} --> language>.
+<language <-> b>.
+
+
+<{U,A,S,B,T} --> element>.
+
+
+'http://www.ieml.org/english/polarity.html
+<{O,M} --> pole>.
+<(*,en,"pragmatic") --> O>.
+<(*,en,"semantic") --> M>.
+
+<{source,target} --> role>.
+
+'http://www.ieml.org/english/o_1.html
+<{U,A} --> O>.
+<(*,en,"virtual") --> U>.
+<(*,en,"actual") --> A>.
+<(--,U) ==> A>.
+<(--,A) ==> U>.
+<{(*,OO,O),(*,OM,O),(*,MO,M),(*,MM,M)} --> source>.
+<{(*,OO,O),(*,MO,O),(*,OM,M),(*,MM,M)} --> target>.
+
+
+'http://www.ieml.org/english/m_1.html
+<{S,B,T} --> M>.
+<(*,en,"sign") --> S>.
+<(*,en,"being") --> B>.
+<(*,en,"thing") --> T>.
+
+'http://www.ieml.org/english/polarevents.html
+<{OO, OM, MO, MM} --> event>.
+<(*,O,O) <=> OO>.
+<(*,O,M) <=> OM>.
+<(*,M,O) <=> MO>.
+<(*,M,M) <=> MM>.
+<(*,en,"energy") --> OO>.
+<(*,en,"act") --> OM>.
+<(*,en,"mutation") --> MO>.
+<(*,en,"concept") --> MM>.
+
+
+<{UU,UA,AU,AA} --> OO>.
+<(*,U,U) <=> UU>.
+<(*,U,A) <=> UA>.
+<(*,A,U) <=> AU>.
+<(*,A,A) <=> AA>.
+<(*,en,"reflect") --> UU>.
+<UU <=> wo>.
+<(*,en,"act") --> UA>.
+<UA <=> wa>.
+<(*,en,"perceive") --> AU>.
+<AU <=> wu>.
+<(*,en,"reconstitute") --> AA>.
+<AA <=> we>.
+
+<{SS,SB,ST,BS,BB,BT,TS,TB,TT} --> MM>.
+
+
+<(*,S,T) <=> ST>.
+<(*,B,S) <=> BS>.
+<(*,B,B) <=> BB>.
+<(*,B,T) <=> BT>.
+<(*,T,S) <=> TS>.
+<(*,T,B) <=> TB>.
+<(*,T,T) <=> TT>.
+
+<(*,S,S) <=> SS>.
+<(*,en,"thought") --> SS>.
+<SS <=> s>.
+
+<(*,S,T) <=> ST>.
+<(*,en,"memory") --> ST>.
+<ST <=> t>.
+
+<(*,S,B) <=> SB>.
+<(*,en,"language") --> SB>.
+<SB <=> b>.
+<language <-> b>.
+
+'TODO:
+'BS	society	k
+'BB	affect	m
+'BT	world	n
+'TS	truth	d
+'TB	life	f
+'TT	space	l
+
+
+
+'... TODO add remaining events: http://www.ieml.org/english/polarevents.html
+
+
+
+'http://www.ieml.org/english/cycles.html
+<(*,<$a --> event>,<$b --> event>) --> cycle>.
+<<(*,$a,$b) --> cycle> ==> <$a =/> $b>>.
+
+
+<(*,en,"life stage") --> (*,OO,OO)>.
+<(*,en,"behavior") --> (*,OO,OM)>.
+<(*,en,"governance") --> (*,OO,MO)>.
+<(*,en,"action source") --> (*,OO,MM)>.
+
+<(*,en,"empowerment") --> (*,OM,OO)>.
+<(*,en,"performance") --> (*,OM,OM)>.
+<(*,en,"production") --> (*,OM,MO)>.
+<(*,en,"obstacle") --> (*,OM,MM)>.
+
+<(*,en,"impermanent") --> (*,MO,OO)>.
+<(*,en,"condition") --> (*,MO,OM)>.
+<(*,en,"transformation") --> (*,MO,MO)>.
+<(*,en,"trial") --> (*,MO,MM)>.
+
+<(*,en,"meaning source") --> (*,MM,OO)>.
+<(*,en,"development") --> (*,MM,OM)>.
+<(*,en,"creation") --> (*,MM,MO)>.
+<(*,en,"nature") --> (*,MM,MM)>.
+
+
+'Element:
+'Flow: Source,Target,Translator
+<(*,<$s --> source>,<$t --> target>,<$p --> translator>) --> flow>.
+<(*,$s,$t,$p) ==> <(*,$s,$t) --> $p>>.
