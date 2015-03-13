@@ -11,8 +11,6 @@ import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 import nars.build.Default;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -128,7 +126,7 @@ public class TestNARGraph extends Nengrow {
 
         /** returns a list of edges which can be used by drawing thread for non-synchronized fast drawing */
         public List<UIEdge<UIVertex>> getEdges() {
-            synchronized(nextEdges) {
+            synchronized(graph) {
                 if (edgesChanged) {
                     edgesChanged = false;
                     nextEdges = new ArrayList(graph.edgeSet()); //use atomicRef?
@@ -256,28 +254,29 @@ public class TestNARGraph extends Nengrow {
                 @Override
                 public void onForgetConcept(Concept c) {
 
+                    remove(c);
 
 
                     //int x = ui.getViewer().getGround().printTree(System.out);
 
-                    remove(c);
-
                     //int y = ui.getViewer().getGround().printTree(System.out);
-
-
-                    System.out.println(" forget: " +
-                        nar.memory.concepts.size() + " concepts, "
-                    + graph.vertexSet().size() + " vertices, " +
-                    Iterators.size(Iterators.filter(graph.vertexSet().iterator(), new Predicate<UIVertex>() {
-
-                        @Override
-                        public boolean apply(UIVertex input) {
-                            if (input instanceof TermNode) {
-                                return ((TermNode) input).concept!=null;
-                            }
-                            return false;
-                        }
-                    })) + " concept ui nodes" );
+//
+//
+//                    System.out.println(" forget: " +
+//                        nar.memory.concepts.size() + " concepts, "
+//                    + graph.vertexSet().size() + " vertices, " +
+//                            synchronized(graph) {
+//                    Iterators.size(Iterators.filter(graph.vertexSet().iterator(), new Predicate<UIVertex>() {
+//
+//                        @Override
+//                        public boolean apply(UIVertex input) {
+//                            if (input instanceof TermNode) {
+//                                return ((TermNode) input).concept!=null;
+//                            }
+//                            return false;
+//                        }
+//                    })) + " concept ui nodes" );
+//                            }
 
                 }
             };
@@ -321,11 +320,19 @@ public class TestNARGraph extends Nengrow {
                 UIVertex v1 = add(source);
                 UIVertex v2 = add(target);
 
-                if (v1!=null && v2!=null)
-                    if (graph.addEdge(v1, v2, e = new UIEdge(v1, v2, edge))) {
-                        updateEdges();
-                        return e;
+                if (v1!=null && v2!=null) {
+
+                    e = new UIEdge(v1, v2, edge);
+                    boolean added;
+                    synchronized (graph) {
+                         added = graph.addEdge(v1, v2, e);
                     }
+                    if (added) {
+                        updateEdges();
+                            return e;
+                        }
+
+                }
                 return null;
             }
 
@@ -341,14 +348,16 @@ public class TestNARGraph extends Nengrow {
             if (existing==null) {
                 synchronized (graph) {
                     existing = newVertex(o);
-                    if (!graph.addVertex(existing))
-                        throw new RuntimeException("graph / index inconsistency; vertex already existed");
 
                     try {
                         addNode(existing);
                     } catch (StructuralException e) {
                         throw new RuntimeException(e);
                     }
+
+                    if (!graph.addVertex(existing))
+                        throw new RuntimeException("graph / index inconsistency; vertex already existed");
+
                 }
             }
             else {
@@ -373,23 +382,24 @@ public class TestNARGraph extends Nengrow {
             UIVertex existing = getNode(id);
             if (existing == null) return null;
 
+            SwingUtilities.invokeLater(existing.ui::destroy);
 
             synchronized (graph) {
                 try {
                     removeNode(id);
-                    //existing.ui.destroy();
                 } catch (StructuralException e) {
                     throw new RuntimeException(e);
                 }
-                SwingUtilities.invokeLater(existing.ui::destroy);
 
                 if (!graph.removeVertex(existing))
                     throw new RuntimeException("graph / index inconsistency; vertex already existed");
 
+                edgesChanged = true;
             }
 
-            return existing;
 
+
+            return existing;
         }
 
         private boolean edgesChanged = false;

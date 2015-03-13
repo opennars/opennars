@@ -283,6 +283,9 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                      */
         UINeoNode nodeUI = UINeoNode.createNodeUI(node);
 
+        if (nodeUI == null) {
+            throw new RuntimeException(node + " did not createUINode");
+        }
 
         if (newItemPositionX != null && newItemPositionY != null) {
             nodeUI.setOffset(newItemPositionX, newItemPositionY);
@@ -292,7 +295,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         } else {
             boolean centerAndNotify = !isFirstUpdate;
             UINeoNode u = addUINode(nodeUI, centerAndNotify, false);
-            neoNodesChildren.put(node,u);
+
+            neoNodesChildren.put(node, u);
             if (centerAndNotify) {
                 nodeUI.showPopupMessage("Node " + node.getName() + " added to Network");
             }

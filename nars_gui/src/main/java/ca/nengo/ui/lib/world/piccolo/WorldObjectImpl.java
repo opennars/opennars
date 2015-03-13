@@ -798,7 +798,7 @@ public class WorldObjectImpl implements WorldObject {
                 successfull = true;
             }
         }
-        if (!successfull) {
+        if (!successfull && !isDestroyed()) {
             throw new InvalidParameterException("Listener is not attached");
         }
     }

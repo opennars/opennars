@@ -451,7 +451,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
 
 
 
-//			VisiblyMutableUtils.nodeRemoved(this, node, myListeners);
+        VisiblyChangesUtils.nodeRemoved(this, node, myListeners);
 
         getSimulator().update(this);
         fireVisibleChangeEvent();
