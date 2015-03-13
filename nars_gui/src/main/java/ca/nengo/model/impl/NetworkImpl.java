@@ -573,8 +573,11 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     /**
      * @see ca.nengo.model.Node#run(float, float)
      */
-    public void run(float startTime, float endTime) throws SimulationException {
+    @Deprecated public void run(float startTime, float endTime) throws SimulationException {
         getSimulator().run(startTime, endTime, myStepSize);
+    }
+    public void run(float startTime, float endTime, int stepsPerCycle) throws SimulationException {
+        getSimulator().run(startTime, endTime, myStepSize = ((endTime-startTime)/stepsPerCycle)) ;
     }
 
     /**
@@ -985,6 +988,8 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     public void stopProbing(String stateName) {
 
     }
+
+
 
     /**
      * Wraps an Origin with a new name (for exposing outside Network).

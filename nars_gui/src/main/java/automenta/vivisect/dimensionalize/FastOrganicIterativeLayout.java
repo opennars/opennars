@@ -26,10 +26,9 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
     double temperatureDecay;
     double minTemperature;
 
-    public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, double scale) {
+    public FastOrganicIterativeLayout(DirectedGraph<N,E> graph) {
         this.graph = graph;
-        this.initialBounds = new mxRectangle(0,0, scale, scale);
-        setInitialTemp(100, 0.98f);
+        setInitialTemp(100, 1.0f);
         setMinDistanceLimit(0.1f);
         setMaxDistanceLimit(450f);
 
@@ -37,6 +36,10 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
         resetLearning();
 
+    }
+
+    public void scale(double scale) {
+        this.initialBounds = new mxRectangle(0,0, scale, scale);
     }
 
     @Override

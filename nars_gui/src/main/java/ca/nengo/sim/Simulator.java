@@ -173,4 +173,6 @@ public interface Simulator<K, N extends Node> extends VisiblyChanges, Cloneable 
 	 * @throws CloneNotSupportedException
 	 */
 	public Simulator clone() throws CloneNotSupportedException;
+
+
 }

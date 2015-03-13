@@ -157,7 +157,7 @@ public class TermNode extends UIVertex {
             long animTime = (long) (layoutPeriod * 1f);
 
             //TODO combine these into one Transform update
-            ui.dragTo(x, y, 0.02);
+            ui.dragTo(x, y, 0.5);
             ui.scaleTo(scale * (0.75f + priority), 0.05);
         }
         //System.out.println(x + " " + y);

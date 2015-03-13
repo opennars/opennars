@@ -3,6 +3,7 @@ package ca.nengo.model;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
+import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 */
 public class AgentNode extends AbstractWidget {
 
-    float animationLerpRate = 0.5f; //LERP interpolation rate
+    float animationLerpRate = 0.05f; //LERP interpolation rate
 
     double heading = 0, cheading = 0.57;
     double cx, cy, x, y;
@@ -26,6 +27,9 @@ public class AgentNode extends AbstractWidget {
 
         cx = x = ui.getOffset().getX();
         cy = y = ui.getOffset().getY();
+
+
+        setBounds(new PBounds(0,0,64,64));
 
     }
 
@@ -73,6 +77,12 @@ public class AgentNode extends AbstractWidget {
         this.movementBounds = movementBounds;
     }
 
+    @Override
+    public void draggedTo(double x, double y) {
+        super.draggedTo(x, y);
+        cx = this.x = x;
+        cy = this.y = y;
+    }
 
     @Override
     protected void paint(PaintContext paintContext, double width, double height) {
@@ -84,16 +94,14 @@ public class AgentNode extends AbstractWidget {
         double ww = width * scale;
         double hh = height * scale;
 
+
         if (canMove()) {
             cx = (cx * (1.0f - animationLerpRate)) + (x * animationLerpRate);
             cy = (cy * (1.0f - animationLerpRate)) + (y * animationLerpRate);
             cheading = (cheading * (1.0f - animationLerpRate / 2.0f)) + (heading * animationLerpRate / 2.0f);
 
 
-
-
-
-
+            /*
             Rectangle2D mb = getMovementBounds();
             if (mb!=null) {
                 if (x < mb.getMinX()) cx = x = mb.getMinX();
@@ -102,11 +110,14 @@ public class AgentNode extends AbstractWidget {
                 if (y < mb.getMinY()) cy = y = mb.getMinY();
                 if (y > mb.getMaxY()) cy = y = mb.getMaxY();
             }
+            */
 
 
 
 
-            move(cx - ui.getOffset().getX(), cy - ui.getOffset().getY() );
+            //System.out.println(x + " " + y+ " <= " + cx + " " + cy);
+            move(cx,cy);
+            //move(cx - ui.getOffset().getX(), cy - ui.getOffset().getY() );
 
             //ui.setOffset(cx,cy);
 

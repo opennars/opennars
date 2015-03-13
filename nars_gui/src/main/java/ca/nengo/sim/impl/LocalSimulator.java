@@ -165,8 +165,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
         double time = startTime;
         double thisStepSize = stepSize;
 
-        if(topLevel)
-        {
+        if(topLevel) {
             initRun(false);
             resetProbes();
         }

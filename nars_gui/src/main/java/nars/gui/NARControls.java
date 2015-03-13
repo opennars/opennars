@@ -26,7 +26,6 @@ import automenta.vivisect.swing.*;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
-import nars.core.Memory.Timing;
 import nars.core.NAR;
 import nars.event.Reaction;
 import nars.gui.input.TextInputPanel;
@@ -42,7 +41,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.awt.BorderLayout.CENTER;
@@ -51,7 +49,7 @@ import static nars.core.Memory.Timing.Real;
 import static nars.core.Memory.Timing.Simulation;
 
 
-public class NARControls extends NPanel implements ActionListener, Reaction {
+public class NARControls extends TimeControl implements Reaction {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 
@@ -72,34 +70,14 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
 
 
     /**
-     * Control buttons
-     */
-    private JButton stopButton, walkButton;
-
-    /**
      * Whether the experience is saving into a file
      */
     private boolean savingExp = false;
 
 
-
-    /**
-     * To process the next chunk of output data
-     *
-     * @param lines The text lines to be displayed
-     */
-    private NSlider speedSlider;
-    private float currentSpeed = 0f;
-    private float lastSpeed = 0f;
-    private final float defaultSpeed = 0.5f;
-
-    private final int GUIUpdatePeriodMS = 75;
     private NSlider volumeSlider;
 
-    private boolean allowFullSpeed = true;
 
-
-    int chartHistoryLength = 128;
     private final NARMetrics metrics;
 
     public NARControls(final NAR nar) {
@@ -490,16 +468,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
             updateGUI();
         }
     };
-    
-    /** in ms */
-    long lastUpdateTime = -1;
-    
-    /** in memory cycles */
-    
-    
-    
-    AtomicBoolean updateScheduled = new AtomicBoolean(false);
-    
+
     protected void updateGUI() {
                 
         speedSlider.repaint();
@@ -601,55 +570,6 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
     }
 
 
-    
-    private NSlider newSpeedSlider() {
-            final StringBuilder sb = new StringBuilder(32);
-
-        final NSlider s = new NSlider(0f, 0f, 1.0f) {
-
-            
-            @Override
-            public String getText() {
-                if (value == null) {
-                    return "";
-                }
-                
-                Timing tt = memory.param.getTiming();
-                
-                if (sb.length() > 0) sb.setLength(0);
-                
-                sb.append('@');
-                
-                if ((tt == Real) || (tt == Simulation)) {
-                    sb.append(memory.time() + "|" + memory.timeCycle());
-                }
-                else {
-                    sb.append(memory.time());
-                }
-                        
-                
-
-                if (currentSpeed == 0) {
-                    sb.append(" - pause");
-                } else if (currentSpeed == 1.0) {
-                    sb.append(" - run max speed");
-                } else {
-                    sb.append(" - run ").append(nar.getMinFramePeriodMS()).append(" ms / frame");
-                }
-                return sb.toString();
-            }
-
-            @Override
-            public void onChange(float v) {                
-                setSpeed(v);
-            }
-
-        };
-        this.speedSlider = s;
-
-        return s;
-    }
-
     private NSlider newVolumeSlider() {
         final NSlider s = this.volumeSlider = new NSlider(100f, 0, 100f) {
 
@@ -693,6 +613,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
         return s;
     }
 
+    @Override
     public void setSpeed(float nextSpeed) {
         final float maxPeriodMS = 1024.0f;
 
@@ -756,13 +677,7 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
 //
 //        }
 //    }
-    
-    
-    //http://astronautweb.co/snippet/font-awesome/
-    private final char FA_PlayCharacter = '\uf04b';
-    private final char FA_StopCharacter = '\uf04c';
-    private final char FA_FocusCharacter = '\uf11e';
-    private final char FA_ControlCharacter = '\uf085';
+
 
     private JComponent newParameterPanel() {
         JPanel p = new JPanel();
@@ -891,6 +806,38 @@ public class NARControls extends NPanel implements ActionListener, Reaction {
 
     @Override
     protected void onShowing(boolean showing) {
+
+    }
+
+    transient StringBuilder sb = new StringBuilder();
+
+    @Override
+    public String getTimeText() {
+
+
+        Memory.Timing tt = memory.param.getTiming();
+
+        if (sb.length() > 0) sb.setLength(0);
+
+        sb.append('@');
+
+        if ((tt == Real) || (tt == Simulation)) {
+            sb.append(memory.time() + "|" + memory.timeCycle());
+        }
+        else {
+            sb.append(memory.time());
+        }
+
+
+
+        if (currentSpeed == 0) {
+            sb.append(" - pause");
+        } else if (currentSpeed == 1.0) {
+            sb.append(" - run max speed");
+        } else {
+            sb.append(" - run ").append(nar.getMinFramePeriodMS()).append(" ms / frame");
+        }
+        return sb.toString();
 
     }
 }

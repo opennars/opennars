@@ -4,6 +4,7 @@ import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
 import automenta.vivisect.dimensionalize.UIEdge;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
+import ca.nengo.model.StepListener;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.AbstractMapNetwork;
 import ca.nengo.ui.Nengrow;
@@ -23,6 +24,7 @@ import nars.logic.entity.Term;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.piccolo2d.util.PPaintContext;
 
 import javax.swing.*;
 import java.io.File;
@@ -63,13 +65,12 @@ public class TestNARGraph extends Nengrow {
         private UINARGraph ui;
 
 
-        float simTimePerCycle = 0.5f;
-        float simTimePerLayout = 0.5f;
+        float simTimePerCycle = 4f;
+        float simTimePerLayout = 0.25f;
 
 
-        float radius = 2500;
         final FastOrganicIterativeLayout<UIVertex,UIEdge<UIVertex>> hmap =
-                new FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>>(graph, radius) {
+                new FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>>(graph) {
         /*final HyperassociativeMap<NARGraphVertex,UIEdge<NARGraphVertex>> hmap =
             new HyperassociativeMap<NARGraphVertex,UIEdge<NARGraphVertex>>(graph, 2) {*/
 
@@ -138,26 +139,27 @@ public class TestNARGraph extends Nengrow {
 
 
 
-        abstract public class SubCycle {
+        abstract public class SubCycle implements StepListener {
 
-            float lastCycle = 0;
-            long lastCycleReal = System.currentTimeMillis();
+            float lastStep = 0;
+            long lastStepReal = System.currentTimeMillis();
 
-            public void update(float endTime) {
+            @Override
+            public void stepStarted(float time) {
                 double interval = getTimePerCycle();
-                    float dt = endTime - lastCycle;
-                    int numCycles = (int)(Math.floor( dt / interval));
+                float dt = time - lastStep;
+                int numCycles = (int)(Math.floor( dt / interval));
 
-                    if (numCycles > 0) {
+                if (numCycles > 0) {
 
-                        long now = System.currentTimeMillis();
-                        run(numCycles, endTime, now - lastCycleReal);
+                    long now = System.currentTimeMillis();
+                    run(numCycles, time, now - lastStepReal);
 
-                        lastCycle = endTime;
-                        lastCycleReal = now;
-                    }
-                //System.out.println("run: " + endTime);
-                //System.out.println("waiting since " + lastCycle + " at " + endTime);
+                    lastStep = time;
+                    lastStepReal = now;
+                }
+
+                //System.out.println(this + " run: " + time + " waiting since " + lastStep);
             }
 
             abstract public double getTimePerCycle();
@@ -171,6 +173,11 @@ public class TestNARGraph extends Nengrow {
             @Override public void run(int numCycles, float endTime, long deltaMS) {
 
                 nar.step(numCycles);
+            }
+
+            @Override
+            public String toString() {
+                return "nar";
             }
         };
         SubCycle layoutCycle = new SubCycle() {
@@ -186,8 +193,19 @@ public class TestNARGraph extends Nengrow {
                 hmap.setSpeedFactor(10);
                 */
 
-                hmap.resetLearning();
-                hmap.run(1);
+                try {
+                    hmap.scale(Math.sqrt(graph.vertexSet().size()) * 500);
+                    hmap.resetLearning();
+                    hmap.run(10);
+                }
+                catch (Exception e) {
+                    //unless graph is absolutely concurrent safe, just absorb any errors because it will be updated soon anyway
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "layout";
             }
         };
 
@@ -197,14 +215,6 @@ public class TestNARGraph extends Nengrow {
             return node.vertex.name().toString();
         }
 
-        @Override
-        public void run(float startTime, float endTime) throws SimulationException {
-            super.run(startTime, endTime);
-
-            narCycle.update(endTime);
-            layoutCycle.update(endTime);
-
-        }
 
 
         /** vertex can just call their .getCoordinate() to get the same value without needing to do a map lookup */
@@ -281,6 +291,8 @@ public class TestNARGraph extends Nengrow {
 
                 }
             };
+
+            addStepListener(layoutCycle);
 
             updateItems();
         }
@@ -437,7 +449,7 @@ public class TestNARGraph extends Nengrow {
     public void init() throws Exception {
 
 
-        Default d = new Default(256, 1, 1);
+        Default d = new Default(64, 5, 1);
         d.setSubconceptBagSize(0);
         NAR nar = new NAR(d);
         /*nar.input("<a --> {b}>.");
@@ -458,27 +470,33 @@ public class TestNARGraph extends Nengrow {
         UINetwork networkUI = (UINetwork) addNodeModel(newGraph(nar));
         NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
 
+        getUniverse().setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+        getUniverse().setAnimatingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+        getUniverse().setInteractingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+
         float fps = 50f;
+        System.out.println("start " + time);
 
         java.util.Timer timer = new java.util.Timer("", false);
         timer.scheduleAtFixedRate(new TimerTask() {
 
-            boolean finished = true;
+
             @Override
-            public void run() {
-                if (!finished) return;
-                finished = false;
+            synchronized public void run() {
 
                 float dt = 0.25f;
                 try {
-                    networkUI.node().run(time, time + dt);
+
+                    networkUI.node().run(time, time + dt, 1);
+
                 } catch (SimulationException e) {
                     e.printStackTrace();
                 }
                 time += dt;
-                finished = true;
             }
         }, 0, (int)(1000/fps));
+
+
 
 
 //        Timer t = new Timer((int)(1000/fps), new ActionListener() {

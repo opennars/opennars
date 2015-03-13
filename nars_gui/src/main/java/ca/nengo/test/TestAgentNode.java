@@ -16,7 +16,6 @@ import ca.nengo.ui.model.widget.SliderNode;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Created by me on 3/3/15.
@@ -38,9 +37,10 @@ public class TestAgentNode extends Nengrow {
             public void run(float startTime, float endTime) throws SimulationException {
                 super.run(startTime, endTime);
 
+                //System.out.println(endTime  + " " + startTime + " " + (endTime-startTime));
 
                 rotate( (endTime-startTime)*24f  );
-                forward( Math.random() * 10 );
+                forward( Math.random() * (endTime-startTime) * 1000.0 );
 
                 if (Math.random() < 0.02) {
                     say("hi!");
@@ -48,7 +48,7 @@ public class TestAgentNode extends Nengrow {
 
             }
         };
-        an.setMovementBounds(new Rectangle2D.Double(0, 0, 500.01, 500.01));
+        //an.setMovementBounds(new Rectangle2D.Double(0, 0, 500.01, 500.01));
         network.addNode(an);
 
         network.addNode(new StringView("Text1"));
@@ -68,13 +68,13 @@ public class TestAgentNode extends Nengrow {
         networkUI.doubleClicked();
 
 
-        new Timer(50, new ActionListener() {
+        Timer t = new Timer(50, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    float dt = getSimulationDT();
-                    networkUI.node().run(time, time + dt);
+                    float dt = 0.01f;
+                    networkUI.node().run(time, time + dt, 1);
                     time += dt;
 
                 } catch (SimulationException e1) {
@@ -82,7 +82,9 @@ public class TestAgentNode extends Nengrow {
                 }
                 //cycle();
             }
-        }).start();
+        });
+        t.setCoalesce(true);
+        t.start();
 
     }
 
