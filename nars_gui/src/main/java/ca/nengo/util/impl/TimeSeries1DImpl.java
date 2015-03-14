@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.util.impl;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.SingleValuedProperty;
 import ca.nengo.config.impl.ConfigurationImpl;
@@ -73,7 +73,7 @@ public class TimeSeries1DImpl implements TimeSeries1D, Serializable {
 	 * @return Custom Configuration (to more cleanly handle properties in 1D) 
 	 */
 	public Configuration getConfiguration() {
-		ConfigurationImpl result = ConfigUtil.defaultConfiguration(this);
+		ConfigurationImpl result = PropretiesUtil.defaultConfiguration(this);
 		result.removeProperty("units");
 		result.removeProperty("units1D");
 		result.removeProperty("values");

@@ -24,7 +24,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.config.descriptors.functions;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.ui.NewConfigurableDialog;
 import ca.nengo.math.Function;
 
@@ -51,7 +51,7 @@ public class FnAdvanced implements ConfigurableFunction {
         if (myFunction == null) {
             myFunction = (Function) NewConfigurableDialog.showDialog(parent, type, type);
         } else {
-            ConfigUtil.configure(parent, myFunction);
+            PropretiesUtil.configure(parent, myFunction);
         }
         return myFunction;
     }

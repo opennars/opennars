@@ -60,6 +60,9 @@ public class Video {
         UIManager.put("SplitPane.background", bgColor);
         UIManager.put("ScrollPane.background", bgColor);
 
+        UIManager.put("PopupMenu.background", bgColor);
+        UIManager.put("PopupMenu.foreground", Color.WHITE);
+
         UIManager.put("TextArea.foreground", Color.WHITE);
 
         UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));

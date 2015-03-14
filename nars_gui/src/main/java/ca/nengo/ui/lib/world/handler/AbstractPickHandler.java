@@ -47,7 +47,7 @@ public abstract class AbstractPickHandler extends PBasicInputEventHandler {
 
     protected abstract void processMouseEvent(PInputEvent event);
 
-    protected void pick() {
+    private void pick() {
         nodeUnPicked();
         this.pickedNode = nextPickedNode;
         if (this.pickedNode != null)

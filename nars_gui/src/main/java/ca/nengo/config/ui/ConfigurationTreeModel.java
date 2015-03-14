@@ -384,7 +384,7 @@ public class ConfigurationTreeModel implements TreeModel {
 			myObject = (object == null) ? new NullValue() : object;
 
 			if (object != null && !MainHandler.getInstance().canHandle(object.getClass())) {
-				myConfiguration = ConfigUtil.getConfiguration(object);
+				myConfiguration = PropretiesUtil.getConfiguration(object);
 			}
 		}
 

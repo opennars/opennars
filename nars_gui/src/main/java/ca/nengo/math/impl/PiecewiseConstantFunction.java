@@ -32,7 +32,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.math.impl;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.impl.ConfigurationImpl;
 import ca.nengo.config.impl.SingleValuedPropertyImpl;
@@ -90,7 +90,7 @@ public class PiecewiseConstantFunction extends AbstractFunction {
 	 * @return Custom configuration
 	 */
 	public Configuration getConfiguration() {
-		ConfigurationImpl result = ConfigUtil.defaultConfiguration(this);
+		ConfigurationImpl result = PropretiesUtil.defaultConfiguration(this);
 		result.defineProperty(SingleValuedPropertyImpl.getSingleValuedProperty(result, "numDiscontinuities", Integer.TYPE));
 		return result;
 	}

@@ -380,7 +380,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	 * the one the list of selectable parents.
 	 */
 	protected boolean isSelectable(WorldObject node) {
-		return (node != null && selectableParent.isAncestorOf(node)); 
+		return (node != null && node.getVisible() && selectableParent.isAncestorOf(node));
 	}
 	
 	protected void startStandardOptionSelection(PInputEvent pie) {
@@ -421,9 +421,9 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 	}
 	
 	public void undecorateSelectedNode(WorldObjectImpl node) {
-        Object frame = node.getPNode().getAttribute(SELECTION_HANDLER_FRAME_ATTR);
+        SelectionBorder frame = (SelectionBorder) node.getPNode().getAttribute(SELECTION_HANDLER_FRAME_ATTR);
 		if (frame != null && frame instanceof SelectionBorder) {
-			((SelectionBorder) frame).destroy();
+			frame.destroy();
 		}
 		node.setSelected(false);
         node.getPNode().addAttribute(SELECTION_HANDLER_FRAME_ATTR, null);
@@ -438,7 +438,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		boolean changes = false;
 		for (int i = sel.size() - 1; i >= 0; i--) {
             WorldObject wo = sel.get(i);
-			if (wo.isDestroyed()) {
+			if (!wo.getVisible()) {
 				//internalUnselect(sel.get(i));
 				selectedObjects.remove(wo);
 				sel.remove(i);
@@ -767,7 +767,8 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 			PNode next = itemsIt.next();
 			if (next instanceof PiccoloNodeInWorld) {
 				WorldObjectImpl wo = (WorldObjectImpl) ((PiccoloNodeInWorld) next).getWorldObject();
-				allObjects.add(wo);
+				if (wo.getVisible())
+                    allObjects.add(wo);
 			}
 
 		}
@@ -782,7 +783,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
 		Iterator<WorldObjectImpl> selectionEn = selectedObjects.iterator();
 		while (selectionEn.hasNext()) {
 			WorldObjectImpl node = selectionEn.next();
-			if (!allObjects.contains(node)) {
+			if (!node.getVisible() || !allObjects.contains(node)) {
 				unselectList.add(node);
 			}
 		}

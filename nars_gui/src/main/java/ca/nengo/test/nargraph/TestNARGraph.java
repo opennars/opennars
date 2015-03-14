@@ -18,14 +18,18 @@ import nars.build.Default;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.ConceptReaction;
+import nars.gui.NARSwing;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Named;
 import nars.logic.entity.Task;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.piccolo2d.util.PPaintContext;
 
+import javax.swing.*;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.util.*;
 
 
@@ -51,59 +55,70 @@ public class TestNARGraph extends Nengrow {
     public void init() throws Exception {
 
 
-        Default d = new Default(32, 4, 1);
+        Default d = new Default(128, 1, 1);
         d.setSubconceptBagSize(0);
         NAR nar = new NAR(d);
-        nar.input("<a --> {b}>.");
-        nar.input("<b --> c>.");
-        nar.input("<[c] --> a>. :/:");
-
-//        nar.input("<{(*,key1,value1),(*,key2,value2)} --> table>.");
-
-        //      nar.input("<a --> b>.");
-
-        nar.run(200);
+//        nar.input("<a --> {b}>.");
+//        nar.input("<b --> c>.");
+//        nar.input("<[c] --> a>. :/:");
+////        nar.input("<{(*,key1,value1),(*,key2,value2)} --> table>.");
+//
+//        //      nar.input("<a --> b>.");
+//        nar.run(200);
 
         Parameters.DEBUG = true;
-        /*NARSwing.themeInvert();
+        NARSwing.themeInvert();
         NARSwing s = new NARSwing(nar);
         nar.input(new File("/tmp/h.nal"));
 
 
-        s.controls.setSpeed(0.1f);*/
+        s.controls.setSpeed(0.1f);
 
 
         UINetwork networkUI = (UINetwork) addNodeModel(newGraph(nar));
         NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
 
-        /*
+
         getUniverse().setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
         getUniverse().setAnimatingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
         getUniverse().setInteractingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
-        */
+
 
         float fps = 50f;
 
         java.util.Timer timer = new java.util.Timer("", false);
         timer.scheduleAtFixedRate(new TimerTask() {
 
+            int frame = 0;
 
             @Override
             public void run() {
 
-                float dt = 0.26f;
-                try {
-                    long start = System.nanoTime();
-                    networkUI.node().run(time, time + dt, 1);
-                    long end = System.nanoTime();
-                    double time = (end - start)/1e6;
+                long start = 0;
 
-                    //System.out.println(time +  " ms");
+                float dt = 0.25f;
+                try {
+
+                    if (frame%100==0) {
+                        start = System.nanoTime();
+                    }
+
+                    networkUI.node().run(time, time + dt, 1);
+
+                    if (frame%100==0) {
+                        long end = System.nanoTime();
+                        double time = (end - start)/1e6;
+
+                        System.out.println(time +  " ms");
+                    }
+
 
                 } catch (SimulationException e) {
                     e.printStackTrace();
                 }
+
                 time += dt;
+                frame++;
             }
         }, 0, (int) (1000 / fps));
 
@@ -114,20 +129,10 @@ public class TestNARGraph extends Nengrow {
 
         private final NAR nar;
         private final ConceptReaction conceptReaction;
-
-        private UIEdge[] nextEdges;
-        private Set<UIEdge> edges = new FastSet<UIEdge>().atomic();
-
-        float simTimePerCycle = 4f;
+        float simTimePerCycle = 1f;
         float simTimePerLayout = 0.25f;
         long lasTLayout = System.currentTimeMillis();
-        Rectangle2D layoutBounds = new Rectangle2D.Double(-500,-500, 1000, 1000);
-
-        private UINARGraph ui;
-        private boolean edgesChanged = false;
-
-
-
+        Rectangle2D layoutBounds = new Rectangle2D.Double(-500, -500, 1000, 1000);
         final FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>> hmap =
                 new FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>>(layoutBounds) {
         /*final HyperassociativeMap<NARGraphVertex,UIEdge<NARGraphVertex>> hmap =
@@ -162,14 +167,11 @@ public class TestNARGraph extends Nengrow {
 
                     @Override
                     protected Iterator<UIVertex> getVertices() {
-                        return Iterators.filter(Iterators.forArray(nodes()), UIVertex.class);
+                        return Iterators.filter(nodes().iterator(), UIVertex.class);
                     }
 
 
-                };//.scale(10, 200, 20);
-
-
-
+                };
         SubCycle narCycle = new SubCycle() {
             @Override
             public double getTimePerCycle() {
@@ -179,7 +181,8 @@ public class TestNARGraph extends Nengrow {
             @Override
             public void run(int numCycles, float endTime, long deltaMS) {
 
-                nar.step(numCycles);
+                if (!nar.isRunning())
+                    nar.step(numCycles);
             }
 
             @Override
@@ -204,11 +207,11 @@ public class TestNARGraph extends Nengrow {
                 */
 
 
-
-                double layoutRad = 5000; //(Math.sqrt(graph.vertexSet().size()) * 500);
-                layoutBounds.setRect(-layoutRad/2, -layoutRad/2, layoutRad, layoutRad);
+                double layoutRad = Math.sqrt( numVertices )* 500;
+                layoutBounds.setRect(-layoutRad / 2, -layoutRad / 2, layoutRad, layoutRad);
                 hmap.resetLearning();
-                hmap.run(1);
+                hmap.run(2);
+
 
             }
 
@@ -217,7 +220,11 @@ public class TestNARGraph extends Nengrow {
                 return "layout";
             }
         };
-
+        private UIEdge[] nextEdges;
+        private Set<UIEdge> edges = new FastSet<UIEdge>().atomic();
+        private UINARGraph ui;
+        private boolean edgesChanged = false;
+        private int numVertices = 0;
 
 
         public NARGraphNode(NAR n) {
@@ -230,7 +237,7 @@ public class TestNARGraph extends Nengrow {
                 @Override
                 public void onFiredConcept(Concept c) {
 
-                    add(c);
+                    refresh(c);
                 }
 
                 @Override
@@ -238,7 +245,7 @@ public class TestNARGraph extends Nengrow {
                     refresh(c);
                     //add(c);
                     //if (add(c) != null)
-                      //  refresh(c);
+                    //  refresh(c);
                 }
 
                 @Override
@@ -272,7 +279,7 @@ public class TestNARGraph extends Nengrow {
             };
 
             addStepListener(layoutCycle);
-            addStepListener(narCycle);
+            //addStepListener(narCycle);
 
         }
 
@@ -281,14 +288,14 @@ public class TestNARGraph extends Nengrow {
             long now = System.currentTimeMillis();
             long dt = (now - lasTLayout);
             if (dt > 0) {
+                numVertices = vertices.size();
                 for (UIVertex v : vertices) {
-
-                    /*if (v.isDependent()) {
-                        if ((graph.inDegreeOf(v) + graph.outDegreeOf(v)) == 0)
-                            remove(v.vertex);
-                    }*/
-
                     v.getActualCoordinates(dt);
+                    if (v.isDependent() && v.degree()==0) {
+                        System.err.println("late removing " + v);
+                        remove(v);
+                    }
+
                 }
                 lasTLayout = now;
             }
@@ -317,7 +324,6 @@ public class TestNARGraph extends Nengrow {
         }
 
 
-
         /**
          * should be called from within a synchronized(graph) { } block
          */
@@ -342,7 +348,6 @@ public class TestNARGraph extends Nengrow {
         }
 
 
-
         public void refresh(Object x) {
             new MyGrapher().on(null, x, false).finish();
         }
@@ -353,22 +358,32 @@ public class TestNARGraph extends Nengrow {
             return this.ui = new UINARGraph(this);
         }
 
-        private void add(UIEdge<UIVertex> e) {
+        private boolean add(UIEdge<UIVertex> e) {
             if (edges.add(e)) {
                 e.getSource().link(e, true);
                 e.getTarget().link(e, false);
                 edgesChanged();
+                return true;
             }
+            return false;
         }
+
         private void remove(UIEdge<UIVertex> e) {
             if (edges.remove(e)) {
-                if (e.getSource()!=null)
+                if (e.getSource() != null)
                     e.getSource().unlink(e, true);
-                if (e.getTarget()!=null) {
+                if (e.getTarget() != null) {
                     e.getTarget().unlink(e, false);
                 }
+                ensureValid(e.getSource());
+                ensureValid(e.getTarget());
                 edgesChanged();
             }
+        }
+
+        private void ensureValid(UIVertex v) {
+            if (v.isDependent() && v.degree() == 0)
+                remove(v);
         }
 
         /**
@@ -386,11 +401,11 @@ public class TestNARGraph extends Nengrow {
                     return null;
 
 
-                    try {
-                        addNode(ui);
-                    } catch (StructuralException e) {
-                        //throw new RuntimeException(e);
-                    }
+                try {
+                    addNode(ui);
+                } catch (StructuralException e) {
+                    throw new RuntimeException(e);
+                }
 
             } else {
                 //allow upgrading from Term to Concept; not downgrading
@@ -400,9 +415,6 @@ public class TestNARGraph extends Nengrow {
                 }*/
 
             }
-
-            //refresh(ui.vertex);
-
 
             return ui;
         }
@@ -428,9 +440,7 @@ public class TestNARGraph extends Nengrow {
                 remove(e);
             }
 
-            existing.ui.destroy();
-            //SwingUtilities.invokeLater(existing.ui::destroy);
-
+            SwingUtilities.invokeLater(existing.ui::destroy);
 
 
             return existing;
@@ -486,17 +496,19 @@ public class TestNARGraph extends Nengrow {
 
             @Override
             public Object addVertex(Named o) {
-                add(o);
+
                 //only non-dependent objects can be added outside of an edge
-                /*if (o instanceof Concept) {
+                if (o instanceof Concept) {
                     add(o);
                     return o;
-                }*/
+                }
                 return null;
             }
 
             @Override
             public Object addEdge(NARGraph g, Named source, Named target, Object edge) {
+
+                //TODO defer creation of v1 and v2 until sure that edge can be created
 
                 UIVertex v1 = add(source);
                 if (v1 == null) return null;
@@ -505,7 +517,12 @@ public class TestNARGraph extends Nengrow {
 
 
                 UIEdge e = new UIEdge(v1, v2, edge);
-                add(e);
+                if (add(e)) {
+                    return e;
+                }
+
+                ensureValid(v1);
+                ensureValid(v2);
 
                 return null;
             }

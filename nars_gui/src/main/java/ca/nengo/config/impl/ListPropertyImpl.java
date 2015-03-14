@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.config.impl;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.ListProperty;
 import ca.nengo.model.StructuralException;
@@ -87,7 +87,7 @@ public class ListPropertyImpl extends AbstractProperty implements ListProperty {
 		String uname = Character.toUpperCase(name.charAt(0)) + name.substring(1);
 		String[] getterNames = new String[]{"get"+uname};
 		String[] setterNames = new String[]{"set"+uname,
-				"set"+ConfigUtil.stripSuffix(uname, "s"), "set"+ConfigUtil.stripSuffix(uname, "es")};
+				"set"+ PropretiesUtil.stripSuffix(uname, "s"), "set"+ PropretiesUtil.stripSuffix(uname, "es")};
 		String[] countGetterNames = new String[]{"getNum"+uname, "getNum"+uname+ 's', "get"+uname+"Count"};
 		String[] arrayGetterNames = new String[]{"get"+uname, "get"+uname+ 's', "get"+uname+"Array", "getAll"+uname};
 		String[] arraySetterNames = new String[]{"set"+uname, "set"+uname+ 's', "set"+uname+"Array", "setAll"+uname};

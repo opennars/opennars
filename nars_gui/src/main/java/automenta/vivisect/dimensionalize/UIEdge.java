@@ -19,7 +19,6 @@ public class UIEdge<V extends Named> extends DefaultEdge {
         super();
         this.s = s;
         this.t = t;
-        this.name = e.toString() + this.s.name() + ':' + this.t.name() + ':';
 
         if (e instanceof NARGraph.NAREdge) {
             this.e = ((NARGraph.NAREdge)e).getObject();
@@ -27,6 +26,10 @@ public class UIEdge<V extends Named> extends DefaultEdge {
         else {
             this.e = e;
         }
+
+        this.name = e.toString() + this.s.name() + ':' + this.t.name() + ':';
+
+
     }
 
 

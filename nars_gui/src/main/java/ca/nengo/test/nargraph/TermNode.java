@@ -104,7 +104,7 @@ public class TermNode extends UIVertex {
 
     @Override
     public boolean isDependent() {
-        return concept!=null; //concepts are allowed non-dependent
+        return concept==null; //concepts are allowed non-dependent
     }
 
     public float getPriority() {
@@ -171,7 +171,7 @@ public class TermNode extends UIVertex {
 
         //TODO combine these into one Transform update
         ui.scaleTo(scale * (0.75f + priority), 0.05);
-        ui.dragTo(x, y, 0.5);
+        ui.dragTo(x, y, 0.5, 0.005);
 
 
         //System.out.println(x + " " + y);

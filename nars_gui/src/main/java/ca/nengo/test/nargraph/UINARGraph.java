@@ -12,6 +12,7 @@ import nars.logic.entity.TermLink;
 import org.apache.commons.math3.util.FastMath;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
 * Created by me on 3/12/15.
@@ -110,16 +111,18 @@ public class UINARGraph extends UINetwork {
                 if (target.ui.isDestroyed()) continue;
 
 
-                double sx = source.getX();
-                double sy = source.getY();
-                double tx = target.getX();
-                double ty = target.getY();
+                Rectangle2D sb = source.ui.getFullBoundsReference();
+                Rectangle2D tb = target.ui.getFullBoundsReference();
+                double sx = sb.getCenterX();
+                double sy = sb.getCenterY();
+                double tx = tb.getCenterX();
+                double ty = tb.getCenterY();
 
                 //System.out.println(source + " " + target + " " + sx + " " + sy + " " + tx + " "+ ty);
 
-                final float sourceRadius = (float) source.ui.getWidth() / 2f;
-                final float targetRadius = (float) target.ui.getWidth() / 2f;
-                //g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
+                final float sourceRadius = 96; //(float)sb.getWidth() / 8f;
+                final float targetRadius = 96; //(float)tb.getWidth() / 16f;
+
                 e.shape = drawArrow(g, (Polygon) e.shape, getEdgeColor(e), sourceRadius, (int) sx, (int) sy, (int) tx, (int) ty, targetRadius);
 
         }
@@ -144,6 +147,12 @@ public class UINARGraph extends UINetwork {
         return Color.WHITE;
     }
 
+    @Override
+    public void layoutChildren() {
+
+
+    }
+
     class UINARGraphGround extends WorldGroundImpl /*ElasticGround*/ {
 
         @Override
@@ -151,7 +160,10 @@ public class UINARGraph extends UINetwork {
             drawEdges(paintContext);
             super.paint(paintContext);
         }
+        @Override
+        public void layoutChildren() {
 
+        }
 
     }
 
@@ -163,6 +175,11 @@ public class UINARGraph extends UINetwork {
         @Override
         protected boolean isDropEffect() {
             return false;
+        }
+
+        @Override
+        public void layoutChildren() {
+
         }
     }
 }

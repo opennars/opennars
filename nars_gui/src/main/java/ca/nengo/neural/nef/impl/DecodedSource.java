@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.neural.nef.impl;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configurable;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.impl.ConfigurationImpl;
@@ -208,7 +208,7 @@ public class DecodedSource implements NSource<InstantaneousOutput>, Resettable, 
 	 * @see ca.nengo.config.Configurable#getConfiguration()
 	 */
 	public Configuration getConfiguration() {
-		ConfigurationImpl result = ConfigUtil.defaultConfiguration(this);
+		ConfigurationImpl result = PropretiesUtil.defaultConfiguration(this);
 		//result.renameProperty("sTPDynamics", "STPDynamics");
 		return result;
 	}

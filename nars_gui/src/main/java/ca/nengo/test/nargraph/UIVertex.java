@@ -5,13 +5,13 @@ import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import com.google.common.collect.Iterables;
+import javolution.util.FastSet;
 import nars.logic.entity.Named;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.piccolo2d.util.PAffineTransform;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 abstract public class UIVertex<V extends Named> extends AbstractWidget implements Named {
@@ -21,8 +21,8 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
     protected long layoutPeriod = -1;
     boolean destroyed = false;
 
-    final Set<UIEdge> incoming = new LinkedHashSet();
-    final Set<UIEdge> outgoing = new LinkedHashSet();
+    final Set<UIEdge> incoming = new FastSet<UIEdge>().atomic();
+    final Set<UIEdge> outgoing = new FastSet<UIEdge>().atomic();
 
     public UIVertex(V vertex) {
         super(vertex.name().toString());
@@ -44,10 +44,9 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
 
     @Override
     protected void destroy() {
-
         //System.out.println("before destroy " + this);
         destroyed = true;
-
+        setBounds(0,0,0,0);
     }
 
     @Override
@@ -63,8 +62,6 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof UIVertex) {
-            if (destroyed)
-                return false;
             return getName().equals(((UIVertex) obj).getName());
         }
         return false;
@@ -79,6 +76,7 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
         return this.vertex;
     }
 
+
     @Override
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
         return vertex.toString();
@@ -91,8 +89,6 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
 
     /** loads the actual geometric coordinates to the coords array prior to next layout iteration */
     public void getActualCoordinates(long layoutPeriod /* in realtime msec */) {
-        if (destroyed) return;
-
         double x = getX();
         double y = getY();
         if (!Double.isFinite(x) || !Double.isFinite(y)) {
@@ -145,5 +141,9 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
             return outgoing;
         else
             return Collections.emptyList();
+    }
+
+    public int degree() {
+        return incoming.size() + outgoing.size();
     }
 }

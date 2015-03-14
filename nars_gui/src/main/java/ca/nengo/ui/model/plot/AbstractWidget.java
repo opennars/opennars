@@ -2,6 +2,7 @@ package ca.nengo.ui.model.plot;
 
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractNode;
+import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.piccolo.object.BoundsHandle;
@@ -26,7 +27,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         super(name);
 
         ui = newUI(width, height);
-        setBounds(0,0,width,height);
+        //setBounds(-width/2,-height/2,width,height);
     }
 
     public boolean isResizable() {
@@ -98,6 +99,15 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
             repaint();
         }
 
+        @Override
+        protected void constructMenu(PopupMenuBuilder menu) {
+            super.constructMenu(menu);
+        }
+
+        @Override
+        public void layoutChildren() {
+            super.layoutChildren();
+        }
 
         @Override
         protected void prepareForDestroy() {
@@ -118,8 +128,8 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
             super.dragTo(dx, dy);
         }
         @Override
-        public void dragTo(double dx, double dy, double speed /* 1 - LERP momentum */) {
-            super.dragTo(dx, dy, speed);
+        public void dragTo(double dx, double dy, double speed, double arrivalSpeed /* 1 - LERP momentum */) {
+            super.dragTo(dx, dy, speed, arrivalSpeed);
         }
 
         @Override

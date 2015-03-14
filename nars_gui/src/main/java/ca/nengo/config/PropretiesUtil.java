@@ -27,11 +27,13 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.config;
 
+import automenta.vivisect.swing.ReflectPanel;
 import ca.nengo.config.impl.ConfigurationImpl;
 import ca.nengo.config.impl.ListPropertyImpl;
 import ca.nengo.config.impl.NamedValuePropertyImpl;
 import ca.nengo.config.impl.SingleValuedPropertyImpl;
 import ca.nengo.config.ui.*;
+import nars.gui.output.VerticalPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +51,7 @@ import java.util.Map;
  *
  * @author Bryan Tripp
  */
-public class ConfigUtil {
+public class PropretiesUtil {
 
 	/**
 	 * Shows a tree in which object properties can be edited.
@@ -77,18 +79,22 @@ public class ConfigUtil {
 	 * @param o The Object to configure
 	 */
 	private static void configure(Frame owner, Dialog owner2, Object o) {
-		JScrollPane configuruationPane = createConfigurationPane(o);
 
 		final JDialog dialog;
 		if (owner != null) {
-			dialog = new JDialog(owner, o.getClass().getSimpleName() + " Inspector");
+			dialog = new JDialog(owner, o.toString());
 		} else {
-			dialog = new JDialog(owner2, o.getClass().getSimpleName() + " Inspector");
+			dialog = new JDialog(owner2, o.toString());
 		}
 
 		dialog.getContentPane().setLayout(new BorderLayout());
-		dialog.getContentPane().add(configuruationPane, BorderLayout.CENTER);
-		dialog.setPreferredSize(new Dimension(400, 600));
+
+        VerticalPanel centerPane = new VerticalPanel();
+        centerPane.addPanel(0, new ReflectPanel(o));
+        centerPane.addPanel(1, createConfigurationPane(o));
+
+        dialog.setPreferredSize(new Dimension(400, 600));
+		dialog.getContentPane().add(centerPane, BorderLayout.CENTER);
 
 		JButton doneButton = new JButton("Done");
 		doneButton.addActionListener(new ActionListener() {
@@ -114,7 +120,7 @@ public class ConfigUtil {
 	 *
 	 *
 	 */
-	public static class ConfigurationPane extends JScrollPane {
+	public static class ConfigurationPane extends JPanel {
 
 		private static final long serialVersionUID = 1L;
 
@@ -125,11 +131,12 @@ public class ConfigUtil {
 		 * @param o Object to configure
 		 */
 		public ConfigurationPane(Object o) {
-			super();
+			super(new BorderLayout());
 			init(o);
 
 			//note: setting preferred size of tree itself prevents viewport from expanding
 			this.setPreferredSize(new Dimension(300, 300));
+            add(myTree, BorderLayout.CENTER);
 		}
 
 		private void init(Object o) {
@@ -144,7 +151,6 @@ public class ConfigUtil {
 			}
 
 			myTree.setScrollsOnExpand(true);
-			this.setViewportView(myTree);
 
 			myTree.setEditable(true);
 			myTree.setCellEditor(new ConfigurationTreeCellEditor(myTree));
@@ -160,7 +166,7 @@ public class ConfigUtil {
 					if (e.getKeyCode() == 112 && selected instanceof Property) {
 						String documentation = ((Property) selected).getDocumentation();
 						if (documentation != null) {
-                            ConfigUtil.showHelp(documentation);
+                            PropretiesUtil.showHelp(documentation);
                         }
 					}
 				}

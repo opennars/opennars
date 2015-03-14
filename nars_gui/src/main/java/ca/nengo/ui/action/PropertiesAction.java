@@ -33,7 +33,7 @@ import ca.nengo.ui.lib.action.StandardAction;
  * 
  * @author TODO
  */
-public class ConfigureAction extends StandardAction {
+public class PropertiesAction extends StandardAction {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,8 +44,8 @@ public class ConfigureAction extends StandardAction {
      * 
      * @param model TODO
      */
-    public ConfigureAction(Object model) {
-        super("Inspector");
+    public PropertiesAction(Object model) {
+        super("Properties");
         init(model);
     }
 
@@ -55,8 +55,8 @@ public class ConfigureAction extends StandardAction {
      * @param actionName TODO
      * @param model TODO
      */
-    public ConfigureAction(String actionName, Object model) {
-        super("Inspector", actionName);
+    public PropertiesAction(String actionName, Object model) {
+        super("Properties", actionName);
         init(model);
     }
 
@@ -66,6 +66,7 @@ public class ConfigureAction extends StandardAction {
 
     @Override
     protected void action() throws ActionException {
+        System.out.println(model);
         AbstractNengo.getInstance().configureObject(model);
     }
 }

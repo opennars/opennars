@@ -46,7 +46,7 @@
 
 'http://www.ieml.org/english/cycles.html
 <(*,<$a --> event>,<$b --> event>) --> cycle>.
-<<(*,$a,$b) --> cycle> ==> <$a =/> $b>>.
+'<<(*,$a,$b) --> cycle> ==> <$a =/> $b>>.
 
 
 <life_stage --> (*,energy,energy)>.
@@ -80,9 +80,9 @@
 <SELF --> memory>.
 <SELF --> thought>.
 <personal_change --> SELF>.
-<<$x <-> thought> =/> reflect($x,#y)>!
+'<<$x <-> thought> =/> reflect($x,#y)>!
 <^say <-> language>.
-<<$x --> thought> =/> say($x)>!
-<$1 --> thought>?
-say(actual,language,change)!
-(--,<{personal_change} --> obstacle>)!
+'<<$x --> thought> =/> say($x)>!
+'<#1 --> thought>?
+'say(actual,language,change)!
+'(--,<{personal_change} --> obstacle>)!

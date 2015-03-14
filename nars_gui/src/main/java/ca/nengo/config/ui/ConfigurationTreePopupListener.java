@@ -160,7 +160,7 @@ public class ConfigurationTreePopupListener extends MouseAdapter {
 					public void actionPerformed(ActionEvent e) {
 						String documentation = p.getDocumentation();
 						if (documentation != null)
-							ConfigUtil.showHelp(documentation);
+							PropretiesUtil.showHelp(documentation);
 					}				
 				});
 				popup.add(helpItem);
@@ -182,7 +182,7 @@ public class ConfigurationTreePopupListener extends MouseAdapter {
 	}
 	
 	private Object getValue(Class<?> type) {
-		Object result = ConfigUtil.getDefaultValue(type);
+		Object result = PropretiesUtil.getDefaultValue(type);
 		if (result == null) {
 			result = NewConfigurableDialog.showDialog(myTree, type, null);
 		}

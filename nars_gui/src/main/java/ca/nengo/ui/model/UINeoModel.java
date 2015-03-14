@@ -26,7 +26,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model;
 
-import ca.nengo.ui.action.ConfigureAction;
+import ca.nengo.ui.action.PropertiesAction;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 
@@ -49,11 +49,11 @@ public abstract class UINeoModel<M> extends ModelObject<M> {
 	@Override
 	protected void constructMenu(PopupMenuBuilder menu) {
 		super.constructMenu(menu);
-		menu.addAction(new ConfigureAction("Properties", node()));
+		menu.addAction(new PropertiesAction("Properties", node()));
 	}
 
 	@Override
 	public void altClicked() {
-		(new ConfigureAction("Inspector", node())).doAction();
+		(new PropertiesAction("Inspector", node())).doAction();
 	}
 }

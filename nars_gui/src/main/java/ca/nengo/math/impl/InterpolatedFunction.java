@@ -1,6 +1,6 @@
 package ca.nengo.math.impl;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.impl.ConfigurationImpl;
 import ca.nengo.config.impl.SingleValuedPropertyImpl;
@@ -41,7 +41,7 @@ public class InterpolatedFunction extends AbstractFunction {
 	 * @return Custom configuration
 	 */
 	public Configuration getConfiguration() {
-		ConfigurationImpl result = ConfigUtil.defaultConfiguration(this);
+		ConfigurationImpl result = PropretiesUtil.defaultConfiguration(this);
 		result.defineProperty(SingleValuedPropertyImpl.getSingleValuedProperty(result, "numPoints", Integer.TYPE));
 		return result;
 	}

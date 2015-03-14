@@ -337,7 +337,7 @@ public class WorldObjectImpl implements WorldObject {
         }
     }
 
-    public final void destroy() {
+    synchronized public final void destroy() {
         if (isDestroyed)
             return;
         isDestroyed = true;
@@ -345,31 +345,30 @@ public class WorldObjectImpl implements WorldObject {
         prepareForDestroy();
 
 
-        Collection children = getChildrenReference();
+        //Collection children = getChildrenReference();
 
 
 
 
         removeFromParent();
-
-        pnode.removeAllChildren();
-        if (pnode instanceof PXNode) {
-            ((PXNode) pnode).removeFromWorld();
-        }
-        else {
-            pnode.removeFromParent();
-        }
-
-        for (Object o : children) {
-            if (o instanceof WorldObject)
-                ((WorldObject)o).destroy();
-        }
-
-        if (eventListenerMap!=null)
-            eventListenerMap.clear();
-
-        if (childListeners!=null)
-            childListeners.clear();
+        removeFromWorld();
+//
+//        pnode.removeAllChildren();
+//        if (pnode instanceof PXNode) {
+//            ((PXNode) pnode).removeFromWorld();
+//        }
+//        else {
+//            pnode.removeFromParent();
+//        }
+//        for (Object o : children) {
+//            if (o instanceof WorldObject)
+//                ((WorldObject)o).destroy();
+//        }
+//        if (eventListenerMap!=null)
+//            eventListenerMap.clear();
+//
+//        if (childListeners!=null)
+//            childListeners.clear();
 
     }
 
@@ -389,7 +388,7 @@ public class WorldObjectImpl implements WorldObject {
         }
     }
 
-    public void dragTo(double x, double y, double speed /* max speed */) {
+    public void dragTo(double x, double y, double speed, double arrivalSpeed /* max speed */) {
         final double epsilon = 0.001f; //min movement which wont matter
 
         if (isDraggable()) {
@@ -402,7 +401,11 @@ public class WorldObjectImpl implements WorldObject {
                 return;
             }
             else if (normSquare < speed*speed) {
-                nx = x; ny = y;
+                //nx = x; ny = y;
+
+                //apply arrival speed (LERP)
+                nx = (x * arrivalSpeed) + (1.0 - arrivalSpeed) * cx;
+                ny = (y * arrivalSpeed) + (1.0 - arrivalSpeed) * cy;
             }
             else {
                 double norm = Math.sqrt(normSquare);
@@ -531,7 +534,7 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public boolean getVisible() {
-        return pnode.getVisible();
+        return pnode.getVisible() && !isDestroyed();
     }
 
     /*
@@ -817,7 +820,7 @@ public class WorldObjectImpl implements WorldObject {
             }
         }
         if (!successfull && !isDestroyed()) {
-            throw new InvalidParameterException("Listener is not attached");
+            //throw new InvalidParameterException("Listener is not attached");
         }
     }
 

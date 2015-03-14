@@ -26,7 +26,7 @@ package ca.nengo.ui.data;
 
 import ca.nengo.io.DelimitedFileExporter;
 import ca.nengo.model.Network;
-import ca.nengo.ui.action.ConfigureAction;
+import ca.nengo.ui.action.PropertiesAction;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.action.ReversableAction;
@@ -170,7 +170,7 @@ public class DataListView extends JPanel implements TreeSelectionListener {
                         NengoTreeNode neoTreeNode = (NengoTreeNode) leafNode;
 
                         if (neoTreeNode.getNeoNode() != null) {
-                            menuBuilder.addAction(new ConfigureAction("Inspector",
+                            menuBuilder.addAction(new PropertiesAction("Inspector",
                                     neoTreeNode.getNeoNode()));
                         }
                     }

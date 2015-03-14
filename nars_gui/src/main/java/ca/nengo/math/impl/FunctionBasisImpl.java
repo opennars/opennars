@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.math.impl;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.impl.ConfigurationImpl;
 import ca.nengo.config.impl.ListPropertyImpl;
@@ -68,7 +68,7 @@ public class FunctionBasisImpl extends AbstractFunction implements FunctionBasis
 	 * @return Custom configuration 
 	 */
 	public Configuration getConfiguration() {
-		ConfigurationImpl result = ConfigUtil.defaultConfiguration(this);
+		ConfigurationImpl result = PropretiesUtil.defaultConfiguration(this);
 		result.removeProperty("basisDimension");
 		try {
 			Method getter = this.getClass().getMethod("getFunction", Integer.TYPE);

@@ -1,6 +1,6 @@
 package ca.nengo.ui;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.model.Network;
 import ca.nengo.model.Node;
 import ca.nengo.model.NSource;
@@ -401,7 +401,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             configPane.toJComponent().setAuxVisible(true);
             configPane.configureObj(obj);
         } else {
-            //ConfigUtil.configure(UIEnvironment.getInstance(), obj);
+            PropretiesUtil.configure((Dialog) null, obj);
         }
     }
 
@@ -619,11 +619,11 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             int location=auxSplitPane.getDividerLocation();
 
             if (obj==null) {
-                ConfigUtil.ConfigurationPane configurationPane = ConfigUtil.createConfigurationPane(obj);
+                PropretiesUtil.ConfigurationPane configurationPane = PropretiesUtil.createConfigurationPane(obj);
                 configurationPane.getTree().setBackground(NengoStyle.COLOR_CONFIGURE_BACKGROUND);
                 auxSplitPane.setAuxPane(configurationPane,"Inspector");
             } else {
-                ConfigUtil.ConfigurationPane configurationPane = ConfigUtil.createConfigurationPane(obj);
+                PropretiesUtil.ConfigurationPane configurationPane = PropretiesUtil.createConfigurationPane(obj);
                 configurationPane.getTree().setBackground(NengoStyle.COLOR_CONFIGURE_BACKGROUND);
 
                 // style.applyStyle(configurationPane.getTree());

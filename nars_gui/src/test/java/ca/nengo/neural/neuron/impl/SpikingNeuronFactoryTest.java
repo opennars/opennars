@@ -3,7 +3,7 @@
  */
 package ca.nengo.neural.neuron.impl;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.math.impl.IndicatorPDF;
 import junit.framework.TestCase;
 
@@ -30,6 +30,6 @@ public class SpikingNeuronFactoryTest extends TestCase {
                 new IndicatorPDF(1),
                 new IndicatorPDF(0));
 
-        ConfigUtil.configure((Frame) null, factory);
+        PropretiesUtil.configure((Frame) null, factory);
     }
 }

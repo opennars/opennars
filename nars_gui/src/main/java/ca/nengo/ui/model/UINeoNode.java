@@ -223,26 +223,26 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		
 		menu.addAction(new CopyAction("Copy", arrayOfMe));
 		menu.addAction(new CutAction("Cut", arrayOfMe));
-
-		SimulationMode mode = ((UINeoNode) arrayOfMe.toArray()[0]).node().getMode();
-
-		int selected = -1;
-		if (mode == SimulationMode.DEFAULT) {
-			selected = 0;
-		} else if (mode == SimulationMode.RATE) {
-			selected = 1;
-		} else if (mode == SimulationMode.DIRECT) {
-			selected = 2;
-		}
-		
-		if (selected >= 0) {
-			AbstractMenuBuilder modeMenu = menu.addSubMenu("Mode");
-			modeMenu.addActionsRadio(new StandardAction[]{
-					new DefaultModeAction("Spiking", arrayOfMe),
-					new RateModeAction("Rate", arrayOfMe),
-					new DirectModeAction("Direct", arrayOfMe)
-				}, selected);
-		}
+//
+//		SimulationMode mode = ((UINeoNode) arrayOfMe.toArray()[0]).node().getMode();
+//
+//		int selected = -1;
+//		if (mode == SimulationMode.DEFAULT) {
+//			selected = 0;
+//		} else if (mode == SimulationMode.RATE) {
+//			selected = 1;
+//		} else if (mode == SimulationMode.DIRECT) {
+//			selected = 2;
+//		}
+//
+//		if (selected >= 0) {
+//			AbstractMenuBuilder modeMenu = menu.addSubMenu("Mode");
+//			modeMenu.addActionsRadio(new StandardAction[]{
+//					new DefaultModeAction("Spiking", arrayOfMe),
+//					new RateModeAction("Rate", arrayOfMe),
+//					new DirectModeAction("Direct", arrayOfMe)
+//				}, selected);
+//		}
 
 //		menu.addSection("File");
 //		menu.addAction(new SaveNodeAction(this));

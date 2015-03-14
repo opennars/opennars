@@ -21,7 +21,7 @@ import org.piccolo2d.event.PInputEvent;
 public class TooltipPickHandler extends AbstractPickHandler {
 	public static final String TOOLTIP_BORDER_ATTR = "tooltipBdr";
 
-	private WorldObject controls;
+	//private WorldObject controls;
 
 	private WorldObject keyboardFocusObject;
 
@@ -67,12 +67,13 @@ public class TooltipPickHandler extends AbstractPickHandler {
 				/*
 				 * Do nothing if the mouse is over the controls
 				 */
-				if (node == controls) {
+				//if (node == controls) {
 					//setKeepPickAlive(true);
-					return null;
-				} else if (wo instanceof WorldLayer || wo instanceof Window) {
+				//	return null;
+				/*} else */
+                if (wo instanceof WorldLayer || wo instanceof Window) {
 					break;
-				} else if (wo.getTooltip() != null) {
+				} else if (wo.getVisible() && wo.getTooltip() != null) {
 					//return null; // hack to eliminate tool tips
 					return wo;
 				}

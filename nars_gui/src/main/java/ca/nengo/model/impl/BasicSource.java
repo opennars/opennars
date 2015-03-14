@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.model.impl;
 
-import ca.nengo.config.ConfigUtil;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configurable;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.Property;
@@ -78,7 +78,7 @@ public class BasicSource implements NSource<InstantaneousOutput>, Noise.Noisy, R
 	}
 
 	private void initConfiguration() {
-		myConfiguration = ConfigUtil.defaultConfiguration(this);
+		myConfiguration = PropretiesUtil.defaultConfiguration(this);
 		myConfiguration.removeProperty("dimensions");
 		try {
 			Property p = new SingleValuedPropertyImpl(myConfiguration, "dimensions", Integer.TYPE,

@@ -8,6 +8,7 @@ import ca.nengo.ui.lib.world.WorldObject.Property;
 import ca.nengo.ui.lib.world.WorldSky;
 import ca.nengo.ui.lib.world.piccolo.primitive.Path;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
@@ -27,8 +28,9 @@ public class SelectionBorder implements Listener {
 	private WorldSky frameHolder;
 
 	private WorldObject selectedObj;
+    private WorldObject nextSelected;
 
-	/**
+    /**
 	 * @param world
 	 *            World, whose sky, this border shall be added to.
 	 */
@@ -74,8 +76,15 @@ public class SelectionBorder implements Listener {
 			if (selectedObj.getVisible()) {
 				Rectangle2D bounds = selectedObj.objectToSky(selectedObj.getBounds());
 
-				frame.setBounds((float) bounds.getX(), (float) bounds.getY(), (float) bounds
-						.getWidth(), (float) bounds.getHeight());
+                float w = (float) bounds.getWidth();
+                float h = (float) bounds.getHeight();
+
+                if ((w == 0) || (h == 0)) {
+                    destroy();
+                    return;
+                }
+
+				frame.setBounds((float) bounds.getX(), (float) bounds.getY(), w, h);
 				frame.setPaint(null);
 				frame.setStrokePaint(frameColor);
 				frame.setVisible(true);
@@ -91,6 +100,7 @@ public class SelectionBorder implements Listener {
 		setSelected(null);
 
 		frameHolder.removePropertyChangeListener(Property.VIEW_TRANSFORM, this);
+        frame.destroy();
 	}
 
 	public Color getFrameColor() {
@@ -100,8 +110,10 @@ public class SelectionBorder implements Listener {
 	public void propertyChanged(Property event) {
 		if (event == Property.REMOVED_FROM_WORLD) {
 			setSelected(null);
+            destroy();
 		}
-		updateBounds();
+        else
+		    updateBounds();
 	}
 
 	public void setFrameColor(Color frameColor) {
@@ -109,33 +121,52 @@ public class SelectionBorder implements Listener {
 		updateBounds();
 	}
 
-	public  boolean setSelected(WorldObject newSelected) {
+	public boolean setSelected(WorldObject newSelected) {
 		if (newSelected == selectedObj) {
             if (selectedObj!=null)
                 updateBounds();
 			return false;
 		}
 
-        synchronized (frame) {
-            if (selectedObj != null) {
-                selectedObj.removePropertyChangeListener(Property.GLOBAL_BOUNDS, this);
-                selectedObj.removePropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
-                selectedObj = null;
-            }
 
-            selectedObj = newSelected;
-            if (selectedObj != null) {
-                selectedObj.addPropertyChangeListener(Property.GLOBAL_BOUNDS, this);
-                selectedObj.addPropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
 
-                frameHolder.addChild(frame);
-                updateBounds();
-            } else {
-
-                frame.removeFromParent();
-            }
+        if (this.nextSelected == null) {
+            this.nextSelected = newSelected;
+            SwingUtilities.invokeLater(this::updateFrame);
         }
+        else {
+            //will update on the already queued swingevent
+            this.nextSelected = newSelected;
+        }
+
+
         return true;
 	}
+
+    /** called in synchrony via event thread */
+    private void updateFrame() {
+
+        if (selectedObj != null) {
+            selectedObj.removePropertyChangeListener(Property.GLOBAL_BOUNDS, this);
+            selectedObj.removePropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
+        }
+
+
+        WorldObject newSelected = nextSelected;
+        nextSelected = null;
+
+        selectedObj = newSelected;
+        if (selectedObj != null) {
+            selectedObj.addPropertyChangeListener(Property.GLOBAL_BOUNDS, this);
+            selectedObj.addPropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
+
+            frameHolder.addChild(frame);
+            updateBounds();
+        } else {
+
+            frame.removeFromParent();
+        }
+
+    }
 
 }
