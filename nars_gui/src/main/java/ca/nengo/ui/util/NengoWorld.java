@@ -2,16 +2,17 @@ package ca.nengo.ui.util;
 
 import ca.nengo.model.Node;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.elastic.ElasticWorld;
+import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
+import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.model.UINeoNode;
 
 import java.awt.geom.Point2D;
 
-public class NengoWorld extends ElasticWorld implements NodeContainer {
+public class NengoWorld extends WorldImpl implements NodeContainer {
 
 	public NengoWorld() {
-		super("Nengo");
+		super("Nengo", new WorldGroundImpl());
 	}
 
 	/*@Override

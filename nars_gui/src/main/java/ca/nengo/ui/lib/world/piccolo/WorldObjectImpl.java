@@ -340,30 +340,33 @@ public class WorldObjectImpl implements WorldObject {
     synchronized public final void destroy() {
         if (isDestroyed)
             return;
+
         isDestroyed = true;
+
+        setVisible(false);
 
         prepareForDestroy();
 
 
-        //Collection children = getChildrenReference();
+        Collection children = getChildrenReference();
 
 
 
 
         removeFromParent();
         removeFromWorld();
-//
-//        pnode.removeAllChildren();
-//        if (pnode instanceof PXNode) {
-//            ((PXNode) pnode).removeFromWorld();
-//        }
-//        else {
-//            pnode.removeFromParent();
-//        }
-//        for (Object o : children) {
-//            if (o instanceof WorldObject)
-//                ((WorldObject)o).destroy();
-//        }
+
+        pnode.removeAllChildren();
+        if (pnode instanceof PXNode) {
+            ((PXNode) pnode).removeFromWorld();
+        }
+        else {
+            pnode.removeFromParent();
+        }
+        for (Object o : children) {
+            if (o instanceof WorldObject)
+                ((WorldObject)o).destroy();
+        }
 //        if (eventListenerMap!=null)
 //            eventListenerMap.clear();
 //

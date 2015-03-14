@@ -7,10 +7,10 @@ import ca.nengo.ui.lib.world.Destroyable;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.WorldObject.Property;
-import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
+import ca.nengo.ui.util.NengoWorld;
 import org.piccolo2d.PCanvas;
 import org.piccolo2d.PLayer;
 import org.piccolo2d.event.PBasicInputEventHandler;
@@ -44,7 +44,7 @@ public class Universe extends PCanvas implements Destroyable {
 
 	private final Vector<String> taskStatusStrings = new Vector<String>();
 
-	private ElasticWorld topWorld;
+	private NengoWorld topWorld;
 
 	private final Collection<WorldImpl> worlds;
 
@@ -181,7 +181,7 @@ public class Universe extends PCanvas implements Destroyable {
 		worlds.add(world);
 	}
 
-	public ElasticWorld getWorld() {
+	public NengoWorld getWorld() {
 		return topWorld;
 	}
 
@@ -226,7 +226,7 @@ public class Universe extends PCanvas implements Destroyable {
 	 * @param world
 	 *            World to be the background for it all
 	 */
-	public void initialize(ElasticWorld world) {
+	public void initialize(NengoWorld world) {
 		Util.Assert(world != null);
 
 		if (topWorld == null) {

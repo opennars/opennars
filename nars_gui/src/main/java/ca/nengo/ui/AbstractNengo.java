@@ -1,10 +1,10 @@
 package ca.nengo.ui;
 
 import ca.nengo.config.PropretiesUtil;
-import ca.nengo.model.Network;
-import ca.nengo.model.Node;
 import ca.nengo.model.NSource;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.Network;
+import ca.nengo.model.Node;
 import ca.nengo.ui.action.*;
 import ca.nengo.ui.data.DataListView;
 import ca.nengo.ui.lib.AppFrame;
@@ -17,7 +17,6 @@ import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.handler.MouseHandler;
 import ca.nengo.ui.lib.world.handler.SelectionHandler;
 import ca.nengo.ui.lib.world.piccolo.primitive.Universe;
@@ -28,7 +27,10 @@ import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.widget.UIProbe;
 import ca.nengo.ui.model.widget.UIProjection;
 import ca.nengo.ui.model.widget.Widget;
-import ca.nengo.ui.util.*;
+import ca.nengo.ui.util.NengoClipboard;
+import ca.nengo.ui.util.NengoWorld;
+import ca.nengo.ui.util.NeoFileChooser;
+import ca.nengo.ui.util.ProgressIndicator;
 import ca.nengo.util.Environment;
 import org.simplericity.macify.eawt.Application;
 
@@ -349,7 +351,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     }
 
     @Override
-    protected ElasticWorld createWorld() {
+    protected NengoWorld createWorld() {
         return new NengoWorld();
     }
 

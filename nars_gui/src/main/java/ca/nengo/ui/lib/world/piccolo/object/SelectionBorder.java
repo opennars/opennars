@@ -49,7 +49,6 @@ public class SelectionBorder implements Listener {
 	public SelectionBorder(World world, WorldObject objSelected) {
 		this(world);
 		setSelected(objSelected);
-
 	}
 
 	/**
@@ -63,15 +62,13 @@ public class SelectionBorder implements Listener {
 
 		frame.setPickable(false);
 
-		frameHolder.addPropertyChangeListener(Property.VIEW_TRANSFORM, this);
-
 		frameHolder.addChild(frame);
 	}
 
 	/**
 	 * Updates the bounds of the border to match those of the selected object
 	 */
-	protected void updateBounds() {
+	protected boolean updateBounds() {
 		if (selectedObj != null) {
 			if (selectedObj.getVisible()) {
 				Rectangle2D bounds = selectedObj.objectToSky(selectedObj.getBounds());
@@ -80,27 +77,40 @@ public class SelectionBorder implements Listener {
                 float h = (float) bounds.getHeight();
 
                 if ((w == 0) || (h == 0)) {
-                    destroy();
-                    return;
+                    hide();
+                }
+                else {
+                    frame.setBounds((float) bounds.getX(), (float) bounds.getY(), w, h);
+                    frame.setPaint(null);
+                    frame.setStrokePaint(frameColor);
+                    show();
+                    return true;
                 }
 
-				frame.setBounds((float) bounds.getX(), (float) bounds.getY(), w, h);
-				frame.setPaint(null);
-				frame.setStrokePaint(frameColor);
-				frame.setVisible(true);
 			} else {
-				frame.setVisible(false);
+				hide();
 			}
 		} else {
-			setSelected(null);
+            if (isShow())
+                hide();
 		}
+        return false;
 	}
 
-	public void destroy() {
-		setSelected(null);
+    public boolean isShow() { return frame.getVisible(); }
 
-		frameHolder.removePropertyChangeListener(Property.VIEW_TRANSFORM, this);
+    public void destroy() {
         frame.destroy();
+    }
+
+    public void show() {
+        frameHolder.addPropertyChangeListener(Property.VIEW_TRANSFORM, this);
+        frame.setVisible(true);
+    }
+	public void hide() {
+        frameHolder.removePropertyChangeListener(Property.VIEW_TRANSFORM, this);
+        frame.setVisible(false);
+        this.selectedObj = null;
 	}
 
 	public Color getFrameColor() {
@@ -123,7 +133,7 @@ public class SelectionBorder implements Listener {
 
 	public boolean setSelected(WorldObject newSelected) {
 		if (newSelected == selectedObj) {
-            if (selectedObj!=null)
+            if (newSelected!=null)
                 updateBounds();
 			return false;
 		}
@@ -157,14 +167,15 @@ public class SelectionBorder implements Listener {
 
         selectedObj = newSelected;
         if (selectedObj != null) {
-            selectedObj.addPropertyChangeListener(Property.GLOBAL_BOUNDS, this);
-            selectedObj.addPropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
-
-            frameHolder.addChild(frame);
-            updateBounds();
+            if (updateBounds()) {
+                selectedObj.addPropertyChangeListener(Property.GLOBAL_BOUNDS, this);
+                selectedObj.addPropertyChangeListener(Property.REMOVED_FROM_WORLD, this);
+            }
+            else {
+                selectedObj = null;
+            }
         } else {
-
-            frame.removeFromParent();
+            hide();
         }
 
     }

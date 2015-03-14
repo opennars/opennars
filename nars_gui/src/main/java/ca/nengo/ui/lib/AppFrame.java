@@ -6,11 +6,11 @@ import ca.nengo.ui.lib.menu.MenuBuilder;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXGrid;
 import ca.nengo.ui.lib.world.piccolo.primitive.Universe;
+import ca.nengo.ui.util.NengoWorld;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.activities.PActivity;
 import org.piccolo2d.util.PDebug;
@@ -24,7 +24,10 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -176,7 +179,7 @@ public abstract class AppFrame extends JPanel implements ApplicationListener {
         return PUtil.createBasicScenegraph();
     }
 
-    protected abstract ElasticWorld createWorld();
+    protected abstract NengoWorld createWorld();
 
     protected DisplayMode getBestDisplayMode(GraphicsDevice device) {
         Iterator<DisplayMode> itr = getPreferredDisplayModes(device).iterator();
@@ -575,7 +578,7 @@ public abstract class AppFrame extends JPanel implements ApplicationListener {
     /**
      * @return the top-most World associated with this frame
      */
-    public ElasticWorld getWorld() {
+    public NengoWorld getWorld() {
         return universe.getWorld();
     }
 

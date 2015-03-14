@@ -22,7 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 
 
-public class ElasticGround extends WorldGroundImpl {
+@Deprecated public class ElasticGround extends WorldGroundImpl {
 
 	public static final String ELASTIC_LENGTH_KEY = "elasticLength";
 
