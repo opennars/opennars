@@ -61,7 +61,7 @@ public class IntegratorExample {
 		network = new UINetwork(new DefaultNetwork());
 		abstractNengo.getWorld().getGround().addChild(network);
 		network.openViewer();
-		network.getViewer().getGround().setElasticEnabled(true);
+		//network.getViewer().getGround().setElasticEnabled(true);
 
 		(new Thread(new Runnable() {
 

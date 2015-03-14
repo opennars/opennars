@@ -99,20 +99,16 @@ public class HyperassociativeMap<N, E extends UIEdge<N>> implements IterativeLay
         return coordinates.keySet();
     }
 
-    @Override
-    public ArrayRealVector newPosition(N node) {
-        ArrayRealVector location = randomCoordinates(dimensions);
-        return location;
-    }
-    
+
     @Override
     public ArrayRealVector getPosition(N node) {
-        ArrayRealVector location = coordinates.get(node);    
-        if (location == null) {
-            location = newPosition(node);
-            coordinates.put(node, location);
-        }
-        return location;
+        throw new RuntimeException("this should not be called");
+//        ArrayRealVector location = coordinates.get(node);
+//        if (location == null) {
+//            location = newPosition(node);
+//            coordinates.put(node, location);
+//        }
+//        return location;
     }
 
     public double getMaxRepulsionDistance() {

@@ -36,8 +36,9 @@ import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticGround;
-import ca.nengo.ui.lib.world.elastic.ElasticWorld;
 import ca.nengo.ui.lib.world.handler.AbstractStatusHandler;
+import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
+import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.model.ModelsContextMenu;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINodeViewable;
@@ -56,7 +57,7 @@ import java.util.*;
  * 
  * @author Shu
  */
-public abstract class NodeViewer extends ElasticWorld implements Interactable {
+public abstract class NodeViewer extends WorldImpl implements Interactable {
 
     private MyNodeListener myNodeListener;
     private Boolean justOpened;
@@ -78,7 +79,7 @@ public abstract class NodeViewer extends ElasticWorld implements Interactable {
      * @param nodeContainer
      *            UI Object containing the Node model
      */
-    public NodeViewer(UINodeViewable nodeContainer, ElasticGround ground) {
+    public NodeViewer(UINodeViewable nodeContainer, WorldGroundImpl ground) {
         super(nodeContainer.getName() + " (" + nodeContainer.getTypeName() + " Viewer)", ground);
         this.parentOfViewer = nodeContainer;
         this.justOpened = false;
@@ -198,7 +199,7 @@ public abstract class NodeViewer extends ElasticWorld implements Interactable {
      *            Type of sort layout to use
      */
     public void applySortLayout(SortMode sortMode) {
-        getGround().setElasticEnabled(false);
+        //getGround().setElasticEnabled(false);
 
         List<UINeoNode> nodes = getUINodes();
 
@@ -444,9 +445,9 @@ class NodeViewerStatus extends AbstractStatusHandler {
 
         ModelObject wo = (ModelObject) Util.getNodeFromPickPath(event, ModelObject.class);
 
-        if (getWorld().getGround().isElasticMode()) {
+        /*if (getWorld().getGround().isElasticMode()) {
             statusStr.append("(Elastic) | ");
-        }
+        }*/
         statusStr.append(getWorld().getViewerParent().getFullName()).append(" -> ");
 
         if (getWorld().getSelection().size() > 1) {

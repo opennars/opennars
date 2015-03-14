@@ -6,7 +6,6 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import java.util.Collection;
 
 public interface IterativeLayout<V,E> {
-    ArrayRealVector newPosition(V vertex);
 
     ArrayRealVector getPosition(V vertex);
 

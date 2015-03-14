@@ -34,6 +34,7 @@ import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.ui.lib.util.UserMessages;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.elastic.ElasticGround;
+import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UIGroup;
 import ca.nengo.ui.model.node.UINetwork;
@@ -60,7 +61,7 @@ public class GroupViewer<N extends Group, G extends UINodeViewable> extends Node
 	 * @param ensembleUI
 	 *            Parent Ensemble UI Wrapper
 	 */
-	public GroupViewer(G ensembleUI, ElasticGround g) {
+	public GroupViewer(G ensembleUI, WorldGroundImpl g) {
 		super(ensembleUI, g);
 	}
 

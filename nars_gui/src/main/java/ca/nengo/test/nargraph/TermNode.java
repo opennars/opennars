@@ -11,6 +11,7 @@ import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /** a node which can represent a pre-Term, a Term, or a Concept */
 public class TermNode extends UIVertex {
@@ -153,13 +154,19 @@ public class TermNode extends UIVertex {
 
         double x = d[0];
         double y = d[1];
-        if (Double.isFinite(x) && Double.isFinite(y)) {
-            long animTime = (long) (layoutPeriod * 1f);
 
-            //TODO combine these into one Transform update
-            ui.dragTo(x, y, 0.5);
-            ui.scaleTo(scale * (0.75f + priority), 0.05);
-        }
+        //bounds
+        Rectangle2D bounds = graphnode.getLayoutBounds();
+        if (x > bounds.getMaxX()) x= bounds.getMaxX();
+        if (x < bounds.getMinX()) x = bounds.getMinX();
+        if (y > bounds.getMaxY()) y= bounds.getMaxY();
+        if (y < bounds.getMinY()) y = bounds.getMinY();
+
+        //TODO combine these into one Transform update
+        ui.scaleTo(scale * (0.75f + priority), 0.05);
+        ui.dragTo(x, y, 0.5);
+
+
         //System.out.println(x + " " + y);
         layoutPeriod = -1;
 

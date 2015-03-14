@@ -20,8 +20,7 @@
 <{U,A} --> O>.
 <(*,en,"virtual") --> U>.
 <(*,en,"actual") --> A>.
-<(--,U) ==> A>.
-<(--,A) ==> U>.
+<(--,<U <-> A>).
 <{(*,OO,O),(*,OM,O),(*,MO,M),(*,MM,M)} --> source>.
 <{(*,OO,O),(*,MO,O),(*,OM,M),(*,MM,M)} --> target>.
 
@@ -34,10 +33,10 @@
 
 'http://www.ieml.org/english/polarevents.html
 <{OO, OM, MO, MM} --> event>.
-<(*,O,O) <=> OO>.
-<(*,O,M) <=> OM>.
-<(*,M,O) <=> MO>.
-<(*,M,M) <=> MM>.
+<(*,O,O) <-> OO>.
+<(*,O,M) <-> OM>.
+<(*,M,O) <-> MO>.
+<(*,M,M) <-> MM>.
 <(*,en,"energy") --> OO>.
 <(*,en,"act") --> OM>.
 <(*,en,"mutation") --> MO>.
@@ -45,41 +44,41 @@
 
 
 <{UU,UA,AU,AA} --> OO>.
-<(*,U,U) <=> UU>.
-<(*,U,A) <=> UA>.
-<(*,A,U) <=> AU>.
-<(*,A,A) <=> AA>.
+<(*,U,U) <-> UU>.
+<(*,U,A) <-> UA>.
+<(*,A,U) <-> AU>.
+<(*,A,A) <-> AA>.
 <(*,en,"reflect") --> UU>.
-<UU <=> wo>.
+<UU <-> wo>.
 <(*,en,"act") --> UA>.
-<UA <=> wa>.
+<UA <-> wa>.
 <(*,en,"perceive") --> AU>.
-<AU <=> wu>.
+<AU <-> wu>.
 <(*,en,"reconstitute") --> AA>.
-<AA <=> we>.
+<AA <-> we>.
 
 <{SS,SB,ST,BS,BB,BT,TS,TB,TT} --> MM>.
 
 
-<(*,S,T) <=> ST>.
-<(*,B,S) <=> BS>.
-<(*,B,B) <=> BB>.
-<(*,B,T) <=> BT>.
-<(*,T,S) <=> TS>.
-<(*,T,B) <=> TB>.
-<(*,T,T) <=> TT>.
+<(*,S,T) <-> ST>.
+<(*,B,S) <-> BS>.
+<(*,B,B) <-> BB>.
+<(*,B,T) <-> BT>.
+<(*,T,S) <-> TS>.
+<(*,T,B) <-> TB>.
+<(*,T,T) <-> TT>.
 
-<(*,S,S) <=> SS>.
+<(*,S,S) <-> SS>.
 <(*,en,"thought") --> SS>.
-<SS <=> s>.
+<SS <-> s>.
 
-<(*,S,T) <=> ST>.
+<(*,S,T) <-> ST>.
 <(*,en,"memory") --> ST>.
-<ST <=> t>.
+<ST <-> t>.
 
-<(*,S,B) <=> SB>.
+<(*,S,B) <-> SB>.
 <(*,en,"language") --> SB>.
-<SB <=> b>.
+<SB <-> b>.
 <language <-> b>.
 
 'TODO:

@@ -2,7 +2,7 @@ package ca.nengo.test.nargraph;
 
 import automenta.vivisect.dimensionalize.UIEdge;
 import automenta.vivisect.swing.ColorArray;
-import ca.nengo.ui.lib.world.elastic.ElasticGround;
+import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.model.icon.ModelIcon;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NetworkViewer;
@@ -18,7 +18,7 @@ import java.awt.*;
 */
 public class UINARGraph extends UINetwork {
 
-    float arrowHeadScale = 1f / 8f;
+    float arrowHeadScale = 1f / 4f;
 
     private final TestNARGraph.NARGraphNode nargraph;
 
@@ -92,34 +92,42 @@ public class UINARGraph extends UINetwork {
 
     protected void drawEdges(ca.nengo.ui.lib.world.PaintContext paintContext) {
 
+        UIEdge<UIVertex>[] ee = nargraph.getEdges();
+        if (ee == null) return;
+
         Graphics2D g = paintContext.getGraphics();
 
 
-            for (final UIEdge e : nargraph.getEdges()) {
+            for (final UIEdge e : ee) {
 
                 UIVertex source = (UIVertex) e.getSource();
                 if (source == null) continue;
                 UIVertex target = (UIVertex) e.getTarget();
                 if (target == null) continue;
 
-                if ((!source.ui.getVisible() || !target.ui.getVisible())) {
+                if ((source.ui.isDestroyed() || target.ui.isDestroyed())) {
+                    //System.out.println(source + " or " + target + " destroyed");
                     continue;
                 }
 
-                double sx = source.ui.getCenterX();
-                double sy = source.ui.getCenterY();
-                double tx = target.ui.getCenterX();
-                double ty = target.ui.getCenterY();
+                double sx = source.getX();
+                double sy = source.getY();
+                double tx = target.getX();
+                double ty = target.getY();
 
+                //System.out.println(source + " " + target + " " + sx + " " + sy + " " + tx + " "+ ty);
+
+                final float sourceRadius = (float) source.ui.getWidth() / 2f;
                 final float targetRadius = (float) target.ui.getWidth() / 2f;
                 //g.drawLine((int)sx, (int)sy, (int)tx, (int)ty);
-                e.shape = drawArrow(g, (Polygon) e.shape, getEdgeColor(e), 256f, (int) sx, (int) sy, (int) tx, (int) ty, targetRadius);
+                e.shape = drawArrow(g, (Polygon) e.shape, getEdgeColor(e), sourceRadius, (int) sx, (int) sy, (int) tx, (int) ty, targetRadius);
 
         }
     }
 
     final ColorArray red = new ColorArray(64, new Color(0.4f, 0.2f, 0.2f, 0.5f), new Color(1f, 0.7f, 0.3f, 1.0f));
     final ColorArray blue = new ColorArray(64, new Color(0.2f, 0.2f, 0.4f, 0.5f), new Color(0.3f, 0.7f, 1f, 1.0f));
+
 
 
     public Color getEdgeColor(UIEdge e) {
@@ -136,18 +144,25 @@ public class UINARGraph extends UINetwork {
         return Color.WHITE;
     }
 
-    class UINARGraphGround extends ElasticGround {
+    class UINARGraphGround extends WorldGroundImpl /*ElasticGround*/ {
 
         @Override
         public void paint(ca.nengo.ui.lib.world.PaintContext paintContext) {
-            super.paint(paintContext);
             drawEdges(paintContext);
+            super.paint(paintContext);
         }
+
+
     }
 
     final private class UINARGraphViewer extends NetworkViewer {
         public UINARGraphViewer(UINARGraph g) {
             super(g, new UINARGraphGround());
+        }
+
+        @Override
+        protected boolean isDropEffect() {
+            return false;
         }
     }
 }

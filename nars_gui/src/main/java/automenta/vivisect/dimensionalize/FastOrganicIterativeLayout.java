@@ -1,32 +1,29 @@
 package automenta.vivisect.dimensionalize;
 
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
-import com.mxgraph.util.mxRectangle;
 import nars.core.Parameters;
 import nars.util.data.XORShiftRandom;
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.DirectedGraph;
 
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 /**
  * Fast organic layout algorithm, adapted from JGraph
  */
-public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements IterativeLayout<N,E>{
+abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements IterativeLayout<N,E>{
 
     public static final double DisplacementLengthEpsilon = 0.0001; //minimum distinguishable length
 
-    private final Map<N, ArrayRealVector> coordinates = new LinkedHashMap();
     private final DirectedGraph<N, E> graph;
     private final Random rng = new XORShiftRandom();
-
-    mxRectangle initialBounds;
+    private final Rectangle2D bounds;
 
     double temperature;
     double temperatureDecay;
     double minTemperature;
 
-    public FastOrganicIterativeLayout(DirectedGraph<N,E> graph) {
+    public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, Rectangle2D bounds) {
         this.graph = graph;
         setInitialTemp(100, 1.0f);
         setMinDistanceLimit(0.1f);
@@ -34,29 +31,13 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
         setForceConstant(30);
 
+        this.bounds = bounds;
+
         resetLearning();
 
     }
 
-    public void scale(double scale) {
-        this.initialBounds = new mxRectangle(0,0, scale, scale);
-    }
 
-    @Override
-    public ArrayRealVector newPosition(N node) {
-        ArrayRealVector location = new ArrayRealVector(2);
-        return location;
-    }
-
-    @Override
-    public ArrayRealVector getPosition(N node) {
-        ArrayRealVector location = coordinates.get(node);
-        if (location == null) {
-            location = newPosition(node);
-            coordinates.put(node, location);
-        }
-        return location;
-    }
 
     @Override
     public void resetLearning() {
@@ -325,7 +306,7 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
         final List<N> cells = this.cells;
         final double[] radii = this.radius;
 
-        Map<N, ArrayRealVector> coordinates = this.coordinates;
+
 
 
         for (int i = 0; i < n; i++) {
@@ -479,22 +460,19 @@ public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements Itera
 
         double wx, wy;
 
-        if (initialBounds != null) {
-            wx =  (maxx - minx);
-            if (wx == 0) wx = 1;
-            else wx = initialBounds.getWidth() / wx;
-            wy =  (maxy - miny);
-            if (wy == 0) wy = 1;
-            else wy = initialBounds.getHeight() / wy;
-            dx += initialBounds.getX();
-            dy += initialBounds.getY();
-        }
-        else {
-            wx = wy = 1;
-        }
 
-        for (final ArrayRealVector a : coordinates.values()) {
-            double[] p = a.getDataRef();
+        wx =  (maxx - minx);
+        if (wx == 0) wx = 1;
+        else wx = bounds.getWidth() / wx;
+        wy =  (maxy - miny);
+        if (wy == 0) wy = 1;
+        else wy = bounds.getHeight() / wy;
+        dx += bounds.getCenterX();
+        dy += bounds.getCenterY();
+
+
+        for (final N x : vertexArray) {
+            double[] p = getPosition(x).getDataRef();
             p[0] = p[0] * wx + dx;
             p[1] = p[1] * wy + dy;
         }

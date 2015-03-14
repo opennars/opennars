@@ -12,6 +12,7 @@ import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.ui.lib.object.activity.TrackedAction;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
+import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldSkyImpl;
 import edu.uci.ics.jung.graph.Graph;
@@ -43,12 +44,12 @@ public class ElasticWorld extends WorldImpl {
         this(name, new WorldSkyImpl(), new ElasticGround());
     }
 
-    public ElasticWorld(String name, ElasticGround ground) {
+    public ElasticWorld(String name, WorldGroundImpl ground) {
         this(name, new WorldSkyImpl(), ground);
 
     }
 
-    public ElasticWorld(String name, WorldSkyImpl sky, ElasticGround ground) {
+    public ElasticWorld(String name, WorldSkyImpl sky, WorldGroundImpl ground) {
         super(name, sky, ground);
     }
 

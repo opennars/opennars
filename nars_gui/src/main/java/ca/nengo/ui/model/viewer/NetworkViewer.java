@@ -36,7 +36,7 @@ import ca.nengo.ui.lib.util.UserMessages;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.elastic.ElasticGround;
-import ca.nengo.ui.lib.world.piccolo.icon.ArrowIcon;
+import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.lib.world.piccolo.icon.LoadIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.SaveIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.ZoomIcon;
@@ -67,7 +67,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
     private final File backupLayoutFile;
     private Path layoutArea;
     private Button zoom;
-    private Button feedforward;
+    //private Button feedforward;
     private Button save;
     private Button restore;
 
@@ -83,7 +83,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         this(pNetwork, new ElasticGround());
     }
 
-    public NetworkViewer(UINetwork pNetwork, ElasticGround g) {
+    public NetworkViewer(UINetwork pNetwork, WorldGroundImpl g) {
         super(pNetwork, g);
         String layoutFileName = "layouts/" + pNetwork.getName() + ".layout";
         this.layoutFile = new File(layoutFileName);
@@ -113,12 +113,14 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                 zoomToFit();
             }
         });
+        /*
         feedforward = new Button(new ArrowIcon(BUTTON_SIZE),
                 new Runnable() {
             public void run() {
                 doFeedForwardLayout();
             }
         });
+        */
         save = new Button(new SaveIcon(BUTTON_SIZE),
                 new Runnable() {
             public void run() {
@@ -134,17 +136,17 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         layoutArea = Path.createRectangle(0, 0, 0.25f, 0.2f);
         layoutArea.setTransparency(0.0f);
         zoom.setTransparency(0.0f);
-        feedforward.setTransparency(0.0f);
+        //feedforward.setTransparency(0.0f);
         save.setTransparency(0.0f);
         restore.setTransparency(0.0f);
         layoutArea.setPickable(true); // Need this to have event listeners. Ugh.
         layoutArea.addInputEventListener(new ShowHideHandler(
                 new WorldObject[]{
-                        zoom, feedforward, save, restore
+                        zoom, /*feedforward, */save, restore
                 }));
         this.addChild(layoutArea);
         this.addChild(zoom);
-        this.addChild(feedforward);
+        //this.addChild(feedforward);
         this.addChild(save);
         this.addChild(restore);
     }
@@ -161,8 +163,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         restore.setOffset(buttonX, buttonY);
         buttonX -= save.getWidth();
         save.setOffset(buttonX, buttonY);
-        buttonX -= feedforward.getWidth();
-        feedforward.setOffset(buttonX, buttonY);
+        //buttonX -= feedforward.getWidth();
+        //feedforward.setOffset(buttonX, buttonY);
         buttonX -= zoom.getWidth();
         zoom.setOffset(buttonX, buttonY);
     }
@@ -293,7 +295,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             getGround().addChildFancy(nodeUI, false);
 
         } else {
-            boolean centerAndNotify = !isFirstUpdate;
+            boolean centerAndNotify = !isFirstUpdate && isDropEffect();
             UINeoNode u = addUINode(nodeUI, centerAndNotify, false);
 
             neoNodesChildren.put(node, u);
@@ -305,6 +307,9 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         return nodeUI;
     }
 
+    protected boolean isDropEffect() {
+        return true;
+    }
 
     private void updateViewExposed() {
         /*
@@ -404,10 +409,12 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                 // applyJungLayout(KKLayout.class);
             }
         }
+        /*
         if (ELASTIC_LAYOUT_ENABLED_DEFAULT) {
             // enable elastic layout for Jung && when no nodes are loaded.
             getGround().setElasticEnabled(true);
         }
+        */
     }
 
     @Override
@@ -478,7 +485,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             }
         }
 
-        getGround().setElasticEnabled(false);
+        //getGround().setElasticEnabled(false);
         boolean enableElasticMode = false;
 
         HashMap<String, Float[]> nodeXY = new HashMap<String, Float[]>();
@@ -594,9 +601,11 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             zoomToBounds(fullBounds, 700);
         }
 
+        /*
         if (enableElasticMode) {
             getGround().setElasticEnabled(true);
         }
+        */
 
         return fullBounds != null;
     }
@@ -633,7 +642,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         newfile.append("##############################\n");
         newfile.append("### Nengo Workspace layout ###\n");
         newfile.append("##############################\n");
-        newfile.append("# elasticmode=").append(Boolean.toString(getGround().isElasticMode())).append('\n');
+        //newfile.append("# elasticmode=").append(Boolean.toString(getGround().isElasticMode())).append('\n');
         newfile.append("# viewbounds=").append(getSky().getViewBounds().toString()).append('\n');
         for (UINeoNode object : getUINodes()) {
             newfile.append("# ").append(object.getFullName()).append('=').append(object.getOffset().toString()).append('\n');

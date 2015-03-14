@@ -5,6 +5,7 @@ import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import nars.logic.entity.Named;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.piccolo2d.util.PAffineTransform;
 
 import java.util.HashMap;
 
@@ -24,14 +25,16 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget {
         this.coords = new ArrayRealVector(2);
 
         //initial random position, to seed layout
-        ui.dragTo(1000*(Math.random() - 0.5), 1000*(Math.random() - 0.5));
-        //getActualCoordinates(0);
+        double x, y;
+        move(x = 1000 * (Math.random() - 0.5), y = 1000*(Math.random() - 0.5));
+        coords.setEntry(0, x); coords.setEntry(1, y);
     }
 
     abstract public float getPriority();
 
     @Override
     protected void beforeDestroy() {
+        System.out.println("before destroy " + this);
     }
 
     @Override
@@ -84,10 +87,14 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget {
     }
 
     public double getX() {
-        return ui.getPNode().getTransform().getTranslateX();
+        PAffineTransform tr = ui.getPNode().getTransformReference(false);
+        if (tr!=null) return tr.getTranslateX();
+        return Double.NaN;
     }
     public double getY() {
-        return ui.getPNode().getTransform().getTranslateY();
+        PAffineTransform tr = ui.getPNode().getTransformReference(false);
+        if (tr!=null) return tr.getTranslateY();
+        return Double.NaN;
     }
 
 
