@@ -78,7 +78,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
     /**
      * @see ca.nengo.sim.Simulator#update(ca.nengo.model.Network)
      */
-    public synchronized void update(Network network) {
+    public void update(Network network) {
     	
     	this.network = network;
         
@@ -107,7 +107,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
         	myProbeTasks = new ArrayList<ThreadTask>(20);
         }
 
-        myTasks = NodeThreadPool.collectTasks(network.getNodes(), myTasks);
+        myTasks = NodeThreadPool.collectTasks(network.nodes(), myTasks);
     }
 
     /**
@@ -120,7 +120,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
             it.next().reset();
         }
 
-        for (Node node: network.getNodes())
+        for (Node node: network.nodes())
         {
             if(node instanceof Network) {
                 ((Network)node).getSimulator().resetProbes();
@@ -149,8 +149,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
     /**
      * @see ca.nengo.sim.Simulator#run(float, float, float)
      */
-    public void run(float startTime, float endTime, float stepSize)
-            throws SimulationException {
+    public void run(float startTime, float endTime, float stepSize) throws SimulationException {
         this.run(startTime, endTime, stepSize, true);
     }
     
@@ -238,19 +237,17 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
                 myProjection.getTarget().apply(values);
             }
 
-            Node[] nn = network.getNodes();
-            if (nn != null) {
-                for (Node myNode : nn) {
-                    if (myNode == null) continue;
-                    if (myNode instanceof NetworkImpl) {
-                        ((NetworkImpl) myNode).run(startTime, endTime, false);
-                    } /*else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {
-                        myDeferredSocketNodes.add(myNode);
-                        continue;
-                    } else*/
-                    {
-                        myNode.run(startTime, endTime);
-                    }
+            Iterable<? extends Node> nn = network.nodes();
+            for (Node myNode : nn) {
+                //if (myNode == null) continue;
+                if (myNode instanceof NetworkImpl) {
+                    ((NetworkImpl) myNode).run(startTime, endTime, false);
+                } /*else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {
+                    myDeferredSocketNodes.add(myNode);
+                    continue;
+                } else*/
+                {
+                    myNode.run(startTime, endTime);
                 }
             }
 

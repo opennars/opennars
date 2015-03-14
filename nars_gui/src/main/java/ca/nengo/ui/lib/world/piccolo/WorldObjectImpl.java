@@ -350,6 +350,8 @@ public class WorldObjectImpl implements WorldObject {
 
 
 
+        removeFromParent();
+
         pnode.removeAllChildren();
         if (pnode instanceof PXNode) {
             ((PXNode) pnode).removeFromWorld();

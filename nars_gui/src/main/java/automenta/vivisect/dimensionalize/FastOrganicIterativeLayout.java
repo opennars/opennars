@@ -1,9 +1,9 @@
 package automenta.vivisect.dimensionalize;
 
+import ca.nengo.test.nargraph.UIVertex;
+import com.google.common.collect.Iterators;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
-import nars.core.Parameters;
 import nars.util.data.XORShiftRandom;
-import org.jgrapht.DirectedGraph;
 
 import java.awt.geom.Rectangle2D;
 import java.util.*;
@@ -11,23 +11,100 @@ import java.util.*;
 /**
  * Fast organic layout algorithm, adapted from JGraph
  */
-abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> implements IterativeLayout<N,E>{
+abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends UIEdge<N>> implements IterativeLayout<N, E> {
 
     public static final double DisplacementLengthEpsilon = 0.0001; //minimum distinguishable length
-
-    private final DirectedGraph<N, E> graph;
+    transient final List<Object> cells = new ArrayList();
     private final Random rng = new XORShiftRandom();
     private final Rectangle2D bounds;
+    /**
+     * Specifies if the top left corner of the input cells should be the origin
+     * of the layout result. Default is true.
+     */
+    protected boolean useInputOrigin = true;
+    /**
+     * Specifies if all edge points of traversed edge should be removed.
+     * Default is true.
+     */
+    protected boolean resetEdges = true;
+    /**
+     * Specifies if the STYLE_NOEDGESTYLE flag should be set on edge that are
+     * modified by the result. Default is true.
+     */
+    protected boolean disableEdgeStyle = true;
+    /**
+     * The force constant by which the attractive forces are divided and the
+     * replusive forces are multiple by the square of. The value equates to the
+     * average radius there is of free space around each node. Default is 50.
+     */
+    protected double forceConstant = 50;
+    /**
+     * Cache of <forceConstant>^2 for performance.
+     */
+    protected double forceConstantSquared = 0;
+    /**
+     * Minimal distance limit. Default is 2. Prevents of dividing by zero.
+     */
+    protected double minDistanceLimit = 2;
+    /**
+     * Cached version of <minDistanceLimit> squared.
+     */
+    protected double minDistanceLimitSquared = 0;
+    /**
+     * The maximum distance between vertex, beyond which their repulsion no
+     * longer has an effect
+     */
+    protected double maxDistanceLimit;
+    /**
+     * Start value of temperature. Default is 200.
+     */
+    protected double initialTemp;
+    /**
+     * An array of all vertex to be laid out.
+     */
+    protected List<N> vertices = new ArrayList();
+    /**
+     * An array of locally stored X co-ordinate displacements for the vertex.
+     */
+    protected double[] dispX;
+    /**
+     * An array of locally stored Y co-ordinate displacements for the vertex.
+     */
+    protected double[] dispY;
+    /**
+     * An array of locally stored co-ordinate positions for the vertex.
+     */
+    protected double[][] cellLocation;
+    /**
+     * The approximate radius of each cell, nodes only.
+     */
+    protected double[] radius;
+    /**
+     * The approximate radius squared of each cell, nodes only.
+     */
+    protected double[] radiusSquared;
+    /**
+     * Array of booleans representing the movable states of the vertex.
+     */
+    protected boolean[] isMoveable;
+    /**
+     * Local copy of cell neighbours.
+     */
+    protected int[][] neighbors;
+    /**
+     * Maps from vertex to indices.
+     */
 
+    protected ObjectIntHashMap<N> indices = new ObjectIntHashMap<>();
     double temperature;
     double temperatureDecay;
     double minTemperature;
 
-    public FastOrganicIterativeLayout(DirectedGraph<N,E> graph, Rectangle2D bounds) {
-        this.graph = graph;
+
+    public FastOrganicIterativeLayout(Rectangle2D bounds) {
         setInitialTemp(100, 1.0f);
         setMinDistanceLimit(0.1f);
-        setMaxDistanceLimit(450f);
+        setMaxDistanceLimit(150f);
 
         setForceConstant(30);
 
@@ -37,115 +114,10 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
 
     }
 
-
-
     @Override
     public void resetLearning() {
         temperature = initialTemp;
     }
-
-
-
-
-    /**
-     * Specifies if the top left corner of the input cells should be the origin
-     * of the layout result. Default is true.
-     */
-    protected boolean useInputOrigin = true;
-
-    /**
-     * Specifies if all edge points of traversed edge should be removed.
-     * Default is true.
-     */
-    protected boolean resetEdges = true;
-
-    /**
-     * Specifies if the STYLE_NOEDGESTYLE flag should be set on edge that are
-     modified by the result. Default is true.
-     */
-    protected boolean disableEdgeStyle = true;
-
-    /**
-     * The force constant by which the attractive forces are divided and the
-     * replusive forces are multiple by the square of. The value equates to the
-     * average radius there is of free space around each node. Default is 50.
-     */
-    protected double forceConstant = 50;
-
-    /**
-     * Cache of <forceConstant>^2 for performance.
-     */
-    protected double forceConstantSquared = 0;
-
-    /**
-     * Minimal distance limit. Default is 2. Prevents of dividing by zero.
-     */
-    protected double minDistanceLimit = 2;
-
-    /**
-     * Cached version of <minDistanceLimit> squared.
-     */
-    protected double minDistanceLimitSquared = 0;
-
-    /**
-     * The maximum distance between vertex, beyond which their repulsion no
-     longer has an effect
-     */
-    protected double maxDistanceLimit;
-
-    /**
-     * Start value of temperature. Default is 200.
-     */
-    protected double initialTemp;
-
-
-
-    /**
-     * An array of all vertex to be laid out.
-     */
-    protected List<N> vertexArray = Parameters.newArrayList();
-
-    /**
-     * An array of locally stored X co-ordinate displacements for the vertex.
-     */
-    protected double[] dispX;
-
-    /**
-     * An array of locally stored Y co-ordinate displacements for the vertex.
-     */
-    protected double[] dispY;
-
-    /**
-     * An array of locally stored co-ordinate positions for the vertex.
-     */
-    protected double[][] cellLocation;
-
-    /**
-     * The approximate radius of each cell, nodes only.
-     */
-    protected double[] radius;
-
-    /**
-     * The approximate radius squared of each cell, nodes only.
-     */
-    protected double[] radiusSquared;
-
-    /**
-     * Array of booleans representing the movable states of the vertex.
-     */
-    protected boolean[] isMoveable;
-
-    /**
-     * Local copy of cell neighbours.
-     */
-    protected int[][] neighbors;
-
-
-    /**
-     * Maps from vertex to indices.
-     */
-
-    protected ObjectIntHashMap<N> indices = new ObjectIntHashMap<>();
 
     @Override
     public double getRadius(N n) {
@@ -173,15 +145,11 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
     }
 
     /**
-     *
      * @param value
      */
     public void setUseInputOrigin(boolean value) {
         useInputOrigin = value;
     }
-
-
-
 
     /**
      *
@@ -191,7 +159,6 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
     }
 
     /**
-     *
      * @param value
      */
     public void setForceConstant(double value) {
@@ -206,7 +173,6 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
     }
 
     /**
-     *
      * @param value
      */
     public void setMinDistanceLimit(double value) {
@@ -235,7 +201,6 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
     }
 
     /**
-     *
      * @param value
      */
     public void setInitialTemp(double value, double decay) {
@@ -244,30 +209,22 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
         minTemperature = value / 100;
     }
 
-
-    transient final List<N> cells = new ArrayList();
-
     public void run(int iterations) {
 
         if (temperature < minTemperature) return;
 
         indices.clear();
 
+
         // Finds the relevant vertex for the layout
-        vertexArray.clear();
+        vertices.clear();
 
-        Set<N> vx = graph.vertexSet();
-        if (vx == null || vx.isEmpty()) return;
-        try {
-            vertexArray.addAll(vx);
-        }
-        catch (Exception e) {
-            //HACK handle this better
-            return;
-        }
+        Iterators.addAll(vertices, getVertices());
+
+        if (vertices.isEmpty()) return;
 
 
-        pre(vertexArray);
+        pre(vertices);
 
 
         //null disables offset adjustment at the end
@@ -275,10 +232,10 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
         //? graph.getBoundsForCells(vertexArray, false, false, true) : null;
 
 
-        int n = vertexArray.size();
+        int n = vertices.size();
 
 
-        if ((cellLocation == null) || (cellLocation.length<n)) {
+        if ((cellLocation == null) || (cellLocation.length < n)) {
             dispX = new double[n];
             dispY = new double[n];
             cellLocation = new double[n][];
@@ -303,16 +260,14 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
 
         final double cellLocation[][] = this.cellLocation;
         final int[][] neighbors = this.neighbors;
-        final List<N> cells = this.cells;
+        final List<Object> cells = this.cells;
         final double[] radii = this.radius;
 
 
-
-
         for (int i = 0; i < n; i++) {
-            N v = vertexArray.get(i);
+            N v = vertices.get(i);
 
-            if (cellLocation[i]==null)
+            if (cellLocation[i] == null)
                 cellLocation[i] = new double[2];
 
             // Set up the mapping from array indices to cells
@@ -322,8 +277,8 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
             // Set the X,Y value of the internal version of the cell to
             // the center point of the vertex for better positioning
             double radius = getRadius(v);
-            double width = radius*2f; //bounds.getWidth();
-            double height = radius*2f; //bounds.getHeight();
+            double width = radius * 2f; //bounds.getWidth();
+            double height = radius * 2f; //bounds.getHeight();
 
             // Randomize (0, 0) locations
             //TODO re-use existing location
@@ -331,12 +286,11 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
             double x = c[0], y = c[1];
 
 
-
             cellLocation[i][0] = x;// + width / 2.0;
             cellLocation[i][1] = y;// + height / 2.0;
 
             radii[i] = radius;
-            this.radiusSquared[i] = radius*radius;
+            this.radiusSquared[i] = radius * radius;
 
 
             // Moves cell location back to top-left from center locations used in
@@ -356,73 +310,71 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
             //TODO why does a vertex disappear from the graph... make this unnecessary
 
 
-
-            Set<E> edges = graph.edgesOf(v);
-            if (edges!=null) {
-
-                cells.clear();
-                for (E e : edges) {
-
-                    N source = e.getSource();
-                    N target = e.getTarget();
-                    if (source!=v)  cells.add(source);
-                    else if (target!=v)  cells.add(target);
-                }
-
-                if (neighbors[i]==null || neighbors[i].length < cells.size())
-                    neighbors[i] = new int[cells.size()];
-
-                for (int j = 0; j < cells.size(); j++) {
-                    N cj = cells.get(j);
-
-                    if (indices.containsKey(cj)) {
-                        int index = indices.get(cj);
-
-                        // Check the connected cell in part of the vertex list to be
-                        // acted on by this layout
-
-                        neighbors[i][j] = index;
-                    }
-                    // Else if index of the other cell doesn't correspond to
-                    // any cell listed to be acted upon in this layout. Set
-                    // the index to the value of this vertex (a dummy self-loop)
-                    // so the attraction force of the edge is not calculated
-                    else {
-                        neighbors[i][j] = i;
-                    }
-                }
-
-                //fill up the remaining indexes with -1 in case it was shrunk and not unallocated
-                for (int j = cells.size(); j < neighbors[i].length; j++)
-                    neighbors[i][j] = -1;
+            cells.clear();
+            for (Object oo : v.getEdges(true, true)) {
+                UIEdge e = (UIEdge)oo; //HACK fix this
+                Object source = e.getSource();
+                Object target = e.getTarget();
+                if (source != v) cells.add(source);
+                else if (target != v) cells.add(target);
             }
-            else if (neighbors[i] != null) {
+
+            if (cells.isEmpty() && neighbors[i] != null) {
                 Arrays.fill(neighbors[i], -1);
+                continue;
             }
-        }
 
+            if (neighbors[i] == null || neighbors[i].length < cells.size())
+                neighbors[i] = new int[cells.size()];
+
+            for (int j = 0; j < cells.size(); j++) {
+                Object cj = cells.get(j);
+
+                if (indices.containsKey(cj)) {
+                    int index = indices.get(cj);
+
+                    // Check the connected cell in part of the vertex list to be
+                    // acted on by this layout
+
+                    neighbors[i][j] = index;
+                }
+                // Else if index of the other cell doesn't correspond to
+                // any cell listed to be acted upon in this layout. Set
+                // the index to the value of this vertex (a dummy self-loop)
+                // so the attraction force of the edge is not calculated
+                else {
+                    neighbors[i][j] = i;
+                }
+            }
+
+            //fill up the remaining indexes with -1 in case it was shrunk and not unallocated
+            for (int j = cells.size(); j < neighbors[i].length; j++)
+                neighbors[i][j] = -1;
+
+
+        }
 
 
         // Main iteration loop
         //try {
-            for (int iteration = 0; iteration < iterations; iteration++) {
+        for (int iteration = 0; iteration < iterations; iteration++) {
 
-                // Calculate repulsive forces on all vertex
-                calcRepulsion();
+            // Calculate repulsive forces on all vertex
+            calcRepulsion();
 
-                // Calculate attractive forces through edge
-                calcAttraction();
+            // Calculate attractive forces through edge
+            calcAttraction();
 
-                temperature = temperature * temperatureDecay;
-                calcPositions(temperature);
-            }
+            temperature = temperature * temperatureDecay;
+            calcPositions(temperature);
+        }
 
         //} catch (Exception e) { }
 
         double minx = 0, miny = 0, maxx = 0, maxy = 0;
 
-        for (int i = 0; i < vertexArray.size(); i++) {
-            N v = vertexArray.get(i);
+        for (int i = 0; i < vertices.size(); i++) {
+            N v = vertices.get(i);
 
             if (v != null) {
                 //cellLocation[i][0] -= 1/2.0; //geo.getWidth() / 2.0;
@@ -453,31 +405,35 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
         // Modifies the cloned geometries in-place. Not needed
         // to clone the geometries again as we're in the same
         // undoable change.
-        double dx = -(maxx+minx)/2f;
-        double dy = -(maxy+miny)/2f;
+        double dx = -(maxx + minx) / 2f;
+        double dy = -(maxy + miny) / 2f;
 
         //normalize to bounds
 
         double wx, wy;
 
 
-        wx =  (maxx - minx);
+        wx = (maxx - minx);
         if (wx == 0) wx = 1;
         else wx = bounds.getWidth() / wx;
-        wy =  (maxy - miny);
+        wy = (maxy - miny);
         if (wy == 0) wy = 1;
         else wy = bounds.getHeight() / wy;
         dx += bounds.getCenterX();
         dy += bounds.getCenterY();
 
 
-        for (final N x : vertexArray) {
+        for (final N x : vertices) {
             double[] p = getPosition(x).getDataRef();
             p[0] = p[0] * wx + dx;
             p[1] = p[1] * wy + dy;
         }
 
     }
+
+
+    protected abstract Iterator<? extends N> getVertices();
+
 
     /**
      * Takes the displacements calculated for each cell and applies them to the
@@ -488,7 +444,7 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
 
         final double[] dispX = this.dispX;
         final double[] dispY = this.dispY;
-        int size = vertexArray.size();
+        int size = vertices.size();
 
         final double[][] cellLocation = this.cellLocation;
 
@@ -525,7 +481,7 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
 
     /**
      * Calculates the attractive forces between all laid out nodes linked by
-     edge
+     * edge
      */
     protected void calcAttraction() {
         // Check the neighbours of each vertex and calculate the attractive
@@ -541,8 +497,8 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
         final double radius[] = this.radius;
         final boolean[] isMoveable = this.isMoveable;
 
-        for (int i = 0; i < vertexArray.size(); i++) {
-            if (neighbors[i]==null) continue;
+        for (int i = 0; i < vertices.size(); i++) {
+            if (neighbors[i] == null) continue;
             if (cellLocation[i] == null) continue;
             for (int k = 0; k < neighbors[i].length; k++) {
                 // Get the index of the othe cell in the vertex array
@@ -591,7 +547,7 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
      * Calculates the repulsive forces between all laid out nodes
      */
     protected void calcRepulsion() {
-        final int vertexCount = vertexArray.size();
+        final int vertexCount = vertices.size();
 
         final double maxDist = maxDistanceLimit; //cache as local variable for speed
         final double minDist = minDistanceLimit; //cache as local variable for speed
@@ -604,7 +560,7 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
 
         for (int i = 0; i < vertexCount; i++) {
             final double ri = radius[i];
-            if (cellLocation[i]==null) continue;
+            if (cellLocation[i] == null) continue;
 
             final double ix = cellLocation[i][0];
             final double iy = cellLocation[i][1];
@@ -613,28 +569,30 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
             for (int j = i; j < vertexCount; j++) {
                 // Exits if the layout is no longer allowed to run
 
-                if ((j != i) && (cellLocation[j]!=null)) {
+                if ((j != i) && (cellLocation[j] != null)) {
                     double xDelta = ix - cellLocation[j][0];
                     double yDelta = iy - cellLocation[j][1];
+
+                    final double rj = radius[j];
+                    double rij = ri + rj; //total radii
 
                     if (xDelta == 0) {
                         xDelta = 0.01 + (-0.5f + 0.5f * rng.nextDouble());
                     }
 
-                    if (xDelta - ri > maxDist) continue; // early exit condition
+                    if (xDelta - rij > maxDist) continue; // early exit condition
 
                     if (yDelta == 0) {
                         yDelta = 0.01 + (-0.5f + 0.5f * rng.nextDouble());
                     }
 
-                    final double rj = radius[j];
-                    if (yDelta - rj > maxDist) continue; // early exit condition
+                    if (yDelta - rij > maxDist) continue; // early exit condition
 
                     // Distance between nodes
                     double deltaLength = Math.sqrt((xDelta * xDelta)
                             + (yDelta * yDelta));
 
-                    double deltaLengthWithRadius = deltaLength - ri - rj;
+                    double deltaLengthWithRadius = deltaLength - rij;
 
                     if (deltaLengthWithRadius > maxDist) {
                         // Ignore vertex too far apart
@@ -667,8 +625,6 @@ abstract public class FastOrganicIterativeLayout<N, E extends UIEdge<N>> impleme
             }
         }
     }
-
-
 
 
 }

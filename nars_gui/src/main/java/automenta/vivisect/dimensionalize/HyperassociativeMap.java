@@ -15,6 +15,7 @@
 package automenta.vivisect.dimensionalize;
 
 import nars.core.Parameters;
+import nars.logic.entity.Named;
 import nars.util.data.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.Graph;
@@ -51,7 +52,7 @@ import java.util.concurrent.Future;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-public class HyperassociativeMap<N, E extends UIEdge<N>> implements IterativeLayout<N,E> {
+public class HyperassociativeMap<N extends Named, E extends UIEdge<N>> implements IterativeLayout<N,E> {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;

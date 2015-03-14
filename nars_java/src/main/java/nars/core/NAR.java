@@ -578,7 +578,9 @@ public class NAR implements Runnable {
                 memory.cycle();
         }
         catch (Throwable e) {
-            error(e);
+            Throwable c = e.getCause();
+            if (c == null) c = e;
+            error(c);
         }
 
         emit(FrameEnd.class);

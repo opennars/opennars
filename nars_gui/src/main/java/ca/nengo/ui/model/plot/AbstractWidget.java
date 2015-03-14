@@ -26,6 +26,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         super(name);
 
         ui = newUI(width, height);
+        setBounds(0,0,width,height);
     }
 
     public boolean isResizable() {
@@ -38,6 +39,9 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         return ei;
     }
 
+    public PBounds setBounds(double x, double y, double w, double h) {
+        return setBounds(new PBounds(x, y, w, h));
+    }
 
     public PBounds getBounds() { return ui.getBounds(); }
     public PBounds setBounds(PBounds p) { ui.setBounds(p); return p; }
@@ -70,7 +74,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
 
 
     /** called before destruction */
-    protected void beforeDestroy() {
+    protected void destroy() {
 
     }
 
@@ -100,7 +104,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
             super.prepareForDestroy();
 
             if (!isDestroyed())
-                beforeDestroy();
+                AbstractWidget.this.destroy();
         }
 
         @Override

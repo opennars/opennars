@@ -103,7 +103,8 @@ public class GroupViewer<N extends Group, G extends UINodeViewable> extends Node
             }
         }
 
-        for (Node n : getModel().getNodes()) {
+        for (Object o : getModel().nodes()) {
+            Node n = (Node)o; //HACK
             UINeoNode u = neoNodesChildren.get(n);
             if (u == null) {
                 u = createUINode(n, isFirstUpdate);

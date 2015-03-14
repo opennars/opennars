@@ -158,7 +158,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 * @param widget
 	 *            Widget to be added
 	 */
-	protected void addWidget(Widget widget) {
+    public void addWidget(Widget widget) {
 		widget.setScale(0.5);
 		addChild(widget);
 	}

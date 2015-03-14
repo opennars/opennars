@@ -41,9 +41,9 @@ public class InternalExperience extends AbstractPlugin  {
 
 
     //internal experience has less durability?
-    public static final float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
+    public static final float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
     //internal experience has less priority?
-    public static final float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
+    public static final float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.5f;
     
     //dont use internal experience for want and believe if this setting is true
     public static final boolean AllowWantBelieve=true;
@@ -139,6 +139,8 @@ public class InternalExperience extends AbstractPlugin  {
             Task task = (Task)a[0];
             NAL nal = (NAL)a[1];
 
+            if (Memory.randomNumber.nextDouble()>INTERNAL_EXPERIENCE_PROBABILITY) return;
+
             if(task.budget.summary() < MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return;
             }
@@ -147,7 +149,6 @@ public class InternalExperience extends AbstractPlugin  {
 
             if (content instanceof Operation) return;   // to prevent infinite recursions
 
-            if (Memory.randomNumber.nextDouble()>INTERNAL_EXPERIENCE_PROBABILITY) return;
 
             Sentence sentence = task.sentence;
 

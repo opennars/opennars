@@ -38,6 +38,9 @@ package ca.nengo.model;
 
 import ca.nengo.util.SpikePattern;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * <p>
  * A group of Nodes with largely overlapping inputs and outputs.
@@ -104,4 +107,11 @@ public interface Group<N extends Node> extends Node<N> {
 	public void redefineNodes(Node[] nodes);
 	
 	public void stopProbing(String stateName);
+
+    default public Iterable<? extends Node> nodes() {
+        Node[] t = getNodes();
+        if (t.length == 0) return Collections.emptyList();
+        return Arrays.asList(t);
+    }
+
 }

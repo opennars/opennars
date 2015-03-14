@@ -1,5 +1,6 @@
 package ca.nengo.ui.lib.world;
 
+import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import org.piccolo2d.PNode;
 import org.piccolo2d.activities.PInterpolatingActivity;
 
@@ -255,7 +256,7 @@ public interface WorldObject extends NamedObject, Destroyable {
     /**
      * @return World which is an ancestor
      */
-    public World getWorld();
+    public WorldImpl getWorld();
 
     /**
      * @return World layer which is an ancestor

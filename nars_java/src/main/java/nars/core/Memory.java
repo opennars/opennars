@@ -767,7 +767,7 @@ public class Memory implements Serializable {
 
         ex.printStackTrace();
 
-        if (Parameters.EXIT_ON_EXCEPTION) {
+        if (Parameters.DEBUG && Parameters.EXIT_ON_EXCEPTION) {
             //throw the exception to the next lower stack catcher, or cause program exit if none exists
             throw new RuntimeException(ex);
         }

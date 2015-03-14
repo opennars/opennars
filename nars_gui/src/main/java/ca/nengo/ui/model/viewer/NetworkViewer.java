@@ -171,11 +171,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
 
     @Override
     protected void removeChildModel(Node node) {
-        try {
-            getModel().removeNode(node.getName());
-        } catch (StructuralException e) {
-            e.printStackTrace();
-        }
+        getModel().removeNode(node.getName());
     }
 
     protected Double newItemPositionX;

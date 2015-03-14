@@ -38,14 +38,14 @@ public class TermNode extends UIVertex {
 
     @Override
     public String toString() {
-        if (concept!=null) return "TermNode[Concept=" + concept +"]";
-        if (task!=null) return "TermNode[Task=" + task +"]";
-        if (term!=null) return "TermNode[Term=" + term +"]";
+        if (concept!=null) return "TermNode[Concept=" + name().toString() +"]";
+        if (task!=null) return "TermNode[Task=" + name().toString() +"]";
+        if (term!=null) return "TermNode[Term=" + name().toString() +"]";
         return "TermNode[\""  + text + "\"]";
     }
 
     public TermNode(TestNARGraph.NARGraphNode graphnode, Concept c) {
-        super(c.getTerm());
+        super(c);
         this.graphnode = graphnode;
         setConcept(c);
     }
@@ -68,7 +68,8 @@ public class TermNode extends UIVertex {
         this.concept = null;
         this.task = t;
         if (t == null) {
-            this.term = null;
+            throw new RuntimeException("task is null");
+            //this.term = null;
         }
         else {
             this.term = t.getTerm();
@@ -91,13 +92,19 @@ public class TermNode extends UIVertex {
         this.concept = c;
         this.task = null;
         if (c == null) {
-            this.term = null;
+            throw new RuntimeException("concept is null");
+            //this.term = null;
         }
         else {
             this.term = c.getTerm();
         }
         updateUI();
         return true;
+    }
+
+    @Override
+    public boolean isDependent() {
+        return concept!=null; //concepts are allowed non-dependent
     }
 
     public float getPriority() {

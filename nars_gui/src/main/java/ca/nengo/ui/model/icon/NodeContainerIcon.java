@@ -24,7 +24,6 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model.icon;
 
-import ca.nengo.model.SimulationMode;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.primitive.Text;
@@ -60,26 +59,26 @@ public abstract class NodeContainerIcon extends ModelIcon {
 	 * Scales the icon display size depending on how many nodes are contained
 	 * within it
 	 */
-	private void updateIconScale() {
+	private void updateIconScaleByNumContained() {
 
 		int numOfNodes = getModelParent().getNodesCount();
-		int dimensionality = getModelParent().getDimensionality();
+		//int dimensionality = getModelParent().getDimensionality();
 
-		myNumOfNodes = numOfNodes;
+		//myNumOfNodes = numOfNodes;
 
-        String neuronsText = myNumOfNodes + " Neuron" + (myNumOfNodes == 1 ? "" : "s");
+        //String neuronsText = myNumOfNodes + " Neuron" + (myNumOfNodes == 1 ? "" : "s");
 
         //if (getModelParent().getModel()!=null) {
-            if (getModelParent().node().getMode() == SimulationMode.DIRECT) {
+            /*if (getModelParent().node().getMode() == SimulationMode.DIRECT) {
                 neuronsText = "Direct Mode";
-            }
+            }*/
         //}
 		
-		String dimensionalityText = "";
-		if (dimensionality > 0) {
-			dimensionalityText = "   " + dimensionality + 'D';
-		}
-		sizeLabel.setText(neuronsText + dimensionalityText);
+		//String dimensionalityText = "";
+		//if (dimensionality > 0) {
+			//dimensionalityText = "   " + dimensionality + 'D';
+		//}
+		//sizeLabel.setText(neuronsText + dimensionalityText);
 
 		float numOfNodesNormalized;
 		if (numOfNodes >= getNodeCountNormalization())
@@ -113,7 +112,7 @@ public abstract class NodeContainerIcon extends ModelIcon {
 	@Override
 	public void modelUpdated() {
 		super.modelUpdated();
-		updateIconScale();
+		//updateIconScaleByNumContained();
 	}
 	
 	@Override

@@ -117,7 +117,7 @@ public interface Node<N extends Node> extends Serializable, Resettable, Simulati
 	 */
 	public Node clone() throws CloneNotSupportedException;
 
-    default public Node[] getNodes() {
+    @Deprecated default public Node[] getNodes() {
         return emptyNodeArray;
     }
 }

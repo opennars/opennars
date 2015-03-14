@@ -1,23 +1,28 @@
 package ca.nengo.test.nargraph;
 
+import automenta.vivisect.dimensionalize.UIEdge;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
+import com.google.common.collect.Iterables;
 import nars.logic.entity.Named;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.piccolo2d.util.PAffineTransform;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-/**
-* Created by me on 3/12/15.
-*/
-abstract public class UIVertex<V extends Named> extends AbstractWidget {
+abstract public class UIVertex<V extends Named> extends AbstractWidget implements Named {
 
     public final V vertex;
     private final ArrayRealVector coords;
     protected long layoutPeriod = -1;
+    boolean destroyed = false;
 
+    final Set<UIEdge> incoming = new LinkedHashSet();
+    final Set<UIEdge> outgoing = new LinkedHashSet();
 
     public UIVertex(V vertex) {
         super(vertex.name().toString());
@@ -30,11 +35,19 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget {
         coords.setEntry(0, x); coords.setEntry(1, y);
     }
 
+    @Override
+    public Object name() {
+        return vertex;
+    }
+
     abstract public float getPriority();
 
     @Override
-    protected void beforeDestroy() {
-        System.out.println("before destroy " + this);
+    protected void destroy() {
+
+        //System.out.println("before destroy " + this);
+        destroyed = true;
+
     }
 
     @Override
@@ -49,8 +62,11 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof UIVertex)
+        if (obj instanceof UIVertex) {
+            if (destroyed)
+                return false;
             return getName().equals(((UIVertex) obj).getName());
+        }
         return false;
     }
 
@@ -75,6 +91,8 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget {
 
     /** loads the actual geometric coordinates to the coords array prior to next layout iteration */
     public void getActualCoordinates(long layoutPeriod /* in realtime msec */) {
+        if (destroyed) return;
+
         double x = getX();
         double y = getY();
         if (!Double.isFinite(x) || !Double.isFinite(y)) {
@@ -98,4 +116,34 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget {
     }
 
 
+    private Set<UIEdge> getEdgeSet(final boolean in) {
+        return in ? incoming : outgoing;
+    }
+
+    public void link(UIEdge v, boolean in) {
+        if (destroyed) return;
+        getEdgeSet(in).add(v);
+    }
+
+    public void unlink(UIEdge v, boolean in) {
+        if (destroyed) return;
+        getEdgeSet(in).remove(v);
+    }
+
+    abstract public boolean isDependent();
+
+    public Iterable<UIEdge> getEdges(boolean in, boolean out) {
+        if (destroyed) return Collections.emptyList();
+
+        boolean i = !incoming.isEmpty();
+        boolean o = !outgoing.isEmpty();
+        if (i && o)
+            return Iterables.concat(incoming, outgoing);
+        else if (i)
+            return incoming;
+        else if (o)
+            return outgoing;
+        else
+            return Collections.emptyList();
+    }
 }

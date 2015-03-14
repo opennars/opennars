@@ -4,6 +4,7 @@ import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.ObjectSet;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
+import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
 import edu.uci.ics.jung.graph.impl.AbstractSparseEdge;
 import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
@@ -119,8 +120,8 @@ public class ElasticGround extends WorldGroundImpl {
 	}
 
 	@Override
-	public ElasticWorld getWorld() {
-		return (ElasticWorld) super.getWorld();
+	public WorldImpl getWorld() {
+		return super.getWorld();
 	}
 
 	public boolean isElasticMode() {

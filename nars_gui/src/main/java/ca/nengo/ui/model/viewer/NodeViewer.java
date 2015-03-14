@@ -26,6 +26,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model.viewer;
 
+import ca.nengo.model.Group;
 import ca.nengo.model.Node;
 import ca.nengo.ui.lib.action.LayoutAction;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
@@ -301,8 +302,8 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
     /**
      * @return NEO Model represented by the viewer
      */
-    public Node getModel() {
-        return parentOfViewer.node();
+    public Group getModel() {
+        return (Group) parentOfViewer.node();
     }
 
     /**

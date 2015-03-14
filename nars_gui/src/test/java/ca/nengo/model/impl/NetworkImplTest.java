@@ -43,13 +43,10 @@ public class NetworkImplTest extends TestCase {
 		} catch (StructuralException e) {
 		} // exception is expected
 
-		try {
-			myNetwork.removeNode("c");
-			fail("Should have thrown exception because named ensemble doesn't exist");
-		} catch (StructuralException e) {
-		} // exception is expected
+        myNetwork.removeNode("c");
+        fail("Should have thrown exception because named ensemble doesn't exist");
 
-		myNetwork.removeNode("b");
+        myNetwork.removeNode("b");
 		assertEquals(1, myNetwork.getNodes().length);
 		assertEquals(a, myNetwork.getNodes()[0]);
 	}

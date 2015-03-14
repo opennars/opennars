@@ -114,7 +114,7 @@ import java.util.*;
 	protected void initialize(Network network, List<ThreadTask> threadTasks, boolean interactive){
 		
 
-		Node[] nodes = network.getNodes();
+		Iterable<Node> nodes = network.nodes();
 		Projection[] projections = network.getProjections();
 		
 		List<Node> nodeList = collectNodes(nodes, false, null);
@@ -372,7 +372,7 @@ import java.util.*;
      * 
      * @author Eric Crawford
      */
-    public static List<Node> collectNodes(Node[] startingNodes, boolean breakDownNetworkArrays, List<Node> nodes){
+    public static List<Node> collectNodes(Iterable<Node> startingNodes, boolean breakDownNetworkArrays, List<Node> nodes){
 
         if (nodes == null)
             nodes = new ArrayList();
@@ -404,7 +404,7 @@ import java.util.*;
             
             
             if(isNetwork){
-            	collectNodes(((Network) workingNode).getNodes(), breakDownNetworkArrays, nodes);
+            	collectNodes(((Network) workingNode).nodes(), breakDownNetworkArrays, nodes);
             }
             else{
             	nodes.add(workingNode);
@@ -420,7 +420,7 @@ import java.util.*;
      * 
      * @author Eric Crawford
      */
-    public static List<Projection> collectProjections(Node[] startingNodes, Projection[] startingProjections, List<Projection> projections){
+    public static List<Projection> collectProjections(Iterable<Node> startingNodes, Projection[] startingProjections, List<Projection> projections){
 
         if (projections == null)
             projections = new ArrayList();
@@ -435,7 +435,7 @@ import java.util.*;
 
             if(workingNode instanceof Network) {
                 Network nwn = ((Network) workingNode);
-                collectProjections(nwn.getNodes(), nwn.getProjections(), projections);
+                collectProjections(nwn.nodes(), nwn.getProjections(), projections);
             }
         }
 
@@ -447,7 +447,7 @@ import java.util.*;
      * 
      * @author Eric Crawford
      */
-    public static List<ThreadTask> collectTasks(Node[] startingNodes, List<ThreadTask> tasks){
+    public static List<ThreadTask> collectTasks(Iterable<Node> startingNodes, List<ThreadTask> tasks){
 
         if (tasks == null)
             tasks = new ArrayList<ThreadTask>();
@@ -457,7 +457,7 @@ import java.util.*;
         for (Node workingNode : startingNodes) {
 
             if(workingNode instanceof Network) { // && !(workingNode.getClass().getCanonicalName().contains("CCMModelNetwork")))
-                collectTasks( ((Network) workingNode).getNodes(), tasks);
+                collectTasks( ((Network) workingNode).nodes(), tasks);
             }
             
             if(workingNode instanceof TaskSpawner)

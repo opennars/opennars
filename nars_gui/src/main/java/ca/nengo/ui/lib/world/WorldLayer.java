@@ -4,8 +4,6 @@ import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
 
-import java.util.Collection;
-
 /**
  * A Layer of the world
  * 

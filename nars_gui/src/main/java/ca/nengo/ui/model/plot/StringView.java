@@ -2,14 +2,10 @@ package ca.nengo.ui.model.plot;
 
 
 import ca.nengo.model.*;
-import ca.nengo.model.impl.AbstractNode;
 import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.neural.SpikeOutput;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.piccolo.object.BoundsHandle;
-import ca.nengo.ui.model.UIBuilder;
-import ca.nengo.ui.model.UINeoNode;
-import ca.nengo.ui.model.icon.EmptyIcon;
 import ca.nengo.ui.model.widget.UITarget;
 import ca.nengo.util.ScriptGenException;
 
@@ -17,93 +13,13 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 
-public class StringView extends AbstractNode implements UIBuilder {
+public class StringView extends AbstractWidget {
 
     final NTarget<InstantaneousOutput> input = new ObjectTarget(this, "input",Object.class);
 
-    private ToStringUI ui;
-    String label = "";
+    String label = "?";
     private Object currentValue = null;
 
-    public class ToStringUI extends UINeoNode<StringView> {
-
-        public ToStringUI() {
-            super(StringView.this);
-
-            BoundsHandle.addBoundsHandlesTo(this);
-
-            EmptyIcon icon = new EmptyIcon(this);
-            icon.setLabelVisible(false);
-            setIcon(icon);
-
-            //img = new BufferedImage(400, 200, BufferedImage.TYPE_4BYTE_ABGR);
-            //setIcon(new WorldObjectImpl(new PXImage(img)));
-            setBounds(0, 0, 128, 64);
-
-            addWidget(UITarget.createTerminationUI(this, getInput()));
-
-
-
-            repaint();
-        }
-
-        @Override
-        public String getTypeName() {
-            return "ToStringUI";
-        }
-
-
-
-        double min, max;
-        float fontSize = 1;
-        boolean fontSizeLocked = false;
-        int offX = 0, offY = 0;
-        int upOrDown = 0;
-
-        @Override
-        public void paint(PaintContext paintContext) {
-            super.paint(paintContext);
-
-            Graphics2D g = paintContext.getGraphics();
-
-
-            Font f = g.getFont().deriveFont(fontSize);
-            if (!fontSizeLocked) {
-                double ww = getWidth();
-                double hh = getHeight();
-                Rectangle2D sb = f.getStringBounds(label, g.getFontRenderContext());
-                if ((sb.getWidth() > ww) || (sb.getHeight() > hh)) {
-                    fontSize--;
-                    f = g.getFont().deriveFont(fontSize);
-                    if (upOrDown == 1)
-                        fontSizeLocked = true;
-                    else
-                        upOrDown = -1;
-                }
-                else if ((sb.getWidth() < ww) || (sb.getHeight() < hh)) {
-                    fontSize++;
-                    f = g.getFont().deriveFont(fontSize);
-                    if (upOrDown == -1)
-                        fontSizeLocked = true;
-                    else
-                        upOrDown = +1;
-                }
-
-                offX = 0;
-                offY = (int)(hh/2-sb.getHeight()/2);
-            }
-
-            g.setFont(f);
-            g.setColor(Color.WHITE);
-            g.drawString(label, offX, offY);
-        }
-
-        public void reset() {
-            fontSizeLocked = false;
-            upOrDown = 0;
-            repaint();
-        }
-    }
 
 
 
@@ -112,14 +28,23 @@ public class StringView extends AbstractNode implements UIBuilder {
     }
 
     public StringView(String name) {
-        super(name);
+        super(name, 64, 64);
+
+
+
+
+        BoundsHandle.addBoundsHandlesTo(ui);
+        ui.addWidget(UITarget.createTerminationUI(ui, getInput()));
+
         reset(false);
     }
 
+
+    /*
     @Override
     public UINeoNode newUI(double width, double height) {
         return new ToStringUI();
-    }
+    }*/
 
 
     @Override
@@ -171,8 +96,55 @@ public class StringView extends AbstractNode implements UIBuilder {
 
         if (!newLabel.equals(label)) {
             label = newLabel;
-            ui.reset();
+            reset();
         }
+    }
+
+    double min, max;
+    float fontSize = 1;
+    boolean fontSizeLocked = false;
+    int offX = 0, offY = 0;
+    int upOrDown = 0;
+
+    @Override
+    protected void paint(PaintContext paintContext, double ww, double hh) {
+
+        Graphics2D g = paintContext.getGraphics();
+
+
+        Font f = g.getFont().deriveFont(fontSize);
+        if (!fontSizeLocked) {
+            Rectangle2D sb = f.getStringBounds(label, g.getFontRenderContext());
+            if ((sb.getWidth() > ww) || (sb.getHeight() > hh)) {
+                fontSize--;
+                f = g.getFont().deriveFont(fontSize);
+                if (upOrDown == 1)
+                    fontSizeLocked = true;
+                else
+                    upOrDown = -1;
+            }
+            else if ((sb.getWidth() < ww) || (sb.getHeight() < hh)) {
+                fontSize++;
+                f = g.getFont().deriveFont(fontSize);
+                if (upOrDown == -1)
+                    fontSizeLocked = true;
+                else
+                    upOrDown = +1;
+            }
+
+            offX = 0;
+            offY = (int)(hh/2-sb.getHeight()/2);
+        }
+
+        g.setFont(f);
+        g.setColor(Color.WHITE);
+        g.drawString(label, offX, offY);
+    }
+
+    public void reset() {
+        fontSizeLocked = false;
+        upOrDown = 0;
+        ui.repaint();
     }
 
     @Override

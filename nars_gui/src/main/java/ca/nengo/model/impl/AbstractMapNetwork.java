@@ -3,9 +3,9 @@ package ca.nengo.model.impl;
 import ca.nengo.model.*;
 import ca.nengo.util.Probe;
 import ca.nengo.util.VisiblyChanges;
+import javolution.util.FastMap;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<K, N> {
 
@@ -18,7 +18,7 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
     public AbstractMapNetwork(String s) {
         super(s);
         //nodeMap = new LinkedHashMap<>();
-        nodeMap = new ConcurrentHashMap<>();
+        nodeMap = new FastMap<K,N>().atomic();
     }
 
 
@@ -39,6 +39,11 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
     protected void changed(VisiblyChanges object, K oldName, K newName) {
         nodeMap.put(newName, (N) object);
         nodeMap.remove(oldName);
+    }
+
+    @Override
+    public Iterable<? extends Node> nodes() {
+        return nodeMap.values();
     }
 
     @Override

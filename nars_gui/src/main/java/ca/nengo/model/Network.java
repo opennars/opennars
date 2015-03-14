@@ -30,6 +30,8 @@ package ca.nengo.model;
 import ca.nengo.sim.Simulator;
 import ca.nengo.util.ScriptGenException;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -68,10 +70,10 @@ public interface Network<K, N extends Node> extends Group<N>, Probeable {
 	public N getNode(K name) throws StructuralException;
 
 	/**
-	 * @param name Name of Node to remove
-	 * @throws StructuralException if named Node does not exist in network
+     * @param name Name of Node to remove
+     * @throws StructuralException if named Node does not exist in network
 	 */
-	public void removeNode(K name) throws StructuralException;
+	public N removeNode(K name);
 
 
 	/**
@@ -207,5 +209,6 @@ public interface Network<K, N extends Node> extends Group<N>, Probeable {
 	public void addStepListener(StepListener listener);
 	public void removeStepListener(StepListener listener);
 	public void fireStepListeners(float time);
+
 
 }

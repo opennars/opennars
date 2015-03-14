@@ -18,7 +18,7 @@ import java.awt.*;
 */
 public class UINARGraph extends UINetwork {
 
-    float arrowHeadScale = 1f / 4f;
+    float arrowHeadScale = 1f / 2f;
 
     private final TestNARGraph.NARGraphNode nargraph;
 
@@ -92,23 +92,23 @@ public class UINARGraph extends UINetwork {
 
     protected void drawEdges(ca.nengo.ui.lib.world.PaintContext paintContext) {
 
-        UIEdge<UIVertex>[] ee = nargraph.getEdges();
+        Iterable<UIEdge> ee = nargraph.getEdges();
         if (ee == null) return;
 
         Graphics2D g = paintContext.getGraphics();
 
+        //System.out.println("painting edges: " + ee.length);
 
             for (final UIEdge e : ee) {
 
                 UIVertex source = (UIVertex) e.getSource();
                 if (source == null) continue;
+                if (source.ui.isDestroyed()) continue;
+
                 UIVertex target = (UIVertex) e.getTarget();
                 if (target == null) continue;
+                if (target.ui.isDestroyed()) continue;
 
-                if ((source.ui.isDestroyed() || target.ui.isDestroyed())) {
-                    //System.out.println(source + " or " + target + " destroyed");
-                    continue;
-                }
 
                 double sx = source.getX();
                 double sy = source.getY();

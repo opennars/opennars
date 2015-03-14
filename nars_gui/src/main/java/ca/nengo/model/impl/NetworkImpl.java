@@ -191,6 +191,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     public void addNode(N node) throws StructuralException {
 
 
+
         if (!add(name(node), node))
             throw new StructuralException("This Network already contained a Node named " + node.getName());
 
@@ -209,7 +210,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      * @return number of neurons in this network
      */
     public int countNeurons() {
-        Node[] myNodes = getNodes();
+        Iterable<? extends Node> myNodes = nodes();
         int count = 0;
         for (Node node : myNodes) {
             if (node instanceof NetworkImpl)
@@ -338,7 +339,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     /**
      * @see ca.nengo.model.Network#getNodes()
      */
-    public Node[] getNodes() {
+    @Deprecated public Node[] getNodes() {
         if (myNodeArray == null) {
             //synchronized(myProbeables /* just some final variable for now */) {
                 Collection<N> c = getNodeCollection();
@@ -400,22 +401,24 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
 
 
     //TODO just return the value or null
-    public void removeNode(N node) throws StructuralException {
-        removeNode(name(node));
+    public N removeNode(N node) /*throws StructuralException*/ {
+        return removeNode(name(node));
     }
 
     /**
      * @see ca.nengo.model.Network#removeNode(java.lang.String)
      */
-    public void removeNode(K name) throws StructuralException {
+    public N removeNode(K name) {
         //TODO just return the value or null
 
         N node = remove(name);
-        if (node == null)
-            throw new StructuralException("No Node named " + name + " in this Network");
+        if (node == null) return null;
+        /*if (node == null)
+            throw new StructuralException("No Node named " + name + " in this Network");*/
 
         node.removeChangeListener(this);
         myNodeArray = null;
+
 
 
         if (node instanceof Network) {
@@ -426,7 +429,6 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
                     net.getSimulator().removeProbe(probe);
                 } catch (SimulationException se) {
                     System.err.println(se);
-                    return;
                 }
             }
 
@@ -440,7 +442,11 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
             for (NSource source : sources) {
                 String exposedName = getExposedOriginName(source);
                 if (exposedName != null) {
-                    hideOrigin(exposedName);
+                    try {
+                        hideOrigin(exposedName);
+                    } catch (StructuralException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         } else if (node instanceof SocketUDPNode) {
@@ -456,6 +462,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
         getSimulator().update(this);
         fireVisibleChangeEvent();
 
+        return node;
     }
 
     /** returns the removed item, or null if didn't exist */
