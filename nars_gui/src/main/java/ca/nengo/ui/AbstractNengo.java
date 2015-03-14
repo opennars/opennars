@@ -344,6 +344,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             //interactivePlotsAction = new DisabledAction("Interactive Plots", "No object selected");
         }
 
+
         runMenu.addAction(simulateAction, KeyEvent.VK_F4, KeyStroke.getKeyStroke(KeyEvent.VK_F4,
                 0));
         //runMenu.addAction(interactivePlotsAction, KeyEvent.VK_F5, KeyStroke.getKeyStroke(KeyEvent.VK_F5,
