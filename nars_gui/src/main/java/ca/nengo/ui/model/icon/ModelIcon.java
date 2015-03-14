@@ -73,6 +73,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 		this.parent = parent;
 		this.iconReal = icon;
 
+
 		addChild(icon);
 
 		label = new Text();

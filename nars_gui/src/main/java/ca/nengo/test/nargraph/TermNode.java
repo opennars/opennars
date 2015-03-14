@@ -5,8 +5,8 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.model.icon.ModelIcon;
 import ca.nengo.ui.model.icon.NodeIcon;
-import nars.logic.Terms;
 import nars.logic.entity.Concept;
+import nars.logic.entity.Named;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
@@ -18,16 +18,18 @@ public class TermNode extends UIVertex {
 
     private final TestNARGraph.NARGraphNode graphnode;
     String text;
-    Terms.Termable term = null;
-    Concept concept = null;
-    private Task task = null;
+
+    final Term term; //required
+
+    Concept concept = null; //if non-null, this represents Concept nature
+    Task task = null; //if non-null, this represents Task nature
 
     private NodeIcon icon;
     private float priority = 0;
     private float lastUIUpdate;
     private float minUpdateTime = 0.1f;
+    protected float time;
 
-    final Color inputTaskColor = new Color(0.4f, 0.3f, 0.85f, 1.0f);
 
 //    public TermNode(TestNARGraph.NARGraphNode graphnode, String text) {
 //        super(UUID.randomUUID().toString());
@@ -38,68 +40,42 @@ public class TermNode extends UIVertex {
 
     @Override
     public String toString() {
-        if (concept!=null) return "TermNode[Concept=" + name().toString() +"]";
-        if (task!=null) return "TermNode[Task=" + name().toString() +"]";
-        if (term!=null) return "TermNode[Term=" + name().toString() +"]";
-        return "TermNode[\""  + text + "\"]";
+        return "TermNode[Term=" + name().toString() +",C=" + concept +", T=" + task + "]";
+        //return "TermNode[\""  + text + "\"]";
     }
 
     public TermNode(TestNARGraph.NARGraphNode graphnode, Concept c) {
-        super(c);
-        this.graphnode = graphnode;
+        this(graphnode, c.getTerm());
         setConcept(c);
     }
 
     public TermNode(TestNARGraph.NARGraphNode graphnode, Task t) {
-        super(t.sentence);
-        this.graphnode = graphnode;
+        this(graphnode, t.getTerm());
         setTask(t);
     }
 
     public TermNode(TestNARGraph.NARGraphNode graphnode, Term term) {
         super(term);
+        this.term = term;
         this.graphnode = graphnode;
-        setTerm(term.getTerm());
     }
 
     public boolean setTask(Task t) {
-        if (this.task == t) return false;
-        this.priority = 0; //will be updated
-        this.concept = null;
-        this.task = t;
-        if (t == null) {
-            throw new RuntimeException("task is null");
-            //this.term = null;
+        if (this.task!=t) {
+            this.task = t;
+            updateUI();
+            return true;
         }
-        else {
-            this.term = t.getTerm();
-        }
-        updateUI();
-        return true;
+        return false;
     }
-    public boolean setTerm(Term t) {
-        if (this.term == t) return false;
-        this.priority = 0; //will be updated
-        this.concept = null;
-        this.task = null;
-        this.term = t;
-        updateUI();
-        return true;
-    }
+
     public boolean setConcept(Concept c) {
-        if (this.concept == c) return false;
-        this.priority = 0; //will be updated
-        this.concept = c;
-        this.task = null;
-        if (c == null) {
-            throw new RuntimeException("concept is null");
-            //this.term = null;
+        if (this.concept!=c) {
+            this.concept = c;
+            updateUI();
+            return true;
         }
-        else {
-            this.term = c.getTerm();
-        }
-        updateUI();
-        return true;
+        return false;
     }
 
     @Override
@@ -128,30 +104,36 @@ public class TermNode extends UIVertex {
         float alpha = 0.75f;
         Color color = Color.DARK_GRAY;
         float scale = 1f;
+        float angle = 0;
+
+        priority = 0;
+        float r = 0.5f;
+        float g = 0;
+        float b = 0.5f;
+
         if (concept != null) {
-            priority = concept.getPriority();
-            color = green.get(priority);
-            alpha = 0.5f + (0.5f * color.getAlpha()) / 256f;
-            scale = 1.5f;
+            priority += concept.getPriority();
+            g += concept.getPriority() / 2f;
+            scale += 0.5f;
         }
-        else if (task != null) {
-            priority = task.getPriority();
-
-            alpha = 0.5f + (0.5f * color.getAlpha()) / 256f;
-
+        if (task != null) {
+            priority += task.getPriority();
+            b += task.getPriority() / 2f;
             if (task.isInput()) {
-                color = inputTaskColor;
-                scale = 1.25f;
+                scale += 0.25f;
             }
-            else {
-                color = purple.get(priority); //to match the blue of TaskLinks
-                scale = 0.75f;
-            }
+            angle = time * 0.1f * (0.5f * task.getPriority());
         }
-        else {
+
+        if (priority==0) {
             priority = 0;
             scale = 0.5f;
+            r = g = b = 0.5f;
         }
+
+        alpha = 0.5f + (0.5f * color.getAlpha()) / 256f;
+
+        color = new Color(r, g, b);
         icon.getBody().setPaint(color);
         icon.setTransparency(alpha);
 
@@ -172,6 +154,7 @@ public class TermNode extends UIVertex {
         //TODO combine these into one Transform update
         ui.scaleTo(scale * (0.75f + priority), 0.05);
         ui.dragTo(x, y, bounds.getWidth() /* speed */, 0.005);
+        ui.getIcon().getBody().setRotation(angle);
 
 
         //System.out.println(x + " " + y);
@@ -197,6 +180,7 @@ public class TermNode extends UIVertex {
             //updateUI();
             lastUIUpdate = endTime;
         }
+        time = endTime;
     }
 
 
@@ -211,4 +195,28 @@ public class TermNode extends UIVertex {
 
         lastUIUpdate = -1;
     }
+
+    @Override
+    public UIVertex add(Named v) {
+        if (task==null && v instanceof Task)
+            setTask((Task)v);
+        else if (concept == null & v instanceof Concept)
+            setConcept((Concept)v);
+        return this;
+    }
+
+    @Override
+    public UIVertex remove(Named v) {
+        if (task != null && v instanceof Task)
+            setTask(null);
+        if (concept != null & v instanceof Concept)
+            setConcept(null);
+
+        if ((this.task ==null) && (this.concept == null))
+            return this; //just a term, remove by default
+
+        return null; //keep alive
+    }
+
+
 }

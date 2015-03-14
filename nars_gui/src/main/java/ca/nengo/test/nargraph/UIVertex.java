@@ -146,4 +146,10 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
     public int degree() {
         return incoming.size() + outgoing.size();
     }
+
+    /** if unadded, return null to prevent creation, or return this to allow this node to be created. otherwise just return this */
+    abstract public UIVertex add(Named v);
+
+    /** return null to prevent deltetion, or return this to allow this node to be deleted */
+    public abstract UIVertex remove(Named v);
 }

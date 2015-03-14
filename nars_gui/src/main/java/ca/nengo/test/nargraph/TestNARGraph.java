@@ -19,6 +19,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.ConceptReaction;
 import nars.gui.NARSwing;
+import nars.logic.Terms;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Named;
 import nars.logic.entity.Task;
@@ -420,7 +421,13 @@ public class TestNARGraph extends Nengrow {
         }
 
         public UIVertex getNode(Named v) {
-            return getNode(v.name().toString());
+            final Named input = v;
+            if ((v instanceof Concept)||(v instanceof Task))
+                v = ((Terms.Termable)v).getTerm();
+            UIVertex u = getNode(v.name().toString());
+            if (u!=null)
+                u = u.add(input);
+            return u;
         }
 
 
@@ -428,7 +435,9 @@ public class TestNARGraph extends Nengrow {
 
             String id = v.name().toString();
             UIVertex existing = removeNode(id);
+            existing = existing.remove(v);
             if (existing == null) return null;
+
 
 
             existing.destroy();
@@ -496,13 +505,8 @@ public class TestNARGraph extends Nengrow {
 
             @Override
             public Object addVertex(Named o) {
-
                 //only non-dependent objects can be added outside of an edge
-                if (o instanceof Concept) {
-                    add(o);
-                    return o;
-                }
-                return null;
+                return add(o);
             }
 
             @Override
