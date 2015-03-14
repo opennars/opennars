@@ -104,15 +104,18 @@ public class UINARGraph extends UINetwork {
 
                 UIVertex source = (UIVertex) e.getSource();
                 if (source == null) continue;
-                if (source.ui.isDestroyed()) continue;
+                if (!source.ui.getVisible()) continue;
 
                 UIVertex target = (UIVertex) e.getTarget();
                 if (target == null) continue;
-                if (target.ui.isDestroyed()) continue;
+                if (!target.ui.getVisible()) continue;
 
 
                 Rectangle2D sb = source.ui.getFullBoundsReference();
+                if (sb.getWidth()==0)  continue;
                 Rectangle2D tb = target.ui.getFullBoundsReference();
+                if (tb.getWidth()==0)  continue;
+
                 double sx = sb.getCenterX();
                 double sy = sb.getCenterY();
                 double tx = tb.getCenterX();

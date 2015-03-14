@@ -171,7 +171,7 @@ public class TermNode extends UIVertex {
 
         //TODO combine these into one Transform update
         ui.scaleTo(scale * (0.75f + priority), 0.05);
-        ui.dragTo(x, y, 0.5, 0.005);
+        ui.dragTo(x, y, bounds.getWidth() /* speed */, 0.005);
 
 
         //System.out.println(x + " " + y);
