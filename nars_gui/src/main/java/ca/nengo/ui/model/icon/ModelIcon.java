@@ -30,6 +30,7 @@ import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.lib.world.piccolo.primitive.Text;
+import org.piccolo2d.extras.nodes.PNodeCache;
 
 /**
  * An Icon which has a representation and an label. It is used to represent NEO
@@ -53,13 +54,17 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 * Parent of this icon
 	 */
 	private final ModelObject parent;
+    private final boolean cacheLabel = true;
 
-	/**
+    /**
 	 * Whether to show the type of model in the label
 	 */
 	private boolean showTypeInLabel = false;
     private boolean showingLabel = true;
 
+    public ModelIcon(ModelObject parent, WorldObject icon) {
+        this(parent,icon,true);
+    }
     /**
 	 * @param parent
 	 *            The Model the icon is representing
@@ -68,7 +73,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 * @param scale
 	 *            Scale of the Icon
 	 */
-	public ModelIcon(ModelObject parent, WorldObject icon) {
+	public ModelIcon(ModelObject parent, WorldObject icon, boolean cacheBitmap) {
 		super();
 		this.parent = parent;
 		this.iconReal = icon;
@@ -80,7 +85,13 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 		label.setConstrainWidthToTextWidth(true);
         label.setTextPaint(NengoStyle.COLOR_ICON_LABEL);
         updateLabel();
-		addChild(label);
+
+        if (cacheLabel) {
+            addChildCache(label);
+        }
+        else {
+            addChild(label);
+        }
 
 		parent.addPropertyChangeListener(Property.MODEL_CHANGED, this);
 

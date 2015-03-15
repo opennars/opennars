@@ -105,7 +105,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         void setMinPriority(float minPriority);
     }
 
-    abstract public static class NAREdge<X> extends DefaultEdge {
+    abstract public static class NAREdge<X> extends DefaultEdge implements Named<X> {
 
         private final X object;
         private final int hash;
@@ -116,8 +116,14 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         public NAREdge() {
-            this.object = (X) getClass();
+            this.object = (X)getClass();
             this.hash = getHash();
+        }
+
+
+        @Override
+        public X name() {
+            return object;
         }
 
         private int getHash() {

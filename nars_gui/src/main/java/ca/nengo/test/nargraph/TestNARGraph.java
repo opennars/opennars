@@ -13,7 +13,7 @@ import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import com.google.common.collect.Iterators;
-import javolution.util.FastSet;
+import javolution.util.FastMap;
 import nars.build.Default;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -222,7 +222,7 @@ public class TestNARGraph extends Nengrow {
             }
         };
         private UIEdge[] nextEdges;
-        private Set<UIEdge> edges = new FastSet<UIEdge>().atomic();
+        private Map<String,UIEdge> edges = new FastMap<String,UIEdge>().atomic();
         private UINARGraph ui;
         private boolean edgesChanged = false;
         private int numVertices = 0;
@@ -293,7 +293,7 @@ public class TestNARGraph extends Nengrow {
                 for (UIVertex v : vertices) {
                     v.getActualCoordinates(dt);
                     if (v.isDependent() && v.degree()==0) {
-                        System.err.println("late removing " + v);
+                        //System.err.println("late removing " + v);
                         remove(v);
                     }
 
@@ -316,7 +316,7 @@ public class TestNARGraph extends Nengrow {
 //                    }
 //                }
 //            }
-            return edges;
+            return edges.values();
         }
 
         @Override
@@ -359,8 +359,19 @@ public class TestNARGraph extends Nengrow {
             return this.ui = new UINARGraph(this);
         }
 
-        private boolean add(UIEdge<UIVertex> e) {
-            if (edges.add(e)) {
+        /** adds or gets existing edge between two vertices, directional */
+        public UIEdge<UIVertex> addEdge(UIVertex s, UIVertex t) {
+            String name = s.name().toString() + ':' + t.name();
+            UIEdge<UIVertex> exist = edges.get(name);
+            if (exist == null)
+                exist = new UIEdge(s, t);
+            if (!add(exist))
+                return null;
+            return exist;
+        }
+
+        protected boolean add(UIEdge<UIVertex> e) {
+            if (edges.putIfAbsent(e.name, e)==null) {
                 e.getSource().link(e, true);
                 e.getTarget().link(e, false);
                 edgesChanged();
@@ -370,7 +381,7 @@ public class TestNARGraph extends Nengrow {
         }
 
         private void remove(UIEdge<UIVertex> e) {
-            if (edges.remove(e)) {
+            if (edges.remove(e.name)!=null) {
                 if (e.getSource() != null)
                     e.getSource().unlink(e, true);
                 if (e.getTarget() != null) {
@@ -512,7 +523,7 @@ public class TestNARGraph extends Nengrow {
             }
 
             @Override
-            public Object addEdge(NARGraph g, Named source, Named target, Object edge) {
+            public Object addEdge(NARGraph g, Named source, Named target, Object edgeContent) {
 
                 //TODO defer creation of v1 and v2 until sure that edge can be created
 
@@ -520,15 +531,13 @@ public class TestNARGraph extends Nengrow {
                 if (v1 == null) return null;
                 UIVertex v2 = add(target);
                 if (v2 == null) return null;
+                if (v2 == v1) return null; //loop
 
-
-                UIEdge e = new UIEdge(v1, v2, edge);
-                if (add(e)) {
+                UIEdge e = NARGraphNode.this.addEdge(v1, v2);
+                if (e!=null) {
+                    e.add((Named)edgeContent);
                     return e;
                 }
-
-                ensureValid(v1);
-                ensureValid(v2);
 
                 return null;
             }

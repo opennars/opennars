@@ -29,10 +29,8 @@ package ca.nengo.util;
 
 import ca.nengo.model.Node;
 import ca.nengo.model.StructuralException;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Utility methods for VisiblyMutable objects. 
@@ -41,7 +39,7 @@ import java.util.List;
  */
 public class VisiblyChangesUtils {
 	
-	private static final Logger ourLogger = LogManager.getLogger(VisiblyChangesUtils.class);
+	//private static final Logger ourLogger = LogManager.getLogger(VisiblyChangesUtils.class);
 
 	/**
 	 * Notifies listeners of a change to the given VisiblyMutable object.  
@@ -49,13 +47,13 @@ public class VisiblyChangesUtils {
 	 * @param vm The changed VisiblyMutable object
 	 * @param listeners List of things listening for changes
 	 */
-	public static void changed(final VisiblyChanges vm, List<VisiblyChanges.Listener> listeners) {
+	public static void changed(final VisiblyChanges vm, ArrayList<VisiblyChanges.Listener> listeners) {
 		VisiblyChanges.Event event = new MyEvent(vm);
 		
 		try {
 			fire(event, listeners);
 		} catch (StructuralException e) {
-			ourLogger.error(e);
+			System.err.println(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -75,11 +73,11 @@ public class VisiblyChangesUtils {
 	 * @throws StructuralException if the new name is invalid
 	 */
 	public static void nameChanged(final VisiblyChanges vm, final String oldName, final String newName,
-			List<VisiblyChanges.Listener> listeners) throws StructuralException {
+			ArrayList<VisiblyChanges.Listener> listeners) throws StructuralException {
 			
 		if (!isValidName(newName)) throw new StructuralException("Name '"+newName+"' must not contain '.' or ':'");
 		
-		VisiblyChanges.NameChangeEvent event = new MyNameChangeEvent(newName, oldName, vm);
+		VisiblyChanges.NameChangeEvent event = new VCChangeEvent(newName, oldName, vm);
 		
 		try {
 			fire(event, listeners);			
@@ -95,31 +93,22 @@ public class VisiblyChangesUtils {
 	 * @param n The node that was removed
 	 * @param listeners List of things listening for changes
 	 */
-	public static void nodeRemoved(final VisiblyChanges vm, final Node n, List<VisiblyChanges.Listener> listeners) {
-		VisiblyChanges.NodeRemovedEvent event = new VisiblyChanges.NodeRemovedEvent() {
-			public VisiblyChanges getObject() {
-				return vm;
-			}
-			
-			public Node getNode()
-			{
-				return n;
-			}
-		};
+	public static void nodeRemoved(final VisiblyChanges vm, final Node n, ArrayList<VisiblyChanges.Listener> listeners) {
+		VisiblyChanges.NodeRemovedEvent event = new VCRemovedEvent(vm, n);
 		
 		try {
 			fire(event, listeners);
 		} catch (StructuralException e) {
-			ourLogger.error(e);
+            System.err.println(e);
 			throw new RuntimeException(e);
 		}
 	}
 	
-	private static void fire(VisiblyChanges.Event event, List<VisiblyChanges.Listener> listeners) throws StructuralException {
+	private static void fire(final VisiblyChanges.Event event, final ArrayList<VisiblyChanges.Listener> listeners) throws StructuralException {
 		if (listeners != null) {
-			Iterator<VisiblyChanges.Listener> iterator = listeners.iterator();
-			while (iterator.hasNext()) {
-				VisiblyChanges.Listener listener = iterator.next();
+            int n = listeners.size();
+            for (int i = 0; i < n; i++) {
+                VisiblyChanges.Listener listener = listeners.get(i);
 				listener.changed(event);
 			}			
 		}
@@ -137,13 +126,13 @@ public class VisiblyChangesUtils {
         }
     }
 
-    private static class MyNameChangeEvent implements VisiblyChanges.NameChangeEvent {
+    private static class VCChangeEvent implements VisiblyChanges.NameChangeEvent {
 
         private final String newName;
         private final String oldName;
         private final VisiblyChanges vm;
 
-        public MyNameChangeEvent(String newName, String oldName, VisiblyChanges vm) {
+        public VCChangeEvent(String newName, String oldName, VisiblyChanges vm) {
             this.newName = newName;
             this.oldName = oldName;
             this.vm = vm;
@@ -161,5 +150,24 @@ public class VisiblyChangesUtils {
             return vm;
         }
 
+    }
+
+    private static class VCRemovedEvent implements VisiblyChanges.NodeRemovedEvent {
+        private final VisiblyChanges vm;
+        private final Node n;
+
+        public VCRemovedEvent(VisiblyChanges vm, Node n) {
+            this.vm = vm;
+            this.n = n;
+        }
+
+        public VisiblyChanges getObject() {
+            return vm;
+        }
+
+        public Node getNode()
+        {
+            return n;
+        }
     }
 }

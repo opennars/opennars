@@ -81,7 +81,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     protected Map<String, Object> myMetaData;
     protected Map<NSource, String> exposedSourceNames;
     protected Map<NTarget, String> exposedTargetNames;
-    protected transient List<VisiblyChanges.Listener> myListeners;
+    protected transient ArrayList<VisiblyChanges.Listener> myListeners;
     private transient List<StepListener> myStepListeners;
 
     public NetworkImpl() {

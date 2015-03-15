@@ -74,7 +74,7 @@ public class DirectNode implements Node<Node> {
 	private Map<String, ObjectTarget<InstantaneousOutput>> myTerminations;
 	private BasicSource myOrigin;
 	private String myDocumentation;
-	private transient List<VisiblyChanges.Listener> myListeners;
+	private transient ArrayList<VisiblyChanges.Listener> myListeners;
 
 	/**
 	 * Constructor for a simple passthrough with single input.

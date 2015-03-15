@@ -15,7 +15,6 @@ import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class NetworkImplTest extends TestCase {
 
@@ -423,7 +422,7 @@ public class NetworkImplTest extends TestCase {
 		private static final long serialVersionUID = 1L;
 
 		private String myName;
-		private transient List<VisiblyChanges.Listener> myListeners;
+		private transient ArrayList<VisiblyChanges.Listener> myListeners;
 
 		public MockGroup(String name) {
 			myName = name;

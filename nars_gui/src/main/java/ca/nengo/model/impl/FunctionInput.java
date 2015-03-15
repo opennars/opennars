@@ -46,7 +46,6 @@ import ca.nengo.util.impl.TimeSeriesImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -74,7 +73,7 @@ public class FunctionInput implements Node<Node>, Probeable {
 //	private float[] myValues;
 	private BasicSource myOrigin;
 	private String myDocumentation;
-	private transient List<VisiblyChanges.Listener> myListeners;
+	private transient ArrayList<VisiblyChanges.Listener> myListeners;
 
 	/**
 	 * @param name The name of this Node

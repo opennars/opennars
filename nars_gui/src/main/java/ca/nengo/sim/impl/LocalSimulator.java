@@ -61,7 +61,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
     private List<Probe> myProbes;
     protected Network<K,N> network;
     private boolean myDisplayProgress;
-    private transient List<VisiblyChanges.Listener> myChangeListeners;
+    private transient ArrayList<VisiblyChanges.Listener> myChangeListeners;
     private transient NodeThreadPool myNodeThreadPool;
 
     /**

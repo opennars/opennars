@@ -61,7 +61,7 @@ public abstract class AbstractGroup implements Group<Node>, Probeable, VisiblyCh
 	private boolean myCollectSpikesFlag;
 	private int myCollectSpikesRatio = 1;
 	private String myDocumentation;
-	private transient List<VisiblyChanges.Listener> myListeners;
+	private transient ArrayList<VisiblyChanges.Listener> myListeners;
 	private Node[] myNodes;
 	private Map<String, NSource> mySources;
 	private Map<String, GroupTarget> myTargets;

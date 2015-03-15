@@ -16,6 +16,7 @@ import org.piccolo2d.PCamera;
 import org.piccolo2d.PNode;
 import org.piccolo2d.activities.PInterpolatingActivity;
 import org.piccolo2d.event.PInputEventListener;
+import org.piccolo2d.extras.nodes.PNodeCache;
 import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
@@ -234,12 +235,16 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public void addChild(WorldObject wo, int index) {
-            if (index == -1) {
-                pnode.addChild(wo.getPNode());
-            } else {
-                pnode.addChild(index, wo.getPNode());
-            }
-
+        if (index == -1) {
+            pnode.addChild(wo.getPNode());
+        } else {
+            pnode.addChild(index, wo.getPNode());
+        }
+    }
+    public void addChildCache(WorldObject wo) {
+        PNodeCache cacheNode = new PNodeCache();
+        cacheNode.addChild(wo.getPNode());
+        pnode.addChild(cacheNode);
     }
 
     public void addChildrenListener(ChildListener listener) {

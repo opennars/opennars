@@ -47,7 +47,7 @@ public abstract class AbstractNode implements Node<Node> {
 	private Map<String, NSource> mySources;
 	private Map<String, NTarget> myTargets;
 	private String myDocumentation;
-	private transient List<VisiblyChanges.Listener> myListeners;
+	private transient ArrayList<VisiblyChanges.Listener> myListeners;
 
 	/**
 	 * @param name Name of Node

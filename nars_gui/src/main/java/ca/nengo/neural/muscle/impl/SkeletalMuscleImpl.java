@@ -48,7 +48,6 @@ import ca.nengo.util.impl.TimeSeriesImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -69,7 +68,7 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	private Integrator myIntegrator;
 	private float myLength;
 	private String myDocumentation;
-	private transient List<Listener> myListeners;
+	private transient ArrayList<Listener> myListeners;
 
 	private TimeSeries myActivationHistory; //saved for single timestep to support Probeable
 	private TimeSeries myForceHistory;

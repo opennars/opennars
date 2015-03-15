@@ -12,7 +12,6 @@ import nars.logic.entity.TermLink;
 import org.apache.commons.math3.util.FastMath;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 
 /**
 * Created by me on 3/12/15.
@@ -111,15 +110,15 @@ public class UINARGraph extends UINetwork {
                 if (!target.ui.getVisible()) continue;
 
 
-                Rectangle2D sb = source.ui.getFullBoundsReference();
+                /*Rectangle2D sb = source.ui.getFullBoundsReference();
                 if (sb.getWidth()==0)  continue;
                 Rectangle2D tb = target.ui.getFullBoundsReference();
-                if (tb.getWidth()==0)  continue;
+                if (tb.getWidth()==0)  continue;*/
 
-                double sx = sb.getCenterX();
-                double sy = sb.getCenterY();
-                double tx = tb.getCenterX();
-                double ty = tb.getCenterY();
+                double sx = source.getX();
+                double sy = source.getY();
+                double tx = target.getX();
+                double ty = target.getY();
 
                 //System.out.println(source + " " + target + " " + sx + " " + sy + " " + tx + " "+ ty);
 

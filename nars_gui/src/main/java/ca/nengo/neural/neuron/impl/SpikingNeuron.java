@@ -39,7 +39,6 @@ import ca.nengo.util.impl.TimeSeries1DImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -67,7 +66,7 @@ public class SpikingNeuron implements Neuron, Probeable, NEFNode {
 	private float myBias;
 	private float myRadialInput;
 	private String myDocumentation;
-	private transient List<VisiblyChanges.Listener> myListeners;
+	private transient ArrayList<VisiblyChanges.Listener> myListeners;
 	private Noise myNoise = null;
 
 

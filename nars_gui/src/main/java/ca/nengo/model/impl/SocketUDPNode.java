@@ -79,7 +79,7 @@ public class SocketUDPNode implements Node<Node>, Resettable {
 	private Map<String, ObjectTarget<InstantaneousOutput>> myTerminations;
 	private BasicSource myOrigin;
 	private String myDocumentation;
-	private transient List<VisiblyChanges.Listener> myListeners;
+	private transient ArrayList<VisiblyChanges.Listener> myListeners;
 
 	private int myLocalPort;
 	private int myGivenLocalPort;

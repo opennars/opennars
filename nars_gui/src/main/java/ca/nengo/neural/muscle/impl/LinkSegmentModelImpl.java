@@ -57,7 +57,7 @@ public class LinkSegmentModelImpl implements LinkSegmentModel {
 	private float myTimeStep;
 	private float myTime;
 	private String myDocumentation;
-	private transient List<VisiblyChanges.Listener> myListeners;
+	private transient ArrayList<VisiblyChanges.Listener> myListeners;
 
 	/**
 	 * @param name Segment name
