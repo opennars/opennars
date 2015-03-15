@@ -1,17 +1,14 @@
 package nars.irc;
 
 
-import automenta.vivisect.Video;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import nars.build.Default;
-import nars.build.Solid;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.AbstractReaction;
-import nars.gui.NARSwing;
 import nars.io.Texts;
 import nars.io.nlp.Twokenize;
 import nars.logic.entity.Sentence;
@@ -47,23 +44,22 @@ public class IRCBot {
         Parameters.DEBUG = true;
 
 
-        //Default d = new Default();
-        Default d = new Solid(1024, 0,5, 0,3);
+        Default d = new Default();
+        //Default d = new Solid(1024, 0,5, 0,3);
+
         d.param.decisionThreshold.set(0.1);
         d.param.temporalRelationsMax.set(2);
         d.param.shortTermMemoryHistory.set(2);
         d.param.duration.set(1);
-        /* d.param.termLinkMaxReasoned.set(4);
+        d.param.termLinkMaxReasoned.set(4);
         d.param.conceptsFiredPerCycle.set(2);
-        d.param.decisionThreshold.set(0.3);
-        d.param.temporalRelationsMax.set(2);*/
+
+
 
         //d.temporalPlanner(16f,8,8,2);
 
         NAR n = new NAR( d );
 
-        Video.themeInvert();
-        new NARSwing(n).controls.setSpeed(0.1f);
 
         File corpus = new File("/tmp/h.nal");
         n.input(corpus);
@@ -74,13 +70,16 @@ public class IRCBot {
         }
         System.out.println("ok");
 
-        //n.start(15, 1);
+        n.start(1, 1);
 
-
+        /*
+        Video.themeInvert();
+        new NARSwing(n).controls.setSpeed(0.1f);
+        */
 
         IRCBot i = new IRCBot(n);
 
-        i.loop(corpus, 250);
+        i.loop(corpus, 100);
 
         String[] book = String.join(" ", Files.readAllLines(Paths.get("/home/me/worstward.txt"))).split("\\. ");
         i.read(book, 5000);

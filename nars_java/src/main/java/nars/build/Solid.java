@@ -24,10 +24,12 @@ public class Solid extends Default {
     private final int maxTaskLink;
     private final int minTermLink;
     private final int maxTermLink;
+    private final int inputsPerCycle;
     private Memory memory;
 
-    public Solid(int maxConcepts, int minTaskLink, int maxTaskLink, int minTermLink, int maxTermLink) {
+    public Solid(int inputsPerCycle, int maxConcepts, int minTaskLink, int maxTaskLink, int minTermLink, int maxTermLink) {
         super();
+        this.inputsPerCycle = inputsPerCycle;
         this.maxConcepts = maxConcepts;
         this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
         this.minTaskLink = minTaskLink;
@@ -90,7 +92,8 @@ public class Solid extends Default {
             public void cycle() {
                 //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
-                getMemory().perceiveNext();
+                int perceptions = inputsPerCycle - 1;
+                while( (getMemory().perceiveNext() > 0)  && (perceptions-- >= 0));
 
                 //1. process all new tasks
                 for (Task t : tasks) {
@@ -168,7 +171,7 @@ public class Solid extends Default {
 
     public static void main(String[] args) {
 
-        Solid s = new Solid(128, 0, 9, 0, 3);
+        Solid s = new Solid(4, 128, 0, 9, 0, 3);
         NAR n = new NAR(s);
         n.input("<a --> b>. :\\:");
         n.input("<b <-> c>.");
