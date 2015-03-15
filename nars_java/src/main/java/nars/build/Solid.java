@@ -99,6 +99,7 @@ public class Solid extends Default {
                     System.out.println("  firing " + c + " x " + fires);
                     for (int i = 0; i < fires; i++) {
                         TaskLink tl = c.taskLinks.forgetNext(param.taskLinkForgetDurations, getMemory());
+                        if (tl==null) break;
                         new ConceptProcess(c, tl) {
                             @Override protected void beforeFinish() {
 

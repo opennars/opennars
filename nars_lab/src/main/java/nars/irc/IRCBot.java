@@ -1,6 +1,7 @@
 package nars.irc;
 
 
+import automenta.vivisect.Video;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -9,9 +10,14 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.AbstractReaction;
-import nars.io.BufferedOutput;
+import nars.gui.NARSwing;
 import nars.io.nlp.Twokenize;
+import nars.logic.entity.Sentence;
 import nars.logic.entity.Term;
+import nars.logic.entity.TruthValue;
+import nars.logic.entity.stamp.Stamp;
+import nars.logic.nal1.Inheritance;
+import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operator;
 
 import java.io.*;
@@ -36,11 +42,11 @@ public class IRCBot {
 
 
     public static void main(String[] args) throws Exception {
-        Parameters.DEBUG = false;
+        Parameters.DEBUG = true;
 
 
         Default d = new Default();
-        d.setConceptBagSize(1024);
+        //Default d = new Solid(1024, 10, 1);
         /*d.param.shortTermMemoryHistory.set(3);
         d.param.termLinkMaxReasoned.set(4);
         d.param.conceptsFiredPerCycle.set(2);
@@ -49,6 +55,7 @@ public class IRCBot {
 
         NAR n = new NAR( d );
 
+
         n.input(new File("/tmp/h.nal"));
         System.out.print("initializing...");
         for (int i = 0; i < 10; i++) {
@@ -56,7 +63,11 @@ public class IRCBot {
             n.run(1000);
         }
         System.out.println("ok");
-        n.start(1,1);
+        //n.start(10, 1);
+
+        Video.themeInvert();
+        new NARSwing(n).controls.setSpeed(0.1f);
+
 
         IRCBot i = new IRCBot(n);
 
@@ -119,11 +130,9 @@ public class IRCBot {
                     a = input.content.toLowerCase().toString();
                     pattern = "word";
                 }
+                //TODO apostrophe words
                 else if (input.pattern.equals("punct")) {
-                    if (input.content.equals("."))
-                        a = "\".\"";
-                    else
-                        a = "\"" + input.content + "\"";
+                    a = input.content;
                     pattern = "word";
                 }
                 else {
@@ -131,10 +140,12 @@ public class IRCBot {
                 }
                 //else
                   //  a = "\"" + input.content.toLowerCase() + "\"";
-                String r = "<" + a + " --> " + pattern + ">. :|:\n";
-                r += "say(" + a + ")!\n";
-                r += delay + "\n";
-                return r;
+                //String r = "<" + a + " --> " + pattern + ">. :|:\n";
+                nar.input(new Sentence(Inheritance.make(Term.text(a), Term.get(pattern)), '.', new TruthValue(1.0f, 0.9f), new Stamp(nar.memory, Tense.Present)));
+                nar.think(delay);
+                //r += "say(" + a + ")!\n";
+                //r += delay + "\n";
+                return "";
             }
         }));
         //i += "<silence --> hear>. :|: \n" + endDelay + "\n";
@@ -143,7 +154,7 @@ public class IRCBot {
         System.out.println(nar.time() + " HEAR: " + tokens);
         //System.out.println("HEAR: " + i);
 
-        nar.input(i);
+        //nar.input(i);
 
         return tokens.size();
     }
@@ -187,13 +198,14 @@ public class IRCBot {
             }
         };
 
-        new BufferedOutput(nar, 1, 5000, 64) {
+        /*new BufferedOutput(nar, 1, 5000, 64) {
 
             @Override
             protected void output(List<OutputItem> buffer) {
                System.out.println(buffer);
             }
-        };
+        };*/
+
         //new TextOutput(nar, System.out).setShowErrors(true).setPriorityMin(0.95f);
 
         // Connect directly to the IRC server.

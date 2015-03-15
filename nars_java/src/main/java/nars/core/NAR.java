@@ -66,9 +66,9 @@ public class NAR implements Runnable {
     public final Narsese narsese;
     public TextPerception textPerception;
 
-
-
-
+    public void think(int delay) {
+        memory.think(delay);
+    }
 
 
     /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */

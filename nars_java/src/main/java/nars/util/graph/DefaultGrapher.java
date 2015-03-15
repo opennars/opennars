@@ -286,7 +286,8 @@ public class DefaultGrapher implements NARGraph.Grapher {
     }
 
     public DefaultGrapher on(NARGraph g, Object vertex) {
-        return on(g, vertex);
+        //return on(g, vertex);
+        return this;
     }
 
     /** updates an object that may be in the graph */

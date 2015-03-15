@@ -1,6 +1,7 @@
 package nars.build;
 
 import nars.logic.nal8.Operator;
+import nars.operator.data.Flat;
 import nars.operator.io.Say;
 import nars.operator.io.Schizo;
 import nars.operator.math.Add;
@@ -53,7 +54,9 @@ public class DefaultOperators {
             new Count(),
             new Add(),
             //new MathExpression(),
-                        
+
+            //Term manipulation
+            new Flat.AsProduct(),
 
             //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
             //new Javascript(),  // javascript evaluation
