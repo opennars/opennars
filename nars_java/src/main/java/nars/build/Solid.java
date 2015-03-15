@@ -27,11 +27,9 @@ public class Solid extends Default {
     public Solid(int maxConcepts, int minFires, int maxFires) {
         super();
         this.maxConcepts = maxConcepts;
-        this.maxTasks = maxConcepts * 4;
+        this.maxTasks = maxConcepts * 100;
         this.maxFires = maxFires;
         this.minFires = minFires;
-
-
     }
 
     @Override
@@ -82,7 +80,7 @@ public class Solid extends Default {
 
             @Override
             public void cycle() {
-                System.out.println("cycle " + memory.time());
+                System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
                 getMemory().perceiveNext();
 
@@ -160,13 +158,16 @@ public class Solid extends Default {
 
     public static void main(String[] args) {
 
-        NAR n = new NAR(new Solid(64, 10, 1));
-        n.input("<a --> b>.");
-        n.input("<b --> c>.");
-        n.input("<c --> a>.");
+        Solid s = new Solid(128, 20, 2);
+        NAR n = new NAR(s);
+        n.input("<a --> b>. :\\:");
+        n.input("<b <-> c>.");
+        n.input("<c <-> d>? :/:");
+        n.input("<(*,d,c) </> a>.");
 
         TextOutput.out(n);
-        n.step(4);
+        n.step(64);
+
     }
 
 

@@ -7,6 +7,7 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
+import java.io.PrintStream;
 import java.util.Deque;
 
 
@@ -17,6 +18,7 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
     void addTask(Task t);
 
     int size();
+
 
 
     public interface CoreAware {
