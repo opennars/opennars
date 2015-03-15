@@ -392,7 +392,7 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public void dragTo(double x, double y, double speed, double arrivalSpeed /* max speed */) {
-        final double epsilon = 0.001f; //min movement which wont matter
+        final double epsilon = 10f; //min movement which wont matter
 
         if (isDraggable()) {
             Point2D offset = getOffset();
@@ -400,7 +400,7 @@ public class WorldObjectImpl implements WorldObject {
             double dx = x - cx, dy = y - cy;
             double normSquare = dx * dx + dy * dy;
             double nx, ny;
-            if (normSquare < epsilon) {
+            if (normSquare < epsilon*epsilon) {
                 return;
             }
             else if (normSquare < speed*speed) {

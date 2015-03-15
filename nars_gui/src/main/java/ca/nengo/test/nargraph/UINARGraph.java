@@ -45,22 +45,22 @@ public class UINARGraph extends UINetwork {
             float dx = x2 - x1;
             float dy = y2 - y1;
 
-            float angle = (float) (FastMath.atan2(dy, dx));
-            final float arrowAngle = (float) FastMath.PI / 12f + thick / 200f;
+            float angle = (float) (Math.atan2(dy, dx));
+            final float arrowAngle = (float) FastMath.PI / 4;
 
-            float len = (float) FastMath.sqrt(dx * dx + dy * dy) - destinationRadius;
+            float len = (float) Math.sqrt(dx * dx + dy * dy) - destinationRadius;
             if (len <= 0) return null;
 
-            final int ix2 = (int) (FastMath.cos(angle) * len + x1);
-            final int iy2 = (int) (FastMath.sin(angle) * len + y1);
+            final int ix2 = (int) (Math.cos(angle) * len + x1);
+            final int iy2 = (int) (Math.sin(angle) * len + y1);
 
             final double aMin = angle - Math.PI - arrowAngle;
             final double aMax = angle - Math.PI + arrowAngle;
 
-            int plx = (int) (FastMath.cos(aMin) * arrowHeadRadius);
-            int ply = (int) (FastMath.sin(aMin) * arrowHeadRadius);
-            int prx = (int) (FastMath.cos(aMax) * arrowHeadRadius);
-            int pry = (int) (FastMath.sin(aMax) * arrowHeadRadius);
+            int plx = (int) (Math.cos(aMin) * arrowHeadRadius);
+            int ply = (int) (Math.sin(aMin) * arrowHeadRadius);
+            int prx = (int) (Math.cos(aMax) * arrowHeadRadius);
+            int pry = (int) (Math.sin(aMax) * arrowHeadRadius);
 
 
 
@@ -123,8 +123,8 @@ public class UINARGraph extends UINetwork {
 
                 //System.out.println(source + " " + target + " " + sx + " " + sy + " " + tx + " "+ ty);
 
-                final float sourceRadius = 96; //(float)sb.getWidth() / 8f;
-                final float targetRadius = 96; //(float)tb.getWidth() / 16f;
+                final float sourceRadius = 64; //(float)sb.getWidth() / 8f;
+                final float targetRadius = 32; //(float)tb.getWidth() / 16f;
 
                 e.shape = drawArrow(g, (Polygon) e.shape, getEdgeColor(e), sourceRadius, (int) sx, (int) sy, (int) tx, (int) ty, targetRadius);
 

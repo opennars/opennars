@@ -435,6 +435,8 @@ public class TestNARGraph extends Nengrow {
 
             String id = v.name().toString();
             UIVertex existing = removeNode(id);
+            if (existing == null) return null;
+
             existing = existing.remove(v);
             if (existing == null) return null;
 

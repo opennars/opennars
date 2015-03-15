@@ -122,7 +122,7 @@ public class TermNode extends UIVertex {
             if (task.isInput()) {
                 scale += 0.25f;
             }
-            angle = time * 0.1f * (0.5f * task.getPriority());
+            angle = time * 0.5f * (0.5f * task.getPriority());
         }
 
         if (priority==0) {
@@ -131,11 +131,11 @@ public class TermNode extends UIVertex {
             r = g = b = 0.5f;
         }
 
+        color = new Color(r, 1-g, 1-b, alpha);
         alpha = 0.5f + (0.5f * color.getAlpha()) / 256f;
 
-        color = new Color(r, g, b);
         icon.getBody().setPaint(color);
-        icon.setTransparency(alpha);
+        icon.getBody().setTransparency(alpha);
 
         if (priority < 0) priority = 0;
 
@@ -152,10 +152,12 @@ public class TermNode extends UIVertex {
         if (y < bounds.getMinY()) y = bounds.getMinY();
 
         //TODO combine these into one Transform update
-        ui.scaleTo(scale * (0.75f + priority), 0.05);
+        float targetScale = scale * (0.75f + priority);
+        ui.scaleTo(targetScale, 0.05);
         ui.dragTo(x, y, bounds.getWidth() /* speed */, 0.005);
-        ui.getIcon().getBody().setRotation(angle);
+        //ui.animateToPositionScaleRotation(x, y, targetScale, 0, 0);
 
+        ui.getIcon().getBody().setRotation(angle);
 
         //System.out.println(x + " " + y);
         layoutPeriod = -1;
