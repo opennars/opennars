@@ -64,6 +64,11 @@ abstract public class BufferedOutput extends Output {
             else
                 return -1;
         }
+
+        @Override
+        public String toString() {
+            return object.toString();
+        }
     }
 
     final SortedSet<OutputItem> bufferCosts = new TreeSet<>();

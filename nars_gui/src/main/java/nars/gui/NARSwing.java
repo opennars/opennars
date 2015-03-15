@@ -25,6 +25,7 @@ import automenta.vivisect.swing.NWindow;
 import nars.build.Default.CommandLineNARBuilder;
 import nars.control.experimental.AntCore;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.TextOutput;
 
 import javax.management.MBeanServer;
@@ -50,7 +51,8 @@ public class NARSwing extends Video {
     public NARSwing(NAR nar, boolean logPanel) {
         super();
                 
-        this.nar = nar;                
+        this.nar = nar;
+        Parameters.DEBUG = true;
         
         controls = new NARControls(nar);        
         mainWindow = new NWindow(NAR.VERSION, controls);

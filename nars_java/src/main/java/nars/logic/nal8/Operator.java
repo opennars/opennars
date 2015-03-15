@@ -94,8 +94,8 @@ public abstract class Operator extends Term implements Plugin {
 
 
     public static class ExecutionResult {
-        private final Operation operation;
-        private final Object feedback;
+        public final Operation operation;
+        public final Object feedback;
 
         public ExecutionResult(Operation op, Object feedback) {
             this.operation = op;
@@ -103,9 +103,11 @@ public abstract class Operator extends Term implements Plugin {
         }
         
         public Task getTask() { return operation.getTask(); }
-        
 
-        
+        public Operation getOperation() {
+            return operation;
+        }
+
         @Override
         public String toString() {
             if (operation instanceof ImmediateOperation) {

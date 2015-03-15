@@ -12,6 +12,8 @@ import nars.logic.entity.Term;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
+import java.util.Set;
 
 /** a node which can represent a pre-Term, a Term, or a Concept */
 public class TermNode extends UIVertex {
@@ -22,7 +24,7 @@ public class TermNode extends UIVertex {
     final Term term; //required
 
     Concept concept = null; //if non-null, this represents Concept nature
-    Task task = null; //if non-null, this represents Task nature
+    Set<Task> task = new HashSet(); //if non-empty, this represents Task nature
 
     private NodeIcon icon;
     private float priority = 0;
@@ -51,7 +53,7 @@ public class TermNode extends UIVertex {
 
     public TermNode(TestNARGraph.NARGraphNode graphnode, Task t) {
         this(graphnode, t.getTerm());
-        setTask(t);
+        addTask(t);
     }
 
     public TermNode(TestNARGraph.NARGraphNode graphnode, Term term) {
@@ -60,9 +62,9 @@ public class TermNode extends UIVertex {
         this.graphnode = graphnode;
     }
 
-    public boolean setTask(Task t) {
+    public boolean addTask(Task t) {
         if (this.task!=t) {
-            this.task = t;
+            this.task.add(t);
             updateUI();
             return true;
         }
@@ -107,28 +109,36 @@ public class TermNode extends UIVertex {
         float angle = 0;
 
         priority = 0;
-        float r = 0.25f;
-        float g = 0.25f;
-        float b = 0.25f;
+        float r = 0.20f;
+        float g = 0.50f;
+        float b = 0.50f;
 
         if (concept != null) {
             priority += concept.getPriority();
-            r += concept.getPriority() / 2f;
+            g += concept.getPriority() / 2f;
             scale += 0.5f;
         }
         if (task != null) {
-            priority += task.getPriority();
-            b += task.getPriority() / 2f;
-            if (task.isInput()) {
-                scale += 0.25f;
+            float p = 0;
+            int numTasks = task.size();
+
+            for (Task t : task) {
+                float tp = t.getPriority() / numTasks;
+                b += tp * 0.5f;
+                /*if (t.isInput()) {
+                    scale += 0.25f;
+                }*/
+                p += tp;
             }
-            angle = time * 0.5f * (0.5f * task.getPriority());
+            angle = time * 0.1f * (p);
+            priority += p * 0.5f;
+
         }
 
         if (priority==0) {
             priority = 0;
             scale = 0.5f;
-            r = g = b = 0.25f;
+            //r = g = b = 0.5f;
         }
 
         color = new Color(r, g, b, alpha);
@@ -201,7 +211,7 @@ public class TermNode extends UIVertex {
     @Override
     public UIVertex add(Named v) {
         if (task==null && v instanceof Task)
-            setTask((Task)v);
+            addTask((Task) v);
         else if (concept == null & v instanceof Concept)
             setConcept((Concept)v);
         return this;
@@ -210,7 +220,7 @@ public class TermNode extends UIVertex {
     @Override
     public UIVertex remove(Named v) {
         if (task != null && v instanceof Task)
-            setTask(null);
+            addTask(null);
         if (concept != null & v instanceof Concept)
             setConcept(null);
 
