@@ -81,10 +81,11 @@ class PXText extends PXNode {
 	private transient TextLayout[] lines;
 	private String text;
 	private Paint textPaint;
-	private static boolean useBlurTextThreshold = true;
+	private static boolean useBlurTextThreshold = false;
+
+    public final ArrayList<Object> linesList = new ArrayList<Object>();
 
 	protected double blurTextThreshold;
-    private final boolean antialias = false;
 
     public PXText() {
 		super();
@@ -98,7 +99,8 @@ class PXText extends PXNode {
 		init();
 	}
 
-	private void init() {
+
+    private void init() {
 		setBlurTextThreshold(DEFAULT_BLURTEXT_THRESHOLD);
 		setConstrainWidthToTextWidth(true);
 
@@ -143,9 +145,10 @@ class PXText extends PXNode {
 				return;
 			}
 
+
             Graphics2D g2 = paintContext.getGraphics();
 
-            if (!antialias) {
+            if (!NengoStyle.antialias) {
                 g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
             }
@@ -242,9 +245,11 @@ class PXText extends PXNode {
 	 * wrapped based on the bounds of this node.
 	 */
 	public void recomputeLayout() {
-		ArrayList<Object> linesList = new ArrayList<Object>();
-		double textWidth = 0;
-		double textHeight = 0;
+
+        linesList.clear();
+
+		float textWidth = 0;
+		float textHeight = 0;
 
 		if (text != null && text.length() > 0) {
 			AttributedString atString = new AttributedString(text);
@@ -252,9 +257,9 @@ class PXText extends PXNode {
 
 			AttributedCharacterIterator itr = atString.getIterator();
 			LineBreakMeasurer measurer = new LineBreakMeasurer(itr,
-					PPaintContext.RENDER_QUALITY_HIGH_FRC);
+					NengoStyle.renderQuality);
 			float availableWidth = constrainWidthToTextWidth ? Float.MAX_VALUE
-					: (float) getWidth();
+					: Math.max(1, (float) getWidth());
 
 			int nextLineBreakOffset = text.indexOf('\n');
 			if (nextLineBreakOffset == -1) {
@@ -283,13 +288,15 @@ class PXText extends PXNode {
 						+ aTextLayout.getLeading();
 				textWidth = Math.max(textWidth, aTextLayout.getAdvance());
 			}
+
+
 		}
 
 		lines = linesList.toArray(new TextLayout[linesList.size()]);
 
 		if (constrainWidthToTextWidth || constrainHeightToTextHeight) {
-			double newWidth = getWidth();
-			double newHeight = getHeight();
+			double newWidth = Math.max(1,getWidth());
+			double newHeight = Math.max(1, getHeight());
 
 			if (constrainWidthToTextWidth) {
 				newWidth = textWidth;

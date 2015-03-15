@@ -1,14 +1,11 @@
 package ca.nengo.test.nargraph;
 
 import automenta.vivisect.dimensionalize.UIEdge;
-import automenta.vivisect.swing.ColorArray;
 import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.model.icon.ModelIcon;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NetworkViewer;
 import ca.nengo.ui.model.viewer.NodeViewer;
-import nars.logic.entity.TaskLink;
-import nars.logic.entity.TermLink;
 import org.apache.commons.math3.util.FastMath;
 
 import java.awt.*;
@@ -120,6 +117,8 @@ public class UINARGraph extends UINetwork {
                 double tx = target.getX();
                 double ty = target.getY();
 
+                e.update();
+
                 //System.out.println(source + " " + target + " " + sx + " " + sy + " " + tx + " "+ ty);
 
                 final float sourceRadius = 64; //(float)sb.getWidth() / 8f;
@@ -130,23 +129,29 @@ public class UINARGraph extends UINetwork {
         }
     }
 
-    final ColorArray red = new ColorArray(64, new Color(0.4f, 0.2f, 0.2f, 0.5f), new Color(1f, 0.7f, 0.3f, 1.0f));
-    final ColorArray blue = new ColorArray(64, new Color(0.2f, 0.2f, 0.4f, 0.5f), new Color(0.3f, 0.7f, 1f, 1.0f));
+    //final ColorArray red = new ColorArray(64, new Color(0.4f, 0.2f, 0.2f, 0.5f), new Color(1f, 0.7f, 0.3f, 1.0f));
+    //final ColorArray blue = new ColorArray(64, new Color(0.2f, 0.2f, 0.4f, 0.5f), new Color(0.3f, 0.7f, 1f, 1.0f));
 
 
 
     public Color getEdgeColor(UIEdge e) {
+        float priority = (float) e.getPriorityMean();
+        float termlinkPriority = (float) e.getTermlinkPriority();
+        float tasklinkPriority = (float) e.getTasklinkPriority();
 
-        final Object x = e.e;
-        if (x instanceof TermLink) {
-            float p = ((TermLink)x).budget.getPriority();
-            return red.get(p);
-        }
-        else if (e.e instanceof TaskLink) {
-            float p = ((TaskLink)x).budget.getPriority();
-            return blue.get(p);
-        }
-        return Color.WHITE;
+
+        return new Color(0.25f + 0.75f * termlinkPriority, 0.25f, 0.25f + 0.75f * tasklinkPriority, 0.25f + 0.75f * priority);
+
+//        final Object x = e.e;
+//        if (x instanceof TermLink) {
+//            float p = ((TermLink)x).budget.getPriority();
+//            return red.get(p);
+//        }
+//        else if (e.e instanceof TaskLink) {
+//            float p = ((TaskLink)x).budget.getPriority();
+//            return blue.get(p);
+//        }
+//        return Color.WHITE;
     }
 
     @Override

@@ -107,13 +107,13 @@ public class TermNode extends UIVertex {
         float angle = 0;
 
         priority = 0;
-        float r = 0.5f;
-        float g = 0;
-        float b = 0.5f;
+        float r = 0.25f;
+        float g = 0.25f;
+        float b = 0.25f;
 
         if (concept != null) {
             priority += concept.getPriority();
-            g += concept.getPriority() / 2f;
+            r += concept.getPriority() / 2f;
             scale += 0.5f;
         }
         if (task != null) {
@@ -128,10 +128,10 @@ public class TermNode extends UIVertex {
         if (priority==0) {
             priority = 0;
             scale = 0.5f;
-            r = g = b = 0.5f;
+            r = g = b = 0.25f;
         }
 
-        color = new Color(r, 1-g, 1-b, alpha);
+        color = new Color(r, g, b, alpha);
         alpha = 0.5f + (0.5f * color.getAlpha()) / 256f;
 
         icon.getBody().setPaint(color);

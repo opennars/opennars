@@ -54,7 +54,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 * Parent of this icon
 	 */
 	private final ModelObject parent;
-    private final boolean cacheLabel = true;
+    private final boolean cacheLabel = false;//not working entirely yet
 
     /**
 	 * Whether to show the type of model in the label
