@@ -514,7 +514,7 @@ public class Concept extends Item<Term> implements Termable {
 
         List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
-        if (templates.isEmpty()) {
+        if (templates == null || templates.isEmpty()) {
             //distribute budget to incoming termlinks?
             return false;
         }

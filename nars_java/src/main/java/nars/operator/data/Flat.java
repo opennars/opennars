@@ -31,7 +31,7 @@ abstract public class Flat extends TermFunction {
         collect(x, l);
         return result(l);
     }
-    protected static void collect(Term[] x, List<Term> l) {
+    public static List<Term> collect(Term[] x, List<Term> l) {
         for (Term a : x) {
             if ((a instanceof Product) || (a instanceof SetTensional) || (a instanceof Conjunction)) {
                 collect( ((CompoundTerm)a).term, l);
@@ -39,6 +39,7 @@ abstract public class Flat extends TermFunction {
             else
                 l.add(a);
         }
+        return l;
     }
 
     abstract public Term result(List<Term> terms);

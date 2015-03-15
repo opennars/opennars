@@ -20,16 +20,20 @@ public class Solid extends Default {
 
     private final int maxConcepts;
     private final int maxTasks;
-    private final int minFires;
-    private final int maxFires;
+    private final int minTaskLink;
+    private final int maxTaskLink;
+    private final int minTermLink;
+    private final int maxTermLink;
     private Memory memory;
 
-    public Solid(int maxConcepts, int minFires, int maxFires) {
+    public Solid(int maxConcepts, int minTaskLink, int maxTaskLink, int minTermLink, int maxTermLink) {
         super();
         this.maxConcepts = maxConcepts;
-        this.maxTasks = maxConcepts * 100;
-        this.maxFires = maxFires;
-        this.minFires = minFires;
+        this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
+        this.minTaskLink = minTaskLink;
+        this.maxTaskLink = maxTaskLink;
+        this.minTermLink = minTermLink;
+        this.maxTermLink = maxTermLink;
     }
 
     @Override
@@ -78,9 +82,13 @@ public class Solid extends Default {
                 return 0;
             }
 
+            protected int num(float p, int min, int max) {
+                return Math.round((p * (max - min)) + min);
+            }
+
             @Override
             public void cycle() {
-                System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
+                //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
                 getMemory().perceiveNext();
 
@@ -94,13 +102,14 @@ public class Solid extends Default {
                 for (Concept c : concepts) {
 
                     float p = c.getPriority();
-                    int fires = Math.round(p * (maxFires - minFires) + minFires);
+                    int fires = num(p, minTaskLink, maxTaskLink);
 
-                    System.out.println("  firing " + c + " x " + fires);
+                    //System.out.println("  firing " + c + " x " + fires);
+
                     for (int i = 0; i < fires; i++) {
                         TaskLink tl = c.taskLinks.forgetNext(param.taskLinkForgetDurations, getMemory());
                         if (tl==null) break;
-                        new ConceptProcess(c, tl) {
+                        new ConceptProcess(c, tl, num(p, minTermLink, maxTermLink)) {
                             @Override protected void beforeFinish() {
 
                             }
@@ -159,7 +168,7 @@ public class Solid extends Default {
 
     public static void main(String[] args) {
 
-        Solid s = new Solid(128, 20, 2);
+        Solid s = new Solid(128, 0, 9, 0, 3);
         NAR n = new NAR(s);
         n.input("<a --> b>. :\\:");
         n.input("<b <-> c>.");

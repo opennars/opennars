@@ -1,5 +1,6 @@
 package nars.event;
 
+import nars.core.Memory;
 import nars.core.NAR;
 
 /**
@@ -16,6 +17,10 @@ public abstract class AbstractReaction implements Reaction {
     public AbstractReaction(NAR n, Class... events) {
         this(n, true, events);
     }
+    public AbstractReaction(Memory m, Class... events) {
+        this(m.event, true, events);
+    }
+
     public AbstractReaction(EventEmitter n, Class... events) {
         this(n, true, events);
     }

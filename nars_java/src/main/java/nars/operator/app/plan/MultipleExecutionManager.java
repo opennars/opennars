@@ -6,12 +6,11 @@ package nars.operator.app.plan;
 import nars.core.Events;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.Memory;
+import nars.core.Parameters;
+import nars.event.AbstractReaction;
 import nars.io.Texts;
 import nars.logic.NALOperator;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.entity.TruthValue;
+import nars.logic.entity.*;
 import nars.logic.nal5.Conjunction;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
@@ -28,7 +27,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * Operation execution and planning support. Strengthens and accelerates
  * goal-reaching activity
  */
-@Deprecated public class MultipleExecutionManager {
+public class MultipleExecutionManager extends AbstractReaction {
 
     public final GraphExecutive graph;
     public final Memory memory;
@@ -55,6 +54,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
     float motivationToFinishCurrentExecution = 1.5f;
 
     public MultipleExecutionManager(Memory mem) {
+        super(mem, Events.CycleStart.class);
         this.memory = mem;
         
         this.graph = new GraphExecutive(mem, this);
@@ -87,6 +87,14 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
     public int getNumActiveTasks() {
         return numActiveTasks;
+    }
+
+    @Override
+    public void event(Class event, Object[] args) {
+
+        if (event == Events.CycleStart.class) {
+            cycle();
+        }
     }
 
     public static class Execution implements Comparable<Execution> {
@@ -323,10 +331,10 @@ import java.util.concurrent.ConcurrentSkipListSet;
         updateTasks();
         updateSensors();
 
-        
         if (tasks.isEmpty()) {
             return;
         }
+
 
         //System.out.println(now + " tasks=" + tasks);
         
@@ -416,8 +424,13 @@ import java.util.concurrent.ConcurrentSkipListSet;
             Interval ui = (Interval) currentTerm;
             task.delayUntil = memory.time() + Interval.cycles(ui.magnitude, memory.param.duration);
             s++;
-        } else {
+        } else if (currentTerm instanceof CompoundTerm) {
             /*System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);*/
+            //removeExecution(task); //was never executed, dont remove
+            inputGoal((CompoundTerm)currentTerm);
+            s++;
+        }
+        else {
             removeExecution(task); //was never executed, dont remove
         }
 
@@ -435,6 +448,16 @@ import java.util.concurrent.ConcurrentSkipListSet;
             //still incomplete
             task.sequence = s;
             task.setMotivationFactor(motivationToFinishCurrentExecution);
+        }
+    }
+
+    public boolean inputGoal(CompoundTerm currentTerm) {
+        try {
+            memory.taskInput(memory.newTask(currentTerm).goal().present().truth(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE).get());
+            return true;
+        }
+        catch (Exception e) {
+            return false;
         }
     }
 

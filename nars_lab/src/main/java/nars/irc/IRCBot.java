@@ -6,11 +6,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import nars.build.Default;
+import nars.build.Solid;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
+import nars.io.Texts;
 import nars.io.nlp.Twokenize;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Term;
@@ -28,7 +30,7 @@ import java.util.List;
 
 public class IRCBot {
 
-    boolean outputting = false;
+    boolean outputting = true;
 
     // The server to connect to and our details.
     String server = "irc.freenode.net";
@@ -36,7 +38,7 @@ public class IRCBot {
     String login = "narchy";
 
     // The channel which the bot will join.
-    String channel = "#nars";
+    String channel = "#netention";
     private final NAR nar;
     private BufferedWriter writer = null;
 
@@ -45,37 +47,78 @@ public class IRCBot {
         Parameters.DEBUG = true;
 
 
-        Default d = new Default();
-        //Default d = new Solid(1024, 10, 1);
-        /*d.param.shortTermMemoryHistory.set(3);
-        d.param.termLinkMaxReasoned.set(4);
+        //Default d = new Default();
+        Default d = new Solid(1024, 0,5, 0,3);
+        d.param.decisionThreshold.set(0.1);
+        d.param.temporalRelationsMax.set(2);
+        d.param.shortTermMemoryHistory.set(2);
+        d.param.duration.set(1);
+        /* d.param.termLinkMaxReasoned.set(4);
         d.param.conceptsFiredPerCycle.set(2);
         d.param.decisionThreshold.set(0.3);
         d.param.temporalRelationsMax.set(2);*/
 
+        //d.temporalPlanner(16f,8,8,2);
+
         NAR n = new NAR( d );
-
-
-        n.input(new File("/tmp/h.nal"));
-        System.out.print("initializing...");
-        for (int i = 0; i < 10; i++) {
-            System.out.print(i + " ");
-            n.run(1000);
-        }
-        System.out.println("ok");
-        //n.start(10, 1);
 
         Video.themeInvert();
         new NARSwing(n).controls.setSpeed(0.1f);
 
+        File corpus = new File("/tmp/h.nal");
+        n.input(corpus);
+        System.out.print("initializing...");
+        for (int i = 0; i < 10; i++) {
+            System.out.print(i + " ");
+            n.run(10);
+        }
+        System.out.println("ok");
+
+        //n.start(15, 1);
+
+
 
         IRCBot i = new IRCBot(n);
 
-        i.hear("chan", "i exist now.");
-        n.input("say(i,exist,now)!");
+        i.loop(corpus, 250);
 
-        String[] book = String.join(" ", Files.readAllLines(Paths.get("/home/me/meta.txt"))).split("\\. ");
-        i.read(book, 1000);
+        String[] book = String.join(" ", Files.readAllLines(Paths.get("/home/me/worstward.txt"))).split("\\. ");
+        i.read(book, 5000);
+
+    }
+
+    private void loop(File corpus, int lineDelay) {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                List<String> lines = null;
+                try {
+                    lines = Files.readAllLines(Paths.get(corpus.toURI()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                while (true)  {
+
+                    for (String s : lines) {
+                        s = s.trim();
+                        if (s.isEmpty())continue;
+
+
+                        nar.input("$0.5$ " + s);
+
+                        try {
+                            Thread.sleep(lineDelay);
+                        } catch (InterruptedException e) {
+                        }
+                    }
+
+                }
+            }
+        }).start();
+
     }
 
     private void read(String[] sentences, int delayMS) {
@@ -103,7 +146,7 @@ public class IRCBot {
 
 
     public int hear(String channel, String m) {
-        final int delay = 7, endDelay = 100, tokenMax = 7, tokenMin = 2;
+        final int delay = 200 /*ms */, endDelay = 1000, tokenMax = 7, tokenMin = 2;
         List<Twokenize.Span> tokens = Twokenize.twokenize(m);
         int nonPunc = Iterables.size(Iterables.filter(tokens, new Predicate<Twokenize.Span>() {
 
@@ -119,20 +162,25 @@ public class IRCBot {
 
 
         //String i = "<language --> hear>. :|: \n " + delay + "\n";
-        String i = "";
-        i += String.join("", Iterables.transform(tokens, new Function<Twokenize.Span, String>() {
+
+        String c= String.join(",", Iterables.transform(tokens, new Function<Twokenize.Span, String>() {
 
             @Override
             public String apply(Twokenize.Span input) {
                 String a = "";
                 String pattern = "";
+                Term wordTerm;
                 if (input.pattern.equals("word")) {
                     a = input.content.toLowerCase().toString();
+                    wordTerm = Term.get(a);
                     pattern = "word";
                 }
                 //TODO apostrophe words
                 else if (input.pattern.equals("punct")) {
-                    a = input.content;
+                    String b = Texts.escapeLiteral(input.content).toString();
+                    wordTerm = Term.text(b);
+
+                    a = "\"" + input.content + "\"";
                     pattern = "word";
                 }
                 else {
@@ -141,20 +189,41 @@ public class IRCBot {
                 //else
                   //  a = "\"" + input.content.toLowerCase() + "\"";
                 //String r = "<" + a + " --> " + pattern + ">. :|:\n";
-                nar.input(new Sentence(Inheritance.make(Term.text(a), Term.get(pattern)), '.', new TruthValue(1.0f, 0.9f), new Stamp(nar.memory, Tense.Present)));
-                nar.think(delay);
+
+                Term tt = Inheritance.make(wordTerm, Term.get(pattern));
+                char punc = '.';
+
+                //Term tt = Operation.make(nar.memory.operator("^say"), new Term[] {wordTerm});
+                //char punc = '!';
+
+                nar.input(new Sentence(tt, punc, new TruthValue(1.0f, 0.9f), new Stamp(nar.memory, Tense.Present)));
+                //nar.think(delay);
                 //r += "say(" + a + ")!\n";
                 //r += delay + "\n";
-                return "";
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (a.isEmpty()) return "<\"..\"-->word>";
+                return "<" + a + "-->word>";
             }
         }));
-        //i += "<silence --> hear>. :|: \n" + endDelay + "\n";
-        //i += endDelay + "\n";
+
 
         System.out.println(nar.time() + " HEAR: " + tokens);
         //System.out.println("HEAR: " + i);
 
-        //nar.input(i);
+        String i = "<(*," + c + ") --> sentence>.";
+        nar.input(i);
+        String j = "<(&/," + c + ") --> sentence>. :|:";
+        nar.input(j);
+
+        try {
+            Thread.sleep(endDelay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return tokens.size();
     }
@@ -166,7 +235,7 @@ public class IRCBot {
 
             private String lastMessage = "";
 
-            int minSpokenWords = 3;
+            int minSpokenWords = 2;
 
             @Override
             public void event(Class event, Object[] args) {
@@ -198,13 +267,16 @@ public class IRCBot {
             }
         };
 
-        /*new BufferedOutput(nar, 1, 5000, 64) {
+        /*
+        new BufferedOutput(nar, 1, 1000, 64) {
 
             @Override
-            protected void output(List<OutputItem> buffer) {
+            protected void output(List<BufferedOutput.OutputItem> buffer) {
                System.out.println(buffer);
             }
-        };*/
+        };
+        */
+
 
         //new TextOutput(nar, System.out).setShowErrors(true).setPriorityMin(0.95f);
 

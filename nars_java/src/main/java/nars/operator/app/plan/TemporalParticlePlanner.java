@@ -26,6 +26,7 @@ import nars.event.Reaction;
 import nars.logic.NAL;
 import nars.logic.NALOperator;
 import nars.logic.TruthFunctions;
+import nars.logic.entity.CompoundTerm;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -51,8 +52,7 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
     /**
      * global plan search parameters
      */
-    public static boolean used=false; //cause decison making breaks if conjunction sequence is added when planner is not active
-    
+
     float searchDepth;
     int planParticles;
 
@@ -65,7 +65,7 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
     /**
      * max number of tasks that a plan can generate. chooses the N best
      */
-    int maxPlannedTasks = 0;
+    int maxPlannedTasks;
        
     MultipleExecutionManager executive;
     GraphExecutive graph;
@@ -142,9 +142,12 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
                     } else if (it.getSubject() instanceof Operation) {
                         executive.execute(executing, (Operation) it.getSubject(), task); //directly execute
                         return;
+                    } else if (term instanceof CompoundTerm) {
+                        executive.inputGoal((CompoundTerm)term);
+                        return;
                     }
                 }
-            }                         
+            }
         }
         else if (event == NewTaskExecution.class) {
             Execution te = (Execution)a[0];
@@ -163,7 +166,7 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
             }
             
             te.setTask(t);
-            
+
         }
     }
     

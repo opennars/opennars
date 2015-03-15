@@ -25,7 +25,8 @@ public class GraphExecutive {
 
     public final Memory memory;
     public final ImplicationGraph implication;
-    
+    private boolean requireOperationInPlan = true;
+
 
     final int maxConsecutiveIntervalTerms = 1;
         
@@ -281,7 +282,7 @@ public class GraphExecutive {
                     continue;
                 }
 
-                if (!operationTraversed) {
+                if (requireOperationInPlan && !operationTraversed) {
                     pathFailNoOperation++;
                     continue;                        
                 }
@@ -601,7 +602,9 @@ public class GraphExecutive {
             Term imp = Implication.make(subj, goalTerm, TemporalRules.ORDER_FORWARD);
 
             if (imp == null) {
-                throw new RuntimeException("Invalid implication: " + subj + " =\\> " + goalTerm);
+                //throw new RuntimeException("Invalid implication: " + subj + " =\\> " + goalTerm);
+                System.err.println("Invalid implication: " + subj + " =\\> " + goalTerm);
+                return null;
             }
 
 
@@ -659,7 +662,7 @@ public class GraphExecutive {
         SortedSet<ParticlePath> roots = act.activate(false, particles, distance);
     
 
-        if (roots == null) {            
+        if ((roots == null) || (roots.isEmpty())) {
             return null;
         }
         
@@ -693,7 +696,7 @@ public class GraphExecutive {
                 
                 i--; //next impl                                
                                                 
-                if (isPlanTerm(term)) {                                        
+                if (!requireOperationInPlan || isPlanTerm(term)) {
                     boolean isInterval = term instanceof Interval;
                     if (!isInterval) {
                                                 
@@ -731,7 +734,7 @@ public class GraphExecutive {
             }            
                 
             //TODO check this prior to above loop, to avoid wasting that effort
-            if (operations == 0)
+            if (requireOperationInPlan && operations == 0)
                 continue;
                         
             if (seq.isEmpty())
@@ -757,12 +760,13 @@ public class GraphExecutive {
     protected Task planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         
         Task newTask = plan.planTask(c, task, target, punctuation);
+        if (newTask == null) return null;
 
         memory.taskInput(newTask);
         
         //it comes through temporal induction with correct truth value anyway
         //nal.derivedTask(newTaskAt, false, true, null, null);  //and if this is a implication then wrong
-        //memory.executive.addExecution(c, newTaskAt);
+        memory.executive.addExecution(c, newTask);
         
         return newTask;
         
@@ -771,7 +775,8 @@ public class GraphExecutive {
    public int plan(final NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
 
         TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
-        
+        if (plans == null || plans.isEmpty()) return 0;
+
         int n = 0;
         
         boolean emittingPlans = memory.emitting(ParticlePlan.class);

@@ -180,7 +180,7 @@ public class Operation extends Inheritance {
     }
 
 
-    public static Operation make(Operator opTerm, Term[] arg) {
+    public static Operation make(Operator opTerm, Term... arg) {
         return make(opTerm, arg, null);
     }
 
