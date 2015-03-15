@@ -3,14 +3,12 @@ package nars.control;
 import nars.core.Core;
 import nars.core.Events;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
 import nars.logic.reason.ConceptProcess;
 import nars.util.bag.Bag;
 import nars.util.bag.impl.CacheBag;
 import nars.util.bag.impl.LevelBag;
-import nars.util.bag.select.BagActivator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -130,76 +128,22 @@ abstract public class UniCore implements Core {
 
     }
 
-    public class ConceptActivator extends BagActivator<Term,Concept> {
-
-        final float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
-
-        private boolean createIfMissing;
-        private long now;
-
+    final ConceptActivator activator = new ConceptActivator() {
         @Override
-        public Concept updateItem(Concept c) {
-
-            long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();
-            memory.forget(c, cyclesSinceLastForgotten, relativeThreshold);
-
-            if (budget!=null) {
-                BudgetValue cb = c.budget;
-
-                final float activationFactor = memory.param.conceptActivationFactor.floatValue();
-                BudgetFunctions.activate(cb, getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor );
-            }
-
-            return c;
-        }
-
-        public void set(Term t, BudgetValue b, boolean createIfMissing, long now) {
-            setKey(t);
-            setBudget(b);
-            this.createIfMissing = createIfMissing;
-            this.now = now;
+        public Memory getMemory() {
+            return memory;
         }
 
         @Override
-        public Concept newItem() {
-
-            //try remembering from subconscious
-            if (subcon!=null) {
-                Concept concept = subcon.take(getKey());
-                if (concept!=null) {
-
-                    //reset the forgetting period to zero so that its time while forgotten will not continue to penalize it during next forgetting iteration
-                    concept.budget.setLastForgetTime(now);
-
-                    memory.emit(Events.ConceptRemember.class, concept);
-
-                    return concept;
-                }
-            }
-
-            //create new concept, with the applied budget
-            if (createIfMissing) {
-
-                Concept concept = conceptBuilder.newConcept(budget, getKey(), memory);
-
-                if (memory.logic!=null)
-                    memory.logic.CONCEPT_NEW.hit();
-
-                memory.emit(Events.ConceptNew.class, concept);
-
-                return concept;
-            }
-
-            return null;
+        public CacheBag<Term, Concept> getSubConcepts() {
+            return subcon;
         }
 
         @Override
-        public void overflow(Concept overflow) {
-            conceptRemoved(overflow);
+        public ConceptBuilder getConceptBuilder() {
+            return conceptBuilder;
         }
-    }
-
-    final ConceptActivator activator = new ConceptActivator();
+    };
 
 
     @Override
