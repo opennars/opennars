@@ -108,6 +108,8 @@ public class OutputContainsCondition extends OutputCondition {
         return (channel == Events.OUT.class) || (channel == Events.EXE.class) || (channel == Events.Answer.class);
     }
 
+    final StringBuilder buffer = new StringBuilder();
+
     public boolean cond(Class channel, Object signal) {
 
         if (validChannel(channel)) {
@@ -129,8 +131,9 @@ public class OutputContainsCondition extends OutputCondition {
                 if (signal instanceof ExecutionResult)
                     t = ((ExecutionResult)signal).getTask();
                 
-                o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
-                
+                //o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
+                o = TextOutput.getOutputString(channel, signal, false, nar, buffer).toString();
+
                 if (o.contains(containing)) {
                     if ((saveSimilar) && (t!=null)) {                        
                         exact.add(t);

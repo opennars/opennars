@@ -17,6 +17,8 @@ import nars.util.bag.impl.CacheBag;
 import nars.util.bag.impl.CurveBag;
 import nars.util.bag.impl.experimental.ChainBag;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -24,7 +26,7 @@ import java.util.Iterator;
 public class Solid extends Default {
 
 
-    private final int maxConcepts;
+    private final int maxConcepts, maxSubConcepts;
     private final int maxTasks;
     private final int minTaskLink;
     private final int maxTaskLink;
@@ -33,10 +35,12 @@ public class Solid extends Default {
     private final int inputsPerCycle;
     private Memory memory;
 
+
     public Solid(int inputsPerCycle, int maxConcepts, int minTaskLink, int maxTaskLink, int minTermLink, int maxTermLink) {
         super();
         this.inputsPerCycle = inputsPerCycle;
         this.maxConcepts = maxConcepts;
+        this.maxSubConcepts = maxConcepts * 4;
         this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
         this.minTaskLink = minTaskLink;
         this.maxTaskLink = maxTaskLink;
@@ -53,22 +57,6 @@ public class Solid extends Default {
 
 
 
-    final ConceptActivator activator = new ConceptActivator() {
-        @Override
-        public Memory getMemory() {
-            return memory;
-        }
-
-        @Override
-        public CacheBag<Term, Concept> getSubConcepts() {
-            return null;
-        }
-
-        @Override
-        public ConceptBuilder getConceptBuilder() {
-            return Solid.this.getConceptBuilder();
-        }
-    };
 
     static final Comparator<Item> budgetComparator = new Comparator<Item>() {
         //almost...
@@ -110,9 +98,31 @@ public class Solid extends Default {
     @Override
     public Core newCore() {
 
+
             return new Core() {
 
+
+                public final CacheBag<Term, Concept> subcon = new CacheBag(maxSubConcepts);
+
                 CurveBag<Concept,Term> concepts = new CurveBag(maxConcepts, true);
+
+                final ConceptActivator activator = new ConceptActivator() {
+                    @Override
+                    public Memory getMemory() {
+                        return memory;
+                    }
+
+                    @Override
+                    public CacheBag<Term, Concept> getSubConcepts() {
+                        return subcon;
+                    }
+
+                    @Override
+                    public ConceptBuilder getConceptBuilder() {
+                        return Solid.this.getConceptBuilder();
+                    }
+                };
+
 
                 //iterates in reverse, lowest to highest
                 FastSortedSet<Task> tasks = new FastSortedSet(new Equality<Task>() {
@@ -140,6 +150,9 @@ public class Solid extends Default {
 
                 @Override
                 public void addTask(Task t) {
+                    if (!t.aboveThreshold())
+                        return;
+
                     if (tasks.size() >= maxTasks) {
                         //reject this task if it lower than the lowest
                         Task lowest = tasks.first();
@@ -147,6 +160,7 @@ public class Solid extends Default {
                             return;
                         }
                     }
+
                     tasks.add(t);
                 }
 
@@ -159,12 +173,13 @@ public class Solid extends Default {
                 return Math.round((p * (max - min)) + min);
             }
 
+
+
             @Override
             public void cycle() {
                 //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
-                int perceptions = inputsPerCycle - 1;
-                while( (getMemory().perceiveNext() > 0)  && (perceptions-- >= 0));
+                getMemory().perceiveNext(inputsPerCycle);
 
                 //1. process all new tasks
                 int t = 0;
@@ -174,22 +189,20 @@ public class Solid extends Default {
                 }
                 tasks.clear();
 
-                //2. fire all cocnepts
+                //2. fire all concepts
                 for (Concept c : concepts) {
 
                     float p = c.getPriority();
                     int fires = num(p, minTaskLink, maxTaskLink);
+                    int termFires = num(p, minTermLink, maxTermLink);
+                    if (termFires == 0) continue;
 
                     //System.out.println("  firing " + c + " x " + fires);
 
                     for (int i = 0; i < fires; i++) {
                         TaskLink tl = c.taskLinks.forgetNext(param.taskLinkForgetDurations, getMemory());
                         if (tl==null) break;
-                        new ConceptProcess(c, tl, num(p, minTermLink, maxTermLink)) {
-                            @Override protected void beforeFinish() {
-
-                            }
-                        }.run();
+                        new ConceptProcess(c, tl, termFires).run();
                     }
                 }
             }
@@ -198,6 +211,7 @@ public class Solid extends Default {
             public void reset() {
                 tasks.clear();
                 concepts.clear();
+                subcon.clear();
             }
 
             @Override
@@ -225,12 +239,12 @@ public class Solid extends Default {
 
             @Override
             public void init(Memory m) {
-
+                subcon.setMemory(m);
             }
 
             @Override
             public void conceptRemoved(Concept c) {
-
+                subcon.add(c);
             }
 
             @Override
@@ -250,14 +264,18 @@ public class Solid extends Default {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
-        Solid s = new Solid(4, 128, 0, 9, 0, 3);
+        Solid s = new Solid(1, 256, 0, 9, 0, 3);
         NAR n = new NAR(s);
-        n.input("<a --> b>. :\\:");
-        n.input("<b <-> c>.");
-        n.input("<c <-> d>? :/:");
-        n.input("<(*,d,c) </> a>.");
+        n.input(new File("/tmp/h.nal"));
+        /*
+        n.input("<a --> b>. %1.00;0.90%\n" +
+                "<b --> c>. %1.00;0.90%\n"+
+                "<c --> d>. %1.00;0.90%\n" +
+                "<a --> d>?");*/
+
+        //''outputMustContain('<a --> d>. %1.00;0.27%')
 
         TextOutput.out(n);
         n.step(64);

@@ -32,6 +32,7 @@ import nars.logic.entity.*;
 import nars.logic.nal2.NAL2;
 import nars.logic.nal7.TemporalRules;
 
+import java.util.Arrays;
 
 
 /**
@@ -121,7 +122,7 @@ public class LocalRules {
         Sentence problem = task.sentence;
         Memory memory = nal.memory;
         
-        if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
+        if (!TemporalRules.matchingOrder(problem, belief)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return false;
@@ -152,8 +153,8 @@ public class LocalRules {
 
             belief = belief.clone(content);
             if (belief == null) {
-                //throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
-                return false;
+                throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
+                //return false;
             }
 
 
@@ -177,6 +178,7 @@ public class LocalRules {
         //Solution Activated
         if(task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST) {
             if(task.isInput()) { //only show input tasks as solutions
+
                 memory.emit(Answer.class, task, belief);
             } else {
                 memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed

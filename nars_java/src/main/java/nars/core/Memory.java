@@ -675,7 +675,7 @@ public class Memory implements Serializable {
     /** attempts to perceive the next input from perception, and
      *  handle it by immediately acting on it, or
      *  adding it to the new tasks queue for future reasoning.
-     * @return how many tasks were generated as a result of perceiving, or -1 if no percept was available */
+     * @return how many tasks were generated as a result of perceiving (which can be zero), or -1 if no percept is available */
     public int perceiveNext() {
         if (!thinking()) return -1;
 
@@ -791,19 +791,6 @@ public class Memory implements Serializable {
         return operators.remove(op.name());
     }
 
-    @Override
-    public String toString() {
-        //final StringBuilder sb = new StringBuilder(1024);
-        //sb.append(toStringLongIfNotNull(novelTasks, "novelTasks"))
-        //      .append(toStringIfNotNull(newTasks, "newTasks"));
-        //.append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
-        //.append(toStringLongIfNotNull(getCurrentBeliefLink(), "currentBeliefLink"))
-        //.append(toStringIfNotNull(getCurrentBelief(), "currentBelief"));
-        //return sb.toString();
-        return super.toString();
-    }
-
-
     /** produces a new stamp serial #, used to uniquely identify inputs */
     public long newStampSerial() {
         return currentStampSerial++;
@@ -831,7 +818,7 @@ public class Memory implements Serializable {
     public Set<Task> getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks) {
 
         //TODO estimate size
-        Set<Task> t = Parameters.newHashSet(1000);
+        Set<Task> t = Parameters.newHashSet(4);
 
         if (includeTaskLinks) {
             for (Concept c : concepts) {
@@ -863,33 +850,6 @@ public class Memory implements Serializable {
         return new NewTask(this, s);
     }
 
-//    @Deprecated public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability) {
-//        return newTask(content, sentenceType, freq, conf, priority, durability, (Task) null);
-//    }
-//
-//    @Deprecated public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
-//        return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
-//    }
-//
-//    @Deprecated public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
-//        return newTask(content, sentenceType, freq, conf, priority, durability, null, tense);
-//    }
-//
-//    @Deprecated public Task newTask(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
-//        return newTaskAt(content, sentenceType, freq, conf, priority, durability, parentTask, tense, time());
-//    }
-//
-//    @Deprecated public Task newTaskAt(CompoundTerm content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense, long ocurrenceTime) {
-//
-//        TruthValue truth = new TruthValue(freq, conf);
-//        Sentence sentence = new Sentence(
-//                content,
-//                sentenceType,
-//                truth,
-//                new Stamp(this, ocurrenceTime, tense));
-//        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
-//        return new Task(sentence, budget, parentTask);
-//    }
 
     /**
      * samples a next concept for processing;

@@ -40,7 +40,7 @@ public class TextOutput extends Output {
 
 
     private final NAR nar;
-    
+
     private String prefix = "";
     private LineOutput outExp2;
     private PrintWriter outExp;
@@ -51,12 +51,13 @@ public class TextOutput extends Output {
     private float minPriority = 0;
 
     public interface LineOutput {
-        public void println(String s);
+        public void println(CharSequence s);
     }
 
     public static TextOutput out(NAR n) {
         return new TextOutput(n, System.out);
     }
+
     public static TextOutput err(NAR n) {
         return new TextOutput(n, System.err);
     }
@@ -70,6 +71,7 @@ public class TextOutput extends Output {
         super(n, true);
         this.nar = n;
     }
+
     public TextOutput(NAR n, LineOutput outExp2) {
         this(n);
         this.outExp2 = outExp2;
@@ -78,21 +80,26 @@ public class TextOutput extends Output {
     public TextOutput(NAR n, PrintWriter outExp) {
         this(n, outExp, 0.0f);
     }
+
     public TextOutput(NAR n, PrintWriter outExp, float minPriority) {
         this(n);
         this.outExp = outExp;
         this.minPriority = minPriority;
     }
+
     public TextOutput(NAR n, PrintStream ps) {
         this(n, new PrintWriter(ps));
     }
+
     public TextOutput(NAR n, PrintStream ps, float minPriority) {
         this(n, ps);
         this.minPriority = minPriority;
     }
+
     public TextOutput(NAR n, StringWriter s) {
         this(n, new PrintWriter(s));
     }
+
     /**
      * Open an output experience file
      */
@@ -112,6 +119,8 @@ public class TextOutput extends Output {
         stop();
     }
 
+    final StringBuilder buffer = new StringBuilder();
+
     /**
      * Process the next chunk of output data
      */
@@ -119,21 +128,25 @@ public class TextOutput extends Output {
     public void event(final Class channel, final Object... oo) {
         if (!showErrors && (channel == Events.ERR.class))
             return;
-        
+
         if (!showInput && (channel == Events.IN.class))
             return;
         
-        /*if ((outExp!=null) || (outExp2!=null))*/ {
-            final String s = process(channel, oo);
-            if (s!=null) {
+        if ((outExp!=null) && (outExp2!=null)) {
+            throw new RuntimeException("why does this TextOuput exist?");
+        }
+
+        synchronized (buffer) {
+            final CharSequence s = process(channel, oo);
+            if (s != null) {
                 if (outExp != null) {
-                    if (prefix!=null)
+                    if (prefix != null)
                         outExp.print(prefix);
                     outExp.println(s);
                     outExp.flush();
                 }
                 if (outExp2 != null) {
-                    if (prefix!=null)
+                    if (prefix != null)
                         outExp2.println(prefix + s);
                     else
                         outExp2.println(s);
@@ -141,21 +154,19 @@ public class TextOutput extends Output {
             }
         }
     }
-    
 
-    
-    public String process(final Class c, final Object[] o) {
+
+    public CharSequence process(final Class c, final Object[] o) {
         if (o[0] instanceof Task) {
-            if (!allowTask((Task)o[0]))
+            if (!allowTask((Task) o[0]))
                 return null;
         }
-        final StringBuilder result = new StringBuilder(16 /* estimate */);
-
-
-        return getOutputString(c, o, true, showStamp, nar, result, minPriority);
+        return getOutputString(c, o, true, showStamp, nar, buffer, minPriority);
     }
-    
-    /** may be overridden in subclass to filter certain tasks */
+
+    /**
+     * may be overridden in subclass to filter certain tasks
+     */
     protected boolean allowTask(Task t) {
         return true;
     }
@@ -167,15 +178,14 @@ public class TextOutput extends Output {
     public TextOutput setShowErrors(boolean errors) {
         this.showErrors = errors;
         return this;
-    }    
+    }
 
     public TextOutput setShowInput(boolean showInput) {
         this.showInput = showInput;
         return this;
     }
-    
-    
-//
+
+
 //    public TextOutput setErrorStackTrace(boolean b) {
 //        this.showStackTrace = true;
 //        return this;
@@ -186,28 +196,25 @@ public class TextOutput extends Output {
         return this;
     }
 
-//    public static String getOutputString(final Class channel, Object[] signals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
-//        return getOutputString(channel, signals, showChannel, showStamp, nar, buffer, 0);
-//    }
-
     public void setPriorityMin(float minPriority) {
         this.minPriority = minPriority;
     }
 
-    /** generates a human-readable string from an output channel and signals */
-    public static String getOutputString(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
+    /**
+     * generates a human-readable string from an output channel and signals
+     */
+    public static StringBuilder getOutputString(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
         buffer.setLength(0);
-        
+
         if (showChannel)
             buffer.append(channel.getSimpleName()).append(": ");
 
         Object signal;
         Object[] signals;
         if (signalOrSignals instanceof Object[]) {
-            signals =(Object[]) signalOrSignals;
+            signals = (Object[]) signalOrSignals;
             signal = signals[0];
-        }
-        else {
+        } else {
             signal = signalOrSignals;
             signals = null;
         }
@@ -216,39 +223,36 @@ public class TextOutput extends Output {
         if (channel == Events.ERR.class) {
 
             if (signal instanceof Throwable) {
-                Throwable e = (Throwable)signal;
+                Throwable e = (Throwable) signal;
 
                 buffer.append(e.toString());
 
-                /*if (showStackTrace)*/ {
+                /*if (showStackTrace)*/
+                {
                     //buffer.append(" ").append(Arrays.asList(e.getStackTrace()));
                 }
-            }
-            else {
-                if (signals!=null)
+            } else {
+                if (signals != null)
                     buffer.append(Arrays.toString(signals));
                 else
                     buffer.append(signals);
-            }      
-            
-        }
-        else if ((channel == Answer.class) && (signals!=null)) {
+            }
+
+        } else if ((channel == Answer.class) && (signals != null)) {
             Task question = (Task) signals[0];
             Sentence answer = (Sentence) signals[1];
             question.sentence.toString(buffer, nar.memory, showStamp).append(" = ").append(answer.toString(nar, showStamp));
-        }
-        else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class)))  {
+
+        } else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class))) {
 
 
-            Task t = (Task)signal;
-            if (t.budget!=null && t.sentence!=null) {
-                minPriority = Math.min(nar.param.noiseLevel.get()/100.0f, minPriority);
+            Task t = (Task) signal;
+            if (t.budget != null && t.sentence != null) {
                 if (t.getPriority() < minPriority)
                     return null;
 
                 t.sentence.toString(buffer, nar.memory, showStamp);
-            }
-            else {
+            } else {
                 buffer.append(t.toString());
             }
                 
@@ -263,93 +267,93 @@ public class TextOutput extends Output {
 //                Sentence s = (Sentence)signals;
 //                buffer.append(s.toString(nar, showStamp));                        
 
-            
-        }
-        else {
-            if ((signals!=null) && (signals.length > 1))
+
+        } else {
+            if ((signals != null) && (signals.length > 1))
                 buffer.append(Arrays.toString(signals));
             else
                 buffer.append(signal.toString());
         }
 
-        return Texts.unescape(buffer).toString();
-        
+        return Texts.unescape(buffer);
+
     }
-    
+
+    /*
     public static CharSequence getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
         CharSequence s = getOutputString(channel, signal, showStamp, nar);
-        if (showChannel) {            
+        if (showChannel) {
             String channelName = channel.getSimpleName();
             StringBuilder r = new StringBuilder(s.length() + 2 + channelName.length());
             return r.append(channel.getSimpleName()).append(": ").append(s);
-        }
-        else {
+        } else {
             return s;
         }
-    }
+    }*/
 
-    public static CharSequence getOutputString(Class channel, Object signal, final boolean showStamp, final NAR nar) {
-        return getOutputString(channel, signal, showStamp, nar, new StringBuilder());
-    }
-    
-    /** generates a human-readable string from an output channel and signal */
     public static CharSequence getOutputString(Class channel, Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
-        buffer.setLength(0);
-        
-        if (signal instanceof Exception) {
-            Exception e = (Exception)signal;
-
-            buffer.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
-
-            /*if (showStackTrace)*/ 
-            {
-                buffer.append(' ').append(Arrays.asList(e.getStackTrace()));
-            }
-        }
-        else if (signal instanceof Task) {
-            Task t = (Task)signal;
-            
-            Sentence s = t.sentence;
-
-            if (s!=null)
-                s.toString(buffer, nar.memory, showStamp);
-            else
-                buffer.append(t.toString());
-            
-        }            
-        else if (signal instanceof Sentence) {
-            Sentence s = (Sentence) signal;
-            s.toString(buffer, nar.memory, showStamp);
-        }                    
-        else if (signal instanceof Object[]) {
-            if (channel == Answer.class) {
-                Object[] o = (Object[])signal;
-                //Task task = (Task)o[0];
-                Sentence belief = (Sentence)o[1];
-                
-                //Sentence question = task.sentence;
-                Sentence answer = belief;
-                
-                buffer.append(answer.toString(buffer, nar.memory, showStamp));
-            }
-            else {
-                //TODO use repeat buffer.append(..) rather than Array.toString
-                buffer.append(Arrays.toString((Object[]) signal));
-            }
-        }
-        else {
-            buffer.append(signal.toString());
-        }
-        
-        return Texts.unescape(buffer);
-        
+        return getOutputString(channel, signal, false, showStamp, nar, buffer, 0);
     }
-    
-    
+
+
+
+
     public void stop() {
         setActive(false);
     }
-    
+
+
+//    @Deprecated static CharSequence _getOutputString(Class channel, Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+//        buffer.setLength(0);
+//
+//        if (signal instanceof Exception) {
+//            Exception e = (Exception) signal;
+//
+//            buffer.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
+//
+//            /*if (showStackTrace)*/
+//            {
+//                buffer.append(' ').append(Arrays.asList(e.getStackTrace()));
+//            }
+//        } else if (signal instanceof Task) {
+//            Task t = (Task) signal;
+//
+//            Sentence s = t.sentence;
+//
+//            if (s != null)
+//                s.toString(buffer, nar.memory, showStamp);
+//            else
+//                buffer.append(t.toString());
+//
+//        } else if (signal instanceof Sentence) {
+//            Sentence s = (Sentence) signal;
+//            s.toString(buffer, nar.memory, showStamp);
+//        } else if (signal instanceof Object[]) {
+//            if (channel == Answer.class) {
+//                Object[] o = (Object[]) signal;
+//                //Task task = (Task)o[0];
+//                Sentence belief = (Sentence) o[1];
+//
+//                //Sentence question = task.sentence;
+//                Sentence answer = belief;
+//
+//                buffer.append(answer.toString(buffer, nar.memory, showStamp));
+//            } else {
+//                //TODO use repeat buffer.append(..) rather than Array.toString
+//                buffer.append(Arrays.toString((Object[]) signal));
+//            }
+//        } else {
+//            buffer.append(signal.toString());
+//        }
+//
+//        return Texts.unescape(buffer);
+//
+//    }
+
+}
+
+//NOT IMPLEMENTED YET
+class HTMLOutput {
     /** generates a human-readable string from an output channel and signal */
     public static String getOutputHTML(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar) {
         final StringBuilder buffer = new StringBuilder();

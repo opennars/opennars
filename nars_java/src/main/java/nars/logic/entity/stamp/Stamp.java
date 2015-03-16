@@ -20,6 +20,7 @@
  */
 package nars.logic.entity.stamp;
 
+import com.gs.collections.impl.set.mutable.primitive.LongHashSet;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
@@ -126,8 +127,6 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      * @param second The second Stamp
      */
     public static Stamp zip(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
-        int i2, j;
-        int i1 = i2 = j = 0;
 
         final long[] firstBase = first.evidentialBase;
         final long[] secondBase = second.evidentialBase;
@@ -138,17 +137,27 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
             throw new RuntimeException("Stamp can not be created from parents with different durations: " + first + ", " + second);
 
         final int baseLength = Math.min(firstBase.length + secondBase.length, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
-        long[] evidentialBase = new long[baseLength];
+        //long[] evidentialBase = new long[baseLength];
 
         int firstLength = firstBase.length;
         int secondLength = secondBase.length;
 
-        //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143
-        while (i2 < secondLength && j < baseLength) {
-            evidentialBase[j++] = secondBase[i2++];
+        LongHashSet h = new LongHashSet(firstLength + secondLength);
+
+        int i2;
+        int i1 = i2 = 0;
+
+        //Store the value negative so sort order will be reversed. then negative again to restore the original value
+        while (i2 < secondLength && (h.size() < baseLength)) {
+            h.add( -secondBase[i2++] );
         }
-        while (i1 < firstLength && j < baseLength) {
-            evidentialBase[j++] = firstBase[i1++];
+        while (i1 < firstLength && (h.size() < baseLength)) {
+            h.add( -firstBase[i1++] );
+        }
+
+        long[] evidentialBase = h.toSortedArray();
+        for (int i = 0; i < evidentialBase.length; i++) {
+            evidentialBase[i] *= -1;
         }
 
         return new Stamp(evidentialBase, creationTime, occurenceTime, duration);

@@ -11,7 +11,6 @@ import nars.event.AbstractReaction;
 import nars.gui.WrapLayout;
 import nars.io.Output;
 import nars.io.Symbols;
-import nars.io.TextOutput;
 import nars.io.TraceWriter;
 import nars.io.TraceWriter.LogOutput;
 import nars.logic.entity.Sentence;
@@ -29,10 +28,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 abstract public class LogPanel extends NPanel implements LogOutput {
-
-    static CharSequence getText(Class c, Object o, boolean showStamp, NAR nar) {
-        return TextOutput.getOutputString(c, o, showStamp, nar);
-    }
 
     protected final NAR nar;
 

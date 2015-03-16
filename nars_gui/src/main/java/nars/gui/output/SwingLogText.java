@@ -5,6 +5,7 @@ import automenta.vivisect.swing.NWindow;
 import nars.core.Events;
 import nars.core.Events.OUT;
 import nars.core.NAR;
+import nars.io.TextOutput;
 import nars.logic.entity.*;
 
 import javax.swing.*;
@@ -118,6 +119,7 @@ public class SwingLogText extends SwingText {
     protected void onLineVisible(int offset) {
     }
 
+    final StringBuilder buffer = new StringBuilder();
 
     public void output(final Class c, final Object o) {
         pendingDisplay.addLast(new LogLine(c, o));
@@ -185,7 +187,7 @@ public class SwingLogText extends SwingText {
         }
 
 
-        CharSequence text = LogPanel.getText(c, o, showStamp, nar);
+        CharSequence text = TextOutput.getOutputString(c, o, showStamp, nar, buffer);
         StringBuilder sb = new StringBuilder(text.length() + 2);
         sb.append(' ');
         if ((text.length() > maxLineWidth) && (c != Events.ERR.class))

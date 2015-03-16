@@ -7,7 +7,6 @@ import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 
-import java.io.PrintStream;
 import java.util.Deque;
 
 
@@ -28,8 +27,8 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
 
     /** called once during the main memory cycle; 
      *  responsible for executing Memory's:
-     *      --newTasks (ImmediateProcess)
-     *      --novelTasks (ImmediateProcess)
+     *      --newTasks (DirectProcess)
+     *      --novelTasks (DirectProcess)
      *      --fired concepts (FireConcept)
      *      --otherTasks
      */

@@ -15,7 +15,7 @@ import nars.logic.entity.*;
  *     TermLinks
  *
  * */
-abstract public class ConceptProcess extends NAL {
+public class ConceptProcess extends NAL {
 
     protected final Term currentTerm;
     protected final TaskLink currentTaskLink;
@@ -49,7 +49,9 @@ abstract public class ConceptProcess extends NAL {
     }
 
 
-    abstract protected void beforeFinish();
+    protected void beforeFinish() {
+
+    }
 
     @Override
     protected void onFinished() {

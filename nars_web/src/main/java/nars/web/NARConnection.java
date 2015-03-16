@@ -36,7 +36,7 @@ abstract public class NARConnection implements LineOutput {
     }
     
     @Override
-    abstract public void println(String output);
+    abstract public void println(CharSequence output);
     
     
     boolean running = false;

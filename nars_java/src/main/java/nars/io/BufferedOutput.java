@@ -223,13 +223,15 @@ abstract public class BufferedOutput extends Output {
 
         Set<String> strings = Parameters.newHashSet(l.size());
 
+        StringBuilder buffer = new StringBuilder();
+
         String lastChannel = "";
         for (OutputItem i : l) {
 
             String nextChannel = i.channel.getSimpleName();
 
             String content = TextOutput.getOutputString(
-                    i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, new StringBuilder(), 0);
+                    i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, buffer, 0).toString();
 
             String prefix = nextChannel + (": ");
 
