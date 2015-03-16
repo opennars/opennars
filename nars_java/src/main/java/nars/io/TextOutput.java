@@ -248,7 +248,7 @@ public class TextOutput extends Output {
 
             Task t = (Task) signal;
             if (t.budget != null && t.sentence != null) {
-                if (t.getPriority() < minPriority)
+                if (t.getPriority() <= minPriority)
                     return null;
 
                 t.sentence.toString(buffer, nar.memory, showStamp);

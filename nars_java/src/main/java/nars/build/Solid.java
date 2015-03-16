@@ -266,22 +266,21 @@ public class Solid extends Default {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        Solid s = new Solid(1, 256, 0, 9, 0, 3);
+        Solid s = new Solid(1, 1024, 0, 9, 0, 3);
         NAR n = new NAR(s);
         n.input(new File("/tmp/h.nal"));
+
+        TextOutput.out(n).setPriorityMin(1.0f);
+        n.step(24);
+
+    }
+
         /*
         n.input("<a --> b>. %1.00;0.90%\n" +
                 "<b --> c>. %1.00;0.90%\n"+
                 "<c --> d>. %1.00;0.90%\n" +
                 "<a --> d>?");*/
-
-        //''outputMustContain('<a --> d>. %1.00;0.27%')
-
-        TextOutput.out(n);
-        n.step(64);
-
-    }
-
+    //''outputMustContain('<a --> d>. %1.00;0.27%')
 
 
 }
