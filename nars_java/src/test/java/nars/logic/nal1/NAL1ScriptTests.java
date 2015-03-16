@@ -27,6 +27,7 @@ public class NAL1ScriptTests extends ScriptNALTest {
                 new Curve(),
                 new Default.DefaultMicro(),
                 new Discretinuous()
+                //new Solid(1, 128, 0, 9, 0, 3)
         );
     }
 

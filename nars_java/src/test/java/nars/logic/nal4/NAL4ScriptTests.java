@@ -23,7 +23,9 @@ public class NAL4ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(4),
-                new Curve());
+                new Curve()
+        );
+                //new Solid(1, 256, 1, 4, 1, 3));
     }
 
     public int getMaxCycles() { return 1600; }

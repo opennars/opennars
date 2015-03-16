@@ -74,7 +74,7 @@ public class BubbleBagTest extends AbstractBagTest {
 
     @Test public void testActivity() {
 
-        int c = 16;
+        int c = 32;
         BubbleBag<NullItem,CharSequence> s = new BubbleBag(c);
 
         int ii = c*3;
