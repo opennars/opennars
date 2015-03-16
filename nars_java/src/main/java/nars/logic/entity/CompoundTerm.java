@@ -298,7 +298,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     /* ----- utilities for oldName ----- */
 
     public CompoundTerm cloneDeepVariables() {
-        Term c = clone(cloneVariableTermsDeep());
+        return cloneDeepVariables(null);
+    }
+    protected CompoundTerm cloneDeepVariables(CompoundTerm scope) {
+        Term c = clone(cloneVariableTermsDeep(scope));
 
         if (c == null)
             throw new UnableToCloneException("clone(cloneVariableTermsDeep()) resulted in null: " + this);
@@ -501,15 +504,25 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     }
 
     public Term[] cloneVariableTermsDeep() {
+        return cloneVariableTermsDeep(null);
+    }
+
+    public Term[] cloneVariableTermsDeep(CompoundTerm scope) {
         Term[] l = new Term[term.length];
         for (int i = 0; i < l.length; i++) {
             Term t = term[i];
+
             if (t.hasVar()) {
                 if (t instanceof CompoundTerm) {
-                    t = ((CompoundTerm) t).cloneDeepVariables();
-                } else  /* it's a variable */
-                    t = t.clone();
+                    t = ((CompoundTerm) t).cloneDeepVariables(scope);
+                } else {  /* it's a variable */
+                    Variable v = (Variable)t;
+                    t = v.clone( scope );
+                }
             }
+
+            //else it is an atomic term or a compoundterm with no variables, so use as-is:
+
             l[i] = t;
         }
         return l;

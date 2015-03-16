@@ -137,28 +137,26 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
         }
 
 
-        if (Parameters.DEBUG) {
-            if (invalidSentenceTerm(seedTerm))
-                throw new RuntimeException("Invalid sentence content term: " + seedTerm);
-        }
 
 
         this.stamp = st;
 
+        this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
+
+        this.term = normalize ? seedTerm.cloneNormalized() : seedTerm;
+
+        if (Parameters.DEBUG) {
+            if (invalidSentenceTerm(term))
+                throw new RuntimeException("Invalid sentence content term: " + seedTerm + ", seedTerm=" + seedTerm);
+        }
+
         if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
-            if (!Term.valid(seedTerm)) {
-                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + seedTerm);
+            if (!Term.valid(term)) {
+                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + term);
                 ntc.printStackTrace();
                 throw ntc;
             }
         }
-
-
-
-
-        this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
-
-        this.term = normalize ? seedTerm.cloneNormalized() : seedTerm;
 
         this.hash = 0;
 
@@ -415,17 +413,6 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
         }
     }
 
-
-
-//    /**
-//     * Clone the content of the sentence
-//     *
-//     * @return A clone of the content Term
-//     */
-//    public Term cloneContent() {
-//        return content.clone();
-//    }
-//
 
 
     /**

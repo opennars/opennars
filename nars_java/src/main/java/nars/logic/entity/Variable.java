@@ -58,6 +58,7 @@ public class Variable extends Term {
 
     @Override protected void setName(CharSequence newName) { }
 
+
     public Variable setScope(final Term scope, final CharSequence n) {
         this.name = n;
         this.type = n.charAt(0);
@@ -79,6 +80,15 @@ public class Variable extends Term {
         if (scope == this)
             v.scope = v;
         return v;
+    }
+
+    public Variable clone(CompoundTerm newScope) {
+        return new Variable(name(), newScope);
+    }
+
+    /** clones the variable with its scope removed/reset */
+    public Variable cloneUnscoped() {
+        return new Variable(name(), null);
     }
 
     /**

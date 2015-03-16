@@ -88,8 +88,7 @@ public abstract class Operator extends Term implements Plugin {
     @Override
     public Operator clone() {
         //do not clone operators, just use as-is since it's effectively immutable
-        //return this;
-        throw new RuntimeException("Operators should not be cloned");
+        return this;
     }
 
 
