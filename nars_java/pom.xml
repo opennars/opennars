@@ -47,39 +47,6 @@
             </plugin>
 
 
-            <plugin>
-                <!-- https://github.com/chrischristo/capsule-maven-plugin -->
-                <groupId>com.github.chrischristo</groupId>
-                <artifactId>capsule-maven-plugin</artifactId>
-                <version>0.10.1</version>
-                <configuration>
-                    <appClass>nars.core.NARRun</appClass>
-                    <manifest>
-                        <entry>
-                            <key>Min-Java-Version</key>
-                            <value>1.8.0</value>
-                        </entry>
-                    </manifest>
-                    <!--
-                    <fileSets>
-                        <fileSet>
-                            <directory>../nal/</directory>
-                            <outputDirectory>nal/</outputDirectory>
-                            <includes>
-                                <include>*</include>
-                            </includes>
-                        </fileSet>
-                    </fileSets>
-                    -->
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
             <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
