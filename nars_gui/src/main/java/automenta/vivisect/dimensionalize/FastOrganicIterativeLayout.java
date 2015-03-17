@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Fast organic layout algorithm, adapted from JGraph
  */
-abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends UIEdge<N>> implements IterativeLayout<N, E> {
+abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends UIEdge> implements IterativeLayout<N, E> {
 
     public static final double DisplacementLengthEpsilon = 0.0001; //minimum distinguishable length
     transient final List<Object> cells = new ArrayList();
@@ -100,14 +100,16 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
     double temperature;
     double temperatureDecay;
     double minTemperature;
+    private List<Double> edgeWeights = new ArrayList();
+    private double[][] attractStrength;
 
 
     public FastOrganicIterativeLayout(Rectangle2D bounds) {
-        setInitialTemp(100, 1.0f);
-        setMinDistanceLimit(0.1f);
-        setMaxDistanceLimit(150f);
+        setInitialTemp(200, 1.0f);
+        setMinDistanceLimit(0.01f);
+        setMaxDistanceLimit(9550f);
 
-        setForceConstant(30);
+        setForceConstant(150);
 
         this.bounds = bounds;
 
@@ -242,6 +244,7 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
             cellLocation = new double[n][];
             isMoveable = new boolean[n];
             neighbors = new int[n][];
+            attractStrength = new double[n][];
             radius = new double[n];
             radiusSquared = new double[n];
         }
@@ -262,6 +265,7 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
         final double cellLocation[][] = this.cellLocation;
         final int[][] neighbors = this.neighbors;
         final List<Object> cells = this.cells;
+        final List<Double> edgeWeights = this.edgeWeights;
         final double[] radii = this.radius;
 
 
@@ -312,10 +316,11 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
 
 
             cells.clear();
+            edgeWeights.clear();
             for (Object oo : v.getEdgesIn())
-                updateEdge(cells, v, (UIEdge) oo);
+                updateEdge(cells, edgeWeights, v, (UIEdge) oo);
             for (Object oo : v.getEdgesOut())
-                updateEdge(cells, v, (UIEdge) oo);
+                updateEdge(cells, edgeWeights, v, (UIEdge) oo);
 
 
             if (cells.isEmpty() && neighbors[i] != null) {
@@ -323,11 +328,14 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
                 continue;
             }
 
-            if (neighbors[i] == null || neighbors[i].length < cells.size())
+            if (neighbors[i] == null || neighbors[i].length < cells.size()) {
                 neighbors[i] = new int[cells.size()];
+                attractStrength[i] = new double[cells.size()];
+            }
 
             for (int j = 0; j < cells.size(); j++) {
                 Object cj = cells.get(j);
+                double w = edgeWeights.get(j);
 
                 if (indices.containsKey(cj)) {
                     int index = indices.get(cj);
@@ -336,6 +344,7 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
                     // acted on by this layout
 
                     neighbors[i][j] = index;
+                    attractStrength[i][j] = w;
                 }
                 // Else if index of the other cell doesn't correspond to
                 // any cell listed to be acted upon in this layout. Set
@@ -430,12 +439,16 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
 
     }
 
-    private void updateEdge(List<Object> cells, N v, UIEdge oo) {
-        UIEdge e = oo; //HACK fix this
+    private void updateEdge(List<Object> cells, List<Double> weights, N v, UIEdge e) {
         Object source = e.getSource();
         Object target = e.getTarget();
-        if (source != v) cells.add(source);
-        else if (target != v) cells.add(target);
+        if (source != v) {
+            cells.add(source);
+            weights.add(getEdgeWeight((E) e));
+        }
+        else if (target != v) {
+            cells.add(target);
+        }
     }
 
 
@@ -494,6 +507,7 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
         // Check the neighbours of each vertex and calculate the attractive
         // force of the edge connecting them
         final int[][] neighbors = this.neighbors;
+        final double[][] attractStrength = this.attractStrength;
         final double[][] cellLocation = this.cellLocation;
 
         final double minDist = minDistanceLimit; //cache as local variable for speed
@@ -524,14 +538,15 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
                     double deltaLength = Math.sqrt(xDelta * xDelta + yDelta
                             * yDelta);
 
-                    deltaLength -= rsum;
+                    //deltaLength -= rsum;
 
                     if (deltaLength < minDist) {
                         deltaLength = minDist;
                     }
 
+                    double w = attractStrength[i][k];
 
-                    double force = (deltaLength) / (fc);
+                    double force = (deltaLength) / (fc) * w;
 
                     double displacementX = xDelta * force;
                     double displacementY = yDelta * force;
@@ -580,26 +595,26 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
                     double xDelta = ix - cellLocation[j][0];
                     double yDelta = iy - cellLocation[j][1];
 
-                    final double rj = radius[j];
-                    double rij = ri + rj; //total radii
+                    //final double rj = radius[j];
+                    //double rij = ri + rj; //total radii
 
                     if (xDelta == 0) {
                         xDelta = 0.01 + (-0.5f + 0.5f * rng.nextDouble());
                     }
 
-                    if (xDelta - rij > maxDist) continue; // early exit condition
+                    //if (xDelta - rij > maxDist) continue; // early exit condition
 
                     if (yDelta == 0) {
                         yDelta = 0.01 + (-0.5f + 0.5f * rng.nextDouble());
                     }
 
-                    if (yDelta - rij > maxDist) continue; // early exit condition
+                    //if (yDelta - rij > maxDist) continue; // early exit condition
 
                     // Distance between nodes
                     double deltaLength = Math.sqrt((xDelta * xDelta)
                             + (yDelta * yDelta));
 
-                    double deltaLengthWithRadius = deltaLength - rij;
+                    double deltaLengthWithRadius = deltaLength;// - rij;
 
                     if (deltaLengthWithRadius > maxDist) {
                         // Ignore vertex too far apart

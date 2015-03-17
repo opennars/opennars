@@ -54,14 +54,15 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                     /*if (e.e instanceof TermLink) {
                         return 4.0;
                     }*/
-                    return 1.0;
+                    return 0.5 + 0.5 *e.getTermlinkPriority();
+                    //return 1;
                 }
 
 
                 @Override
                 public double getRadius(UIVertex narGraphVertex) {
                     double r = 1 + narGraphVertex.getRadius();
-                    return r * 0.5f;
+                    return r*2000;
                 }
 
                 @Override
@@ -108,8 +109,10 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
             double layoutRad = Math.sqrt( numVertices )* 500;
             layoutBounds.setRect(-layoutRad / 2, -layoutRad / 2, layoutRad, layoutRad);
+            //hmap.setInitialTemp(200, 0.5f);
+            //hmap.setForceConstant(100);
             hmap.resetLearning();
-            hmap.run(2);
+            hmap.run(1);
 
 
 
@@ -295,7 +298,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
      * if the UI node doesnt exist, it will add it to the graph and attempt creating one;
      * returns the existing one if already existed
      */
-    protected AbstractWidget add(Named o) {
+    protected synchronized AbstractWidget add(Named o) {
 
         AbstractWidget ui = getNode(o);
 
