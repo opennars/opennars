@@ -64,8 +64,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
         return new Color(red, green, 1.0f, ii);
     }
 
-    public ConceptPanel newPanel(Concept c, boolean label, int chartSize) {
-        ConceptPanel cp = new ConceptPanel(c, label, chartSize){
+    public ConceptPanel newPanel(Concept c, boolean label, boolean full, int chartSize) {
+        ConceptPanel cp = new ConceptPanel(c, label, full, chartSize){
 
             @Override
             protected void onShowing(final boolean showing) {
@@ -136,7 +136,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         //private final BagChart taskLinkChart;
         int chartWidth = 64;
         int chartHeight = 64;
-        private JTextArea title;
+
         private JLabel subtitle;
         //final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
@@ -144,7 +144,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         // private final PCanvas syntaxPanel;
 
 
-        public ConceptPanel(final Concept c, boolean label, int chartSize) {
+        public ConceptPanel(final Concept c, boolean label, boolean full, int chartSize) {
             super(new BorderLayout());
             this.concept = c;
             this.closed = false;
@@ -152,49 +152,86 @@ public class ConceptPanelBuilder extends AbstractReaction {
             this.chartWidth = this.chartHeight = chartSize;
             setOpaque(false);
 
+            this.subtitle = new JLabel();
 
-            JPanel details = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
-            details.setOpaque(false);
 
-            details.add(this.beliefTime = new BeliefTimeline(chartWidth / 2, chartHeight));
-            details.add(this.beliefChart = new TruthChart(chartWidth, chartHeight));
 
-            details.add(this.questionChart = new PriorityColumn((int) Math.ceil(Math.sqrt(chartWidth)), chartHeight));
+            this.beliefTime = new BeliefTimeline(chartWidth / 2, chartHeight);
+            this.beliefChart = new TruthChart(chartWidth, chartHeight);
+            this.questionChart = new PriorityColumn((int) Math.ceil(Math.sqrt(chartWidth)), chartHeight);
+            this.desireChart = new TruthChart(chartWidth, chartHeight);
 
-            details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
-            //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
+            if (full) {
+                NengoNetworkPanel nengo;
+                add(nengo = new NengoNetworkPanel(new TermGraphNode(c.memory) {
 
-            //details.add(this.termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
-            //details.add(this.taskLinkChart = new RadialBagChart(c, c.taskLinks));
-            details.add(new NengoNetworkPanel(new TermGraphNode(c.memory) {
+                    @Override
+                    public boolean includeTerm(Term t) {
+                        return t.equals(concept.getTerm());
+                    }
 
-                @Override public boolean includeTerm(Term t) {
-                    return t.equals(concept.getTerm());
+                    @Override
+                    public boolean filter() {
+                        return true;
+                    }
+
+
+                    @Override
+                    public String name() {
+                        return concept.term.toString();
+                    }
+
+                }), BorderLayout.CENTER);
+
+
+                FlowLayout fl = new FlowLayout(FlowLayout.RIGHT);
+
+                fl.setVgap(30);
+
+                nengo.getUniverse().setLayout(fl);
+
+                nengo.getUniverse().add(beliefTime);
+                nengo.getUniverse().add(beliefChart);
+                nengo.getUniverse().add(questionChart);
+                nengo.getUniverse().add(desireChart);
+            }
+            else {
+                JTextArea title = new JTextArea(concept.term.toString());
+
+                if (label) {
+                    title.setWrapStyleWord(true);
+                    title.setLineWrap(true);
+                    title.setEditable(false);
+                    title.setOpaque(false);
+                    title.setFont(Video.monofont.deriveFont(titleSize));
                 }
 
-                @Override
-                public boolean filter() {
-                    return true;
-                }
-            }));
+                JPanel titlePanel = new JPanel(new BorderLayout());
+                titlePanel.setOpaque(false);
+                titlePanel.add(title, CENTER);
+                titlePanel.add(subtitle, SOUTH);
 
-            JPanel titlePanel = new JPanel(new BorderLayout());
-            titlePanel.setOpaque(false);
-
-            if (label) {
-                titlePanel.add(this.title = new JTextArea(concept.term.toString()), CENTER);
-                title.setWrapStyleWord(true);
-                title.setLineWrap(true);
-                title.setEditable(false);
-                title.setOpaque(false);
-                title.setFont(Video.monofont.deriveFont(titleSize));
-                titlePanel.add(this.subtitle = new JLabel(), SOUTH);
 
                 add(titlePanel, NORTH);
+
+
+                JPanel details = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
+                details.setOpaque(false);
+
+                details.add(beliefTime);
+                details.add(beliefChart);
+                details.add(questionChart);
+                details.add(desireChart);
+
+                //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
+
+                //details.add(this.termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
+                //details.add(this.taskLinkChart = new RadialBagChart(c, c.taskLinks));
+
+                add(details, CENTER);
+
             }
 
-
-            add(details, CENTER);
 
            /* TermSyntaxVis tt = new TermSyntaxVis(c.term);
             syntaxPanel = new PCanvas(tt);

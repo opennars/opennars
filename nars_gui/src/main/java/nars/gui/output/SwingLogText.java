@@ -270,7 +270,7 @@ public class SwingLogText extends SwingText {
 
                 if (w == null) {
                     w = new NWindow(concept.term.toString(),
-                            cpBuilder.newPanel(concept, true, 64));
+                            cpBuilder.newPanel(concept, true, true, 64));
 
                     w.pack();
                     w.setVisible(true);

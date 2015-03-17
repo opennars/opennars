@@ -336,7 +336,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
             {
                 Concept c = nar.concept(task.getTerm());
                 if (c!=null) {
-                    ConceptPanelBuilder.ConceptPanel p = cpBuilder.newPanel(c, false, 32);
+                    ConceptPanelBuilder.ConceptPanel p = cpBuilder.newPanel(c, false, false, 32);
                     add(p);
                 }
             }

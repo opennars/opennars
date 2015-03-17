@@ -9,6 +9,7 @@ import nars.build.Default;
 import nars.core.NAR;
 import org.piccolo2d.util.PPaintContext;
 
+import javax.swing.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -70,7 +71,14 @@ public class NengoNetworkPanel extends Nengrow {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                ((Window)networkUI.getViewerWindow()).setWindowState(Window.WindowState.MAXIMIZED, true);
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        ((Window) networkUI.getViewerWindow()).setWindowState(Window.WindowState.MAXIMIZED, true);
+                    }
+                });
+
             }
         });
 
