@@ -39,7 +39,7 @@ public class ShapeObject extends WorldObjectImpl {
 		init();
 	}
 
-	private void init() {
+	protected void init() {
         pathNode = (PXPath) getPNode();
 		setPickable(false);
 	}

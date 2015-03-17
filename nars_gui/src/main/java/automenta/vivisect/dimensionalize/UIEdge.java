@@ -27,6 +27,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
     public Shape shape;
     private float angle;
     private double dist;
+    boolean halfQuad = true; //use triangle of half a quad, to show different non-overlapping bidirectional edges
 
     public UIEdge(V s, V t) {
         super();
@@ -38,10 +39,16 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
     }
 
     @Override
+    protected void init() {
+        super.init();
+        setSelectable(true);
+        setPickable(true);
+    }
+
+    @Override
     public String name() {
         return name;
     }
-
 
 
     public void update() {
@@ -97,7 +104,6 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         final float targetRadius = 12;//(float)target.ui.getWidth();
 
         setPaint(getEdgeColor(this));
-        setStroke(null);
 
 
         shape = drawArrow((Polygon) shape, null, sourceRadius, 0, 0, (int) tx, (int) ty, targetRadius);
@@ -172,10 +178,13 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
             final double aMin = angle - Math.PI - arrowAngle;
             final double aMax = angle - Math.PI + arrowAngle;
 
-            int plx = (int) (Math.cos(aMin) * arrowHeadRadius);
-            int ply = (int) (Math.sin(aMin) * arrowHeadRadius);
-            int prx = (int) (Math.cos(aMax) * arrowHeadRadius);
-            int pry = (int) (Math.sin(aMax) * arrowHeadRadius);
+            int plx =0 , ply = 0;
+            if (!halfQuad) {
+                plx = (int) (Math.cos(aMin) * arrowHeadRadius);
+                ply = (int) (Math.sin(aMin) * arrowHeadRadius);
+            }
+            int prx = (int) Math.floor(Math.cos(aMax) * arrowHeadRadius);
+            int pry = (int) Math.floor(Math.sin(aMax) * arrowHeadRadius);
 
 
 
@@ -190,10 +199,11 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
                 p.reset();
             else
                 p = new Polygon(); //TODO recycle this .reset()
-            p.addPoint(ix2 - x2, iy2 -y2);
-            p.addPoint( ix2 + prx - x2, iy2 + pry -y2);
-            p.addPoint( x1 - x2, y1 -y2);
-            p.addPoint(  x2 + plx - x2, y2 + ply -y2);
+            p.addPoint(ix2 - x2, iy2 - y2);
+            p.addPoint(ix2 + prx - x2, iy2 + pry - y2);
+            p.addPoint(x1 - x2, y1 - y2);
+            if (!halfQuad)
+                p.addPoint(x2 + plx - x2, y2 + ply - y2);
 
             //g.setPaint(color);
             //g.fillPolygon(p);

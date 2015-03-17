@@ -66,6 +66,7 @@ public class TermNode extends UIVertex {
         super(term);
         this.term = term;
         this.graphnode = graphnode;
+        ui.setChildrenPickable(true);
     }
 
     public boolean addTask(Task t) {
