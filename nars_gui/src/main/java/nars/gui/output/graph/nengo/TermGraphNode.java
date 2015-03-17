@@ -1,6 +1,8 @@
 package nars.gui.output.graph.nengo;
 
 import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
+import automenta.vivisect.dimensionalize.HyperassociativeMap;
+import automenta.vivisect.dimensionalize.IterativeLayout;
 import ca.nengo.model.StepListener;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.AbstractMapNetwork;
@@ -22,20 +24,24 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 /**
-* Created by me on 3/17/15.
-*/
+ * Created by me on 3/17/15.
+ */
 public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> implements UIBuilder {
 
     private final NAR nar;
+
     private final ConceptReaction conceptReaction;
+
     float simTimePerCycle = 1f;
     float simTimePerLayout = 0.25f;
+
     long lasTLayout = System.currentTimeMillis();
+
     Rectangle2D layoutBounds = new Rectangle2D.Double(-500, -500, 1000, 1000);
-    final FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>> hmap =
+
+
+    final FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>> organicLayout =
             new FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>>(layoutBounds) {
-    /*final HyperassociativeMap<NARGraphVertex,UIEdge<NARGraphVertex>> hmap =
-        new HyperassociativeMap<NARGraphVertex,UIEdge<NARGraphVertex>>(graph, 2) {*/
 
 
                 @Override
@@ -54,7 +60,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                     /*if (e.e instanceof TermLink) {
                         return 4.0;
                     }*/
-                    return 0.5 + 0.5 *e.getTermlinkPriority();
+                    return 0.5 + 0.5 * e.getTermlinkPriority();
                     //return 1;
                 }
 
@@ -62,7 +68,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                 @Override
                 public double getRadius(UIVertex narGraphVertex) {
                     double r = 1 + narGraphVertex.getRadius();
-                    return r*2000;
+                    return r * 2000;
                 }
 
                 @Override
@@ -72,6 +78,61 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
 
             };
+    final HyperassociativeMap<UIVertex,UIEdge<UIVertex>> haLayout =
+        new HyperassociativeMap<UIVertex,UIEdge<UIVertex>>(2) {
+
+
+                @Override
+                public ArrayRealVector getPosition(UIVertex node) {
+
+                    return node.getCoordinates();
+                }
+
+                @Override
+                public void pre(Collection<UIVertex> vertices) {
+
+                    setScale(96);
+                    setRepulsiveWeakness(2);
+                    setAttractionStrength(2.0);
+                    setEquilibriumDistance(2);
+                    setMaxRepulsionDistance(7500);
+                    updateCoordinates(vertices);
+                }
+
+
+                @Override
+                public double getSpeedFactor() {
+                    return 0.02;
+                }
+
+                @Override
+                public double getEdgeWeight(UIEdge e) {
+                    /*if (e.e instanceof TermLink) {
+                        return 4.0;
+                    }*/
+                    return 0.25 + 0.75 * e.getTermlinkPriority();
+                    //return 1;
+                }
+
+
+                @Override
+                public double getRadius(UIVertex narGraphVertex) {
+                    double r = 1 + narGraphVertex.getRadius();
+                    return r * 3;
+                }
+
+                @Override
+                protected Iterator<UIVertex> getVertices() {
+                    return Iterators.filter(nodes().iterator(), UIVertex.class);
+                }
+
+
+            };
+
+
+
+    IterativeLayout<UIVertex, UIEdge<UIVertex>> hmap = haLayout;
+
     SubCycle narCycle = new SubCycle() {
         @Override
         public double getTimePerCycle() {
@@ -90,6 +151,11 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             return "nar";
         }
     };
+    //private UIEdge[] nextEdges;
+    //private Map<String,UIEdge> edges = new FastMap<String,UIEdge>().atomic();
+    private UINARGraph ui;
+    private boolean edgesChanged = false;
+    private int numVertices = 0;
     SubCycle layoutCycle = new SubCycle() {
         @Override
         public double getTimePerCycle() {
@@ -107,13 +173,12 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             */
 
 
-            double layoutRad = Math.sqrt( numVertices )* 500;
+            double layoutRad = Math.sqrt(numVertices) * 800;
             layoutBounds.setRect(-layoutRad / 2, -layoutRad / 2, layoutRad, layoutRad);
             //hmap.setInitialTemp(200, 0.5f);
             //hmap.setForceConstant(100);
             hmap.resetLearning();
             hmap.run(1);
-
 
 
         }
@@ -123,11 +188,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             return "layout";
         }
     };
-    //private UIEdge[] nextEdges;
-    //private Map<String,UIEdge> edges = new FastMap<String,UIEdge>().atomic();
-    private UINARGraph ui;
-    private boolean edgesChanged = false;
-    private int numVertices = 0;
 
 
     public TermGraphNode(NAR n) {
@@ -194,7 +254,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             numVertices = vertices.size();
             for (UIVertex v : vertices) {
                 v.getActualCoordinates(dt);
-                if (v.isDependent() && v.degree()==0) {
+                if (v.isDependent() && v.degree() == 0) {
                     //System.err.println("late removing " + v);
                     remove(v);
                 }
@@ -204,8 +264,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             lasTLayout = now;
         }
     }
-
-
 
 
     @Override
@@ -248,7 +306,9 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
         return this.ui = new UINARGraph(this);
     }
 
-    /** adds or gets existing edge between two vertices, directional */
+    /**
+     * adds or gets existing edge between two vertices, directional
+     */
     public UIEdge<UIVertex> addEdge(UIVertex<?> s, UIVertex<?> t) {
         String name = s.name().toString() + ':' + t.name();
 
@@ -267,11 +327,11 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
     protected boolean add(UIEdge<UIVertex> e) {
         //if (edges.putIfAbsent(e.name(), e)==null) {
-            if (e.getSource().link(e, false)) {
-                e.getTarget().link(e, true);
-                edgesChanged();
-                return true;
-            }
+        if (e.getSource().link(e, false)) {
+            e.getTarget().link(e, true);
+            edgesChanged();
+            return true;
+        }
         //}
         return false;
     }
@@ -329,11 +389,11 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
     public AbstractWidget getNode(Named v) {
         final Named input = v;
-        if ((v instanceof Concept)||(v instanceof Task))
-            v = ((Terms.Termable)v).getTerm();
+        if ((v instanceof Concept) || (v instanceof Task))
+            v = ((Terms.Termable) v).getTerm();
         AbstractWidget u = getNode(v.name().toString());
-        if ((u!=null) && (u instanceof UIVertex))
-            u = ((UIVertex)u).add(input);
+        if ((u != null) && (u instanceof UIVertex))
+            u = ((UIVertex) u).add(input);
         return u;
     }
 
@@ -359,8 +419,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             }
 
         }
-
-
 
 
         SwingUtilities.invokeLater(existing.ui::destroy);
@@ -436,9 +494,9 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             if (!(v1 instanceof UIVertex)) return null;
             if (!(v2 instanceof UIVertex)) return null;
 
-            UIEdge e = TermGraphNode.this.addEdge((UIVertex)v1, (UIVertex)v2);
-            if (e!=null) {
-                e.add((Named)edgeContent);
+            UIEdge e = TermGraphNode.this.addEdge((UIVertex) v1, (UIVertex) v2);
+            if (e != null) {
+                e.add((Named) edgeContent);
                 return e;
             }
 

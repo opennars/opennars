@@ -184,7 +184,7 @@ public class TermNode extends UIVertex {
 
         ui.scaleTo(targetScale, 0.05);
 
-        ui.dragTo(x, y, bounds.getWidth()*2 /* speed */, 0.01);
+        ui.dragTo(x, y, bounds.getWidth()*1 /* speed */, 0.01);
         //ui.animateToPositionScaleRotation(x, y, targetScale, 0, 0);
 
         ui.getIcon().getBody().setRotation(angle);
