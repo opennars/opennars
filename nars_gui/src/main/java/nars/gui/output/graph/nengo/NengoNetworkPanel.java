@@ -2,7 +2,6 @@ package nars.gui.output.graph.nengo;
 
 import ca.nengo.model.SimulationException;
 import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import nars.build.Default;
@@ -11,6 +10,9 @@ import org.piccolo2d.util.PPaintContext;
 
 
 public class NengoNetworkPanel extends Nengrow {
+
+    private NodeViewer networkUIViewer;
+    private NodeViewer window;
 
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
 
@@ -43,30 +45,45 @@ public class NengoNetworkPanel extends Nengrow {
         this(newGraph(n));
     }
 
-    public NengoNetworkPanel(TermGraphNode node) {
+    public NengoNetworkPanel(TermGraphNode graph) {
         super();
-        try {
-            init(node);
-        } catch (ContainerException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-    public void init(TermGraphNode graph) throws ContainerException {
-
-        this.graphNode = graph;
-
-        networkUI = (UINetwork) addNodeModel(graphNode);
-        NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
 
 
         getUniverse().setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
         getUniverse().setAnimatingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
         getUniverse().setInteractingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
 
+        this.graphNode = graph;
+
+
+            //networkUI = (UINetwork) addNodeModel(graphNode);
+            //networkUI = (UINetwork) getNengoWorld().addNodeModel(graphNode);
+
+            networkUI = graphNode.newUI(800,600); ///UINetwork) addNodeModel(graphNode);
+
+
+
+        getNengoWorld().addChild(networkUIViewer = networkUI.createViewerInstance());
+            //networkUIViewer.applyDefaultLayout();
+            //window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
+
+
+
+
+
+
     }
+
+//
+//    @Override
+//    protected NodeContainer getRoot() {
+//        //return super.getRoot();
+//        return networkUIViewer;
+//    }
+
+
+
+
 
     @Override
     public void run() {
@@ -75,6 +92,7 @@ public class NengoNetworkPanel extends Nengrow {
 
         float dt = 0.25f;
         try {
+
 
             if (printFPS) {
                 if (frame % 100 == 0) {
