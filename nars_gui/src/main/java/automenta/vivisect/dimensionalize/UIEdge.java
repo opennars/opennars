@@ -2,12 +2,10 @@ package automenta.vivisect.dimensionalize;
 
 import ca.nengo.test.nargraph.UIVertex;
 import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
-import ca.nengo.ui.util.RegularPolygon;
 import javolution.util.FastSet;
 import nars.logic.entity.Named;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.util.FastMath;
-import org.piccolo2d.util.PAffineTransform;
 
 import java.awt.*;
 import java.util.Set;
@@ -90,58 +88,42 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
                 Rectangle2D tb = target.ui.getFullBoundsReference();
                 if (tb.getWidth()==0)  continue;*/
 
-        double sx = source.getX();
-        double sy = source.getY();
-        double tx = target.getX();
-        double ty = target.getY();
+        double sx = 0;
+        double sy = 0;
+        double tx = target.getX()-source.getX();
+        double ty = target.getY()-source.getY();
 
         //System.out.println(source + " " + target + " " + sx + " " + sy + " " + tx + " "+ ty);
 
-        final float sourceRadius = (float)getWidth();
-        final float targetRadius = (float)target.ui.getWidth();
+        double pscale = getParent().getScale();
+        tx/=pscale;
+        ty/=pscale;
+
+
+        final float sourceRadius = 48;//(float)target.ui.getWidth();
+        final float targetRadius = 12;//(float)target.ui.getWidth();
 
         double dx = tx - sx;
         double dy = ty - sy;
 
-        final float triRes = 100.0f;
-        if (shape == null) {
-            shape = new RegularPolygon(0,0,triRes/2,3, Math.PI);
+        double cx = (tx + sx)/2;
+        double cy = (ty + sy)/2;
 
-            getGeometry().setPathTo(shape);
-        }
-
-        angle = (float) (Math.atan2(dy, dx));
-        dist = Math.sqrt(dx*dx+dy*dy)-sourceRadius - targetRadius;
-
-        if (dist < 0) {
-            setVisible(false);
-            return;
-        }
-        else
-            setVisible(true);
-
-        final double pscale = getPNode().getParent().getScale();
+        //angle = (float) (Math.atan2(dy, dx));
+        //dist = Math.sqrt(dx*dx+dy*dy);// - (float)target.ui.getWidth() - (float)source.ui.getWidth();
+        //dist/=2;
 
 
-        PAffineTransform tr = getGeometry().getTransformReference(true);
-        tr.setToIdentity();
-
-        double cx = (sx+tx)/2;
-        double cy = (sy+ty)/2;
-
-        //tr.rotate(Math.PI);
-        tr.translate(cx-sx, cy-sy);
-        tr.rotate(angle );
-        tr.scale(dist/triRes,0.5f);
-        tr.translate(-sourceRadius,0);
-
-        getGeometry().setTransform(tr);
 
         setPaint(getEdgeColor(this));
         setStroke(null);
 
-        //shape = drawArrow((Polygon) shape, null, sourceRadius, (int) sx, (int) sy, (int) tx, (int) ty, targetRadius);
-        //getGeometry().setPathTo(shape);
+        if (shape == null)
+            shape = new Polygon();
+
+        shape = drawArrow((Polygon) shape, null, sourceRadius, 0, 0, (int) tx, (int) ty, targetRadius);
+        if (shape != null)
+            getGeometry().setPathTo(shape);
 
 
     }
@@ -203,7 +185,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
             float angle = (float) (Math.atan2(dy, dx));
             final float arrowAngle = (float) FastMath.PI / 4;
 
-            float len = (float) Math.sqrt(dx * dx + dy * dy) - destinationRadius;
+            float len = (float) Math.sqrt(dx * dx + dy * dy);// - destinationRadius;
             if (len <= 0) return null;
 
             final int ix2 = (int) (Math.cos(angle) * len + x1);
@@ -230,10 +212,10 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
                 p.reset();
             else
                 p = new Polygon(); //TODO recycle this .reset()
-            p.addPoint(ix2, iy2);
-            p.addPoint( ix2 + prx, iy2 + pry);
-            p.addPoint( x1, y1);
-            p.addPoint(  x2 + plx, y2 + ply );
+            p.addPoint(ix2 - x2, iy2 -y2);
+            p.addPoint( ix2 + prx - x2, iy2 + pry -y2);
+            p.addPoint( x1 - x2, y1 -y2);
+            p.addPoint(  x2 + plx - x2, y2 + ply -y2);
 
             //g.setPaint(color);
             //g.fillPolygon(p);
