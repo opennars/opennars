@@ -33,6 +33,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         this.s = s;
         this.t = t;
         this.name = s.name().toString() + ':' + t.name();
+        this.shape = new Polygon();
 
     }
 
@@ -83,17 +84,9 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
 
 
 
-                /*Rectangle2D sb = source.ui.getFullBoundsReference();
-                if (sb.getWidth()==0)  continue;
-                Rectangle2D tb = target.ui.getFullBoundsReference();
-                if (tb.getWidth()==0)  continue;*/
 
-        double sx = 0;
-        double sy = 0;
         double tx = target.getX()-source.getX();
         double ty = target.getY()-source.getY();
-
-        //System.out.println(source + " " + target + " " + sx + " " + sy + " " + tx + " "+ ty);
 
         double pscale = getParent().getScale();
         tx/=pscale;
@@ -103,27 +96,12 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         final float sourceRadius = 48;//(float)target.ui.getWidth();
         final float targetRadius = 12;//(float)target.ui.getWidth();
 
-        double dx = tx - sx;
-        double dy = ty - sy;
-
-        double cx = (tx + sx)/2;
-        double cy = (ty + sy)/2;
-
-        //angle = (float) (Math.atan2(dy, dx));
-        //dist = Math.sqrt(dx*dx+dy*dy);// - (float)target.ui.getWidth() - (float)source.ui.getWidth();
-        //dist/=2;
-
-
-
         setPaint(getEdgeColor(this));
         setStroke(null);
 
-        if (shape == null)
-            shape = new Polygon();
 
         shape = drawArrow((Polygon) shape, null, sourceRadius, 0, 0, (int) tx, (int) ty, targetRadius);
-        if (shape != null)
-            getGeometry().setPathTo(shape);
+        getGeometry().setPathTo(shape); //forces update
 
 
     }

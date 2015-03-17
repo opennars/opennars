@@ -517,7 +517,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
                     t = ((CompoundTerm) t).cloneDeepVariables(scope);
                 } else {  /* it's a variable */
                     Variable v = (Variable)t;
-                    t = v.clone( scope );
+                    if (v.hasVarDep() && scope==null)
+                        t = v.clone(); //re-use existing scope
+                    else
+                        t = v.clone( scope );
                 }
             }
 

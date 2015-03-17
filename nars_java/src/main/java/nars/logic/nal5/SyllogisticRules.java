@@ -230,15 +230,15 @@ public final class SyllogisticRules {
      * @param figure Locations of the shared term in premises
      * @param nal Reference to the memory
      */
-    public static void resemblance(Term term1, Term term2, Sentence belief, Sentence sentence, int figure, NAL nal) {
+    public static boolean resemblance(Term term1, Term term2, Sentence belief, Sentence sentence, int figure, NAL nal) {
         if (Statement.invalidStatement(term1, term2)) {
-            return;
+            return false;
         }
         int order1 = belief.term.getTemporalOrder();
         int order2 = sentence.term.getTemporalOrder();
         int order = resemblanceOrder(order1, order2, figure);
         if (order == ORDER_INVALID) {
-            return;
+            return false;
         }
         Statement st = (Statement) belief.term;
         TruthValue truth = null;
@@ -254,9 +254,10 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,
+        return nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,
                 nal.newStamp(belief, sentence),
                 false );
+
     }
 
     /* --------------- rules used only in conditional logic --------------- */
