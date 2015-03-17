@@ -9,10 +9,11 @@ import nars.build.Default;
 import nars.core.NAR;
 import org.piccolo2d.util.PPaintContext;
 
+import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class NengoTermGraph extends Nengrow {
+public class NengoTermGraph extends Nengrow implements Runnable {
 
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
 
@@ -21,10 +22,12 @@ public class NengoTermGraph extends Nengrow {
     private TermGraphNode graphNode;
     float time = 0;
     boolean printFPS = false;
-
+    private Timer timer;
+    int frame = 0;
+    double fps = 30;
 
     public static TermGraphNode newGraph(NAR n) {
-        TermGraphNode network = new TermGraphNode(n);
+        TermGraphNode network = new TermGraphNode(n.memory);
         return network;
     }
 
@@ -33,7 +36,9 @@ public class NengoTermGraph extends Nengrow {
         d.setSubconceptBagSize(0);
         NAR nar = new NAR(d);
         nar.input("<a-->b>.");
-        nar.run(1);
+        nar.input("<b-->c>.");
+        nar.input("<c-->d>.");
+        nar.run(16);
         new NengoTermGraph(nar).window(800, 600);
     }
 
@@ -53,11 +58,27 @@ public class NengoTermGraph extends Nengrow {
 
     UINetwork networkUI = null;
 
+    @Override
+    protected void onShowing(boolean showing) {
+        if (showing) {
+            timer = new java.util.Timer("", false);
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override public void run() {
+                    NengoTermGraph.this.run();
+                }
+            }, 0, (int) (1000 / fps));
+        }
+        else {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
     public void init(TermGraphNode graph) throws ContainerException {
 
         this.graphNode = graph;
 
-        UINetwork networkUI = (UINetwork) addNodeModel(graphNode);
+        networkUI = (UINetwork) addNodeModel(graphNode);
         NodeViewer window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
 
 
@@ -65,52 +86,42 @@ public class NengoTermGraph extends Nengrow {
         getUniverse().setAnimatingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
         getUniverse().setInteractingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
 
+    }
 
-        float fps = 30f;
+    @Override
+    public void run() {
 
-        java.util.Timer timer = new java.util.Timer("", false);
-        timer.scheduleAtFixedRate(new TimerTask() {
+        long start = 0;
 
-            int frame = 0;
+        float dt = 0.25f;
+        try {
 
-            @Override
-            public void run() {
-
-                long start = 0;
-
-                float dt = 0.25f;
-                try {
-
-                    if (printFPS) {
-                        if (frame % 100 == 0) {
-                            start = System.nanoTime();
-                        }
-                    }
-
-                    if (networkUI!=null)
-                        networkUI.node().run(time, time + dt, 1);
-
-
-                    if (printFPS) {
-                        if (frame % 100 == 0) {
-                            long end = System.nanoTime();
-                            double time = (end - start) / 1e6;
-
-                            System.out.println(this + " " + time + " ms");
-                        }
-                    }
-
-
-                } catch (SimulationException e) {
-                    e.printStackTrace();
+            if (printFPS) {
+                if (frame % 100 == 0) {
+                    start = System.nanoTime();
                 }
-
-                time += dt;
-                frame++;
             }
-        }, 0, (int) (1000 / fps));
+
+            if (networkUI!=null)
+                networkUI.node().run(time, time + dt, 1);
 
 
+            if (printFPS) {
+                if (frame % 100 == 0) {
+                    long end = System.nanoTime();
+                    double time = (end - start) / 1e6;
+
+                    System.out.println(this + " " + time + " ms");
+                }
+            }
+
+
+        } catch (SimulationException e) {
+            e.printStackTrace();
+        }
+
+        time += dt;
+        frame++;
     }
 
 

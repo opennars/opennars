@@ -25,7 +25,6 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.model.icon;
 
 import ca.nengo.ui.lib.NengoStyle;
-import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXImage;
 import org.piccolo2d.util.PBounds;
@@ -113,9 +112,9 @@ class IconImageNode extends PXImage {
 
 		Graphics2D g2 = aPaintContext.getGraphics();
 
-		if (ENABLE_SEMANTIC_ZOOM && s < UIEnvironment.SEMANTIC_ZOOM_LEVEL) {
+		if (ENABLE_SEMANTIC_ZOOM && s < NengoStyle.SEMANTIC_ZOOM_LEVEL) {
 			if (s != prevScale) {
-				double delta = 1 - ((UIEnvironment.SEMANTIC_ZOOM_LEVEL - s) / UIEnvironment.SEMANTIC_ZOOM_LEVEL);
+				double delta = 1 - ((NengoStyle.SEMANTIC_ZOOM_LEVEL - s) / NengoStyle.SEMANTIC_ZOOM_LEVEL);
 
 				updatePath(1 / delta);
 			}

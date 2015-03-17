@@ -15,12 +15,11 @@ public abstract class AbstractReaction implements Reaction {
     private final Class[] events;
 
     public AbstractReaction(NAR n, Class... events) {
-        this(n, true, events);
+        this(n.memory.event, true, events);
     }
     public AbstractReaction(Memory m, Class... events) {
         this(m.event, true, events);
     }
-
     public AbstractReaction(EventEmitter n, Class... events) {
         this(n, true, events);
     }
@@ -29,8 +28,8 @@ public abstract class AbstractReaction implements Reaction {
         this(n.memory.event, active, events);
     }
 
-    
     public AbstractReaction(EventEmitter source, boolean active, Class... events) {
+        super();
         this.source = source;
         this.events = events;
 

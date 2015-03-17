@@ -9,7 +9,7 @@ import ca.nengo.model.impl.AbstractMapNetwork;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import com.google.common.collect.Iterators;
-import nars.core.NAR;
+import nars.core.Memory;
 import nars.event.ConceptReaction;
 import nars.logic.Terms;
 import nars.logic.entity.Concept;
@@ -28,9 +28,10 @@ import java.util.*;
  */
 public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> implements UIBuilder {
 
-    private final NAR nar;
+
 
     private final ConceptReaction conceptReaction;
+    private final Memory memory;
 
     float simTimePerCycle = 1f;
     float simTimePerLayout = 0.25f;
@@ -79,7 +80,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
             };
     final HyperassociativeMap<UIVertex,UIEdge<UIVertex>> haLayout =
-        new HyperassociativeMap<UIVertex,UIEdge<UIVertex>>(2) {
+            new HyperassociativeMap<UIVertex,UIEdge<UIVertex>>(2) {
 
 
                 @Override
@@ -133,24 +134,24 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
     IterativeLayout<UIVertex, UIEdge<UIVertex>> hmap = haLayout;
 
-    SubCycle narCycle = new SubCycle() {
-        @Override
-        public double getTimePerCycle() {
-            return simTimePerCycle;
-        }
-
-        @Override
-        public void run(int numCycles, float endTime, long deltaMS) {
-
-            if (!nar.isRunning())
-                nar.step(numCycles);
-        }
-
-        @Override
-        public String toString() {
-            return "nar";
-        }
-    };
+//    SubCycle narCycle = new SubCycle() {
+//        @Override
+//        public double getTimePerCycle() {
+//            return simTimePerCycle;
+//        }
+//
+//        @Override
+//        public void run(int numCycles, float endTime, long deltaMS) {
+//
+//            if (!nar.isRunning())
+//                nar.step(numCycles);
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return "nar";
+//        }
+//    };
     //private UIEdge[] nextEdges;
     //private Map<String,UIEdge> edges = new FastMap<String,UIEdge>().atomic();
     private UINARGraph ui;
@@ -190,12 +191,12 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
     };
 
 
-    public TermGraphNode(NAR n) {
+    public TermGraphNode(Memory m) {
         super();
 
-        this.nar = n;
+        this.memory = m;
 
-        this.conceptReaction = new ConceptReaction(nar) {
+        this.conceptReaction = new ConceptReaction(m) {
 
             @Override
             public void onFiredConcept(Concept c) {

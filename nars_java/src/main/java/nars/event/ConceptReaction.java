@@ -2,6 +2,7 @@ package nars.event;
 
 
 import nars.core.Events;
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.logic.entity.Concept;
 import nars.logic.reason.ConceptProcess;
@@ -11,17 +12,21 @@ import java.util.function.Consumer;
 /** watches for concept lifecycle (creation and forget) events */
 abstract public class ConceptReaction extends AbstractReaction {
 
-    private final NAR nar;
+    private final Memory memory;
 
     public ConceptReaction(NAR n) {
-        super(n, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class);
+        this(n.memory);
+    }
 
-        this.nar = n;
+    public ConceptReaction(Memory m) {
+        super(m.event, true, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class);
+
+        this.memory = m;
         //add existing events
-        n.memory.taskLater(new Runnable() {
+        memory.taskLater(new Runnable() {
             @Override
             public void run() {
-                n.memory.concepts.forEach(new Consumer<Concept>() {
+                memory.concepts.forEach(new Consumer<Concept>() {
                     @Override
                     public void accept(Concept concept) {
                         onNewConcept(concept);
@@ -46,7 +51,7 @@ abstract public class ConceptReaction extends AbstractReaction {
             onFiredConcept(c);
         }
         else if (event == Events.ResetStart.class) {
-            nar.memory.concepts.forEach(new Consumer<Concept>() {
+            memory.concepts.forEach(new Consumer<Concept>() {
                 @Override
                 public void accept(Concept concept) {
                     onForgetConcept(concept);

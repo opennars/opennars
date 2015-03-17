@@ -1,5 +1,6 @@
 package ca.nengo.ui.lib;
 
+import automenta.vivisect.swing.NPanel;
 import ca.nengo.plot.Plotter;
 import ca.nengo.ui.lib.action.*;
 import ca.nengo.ui.lib.menu.MenuBuilder;
@@ -39,7 +40,7 @@ import java.util.List;
  * 
  * @author Shu Wu
  */
-public abstract class AppFrame extends JPanel implements ApplicationListener {
+public abstract class AppFrame extends NPanel implements ApplicationListener {
     private static final long serialVersionUID = 2769082313231407201L;
 
     /**

@@ -12,6 +12,8 @@ import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
+import nars.gui.output.graph.nengo.NengoTermGraph;
+import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.logic.entity.BudgetValue.Budgetable;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
@@ -141,7 +143,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         // private final PCanvas syntaxPanel;
 
 
-        public ConceptPanel(Concept c, boolean label, int chartSize) {
+        public ConceptPanel(final Concept c, boolean label, int chartSize) {
             super(new BorderLayout());
             this.concept = c;
             this.closed = false;
@@ -160,8 +162,16 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
             //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
+
             details.add(this.termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
             details.add(this.taskLinkChart = new RadialBagChart(c, c.taskLinks));
+            details.add(new NengoTermGraph(new TermGraphNode(c.memory) {
+
+//                @Override public boolean includeConcept(Concept cv) {
+//                    System.out.println("include: " + cv + " = " + concept);
+//                    return cv.equals(concept);
+//                }
+            }));
 
             JPanel titlePanel = new JPanel(new BorderLayout());
             titlePanel.setOpaque(false);

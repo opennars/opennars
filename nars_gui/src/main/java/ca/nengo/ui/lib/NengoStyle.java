@@ -110,6 +110,8 @@ public class NengoStyle {
     public static final Color COLOR_ICON_LABEL = Color.WHITE;
     public final static boolean antialias = true;
     public final static FontRenderContext renderQuality = PPaintContext.RENDER_QUALITY_LOW_FRC;
+    public static final double SEMANTIC_ZOOM_LEVEL = 0.2;
+    public static final double ANIMATION_TARGET_FRAME_RATE = 30;
 
     public static void applyStyle(JComponent item) {
 		item.setBorder(null);

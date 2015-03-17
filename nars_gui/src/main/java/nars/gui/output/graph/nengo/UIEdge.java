@@ -102,6 +102,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
             getGeometry().updateBoundsFromPath();
             getGeometry().invalidatePaint();
 
+
             //getGeometry().setPathTo(shape); //forces update
         }
 

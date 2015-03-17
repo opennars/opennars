@@ -9,10 +9,8 @@ import nars.core.Parameters;
  * @author Shu Wu
  */
 public class UIEnvironment {
-	public static final double SEMANTIC_ZOOM_LEVEL = 0.2;
-	public static final double ANIMATION_TARGET_FRAME_RATE = 30;
 
-	private static AppFrame uiInstance;
+    //private static AppFrame uiInstance;
 
 	static boolean debugEnabled = Parameters.DEBUG;
 
@@ -24,11 +22,14 @@ public class UIEnvironment {
 		UIEnvironment.debugEnabled = debugEnabled;
 	}
 
+    private static final ThreadLocal<AppFrame> instances = new ThreadLocal<>();
+
 	/**
 	 * @return UI Instance
 	 */
 	public static AppFrame getInstance() {
-		return uiInstance;
+        AppFrame a = instances.get();
+        return a;
 	}
 
 	/**
@@ -36,16 +37,7 @@ public class UIEnvironment {
 	 *            UI Instance
 	 */
 	public static void setInstance(AppFrame instance) {
-
-		/*
-		 * Only one instance of the UI may be running at once
-		 */
-		if (uiInstance != null) {
-			throw new RuntimeException(
-					"Only one instance of the User Inteface may be running.");
-		}
-
-		uiInstance = instance;
+        instances.set(instance);
 	}
 
 }

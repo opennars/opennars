@@ -69,6 +69,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
     public AbstractNengo() {
         super();
+        Environment.setUserInterface(true);
     }
 
     /**
@@ -105,7 +106,10 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
         */
     }
 
+    @Override
+    protected void onShowing(boolean showing) {
 
+    }
 
     /**
      * @return Top Node Container available in the Application Window. Null, if
@@ -155,7 +159,6 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
 
         /// Set up Environment variables
-        Environment.setUserInterface(true);
 
         /// Register plugin classes
         //		registerPlugins();

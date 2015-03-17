@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib.world.activity;
 
-import ca.nengo.ui.lib.util.UIEnvironment;
+import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.WorldObject;
 import org.piccolo2d.activities.PInterpolatingActivity;
 
@@ -27,7 +27,7 @@ public class Fader extends PInterpolatingActivity {
 	 */
 	public Fader(WorldObject target, long duration, float finalOpacity) {
 		super(duration,
-				(int) (1000 / UIEnvironment.ANIMATION_TARGET_FRAME_RATE));
+				(int) (1000 / NengoStyle.ANIMATION_TARGET_FRAME_RATE));
 		this.node = target;
 		this.targetTransparency = finalOpacity;
 	}
