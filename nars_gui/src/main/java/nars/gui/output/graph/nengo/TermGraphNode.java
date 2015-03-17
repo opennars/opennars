@@ -196,6 +196,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                     remove(v);
                 }
 
+                v.update();
             }
             lasTLayout = now;
         }

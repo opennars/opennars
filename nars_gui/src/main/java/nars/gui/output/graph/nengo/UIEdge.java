@@ -15,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class UIEdge<V extends Named> extends ShapeObject implements Named<String> {
 
     final V s, t;
+    final double tEpsilon = 2; //# pixel difference to cause repaint
 
     /** items contained in this edge */
     public final Set<Named> e = new CopyOnWriteArraySet(); //new FastSet<Named>().atomic();
@@ -27,6 +28,8 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
     private float angle;
     private double dist;
     boolean halfQuad = true; //use triangle of half a quad, to show different non-overlapping bidirectional edges
+    private double lastTX = Double.NaN;
+    private double lastTY = Double.NaN;
 
     public UIEdge(V s, V t) {
         super();
@@ -52,6 +55,68 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         return name;
     }
 
+
+    public void render() {
+
+        UIVertex source = (UIVertex) getSource();
+        if (source == null || !source.ui.getVisible()) {
+            setVisible(false);
+            return;
+        }
+
+        UIVertex target = (UIVertex) getTarget();
+        if (target == null || !target.ui.getVisible()) {
+            setVisible(false);
+            return;
+        }
+
+
+        double pscale = getPNode().getParent().getParent().getScale(); //parent of the parent because nodes are collected in a container node of the vertex, which is beneath the icon
+        double tx = (target.getX()-source.getX())/pscale;
+        double ty = (target.getY()-source.getY())/pscale;
+
+        if (Double.isFinite(lastTX)) {
+            double dtx = FastMath.abs(lastTX - tx);
+            double dty = FastMath.abs(lastTY - ty);
+            if ((dtx < tEpsilon) && (dty < tEpsilon)) {
+                return;
+            }
+        }
+
+
+        final float sourceRadius = 48;//(float)target.ui.getWidth();
+        final float targetRadius = 12;//(float)target.ui.getWidth();
+
+
+
+        shape = drawArrow((Polygon) shape, null, sourceRadius, (int) tx, (int) ty, 0, 0,targetRadius);
+        if (shape == null) {
+            setVisible(false);
+        }
+        else {
+            setVisible(true);
+
+            //equivalent to: setPathTo(shape) but without firing an event
+            getGeometry().getPath().reset();
+            getGeometry().getPath().append(shape, false);
+            getGeometry().updateBoundsFromPath();
+            getGeometry().invalidatePaint();
+
+            //getGeometry().setPathTo(shape); //forces update
+        }
+
+        lastTX = tx;
+        lastTY = ty;
+
+    }
+
+    @Override
+    public void setVisible(boolean isVisible) {
+        super.setVisible(isVisible);
+        if (!isVisible) {
+            lastTX = lastTY = Double.NaN;
+        }
+    }
 
     public void update() {
 
@@ -82,47 +147,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         if (ntask > 0) tasklinkPriority /= ntask;
         if (nterm > 0) termlinkPriority /= nterm;
 
-
-        UIVertex source = (UIVertex) getSource();
-        if (source == null) return;
-        if (!source.ui.getVisible()) return;
-
-        UIVertex target = (UIVertex) getTarget();
-        if (target == null) return;
-        if (!target.ui.getVisible()) return;
-
-
-
-
-        double tx = target.getX()-source.getX();
-        double ty = target.getY()-source.getY();
-
-        double pscale = getPNode().getParent().getParent().getScale(); //parent of the parent because nodes are collected in a container node of the vertex, which is beneath the icon
-        tx/=pscale;
-        ty/=pscale;
-
-
-        final float sourceRadius = 48;//(float)target.ui.getWidth();
-        final float targetRadius = 12;//(float)target.ui.getWidth();
-
         setPaint(getEdgeColor(this));
-
-
-        shape = drawArrow((Polygon) shape, null, sourceRadius, (int) tx, (int) ty, 0, 0,targetRadius);
-        if (shape == null) {
-            setVisible(false);
-        }
-        else {
-            setVisible(true);
-
-            //equivalent to: setPathTo(shape) but without firing an event
-            getGeometry().getPath().reset();
-            getGeometry().getPath().append(shape, false);
-            getGeometry().updateBoundsFromPath();
-            getGeometry().invalidatePaint();
-
-            //getGeometry().setPathTo(shape); //forces update
-        }
 
 
     }

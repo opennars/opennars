@@ -70,10 +70,17 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
         return false;
     }
 
+    public void update() {
+        for (UIEdge e : getEdgeSet(false)) {
+            e.update();
+        }
+
+    }
+
     @Override
     protected void paint(PaintContext paintContext, double width, double height) {
         for (UIEdge e : getEdgeSet(false)) {
-            e.update();
+            e.render();
         }
 
     }
@@ -84,7 +91,7 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
 
     @Override
     public void run(float startTime, float endTime) throws SimulationException {
-
+        //NEVER CALLED
     }
 
     @Override

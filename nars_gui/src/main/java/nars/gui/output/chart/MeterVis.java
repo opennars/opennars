@@ -133,7 +133,7 @@ public class MeterVis extends TimelineVis {
         public MeterVisPanel() {
             super(MeterVis.this);
             
-            //noLoop();
+            noLoop();
             //TODO disable event when window hiden
             framer = nar.on(T(FrameEnd.class), this);
 

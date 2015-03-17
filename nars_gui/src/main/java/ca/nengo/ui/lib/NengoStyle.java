@@ -108,7 +108,7 @@ public class NengoStyle {
 	public static final Font FONT_SEARCH_TEXT = new Font(FONT_FAMILY, Font.BOLD, 30);
 	public static final Font FONT_SEARCH_RESULT_COUNT = new Font(FONT_FAMILY, Font.BOLD, 22);
     public static final Color COLOR_ICON_LABEL = Color.WHITE;
-    public final static boolean antialias = false;
+    public final static boolean antialias = true;
     public final static FontRenderContext renderQuality = PPaintContext.RENDER_QUALITY_LOW_FRC;
 
     public static void applyStyle(JComponent item) {
