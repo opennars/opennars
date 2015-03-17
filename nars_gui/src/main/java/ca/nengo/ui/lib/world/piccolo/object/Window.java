@@ -277,9 +277,12 @@ public class Window extends WorldObjectImpl implements Interactable {
 		setWindowState(savedWindowState);
 	}
 
-	public void setWindowState(WindowState state) {
+    public void setWindowState(WindowState state) {
+        setWindowState(state, false);
+    }
+	public void setWindowState(WindowState state, boolean force) {
 
-		if (state != myState) {
+		if (force || (state != myState)) {
 
 			/*
 			 * Saves the window bounds and offset

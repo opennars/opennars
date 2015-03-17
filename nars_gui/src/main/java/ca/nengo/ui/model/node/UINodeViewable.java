@@ -109,7 +109,7 @@ public abstract class UINodeViewable extends UINeoNode {
     /**
      * @return Viewer Window
      */
-    protected Window getViewerWindow() {
+    public Window getViewerWindow() {
         if (!isViewerWindowVisible()) {
 
             NodeViewer nodeViewer = createViewerInstance();

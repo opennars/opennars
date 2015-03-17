@@ -109,7 +109,9 @@ public class Universe extends PCanvas implements Destroyable {
 	private WorldObject textLabels;
 	private TextLayoutListener textLayoutListener;
 
-	class TextLayoutListener implements Listener {
+
+
+    class TextLayoutListener implements Listener {
 
 		public void propertyChanged(Property event) {
 			if (event == Property.BOUNDS_CHANGED) {
@@ -221,6 +223,10 @@ public class Universe extends PCanvas implements Destroyable {
 	public void removeWorld(WorldImpl world) {
 		worlds.remove(world);
 	}
+
+    public void removeWorlds() {
+        worlds.clear();
+    }
 
 	/**
 	 * @param world

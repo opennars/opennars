@@ -79,4 +79,7 @@ public class NengoWorld extends WorldImpl implements NodeContainer {
 		return localPoint;
 	}
 
+    public void removeChildren() {
+        pnode.removeAllChildren();
+    }
 }

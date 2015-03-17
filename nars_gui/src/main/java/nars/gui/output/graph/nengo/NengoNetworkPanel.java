@@ -2,11 +2,15 @@ package nars.gui.output.graph.nengo;
 
 import ca.nengo.model.SimulationException;
 import ca.nengo.ui.Nengrow;
+import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import nars.build.Default;
 import nars.core.NAR;
 import org.piccolo2d.util.PPaintContext;
+
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 
 public class NengoNetworkPanel extends Nengrow {
@@ -56,16 +60,19 @@ public class NengoNetworkPanel extends Nengrow {
         this.graphNode = graph;
 
 
-            //networkUI = (UINetwork) addNodeModel(graphNode);
-            //networkUI = (UINetwork) getNengoWorld().addNodeModel(graphNode);
+        try {
+            networkUI = (UINetwork) addNodeModel(graphNode);
+            window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
+        } catch (ContainerException e) {
+            e.printStackTrace();
+        }
 
-            networkUI = graphNode.newUI(800,600); ///UINetwork) addNodeModel(graphNode);
-
-
-
-        getNengoWorld().addChild(networkUIViewer = networkUI.createViewerInstance());
-            //networkUIViewer.applyDefaultLayout();
-            //window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                ((Window)networkUI.getViewerWindow()).setWindowState(Window.WindowState.MAXIMIZED, true);
+            }
+        });
 
 
 
