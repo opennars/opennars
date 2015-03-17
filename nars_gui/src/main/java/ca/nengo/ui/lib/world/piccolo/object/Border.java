@@ -2,7 +2,7 @@ package ca.nengo.ui.lib.world.piccolo.object;
 
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -15,7 +15,7 @@ import java.awt.geom.Rectangle2D;
 public class Border extends WorldObjectImpl implements Listener {
 
 	private final Color myColor;
-	private final Path myFrame;
+	private final ShapeObject myFrame;
 	private final WorldObjectImpl myTarget;
 
 	/**
@@ -31,7 +31,7 @@ public class Border extends WorldObjectImpl implements Listener {
 		this.myColor = color;
 		this.myTarget = target;
 
-		myFrame = Path.createRectangle(0f, 0f, 1f, 1f);
+		myFrame = ShapeObject.createRectangle(0f, 0f, 1f, 1f);
 		setPickable(false);
 		setChildrenPickable(false);
 

@@ -2,7 +2,7 @@ package ca.nengo.ui.lib.world.piccolo.object;
 
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 
 /**
  * A button which draws itself as a WorldObject
@@ -11,14 +11,14 @@ import ca.nengo.ui.lib.world.piccolo.primitive.Path;
  */
 public class Button extends AbstractButton {
 
-	private final Path buttonCover;
+	private final ShapeObject buttonCover;
 
 	public Button(WorldObjectImpl worldObject, Runnable action) {
 		super(action);
 
 		addChild(worldObject);
 
-		buttonCover = Path.createRectangle(0f, 0f, (float) worldObject.getWidth(), (float) worldObject.getHeight());
+		buttonCover = ShapeObject.createRectangle(0f, 0f, (float) worldObject.getWidth(), (float) worldObject.getHeight());
 		buttonCover.setPaint(NengoStyle.COLOR_FOREGROUND);
 		addChild(buttonCover);
 

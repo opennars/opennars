@@ -6,7 +6,7 @@ import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.WorldObject.Property;
 import ca.nengo.ui.lib.world.WorldSky;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +21,7 @@ import java.awt.geom.Rectangle2D;
  * @author Shu Wu
  */
 public class SelectionBorder implements Listener {
-	private final Path frame;
+	private final ShapeObject frame;
 
 	private Color frameColor = NengoStyle.COLOR_BORDER_SELECTED;
 
@@ -36,7 +36,7 @@ public class SelectionBorder implements Listener {
 	 */
 	public SelectionBorder(World world) {
 		super();
-        frame = Path.createRectangle(0f, 0f, 1f, 1f);
+        frame = ShapeObject.createRectangle(0f, 0f, 1f, 1f);
 		init(world);
 	}
 

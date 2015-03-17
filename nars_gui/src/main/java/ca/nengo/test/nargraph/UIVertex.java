@@ -1,6 +1,7 @@
 package ca.nengo.test.nargraph;
 
 import automenta.vivisect.dimensionalize.UIEdge;
+import ca.nengo.model.SimulationException;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
@@ -65,13 +66,21 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
 
     @Override
     protected void paint(PaintContext paintContext, double width, double height) {
-
+        for (UIEdge e : getEdgeSet(false)) {
+            e.update();
+        }
+        ui.getIcon().moveToFront();
     }
 
     public V vertex() {
         return this.vertex;
     }
 
+    @Override
+    public void run(float startTime, float endTime) throws SimulationException {
+
+
+    }
 
     @Override
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
@@ -115,11 +124,17 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
     public void link(UIEdge v, boolean in) {
         if (destroyed) return;
         getEdgeSet(in).add(v);
+        if (!in) {
+            ui.addChild(v);
+        }
     }
 
     public void unlink(UIEdge v, boolean in) {
         if (destroyed) return;
         getEdgeSet(in).remove(v);
+        if (!in) {
+            ui.removeChild(v);
+        }
     }
 
     abstract public boolean isDependent();
@@ -148,4 +163,6 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
 
     /** return null to prevent deltetion, or return this to allow this node to be deleted */
     public abstract UIVertex remove(Named v);
+
+    public abstract double getRadius();
 }

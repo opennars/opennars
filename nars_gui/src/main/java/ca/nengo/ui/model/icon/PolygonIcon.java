@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.model.icon;
 
 import ca.nengo.ui.lib.object.model.ModelObject;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 
 import java.awt.*;
 
@@ -39,7 +39,7 @@ import java.awt.*;
 public class PolygonIcon extends ModelIcon {
 
 	public PolygonIcon(ModelObject parent, int sides, float radius, Color fillColor) {
-        super(parent, Path.createPolygon(sides, radius, fillColor));
+        super(parent, ShapeObject.createPolygon(sides, radius, fillColor));
 		configureLabel(false);
 	}
 }

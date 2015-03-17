@@ -41,7 +41,7 @@ import ca.nengo.ui.lib.world.piccolo.icon.LoadIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.SaveIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.ZoomIcon;
 import ca.nengo.ui.lib.world.piccolo.object.Button;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINetwork;
@@ -65,7 +65,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
     private static final boolean ELASTIC_LAYOUT_ENABLED_DEFAULT = false;
     private final File layoutFile;
     private final File backupLayoutFile;
-    private Path layoutArea;
+    private ShapeObject layoutArea;
     private Button zoom;
     //private Button feedforward;
     private Button save;
@@ -133,7 +133,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
                 restoreNodeLayout();
             }
         });
-        layoutArea = Path.createRectangle(0, 0, 0.25f, 0.2f);
+        layoutArea = ShapeObject.createRectangle(0, 0, 0.25f, 0.2f);
         layoutArea.setTransparency(0.0f);
         zoom.setTransparency(0.0f);
         //feedforward.setTransparency(0.0f);

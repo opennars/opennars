@@ -11,7 +11,7 @@ import ca.nengo.ui.lib.world.piccolo.icon.CloseIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.MaximizeIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.MinimizeIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.RestoreIcon;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
@@ -332,7 +332,7 @@ class MenuBar extends WorldObjectImpl implements PInputEventListener {
 	private WorldObject buttonHolder;
 	private AbstractButton maximizeButton, minimizeButton, closeButton, normalButton;
 	private final Window myWindow;
-	private Path rectangle;
+	private ShapeObject rectangle;
 
 	private Text title;
 
@@ -344,7 +344,7 @@ class MenuBar extends WorldObjectImpl implements PInputEventListener {
 
 	private void init() {
 		addInputEventListener(this);
-		rectangle = Path.createRectangle(0, 0, 1, 1);
+		rectangle = ShapeObject.createRectangle(0, 0, 1, 1);
 		rectangle.setPaint(NengoStyle.COLOR_BACKGROUND2);
 
 		addChild(rectangle);

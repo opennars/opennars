@@ -32,9 +32,14 @@ public class TermNode extends UIVertex {
     private float minUpdateTime = 0.1f;
     protected float time;
     private double currentScale = -1;
+    private double radius = 0;
 
+    @Override
+    public double getRadius() {
+        return radius;
+    }
 
-//    public TermNode(TestNARGraph.NARGraphNode graphnode, String text) {
+    //    public TermNode(TestNARGraph.NARGraphNode graphnode, String text) {
 //        super(UUID.randomUUID().toString());
 //        this.graphnode = graphnode;
 //        setTerm(null);
@@ -186,6 +191,8 @@ public class TermNode extends UIVertex {
         //System.out.println(x + " " + y);
         layoutPeriod = -1;
 
+
+        radius = ui.getFullBoundsReference().getWidth()/2.0; //hegith?
 
 
     }

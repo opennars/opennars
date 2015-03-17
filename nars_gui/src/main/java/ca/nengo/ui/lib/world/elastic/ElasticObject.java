@@ -6,7 +6,7 @@ import ca.nengo.ui.lib.world.WorldLayer;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.WorldObject.Property;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 import ca.nengo.ui.lib.world.piccolo.primitive.PiccoloNodeInWorld;
 
 import java.awt.*;
@@ -204,16 +204,16 @@ public class ElasticObject extends WorldObjectImpl {
 
 class Anchor implements Destroyable, Listener {
 	private final ElasticObject obj;
-	private final Path border;
-	private final Path line;
+	private final ShapeObject border;
+	private final ShapeObject line;
 
 	public Anchor(ElasticObject obj) {
 		super();
 		this.obj = obj;
 		WorldLayer ground = obj.getWorldLayer();
 
-		border = Path.createRectangle(0, 0, 1, 1);
-		line = new Path();
+		border = ShapeObject.createRectangle(0, 0, 1, 1);
+		line = new ShapeObject();
 		// line.setStrokePaint(style.COLOR)
 		border.setPaint(null);
 		line.setPaint(null);

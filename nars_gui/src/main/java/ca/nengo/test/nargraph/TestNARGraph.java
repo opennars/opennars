@@ -162,7 +162,7 @@ public class TestNARGraph extends Nengrow {
 
                     @Override
                     public double getRadius(UIVertex narGraphVertex) {
-                        double r = 1 + narGraphVertex.ui.getFullBoundsReference().getWidth();
+                        double r = 1 + narGraphVertex.getRadius();
                         return r * 0.5f;
                     }
 
@@ -368,11 +368,6 @@ public class TestNARGraph extends Nengrow {
                 exist = new UIEdge(s, t);
             if (!add(exist))
                 return null;
-            try {
-                addNode(exist);
-            } catch (StructuralException e) {
-                e.printStackTrace();
-            }
             return exist;
         }
 

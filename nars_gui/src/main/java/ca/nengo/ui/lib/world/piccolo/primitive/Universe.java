@@ -58,13 +58,13 @@ public class Universe extends PCanvas implements Destroyable {
 
 	}
 
-	private Path statusTextBackground;
+	private ShapeObject statusTextBackground;
 
 	/**
 	 * Initializes the status bar
 	 */
 	private void initStatusPanel() {
-		statusTextBackground = Path.createRectangle(0, 0, 1, 1);
+		statusTextBackground = ShapeObject.createRectangle(0, 0, 1, 1);
 		statusTextBackground.setPaint(NengoStyle.COLOR_BACKGROUND);
 		statusTextBackground.setTransparency(0.7f);
 

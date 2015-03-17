@@ -112,7 +112,11 @@ public class PXPath extends PXNode {
 		return result;
 	}
 
-	public static PXPath createEllipse(float x, float y, float width,
+    public void setPath(GeneralPath path) {
+        this.path = path;
+    }
+
+    public static PXPath createEllipse(float x, float y, float width,
 			float height) {
 		TEMP_ELLIPSE.setFrame(x, y, width, height);
 		PXPath result = new PXPath(TEMP_ELLIPSE);

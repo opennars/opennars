@@ -28,7 +28,7 @@ package ca.nengo.ui.model.icon;
 
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.object.model.ModelObject;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 
 /**
  * Icon for a neuron
@@ -40,7 +40,7 @@ public class NodeIcon extends ModelIcon {
 
 
 	public NodeIcon(ModelObject parent) {
-		super(parent, Path.createPolygon(6, 50, NengoStyle.COLOR_FOREGROUND));
+		super(parent, ShapeObject.createPolygon(6, 50, NengoStyle.COLOR_FOREGROUND));
 		configureLabel(false);
 	}
 }

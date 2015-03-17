@@ -1,7 +1,7 @@
 package ca.nengo.ui.lib.world.piccolo.object;
 
 import ca.nengo.ui.lib.NengoStyle;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 import ca.nengo.ui.lib.world.piccolo.primitive.Text;
 
 import java.awt.*;
@@ -17,7 +17,7 @@ public class TextButton extends AbstractButton {
 
 	private static final int BORDER_WIDTH = 5;
 
-	private final Path frame;
+	private final ShapeObject frame;
 
 	private final Text myTextNode;
 
@@ -35,7 +35,7 @@ public class TextButton extends AbstractButton {
 		myTextNode.setFont(NengoStyle.FONT_BUTTONS);
 		myTextNode.setTextPaint(NengoStyle.COLOR_FOREGROUND);
 
-		frame = Path.createRectangle(0, 0, 100, 100);
+		frame = ShapeObject.createRectangle(0, 0, 100, 100);
 		frame.setStrokePaint(NengoStyle.COLOR_BUTTON_BORDER);
 
 		addChild(frame);
@@ -46,7 +46,7 @@ public class TextButton extends AbstractButton {
 		stateChanged();
 	}
 
-	public Path getFrame() {
+	public ShapeObject getFrame() {
 		return frame;
 	}
 

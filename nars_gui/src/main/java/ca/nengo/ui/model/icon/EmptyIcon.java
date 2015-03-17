@@ -27,7 +27,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.model.icon;
 
 import ca.nengo.ui.lib.object.model.ModelObject;
-import ca.nengo.ui.lib.world.piccolo.primitive.Path;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 
 /**
  * Icon for a neuron
@@ -37,7 +37,7 @@ import ca.nengo.ui.lib.world.piccolo.primitive.Path;
 public class EmptyIcon extends ModelIcon {
 
 	public EmptyIcon(ModelObject parent) {
-		super(parent, new Path());
+		super(parent, new ShapeObject());
 		configureLabel(false);
 	}
 }
