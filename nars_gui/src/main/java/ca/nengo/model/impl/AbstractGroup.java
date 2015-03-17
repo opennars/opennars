@@ -128,9 +128,9 @@ public abstract class AbstractGroup implements Group<Node>, Probeable, VisiblyCh
 	}
 
 	/**
-	 * @see ca.nengo.model.Group#getName()
+	 * @see ca.nengo.model.Group#name()
 	 */
-    public String getName() {
+    public String name() {
 		return myName;
 	}
 
@@ -138,7 +138,7 @@ public abstract class AbstractGroup implements Group<Node>, Probeable, VisiblyCh
 	 * @param name The new name
 	 */
     public void setName(String name) throws StructuralException {
-		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, name(), name, myListeners);
 		myName = name;
 	}
 

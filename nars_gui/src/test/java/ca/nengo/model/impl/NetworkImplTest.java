@@ -428,12 +428,12 @@ public class NetworkImplTest extends TestCase {
 			myName = name;
 		}
 
-		public String getName() {
+		public String name() {
 			return myName;
 		}
 		
 		public void setName(String name) throws StructuralException {
-			VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
+			VisiblyChangesUtils.nameChanged(this, name(), name, myListeners);
 			myName = name;
 		}
 

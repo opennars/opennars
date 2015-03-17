@@ -34,9 +34,9 @@ public class MockNode implements Node<Node>, Cloneable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getName()
+	 * @see ca.nengo.model.Node#name()
 	 */
-	public String getName() {
+	public String name() {
 		return myName;
 	}
 
@@ -126,7 +126,7 @@ public class MockNode implements Node<Node>, Cloneable {
 		try {
 			MockNode other = node.clone();
 			System.out.println("equals? " + (node == other));
-			System.out.println(other.getName());
+			System.out.println(other.name());
 			System.out.println(other.getDocumentation());
 			System.out.println(other.getMode());
 		} catch (CloneNotSupportedException e) {

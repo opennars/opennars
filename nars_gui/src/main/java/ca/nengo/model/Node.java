@@ -29,6 +29,7 @@ package ca.nengo.model;
 
 import ca.nengo.util.ScriptGenException;
 import ca.nengo.util.VisiblyChanges;
+import nars.logic.entity.Named;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -39,14 +40,14 @@ import java.util.HashMap;
  *
  * @author Bryan Tripp
  */
-public interface Node<N extends Node> extends Serializable, Resettable, SimulationMode.ModeConfigurable, VisiblyChanges, Cloneable {
+public interface Node<N extends Node> extends Serializable, Resettable, SimulationMode.ModeConfigurable, VisiblyChanges, Cloneable, Named<String> {
 
     public final static Node[] EMPTY = new Node[0];
 
     /**
 	 * @return Name of Node (must be unique in a Network)
 	 */
-	public String getName();
+	public String name();
 
 	/**
 	 * @param name The new name

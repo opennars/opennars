@@ -86,9 +86,9 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
         result.myProjectionMap.clear();
         for (Projection oldProjection : getProjections()) {
             try {
-                NSource newSource = result.getNode(oldProjection.getSource().getNode().getName())
+                NSource newSource = result.getNode(oldProjection.getSource().getNode().name())
                         .getSource(oldProjection.getSource().getName());
-                NTarget newTarget = result.getNode(oldProjection.getTarget().getNode().getName())
+                NTarget newTarget = result.getNode(oldProjection.getTarget().getNode().name())
                         .getTarget(oldProjection.getTarget().getName());
                 Projection newProjection = new ProjectionImpl(newSource, newTarget, result);
                 result.myProjectionMap.put(newTarget, newProjection);
@@ -105,8 +105,8 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
             NSource wrapped = ((SourceWrapper) exposed).getWrappedOrigin();
             try {
                 // Check to see if referenced node is the network itself. If it is, handle the origin differently.
-                if (wrapped.getNode().getName() != myName) {
-                    NSource toExpose = result.getNode(wrapped.getNode().getName()).getSource(wrapped.getName());
+                if (wrapped.getNode().name() != myName) {
+                    NSource toExpose = result.getNode(wrapped.getNode().name()).getSource(wrapped.getName());
                     result.exposeOrigin(toExpose, name);
                 }
             } catch (StructuralException e) {
@@ -122,8 +122,8 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
             NTarget wrapped = ((TargetWrapper) exposed).getWrappedTermination();
             try {
                 // Check to see if referenced node is the network itself. If it is, handle the termination differently.
-                if (wrapped.getNode().getName() != myName) {
-                    NTarget toExpose = result.getNode(wrapped.getNode().getName()).getTarget(wrapped.getName());
+                if (wrapped.getNode().name() != myName) {
+                    NTarget toExpose = result.getNode(wrapped.getNode().name()).getTarget(wrapped.getName());
                     result.exposeTermination(toExpose, name);
                 }
             } catch (StructuralException e) {
@@ -170,7 +170,7 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
 //					}
                 } else {
                     try {
-                        result.mySimulator.addProbe(oldNode.getName(), oldProbe.getStateName(), true);
+                        result.mySimulator.addProbe(oldNode.name(), oldProbe.getStateName(), true);
                     } catch (Exception e) {
                         throw new RuntimeException("Problem copying Probe", e);
                     }

@@ -216,9 +216,9 @@ public class SocketUDPNode implements Node<Node>, Resettable {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getName()
+	 * @see ca.nengo.model.Node#name()
 	 */
-	public String getName() {
+	public String name() {
 		return myName;
 	}
 
@@ -226,7 +226,7 @@ public class SocketUDPNode implements Node<Node>, Resettable {
 	 * @param name The new name
 	 */
 	public void setName(String name) throws StructuralException {
-		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, name(), name, myListeners);
 		myName = name;
 	}
 

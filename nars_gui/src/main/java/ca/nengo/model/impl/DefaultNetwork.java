@@ -18,7 +18,7 @@ public class DefaultNetwork<N extends Node> extends AbstractMapNetwork<String,N>
 
     @Override
     public String name(N node) {
-        return node.getName();
+        return node.name();
     }
 
 }

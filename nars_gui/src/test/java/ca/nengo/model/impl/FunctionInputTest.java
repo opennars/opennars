@@ -16,7 +16,7 @@ public class FunctionInputTest extends TestCase {
 	public void testGetName() throws StructuralException {
 		String name = "test";
 		FunctionInput input = new FunctionInput(name, new Function[]{new ConstantFunction(1, 1f)}, Units.UNK);
-		assertEquals(name, input.getName());
+		assertEquals(name, input.name());
 	}
 
 	/*

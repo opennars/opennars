@@ -27,12 +27,13 @@ public class NALysisSome extends NALysis {
     public static void main(String[] args) throws FileNotFoundException {
 
         Parameters.DEBUG = true;
+        Parameters.DEBUG_DERIVATION_STACKTRACES = true;
         showInput = true;
         showOutput = true;
         showTrace = false;
 
         //String test = "./nal/test6/nal6.27.nal";
-        String test = "./nal/test7/nal7.4.nal";
+        String test = "./nal/test5/depr/nal5.19.nal";
         //String test = "./nal/test8/nal8.1.0.nal";
         //String test = "./nal/test8/nal8.1.21.nal";
         //String test = "./nal/test6/nal6.22.nal";
@@ -46,13 +47,13 @@ public class NALysisSome extends NALysis {
         TestNAR n = analyze(
                 build,
                 test,
-                800,
+                100,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {
             @Override public void event(Class event, Object[] args) {
                 Task t = (Task)args[0];
-                System.out.println("Derived: " + t);
+                System.out.println("Derived: " + t + " " + t.getHistory());
             }
         });
         n.on(Events.TaskRemove.class, new Reaction() {

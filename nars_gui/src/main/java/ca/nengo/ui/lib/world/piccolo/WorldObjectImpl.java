@@ -397,7 +397,7 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public void dragTo(double x, double y, double speed, double arrivalSpeed /* max speed */) {
-        final double epsilon = 10f; //min movement which wont matter
+        final double epsilon = 50f; //min movement which wont matter
 
         if (isDraggable()) {
             Point2D offset = getOffset();
@@ -426,8 +426,9 @@ public class WorldObjectImpl implements WorldObject {
         }
     }
 
-    public void scaleTo(double targetScale, double speed) {
-        setScale( getScale() * (1.0 - speed) + targetScale * speed );
+    public boolean scaleTo(double targetScale, double speed) {
+        double nextScale = getScale() * (1.0 - speed) + targetScale * speed;
+        return setScale( nextScale );
     }
 
 
@@ -884,12 +885,21 @@ public class WorldObjectImpl implements WorldObject {
         pnode.setPickable(isPickable);
     }
 
-    public void setRotation(double theta) {
+
+    final static double rotationEpsilon = 0.01;
+    final static double scaleEpsilon = 0.01;
+    public boolean setRotation(double theta) {
+        if (Math.abs(getRotation() - theta) < rotationEpsilon)
+            return false;
         pnode.setRotation(theta);
+        return true;
     }
 
-    public void setScale(double arg0) {
-        pnode.setScale(arg0);
+    public boolean setScale(double s) {
+        if (Math.abs(getScale() - s) < scaleEpsilon)
+            return false;
+        pnode.setScale(s);
+        return true;
     }
 
     /*

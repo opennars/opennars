@@ -68,7 +68,7 @@ public class CreateModelAction extends ReversableAction {
      */
     public static void ensureNonConflictingName(Node node, NodeContainer container)
             throws UserCancelledException {
-        String newName = node.getName();
+        String newName = node.name();
         int i = 0;
 
         // Check if the name itself is valid
@@ -84,7 +84,7 @@ public class CreateModelAction extends ReversableAction {
 	            }
 	        }
         }
-        String originalName = node.getName();
+        String originalName = node.name();
         
         
         while (container.getNodeModel(newName) != null) {

@@ -515,7 +515,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	@Override
 	public String getName() {
 		if (node() != null) {
-			return node().getName();
+			return node().name();
 		} else {
 			return "Model not constructed";
 		}

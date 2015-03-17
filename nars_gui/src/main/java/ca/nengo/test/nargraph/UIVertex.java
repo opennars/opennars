@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-abstract public class UIVertex<V extends Named> extends AbstractWidget implements Named {
+abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
 
     public final V vertex;
     private final ArrayRealVector coords;
@@ -35,10 +35,6 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
         coords.setEntry(0, x); coords.setEntry(1, y);
     }
 
-    @Override
-    public Object name() {
-        return vertex;
-    }
 
     abstract public float getPriority();
 
@@ -51,18 +47,18 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
 
     @Override
     public String toString() {
-        return "NARGraphVertex[" + getName() + ']';
+        return "NARGraphVertex[" + name() + ']';
     }
 
     @Override
     public int hashCode() {
-        return getName().hashCode();
+        return name().hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof UIVertex) {
-            return getName().equals(((UIVertex) obj).getName());
+            return name().equals(((UIVertex) obj).name());
         }
         return false;
     }

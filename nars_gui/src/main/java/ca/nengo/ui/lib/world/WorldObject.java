@@ -203,7 +203,7 @@ public interface WorldObject extends NamedObject, Destroyable {
      *
      * @param theta rotation in radians
      */
-    public void setRotation(double theta);
+    public boolean setRotation(double theta);
 
     /**
      * Return the scale applied by this node's transform. The scale is effecting
@@ -217,9 +217,9 @@ public interface WorldObject extends NamedObject, Destroyable {
      * Set the scale of this node's transform. The scale will affect this node
      * and all its descendents.
      *
-     * @param scale the scale to set the transform to
+     * @param s the scale to set the transform to
      */
-    public void setScale(double scale);
+    public boolean setScale(double s);
 
     /**
      * @return Tooltip object, null if there is none

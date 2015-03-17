@@ -171,7 +171,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
 
     @Override
     protected void removeChildModel(Node node) {
-        getModel().removeNode(node.getName());
+        getModel().removeNode(node.name());
     }
 
     protected Double newItemPositionX;
@@ -261,11 +261,11 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             } else {
                 if (nodeOrigin == null) {
                     Util.Assert(false, "Could not find a Origin attached to a projection: "
-                            + source.getNode().getName());
+                            + source.getNode().name());
                 }
                 if (nodeTerm == null) {
                     Util.Assert(false, "Could not find a Termination attached to a projection: "
-                            + term.getNode().getName());
+                            + term.getNode().name());
                 }
             }
 
@@ -296,7 +296,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
 
             neoNodesChildren.put(node, u);
             if (centerAndNotify) {
-                nodeUI.showPopupMessage("Node " + node.getName() + " added to Network");
+                nodeUI.showPopupMessage("Node " + node.name() + " added to Network");
             }
         }
 

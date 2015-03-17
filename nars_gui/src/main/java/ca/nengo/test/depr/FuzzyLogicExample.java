@@ -174,10 +174,10 @@ public class FuzzyLogicExample {
 		 * Add probes
 		 */
 		try {
-			simulator.addProbe(C.getName(), "in", true);
-			simulator.addProbe(A.getName(), "in", true);
-			simulator.addProbe(B.getName(), "in", true);
-			simulator.addProbe(D.getName(), "in", true);
+			simulator.addProbe(C.name(), "in", true);
+			simulator.addProbe(A.name(), "in", true);
+			simulator.addProbe(B.name(), "in", true);
+			simulator.addProbe(D.name(), "in", true);
 		} catch (SimulationException e) {
 			e.printStackTrace();
 		}

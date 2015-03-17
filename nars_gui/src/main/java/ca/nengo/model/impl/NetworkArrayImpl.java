@@ -375,8 +375,8 @@ public class NetworkArrayImpl extends DefaultNetwork {
 	public void addNode(Node node) throws StructuralException {
 		// Hack to get UI to update node removal
 		super.addNode(node);
-		super.removeNode(node.getName());
-		throw new StructuralException("Nodes cannot be added to NetworkArrayImpl named " + this.getName());
+		super.removeNode(node.name());
+		throw new StructuralException("Nodes cannot be added to NetworkArrayImpl named " + this.name());
 	}
 	
 	
@@ -592,7 +592,7 @@ public class NetworkArrayImpl extends DefaultNetwork {
 			// Clone node references
 			result.myNodes = new NEFGroupImpl[myNodes.length];
 			for (int i = 0; i < myNodes.length; i++) {
-				result.myNodes[i] = (NEFGroupImpl) result.getNode(myNodes[i].getName());
+				result.myNodes[i] = (NEFGroupImpl) result.getNode(myNodes[i].name());
 			}
 			
 			// Clone array origins and ensemble terminations

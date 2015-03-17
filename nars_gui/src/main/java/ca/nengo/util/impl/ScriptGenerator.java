@@ -51,7 +51,7 @@ public class ScriptGenerator extends DFSIterator {
     @SuppressWarnings("unchecked")
 	protected void pre(Node node) {
         if (parentNetwork.peek().getMetaData("templates") != null &&
-        	    ((ArrayList)parentNetwork.peek().getMetaData("templates")).contains(node.getName())) 
+        	    ((ArrayList)parentNetwork.peek().getMetaData("templates")).contains(node.name()))
         {
             inTemplateNetwork++;
         }
@@ -66,7 +66,7 @@ public class ScriptGenerator extends DFSIterator {
 			for (Node child : node.getNodes())
 			{
 				String prefix;
-				String nameNoSpaces = node.getName().replaceAll("\\p{Blank}|\\p{Punct}", Character.toString(spaceDelimiter));
+				String nameNoSpaces = node.name().replaceAll("\\p{Blank}|\\p{Punct}", Character.toString(spaceDelimiter));
 				
 				if(topLevel)
 					prefix = topLevelPrefix + spaceDelimiter + nameNoSpaces;

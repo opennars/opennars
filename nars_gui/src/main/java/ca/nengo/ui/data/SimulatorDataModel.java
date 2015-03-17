@@ -58,7 +58,7 @@ public class SimulatorDataModel extends DefaultTreeModel {
      */
     private static SortableMutableTreeNode createSortableNode(DefaultMutableTreeNode parent,
             Node neoNode) {
-        String name = neoNode.getName();
+        String name = neoNode.name();
 
         if (neoNode instanceof Network) {
             name += " (Network)";
@@ -280,12 +280,12 @@ public class SimulatorDataModel extends DefaultTreeModel {
             // Node has already been removed from the tree by the user
             //
             topLevelNetworks.remove(network.hashCode());
-            nameLUT.remove(network.getName());
+            nameLUT.remove(network.name());
             networkNode = null;
         }
 
         if (networkNode == null) {
-            String originalName = network.getName();
+            String originalName = network.name();
 
             String name = originalName;
 

@@ -137,7 +137,7 @@ public class DecodableGroupImpl extends PlasticGroupImpl implements DecodableGro
 			environment.run(0, transientTime);
 			TimeSeries result = probe.getData();
 			environment.removeProjection(target);
-			environment.removeNode(fi.getName());
+			environment.removeNode(fi.name());
 
 			values[i] = new float[result.getDimension()];
 			int samples = (int) Math.ceil( result.getValues().length / 10d ); //use only last ~10% of run in the average to avoid transient

@@ -127,9 +127,9 @@ public class LinkSegmentModelImpl implements LinkSegmentModel {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getName()
+	 * @see ca.nengo.model.Node#name()
 	 */
-	public String getName() {
+	public String name() {
 		return myName;
 	}
 
@@ -137,7 +137,7 @@ public class LinkSegmentModelImpl implements LinkSegmentModel {
 	 * @see ca.nengo.model.Node#setName(java.lang.String)
 	 */
 	public void setName(String name) throws StructuralException {
-		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, name(), name, myListeners);
 		myName = name;
 	}
 

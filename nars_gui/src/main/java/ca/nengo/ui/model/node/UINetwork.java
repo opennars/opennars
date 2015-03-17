@@ -146,7 +146,7 @@ public class UINetwork extends UINodeViewable {
         if (node() == null) {
             return super.getName();
         } else {
-            return node().getName();
+            return node().name();
         }
     }
 

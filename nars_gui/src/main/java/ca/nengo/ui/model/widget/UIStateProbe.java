@@ -76,7 +76,7 @@ public class UIStateProbe extends UIProbe {
 						true);
 
 			} else if (nodeAttachedTo.getNetworkParent() != null) {
-				probe = nodeAttachedTo.getNetworkParent().getSimulator().addProbe(node.getName(),
+				probe = nodeAttachedTo.getNetworkParent().getSimulator().addProbe(node.name(),
 						state,
 						true);
 			} else {

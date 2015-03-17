@@ -90,7 +90,7 @@ public class NodeLayout implements Serializable {
 	 *            Position of node
 	 */
 	private void addPosition(UINeoNode wo, Point2D position) {
-		nodePositions.put(wo.node().getName(), new PointSerializable(
+		nodePositions.put(wo.node().name(), new PointSerializable(
 				position));
 	}
 
@@ -108,7 +108,7 @@ public class NodeLayout implements Serializable {
 	 */
 	public Point2D getPosition(UINeoNode node) {
 		PointSerializable savedPosition = nodePositions.get(node.node()
-				.getName());
+				.name());
 		if (savedPosition != null) {
 			return savedPosition.toPoint2D();
 		} else {

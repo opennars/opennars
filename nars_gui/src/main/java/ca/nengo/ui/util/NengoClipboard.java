@@ -76,7 +76,7 @@ public class NengoClipboard {
 		if (hasContents()) {
 			ArrayList<String> result = new ArrayList<String>(selectedObjs.size());
 			for (Node obj : selectedObjs)
-				result.add(obj.getName());
+				result.add(obj.name());
 			return result;
 		} else {
 			return null;

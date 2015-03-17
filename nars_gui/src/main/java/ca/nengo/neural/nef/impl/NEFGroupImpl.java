@@ -954,7 +954,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 					super.run(startTime, endTime);
 				}
 			} catch (SimulationException e) {
-				e.setEnsemble(getName());
+				e.setEnsemble(name());
 				throw e;
 			}
 		}
@@ -1134,7 +1134,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
         StringBuilder py = new StringBuilder(String.format("%s.make('%s', %d, %d", 
                     scriptData.get("netName"), 
-                    getName(), 
+                    name(),
                     getNodes().length, 
                     myDimension));
 

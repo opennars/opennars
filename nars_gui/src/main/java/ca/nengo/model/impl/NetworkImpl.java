@@ -193,7 +193,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
 
 
         if (!add(name(node), node))
-            throw new StructuralException("This Network already contained a Node named " + node.getName());
+            throw new StructuralException("This Network already contained a Node named " + node.name());
 
         myNodeArray = null;
 
@@ -434,7 +434,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
 
             Node[] nodes = net.getNodes();
             for (Node node2 : nodes) {
-                net.removeNode(node2.getName());
+                net.removeNode(node2.name());
             }
         } else if (node instanceof DecodableGroupImpl) {
             NEFGroupImpl pop = (NEFGroupImpl) node;
@@ -517,9 +517,9 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     }
 
     /**
-     * @see ca.nengo.model.Node#getName()
+     * @see ca.nengo.model.Node#name()
      */
-    public String getName() {
+    public String name() {
         return myName;
     }
 
@@ -530,7 +530,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     public void setName(String name) throws StructuralException {
         if (!myName.equals(name)) {
             myName = name;
-            VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
+            VisiblyChangesUtils.nameChanged(this, name(), name, myListeners);
         }
     }
 
@@ -858,7 +858,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     }
 
     public void dumpToScript() throws FileNotFoundException {
-        File file = new File(this.getName().replace(' ', '_') + ".py");
+        File file = new File(this.name().replace(' ', '_') + ".py");
 
         ScriptGenerator scriptGen = new ScriptGenerator(file);
         scriptGen.startDFS(this);

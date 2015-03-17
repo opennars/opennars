@@ -107,6 +107,7 @@ public class UINARGraph extends UINetwork {
                 if (!target.ui.getVisible()) continue;
 
 
+
                 /*Rectangle2D sb = source.ui.getFullBoundsReference();
                 if (sb.getWidth()==0)  continue;
                 Rectangle2D tb = target.ui.getFullBoundsReference();
@@ -164,8 +165,8 @@ public class UINARGraph extends UINetwork {
 
         @Override
         public void paint(ca.nengo.ui.lib.world.PaintContext paintContext) {
-            drawEdges(paintContext);
             super.paint(paintContext);
+            drawEdges(paintContext);
         }
         @Override
         public void layoutChildren() {

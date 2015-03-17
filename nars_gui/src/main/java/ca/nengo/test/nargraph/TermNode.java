@@ -31,6 +31,7 @@ public class TermNode extends UIVertex {
     private float lastUIUpdate;
     private float minUpdateTime = 0.1f;
     protected float time;
+    private double currentScale = -1;
 
 
 //    public TermNode(TestNARGraph.NARGraphNode graphnode, String text) {
@@ -64,8 +65,18 @@ public class TermNode extends UIVertex {
 
     public boolean addTask(Task t) {
         if (this.task!=t) {
-            this.task.add(t);
-            updateUI();
+            if (this.task.add(t)) {
+                updateUI();
+            }
+            return true;
+        }
+        return false;
+    }
+    public boolean removeTask(Task t) {
+        if (this.task!=t) {
+            if (this.task.remove(t)) {
+                updateUI();
+            }
             return true;
         }
         return false;
@@ -118,7 +129,7 @@ public class TermNode extends UIVertex {
             g += concept.getPriority() / 2f;
             scale += 0.5f;
         }
-        if (task != null) {
+        if (!task.isEmpty()) {
             float p = 0;
             int numTasks = task.size();
 
@@ -162,8 +173,11 @@ public class TermNode extends UIVertex {
         if (y < bounds.getMinY()) y = bounds.getMinY();
 
         //TODO combine these into one Transform update
+
         float targetScale = scale * (0.75f + priority);
+
         ui.scaleTo(targetScale, 0.05);
+
         ui.dragTo(x, y, bounds.getWidth() /* speed */, 0.005);
         //ui.animateToPositionScaleRotation(x, y, targetScale, 0, 0);
 
@@ -220,11 +234,11 @@ public class TermNode extends UIVertex {
     @Override
     public UIVertex remove(Named v) {
         if (task != null && v instanceof Task)
-            addTask(null);
+            removeTask(null);
         if (concept != null & v instanceof Concept)
             setConcept(null);
 
-        if ((this.task ==null) && (this.concept == null))
+        if ((this.task.isEmpty()) && (this.concept == null))
             return this; //just a term, remove by default
 
         return null; //keep alive

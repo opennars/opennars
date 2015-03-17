@@ -242,7 +242,7 @@ public class PyramidalNetwork extends DefaultNetwork
     }
 
 
-    public String getName() {
+    public String name() {
         return myName;
     }
 

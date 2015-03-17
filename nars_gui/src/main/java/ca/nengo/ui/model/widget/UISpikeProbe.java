@@ -44,7 +44,7 @@ public class UISpikeProbe extends UIProbe {
 	@Override
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
-		tooltips.addProperty("Attached to", node().getName());
+		tooltips.addProperty("Attached to", node().name());
 	}
 
 	@Override

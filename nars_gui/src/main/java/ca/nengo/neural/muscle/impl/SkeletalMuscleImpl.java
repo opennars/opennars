@@ -123,9 +123,9 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	}
 
 	/**
-	 * @see ca.nengo.model.Node#getName()
+	 * @see ca.nengo.model.Node#name()
 	 */
-	public String getName() {
+	public String name() {
 		return myName;
 	}
 
@@ -134,7 +134,7 @@ public class SkeletalMuscleImpl implements SkeletalMuscle {
 	 * 		will be a part)
 	 */
 	public void setName(String name) throws StructuralException {
-		VisiblyChangesUtils.nameChanged(this, getName(), name, myListeners);
+		VisiblyChangesUtils.nameChanged(this, name(), name, myListeners);
 		myName = name;
 	}
 

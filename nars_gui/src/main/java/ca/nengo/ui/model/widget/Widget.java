@@ -169,7 +169,7 @@ public abstract class Widget<M> extends UINeoModel<M> {
 		Network network = networkUI.node();
 		if (network != null) {
 			unExpose(network);
-			showPopupMessage(getName() + " is UN-exposed on Network: " + network.getName());
+			showPopupMessage(getName() + " is UN-exposed on Network: " + network.name());
 		} else {
 			UserMessages.showWarning("Cannot expose because no external network is available");
 		}

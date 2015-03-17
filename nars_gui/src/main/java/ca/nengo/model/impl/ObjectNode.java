@@ -74,7 +74,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
         commonOut.setLabelVisible(false);
 
         bodyGraph = new DefaultDirectedGraph(String.class);
-        bodyGraph.addVertex(getName());
+        bodyGraph.addVertex(name());
         bodyGraph.addVertex(commonIn.getName());
         bodyGraph.addVertex(commonOut.getName());
 

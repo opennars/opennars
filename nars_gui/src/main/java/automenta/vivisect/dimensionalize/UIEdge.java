@@ -1,17 +1,21 @@
 package automenta.vivisect.dimensionalize;
 
+import ca.nengo.model.SimulationException;
+import ca.nengo.ui.lib.world.PaintContext;
+import ca.nengo.ui.model.plot.AbstractWidget;
+import ca.nengo.util.ScriptGenException;
 import javolution.util.FastSet;
 import nars.logic.entity.Named;
 import nars.util.graph.NARGraph;
-import org.jgrapht.graph.DefaultEdge;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
 * Created by me on 3/12/15.
 */
-public class UIEdge<V extends Named> extends DefaultEdge {
+public class UIEdge<V extends Named> extends AbstractWidget {
 
     final V s, t;
 
@@ -20,16 +24,13 @@ public class UIEdge<V extends Named> extends DefaultEdge {
 
     float termlinkPriority, tasklinkPriority, priority;
 
-    public final String name;
+
     public Shape shape;
 
     public UIEdge(V s, V t) {
-        super();
+        super(s.name().toString() + ':' + t.name());
         this.s = s;
         this.t = t;
-
-
-        this.name = this.s.name().toString() + ':' + this.t.name();
 
     }
 
@@ -85,27 +86,39 @@ public class UIEdge<V extends Named> extends DefaultEdge {
 
     @Override
     public boolean equals(Object obj) {
-        return name.equals(((UIEdge)obj).name);
+        return name().equals(((UIEdge)obj).name());
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return name().hashCode();
     }
 
     @Override
     public String toString() {
-        return name;
+        return name();
     }
 
-    @Override
     public V getSource() {
         return s;
     }
 
-    @Override
     public V getTarget() {
         return t;
     }
 
+    @Override
+    protected void paint(PaintContext paintContext, double width, double height) {
+
+    }
+
+    @Override
+    public void run(float startTime, float endTime) throws SimulationException {
+
+    }
+
+    @Override
+    public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
+        return null;
+    }
 }

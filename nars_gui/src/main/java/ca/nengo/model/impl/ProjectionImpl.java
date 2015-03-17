@@ -140,7 +140,7 @@ public class ProjectionImpl implements Projection {
 		NEFGroup pre = (NEFGroup) baseOrigin.getNode();
 		NEFGroup post = (NEFGroup) baseTermination.getNode();
 
-		myBiasOrigin = pre.addBiasOrigin(baseOrigin, numInterneurons, getUniqueNodeName(post.getName() + '_' + baseTermination.getName()), excitatory);
+		myBiasOrigin = pre.addBiasOrigin(baseOrigin, numInterneurons, getUniqueNodeName(post.name() + '_' + baseTermination.getName()), excitatory);
 		myInterneurons = myBiasOrigin.getInterneurons();
 		myNetwork.addNode(myInterneurons);
 		BiasTarget[] bt = post.addBiasTerminations(baseTermination, tauBias, myBiasOrigin.getDecoders(), baseOrigin.getDecoders());
@@ -173,7 +173,7 @@ public class ProjectionImpl implements Projection {
 		while (!done) {
 			done = true;
 			for (Node node : nodes) {
-				if (node.getName().equals(result)) {
+				if (node.name().equals(result)) {
 					done = false;
 					result = base + c++;
 				}
@@ -195,7 +195,7 @@ public class ProjectionImpl implements Projection {
 			myNetwork.removeProjection(myDirectBT);
 			myNetwork.removeProjection(myIndirectBT);
 			myNetwork.removeProjection(myInterneuronTermination);
-			myNetwork.removeNode(myInterneurons.getName());
+			myNetwork.removeNode(myInterneurons.name());
 
 			pre.removeDecodedOrigin(myBiasOrigin.getName());
 			post.removeDecodedTermination(myDirectBT.getName());
@@ -242,7 +242,7 @@ public class ProjectionImpl implements Projection {
 	    StringBuilder py = new StringBuilder();
 	    
 	    String pythonNetworkName = scriptData.get("prefix") 
-	    			+ getNetwork().getName().replaceAll("\\p{Blank}|\\p{Punct}", scriptData.get("spaceDelim").toString());
+	    			+ getNetwork().name().replaceAll("\\p{Blank}|\\p{Punct}", scriptData.get("spaceDelim").toString());
 	    
 	    py.append(String.format("%1s.connect(", pythonNetworkName));
 	    
@@ -251,7 +251,7 @@ public class ProjectionImpl implements Projection {
 
 	    while(tempSource instanceof SourceWrapper)
 	    {
-	    	originNodeFullName.append(tempSource.getNode().getName()).append('.');
+	    	originNodeFullName.append(tempSource.getNode().name()).append('.');
 	    	tempSource = ((SourceWrapper) tempSource).getWrappedOrigin();
 	    }
 	    
@@ -260,7 +260,7 @@ public class ProjectionImpl implements Projection {
 
 	    while(tempTarget instanceof TargetWrapper)
 	    {
-	    	terminationNodeFullName.append(tempTarget.getNode().getName()).append('.');
+	    	terminationNodeFullName.append(tempTarget.getNode().name()).append('.');
 	    	tempTarget = ((TargetWrapper) tempTarget).getWrappedTermination();
 	    }
 	    
@@ -272,7 +272,7 @@ public class ProjectionImpl implements Projection {
 	    {
 	    	dTermination = (DecodedTarget) tempTarget;
 	    	transformString.append(getTransformScript(dTermination, "transform = ".length()));
-	    	terminationNodeFullName.append(tempTarget.getNode().getName());
+	    	terminationNodeFullName.append(tempTarget.getNode().name());
 	    }
 	    else if(tempTarget instanceof GroupTarget &&
 	    		tempTarget.getNode() instanceof NetworkArrayImpl)
@@ -312,7 +312,7 @@ public class ProjectionImpl implements Projection {
 	    String functionName = "";
 	    if(tempSource instanceof BasicSource && tempSource.getNode() instanceof FunctionInput)
 	    {
-	    	originNodeFullName.append(tempSource.getNode().getName());
+	    	originNodeFullName.append(tempSource.getNode().name());
 	    }
 	    else
 	    {
@@ -320,7 +320,7 @@ public class ProjectionImpl implements Projection {
 		    if(tempSource instanceof DecodedSource)
 		    {
 		    	dOrigin = (DecodedSource) tempSource;
-		    	originNodeFullName.append(tempSource.getNode().getName());
+		    	originNodeFullName.append(tempSource.getNode().name());
 		    }
 		    else if(tempSource instanceof NetworkArrayImpl.ArraySource &&
 		    		tempSource.getNode() instanceof NetworkArrayImpl)

@@ -152,7 +152,7 @@ public class ProbeImpl implements Probe<String>, java.io.Serializable {
 		float[][] values = myValues.toArray(new float[0][]);
 		
 		TimeSeriesImpl result = new TimeSeriesImpl(times, values, (myUnits == null) ? new Units[]{Units.UNK} : myUnits);
-		result.setName(((myTarget instanceof Node) ? ((Node) myTarget).getName()+ ':' : "") + myStateName);
+		result.setName(((myTarget instanceof Node) ? ((Node) myTarget).name()+ ':' : "") + myStateName);
 		return result;
 	}
 

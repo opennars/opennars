@@ -146,7 +146,7 @@ public class ProjectionImplTest extends TestCase {
 		float[][] directWeights = MU.prod(post.getEncoders(), MU.prod(t.getTransform(), MU.transpose(o.getDecoders())));
 		System.out.println("Direct weights: " + MU.min(directWeights) + " to " + MU.max(directWeights));
 
-		Probe probe = network.getSimulator().addProbe(post.getName(), NEFGroup.X, true);
+		Probe probe = network.getSimulator().addProbe(post.name(), NEFGroup.X, true);
 		network.setMode(SimulationMode.CONSTANT_RATE);
 		network.run(-1.5f, 1);
 		network.setMode(SimulationMode.DEFAULT);

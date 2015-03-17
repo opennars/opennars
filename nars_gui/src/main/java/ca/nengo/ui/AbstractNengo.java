@@ -634,7 +634,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
                 String name;
                 if (obj instanceof Node) {
-                    name = ((Node) obj).getName();
+                    name = ((Node) obj).name();
                 } else if (obj instanceof NTarget) {
                     name = ((NTarget) obj).getName();
                 } else if (obj instanceof NSource) {

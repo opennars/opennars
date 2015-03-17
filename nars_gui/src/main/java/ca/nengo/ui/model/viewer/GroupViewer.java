@@ -179,7 +179,7 @@ public class GroupViewer<N extends Group, G extends UINodeViewable> extends Node
                         UserMessages.showError("Unsupported target type for probe");
                     } else {
 
-                        if (probe.isInEnsemble() && probe.getEnsembleName() == getModel().getName()) {
+                        if (probe.isInEnsemble() && probe.getEnsembleName() == getModel().name()) {
                             Node node = (Node) target;
 
                             UINeoNode nodeUI = getUINode(node);

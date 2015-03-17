@@ -11,6 +11,7 @@ import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import com.google.common.collect.Iterators;
 import javolution.util.FastMap;
@@ -56,7 +57,7 @@ public class TestNARGraph extends Nengrow {
     public void init() throws Exception {
 
 
-        Default d = new Default(128, 1, 1);
+        Default d = new Default(32, 1, 1);
         d.setSubconceptBagSize(0);
         NAR nar = new NAR(d);
 //        nar.input("<a --> {b}>.");
@@ -70,10 +71,9 @@ public class TestNARGraph extends Nengrow {
         Parameters.DEBUG = true;
         NARSwing.themeInvert();
         NARSwing s = new NARSwing(nar);
+
         nar.input(new File("/tmp/h.nal"));
-
-
-        s.controls.setSpeed(0.1f);
+        //s.controls.setSpeed(0.1f);
 
 
         UINetwork networkUI = (UINetwork) addNodeModel(newGraph(nar));
@@ -85,7 +85,7 @@ public class TestNARGraph extends Nengrow {
         getUniverse().setInteractingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
 
 
-        float fps = 50f;
+        float fps = 30f;
 
         java.util.Timer timer = new java.util.Timer("", false);
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -126,7 +126,7 @@ public class TestNARGraph extends Nengrow {
 
     }
 
-    public static class NARGraphNode extends AbstractMapNetwork<String, UIVertex> implements UIBuilder {
+    public static class NARGraphNode extends AbstractMapNetwork<String, AbstractWidget> implements UIBuilder {
 
         private final NAR nar;
         private final ConceptReaction conceptReaction;
@@ -212,6 +212,7 @@ public class TestNARGraph extends Nengrow {
                 layoutBounds.setRect(-layoutRad / 2, -layoutRad / 2, layoutRad, layoutRad);
                 hmap.resetLearning();
                 hmap.run(2);
+
 
 
             }
@@ -320,7 +321,7 @@ public class TestNARGraph extends Nengrow {
         }
 
         @Override
-        public String name(UIVertex node) {
+        public String name(AbstractWidget node) {
             return node.name().toString();
         }
 
@@ -367,11 +368,16 @@ public class TestNARGraph extends Nengrow {
                 exist = new UIEdge(s, t);
             if (!add(exist))
                 return null;
+            try {
+                addNode(exist);
+            } catch (StructuralException e) {
+                e.printStackTrace();
+            }
             return exist;
         }
 
         protected boolean add(UIEdge<UIVertex> e) {
-            if (edges.putIfAbsent(e.name, e)==null) {
+            if (edges.putIfAbsent(e.name(), e)==null) {
                 e.getSource().link(e, true);
                 e.getTarget().link(e, false);
                 edgesChanged();
@@ -381,7 +387,7 @@ public class TestNARGraph extends Nengrow {
         }
 
         private void remove(UIEdge<UIVertex> e) {
-            if (edges.remove(e.name)!=null) {
+            if (edges.remove(e.name())!=null) {
                 if (e.getSource() != null)
                     e.getSource().unlink(e, true);
                 if (e.getTarget() != null) {
@@ -402,9 +408,9 @@ public class TestNARGraph extends Nengrow {
          * if the UI node doesnt exist, it will add it to the graph and attempt creating one;
          * returns the existing one if already existed
          */
-        protected UIVertex add(Named o) {
+        protected AbstractWidget add(Named o) {
 
-            UIVertex ui = getNode(o);
+            AbstractWidget ui = getNode(o);
 
             if (ui == null) {
 
@@ -431,36 +437,41 @@ public class TestNARGraph extends Nengrow {
             return ui;
         }
 
-        public UIVertex getNode(Named v) {
+        public AbstractWidget getNode(Named v) {
             final Named input = v;
             if ((v instanceof Concept)||(v instanceof Task))
                 v = ((Terms.Termable)v).getTerm();
-            UIVertex u = getNode(v.name().toString());
-            if (u!=null)
-                u = u.add(input);
+            AbstractWidget u = getNode(v.name().toString());
+            if ((u!=null) && (u instanceof UIVertex))
+                u = ((UIVertex)u).add(input);
             return u;
         }
 
 
-        protected UIVertex remove(Named v) {
+        protected AbstractWidget remove(Named v) {
 
             String id = v.name().toString();
-            UIVertex existing = removeNode(id);
+            AbstractWidget existing = removeNode(id);
             if (existing == null) return null;
 
-            existing = existing.remove(v);
-            if (existing == null) return null;
+            if (existing instanceof UIVertex) {
+                UIVertex vv = ((UIVertex) existing);
+                existing = vv = vv.remove(v);
+                if (existing == null) return null;
+                vv.destroy();
 
 
+                List<UIEdge> toRemove = new ArrayList(vv.incoming.size() + vv.outgoing.size());
+                toRemove.addAll(vv.incoming);
+                toRemove.addAll(vv.outgoing);
+                for (UIEdge e : toRemove) {
+                    remove(e);
+                }
 
-            existing.destroy();
-
-            List<UIEdge> toRemove = new ArrayList(existing.incoming.size() + existing.outgoing.size());
-            toRemove.addAll(existing.incoming);
-            toRemove.addAll(existing.outgoing);
-            for (UIEdge e : toRemove) {
-                remove(e);
             }
+
+
+
 
             SwingUtilities.invokeLater(existing.ui::destroy);
 
@@ -527,13 +538,15 @@ public class TestNARGraph extends Nengrow {
 
                 //TODO defer creation of v1 and v2 until sure that edge can be created
 
-                UIVertex v1 = add(source);
+                AbstractWidget v1 = add(source);
                 if (v1 == null) return null;
-                UIVertex v2 = add(target);
+                AbstractWidget v2 = add(target);
                 if (v2 == null) return null;
                 if (v2 == v1) return null; //loop
+                if (!(v1 instanceof UIVertex)) return null;
+                if (!(v2 instanceof UIVertex)) return null;
 
-                UIEdge e = NARGraphNode.this.addEdge(v1, v2);
+                UIEdge e = NARGraphNode.this.addEdge((UIVertex)v1, (UIVertex)v2);
                 if (e!=null) {
                     e.add((Named)edgeContent);
                     return e;
