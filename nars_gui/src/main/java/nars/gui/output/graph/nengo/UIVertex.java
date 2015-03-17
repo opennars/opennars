@@ -12,8 +12,8 @@ import org.piccolo2d.util.PAffineTransform;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
 
@@ -23,8 +23,8 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
     protected long layoutPeriod = -1;
     boolean destroyed = false;
 
-    final Set<UIEdge<V>> incoming = new LinkedHashSet<>();//.atomic();
-    final Set<UIEdge<V>> outgoing = new LinkedHashSet<>();//.atomic();
+    final Set<UIEdge<V>> incoming = new CopyOnWriteArraySet<>();//.atomic();
+    final Set<UIEdge<V>> outgoing = new CopyOnWriteArraySet<>();//.atomic();
 
     public UIVertex(V vertex) {
         super(vertex.name().toString());
@@ -75,6 +75,7 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
         for (UIEdge e : getEdgeSet(false)) {
             e.update();
         }
+
     }
 
     public V vertex() {
@@ -83,7 +84,6 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
 
     @Override
     public void run(float startTime, float endTime) throws SimulationException {
-
 
     }
 

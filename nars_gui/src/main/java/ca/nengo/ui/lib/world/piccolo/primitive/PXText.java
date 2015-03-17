@@ -81,11 +81,11 @@ class PXText extends PXNode {
 	private transient TextLayout[] lines;
 	private String text;
 	private Paint textPaint;
-	private static boolean useBlurTextThreshold = false;
+	private static boolean useBlurTextThreshold = true;
 
     public final ArrayList<Object> linesList = new ArrayList<Object>();
 
-	protected double blurTextThreshold;
+	protected double blurTextThreshold = 5.5;
 
     public PXText() {
 		super();

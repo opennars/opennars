@@ -6,8 +6,8 @@ import nars.util.graph.NARGraph;
 import org.apache.commons.math3.util.FastMath;
 
 import java.awt.*;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
 * Created by me on 3/12/15.
@@ -17,7 +17,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
     final V s, t;
 
     /** items contained in this edge */
-    public final Set<Named> e = new LinkedHashSet(); //new FastSet<Named>().atomic();
+    public final Set<Named> e = new CopyOnWriteArraySet(); //new FastSet<Named>().atomic();
     private final String name;
 
     float termlinkPriority, tasklinkPriority, priority;
