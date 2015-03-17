@@ -9,10 +9,13 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 
 abstract public class Nengrow extends AbstractNengo {
 
     private float simulationDT;
+    double fps = 30;
+    private java.util.Timer timer;
 
     public Nengrow() {
         this(new DefaultApplication());
@@ -87,4 +90,52 @@ abstract public class Nengrow extends AbstractNengo {
 /*    public static void main(String[] args) {
         new Nengrow();
     }*/
+
+    /** each cycle, this is called */
+    public void run() {
+
+    }
+
+
+    public double getFPS() { return fps; }
+
+    public void setFPS(double fps) {
+        this.fps = fps;
+        start();
+    }
+
+
+    protected void start() {
+        stop();
+
+        System.out.println("start");
+
+        double fps = getFPS();
+        if (fps > 0) {
+            timer = new java.util.Timer("", false);
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    Nengrow.this.run();
+                    repaint();
+                }
+            }, 0, (int) (1000 / fps));
+        }
+    }
+    protected void stop() {
+        if (timer!=null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    @Override
+    protected void onShowing(boolean showing) {
+        if (showing) {
+            start();
+        }
+        else {
+            stop();
+        }
+    }
 }

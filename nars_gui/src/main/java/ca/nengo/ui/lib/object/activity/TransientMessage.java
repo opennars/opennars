@@ -57,6 +57,7 @@ public class TransientMessage extends Text {
 			}
 		};
 		showPopupActivity.setStartTime(startTime);
+
 		UIEnvironment.getInstance().addActivity(showPopupActivity);
 
 	}

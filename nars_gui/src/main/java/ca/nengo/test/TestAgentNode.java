@@ -13,10 +13,6 @@ import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 /**
  * Created by me on 3/3/15.
  */
@@ -24,6 +20,7 @@ public class TestAgentNode extends Nengrow {
 
 
     float time = 0;
+    private UINetwork networkUI;
 
     public static void main(String[] args) {
         new TestAgentNode().window(900,800);
@@ -64,28 +61,23 @@ public class TestAgentNode extends Nengrow {
     public void init() throws Exception {
 
 
-        UINetwork networkUI = (UINetwork) addNodeModel(newAgentNodeDemo());
+        networkUI = (UINetwork) addNodeModel(newAgentNodeDemo());
         networkUI.doubleClicked();
-
-
-        Timer t = new Timer(50, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    float dt = 0.01f;
-                    networkUI.node().run(time, time + dt, 1);
-                    time += dt;
-
-                } catch (SimulationException e1) {
-                    e1.printStackTrace();
-                }
-                //cycle();
-            }
-        });
-        t.setCoalesce(true);
-        t.start();
 
     }
 
+
+
+    @Override
+    public void run() {
+        try {
+            float dt = 0.01f;
+            networkUI.node().run(time, time + dt, 1);
+            time += dt;
+
+        } catch (SimulationException e1) {
+            e1.printStackTrace();
+        }
+
+    }
 }

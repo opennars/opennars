@@ -15,6 +15,7 @@ import nars.logic.Terms;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Named;
 import nars.logic.entity.Task;
+import nars.logic.entity.Term;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -23,9 +24,7 @@ import javax.swing.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
-/**
- * Created by me on 3/17/15.
- */
+
 public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> implements UIBuilder {
 
 
@@ -33,8 +32,9 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
     private final ConceptReaction conceptReaction;
     private final Memory memory;
 
-    float simTimePerCycle = 1f;
+    //float simTimePerCycle = 1f;
     float simTimePerLayout = 0.25f;
+    boolean allowTermNodes = true;
 
     long lasTLayout = System.currentTimeMillis();
 
@@ -152,10 +152,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 //            return "nar";
 //        }
 //    };
-    //private UIEdge[] nextEdges;
-    //private Map<String,UIEdge> edges = new FastMap<String,UIEdge>().atomic();
     private UINARGraph ui;
-    private boolean edgesChanged = false;
     private int numVertices = 0;
     SubCycle layoutCycle = new SubCycle() {
         @Override
@@ -190,6 +187,13 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
         }
     };
 
+    public boolean filter() {
+        return false;
+    }
+    public boolean includeTerm(Term t) {
+        return true;
+    }
+
 
     public TermGraphNode(Memory m) {
         super();
@@ -200,51 +204,21 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
             @Override
             public void onFiredConcept(Concept c) {
-
                 refresh(c);
             }
 
             @Override
             public void onNewConcept(Concept c) {
                 refresh(c);
-                //add(c);
-                //if (add(c) != null)
-                //  refresh(c);
             }
 
             @Override
             public void onForgetConcept(Concept c) {
-
                 remove(c);
-
-
-                //int x = ui.getViewer().getGround().printTree(System.out);
-
-                //int y = ui.getViewer().getGround().printTree(System.out);
-//
-//
-//                    System.out.println(" forget: " +
-//                        nar.memory.concepts.size() + " concepts, "
-//                    + graph.vertexSet().size() + " vertices, " +
-//                            synchronized(graph) {
-//                    Iterators.size(Iterators.filter(graph.vertexSet().iterator(), new Predicate<UIVertex>() {
-//
-//                        @Override
-//                        public boolean apply(UIVertex input) {
-//                            if (input instanceof TermNode) {
-//                                return ((TermNode) input).concept!=null;
-//                            }
-//                            return false;
-//                        }
-//                    })) + " concept ui nodes" );
-//                            }
-
             }
         };
 
         addStepListener(layoutCycle);
-        //addStepListener(narCycle);
-
     }
 
 
@@ -256,7 +230,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             for (UIVertex v : vertices) {
                 v.getActualCoordinates(dt);
                 if (v.isDependent() && v.degree() == 0) {
-                    //System.err.println("late removing " + v);
+                    System.err.println("late removing " + v);
                     remove(v);
                 }
 
@@ -280,17 +254,34 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
         TermNode v = null;
 
+
         if (x instanceof Concept) {
-            v = new TermNode(this, (Concept) x);
+            v = new TermNode(this, (Concept) x) {
+                @Override
+                public boolean isDependent() {
+                    if (filter())
+                        return super.isDependent() || !includeTerm(term);
+                    return super.isDependent();
+                }
+            };
         } else if (x instanceof Task) {
-            v = new TermNode(this, (Task) x);
+            v = new TermNode(this, (Task) x) {
+                @Override
+                public boolean isDependent() {
+                    if (filter())
+                        return super.isDependent() || !includeTerm(term);
+                    return super.isDependent();
+                }
+            };
+        }
+        else if ((x instanceof Term) && allowTermNodes) {
+            v = new TermNode(this, (Term)x);
         }
 
-            /*
-            else if (x instanceof Term) {
-                v = new TermNode(this, (Term)x);
-            }
-            */
+
+        if (v == null)
+            System.out.println(x + " == " + v);
+
 
 
         return v;
@@ -298,6 +289,9 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
 
     public void refresh(Object x) {
+        if (x instanceof Terms.Termable)
+            if (!includeTerm(((Terms.Termable) x).getTerm()))
+                return;
         new MyGrapher().on(null, x, false).finish();
     }
 
@@ -330,7 +324,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
         //if (edges.putIfAbsent(e.name(), e)==null) {
         if (e.getSource().link(e, false)) {
             e.getTarget().link(e, true);
-            edgesChanged();
             return true;
         }
         //}
@@ -342,7 +335,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             if (e.getSource().unlink(e, false)) {
                 ensureValid(e.getSource());
                 ensureValid(e.getTarget());
-                edgesChanged();
             }
             if (e.getTarget() != null) { //necessary?
                 e.getTarget().unlink(e, true);
@@ -428,9 +420,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
         return existing;
     }
 
-    protected void edgesChanged() {
-        edgesChanged = true;
-    }
 
     @Override
     public String toPostScript(HashMap scriptData) {
@@ -488,9 +477,9 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             //TODO defer creation of v1 and v2 until sure that edge can be created
 
             AbstractWidget v1 = add(source);
-            if (v1 == null) return null;
             AbstractWidget v2 = add(target);
-            if (v2 == null) return null;
+            //allow both source and target opportunity to combine with existing vertex
+            if ((v1 == null || v2 == null)) return null;
             if (v2 == v1) return null; //loop
             if (!(v1 instanceof UIVertex)) return null;
             if (!(v2 instanceof UIVertex)) return null;

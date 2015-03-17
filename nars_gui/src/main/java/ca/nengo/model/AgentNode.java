@@ -5,6 +5,7 @@ import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import org.piccolo2d.util.PBounds;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
@@ -24,16 +25,11 @@ public class AgentNode extends AbstractWidget {
     public AgentNode(String name) {
         super(name);
 
-
         cx = x = ui.getOffset().getX();
         cy = y = ui.getOffset().getY();
 
-
         setBounds(new PBounds(0,0,64,64));
-
     }
-
-
 
     public void forward(double dist) {
         x += Math.cos(heading) * dist;
@@ -42,7 +38,11 @@ public class AgentNode extends AbstractWidget {
     }
 
     public void say(String message) {
-        ui.showPopupMessage(message);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                ui.showPopupMessage(message);
+            }
+        });
     }
 
     public double rotate(double dA) {

@@ -12,12 +12,13 @@ import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.event.AbstractReaction;
-import nars.gui.output.graph.nengo.NengoTermGraph;
+import nars.gui.output.graph.nengo.NengoNetworkPanel;
 import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.logic.entity.BudgetValue.Budgetable;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Item;
 import nars.logic.entity.Sentence;
+import nars.logic.entity.Term;
 import nars.logic.entity.TruthValue.Truthable;
 import nars.util.bag.Bag;
 
@@ -131,8 +132,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
         private final TruthChart beliefChart;
         private final TruthChart desireChart;
         private final PriorityColumn questionChart;
-        private final BagChart termLinkChart;
-        private final BagChart taskLinkChart;
+        //private final BagChart termLinkChart;
+        //private final BagChart taskLinkChart;
         int chartWidth = 64;
         int chartHeight = 64;
         private JTextArea title;
@@ -163,14 +164,18 @@ public class ConceptPanelBuilder extends AbstractReaction {
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
             //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
 
-            details.add(this.termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
-            details.add(this.taskLinkChart = new RadialBagChart(c, c.taskLinks));
-            details.add(new NengoTermGraph(new TermGraphNode(c.memory) {
+            //details.add(this.termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
+            //details.add(this.taskLinkChart = new RadialBagChart(c, c.taskLinks));
+            details.add(new NengoNetworkPanel(new TermGraphNode(c.memory) {
 
-//                @Override public boolean includeConcept(Concept cv) {
-//                    System.out.println("include: " + cv + " = " + concept);
-//                    return cv.equals(concept);
-//                }
+                @Override public boolean includeTerm(Term t) {
+                    return t.equals(concept.getTerm());
+                }
+
+                @Override
+                public boolean filter() {
+                    return true;
+                }
             }));
 
             JPanel titlePanel = new JPanel(new BorderLayout());
@@ -251,12 +256,14 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 desireChart.setVisible(false);
             }
 
+            /*
             if (termLinkChart != null) {
                 termLinkChart.update(time);
             }
             if (taskLinkChart != null) {
                 taskLinkChart.update(time);
             }
+            */
 
             validate();
 

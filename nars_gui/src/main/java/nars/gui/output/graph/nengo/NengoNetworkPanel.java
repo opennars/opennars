@@ -9,22 +9,19 @@ import nars.build.Default;
 import nars.core.NAR;
 import org.piccolo2d.util.PPaintContext;
 
-import java.util.Timer;
-import java.util.TimerTask;
 
-
-public class NengoTermGraph extends Nengrow implements Runnable {
+public class NengoNetworkPanel extends Nengrow {
 
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
 
 
-    static int n = 0;
+
     private TermGraphNode graphNode;
     float time = 0;
     boolean printFPS = false;
-    private Timer timer;
     int frame = 0;
-    double fps = 30;
+
+    UINetwork networkUI = null;
 
     public static TermGraphNode newGraph(NAR n) {
         TermGraphNode network = new TermGraphNode(n.memory);
@@ -39,14 +36,14 @@ public class NengoTermGraph extends Nengrow implements Runnable {
         nar.input("<b-->c>.");
         nar.input("<c-->d>.");
         nar.run(16);
-        new NengoTermGraph(nar).window(800, 600);
+        new NengoNetworkPanel(nar).window(800, 600);
     }
 
-    public NengoTermGraph(NAR n) {
+    public NengoNetworkPanel(NAR n) {
         this(newGraph(n));
     }
 
-    public NengoTermGraph(TermGraphNode node) {
+    public NengoNetworkPanel(TermGraphNode node) {
         super();
         try {
             init(node);
@@ -56,23 +53,6 @@ public class NengoTermGraph extends Nengrow implements Runnable {
     }
 
 
-    UINetwork networkUI = null;
-
-    @Override
-    protected void onShowing(boolean showing) {
-        if (showing) {
-            timer = new java.util.Timer("", false);
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override public void run() {
-                    NengoTermGraph.this.run();
-                }
-            }, 0, (int) (1000 / fps));
-        }
-        else {
-            timer.cancel();
-            timer = null;
-        }
-    }
 
     public void init(TermGraphNode graph) throws ContainerException {
 
