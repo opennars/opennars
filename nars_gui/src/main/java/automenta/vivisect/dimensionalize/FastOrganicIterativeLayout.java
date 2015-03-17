@@ -1,5 +1,6 @@
 package automenta.vivisect.dimensionalize;
 
+import nars.gui.output.graph.nengo.UIEdge;
 import nars.gui.output.graph.nengo.UIVertex;
 import com.google.common.collect.Iterators;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
@@ -311,13 +312,11 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
 
 
             cells.clear();
-            for (Object oo : v.getEdges(true, true)) {
-                UIEdge e = (UIEdge)oo; //HACK fix this
-                Object source = e.getSource();
-                Object target = e.getTarget();
-                if (source != v) cells.add(source);
-                else if (target != v) cells.add(target);
-            }
+            for (Object oo : v.getEdgesIn())
+                updateEdge(cells, v, (UIEdge) oo);
+            for (Object oo : v.getEdgesOut())
+                updateEdge(cells, v, (UIEdge) oo);
+
 
             if (cells.isEmpty() && neighbors[i] != null) {
                 Arrays.fill(neighbors[i], -1);
@@ -429,6 +428,14 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
             p[1] = p[1] * wy + dy;
         }
 
+    }
+
+    private void updateEdge(List<Object> cells, N v, UIEdge oo) {
+        UIEdge e = oo; //HACK fix this
+        Object source = e.getSource();
+        Object target = e.getTarget();
+        if (source != v) cells.add(source);
+        else if (target != v) cells.add(target);
     }
 
 

@@ -19,6 +19,7 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
         super(s);
         //nodeMap = new LinkedHashMap<>();
         nodeMap = new FastMap<K,N>().atomic();
+        //nodeMap = new FastMap<K,N>().shared();
     }
 
 

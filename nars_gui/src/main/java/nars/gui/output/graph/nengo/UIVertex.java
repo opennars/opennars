@@ -1,12 +1,10 @@
 package nars.gui.output.graph.nengo;
 
-import automenta.vivisect.dimensionalize.UIEdge;
 import ca.nengo.model.SimulationException;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import com.google.common.collect.Iterables;
-import javolution.util.FastSet;
 import nars.logic.entity.Named;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.piccolo2d.PNode;
@@ -14,6 +12,7 @@ import org.piccolo2d.util.PAffineTransform;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
@@ -24,8 +23,8 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
     protected long layoutPeriod = -1;
     boolean destroyed = false;
 
-    final Set<UIEdge> incoming = new FastSet<UIEdge>();//.atomic();
-    final Set<UIEdge> outgoing = new FastSet<UIEdge>();//.atomic();
+    final Set<UIEdge<V>> incoming = new LinkedHashSet<>();//.atomic();
+    final Set<UIEdge<V>> outgoing = new LinkedHashSet<>();//.atomic();
 
     public UIVertex(V vertex) {
         super(vertex.name().toString());
@@ -123,31 +122,45 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
     }
 
 
-    private Set<UIEdge> getEdgeSet(final boolean in) {
+    private Set<UIEdge<V>> getEdgeSet(final boolean in) {
         return in ? incoming : outgoing;
     }
 
-    public void link(UIEdge v, boolean in) {
-        if (destroyed) return;
-        getEdgeSet(in).add(v);
-        if (!in) {
-            //ui.addChild(v);
-            links.addChild(v.getPNode());
+    public boolean link(UIEdge v, boolean in) {
+        if (destroyed) return false;
+        if (getEdgeSet(in).add(v)) {
+            if (!in) {
+                //ui.addChild(v);
+                links.addChild(v.getPNode());
+            }
+            return true;
         }
+        return false;
     }
 
-    public void unlink(UIEdge v, boolean in) {
-        if (destroyed) return;
-        getEdgeSet(in).remove(v);
-        if (!in) {
-            //ui.removeChild(v);
-            links.removeChild(v.getPNode());
+    public boolean unlink(UIEdge v, boolean in) {
+        if (destroyed) return false;
+        if (getEdgeSet(in).remove(v)) {
+            if (!in) {
+                //ui.removeChild(v);
+                links.removeChild(v.getPNode());
+            }
+            return true;
         }
+        return false;
     }
 
     abstract public boolean isDependent();
 
-    public Iterable<UIEdge> getEdges(boolean in, boolean out) {
+    public Set<UIEdge<V>> getEdgesIn() {
+        return incoming;
+    }
+    public Set<UIEdge<V>> getEdgesOut() {
+        return incoming;
+    }
+
+    /** Iterables.concat makes a copy of the list, unnecessary */
+    @Deprecated public Iterable<UIEdge<V>> getEdges(boolean in, boolean out) {
         if (destroyed) return Collections.emptyList();
 
         boolean i = !incoming.isEmpty();

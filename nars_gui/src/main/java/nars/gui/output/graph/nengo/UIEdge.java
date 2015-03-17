@@ -1,13 +1,12 @@
-package automenta.vivisect.dimensionalize;
+package nars.gui.output.graph.nengo;
 
-import nars.gui.output.graph.nengo.UIVertex;
 import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
-import javolution.util.FastSet;
 import nars.logic.entity.Named;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.util.FastMath;
 
 import java.awt.*;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -18,7 +17,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
     final V s, t;
 
     /** items contained in this edge */
-    public final Set<Named> e = new FastSet<Named>().atomic();
+    public final Set<Named> e = new LinkedHashSet(); //new FastSet<Named>().atomic();
     private final String name;
 
     float termlinkPriority, tasklinkPriority, priority;
@@ -109,7 +108,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         setPaint(getEdgeColor(this));
 
 
-        shape = drawArrow((Polygon) shape, null, sourceRadius, 0, 0, (int) tx, (int) ty, targetRadius);
+        shape = drawArrow((Polygon) shape, null, sourceRadius, (int) tx, (int) ty, 0, 0,targetRadius);
         if (shape == null) {
             setVisible(false);
         }

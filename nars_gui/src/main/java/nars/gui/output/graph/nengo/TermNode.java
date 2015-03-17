@@ -193,7 +193,8 @@ public class TermNode extends UIVertex {
         layoutPeriod = -1;
 
 
-        radius = ui.getFullBoundsReference().getWidth()/2.0; //hegith?
+        //radius = ui.getFullBoundsReference().getWidth()/2.0; //hegith?
+        radius = ui.getWidth()*2;
 
 
     }

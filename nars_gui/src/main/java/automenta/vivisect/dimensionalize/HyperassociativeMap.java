@@ -15,6 +15,7 @@
 package automenta.vivisect.dimensionalize;
 
 import nars.core.Parameters;
+import nars.gui.output.graph.nengo.UIEdge;
 import nars.logic.entity.Named;
 import nars.util.data.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;

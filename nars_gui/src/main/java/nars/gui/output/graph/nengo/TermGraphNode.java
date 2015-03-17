@@ -1,14 +1,12 @@
 package nars.gui.output.graph.nengo;
 
 import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
-import automenta.vivisect.dimensionalize.UIEdge;
 import ca.nengo.model.StepListener;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.AbstractMapNetwork;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import com.google.common.collect.Iterators;
-import javolution.util.FastMap;
 import nars.core.NAR;
 import nars.event.ConceptReaction;
 import nars.logic.Terms;
@@ -122,8 +120,8 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             return "layout";
         }
     };
-    private UIEdge[] nextEdges;
-    private Map<String,UIEdge> edges = new FastMap<String,UIEdge>().atomic();
+    //private UIEdge[] nextEdges;
+    //private Map<String,UIEdge> edges = new FastMap<String,UIEdge>().atomic();
     private UINARGraph ui;
     private boolean edgesChanged = false;
     private int numVertices = 0;
@@ -204,21 +202,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
     }
 
 
-    /**
-     * returns a list of edges which can be used by drawing thread for non-synchronized fast drawing
-     */
-    public Iterable<UIEdge> getEdges() {
-//            if (edgesChanged) {
-//                synchronized (edges) {
-//                    if (edgesChanged) { //test again in case a previously blocked thread goes in after it has been updated already
-//                        int numEdges = edges.size();
-//                        nextEdges = edges.toArray(new UIEdge[numEdges]); //use atomicRef?
-//                        edgesChanged = false;
-//                    }
-//                }
-//            }
-        return edges.values();
-    }
+
 
     @Override
     public String name(AbstractWidget node) {
@@ -261,36 +245,43 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
     }
 
     /** adds or gets existing edge between two vertices, directional */
-    public UIEdge<UIVertex> addEdge(UIVertex s, UIVertex t) {
+    public UIEdge<UIVertex> addEdge(UIVertex<?> s, UIVertex<?> t) {
         String name = s.name().toString() + ':' + t.name();
-        UIEdge<UIVertex> exist = edges.get(name);
-        if (exist == null)
-            exist = new UIEdge(s, t);
+
+        //this may be inefficient
+        for (UIEdge e : s.getEdgesOut()) {
+            if (e.name().equals(name)) {
+                return e;
+            }
+        }
+
+        UIEdge exist = new UIEdge(s, t);
         if (!add(exist))
             return null;
         return exist;
     }
 
     protected boolean add(UIEdge<UIVertex> e) {
-        if (edges.putIfAbsent(e.name(), e)==null) {
-            e.getSource().link(e, true);
-            e.getTarget().link(e, false);
-            edgesChanged();
-            return true;
-        }
+        //if (edges.putIfAbsent(e.name(), e)==null) {
+            if (e.getSource().link(e, false)) {
+                e.getTarget().link(e, true);
+                edgesChanged();
+                return true;
+            }
+        //}
         return false;
     }
 
     private void remove(UIEdge<UIVertex> e) {
-        if (edges.remove(e.name())!=null) {
-            if (e.getSource() != null)
-                e.getSource().unlink(e, true);
-            if (e.getTarget() != null) {
-                e.getTarget().unlink(e, false);
+        if (e.getSource() != null) { //necessary?
+            if (e.getSource().unlink(e, false)) {
+                ensureValid(e.getSource());
+                ensureValid(e.getTarget());
+                edgesChanged();
             }
-            ensureValid(e.getSource());
-            ensureValid(e.getTarget());
-            edgesChanged();
+            if (e.getTarget() != null) { //necessary?
+                e.getTarget().unlink(e, true);
+            }
         }
     }
 

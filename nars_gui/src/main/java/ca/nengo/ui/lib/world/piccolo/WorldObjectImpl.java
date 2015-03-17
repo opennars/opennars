@@ -68,7 +68,7 @@ public class WorldObjectImpl implements WorldObject {
         return EVENT_CONVERSION_TABLE_2.get(type);
     }
 
-    private final Set<ChildListener> childListeners = new LinkedHashSet();
+    private final Set<ChildListener> childListeners = new LinkedHashSet(1);
 
     private boolean draggable = true;
 
