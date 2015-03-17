@@ -32,7 +32,7 @@ import nars.gui.input.TextInputPanel;
 import nars.gui.output.*;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
-import nars.gui.output.graph.NARGraphPanel;
+import nars.gui.output.graph.nengo.NengoTermGraph;
 import nars.io.TextOutput;
 import nars.logic.meta.NARMetrics;
 
@@ -51,7 +51,7 @@ import static nars.core.Memory.Timing.Simulation;
 
 public class NARControls extends TimeControl implements Reaction {
 
-    final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
+    //final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 
     /**
      * Reference to the reasoner
@@ -154,7 +154,8 @@ public class NARControls extends TimeControl implements Reaction {
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new NWindow("graphvis", new NARGraphPanel( nar, -1) ).show(800, 800, false);
+                    new NWindow("Concepts",
+                            new NengoTermGraph(nar) ).show(800, 800, false);
                 }
             });
             m.add(mv);
@@ -204,24 +205,7 @@ public class NARControls extends TimeControl implements Reaction {
                     new NWindow("Activity", new MultiOutputPanel(NARControls.this)).show(500, 300);                }
             });
             m.add(al); */
-            
 
-
-
-            
-
-//            JMenuItem mv2 = new JMenuItem("+ Concept Graph 2");
-//            mv2.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    new NWindow("Concept Graph 2", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
-//                }
-//            });
-//            m.add(mv2);
-//
-//            
-            
-            
 
             JMenuItem imv = new JMenuItem("+ Eternalized Implications Graph");
             imv.addActionListener(new ActionListener() {
@@ -698,14 +682,10 @@ public class NARControls extends TimeControl implements Reaction {
         JButton focusButton = new AwesomeButton(FA_FocusCharacter);
         focusButton.setToolTipText("Focus");
         focusButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 setSpeed(1.0f);
                 volumeSlider.setValue(0.0f);
-                
             }
-
         });
         pc.add(focusButton);
         

@@ -1,6 +1,6 @@
 package automenta.vivisect.dimensionalize;
 
-import ca.nengo.test.nargraph.UIVertex;
+import nars.gui.output.graph.nengo.UIVertex;
 import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 import javolution.util.FastSet;
 import nars.logic.entity.Named;
@@ -34,15 +34,18 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         this.s = s;
         this.t = t;
         this.name = s.name().toString() + ':' + t.name();
+
         this.shape = new Polygon();
+        getGeometry().setPathTo(shape); //forces update
 
     }
 
     @Override
     protected void init() {
         super.init();
-        setSelectable(true);
-        setPickable(true);
+        //setSelectable(true);
+        //setPickable(true);
+        setStroke(null);
     }
 
     @Override
@@ -95,7 +98,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         double tx = target.getX()-source.getX();
         double ty = target.getY()-source.getY();
 
-        double pscale = getParent().getScale();
+        double pscale = getPNode().getParent().getParent().getScale(); //parent of the parent because nodes are collected in a container node of the vertex, which is beneath the icon
         tx/=pscale;
         ty/=pscale;
 
@@ -107,7 +110,20 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
 
 
         shape = drawArrow((Polygon) shape, null, sourceRadius, 0, 0, (int) tx, (int) ty, targetRadius);
-        getGeometry().setPathTo(shape); //forces update
+        if (shape == null) {
+            setVisible(false);
+        }
+        else {
+            setVisible(true);
+
+            //equivalent to: setPathTo(shape) but without firing an event
+            getGeometry().getPath().reset();
+            getGeometry().getPath().append(shape, false);
+            getGeometry().updateBoundsFromPath();
+            getGeometry().invalidatePaint();
+
+            //getGeometry().setPathTo(shape); //forces update
+        }
 
 
     }

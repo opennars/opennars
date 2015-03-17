@@ -1,4 +1,4 @@
-package ca.nengo.test.nargraph;
+package nars.gui.output.graph.nengo;
 
 import automenta.vivisect.swing.ColorArray;
 import ca.nengo.model.SimulationException;
@@ -18,7 +18,7 @@ import java.util.Set;
 /** a node which can represent a pre-Term, a Term, or a Concept */
 public class TermNode extends UIVertex {
 
-    private final TestNARGraph.NARGraphNode graphnode;
+    private final TermGraphNode graphnode;
     String text;
 
     final Term term; //required
@@ -52,17 +52,17 @@ public class TermNode extends UIVertex {
         //return "TermNode[\""  + text + "\"]";
     }
 
-    public TermNode(TestNARGraph.NARGraphNode graphnode, Concept c) {
+    public TermNode(TermGraphNode graphnode, Concept c) {
         this(graphnode, c.getTerm());
         setConcept(c);
     }
 
-    public TermNode(TestNARGraph.NARGraphNode graphnode, Task t) {
+    public TermNode(TermGraphNode graphnode, Task t) {
         this(graphnode, t.getTerm());
         addTask(t);
     }
 
-    public TermNode(TestNARGraph.NARGraphNode graphnode, Term term) {
+    public TermNode(TermGraphNode graphnode, Term term) {
         super(term);
         this.term = term;
         this.graphnode = graphnode;
@@ -184,7 +184,7 @@ public class TermNode extends UIVertex {
 
         ui.scaleTo(targetScale, 0.05);
 
-        ui.dragTo(x, y, bounds.getWidth() /* speed */, 0.005);
+        ui.dragTo(x, y, bounds.getWidth()*4 /* speed */, 0.005);
         //ui.animateToPositionScaleRotation(x, y, targetScale, 0, 0);
 
         ui.getIcon().getBody().setRotation(angle);

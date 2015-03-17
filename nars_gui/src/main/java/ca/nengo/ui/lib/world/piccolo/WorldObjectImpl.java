@@ -877,8 +877,12 @@ public class WorldObjectImpl implements WorldObject {
         setOffset(arg0.getX(), arg0.getY());
     }
 
-    public void setPaint(Paint arg0) {
-       pnode.setPaint(arg0);
+    public void setPaint(Paint p) {
+        Paint oldPaint = pnode.getPaint();
+        if (oldPaint!=null && oldPaint.equals(p))
+            return;//same paint
+        Color c;
+        pnode.setPaint(p);
     }
 
     public void setPickable(boolean isPickable) {

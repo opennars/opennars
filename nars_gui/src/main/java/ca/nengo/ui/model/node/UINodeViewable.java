@@ -118,10 +118,15 @@ public abstract class UINodeViewable extends UINeoNode {
 
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    if (getWorld() != null) {
-                        if (viewerWindowRef.get() != null && !viewerWindowRef.get().isDestroyed()) {
-                            getWorld().zoomToObject(viewerWindowRef.get());
+                    try {
+                        if (getWorld() != null) {
+                            if (viewerWindowRef.get() != null && !viewerWindowRef.get().isDestroyed()) {
+                                getWorld().zoomToObject(viewerWindowRef.get());
+                            }
                         }
+                    }
+                    catch (Exception e) {
+                        //..
                     }
                 }
             });

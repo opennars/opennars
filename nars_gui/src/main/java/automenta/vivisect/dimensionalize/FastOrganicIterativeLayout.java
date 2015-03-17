@@ -1,6 +1,6 @@
 package automenta.vivisect.dimensionalize;
 
-import ca.nengo.test.nargraph.UIVertex;
+import nars.gui.output.graph.nengo.UIVertex;
 import com.google.common.collect.Iterators;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.util.data.XORShiftRandom;

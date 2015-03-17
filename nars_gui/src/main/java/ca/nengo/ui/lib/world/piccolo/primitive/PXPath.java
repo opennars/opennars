@@ -373,7 +373,11 @@ public class PXPath extends PXNode {
 		invalidatePaint();
 	}
 
-	public void append(Shape aShape, boolean connect) {
+    public GeneralPath getPath() {
+        return path;
+    }
+
+    public void append(Shape aShape, boolean connect) {
 		path.append(aShape, connect);
 		firePropertyChange(PROPERTY_CODE_PATH, PROPERTY_PATH, null, path);
 		updateBoundsFromPath();

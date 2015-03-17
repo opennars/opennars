@@ -263,10 +263,12 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
 
-		if (node().getDocumentation() != null) {
-			tooltips.addProperty("Documentation",
-					Util.truncateString(node().getDocumentation(), 100));
-		}
+        if (node()!=null) {
+            if (node().getDocumentation() != null) {
+                tooltips.addProperty("Documentation",
+                        Util.truncateString(node().getDocumentation(), 100));
+            }
+        }
 		//tooltips.addProperty("Simulation mode", getModel().getMode().toString());
 
 	}
@@ -506,6 +508,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	public String getFileName() {
 		return this.getName() + '.' + AbstractNengo.NEONODE_FILE_EXTENSION;
 	}
+
 
 	@Override
 	public N node() {

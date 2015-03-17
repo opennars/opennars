@@ -1,4 +1,4 @@
-package ca.nengo.test.nargraph;
+package nars.gui.output.graph.nengo;
 
 import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.model.icon.ModelIcon;
@@ -12,9 +12,9 @@ import ca.nengo.ui.model.viewer.NodeViewer;
 public class UINARGraph extends UINetwork {
 
 
-    private final TestNARGraph.NARGraphNode nargraph;
+    private final TermGraphNode nargraph;
 
-    public UINARGraph(TestNARGraph.NARGraphNode n) {
+    public UINARGraph(TermGraphNode n) {
         super(n);
         this.nargraph = n;
     }
