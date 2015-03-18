@@ -261,7 +261,7 @@ public class LocalRules {
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,
                 nal.newStamp(asym, sym),
-                false);
+                false, false);
     }
 
     /* -------------------- one-premise logic rules -------------------- */

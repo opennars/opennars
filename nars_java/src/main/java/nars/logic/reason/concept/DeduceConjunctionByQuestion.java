@@ -127,7 +127,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
                 BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
                 nal.doublePremiseTask(conj, truthAnd, budget,
                         nal.newStamp(sentence, belief),
-                        false);
+                        false, true);
 
                 nal.memory.logic.DED_CONJUNCTION_BY_QUESTION.hit();
 

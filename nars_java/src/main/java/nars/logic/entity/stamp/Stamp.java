@@ -127,6 +127,13 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      */
     public static Stamp zip(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
 
+        if (first==second) {
+            throw new RuntimeException("Same stamp: " + first);
+        }
+//        if (first.equals(second, true, true, true, true)) {
+//            throw new RuntimeException("Equal stamp: " + first);
+//        }
+
         final long[] firstBase = first.evidentialBase;
         final long[] secondBase = second.evidentialBase;
 
@@ -547,6 +554,9 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     }
 
     public boolean isCyclic() {
+        long[] es = toSet();
+        return es.length!=evidentialBase.length; //if the evidential set contains duplicates, it will be of a smaller size then the original evidence
+        /*
         final int stampLength = evidentialBase.length;
         for (int i = 0; i < stampLength; i++) {
             final long baseI = evidentialBase[i];
@@ -556,8 +566,9 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
                 }
             }
         }
-
         return false;
+        */
+
     }
 }
 

@@ -22,6 +22,7 @@ public class NAL4Test extends JavaNALTest {
                 {new Default()},
                 {new Default().level(6)},
                 {new Default().setInternalExperience(null) },
+
                 //{new DefaultBuffered().setInternalExperience(null) },
 
                 {new Curve().setInternalExperience(null)}
@@ -45,14 +46,17 @@ public class NAL4Test extends JavaNALTest {
         ''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.26%')
         */
 
-        long time = 5000;
+        //TextOutput.out(nar);
 
-        float minConf = 0.12f; ///0.26f;
+
+        long time = 2000;
+
+        float minConf = 0.66f;
         nar.believe("<0 --> num>", 1.0f, 0.9f);
         nar.believe("<<$1 --> num> ==> <(*,$1) --> num>>", 1.0f, 0.9f);
         nar.ask("<(*,(*,(*,0))) --> num>");
-        nar.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
-        nar.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.1f, 1.0f);
+        nar.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.81f, 1.0f);
+        nar.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.73f, 1.0f);
         nar.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
         nar.run();
 

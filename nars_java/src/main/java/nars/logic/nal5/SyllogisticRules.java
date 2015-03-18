@@ -90,8 +90,8 @@ public final class SyllogisticRules {
             return;
 
         final NAL.StampBuilder stamp = nal.newStamp(sentence, belief);
-        nal.doublePremiseTask(content1, truth1, budget1, stamp, false);
-        nal.doublePremiseTask(content2, truth2, budget2, stamp, false);
+        nal.doublePremiseTask(content1, truth1, budget1, stamp, false, true);
+        nal.doublePremiseTask(content2, truth2, budget2, stamp, false, true);
     }
 
     /**
@@ -151,13 +151,13 @@ public final class SyllogisticRules {
 
         nal.doublePremiseTask(
                 Statement.make(taskContent, term1, term2, order), 
-                    truth1, budget1, stamp, false);
+                    truth1, budget1, stamp, false, false);
         nal.doublePremiseTask(
                 Statement.make(taskContent, term2, term1, reverseOrder(order)), 
-                    truth2, budget2, stamp, false);
+                    truth2, budget2, stamp, false, false);
         nal.doublePremiseTask(
                 Terms.makeSymStatement(taskContent, term1, term2, order),
-                    truth3, budget3, stamp, false);
+                    truth3, budget3, stamp, false, false);
         
     }
 
@@ -215,7 +215,7 @@ public final class SyllogisticRules {
         }
 
         nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,
-                nal.newStamp(asym, sym), false);
+                nal.newStamp(asym, sym), false, true);
 
         nal.memory.logic.ANALOGY.hit();
     }
@@ -256,7 +256,7 @@ public final class SyllogisticRules {
         
         return nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,
                 nal.newStamp(belief, sentence),
-                false );
+                false, true );
 
     }
 
@@ -362,7 +362,7 @@ public final class SyllogisticRules {
         if(!Variables.indepVarUsedInvalid(content)) {
             nal.doublePremiseTask(content, truth, budget,
                     st,
-                    false);
+                    false, false);
         }
     }
 
@@ -523,7 +523,7 @@ public final class SyllogisticRules {
 
         return nal.doublePremiseTask((CompoundTerm)content, truth, budget,
                 nal.newStamp(taskSentence, belief, TemporalRules.applyExpectationOffset(nal.memory, premise1, occurTime)),
-                false);
+                false, deduction);
     }
 
     /**
@@ -626,7 +626,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        nal.doublePremiseTask(content, truth, budget, nal.newStamp(taskSentence, belief), false);
+        nal.doublePremiseTask(content, truth, budget, nal.newStamp(taskSentence, belief), false, true);
 
         return true;
     }
@@ -706,7 +706,7 @@ public final class SyllogisticRules {
                     budget = BudgetFunctions.forward(truth, nal);
                 }
 
-                nal.doublePremiseTask((CompoundTerm) content, truth, budget, nal.newStamp(sentence, belief), false);
+                nal.doublePremiseTask((CompoundTerm) content, truth, budget, nal.newStamp(sentence, belief), false, false);
             }
         }
         
@@ -735,7 +735,7 @@ public final class SyllogisticRules {
                     }
                     budget = BudgetFunctions.forward(truth, nal);
                 }
-                nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(sentence, belief), false);
+                nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(sentence, belief), false, false);
             }
         }
         
@@ -774,6 +774,6 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(sentence, belief), false);
+        nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(sentence, belief), false, false);
     }
 }

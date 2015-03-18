@@ -370,23 +370,23 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11,inductionLimit)) {
-                boolean t = nal.doublePremiseTask(statement11, truth1, budget1, stamp, true, subbedBelief, subbedTask);
+                boolean t = nal.doublePremiseTask(statement11, truth1, budget1, stamp, true, subbedBelief, subbedTask, false);
             }
             if(!tooMuchTemporalStatements(statement22,inductionLimit)) {
-               boolean t = nal.doublePremiseTask(statement22, truth2, budget2, stamp, true, subbedBelief, subbedTask);
+               boolean t = nal.doublePremiseTask(statement22, truth2, budget2, stamp, true, subbedBelief, subbedTask, false);
             }
             if(!tooMuchTemporalStatements(statement33,inductionLimit)) {
-               boolean t = nal.doublePremiseTask(statement33, truth3, budget3, stamp, true, subbedBelief, subbedTask);
+               boolean t = nal.doublePremiseTask(statement33, truth3, budget3, stamp, true, subbedBelief, subbedTask, false);
             }
         }
         if(!tooMuchTemporalStatements(statement1,inductionLimit)) {
-            boolean t = nal.doublePremiseTask(statement1, truth1, budget1, stamp, true, subbedBelief, subbedTask);
+            boolean t = nal.doublePremiseTask(statement1, truth1, budget1, stamp, true, subbedBelief, subbedTask, false);
         }
         if(!tooMuchTemporalStatements(statement2,inductionLimit)) {
-            boolean t = nal.doublePremiseTask(statement2, truth2, budget2, stamp, true, subbedBelief, subbedTask); //=/> only to  keep graph simple for now
+            boolean t = nal.doublePremiseTask(statement2, truth2, budget2, stamp, true, subbedBelief, subbedTask, false); //=/> only to  keep graph simple for now
         }
         if(!tooMuchTemporalStatements(statement3,inductionLimit)) {
-            boolean t = nal.doublePremiseTask(statement3, truth3, budget3, stamp, true, subbedBelief, subbedTask);
+            boolean t = nal.doublePremiseTask(statement3, truth3, budget3, stamp, true, subbedBelief, subbedTask, false);
         }
 
     }

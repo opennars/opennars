@@ -94,6 +94,7 @@ public class UtilityFunctions {
     public final static float aveGeo(final float... arr) {
         float product = 1;
         for (final float f : arr) {
+            if (f == 0) return 0;
             product *= f;
         }
         return (float) pow(product, 1.00 / arr.length);

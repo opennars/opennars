@@ -44,7 +44,8 @@ public class Solid extends Default {
         this.maxTaskLink = maxTaskLink;
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
-        param.duration.set(1);
+        param.duration.set(3);
+        param.noveltyHorizon.set(2);
     }
 
     @Override
@@ -174,13 +175,7 @@ public class Solid extends Default {
 
 
 
-            @Override
-            public void cycle() {
-                //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
-
-                getMemory().perceiveNext(inputsPerCycle);
-
-                //1. process all new tasks
+            protected void processNewTasks() {
                 int t = 0;
                 for (Task task : tasks) {
 
@@ -190,9 +185,21 @@ public class Solid extends Default {
                     if (t++ >= maxTasks) break;
                 }
                 tasks.clear();
+            }
+
+            @Override
+            public void cycle() {
+                //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
+
+                getMemory().perceiveNext(inputsPerCycle);
+
+                processNewTasks();
 
                 //2. fire all concepts
                 for (Concept c : concepts) {
+
+                    int conceptTaskLinks = c.taskLinks.size();
+                    if (conceptTaskLinks == 0) continue;
 
                     float p = c.getPriority();
                     int fires = num(p, minTaskLink, maxTaskLink);
@@ -200,14 +207,15 @@ public class Solid extends Default {
                     int termFires = num(p, minTermLink, maxTermLink);
                     if (termFires < 1) continue;
 
-                    //System.out.println("  firing " + c.budget + " " + c + " x " + fires);
-
                     for (int i = 0; i < fires; i++) {
                         TaskLink tl = c.taskLinks.forgetNext(param.taskLinkForgetDurations, getMemory());
                         if (tl==null) break;
                         new ConceptProcess(c, tl, termFires).run();
                     }
+
                 }
+
+                //processNewTasks();
 
                 memory.runNextTasks();
             }
@@ -274,12 +282,12 @@ public class Solid extends Default {
 
         Parameters.DEBUG = false;
 
-        Solid s = new Solid(2, 256, 0, 9, 0, 3);
+        Solid s = new Solid(3, 512, 1, 10, 1, 8);
         NAR n = new NAR(s);
         n.input(new File("/tmp/h.nal"));
 
-        TextOutput.out(n).setPriorityMin(1.0f);
-        n.step(6);
+        TextOutput.out(n).setOutputPriorityMin(1.0f);
+        n.step(45);
 
     }
 

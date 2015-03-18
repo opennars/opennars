@@ -215,7 +215,6 @@ public class ConceptProcess extends NAL {
                 this.currentBelief = currentBeliefConcept.getBelief(this, getCurrentTask());
             }
             else {
-                //this.currentBelief = currentTask.sentence;
                 this.currentBelief = null;
             }
         }

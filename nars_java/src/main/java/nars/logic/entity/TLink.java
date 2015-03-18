@@ -24,4 +24,12 @@ public interface TLink<T extends Termable> extends BudgetValue.Budgetable {
             out.print(((TaskLink)t).getRecords());
         }
     }
+
+    /** accessor for getIndex which will throw an exception if the index is not available for use as a figure value (0,1) */
+    default public int getFigureIndex(final int i) {
+        final short v = getIndex(i);
+        if ((v < 0) || (v > 1))
+            throw new RuntimeException("Figure index " + i + " not available in " + this);
+        return v;
+    }
 }

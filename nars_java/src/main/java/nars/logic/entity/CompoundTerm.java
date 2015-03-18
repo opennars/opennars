@@ -190,26 +190,18 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         return cloneNormalized();
     }
 
-    /**
-     * for normalizing terms that contain variables which need to be finalized for use in a Sentence
-     */
-    public <T extends CompoundTerm> T cloneNormalized() {
-        if (!hasVar()) return (T) this;
-        if (isNormalized()) return (T) this;
-
-        //TODO merge cloneDeepVariables with the variable extraction part below
-
-        final T c = (T) cloneDeepVariables();
-
-        List<Variable> vars = Parameters.newArrayList(); //may contain duplicates, list for efficiency
-
-        c.recurseSubtermsContainingVariables(new Sentence.SubTermVarCollector(vars));
-
+    public static class VariableNormalization  {
         Map<CharSequence, CharSequence> rename = Parameters.newHashMap();
+
+        final CompoundTerm result;
         boolean renamed = false;
 
-        for (final Variable v : vars) {
+        public VariableNormalization(CompoundTerm target) {
+            this.result = target.cloneVariablesDeep();
+            this.result.transformVariableTermsDeep(this);
+        }
 
+        public Variable apply(CompoundTerm ct, Variable v) {
             CharSequence vname = v.name();
             if (!v.hasVarIndep() && v.hasScope()) //include the scope as part of its uniqueness
                 vname = vname.toString() + v.getScope().name();
@@ -223,28 +215,43 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
                     renamed = true;
             }
 
-
-            v.setScope(c, n);
-
+            return new Variable(n, result);
         }
 
-        if (renamed) {
+        public boolean hasRenamed() {
+            return renamed;
+        }
 
-            c.invalidateName();
+        public CompoundTerm getResult() {
+            return result;
+        }
+    }
 
-            if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
-                if (!Term.valid(c)) {
-                    CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + this);
-                    ntc.printStackTrace();
-                    throw ntc;
-                }
+    /**
+     * for normalizing terms that contain variables which need to be finalized for use in a Sentence
+     */
+    public <T extends CompoundTerm> T cloneNormalized() {
+        if (!hasVar()) return (T) this;
+        if (isNormalized()) return (T) this;
+
+
+        VariableNormalization vn = new VariableNormalization(this);
+        CompoundTerm result = vn.getResult();
+        if (vn.hasRenamed()) {
+            result.invalidateName();
+        }
+
+        result.setNormalized(true); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
+
+        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+            if (!Term.valid(result)) {
+                UnableToCloneException ntc = new UnableToCloneException("Invalid term discovered after normalization: " + result + " ; prior to normalization: " + this);
+                ntc.printStackTrace();
+                throw ntc;
             }
-
         }
 
-        c.setNormalized(true); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
-
-        return c;
+        return (T)result;
 
     }
 
@@ -298,24 +305,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         return ((CompoundTerm) c);
     }
     
-    
 
-    /* ----- utilities for oldName ----- */
 
-    public CompoundTerm cloneDeepVariables() {
-        return cloneDeepVariables(null);
-    }
-    protected CompoundTerm cloneDeepVariables(CompoundTerm scope) {
-        Term c = clone(cloneVariableTermsDeep(scope));
 
-        if (c == null)
-            throw new UnableToCloneException("clone(cloneVariableTermsDeep()) resulted in null: " + this);
 
-        if (c.operator() != operator())
-            throw new UnableToCloneException("cloneDeepVariables resulted in different class: " + c + " from " + this);
-
-        return ((CompoundTerm) c);
-    }
 
     /**
      * override in subclasses to avoid unnecessary reinit
@@ -508,32 +501,39 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         return l;
     }
 
-    public Term[] cloneVariableTermsDeep() {
-        return cloneVariableTermsDeep(null);
+
+    /** clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step */
+    protected CompoundTerm cloneVariablesDeep() {
+        return (CompoundTerm) clone(cloneVariableTermsDeep());
     }
 
-    public Term[] cloneVariableTermsDeep(CompoundTerm scope) {
+    public Term[] cloneVariableTermsDeep() {
         Term[] l = new Term[term.length];
         for (int i = 0; i < l.length; i++) {
             Term t = term[i];
 
-            if (t.hasVar()) {
-                if (t instanceof CompoundTerm) {
-                    t = ((CompoundTerm) t).cloneDeepVariables(scope);
-                } else {  /* it's a variable */
-                    Variable v = (Variable)t;
-                    if (v.hasVarDep() && scope==null)
-                        t = v.clone(); //re-use existing scope
-                    else
-                        t = v.clone( scope );
-                }
+            if ((!(t instanceof Variable)) && (t.hasVar())) {
+                t = t.cloneDeep();
             }
 
             //else it is an atomic term or a compoundterm with no variables, so use as-is:
-
             l[i] = t;
         }
         return l;
+    }
+
+    protected void transformVariableTermsDeep(VariableNormalization variableTransform) {
+        for (int i = 0; i < term.length; i++) {
+            Term t = term[i];
+
+            if (t.hasVar()) {
+                if (t instanceof CompoundTerm) {
+                    ((CompoundTerm)t).transformVariableTermsDeep(variableTransform);
+                } else {  /* it's a variable */
+                    term[i] = variableTransform.apply(this, (Variable)t);
+                }
+            }
+        }
     }
 
     /**

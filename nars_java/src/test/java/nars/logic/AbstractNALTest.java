@@ -148,7 +148,7 @@ abstract public class AbstractNALTest extends TestCase {
         assertTrue("No cycles elapsed", nar.time() > 0);
 
         StringBuilder report = new StringBuilder();
-        report.append('@').append(nar.time()).append(": ");
+        report.append('@').append(nar.time()).append(":\n");
         boolean suc = nar.getError()==null;
         for (OutputCondition e : nar.requires) {
             if (!e.succeeded) {
@@ -157,7 +157,7 @@ abstract public class AbstractNALTest extends TestCase {
                 suc = false;
             }
             else {
-                report.append(e.getTrueReasons().toString()).append('\n');
+                report.append(e.getTrueReasons().toString()).append("\n\n");
             }
         }
         if (!suc && script!=null) {

@@ -31,7 +31,6 @@ import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
 import nars.logic.*;
 import nars.logic.entity.*;
-import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal1.Negation;
 import nars.logic.nal2.Similarity;
@@ -46,8 +45,6 @@ import nars.logic.nal5.Equivalence;
 import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
-import nars.logic.nal8.ImmediateOperation;
-import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.operator.app.plan.MultipleExecutionManager;
 import reactor.function.Supplier;
@@ -109,6 +106,8 @@ public class Memory implements Serializable {
     public Set<Concept> getGoalConcepts() {
         return goalConcepts;
     }
+
+
 
     /** allows an external component to signal to the memory that data is available.
      * default implementation now just absorbs all the data but different policies
@@ -553,36 +552,12 @@ public class Memory implements Serializable {
      */
     public boolean taskAdd(final Task t, final String reason) {
 
-        if (Parameters.DEBUG) {
-            if (t.sentence != null && t.sentence.stamp.getOccurrenceTime() < -999999 && !t.sentence.isEternal())
-                throw new RuntimeException("Probably invalid occurence time:\n" + t.getExplanation());
-        }
-
         if (reason!=null)
             t.addHistory(reason);
 
         /* process ImmediateOperation and Operations of ImmediateOperators */
-        final Term taskTerm = t.getTerm();
-        if (taskTerm instanceof Operation) {
-            Operation o = (Operation) taskTerm;
-            o.setTask(t);
-
-
-            if (o instanceof ImmediateOperation) {
-                if (t.sentence!=null && t.getPunctuation()!= Symbols.GOAL)
-                    throw new RuntimeException("ImmediateOperation " + o + " was not specified with goal punctuation");
-
-                ImmediateOperation i = (ImmediateOperation) t.getTerm();
-                i.execute(this);
-                return false;
-            }
-            else if (o.getOperator().isImmediate()) {
-                if (t.sentence!=null && t.getPunctuation()!= Symbols.GOAL)
-                    throw new RuntimeException("ImmediateOperator call " + o + " was not specified with goal punctuation");
-
-                o.getOperator().call(o, this);
-                return false;
-            }
+        if (t.executeIfImmediate(this)) {
+            return false;
         }
 
         if (!t.budget.aboveThreshold()) {
@@ -619,25 +594,12 @@ public class Memory implements Serializable {
      */
     public int taskInput(final Task task) {
 
-        if (task.sentence!=null) {
-            //if a task has an unperceived creationTime,
-            // set it to the memory's current time here,
-            // and adjust occurenceTime if it's not eternal
-            Stamp s = task.sentence.stamp;
-            if (s.getCreationTime() == Stamp.UNPERCEIVED) {
-                final long now = time();
-                long oc = s.getOccurrenceTime();
-                if (oc!=Stamp.ETERNAL)
-                    oc += now;
-                task.getStamp().setTime(now, oc);
-            }
-        }
+        task.ensurePerceived(this);
 
-
-        emit(Events.IN.class, task);
-
-        if (taskAdd(task, "Perceived"))
+        if (taskAdd(task, "Perceived")) {
+            emit(Events.IN.class, task);
             return 1;
+        }
 
         return 0;
     }
@@ -645,6 +607,8 @@ public class Memory implements Serializable {
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
     public void taskRemoved(final Task task, final String removalReason) {
         task.addHistory(removalReason);
+        if (Parameters.TASK_HISTORY && Parameters.DEBUG_DERIVATION_STACKTRACES)
+            task.addHistory(NAL.getNALStack());
         emit(TaskRemove.class, task, removalReason);
         task.end();
     }

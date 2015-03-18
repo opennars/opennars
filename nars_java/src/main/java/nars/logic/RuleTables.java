@@ -105,7 +105,9 @@ public class RuleTables {
      * @return The figure of the syllogism, one of the four: 11, 12, 21, or 22
      */
     public static final  int indexToFigure(final TLink link1, final TLink link2) {
-        return (link1.getIndex(0) + 1) * 10 + (link2.getIndex(0) + 1);
+        final int i1 = link1.getFigureIndex(0);
+        final int i2 = link2.getFigureIndex(0);
+        return ((i1 + 1) * 10) + (i2 + 1);
     }
 
     /**

@@ -48,7 +48,7 @@ public class TextOutput extends Output {
     //privte boolean showStackTrace = false;
     private boolean showStamp = true;
     private boolean showInput = true;
-    private float minPriority = 0;
+    private float outputPriorityMin = 0;
 
     public interface LineOutput {
         public void println(CharSequence s);
@@ -81,19 +81,19 @@ public class TextOutput extends Output {
         this(n, outExp, 0.0f);
     }
 
-    public TextOutput(NAR n, PrintWriter outExp, float minPriority) {
+    public TextOutput(NAR n, PrintWriter outExp, float outputPriorityMin) {
         this(n);
         this.outExp = outExp;
-        this.minPriority = minPriority;
+        this.outputPriorityMin = outputPriorityMin;
     }
 
     public TextOutput(NAR n, PrintStream ps) {
         this(n, new PrintWriter(ps));
     }
 
-    public TextOutput(NAR n, PrintStream ps, float minPriority) {
+    public TextOutput(NAR n, PrintStream ps, float outputPriorityMin) {
         this(n, ps);
-        this.minPriority = minPriority;
+        this.outputPriorityMin = outputPriorityMin;
     }
 
     public TextOutput(NAR n, StringWriter s) {
@@ -161,7 +161,7 @@ public class TextOutput extends Output {
             if (!allowTask((Task) o[0]))
                 return null;
         }
-        return getOutputString(c, o, true, showStamp, nar, buffer, minPriority);
+        return getOutputString(c, o, true, showStamp, nar, buffer, outputPriorityMin);
     }
 
     /**
@@ -196,18 +196,16 @@ public class TextOutput extends Output {
         return this;
     }
 
-    public void setPriorityMin(float minPriority) {
-        this.minPriority = minPriority;
+    public void setOutputPriorityMin(float minPriority) {
+        this.outputPriorityMin = minPriority;
     }
 
     /**
      * generates a human-readable string from an output channel and signals
      */
-    public static StringBuilder getOutputString(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
+    public static StringBuilder getOutputString(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float outputMinPriority) {
         buffer.setLength(0);
 
-        if (showChannel)
-            buffer.append(channel.getSimpleName()).append(": ");
 
         Object signal;
         Object[] signals;
@@ -219,6 +217,9 @@ public class TextOutput extends Output {
             signals = null;
         }
 
+        if (showChannel) {
+            buffer.append(channel.getSimpleName()).append(": ");
+        }
 
         if (channel == Events.ERR.class) {
 
@@ -248,7 +249,7 @@ public class TextOutput extends Output {
 
             Task t = (Task) signal;
             if (t.budget != null && t.sentence != null) {
-                if (t.getPriority() <= minPriority)
+                if (channel == Events.OUT.class && t.getPriority() <= outputMinPriority)
                     return null;
 
                 t.sentence.toString(buffer, nar.memory, showStamp);

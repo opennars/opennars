@@ -165,7 +165,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
                 return nal.doublePremiseTask(whole, truth, budget,
                         nal.newStamp(s1, s2),
-                        true);
+                        true, false);
             }
         }
         return false;

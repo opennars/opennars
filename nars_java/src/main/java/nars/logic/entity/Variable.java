@@ -37,7 +37,7 @@ public class Variable extends Term {
     /** caches the type character for faster lookup than charAt(0) */
     private transient char type = 0;
     
-    private Term scope;
+    private final Term scope;
 
     private transient int hash;
     
@@ -51,35 +51,30 @@ public class Variable extends Term {
      *
      * @param name A String read from input
      */
-    protected Variable(final CharSequence name, final Term scope) {
-        super();        
-        setScope(scope, name);
+    protected Variable(final CharSequence n, final Term scope) {
+        super();
+        this.name = n;
+        this.type = n.charAt(0);
+        if (!validVariableType(type))
+            throw new RuntimeException("Invalid variable type: " + n);
+        this.scope = scope != null ? scope : this;
+        this.hash = 0; //calculate lazily
     }
 
     @Override protected void setName(CharSequence newName) { }
 
 
-    public Variable setScope(final Term scope, final CharSequence n) {
-        this.name = n;
-        this.type = n.charAt(0);
-        this.scope = scope != null ? scope : this;
-        this.hash = 0; //calculate lazily
-        if (!validVariableType(type)) 
-            throw new RuntimeException("Invalid variable type: " + n);
-        return this;
-    }
     
     /**
      * Clone a Variable
+     * If this is unscoped, the result will be unscoped also.
+     * If this is scoped, it will have the same scope.
      *
      * @return The cloned Variable
      */
     @Override
     public Variable clone() {
-        Variable v = new Variable(name(), scope);
-        if (scope == this)
-            v.scope = v;
-        return v;
+        return new Variable(name(), scope == this ? null : scope);
     }
 
     public Variable clone(CompoundTerm newScope) {

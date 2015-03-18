@@ -148,11 +148,17 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
         //its revision, of course its cyclic, apply evidental base policy
 
-        if(Parameters.DEBUG && !allowOverlap) { //TODO cleanup for 1.6.3, revised variable wont be needed anymore I guess.
-            if (task.getStamp().isCyclic()) {
-                //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
-                //re.printStackTrace();
-                return false;
+        /*if(Parameters.DEBUG)*/ //TODO make this DEBUG only once it is certain
+        {
+            //if revised, the stamp should already have been prevented from even being created
+
+            if (revised || !allowOverlap) {
+                if (task.getStamp().isCyclic()) {
+                    //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
+                    //re.printStackTrace();
+                    memory.taskRemoved(task, "Cyclic: " + task.getStamp().toString());
+                    return false;
+                }
             }
         }
 
@@ -225,7 +231,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             task.addHistory(reason);
 
             if (Parameters.DEBUG_DERIVATION_STACKTRACES) {
-                task.addHistory(getNALStack().toString());
+                task.addHistory(getNALStack());
             }
 
             return true;
@@ -247,13 +253,16 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder newStamp, boolean temporalAdd) {
-        return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentBelief(), getCurrentTask());
+    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder newStamp, boolean temporalAdd, boolean allowOverlap) {
+        return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentBelief(), getCurrentTask(), allowOverlap);
     }
 
-    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder stamp, final boolean temporalAdd, Sentence subbedBelief, Task subbedTask) {
-        if (!newBudget.aboveThreshold()) {
-            return false;
+    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder stamp, final boolean temporalAdd, Sentence subbedBelief, Task subbedTask, boolean allowOverlap) {
+        if (!Parameters.DEBUG) { //in debug mode, allow the task to be created so we get the entire thing when it is rejected in the filter later
+            if (!newBudget.aboveThreshold()) {
+                //early exit test for below budget
+                return false;
+            }
         }
 
         newTaskContent = Sentence.termOrNull(newTaskContent);
@@ -264,7 +273,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
         boolean derived = deriveTask(new Task(
                 new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
-                newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask, false);
+                newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask, allowOverlap);
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
@@ -276,7 +285,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                                     TruthFunctions.eternalize(newTruth),
                                     newStamp.cloneEternal()),
                             newBudget, subbedTask, subbedBelief),
-                    false, false, subbedBelief, subbedTask, false);
+                    false, false, subbedBelief, subbedTask, allowOverlap);
         }
 
         return derived;
@@ -348,7 +357,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
     public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
+        //newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
         return deriveTask(newTask, false, true);
     }
 
@@ -568,8 +577,9 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                     stamp = new Stamp(b, creationTime, occurrenceTime);
                 else if (b == null)
                     stamp = new Stamp(a, creationTime, occurrenceTime);
-                else
+                else {
                     stamp = Stamp.zip(a, b, creationTime, occurrenceTime);
+                }
             }
             return stamp;
         }

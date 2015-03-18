@@ -204,12 +204,13 @@ public class TransformTask extends ConceptFireTask {
             ImageInt image = (ImageInt) subject;
             int relationIndex = image.relationIndex;
             for (short i = 0; i < image.size(); i++) {
+                Term iti = image.term[i];
                 if (i == relationIndex) {
-                    newSubj = image.term[relationIndex];
+                    newSubj = iti;
                     newPred = Product.make(image, predicate, relationIndex);
                 } else {
                     newSubj = ImageInt.make(image, predicate, i);
-                    newPred = image.term[i];
+                    newPred = iti;
                 }
                 inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) {

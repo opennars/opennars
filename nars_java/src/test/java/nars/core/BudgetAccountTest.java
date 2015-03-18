@@ -21,8 +21,8 @@ public class BudgetAccountTest {
     
     @Test
     public void testBudgetAccounting() {
-        BudgetValue a = new BudgetValue(1f,0,0);
-        BudgetValue b = new BudgetValue(0.5f,0,0);
+        BudgetValue a = new BudgetValue(1f,0.5f,0);
+        BudgetValue b = new BudgetValue(0.5f,0.5f,0);
         BudgetAccount x = new BudgetAccount(0f);
         
         x.transfer(a, 0.75f, b, 0.75f, false);

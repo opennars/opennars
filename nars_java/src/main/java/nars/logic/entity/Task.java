@@ -22,9 +22,12 @@ package nars.logic.entity;
 
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.io.Symbols;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.stamp.Stamp;
 import nars.logic.entity.stamp.Stamped;
+import nars.logic.nal8.ImmediateOperation;
+import nars.logic.nal8.Operation;
 
 import java.lang.ref.Reference;
 import java.util.ArrayList;
@@ -515,5 +518,51 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
             history.addAll(historyToCopy);
         }
         return this;
+    }
+
+    /**
+     * @return true if it was immediate
+     */
+    public boolean executeIfImmediate(Memory memory) {
+        final Term taskTerm = getTerm();
+        if (taskTerm instanceof Operation) {
+            Operation o = (Operation) taskTerm;
+            o.setTask(this);
+
+
+            if (o instanceof ImmediateOperation) {
+                if (sentence!=null && getPunctuation()!= Symbols.GOAL)
+                    throw new RuntimeException("ImmediateOperation " + o + " was not specified with goal punctuation");
+
+                ImmediateOperation i = (ImmediateOperation) getTerm();
+                i.execute(memory);
+                return true;
+            }
+            else if (o.getOperator().isImmediate()) {
+                if (sentence!=null && getPunctuation()!= Symbols.GOAL)
+                    throw new RuntimeException("ImmediateOperator call " + o + " was not specified with goal punctuation");
+
+                o.getOperator().call(o, memory);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void ensurePerceived(Memory memory) {
+        if (sentence!=null) {
+            //if a task has an unperceived creationTime,
+            // set it to the memory's current time here,
+            // and adjust occurenceTime if it's not eternal
+            Stamp s = sentence.stamp;
+            if (s.getCreationTime() == Stamp.UNPERCEIVED) {
+                final long now = memory.time();
+                long oc = s.getOccurrenceTime();
+                if (oc!=Stamp.ETERNAL)
+                    oc += now;
+                getStamp().setTime(now, oc);
+            }
+        }
     }
 }

@@ -451,10 +451,10 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
         return revisible;
     }
 
-    public Sentence setRevisible(final boolean b) {
+    /*public Sentence setRevisible(final boolean b) {
         revisible = b;
         return this;
-    }
+    }*/
 
     public int getTemporalOrder() {
         int t = term.getTemporalOrder();
@@ -682,7 +682,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
     }
 
 
-    public static class SubTermVarCollector implements Term.TermVisitor {
+    @Deprecated public static class SubTermVarCollector implements Term.TermVisitor {
         private final List<Variable> vars;
 
         public SubTermVarCollector(List<Variable> vars) {

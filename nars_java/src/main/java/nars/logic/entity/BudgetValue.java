@@ -26,6 +26,7 @@ import nars.io.Symbols;
 import nars.io.Texts;
 import nars.logic.BudgetFunctions;
 
+import static nars.core.Parameters.BUDGET_EPSILON;
 import static nars.core.Parameters.TRUTH_EPSILON;
 import static nars.logic.BudgetFunctions.m;
 import static nars.logic.UtilityFunctions.*;
@@ -95,7 +96,7 @@ public class BudgetValue implements Cloneable {
     public BudgetValue(final float p, final float d, final float q) {
         setPriority(p);
         setDurability(d);
-        quality = q;
+        setQuality(q);
     }
 
     /**
@@ -124,9 +125,9 @@ public class BudgetValue implements Cloneable {
     }
 
     public BudgetValue accumulate(final float addPriority, final float addDurability, final float addQuality) {
-        setPriority(Math.min(1f, getPriority() + addPriority));
-        setDurability(m(getDurability(), addDurability));
-        setQuality(m(getQuality(), addQuality));
+        setPriority(Math.min(1f, getPriority() + addPriority)); //add priority
+        setDurability(m(getDurability(), addDurability)); //max durab
+        setQuality(m(getQuality(), addQuality)); //max quali
         return this;
     }
 
@@ -156,11 +157,59 @@ public class BudgetValue implements Cloneable {
             v=1.0f;
             //throw new RuntimeException("priority value above 1");
         }
+        else if (v < 0) {
+            throw new RuntimeException("negative priority value");
+        }
 
-        if (priority==v)
+        final float dp;
+        if (priority >= v) dp = priority - v;
+        else dp = v - priority;
+        if (dp < BUDGET_EPSILON)
             return false;
 
         priority = v;
+        return true;
+    }
+
+    /**
+     * Change durability value
+     * @param d The new durability
+     */
+    public boolean setDurability(float d) {
+        if (Parameters.DEBUG) ensureBetweenZeroAndOne(d);
+
+        if(d>=1.0) {
+            d = (float) (1.0-TRUTH_EPSILON);
+            //throw new RuntimeException("durability value above or equal 1");
+        }
+        /*else if (d < BUDGET_EPSILON) {
+            System.err.println("zero durability");
+        }*/
+
+        final float dp;
+        if (durability >= d) dp = durability - d;
+        else dp = d - durability;
+        if (dp < BUDGET_EPSILON)
+            return false;
+
+        durability = d;
+        return true;
+    }
+
+    /**
+     * Change quality value
+     * @param v The new quality
+     */
+    public boolean setQuality(final float v) {
+        if (Parameters.DEBUG) ensureBetweenZeroAndOne(v);
+
+        final float dp;
+        if (quality >= v) dp = quality - v;
+        else dp = v - quality;
+        if (dp < BUDGET_EPSILON)
+            return false;
+
+        quality = v;
         return true;
     }
 
@@ -202,23 +251,7 @@ public class BudgetValue implements Cloneable {
         return durability;
     }
 
-    /**
-     * Change durability value
-     * @param d The new durability
-     */
-    public boolean setDurability(float d) {
-        if (Parameters.DEBUG) ensureBetweenZeroAndOne(d);
 
-        if(d>=1.0) {
-            d = (float) (1.0-TRUTH_EPSILON);
-            //throw new RuntimeException("durability value above or equal 1");
-        }
-        if (durability!=d) {
-            durability = d;
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Increase durability value by a percentage of the remaining range
@@ -244,19 +277,6 @@ public class BudgetValue implements Cloneable {
         return quality;
     }
 
-    /**
-     * Change quality value
-     * @param v The new quality
-     */
-    public boolean setQuality(final float v) {
-        if (Parameters.DEBUG) ensureBetweenZeroAndOne(v);
-
-        if (quality!=v) {
-            quality = v;
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Increase quality value by a percentage of the remaining range
@@ -450,15 +470,16 @@ public class BudgetValue implements Cloneable {
     public static BudgetValue newDefault(Sentence s, Memory memory) {
         float priority, durability;
         switch (s.punctuation) {
-            case '.':
+            case Symbols.JUDGMENT:
                 priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
                 durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
                 break;
-            case '?':
+            case Symbols.QUEST:
+            case Symbols.QUESTION:
                 priority = Parameters.DEFAULT_QUESTION_PRIORITY;
                 durability = Parameters.DEFAULT_QUESTION_DURABILITY;
                 break;
-            case '!':
+            case Symbols.GOAL:
                 priority = Parameters.DEFAULT_GOAL_PRIORITY;
                 durability = Parameters.DEFAULT_GOAL_DURABILITY;
                 break;
